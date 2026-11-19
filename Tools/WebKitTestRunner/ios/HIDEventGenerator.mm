@@ -246,8 +246,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     if (!self)
         return nil;
 
-    for (NSUInteger i = 0; i < HIDMaxTouchCount; ++i)
-        _activePoints[i].identifier = fingerIdentifiers[i];
+    [self resetState];
 
     _eventCallbacks = adoptNS([[NSMutableDictionary alloc] init]);
 
@@ -267,9 +266,14 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     _activeModifiers.updateForUsageCode(usage, isKeyDown);
 }
 
-- (void)resetActiveModifiers
+- (void)resetState
 {
     _activeModifiers = { };
+    _activePointCount = 0;
+    for (NSUInteger i = 0; i < HIDMaxTouchCount; ++i) {
+        _activePoints[i] = { };
+        _activePoints[i].identifier = fingerIdentifiers[i];
+    }
 }
 
 static IOHIDDigitizerTransducerType transducerTypeFromString(NSString * transducerTypeString)
@@ -496,6 +500,7 @@ static InterpolationType interpolationFromString(NSString *string)
                 pointInfo->pathProximity = kGSEventPathInfoInTouch | kGSEventPathInfoInRange;
         } else if (eventType == HandEventLifted || eventType == HandEventCanceled || eventType == StylusEventLifted) {
             pointInfo->pathMajorRadius = 0;
+            pointInfo->pathMajorRadiusTolerance = 0;
             pointInfo->pathPressure = 0;
             pointInfo->pathProximity = 0;
         }
@@ -811,6 +816,8 @@ static InterpolationType interpolationFromString(NSString *string)
 
     auto eventRef = adoptCF([self _createIOHIDEventType:StylusEventLifted]);
     [self _sendHIDEvent:eventRef.get()];
+
+    _activePointCount = 0;
 }
 
 - (void)stylusDownAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
