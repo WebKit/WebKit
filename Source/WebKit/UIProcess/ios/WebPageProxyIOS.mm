@@ -1305,18 +1305,23 @@ void WebPageProxy::requestEvasionRectsAboveSelection(CompletionHandler<void(cons
         rects->appendVector(WTF::move(focusedFrameRects));
     } });
 
-    // The controls to evade can be in the main frame even when the selection is in an iframe in another process.
-    RefPtr mainFrame = m_mainFrame;
-    if (!focusedFrame || !mainFrame || &focusedFrame->process() == &mainFrame->process())
+    if (!focusedFrame)
         return;
 
     auto selectionBounds = selectionBoundingRectInRootViewCoordinates();
     if (selectionBounds.isEmpty())
         return;
 
-    sendWithAsyncReplyToProcessContainingFrame(mainFrame->frameID(), Messages::WebPage::RequestEvasionRectsAboveSelection(selectionBounds, scaleFactor, contextMenuAreaLimit), Messages::WebPage::RequestEvasionRectsAboveSelection::Reply { [rects, aggregator](Vector<FloatRect>&& mainFrameRects) {
-        rects->appendVector(WTF::move(mainFrameRects));
-    } });
+    // The controls to evade can be in any frame near the selection, including frames in other processes. Each of those
+    // processes looks under all of its local roots, given where the selection is.
+    Ref focusedFrameProcess = focusedFrame->process();
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        if (&process == focusedFrameProcess.ptr())
+            return;
+        process.sendWithAsyncReply(Messages::WebPage::RequestEvasionRectsAboveSelection(selectionBounds, scaleFactor, contextMenuAreaLimit), [rects, aggregator](Vector<FloatRect>&& otherProcessRects) {
+            rects->appendVector(WTF::move(otherProcessRects));
+        }, pageID);
+    });
 }
 
 void WebPageProxy::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&& completionHandler)

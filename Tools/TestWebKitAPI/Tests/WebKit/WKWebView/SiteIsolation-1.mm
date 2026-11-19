@@ -2130,6 +2130,130 @@ TEST(SiteIsolation, EditMenuAvoidsControlsAboveCrossOriginIframe)
     EXPECT_EQ(UIEditMenuArrowDirectionUp, arrowDirection);
 }
 
+// The controls can also be in a frame between the main frame and the selection's frame, in a process of its own, or in
+// the main frame when the selection's frame is back in the main frame's process under a cross-site parent.
+static UIEditMenuArrowDirection editMenuArrowDirectionForSelectionInCrossOriginGrandchildFrame(ASCIILiteral mainFrameHTML, ASCIILiteral middleFrameHTML, bool sharedProcessEnabled = true)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameHTML } },
+        { "/middle"_s, { middleFrameHTML } },
+        { "/grandchild"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"SiteIsolationSharedProcessEnabled", sharedProcessEnabled);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView focusInWindow];
+
+    RetainPtr<WKFrameInfo> grandchildFrame;
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr<_WKFrameTreeNode> mainFrameNode = [webView frameTree];
+        RetainPtr<_WKFrameTreeNode> middleFrameNode = [mainFrameNode.get() childFrames].firstObject;
+        grandchildFrame = [middleFrameNode.get() childFrames].firstObject.info;
+        return !!grandchildFrame;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr inputDelegate = startInputSessionInCrossOriginIframe(webView.get(), grandchildFrame.get());
+    setSelectionInFrame(webView.get(), grandchildFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+
+    __block bool done = false;
+    __block UIEditMenuArrowDirection arrowDirection = UIEditMenuArrowDirectionAutomatic;
+    [[webView textInputContentView] requestPreferredArrowDirectionForEditMenuWithCompletionHandler:^(UIEditMenuArrowDirection direction) {
+        arrowDirection = direction;
+        done = true;
+    }];
+    Util::run(&done);
+    return arrowDirection;
+}
+
+TEST(SiteIsolation, EditMenuAvoidsControlsInIntermediateCrossOriginFrame)
+{
+    // example.com, then webkit.org with the controls, then apple.com with the selection. Without the shared process for
+    // cross-site frames, that's three processes.
+    auto mainFrameHTML = "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'>"
+        "<iframe style='position: absolute; left: 0; top: 100px; width: 400px; height: 400px; border: none;' src='https://webkit.org/middle'></iframe>"
+        "</body>"_s;
+    auto middleFrameHTML = "<body style='margin: 0'>"
+        "<div style='position: absolute; left: 0; top: 120px;'><input type='button' value='1'><input type='button' value='2'><input type='button' value='3'><input type='button' value='4'><input type='button' value='5'><input type='button' value='6'></div>"
+        "<iframe style='position: absolute; left: 0; top: 160px; width: 320px; height: 100px; border: none;' src='https://apple.com/grandchild'></iframe>"
+        "</body>"_s;
+    EXPECT_EQ(UIEditMenuArrowDirectionUp, editMenuArrowDirectionForSelectionInCrossOriginGrandchildFrame(mainFrameHTML, middleFrameHTML, false));
+}
+
+TEST(SiteIsolation, EditMenuAvoidsMainFrameControlsAboveGrandchildFrameInMainFrameProcess)
+{
+    // example.com with the controls, then webkit.org, then example.com again with the selection, back in the main
+    // frame's process but under a cross-site parent.
+    auto mainFrameHTML = "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'>"
+        "<div style='position: absolute; left: 0; top: 220px;'><input type='button' value='1'><input type='button' value='2'><input type='button' value='3'><input type='button' value='4'><input type='button' value='5'><input type='button' value='6'></div>"
+        "<iframe style='position: absolute; left: 0; top: 240px; width: 400px; height: 300px; border: none;' src='https://webkit.org/middle'></iframe>"
+        "</body>"_s;
+    auto middleFrameHTML = "<body style='margin: 0'>"
+        "<iframe style='position: absolute; left: 0; top: 20px; width: 320px; height: 100px; border: none;' src='https://example.com/grandchild'></iframe>"
+        "</body>"_s;
+    EXPECT_EQ(UIEditMenuArrowDirectionUp, editMenuArrowDirectionForSelectionInCrossOriginGrandchildFrame(mainFrameHTML, middleFrameHTML));
+}
+
+// The controls can also be in a sibling frame just above the selection's frame. The sibling here is bigger than the edit
+// menu's area limit, so the main frame's process can't count the sibling <iframe> element itself as the thing to evade.
+static UIEditMenuArrowDirection editMenuArrowDirectionForSelectionInFrameBelowCrossOriginSibling(bool sharedProcessEnabled)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'>"
+            "<iframe style='position: absolute; left: 0; top: 0; width: 800px; height: 420px; border: none;' src='https://webkit.org/sibling'></iframe>"
+            "<iframe style='position: absolute; left: 0; top: 440px; width: 320px; height: 100px; border: none;' src='https://apple.com/editable'></iframe>"
+            "</body>"_s } },
+        { "/sibling"_s, { "<body style='margin: 0'>"
+            "<div style='position: absolute; left: 0; top: 400px;'><input type='button' value='1'><input type='button' value='2'><input type='button' value='3'><input type='button' value='4'><input type='button' value='5'><input type='button' value='6'></div>"
+            "</body>"_s } },
+        { "/editable"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"SiteIsolationSharedProcessEnabled", sharedProcessEnabled);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView focusInWindow];
+
+    RetainPtr<WKFrameInfo> editableFrame;
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr<_WKFrameTreeNode> mainFrameNode = [webView frameTree];
+        for (_WKFrameTreeNode *child in [mainFrameNode.get() childFrames]) {
+            if ([child.info.request.URL.host isEqualToString:@"apple.com"])
+                editableFrame = child.info;
+        }
+        return !!editableFrame;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr inputDelegate = startInputSessionInCrossOriginIframe(webView.get(), editableFrame.get());
+    setSelectionInFrame(webView.get(), editableFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+
+    __block bool done = false;
+    __block UIEditMenuArrowDirection arrowDirection = UIEditMenuArrowDirectionAutomatic;
+    [[webView textInputContentView] requestPreferredArrowDirectionForEditMenuWithCompletionHandler:^(UIEditMenuArrowDirection direction) {
+        arrowDirection = direction;
+        done = true;
+    }];
+    Util::run(&done);
+    return arrowDirection;
+}
+
+TEST(SiteIsolation, EditMenuAvoidsControlsInCrossOriginSiblingFrame)
+{
+    // With the shared process for cross-site frames, both iframes are in one process, as separate local roots.
+    EXPECT_EQ(UIEditMenuArrowDirectionUp, editMenuArrowDirectionForSelectionInFrameBelowCrossOriginSibling(true));
+}
+
+TEST(SiteIsolation, EditMenuAvoidsControlsInCrossOriginSiblingFrameInItsOwnProcess)
+{
+    EXPECT_EQ(UIEditMenuArrowDirectionUp, editMenuArrowDirectionForSelectionInFrameBelowCrossOriginSibling(false));
+}
+
 #endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
 TEST(SiteIsolation, AccessibilityRectsAtSelectionOffsetInCrossOriginIframe)
