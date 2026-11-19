@@ -8964,7 +8964,7 @@ bool Document::crossOriginIsolated() const
 
 void Document::setAgentClusterIdentifier(std::optional<AgentClusterIdentifier> identifier)
 {
-    ASSERT(!m_eventLoop);
+    ASSERT(!m_eventLoop || !isInWebProcess()); // Frame::setOpenerForWebKitLegacy violates this condition.
     m_agentClusterIdentifier = identifier;
 }
 
@@ -12785,7 +12785,7 @@ PermissionsPolicy Document::permissionsPolicy() const
 
 void Document::securityOriginDidChange()
 {
-    ASSERT(!m_eventLoop);
+    ASSERT(!m_eventLoop || !isInWebProcess()); // Frame::setOpenerForWebKitLegacy violates this condition.
     m_syncData->documentSecurityOrigin = SecurityContext::securityOrigin();
     m_permissionsPolicy = nullptr;
     if (m_hasUnpartitionedStorageAccess) {
