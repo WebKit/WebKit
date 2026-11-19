@@ -47,6 +47,9 @@ public:
     ~StreamConnectionWorkQueue();
     void addStreamConnection(StreamServerConnection&);
     void removeStreamConnection(StreamServerConnection&);
+    // Runs all the work dispatched before the work queue stops, including the work dispatched while it is
+    // stopping, then the cleanup function. Work must not be dispatched after the work queue has stopped,
+    // including by the cleanup function.
     void stopAndWaitForCompletion(NOESCAPE WTF::Function<void()>&& cleanupFunction = nullptr);
     void wakeUp();
     Semaphore& wakeUpSemaphore() LIFETIME_BOUND { return m_wakeUpSemaphore; }
@@ -65,6 +68,7 @@ private:
     std::atomic<bool> m_shouldQuit { false };
 
     mutable Lock m_lock;
+    bool m_isStopped WTF_GUARDED_BY_LOCK(m_lock) { false };
     RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
     WTF::Function<void()> m_cleanupFunction WTF_GUARDED_BY_LOCK(m_lock);

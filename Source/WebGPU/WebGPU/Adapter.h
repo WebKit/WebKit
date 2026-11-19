@@ -45,6 +45,7 @@ namespace WebGPU::Metal {
 
 class Device;
 class Instance;
+class WorkScheduler;
 
 // https://gpuweb.github.io/gpuweb/#gpuadapter
 class Adapter final : public WebGPU::Adapter {
@@ -78,6 +79,7 @@ public:
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
     ThreadSafeWeakPtr<Instance> weakInstance() const { return m_instance; }
+    WorkScheduler& workScheduler() const { return m_workScheduler; }
 
 private:
     Adapter(id<MTLDevice>, Instance&, bool xrCompatible, HardwareCapabilities&&);
@@ -85,6 +87,7 @@ private:
 
     id<MTLDevice> m_device { nil };
     const ThreadSafeWeakPtr<Instance> m_instance;
+    const Ref<WorkScheduler> m_workScheduler;
 
     const HardwareCapabilities m_capabilities { };
     bool m_deviceRequested { false };
