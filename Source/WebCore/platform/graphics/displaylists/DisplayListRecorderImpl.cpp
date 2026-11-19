@@ -53,7 +53,7 @@ RecorderImpl::RecorderImpl(const GraphicsContextState& state, const FloatRect& i
 
 RecorderImpl::~RecorderImpl()
 {
-    ASSERT(stateStack().size() == 1); // If this fires, it indicates mismatched save/restore.
+    ASSERT(!stackSize()); // If this fires, it indicates mismatched save/restore.
 }
 
 Ref<const DisplayList> RecorderImpl::takeDisplayList()
@@ -77,7 +77,7 @@ void RecorderImpl::save(GraphicsContextState::Purpose purpose)
 
 bool RecorderImpl::restore(GraphicsContextState::Purpose purpose)
 {
-    if (stateStack().size() <= 1) {
+    if (!stackSize()) {
         LOG_ERROR("ERROR bool RecorderImpl::restore() stack is empty");
         return false;
     }
