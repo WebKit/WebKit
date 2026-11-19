@@ -4823,6 +4823,47 @@ TEST(SiteIsolation, PopupNavigationWithWebsiteDataStoreOfOpenerKeepsOpener)
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
 }
 
+TEST(SiteIsolation, CloseRunsUnloadHandlerInCrossSiteIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<script>localStorage.setItem('loaded', 'yes'); addEventListener('unload', () => localStorage.setItem('unloaded', 'yes'));</script>"_s } },
+        { "/reader"_s, { "<script>addEventListener('message', event => window.webkit.messageHandlers.testHandler.postMessage(event.data));</script><iframe src='https://webkit.org/read'></iframe>"_s } },
+        { "/read"_s, { "<script>function report() { parent.postMessage(String(localStorage.getItem('unloaded')) + ',' + String(localStorage.getItem('loaded')), '*'); } report(); addEventListener('storage', report);</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableUnloadEvent(configuration.get());
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    RetainPtr readerNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [readerNavigationDelegate allowAnyTLSCertificate];
+    RetainPtr reader = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [reader setNavigationDelegate:readerNavigationDelegate.get()];
+
+    __block bool sawLoadedFlag = false;
+    __block bool sawUnloadedFlag = false;
+    [reader performAfterReceivingMessage:@"null,yes" action:^{
+        sawLoadedFlag = true;
+    }];
+    [reader performAfterReceivingMessage:@"yes,yes" action:^{
+        sawUnloadedFlag = true;
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScript:@"true" inFrame:childFrame.get()];
+
+    [reader loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/reader"]]];
+    EXPECT_TRUE(Util::runFor(&sawLoadedFlag, 10_s));
+
+    [webView _close];
+
+    EXPECT_TRUE(Util::runFor(&sawUnloadedFlag, 10_s));
+}
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
 
 // When a web process's hit test reaches a frame hosted by another process, it replies with that frame and the point in

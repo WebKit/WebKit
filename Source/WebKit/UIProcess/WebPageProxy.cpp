@@ -2092,6 +2092,22 @@ void WebPageProxy::close()
     WEBPAGEPROXY_RELEASE_LOG(Loading, "close:");
 
     m_isClosed = true;
+
+    struct ProcessToClose {
+        const Ref<WebProcessProxy> process;
+        WebCore::PageIdentifier pageID;
+        WebProcessProxy::ShutdownPreventingScopeCounter::Token shutdownPreventingScope;
+    };
+    Vector<ProcessToClose> processesToClose;
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.addPagePendingClose(identifier());
+        processesToClose.append({
+            process,
+            pageID,
+            process.shutdownPreventingScope()
+        });
+    });
+
     internals().subframeTerminationEvent = std::nullopt;
 
     leastRecentlyVisiblePages().remove(*this);
@@ -2189,20 +2205,6 @@ void WebPageProxy::close()
     Ref processPool = m_configuration->processPool();
     processPool->backForwardCache().removeEntriesForPage(*this);
 
-    struct ProcessToClose {
-        const Ref<WebProcessProxy> process;
-        WebCore::PageIdentifier pageID;
-        WebProcessProxy::ShutdownPreventingScopeCounter::Token shutdownPreventingScope;
-    };
-    Vector<ProcessToClose> processesToClose;
-    forEachWebContentProcess([&](auto& process, auto pageID) {
-        process.addPagePendingClose(identifier());
-        processesToClose.append({
-            process,
-            pageID,
-            process.shutdownPreventingScope()
-        });
-    });
     // Delay sending close message to next runloop cycle to avoid white flash.
     RunLoop::currentSingleton().dispatch([processesToClose = WTF::move(processesToClose), pageProxyID = identifier()] {
         for (auto [process, pageID, scope] : processesToClose) {
