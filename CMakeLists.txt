@@ -16,8 +16,14 @@ endif ()
 
 project(WebKit LANGUAGES C CXX)
 
+# -Wunsafe-buffer-usage on prefix-header code adds ~3% to each compile step the Xcode build still checks it.
 # project() enables C and CXX; see WEBKIT_ENABLE_LANGUAGE for why this is reset.
-set(CMAKE_PCH_PROLOGUE "")
+set(WEBKIT_PCH_PROLOGUE "")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(WEBKIT_PCH_PROLOGUE "#pragma clang diagnostic push\n#pragma clang diagnostic ignored \"-Wunsafe-buffer-usage\"")
+    set(CMAKE_PCH_EPILOGUE "#pragma clang diagnostic pop")
+endif ()
+set(CMAKE_PCH_PROLOGUE "${WEBKIT_PCH_PROLOGUE}")
 
 # -----------------------------------------------------------------------------
 # Common configuration
