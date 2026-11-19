@@ -56,26 +56,12 @@ struct JustifyItems {
 
     constexpr bool isNormal() const { return primary() == PrimaryKind::Normal; }
     constexpr bool isStretch() const { return primary() == PrimaryKind::Stretch; }
-    constexpr bool isBaseline() const { return primary() == PrimaryKind::Baseline; }
-    constexpr bool isCenter() const { return primary() == PrimaryKind::Center; }
-    constexpr bool isStart() const { return primary() == PrimaryKind::Start; }
-    constexpr bool isEnd() const { return primary() == PrimaryKind::End; }
-    constexpr bool isSelfStart() const { return primary() == PrimaryKind::SelfStart; }
-    constexpr bool isSelfEnd() const { return primary() == PrimaryKind::SelfEnd; }
-    constexpr bool isFlexStart() const { return primary() == PrimaryKind::FlexStart; }
-    constexpr bool isFlexEnd() const { return primary() == PrimaryKind::FlexEnd; }
-    constexpr bool isLeft() const { return primary() == PrimaryKind::Left; }
-    constexpr bool isRight() const { return primary() == PrimaryKind::Right; }
     constexpr bool isAnchorCenter() const { return primary() == PrimaryKind::AnchorCenter; }
     constexpr bool isLegacy() const { return primary() == PrimaryKind::Legacy; }
 
     constexpr bool isFirstBaseline() const { return primary() == PrimaryKind::Baseline && baselineAlignmentPreference() == BaselineAlignmentPreferenceKind::First; }
-    constexpr bool isLastBaseline() const { return primary() == PrimaryKind::Baseline && baselineAlignmentPreference() == BaselineAlignmentPreferenceKind::Last; }
 
     constexpr bool isLegacyNone() const { return primary() == PrimaryKind::Legacy && legacyPosition() == LegacyPositionKind::None; }
-    constexpr bool isLegacyLeft() const { return primary() == PrimaryKind::Legacy && legacyPosition() == LegacyPositionKind::Left; }
-    constexpr bool isLegacyRight() const { return primary() == PrimaryKind::Legacy && legacyPosition() == LegacyPositionKind::Right; }
-    constexpr bool isLegacyCenter() const { return primary() == PrimaryKind::Legacy && legacyPosition() == LegacyPositionKind::Center; }
 
     template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&...) const;
 
