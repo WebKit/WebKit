@@ -41,15 +41,21 @@ inline ContainmentChecker::ContainmentChecker(const Style::ComputedStyle& style,
 
 inline ContainmentChecker::~ContainmentChecker() = default;
 
+inline bool ContainmentChecker::hasContainment(const ComputedStyle& style, ContainValue value)
+{
+    ASSERT(value == ContainValue::Layout || value == ContainValue::Paint);
+
+    // content-visibility: hidden and auto also turn on layout and paint containment.
+    return style.contain().contains(value)
+        || style.contentVisibility() == ContentVisibility::Hidden
+        || style.contentVisibility() == ContentVisibility::Auto;
+}
+
 inline bool ContainmentChecker::shouldApplyLayoutContainment() const
 {
     // https://drafts.csswg.org/css-contain/#containment-layout
 
-    // content-visibility hidden and auto turns on layout containment.
-    auto hasContainment = m_style->usedContain().contains(ContainValue::Layout)
-        || m_style->contentVisibility() == ContentVisibility::Hidden
-        || m_style->contentVisibility() == ContentVisibility::Auto;
-    if (!hasContainment)
+    if (!hasContainment(m_style, ContainValue::Layout))
         return false;
 
     // Giving an element layout containment has no effect if any of the following are true:
@@ -144,11 +150,7 @@ inline bool ContainmentChecker::shouldApplyPaintContainment() const
 {
     // https://drafts.csswg.org/css-contain/#containment-paint
 
-    // content-visibility hidden and auto turns on paint containment.
-    auto hasContainment = m_style->usedContain().contains(ContainValue::Paint)
-        || m_style->contentVisibility() == ContentVisibility::Hidden
-        || m_style->contentVisibility() == ContentVisibility::Auto;
-    if (!hasContainment)
+    if (!hasContainment(m_style, ContainValue::Paint))
         return false;
 
     // Giving an element paint containment has no effect if any of the following are true:
