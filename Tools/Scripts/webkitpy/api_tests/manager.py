@@ -308,6 +308,58 @@ class Manager(object):
                         result.append(line)
         return result
 
+    def _classify_results(self, results, current_config):
+        """Returns the unexpected failures, expected failures and unexpected passes in results."""
+        unexpected_failures = {}
+        expected_failures = {}
+        unexpected_passes = {}
+
+        for test, test_result in iteritems(results):
+            status = test_result[0]
+            if status == Runner.STATUS_DISABLED:
+                continue
+            exp = self._expectations.get_expectation(test, current_config)
+            actual = runner_status_to_expectation(status)
+            is_expected = actual is not None and actual in (exp.expected if exp else PASS)
+            passed = status == Runner.STATUS_PASSED
+
+            if is_expected and not passed:
+                expected_failures[test] = test_result
+            elif not is_expected and passed:
+                unexpected_passes[test] = test_result
+            elif not is_expected:
+                unexpected_failures[test] = test_result
+
+        return unexpected_failures, expected_failures, unexpected_passes
+
+    def _retry_failing_tests(self, runner, current_config):
+        unexpected_failures, _, _ = self._classify_results(runner.results, current_config)
+        failing_tests = list(unexpected_failures)
+        if not failing_tests:
+            return {}
+
+        _log.info(f'\nRetrying {pluralize(len(failing_tests), "unexpected failure")}')
+        # One worker, like run-webkit-tests, so a test that only fails alongside others is reported as flaky.
+        retry_runner = Runner(self._port, self._stream, expectations=self._expectations, status=self._status)
+        retry_runner.run(failing_tests, num_workers=1)
+
+        runner.results, flakies = Manager._merge_retry_results(runner.results, retry_runner.results)
+        if flakies:
+            _log.info(f'Flaky tests: {", ".join(sorted(flakies))}')
+        return flakies
+
+    @staticmethod
+    def _merge_retry_results(first_run_results, retry_results):
+        """Returns the results with each retried test's latest result, and the first-run results of the tests that passed on retry."""
+        final = dict(first_run_results)
+        final.update(retry_results)
+        flakies = {
+            test: first_run_results[test]
+            for test, result in iteritems(retry_results)
+            if result[0] == Runner.STATUS_PASSED and test in first_run_results and first_run_results[test][0] != Runner.STATUS_PASSED
+        }
+        return final, flakies
+
     def run(self, args, json_output=None):
         self._status.report('working')
         result = self._run(args, json_output)
@@ -422,6 +474,7 @@ class Manager(object):
             _log.debug(f'Repeating each test {self._options.iterations} times')
 
         runner = None
+        flakies = {}
         try:
             _log.info('Running tests')
             runner = Runner(self._port, self._stream, expectations=self._expectations, status=self._status)
@@ -429,6 +482,9 @@ class Manager(object):
             for i in range(self._options.iterations):
                 _log.debug(f'\nIteration {i + 1}')
                 runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else None)
+            # A retry would pass a test that only fails under load, which is what --test-parallel-safety checks for.
+            if getattr(self._options, 'retry_failures', False) and not self._port.get_option('test_parallel_safety'):
+                flakies = self._retry_failing_tests(runner, current_config)
         except EarlyExitException as e:
             self._stream.writeln(f'\nExiting early after {e.failure_count} failures.')
         except KeyboardInterrupt:
@@ -450,30 +506,7 @@ class Manager(object):
         test_parallel_safety_tests = self._port.get_option('test_parallel_safety') or []
         is_parallel_safety_mode = bool(test_parallel_safety_tests)
 
-        unexpected_failures = {}
-        expected_failures = {}
-        unexpected_passes = {}
-
-        for test, test_result in iteritems(runner.results):
-            status = test_result[0]
-            if status == runner.STATUS_DISABLED:
-                continue
-            exp = self._expectations.get_expectation(test, current_config)
-            expectation_status = runner_status_to_expectation(status)
-
-            if exp is None or exp.expected == PASS:
-                if status != runner.STATUS_PASSED:
-                    unexpected_failures[test] = test_result
-            else:
-                is_expected = exp.result_is_expected(expectation_status) if expectation_status is not None else False
-                if is_expected:
-                    if status != runner.STATUS_PASSED:
-                        expected_failures[test] = test_result
-                else:
-                    if status == runner.STATUS_PASSED:
-                        unexpected_passes[test] = test_result
-                    else:
-                        unexpected_failures[test] = test_result
+        unexpected_failures, expected_failures, unexpected_passes = self._classify_results(runner.results, current_config)
 
         summary = f'Ran {len(runner.results) - disabled} tests of {original_test_count} with {len(successful)} successful'
         if expected_failures:
@@ -578,6 +611,15 @@ class Manager(object):
 
         # A passing test has no 'actual' and passing tests are not worth the size when reporting.
         result_dictionary['results'] = {test: test_result for test, test_result in upload_results.items() if test_result.get('actual')}
+
+        # A flaky test passed on retry, so `results` leaves it out; this keeps its first-run failure for EWS to report.
+        result_dictionary['flaky_results'] = {
+            test: Upload.create_test_result(
+                expected=self._expected_results_for_upload(self._expectations.get_expectation(test, current_config)),
+                actual=status_to_test_result[flaky_result[0]],
+                time=int(flaky_result[2] * 1000),
+            ) for test, flaky_result in iteritems(flakies)
+        }
 
         if json_output:
             self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))

@@ -254,3 +254,98 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
         unexpected_failures = {'TestWebKitAPI.MediaSamplesDecoder.DecodeVP8IntoSharedMemory': (Runner.STATUS_FAILED, output, 1.0)}
         results = Manager._upload_results_with_logs({test: {'actual': 'FAIL'} for test in unexpected_failures}, unexpected_failures)
         self.assertEqual(self.FAILURE_OUTPUT + 'x' * 8009 + ' [1,991 more bytes]\n', results['TestWebKitAPI.MediaSamplesDecoder.DecodeVP8IntoSharedMemory']['log'])
+
+    def test_merge_retry_results_reports_a_test_that_passes_on_retry_as_flaky(self):
+        first_run = {
+            'TestA': (Runner.STATUS_FAILED, 'fail output', 1.0),
+            'TestB': (Runner.STATUS_PASSED, '', 0.5),
+        }
+        final, flakies = Manager._merge_retry_results(first_run, {'TestA': (Runner.STATUS_PASSED, '', 0.9)})
+        self.assertEqual({'TestA': Runner.STATUS_PASSED, 'TestB': Runner.STATUS_PASSED}, {test: result[0] for test, result in final.items()})
+        self.assertEqual({'TestA': (Runner.STATUS_FAILED, 'fail output', 1.0)}, flakies)
+
+    def test_merge_retry_results_keeps_the_retry_result_of_a_test_that_fails_twice(self):
+        final, flakies = Manager._merge_retry_results(
+            {'TestA': (Runner.STATUS_FAILED, 'first output', 1.0)},
+            {'TestA': (Runner.STATUS_CRASHED, 'second output', 1.1)},
+        )
+        self.assertEqual({'TestA': (Runner.STATUS_CRASHED, 'second output', 1.1)}, final)
+        self.assertEqual({}, flakies)
+
+    def test_merge_retry_results_keeps_the_first_run_result_of_a_test_the_retry_did_not_run(self):
+        final, flakies = Manager._merge_retry_results({'TestA': (Runner.STATUS_TIMEOUT, '', 30.0)}, {})
+        self.assertEqual({'TestA': (Runner.STATUS_TIMEOUT, '', 30.0)}, final)
+        self.assertEqual({}, flakies)
+
+    @staticmethod
+    def _manager_with_expectations(expectations=None):
+        manager = Manager(MagicMock(), MagicMock(), MagicMock())
+        manager._expectations = MagicMock()
+        manager._expectations.get_expectation.side_effect = lambda test, config: (expectations or {}).get(test)
+        return manager
+
+    def test_classify_results_sorts_each_result_by_its_expectation(self):
+        manager = self._manager_with_expectations({
+            'ExpectedFailure': Expectation('ExpectedFailure', expected={FAIL}),
+            'UnexpectedPass': Expectation('UnexpectedPass', expected={FAIL}),
+            'WrongFailure': Expectation('WrongFailure', expected={FAIL}),
+            'FlakyPass': Expectation('FlakyPass', expected={PASS, FAIL}),
+        })
+        results = {
+            'NewFailure': (Runner.STATUS_FAILED, '', 1.0),
+            'Pass': (Runner.STATUS_PASSED, '', 1.0),
+            'Disabled': (Runner.STATUS_DISABLED, '', 0.0),
+            'StillRunning': (Runner.STATUS_RUNNING, '', 0.0),
+            'ExpectedFailure': (Runner.STATUS_FAILED, '', 1.0),
+            'UnexpectedPass': (Runner.STATUS_PASSED, '', 1.0),
+            'WrongFailure': (Runner.STATUS_CRASHED, '', 1.0),
+            'FlakyPass': (Runner.STATUS_PASSED, '', 1.0),
+        }
+
+        unexpected_failures, expected_failures, unexpected_passes = manager._classify_results(results, current_config=None)
+
+        self.assertEqual(['NewFailure', 'StillRunning', 'WrongFailure'], sorted(unexpected_failures))
+        self.assertEqual(['ExpectedFailure'], list(expected_failures))
+        self.assertEqual(['UnexpectedPass'], list(unexpected_passes))
+
+    def test_retry_failing_tests_reruns_only_the_unexpected_failures_with_one_worker(self):
+        manager = self._manager_with_expectations({
+            'TestD': Expectation('TestD', expected={FAIL}),
+            'TestE': Expectation('TestE', expected={FAIL}),
+        })
+        runner = Runner(MagicMock(), MagicMock())
+        runner.results = {
+            'TestA': (Runner.STATUS_FAILED, 'fail output', 1.0),
+            'TestB': (Runner.STATUS_PASSED, '', 0.5),
+            'TestC': (Runner.STATUS_DISABLED, '', 0.0),
+            'TestD': (Runner.STATUS_FAILED, 'expected failure output', 1.0),
+            'TestE': (Runner.STATUS_CRASHED, 'crash output', 1.0),
+        }
+
+        def pass_on_retry(retry_runner, tests, num_workers):
+            retry_runner.results = {test: (Runner.STATUS_PASSED, '', 0.9) for test in tests}
+
+        with patch.object(Runner, 'run', autospec=True, side_effect=pass_on_retry) as run:
+            flakies = manager._retry_failing_tests(runner, current_config=None)
+
+        self.assertEqual(['TestA', 'TestE'], run.call_args.args[1])
+        self.assertEqual({'num_workers': 1}, run.call_args.kwargs)
+        self.assertIsNot(runner, run.call_args.args[0])
+        self.assertEqual({
+            'TestA': (Runner.STATUS_FAILED, 'fail output', 1.0),
+            'TestE': (Runner.STATUS_CRASHED, 'crash output', 1.0),
+        }, flakies)
+        self.assertEqual(Runner.STATUS_PASSED, runner.results['TestA'][0])
+        self.assertEqual((Runner.STATUS_FAILED, 'expected failure output', 1.0), runner.results['TestD'])
+
+    def test_retry_failing_tests_skips_the_retry_when_nothing_failed_unexpectedly(self):
+        manager = self._manager_with_expectations({'TestB': Expectation('TestB', expected={FAIL})})
+        runner = Runner(MagicMock(), MagicMock())
+        runner.results = {
+            'TestA': (Runner.STATUS_PASSED, '', 0.5),
+            'TestB': (Runner.STATUS_FAILED, 'expected failure output', 1.0),
+        }
+
+        with patch.object(Runner, 'run', autospec=True) as run:
+            self.assertEqual({}, manager._retry_failing_tests(runner, current_config=None))
+        run.assert_not_called()
