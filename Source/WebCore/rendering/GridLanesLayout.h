@@ -41,20 +41,25 @@ class RenderGrid;
 
 class GridLanesResult {
 public:
+    // "The alignment subject is the item’s margin box, and the alignment container is that box plus the adjacent “gap”."
+    struct StackingAxisAlignmentContainer {
+        LayoutUnit start;
+        LayoutUnit size;
+    };
+
     GridLanesResult() = default;
-    GridLanesResult(HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit>&& stackingAxisOffsets, LayoutUnit gridContentSize)
-        : m_stackingAxisOffsets(WTF::move(stackingAxisOffsets))
+    GridLanesResult(HashMap<SingleThreadWeakRef<const RenderBox>, StackingAxisAlignmentContainer>&& stackingAxisAlignmentContainers, LayoutUnit gridContentSize)
+        : m_stackingAxisAlignmentContainers(WTF::move(stackingAxisAlignmentContainers))
         , m_gridContentSize(gridContentSize)
     {
     }
 
-    NODELETE LayoutUnit stackingAxisOffsetForGridItem(const RenderBox&) const;
+    NODELETE StackingAxisAlignmentContainer stackingAxisAlignmentContainerForGridItem(const RenderBox&) const;
 
     LayoutUnit gridContentSize() const { return m_gridContentSize; }
 
 private:
-    // Offset of the item's margin box.
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_stackingAxisOffsets;
+    HashMap<SingleThreadWeakRef<const RenderBox>, StackingAxisAlignmentContainer> m_stackingAxisAlignmentContainers;
     LayoutUnit m_gridContentSize;
 };
 
