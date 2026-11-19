@@ -247,6 +247,19 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
 }
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+bool PageClientImpl::isTouchScrollInProgress() const
+{
+#if ENABLE(WPE_PLATFORM)
+    if (auto* wpeView = m_view.wpeView()) {
+        auto* gestureController = wpe_view_get_gesture_controller(wpeView);
+        return gestureController && wpe_gesture_controller_get_gesture(gestureController) == WPE_GESTURE_DRAG;
+    }
+#endif
+    return false;
+}
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wasEventHandled)
 {

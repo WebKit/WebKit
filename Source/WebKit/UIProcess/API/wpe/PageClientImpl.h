@@ -126,6 +126,9 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     void doneWithTouchEvent(const WebTouchEvent&, bool) override;
 #endif
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    bool isTouchScrollInProgress() const override;
+#endif
     void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
