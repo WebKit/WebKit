@@ -641,6 +641,10 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(renderBufferCount);
 
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    updateScreenHeadroomFromScreenPropertiesIfNeeded();
+#endif
+
     bool reportValidationErrors = !dueToReshape;
     if (!protect(m_presentationContext)->configure(configuration, m_width, m_height, reportValidationErrors))
         return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContext.configure: Unable to configure."_s };
