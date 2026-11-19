@@ -188,8 +188,10 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
             cookie["event-breakpoint-case-sensitive"] = this._caseSensitive;
             cookie["event-breakpoint-is-regex"] = this._isRegex;
         }
-        if (this._eventListener)
+        if (this._eventListener) {
             cookie["event-breakpoint-event-listener"] = this._eventListener.eventListenerId;
+            cookie["event-breakpoint-event-listener-target"] = this._eventListener.owningTarget?.identifier ?? null;
+        }
     }
 
     toJSON(key)

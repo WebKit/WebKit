@@ -46,8 +46,11 @@ PASS: Page handler should fire after the page listener is enabled again.
 PASS: Frame handler should still fire.
 
 -- Running test case: FrameListenerBreakpoint
-PASS: Should not register a breakpoint for the frame listener.
+PASS: Should register a breakpoint for the frame listener.
+PASS: Should not register a breakpoint for the page listener.
 PASS: Should register a breakpoint for the page listener.
+PASS: The two breakpoints should be different.
+PASS: Should remove the breakpoint of the frame listener.
 PASS: Removing the frame listener's breakpoint should keep the page listener's breakpoint.
 PASS: Should remove the breakpoint of the page listener.
 

@@ -1,0 +1,126 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="../dom-debugger/resources/dom-debugger-test-utilities.js"></script>
+<script src="../dom-debugger/resources/event-listener-breakpoint-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.BreakpointForEventListener");
+
+    const invalidEventListenerId = 9999999;
+
+    let frameTarget = null;
+    let eventListenerId = 0;
+
+    async function headingClickListener() {
+        let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({expression: `document.getElementById("heading")`, objectGroup: "test"});
+        let {nodeId} = await frameTarget.DOMAgent.requestNode(result.objectId);
+        let {listeners} = await frameTarget.DOMAgent.getEventListenersForNode.invoke({nodeId, includeAncestors: false});
+        return listeners.find((listener) => listener.handlerName === "basicClickHandler") || null;
+    }
+
+    async function hasBreakpoint() {
+        return !!(await headingClickListener())?.hasBreakpoint;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.BreakpointForEventListener.Setup",
+        description: "Find the click listener of a node in the cross-origin frame target.",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("event-listeners-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+            while (!WI.domManager.frameTargetDocumentForTarget(frameTarget))
+                await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "attachBasicClickListener()", objectGroup: "test"});
+            let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({expression: `document.getElementById("heading")`, objectGroup: "test"});
+            let {nodeId} = await frameTarget.DOMAgent.requestNode(result.objectId);
+            let {listeners} = await frameTarget.DOMAgent.getEventListenersForNode.invoke({nodeId, includeAncestors: false});
+            InspectorTest.expectEqual(listeners.length, 1, "Node should have one listener.");
+            eventListenerId = listeners[0]?.eventListenerId;
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.BreakpointForEventListener.CommandAvailability",
+        description: "Frame targets should support event listener breakpoint commands.",
+        async test() {
+            InspectorTest.expectThat(frameTarget.hasCommand("DOM.setBreakpointForEventListener"), "Frame target should support DOM.setBreakpointForEventListener.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOM.setBreakpointForEventListener", "options"), "Frame target should support options for DOM.setBreakpointForEventListener.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOM.removeBreakpointForEventListener"), "Frame target should support DOM.removeBreakpointForEventListener.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.BreakpointForEventListener.SetAndRemove",
+        description: "The frame target should store a breakpoint for its listener, and reject setting it twice or removing it twice.",
+        async test() {
+            InspectorTest.expectFalse(await hasBreakpoint(), "Listener should not have a breakpoint.");
+
+            InspectorTest.log("Setting breakpoint...");
+            await frameTarget.DOMAgent.setBreakpointForEventListener.invoke({eventListenerId, options: {condition: "true"}});
+            InspectorTest.expectThat(await hasBreakpoint(), "Listener should have a breakpoint.");
+
+            InspectorTest.log("Setting breakpoint again...");
+            await InspectorTest.expectException(async () => {
+                await frameTarget.DOMAgent.setBreakpointForEventListener.invoke({eventListenerId});
+            });
+
+            InspectorTest.log("Removing breakpoint...");
+            await frameTarget.DOMAgent.removeBreakpointForEventListener.invoke({eventListenerId});
+            InspectorTest.expectFalse(await hasBreakpoint(), "Listener should not have a breakpoint after removal.");
+
+            InspectorTest.log("Removing breakpoint again...");
+            await InspectorTest.expectException(async () => {
+                await frameTarget.DOMAgent.removeBreakpointForEventListener.invoke({eventListenerId});
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.BreakpointForEventListener.ReaddedListener",
+        description: "A listener that is removed and added again should get a new id, without the old listener's breakpoint.",
+        async test() {
+            InspectorTest.log("Setting breakpoint...");
+            await frameTarget.DOMAgent.setBreakpointForEventListener.invoke({eventListenerId});
+            InspectorTest.expectThat(await hasBreakpoint(), "Listener should have a breakpoint.");
+
+            InspectorTest.log("Removing the listener and adding it again...");
+            await evaluateInTarget(frameTarget, `{ let heading = document.getElementById("heading"); heading.removeEventListener("click", basicClickHandler); heading.addEventListener("click", basicClickHandler); }`);
+            await expectNoListenerPause(frameTarget, `document.getElementById("heading").click()`, "Should not pause for the listener added again.");
+
+            let readdedListener = await headingClickListener();
+            InspectorTest.expectNotEqual(readdedListener?.eventListenerId, eventListenerId, "Listener added again should get a new id.");
+            InspectorTest.expectFalse(!!readdedListener?.hasBreakpoint, "Listener added again should not have a breakpoint.");
+
+            InspectorTest.log("Removing breakpoint for the old id...");
+            await InspectorTest.expectException(async () => {
+                await frameTarget.DOMAgent.removeBreakpointForEventListener.invoke({eventListenerId});
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.BreakpointForEventListener.Invalid",
+        description: "Invalid event listener identifiers should cause an error.",
+        async test() {
+            InspectorTest.log("Setting breakpoint for an invalid listener id...");
+            await InspectorTest.expectException(async () => {
+                await frameTarget.DOMAgent.setBreakpointForEventListener.invoke({eventListenerId: invalidEventListenerId});
+            });
+
+            InspectorTest.log("Removing breakpoint for an invalid listener id...");
+            await InspectorTest.expectException(async () => {
+                await frameTarget.DOMAgent.removeBreakpointForEventListener.invoke({eventListenerId: invalidEventListenerId});
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests DOM.setBreakpointForEventListener and DOM.removeBreakpointForEventListener on a cross-origin frame target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/event-listeners-frame.html"></iframe>
+</body>

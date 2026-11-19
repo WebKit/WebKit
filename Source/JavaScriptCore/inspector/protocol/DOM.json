@@ -467,7 +467,7 @@
         {
             "name": "setBreakpointForEventListener",
             "description": "Set a breakpoint on the given event listener.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "eventListenerId", "$ref": "EventListenerId" },
                 { "name": "options", "$ref": "Debugger.BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
@@ -476,7 +476,7 @@
         {
             "name": "removeBreakpointForEventListener",
             "description": "Remove any breakpoints on the given event listener.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "eventListenerId", "$ref": "EventListenerId" }
             ]

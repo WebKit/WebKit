@@ -1,0 +1,215 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script src="resources/event-listener-breakpoint-test-utilities.js"></script>
+<script>
+function mainButtonClicked(event) { window.lastEventType = event.type; }
+
+function attachMainListener() { document.getElementById("main-button").addEventListener("click", mainButtonClicked); }
+function clickMainButton() { document.getElementById("main-button").click(); return true; }
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.EventListenerBreakpoint");
+
+    let frameTarget = null;
+    let frameBodyNode = null;
+    let mainListener = null;
+    let frameListener = null;
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Setup",
+        description: "Find a listener in the page and a listener in the cross-origin frame that have the same id.",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("event-listener-breakpoint-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            let frameDocument = await frameTargetDocument(frameTarget);
+            InspectorTest.expectNotNull(frameDocument, "Frame target should have a document.");
+
+            let pageDocument = await withDeadline(WI.domManager.requestDocument(), "page document");
+            let mainNode = WI.domManager.nodeForId(await withDeadline(pageDocument.querySelector("#main-button"), "page querySelector"));
+            let frameNode = WI.domManager.nodeForId(await withDeadline(frameDocument.querySelector("#frame-button"), "frame querySelector"));
+            frameBodyNode = WI.domManager.nodeForId(await withDeadline(frameDocument.querySelector("body"), "frame querySelector"));
+            InspectorTest.expectNotNull(mainNode, "Should find #main-button in the page.");
+            InspectorTest.expectThat(frameNode?.owningTarget === frameTarget, "#frame-button should belong to the frame target.");
+
+            await evaluateInTarget(null, "attachMainListener()");
+            mainListener = await eventListenerForNode(mainNode, "mainButtonClicked");
+
+            // The frame agent numbers listeners from 1 for each document, but the page agent keeps counting
+            // across documents. Give the frame agent enough other listeners to reach the page listener's id.
+            let padCount = mainListener.eventListenerId - 1;
+            if (padCount) {
+                await evaluateInTarget(frameTarget, `addPadListeners(${padCount})`);
+                await withDeadline(frameBodyNode.getEventListeners({includeAncestors: false}), "frame getEventListeners for pad listeners");
+            }
+
+            frameListener = await eventListenerForNode(frameNode, "frameButtonClicked");
+
+            InspectorTest.expectEqual(mainListener?.handlerName, "mainButtonClicked", "Page listener should be the page handler.");
+            InspectorTest.expectEqual(frameListener?.handlerName, "frameButtonClicked", "Frame listener should be the frame handler.");
+            InspectorTest.expectEqual(frameListener?.eventListenerId, mainListener?.eventListenerId, "The two listeners should have the same id.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Supported",
+        description: "Breakpoints should be supported on frame listeners as well as page listeners.",
+        async test() {
+            InspectorTest.expectThat(WI.DOMManager.supportsBreakpointForEventListener(mainListener), "Page listener should support breakpoints.");
+            InspectorTest.expectThat(WI.DOMManager.supportsBreakpointForEventListener(frameListener), "Frame listener should support breakpoints.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.FrameListener",
+        description: "A breakpoint on a frame listener should pause in the frame, and not on the page listener with the same id.",
+        async test() {
+            await setListenerBreakpoint(frameListener);
+            InspectorTest.expectNotNull(breakpointForListener(frameListener), "Should register a breakpoint for the frame listener.");
+            InspectorTest.expectNull(breakpointForListener(mainListener), "Should not register a breakpoint for the page listener with the same id.");
+
+            InspectorTest.log("Clicking the frame button...");
+            await expectListenerPause(frameTarget, "clickFrameButton()", frameListener, {functionName: "frameButtonClicked", pauseTarget: frameTarget});
+
+            InspectorTest.log("Clicking the page button...");
+            await expectNoListenerPause(null, "clickMainButton()", "Should not pause for the page listener with the same id.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.PageListener",
+        description: "A breakpoint on a page listener should pause in the page, and not on the frame listener with the same id.",
+        async test() {
+            await setListenerBreakpoint(mainListener);
+            InspectorTest.expectNotNull(breakpointForListener(mainListener), "Should register a breakpoint for the page listener.");
+            InspectorTest.expectNull(breakpointForListener(frameListener), "Should not register a breakpoint for the frame listener with the same id.");
+
+            InspectorTest.log("Clicking the frame button...");
+            await expectNoListenerPause(frameTarget, "clickFrameButton()", "Should not pause for the frame listener with the same id.");
+
+            InspectorTest.log("Clicking the page button...");
+            await expectListenerPause(null, "clickMainButton()", mainListener, {functionName: "mainButtonClicked"});
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.RemoveFrameKeepsPage",
+        description: "Removing the frame listener's breakpoint should keep the breakpoint of the page listener with the same id.",
+        async test() {
+            await setListenerBreakpoint(mainListener);
+            await setListenerBreakpoint(frameListener);
+            InspectorTest.expectNotNull(breakpointForListener(mainListener), "Page listener should have a breakpoint.");
+            InspectorTest.expectNotNull(breakpointForListener(frameListener), "Frame listener should have a breakpoint.");
+            InspectorTest.expectThat(breakpointForListener(mainListener) !== breakpointForListener(frameListener), "The two breakpoints should be different.");
+            InspectorTest.expectEqual(WI.domManager.eventListenerBreakpoints.length, 2, "Should have two listener breakpoints.");
+
+            await removeListenerBreakpoint(frameListener);
+            InspectorTest.expectNull(breakpointForListener(frameListener), "Frame listener should have no breakpoint.");
+            InspectorTest.expectNotNull(breakpointForListener(mainListener), "Page listener should keep its breakpoint.");
+
+            InspectorTest.log("Clicking the frame button...");
+            await expectNoListenerPause(frameTarget, "clickFrameButton()", "Should not pause for the removed frame breakpoint.");
+
+            InspectorTest.log("Clicking the page button...");
+            InspectorTest.expectEqual(await countPausesDuring(null, "clickMainButton()"), 1, "Should still pause for the page breakpoint.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Disabled",
+        description: "Disabling a frame listener breakpoint should stop it pausing, and enabling it again should pause.",
+        async test() {
+            let breakpoint = await setListenerBreakpoint(frameListener);
+            InspectorTest.expectNotNull(breakpoint, "Should register a breakpoint for the frame listener.");
+            if (!breakpoint)
+                return;
+
+            InspectorTest.log("Disabling the breakpoint...");
+            breakpoint.disabled = true;
+            await flushCommands(frameTarget);
+            await expectNoListenerPause(frameTarget, "clickFrameButton()", "Should not pause for a disabled breakpoint.");
+
+            InspectorTest.log("Enabling the breakpoint...");
+            breakpoint.disabled = false;
+            await flushCommands(frameTarget);
+            InspectorTest.expectEqual(await countPausesDuring(frameTarget, "clickFrameButton()"), 1, "Should pause for an enabled breakpoint.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Condition",
+        description: "A frame listener breakpoint's condition should be evaluated in the frame.",
+        async test() {
+            let breakpoint = await setListenerBreakpoint(frameListener);
+            InspectorTest.expectNotNull(breakpoint, "Should register a breakpoint for the frame listener.");
+            if (!breakpoint)
+                return;
+
+            InspectorTest.log(`Setting condition "window.frameCondition"...`);
+            breakpoint.condition = "window.frameCondition";
+            await flushCommands(frameTarget);
+
+            await evaluateInTarget(frameTarget, "window.frameCondition = false");
+            await expectNoListenerPause(frameTarget, "clickFrameButton()", "Should not pause while the condition is false in the frame.");
+
+            await evaluateInTarget(frameTarget, "window.frameCondition = true");
+            InspectorTest.expectEqual(await countPausesDuring(frameTarget, "clickFrameButton()"), 1, "Should pause while the condition is true in the frame.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.WindowListener",
+        description: "A breakpoint on a listener of the frame's window should pause in the frame.",
+        async test() {
+            let windowListener = await eventListenerForNode(frameBodyNode, "frameWindowHandler", {includeAncestors: true});
+            InspectorTest.expectThat(windowListener?.onWindow, "Should find the frame window's listener.");
+            if (!windowListener)
+                return;
+
+            await setListenerBreakpoint(windowListener);
+            InspectorTest.expectNotNull(breakpointForListener(windowListener), "Should register a breakpoint for the window listener.");
+
+            InspectorTest.log("Dispatching an event on the frame's window...");
+            await expectListenerPause(frameTarget, "dispatchWindowEvent()", windowListener, {functionName: "frameWindowHandler", pauseTarget: frameTarget});
+        }
+    });
+
+    // Runs last, since the frame's document is replaced.
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.FrameReload",
+        description: "Reloading the frame drops its listener ids, so its listener breakpoints should be removed.",
+        async test() {
+            await setListenerBreakpoint(mainListener);
+            let frameBreakpoint = await setListenerBreakpoint(frameListener);
+            InspectorTest.expectNotNull(frameBreakpoint, "Should register a breakpoint for the frame listener.");
+
+            let removedBreakpoints = [];
+            let listener = WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, (event) => {
+                removedBreakpoints.push(event.data.breakpoint);
+            });
+
+            InspectorTest.log("Reloading the frame...");
+            let documentAvailablePromise = WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            await evaluateInTarget(frameTarget, "setTimeout(() => location.reload(), 0)");
+            await withDeadline(documentAvailablePromise, "frame document after reload");
+
+            WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, listener);
+
+            InspectorTest.expectThat(!!frameBreakpoint && removedBreakpoints.includes(frameBreakpoint), "Should remove the frame listener's breakpoint.");
+            InspectorTest.expectNull(breakpointForListener(frameListener), "Frame listener should have no breakpoint.");
+            InspectorTest.expectNotNull(breakpointForListener(mainListener), "Page listener should keep its breakpoint.");
+            InspectorTest.expectEqual(WI.domManager.eventListenerBreakpoints.length, 1, "Should have one listener breakpoint left.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that breakpoints on event listeners in a cross-origin iframe pause in the frame target, and are kept apart from page listeners with the same id.</p>
+<button id="main-button">Main Button</button>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/event-listener-breakpoint-frame.html"></iframe>
+</body>

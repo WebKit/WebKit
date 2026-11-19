@@ -1,0 +1,122 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script src="resources/event-listener-breakpoint-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames");
+
+    let crossOriginTarget = null;
+    let nestedTarget = null;
+    let parentNode = null;
+    let nestedNode = null;
+    let parentListener = null;
+    let nestedListener = null;
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.Setup",
+        description: "Find a listener in the cross-origin iframe and a listener in the same-process frame nested in it, which has its own frame target.",
+        async test() {
+            crossOriginTarget = await waitForFrameTargetForURLContaining("event-listener-breakpoint-nested-frame.html");
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin frame target.");
+            await frameTargetDocument(crossOriginTarget);
+
+            nestedTarget = await waitForFrameTargetForURLContaining("about:srcdoc");
+            InspectorTest.expectThat(nestedTarget && nestedTarget !== crossOriginTarget, "Should find the nested frame's target.");
+            await frameTargetDocument(nestedTarget);
+            InspectorTest.assert(await waitForExpressionInTarget(nestedTarget, "!!window.clickOwnButton", 50), "Nested frame should load.");
+
+            parentNode = await nodeForExpressionInTarget(crossOriginTarget, `document.getElementById("parent-button")`);
+            nestedNode = await nodeForExpressionInTarget(nestedTarget, `document.getElementById("nested-button")`);
+            InspectorTest.expectThat(parentNode?.owningTarget === crossOriginTarget, "Parent button should belong to the cross-origin frame target.");
+            InspectorTest.expectThat(nestedNode?.owningTarget === nestedTarget, "Nested button should belong to the nested frame's target.");
+
+            parentListener = await eventListenerForNode(parentNode, "parentClicked");
+            nestedListener = await eventListenerForNode(nestedNode, "nestedClicked");
+            InspectorTest.expectThat(parentListener?.owningTarget === crossOriginTarget, "Parent listener should belong to the cross-origin frame target.");
+            InspectorTest.expectThat(nestedListener?.owningTarget === nestedTarget, "Nested listener should belong to the nested frame's target.");
+
+            InspectorTest.expectEqual(nestedListener?.eventListenerId, parentListener?.eventListenerId, "The two frame listeners should have the same id.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.NestedListener",
+        description: "A breakpoint on the nested frame's listener should pause in the nested frame's target, and not on the parent frame's listener with the same id.",
+        async test() {
+            InspectorTest.expectThat(WI.DOMManager.supportsBreakpointForEventListener(nestedListener), "Nested listener should support breakpoints.");
+
+            await setListenerBreakpoint(nestedListener);
+            InspectorTest.expectNotNull(breakpointForListener(nestedListener), "Should register a breakpoint for the nested listener.");
+            InspectorTest.expectNull(breakpointForListener(parentListener), "Should not register a breakpoint for the parent listener with the same id.");
+
+            InspectorTest.log("Clicking the nested frame's button...");
+            await expectListenerPause(nestedTarget, "clickOwnButton()", nestedListener, {functionName: "nestedClicked", pauseTarget: nestedTarget});
+
+            InspectorTest.log("Clicking the parent frame's button...");
+            await expectNoListenerPause(crossOriginTarget, "clickParentButton()", "Should not pause for the parent listener with the same id.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.ParentListener",
+        description: "A breakpoint on the parent frame's listener should pause in the parent frame's target, also when script of the nested frame dispatches the event.",
+        async test() {
+            await setListenerBreakpoint(parentListener);
+            InspectorTest.expectNull(breakpointForListener(nestedListener), "Should not register a breakpoint for the nested listener with the same id.");
+
+            InspectorTest.log("Clicking the parent frame's button...");
+            await expectListenerPause(crossOriginTarget, "clickParentButton()", parentListener, {functionName: "parentClicked", pauseTarget: crossOriginTarget});
+
+            InspectorTest.log("Clicking the nested frame's button...");
+            await expectNoListenerPause(nestedTarget, "clickOwnButton()", "Should not pause for the nested listener with the same id.");
+
+            InspectorTest.log("Script of the nested frame clicks the parent frame's button...");
+            await expectListenerPause(nestedTarget, "clickParentButtonFromNestedFrame()", parentListener, {functionName: "parentClicked", pauseTarget: crossOriginTarget});
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.NestedListenerOnParentTarget",
+        description: "The parent frame's agent also lists the nested frame's listeners, but should reject breakpoints on them, since the nested frame's events never reach it.",
+        async test() {
+            let {result} = await crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "nestedButton()", objectGroup: "test"});
+            let {nodeId} = await crossOriginTarget.DOMAgent.requestNode(result.objectId);
+            let {listeners} = await crossOriginTarget.DOMAgent.getEventListenersForNode.invoke({nodeId, includeAncestors: false});
+            let listener = listeners.find((listener) => listener.handlerName === "nestedClicked");
+            InspectorTest.expectNotNull(listener, "The parent frame's agent should list the nested frame's listener.");
+
+            InspectorTest.log("Setting a breakpoint on it in the cross-origin frame target directly...");
+            await InspectorTest.expectException(async () => {
+                await crossOriginTarget.DOMAgent.setBreakpointForEventListener.invoke({eventListenerId: listener.eventListenerId});
+            });
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.WindowListener",
+        description: "A breakpoint on a window listener should be supported only when the window is the frame target's own.",
+        async test() {
+            let windowListener = await eventListenerForNode(parentNode, "parentWindowHandler", {includeAncestors: true});
+            InspectorTest.expectThat(windowListener?.onWindow, "Should find the parent frame's window listener.");
+            InspectorTest.expectThat(WI.DOMManager.supportsBreakpointForEventListener(windowListener), "Window listener of the frame's own document should support breakpoints.");
+
+            // Listed for a node of the nested frame, the window would be the nested frame's.
+            let windowListenerOfNestedNode = Object.assign({}, windowListener, {windowNode: nestedNode});
+            InspectorTest.expectFalse(WI.DOMManager.supportsBreakpointForEventListener(windowListenerOfNestedNode), "Window listener listed for a node of another frame's document should not support breakpoints.");
+
+            await setListenerBreakpoint(windowListener);
+            InspectorTest.log("Dispatching an event on the parent frame's window...");
+            await expectListenerPause(crossOriginTarget, "dispatchParentWindowEvent()", windowListener, {functionName: "parentWindowHandler", pauseTarget: crossOriginTarget});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that breakpoints on event listeners of a cross-origin iframe and of the same-process frame nested in it go to each frame's own target, even when their listener ids are the same.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/event-listener-breakpoint-nested-frame.html"></iframe>
+</body>
