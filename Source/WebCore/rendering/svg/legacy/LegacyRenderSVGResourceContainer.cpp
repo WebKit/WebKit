@@ -126,9 +126,9 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
 
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
     bool markForInvalidation = mode != ParentOnlyInvalidation;
-    auto* root = SVGRenderSupport::findTreeRootObject(*this);
+    CheckedPtr root = SVGRenderSupport::findTreeRootObject(*this);
 
-    for (auto& client : m_clients | dereferenceView) {
+    for (CheckedRef client : m_clients | dereferenceView) {
         // We should not mark any client outside the current root for invalidation
         if (root != SVGRenderSupport::findTreeRootObject(client))
             continue;
@@ -225,10 +225,10 @@ void LegacyRenderSVGResourceContainer::registerResource()
     for (auto& client : elements) {
         ASSERT(client->hasPendingResources());
         treeScope->clearHasPendingSVGResourcesIfPossible(client);
-        auto* renderer = client->renderer();
+        CheckedPtr renderer = client->renderer();
         if (!renderer)
             continue;
-        SVGResourcesCache::clientStyleChanged(*renderer, Style::DifferenceResult::Layout, nullptr, renderer->style());
+        SVGResourcesCache::clientStyleChanged(*renderer, Style::DifferenceResult::Layout, nullptr, protect(renderer->style()));
         renderer->setNeedsLayout();
     }
 }

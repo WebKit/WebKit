@@ -63,8 +63,8 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
     SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
     resources.buildSetOfResources(resourceSet);
 
-    for (auto& resourceContainer : resourceSet)
-        resourceContainer.addClient(renderer);
+    for (CheckedRef resourceContainer : resourceSet)
+        resourceContainer->addClient(renderer);
 }
 
 void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
@@ -85,8 +85,8 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
     SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
     resources->buildSetOfResources(resourceSet);
 
-    for (auto& resourceContainer : resourceSet)
-        resourceContainer.removeClient(renderer);
+    for (CheckedRef resourceContainer : resourceSet)
+        resourceContainer->removeClient(renderer);
 }
 
 static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderElement& renderer)
@@ -225,7 +225,7 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
     if (!rendererCanHaveResources(renderer))
         return;
     RenderElement& elementRenderer = downcast<RenderElement>(renderer);
-    resourcesCacheFromRenderer(elementRenderer).addResourcesFromRenderer(elementRenderer, elementRenderer.style());
+    resourcesCacheFromRenderer(elementRenderer).addResourcesFromRenderer(elementRenderer, protect(elementRenderer.style()));
 }
 
 void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
@@ -280,11 +280,7 @@ void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& reso
     // Only renderers registered as clients of the resource can reference it, so visit those
     // rather than every renderer in the cache (which is quadratic when tearing down many resources).
     // Snapshot the clients since notifying them can invalidate and mutate the client set.
-    Vector<SingleThreadWeakPtr<RenderElement>> clients;
-    clients.reserveInitialCapacity(resource.m_clients.computeSize());
-    for (auto& client : resource.m_clients | dereferenceView)
-        clients.append(client);
-
+    auto clients = copyToVectorOf<SingleThreadWeakPtr<RenderElement>>(resource.m_clients);
     for (auto& weakClient : borrow(clients)) {
         CheckedPtr client = weakClient.get();
         if (!client)
@@ -296,7 +292,7 @@ void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& reso
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
         Ref clientElement = *client->element();
-        clientElement->treeScopeForSVGReferences().addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement));
+        protect(clientElement->treeScopeForSVGReferences())->addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement));
     }
 }
 
@@ -319,7 +315,7 @@ void SVGResourcesCache::SetStyleForScope::setStyle(const Style::ComputedStyle& s
         return;
 
     // FIXME: Check if a similar mechanism is needed for LBSE + text rendering.
-    if (m_renderer.document().settings().layerBasedSVGEngineEnabled())
+    if (m_renderer->document().settings().layerBasedSVGEngineEnabled())
         return;
 
     auto& cache = resourcesCacheFromRenderer(m_renderer);

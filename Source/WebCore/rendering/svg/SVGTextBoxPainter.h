@@ -71,8 +71,8 @@ private:
     std::pair<unsigned, unsigned> selectionStartEnd() const;
 
     const InlineIterator::SVGTextBox m_textBox;
-    const RenderSVGInlineText& m_renderer;
-    const RenderBoxModelObject& m_parentRenderer;
+    const CheckedRef<const RenderSVGInlineText> m_renderer;
+    const CheckedRef<const RenderBoxModelObject> m_parentRenderer;
     PaintInfo& m_paintInfo;
     const TextBoxSelectableRange m_selectableRange;
     const LayoutPoint m_paintOffset;

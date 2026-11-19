@@ -264,11 +264,12 @@ RefPtr<ImageBuffer> LegacyRenderSVGResourcePattern::createTileImage(GraphicsCont
 
     // Draw the content into the ImageBuffer.
     for (Ref child : childrenOfType<SVGElement>(*attributes.patternContentElement())) {
-        if (!child->renderer())
+        CheckedPtr renderer = child->renderer();
+        if (!renderer)
             continue;
-        if (child->renderer()->needsLayout())
+        if (renderer->needsLayout())
             return nullptr;
-        SVGRenderingContext::renderSubtreeToContext(tileImageContext, *child->renderer(), contentTransformation);
+        SVGRenderingContext::renderSubtreeToContext(tileImageContext, *renderer, contentTransformation);
     }
 
     return tileImage;

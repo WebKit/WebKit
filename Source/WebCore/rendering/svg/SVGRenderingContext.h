@@ -95,10 +95,10 @@ private:
     // List of those flags which require actions during the destructor.
     static constexpr int ActionsNeeded = RestoreGraphicsContext | EndOpacityLayer | EndFilterLayer;
 
-    RenderElement* m_renderer { nullptr };
+    CheckedPtr<RenderElement> m_renderer;
     PaintInfo* m_paintInfo { nullptr };
     GraphicsContext* m_savedContext  { nullptr };
-    LegacyRenderSVGResourceFilter* m_filter  { nullptr };
+    CheckedPtr<LegacyRenderSVGResourceFilter> m_filter;
     LayoutRect m_savedPaintRect;
     int m_renderingFlags { 0 };
     // True with path-based clipping is known to contrain the clipped area to within the renderer; used to optimize away a context clip.

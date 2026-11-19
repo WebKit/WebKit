@@ -69,7 +69,7 @@ bool RenderSVGInline::isChildAllowed(const RenderObject& child, const Style::Com
 
 FloatRect RenderSVGInline::objectBoundingBox() const
 {
-    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+    if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         return textAncestor->objectBoundingBox();
 
     return FloatRect();
@@ -77,7 +77,7 @@ FloatRect RenderSVGInline::objectBoundingBox() const
 
 FloatRect RenderSVGInline::strokeBoundingBox() const
 {
-    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+    if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         return textAncestor->strokeBoundingBox();
 
     return FloatRect();
@@ -85,7 +85,7 @@ FloatRect RenderSVGInline::strokeBoundingBox() const
 
 FloatRect RenderSVGInline::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
 {
-    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+    if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         return textAncestor->repaintRectInLocalCoordinates(repaintRectCalculation);
 
     return FloatRect();
@@ -93,7 +93,7 @@ FloatRect RenderSVGInline::repaintRectInLocalCoordinates(RepaintRectCalculation 
 
 FloatRect RenderSVGInline::decoratedBoundingBox() const
 {
-    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+    if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         return textAncestor->decoratedBoundingBox();
 
     return { };
@@ -150,7 +150,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
         return;
     }
 
-    auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this);
+    CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this);
     if (!textAncestor)
         return;
 
@@ -189,7 +189,7 @@ void RenderSVGInline::styleDidChange(Style::Difference diff, const Style::Comput
         invalidateCachedBoundaries();
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
     if (!isAnonymous())
-        SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
+        SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, protect(style()));
 }
 
 bool RenderSVGInline::needsHasSVGTransformFlags() const

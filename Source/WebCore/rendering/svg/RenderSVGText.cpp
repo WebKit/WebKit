@@ -113,7 +113,7 @@ const RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(const RenderObje
 
 static inline void updateFontInAllDescendants(RenderSVGText& text)
 {
-    for (RenderObject* descendant = &text; descendant; descendant = descendant->nextInPreOrder(&text)) {
+    for (CheckedPtr<RenderObject> descendant = &text; descendant; descendant = descendant->nextInPreOrder(&text)) {
         if (CheckedPtr text = dynamicDowncast<RenderSVGInlineText>(*descendant))
             text->updateScaledFont();
     }
@@ -238,15 +238,15 @@ bool RenderSVGText::layoutInlineChildrenWithoutLineLayout()
 
     computeAndSetLineLayoutPath();
 
-    auto& inlineLayout = ensureInlineLayout();
-    if (!inlineLayout.layoutSVGText())
+    CheckedRef inlineLayout = ensureInlineLayout();
+    if (!inlineLayout->layoutSVGText())
         return false;
 
     CheckedPtr cache = document().existingAXObjectCache();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
-        auto& renderer = *walker.current();
-        ASSERT(renderer.isInlineBox() || is<RenderText>(renderer));
-        renderer.clearNeedsLayout();
+        CheckedRef renderer = *walker.current();
+        ASSERT(renderer->isInlineBox() || is<RenderText>(renderer));
+        renderer->clearNeedsLayout();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (cache)
             cache->onTextRunsChanged(renderer);
@@ -255,8 +255,8 @@ bool RenderSVGText::layoutInlineChildrenWithoutLineLayout()
 
     // Only content without a contentful line keeps this height. updatePositionAndOverflow() sets the geometry otherwise.
     auto contentLogicalHeight = [&] -> LayoutUnit {
-        if (inlineLayout.hasContentfulInlineLine())
-            return inlineLayout.contentLogicalHeight();
+        if (inlineLayout->hasContentfulInlineLine())
+            return inlineLayout->contentLogicalHeight();
         if (hasLineIfEmpty())
             return lineHeight();
         return { };
@@ -281,7 +281,7 @@ void RenderSVGText::computePerCharacterLayoutInformation()
     auto [boxes, fragmentsForBoxes] = lineLayout->resetSVGTextFragments();
     ASSERT(!boxes.isEmpty() && boxes[0].isRootInlineBox());
 
-    SVGTextLayoutAlgorithm { layoutBox(), boxes, fragmentsForBoxes }.layout();
+    SVGTextLayoutAlgorithm { protect(layoutBox()), boxes, fragmentsForBoxes }.layout();
     updatePositionAndOverflow(lineLayout->applySVGTextFragments());
 }
 
@@ -371,12 +371,12 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
 
             PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, usedPointerEvents());
 
-            auto& renderer = textBox.renderer();
-            if (!request.isVisibleForStyle(renderer.usedStyle()) && hitRules.requireVisible)
+            CheckedRef renderer = textBox.renderer();
+            if (!request.isVisibleForStyle(renderer->usedStyle()) && hitRules.requireVisible)
                 continue;
 
-            bool hitsStroke = hitRules.canHitStroke && (!renderer.style().stroke().isNone() || !hitRules.requireStroke);
-            bool hitsFill = hitRules.canHitFill && (!renderer.style().fill().isNone() || !hitRules.requireFill);
+            bool hitsStroke = hitRules.canHitStroke && (!renderer->style().stroke().isNone() || !hitRules.requireStroke);
+            bool hitsFill = hitRules.canHitFill && (!renderer->style().fill().isNone() || !hitRules.requireFill);
             if (!hitsStroke && !hitsFill)
                 continue;
 
@@ -384,10 +384,10 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             if (!locationInContainer.intersects(rect))
                 continue;
 
-            float scalingFactor = renderer.scalingFactor();
+            float scalingFactor = renderer->scalingFactor();
             ASSERT(scalingFactor);
 
-            float baseline = renderer.scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
+            float baseline = protect(renderer->scaledFont())->metricsOfPrimaryFont().ascent() / scalingFactor;
 
             AffineTransform fragmentTransform;
             for (auto& fragment : textBox.textFragments()) {
@@ -399,8 +399,8 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
                 if (!fragmentQuad.containsPoint(locationInContainer.point()))
                     continue;
 
-                renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-                if (result.addNodeToListBasedTestResult(protect(renderer.nodeForHitTest()).get(), request, locationInContainer, rect) == HitTestProgress::Stop)
+                renderer->updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+                if (result.addNodeToListBasedTestResult(protect(renderer->nodeForHitTest()).get(), request, locationInContainer, rect) == HitTestProgress::Stop)
                     return true;
             }
         }
@@ -447,7 +447,7 @@ PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInC
     if (!closestBox)
         return createPositionWithAffinity(0, Affinity::Downstream);
 
-    return const_cast<RenderObject&>(closestBox->renderer()).positionForPoint({ pointInContents.x(), LayoutUnit(closestBox->blockStartRelativePhysicalRect().y()) }, source, fragment);
+    return protect(const_cast<RenderObject&>(closestBox->renderer()))->positionForPoint({ pointInContents.x(), LayoutUnit(closestBox->blockStartRelativePhysicalRect().y()) }, source, fragment);
 }
 
 bool RenderSVGText::requiresLayer() const
@@ -504,7 +504,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (usedStyle().visibility() == UsedVisibility::Hidden || m_objectBoundingBox.isEmpty())
             return;
 
-        paintInfo.eventRegionContext()->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
+        protect(paintInfo.eventRegionContext())->unite(FloatRoundedRect(strokeBoundingBox()), *this, protect(style()), false);
         return;
     }
 
@@ -564,7 +564,7 @@ void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint&
             SVGTextBoxPainter painter(box->inlineContent(), box->boxIndex(), paintInfo, paintOffset);
             painter.paint();
         } else {
-            auto* renderer = dynamicDowncast<RenderElement>(box->renderer());
+            CheckedPtr renderer = dynamicDowncast<RenderElement>(box->renderer());
             contextStack.append({ const_cast<RenderElement&>(*renderer), paintInfo, SVGRenderingContext::SaveGraphicsContext });
 
             // FIXME: find out if we can skip children too in LBSE case.
@@ -610,7 +610,7 @@ float RenderSVGText::strokeInflation(float strokeWidth) const
     // vector-effect is not inherited, so a run may or may not use a non scaling stroke. SVGTextBoxPainter
     // decides per run, using the style of the run's parent renderer: do the same, and keep the widest inflation.
     std::optional<float> inflation;
-    for (const RenderObject* descendant = this; descendant; descendant = descendant->nextInPreOrder(this)) {
+    for (CheckedPtr<const RenderObject> descendant = this; descendant; descendant = descendant->nextInPreOrder(this)) {
         CheckedPtr inlineText = dynamicDowncast<RenderSVGInlineText>(*descendant);
         if (!inlineText)
             continue;
@@ -708,16 +708,16 @@ void RenderSVGText::styleDidChange(Style::Difference diff, const Style::Computed
         if (diff != Style::DifferenceResult::Layout)
             return false;
 
-        auto& newStyle = style();
+        CheckedRef newStyle = style();
         if (!oldStyle)
-            return newStyle.affectsTransform();
+            return newStyle->affectsTransform();
 
-        return (oldStyle->affectsTransform() != newStyle.affectsTransform()
-            || oldStyle->transform() != newStyle.transform()
-            || oldStyle->translate() != newStyle.translate()
-            || oldStyle->scale() != newStyle.scale()
-            || oldStyle->rotate() != newStyle.rotate()
-            || oldStyle->offsetPath() != newStyle.offsetPath());
+        return (oldStyle->affectsTransform() != newStyle->affectsTransform()
+            || oldStyle->transform() != newStyle->transform()
+            || oldStyle->translate() != newStyle->translate()
+            || oldStyle->scale() != newStyle->scale()
+            || oldStyle->rotate() != newStyle->rotate()
+            || oldStyle->offsetPath() != newStyle->offsetPath());
     };
 
     if (needsTransformUpdate())

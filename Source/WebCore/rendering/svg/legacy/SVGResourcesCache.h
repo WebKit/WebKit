@@ -21,6 +21,7 @@
 
 #include "RenderStyleConstants.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -73,8 +74,8 @@ public:
     private:
         void setStyle(const Style::ComputedStyle&);
 
-        RenderElement& m_renderer;
-        const Style::ComputedStyle& m_scopedStyle;
+        const CheckedRef<RenderElement> m_renderer;
+        const CheckedRef<const Style::ComputedStyle> m_scopedStyle;
         bool m_needsNewStyle { false };
     };
 

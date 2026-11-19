@@ -87,7 +87,7 @@ SVGImageElement& LegacyRenderSVGImage::imageElement() const
 
 FloatRect LegacyRenderSVGImage::calculateObjectBoundingBox() const
 {
-    return calculateSVGImageObjectBoundingBox(imageElement(), style(), imageResource().cachedImage());
+    return calculateSVGImageObjectBoundingBox(protect(imageElement()), protect(style()), protect(imageResource().cachedImage()));
 }
 
 bool LegacyRenderSVGImage::updateImageViewport()
@@ -146,7 +146,7 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         if (usedStyle().visibility() == UsedVisibility::Hidden || m_objectBoundingBox.isEmpty())
             return;
 
-        paintInfo.eventRegionContext()->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
+        protect(paintInfo.eventRegionContext())->unite(FloatRoundedRect(strokeBoundingBox()), *this, protect(style()), false);
         return;
     }
 
@@ -173,7 +173,7 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         }
     }
 
-    if (style().hasOutline())
+    if (protect(style())->hasOutline())
         paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 
@@ -192,7 +192,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     styleImage->draw(context, *this, descriptor, destRect, srcRect);
 
     if (RefPtr cachedImage = imageResource().cachedImage(); cachedImage && !context.paintingDisabled())
-        protect(document())->didPaintImage(imageElement(), cachedImage, destRect);
+        protect(document())->didPaintImage(protect(imageElement()), cachedImage, destRect);
 }
 
 void LegacyRenderSVGImage::invalidateBufferedForeground()

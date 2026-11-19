@@ -46,7 +46,7 @@ public:
 private:
     NODELETE AlignmentBaseline dominantBaselineToAlignmentBaseline(bool isVerticalText, const Style::ComputedStyle&) const;
 
-    CheckedRef<const FontCascade> m_font;
+    const CheckedRef<const FontCascade> m_font;
 };
 
 } // namespace WebCore

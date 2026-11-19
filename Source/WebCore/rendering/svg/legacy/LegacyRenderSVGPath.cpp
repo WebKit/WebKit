@@ -247,16 +247,16 @@ void LegacyRenderSVGPath::drawMarkers(PaintInfo& paintInfo)
     if (!resources)
         return;
 
-    LegacyRenderSVGResourceMarker* markerStart = resources->markerStart();
-    LegacyRenderSVGResourceMarker* markerMid = resources->markerMid();
-    LegacyRenderSVGResourceMarker* markerEnd = resources->markerEnd();
+    CheckedPtr markerStart = resources->markerStart();
+    CheckedPtr markerMid = resources->markerMid();
+    CheckedPtr markerEnd = resources->markerEnd();
     if (!markerStart && !markerMid && !markerEnd)
         return;
 
     float strokeWidth = this->strokeWidthForMarkerUnits();
     unsigned size = m_markerPositions.size();
     for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
+        if (CheckedPtr marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
             auto& context = paintInfo.context();
             GraphicsContextStateSaver stateSaver(context);
 
@@ -273,15 +273,15 @@ FloatRect LegacyRenderSVGPath::markerRect(RepaintRectCalculation repaintRectCalc
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
     ASSERT(resources);
 
-    auto* markerStart = resources->markerStart();
-    auto* markerMid = resources->markerMid();
-    auto* markerEnd = resources->markerEnd();
+    CheckedPtr markerStart = resources->markerStart();
+    CheckedPtr markerMid = resources->markerMid();
+    CheckedPtr markerEnd = resources->markerEnd();
     ASSERT(markerStart || markerMid || markerEnd);
 
     FloatRect boundaries;
     unsigned size = m_markerPositions.size();
     for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
+        if (CheckedPtr marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
             boundaries.unite(marker->markerBoundaries(repaintRectCalculation, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth)));
     }
     return boundaries;

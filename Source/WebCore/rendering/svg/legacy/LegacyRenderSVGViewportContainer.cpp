@@ -75,7 +75,7 @@ void LegacyRenderSVGViewportContainer::calcViewport()
 
 bool LegacyRenderSVGViewportContainer::calculateLocalTransform()
 {
-    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
+    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(protect(parent()));
     if (!m_needsTransformUpdate)
         return false;
 

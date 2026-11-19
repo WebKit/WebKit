@@ -130,7 +130,7 @@ void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::Co
         return;
 
     // The text metrics may be influenced by style changes.
-    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+    if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         textAncestor->setNeedsLayout();
 }
 
@@ -163,7 +163,7 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
         textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragmentTransform.xScale()));
 
     const bool includePartialGlyphs = true;
-    return fragment.characterOffset - textBox.start() + textBox.renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
+    return fragment.characterOffset - textBox.start() + protect(textBox.renderer().scaledFont())->offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
 PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
@@ -218,7 +218,7 @@ void RenderSVGInlineText::updateScaledFont()
 {
     float scalingFactor = 1;
     FontCascade scaledFont;
-    computeNewScaledFontForStyle(*this, style(), scalingFactor, scaledFont);
+    computeNewScaledFontForStyle(*this, protect(style()), scalingFactor, scaledFont);
     if (scalingFactor != m_scalingFactor || scaledFont != m_scaledFont)
         m_hasValidTextMetrics = false;
     m_scalingFactor = scalingFactor;
@@ -228,7 +228,7 @@ void RenderSVGInlineText::updateScaledFont()
 static float computeScalingFactorForRenderer(const RenderObject& renderer)
 {
     if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
-        if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
+        if (CheckedPtr layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
             return SVGTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
     }
     return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
@@ -238,7 +238,7 @@ float RenderSVGInlineText::computeNonScalingStrokeScaleForRenderer(const RenderO
 {
     auto transform = [&] -> AffineTransform {
         if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
-            if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
+            if (CheckedPtr layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
                 return SVGTransformComputation(*layerRenderer).computeTransformToSVGRoot();
             return { };
         }
@@ -255,7 +255,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     scalingFactor = computeScalingFactorForRenderer(renderer);
     if (!scalingFactor) {
         scalingFactor = 1;
-        scaledFont = style.fontCascade();
+        scaledFont = protect(style.fontCascade());
         return;
     }
 
@@ -272,7 +272,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     if (fontDescription.orientation() != FontOrientation::Horizontal)
         fontDescription.setOrientation(FontOrientation::Horizontal);
 
-    scaledFont = FontCascade(WTF::move(fontDescription));
+    scaledFont = FontCascade { WTF::move(fontDescription) };
     scaledFont.update(protect(protect(renderer.document())->fontSelector()).ptr());
 }
 

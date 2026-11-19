@@ -23,10 +23,6 @@ rendering/paint/BackgroundPainter.cpp
 [ macOS ] rendering/cocoa/RenderThemeCocoa.mm
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
-rendering/svg/legacy/LegacyRenderSVGImage.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp
-rendering/svg/legacy/LegacyRenderSVGRoot.cpp
-rendering/svg/legacy/SVGResourcesCache.cpp
 rendering/updating/RenderTreeBuilderList.cpp
 rendering/updating/RenderTreeBuilderMathML.cpp
 rendering/updating/RenderTreeBuilderMultiColumn.cpp

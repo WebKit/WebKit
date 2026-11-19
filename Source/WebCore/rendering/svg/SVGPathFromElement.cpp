@@ -45,18 +45,18 @@ namespace WebCore {
 
 static Path pathFromCircleElement(const SVGCircleElement& element)
 {
-    RenderElement* renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     if (!renderer)
         return { };
 
     Path path;
-    auto& style = renderer->style();
-    auto usedZoom = style.usedZoomForLength();
+    CheckedRef style = renderer->style();
+    auto usedZoom = style->usedZoomForLength();
     SVGLengthContext lengthContext(&element);
-    float r = lengthContext.valueForLength(style.r(), usedZoom);
+    float r = lengthContext.valueForLength(style->r(), usedZoom);
     if (r > 0) {
-        float cx = lengthContext.valueForLength(style.cx(), usedZoom, SVGLengthMode::Width);
-        float cy = lengthContext.valueForLength(style.cy(), usedZoom, SVGLengthMode::Height);
+        float cx = lengthContext.valueForLength(style->cx(), usedZoom, SVGLengthMode::Width);
+        float cy = lengthContext.valueForLength(style->cy(), usedZoom, SVGLengthMode::Height);
         path.addEllipseInRect(FloatRect(cx - r, cy - r, r * 2, r * 2));
     }
     return path;
@@ -64,21 +64,21 @@ static Path pathFromCircleElement(const SVGCircleElement& element)
 
 static Path pathFromEllipseElement(const SVGEllipseElement& element)
 {
-    RenderElement* renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     if (!renderer)
         return { };
 
-    auto& style = renderer->style();
+    CheckedRef style = renderer->style();
     SVGLengthContext lengthContext(&element);
 
     // Per SVG 2 §10.4: an `auto` value for either rx or ry is converted to the
     // used value of the other property. If both are auto, both used values are 0.
-    auto& rxStyle = style.rx();
-    auto& ryStyle = style.ry();
+    auto& rxStyle = style->rx();
+    auto& ryStyle = style->ry();
     if (rxStyle.isAuto() && ryStyle.isAuto())
         return { };
 
-    auto usedZoom = style.usedZoomForLength();
+    auto usedZoom = style->usedZoomForLength();
 
     float rx, ry;
     if (rxStyle.isAuto())
@@ -94,8 +94,8 @@ static Path pathFromEllipseElement(const SVGEllipseElement& element)
         return { };
 
     Path path;
-    float cx = lengthContext.valueForLength(style.cx(), usedZoom, SVGLengthMode::Width);
-    float cy = lengthContext.valueForLength(style.cy(), usedZoom, SVGLengthMode::Height);
+    float cx = lengthContext.valueForLength(style->cx(), usedZoom, SVGLengthMode::Width);
+    float cy = lengthContext.valueForLength(style->cy(), usedZoom, SVGLengthMode::Height);
     path.addEllipseInRect(FloatRect(cx - rx, cy - ry, rx * 2, ry * 2));
     return path;
 }
@@ -148,36 +148,36 @@ static Path pathFromPolylineElement(const SVGPolylineElement& element)
 
 static Path pathFromRectElement(const SVGRectElement& element)
 {
-    RenderElement* renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     if (!renderer)
         return { };
 
-    auto& style = renderer->style();
-    auto usedZoom = style.usedZoomForLength();
+    CheckedRef style = renderer->style();
+    auto usedZoom = style->usedZoomForLength();
     SVGLengthContext lengthContext(&element);
     auto size = FloatSize {
-        lengthContext.valueForLength(style.width(), usedZoom, SVGLengthMode::Width),
-        lengthContext.valueForLength(style.height(), usedZoom, SVGLengthMode::Height)
+        lengthContext.valueForLength(style->width(), usedZoom, SVGLengthMode::Width),
+        lengthContext.valueForLength(style->height(), usedZoom, SVGLengthMode::Height)
     };
 
     if (size.isEmpty())
         return { };
 
     auto location = FloatPoint {
-        lengthContext.valueForLength(style.x(), usedZoom, SVGLengthMode::Width),
-        lengthContext.valueForLength(style.y(), usedZoom, SVGLengthMode::Height)
+        lengthContext.valueForLength(style->x(), usedZoom, SVGLengthMode::Width),
+        lengthContext.valueForLength(style->y(), usedZoom, SVGLengthMode::Height)
     };
 
     auto radii = FloatSize {
-        lengthContext.valueForLength(style.rx(), usedZoom, SVGLengthMode::Width),
-        lengthContext.valueForLength(style.ry(), usedZoom, SVGLengthMode::Height)
+        lengthContext.valueForLength(style->rx(), usedZoom, SVGLengthMode::Width),
+        lengthContext.valueForLength(style->ry(), usedZoom, SVGLengthMode::Height)
     };
 
     // Per SVG spec: if one of radii.x() and radii.y() is auto or negative, then the other corner
     // radius value is used. If both are auto or negative, then they are both set to 0.
-    if (style.rx().isAuto() || radii.width() < 0)
+    if (style->rx().isAuto() || radii.width() < 0)
         radii.setWidth(std::max(0.f, radii.height()));
-    if (style.ry().isAuto() || radii.height() < 0)
+    if (style->ry().isAuto() || radii.height() < 0)
         radii.setHeight(std::max(0.f, radii.width()));
 
     Path path;

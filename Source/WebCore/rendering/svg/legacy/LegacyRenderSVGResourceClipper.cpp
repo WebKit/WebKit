@@ -126,7 +126,7 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
 
         // For <use> elements, check visibility of the target element and skip if no visible target.
         if (RefPtr useElement = dynamicDowncast<SVGUseElement>(graphicsElement.get())) {
-            auto* clipChildRenderer = useElement->rendererClipChild();
+            CheckedPtr clipChildRenderer = useElement->rendererClipChild();
             if (!clipChildRenderer)
                 continue;
             if (rendererRequiresMaskClipping(*clipChildRenderer))
@@ -161,7 +161,7 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
         clipPath.addRect(FloatRect());
 
     OptionSet<ApplyResult> result = { ApplyResult::ResourceApplied };
-    if (auto* shapeRenderer = dynamicDowncast<LegacyRenderSVGShape>(renderer); shapeRenderer && shapeRenderer->shapeType() == LegacyRenderSVGShape::ShapeType::Rectangle) {
+    if (CheckedPtr shapeRenderer = dynamicDowncast<LegacyRenderSVGShape>(renderer); shapeRenderer && shapeRenderer->shapeType() == LegacyRenderSVGShape::ShapeType::Rectangle) {
         // When clipping a rect with a path, if we know the path is entirely inside the rect, we can skip a clip when filling the rect.
         auto clipBounds = clipPath.fastBoundingRect();
         if (transform)
@@ -217,7 +217,7 @@ auto LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
 
         // clipPath can also be clipped by another clipPath.
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-        LegacyRenderSVGResourceClipper* clipper;
+        CheckedPtr<LegacyRenderSVGResourceClipper> clipper;
         bool succeeded;
         if (resources && (clipper = resources->clipper())) {
             GraphicsContextStateSaver stateSaver(maskContext);
@@ -267,18 +267,18 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
 
     // Draw all clipPath children into a global mask.
     for (Ref child : childrenOfType<SVGElement>(clipPathElement())) {
-        auto renderer = child->renderer();
+        CheckedPtr renderer = child->renderer();
         if (!renderer)
             continue;
         if (renderer->needsLayout()) {
             view().frameView().setPaintBehavior(oldBehavior);
             return false;
         }
-        const Style::ComputedStyle& style = renderer->style();
-        if (style.display() == Style::DisplayType::None || (renderer->usedStyle().visibility() != UsedVisibility::Visible && !is<SVGUseElement>(child)))
+        CheckedRef style = renderer->style();
+        if (style->display() == Style::DisplayType::None || (renderer->usedStyle().visibility() != UsedVisibility::Visible && !is<SVGUseElement>(child)))
             continue;
 
-        WindRule newClipRule = style.clipRule();
+        WindRule newClipRule = style->clipRule();
         RefPtr useElement = dynamicDowncast<SVGUseElement>(child);
         if (useElement) {
             renderer = useElement->rendererClipChild();
@@ -297,7 +297,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
         // In the case of a <use> element, we obtained its renderere above, to retrieve its clipRule.
         // We have to pass the <use> renderer itself to renderSubtreeToContext() to apply it's x/y/transform/etc. values when rendering.
         // So if useElement is non-null, refetch the childNode->renderer(), as renderer got overridden above.
-        SVGRenderingContext::renderSubtreeToContext(maskContext, useElement ? *child->renderer() : *renderer, maskContentTransformation);
+        SVGRenderingContext::renderSubtreeToContext(maskContext, useElement ? *protect(child->renderer()) : *renderer, maskContentTransformation);
     }
 
     view().frameView().setPaintBehavior(oldBehavior);
@@ -313,8 +313,8 @@ void LegacyRenderSVGResourceClipper::calculateClipContentRepaintRect(RepaintRect
             continue;
         if (!renderer->isRenderOrLegacyRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
-        const Style::ComputedStyle& style = renderer->style();
-        if (style.display() == Style::DisplayType::None || (renderer->usedStyle().visibility() != UsedVisibility::Visible && !childNode->hasTagName(SVGNames::useTag)))
+        CheckedRef style = renderer->style();
+        if (style->display() == Style::DisplayType::None || (renderer->usedStyle().visibility() != UsedVisibility::Visible && !childNode->hasTagName(SVGNames::useTag)))
             continue;
 
         // For <use> elements, check if the clipping target is visible.
@@ -342,7 +342,7 @@ bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectB
     // not this clipper's OBB. SVGRenderSupport::pointInClippingArea() would incorrectly
     // resolve objectBoundingBox units against *this->objectBoundingBox().
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this)) {
-        if (auto* nestedClipper = resources->clipper(); nestedClipper && !nestedClipper->hitTestClipContent(objectBoundingBox, point))
+        if (CheckedPtr nestedClipper = resources->clipper(); nestedClipper && !nestedClipper->hitTestClipContent(objectBoundingBox, point))
             return false;
     }
 
@@ -358,7 +358,7 @@ bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectB
     }
 
     for (RefPtr childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
-        RenderObject* renderer = childNode->renderer();
+        CheckedPtr renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;
         if (!renderer->isRenderOrLegacyRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))

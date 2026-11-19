@@ -50,23 +50,6 @@ rendering/paint/TextBoxPainter.cpp
 rendering/paint/TextDecorationPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/shapes/ShapeOutsideInfo.cpp
-rendering/svg/RenderSVGInline.cpp
-rendering/svg/RenderSVGInlineText.cpp
-rendering/svg/RenderSVGText.cpp
-rendering/svg/SVGPathFromElement.cpp
-rendering/svg/SVGRenderSupport.cpp
-rendering/svg/SVGRenderingContext.cpp
-rendering/svg/SVGTextBoxPainter.cpp
-rendering/svg/legacy/LegacyRenderSVGContainer.cpp
-rendering/svg/legacy/LegacyRenderSVGPath.cpp
-rendering/svg/legacy/LegacyRenderSVGResource.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
-rendering/svg/legacy/LegacyRenderSVGRoot.cpp
-rendering/svg/legacy/SVGResources.cpp
-rendering/svg/legacy/SVGResourcesCache.cpp
-rendering/svg/legacy/SVGResourcesCycleSolver.cpp
 rendering/updating/RenderTreeBuilder.cpp
 rendering/updating/RenderTreeBuilderBlock.cpp
 rendering/updating/RenderTreeBuilderBlockFlow.cpp

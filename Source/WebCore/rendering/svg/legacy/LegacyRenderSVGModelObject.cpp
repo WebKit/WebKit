@@ -157,7 +157,7 @@ void LegacyRenderSVGModelObject::styleDidChange(Style::Difference diff, const St
             setNeedsTransformUpdate();
     }
     RenderElement::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, protect(style()));
 }
 
 bool LegacyRenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction)

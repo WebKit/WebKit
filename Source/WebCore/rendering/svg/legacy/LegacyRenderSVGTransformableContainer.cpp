@@ -69,7 +69,7 @@ bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()
         m_needsTransformUpdate = true;
     }
 
-    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
+    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(protect(parent()));
     if (!m_needsTransformUpdate)
         return false;
 

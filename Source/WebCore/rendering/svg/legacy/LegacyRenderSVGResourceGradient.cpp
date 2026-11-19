@@ -189,7 +189,7 @@ private:
 
 static inline std::tuple<FloatRect, FloatSize> calculateGradientGeometry(RenderElement& renderer)
 {
-    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
+    CheckedPtr textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
     ASSERT(textRootBlock);
 
     FloatRect decoratedBounds = textRootBlock->decoratedBoundingBox();
@@ -207,7 +207,7 @@ static inline AffineTransform calculateGradientUserspaceTransform(RenderElement&
     if (gradientUnits != SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         return gradientTransform;
 
-    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
+    CheckedPtr textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
     ASSERT(textRootBlock);
 
     auto boundingBox = textRootBlock->objectBoundingBox();

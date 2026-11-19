@@ -96,12 +96,12 @@ bool LegacyRenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point,
         ASSERT(m_path);
         AffineTransform nonScalingTransform = computeNonScalingStrokeTransform();
         return nonScalingStrokePath(*m_path, nonScalingTransform).strokeContains(nonScalingTransform.mapPoint(point), [this](GraphicsContext& context) {
-            SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+            SVGRenderSupport::applyStrokeStyleToContext(context, protect(style()), *this);
         });
     }
 
     return ensurePath().strokeContains(point, [this] (GraphicsContext& context) {
-        SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+        SVGRenderSupport::applyStrokeStyleToContext(context, protect(style()), *this);
     });
 }
 
@@ -116,7 +116,7 @@ bool LegacyRenderSVGShape::fillContains(const FloatPoint& point, bool requiresFi
         return false;
 
     Color fallbackColor;
-    if (requiresFill && !LegacyRenderSVGResource::fillPaintingResource(*this, style(), fallbackColor))
+    if (requiresFill && !LegacyRenderSVGResource::fillPaintingResource(*this, protect(style()), fallbackColor))
         return false;
 
     return shapeDependentFillContains(point, fillRule);
@@ -133,7 +133,7 @@ bool LegacyRenderSVGShape::strokeContains(const FloatPoint& point, bool requires
         return false;
 
     Color fallbackColor;
-    if (requiresStroke && !LegacyRenderSVGResource::strokePaintingResource(*this, style(), fallbackColor))
+    if (requiresStroke && !LegacyRenderSVGResource::strokePaintingResource(*this, protect(style()), fallbackColor))
         return false;
 
     return shapeDependentStrokeContains(point);
@@ -248,13 +248,14 @@ void LegacyRenderSVGShape::strokeShape(const Style::ComputedStyle& style, Graphi
 
 void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 {
-    for (auto type : style().paintOrder()) {
+    CheckedRef style = this->style();
+    for (auto type : style->paintOrder()) {
         switch (type) {
         case Style::PaintType::Fill:
-            fillShape(style(), childPaintInfo.context());
+            fillShape(style, childPaintInfo.context());
             break;
         case Style::PaintType::Stroke:
-            strokeShape(style(), childPaintInfo.context());
+            strokeShape(style, childPaintInfo.context());
             break;
         case Style::PaintType::Markers:
             drawMarkers(childPaintInfo);
@@ -272,10 +273,10 @@ void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         CheckedRef eventRegionContext = *paintInfo.eventRegionContext();
         // Avoid stroking the path when an upper bound cannot change the event region.
         if (!m_strokeBoundingBox) {
-            if (auto bound = boundOfStrokeBoundingBox(); bound && eventRegionContext->uniteWouldNotChangeRegions(*bound, *this, style()))
+            if (auto bound = boundOfStrokeBoundingBox(); bound && eventRegionContext->uniteWouldNotChangeRegions(*bound, *this, protect(style())))
                 return;
         }
-        eventRegionContext->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
+        eventRegionContext->unite(FloatRoundedRect(strokeBoundingBox()), *this, protect(style()), false);
         return;
     }
 
@@ -303,7 +304,7 @@ void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         }
     }
 
-    if (style().hasOutline())
+    if (protect(style())->hasOutline())
         paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 
@@ -329,7 +330,7 @@ bool LegacyRenderSVGShape::isPointInStroke(const FloatPoint& point)
     if (hasNonScalingStroke() && hasPath()) {
         AffineTransform nonScalingTransform = computeNonScalingStrokeTransform();
         return nonScalingStrokePath(*m_path, nonScalingTransform).strokeContains(nonScalingTransform.mapPoint(point), [checkedThis = CheckedRef { *this }](GraphicsContext& context) {
-            SVGRenderSupport::applyStrokeStyleToContext(context, checkedThis->style(), checkedThis.get());
+            SVGRenderSupport::applyStrokeStyleToContext(context, protect(checkedThis->style()), checkedThis.get());
         });
     }
 
@@ -425,7 +426,7 @@ FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
             AffineTransform nonScalingTransform = computeNonScalingStrokeTransform();
             if (std::optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
                 FloatRect strokeBoundingRect = nonScalingStrokePath(*m_path, nonScalingTransform).strokeBoundingRect(Function<void(GraphicsContext&)> { [this](GraphicsContext& context) {
-                    SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+                    SVGRenderSupport::applyStrokeStyleToContext(context, protect(style()), *this);
                 } });
                 strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
                 if (!strokeBoundingRect.isNaN())
@@ -433,7 +434,7 @@ FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
             }
         } else {
             auto strokeBoundingRect = path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
-                SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+                SVGRenderSupport::applyStrokeStyleToContext(context, protect(style()), *this);
             } });
             if (!strokeBoundingRect.isNaN())
                 strokeBoundingBox.unite(strokeBoundingRect);

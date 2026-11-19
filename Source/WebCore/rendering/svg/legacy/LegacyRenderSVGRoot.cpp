@@ -66,9 +66,9 @@ LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, UniqueRef<Style
 {
     ASSERT(isLegacyRenderSVGRoot());
     LayoutSize intrinsicSize(computeIntrinsicSize());
-    if (!svgSVGElement().hasIntrinsicWidth())
+    if (!element.hasIntrinsicWidth())
         intrinsicSize.setWidth(legacySVGRootDefaultWidth);
-    if (!svgSVGElement().hasIntrinsicHeight())
+    if (!element.hasIntrinsicHeight())
         intrinsicSize.setHeight(legacySVGRootDefaultHeight);
     setIntrinsicSize(intrinsicSize);
 }
@@ -154,7 +154,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalWidth(IsComputingIntrinsic
         return m_containerSize.width();
 
     if (isEmbeddedThroughFrameContainingSVGDocument())
-        return containingBlock()->contentBoxLogicalWidth();
+        return protect(containingBlock())->contentBoxLogicalWidth();
 
     // For intrinsic sizing keywords (e.g. max-content), when the SVG has no intrinsic width
     // but has an intrinsic ratio (from viewBox), compute the width using the default height
@@ -182,7 +182,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<Layou
         return m_containerSize.height();
 
     if (isEmbeddedThroughFrameContainingSVGDocument())
-        return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding);
+        return protect(containingBlock())->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding);
 
     // For intrinsic sizing keywords (e.g. max-content), when the SVG has no intrinsic height
     // but has an intrinsic ratio (from viewBox), compute the height from the used width and the
@@ -228,9 +228,9 @@ void LegacyRenderSVGRoot::layout()
 
     if (!m_resourcesNeedingToInvalidateClients.computeIsEmpty()) {
         // Invalidate resource clients, which may mark some nodes for layout.
-        for (auto& resource :  m_resourcesNeedingToInvalidateClients) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
-            SVGResourcesCache::clientStyleChanged(resource, Style::DifferenceResult::Layout, nullptr, resource.style());
+        for (CheckedRef resource : m_resourcesNeedingToInvalidateClients) {
+            resource->removeAllClientsFromCacheAndMarkForInvalidation();
+            SVGResourcesCache::clientStyleChanged(resource, Style::DifferenceResult::Layout, nullptr, protect(resource->style()));
         }
 
         m_isLayoutSizeChanged = false;
@@ -331,7 +331,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
         auto clipRect = snapRectToDevicePixels(overflowClipRect(paintOffset), document().deviceScaleFactor());
         childPaintInfo.context().clip(clipRect);
         if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
-            childPaintInfo.eventRegionContext()->pushClip(enclosingIntRect(clipRect));
+            protect(childPaintInfo.eventRegionContext())->pushClip(enclosingIntRect(clipRect));
     }
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
@@ -340,7 +340,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
     auto transform = AffineTransform::makeTranslation(toFloatSize(adjustedPaintOffset)) * localToBorderBoxTransform();
     childPaintInfo.applyTransform(transform);
     if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
-        childPaintInfo.eventRegionContext()->pushTransform(transform);
+        protect(childPaintInfo.eventRegionContext())->pushTransform(transform);
 
     // SVGRenderingContext must be destroyed before we restore the childPaintInfo.context(), because a filter may have
     // changed the context and it is only reverted when the SVGRenderingContext destructor finishes applying the filter.
@@ -354,8 +354,8 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
 
         if (continueRendering) {
             childPaintInfo.updateSubtreePaintRootForChildren(this);
-            for (auto& child : childrenOfType<RenderElement>(*this))
-                child.paint(childPaintInfo, location());
+            for (CheckedRef child : childrenOfType<RenderElement>(*this))
+                child->paint(childPaintInfo, location());
         }
     }
 
@@ -397,7 +397,7 @@ void LegacyRenderSVGRoot::styleDidChange(Style::Difference diff, const Style::Co
         m_hasBoxDecorations = hasVisibleBoxDecorationStyle();
 
     RenderReplaced::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, protect(style()));
 }
 
 // RenderBox methods will expect coordinates w/o any transforms in coordinates
@@ -571,7 +571,7 @@ bool LegacyRenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResu
     if (contentBoxRect().contains(pointInBorderBox) || (!shouldApplyViewportClip() && visualOverflowRect().contains(pointInParent))) {
         FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(FloatPoint(pointInParent));
 
-        for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+        for (CheckedPtr child = lastChild(); child; child = child->previousSibling()) {
             // FIXME: nodeAtFloatPoint() doesn't handle rect-based hit tests yet.
             if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
                 updateHitTestResult(result, pointInBorderBox);
@@ -605,7 +605,7 @@ bool LegacyRenderSVGRoot::hasRelativeDimensions() const
 
 void LegacyRenderSVGRoot::addResourceForClientInvalidation(LegacyRenderSVGResourceContainer* resource)
 {
-    LegacyRenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(*resource);
+    CheckedPtr svgRoot = SVGRenderSupport::findTreeRootObject(*resource);
     if (!svgRoot)
         return;
     svgRoot->m_resourcesNeedingToInvalidateClients.add(*resource);

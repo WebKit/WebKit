@@ -141,7 +141,7 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
         return { };
     }
 
-    filterData->filter->clampFilterRegionIfNeeded();
+    protect(filterData->filter)->clampFilterRegionIfNeeded();
 
 #if USE(CAIRO)
     auto colorSpace = ColorSpace::SRGB();
@@ -245,7 +245,7 @@ void LegacyRenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
             continue;
 
         // Repaint the image on the screen.
-        markClientForInvalidation(objectFilterDataPair.key, RepaintInvalidation);
+        markClientForInvalidation(protect(objectFilterDataPair.key.get()), RepaintInvalidation);
 
         protect(filterData->filter)->clearEffectResult(effect);
     }
