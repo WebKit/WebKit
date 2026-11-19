@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-class SVGTextMetrics;
+struct SVGTextMetrics;
 
 enum class AlignmentBaseline : uint8_t;
 

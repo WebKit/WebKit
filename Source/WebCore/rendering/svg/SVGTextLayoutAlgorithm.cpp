@@ -134,7 +134,7 @@ static void appendRunMetrics(RenderSVGInlineText& text, unsigned runStart, unsig
     auto height = scaledFont->metricsOfPrimaryFont().height() / scalingFactor;
 
     auto appendMetrics = [&](unsigned metricsLength, float width) {
-        metrics.append(SVGTextMetrics(metricsLength, width / scalingFactor, height));
+        metrics.append({ .length = metricsLength, .width = width / scalingFactor, .height = height });
     };
 
     if (metricsLengthAt(run.text(), 0) == length) {
@@ -169,7 +169,8 @@ static void appendRunMetrics(RenderSVGInlineText& text, unsigned runStart, unsig
         auto continuesTypographicCharacter = !isClusterStart(runStart + position) || (!hasGlyph && !isDefaultIgnorableCodePoint(run.text().codePointAt(position)));
         if (position && continuesTypographicCharacter) {
             auto& previous = metrics.last();
-            previous = SVGTextMetrics(previous.length() + metricsLength, previous.width() + metricsWidth / scalingFactor, height);
+            previous.length += metricsLength;
+            previous.width += metricsWidth / scalingFactor;
         } else
             appendMetrics(metricsLength, metricsWidth);
         position += metricsLength;
@@ -223,7 +224,7 @@ const SVGTextMetrics& SVGTextLayoutAlgorithm::metrics(const Character& character
 float SVGTextLayoutAlgorithm::glyphLength(const Character& character) const
 {
     auto& characterMetrics = metrics(character);
-    return m_isVertical ? characterMetrics.height() : characterMetrics.width();
+    return m_isVertical ? characterMetrics.height : characterMetrics.width;
 }
 
 unsigned SVGTextLayoutAlgorithm::typographicCharacterCount(std::span<const unsigned> characterIndexes) const
@@ -617,7 +618,7 @@ void SVGTextLayoutAlgorithm::measureText()
         unsigned position = 0;
         for (unsigned metricsIndex = 0; metricsIndex < metrics.size() && position < length; ++metricsIndex) {
             m_characters[textContent.start + position].metricsIndex = metricsIndex;
-            position += metrics[metricsIndex].length();
+            position += metrics[metricsIndex].length;
         }
     }
 }
@@ -1011,8 +1012,9 @@ void SVGTextLayoutAlgorithm::buildFragments()
         auto fragmentLengthAdjustScale = 1.f;
         auto fragmentHasSpacing = false;
         auto fragmentSpacing = 0.f;
-        auto lastRotate = 0.f;
-        auto previousIsPositioned = false;
+        auto previousRotate = 0.f;
+        // Whether a character without metrics since the last typographic character, like one inside a ligature, was positioned.
+        auto skippedCharacterIsPositioned = false;
 
         auto closeFragment = [&](unsigned endIndex) {
             if (!fragment)
@@ -1021,12 +1023,12 @@ void SVGTextLayoutAlgorithm::buildFragments()
             auto inlineLength = 0.f;
             auto metricsEnd = fragment->metricsListOffset;
             for (unsigned offset = 0; offset < fragment->length && metricsEnd < metrics.size(); ++metricsEnd) {
-                inlineLength += m_isVertical ? metrics[metricsEnd].height() : metrics[metricsEnd].width();
-                offset += metrics[metricsEnd].length();
+                inlineLength += m_isVertical ? metrics[metricsEnd].height : metrics[metricsEnd].width;
+                offset += metrics[metricsEnd].length;
             }
             auto& lastMetrics = metrics[metricsEnd - 1];
-            fragment->width = m_isVertical ? lastMetrics.width() : inlineLength;
-            fragment->height = m_isVertical ? inlineLength : lastMetrics.height();
+            fragment->width = m_isVertical ? lastMetrics.width : inlineLength;
+            fragment->height = m_isVertical ? inlineLength : lastMetrics.height;
             fragment->spacing = fragmentSpacing;
             fragments.append(*fragment);
             fragment = { };
@@ -1040,7 +1042,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
             }
             if (!character.hasMetrics()) {
                 // "Let shift.x = shift.x + resolve_dx[i]": the dx of a character inside a ligature moves the characters _after_ it.
-                previousIsPositioned |= character.isPositioned;
+                skippedCharacterIsPositioned |= character.isPositioned;
                 continue;
             }
 
@@ -1050,12 +1052,13 @@ void SVGTextLayoutAlgorithm::buildFragments()
                 // A combining mark stays with its base rather than being shaped alone. Bug 266832.
                 if (!character.isClusterStart)
                     return false;
-                return character.isPositioned || previousIsPositioned || m_isVertical || isOnPath || character.rotate || lastRotate || character.orientationAngle
+                return character.isPositioned || skippedCharacterIsPositioned || m_isVertical || isOnPath || character.rotate || previousRotate || character.orientationAngle
                     || fragmentHasSpacing || character.isInSpacingTextLength || character.lengthAdjustScale != fragmentLengthAdjustScale;
             }();
-            lastRotate = character.rotate;
-            previousIsPositioned = false;
+            previousRotate = character.rotate;
+            skippedCharacterIsPositioned = false;
 
+            // A character with spacing is the last of its fragment, since the next one starts a new fragment.
             if (!startsFragment) {
                 fragmentHasSpacing |= !!character.spacing;
                 fragmentSpacing = character.spacing;
@@ -1103,6 +1106,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
                 transform.translate(-fragment->x, -fragment->y);
             }
 
+            // The state of the previous fragment is reset here, when the next fragment starts.
             fragmentLengthAdjustScale = character.lengthAdjustScale;
             fragmentHasSpacing = !!character.spacing;
             fragmentSpacing = character.spacing;
