@@ -47,6 +47,8 @@ const views = [];
 let agregateConnfiguration = Configuration.fromQuery();
 let rangeParams = {};
 
+const MAX_HISTORY_ADDRESS_LENGTH = 6400;
+
 const unexpectedQuery = new QueryModifier('unexpected');
 function willFilterExpected() {
     const current = unexpectedQuery.current();
@@ -256,16 +258,30 @@ class SuiteFailuresView {
                 const failures = Failures.combine(...diff.failures);
                 const reversedTypes = [...Expectations.failureTypes].reverse();
 
+                const testsByType = reversedTypes.map(type => Object.keys(failures[type]).sort((a, b) => {
+                    const numberDifference = failures[type][a] - failures[type][b];
+                    if (numberDifference)
+                        return numberDifference;
+                    return a.localeCompare(b);
+                }));
+                const tests = testsByType.flat();
+                const testsInHistory = [];
+                let historyAddressLength = '/?'.length;
+                for (const test of tests) {
+                    historyAddressLength += `&suite=${encodeURIComponent(this.suite)}&test=${encodeURIComponent(test)}`.length;
+                    if (historyAddressLength > MAX_HISTORY_ADDRESS_LENGTH)
+                        break;
+                    testsInHistory.push(test);
+                }
+                const historyParams = {suite: testsInHistory.map(() => this.suite), test: testsInHistory};
+                const historyLabel = testsInHistory.length < tests.length ?
+                    `the first ${testsInHistory.length} of ${tests.length.toLocaleString()} tests` :
+                    `all ${tests.length} tests`;
+
                 DOM.inject(element, `<b>Failures</b>
                     <div class="list">
-                        ${reversedTypes.map(type => {
-                            return Object.keys(failures[type]).sort((a, b) => {
-                                const numberDifference = failures[type][a] - failures[type][b];
-                                if (numberDifference)
-                                    return numberDifference;
-                                return a.localeCompare(b);
-                            }).map(test => {
-                                return `<div class="item">
+                        ${reversedTypes.map((type, index) => testsByType[index].map(test => {
+                            return `<div class="item">
                                     <div class="dot ${type} small">
                                         <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
                                     </div>
@@ -273,8 +289,11 @@ class SuiteFailuresView {
                                         ${escapeHTML(test)}
                                     </a>
                                 </div>`;
-                            }).join('');
-                        }).join('')}
+                        }).join('')).join('')}
+                        ${testsInHistory.length > 1 ? `<div class="item">
+                                <div class="dot small" style="visibility: hidden"></div>
+                                <a class="button" style="margin: var(--colPaddingSize) 0 calc(var(--colPaddingSize) * 2)" href="/?${paramsToQuery(historyParams)}" target="_blank">Open the history of ${historyLabel}</a>
+                            </div>` : ''}
                     </div>`);
             },
         });
