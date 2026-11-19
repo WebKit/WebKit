@@ -434,89 +434,70 @@ void SVGResources::removeClientFromCacheAndMarkForInvalidation(RenderElement& re
     }
 }
 
-bool SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
+bool SVGResources::referencesResource(LegacyRenderSVGResourceContainer& resource) const
+{
+    if (m_linkedResource == &resource)
+        return true;
+
+    if (m_clipperFilterMaskerData && (m_clipperFilterMaskerData->clipper == &resource || m_clipperFilterMaskerData->filter == &resource || m_clipperFilterMaskerData->masker == &resource))
+        return true;
+
+    if (m_markerData && (m_markerData->markerStart == &resource || m_markerData->markerMid == &resource || m_markerData->markerEnd == &resource))
+        return true;
+
+    return m_fillStrokeData && (m_fillStrokeData->fill == &resource || m_fillStrokeData->stroke == &resource);
+}
+
+void SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
 {
     if (isEmpty())
-        return false;
+        return;
 
     if (m_linkedResource == &resource) {
         ASSERT(!m_clipperFilterMaskerData);
         ASSERT(!m_markerData);
         ASSERT(!m_fillStrokeData);
-        m_linkedResource->removeAllClientsFromCacheAndMarkForInvalidation();
         m_linkedResource = nullptr;
-        return true;
+        return;
     }
 
-    bool foundResources = false;
     switch (resource.resourceType()) {
     case MaskerResourceType:
-        if (!m_clipperFilterMaskerData)
-            break;
-        if (m_clipperFilterMaskerData->masker == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_clipperFilterMaskerData && m_clipperFilterMaskerData->masker == &resource)
             m_clipperFilterMaskerData->masker = nullptr;
-            foundResources = true;
-        }
         break;
     case MarkerResourceType:
         if (!m_markerData)
             break;
-        if (m_markerData->markerStart == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_markerData->markerStart == &resource)
             m_markerData->markerStart = nullptr;
-            foundResources = true;
-        }
-        if (m_markerData->markerMid == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_markerData->markerMid == &resource)
             m_markerData->markerMid = nullptr;
-            foundResources = true;
-        }
-        if (m_markerData->markerEnd == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_markerData->markerEnd == &resource)
             m_markerData->markerEnd = nullptr;
-            foundResources = true;
-        }
         break;
     case PatternResourceType:
     case LinearGradientResourceType:
     case RadialGradientResourceType:
         if (!m_fillStrokeData)
             break;
-        if (m_fillStrokeData->fill == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_fillStrokeData->fill == &resource)
             m_fillStrokeData->fill = nullptr;
-            foundResources = true;
-        }
-        if (m_fillStrokeData->stroke == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_fillStrokeData->stroke == &resource)
             m_fillStrokeData->stroke = nullptr;
-            foundResources = true;
-        }
         break;
     case FilterResourceType:
-        if (!m_clipperFilterMaskerData)
-            break;
-        if (m_clipperFilterMaskerData->filter == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_clipperFilterMaskerData && m_clipperFilterMaskerData->filter == &resource)
             m_clipperFilterMaskerData->filter = nullptr;
-            foundResources = true;
-        }
         break;
     case ClipperResourceType:
-        if (!m_clipperFilterMaskerData)
-            break;
-        if (m_clipperFilterMaskerData->clipper == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_clipperFilterMaskerData && m_clipperFilterMaskerData->clipper == &resource)
             m_clipperFilterMaskerData->clipper = nullptr;
-            foundResources = true;
-        }
         break;
     case SolidColorResourceType:
         ASSERT_NOT_REACHED();
         break;
     }
-    return foundResources;
 }
 
 void SVGResources::buildSetOfResources(SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& set)
