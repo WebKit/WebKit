@@ -27,9 +27,11 @@
 #import "WKWebViewFindStringFindDelegate.h"
 
 #import "Helpers/DeprecatedGlobalValues.h"
+#import "Helpers/Utilities.h"
 
 @implementation WKWebViewFindStringFindDelegate {
     RetainPtr<NSString> _findString;
+    bool _didReceiveFindResult;
 }
 
 - (NSString *)findString
@@ -37,11 +39,18 @@
     return _findString.get();
 }
 
+- (void)waitForFindResult
+{
+    _didReceiveFindResult = false;
+    TestWebKitAPI::Util::run(&_didReceiveFindResult);
+}
+
 - (void)_webView:(WKWebView *)webView didCountMatches:(NSUInteger)matches forString:(NSString *)string
 {
     _findString = string;
     _matchesCount = matches;
     _didFail = NO;
+    _didReceiveFindResult = true;
     isDone = YES;
 }
 
@@ -51,6 +60,7 @@
     _matchesCount = matches;
     _matchIndex = matchIndex;
     _didFail = NO;
+    _didReceiveFindResult = true;
     isDone = YES;
 }
 
@@ -58,6 +68,7 @@
 {
     _findString = string;
     _didFail = YES;
+    _didReceiveFindResult = true;
     isDone = YES;
 }
 

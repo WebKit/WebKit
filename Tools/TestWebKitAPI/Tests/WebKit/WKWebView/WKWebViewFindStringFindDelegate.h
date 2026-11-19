@@ -30,4 +30,6 @@
 @property (nonatomic, readonly) NSUInteger matchesCount;
 @property (nonatomic, readonly) NSInteger matchIndex;
 @property (nonatomic, readonly) BOOL didFail;
+
+- (void)waitForFindResult;
 @end
