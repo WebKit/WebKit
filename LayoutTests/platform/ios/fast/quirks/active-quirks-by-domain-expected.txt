@@ -472,6 +472,8 @@ https://www.reddit.com/
     ShouldDisableElementFullscreenQuirk
     ShouldDisableScrollAnchoringQuirk
         documentSelector: #sink-it-back-to-top
+https://routine.co/
+    ShouldDisableCSSSizeShorthandQuirk
 https://www.scribd.com/
     NeedsReuseLiveRangeForSelectionUpdateQuirk
 https://www.sfusd.edu/

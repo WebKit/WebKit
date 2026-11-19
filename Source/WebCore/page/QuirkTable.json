@@ -1149,6 +1149,11 @@
             "behaviors": [{ "id": "NeedsIPadMiniUserAgentQuirk" }]
         },
         {
+            "bugs": ["rdar://192472804"],
+            "matches": ["*://*.routine.co/*"],
+            "behaviors": [{ "id": "ShouldDisableCSSSizeShorthandQuirk" }]
+        },
+        {
             "bugs": ["rdar://60314791"],
             "matches": ["*://*.sapo.pt/*"],
             "behaviors": [

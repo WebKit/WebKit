@@ -410,6 +410,8 @@ https://www.ralphlauren.com/
     (none)
 https://www.reddit.com/
     RequiresUserGestureToPauseInPictureInPictureQuirk
+https://routine.co/
+    ShouldDisableCSSSizeShorthandQuirk
 https://www.scribd.com/
     NeedsReuseLiveRangeForSelectionUpdateQuirk
 https://www.sfusd.edu/
