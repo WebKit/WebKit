@@ -55,11 +55,42 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Table.ResetColumnVisibility",
+        description: "resetColumnVisibility should restore each hideable column to its default hidden state.",
+        test() {
+            let table = InspectorTest.createTable(10);
+
+            let indexColumn = table.columnWithIdentifier("index");
+            let nameColumn = table.columnWithIdentifier("name");
+
+            let extraColumn = new WI.TableColumn("extra", "Extra", {hidden: true});
+            table.addColumn(extraColumn);
+
+            // Deviate every column from its default visibility.
+            table.hideColumn(indexColumn);
+            table.hideColumn(nameColumn);
+            table.showColumn(extraColumn);
+
+            InspectorTest.expectTrue(indexColumn.hidden, "Index column should be hidden before reset.");
+            InspectorTest.expectTrue(nameColumn.hidden, "Name column should be hidden before reset.");
+            InspectorTest.expectFalse(extraColumn.hidden, "Extra column should be visible before reset.");
+
+            table.resetColumnVisibility();
+
+            InspectorTest.expectFalse(indexColumn.hidden, "Index column should be restored to its default visible state.");
+            InspectorTest.expectFalse(nameColumn.hidden, "Name column should be restored to its default visible state.");
+            InspectorTest.expectTrue(extraColumn.hidden, "Extra column should be restored to its default hidden state.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onLoad="runTest()">
-    <p>Tests Table row-visibility boundary checks and showing a column into an empty visible column set.</p>
+    <p>Tests Table row-visibility boundary checks, showing a column into an empty visible column set, and resetting column visibility to defaults.</p>
 </body>
 </html>
