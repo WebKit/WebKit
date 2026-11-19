@@ -1,0 +1,25 @@
+ABCDEFGH
+ABCDEFGH
+ABCDEFGH
+ABCDEFGH
+ABCDEFGHIJKL
+ABCDEFGHIJKL
+ABC
+ABC
+ABC
+ABC
+ABC
+
+PASS control: every expected point is far from the origin
+PASS control, path: after the first corner the text runs down the right edge
+PASS control, path with Z: the text continues back along the closing edge
+PASS control, path drawn right to left: the second character is to the left of the first
+PASS control, path of four clockwise arcs: the second character is below the 3 o'clock point
+PASS rect: after the first corner the text runs down the right edge
+PASS polyline: after the first corner the text runs down the right edge
+PASS polygon: after the first corner the text runs down the right edge
+PASS polygon: the text continues back along the closing edge
+PASS line from right to left: the second character is to the left of the first
+PASS circle: the second character is below the 3 o'clock point (clockwise)
+PASS ellipse: the second character is below the 3 o'clock point (clockwise)
+
