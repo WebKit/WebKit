@@ -73,6 +73,7 @@ public:
     bool isNull() const { return isEmpty() && !m_buffer; }
 
     void transferOwnershipToReceiver(WebCore::MemoryLedger ledger) { m_ledger = ledger; }
+    void setMemoryLedger(WebCore::MemoryLedger ledger) { m_memoryLedger = ledger; }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     RefPtr<WebCore::FragmentedSharedBuffer> buffer() const { return m_buffer; }
@@ -86,6 +87,10 @@ public:
     RefPtr<WebCore::SharedBuffer> unsafeBuffer() const;
     std::span<const uint8_t> span() const LIFETIME_BOUND;
     RefPtr<WebCore::SharedMemory> sharedCopy() const;
+    // Wraps the received memory when no other process can modify it, null otherwise.
+    RefPtr<WebCore::SharedBuffer> exclusiveBuffer() const;
+    // Data no other process can modify; copies only when the sender may still access the memory.
+    Ref<WebCore::SharedBuffer> isolatedBuffer() const;
 
 private:
     SharedBufferReference(Ref<WebCore::SharedMemory>&& memory, size_t size)
@@ -96,6 +101,7 @@ private:
     mutable RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
     RefPtr<WebCore::SharedMemory> m_memory; // Only set on the receiver side and if m_size isn't 0.
     std::optional<WebCore::MemoryLedger> m_ledger;
+    std::optional<WebCore::MemoryLedger> m_memoryLedger;
 };
 
 } // namespace IPC

@@ -33,6 +33,7 @@
 #if PLATFORM(COCOA)
 #include <mach/mach.h>
 #include <mach/vm_purgable.h>
+#include <wtf/spi/cocoa/MachVMSPI.h>
 #endif
 
 namespace WebCore {
@@ -456,6 +457,69 @@ TEST(SharedMemoryTransfer, ExclusiveAfterForwarding)
     ASSERT_NOT_NULL(secondHop);
     EXPECT_TRUE(secondHop->isExclusive());
     expectTestPattern(secondHop->span(), 5);
+}
+
+TEST(SharedMemoryTransfer, ExclusiveAfterSenderSetsLedger)
+{
+    auto handle = createDonatedHandle(10);
+    ASSERT_TRUE(handle.has_value());
+    handle->takeOwnershipOfMemory(MemoryLedger::Media);
+
+    RefPtr received = SharedMemory::mapTransfer(WTF::move(*handle));
+    ASSERT_NOT_NULL(received);
+    EXPECT_TRUE(received->isExclusive());
+    expectTestPattern(received->span(), 10);
+}
+
+static bool isInReadOnlyMapping(std::span<const uint8_t> data)
+{
+    auto start = reinterpret_cast<mach_vm_address_t>(data.data());
+    mach_vm_address_t regionStart = start;
+    mach_vm_size_t regionSize = 0;
+    vm_region_basic_info_data_64_t info { };
+    mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
+    mach_port_t object = MACH_PORT_NULL;
+    if (mach_vm_region(mach_task_self(), &regionStart, &regionSize, VM_REGION_BASIC_INFO_64, reinterpret_cast<vm_region_info_t>(&info), &count, &object) != KERN_SUCCESS)
+        return false;
+    return regionStart <= start && start + data.size() <= regionStart + regionSize && info.max_protection == VM_PROT_READ;
+}
+
+TEST(SharedMemoryTransfer, FromIPCDataWrapsDonatedMemory)
+{
+    auto handle = createDonatedHandle(7);
+    ASSERT_TRUE(handle.has_value());
+
+    auto buffer = FragmentedSharedBuffer::fromIPCData(FragmentedSharedBuffer::IPCData { WTF::move(handle) });
+    ASSERT_TRUE(buffer.has_value());
+    Ref contiguous = (*buffer)->makeContiguous();
+    EXPECT_TRUE(isInReadOnlyMapping(contiguous->span()));
+    expectTestPattern(contiguous->span(), 7);
+}
+
+TEST(SharedMemoryTransfer, FromIPCDataCopiesWhenSenderKeepsMapping)
+{
+    RefPtr source = SharedMemory::allocate(transferSize);
+    ASSERT_NOT_NULL(source);
+    fillTestPattern(source->mutableSpan(), 8);
+    auto handle = source->createHandle(SharedMemory::Protection::ReadOnly);
+    ASSERT_TRUE(handle.has_value());
+
+    auto buffer = FragmentedSharedBuffer::fromIPCData(FragmentedSharedBuffer::IPCData { WTF::move(handle) });
+    ASSERT_TRUE(buffer.has_value());
+    Ref contiguous = (*buffer)->makeContiguous();
+    EXPECT_FALSE(isInReadOnlyMapping(contiguous->span()));
+    expectTestPattern(contiguous->span(), 8);
+}
+
+TEST(SharedMemoryTransfer, FromIPCDataCopiesVolatileMemory)
+{
+    auto handle = createDonatedHandle(9, VM_PURGABLE_VOLATILE);
+    ASSERT_TRUE(handle.has_value());
+
+    auto buffer = FragmentedSharedBuffer::fromIPCData(FragmentedSharedBuffer::IPCData { WTF::move(handle) });
+    ASSERT_TRUE(buffer.has_value());
+    Ref contiguous = (*buffer)->makeContiguous();
+    EXPECT_FALSE(isInReadOnlyMapping(contiguous->span()));
 }
 #endif // HAVE(SAFE_MEMORY_TRANSFER)
 

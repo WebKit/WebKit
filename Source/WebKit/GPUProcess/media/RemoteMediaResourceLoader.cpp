@@ -148,6 +148,11 @@ void RemoteMediaResourceLoader::dataReceived(RemoteMediaResourceIdentifier ident
     if (!resource)
         return completionHandler(std::nullopt);
 
+    if (RefPtr exclusiveBuffer = buffer.exclusiveBuffer()) {
+        resource->dataReceived(*exclusiveBuffer);
+        return completionHandler(std::nullopt);
+    }
+
     RefPtr sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
         return completionHandler(std::nullopt);
