@@ -521,24 +521,30 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     });
 }
 
-void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
+void WebSWServerConnection::matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
+    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (!checkTopOrigin(topOrigin))
         return;
 
     doRegistrationMatching(topOrigin, clientURL, WTF::move(callback));
 }
 
-void WebSWServerConnection::whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
+void WebSWServerConnection::whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
 {
+    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (!checkTopOrigin(topOrigin))
         return;
 
     SWServer::Connection::whenRegistrationReady(topOrigin, clientURL, WTF::move(callback));
 }
 
-void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
+void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
 {
+    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (!checkTopOrigin(topOrigin))
         return;
 
@@ -551,8 +557,10 @@ void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin
     });
 }
 
-void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
+void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
+    auto clientOrigin = WTF::move(untrustedClientOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     MESSAGE_CHECK(data.identifier.processIdentifier() == identifier());
     if (!checkTopOrigin(clientOrigin.topOrigin))
         return;
@@ -1084,16 +1092,29 @@ void WebSWServerConnection::reportNetworkUsageToWorkerClient(WebCore::ScriptExec
 }
 #endif
 
-bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& origin)
+std::optional<IPC::ValidationFailure> WebSWServerConnection::topOriginValidationFailure(const WebCore::SecurityOriginData& origin) const
 {
-    MESSAGE_CHECK_WITH_RETURN_VALUE(!origin.isNull(), false);
+    if (origin.isNull())
+        return IPC::ValidationFailure::Terminate;
+
+    // Not an attack: the connection can go away while a message from it is still being handled.
     RefPtr networkConnectionToWebProcess = m_networkConnectionToWebProcess.get();
     if (!networkConnectionToWebProcess)
-        return false;
+        return IPC::ValidationFailure::Ignore;
 
     Ref networkProcess = NetworkProcess::singleton();
-    MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())), false);
-    return true;
+    if (!networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())))
+        return IPC::ValidationFailure::Terminate;
+    return std::nullopt;
+}
+
+bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& origin)
+{
+    auto failure = topOriginValidationFailure(origin);
+    if (!failure)
+        return true;
+    MESSAGE_CHECK_WITH_RETURN_VALUE(*failure != IPC::ValidationFailure::Terminate, false);
+    return false;
 }
 
 } // namespace WebKit

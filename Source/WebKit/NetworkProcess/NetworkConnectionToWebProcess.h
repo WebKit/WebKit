@@ -38,6 +38,7 @@
 #include "SandboxExtension.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "StorageAccessPermissionChangeObserver.h"
+#include "Untrusted.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
@@ -186,12 +187,14 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
-    SharedPreferencesForWebProcess sharedPreferencesForWebProcessValue() const { return m_sharedPreferencesForWebProcess; }
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const LIFETIME_BOUND { return m_sharedPreferencesForWebProcess; }
     ProcessCrossOriginIsolation crossOriginIsolation() const { return m_crossOriginIsolation; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&&);
 
     // std::nullopt means the process may host documents from any site.
     void setHostedDomains(std::optional<HashSet<WebCore::RegistrableDomain>>&& domains) { m_hostedDomains = WTF::move(domains); }
+    bool hostsDomain(const WebCore::RegistrableDomain&) const;
+    bool mayHostAnyDomain() const { return !m_hostedDomains; }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkSession* networkSession();
@@ -336,7 +339,7 @@ private:
     void scheduleResourceLoad(NetworkResourceLoadParameters&&, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume);
     void performSynchronousLoad(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&&);
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
-    void reserveDeferredFetchQuota(WebPageProxyIdentifier, WebCore::FrameIdentifier controlFrameIdentifier, WebCore::SecurityOriginData&& reportingOrigin, uint64_t maximumQuota, bool isTopLevelControlFrame, uint64_t requestedBytes, CompletionHandler<void(std::optional<WebCore::DeferredFetchIdentifier>, uint64_t availableBytes)>&&);
+    void reserveDeferredFetchQuota(WebPageProxyIdentifier, WebCore::FrameIdentifier controlFrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& reportingOrigin, uint64_t maximumQuota, bool isTopLevelControlFrame, uint64_t requestedBytes, CompletionHandler<void(std::optional<WebCore::DeferredFetchIdentifier>, uint64_t availableBytes)>&&);
     void releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier);
     void addDeferredFetch(WebCore::DeferredFetchIdentifier, NetworkResourceLoadParameters&&);
     void sendDeferredFetch(WebCore::DeferredFetchIdentifier);
@@ -356,8 +359,8 @@ private:
     void pageLoadCompleted(WebCore::PageIdentifier);
     void browsingContextRemoved(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier);
     void crossOriginRedirectReceived(WebCore::ResourceLoaderIdentifier, const URL& redirectURL);
-    void startDownload(DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, OptionSet<WebCore::AdvancedPrivacyProtections>, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No, std::optional<WebCore::FrameIdentifier> = std::nullopt, std::optional<WebCore::PageIdentifier> = std::nullopt);
-    void convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, const WebCore::ResourceResponse&, std::optional<NavigatingToAppBoundDomain>);
+    void startDownload(DownloadID, const WebCore::ResourceRequest&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin, std::optional<NavigatingToAppBoundDomain>, OptionSet<WebCore::AdvancedPrivacyProtections>, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No, std::optional<WebCore::FrameIdentifier> = std::nullopt, std::optional<WebCore::PageIdentifier> = std::nullopt);
+    void convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin, const WebCore::ResourceResponse&, std::optional<NavigatingToAppBoundDomain>);
 
     bool consumeDownloadAuthorization(DownloadID);
 
@@ -366,7 +369,6 @@ private:
     enum class CookieAccess : uint8_t { Disallow, Allow, Terminate };
     enum class AllowUnhostedURL : bool { No, Yes };
     CookieAccess validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL&, const WebCore::SameSiteInfo*, std::optional<WebPageProxyIdentifier>, AllowUnhostedURL = AllowUnhostedURL::No);
-    bool hostsDomain(const WebCore::RegistrableDomain&) const;
 
     void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::IncludeSecureCookies, WebPageProxyIdentifier, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, const String& cookieString, WebCore::RequiresScriptTrackingPrivacy, WebPageProxyIdentifier);
@@ -382,37 +384,37 @@ private:
 
     void registerInternalFileBlobURL(const URL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
     void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURL(const URL&, const URL& srcURL, WebCore::PolicyContainer&&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
+    void registerBlobURL(const URL&, const URL& srcURL, WebCore::PolicyContainer&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
     void registerInternalBlobURLOptionallyFileBacked(URL&&, URL&& srcURL, const String& fileBackedPath, String&& contentType);
     void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, int64_t start, int64_t end, const String& contentType);
     void blobType(const URL&, CompletionHandler<void(String)>&&);
     void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);
-    void unregisterBlobURL(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
+    void unregisterBlobURL(const URL&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
     void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&);
     void generalStoragePathForTesting(CompletionHandler<void(String&&)>&&);
     bool isFilePathAllowed(String path);
 
-    void registerBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
-    void unregisterBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
+    void registerBlobURLHandle(const URL&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
+    void unregisterBlobURLHandle(const URL&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
     bool ownsBlobURL(const URL&) const;
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 
-    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
-    void queryLocalNetworkAccessPermission(std::optional<WebPageProxyIdentifier>, WebCore::ClientOrigin&&, WebCore::IPAddressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
+    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, IPC::Untrusted<WebCore::ClientOrigin>&&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
+    void queryLocalNetworkAccessPermission(std::optional<WebPageProxyIdentifier>, IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::IPAddressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
     void countWebSocketChannelsForTesting(CompletionHandler<void(uint32_t)>&&);
 
     void establishSharedWorkerServerConnection();
     void unregisterSharedWorkerConnection();
 
     void establishSWServerConnection();
-    void establishSWContextConnection(WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void()>&&);
+    void establishSWContextConnection(WebPageProxyIdentifier, IPC::Untrusted<WebCore::Site>&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
     void pingPongForServiceWorkers(CompletionHandler<void(bool)>&& callback) { callback(true); }
 
-    void establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::Site&&, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void()>&&);
+    void establishSharedWorkerContextConnection(WebPageProxyIdentifier, IPC::Untrusted<WebCore::Site>&&, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void()>&&);
     void closeSharedWorkerContextConnection();
 
     void createRTCProvider(CompletionHandler<void()>&&);
@@ -456,16 +458,16 @@ private:
 
     void removeStorageAccessForFrame(WebCore::FrameIdentifier, WebPageProxyIdentifier);
 
-    void logUserInteraction(RegistrableDomain&&);
+    void logUserInteraction(IPC::Untrusted<WebCore::RegistrableDomain>&&);
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);
-    void hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebCore::FrameIdentifier, WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebCore::FrameIdentifier, WebPageProxyIdentifier, WebCore::StorageAccessScope, WebCore::HasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
-    void queryStorageAccessPermission(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(WebCore::PermissionState)>&&);
+    void hasStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, WebCore::FrameIdentifier, WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, WebCore::FrameIdentifier, WebPageProxyIdentifier, WebCore::StorageAccessScope, WebCore::HasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
+    void queryStorageAccessPermission(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(WebCore::PermissionState)>&&);
     void storageAccessQuirkForTopFrameDomain(URL&& topFrameURL, CompletionHandler<void(Vector<RegistrableDomain>)>&&);
-    void requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, WebPageProxyIdentifier openerWebPageProxyID, WebCore::RegistrableDomain&& openerDomain);
+    void requestStorageAccessUnderOpener(IPC::Untrusted<WebCore::RegistrableDomain>&& domainInNeedOfStorageAccess, WebPageProxyIdentifier openerWebPageProxyID, IPC::Untrusted<WebCore::RegistrableDomain>&& openerDomain);
 
-    void setLoginStatus(RegistrableDomain&&, WebCore::IsLoggedIn, std::optional<WebCore::LoginStatus>&&, CompletionHandler<void()>&&);
-    void isLoggedIn(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
+    void setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&&, WebCore::IsLoggedIn, std::optional<WebCore::LoginStatus>&&, CompletionHandler<void()>&&);
+    void isLoggedIn(IPC::Untrusted<WebCore::RegistrableDomain>&&, CompletionHandler<void(bool)>&&);
     void dropNonSerializableInProcessCache(WebCore::ProcessIdentifier, WebCore::NonSerializedDataIdentifier);
     bool isLoginStatusAPIRequiresWebAuthnEnabled() const { return m_sharedPreferencesForWebProcess.loginStatusAPIRequiresWebAuthnEnabled; }
     void addOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);
@@ -486,8 +488,8 @@ private:
     void allCookiesDeleted() final;
 #endif
 
-    void subscribeToStorageAccessPermissionChanges(WebCore::RegistrableDomain&& topFrameDomain, WebCore::RegistrableDomain&& subFrameDomain);
-    void unsubscribeFromStorageAccessPermissionChanges(WebCore::RegistrableDomain&& topFrameDomain, WebCore::RegistrableDomain&& subFrameDomain);
+    void subscribeToStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain);
+    void unsubscribeFromStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain);
     void storageAccessPermissionChanged(const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain) final;
 
     // WebCore::CookiesEnabledStateObserver
@@ -500,7 +502,7 @@ private:
     void navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(std::expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 #endif
 
-    void initializeWebTransportSession(WebTransportSessionIdentifier, URL&&, WebCore::WebTransportOptions&&, Vector<KeyValuePair<String, String>>&&, WebPageProxyIdentifier&&, WebCore::ClientOrigin&&, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
+    void initializeWebTransportSession(WebTransportSessionIdentifier, URL&&, WebCore::WebTransportOptions&&, Vector<KeyValuePair<String, String>>&&, WebPageProxyIdentifier&&, IPC::Untrusted<WebCore::ClientOrigin>&&, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
     void destroyWebTransportSession(WebTransportSessionIdentifier);
 
     struct ResourceNetworkActivityTracker {

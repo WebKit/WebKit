@@ -197,6 +197,13 @@ struct IsValidationProcedureFor<Validator, HashSet<T, HashArg, TraitsArg, TableT
 
 } // namespace IPC
 
+namespace WebKit {
+
+// Yes runs a validation procedure's check even when the sending process does not use site isolation.
+enum class ShouldCheckWithoutSiteIsolation : bool { No, Yes };
+
+} // namespace WebKit
+
 /* Validates an untrusted value and binds the plain one: MESSAGE_CHECKs if the value is
  * illegitimate; completes and returns if we can't be sure; continues past the macro
  * if the value is legitimate.

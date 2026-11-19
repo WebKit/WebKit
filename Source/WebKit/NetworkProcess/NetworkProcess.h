@@ -490,6 +490,7 @@ public:
 
     // Unlike allowsFirstPartyForCookies, this compares the scheme as well as the registrable domain.
     bool allowsFirstPartySite(WebCore::ProcessIdentifier, const WebCore::Site&) const;
+    bool hostsDomain(WebCore::ProcessIdentifier, const RegistrableDomain&) const;
 
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::Site&&, LoadedWebArchive, CompletionHandler<void()>&&);
     void addAllowedFirstPartyDomainForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);

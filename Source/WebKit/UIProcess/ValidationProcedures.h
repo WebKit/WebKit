@@ -39,8 +39,6 @@
 
 namespace WebKit {
 
-enum class ShouldCheckWithoutSiteIsolation : bool { No, Yes };
-
 // Without site isolation, WebProcessProxy records only the main frame's site while the process hosts
 // every site the page pulls in, so no first-party question has a useful answer.
 inline bool firstPartyAccessIsAnswerable(const WebProcessProxy& process)
