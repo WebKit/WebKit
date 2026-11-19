@@ -873,7 +873,7 @@ public:
 
     WebNavigationState& navigationState() LIFETIME_BOUND { return m_navigationState; }
 
-    WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
+    NODELETE WebsiteDataStore& websiteDataStore();
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
@@ -2577,7 +2577,7 @@ public:
     void startURLSchemeTaskShared(IPC::Connection&, Ref<WebProcessProxy>&&, WebCore::PageIdentifier, URLSchemeTaskParameters&&);
     void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SessionHistoryVisibility);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::NavigationUpgradeToHTTPSBehavior, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime);
-    void backForwardAddItemShared(IPC::Connection&, Ref<FrameState>&&, LoadedWebArchive, BrowsingContextGroup&);
+    void backForwardAddItemShared(IPC::Connection&, Ref<FrameState>&&, BrowsingContextGroup&);
     void backForwardGoToItemShared(IPC::Connection&, WebCore::BackForwardItemIdentifier);
     void didDestroyNavigationShared(Ref<WebProcessProxy>&&, WebCore::NavigationIdentifier);
 #if USE(QUICK_LOOK)
@@ -4092,7 +4092,7 @@ private:
 
 #if ENABLE(WEB_ARCHIVE)
     using DataStoreUpdateResult = std::pair<RefPtr<WebsiteDataStore>, LoadedWebArchive>;
-    std::expected<DataStoreUpdateResult, WebCore::ResourceError> updateDataStoreForWebArchiveLoad(WebFrameProxy&, WebCore::PolicyAction, WebCore::NavigationType, API::Navigation&);
+    std::expected<DataStoreUpdateResult, WebCore::ResourceError> dataStoreForWebArchiveLoad(WebFrameProxy&, WebCore::PolicyAction, WebCore::NavigationType, API::Navigation&);
 #endif
 
     void beginSiteHasStorageCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
@@ -4184,8 +4184,6 @@ private:
 #endif
 
     const Ref<VisitedLinkStore> m_visitedLinkStore;
-    // FIXME: This should be the browsing context group's data store, once web archive loads no longer switch stores before their navigation commits.
-    Ref<WebsiteDataStore> m_websiteDataStore;
 #if ENABLE(WEB_ARCHIVE)
     RefPtr<WebsiteDataStore> m_replacedDataStoreForWebArchiveLoad;
 #endif

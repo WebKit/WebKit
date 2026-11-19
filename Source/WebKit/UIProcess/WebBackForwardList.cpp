@@ -777,7 +777,7 @@ Ref<FrameState> WebBackForwardList::completeFrameStateForNavigation(Ref<FrameSta
 void WebBackForwardList::backForwardAddItem(IPC::Connection& connection, Ref<FrameState>&& navigatedFrameState)
 {
     if (RefPtr webPageProxy = m_page.get())
-        backForwardAddItemShared(connection, WTF::move(navigatedFrameState), webPageProxy->didLoadWebArchive() ? LoadedWebArchive::Yes : LoadedWebArchive::No, protect(webPageProxy->browsingContextGroup()));
+        backForwardAddItemShared(connection, WTF::move(navigatedFrameState), protect(webPageProxy->browsingContextGroup()));
 }
 
 static constexpr unsigned maxFrameStateDepthForMessageCheck = WebCore::Page::maxFrameDepth;
@@ -808,7 +808,7 @@ static bool messageCheckItemURLs(Ref<FrameState>& frameState, Ref<WebProcessProx
     return true;
 }
 
-void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, Ref<FrameState>&& navigatedFrameState, LoadedWebArchive loadedWebArchive, BrowsingContextGroup& browsingContextGroup)
+void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, Ref<FrameState>&& navigatedFrameState, BrowsingContextGroup& browsingContextGroup)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
 
@@ -845,8 +845,6 @@ void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, R
                 enhancedSecurity = mainFrame->process().enhancedSecurity();
         }
         item->setEnhancedSecurity(enhancedSecurity);
-        if (loadedWebArchive == LoadedWebArchive::Yes)
-            item->setDataStoreForWebArchive(protect(process->websiteDataStore()));
         addItem(WTF::move(item));
     }
 }

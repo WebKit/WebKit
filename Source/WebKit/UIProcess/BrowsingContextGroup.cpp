@@ -69,7 +69,7 @@ static bool isLoopbackOrLocalNetworkSite(const Site& site, bool localNetworkAcce
 void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataStore, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const WebCore::Site& site, const WebCore::Site& mainFrameSite,
     WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, API::PageConfiguration& pageConfiguration, IsMainFrame isMainFrame, CompletionHandler<void(FrameProcess*)>&& completionHandler)
 {
-    ASSERT(&websiteDataStore == m_websiteDataStore.get());
+    ASSERT(&websiteDataStore == m_websiteDataStore.ptr());
     ASSERT(lockdownMode == m_lockdownMode);
 
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
@@ -158,7 +158,7 @@ bool BrowsingContextGroup::canUseProcessForEnhancedSecurity(const WebProcessProx
 
 bool BrowsingContextGroup::canUseProcess(const WebProcessProxy& process, const WebPreferences& preferences) const
 {
-    return canUseProcessForCrossOriginIsolation(process) && process.websiteDataStore() == m_websiteDataStore.get() && process.lockdownMode() == m_lockdownMode && canUseProcessForEnhancedSecurity(process, preferences);
+    return canUseProcessForCrossOriginIsolation(process) && process.websiteDataStore() == m_websiteDataStore.ptr() && process.lockdownMode() == m_lockdownMode && canUseProcessForEnhancedSecurity(process, preferences);
 }
 
 // Unlike canUseProcess(), this doesn't allow a subframe process with Enhanced Security the navigation doesn't have.
@@ -169,7 +169,7 @@ bool BrowsingContextGroup::canUseProcessForNavigation(const WebProcessProxy& pro
 
 bool BrowsingContextGroup::hasSameModesAs(const BrowsingContextGroup& other) const
 {
-    return m_crossOriginMode == other.m_crossOriginMode && m_websiteDataStore.get() == other.m_websiteDataStore.get() && m_lockdownMode == other.m_lockdownMode && enhancedSecurityStatesAreConsistent(m_enhancedSecurity, other.m_enhancedSecurity);
+    return m_crossOriginMode == other.m_crossOriginMode && m_websiteDataStore.ptr() == other.m_websiteDataStore.ptr() && m_lockdownMode == other.m_lockdownMode && enhancedSecurityStatesAreConsistent(m_enhancedSecurity, other.m_enhancedSecurity);
 }
 
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)

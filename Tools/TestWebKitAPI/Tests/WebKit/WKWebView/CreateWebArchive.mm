@@ -2457,6 +2457,99 @@ TEST(WebArchive, CookieAccessWithoutEphemeralStorage)
         EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.result"], "string");
 }
 
+TEST(WebArchive, CancelledLoadKeepsWebsiteDataStore)
+{
+    HTTPServer server({ { "/"_s, { "<p>page</p>"_s } } }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:server.httpsProxyConfiguration()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *response, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        completionHandler(response.response.URL.isFileURL ? WKNavigationResponsePolicyCancel : WKNavigationResponsePolicyAllow);
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool done = false;
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"name",
+        NSHTTPCookieValue: @"value",
+        NSHTTPCookieDomain: @"example.com",
+    }];
+    [[webView configuration].websiteDataStore.httpCookieStore setCookie:cookie.get() completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    NSDictionary *archive = @{
+        @"WebMainResource" : @{
+            @"WebResourceData" : [@"<p>archive</p>" dataUsingEncoding:NSUTF8StringEncoding],
+            @"WebResourceFrameName" : @"",
+            @"WebResourceMIMEType" : @"text/html",
+            @"WebResourceTextEncodingName" : @"UTF-8",
+            @"WebResourceURL" : @"https://webkit.org/archive"
+        }
+    };
+    NSData *archiveData = [NSPropertyListSerialization dataWithPropertyList:archive format:NSPropertyListBinaryFormat_v1_0 options:0 error:nil];
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"CancelledLoad-%@.webarchive", NSUUID.UUID.UUIDString]];
+    EXPECT_TRUE([archiveData writeToFile:path atomically:YES]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path isDirectory:NO]]];
+    [navigationDelegate waitForDidFailProvisionalNavigation];
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.cookie"], "name=value");
+}
+
+TEST(WebArchive, LeavingSecondWebArchiveRestoresWebsiteDataStore)
+{
+    HTTPServer server({ { "/"_s, { "<p>page</p>"_s } } }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:server.httpsProxyConfiguration()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool done = false;
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"name",
+        NSHTTPCookieValue: @"value",
+        NSHTTPCookieDomain: @"example.com",
+    }];
+    [[webView configuration].websiteDataStore.httpCookieStore setCookie:cookie.get() completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    for (NSString *name in @[ @"first", @"second" ]) {
+        NSDictionary *archive = @{
+            @"WebMainResource" : @{
+                @"WebResourceData" : [@"<p>archive</p>" dataUsingEncoding:NSUTF8StringEncoding],
+                @"WebResourceFrameName" : @"",
+                @"WebResourceMIMEType" : @"text/html",
+                @"WebResourceTextEncodingName" : @"UTF-8",
+                @"WebResourceURL" : [NSString stringWithFormat:@"https://webkit.org/%@", name]
+            }
+        };
+        NSData *archiveData = [NSPropertyListSerialization dataWithPropertyList:archive format:NSPropertyListBinaryFormat_v1_0 options:0 error:nil];
+        NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@-%@.webarchive", name, NSUUID.UUID.UUIDString]];
+        EXPECT_TRUE([archiveData writeToFile:path atomically:YES]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path isDirectory:NO]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+    }
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.cookie"], "name=value");
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

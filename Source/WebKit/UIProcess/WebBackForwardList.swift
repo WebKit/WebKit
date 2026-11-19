@@ -1102,7 +1102,6 @@ final class WebBackForwardList {
     func backForwardAddItemShared(
         connection: IPC.Connection,
         navigatedFrameState: WebKit.RefFrameState,
-        loadedWebArchive: WebKit.LoadedWebArchive,
         browsingContextGroup: WebKit.BrowsingContextGroup
     ) {
         // Also reached from C++ (WebPageProxy::backForwardAddItemShared), so this rather than
@@ -1111,7 +1110,6 @@ final class WebBackForwardList {
             try addItemInternal(
                 connection: connection,
                 navigatedFrameState: navigatedFrameState,
-                loadedWebArchive: loadedWebArchive,
                 browsingContextGroup: browsingContextGroup
             )
         }
@@ -1120,7 +1118,6 @@ final class WebBackForwardList {
     private func addItemInternal(
         connection: IPC.Connection,
         navigatedFrameState: WebKit.RefFrameState,
-        loadedWebArchive: WebKit.LoadedWebArchive,
         browsingContextGroup: WebKit.BrowsingContextGroup
     ) throws(InvalidMessage) {
         let process = WebKit.WebProcessProxy.fromConnection(connection)
@@ -1198,9 +1195,6 @@ final class WebBackForwardList {
             enhancedSecurity = frameProcessEnhancedSecurity(mainFrame)
         }
         item.setEnhancedSecurity(enhancedSecurity)
-        if loadedWebArchive == WebKit.LoadedWebArchive.Yes {
-            item.setDataStoreForWebArchive(process.ptr().websiteDataStore())
-        }
         addItem(newItem: item)
     }
 
@@ -1220,7 +1214,6 @@ final class WebBackForwardList {
             try addItemInternal(
                 connection: connection,
                 navigatedFrameState: navigatedFrameState,
-                loadedWebArchive: page.didLoadWebArchive() ? .Yes : .No,
                 browsingContextGroup: page.browsingContextGroup()
             )
         }

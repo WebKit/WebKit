@@ -72,8 +72,6 @@ public:
 
     const URL& resourceDirectoryURL() const LIFETIME_BOUND { return m_resourceDirectoryURL; }
     void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTF::move(url); }
-    RefPtr<WebsiteDataStore> dataStoreForWebArchive() const { return m_dataStoreForWebArchive; }
-    void setDataStoreForWebArchive(WebsiteDataStore* dataStore) { m_dataStoreForWebArchive = dataStore; }
 
     bool itemIsClone(const WebBackForwardListItem&);
     bool hasSameMainFrameHistoryEntry(const WebBackForwardListItem&) const;
@@ -114,8 +112,6 @@ private:
 
     friend class WebBackForwardCache;
     void setBackForwardCacheEntry(RefPtr<WebBackForwardCacheEntry>&&);
-
-    RefPtr<WebsiteDataStore> m_dataStoreForWebArchive;
 
     const WebCore::BackForwardItemIdentifier m_identifier;
     const Ref<WebBackForwardListFrameItem> m_mainFrameItem;

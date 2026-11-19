@@ -692,7 +692,7 @@ void ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess
 void ProvisionalPageProxy::backForwardAddItem(IPC::Connection& connection, Ref<FrameState>&& navigatedFrameState)
 {
     if (RefPtr page = m_page.get())
-        page->backForwardAddItemShared(connection, WTF::move(navigatedFrameState), m_replacedDataStoreForWebArchiveLoad ? LoadedWebArchive::Yes : LoadedWebArchive::No, m_browsingContextGroup);
+        page->backForwardAddItemShared(connection, WTF::move(navigatedFrameState), m_browsingContextGroup);
 }
 
 void ProvisionalPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier navigationID)
