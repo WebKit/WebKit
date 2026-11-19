@@ -74,8 +74,9 @@ public:
 
     // Methods operating on all cached resources
     void removeClientFromCacheAndMarkForInvalidation(RenderElement&, bool markForInvalidation = true) const;
-    // Returns true if the resource-to-be-destroyed is one of our resources.
-    bool resourceDestroyed(LegacyRenderSVGResourceContainer&);
+    bool referencesResource(LegacyRenderSVGResourceContainer&) const;
+    // Forgets the resource-to-be-destroyed. Invalidating its clients is up to the caller.
+    void resourceDestroyed(LegacyRenderSVGResourceContainer&);
 
 #if ENABLE(TREE_DEBUGGING)
     void dump(const RenderObject*);
