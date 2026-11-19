@@ -637,7 +637,7 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
     if (!addResult.isNewEntry)
         return;
 
-    page->closePage();
+    page->askClientToClose();
 
     // A client that closes the page synchronously (e.g. MiniBrowser on Mac) has already completed the command.
     if (!m_pendingCloseBrowsingContextCallbacksPerPage.contains(pageID))

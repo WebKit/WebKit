@@ -35,6 +35,15 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/_WKFeature.h>
 
+@implementation BeforeUnloadUIDelegate
+
+- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    completionHandler(YES);
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 void setFeatureEnabled(WKWebViewConfiguration *configuration, NSString *featureName, bool enabled)

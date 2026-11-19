@@ -29,6 +29,7 @@
 
 #ifdef __cplusplus
 
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <array>
 #import <string>
@@ -39,10 +40,13 @@
 
 @class TestMessageHandler;
 @class TestNavigationDelegate;
-@class TestUIDelegate;
 @class TestWKWebView;
 @class WKFrameInfo;
 @class WKWebViewConfiguration;
+
+// WebCore only dispatches beforeunload when the UI delegate can run its confirmation panel.
+@interface BeforeUnloadUIDelegate : TestUIDelegate
+@end
 
 #if PLATFORM(MAC)
 // AppKit responder and Services methods that WKWebView implements but doesn't declare in its headers.

@@ -516,19 +516,6 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 
 @end
 
-// WebCore only dispatches beforeunload when the UI delegate can run its confirmation panel.
-@interface BeforeUnloadUIDelegate : TestUIDelegate
-@end
-
-@implementation BeforeUnloadUIDelegate
-
-- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
-{
-    completionHandler(YES);
-}
-
-@end
-
 #if defined(NDEBUG) && PLATFORM(MAC) && ENABLE(REMOTE_INSPECTOR)
 @interface DebuggerPauseTestAutomationSessionDelegate : NSObject <_WKAutomationSessionDelegate>
 @end

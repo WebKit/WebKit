@@ -1070,7 +1070,7 @@ public:
 
     bool preferFasterClickOverDoubleTap() const { return m_preferFasterClickOverDoubleTap; }
 
-    void closePage();
+    void askClientToClose();
 
     void addPlatformLoadParameters(WebProcessProxy&, LoadParameters&);
 
@@ -3932,6 +3932,8 @@ private:
     void clearAudibleActivity();
 
     void tryCloseTimedOut();
+    void closePage(IPC::Connection&);
+    bool isConnectionOfMainFrame(const IPC::Connection&) const;
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
         
 #if ENABLE(APP_BOUND_DOMAINS)

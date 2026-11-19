@@ -97,7 +97,7 @@ void BidiBrowserAgent::didCreatePage(WebPageProxy& page)
         return;
 
     ++it->value->pageCount;
-    page.closePage();
+    page.askClientToClose();
 }
 
 void BidiBrowserAgent::willClosePage(const WebPageProxy& page)

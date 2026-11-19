@@ -2260,7 +2260,7 @@ bool WebPageProxy::tryClose()
 
         protectedThis->internals().tryCloseTimeoutTimer.stop();
         if (shouldClose)
-            protectedThis->closePage();
+            protectedThis->askClientToClose();
     });
     return false;
 }
@@ -2268,7 +2268,7 @@ bool WebPageProxy::tryClose()
 void WebPageProxy::tryCloseTimedOut()
 {
     WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "tryCloseTimedOut: Timed out waiting for the process to respond to the WebPage::TryClose IPC, closing the page now");
-    closePage();
+    askClientToClose();
 }
 
 static std::optional<URL> storageClassBaseURL(const URL& url)
@@ -13454,12 +13454,27 @@ void WebPageProxy::didExitFullscreen()
 
 #endif
 
-void WebPageProxy::closePage()
+bool WebPageProxy::isConnectionOfMainFrame(const IPC::Connection& connection) const
+{
+    return WebProcessProxy::fromConnection(connection).ptr() == m_legacyMainFrameProcess.ptr();
+}
+
+void WebPageProxy::closePage(IPC::Connection& connection)
+{
+    if (!isConnectionOfMainFrame(connection)) {
+        send(Messages::WebPage::CloseFromRemoteFrame());
+        return;
+    }
+
+    askClientToClose();
+}
+
+void WebPageProxy::askClientToClose()
 {
     if (isClosed())
         return;
 
-    WEBPAGEPROXY_RELEASE_LOG(Process, "closePage:");
+    WEBPAGEPROXY_RELEASE_LOG(Process, "askClientToClose:");
     if (RefPtr pageClient = this->pageClient())
         pageClient->clearAllEditCommands();
 

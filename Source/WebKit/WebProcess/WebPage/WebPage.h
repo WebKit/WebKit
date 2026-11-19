@@ -2475,6 +2475,7 @@ private:
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
+    void closeFromRemoteFrame();
     void dispatchPendingNavigateEventForProcessSwap(WebCore::FrameIdentifier, WebCore::PendingNavigateEventIdentifier, CompletionHandler<void(bool)>&&);
     void dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);

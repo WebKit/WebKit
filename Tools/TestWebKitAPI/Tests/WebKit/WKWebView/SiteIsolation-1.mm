@@ -4810,4 +4810,74 @@ TEST(SiteIsolation, PositionInformationRedispatchToFrameInAnotherPageIsRejected)
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
 
+TEST(SiteIsolation, TopCloseFromCrossOriginIframeRunsMainFrameBeforeUnload)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body><script>onbeforeunload = () => { window.ranBeforeUnload = true }</script><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body>iframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr uiDelegate = adoptNS([BeforeUnloadUIDelegate new]);
+    __block bool didClose = false;
+    [uiDelegate setWebViewDidClose:^(WKWebView *) {
+        didClose = true;
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"top.close(); true" inFrame:childFrame.get()];
+    Util::run(&didClose);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"!!window.ranBeforeUnload"] boolValue]);
+}
+
+#if ENABLE(IPC_TESTING_API)
+
+TEST(SiteIsolation, ClosePageFromIframeProcessIsCheckedAgainstClosePolicy)
+{
+    HTTPServer server({
+        { "/first"_s, { "<body>first</body>"_s } },
+        { "/mainframe"_s, { "<body><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body>iframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration { server.httpsProxyConfiguration() };
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    setFeatureEnabled(configuration.get(), @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    __block bool didClose = false;
+    [uiDelegate setWebViewDidClose:^(WKWebView *) {
+        didClose = true;
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    // Script may not close a page that it didn't open once the page has history.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/first"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    auto sendClosePage = [&](WKFrameInfo *sender) {
+        [webView objectByEvaluatingJavaScript:@"IPC.sendMessage('UI', IPC.pageID, IPC.messages.WebPageProxy_ClosePage.name, []);"
+            "IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []); true" inFrame:sender];
+    };
+
+    sendClosePage(childFrame.get());
+    // The main frame's process decides whether to close, and a close it allows is sent from a queued task.
+    [webView objectByCallingAsyncFunction:@"await new Promise(resolve => setTimeout(resolve, 0)); return true" withArguments:nil];
+    EXPECT_FALSE(didClose);
+
+    sendClosePage(nil);
+    Util::run(&didClose);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
+
 } // namespace TestWebKitAPI

@@ -2636,6 +2636,16 @@ void WebPage::tryClose(CompletionHandler<void(bool)>&& completionHandler)
     completionHandler(coreFrame->loader().shouldClose());
 }
 
+void WebPage::closeFromRemoteFrame()
+{
+    RefPtr localMainFrame = this->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    if (RefPtr window = localMainFrame->window())
+        window->close();
+}
+
 void WebPage::dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData&& navigatingFrameOrigin)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
