@@ -812,6 +812,17 @@
             ]
         },
         {
+            "bugs": ["rdar://154776801"],
+            "matches": ["*://*.imdb.com/*"],
+            "behaviors": [
+                { "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": "#inline50_wrapper, #inline50_wrapper * { max-width: 100%; }" },
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() {\n    let advertisement = document.getElementById('inline50_responsive_wrapper');\n    let observed = Symbol.for('WebKitIMDbStaleAdQuirk');\n    if (!advertisement || advertisement[observed] || window.__webkitIMDbStaleAdQuirk !== undefined)\n        return;\n    advertisement[observed] = true;\n    new ResizeObserver(() => {\n        let api = window.ad_utils?.responsiveAdAPI;\n        if (window.__webkitIMDbStaleAdQuirk !== undefined || !api || api.previousWindowWidth === Infinity)\n            return;\n        if (api.getLastAdResponse()?.slots?.inline50?.creativeMetadata?.creativeWidth > document.documentElement.clientWidth) {\n            api.previousWindowWidth = Infinity;\n            dispatchEvent(new Event('resize'));\n        }\n    }).observe(advertisement);\n})();"
+                }
+            ]
+        },
+        {
             "bugs": ["rdar://113978106"],
             "matches": ["*://www.indiatimes.com/*"],
             "behaviors": [{ "id": "NeedsIPadMiniUserAgentQuirk" }]
