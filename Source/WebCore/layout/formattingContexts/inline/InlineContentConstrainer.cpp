@@ -47,12 +47,11 @@ static const size_t maximumLinesToBalanceWithLineRequirement { 12 };
 // Define the penalty associated with show text wider/narrower than ideal bounds.
 // Separating stretchability and shrinkability allows us to weight under/over
 // filling the ideal bounds differently.
-static const InlineLayoutUnit textWrapPrettyStretchability = 15;
-static const InlineLayoutUnit textWrapPrettyShrinkability = 15;
+static const InlineLayoutUnit textWrapStretchability = 15;
+static const InlineLayoutUnit textWrapShrinkability = 15;
 
-// Defines the maximum shrink/stretch factor allowed for text-wrap-pretty.
-static const float textWrapPrettyMaxStretch = 3;
-static const float textWrapPrettyMaxShrink = 3;
+// Defines the maximum shrink factor allowed for text-wrap-pretty, whose lines are never wider than the ideal line width.
+static const float textWrapPrettyMaxShrink = 6;
 
 // We would like 2 or more items on the last line for text-wrap-style:pretty to avoid orphans.
 static const size_t lastLinePreferredInlineItemCount = 2;
@@ -62,19 +61,17 @@ NODELETE static size_t lastLineBreakingPointOffset()
     return 2 * lastLinePreferredInlineItemCount + 1;
 }
 
-// Use auto layout if ideal line width is too short relative to the largest inline item.
+// Use auto layout if the available width is too short relative to the largest inline item.
 // In these situations, text-wrap-pretty does very little of note other than take up time.
-NODELETE static bool validIdealLineWidth(InlineLayoutUnit maxItemWidth, InlineLayoutUnit idealLineWidth, InlineLayoutUnit maxTextIndent)
+NODELETE static bool canFitLargestInlineItem(InlineLayoutUnit maxItemWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit maxTextIndent)
 {
-    return idealLineWidth >= maxItemWidth + maxTextIndent;
+    return availableWidth >= maxItemWidth + maxTextIndent;
 }
 
 NODELETE static bool validLineWidthPretty(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
 {
-    auto difference = candidateLineWidth - idealLineWidth;
-    if (difference > 0)
-        return difference <= textWrapPrettyStretchability * textWrapPrettyMaxStretch;
-    return abs(difference) <= textWrapPrettyShrinkability * textWrapPrettyMaxShrink;
+    ASSERT(candidateLineWidth <= idealLineWidth);
+    return idealLineWidth - candidateLineWidth <= textWrapShrinkability * textWrapPrettyMaxShrink;
 }
 
 // Full implementation of the raggedness function defined in:
@@ -82,7 +79,7 @@ NODELETE static bool validLineWidthPretty(InlineLayoutUnit candidateLineWidth, I
 NODELETE static float computeRaggedness(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
 {
     auto difference = candidateLineWidth - idealLineWidth;
-    auto intermediate = difference / (difference > 0 ? textWrapPrettyStretchability : textWrapPrettyShrinkability);
+    auto intermediate = difference / (difference > 0 ? textWrapStretchability : textWrapShrinkability);
     return 100 * abs(pow(intermediate, 3));
 };
 
@@ -94,7 +91,7 @@ NODELETE static float computeCostBalance(InlineLayoutUnit candidateLineWidth, In
 NODELETE static float computeCostPretty(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth, size_t breakIndex, size_t numberOfBreakOpportunities, InlineLayoutUnit)
 {
     // FIXME: add support for river minimization.
-    // Force max/minimum line width bounds if there are more then lastLinePreferredInlineItemCount items to be laid out after the candidate line.
+    // Force the minimum line width bound if there are more then lastLinePreferredInlineItemCount items to be laid out after the candidate line.
     if (breakIndex < numberOfBreakOpportunities - lastLineBreakingPointOffset()) {
         if (!validLineWidthPretty(candidateLineWidth, idealLineWidth))
             return std::numeric_limits<float>::infinity();
@@ -202,11 +199,11 @@ void InlineContentConstrainer::checkCanConstrainInlineItems()
     }
 }
 
-InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLineForPretty(InlineItemRange layoutRange, InlineLayoutUnit idealLineWidth, EntryPretty lastValidEntry, size_t previousBreakIndex)
+InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLineForPretty(InlineItemRange layoutRange, EntryPretty lastValidEntry, size_t previousBreakIndex)
 {
     auto lineBuilder = LineBuilder { m_inlineFormattingContext, m_horizontalConstraints, m_inlineItemList };
-    // Hyphenation occurs when we require more space than is available. In this case, we should apply max stretch to idealLineWidth.
-    InlineRect lineInitialRect = InlineRect { 0.f, m_horizontalConstraints.logicalLeft, idealLineWidth + textWrapPrettyStretchability * textWrapPrettyMaxStretch, 0.f };
+    // Hyphenation occurs when we require more space than is available. In this case, the line takes the whole available width.
+    InlineRect lineInitialRect = InlineRect { 0.f, m_horizontalConstraints.logicalLeft, m_maximumLineWidthConstraint, 0.f };
     LineLayoutResult lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect }, lastValidEntry.previousLine, !lastValidEntry.previousLine);
     InlineItemPosition lineEnd = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult, lastValidEntry.lineEnd, layoutRange.end);
     bool didLayoutAllItems = lineEnd.index == layoutRange.endIndex();
@@ -378,10 +375,8 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::computeParagraphLeve
             return balanceRangeWithNoLineRequirement(rangeToConstrain, idealLineWidth, isFirstChunk, trailingWidth);
         }
 
-        if (wrapStyle == TextWrapStyle::Pretty) {
-            const InlineLayoutUnit idealLineWidth = m_maximumLineWidthConstraint  - textWrapPrettyStretchability * textWrapPrettyMaxStretch;
-            return prettifyRange(rangeToConstrain, idealLineWidth, isFirstChunk);
-        }
+        if (wrapStyle == TextWrapStyle::Pretty)
+            return prettifyRange(rangeToConstrain, isFirstChunk);
 
         ASSERT_NOT_REACHED();
         return { };
@@ -588,11 +583,11 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLi
     return computeLineWidthsFromBreaks(range, breaks, isFirstChunk);
 }
 
-std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(InlineItemRange range, InlineLayoutUnit idealLineWidth, bool isFirstChunk)
+std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(InlineItemRange range, bool isFirstChunk)
 {
     ASSERT(range.startIndex() < range.endIndex());
-    // Fall back to auto layout if the ideal line width is too narrow relative to the width of the largest inline item.
-    if (!validIdealLineWidth(m_inlineItemWidthsMax, idealLineWidth, computeMaxTextIndent()))
+    // Fall back to auto layout if the available width is too narrow relative to the width of the largest inline item.
+    if (!canFitLargestInlineItem(m_inlineItemWidthsMax, m_maximumLineWidthConstraint, computeMaxTextIndent()))
         return { };
 
     // breakOpportunities holds the indices i such that a line break can occur before m_inlineItemList[i].
@@ -626,7 +621,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
         if (firstLineCandidateWidth > m_maximumLineWidthConstraint)
             break;
 
-        auto cost = computeCostPretty(firstLineCandidateWidth, idealLineWidth, breakIndex, numberOfBreakOpportunities, idealLineWidth);
+        auto cost = computeCostPretty(firstLineCandidateWidth, m_maximumLineWidthConstraint, breakIndex, numberOfBreakOpportunities, m_maximumLineWidthConstraint);
         if (cost < state[breakIndex].accumulatedCost) {
             lastValidStateIndex = breakIndex;
             state[breakIndex].accumulatedCost = cost;
@@ -644,7 +639,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
     // If we are unable to build a valid line from without hyphenation,
     // try to build a valid line using hyphenation from the beginning.
     if (!lastValidStateIndex.has_value()) {
-        auto newEntry = layoutSingleLineForPretty({ breakOpportunities[0], range.endIndex() }, idealLineWidth, state[0], 0);
+        auto newEntry = layoutSingleLineForPretty({ breakOpportunities[0], range.endIndex() }, state[0], 0);
         auto it = std::ranges::find(breakOpportunities, newEntry.lineEnd.index);
         if (it == breakOpportunities.end())
             return { };
@@ -689,7 +684,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
                 return { };
             }
 
-            auto newEntry = layoutSingleLineForPretty({ state[lastValidStateIndex.value()].lineEnd.index, range.endIndex() }, idealLineWidth, state[lastValidStateIndex.value()], lastValidStateIndex.value());
+            auto newEntry = layoutSingleLineForPretty({ state[lastValidStateIndex.value()].lineEnd.index, range.endIndex() }, state[lastValidStateIndex.value()], lastValidStateIndex.value());
             auto it = std::ranges::find(breakOpportunities, newEntry.lineEnd.index);
             // If hyphenation does not create a valid solution, we should return early.
             if (it == breakOpportunities.end())
@@ -711,7 +706,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
             innerSlidingWidth.advanceStartTo(start);
             auto candidateLineWidth = computeLineWidthFromSlidingWidth(textIndent, innerSlidingWidth);
             // TODO: update candidateLineWidth here using state[startIndex].lineEnd.offset.
-            auto candidateLineCost = computeCostPretty(candidateLineWidth, idealLineWidth, breakIndex, numberOfBreakOpportunities, state[startIndex].lastLineWidth);
+            auto candidateLineCost = computeCostPretty(candidateLineWidth, m_maximumLineWidthConstraint, breakIndex, numberOfBreakOpportunities, state[startIndex].lastLineWidth);
             auto accumulatedCost = candidateLineCost + state[startIndex].accumulatedCost;
 
             if (accumulatedCost < state[breakIndex].accumulatedCost) {
