@@ -2369,7 +2369,7 @@ static NSMutableSet *knownPluginMIMETypes()
         return;
     }
 
-    if (!WTF::atomicCompareExchangeStrong(&_private->didDrawTiles, NO, YES))
+    if (WTF::atomicExchange(&_private->didDrawTiles, YES))
         return;
 
     WebThreadLock();
