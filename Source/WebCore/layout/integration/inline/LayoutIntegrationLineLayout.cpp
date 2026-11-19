@@ -589,7 +589,14 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
         auto markerLogicalTop = [&]() -> float {
             if (firstContentfulLine->baselineType() == FontBaseline::Ideographic)
                 return lineBoxLogicalRect.y() + (lineBoxLogicalRect.height() - marker->logicalHeight().toFloat()) / 2;
-            auto markerAscent = marker->isImage() ? marker->logicalHeight().toFloat() : protect(marker->style())->metricsOfPrimaryFont().ascent(FontBaseline::Alphabetic);
+            auto markerAscent = [&] -> float {
+                if (marker->isImage())
+                    return marker->logicalHeight().toFloat();
+                // A marker with `content` is the box of its content, aligned by the content's first baseline.
+                if (CheckedPtr content = marker->contentContainer(); content && listMarkerHasContent(marker->style(), protect(marker->document())))
+                    return content->firstLineBaseline().value_or(content->logicalHeight()).toFloat();
+                return protect(marker->style())->metricsOfPrimaryFont().ascent(FontBaseline::Alphabetic);
+            }();
             return lineBoxLogicalRect.y() + firstContentfulLine->baseline() - markerAscent;
         }();
         // The marker goes on the inline start side of its list item, in the list item's writing mode (css-lists-3

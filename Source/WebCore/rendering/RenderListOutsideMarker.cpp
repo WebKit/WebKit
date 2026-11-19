@@ -157,22 +157,22 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
 
     setLogicalWidth(container.logicalWidth());
 
-    auto contentBaseline = container.firstLineBaseline().value_or(container.logicalHeight());
-
     if (CheckedPtr imageRenderer = isImage() ? dynamicDowncast<RenderBox>(container.firstChild()) : nullptr) {
         container.setLogicalTop(-imageRenderer->logicalTop());
         setLogicalHeight(imageRenderer->logicalHeight());
+    } else if (listMarkerHasContent(style(), document())) {
+        // A marker with `content` is the box of its content, which the line aligns by its first baseline.
+        container.setLogicalTop(0_lu);
+        setLogicalHeight(container.logicalHeight());
     } else {
         // The inline formatting context aligns a text marker box on the marker's primary-font baseline
         // (see InlineLineBoxBuilder), then we paint the content box at the marker box origin. Offset the
         // content box along the block axis so its own first-line baseline lands on that font baseline —
         // otherwise the content's line-box half-leading shifts it off the list item's baseline. Logical
         // setters keep this correct in vertical writing modes.
-        if (listMarkerHasContent(style(), document()))
-            setLogicalHeight(container.logicalHeight());
-        else
-            setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
+        setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
 
+        auto contentBaseline = container.firstLineBaseline().value_or(container.logicalHeight());
         auto baselineOffset = writingMode().prefersCentralBaseline() ? logicalHeight() / 2 : LayoutUnit { style().metricsOfPrimaryFont().ascent(BaselineAlignment::dominantBaseline(writingMode())) };
         container.setLogicalTop(baselineOffset - contentBaseline);
     }
