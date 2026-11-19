@@ -65,7 +65,8 @@ public:
 
     NODELETE PlatformLayer* displayLayer();
 
-    void updateSampleLayerBoundsAndPosition(std::optional<CGRect>);
+    enum class UseRootLayerBounds : bool { No, Yes };
+    void updateSampleLayerBoundsAndPosition(std::optional<CGRect>, UseRootLayerBounds = UseRootLayerBounds::No);
 
     // SampleBufferDisplayLayer.
     PlatformLayer* rootLayer() final;
@@ -115,6 +116,7 @@ private:
 
     WebCore::VideoFrameRotation m_videoFrameRotation { WebCore::VideoFrameRotation::None };
     CGAffineTransform m_affineTransform { CGAffineTransformIdentity };
+    bool m_hasEnqueuedVideoFrame { false };
 
     bool m_paused { false };
     bool m_didFail { false };

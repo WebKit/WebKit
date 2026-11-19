@@ -78,6 +78,31 @@ TEST(LocalSampleBufferDisplayLayer, RotationChangeShouldNotSwapStaleBounds)
     EXPECT_EQ(layer->sampleLayerBoundsForTesting().size.height, 960);
 }
 
+// Verify that the first rotated frame of a new layer sizes the sample layer from the
+// root layer bounds. Nothing else supplies bounds after the layer is created, so
+// without this the frame is fit into unrotated bounds and painted at a reduced size.
+TEST(LocalSampleBufferDisplayLayer, FirstRotatedFrameShouldSwapRootLayerBounds)
+{
+    MockSampleBufferDisplayLayerClient client;
+    auto layer = WebCore::LocalSampleBufferDisplayLayer::create(client);
+    ASSERT_TRUE(layer);
+
+    layer->initialize(false, { 402, 715 }, true, [](bool) { });
+    Util::runFor(0.1_s);
+
+    EXPECT_EQ(layer->sampleLayerBoundsForTesting().size.width, 402);
+    EXPECT_EQ(layer->sampleLayerBoundsForTesting().size.height, 715);
+
+    layer->setVideoFrameRotationForTesting(WebCore::VideoFrameRotation::Right);
+    layer->updateSampleLayerBoundsAndPosition(std::nullopt, WebCore::LocalSampleBufferDisplayLayer::UseRootLayerBounds::Yes);
+    Util::runFor(0.1_s);
+
+    EXPECT_EQ(layer->sampleLayerBoundsForTesting().size.width, 715);
+    EXPECT_EQ(layer->sampleLayerBoundsForTesting().size.height, 402);
+    EXPECT_EQ(layer->bounds().size.width, 402);
+    EXPECT_EQ(layer->bounds().size.height, 715);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(COCOA)
