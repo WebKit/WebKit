@@ -820,7 +820,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                 return processDescriptor(fakeDescriptor, isOwnProperty);
             }
 
-            let possibleNativeBindingGetter = nativeGettersAsValues && (@String(descriptor.get).@endsWith("[native code]\n}") || (!descriptor.get && @Object.@hasOwn(descriptor, "get") && !descriptor.set && @Object.@hasOwn(descriptor, "set")));
+            let possibleNativeBindingGetter = nativeGettersAsValues && (InjectedScriptHost.isNativeFunction(descriptor.get) || (!descriptor.get && @Object.@hasOwn(descriptor, "get") && !descriptor.set && @Object.@hasOwn(descriptor, "set")));
             if (possibleNativeBindingGetter && shouldInvokeNativeGetters) {
                 // Developers may create such a descriptor, so we should be resilient:
                 // let x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")

@@ -164,6 +164,22 @@ JSValue JSInjectedScriptHost::isHTMLAllCollection(JSGlobalObject* globalObject, 
     return jsBoolean(impl().isHTMLAllCollection(vm, value));
 }
 
+JSValue JSInjectedScriptHost::isNativeFunction(CallFrame* callFrame)
+{
+    if (callFrame->argumentCount() < 1)
+        return jsBoolean(false);
+
+    JSValue value = callFrame->uncheckedArgument(0);
+
+    // Embedder callbacks, such as the getters of JSExport properties, are internal functions.
+    if (value.inherits<InternalFunction>())
+        return jsBoolean(true);
+
+    // A bound function is a host function, but it calls the function it is bound to.
+    auto* function = dynamicDowncast<JSFunction>(value);
+    return jsBoolean(function && (function->isNonBoundHostFunction() || function->isBuiltinFunction()));
+}
+
 JSValue JSInjectedScriptHost::isPromiseRejectedWithNativeGetterTypeError(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
