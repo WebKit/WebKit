@@ -686,6 +686,39 @@ void EventRegion::unite(const Region& region, const RenderObject& renderer, cons
 #endif
 }
 
+void EventRegion::replaceInRect(const IntRect& rect, const EventRegion& source)
+{
+#if ENABLE(TOUCH_EVENT_REGIONS) || ENABLE(EDITABLE_REGION) || ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    // These regions cannot be patched; RenderLayerBacking never updates incrementally when they are built.
+    UNUSED_PARAM(rect);
+    UNUSED_PARAM(source);
+    ASSERT_NOT_REACHED();
+    return;
+#else
+    Region rectRegion { rect };
+    auto replace = [&](Region& target, const Region& sourceRegion) {
+        target.subtract(rectRegion);
+        if (sourceRegion.isEmpty())
+            return;
+        auto sourceInRect = sourceRegion;
+        sourceInRect.intersect(rectRegion);
+        target.unite(sourceInRect);
+    };
+
+    replace(m_region, source.m_region);
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    if (m_touchActionRegions.size() < source.m_touchActionRegions.size())
+        m_touchActionRegions.grow(source.m_touchActionRegions.size());
+    for (size_t i = 0; i < m_touchActionRegions.size(); ++i)
+        replace(m_touchActionRegions[i], i < source.m_touchActionRegions.size() ? source.m_touchActionRegions[i] : Region { });
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    replace(m_wheelEventListenerRegion, source.m_wheelEventListenerRegion);
+    replace(m_nonPassiveWheelEventListenerRegion, source.m_nonPassiveWheelEventListenerRegion);
+#endif
+#endif
+}
+
 void EventRegion::translate(const IntSize& offset)
 {
     m_region.translate(offset);

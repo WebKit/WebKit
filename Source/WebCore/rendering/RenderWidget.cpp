@@ -330,6 +330,9 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
         paintRect.move(-widgetPaintOffset.width(), -widgetPaintOffset.height());
     }
 
+    if (CheckedPtr eventRegionContext = paintInfo.eventRegionContext(); eventRegionContext && is<LocalFrameView>(m_widget))
+        eventRegionContext->setPaintedSubframeContent();
+
     if (paintInfo.regionContext) {
         AffineTransform transform;
         transform.translate(snappedPaintOffset);

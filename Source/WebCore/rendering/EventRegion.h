@@ -79,6 +79,10 @@ public:
     bool touchEventListenerRegionsContain(const IntRect&, OptionSet<EventListenerRegionType>) const;
 #endif
 
+    // Set when a non-composited subframe paints its content into this context.
+    void setPaintedSubframeContent() { m_paintedSubframeContent = true; }
+    bool paintedSubframeContent() const { return m_paintedSubframeContent; }
+
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void uniteInteractionRegions(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
     bool shouldConsolidateInteractionRegion(const RenderObject&, const IntRect&, const NodeIdentifier&);
@@ -95,6 +99,7 @@ private:
     Region transformAndClip(Region&&) const;
 
     EventRegion& m_eventRegion;
+    bool m_paintedSubframeContent { false };
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
     HashMap<Ref<const Document>, std::optional<SingleThreadWeakHashSet<const RenderElement>>> m_knownTouchEventTargetAncestors;
@@ -165,6 +170,9 @@ public:
     // True if unite() with this region or any subset of it is a no-op.
     bool uniteWouldNotChangeRegions(const Region&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false) const;
     NODELETE void translate(const IntSize&);
+    // Replaces the part of this region inside rect with the part of source inside rect.
+    // Only supports the contents built without touch event, editable and interaction regions.
+    void replaceInRect(const IntRect&, const EventRegion& source);
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }
     bool contains(const IntRect& rect) const { return m_region.contains(rect); }
