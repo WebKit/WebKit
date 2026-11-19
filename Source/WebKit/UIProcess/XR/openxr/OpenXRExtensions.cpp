@@ -130,12 +130,18 @@ bool OpenXRExtensions::loadMethods(XrInstance instance)
         LOAD_SPATIAL_METHOD(xrCreateSpatialContextAsyncEXT);
         LOAD_SPATIAL_METHOD(xrCreateSpatialContextCompleteEXT);
         LOAD_SPATIAL_METHOD(xrDestroySpatialContextEXT);
+        LOAD_SPATIAL_METHOD(xrDestroySpatialEntityEXT);
+        LOAD_SPATIAL_METHOD(xrCreateSpatialUpdateSnapshotEXT);
         LOAD_SPATIAL_METHOD(xrCreateSpatialDiscoverySnapshotAsyncEXT);
         LOAD_SPATIAL_METHOD(xrCreateSpatialDiscoverySnapshotCompleteEXT);
         LOAD_SPATIAL_METHOD(xrQuerySpatialComponentDataEXT);
         LOAD_SPATIAL_METHOD(xrDestroySpatialSnapshotEXT);
         LOAD_SPATIAL_METHOD(xrGetSpatialBufferVector2fEXT);
     }
+#endif
+#if defined(XR_EXT_spatial_anchor)
+    if (isExtensionSupported(XR_EXT_SPATIAL_ANCHOR_EXTENSION_NAME ""_span))
+        LOAD_SPATIAL_METHOD(xrCreateSpatialAnchorEXT);
 #endif
 #undef LOAD_SPATIAL_METHOD
     return true;
@@ -147,6 +153,17 @@ bool OpenXRExtensions::isExtensionSupported(std::span<const char> name) const
         return equalSpans(unsafeSpan(property.extensionName), name);
     });
     return position != notFound;
+}
+
+bool OpenXRExtensions::areAnchorExtensionsSupported() const
+{
+#if defined(XR_EXT_spatial_entity) && defined(XR_EXT_spatial_anchor) && defined(XR_EXT_future)
+    return isExtensionSupported(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME ""_span)
+        && isExtensionSupported(XR_EXT_SPATIAL_ANCHOR_EXTENSION_NAME ""_span)
+        && isExtensionSupported(XR_EXT_FUTURE_EXTENSION_NAME ""_span);
+#else
+    return false;
+#endif
 }
 
 } // namespace WebKit

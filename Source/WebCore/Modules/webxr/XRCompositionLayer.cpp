@@ -152,7 +152,7 @@ void XRCompositionLayer::startFrame(PlatformXR::FrameData& frameData)
 #endif
 }
 
-std::optional<PlatformXR::FrameData::Pose> computeXRCompositionLayerPose(const TransformationMatrix& spaceTransform, const TransformationMatrix* layerTransform)
+std::optional<PlatformXR::Pose> computeXRCompositionLayerPose(const TransformationMatrix& spaceTransform, const TransformationMatrix* layerTransform)
 {
     // nativeOrigin() returns the transform that maps from the layer's reference space into the session's local space.
     auto transformInLocalSpace = layerTransform ? spaceTransform * *layerTransform : spaceTransform;
@@ -160,7 +160,7 @@ std::optional<PlatformXR::FrameData::Pose> computeXRCompositionLayerPose(const T
     if (!transformInLocalSpace.decompose4(decomposed))
         return std::nullopt;
 
-    return PlatformXR::FrameData::Pose {
+    return PlatformXR::Pose {
         .position = { static_cast<float>(decomposed.translateX), static_cast<float>(decomposed.translateY), static_cast<float>(decomposed.translateZ) },
         .orientation = { static_cast<float>(decomposed.quaternion.x), static_cast<float>(decomposed.quaternion.y), static_cast<float>(decomposed.quaternion.z), static_cast<float>(decomposed.quaternion.w) },
     };
@@ -179,7 +179,7 @@ void XRCompositionLayer::recomputePose()
     auto pose = computeXRCompositionLayerPose(*spaceTransform, transform ? &transform->rawTransform() : nullptr);
     if (!pose) {
         RELEASE_LOG_ERROR(XR, "Failed to decompose space transform, using identity transform for layer pose");
-        m_poseInLocalSpace = PlatformXR::FrameData::Pose { .position = { 0, 0, 0 }, .orientation = { 0, 0, 0, 1 } };
+        m_poseInLocalSpace = PlatformXR::Pose { .position = { 0, 0, 0 }, .orientation = { 0, 0, 0, 1 } };
         return;
     }
     m_poseInLocalSpace = *pose;

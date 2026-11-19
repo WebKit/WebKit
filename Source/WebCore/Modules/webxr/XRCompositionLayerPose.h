@@ -36,7 +36,7 @@ class TransformationMatrix;
 
 // Composes layerInLocal = spaceTransform * layerTransform and returns the composed translation+rotation, or std::nullopt in case of error.
 // Requires its own header (rather than as a static method on XRCompositionLayer) so the math can be unit tested without exposing way too many headers.
-WEBCORE_EXPORT std::optional<PlatformXR::FrameData::Pose> computeXRCompositionLayerPose(const TransformationMatrix& spaceTransform, const TransformationMatrix* layerTransform);
+WEBCORE_EXPORT std::optional<PlatformXR::Pose> computeXRCompositionLayerPose(const TransformationMatrix& spaceTransform, const TransformationMatrix* layerTransform);
 
 } // namespace WebCore
 

@@ -49,6 +49,10 @@
 #include "WebXRTransientInputHitTestSource.h"
 #include "XRCompositionLayer.h"
 #include "XRFrameRequestCallback.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "JSWebXRAnchor.h"
+#include "WebXRAnchor.h"
+#endif
 #include "XRGPUProjectionLayerInit.h"
 #include "XRHitTestOptionsInit.h"
 #include "XRRenderStateInit.h"
@@ -430,6 +434,10 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
     m_sessionListeners.clear();
 
     m_inputSources->clear();
+#if ENABLE(WEBXR_ANCHORS)
+    for (auto& anchor : copyToVector(m_activeAnchors.values()))
+        anchor->deleteAnchor();
+#endif
 #if ENABLE(WEBXR_PLANE_DETECTION)
     invalidateDetectedPlanes();
 #endif
@@ -1110,6 +1118,31 @@ void WebXRSession::layerDestroyed(const XRCompositionLayer& layer)
     protect(m_pendingRenderState)->setLayers(layers);
 }
 #endif
+
+#if ENABLE(WEBXR_ANCHORS)
+
+void WebXRSession::addAnchor(Ref<WebXRAnchor>&& anchor)
+{
+    m_activeAnchors.set(anchor->identifier(), RefPtr<WebXRAnchor>(WTF::move(anchor)));
+}
+
+RefPtr<WebXRAnchor> WebXRSession::anchor(PlatformXR::AnchorIdentifier identifier) const
+{
+    auto it = m_activeAnchors.find(identifier);
+    if (it == m_activeAnchors.end())
+        return nullptr;
+    return it->value;
+}
+
+void WebXRSession::deleteAnchor(PlatformXR::AnchorIdentifier identifier)
+{
+    m_activeAnchors.remove(identifier);
+
+    if (RefPtr device = this->device())
+        device->deleteAnchor(identifier);
+}
+
+#endif // ENABLE(WEBXR_ANCHORS)
 
 WebCoreOpaqueRoot root(WebXRSession* session)
 {

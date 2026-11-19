@@ -38,18 +38,18 @@ namespace WebCore {
 class WebXRPlaneSpace final : public RefCounted<WebXRPlaneSpace>, public WebXRSpace {
     WTF_MAKE_TZONE_ALLOCATED(WebXRPlaneSpace);
 public:
-    static Ref<WebXRPlaneSpace> create(Document&, WebXRSession&, const PlatformXR::FrameData::Pose&);
+    static Ref<WebXRPlaneSpace> create(Document&, WebXRSession&, const PlatformXR::Pose&);
     virtual ~WebXRPlaneSpace();
 
     // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void setPose(const PlatformXR::FrameData::Pose& pose) { m_pose = pose; }
+    void setPose(const PlatformXR::Pose& pose) { m_pose = pose; }
     void setTracked(bool tracked) { m_tracked = tracked; }
 
 private:
-    WebXRPlaneSpace(Document&, WebXRSession&, const PlatformXR::FrameData::Pose&);
+    WebXRPlaneSpace(Document&, WebXRSession&, const PlatformXR::Pose&);
 
     WebXRSession* session() const final { return m_session.get(); }
     std::optional<TransformationMatrix> nativeOrigin() const final;
@@ -58,7 +58,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     WeakPtr<WebXRSession> m_session;
-    PlatformXR::FrameData::Pose m_pose;
+    PlatformXR::Pose m_pose;
     bool m_tracked { true };
 };
 

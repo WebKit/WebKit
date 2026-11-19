@@ -42,6 +42,15 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(WEBXR_ANCHORS)
+#include "JSDOMConvertInterface.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSWebXRAnchor.h"
+#include "TransformationMatrix.h"
+#include "WebXRAnchor.h"
+#include "WebXRAnchorSet.h"
+#include "WebXRRigidTransform.h"
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
 #include "WebXRHitTestResult.h"
 #include "WebXRTransientInputHitTestResult.h"
@@ -265,13 +274,31 @@ ExceptionOr<RefPtr<WebXRPose>> WebXRFrame::getPose(const Document& document, con
     return RefPtr<WebXRPose>(WebXRPose::create(WebXRRigidTransform::create(populateValue->transform), populateValue->emulatedPosition));
 }
 
-TransformationMatrix WebXRFrame::matrixFromPose(const PlatformXR::FrameData::Pose& pose)
+TransformationMatrix WebXRFrame::matrixFromPose(const PlatformXR::Pose& pose)
 {
     TransformationMatrix matrix;
     matrix.translate3d(pose.position.x(), pose.position.y(), pose.position.z());
     matrix.multiply(TransformationMatrix::fromQuaternion({ pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w }));
     return matrix;
 }
+
+#if ENABLE(WEBXR_ANCHORS)
+std::optional<PlatformXR::Pose> WebXRFrame::poseFromTransform(const TransformationMatrix& matrix)
+{
+    TransformationMatrix::Decomposed4Type decomposed;
+    if (!matrix.decompose4(decomposed))
+        return std::nullopt;
+
+    return PlatformXR::Pose {
+        FloatPoint3D(decomposed.translateX, decomposed.translateY, decomposed.translateZ), {
+            static_cast<float>(decomposed.quaternion.x),
+            static_cast<float>(decomposed.quaternion.y),
+            static_cast<float>(decomposed.quaternion.z),
+            static_cast<float>(decomposed.quaternion.w)
+        }
+    };
+}
+#endif
 
 #if ENABLE(WEBXR_HANDS)
 
@@ -444,6 +471,95 @@ ExceptionOr<Ref<WebXRPlaneSet>> WebXRFrame::detectedPlanes()
     return Ref { *m_detectedPlanes };
 }
 #endif
+
+#if ENABLE(WEBXR_ANCHORS)
+
+// https://immersive-web.github.io/anchors/#dom-xrframe-createanchor
+ExceptionOr<void> WebXRFrame::createAnchor(Document& document, const WebXRRigidTransform& pose, WebXRSpace& space, CreateAnchorPromise&& promise)
+{
+    if (!m_session->supportsFeature(PlatformXR::SessionFeature::Anchors)) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "The anchors feature was not requested for this session"_s });
+        return { };
+    }
+
+    if (!m_active) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Frame is not active"_s });
+        return { };
+    }
+
+    if (m_session->ended()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The session was already ended"_s });
+        return { };
+    }
+
+    if (space.session() != m_session.ptr()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Space's session does not match frame's session"_s });
+        return { };
+    }
+
+    RefPtr device = m_session->device();
+    if (!device) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
+        return { };
+    }
+
+    auto effectiveOrigin = space.effectiveOrigin();
+    if (!effectiveOrigin) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to determine space effective origin"_s });
+        return { };
+    }
+
+    // Let anchor native origin be a new native origin returned from the device's call to create a new anchor using pose,
+    // interpreted as if expressed relative to effective origin at the frame's time.
+    auto anchorTransform = effectiveOrigin.value() * pose.rawTransform();
+
+    auto anchorPose = poseFromTransform(anchorTransform);
+    if (!anchorPose) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to decompose anchor transform"_s });
+        return { };
+    }
+
+    device->createAnchor(*anchorPose, [protectedSession = m_session, promise = WTF::move(promise), protectedDocument = Ref { document }](ExceptionOr<PlatformXR::AnchorIdentifier> exceptionOrIdentifier) mutable {
+        if (exceptionOrIdentifier.hasException()) {
+            promise.reject(exceptionOrIdentifier.releaseException());
+            return;
+        }
+
+        auto identifier = exceptionOrIdentifier.releaseReturnValue();
+        if (protectedSession->ended()) {
+            protectedSession->deleteAnchor(identifier);
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "The session was already ended"_s });
+            return;
+        }
+
+        Ref anchor = WebXRAnchor::create(protectedDocument.get(), protectedSession.get(), identifier);
+        protectedSession->addAnchor(anchor.copyRef());
+        promise.resolve(WTF::move(anchor));
+    });
+
+    return { };
+}
+
+// https://immersive-web.github.io/anchors/#dom-xrframe-trackedanchors
+ExceptionOr<Ref<WebXRAnchorSet>> WebXRFrame::trackedAnchors()
+{
+    if (!m_active)
+        return Exception { ExceptionCode::InvalidStateError, "Frame is not active"_s };
+
+    if (!m_trackedAnchors) {
+        Vector<Ref<WebXRAnchor>> anchors;
+        for (auto& [identifier, anchorState] : m_session->frameData().trackedAnchors) {
+            if (anchorState.trackingState == PlatformXR::AnchorTrackingState::Stopped)
+                continue;
+            if (RefPtr anchor = m_session->anchor(identifier))
+                anchors.append(anchor.releaseNonNull());
+        }
+        m_trackedAnchors = WebXRAnchorSet::create(WTF::move(anchors));
+    }
+    return Ref { *m_trackedAnchors };
+}
+
+#endif // ENABLE(WEBXR_ANCHORS)
 
 } // namespace WebCore
 

@@ -527,6 +527,8 @@ namespace WebCore {
     macro(WritableStreamDefaultController) \
     macro(WritableStreamDefaultWriter) \
     macro(XMLHttpRequest) \
+    macro(XRAnchor) \
+    macro(XRAnchorSet) \
     macro(XRBoundedReferenceSpace) \
     macro(XRCompositionLayer) \
     macro(XRCubeLayer) \

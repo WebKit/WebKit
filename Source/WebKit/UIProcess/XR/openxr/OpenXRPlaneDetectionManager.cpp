@@ -97,7 +97,7 @@ static WebCore::Quaternion toQuaternion(const XrQuaternionf& q)
 // https://registry.khronos.org/OpenXR/specs/1.1/html/xrspec.html#ext_spatial_entity_bounded2D_component
 // OpenXR planes lie on the X-Y plane with +Z as the normal, while WebXR planes lie on the X-Z plane with +Y as the normal.
 // The plane space is rotated by +90 degrees around X for the latter, which maps the OpenXR vertex (x, y) to the WebXR vertex (x, -y).
-static PlatformXR::FrameData::Pose toWebXRPlanePose(const XrPosef& center)
+static PlatformXR::Pose toWebXRPlanePose(const XrPosef& center)
 {
     constexpr double halfSqrt2 = std::numbers::sqrt2 / 2;
     auto orientation = toQuaternion(center.orientation).accumulate({ halfSqrt2, 0, 0, halfSqrt2 });

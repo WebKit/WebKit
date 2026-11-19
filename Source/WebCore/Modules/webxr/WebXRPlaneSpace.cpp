@@ -37,12 +37,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRPlaneSpace);
 
-Ref<WebXRPlaneSpace> WebXRPlaneSpace::create(Document& document, WebXRSession& session, const PlatformXR::FrameData::Pose& pose)
+Ref<WebXRPlaneSpace> WebXRPlaneSpace::create(Document& document, WebXRSession& session, const PlatformXR::Pose& pose)
 {
     return adoptRef(*new WebXRPlaneSpace(document, session, pose));
 }
 
-WebXRPlaneSpace::WebXRPlaneSpace(Document& document, WebXRSession& session, const PlatformXR::FrameData::Pose& pose)
+WebXRPlaneSpace::WebXRPlaneSpace(Document& document, WebXRSession& session, const PlatformXR::Pose& pose)
     : WebXRSpace(document, WebXRRigidTransform::create())
     , m_session(session)
     , m_pose(pose)

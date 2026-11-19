@@ -86,6 +86,11 @@ public:
     PFN_xrQuerySpatialComponentDataEXT xrQuerySpatialComponentDataEXT { nullptr };
     PFN_xrDestroySpatialSnapshotEXT xrDestroySpatialSnapshotEXT { nullptr };
     PFN_xrGetSpatialBufferVector2fEXT xrGetSpatialBufferVector2fEXT { nullptr };
+    PFN_xrCreateSpatialUpdateSnapshotEXT xrCreateSpatialUpdateSnapshotEXT { nullptr };
+    PFN_xrDestroySpatialEntityEXT xrDestroySpatialEntityEXT { nullptr };
+#endif
+#if defined(XR_EXT_spatial_anchor)
+    PFN_xrCreateSpatialAnchorEXT xrCreateSpatialAnchorEXT { nullptr };
 #endif
 };
 
@@ -99,6 +104,7 @@ public:
 
     bool loadMethods(XrInstance);
     bool isExtensionSupported(std::span<const char>) const;
+    bool areAnchorExtensionsSupported() const;
     const OpenXRExtensionMethods& methods() const { return *m_methods; }
 
 private:

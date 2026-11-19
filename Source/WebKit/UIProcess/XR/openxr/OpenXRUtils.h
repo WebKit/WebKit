@@ -86,14 +86,22 @@ inline XrResult checkXrResult(XrResult res, const char* originator = nullptr, co
     } \
 }
 
-inline PlatformXR::FrameData::Pose XrIdentityPose()
+inline PlatformXR::Pose XrIdentityPose()
 {
     return { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } };
 }
 
-inline PlatformXR::FrameData::Pose XrPosefToPose(XrPosef pose)
+inline PlatformXR::Pose XrPosefToPose(XrPosef pose)
 {
     return { { pose.position.x, pose.position.y, pose.position.z }, { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w } };
+}
+
+inline XrPosef PoseToXrPosef(const PlatformXR::Pose& pose)
+{
+    return {
+        { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w },
+        { pose.position.x(), pose.position.y(), pose.position.z() }
+    };
 }
 
 inline PlatformXR::FrameData::View XrViewToView(XrView view)

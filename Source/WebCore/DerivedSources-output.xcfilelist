@@ -1130,6 +1130,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetector.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetector.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetectorOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetectorOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRAnchorCreationCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRAnchorCreationCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRAnchorCreationParameters.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRAnchorCreationParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRBoundsPoint.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRBoundsPoint.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRButtonStateInit.cpp
@@ -3420,6 +3424,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrame.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrame.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrameOutputCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrameOutputCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRAnchorController.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRAnchorController.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRDevice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRDevice.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRInputController.cpp

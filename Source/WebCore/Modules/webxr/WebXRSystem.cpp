@@ -282,6 +282,9 @@ bool WebXRSystem::isFeaturePermitted(PlatformXR::SessionFeature feature) const
     case PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor:
     case PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor:
     case PlatformXR::SessionFeature::ReferenceSpaceTypeUnbounded:
+#if ENABLE(WEBXR_ANCHORS)
+    case PlatformXR::SessionFeature::Anchors:
+#endif
 #if ENABLE(WEBXR_HANDS)
     case PlatformXR::SessionFeature::HandTracking:
 #endif
@@ -739,6 +742,12 @@ Vector<PlatformXR::Device::ViewData> WebXRSystem::DummyInlineDevice::views(XRSes
     return { { .active = true, .eye = PlatformXR::Eye::None } };
 }
 
+#if ENABLE(WEBXR_ANCHORS)
+void WebXRSystem::DummyInlineDevice::createAnchor(const PlatformXR::Pose&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&& completionHandler)
+{
+    completionHandler(Exception { ExceptionCode::NotSupportedError });
+}
+#endif
 
 } // namespace WebCore
 

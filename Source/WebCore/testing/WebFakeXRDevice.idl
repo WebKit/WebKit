@@ -74,4 +74,8 @@
   // Like setWorld() but planes at the same region index keep their identity, so they are updated in place instead of replaced.
   [EnabledBySetting=WebXRPlaneDetectionModuleEnabled, Conditional=WEBXR_PLANE_DETECTION] undefined updateWorld(FakeXRWorldInit world);
   [EnabledBySetting=WebXRPlaneDetectionModuleEnabled, Conditional=WEBXR_PLANE_DETECTION] undefined simulateIncompletePlaneDetectionData();
+
+  // Anchors extensions:
+  // The callback is invoked for every anchor creation request and its promise tells whether the creation succeeds. It gets a controller to change the state of the created anchor.
+  [EnabledBySetting=WebXRAnchorsModuleEnabled, Conditional=WEBXR_ANCHORS] undefined setAnchorCreationCallback(FakeXRAnchorCreationCallback? callback);
 };

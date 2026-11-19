@@ -21,8 +21,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     simd_quatf simdOrientation() const { return simd_quaternion(m_simdTransform); }
     WEBCORE_EXPORT WebCore::FloatPoint3D position() const;
-    WEBCORE_EXPORT PlatformXR::FrameData::FloatQuaternion orientation() const;
-    WEBCORE_EXPORT PlatformXR::FrameData::Pose pose() const;
+    WEBCORE_EXPORT PlatformXR::FloatQuaternion orientation() const;
+    WEBCORE_EXPORT PlatformXR::Pose pose() const;
 
     using FloatMatrix4 = std::array<float, 16>;
     WEBCORE_EXPORT FloatMatrix4 toColumnMajorFloatArray() const;

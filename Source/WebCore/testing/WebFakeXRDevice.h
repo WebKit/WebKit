@@ -38,6 +38,9 @@
 #include "PlatformXR.h"
 #include "Timer.h"
 #include "WebFakeXRInputController.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "WebFakeXRAnchorController.h"
+#endif
 #include "XRVisibilityState.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -47,13 +50,17 @@ namespace WebCore {
 
 struct XRCanvasConfiguration;
 
+#if ENABLE(WEBXR_ANCHORS)
+class FakeXRAnchorCreationCallback;
+#endif
+
 class GraphicsContextGL;
 template<typename> class ExceptionOr;
 
 class FakeXRView final : public RefCounted<FakeXRView> {
 public:
     static Ref<FakeXRView> create(XREye eye) { return adoptRef(*new FakeXRView(eye)); }
-    using Pose = PlatformXR::FrameData::Pose;
+    using Pose = PlatformXR::Pose;
     using Fov = PlatformXR::FrameData::Fov;
 
     XREye eye() const { return m_eye; }
@@ -84,8 +91,8 @@ public:
     virtual ~SimulatedXRDevice();
     void setViews(Vector<PlatformXR::FrameData::View>&&);
     void setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&);
-    void setViewerOrigin(const std::optional<PlatformXR::FrameData::Pose>&);
-    void setFloorOrigin(std::optional<PlatformXR::FrameData::Pose>&& origin) { m_frameData.floorTransform = WTF::move(origin); }
+    void setViewerOrigin(const std::optional<PlatformXR::Pose>&);
+    void setFloorOrigin(std::optional<PlatformXR::Pose>&& origin) { m_frameData.floorTransform = WTF::move(origin); }
     void setEmulatedPosition(bool emulated) { m_frameData.isPositionEmulated = emulated; }
     void setSupportsShutdownNotification(bool supportsShutdownNotification) { m_supportsShutdownNotification = supportsShutdownNotification; }
     void setVisibilityState(XRVisibilityState);
@@ -99,6 +106,9 @@ public:
 #if ENABLE(WEBXR_PLANE_DETECTION)
     void updateWorld(const FakeXRWorldInit&);
     void simulateIncompletePlaneDetectionData() { m_simulateIncompletePlaneData = true; }
+#endif
+#if ENABLE(WEBXR_ANCHORS)
+    void setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&&);
 #endif
 
 private:
@@ -115,6 +125,10 @@ private:
     std::optional<PlatformXR::LayerInfo> createCompositionLayer(PlatformXR::CompositionLayerType, IntSize, PlatformXR::LayerLayout, PlatformXR::LayerUpdateMode) final;
 #endif
     void deleteLayer(PlatformXR::LayerHandle) final;
+#if ENABLE(WEBXR_ANCHORS)
+    void createAnchor(const PlatformXR::Pose&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&&) final;
+    void deleteAnchor(PlatformXR::AnchorIdentifier) final;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     void requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&&) final;
     void deleteHitTestSource(PlatformXR::HitTestSource) final;
@@ -139,6 +153,10 @@ private:
 #if ENABLE(WEBXR_HIT_TEST)
     HashMap<PlatformXR::HitTestSource, UniqueRef<PlatformXR::HitTestOptions>> m_hitTestSources;
     HashMap<PlatformXR::TransientInputHitTestSource, UniqueRef<PlatformXR::TransientInputHitTestOptions>> m_transientInputHitTestSources;
+#endif
+#if ENABLE(WEBXR_ANCHORS)
+    RefPtr<FakeXRAnchorCreationCallback> m_anchorCreationCallback;
+    HashMap<PlatformXR::AnchorIdentifier, Ref<WebFakeXRAnchorController>> m_anchors;
 #endif
 #if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
     FakeXRWorldInit m_world;
@@ -176,8 +194,11 @@ public:
     void updateWorld(const FakeXRWorldInit& world) { m_device->updateWorld(world); }
     void simulateIncompletePlaneDetectionData() { m_device->simulateIncompletePlaneDetectionData(); }
 #endif
+#if ENABLE(WEBXR_ANCHORS)
+    void setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&&);
+#endif
 
-    static ExceptionOr<PlatformXR::FrameData::Pose> parseRigidTransform(const FakeXRRigidTransformInit&);
+    static ExceptionOr<PlatformXR::Pose> parseRigidTransform(const FakeXRRigidTransformInit&);
 
 private:
     WebFakeXRDevice();

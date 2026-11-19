@@ -31,9 +31,15 @@
 #if ENABLE(WEBXR)
 
 #include "DOMPointReadOnly.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "FakeXRAnchorCreationCallback.h"
+#include "FakeXRAnchorCreationParameters.h"
+#endif
+#include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WebFakeXRInputController.h"
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -88,7 +94,7 @@ void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&
         m_frameData.stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
 }
 
-void SimulatedXRDevice::setViewerOrigin(const std::optional<PlatformXR::FrameData::Pose>& origin)
+void SimulatedXRDevice::setViewerOrigin(const std::optional<PlatformXR::Pose>& origin)
 {
     if (origin) {
         m_frameData.origin = *origin;
@@ -97,7 +103,7 @@ void SimulatedXRDevice::setViewerOrigin(const std::optional<PlatformXR::FrameDat
         return;
     }
 
-    m_frameData.origin = PlatformXR::FrameData::Pose();
+    m_frameData.origin = PlatformXR::Pose();
     m_frameData.isPositionValid = false;
     m_frameData.isTrackingValid = false;
 }
@@ -153,14 +159,14 @@ void SimulatedXRDevice::stopTimer()
 }
 
 #if ENABLE(WEBXR_HIT_TEST)
-static PlatformXR::FrameData::Pose rigidTransformToPose(TransformationMatrix matrix)
+static PlatformXR::Pose rigidTransformToPose(TransformationMatrix matrix)
 {
     TransformationMatrix::Decomposed4Type decomposed;
     if (!matrix.decompose4(decomposed))
         return { { }, { } };
 
     FloatPoint3D position(decomposed.translateX, decomposed.translateY, decomposed.translateZ);
-    PlatformXR::FrameData::FloatQuaternion orientation(decomposed.quaternion.x, decomposed.quaternion.y, decomposed.quaternion.z, decomposed.quaternion.w);
+    PlatformXR::FloatQuaternion orientation(decomposed.quaternion.x, decomposed.quaternion.y, decomposed.quaternion.z, decomposed.quaternion.w);
     return { position, orientation };
 };
 #endif
@@ -194,7 +200,7 @@ void SimulatedXRDevice::frameTimerFired()
     }
 
 #if ENABLE(WEBXR_HIT_TEST)
-    auto transformFromPose = [](const PlatformXR::FrameData::Pose& pose) {
+    auto transformFromPose = [](const PlatformXR::Pose& pose) {
         TransformationMatrix translation;
         translation.translate3d(pose.position.x(), pose.position.y(), pose.position.z());
         auto rotation = TransformationMatrix::fromQuaternion({ pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w });
@@ -206,21 +212,21 @@ void SimulatedXRDevice::frameTimerFired()
         float z = m.m13() * p.x() + m.m23() * p.y() + m.m33() * p.z() + m.m43() * w;
         return FloatPoint3D { x, y, z };
     };
-    auto transformRay = [&](const PlatformXR::FrameData::Pose& origin, const PlatformXR::Ray& ray) {
+    auto transformRay = [&](const PlatformXR::Pose& origin, const PlatformXR::Ray& ray) {
         auto transform = transformFromPose(origin);
         return PlatformXR::Ray {
             .origin = mapPoint(transform, ray.origin, 1),
             .direction = mapPoint(transform, ray.direction, 0)
         };
     };
-    auto matrixFromPose = [](const PlatformXR::FrameData::Pose& pose) -> TransformationMatrix {
+    auto matrixFromPose = [](const PlatformXR::Pose& pose) -> TransformationMatrix {
         TransformationMatrix matrix;
         matrix.translate3d(pose.position.x(), pose.position.y(), pose.position.z());
         matrix.multiply(TransformationMatrix::fromQuaternion({ pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w }));
         return matrix;
     };
 
-    auto hitTestWorldToOrigin = [&matrixFromPose](const PlatformXR::FrameData::Pose& origin, Vector<PlatformXR::FrameData::HitTestResult> hitTestInWorld) -> Vector<PlatformXR::FrameData::HitTestResult> {
+    auto hitTestWorldToOrigin = [&matrixFromPose](const PlatformXR::Pose& origin, Vector<PlatformXR::FrameData::HitTestResult> hitTestInWorld) -> Vector<PlatformXR::FrameData::HitTestResult> {
         auto originTransform = matrixFromPose(origin);
         if (!originTransform.isInvertible())
             return { };
@@ -235,18 +241,18 @@ void SimulatedXRDevice::frameTimerFired()
     };
 
     auto computeOrigin = [&data](PlatformXR::NativeOriginInformation nativeOrigin) {
-        return WTF::switchOn(nativeOrigin, [&](const PlatformXR::ReferenceSpaceType& referenceSpaceType) -> std::optional<PlatformXR::FrameData::Pose> {
+        return WTF::switchOn(nativeOrigin, [&](const PlatformXR::ReferenceSpaceType& referenceSpaceType) -> std::optional<PlatformXR::Pose> {
             switch (referenceSpaceType) {
             case PlatformXR::ReferenceSpaceType::Viewer:
                 return data.origin;
             case PlatformXR::ReferenceSpaceType::Local:
-                return PlatformXR::FrameData::Pose();
+                return PlatformXR::Pose();
             case PlatformXR::ReferenceSpaceType::LocalFloor:
                 return data.floorTransform;
             default:
                 return std::nullopt;
             }
-        }, [&](const PlatformXR::InputSourceSpaceInfo& inputSource) -> std::optional<PlatformXR::FrameData::Pose> {
+        }, [&](const PlatformXR::InputSourceSpaceInfo& inputSource) -> std::optional<PlatformXR::Pose> {
             auto i = data.inputSources.findIf([&](auto& item) { return item.handle == inputSource.handle; });
             if (i == notFound)
                 return std::nullopt;
@@ -271,7 +277,7 @@ void SimulatedXRDevice::frameTimerFired()
     for (const auto& pair : m_transientInputHitTestSources) {
         Vector<PlatformXR::FrameData::TransientInputHitTestResult> results;
         for (const auto& source : data.inputSources) {
-            std::optional<PlatformXR::FrameData::Pose> origin;
+            std::optional<PlatformXR::Pose> origin;
             auto i = data.inputSources.findIf([&](auto& item) {
                 return item.handle == source.handle;
             });
@@ -288,6 +294,11 @@ void SimulatedXRDevice::frameTimerFired()
         }
         data.transientInputHitTestResults.add(pair.key, WTF::move(results));
     }
+#endif
+
+#if ENABLE(WEBXR_ANCHORS)
+    for (auto& [identifier, controller] : m_anchors)
+        data.trackedAnchors.add(identifier, controller->anchorState());
 #endif
 
 #if ENABLE(WEBXR_PLANE_DETECTION)
@@ -343,6 +354,46 @@ void SimulatedXRDevice::deleteLayer(PlatformXR::LayerHandle handle)
     }
 }
 
+#if ENABLE(WEBXR_ANCHORS)
+void SimulatedXRDevice::setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&& callback)
+{
+    m_anchorCreationCallback = WTF::move(callback);
+}
+
+void SimulatedXRDevice::createAnchor(const PlatformXR::Pose& pose, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&& completionHandler)
+{
+    if (!m_anchorCreationCallback) {
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::OperationError });
+        return;
+    }
+
+    FakeXRRigidTransformInit requestedAnchorOrigin { { pose.position.x(), pose.position.y(), pose.position.z() }, { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w } };
+    FakeXRAnchorCreationParameters parameters { WTF::move(requestedAnchorOrigin), false };
+    auto controller = WebFakeXRAnchorController::create(pose);
+    auto result = m_anchorCreationCallback->invoke(parameters, controller.get());
+    if (result.type() != CallbackResultType::Success) {
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::OperationError });
+        return;
+    }
+
+    result.releaseReturnValue()->whenSettledWithResult([protectedThis = Ref { *this }, controller = WTF::move(controller), completionHandler = WTF::move(completionHandler)](JSDOMGlobalObject* globalObject, bool isFulfilled, JSC::JSValue value) mutable {
+        if (!isFulfilled || !value.toBoolean(globalObject)) {
+            completionHandler(WebCore::Exception { WebCore::ExceptionCode::OperationError });
+            return;
+        }
+        auto identifier = PlatformXR::AnchorIdentifier::generate();
+        protectedThis->m_anchors.add(identifier, WTF::move(controller));
+        completionHandler(WTF::move(identifier));
+    });
+}
+
+void SimulatedXRDevice::deleteAnchor(PlatformXR::AnchorIdentifier identifier)
+{
+    if (auto controller = m_anchors.take(identifier))
+        controller->markAsDeleted();
+}
+#endif
+
 #if ENABLE(WEBXR_HIT_TEST)
 void SimulatedXRDevice::requestHitTestSource(const PlatformXR::HitTestOptions& options, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&& completionHandler)
 {
@@ -377,7 +428,7 @@ Vector<PlatformXR::FrameData::HitTestResult> SimulatedXRDevice::hitTestWorld(con
 {
     struct HitTestResult {
         double distance;
-        PlatformXR::FrameData::Pose pose;
+        PlatformXR::Pose pose;
     };
     Vector<HitTestResult> resultsForRegions;
     for (const auto& region : m_world.hitTestRegions) {
@@ -693,12 +744,12 @@ Ref<WebFakeXRInputController> WebFakeXRDevice::simulateInputSourceConnection(con
     return input;
 }
 
-ExceptionOr<PlatformXR::FrameData::Pose> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)
+ExceptionOr<PlatformXR::Pose> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)
 {
     if (init.position.size() != 3 || init.orientation.size() != 4)
         return Exception { ExceptionCode::TypeError };
 
-    PlatformXR::FrameData::Pose pose;
+    PlatformXR::Pose pose;
     pose.position = { init.position[0], init.position[1], init.position[2] };
     pose.orientation = { init.orientation[0], init.orientation[1], init.orientation[2], init.orientation[3] };
 
@@ -737,6 +788,13 @@ void WebFakeXRDevice::simulateShutdown()
 {
     m_device->simulateShutdownCompleted();
 }
+
+#if ENABLE(WEBXR_ANCHORS)
+void WebFakeXRDevice::setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&& callback)
+{
+    m_device->setAnchorCreationCallback(WTF::move(callback));
+}
+#endif
 
 #if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
 void WebFakeXRDevice::setWorld(const FakeXRWorldInit& world)

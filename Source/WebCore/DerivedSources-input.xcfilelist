@@ -2201,6 +2201,8 @@ $(PROJECT_DIR)/svg/SVGZoomAndPan.idl
 $(PROJECT_DIR)/svg/svgattrs.in
 $(PROJECT_DIR)/svg/svgtags.in
 $(PROJECT_DIR)/svg/xlinkattrs.in
+$(PROJECT_DIR)/testing/FakeXRAnchorCreationCallback.idl
+$(PROJECT_DIR)/testing/FakeXRAnchorCreationParameters.idl
 $(PROJECT_DIR)/testing/FakeXRBoundsPoint.idl
 $(PROJECT_DIR)/testing/FakeXRButtonStateInit.idl
 $(PROJECT_DIR)/testing/FakeXRInputSourceInit.idl
@@ -2233,6 +2235,7 @@ $(PROJECT_DIR)/testing/RequestedGPU.idl
 $(PROJECT_DIR)/testing/ServiceWorkerInternals.idl
 $(PROJECT_DIR)/testing/SimulatedWebGLContextEvent.idl
 $(PROJECT_DIR)/testing/TypeConversions.idl
+$(PROJECT_DIR)/testing/WebFakeXRAnchorController.idl
 $(PROJECT_DIR)/testing/WebFakeXRDevice.idl
 $(PROJECT_DIR)/testing/WebFakeXRInputController.idl
 $(PROJECT_DIR)/testing/WebXRTest.idl

@@ -112,7 +112,7 @@ protected:
     // Composition layers fill in their specific data in their overrides.
     virtual void fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer&) const { }
 
-    const PlatformXR::FrameData::Pose& poseInLocalSpace() const { return m_poseInLocalSpace; }
+    const PlatformXR::Pose& poseInLocalSpace() const { return m_poseInLocalSpace; }
 
     const Ref<XRLayerBacking> m_backing;
     const WebXRLayerInit m_init;
@@ -138,7 +138,7 @@ private:
 
     RefPtr<WebXRSpace> m_space;
     RefPtr<WebXRRigidTransform> m_transform;
-    PlatformXR::FrameData::Pose m_poseInLocalSpace;
+    PlatformXR::Pose m_poseInLocalSpace;
 };
 
 } // namespace WebCore

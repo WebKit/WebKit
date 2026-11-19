@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR_HIT_TEST)
 
 #include "ExceptionOr.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "PlatformXR.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -42,6 +43,9 @@ class Document;
 class WebXRFrame;
 class WebXRPose;
 class WebXRSpace;
+#if ENABLE(WEBXR_ANCHORS)
+class WebXRAnchor;
+#endif
 
 class WebXRHitTestResult : public RefCounted<WebXRHitTestResult> {
     WTF_MAKE_TZONE_ALLOCATED(WebXRHitTestResult);
@@ -49,6 +53,10 @@ public:
     static Ref<WebXRHitTestResult> create(WebXRFrame&, WebXRSpace&, const PlatformXR::FrameData::HitTestResult&);
     ~WebXRHitTestResult();
     ExceptionOr<RefPtr<WebXRPose>> getPose(Document&, const WebXRSpace& baseSpace);
+#if ENABLE(WEBXR_ANCHORS)
+    using CreateAnchorPromise = DOMPromiseDeferred<IDLInterface<WebXRAnchor>>;
+    ExceptionOr<void> createAnchor(Document&, CreateAnchorPromise&&);
+#endif
 
 private:
     WebXRHitTestResult(WebXRFrame&, WebXRSpace&, const PlatformXR::FrameData::HitTestResult&);
