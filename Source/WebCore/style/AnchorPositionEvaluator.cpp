@@ -1310,7 +1310,7 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
                     });
                 }
 
-                anchorPositionedToAnchorMap.set(*anchorPositioned, AnchorPositionedToAnchorEntry {
+                anchorPositionedToAnchorMap.set(renderer, AnchorPositionedToAnchorEntry {
                     .anchors = WTF::move(anchors)
                 });
             }
@@ -1354,7 +1354,7 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
         if (!anchorPositionedRenderer)
             continue;
 
-        auto it = anchorPositionedToAnchorMap.find(*anchorPositioned);
+        auto it = anchorPositionedToAnchorMap.find(*anchorPositionedRenderer);
         if (it == anchorPositionedToAnchorMap.end())
             continue;
         auto& anchorPositionedToAnchorEntry = it->value;
@@ -1425,8 +1425,8 @@ auto AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(AnchorPositionedT
 {
     AnchorToAnchorPositionedMap map;
 
-    for (auto& [weakStyleable, anchors] : toAnchorMap) {
-        auto styleable = weakStyleable.styleable();
+    for (auto [anchorPositionedRenderer, anchors] : toAnchorMap) {
+        auto styleable = Styleable::fromRenderer(protect(anchorPositionedRenderer));
         if (!styleable)
             continue;
 
@@ -1774,7 +1774,7 @@ CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::defaultAnchorForBox(co
         return nullptr;
 
     auto& anchorPositionedMap = box.document().styleScope().anchorPositionedToAnchorMap();
-    auto it = anchorPositionedMap.find(*styleable);
+    auto it = anchorPositionedMap.find(box);
     if (it == anchorPositionedMap.end())
         return nullptr;
     auto& anchors = it->value;
