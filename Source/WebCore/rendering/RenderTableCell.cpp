@@ -143,9 +143,7 @@ unsigned RenderTableCell::calculateRowSpanForRowSpanZero() const
     // Handle rowspan="0" which means "span all remaining rows in the row group"
     // Per HTML spec: https://html.spec.whatwg.org/multipage/tables.html#attr-tdth-rowspan
     if (CheckedPtr renderSection = this->section()) {
-        unsigned totalRows = 0;
-        for (CheckedPtr<RenderTableRow> row = renderSection->firstRow(); row; row = row->nextRow())
-            ++totalRows;
+        unsigned totalRows = renderSection->rowCount();
         unsigned currentRow = this->rowIndex();
         if (currentRow < totalRows)
             return totalRows - currentRow;

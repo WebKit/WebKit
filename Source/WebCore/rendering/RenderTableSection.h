@@ -124,6 +124,9 @@ public:
     inline LayoutUnit outerBorderBottom(const WritingMode) const;
 
     unsigned numRows() const;
+    // Number of rows inserted in this section. numRows() is the grid height, which
+    // is larger when a rowspan runs past the last row. Used to resolve rowspan="0".
+    unsigned rowCount() const;
     NODELETE unsigned numColumns() const;
     void recalcCells();
     void recalcCellsIfNeeded();
@@ -281,6 +284,12 @@ inline unsigned RenderTableSection::numRows() const
 {
     ASSERT(!m_needsCellRecalc);
     return m_grid.size();
+}
+
+inline unsigned RenderTableSection::rowCount() const
+{
+    ASSERT(!m_needsCellRecalc);
+    return m_cRow;
 }
 
 inline void RenderTableSection::recalcCellsIfNeeded()
