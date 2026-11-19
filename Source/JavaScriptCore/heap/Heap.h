@@ -954,7 +954,16 @@ private:
     size_t m_externalMemorySize { 0 };
 #endif
     
-    static constexpr unsigned mutatorHasConnBit = 1u << 0u; // Must also be protected by threadLock.
+    // Rules for mutatorHasConnBit, which says this heap's mutator has the conn: it conducts the Collector's phases at its
+    // own polls, instead of the collector thread.
+    // - A mutator takes the conn only while holding the Collector's m_threadLock, and only if no request is outstanding
+    //   and the collector thread is not working, so that the two never both start serving a request.
+    // - The collector thread hands the conn to a mutator without the lock. It does so while serving a request, and
+    //   therefore, by the first rule, no mutator can be taking the conn at the same time.
+    // - The collector thread checks this bit and starts sleeping without releasing the lock in between, so that the
+    //   wake-up in the next rule comes either before its check or after it is asleep, never in between.
+    // - A mutator gives the conn back without the lock, and only then wakes the collector thread under the lock.
+    static constexpr unsigned mutatorHasConnBit = 1u << 0u;
     static constexpr unsigned stoppedBit = 1u << 1u; // Only set when !hasAccessBit
     static constexpr unsigned hasAccessBit = 1u << 2u;
     static constexpr unsigned needCollectionEpilogueBit = 1u << 3u;

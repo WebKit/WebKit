@@ -1638,7 +1638,6 @@ void Heap::finishRelinquishingConn()
     sanitizeStackForVM(vm());
 
     m_collector->didRelinquishConn();
-    ParkingLot::unparkAll(&m_worldState);
 }
 
 void Heap::relinquishConn()
@@ -1658,8 +1657,7 @@ NEVER_INLINE bool Heap::handleNeedCollectionEpilogue(unsigned oldState)
         return false;
     if (m_worldState.compareExchangeWeak(oldState, oldState & ~needCollectionEpilogueBit)) {
         runCollectionEpilogue();
-        // Wake up anyone waiting for us to run the epilogue. Note that they may have woken up already, in
-        // which case they would be waiting for us to release heap access.
+        // Wake the collector thread if it is waiting for the epilogue to run.
         ParkingLot::unparkAll(&m_worldState);
         return true;
     }
@@ -1677,7 +1675,6 @@ void Heap::setNeedCollectionEpilogue()
     // Only End sets this, once per collection, while the mutator is stopped or conducting.
     RELEASE_ASSERT(!(oldState & needCollectionEpilogueBit), oldState);
     RELEASE_ASSERT((oldState & stoppedBit) || (oldState & mutatorHasConnBit), oldState);
-    ParkingLot::unparkAll(&m_worldState);
     m_stopIfNecessaryTimer->scheduleSoon();
 }
 
