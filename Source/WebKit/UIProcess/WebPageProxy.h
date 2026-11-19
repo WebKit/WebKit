@@ -828,6 +828,12 @@ using WebPageProxyIdentifier = ObjectIdentifier<WebPageProxyIdentifierType>;
 using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandlerIdentifierType>;
 using WebUndoStepID = ObjectIdentifier<WebUndoStepIDType>;
 
+template<typename> struct ReplyWithConnectionType;
+template<typename... Arguments> struct ReplyWithConnectionType<CompletionHandler<void(Arguments...)>> {
+    using Type = CompletionHandler<void(IPC::Connection*, Arguments...)>;
+};
+template<typename Message> using ReplyWithConnection = typename ReplyWithConnectionType<typename Message::Reply>::Type;
+
 class WebPageProxy final : public API::ObjectImpl<API::Object::Type::Page>, public IPC::MessageReceiver {
 public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

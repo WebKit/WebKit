@@ -143,6 +143,7 @@
 // UIWKGestureType stands in for WKBEGestureType, which is BEGestureType with BrowserEngineKit and
 // UIWKGestureType without; both are NSInteger-backed, and these handlers ignore the value.
 @interface UIView (SiteIsolationPointBasedSelection)
+- (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state;
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState;
 - (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler;
 @end
@@ -4842,31 +4843,36 @@ static RetainPtr<NSString> ipcFrameIdentifier(TestWKWebView *webView, WKFrameInf
     return [webView stringByEvaluatingJavaScript:@"IPC.frameID[0].toString()" inFrame:frame];
 }
 
-// Counts the position information requests the frame's process receives. If a target frame is given, answers each one
-// as if the point were over that frame, hosted by another process.
-static void countPositionInformationRequests(TestWKWebView *webView, NSString *forgedTargetFrameID = nil)
+// Counts the requests with the given message name that the frame's process receives. If a target frame is given, answers
+// each one as if the point were over that frame, hosted by another process. The reply arguments are a JavaScript array
+// expression in which `remote` stands for the encoded RemoteUserInputEventData.
+static void countRequestsAndForgeRedispatch(TestWKWebView *webView, NSString *messageName, NSString *forgedTargetFrameID = nil, NSString *replyArguments = nil)
 {
-    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.positionInformationRequestCount = 0;"
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.requestCounts = window.requestCounts ?? { };"
+        "window.requestCounts['%1$@'] = 0;"
         "IPC.addIncomingMessageListener('UI', message => {"
-        "    if (message.name !== IPC.messages.WebPage_RequestPositionInformation.name)"
+        "    if (message.name !== IPC.messages['%1$@'].name)"
         "        return;"
-        "    ++window.positionInformationRequestCount;"
-        "    const target = '%@';"
+        "    ++window.requestCounts['%1$@'];"
+        "    const target = '%2$@';"
         "    if (!target || message.listenerID === undefined)"
         "        return;"
-        "    IPC.sendMessage('UI', message.listenerID, IPC.messages.WebPage_RequestPositionInformationReply.name, ["
-        "        { type: 'uint8_t', value: 1 },"
+        "    const remote = ["
         "        { type: 'FrameID', value: [BigInt(target)] },"
         "        { type: 'double', value: 10 },"
         "        { type: 'double', value: 10 },"
-        "    ]);"
-        "}); true", forgedTargetFrameID ?: @""]];
+        "    ];"
+        "    IPC.sendMessage('UI', message.listenerID, IPC.messages['%1$@Reply'].name, %3$@);"
+        "}); true", messageName, forgedTargetFrameID ?: @"", replyArguments ?: @"[]"]];
 }
 
-static int positionInformationRequestCount(TestWKWebView *webView)
+static int redispatchRequestCount(TestWKWebView *webView, NSString *messageName)
 {
-    return [[webView objectByEvaluatingJavaScript:@"window.positionInformationRequestCount"] intValue];
+    return [[webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.requestCounts['%@']", messageName]] intValue];
 }
+
+static NSString * const positionInformationRequest = @"WebPage_RequestPositionInformation";
+static NSString * const positionInformationRedispatchReply = @"[{ type: 'uint8_t', value: 1 }, ...remote]";
 
 static RetainPtr<NSString> takeInvalidMessageStringForTesting(TestWKWebView *webView)
 {
@@ -4888,14 +4894,14 @@ TEST(SiteIsolation, PositionInformationRedispatchToTheSourceFrameIsRejected)
     [navigationDelegate waitForDidFinishNavigation];
 
     // Following this reply would send the same request back to the same process, forever.
-    countPositionInformationRequests(webView.get(), ipcFrameIdentifier(webView.get()).get());
+    countRequestsAndForgeRedispatch(webView.get(), positionInformationRequest, ipcFrameIdentifier(webView.get()).get(), positionInformationRedispatchReply);
     [webView _requestActivatedElementAtPosition:CGPointMake(10, 10) completionBlock:^(_WKActivatedElementInfo *) { }];
 
     EXPECT_TRUE(Util::waitFor([&] {
-        return positionInformationRequestCount(webView.get()) >= 1;
+        return redispatchRequestCount(webView.get(), positionInformationRequest) >= 1;
     }));
     Util::runFor(0.5_s);
-    EXPECT_EQ(1, positionInformationRequestCount(webView.get()));
+    EXPECT_EQ(1, redispatchRequestCount(webView.get(), positionInformationRequest));
     EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
 }
 
@@ -4917,16 +4923,88 @@ TEST(SiteIsolation, PositionInformationRedispatchToFrameInAnotherPageIsRejected)
     [otherNavigationDelegate waitForDidFinishNavigation];
     EXPECT_NE([webView _webProcessIdentifier], [otherWebView _webProcessIdentifier]);
 
-    countPositionInformationRequests(otherWebView.get());
-    countPositionInformationRequests(webView.get(), ipcFrameIdentifier(otherWebView.get()).get());
+    countRequestsAndForgeRedispatch(otherWebView.get(), positionInformationRequest);
+    countRequestsAndForgeRedispatch(webView.get(), positionInformationRequest, ipcFrameIdentifier(otherWebView.get()).get(), positionInformationRedispatchReply);
     [webView _requestActivatedElementAtPosition:CGPointMake(10, 10) completionBlock:^(_WKActivatedElementInfo *) { }];
 
     EXPECT_TRUE(Util::waitFor([&] {
-        return positionInformationRequestCount(webView.get()) >= 1;
+        return redispatchRequestCount(webView.get(), positionInformationRequest) >= 1;
     }));
     Util::runFor(0.5_s);
-    EXPECT_EQ(0, positionInformationRequestCount(otherWebView.get()));
+    EXPECT_EQ(0, redispatchRequestCount(otherWebView.get(), positionInformationRequest));
     EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
+}
+
+using SendSelectionGestureRequest = void (^)(TestWKWebView *);
+
+// Each selection gesture request below is answered with the frame it was sent to. Following that reply would send the
+// same request back to the same process, forever.
+static void expectRedispatchToTheSourceFrameIsRejected(NSString *messageName, NSString *replyArguments, SendSelectionGestureRequest sendRequest)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(ipcTestingConfiguration(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    countRequestsAndForgeRedispatch(webView.get(), messageName, ipcFrameIdentifier(webView.get()).get(), replyArguments);
+    sendRequest(webView.get());
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return redispatchRequestCount(webView.get(), messageName) >= 1;
+    }));
+    Util::runFor(0.5_s);
+    EXPECT_EQ(1, redispatchRequestCount(webView.get(), messageName));
+    EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
+}
+
+// IntPoint, GestureType, GestureRecognizerState and OptionSet<SelectionFlags>, then std::optional<RemoteUserInputEventData>.
+static NSString * const gestureSelectionRedispatchReply = @"[{ type: 'int32_t', value: 0 }, { type: 'int32_t', value: 0 }, { type: 'uint8_t', value: 0 }, { type: 'uint8_t', value: 0 }, { type: 'uint8_t', value: 0 }, { type: 'bool', value: 1 }, ...remote]";
+static NSString * const optionalRedispatchReply = @"[{ type: 'bool', value: 1 }, ...remote]";
+
+TEST(SiteIsolation, SelectWithGestureRedispatchToTheSourceFrameIsRejected)
+{
+    expectRedispatchToTheSourceFrameIsRejected(@"WebPage_SelectWithGesture", gestureSelectionRedispatchReply, ^(TestWKWebView *webView) {
+        [[webView textInputContentView] changeSelectionWithGestureAt:CGPointMake(10, 10) withGesture:UIWKGestureLoupe withState:UIGestureRecognizerStateBegan];
+    });
+}
+
+TEST(SiteIsolation, SelectPositionAtPointRedispatchToTheSourceFrameIsRejected)
+{
+    expectRedispatchToTheSourceFrameIsRejected(@"WebPage_SelectPositionAtPoint", optionalRedispatchReply, ^(TestWKWebView *webView) {
+        [[webView textInputContentView] selectPositionAtPoint:CGPointMake(10, 10) completionHandler:^{ }];
+    });
+}
+
+TEST(SiteIsolation, SelectTextWithGranularityAtPointRedispatchToTheSourceFrameIsRejected)
+{
+    expectRedispatchToTheSourceFrameIsRejected(@"WebPage_SelectTextWithGranularityAtPoint", @"[{ type: 'bool', value: 1 }, ...remote, { type: 'bool', value: 0 }]", ^(TestWKWebView *webView) {
+        [[webView textInputContentView] selectTextWithGranularity:UITextGranularityWord atPoint:CGPointMake(10, 10) completionHandler:^{ }];
+    });
+}
+
+TEST(SiteIsolation, SelectPositionAtBoundaryWithDirectionRedispatchToTheSourceFrameIsRejected)
+{
+    expectRedispatchToTheSourceFrameIsRejected(@"WebPage_SelectPositionAtBoundaryWithDirection", optionalRedispatchReply, ^(TestWKWebView *webView) {
+        [[webView textInputContentView] selectPositionAtBoundary:UITextGranularityWord inDirection:UITextStorageDirectionForward fromPoint:CGPointMake(10, 10) completionHandler:^{ }];
+    });
+}
+
+TEST(SiteIsolation, PrepareSelectionForContextMenuRedispatchToTheSourceFrameIsRejected)
+{
+    expectRedispatchToTheSourceFrameIsRejected(@"WebPage_PrepareSelectionForContextMenuWithLocationInView", @"[{ type: 'uint8_t', value: 1 }, ...remote]", ^(TestWKWebView *webView) {
+        [webView selectTextForContextMenuWithLocationInView:CGPointMake(10, 10) completion:^(BOOL) { }];
+    });
+}
+
+TEST(SiteIsolation, SelectWithTwoTouchesRedispatchToTheSourceFrameIsRejected)
+{
+    expectRedispatchToTheSourceFrameIsRejected(@"WebPage_SelectWithTwoTouches", gestureSelectionRedispatchReply, ^(TestWKWebView *webView) {
+        [[webView textInputContentView] changeSelectionWithTouchesFrom:CGPointMake(10, 10) to:CGPointMake(20, 10) withGesture:UIWKGestureLoupe withState:UIGestureRecognizerStateEnded];
+    });
 }
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
