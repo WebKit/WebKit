@@ -890,6 +890,11 @@ static std::optional<uint64_t> protocolRealmProcessIdentifier(const String& real
 
 static std::optional<pid_t> webProcessPIDForProtocolIdentifier(uint64_t processIdentifier)
 {
+#if PLATFORM(WPE)
+    constexpr auto webProcessName = "WPEWebProcess"_s;
+#else
+    constexpr auto webProcessName = "WebKitWebProces"_s;
+#endif
     auto expectedIdentifier = String::number(processIdentifier);
     std::optional<pid_t> matchingProcess;
     GUniquePtr<GDir> directory(g_dir_open("/proc", 0, nullptr));
@@ -910,7 +915,7 @@ static std::optional<pid_t> webProcessPIDForProtocolIdentifier(uint64_t processI
         auto processNameEnd = stat.reverseFind(')');
         if (processNameStart == notFound || processNameEnd == notFound || processNameEnd < processNameStart)
             continue;
-        if (!stat.substring(processNameStart + 1, processNameEnd - processNameStart - 1).startsWith("WebKitWebProces"_s))
+        if (!stat.substring(processNameStart + 1, processNameEnd - processNameStart - 1).startsWith(webProcessName))
             continue;
 
         auto statFields = stat.substring(processNameEnd + 2).split(' ');
@@ -926,7 +931,7 @@ static std::optional<pid_t> webProcessPIDForProtocolIdentifier(uint64_t processI
         if (!g_file_get_contents(commandLinePath.get(), &commandLine.outPtr(), &commandLineLength, nullptr))
             continue;
 
-        // The normal GLib API test launcher starts WebKitWebProcess directly and passes the WebCore process identifier
+        // The normal GLib API test launcher starts the web process directly and passes the WebCore process identifier
         // as its first argument. WEB_PROCESS_CMD_PREFIX or a debugging wrapper changes this layout and is unsupported here.
         auto executableLength = strnlen(commandLine.get(), commandLineLength);
         if (executableLength >= commandLineLength)
