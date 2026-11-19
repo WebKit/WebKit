@@ -852,16 +852,30 @@ const Style::ComputedStyle* TreeResolver::parentBoxStyleForPseudoElement(const E
     }
 }
 
-static HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>> animatedPropertySources(const Styleable& styleable, const HashSet<AnimatableCSSProperty>& animatedProperties)
+static HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>> animatedPropertySources(const Styleable& styleable, const HashSet<AnimatableCSSProperty>& animatedProperties, WritingMode writingMode)
 {
     HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>> result;
+
+    // Animations and transitions are keyed by physical property, while a declaration may be
+    // direction-aware, so record the logical counterpart too. Otherwise the cascade does not
+    // recognize that such a declaration is the one being animated.
+    auto addProperty = [&](const AnimatableCSSProperty& property, PropertyCascade::AnimationSource source) {
+        result.add(property, EnumSet<PropertyCascade::AnimationSource> { }).iterator->value.add(source);
+
+        auto* propertyID = std::get_if<CSSPropertyID>(&property);
+        if (!propertyID || !CSSProperty::isInLogicalPropertyGroup(*propertyID))
+            return;
+        auto logicalPropertyID = CSSProperty::unresolvePhysicalProperty(*propertyID, writingMode);
+        if (logicalPropertyID == CSSPropertyID::Invalid || logicalPropertyID == *propertyID)
+            return;
+        result.add(logicalPropertyID, EnumSet<PropertyCascade::AnimationSource> { }).iterator->value.add(source);
+    };
+
     for (auto& property : animatedProperties)
-        result.add(property, PropertyCascade::AnimationSource::CSSAnimation);
+        addProperty(property, PropertyCascade::AnimationSource::CSSAnimation);
     if (auto* runningTransitionsByProperty = styleable.runningTransitionsByProperty()) {
-        for (auto& property : runningTransitionsByProperty->keys()) {
-            auto& sources = result.add(property, EnumSet<PropertyCascade::AnimationSource> { }).iterator->value;
-            sources.add(PropertyCascade::AnimationSource::CSSTransition);
-        }
+        for (auto& property : runningTransitionsByProperty->keys())
+            addProperty(property, PropertyCascade::AnimationSource::CSSTransition);
     }
     return result;
 }
@@ -965,7 +979,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         if (resolvedStyle.matchResult) {
             auto animatedStyleBeforeCascadeApplication = Style::ComputedStyle::clonePtr(*animatedStyle);
             // The cascade may override animated properties and have dependencies to them.
-            auto overriddenAnimatedProperties = applyCascadeAfterAnimation(*animatedStyle, animatedPropertySources(styleable, animatedProperties), *resolvedStyle.matchResult, element, resolutionContext);
+            auto overriddenAnimatedProperties = applyCascadeAfterAnimation(*animatedStyle, animatedPropertySources(styleable, animatedProperties, animatedStyle->writingMode()), *resolvedStyle.matchResult, element, resolutionContext);
             ASSERT(styleable.keyframeEffectStack());
             styleable.keyframeEffectStack()->cascadeDidOverrideProperties(overriddenAnimatedProperties, document);
             styleable.setHasPropertiesOverridenAfterAnimation(!overriddenAnimatedProperties.isEmpty());
