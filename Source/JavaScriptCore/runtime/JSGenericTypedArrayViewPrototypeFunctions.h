@@ -63,6 +63,7 @@
 #include "TypedArrayAdaptors.h"
 #include "TypedArrayController.h"
 #include "VMEntryScopeInlines.h"
+#include <wtf/Atomics.h>
 #include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
@@ -363,14 +364,56 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncCopyWithin(VM& vm, JS
     return JSValue::encode(callFrame->thisValue());
 }
 
+#if defined(__GLIBC__) || OS(FREEBSD)
+// For shared memory, indexOf and includes call this function instead of find8, which calls memchr. Another thread can
+// change an element during the search. Returning the index of an element that was equal to the target at some point is
+// fine, even if the element has changed since then. But under concurrent writes, glibc's SSE2 memchr and FreeBSD's
+// amd64 memchr can return an unrelated position, where the element was never equal to the target. This function returns
+// an index only if the value that it reads from that element is equal to the target.
+template<typename ElementType>
+static ALWAYS_INLINE size_t sharedTypedArrayIndexOf(ElementType* array, size_t length, ElementType target, size_t index)
+{
+    for (; index < length; ++index) {
+        if (WTF::atomicLoad<MemoryOrder::Relaxed>(array + index) == target)
+            return index;
+    }
+    return WTF::notFound;
+}
+#endif
+
+#if OS(LINUX) && defined(__GLIBC__)
+// For shared memory, lastIndexOf calls this function instead of reverseFind8. With glibc on Linux, reverseFind8 calls
+// memrchr, and this #if uses the same condition. Another thread can change an element during the search. Returning the
+// index of an element that was equal to the target at some point is fine, even if the element has changed since then.
+// But under concurrent writes, the SSE2 memrchr of glibc 2.35 and earlier can return an unrelated position, where the
+// element was never equal to the target. This function returns an index only if the value that it reads from that
+// element is equal to the target.
+template<typename ElementType>
+static ALWAYS_INLINE size_t sharedTypedArrayLastIndexOf(ElementType* array, size_t searchLength, ElementType target)
+{
+    size_t index = searchLength;
+    while (index--) {
+        if (WTF::atomicLoad<MemoryOrder::Relaxed>(array + index) == target)
+            return index;
+    }
+    return WTF::notFound;
+}
+#endif
+
 template<typename ViewClass>
-static ALWAYS_INLINE size_t typedArrayIndexOfImpl(typename ViewClass::ElementType* array, size_t length, typename ViewClass::ElementType target, size_t index)
+static ALWAYS_INLINE size_t typedArrayIndexOfImpl(ViewClass* thisObject, typename ViewClass::ElementType* array, size_t length, typename ViewClass::ElementType target, size_t index)
 {
     if (index >= length)
         return WTF::notFound;
 
     if constexpr (ViewClass::Adaptor::isInteger) {
         if constexpr (ViewClass::elementSize == 1) {
+#if defined(__GLIBC__) || OS(FREEBSD)
+            if (thisObject->isShared()) [[unlikely]]
+                return sharedTypedArrayIndexOf(array, length, target, index);
+#else
+            UNUSED_PARAM(thisObject);
+#endif
             auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::find8(std::bit_cast<const uint8_t*>(array + index), target, length - index));
             if (result)
                 return result - array;
@@ -427,13 +470,19 @@ static ALWAYS_INLINE size_t typedArrayIndexOfImpl(typename ViewClass::ElementTyp
 }
 
 template<typename ViewClass>
-static ALWAYS_INLINE size_t typedArrayLastIndexOfImpl(typename ViewClass::ElementType* array, size_t searchLength, typename ViewClass::ElementType target)
+static ALWAYS_INLINE size_t typedArrayLastIndexOfImpl(ViewClass* thisObject, typename ViewClass::ElementType* array, size_t searchLength, typename ViewClass::ElementType target)
 {
     if (!searchLength)
         return WTF::notFound;
 
     if constexpr (ViewClass::Adaptor::isInteger) {
         if constexpr (ViewClass::elementSize == 1) {
+#if OS(LINUX) && defined(__GLIBC__)
+            if (thisObject->isShared()) [[unlikely]]
+                return sharedTypedArrayLastIndexOf(array, searchLength, target);
+#else
+            UNUSED_PARAM(thisObject);
+#endif
             auto* result = std::bit_cast<typename ViewClass::ElementType*>(WTF::reverseFind8(std::bit_cast<const uint8_t*>(array), target, searchLength));
             if (result)
                 return result - array;
@@ -550,7 +599,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
         }
     }
 
-    size_t result = typedArrayIndexOfImpl<ViewClass>(array, searchLength, targetOption.value(), index);
+    size_t result = typedArrayIndexOfImpl<ViewClass>(thisObject, array, searchLength, targetOption.value(), index);
     return JSValue::encode(jsBoolean(result != WTF::notFound));
 }
 
@@ -593,7 +642,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     RELEASE_ASSERT(!thisObject->isDetached());
 
     size_t searchLength = std::min<size_t>(length, updatedLength);
-    size_t result = typedArrayIndexOfImpl<ViewClass>(array, searchLength, targetOption.value(), index);
+    size_t result = typedArrayIndexOfImpl<ViewClass>(thisObject, array, searchLength, targetOption.value(), index);
     if (result == WTF::notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -764,7 +813,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
     RELEASE_ASSERT(!thisObject->isDetached());
 
     size_t searchLength = index + 1;
-    size_t result = typedArrayLastIndexOfImpl<ViewClass>(array, searchLength, targetOption.value());
+    size_t result = typedArrayLastIndexOfImpl<ViewClass>(thisObject, array, searchLength, targetOption.value());
     if (result == WTF::notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
