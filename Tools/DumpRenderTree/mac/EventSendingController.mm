@@ -82,8 +82,10 @@ enum class MouseAction : uint8_t {
 };
 
 NSPoint lastMousePosition;
-NSPoint lastClickPosition;
-NSInteger lastButtonDown;
+static NSPoint lastClickPosition;
+#if !PLATFORM(IOS_FAMILY)
+static NSInteger lastButtonDown;
+#endif
 int lastClickButton = std::to_underlying(WebCore::MouseButtonState::None);
 static RetainPtr<NSArray> webkitDomEventNames;
 BOOL replayingSavedEvents;
@@ -1018,6 +1020,16 @@ static NSInteger swizzledEventButtonNumber()
 + (void)clearSavedEvents
 {
     savedMouseEvents() = nil;
+}
+
++ (void)resetMouseState
+{
+    lastMousePosition = NSZeroPoint;
+    lastClickPosition = NSZeroPoint;
+#if !PLATFORM(IOS_FAMILY)
+    lastButtonDown = 0;
+#endif
+    mouseButtonsCurrentlyDown.clear();
 }
 
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location

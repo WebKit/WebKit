@@ -2034,9 +2034,7 @@ static void runTest(const std::string& inputLine)
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
 
-    lastMousePosition = NSZeroPoint;
-    lastClickPosition = NSZeroPoint;
-    lastButtonDown = 0;
+    [EventSendingController resetMouseState];
 
     prevTestBFItem() = [[[mainFrame webView] backForwardList] currentItem];
 

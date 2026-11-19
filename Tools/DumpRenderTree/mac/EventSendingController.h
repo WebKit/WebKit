@@ -51,6 +51,7 @@
 + (void)saveEvent:(NSInvocation *)event;
 + (void)replaySavedEvents;
 + (void)clearSavedEvents;
++ (void)resetMouseState;
 
 - (void)scheduleAsynchronousClick;
 
@@ -66,5 +67,3 @@
 @end
 
 extern NSPoint lastMousePosition;
-extern NSPoint lastClickPosition;
-extern NSInteger lastButtonDown;
