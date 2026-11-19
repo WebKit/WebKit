@@ -1329,6 +1329,7 @@ sub xcodeConfigurationProductDir
     return $baseProductDir if usesPerConfigurationBuildDirectory();
     my $dir = File::Spec->catdir($baseProductDir, $configuration);
     $dir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
+    $dir .= sanitizerSuffix();
     return $dir;
 }
 
@@ -1461,6 +1462,14 @@ sub asanIsEnabled()
 {
     determineASanIsEnabled();
     return $asanIsEnabled;
+}
+
+sub sanitizerSuffix()
+{
+    return "" unless configuration() =~ /^(Debug|Release)/;
+    return "-asan" if asanIsEnabled();
+    return "-tsan" if tsanIsEnabled();
+    return "";
 }
 
 sub tsanIsEnabled()
