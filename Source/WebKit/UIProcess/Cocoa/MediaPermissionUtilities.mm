@@ -626,6 +626,8 @@ public:
 
     Vector<Device> cameras() const final { return devicesForTesting(CapturePreviewDeviceType::Camera); }
     Vector<Device> microphones() const final { return devicesForTesting(CapturePreviewDeviceType::Microphone); }
+    bool cameraMenuEnabled() const final { return [m_prompt selection].isMenuEnabled(CapturePreviewDeviceType::Camera); }
+    bool microphoneMenuEnabled() const final { return [m_prompt selection].isMenuEnabled(CapturePreviewDeviceType::Microphone); }
     String selectedCameraID() const final { return [m_prompt selection].selectedDeviceID(CapturePreviewDeviceType::Camera); }
     String selectedMicrophoneID() const final { return [m_prompt selection].selectedDeviceID(CapturePreviewDeviceType::Microphone); }
     unsigned audioLevelUpdateCount() const final { return [m_prompt audioLevelUpdateCount]; }

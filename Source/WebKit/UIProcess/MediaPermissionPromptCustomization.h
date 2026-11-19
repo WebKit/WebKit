@@ -96,6 +96,8 @@ public:
 
     virtual Vector<Device> cameras() const = 0;
     virtual Vector<Device> microphones() const = 0;
+    virtual bool cameraMenuEnabled() const = 0;
+    virtual bool microphoneMenuEnabled() const = 0;
     virtual String selectedCameraID() const = 0;
     virtual String selectedMicrophoneID() const = 0;
     virtual unsigned audioLevelUpdateCount() const = 0;

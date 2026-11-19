@@ -213,6 +213,24 @@ static RetainPtr<NSArray<NSDictionary<NSString *, NSString *> *>> devicesForTest
 #endif
 }
 
+- (BOOL)cameraMenuEnabled
+{
+#if ENABLE(MEDIA_STREAM)
+    return protect(_prompt)->cameraMenuEnabled();
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)microphoneMenuEnabled
+{
+#if ENABLE(MEDIA_STREAM)
+    return protect(_prompt)->microphoneMenuEnabled();
+#else
+    return NO;
+#endif
+}
+
 - (NSString *)selectedMicrophoneID
 {
 #if ENABLE(MEDIA_STREAM)

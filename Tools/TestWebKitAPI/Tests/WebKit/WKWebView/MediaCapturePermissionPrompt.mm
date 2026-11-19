@@ -905,6 +905,36 @@ TEST(MediaCapturePermissionPrompt, PromptFollowsAnUnpluggedCamera)
     WKResetMockMediaDevices((__bridge WKContextRef)[webView configuration].processPool);
 }
 
+TEST(MediaCapturePermissionPrompt, DeviceMenusStayEnabledWithASingleDevice)
+{
+    auto [webView, delegate] = createWebView();
+
+    auto finished = std::make_shared<bool>(false);
+    RetainPtr prompt = showPreviewPrompt(webView.get(), delegate.get(), @"{ audio: true, video: true }", finished);
+    ASSERT_NOT_NULL(prompt.get());
+    ASSERT_GT([prompt cameras].count, 1U);
+    ASSERT_GT([prompt microphones].count, 1U);
+    EXPECT_TRUE([prompt cameraMenuEnabled]);
+    EXPECT_TRUE([prompt microphoneMenuEnabled]);
+
+    auto removeAllButFirst = [&](NSArray<NSDictionary<NSString *, NSString *> *> *devices) {
+        for (NSDictionary<NSString *, NSString *> *device in [devices subarrayWithRange:NSMakeRange(1, devices.count - 1)])
+            WKRemoveMockMediaDevice((__bridge WKContextRef)[webView configuration].processPool, adoptWK(WKStringCreateWithUTF8CString([device[@"id"] UTF8String])).get());
+    };
+    removeAllButFirst([prompt cameras]);
+    removeAllButFirst([prompt microphones]);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [prompt cameras].count == 1 && [prompt microphones].count == 1;
+    }));
+    EXPECT_TRUE([prompt cameraMenuEnabled]);
+    EXPECT_TRUE([prompt microphoneMenuEnabled]);
+
+    [prompt dismissWithoutAnswer];
+    Util::run(finished.get());
+    WKResetMockMediaDevices((__bridge WKContextRef)[webView configuration].processPool);
+}
+
 TEST(MediaCapturePermissionPrompt, GrantWhilePreviewIsUpCapturesAfterThePreviewStops)
 {
     auto [webView, delegate] = createWebView();

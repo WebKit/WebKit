@@ -375,7 +375,7 @@ constexpr CGFloat promptSheetScreenMargin = 32;
         [popUp selectItemAtIndex:_model.selectedIndex(type)];
 
     [popUp setHidden:devices.isEmpty()];
-    [popUp setEnabled:devices.size() > 1];
+    [popUp setEnabled:_model.isMenuEnabled(type)];
 }
 
 - (void)_rebuildMenus

@@ -649,7 +649,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
 
     // Hide the button if a device is no longer available
     [button setHidden:devices.isEmpty()];
-    [button setEnabled:devices.size() > 1];
+    [button setEnabled:_model.isMenuEnabled(deviceType)];
     if (selectedIndex < devices.size()) {
         RetainPtr title = borrow(devices)[selectedIndex].label().createNSString();
         RetainPtr configuration = [button configuration];

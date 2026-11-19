@@ -92,6 +92,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 // Each has "id" and "label". Empty without a preview.
 @property (nonatomic, readonly, copy) NSArray<NSDictionary<NSString *, NSString *> *> *cameras;
 @property (nonatomic, readonly, copy) NSArray<NSDictionary<NSString *, NSString *> *> *microphones;
+@property (nonatomic, readonly) BOOL cameraMenuEnabled;
+@property (nonatomic, readonly) BOOL microphoneMenuEnabled;
 @property (nonatomic, readonly, copy, nullable) NSString *selectedCameraID;
 @property (nonatomic, readonly, copy, nullable) NSString *selectedMicrophoneID;
 
