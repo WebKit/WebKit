@@ -121,7 +121,6 @@ private:
     void updateTimeDependentAnimationStacks();
     void updateAnimationStacksDependentOnScrollingNode(const WebCore::ScrollingTreeScrollingNode&);
     void updateAnimationStacks(NOESCAPE const Function<bool(const RemoteAnimationStack&)>&);
-    bool animatedContentMayBeVisible(const RemoteLayerTreeNode&) const;
 #endif
 
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteAnimationVisibility.h"
 #import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
@@ -914,66 +915,13 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacks(NOESCAPE const Fu
 bool RemoteScrollingCoordinatorProxyIOS::hasHighImpactMonotonicAnimations() const
 {
     auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
+    RetainPtr<CALayer> webViewLayer = [protect(webPageProxy())->cocoaView() layer];
     for (auto animatedNodeLayerID : m_animatedNodeLayerIDs) {
         RefPtr animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
-        if (animatedNode->hasHighImpactMonotonicAnimations() && animatedContentMayBeVisible(*animatedNode))
+        if (animatedNode->hasHighImpactMonotonicAnimations() && RemoteAnimationVisibility::animatedContentMayBeVisible(*animatedNode, webViewLayer.get()))
             return true;
     }
     return false;
-}
-
-// Content within this fraction of a scroll view's size outside of its visible area may soon be
-// scrolled into view, so it is considered visible.
-static constexpr CGFloat scrollViewVisibilityMarginRatio = 0.5;
-
-bool RemoteScrollingCoordinatorProxyIOS::animatedContentMayBeVisible(const RemoteLayerTreeNode& node) const
-{
-    // Without a known extent, the animated content could be anywhere.
-    auto& animationExtent = node.animationExtent();
-    if (!animationExtent)
-        return true;
-
-    RetainPtr layer = node.layer();
-    RetainPtr<CALayer> ancestor = [layer superlayer];
-    // This layer is not in the hierarchy yet, we'll find out once the commit is applied.
-    if (!ancestor)
-        return true;
-
-    RetainPtr webView = protect(webPageProxy())->cocoaView();
-    if (!webView)
-        return true;
-    RetainPtr<CALayer> webViewLayer = [webView layer];
-
-    // The extent is in the layer's coordinate space without its transform, which is what time-based animations
-    // change, so map it to the superlayer's coordinate space using only the layer's position.
-    auto bounds = [layer bounds];
-    auto anchorPoint = [layer anchorPoint];
-    auto position = [layer position];
-    CGRect rect = CGRectOffset(*animationExtent, position.x - bounds.origin.x - anchorPoint.x * bounds.size.width, position.y - bounds.origin.y - anchorPoint.y * bounds.size.height);
-
-    while (true) {
-        if (ancestor == webViewLayer)
-            return true;
-
-        if ([ancestor isHidden] || ![ancestor opacity])
-            return false;
-
-        if ([ancestor masksToBounds]) {
-            auto clipRect = [ancestor bounds];
-            if ([[ancestor delegate] isKindOfClass:UIScrollView.class])
-                clipRect = CGRectInset(clipRect, -clipRect.size.width * scrollViewVisibilityMarginRatio, -clipRect.size.height * scrollViewVisibilityMarginRatio);
-            rect = CGRectIntersection(rect, clipRect);
-            if (CGRectIsEmpty(rect))
-                return false;
-        }
-
-        RetainPtr<CALayer> superlayer = [ancestor superlayer];
-        if (!superlayer)
-            return true;
-
-        rect = [ancestor convertRect:rect toLayer:superlayer.get()];
-        ancestor = WTF::move(superlayer);
-    }
 }
 #endif
 

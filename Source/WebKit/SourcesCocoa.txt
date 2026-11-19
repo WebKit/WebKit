@@ -711,6 +711,7 @@ UIProcess/RemoteLayerTree/RemoteAnimation.cpp
 UIProcess/RemoteLayerTree/RemoteAnimationStack.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteAnimationTimeline.cpp
 UIProcess/RemoteLayerTree/RemoteAnimationUtilities.cpp
+UIProcess/RemoteLayerTree/RemoteAnimationVisibility.mm
 UIProcess/RemoteLayerTree/RemoteMonotonicTimeline.cpp
 UIProcess/RemoteLayerTree/RemoteMonotonicTimelineRegistry.cpp
 UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm @nonARC
