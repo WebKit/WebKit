@@ -554,8 +554,8 @@ void TextBoxPainter::paintBackgroundFill()
 {
     // Composition, highlights and other marked text cover the content, while the selection uses the line's selection extent.
     auto lineBox = makeIterator()->lineBox();
-    auto contentLogicalTop = lineBox.contentLogicalTopAdjustedForPrecedingLineBox();
-    auto contentLogicalBottom = lineBox.contentLogicalBottomAdjustedForFollowingLineBox();
+    auto contentLogicalTop = lineBox.contentAreaLogicalTopAdjustedForPrecedingLineBox();
+    auto contentLogicalBottom = lineBox.contentAreaLogicalBottomAdjustedForFollowingLineBox();
 
     if (m_containsComposition && !m_compositionWithCustomUnderlines) {
         Ref editor = protect(m_renderer->frame())->editor();

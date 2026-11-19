@@ -34,7 +34,7 @@ namespace WebCore {
 class LineSelection {
 public:
     // The line box grown to fit overflowing content. The caret and hit-testing use the content instead (webkit.org/b/210622),
-    // see LineBox::contentLogicalRectAdjustedForAdjacentLineBoxes.
+    // see LineBox::contentAreaLogicalRectAdjustedForAdjacentLineBoxes.
     static float logicalTop(const InlineIterator::LineBox& lineBox) { return lineBox.selectionLogicalTop(); }
     static float logicalBottom(const InlineIterator::LineBox& lineBox) { return lineBox.selectionLogicalBottom(); }
 

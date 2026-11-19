@@ -44,8 +44,8 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(bool hasInflowBox, bool hasContentfulBox, bool hasBlockLevelBox, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection);
-    Line(const FloatRect& lineBoxRect, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, float contentLogicalLeft, float contentLogicalWidth);
+    Line(bool hasInflowBox, bool hasContentfulBox, bool hasBlockLevelBox, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, EnclosingTopAndBottom enclosingContentAreaLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection);
+    Line(const FloatRect& lineBoxRect, EnclosingTopAndBottom enclosingBorderBoxLogicalTopAndBottom, float alignmentBaseline, float contentLogicalLeft, float contentLogicalWidth);
 
     float left() const { return m_lineBoxRect.x(); }
     float right() const { return m_lineBoxRect.maxX(); }
@@ -66,8 +66,10 @@ public:
     const FloatRect& scrollableOverflow() const LIFETIME_BOUND { return m_scrollableOverflow; }
     const FloatRect& inkOverflow() const LIFETIME_BOUND { return m_inkOverflow; }
 
-    float enclosingContentLogicalTop() const { return m_enclosingLogicalTopAndBottom.top; }
-    float enclosingContentLogicalBottom() const { return m_enclosingLogicalTopAndBottom.bottom; }
+    float enclosingBorderBoxLogicalTop() const { return m_enclosingBorderBoxLogicalTopAndBottom.top; }
+    float enclosingBorderBoxLogicalBottom() const { return m_enclosingBorderBoxLogicalTopAndBottom.bottom; }
+    float enclosingContentAreaLogicalTop() const { return m_enclosingContentAreaLogicalTopAndBottom.top; }
+    float enclosingContentAreaLogicalBottom() const { return m_enclosingContentAreaLogicalTopAndBottom.bottom; }
 
     float baseline() const { return m_alignmentBaseline; }
     FontBaseline baselineType() const { return m_baselineType; }
@@ -130,7 +132,9 @@ private:
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
-    EnclosingTopAndBottom m_enclosingLogicalTopAndBottom;
+    EnclosingTopAndBottom m_enclosingBorderBoxLogicalTopAndBottom;
+    // Same as above, but with inline boxes contributing their content area instead of their border box.
+    EnclosingTopAndBottom m_enclosingContentAreaLogicalTopAndBottom;
     float m_alignmentBaseline { 0.f };
     // Content is mostly in flush with the line box edge except for cases like text-align.
     float m_contentLogicalLeft { 0.f };
@@ -148,11 +152,12 @@ private:
     bool m_hasEllipsis : 1 { false };
 };
 
-inline Line::Line(bool hasInflowBox, bool hasContentfulBox, bool hasBlockLevelBox, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
+inline Line::Line(bool hasInflowBox, bool hasContentfulBox, bool hasBlockLevelBox, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingBorderBoxLogicalTopAndBottom, EnclosingTopAndBottom enclosingContentAreaLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_scrollableOverflow(scrollableOverflow)
-    , m_enclosingLogicalTopAndBottom(enclosingLogicalTopAndBottom)
+    , m_enclosingBorderBoxLogicalTopAndBottom(enclosingBorderBoxLogicalTopAndBottom)
+    , m_enclosingContentAreaLogicalTopAndBottom(enclosingContentAreaLogicalTopAndBottom)
     , m_alignmentBaseline(alignmentBaseline)
     , m_contentLogicalLeft(contentLogicalLeft)
     , m_contentLogicalLeftIgnoringInlineDirection(contentLogicalLeftIgnoringInlineDirection)
@@ -167,11 +172,12 @@ inline Line::Line(bool hasInflowBox, bool hasContentfulBox, bool hasBlockLevelBo
 {
 }
 
-inline Line::Line(const FloatRect& lineBoxRect, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, float contentLogicalLeft, float contentLogicalWidth)
+inline Line::Line(const FloatRect& lineBoxRect, EnclosingTopAndBottom enclosingBorderBoxLogicalTopAndBottom, float alignmentBaseline, float contentLogicalLeft, float contentLogicalWidth)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxRect)
     , m_scrollableOverflow(lineBoxRect)
-    , m_enclosingLogicalTopAndBottom(enclosingLogicalTopAndBottom)
+    , m_enclosingBorderBoxLogicalTopAndBottom(enclosingBorderBoxLogicalTopAndBottom)
+    , m_enclosingContentAreaLogicalTopAndBottom(enclosingBorderBoxLogicalTopAndBottom)
     , m_alignmentBaseline(alignmentBaseline)
     , m_contentLogicalLeft(contentLogicalLeft)
     , m_contentLogicalLeftIgnoringInlineDirection(contentLogicalLeft)
@@ -189,8 +195,10 @@ inline void Line::moveInBlockDirection(float offset)
     m_scrollableOverflow.move(physicalOffset);
     m_inkOverflow.move(physicalOffset);
     m_lineBoxLogicalRect.move({ { }, offset });
-    m_enclosingLogicalTopAndBottom.top += offset;
-    m_enclosingLogicalTopAndBottom.bottom += offset;
+    m_enclosingBorderBoxLogicalTopAndBottom.top += offset;
+    m_enclosingBorderBoxLogicalTopAndBottom.bottom += offset;
+    m_enclosingContentAreaLogicalTopAndBottom.top += offset;
+    m_enclosingContentAreaLogicalTopAndBottom.bottom += offset;
 }
 
 inline void Line::shrinkInBlockDirection(float delta)
@@ -201,7 +209,8 @@ inline void Line::shrinkInBlockDirection(float delta)
     m_scrollableOverflow.contract(physicalDelta);
     m_inkOverflow.contract(physicalDelta);
     m_lineBoxLogicalRect.contract({ { }, delta });
-    m_enclosingLogicalTopAndBottom.bottom -= delta;
+    m_enclosingBorderBoxLogicalTopAndBottom.bottom -= delta;
+    m_enclosingContentAreaLogicalTopAndBottom.bottom -= delta;
 }
 
 inline void Line::setLineBoxRectForSVGText(const FloatRect& rect)
@@ -210,8 +219,9 @@ inline void Line::setLineBoxRectForSVGText(const FloatRect& rect)
     m_scrollableOverflow = rect;
     m_inkOverflow = rect;
     m_lineBoxLogicalRect = m_isHorizontal ? rect : rect.transposedRect();
-    m_enclosingLogicalTopAndBottom.top = m_lineBoxLogicalRect.y();
-    m_enclosingLogicalTopAndBottom.bottom = m_lineBoxLogicalRect.maxY();
+    m_enclosingBorderBoxLogicalTopAndBottom.top = m_lineBoxLogicalRect.y();
+    m_enclosingBorderBoxLogicalTopAndBottom.bottom = m_lineBoxLogicalRect.maxY();
+    m_enclosingContentAreaLogicalTopAndBottom = m_enclosingBorderBoxLogicalTopAndBottom;
     m_contentLogicalLeft = 0;
     m_contentLogicalLeftIgnoringInlineDirection = 0;
     m_contentLogicalWidth = m_lineBoxLogicalRect.width();

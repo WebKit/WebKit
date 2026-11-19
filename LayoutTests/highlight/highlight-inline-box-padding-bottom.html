@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<style>
+.wrap { width: 150px; font: 16px/24px Ahem; color: transparent; }
+.out { padding-bottom: 20px; }
+::highlight(test) { background-color: rgba(0, 0, 255, 0.5); }
+</style>
+<div class="wrap">
+<span class="out"><span id="text">XXXX XXX XXXXX XX XXXXXX XXX XXXX XXXXX XX XXXX</span></span>
+</div>
+<script>
+const range = new Range();
+range.selectNodeContents(document.getElementById("text"));
+CSS.highlights.set("test", new Highlight(range));
+</script>

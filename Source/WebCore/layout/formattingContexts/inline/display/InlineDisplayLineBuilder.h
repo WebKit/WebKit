@@ -48,7 +48,8 @@ public:
 
 private:
     struct EnclosingLineGeometry {
-        InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom;
+        InlineDisplay::Line::EnclosingTopAndBottom enclosingBorderBoxTopAndBottom;
+        InlineDisplay::Line::EnclosingTopAndBottom enclosingContentAreaTopAndBottom;
         InlineRect contentOverflowRect;
     };
     EnclosingLineGeometry collectEnclosingLineGeometry(const LineLayoutResult&, const LineBox&, const InlineRect& lineBoxRect) const;

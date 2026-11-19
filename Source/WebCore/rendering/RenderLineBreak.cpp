@@ -102,7 +102,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
         return;
     auto lineBox = run->lineBox();
 
-    auto lineRect = lineBox.contentLogicalRectAdjustedForAdjacentLineBoxes();
+    auto lineRect = lineBox.contentAreaLogicalRectAdjustedForAdjacentLineBoxes();
     LayoutRect rect = IntRect(run->logicalLeftIgnoringInlineDirection(), lineRect.y(), 0, lineRect.height());
     if (!lineBox.isHorizontal())
         rect = rect.transposedRect();

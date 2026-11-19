@@ -3289,6 +3289,9 @@ fast/text/selection-gap-subpixel-vertical-lr.html [ Skip ]
 fast/text/selection-gap-subpixel-vertical-rl.html [ Skip ]
 fast/text/selection-partial-sideways-lr.html [ Skip ]
 
+# Selection isn't painted in the web process on iOS, so this reftest has nothing to compare.
+editing/selection/selection-inline-box-padding-bottom.html [ Skip ]
+
 webkit.org/b/172610 media/ios/autoplay-only-in-main-document.html [ Skip ]
 webkit.org/b/172672 fast/events/before-unload-returnValue.html [ Skip ]
 

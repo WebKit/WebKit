@@ -267,7 +267,7 @@ std::optional<InlineDisplay::Content> buildSVGTextDisplayContent(const ElementBo
     CheckedRef rootStyle = root.style();
     auto hasInflowBox = boxes.size() > 1;
     auto baseline = rootStyle->metricsOfPrimaryFont().ascent(FontBaseline::Alphabetic);
-    auto line = InlineDisplay::Line { hasInflowBox, hasContentfulText, false, { }, { }, { }, { }, baseline, FontBaseline::Alphabetic, 0, 0, 0, true, rootStyle->writingMode().isHorizontal(), false };
+    auto line = InlineDisplay::Line { hasInflowBox, hasContentfulText, false, { }, { }, { }, { }, { }, baseline, FontBaseline::Alphabetic, 0, 0, 0, true, rootStyle->writingMode().isHorizontal(), false };
     line.setFirstBoxIndex(0);
     line.setBoxCount(boxes.size());
     content.lines.append(WTF::move(line));

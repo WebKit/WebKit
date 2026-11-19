@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<style>
+.wrap { width: 150px; font: 16px/24px Ahem; color: transparent; }
+.out { padding-bottom: 20px; }
+::selection { color: transparent; background: rgba(0, 0, 255, 0.5); }
+</style>
+<div class="wrap" id="wrap">
+<span class="out"><span>XXXX XXX XXXXX XX XXXXXX XXX XXXX XXXXX XX XXXX</span></span>
+</div>
+<script>
+getSelection().selectAllChildren(document.getElementById("wrap"));
+</script>

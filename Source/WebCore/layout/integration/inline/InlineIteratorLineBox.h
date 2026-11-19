@@ -55,12 +55,20 @@ public:
     float contentLogicalWidth() const;
     float contentLogicalHeight() const;
 
-    // The content extended to the adjacent line's content, used by the caret and hit-testing.
+    // Like contentLogicalTop/Bottom, but inline boxes contribute their content area instead of their border box.
+    float contentAreaLogicalTop() const;
+    float contentAreaLogicalBottom() const;
+
+    // The content extended to the adjacent line's content, used by hit-testing.
     float contentLogicalTopAdjustedForPrecedingLineBox() const;
     float contentLogicalBottomAdjustedForFollowingLineBox() const;
-    FloatRect contentLogicalRectAdjustedForAdjacentLineBoxes() const;
 
-    // The line box grown to fit overflowing content. Adjacent lines share their boundary so that selection has no gaps or overlaps.
+    // The content area extended to the adjacent line's content area, used by the caret, highlights and other marked text.
+    float contentAreaLogicalTopAdjustedForPrecedingLineBox() const;
+    float contentAreaLogicalBottomAdjustedForFollowingLineBox() const;
+    FloatRect contentAreaLogicalRectAdjustedForAdjacentLineBoxes() const;
+
+    // The line box grown to fit overflowing content area. Adjacent lines share their boundary so that selection has no gaps or overlaps.
     float selectionLogicalTop() const;
     float selectionLogicalBottom() const;
 
@@ -245,12 +253,22 @@ inline LineBox::LineBox(const LayoutIntegration::InlineContent& inlineContent, s
 
 inline float LineBox::contentLogicalTop() const
 {
-    return line().enclosingContentLogicalTop();
+    return line().enclosingBorderBoxLogicalTop();
 }
 
 inline float LineBox::contentLogicalBottom() const
 {
-    return line().enclosingContentLogicalBottom();
+    return line().enclosingBorderBoxLogicalBottom();
+}
+
+inline float LineBox::contentAreaLogicalTop() const
+{
+    return line().enclosingContentAreaLogicalTop();
+}
+
+inline float LineBox::contentAreaLogicalBottom() const
+{
+    return line().enclosingContentAreaLogicalBottom();
 }
 
 inline std::optional<LineBox> LineBox::precedingLineBoxForSelection() const
@@ -294,23 +312,37 @@ inline float LineBox::contentLogicalBottomAdjustedForFollowingLineBox() const
     return contentLogicalBottom();
 }
 
-inline FloatRect LineBox::contentLogicalRectAdjustedForAdjacentLineBoxes() const
+inline float LineBox::contentAreaLogicalTopAdjustedForPrecedingLineBox() const
 {
-    return { FloatPoint { contentLogicalLeft(), contentLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { contentLogicalRight(), contentLogicalBottomAdjustedForFollowingLineBox() } };
+    if (auto precedingLineBox = precedingLineBoxForSelection())
+        return precedingLineBox->contentAreaLogicalBottom();
+    return contentAreaLogicalTop();
+}
+
+inline float LineBox::contentAreaLogicalBottomAdjustedForFollowingLineBox() const
+{
+    if (auto followingLineBox = followingLineBoxForSelection())
+        return followingLineBox->contentAreaLogicalTop();
+    return contentAreaLogicalBottom();
+}
+
+inline FloatRect LineBox::contentAreaLogicalRectAdjustedForAdjacentLineBoxes() const
+{
+    return { FloatPoint { contentLogicalLeft(), contentAreaLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { contentLogicalRight(), contentAreaLogicalBottomAdjustedForFollowingLineBox() } };
 }
 
 inline float LineBox::selectionLogicalTop() const
 {
     if (auto precedingLineBox = precedingLineBoxForSelection())
-        return std::max(precedingLineBox->contentLogicalBottom(), precedingLineBox->logicalBottom());
-    return std::min(contentLogicalTop(), logicalTop());
+        return std::max(precedingLineBox->contentAreaLogicalBottom(), precedingLineBox->logicalBottom());
+    return std::min(contentAreaLogicalTop(), logicalTop());
 }
 
 inline float LineBox::selectionLogicalBottom() const
 {
     if (auto followingLineBox = followingLineBoxForSelection())
-        return std::min(followingLineBox->contentLogicalTop(), followingLineBox->logicalTop());
-    return std::max(contentLogicalBottom(), logicalBottom());
+        return std::min(followingLineBox->contentAreaLogicalTop(), followingLineBox->logicalTop());
+    return std::max(contentAreaLogicalBottom(), logicalBottom());
 }
 
 inline float LineBox::logicalTop() const

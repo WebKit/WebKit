@@ -2037,7 +2037,7 @@ static bool inlineBackgroundCoversCaret(const RenderBoxModelObject& inlineBox, c
     auto caretMiddleAlongBlockAxis = logicalCaretRect.y() + logicalCaretRect.height() / 2;
 
     for (auto& box : InlineIterator::inlineBoxesFor(inlineBox)) {
-        auto lineRect = LayoutRect { box.lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes() };
+        auto lineRect = LayoutRect { box.lineBox().contentAreaLogicalRectAdjustedForAdjacentLineBoxes() };
         lineRect.move(logicalOffset);
         if (caretMiddleAlongBlockAxis < lineRect.y())
             break;

@@ -1633,7 +1633,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
         auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
         auto lineBox = textBox->lineBox();
-        lineHeight = lineBox.contentLogicalRectAdjustedForAdjacentLineBoxes().height();
+        lineHeight = lineBox.contentAreaLogicalRectAdjustedForAdjacentLineBoxes().height();
 
         // Compute distanceFromBoundsInDirection only for the first text box on each
         // line. Multiple text boxes can share a line (e.g. due to inline formatting

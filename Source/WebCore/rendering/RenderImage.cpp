@@ -141,7 +141,7 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
             lineExtentRect.setHeight(containingBlock->borderBoxHeight());
         }
     } else {
-        auto lineRect = run->lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes();
+        auto lineRect = run->lineBox().contentAreaLogicalRectAdjustedForAdjacentLineBoxes();
         int selectionTop = !containingBlock->writingMode().isBlockFlipped() ? lineRect.y() - logicalTop() : logicalBottom() - lineRect.maxY();
         int selectionHeight = lineRect.height();
         imageRect = IntRect { 0,  selectionTop, logicalWidth(), selectionHeight };

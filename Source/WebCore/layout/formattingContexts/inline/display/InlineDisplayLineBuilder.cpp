@@ -69,7 +69,9 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.textEmphasisBelow().value_or(0.f)
         };
     };
-    auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
+    auto [enclosingBorderBoxTop, enclosingBorderBoxBottom] = initialEnclosingTopAndBottom();
+    auto enclosingContentAreaTop = enclosingBorderBoxTop;
+    auto enclosingContentAreaBottom = enclosingBorderBoxBottom;
     auto contentOverflowRect = [&]() -> InlineRect {
         auto rect = lineBoxRect;
         auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
@@ -92,6 +94,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
 
         CheckedRef layoutBox = inlineLevelBox.layoutBox();
         auto borderBox = InlineRect { };
+        auto contentAreaOrBorderBox = InlineRect { };
 
         if (inlineLevelBox.isAtomicInlineBox()) {
             borderBox = lineBox.logicalBorderBoxForAtomicInlineBox(layoutBox, formattingContext().geometryForBox(layoutBox));
@@ -104,6 +107,8 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
                 continue;
             borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             borderBox.moveBy(lineBoxRect.topLeft());
+            contentAreaOrBorderBox = lineBox.logicalContentBoxForInlineBox(layoutBox);
+            contentAreaOrBorderBox.moveBy(lineBoxRect.topLeft());
             // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
             if (lineLayoutResult.hasContentfulInFlowContent()) {
                 // Empty lines (e.g. anonymous pre/post blocks) don't expect scrollbar overflow.
@@ -115,12 +120,26 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         } else
             ASSERT_NOT_REACHED();
 
-        auto adjustedBorderBoxTop = borderBox.top() - inlineLevelBox.textEmphasisAbove().value_or(0.f);
-        auto adjustedBorderBoxBottom = borderBox.bottom() + inlineLevelBox.textEmphasisBelow().value_or(0.f);
-        enclosingTop = std::min(enclosingTop.value_or(adjustedBorderBoxTop), adjustedBorderBoxTop);
-        enclosingBottom = std::max(enclosingBottom.value_or(adjustedBorderBoxBottom), adjustedBorderBoxBottom);
+        if (!inlineLevelBox.isInlineBox())
+            contentAreaOrBorderBox = borderBox;
+
+        auto textEmphasisAbove = inlineLevelBox.textEmphasisAbove().value_or(0.f);
+        auto textEmphasisBelow = inlineLevelBox.textEmphasisBelow().value_or(0.f);
+        auto adjustedBorderBoxTop = borderBox.top() - textEmphasisAbove;
+        auto adjustedBorderBoxBottom = borderBox.bottom() + textEmphasisBelow;
+        enclosingBorderBoxTop = std::min(enclosingBorderBoxTop.value_or(adjustedBorderBoxTop), adjustedBorderBoxTop);
+        enclosingBorderBoxBottom = std::max(enclosingBorderBoxBottom.value_or(adjustedBorderBoxBottom), adjustedBorderBoxBottom);
+
+        auto adjustedContentAreaTop = contentAreaOrBorderBox.top() - textEmphasisAbove;
+        auto adjustedContentAreaBottom = contentAreaOrBorderBox.bottom() + textEmphasisBelow;
+        enclosingContentAreaTop = std::min(enclosingContentAreaTop.value_or(adjustedContentAreaTop), adjustedContentAreaTop);
+        enclosingContentAreaBottom = std::max(enclosingContentAreaBottom.value_or(adjustedContentAreaBottom), adjustedContentAreaBottom);
     }
-    return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.bottom()) }, contentOverflowRect };
+    return {
+        { enclosingBorderBoxTop.value_or(lineBoxRect.top()), enclosingBorderBoxBottom.value_or(lineBoxRect.bottom()) },
+        { enclosingContentAreaTop.value_or(lineBoxRect.top()), enclosingContentAreaBottom.value_or(lineBoxRect.bottom()) },
+        contentOverflowRect
+    };
 }
 
 InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, bool lineIsFullyTruncatedInBlockDirection) const
@@ -162,7 +181,8 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& line
         , lineBoxLogicalRect
         , mapLineRectLogicalToVisual(lineBoxLogicalRect, constraints.formattingRootBorderBoxSize(), writingMode)
         , mapLineRectLogicalToVisual(enclosingLineGeometry.contentOverflowRect, constraints.formattingRootBorderBoxSize(), writingMode)
-        , enclosingLineGeometry.enclosingTopAndBottom
+        , enclosingLineGeometry.enclosingBorderBoxTopAndBottom
+        , enclosingLineGeometry.enclosingContentAreaTopAndBottom
         , lineBox.alignmentBaseline()
         , lineBox.baselineType()
         , rootInlineBoxRect.left()

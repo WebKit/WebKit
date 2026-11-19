@@ -131,7 +131,7 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
 {
     CheckedRef root = lineBox->formattingContextRoot();
     auto writingMode = root->writingMode();
-    auto lineRect = lineBox->contentLogicalRectAdjustedForAdjacentLineBoxes();
+    auto lineRect = lineBox->contentAreaLogicalRectAdjustedForAdjacentLineBoxes();
 
     int height = lineRect.height();
     int top = lineRect.y();

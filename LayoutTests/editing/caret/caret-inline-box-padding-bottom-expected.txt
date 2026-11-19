@@ -1,0 +1,16 @@
+Tests that block-end padding on an inline box doesn't shift the caret on each line.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caretTop("padded", 2) is caretTop("unpadded", 2)
+PASS caretHeight("padded", 2) is caretHeight("unpadded", 2)
+PASS caretTop("padded", 10) is caretTop("unpadded", 10)
+PASS caretHeight("padded", 10) is caretHeight("unpadded", 10)
+PASS caretTop("padded", 20) is caretTop("unpadded", 20)
+PASS caretHeight("padded", 20) is caretHeight("unpadded", 20)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+XXXX XXX XXXXX XX XXXXXX
+XXXX XXX XXXXX XX XXXXXX

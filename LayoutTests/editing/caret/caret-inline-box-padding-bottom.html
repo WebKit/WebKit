@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+.wrap { width: 150px; font: 16px/24px Ahem; }
+.out { padding-bottom: 20px; }
+</style>
+<div class="wrap"><span class="out"><span id="padded">XXXX XXX XXXXX XX XXXXXX</span></span></div>
+<div class="wrap"><span><span id="unpadded">XXXX XXX XXXXX XX XXXXXX</span></span></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that block-end padding on an inline box doesn't shift the caret on each line.");
+
+function caretTop(id, offset) {
+    const text = document.getElementById(id);
+    getSelection().collapse(text.firstChild, offset);
+    return internals.absoluteCaretBounds().top - text.closest(".wrap").getBoundingClientRect().top;
+}
+
+function caretHeight(id, offset) {
+    getSelection().collapse(document.getElementById(id).firstChild, offset);
+    return internals.absoluteCaretBounds().height;
+}
+
+for (const offset of [2, 10, 20]) {
+    shouldBe(`caretTop("padded", ${offset})`, `caretTop("unpadded", ${offset})`);
+    shouldBe(`caretHeight("padded", ${offset})`, `caretHeight("unpadded", ${offset})`);
+}
+</script>
