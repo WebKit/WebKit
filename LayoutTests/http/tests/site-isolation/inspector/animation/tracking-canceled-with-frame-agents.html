@@ -32,7 +32,7 @@ function test() {
             let didTrackingStart = new Promise((resolve) => {
                 WI.timelineManager.animationTrackingStarted = resolve;
             });
-            WI.timelineManager.animationTrackingUpdated = (timestamp, event) => {
+            WI.timelineManager.animationTrackingUpdated = (target, timestamp, event) => {
                 updates.push(event);
                 for (let waiter of updateWaiters)
                     waiter();
