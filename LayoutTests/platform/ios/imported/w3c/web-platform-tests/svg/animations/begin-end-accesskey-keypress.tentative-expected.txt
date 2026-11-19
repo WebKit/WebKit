@@ -1,0 +1,7 @@
+
+
+FAIL begin='accessKey(a)' does not begin when the user presses 'a' assert_true: Precondition: the key press reached the document expected true got false
+FAIL begin='accesskey(a)' does not begin when the user presses 'a' assert_true: Precondition: the key press reached the document expected true got false
+FAIL end='accessKey(a)' does not end when the user presses 'a' assert_true: Precondition: the key press reached the document expected true got false
+FAIL end='accesskey(a)' does not end when the user presses 'a' assert_true: Precondition: the key press reached the document expected true got false
+

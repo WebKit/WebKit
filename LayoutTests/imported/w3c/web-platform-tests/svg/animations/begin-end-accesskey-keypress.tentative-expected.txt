@@ -1,0 +1,7 @@
+
+
+PASS begin='accessKey(a)' does not begin when the user presses 'a'
+PASS begin='accesskey(a)' does not begin when the user presses 'a'
+PASS end='accessKey(a)' does not end when the user presses 'a'
+PASS end='accesskey(a)' does not end when the user presses 'a'
+

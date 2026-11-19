@@ -156,7 +156,7 @@ private:
     // This represents conditions on elements begin or end list that need to be resolved on runtime
     // for example <animate begin="otherElement.begin + 8s; button.click" ... />
     struct Condition {
-        enum Type { EventBase, Syncbase, AccessKey };
+        enum class Type : bool { EventBase, Syncbase };
         NODELETE Condition(Type, BeginOrEnd, const String& baseID, const AtomString& name, SMILTime offset, int repeats = -1);
         Type m_type;
         BeginOrEnd m_beginOrEnd;

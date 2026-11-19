@@ -126,6 +126,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/attribute-value-unaffected-by-animation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/attributeTypes.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/begin-attribute-mutation.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/begin-end-accesskey-keypress.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/begin-end-accesskey-not-event-name.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/begin-event.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/beginelement-instance-time-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/beginevents-1.html

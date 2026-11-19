@@ -407,6 +407,11 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     if (conditionString.isEmpty())
         return false;
 
+    // SMIL accessKey() (accesskey() in SMIL 2 and later) is not supported. Reject it in any case,
+    // so the rest of the list still applies.
+    if (conditionString.startsWithIgnoringASCIICase("accesskey("_s))
+        return false;
+
     // Find the first dot not preceded by a backslash. Per the SMIL specification,
     // dots in element IDs can be escaped with a backslash (e.g., "my\.anim.end").
     size_t dotPosition = 0;
@@ -439,18 +444,14 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
         // FIXME: By assigning an unsigned to a signed, this can turn large integers into negative numbers.
         repeats = *parsedRepeat;
         nameString = eventNames().repeatEventEvent;
-        type = Condition::EventBase;
+        type = Condition::Type::EventBase;
     } else if (nameView == "begin"_s || nameView == "end"_s) {
         if (baseID.isEmpty())
             return false;
-        type = Condition::Syncbase;
-        nameString = nameView.toAtomString();
-    } else if (nameView.startsWith("accesskey("_s)) {
-        // FIXME: accesskey() support.
-        type = Condition::AccessKey;
+        type = Condition::Type::Syncbase;
         nameString = nameView.toAtomString();
     } else {
-        type = Condition::EventBase;
+        type = Condition::Type::EventBase;
         nameString = nameView.toAtomString();
     }
     
@@ -461,7 +462,7 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
 
     m_conditions.append(Condition(type, beginOrEnd, WTF::move(resolvedBaseID), WTF::move(nameString), offset, repeats));
 
-    if (type == Condition::EventBase && beginOrEnd == End)
+    if (type == Condition::Type::EventBase && beginOrEnd == End)
         m_hasEndEventConditions = true;
 
     return true;
@@ -598,7 +599,7 @@ void SVGSMILElement::connectConditions()
         disconnectConditions();
     m_conditionsConnected = true;
     for (auto& condition : borrow(m_conditions).get()) {
-        if (condition.m_type == Condition::EventBase) {
+        if (condition.m_type == Condition::Type::EventBase) {
             ASSERT(!condition.m_syncbase);
             RefPtr eventBase = eventBaseFor(condition);
             if (!eventBase)
@@ -606,7 +607,7 @@ void SVGSMILElement::connectConditions()
             ASSERT(!condition.m_eventListener);
             condition.m_eventListener = ConditionEventListener::create(this, &condition);
             eventBase->addEventListener(condition.m_name, *condition.m_eventListener);
-        } else if (condition.m_type == Condition::Syncbase) {
+        } else if (condition.m_type == Condition::Type::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
             condition.m_syncbase = protect(treeScope())->getElementById(condition.m_baseID);
             if (!condition.m_syncbase)
@@ -627,7 +628,7 @@ void SVGSMILElement::disconnectConditions()
         return;
     m_conditionsConnected = false;
     for (auto& condition : borrow(m_conditions).get()) {
-        if (condition.m_type == Condition::EventBase) {
+        if (condition.m_type == Condition::Type::EventBase) {
             ASSERT(!condition.m_syncbase);
             if (!condition.m_eventListener)
                 continue;
@@ -641,7 +642,7 @@ void SVGSMILElement::disconnectConditions()
                 eventBase->removeEventListener(condition.m_name, protect(*condition.m_eventListener), { .capture = false });
             protect(condition.m_eventListener)->disconnectAnimation();
             condition.m_eventListener = nullptr;
-        } else if (condition.m_type == Condition::Syncbase) {
+        } else if (condition.m_type == Condition::Type::Syncbase) {
             if (condition.m_syncbase)
                 downcast<SVGSMILElement>(condition.m_syncbase.get())->removeTimeDependent(this);
         }
@@ -1295,7 +1296,7 @@ void SVGSMILElement::createInstanceTimesFromSyncbase(SVGSMILElement* syncbase)
     // FIXME: To be really correct, this should handle updating exising interval by changing 
     // the associated times instead of creating new ones.
     for (auto& condition : m_conditions) {
-        if (condition.m_type == Condition::Syncbase && condition.m_syncbase == syncbase) {
+        if (condition.m_type == Condition::Type::Syncbase && condition.m_syncbase == syncbase) {
             ASSERT(condition.m_name == "begin"_s || condition.m_name == "end"_s);
             // No nested time containers in SVG, no need for crazy time space conversions. Phew!
             SMILTime time = 0;

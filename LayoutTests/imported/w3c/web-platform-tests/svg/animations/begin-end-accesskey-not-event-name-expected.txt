@@ -1,0 +1,9 @@
+
+PASS begin='accessKey(a)' does not begin on a script event named 'accessKey(a)'
+PASS begin='accesskey(a)' does not begin on a script event named 'accesskey(a)'
+PASS begin='accessKey(a) + 2s' gets no begin time from a script event named 'accessKey(a)'
+PASS end='accessKey(a)' does not end on a script event named 'accessKey(a)'
+PASS end='accesskey(a)' does not end on a script event named 'accesskey(a)'
+PASS begin='accessKey(a); 1s' keeps the 1s begin time
+PASS begin='1s; accesskey(a)' keeps the 1s begin time
+
