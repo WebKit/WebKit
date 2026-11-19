@@ -80,9 +80,14 @@ PageOverlayController* PageOverlay::controller() const
     return &m_page->pageOverlayController();
 }
 
-void PageOverlay::setAssociatedFrame(LocalFrame* frame)
+void PageOverlay::setAssociatedFrame(LocalFrame& frame)
 {
+    ASSERT(m_overlayType == OverlayType::Document);
+    ASSERT(frame.isRootFrame());
+    ASSERT(!m_isScopedToFrame);
+    ASSERT(!m_page);
     m_associatedFrame = frame;
+    m_isScopedToFrame = true;
 }
 
 LocalFrame* PageOverlay::associatedFrame() const
@@ -90,12 +95,12 @@ LocalFrame* PageOverlay::associatedFrame() const
     return m_associatedFrame.get();
 }
 
-// The associated frame if set (per-frame overlays under Site Isolation); otherwise the local main
-// frame, preserving the legacy single-overlay geometry for page-level overlays.
+// The associated frame for an overlay scoped to a frame (null once that frame is gone); otherwise the
+// local main frame, preserving the legacy single-overlay geometry for page-level overlays.
 LocalFrame* PageOverlay::frameForGeometry() const
 {
-    if (LocalFrame* associatedFrame = m_associatedFrame.get())
-        return associatedFrame;
+    if (isScopedToFrame())
+        return associatedFrame();
     return protect(m_page)->localMainFrame();
 }
 

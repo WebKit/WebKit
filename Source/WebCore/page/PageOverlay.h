@@ -89,8 +89,10 @@ public:
     // Scope a Document overlay to a specific local root frame: its geometry comes from that frame's
     // view and it is hosted in that frame's own compositing tree, so sibling local roots in one
     // process (Site Isolation) each get an independent overlay. Unset keeps the page-level behavior.
-    NODELETE WEBCORE_EXPORT void setAssociatedFrame(LocalFrame*);
+    NODELETE WEBCORE_EXPORT void setAssociatedFrame(LocalFrame&);
     NODELETE WEBCORE_EXPORT LocalFrame* associatedFrame() const;
+    bool isScopedToFrame() const { return m_isScopedToFrame; }
+    LocalFrame* frameForGeometry() const;
 
     WEBCORE_EXPORT void setNeedsDisplay(const IntRect& dirtyRect);
     WEBCORE_EXPORT void setNeedsDisplay();
@@ -139,13 +141,12 @@ private:
     void startFadeAnimation();
     void fadeAnimationTimerFired();
 
-    LocalFrame* frameForGeometry() const;
-
     PageOverlayClient& m_client;
     WeakPtr<Page> m_page;
 
     // The local root frame this Document overlay is scoped to, if any (see setAssociatedFrame).
     WeakPtr<LocalFrame> m_associatedFrame;
+    bool m_isScopedToFrame { false };
 
     Timer m_fadeAnimationTimer;
     WallTime m_fadeAnimationStartTime;

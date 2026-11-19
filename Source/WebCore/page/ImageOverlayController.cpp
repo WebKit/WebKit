@@ -166,7 +166,7 @@ void ImageOverlayController::updateOverlays()
         if (overlayForRootFrame(rootFrame.ptr()))
             continue;
         Ref overlay { PageOverlay::create(*this, PageOverlay::OverlayType::Document) };
-        overlay->setAssociatedFrame(rootFrame.ptr());
+        overlay->setAssociatedFrame(rootFrame);
         m_page->pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
     }
 

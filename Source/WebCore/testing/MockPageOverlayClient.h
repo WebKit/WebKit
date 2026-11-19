@@ -42,10 +42,10 @@ public:
 
     explicit MockPageOverlayClient();
 
-    Ref<MockPageOverlay> installOverlay(Page&, PageOverlay::OverlayType);
+    Ref<MockPageOverlay> installOverlay(Page&, PageOverlay::OverlayType, LocalFrame* associatedFrame = nullptr);
     void uninstallAllOverlays();
 
-    String layerTreeAsText(Page&, OptionSet<LayerTreeAsTextOptions>);
+    String layerTreeAsText(Page&, LocalFrame& rootFrame, OptionSet<LayerTreeAsTextOptions>);
 
     virtual ~MockPageOverlayClient() = default;
 

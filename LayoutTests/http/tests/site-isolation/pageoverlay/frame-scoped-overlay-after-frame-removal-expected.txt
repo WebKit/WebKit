@@ -1,0 +1,31 @@
+
+View-relative:
+(GraphicsLayer
+)
+
+
+Document-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 50.00 50.00)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+    )
+  )
+)
+
+
+Overlays scoped to a local root: 1, whose root is gone: 0
+View-relative:
+(GraphicsLayer
+)
+
+
+Document-relative:
+(GraphicsLayer
+)
+
+
+Overlays scoped to a local root: 1, whose root is gone: 1
