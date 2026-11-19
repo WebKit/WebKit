@@ -153,6 +153,11 @@ bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, 
     if (isOrthogonalGridItem(parentGrid, gridItem))
         return true;
 
+    return isGridItemInlineSizeDependentOnBlockSize(gridItem, gridItemAlignSelf);
+}
+
+bool isGridItemInlineSizeDependentOnBlockSize(const RenderBox& gridItem, ItemPosition gridItemAlignSelf)
+{
     auto& gridItemStyle = gridItem.style();
     if (gridItem.isRenderFlexibleBox() && gridItemStyle.isColumnFlexDirection() && gridItemStyle.flexWrap().isMultiline())
         return true;

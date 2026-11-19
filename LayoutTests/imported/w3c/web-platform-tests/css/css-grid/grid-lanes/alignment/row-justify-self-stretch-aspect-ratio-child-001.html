@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: A row grows to fit an item stretched in the stacking axis</title>
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#stacking-self-alignment">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-2/#algo-grid-sizing">
+  <link rel="match" href="row-justify-self-stretch-aspect-ratio-child-001-ref.html">
+  <meta name="assert" content="Test passes if the auto rows of a row grid lanes container grow to fit an auto-placed item stretched in the stacking axis, whose height follows its width through a child with an aspect ratio.">
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      grid-template-rows: auto auto;
+      justify-items: stretch;
+      width: 300px;
+      background: gray;
+    }
+    .square {
+      aspect-ratio: 1;
+      background: green;
+    }
+    .wide {
+      grid-row: 2;
+      width: 200px;
+      height: 50px;
+      background: blue;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lanes">
+    <div><div class="square"></div></div>
+    <div class="wide"></div>
+  </div>
+</body>
+</html>

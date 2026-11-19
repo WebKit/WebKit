@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: baseline values of align-self use their fallback alignment in the stacking axis</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#stacking-self-alignment">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#grid-lanes-baseline-alignment">
+  <link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-values">
+  <link rel="match" href="column-align-self-baseline-fallback-001-ref.html">
+  <meta name="assert" content="Test passes if align-self: last baseline on the last item of a track aligns it as safe self-end in the space below it, including for an item whose end side faces the top, and align-self: first baseline aligns it as safe self-start.">
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      grid-template-columns: repeat(2, 50px);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    item {
+      display: block;
+      background: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lanes">
+    <item style="height: 20px; align-self: last baseline"></item>
+    <item style="height: 100px"></item>
+  </div>
+  <div class="grid-lanes">
+    <item style="height: 20px; align-self: first baseline"></item>
+    <item style="height: 100px"></item>
+  </div>
+  <div class="grid-lanes">
+    <item style="writing-mode: vertical-lr; direction: rtl; height: 20px; align-self: last baseline"></item>
+    <item style="height: 100px"></item>
+  </div>
+</body>
+</html>

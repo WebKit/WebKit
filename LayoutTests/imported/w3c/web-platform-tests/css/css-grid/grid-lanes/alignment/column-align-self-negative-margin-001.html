@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: an item with a negative outer size is not adjacent to a gap</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#stacking-self-alignment">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#grid-lanes-layout-algorithm">
+  <link rel="match" href="column-align-self-negative-margin-001-ref.html">
+  <meta name="assert" content="Test passes if an item whose negative margin makes its outer size negative keeps its placement position with align-self: end and align-self: stretch, both when another item follows it in its track and when it is the only item, while the end-aligned item after it moves down to the lowest last item edge.">
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      grid-template-columns: repeat(2, 50px);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    item {
+      display: block;
+      background: green;
+    }
+    .negative {
+      margin-bottom: -30px;
+      background: blue;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lanes">
+    <item class="negative" style="height: 10px; align-self: end"></item>
+    <item style="height: 60px"></item>
+    <item style="height: 20px; grid-column: 1; align-self: end"></item>
+  </div>
+  <div class="grid-lanes">
+    <item class="negative" style="align-self: stretch"></item>
+    <item style="height: 60px"></item>
+    <item style="height: 20px; grid-column: 1"></item>
+  </div>
+  <div class="grid-lanes" style="grid-template-columns: 50px">
+    <item class="negative" style="height: 10px; align-self: end"></item>
+  </div>
+</body>
+</html>

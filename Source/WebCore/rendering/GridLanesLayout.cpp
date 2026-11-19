@@ -33,6 +33,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleGridPositionsResolver.h"
 #include "WritingMode.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -53,12 +54,24 @@ GridLanesResult GridLanesLayout::performGridLanesPlacement(const GridTrackSizing
     return placeGridLanesItems(algorithm, fitTolerance, layoutPhase);
 }
 
+// Outer sizes are floored at zero here too, as they are for the running positions.
+LayoutUnit GridLanesLayout::PlacedItem::outerEdge() const
+{
+    return std::max(placement.marginBoxStart, placement.marginBoxEnd);
+}
+
+void GridLanesLayout::PlacedItem::narrowAdjacentGap(LayoutUnit gap)
+{
+    gap = std::max(0_lu, gap);
+    adjacentGap = adjacentGap ? std::min(*adjacentGap, gap) : gap;
+}
+
 GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
 {
     if (!gridAxisTracksCount())
         return { };
 
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> stackingAxisOffsets;
+    Vector<PlacedItem> placedItems;
     LayoutUnit gridContentSize;
 
     auto& grid = m_renderGrid->currentGrid();
@@ -70,11 +83,61 @@ GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgori
         if (isAutoPlacedInGridAxis)
             m_autoFlowNextCursor = gridAxisSpanFromArea(gridArea).endLine() % gridAxisTracksCount();
 
-        stackingAxisOffsets.set(gridItem.get(), placement.marginBoxStart);
         gridContentSize = std::max(gridContentSize, placement.marginBoxEnd);
+
+        if (layoutPhase == Phase::MaxContent)
+            continue;
+
+        auto gridAxisTracks = gridAxisSpanFromArea(gridArea);
+        gridAxisTracks.clamp(gridAxisTracksCount());
+        placedItems.append({ gridItem, gridAxisTracks, placement, std::nullopt });
     }
 
-    return { WTF::move(stackingAxisOffsets), gridContentSize };
+    if (layoutPhase == Phase::MaxContent)
+        return { { }, gridContentSize };
+
+    // "In the stacking axis, the self-alignment properties only apply to items that are adjacent to a “gap” in the layout,
+    // i.e. placed in their grid track(s) either immediately before a spanning item or as the last item."
+    Vector<std::optional<size_t>> lastPlacedItemInTrack(gridAxisTracksCount());
+    for (size_t itemIndex = 0; itemIndex < placedItems.size(); ++itemIndex) {
+        auto& placedItem = placedItems[itemIndex];
+        for (auto track : placedItem.gridAxisTracks) {
+            if (auto previousItemIndex = lastPlacedItemInTrack[track]) {
+                auto& previousItem = placedItems[*previousItemIndex];
+                previousItem.narrowAdjacentGap(placedItem.placement.marginBoxStart - previousItem.placement.runningPosition);
+            }
+        }
+        for (auto track : placedItem.gridAxisTracks)
+            lastPlacedItemInTrack[track] = itemIndex;
+    }
+
+    // "For the last item in a track, the alignment container extends to the lowest bottom outer edge among all the last items in all tracks."
+    std::optional<LayoutUnit> lowestLastItemEdge;
+    for (auto lastItemIndex : lastPlacedItemInTrack) {
+        if (lastItemIndex) {
+            auto lastItemEdge = placedItems[*lastItemIndex].outerEdge();
+            lowestLastItemEdge = lowestLastItemEdge ? std::max(*lowestLastItemEdge, lastItemEdge) : lastItemEdge;
+        }
+    }
+    for (auto lastItemIndex : lastPlacedItemInTrack) {
+        if (lastItemIndex) {
+            auto& lastItem = placedItems[*lastItemIndex];
+            lastItem.narrowAdjacentGap(*lowestLastItemEdge - lastItem.outerEdge());
+        }
+    }
+
+    // "The alignment subject is the item’s margin box, and the alignment container is that box plus the adjacent “gap”."
+    HashMap<SingleThreadWeakRef<const RenderBox>, GridLanesResult::StackingAxisAlignmentContainer> stackingAxisAlignmentContainers;
+    for (auto& placedItem : borrow(placedItems)) {
+        auto gap = placedItem.adjacentGap.value_or(0_lu);
+        stackingAxisAlignmentContainers.set(placedItem.gridItem.get(), GridLanesResult::StackingAxisAlignmentContainer {
+            placedItem.placement.marginBoxStart,
+            placedItem.placement.marginBoxEnd - placedItem.placement.marginBoxStart + gap,
+            gap
+        });
+    }
+
+    return { WTF::move(stackingAxisAlignmentContainers), gridContentSize };
 }
 
 GridArea GridLanesLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridItem) const
@@ -191,7 +254,7 @@ GridLanesLayout::StackingAxisPlacement GridLanesLayout::updateRunningPositions(c
     for (auto span : gridAxisSpan)
         m_runningPositions[span] = runningPosition;
 
-    return { previousRunningPosition, marginBoxEnd };
+    return { previousRunningPosition, marginBoxEnd, runningPosition };
 }
 
 LayoutUnit GridLanesLayout::maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const
@@ -248,9 +311,9 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     return gridAreaFromGridAxisSpan(gridAxisPosition);
 }
 
-LayoutUnit GridLanesResult::stackingAxisOffsetForGridItem(const RenderBox& gridItem) const
+GridLanesResult::StackingAxisAlignmentContainer GridLanesResult::stackingAxisAlignmentContainerForGridItem(const RenderBox& gridItem) const
 {
-    return m_stackingAxisOffsets.getOptional(gridItem).value_or(0_lu);
+    return m_stackingAxisAlignmentContainers.getOptional(gridItem).value_or(StackingAxisAlignmentContainer { });
 }
 
 inline Style::GridTrackSizingDirection GridLanesLayout::gridAxisDirection() const

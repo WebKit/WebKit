@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: a stretched item in a vertical-rl row grid lanes container resolves percentage max-inline-size against the container's inline size</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#stacking-self-alignment">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#containing-block">
+  <link rel="match" href="row-justify-self-vertical-stretch-001-ref.html">
+  <meta name="assert" content="Test passes if an item stretched in the stacking axis of a vertical-rl row grid lanes container is clamped by max-inline-size: 50% of the container's inline size.">
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      writing-mode: vertical-rl;
+      grid-template-rows: repeat(2, 50px);
+      gap: 10px;
+      width: 200px;
+      height: 300px;
+      justify-items: stretch;
+    }
+    item {
+      display: block;
+      background: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lanes">
+    <item style="max-inline-size: 50%"></item>
+    <item style="inline-size: 280px"></item>
+  </div>
+</body>
+</html>

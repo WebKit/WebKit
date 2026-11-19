@@ -73,6 +73,7 @@ void setOverridingContentSizeForGridItem(const RenderGrid&, RenderBox& gridItem,
 NODELETE void clearOverridingContentSizeForGridItem(const RenderGrid&, RenderBox& gridItem, Style::GridTrackSizingDirection);
 NODELETE bool isOrthogonalGridItem(const RenderGrid&, const RenderBox&);
 bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, const RenderGrid& parentGrid, ItemPosition gridItemAlignSelf);
+bool isGridItemInlineSizeDependentOnBlockSize(const RenderBox& gridItem, ItemPosition gridItemAlignSelf);
 NODELETE bool isOrthogonalParent(const RenderGrid&, const RenderElement& parent);
 bool isAspectRatioBlockSizeDependentGridItem(const RenderBox&);
 // Swaps columns and rows when the writing modes of the grid and the renderer are orthogonal.

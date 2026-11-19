@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: Stacking-axis alignment keeps an item that grew after placement within its gap</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#stacking-self-alignment">
+  <link rel="match" href="column-align-self-clamp-to-gap-001-ref.html">
+  <meta name="assert" content="Test passes if align-self: end leaves an item at the start of its alignment container when the item grew after placement past the end of its gap, and aligns an item that fits to the end.">
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      gap: 10px;
+      grid-template-columns: repeat(2, 50px);
+      margin-bottom: 70px;
+    }
+    item {
+      background: green;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lanes">
+    <item style="height: 100px"></item>
+    <item style="min-height: 150%; align-self: end"></item>
+  </div>
+  <div class="grid-lanes">
+    <item style="height: 100px"></item>
+    <item style="height: 20px; align-self: end"></item>
+  </div>
+</body>
+</html>

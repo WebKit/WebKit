@@ -251,6 +251,7 @@ private:
 
     GridAxisPosition columnAxisPositionForGridItem(const RenderBox&) const;
     GridAxisPosition rowAxisPositionForGridItem(const RenderBox&) const;
+    std::pair<LayoutUnit, LayoutUnit> alignmentStartAndOffsetForGridItem(const RenderBox&, Style::GridTrackSizingDirection, GridLanesResultRef, LayoutUnit gridItemSize) const;
     LayoutUnit columnAxisOffsetForGridItem(const RenderBox&, GridLanesResultRef) const;
     LayoutUnit rowAxisOffsetForGridItem(const RenderBox&, GridLanesResultRef) const;
     ContentAlignmentData computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const;
@@ -265,9 +266,12 @@ private:
     LayoutRect contentOverflowRect() const;
 
     void applyStretchAlignmentToGridItemIfNeeded(RenderBox&, RenderGridLayoutState&);
+    void applyStackingAxisStretchAlignmentToGridItemIfNeeded(RenderBox&, const GridLanesResult&);
+    bool stretchGridItemsInStackingAxis(const GridLanesResult&);
     void stretchBlockSizeForGridItem(RenderBox&, LayoutUnit alignmentContainerSize, RenderGridLayoutState&);
     void stretchInlineSizeForGridItem(RenderBox&, LayoutUnit alignmentContainerSize);
     void applySubgridStretchAlignmentToGridItemIfNeeded(RenderBox&);
+    StyleSelfAlignmentData stackingAxisSelfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, const Style::ComputedStyle* gridStyle = nullptr) const;
 
     std::optional<LayoutUnit> firstLineBaseline() const final;
     std::optional<LayoutUnit> lastLineBaseline() const final;
