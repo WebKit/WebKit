@@ -375,12 +375,14 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Import module '"_s, StringView(moduleName.impl()), "' is reserved"_s)));
                     if (isReservedESMName(import.field))
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Import name '"_s, StringView(fieldName.impl()), "' is reserved"_s)));
-                }
-                skipRequestedModule = isStringConstantImport || moduleInformation.builtinSetsInclude(import.module);
+                } else
+                    skipRequestedModule = true;
             }
-            auto result = specifiers.add(moduleName.impl());
-            if (result.isNewEntry && !skipRequestedModule)
-                moduleRecord->appendRequestedModule(moduleName, nullptr);
+            if (!skipRequestedModule) {
+                auto result = specifiers.add(moduleName.impl());
+                if (result.isNewEntry)
+                    moduleRecord->appendRequestedModule(moduleName, nullptr);
+            }
             moduleRecord->addImportEntry(WebAssemblyModuleRecord::ImportEntry {
                 WebAssemblyModuleRecord::ImportEntryType::Single,
                 WebAssemblyModuleRecord::ModulePhase::Evaluation,
