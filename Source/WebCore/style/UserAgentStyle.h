@@ -56,9 +56,6 @@ public:
 #if ENABLE(FULLSCREEN_API)
     static StyleSheetContents* fullscreenStyleSheet;
 #endif
-#if ENABLE(SERVICE_CONTROLS)
-    static StyleSheetContents* imageControlsStyleSheet;
-#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     static StyleSheetContents* attachmentStyleSheet;
 #endif

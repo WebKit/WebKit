@@ -2009,12 +2009,6 @@ inline RefPtr<CSSValue> extractBorderRadiusSideShorthand(ExtractorState& state, 
     return CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(horizontalRadii)), CSSValueList::createSpaceSeparated(WTF::move(verticalRadii)));
 }
 
-inline void extractBorderRadiusSideShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const StylePropertyShorthand& shorthand)
-{
-    if (auto value = extractBorderRadiusSideShorthand(state, shorthand))
-        builder.append(value->cssText(context));
-}
-
 template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertyShorthand(ExtractorState& state, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty)
 {
     static_assert(property == CSSPropertyID::Background || property == CSSPropertyID::Mask);

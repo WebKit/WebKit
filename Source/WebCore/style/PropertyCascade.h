@@ -114,7 +114,6 @@ public:
 
     const MatchResult& matchResult() const LIFETIME_BOUND { return m_matchResult; }
 
-    PropertyBitSet& propertyIsPresent() LIFETIME_BOUND { return m_propertyIsPresent; }
     const PropertyBitSet& propertyIsPresent() const LIFETIME_BOUND { return m_propertyIsPresent; }
 
     bool applyLowPriorityOnly() const { return !m_includedProperties.ids.isEmpty(); }
@@ -133,7 +132,6 @@ private:
     NODELETE static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
     void setDelayingForRuleRollback(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
 
-    NODELETE bool hasProperty(CSSPropertyID, const CSSValue&);
     NODELETE bool mayOverrideExistingProperty(CSSPropertyID, const CSSValue&);
 
     unsigned logicalGroupPropertyIndex(CSSPropertyID) const;
