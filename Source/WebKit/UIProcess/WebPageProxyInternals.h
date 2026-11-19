@@ -479,6 +479,7 @@ public:
 
 #if ENABLE(UI_SIDE_COMPOSITING)
     std::optional<VisibleContentRectUpdateInfo> lastVisibleContentRectUpdate;
+    VisibleContentRectUpdateIdentifier lastVisibleContentRectUpdateIdentifier;
 #endif
 
     bool needsFixedContainerEdgesUpdateAfterNextCommit { false };

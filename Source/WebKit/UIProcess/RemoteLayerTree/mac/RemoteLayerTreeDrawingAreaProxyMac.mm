@@ -256,6 +256,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
         else
             applyTransientZoomToLayer();
     } else if (usesDelegatedPageScaling()) {
+        if (m_scrollPositionAwaitingLayout && mainFrameCommitData.lastVisibleContentRectUpdateIdentifier >= m_scrollPositionAwaitingLayout->updateIdentifier)
+            adjustLayersForLayoutViewportAwaitingLayout();
+
         // No gesture in flight, but still re-assert the scale every commit, using what the web process just
         // reported so that resets clear it.
         auto scaleToApply = mainFrameCommitData.pageScaleFactor;
@@ -264,7 +267,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
             // Keep showing the committed scale while the hold lasts, so an in-flight commit can't move the layer.
             scaleToApply = *m_delegatedZoomCommittedScale;
 
-            if (scalesAreEssentiallyEqual(mainFrameCommitData.pageScaleFactor, *m_delegatedZoomCommittedScale)
+            constexpr double committedScaleEpsilon = 0.0001;
+            if (WTF::areEssentiallyEqual(mainFrameCommitData.pageScaleFactor, *m_delegatedZoomCommittedScale, committedScaleEpsilon)
                 || ++m_commitsSinceCommittingDelegatedZoom > maxCommitsToHoldDelegatedZoomScale) {
                 m_delegatedZoomCommittedScale = { };
                 m_delegatedZoomCommittedScrollPosition = { };
@@ -449,7 +453,7 @@ bool RemoteLayerTreeDrawingAreaProxyMac::ownsPositionOfLayer(WebCore::PlatformLa
 
 bool RemoteLayerTreeDrawingAreaProxyMac::uiProcessOwnsScrolledContentsLayerPosition() const
 {
-    return m_transientZoomScale || m_delegatedZoomCommittedScale || m_delegatedZoomTargetScrollPosition;
+    return m_transientZoomScale || m_delegatedZoomCommittedScale || m_delegatedZoomTargetScrollPosition || m_scrollPositionAwaitingLayout;
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::applyDelegatedZoomToLayer(double scale, FloatPoint originInVisibleRect)
@@ -623,6 +627,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::dropVisibleContentRectUpdateAfterSnapBa
 void RemoteLayerTreeDrawingAreaProxyMac::cancelDelegatedZoomCommit()
 {
     dropVisibleContentRectUpdateAfterSnapBack();
+    adjustLayersForLayoutViewportAwaitingLayout();
     m_delegatedZoomCommittedScale = { };
     m_delegatedZoomCommittedScrollPosition = { };
     m_delegatedZoomOriginInVisibleRect = { };
@@ -646,15 +651,18 @@ void RemoteLayerTreeDrawingAreaProxyMac::pageScaleWillChangeOutsideOfZoomGesture
 
 void RemoteLayerTreeDrawingAreaProxyMac::reassertDelegatedZoom(double scaleToApply)
 {
+    if (hasDelegatedZoomSnapAnimation())
+        return;
+
     constexpr double unityScaleEpsilon = 0.0001;
-    if (WTF::areEssentiallyEqual(scaleToApply, 1.0, unityScaleEpsilon)) {
-        if (!hasDelegatedZoomSnapAnimation()) {
-            m_delegatedZoomOriginInVisibleRect = { };
-            m_delegatedZoomCommittedScrollPosition = { };
-            removeDelegatedZoomFromLayer();
-        }
-    } else if (!hasDelegatedZoomSnapAnimation())
-        applyDelegatedZoomToLayer(scaleToApply, m_delegatedZoomOriginInVisibleRect.value_or(FloatPoint { }));
+    if (WTF::areEssentiallyEqual(scaleToApply, 1.0, unityScaleEpsilon) && !m_scrollPositionAwaitingLayout) {
+        m_delegatedZoomOriginInVisibleRect = { };
+        m_delegatedZoomCommittedScrollPosition = { };
+        removeDelegatedZoomFromLayer();
+        return;
+    }
+
+    applyDelegatedZoomToLayer(scaleToApply, m_delegatedZoomOriginInVisibleRect.value_or(FloatPoint { }));
 }
 
 FloatPoint RemoteLayerTreeDrawingAreaProxyMac::scrollPositionAnchoringGestureOrigin(double scale, FloatPoint originInVisibleRect) const
@@ -667,6 +675,9 @@ FloatPoint RemoteLayerTreeDrawingAreaProxyMac::scrollPositionAnchoringGestureOri
     // A zoom that picked its own destination has no origin to anchor; see m_delegatedZoomTargetScrollPosition.
     if (m_delegatedZoomTargetScrollPosition)
         return constrainScrollPositionForScale(scale, *m_delegatedZoomTargetScrollPosition);
+
+    if (m_scrollPositionAwaitingLayout)
+        return constrainScrollPositionForScale(scale, m_scrollPositionAwaitingLayout->scrollPosition);
 
     auto currentScrollPosition = scrollingCoordinatorProxy->currentMainFrameScrollPosition();
 
@@ -771,7 +782,8 @@ String RemoteLayerTreeDrawingAreaProxyMac::delegatedZoomOverrideAsTextForTesting
         ") scrolled contents layer position ("_s, layerPosition.x(), ", "_s, layerPosition.y(),
         ") owned by the "_s, positionIsOverridden ? "UI process"_s : "scrolling thread"_s,
         easedFromLayerPosition ? makeString(" easing from ("_s, easedFromLayerPosition->x(), ", "_s, easedFromLayerPosition->y(), ')') : emptyString(),
-        m_visibleContentRectUpdateAfterSnapBack ? " holding the web process update until the ease ends"_s : ""_s);
+        m_visibleContentRectUpdateAfterSnapBack ? " holding the web process update until the ease ends"_s : ""_s,
+        m_scrollPositionAwaitingLayout ? " holding the scrolling tree until the web process lays out"_s : ""_s);
 }
 
 
@@ -830,7 +842,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate(double sca
 
     // The transform is a pure scale, so the gesture origin is anchored by moving the scroll position. The tree,
     // the layout viewport and the web process all have to agree on this value.
-    auto anchoredScrollPosition = scrollPositionAnchoringGestureOrigin(scale, m_transientZoomOriginInVisibleRect.value_or(m_delegatedZoomOriginInVisibleRect.value_or(FloatPoint { })));
+    auto originInVisibleRect = m_transientZoomOriginInVisibleRect.value_or(m_delegatedZoomOriginInVisibleRect.value_or(FloatPoint { }));
+    auto anchoredScrollPosition = scrollPositionAnchoringGestureOrigin(scale, originInVisibleRect);
 
     // Size comes from the view, not from that rect. The web process recomputes the layout viewport from what we
     // send, so scaling it again every frame compounds and collapses the viewport mid-gesture.
@@ -880,7 +893,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate(double sca
         false, // enclosedInScrollableAncestorView
         false, // needsScrollend
         WebCore::VelocityData { },
-        lastCommittedMainFrameLayerTreeTransactionID());
+        lastCommittedMainFrameLayerTreeTransactionID(),
+        page->nextVisibleContentRectUpdateIdentifier());
 
     LOG_WITH_STREAM(VisibleRects, stream << "RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate " << visibleContentRectUpdateInfo.dump());
 
@@ -893,10 +907,35 @@ void RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate(double sca
         return;
     }
 
-    if (uiProcessOwnsScrolledContentsLayerPosition())
-        page->updateVisibleContentRectsAndAdjustLayers(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
-    else
+    if (!uiProcessOwnsScrolledContentsLayerPosition()) {
         page->updateVisibleContentRects(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
+        return;
+    }
+
+    auto previousLayoutViewportRect = page->layoutViewportRect();
+    auto layoutViewportSizeChange = layoutViewportRect.size() - previousLayoutViewportRect.size();
+    bool resizesLayoutViewport = !previousLayoutViewportRect.isEmpty() && (std::abs(layoutViewportSizeChange.width()) >= 1 || std::abs(layoutViewportSizeChange.height()) >= 1);
+    if (isStableState == IsStableState::Yes && (resizesLayoutViewport || m_scrollPositionAwaitingLayout) && page->hasRunningProcess()) {
+        page->updateVisibleContentRects(visibleContentRectUpdateInfo, true);
+        m_scrollPositionAwaitingLayout = ScrollPositionAwaitingLayout { visibleContentRectUpdateInfo.identifier(), anchoredScrollPosition };
+        applyDelegatedZoomToLayer(scale, originInVisibleRect);
+        return;
+    }
+
+    page->updateVisibleContentRectsAndAdjustLayers(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::adjustLayersForLayoutViewportAwaitingLayout()
+{
+    if (!std::exchange(m_scrollPositionAwaitingLayout, std::nullopt))
+        return;
+
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    SetForScope sendingVisibleContentRectUpdate { m_isSendingVisibleContentRectUpdate, true };
+    page->adjustLayersForLayoutViewport(page->unobscuredContentRect().location(), page->unconstrainedLayoutViewportRect(), page->displayedContentScale());
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::updateLayoutViewportForScroll(IsStableState isStableState)
@@ -912,18 +951,22 @@ void RemoteLayerTreeDrawingAreaProxyMac::updateLayoutViewportForScroll(IsStableS
     if (!page)
         return;
 
-    auto scale = m_delegatedZoomAppliedScale.value_or(1);
-
-    // At unity the layout viewport is just the unobscured rect, and the web process keeps that up to date itself.
-    constexpr double unityScaleEpsilon = 0.0001;
-    if (scale <= 0 || WTF::areEssentiallyEqual(scale, 1.0, unityScaleEpsilon))
-        return;
-
     RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
         return;
 
     if (m_isSendingVisibleContentRectUpdate || scrollingCoordinatorProxy->isCommittingScrollingTreeState())
+        return;
+
+    if (m_scrollPositionAwaitingLayout) {
+        adjustLayersForLayoutViewportAwaitingLayout();
+        reassertDelegatedZoom(m_delegatedZoomCommittedScale.value_or(m_pageScaleFactorFromLastCommit));
+    }
+
+    auto scale = m_delegatedZoomAppliedScale.value_or(1);
+
+    constexpr double unityScaleEpsilon = 0.0001;
+    if (scale <= 0 || WTF::areEssentiallyEqual(scale, 1.0, unityScaleEpsilon))
         return;
 
     sendVisibleContentRectUpdate(scale, isStableState);
@@ -956,6 +999,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
     m_transientZoomOriginInVisibleRect = originInVisibleRect;
 
     if (usesDelegatedPageScaling()) {
+        adjustLayersForLayoutViewportAwaitingLayout();
+
         // A new gesture takes over from the previous hold, which would otherwise bring back a stale scale, and
         // from any snap-back still easing out of the last release.
         auto committedScale = std::exchange(m_delegatedZoomCommittedScale, std::nullopt);

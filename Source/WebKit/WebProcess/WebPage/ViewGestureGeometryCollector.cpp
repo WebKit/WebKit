@@ -42,7 +42,9 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/Range.h>
+#include <WebCore/RenderObjectInlines.h>
 #include <WebCore/RenderObjectStyle.h>
+#include <WebCore/RenderReplaced.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Text.h>
 #include <WebCore/TextIterator.h>
@@ -245,6 +247,22 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
 
 #endif // PLATFORM(IOS_FAMILY)
 
+#if PLATFORM(MAC)
+static std::optional<FloatRect> absoluteRectOfDrawnReplacedContent(const Node& node)
+{
+    CheckedPtr renderer = dynamicDowncast<RenderReplaced>(node.renderer());
+    if (!renderer)
+        return std::nullopt;
+
+    auto drawnRect = renderer->replacedContentRect();
+    drawnRect.intersect(renderer->borderBoxRect());
+    if (drawnRect.isEmpty())
+        return std::nullopt;
+
+    return renderer->localToAbsoluteQuad(FloatQuad { FloatRect { drawnRect } }).boundingBox();
+}
+#endif
+
 void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, FloatPoint& origin, FloatRect& absoluteBoundingRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale)
 {
     absoluteBoundingRect = node.absoluteBoundingRect(&isReplaced);
@@ -262,6 +280,12 @@ void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, Flo
             isReplaced = true;
         }
     }  else {
+#if PLATFORM(MAC)
+        if (isReplaced) {
+            if (auto drawnRect = absoluteRectOfDrawnReplacedContent(node))
+                absoluteBoundingRect = *drawnRect;
+        }
+#endif
 #if ENABLE(PDF_PLUGIN)
         if (RefPtr webPage = m_webPage.get()) {
             if (RefPtr pluginView = webPage->mainFramePlugIn()) {

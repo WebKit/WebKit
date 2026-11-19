@@ -3459,7 +3459,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         scrollViewCanScroll([self _scroller]),
         !!_needsScrollend,
         velocityData,
-        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedMainFrameLayerTreeTransactionID()
+        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedMainFrameLayerTreeTransactionID(),
+        _page->nextVisibleContentRectUpdateIdentifier()
     } };
 }
 

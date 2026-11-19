@@ -1,0 +1,4 @@
+A photo that object-fit: contain letterboxes in a box nearly as tall as the view:
+  A double tap zooms to fit the drawn photo: PASS
+The same photo with object-fit: cover:
+  A double tap zooms to fit the box: PASS

@@ -53,6 +53,7 @@ struct WebPage::Internals {
 #if ENABLE(UI_SIDE_COMPOSITING)
     std::optional<TransactionID> lastTransactionIDWithScaleChange;
     std::optional<std::pair<TransactionID, double>> lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
+    VisibleContentRectUpdateIdentifier lastVisibleContentRectUpdateIdentifier;
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(UNIFIED_PDF)
     PDFPluginDisplayMode initialPDFDisplayMode { PDFPluginDisplayMode::SinglePageContinuous };

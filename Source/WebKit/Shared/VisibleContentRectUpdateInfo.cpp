@@ -60,6 +60,7 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
     ts << "VisibleContentRectUpdateInfo"_s;
 
     ts.dumpProperty("lastLayerTreeTransactionID"_s, info.lastLayerTreeTransactionID());
+    ts.dumpProperty("identifier"_s, info.identifier());
 
     ts.dumpProperty("exposedContentRect"_s, info.exposedContentRect());
     ts.dumpProperty("unobscuredContentRect"_s, info.unobscuredContentRect());

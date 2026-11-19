@@ -30,6 +30,7 @@
 #if PLATFORM(MAC)
 
 #include "DisplayLinkObserverID.h"
+#include "IdentifierTypes.h"
 #include <WebCore/AnimationFrameRate.h>
 
 namespace WebKit {
@@ -125,6 +126,7 @@ private:
 
     enum class IsStableState : bool { No, Yes };
     void sendVisibleContentRectUpdate(double scale, IsStableState);
+    void adjustLayersForLayoutViewportAwaitingLayout();
 
     // Scrolling has to refresh the web process's layout viewport override, or fixed and sticky layers stay placed
     // against the rect from the last zoom. iOS does this from -[WKContentView didUpdateVisibleRect:].
@@ -217,6 +219,12 @@ private:
         std::optional<WebCore::ScrollingNodeID> rootScrollingNodeID;
     };
     std::optional<VisibleContentRectUpdateAfterSnapBack> m_visibleContentRectUpdateAfterSnapBack;
+
+    struct ScrollPositionAwaitingLayout {
+        VisibleContentRectUpdateIdentifier updateIdentifier;
+        WebCore::FloatPoint scrollPosition;
+    };
+    std::optional<ScrollPositionAwaitingLayout> m_scrollPositionAwaitingLayout;
 };
 
 } // namespace WebKit

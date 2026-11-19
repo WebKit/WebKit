@@ -48,6 +48,7 @@ class WebKit::VisibleContentRectUpdateInfo {
     bool needsScrollend();
     WebCore::VelocityData scrollVelocity();
     WebKit::TransactionID lastLayerTreeTransactionID();
+    WebKit::VisibleContentRectUpdateIdentifier identifier();
 };
 
 #endif

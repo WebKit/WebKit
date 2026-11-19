@@ -77,6 +77,8 @@ String MainFrameData::description() const
     ts.dumpProperty("allowsUserScaling"_s, allowsUserScaling);
     ts.dumpProperty("viewportFitEdges"_s, viewportFitEdges);
     ts.dumpProperty("isInStableState"_s, isInStableState);
+    if (lastVisibleContentRectUpdateIdentifier)
+        ts.dumpProperty("lastVisibleContentRectUpdateIdentifier"_s, lastVisibleContentRectUpdateIdentifier);
 
     ts.endGroup();
 

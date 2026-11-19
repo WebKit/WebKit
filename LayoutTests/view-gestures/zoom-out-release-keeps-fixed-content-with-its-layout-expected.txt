@@ -1,0 +1,5 @@
+A marker centered in a full size fixed overlay:
+  Before zooming: PASS (the marker is in the middle of the view)
+  Held zoom out: PASS (the marker is in the middle of the view)
+  When the ease ends, before the web process lays out again: PASS (the marker is in the middle of the view)
+  After the web process lays out again: PASS (the marker is in the middle of the view)
