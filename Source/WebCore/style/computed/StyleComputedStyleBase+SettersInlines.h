@@ -379,24 +379,9 @@ inline void ComputedStyleBase::setBorderImage(BorderImage&& image)
     updateHasZeroEffectiveBorderWidths();
 }
 
-inline void ComputedStyleBase::setPerspectiveOrigin(PerspectiveOrigin&& origin)
-{
-    SET_NESTED(m_nonInheritedData, rareData, perspectiveOrigin, WTF::move(origin));
-}
-
 inline void ComputedStyleBase::setTransformOrigin(TransformOrigin&& origin)
 {
     SET_DOUBLY_NESTED(m_nonInheritedData, miscData, transform, origin, WTF::move(origin));
-}
-
-inline void ComputedStyleBase::setInsetBox(InsetBox&& box)
-{
-    SET_NESTED(m_nonInheritedData, surroundData, inset, WTF::move(box));
-}
-
-inline void ComputedStyleBase::setMarginBox(MarginBox&& box)
-{
-    SET_NESTED(m_nonInheritedData, surroundData, margin, WTF::move(box));
 }
 
 inline void ComputedStyleBase::setPaddingBox(PaddingBox&& box)
