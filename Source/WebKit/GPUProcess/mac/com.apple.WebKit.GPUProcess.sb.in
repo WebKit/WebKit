@@ -1346,6 +1346,9 @@
 (when (defined? 'mach_vm_range_create)
     (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
 #endif
+#if HAVE(SAFE_MEMORY_TRANSFER)
+(allow syscall-mig (kernel-mig-routine mach_vm_region_recurse))
+#endif
 (allow syscall-mig (allowed-mig-routines))
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)

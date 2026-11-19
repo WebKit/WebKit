@@ -415,8 +415,10 @@
 
 (define (syscall-mig-allowed)
      (kernel-mig-routine
-#if ASAN_ENABLED
+#if ASAN_ENABLED || HAVE(SAFE_MEMORY_TRANSFER)
         mach_vm_region_recurse
+#endif
+#if ASAN_ENABLED
         task_set_exc_guard_behavior
 #endif
         _mach_make_memory_entry
