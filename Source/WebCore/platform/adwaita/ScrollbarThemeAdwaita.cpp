@@ -69,9 +69,9 @@ bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 #endif
 }
 
-int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelevancy)
+int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarStyle scrollbarStyle, ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelevancy)
 {
-    if (scrollbarWidth == ScrollbarWidth::None || (usesOverlayScrollbars() && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
+    if (scrollbarWidth == ScrollbarWidth::None || (scrollbarStyle == ScrollbarStyle::Overlay && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
         return 0;
     return scrollbarSize;
 }
@@ -127,7 +127,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         .enabled = scrollbar.enabled(),
         .useDarkAppearanceForScrollbars = scrollbar.scrollableArea().useDarkAppearanceForScrollbars(),
         .shouldPlaceVerticalScrollbarOnLeft = scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft(),
-        .usesOverlayScrollbars = usesOverlayScrollbars(),
+        .usesOverlayScrollbars = scrollbar.isOverlayScrollbar(),
         .orientation = scrollbar.orientation(),
         .hoveredPart = scrollbar.hoveredPart(),
         .pressedPart = scrollbar.pressedPart(),

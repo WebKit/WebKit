@@ -28,6 +28,7 @@
 
 #include "GraphicsContext.h"
 #include "Scrollbar.h"
+#include "ScrollbarInlines.h"
 
 namespace WebCore {
 
@@ -258,7 +259,7 @@ int ScrollbarThemeComposite::thumbLength(Scrollbar& scrollbar)
 
 int ScrollbarThemeComposite::minimumThumbLength(Scrollbar& scrollbar)
 {
-    return scrollbarThickness(scrollbar.widthStyle());
+    return scrollbarThickness(protect(scrollbar.scrollableArea())->scrollbarStyle(), scrollbar.widthStyle());
 }
 
 int ScrollbarThemeComposite::trackPosition(Scrollbar& scrollbar)

@@ -103,7 +103,7 @@ Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orient
     // FIXME: This is ugly and would not be necessary if we fix cross-platform code to actually query for
     // scrollbar thickness and use it when sizing scrollbars (rather than leaving one dimension of the scrollbar
     // alone when sizing).
-    int thickness = theme().scrollbarThickness(widthStyle);
+    int thickness = theme().scrollbarThickness(scrollableArea.scrollbarStyle(), widthStyle);
     setFrameRect(IntRect(0, 0, thickness, thickness));
 
     m_currentPos = static_cast<float>(offsetForOrientation(scrollableArea.scrollOffset(), m_orientation));
@@ -475,7 +475,7 @@ void Scrollbar::setEnabled(bool e)
 
 bool Scrollbar::isOverlayScrollbar() const
 {
-    return theme().usesOverlayScrollbars();
+    return protect(scrollableArea())->usesOverlayScrollbars();
 }
 
 int Scrollbar::expandedHitTestToleranceThreshold() const
@@ -579,9 +579,10 @@ int Scrollbar::minimumThumbLength() const
 
 void Scrollbar::updateScrollbarThickness()
 {
-    m_widthStyle = protect(scrollableArea())->scrollbarWidthStyle();
+    CheckedRef scrollableArea = this->scrollableArea();
+    m_widthStyle = scrollableArea->scrollbarWidthStyle();
     if (!isCustomScrollbar() || isMockScrollbar()) {
-        int thickness = ScrollbarTheme::theme().scrollbarThickness(widthStyle());
+        int thickness = ScrollbarTheme::theme().scrollbarThickness(scrollableArea->scrollbarStyle(), widthStyle());
         setFrameRect(IntRect(0, 0, thickness, thickness));
     }
 }

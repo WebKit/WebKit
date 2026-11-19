@@ -93,6 +93,7 @@
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/NodeHTMLConverter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
@@ -118,6 +119,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/Borrow.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
@@ -166,6 +168,13 @@ void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility sh
     _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask | kLSServerConnectionStatusReleaseNotificationsMask, nullptr);
 
     WebProcess::singleton().revokeLaunchServicesSandboxExtension();
+}
+
+void WebPage::updateScrollerPairsForScrollbarStyleOverride()
+{
+    // Page::setScrollbarStyleOverride() doesn't update the scroller pairs of the scroll bars that this process draws.
+    // Each pair takes the style of its own area, so other pages' scroll bars don't change.
+    [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:ScrollerStyle::recommendedScrollerStyle()];
 }
 
 RetainPtr<WKAccessibilityWebPageObject> WebPage::createMockAccessibilityElementWithPresenter(pid_t pid)

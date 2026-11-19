@@ -36,6 +36,7 @@
 #import "WKWebViewMac.h"
 #import "WebColorPicker.h"
 #import "WebPageProxy.h"
+#import "WebPageProxyTesting.h"
 #import "WebPopupMenuProxyMac.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
@@ -245,6 +246,20 @@
         return *bounds;
 #endif
     return NSZeroRect;
+}
+
+- (void)_setScrollerStyleOverrideForTesting:(NSNumber *)scrollerStyle completionHandler:(void (^)(void))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    std::optional<WebCore::ScrollbarStyle> styleOverride;
+    if (scrollerStyle)
+        styleOverride = scrollerStyle.integerValue == NSScrollerStyleOverlay ? WebCore::ScrollbarStyle::Overlay : WebCore::ScrollbarStyle::AlwaysVisible;
+    pageForTesting->setScrollbarStyleOverride(styleOverride, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
 }
 
 @end

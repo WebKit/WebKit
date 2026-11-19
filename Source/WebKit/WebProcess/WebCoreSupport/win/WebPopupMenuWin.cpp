@@ -78,7 +78,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
     // FIXME: popupWidth should probably take into account monitor constraints as is done with WebPopupMenuProxyWin::calculatePositionAndSize.
     popupWidth += std::max(0, data.m_clientPaddingRight - data.m_clientInsetRight) + std::max(0, data.m_clientPaddingLeft - data.m_clientInsetLeft);
     data.m_popupWidth = popupWidth;
-    popupWidth += ScrollbarTheme::theme().scrollbarThickness(ScrollbarWidth::Thin);
+    popupWidth += ScrollbarTheme::theme().scrollbarThickness(ScrollbarTheme::theme().scrollbarStyle(), ScrollbarWidth::Thin);
     popupWidth = std::max(pageCoordinates.width() - m_popupClient->clientInsetLeft() - m_popupClient->clientInsetRight(), popupWidth);
 
     // The backing stores should be drawn at least as wide as the control on the page to match the width of the popup window we'll create.

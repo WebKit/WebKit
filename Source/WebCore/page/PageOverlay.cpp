@@ -121,7 +121,7 @@ IntRect PageOverlay::bounds() const
         int width = frameView->width();
         int height = frameView->height();
 
-        if (!ScrollbarTheme::theme().usesOverlayScrollbars()) {
+        if (!frameView->usesOverlayScrollbars()) {
             if (RefPtr scrollbar = frameView->verticalScrollbar())
                 width -= scrollbar->width();
             if (RefPtr scrollbar = frameView->horizontalScrollbar())

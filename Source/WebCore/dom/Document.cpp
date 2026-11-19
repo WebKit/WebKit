@@ -12182,7 +12182,7 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
     // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
     // so we need to test ScrollView scrollbars separately here. In case of using overlay scrollbars, the layer hit test
     // will always work so we need to check the ScrollView scrollbars in that case too.
-    if (!resultLayer || ScrollbarTheme::theme().usesOverlayScrollbars()) {
+    if (!resultLayer || frameView->usesOverlayScrollbars()) {
         // FIXME: Consider if this test should be done unconditionally.
         if (request.allowsFrameScrollbars()) {
             IntPoint windowPoint = frameView->contentsToWindow(location.roundedPoint());

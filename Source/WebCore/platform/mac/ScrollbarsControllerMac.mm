@@ -30,8 +30,8 @@
 
 #import "GraphicsLayer.h"
 #import "Logging.h"
-#import "NSScrollerImpDetails.h"
 #import "ScrollAnimator.h"
+#import "ScrollTypesMac.h"
 #import "ScrollableArea.h"
 #import "ScrollbarInlines.h"
 #import "ScrollbarMac.h"
@@ -165,12 +165,14 @@ NODELETE static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
 
 - (void)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair updateScrollerStyleForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle
 {
+    UNUSED_PARAM(scrollerImpPair);
+    UNUSED_PARAM(newRecommendedScrollerStyle);
+
     CheckedPtr scrollableArea = _scrollableArea.get();
     if (!scrollableArea)
         return;
 
-    [scrollerImpPair setScrollerStyle:newRecommendedScrollerStyle];
-
+    // The page can override the recommended style.
     CheckedRef scrollbarsController = downcast<WebCore::ScrollbarsControllerMac>(scrollableArea->scrollbarsController());
     scrollbarsController->updateScrollerStyle();
 }
@@ -606,7 +608,7 @@ ScrollbarsControllerMac::ScrollbarsControllerMac(ScrollableArea& scrollableArea)
     , m_scrollerImpPairDelegate(adoptNS([[WebScrollerImpPairDelegate alloc] initWithScrollableArea:&scrollableArea]))
 {
     [m_scrollerImpPair setDelegate:m_scrollerImpPairDelegate.get()];
-    [m_scrollerImpPair setScrollerStyle:ScrollerStyle::recommendedScrollerStyle()];
+    [m_scrollerImpPair setScrollerStyle:nsScrollerStyle(scrollableArea.scrollbarStyle())];
 }
 
 ScrollbarsControllerMac::~ScrollbarsControllerMac()
@@ -685,7 +687,7 @@ void ScrollbarsControllerMac::mouseMovedInContentArea()
 void ScrollbarsControllerMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 {
     // At this time, only legacy scrollbars needs to send notifications here.
-    if (ScrollerStyle::recommendedScrollerStyle() != NSScrollerStyleLegacy)
+    if ([m_scrollerImpPair scrollerStyle] != NSScrollerStyleLegacy)
         return;
 
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
@@ -698,7 +700,7 @@ void ScrollbarsControllerMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 void ScrollbarsControllerMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
 {
     // At this time, only legacy scrollbars needs to send notifications here.
-    if (ScrollerStyle::recommendedScrollerStyle() != NSScrollerStyleLegacy)
+    if ([m_scrollerImpPair scrollerStyle] != NSScrollerStyleLegacy)
         return;
 
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
@@ -928,7 +930,7 @@ void ScrollbarsControllerMac::horizontalScrollbarLayerDidChange()
 bool ScrollbarsControllerMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scrollbar)
 {
     // Non-overlay scrollbars should always participate in hit testing.
-    if (ScrollerStyle::recommendedScrollerStyle() != NSScrollerStyleOverlay)
+    if ([m_scrollerImpPair scrollerStyle] != NSScrollerStyleOverlay)
         return true;
 
     // Overlay scrollbars should participate in hit testing whenever they are at all visible.
@@ -978,6 +980,16 @@ void ScrollbarsControllerMac::updateScrollerImps()
 
 void ScrollbarsControllerMac::updateScrollerStyle()
 {
+    CheckedRef scrollableArea = this->scrollableArea();
+    // FIXME: In WebKitLegacy, the theme's setting is refreshed by an NSPreferredScrollerStyleDidChangeNotification
+    // observer, which can run after AppKit asks the pairs to update. Then this is the old style, and the early return
+    // below skips the update.
+    auto newStyle = scrollableArea->scrollbarStyle();
+
+    // A change of one page's style asks every scroller pair in the process to update.
+    if (!m_needsScrollerStyleUpdate && [m_scrollerImpPair scrollerStyle] == nsScrollerStyle(newStyle))
+        return;
+
     if ([m_scrollerImpPair overlayScrollerStateIsLocked]) {
         m_needsScrollerStyleUpdate = true;
         return;
@@ -991,7 +1003,7 @@ void ScrollbarsControllerMac::updateScrollerStyle()
 
     macTheme->usesOverlayScrollbarsChanged();
 
-    NSScrollerStyle newStyle = [m_scrollerImpPair scrollerStyle];
+    [m_scrollerImpPair setScrollerStyle:nsScrollerStyle(newStyle)];
 
     updateScrollerImps();
 
@@ -1002,7 +1014,7 @@ void ScrollbarsControllerMac::updateScrollerStyle()
 
     // If m_needsScrollerStyleUpdate is true, then the page is restoring from the back/forward cache, and
     // a relayout will happen on its own. Otherwise, we must initiate a re-layout ourselves.
-    protect(scrollableArea())->scrollbarStyleChanged(newStyle == NSScrollerStyleOverlay ? ScrollbarStyle::Overlay : ScrollbarStyle::AlwaysVisible, !m_needsScrollerStyleUpdate);
+    scrollableArea->scrollbarStyleChanged(newStyle, !m_needsScrollerStyleUpdate);
 
     m_needsScrollerStyleUpdate = false;
 }

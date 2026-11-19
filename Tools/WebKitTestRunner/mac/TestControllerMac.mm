@@ -44,9 +44,11 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
@@ -489,6 +491,18 @@ void TestController::platformInitializeContext()
     [NSURLCache setSharedURLCache:sharedCache.get()];
 
     WKContextSetFontAllowList(m_context.get(), generateFontAllowList().get());
+}
+
+void TestController::setScrollbarStyleOverride(const String& style, CompletionHandler<void(WKTypeRef)>&& completionHandler)
+{
+    RetainPtr<NSNumber> scrollerStyle;
+    if (style == "classic"_s)
+        scrollerStyle = @(NSScrollerStyleLegacy);
+    else if (style == "overlay"_s)
+        scrollerStyle = @(NSScrollerStyleOverlay);
+    [m_mainWebView->platformView() _setScrollerStyleOverrideForTesting:scrollerStyle.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler(nullptr);
+    }).get()];
 }
 
 void TestController::setHidden(bool hidden)

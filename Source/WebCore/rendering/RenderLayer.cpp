@@ -3309,7 +3309,7 @@ RenderLayer::OverflowControlRects RenderLayer::overflowControlsRects() const
     };
 
     if (haveResizer) {
-        auto scrollbarThickness = ScrollbarTheme::theme().scrollbarThickness();
+        auto scrollbarThickness = ScrollbarTheme::theme().scrollbarThickness(protect(page())->scrollbarStyle());
         result.resizer = cornerRect({ scrollbarThickness, scrollbarThickness });
     }
 

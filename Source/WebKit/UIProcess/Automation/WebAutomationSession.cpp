@@ -87,6 +87,7 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "BidiBrowserAgent.h"
+#include "BidiEmulationAgent.h"
 #include "BidiEventNames.h"
 #include "BidiInputAgent.h"
 #include "BidiScriptAgent.h"
@@ -1610,6 +1611,7 @@ void WebAutomationSession::wheelEventsFlushedForPage(const WebPageProxy& page)
 void WebAutomationSession::didCreatePage(WebPageProxy& page)
 {
     m_bidiProcessor->browserAgent().didCreatePage(page);
+    m_bidiProcessor->emulationAgent().didCreatePage(page);
     emitContextCreatedEvent(page);
 }
 

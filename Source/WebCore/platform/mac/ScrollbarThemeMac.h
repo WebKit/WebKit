@@ -46,7 +46,7 @@ public:
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior>) override;
     void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect& cornerRect) override;
 
-    int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
+    int scrollbarThickness(ScrollbarStyle, ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
     
     bool supportsControlTints() const override { return true; }
     bool usesOverlayScrollbars() const  override;

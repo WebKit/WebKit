@@ -1692,7 +1692,7 @@ String LocalFrameView::debugDescription() const
 
 bool LocalFrameView::canShowNonOverlayScrollbars() const
 {
-    return canHaveScrollbars() && (usesCustomScrollbarStyle() || !ScrollbarTheme::theme().usesOverlayScrollbars());
+    return canHaveScrollbars() && (usesCustomScrollbarStyle() || !usesOverlayScrollbars());
 }
 
 bool LocalFrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientation) const
@@ -7475,6 +7475,13 @@ Style::ScrollbarGutter LocalFrameView::scrollbarGutterStyle()  const
     return CSS::Keyword::Auto { };
 }
 
+std::optional<ScrollbarStyle> LocalFrameView::scrollbarStyleOverride() const
+{
+    if (RefPtr page = m_frame->page())
+        return page->scrollbarStyleOverride();
+    return std::nullopt;
+}
+
 ScrollbarWidth LocalFrameView::scrollbarWidthStyle()  const
 {
     auto* document = m_frame->document();
@@ -7578,14 +7585,36 @@ void LocalFrameView::writeRenderTreeAsText(TextStream& ts, OptionSet<RenderAsTex
     externalRepresentationForLocalFrame(ts, frame(), behavior);
 }
 
+static void collectUnregisteredScrollableAreas(RenderLayer& layer, const LocalFrameView::ScrollableAreaSet* registeredScrollableAreas, Vector<WeakPtr<ScrollableArea>>& scrollableAreas)
+{
+    if (CheckedPtr scrollableArea = layer.scrollableArea()) {
+        if (!registeredScrollableAreas || !registeredScrollableAreas->contains(*scrollableArea))
+            scrollableAreas.append(*scrollableArea);
+    }
+    for (CheckedPtr child = layer.firstChild(); child; child = child->nextSibling())
+        collectUnregisteredScrollableAreas(*child, registeredScrollableAreas, scrollableAreas);
+}
+
 void LocalFrameView::scrollbarStyleDidChange()
 {
+    // Areas that can't scroll aren't in scrollableAreas(), and with overlay scroll bars, overflow: scroll gives them no
+    // scroll bars and maybe no scroll bars controller. They still need to add or remove scroll bars.
+    Vector<WeakPtr<ScrollableArea>> unregisteredScrollableAreas;
+    if (CheckedPtr renderView = this->renderView()) {
+        CheckedPtr layer = renderView->layer();
+        collectUnregisteredScrollableAreas(*layer, this->scrollableAreas(), unregisteredScrollableAreas);
+    }
+
     // Updating the scroll bars lays out the scrollable areas again, which can add and remove scrollable areas.
     if (auto scrollableAreas = this->scrollableAreas()) {
         for (auto& weakScrollableArea : copyToVectorOf<WeakPtr<ScrollableArea>>(*scrollableAreas)) {
             if (CheckedPtr scrollableArea = weakScrollableArea.get())
                 scrollableArea->scrollbarsController().updateScrollbarStyle();
         }
+    }
+    for (auto& weakScrollableArea : unregisteredScrollableAreas) {
+        if (CheckedPtr scrollableArea = weakScrollableArea.get())
+            scrollableArea->scrollbarStyleChanged(scrollableArea->scrollbarStyle(), true);
     }
     scrollbarsController().updateScrollbarStyle();
 }
@@ -7606,8 +7635,8 @@ int LocalFrameView::scrollbarGutterWidth(bool isHorizontalWritingMode) const
     if (verticalScrollbar() && protect(verticalScrollbar())->isOverlayScrollbar())
         return 0;
 
-    if (!verticalScrollbar() && !(scrollbarGutterStyle().isAuto() || ScrollbarTheme::theme().usesOverlayScrollbars()) && isHorizontalWritingMode)
-        return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+    if (!verticalScrollbar() && !(scrollbarGutterStyle().isAuto() || usesOverlayScrollbars()) && isHorizontalWritingMode)
+        return ScrollbarTheme::theme().scrollbarThickness(scrollbarStyle(), scrollbarWidthStyle());
 
     if (!verticalScrollbar())
         return 0;

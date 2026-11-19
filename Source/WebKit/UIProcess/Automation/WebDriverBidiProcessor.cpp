@@ -35,6 +35,7 @@
 #include "BidiBrowserAgent.h"
 #include "BidiBrowsingContextAgent.h"
 #include "BidiDigitalCredentialsAgent.h"
+#include "BidiEmulationAgent.h"
 #include "BidiInputAgent.h"
 #include "BidiPermissionsAgent.h"
 #include "BidiScriptAgent.h"
@@ -62,6 +63,7 @@ WebDriverBidiProcessor::WebDriverBidiProcessor(WebAutomationSession& session)
     , m_browserAgent(makeUniqueRef<BidiBrowserAgent>(session, m_backendDispatcher))
     , m_browsingContextAgent(BidiBrowsingContextAgent::create(session, m_backendDispatcher))
     , m_digitalCredentialsAgent(makeUniqueRef<BidiDigitalCredentialsAgent>(session, m_backendDispatcher))
+    , m_emulationAgent(makeUniqueRef<BidiEmulationAgent>(session, m_backendDispatcher))
     , m_inputAgent(makeUniqueRef<BidiInputAgent>(session, m_backendDispatcher))
     , m_permissionsAgent(makeUniqueRef<BidiPermissionsAgent>(session, m_backendDispatcher))
     , m_scriptAgent(makeUniqueRef<BidiScriptAgent>(session, m_backendDispatcher))

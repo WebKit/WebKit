@@ -145,6 +145,7 @@ struct WebPageCreationParameters {
     bool alwaysShowsVerticalScroller { false };
 
     bool suppressScrollbarAnimations { false };
+    std::optional<WebCore::ScrollbarStyle> scrollbarStyleOverride { };
 
     WebCore::Pagination::Mode paginationMode { WebCore::Pagination::Mode::Unpaginated };
     bool paginationBehavesLikeColumns { false };

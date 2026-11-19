@@ -1253,6 +1253,13 @@ bool TestController::denyNotificationPermissionOnPrompt(WKStringRef originString
     return true;
 }
 
+#if !PLATFORM(MAC)
+void TestController::setScrollbarStyleOverride(const String&, CompletionHandler<void(WKTypeRef)>&& completionHandler)
+{
+    completionHandler(nullptr);
+}
+#endif
+
 #if !PLATFORM(COCOA)
 void TestController::updatePresentation(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
@@ -2545,6 +2552,7 @@ if (window.testRunner) {
     testRunner.updatePresentation = () => post(['UpdatePresentation']);
     testRunner.setPageScaleFactor = (scaleFactor, x, y) => post(['SetPageScaleFactor', { scaleFactor: scaleFactor, x: x, y: y }]);
     testRunner.setObscuredContentInsets = (top, right, bottom, left) => post(['SetObscuredContentInsets', [top, right, bottom, left]]);
+    testRunner.setScrollbarStyleOverride = style => post(['SetScrollbarStyleOverride', style ?? '']);
     testRunner.setResourceMonitorList = (rulesText) => post(['SetResourceMonitorList', rulesText]);
     testRunner.findStringMatchesInPage = (target, options) => post(['FindStringMatches', { String: target, FindOptions: options }]);
     testRunner.setAuthenticationUsername = username => post(['SetAuthenticationUsername', username]);
@@ -2730,6 +2738,9 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto left = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 3)));
         return WKPageSetObscuredContentInsetsForTesting(TestController::singleton().mainWebView()->page(), top, right, bottom, left, completionHandler.leak(), adoptAndCallCompletionHandler);
     }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetScrollbarStyleOverride"))
+        return setScrollbarStyleOverride(toWTFString(stringValue(argument)), WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "UpdatePresentation"))
         return updatePresentation(WTF::move(completionHandler));

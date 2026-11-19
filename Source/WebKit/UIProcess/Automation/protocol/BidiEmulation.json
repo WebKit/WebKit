@@ -1,0 +1,20 @@
+{
+    "domain": "BidiEmulation",
+    "exposedAs": "emulation",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The emulation module contains commands that make the browser behave as it would in a different environment.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-emulation",
+    "commands": [
+        {
+            "name": "setScrollbarTypeOverride",
+            "description": "Makes pages use classic or overlay scroll bars instead of the system setting, in the given top-level browsing contexts, in the given user contexts, or everywhere.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-emulation-setScrollbarTypeOverride",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/emulation/set_scrollbar_type_override",
+            "parameters": [
+                { "name": "scrollbarType", "type": "any", "description": "\"classic\" or \"overlay\", or null to remove the override." },
+                { "name": "contexts", "type": "array", "items": { "$ref": "BidiBrowsingContext.BrowsingContext" }, "optional": true, "description": "Top-level browsing contexts to override the scrollbar type for." },
+                { "name": "userContexts", "type": "array", "items": { "$ref": "BidiBrowser.UserContext" }, "optional": true, "description": "User contexts to override the scrollbar type for." }
+            ]
+        }
+    ]
+}

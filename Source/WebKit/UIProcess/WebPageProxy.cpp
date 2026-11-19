@@ -8301,6 +8301,21 @@ void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
     send(Messages::WebPage::SetSuppressScrollbarAnimations(suppressAnimations));
 }
 
+void WebPageProxy::setScrollbarStyleOverride(std::optional<WebCore::ScrollbarStyle> styleOverride)
+{
+    if (styleOverride == m_scrollbarStyleOverride)
+        return;
+
+    m_scrollbarStyleOverride = styleOverride;
+
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::SetScrollbarStyleOverride(styleOverride), pageID);
+    });
+}
+
 RectEdges<bool> WebPageProxy::rubberBandableEdges() const
 {
     return internals().rubberBandableEdges;
@@ -17251,6 +17266,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.alwaysShowsHorizontalScroller = m_alwaysShowsHorizontalScroller;
     parameters.alwaysShowsVerticalScroller = m_alwaysShowsVerticalScroller;
     parameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;
+    parameters.scrollbarStyleOverride = m_scrollbarStyleOverride;
     parameters.paginationMode = m_paginationMode;
     parameters.paginationBehavesLikeColumns = m_paginationBehavesLikeColumns;
     parameters.pageLength = m_pageLength;

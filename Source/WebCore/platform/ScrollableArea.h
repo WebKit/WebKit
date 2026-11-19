@@ -161,6 +161,10 @@ public:
     virtual ScrollbarWidth scrollbarWidthStyle() const { return ScrollbarWidth::Auto; }
     virtual std::optional<ScrollbarColor> scrollbarColorStyle() const { return { }; }
 
+    WEBCORE_EXPORT ScrollbarStyle scrollbarStyle() const;
+    bool usesOverlayScrollbars() const { return scrollbarStyle() == ScrollbarStyle::Overlay; }
+    virtual std::optional<ScrollbarStyle> scrollbarStyleOverride() const { return std::nullopt; }
+
     WEBCORE_EXPORT bool allowsHorizontalScrolling() const;
     WEBCORE_EXPORT bool allowsVerticalScrolling() const;
 

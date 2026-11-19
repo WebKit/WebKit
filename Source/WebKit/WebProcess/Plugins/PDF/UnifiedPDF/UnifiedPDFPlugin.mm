@@ -1456,7 +1456,7 @@ void UnifiedPDFPlugin::deviceOrPageScaleFactorChanged(CheckForMagnificationGestu
 IntRect UnifiedPDFPlugin::availableContentsRect() const
 {
     auto availableRect = IntRect({ }, size());
-    if (ScrollbarTheme::theme().usesOverlayScrollbars())
+    if (usesOverlayScrollbars())
         return availableRect;
 
     int verticalScrollbarSpace = 0;

@@ -1139,6 +1139,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
 
     setUnderlayColor(parameters.underlayColor);
+    setScrollbarStyleOverride(parameters.scrollbarStyleOverride);
 
     setPaginationMode(parameters.paginationMode);
     setPaginationBehavesLikeColumns(parameters.paginationBehavesLikeColumns);
@@ -1885,6 +1886,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     setUseColorAppearance(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
     setContentInversion(parameters.contentInversion);
+    setScrollbarStyleOverride(parameters.scrollbarStyleOverride);
 
     if (auto& remotePageParameters = parameters.remotePageParameters) {
         if (RefPtr page = m_page; page && is<RemoteFrame>(page->mainFrame()))
@@ -3652,6 +3654,18 @@ void WebPage::listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> mile
 void WebPage::setSuppressScrollbarAnimations(bool suppressAnimations)
 {
     protect(corePage())->setShouldSuppressScrollbarAnimations(suppressAnimations);
+}
+
+void WebPage::setScrollbarStyleOverride(std::optional<ScrollbarStyle> styleOverride)
+{
+    RefPtr corePage = this->corePage();
+    if (corePage->scrollbarStyleOverride() == styleOverride)
+        return;
+
+    corePage->setScrollbarStyleOverride(styleOverride);
+#if PLATFORM(MAC)
+    updateScrollerPairsForScrollbarStyleOverride();
+#endif
 }
 
 void WebPage::setEnableVerticalRubberBanding(bool enableVerticalRubberBanding)

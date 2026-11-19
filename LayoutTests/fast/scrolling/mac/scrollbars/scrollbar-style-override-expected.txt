@@ -1,0 +1,109 @@
+Tests that changing a page's scroll bar style override adds or removes the vertical scroll bars of the page, its elements, its iframes and a list box, whether or not they can scroll, and lays them out again.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+System setting: classic
+PASS page has a scroll bar.
+PASS page's content is as wide as its client area.
+PASS scrollable has a scroll bar.
+PASS scrollable's content is as wide as its client area.
+PASS notScrollable has a scroll bar.
+PASS notScrollable's content is as wide as its client area.
+PASS scrollableFrame has a scroll bar.
+PASS scrollableFrame's content is as wide as its client area.
+PASS notScrollableFrame has a scroll bar.
+PASS notScrollableFrame's content is as wide as its client area.
+PASS listBox has a scroll bar.
+PASS listBox's content is as wide as its client area.
+
+Scroll bar style override: overlay
+PASS page has no scroll bar.
+PASS page's content is as wide as its client area.
+PASS scrollable has no scroll bar.
+PASS scrollable's content is as wide as its client area.
+PASS notScrollable has no scroll bar.
+PASS notScrollable's content is as wide as its client area.
+PASS scrollableFrame has no scroll bar.
+PASS scrollableFrame's content is as wide as its client area.
+PASS notScrollableFrame has no scroll bar.
+PASS notScrollableFrame's content is as wide as its client area.
+PASS listBox has no scroll bar.
+PASS listBox's content is as wide as its client area.
+
+Adding an element and an iframe that can't scroll, while the style is overlay
+PASS page has no scroll bar.
+PASS page's content is as wide as its client area.
+PASS scrollable has no scroll bar.
+PASS scrollable's content is as wide as its client area.
+PASS notScrollable has no scroll bar.
+PASS notScrollable's content is as wide as its client area.
+PASS scrollableFrame has no scroll bar.
+PASS scrollableFrame's content is as wide as its client area.
+PASS notScrollableFrame has no scroll bar.
+PASS notScrollableFrame's content is as wide as its client area.
+PASS listBox has no scroll bar.
+PASS listBox's content is as wide as its client area.
+PASS addedNotScrollable has no scroll bar.
+PASS addedNotScrollable's content is as wide as its client area.
+PASS addedNotScrollableFrame has no scroll bar.
+PASS addedNotScrollableFrame's content is as wide as its client area.
+
+Scroll bar style override: classic
+PASS page has a scroll bar.
+PASS page's content is as wide as its client area.
+PASS scrollable has a scroll bar.
+PASS scrollable's content is as wide as its client area.
+PASS notScrollable has a scroll bar.
+PASS notScrollable's content is as wide as its client area.
+PASS scrollableFrame has a scroll bar.
+PASS scrollableFrame's content is as wide as its client area.
+PASS notScrollableFrame has a scroll bar.
+PASS notScrollableFrame's content is as wide as its client area.
+PASS listBox has a scroll bar.
+PASS listBox's content is as wide as its client area.
+PASS addedNotScrollable has a scroll bar.
+PASS addedNotScrollable's content is as wide as its client area.
+PASS addedNotScrollableFrame has a scroll bar.
+PASS addedNotScrollableFrame's content is as wide as its client area.
+
+Scroll bar style override: overlay
+PASS page has no scroll bar.
+PASS page's content is as wide as its client area.
+PASS scrollable has no scroll bar.
+PASS scrollable's content is as wide as its client area.
+PASS notScrollable has no scroll bar.
+PASS notScrollable's content is as wide as its client area.
+PASS scrollableFrame has no scroll bar.
+PASS scrollableFrame's content is as wide as its client area.
+PASS notScrollableFrame has no scroll bar.
+PASS notScrollableFrame's content is as wide as its client area.
+PASS listBox has no scroll bar.
+PASS listBox's content is as wide as its client area.
+PASS addedNotScrollable has no scroll bar.
+PASS addedNotScrollable's content is as wide as its client area.
+PASS addedNotScrollableFrame has no scroll bar.
+PASS addedNotScrollableFrame's content is as wide as its client area.
+
+Scroll bar style override: null
+PASS page has a scroll bar.
+PASS page's content is as wide as its client area.
+PASS scrollable has a scroll bar.
+PASS scrollable's content is as wide as its client area.
+PASS notScrollable has a scroll bar.
+PASS notScrollable's content is as wide as its client area.
+PASS scrollableFrame has a scroll bar.
+PASS scrollableFrame's content is as wide as its client area.
+PASS notScrollableFrame has a scroll bar.
+PASS notScrollableFrame's content is as wide as its client area.
+PASS listBox has a scroll bar.
+PASS listBox's content is as wide as its client area.
+PASS addedNotScrollable has a scroll bar.
+PASS addedNotScrollable's content is as wide as its client area.
+PASS addedNotScrollableFrame has a scroll bar.
+PASS addedNotScrollableFrame's content is as wide as its client area.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

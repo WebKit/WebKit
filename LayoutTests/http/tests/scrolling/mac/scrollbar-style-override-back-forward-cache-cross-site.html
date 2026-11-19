@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true UsesBackForwardCache=true ] -->
+<html>
+<head>
+<style>
+body {
+    height: 2000px;
+    margin: 0;
+}
+.scroller {
+    overflow-y: scroll;
+    width: 200px;
+    height: 100px;
+}
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<div id="scrollable" class="scroller"><div style="height: 1000px"></div></div>
+<div id="notScrollable" class="scroller"><div style="height: 10px"></div></div>
+<script>
+description("Tests that a page restored from the back/forward cache has the scroll bar style override that the next page, which is cross-site, set. Going back reuses the process that the page was suspended in.");
+jsTestIsAsync = true;
+
+function checkScrollbars(classic)
+{
+    for (const width of ["innerWidth - document.documentElement.clientWidth", "scrollable.offsetWidth - scrollable.clientWidth", "notScrollable.offsetWidth - notScrollable.clientWidth"]) {
+        if (classic)
+            shouldBeGreaterThan(width, "0");
+        else
+            shouldBe(width, "0");
+    }
+    shouldBe("document.documentElement.getBoundingClientRect().width", "document.documentElement.clientWidth");
+}
+
+addEventListener("pageshow", async event => {
+    if (event.persisted) {
+        testPassed("The page was restored from the back/forward cache.");
+        checkScrollbars(true);
+        finishJSTest();
+        return;
+    }
+    await testRunner.setScrollbarStyleOverride("overlay");
+    checkScrollbars(false);
+    setTimeout(() => location.href = "http://localhost:8000/scrolling/mac/resources/scrollbar-style-override-back-forward-cache-next.html", 0);
+});
+
+addEventListener("pagehide", event => {
+    if (!event.persisted) {
+        testFailed("The page didn't go into the back/forward cache.");
+        finishJSTest();
+    }
+});
+</script>
+</body>
+</html>

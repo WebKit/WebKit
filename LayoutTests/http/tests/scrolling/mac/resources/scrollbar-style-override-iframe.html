@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<style>
+html {
+    overflow-y: scroll;
+}
+body {
+    margin: 0;
+}
+</style>
+<body>
+<script>
+if (location.search == "?scrollable")
+    document.body.style.height = "1000px";
+
+addEventListener("message", event => {
+    const root = document.documentElement;
+    event.source.postMessage({
+        scrollbarWidth: innerWidth - root.clientWidth,
+        contentWidth: root.getBoundingClientRect().width,
+        clientWidth: root.clientWidth,
+    }, "*");
+});
+
+parent.postMessage({ loaded: true }, "*");
+</script>
+</body>

@@ -273,13 +273,13 @@ void ScrollbarThemeMac::preferencesChanged()
     usesOverlayScrollbarsChanged();
 }
 
-int ScrollbarThemeMac::scrollbarThickness(ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelevancy)
+int ScrollbarThemeMac::scrollbarThickness(ScrollbarStyle scrollbarStyle, ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelevancy)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    if (scrollbarWidth == ScrollbarWidth::None || (usesOverlayScrollbars() && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
+    if (scrollbarWidth == ScrollbarWidth::None || (scrollbarStyle == ScrollbarStyle::Overlay && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
         return 0;
 
-    return [[NSScrollerImp self] scrollerWidthForControlSize:nsControlSizeFromScrollbarWidth(scrollbarWidth) scrollerStyle:ScrollerStyle::recommendedScrollerStyle()];
+    return [[NSScrollerImp self] scrollerWidthForControlSize:nsControlSizeFromScrollbarWidth(scrollbarWidth) scrollerStyle:nsScrollerStyle(scrollbarStyle)];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -375,7 +375,7 @@ IntRect ScrollbarThemeMac::backButtonRect(Scrollbar& scrollbar, ScrollbarPart pa
     if (part == BackButtonEndPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsSingle))
         return result;
         
-    int thickness = scrollbarThickness(scrollbar.widthStyle());
+    int thickness = scrollbarThickness(protect(scrollbar.scrollableArea())->scrollbarStyle(), scrollbar.widthStyle());
     bool outerButton = part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
     if (outerButton) {
         if (scrollbar.orientation() == ScrollbarOrientation::Horizontal)
@@ -409,7 +409,7 @@ IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar& scrollbar, ScrollbarPart
     if (part == ForwardButtonStartPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsSingle))
         return result;
         
-    int thickness = scrollbarThickness(scrollbar.widthStyle());
+    int thickness = scrollbarThickness(protect(scrollbar.scrollableArea())->scrollbarStyle(), scrollbar.widthStyle());
     int outerButtonLength = cOuterButtonLength[scrollbarWidthToIndex(scrollbar.widthStyle())];
     int buttonLength = cButtonLength[scrollbarWidthToIndex(scrollbar.widthStyle())];
     
@@ -444,7 +444,7 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar& scrollbar, bool painting)
     if (painting || !hasButtons(scrollbar))
         return scrollbar.frameRect();
     
-    int thickness = scrollbarThickness(scrollbar.widthStyle());
+    int thickness = scrollbarThickness(protect(scrollbar.scrollableArea())->scrollbarStyle(), scrollbar.widthStyle());
     int startWidth = 0;
     int endWidth = 0;
     int outerButtonLength = cOuterButtonLength[scrollbarWidthToIndex(scrollbar.widthStyle())];
@@ -570,7 +570,7 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(NSScrollerImp *paint
 
 static void paintScrollbarUsingLayersForSnapshot(Scrollbar& scrollbar, GraphicsContext& context)
 {
-    if (ScrollerStyle::recommendedScrollerStyle() == NSScrollerStyleOverlay)
+    if (scrollbar.isOverlayScrollbar())
         return;
 
     LocalCurrentGraphicsContext localContext { context };

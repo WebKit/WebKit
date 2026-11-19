@@ -430,6 +430,11 @@ bool RenderListBox::useDarkAppearance() const
     return RenderBlockFlow::useDarkAppearance();
 }
 
+std::optional<ScrollbarStyle> RenderListBox::scrollbarStyleOverride() const
+{
+    return page().scrollbarStyleOverride();
+}
+
 void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Scrollbar& scrollbar)
 {
     auto scrollRect = rectForScrollbar(scrollbar);

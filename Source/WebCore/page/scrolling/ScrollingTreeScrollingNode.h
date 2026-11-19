@@ -58,6 +58,7 @@ class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeScrollingNode, WEBCORE_EXPORT);
     friend class ScrollingTreeScrollingNodeDelegate;
 #if PLATFORM(MAC)
+    friend class ScrollerPairMac;
     friend class ScrollingTreeScrollingNodeDelegateMac;
 #endif
 #if ENABLE(SCROLLING_THREAD)

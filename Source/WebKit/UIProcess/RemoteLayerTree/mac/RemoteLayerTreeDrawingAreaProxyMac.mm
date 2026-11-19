@@ -42,12 +42,10 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/LayoutRect.h>
 #import <WebCore/LocalFrameView.h>
-#import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/VelocityData.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -286,16 +284,12 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     reassertLayoutViewportAfterCommit();
 
     Ref scrollingCoordinatorProxy = *page->scrollingCoordinatorProxy();
-    auto usesOverlayScrollbars = scrollingCoordinatorProxy->overlayScrollbarsEnabled();
-    auto newScrollbarStyle = usesOverlayScrollbars ? ScrollbarStyle::Overlay : ScrollbarStyle::AlwaysVisible;
-    if (!m_scrollbarStyle || m_scrollbarStyle != newScrollbarStyle) {
+    auto newScrollbarStyle = scrollingCoordinatorProxy->overlayScrollbarsEnabled() ? ScrollbarStyle::Overlay : ScrollbarStyle::AlwaysVisible;
+    if (m_scrollbarStyle != newScrollbarStyle) {
+        // Each scroller pair takes the style of its own page, so other pages' scrollers don't change.
+        if (m_scrollbarStyle)
+            [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:[NSScroller preferredScrollerStyle]];
         m_scrollbarStyle = newScrollbarStyle;
-        WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(usesOverlayScrollbars);
-        
-        ScrollerStyle::setUseOverlayScrollbars(usesOverlayScrollbars);
-        
-        NSScrollerStyle style = usesOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
-        [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
     }
 
     page->setScrollPerformanceDataCollectionEnabled(scrollingCoordinatorProxy->scrollingPerformanceTestingEnabled());

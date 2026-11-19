@@ -56,6 +56,7 @@ public:
     void willClosePage(const WebPageProxy&);
 
     bool isValidUserContext(const String& userContextID) const;
+    String userContextForPage(const WebPageProxy&) const;
 
 private:
     struct BidiUserContextDeletionRecord;

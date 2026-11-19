@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC)
 
-#import "NSScrollerImpDetails.h"
 #import "ScrollTypesMac.h"
+#import "ScrollbarInlines.h"
 #import "ScrollbarThemeMac.h"
 
 #import <pal/spi/mac/NSScrollerImpSPI.h>
@@ -50,7 +50,7 @@ NSScrollerImp* ScrollbarMac::scrollerImp() const
 void ScrollbarMac::createScrollerImp(NSScrollerImp* oldScrollerImp)
 {
     if (shouldRegisterScrollbar()) {
-        m_scrollerImp = retainPtr([NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:nsControlSizeFromScrollbarWidth(widthStyle()) horizontal:orientation() == ScrollbarOrientation::Horizontal replacingScrollerImp:oldScrollerImp]);
+        m_scrollerImp = retainPtr([NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(protect(scrollableArea())->scrollbarStyle()) controlSize:nsControlSizeFromScrollbarWidth(widthStyle()) horizontal:orientation() == ScrollbarOrientation::Horizontal replacingScrollerImp:oldScrollerImp]);
         updateScrollerImpState();
     }
 }

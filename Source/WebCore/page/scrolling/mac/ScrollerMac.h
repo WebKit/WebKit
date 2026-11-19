@@ -102,6 +102,8 @@ public:
 private:
     ScrollerMac(ScrollerPairMac&, ScrollbarOrientation);
 
+    void removeScrollerImpFromHostLayer();
+
     int m_minimumKnobLength { 0 };
 
     bool m_isEnabled { false };

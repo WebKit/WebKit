@@ -102,6 +102,7 @@ public:
 
     ScrollbarStyle scrollbarStyle() const { return m_scrollbarStyle; }
     void setScrollbarStyle(ScrollbarStyle);
+    ScrollbarStyle scrollingTreeScrollbarStyle() const;
 
     void setVerticalScrollerImp(NSScrollerImp *);
     void setHorizontalScrollerImp(NSScrollerImp *);

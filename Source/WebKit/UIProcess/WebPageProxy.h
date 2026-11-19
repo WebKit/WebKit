@@ -212,6 +212,7 @@ enum class LayoutMilestone : uint16_t;
 enum class PaginationMode : uint8_t;
 enum class ScrollDirection : uint8_t;
 enum class ScrollbarOverlayStyle : uint8_t;
+enum class ScrollbarStyle : uint8_t;
 
 enum class ActivityState : uint16_t;
 enum class AccessibilityMode : uint8_t;
@@ -1782,6 +1783,9 @@ public:
 
     void setSuppressScrollbarAnimations(bool);
     bool areScrollbarAnimationsSuppressed() const { return m_suppressScrollbarAnimations; }
+
+    void setScrollbarStyleOverride(std::optional<WebCore::ScrollbarStyle>);
+    std::optional<WebCore::ScrollbarStyle> scrollbarStyleOverride() const { return m_scrollbarStyleOverride; }
 
     NODELETE WebCore::RectEdges<bool> pinnedState() const;
     WebCore::RectEdges<bool> pinnedStateIncludingAncestorsAtPoint(WebCore::FloatPoint);
@@ -4380,6 +4384,7 @@ private:
     bool m_alwaysShowsVerticalScroller { false };
 
     bool m_suppressScrollbarAnimations { false };
+    std::optional<WebCore::ScrollbarStyle> m_scrollbarStyleOverride;
 
     WebCore::PaginationMode m_paginationMode { };
     bool m_paginationBehavesLikeColumns { false };

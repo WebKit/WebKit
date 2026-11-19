@@ -189,6 +189,7 @@
 #include "ScriptRunner.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollLatchingController.h"
+#include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
@@ -2204,9 +2205,30 @@ void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
         if (!scrollableAreas)
             continue;
 
-        for (CheckedRef area : *scrollableAreas)
-            area->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
+        // Unlocking runs pending scroll bar style updates, which can add and remove scrollable areas.
+        for (auto& weakArea : copyToVectorOf<WeakPtr<ScrollableArea>>(*scrollableAreas)) {
+            if (CheckedPtr area = weakArea.get())
+                area->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
+        }
     }
+}
+
+void Page::setScrollbarStyleOverride(std::optional<ScrollbarStyle> styleOverride)
+{
+    if (styleOverride == m_scrollbarStyleOverride)
+        return;
+
+    m_scrollbarStyleOverride = styleOverride;
+
+    forEachLocalFrame([](LocalFrame& frame) {
+        if (RefPtr frameView = frame.view())
+            frameView->scrollbarStyleDidChange();
+    });
+}
+
+ScrollbarStyle Page::scrollbarStyle() const
+{
+    return m_scrollbarStyleOverride.value_or(ScrollbarTheme::theme().scrollbarStyle());
 }
 
 PageGroup& Page::group()

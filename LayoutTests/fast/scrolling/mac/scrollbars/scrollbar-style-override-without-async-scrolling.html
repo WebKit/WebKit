@@ -1,0 +1,151 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=false AsyncFrameScrollingEnabled=false ] -->
+<html>
+<head>
+<style>
+body {
+    height: 2000px;
+    margin: 0;
+}
+.scroller {
+    overflow-y: scroll;
+    width: 200px;
+    height: 100px;
+}
+iframe {
+    display: block;
+    width: 200px;
+    height: 100px;
+    border: none;
+}
+</style>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="scrollable" class="scroller"><div style="height: 1000px"></div></div>
+<div id="notScrollable" class="scroller"><div style="height: 10px"></div></div>
+<iframe id="scrollableFrame" srcdoc="<style>html { overflow-y: scroll; } body { margin: 0; height: 1000px; }</style>"></iframe>
+<iframe id="notScrollableFrame" srcdoc="<style>html { overflow-y: scroll; } body { margin: 0; }</style>"></iframe>
+<select id="listBox" multiple size="3" style="display: block; width: 200px; border: none; padding: 0"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+<script>
+description("Without async scrolling, so that this process draws every scroll bar: tests that changing a page's scroll bar style override adds or removes the vertical scroll bars of the page, its elements, its iframes and a list box, whether or not they can scroll, and lays them out again.");
+jsTestIsAsync = true;
+
+const page = {
+    name: "page",
+    scrollbarWidth: () => innerWidth - document.documentElement.clientWidth,
+    contentWidth: () => document.documentElement.getBoundingClientRect().width,
+    clientWidth: () => document.documentElement.clientWidth,
+};
+
+function element(id)
+{
+    const element = document.getElementById(id);
+    return {
+        name: id,
+        scrollbarWidth: () => element.offsetWidth - element.clientWidth,
+        contentWidth: () => element.firstElementChild.getBoundingClientRect().width,
+        clientWidth: () => element.clientWidth,
+    };
+}
+
+// A list box draws its items itself, so it has no content to check.
+function listBox(id)
+{
+    const listBox = document.getElementById(id);
+    return {
+        name: id,
+        scrollbarWidth: () => listBox.offsetWidth - listBox.clientWidth,
+        contentWidth: () => listBox.clientWidth,
+        clientWidth: () => listBox.clientWidth,
+    };
+}
+
+function frame(id)
+{
+    const frame = document.getElementById(id);
+    const root = () => frame.contentDocument.documentElement;
+    return {
+        name: id,
+        scrollbarWidth: () => frame.contentWindow.innerWidth - root().clientWidth,
+        contentWidth: () => root().getBoundingClientRect().width,
+        clientWidth: () => root().clientWidth,
+    };
+}
+
+const areas = [page, element("scrollable"), element("notScrollable"), frame("scrollableFrame"), frame("notScrollableFrame"), listBox("listBox")];
+
+function checkAreas(expectScrollbars)
+{
+    for (const area of areas) {
+        const scrollbarWidth = area.scrollbarWidth();
+        if ((scrollbarWidth > 0) == expectScrollbars)
+            testPassed(`${area.name} ${expectScrollbars ? "has a" : "has no"} scroll bar.`);
+        else
+            testFailed(`${area.name}'s scroll bar is ${scrollbarWidth}px wide.`);
+
+        // The content fills the area without its scroll bar, so it was laid out again for the new scroll bar.
+        const contentWidth = area.contentWidth();
+        const clientWidth = area.clientWidth();
+        if (contentWidth == clientWidth)
+            testPassed(`${area.name}'s content is as wide as its client area.`);
+        else
+            testFailed(`${area.name}'s content is ${contentWidth}px wide, and its client area ${clientWidth}px.`);
+    }
+}
+
+async function setScrollbarStyleOverride(style)
+{
+    debug("");
+    debug(`Scroll bar style override: ${style}`);
+    await testRunner.setScrollbarStyleOverride(style);
+}
+
+function addFrame(id, srcdoc)
+{
+    return new Promise(resolve => {
+        const iframe = document.createElement("iframe");
+        iframe.id = id;
+        iframe.srcdoc = srcdoc;
+        iframe.onload = resolve;
+        document.body.appendChild(iframe);
+    });
+}
+
+onload = async () => {
+    if (!window.testRunner?.setScrollbarStyleOverride) {
+        testFailed("This test needs testRunner.setScrollbarStyleOverride().");
+        finishJSTest();
+        return;
+    }
+
+    debug("System setting: classic");
+    checkAreas(true);
+
+    await setScrollbarStyleOverride("overlay");
+    checkAreas(false);
+
+    debug("");
+    debug("Adding an element and an iframe that can't scroll, while the style is overlay");
+    const addedScroller = document.createElement("div");
+    addedScroller.id = "addedNotScrollable";
+    addedScroller.className = "scroller";
+    addedScroller.innerHTML = "<div style='height: 10px'></div>";
+    document.body.appendChild(addedScroller);
+    await addFrame("addedNotScrollableFrame", "<style>html { overflow-y: scroll; } body { margin: 0; }</style>");
+    areas.push(element("addedNotScrollable"), frame("addedNotScrollableFrame"));
+    checkAreas(false);
+
+    await setScrollbarStyleOverride("classic");
+    checkAreas(true);
+
+    await setScrollbarStyleOverride("overlay");
+    checkAreas(false);
+
+    await setScrollbarStyleOverride(null);
+    checkAreas(true);
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

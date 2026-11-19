@@ -765,6 +765,7 @@ public:
     NODELETE Style::ScrollbarGutter scrollbarGutterStyle() const final;
     NODELETE ScrollbarWidth scrollbarWidthStyle() const final;
     std::optional<ScrollbarColor> scrollbarColorStyle() const final;
+    std::optional<ScrollbarStyle> scrollbarStyleOverride() const final;
 
     // overflow:hidden scrollable areas can participate in anchoring, so they need their own set.
     void addScrollableAreaForScrollAnchoring(ScrollableArea&);

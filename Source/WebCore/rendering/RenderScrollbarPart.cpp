@@ -27,10 +27,12 @@
 #include "RenderScrollbarPart.h"
 
 #include "LocalFrameViewInlines.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderObjectInlines.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderView.h"
@@ -88,25 +90,25 @@ void RenderScrollbarPart::layoutVerticalPart()
     }
 }
 
-static int calcScrollbarThicknessUsing(const Style::PreferredSize& preferredSize, Style::ZoomFactor zoomFactor)
+static int calcScrollbarThicknessUsing(ScrollbarStyle scrollbarStyle, const Style::PreferredSize& preferredSize, Style::ZoomFactor zoomFactor)
 {
     if (preferredSize.isFixed())
         return Style::evaluateMinimum<LayoutUnit>(preferredSize, 0_lu, zoomFactor);
-    return ScrollbarTheme::theme().scrollbarThickness();
+    return ScrollbarTheme::theme().scrollbarThickness(scrollbarStyle);
 }
 
-static int calcScrollbarThicknessUsing(const Style::MinimumSize& minimumSize, Style::ZoomFactor zoomFactor)
+static int calcScrollbarThicknessUsing(ScrollbarStyle scrollbarStyle, const Style::MinimumSize& minimumSize, Style::ZoomFactor zoomFactor)
 {
     if (minimumSize.isFixed() || minimumSize.isAuto())
         return Style::evaluateMinimum<LayoutUnit>(minimumSize, 0_lu, zoomFactor);
-    return ScrollbarTheme::theme().scrollbarThickness();
+    return ScrollbarTheme::theme().scrollbarThickness(scrollbarStyle);
 }
 
-static int calcScrollbarThicknessUsing(const Style::MaximumSize& maximumSize, Style::ZoomFactor zoomFactor)
+static int calcScrollbarThicknessUsing(ScrollbarStyle scrollbarStyle, const Style::MaximumSize& maximumSize, Style::ZoomFactor zoomFactor)
 {
     if (maximumSize.isFixed())
         return Style::evaluateMinimum<LayoutUnit>(maximumSize, 0_lu, zoomFactor);
-    return ScrollbarTheme::theme().scrollbarThickness();
+    return ScrollbarTheme::theme().scrollbarThickness(scrollbarStyle);
 }
 
 void RenderScrollbarPart::computeScrollbarWidth()
@@ -114,9 +116,10 @@ void RenderScrollbarPart::computeScrollbarWidth()
     if (!protect(m_scrollbar.get())->owningRenderer())
         return;
     auto zoomFactor = style().usedZoomForLength();
-    auto width = calcScrollbarThicknessUsing(style().width(), zoomFactor);
-    auto minWidth = calcScrollbarThicknessUsing(style().minWidth(), zoomFactor);
-    auto maxWidth = style().maxWidth().isNone() ? width : calcScrollbarThicknessUsing(style().maxWidth(), zoomFactor);
+    auto scrollbarStyle = protect(page())->scrollbarStyle();
+    auto width = calcScrollbarThicknessUsing(scrollbarStyle, style().width(), zoomFactor);
+    auto minWidth = calcScrollbarThicknessUsing(scrollbarStyle, style().minWidth(), zoomFactor);
+    auto maxWidth = style().maxWidth().isNone() ? width : calcScrollbarThicknessUsing(scrollbarStyle, style().maxWidth(), zoomFactor);
     setBorderBoxWidth(std::max(minWidth, std::min(maxWidth, width)));
     
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
@@ -129,9 +132,10 @@ void RenderScrollbarPart::computeScrollbarHeight()
     if (!protect(m_scrollbar.get())->owningRenderer())
         return;
     auto zoomFactor = style().usedZoomForLength();
-    auto height = calcScrollbarThicknessUsing(style().height(), zoomFactor);
-    auto minHeight = calcScrollbarThicknessUsing(style().minHeight(), zoomFactor);
-    auto maxHeight = style().maxHeight().isNone() ? height : calcScrollbarThicknessUsing(style().maxHeight(), zoomFactor);
+    auto scrollbarStyle = protect(page())->scrollbarStyle();
+    auto height = calcScrollbarThicknessUsing(scrollbarStyle, style().height(), zoomFactor);
+    auto minHeight = calcScrollbarThicknessUsing(scrollbarStyle, style().minHeight(), zoomFactor);
+    auto maxHeight = style().maxHeight().isNone() ? height : calcScrollbarThicknessUsing(scrollbarStyle, style().maxHeight(), zoomFactor);
     setBorderBoxHeight(std::max(minHeight, std::min(maxHeight, height)));
 
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 

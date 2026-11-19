@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "ScrollTypesMac.h"
+#import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatPoint.h>
@@ -122,10 +123,12 @@
 - (void)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair updateScrollerStyleForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle
 {
     UNUSED_PARAM(scrollerImpPair);
+    UNUSED_PARAM(newRecommendedScrollerStyle);
 
+    // The page can override the recommended style.
     RefPtr scrollerPair = _scrollerPair.get();
     if (scrollerPair)
-        scrollerPair->setScrollbarStyle(WebCore::scrollbarStyle(newRecommendedScrollerStyle));
+        scrollerPair->setScrollbarStyle(scrollerPair->scrollingTreeScrollbarStyle());
 }
 
 @end
@@ -147,9 +150,8 @@ void ScrollerPairMac::init()
 
     m_scrollerImpPair = adoptNS([[NSScrollerImpPair alloc] init]);
     [m_scrollerImpPair setDelegate:m_scrollerImpPairDelegate.get()];
-    auto style = ScrollerStyle::recommendedScrollerStyle();
-    m_scrollbarStyle = WebCore::scrollbarStyle(style);
-    [m_scrollerImpPair setScrollerStyle:style];
+    m_scrollbarStyle = scrollingTreeScrollbarStyle();
+    [m_scrollerImpPair setScrollerStyle:nsScrollerStyle(m_scrollbarStyle)];
 
     m_verticalScroller->attach();
     m_horizontalScroller->attach();
@@ -348,8 +350,20 @@ void ScrollerPairMac::setHorizontalScrollerImp(NSScrollerImp *scrollerImp)
     });
 }
 
+ScrollbarStyle ScrollerPairMac::scrollingTreeScrollbarStyle() const
+{
+    RefPtr node = this->node();
+    RefPtr scrollingTree = node ? node->scrollingTree() : nullptr;
+    if (!scrollingTree)
+        return WebCore::scrollbarStyle(ScrollerStyle::recommendedScrollerStyle());
+    return scrollingTree->overlayScrollbarsEnabled() ? ScrollbarStyle::Overlay : ScrollbarStyle::AlwaysVisible;
+}
+
 void ScrollerPairMac::setScrollbarStyle(ScrollbarStyle style)
 {
+    if (m_scrollbarStyle == style)
+        return;
+
     m_scrollbarStyle = style;
 
     ensureOnMainThreadWithProtectedThis([scrollerStyle = nsScrollerStyle(style)](auto& scrollerPair) {

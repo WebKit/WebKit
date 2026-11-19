@@ -1430,7 +1430,7 @@ void RenderBox::panScroll(const IntPoint& source)
 
 bool RenderBox::canUseOverlayScrollbars() const
 {
-    return !style().usesLegacyScrollbarStyle() && ScrollbarTheme::theme().usesOverlayScrollbars();
+    return !style().usesLegacyScrollbarStyle() && protect(page())->scrollbarStyle() == ScrollbarStyle::Overlay;
 }
 
 bool RenderBox::hasAutoScrollbar(ScrollbarOrientation orientation) const
@@ -5754,7 +5754,7 @@ bool RenderBox::overflowChangesMayAffectLayout() const
     if (!ScrollbarTheme::theme().isMockTheme())
         return false;
 #endif
-    return !ScrollbarTheme::theme().usesOverlayScrollbars();
+    return protect(page())->scrollbarStyle() != ScrollbarStyle::Overlay;
 
 }
 

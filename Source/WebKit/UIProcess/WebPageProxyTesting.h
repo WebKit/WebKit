@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class IntPoint;
+enum class ScrollbarStyle : uint8_t;
 }
 
 namespace WebKit {
@@ -100,6 +101,7 @@ public:
 #endif
 
     void setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&&);
+    void setScrollbarStyleOverride(std::optional<WebCore::ScrollbarStyle>, CompletionHandler<void()>&&);
 
     void clearBackForwardList(CompletionHandler<void()>&&);
     String dumpBackForwardList(const String& directory);

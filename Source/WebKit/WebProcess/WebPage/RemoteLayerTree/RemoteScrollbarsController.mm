@@ -150,7 +150,8 @@ void RemoteScrollbarsController::updateScrollbarStyle()
     // and length are properly updated.
     updateScrollbarsThickness();
 
-    protect(scrollableArea())->scrollbarStyleChanged(theme.usesOverlayScrollbars() ? WebCore::ScrollbarStyle::Overlay : WebCore::ScrollbarStyle::AlwaysVisible, true);
+    CheckedRef scrollableArea = this->scrollableArea();
+    scrollableArea->scrollbarStyleChanged(scrollableArea->scrollbarStyle(), true);
 }
 
 void RemoteScrollbarsController::scrollbarColorChanged(std::optional<WebCore::ScrollbarColor> color)

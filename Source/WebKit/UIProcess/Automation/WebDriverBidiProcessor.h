@@ -39,6 +39,7 @@ namespace WebKit {
 class BidiBrowserAgent;
 class BidiBrowsingContextAgent;
 class BidiDigitalCredentialsAgent;
+class BidiEmulationAgent;
 class BidiInputAgent;
 class BidiPermissionsAgent;
 class BidiScriptAgent;
@@ -58,6 +59,7 @@ public:
 
     BidiBrowserAgent& browserAgent() const LIFETIME_BOUND { return m_browserAgent; }
     BidiDigitalCredentialsAgent& digitalCredentialsAgent() const LIFETIME_BOUND { return m_digitalCredentialsAgent; }
+    BidiEmulationAgent& emulationAgent() const LIFETIME_BOUND { return m_emulationAgent; }
     BidiInputAgent& inputAgent() const LIFETIME_BOUND { return m_inputAgent; }
     BidiScriptAgent& scriptAgent() const LIFETIME_BOUND { return m_scriptAgent; }
 
@@ -87,6 +89,7 @@ private:
     const UniqueRef<BidiBrowserAgent> m_browserAgent;
     const Ref<BidiBrowsingContextAgent> m_browsingContextAgent;
     const UniqueRef<BidiDigitalCredentialsAgent> m_digitalCredentialsAgent;
+    const UniqueRef<BidiEmulationAgent> m_emulationAgent;
     const UniqueRef<BidiInputAgent> m_inputAgent;
     const UniqueRef<BidiPermissionsAgent> m_permissionsAgent;
     const UniqueRef<BidiScriptAgent> m_scriptAgent;

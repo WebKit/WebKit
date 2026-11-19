@@ -30,6 +30,7 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
 #include "ScrollerCoordinated.h"
 #include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingTree.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 
 namespace WebCore {
@@ -43,7 +44,7 @@ ScrollingTreeScrollingNodeDelegateCoordinated::ScrollingTreeScrollingNodeDelegat
 {
     ASSERT(isMainThread());
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
-    if (is<ScrollingTreeOverflowScrollingNode>(scrollingNode) && ScrollbarTheme::theme().usesOverlayScrollbars()) {
+    if (is<ScrollingTreeOverflowScrollingNode>(scrollingNode) && scrollingTree()->overlayScrollbarsEnabled()) {
         protect(m_scrollerPair->horizontalScroller())->setOverlayScrollbarEnabled(true);
         protect(m_scrollerPair->verticalScroller())->setOverlayScrollbarEnabled(true);
     }

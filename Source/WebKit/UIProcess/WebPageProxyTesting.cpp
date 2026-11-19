@@ -293,10 +293,20 @@ void WebPageProxyTesting::setObscuredContentInsets(float top, float right, float
     sendWithAsyncReply(Messages::WebPageTesting::SetObscuredContentInsets(top, right, bottom, left), WTF::move(completionHandler));
 }
 
+void WebPageProxyTesting::setScrollbarStyleOverride(std::optional<WebCore::ScrollbarStyle> styleOverride, CompletionHandler<void()>&& completionHandler)
+{
+    Ref page = m_page;
+    page->setScrollbarStyleOverride(styleOverride);
+
+    // By then, every web process of the page has the override, and the UI process draws with it.
+    page->callAfterNextPresentationUpdate(WTF::move(completionHandler));
+}
+
 void WebPageProxyTesting::resetStateBetweenTests()
 {
     Ref page = m_page;
     page->legacyMainFrameProcess().resetState();
+    page->setScrollbarStyleOverride(std::nullopt);
 
     if (auto* mainFrame = page->mainFrame())
         mainFrame->disownOpener();

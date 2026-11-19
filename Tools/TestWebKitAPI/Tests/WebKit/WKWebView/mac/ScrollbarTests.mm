@@ -38,8 +38,11 @@
 #import <WebCore/Color.h>
 #import <WebCore/CornerRadii.h>
 #import <WebKit/WKSnapshotConfigurationPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 #if HAVE(NSVIEW_CORNER_CONFIGURATION)
 
@@ -939,6 +942,185 @@ TEST(ScrollerStyleChange, UpdatesIFrameAndOverflowScrollbars)
 
     // Put anything that observed the swizzled style back on the real one.
     [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
+
+// Elements that can't scroll aren't in their frame's scrollable areas, and with overlay scroll bars they have no scroll bars.
+TEST(ScrollerStyleChange, UpdatesElementsThatCannotScroll)
+{
+    {
+        scrollbarTestsScrollerStyle = NSScrollerStyleOverlay;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(scrollbarTestsPreferredScrollerStyle));
+
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+        [webView synchronouslyLoadHTMLString:@"<body style='margin: 0'>"
+            "<div id='scrollable' style='width: 200px; height: 200px; overflow-y: scroll'><div style='height: 2000px'></div></div>"
+            "<div id='notScrollable' style='width: 200px; height: 100px; overflow-y: scroll'><div id='content'></div></div></body>"];
+        [webView waitForNextPresentationUpdate];
+
+        auto clientWidth = [&](NSString *elementID) {
+            return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"document.getElementById('%@').clientWidth", elementID]].intValue;
+        };
+
+        auto changeScrollerStyle = [&](NSScrollerStyle style) {
+            bool isOverlay = style == NSScrollerStyleOverlay;
+            SCOPED_TRACE(isOverlay ? "Overlay" : "Legacy");
+            scrollbarTestsScrollerStyle = style;
+            [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+            // The element that can scroll is in the scrollable areas, so it shows when the change has arrived.
+            EXPECT_TRUE(Util::waitFor([&] {
+                return isOverlay ? clientWidth(@"scrollable") == 200 : clientWidth(@"scrollable") < 200;
+            }));
+            if (isOverlay)
+                EXPECT_EQ(clientWidth(@"notScrollable"), 200);
+            else
+                EXPECT_LT(clientWidth(@"notScrollable"), 200);
+            EXPECT_EQ([webView stringByEvaluatingJavaScript:@"document.getElementById('content').getBoundingClientRect().width"].intValue, clientWidth(@"notScrollable"));
+        };
+
+        EXPECT_EQ(clientWidth(@"notScrollable"), 200);
+        changeScrollerStyle(NSScrollerStyleLegacy);
+        changeScrollerStyle(NSScrollerStyleOverlay);
+    }
+
+    // Put anything that observed the swizzled style back on the real one.
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
+
+static void collectScrollerStyles(CALayer *layer, Vector<NSInteger>& styles)
+{
+    // AppKit's scroller implementations draw the scroller layers that the UI process hosts, and are their delegates.
+    NSObject *delegate = (NSObject *)layer.delegate;
+    if ([delegate isKindOfClass:NSClassFromString(@"NSScrollerImp")])
+        styles.append([[delegate valueForKey:@"scrollerStyle"] integerValue]);
+
+    for (CALayer *sublayer in layer.sublayers)
+        collectScrollerStyles(sublayer, styles);
+}
+
+// The style of the scroll bars that the UI process draws for the web view, or -1 if they don't all have the same one.
+static NSInteger drawnScrollerStyle(TestWKWebView *webView)
+{
+    [webView waitForNextPresentationUpdate];
+    Vector<NSInteger> styles;
+    collectScrollerStyles(webView.layer, styles);
+    if (styles.isEmpty())
+        return -1;
+    for (auto style : styles) {
+        if (style != styles.first())
+            return -1;
+    }
+    return styles.first();
+}
+
+static void setScrollerStyleOverride(TestWKWebView *webView, NSNumber *scrollerStyle)
+{
+    __block bool done = false;
+    [webView _setScrollerStyleOverrideForTesting:scrollerStyle completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+static int pageScrollbarWidth(TestWKWebView *webView)
+{
+    return [[webView stringByEvaluatingJavaScript:@"window.innerWidth - document.documentElement.clientWidth"] intValue];
+}
+
+TEST(ScrollbarTests, ScrollbarStyleOverrideIsPerPage)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300) configuration:configuration.get()]);
+    [configuration _setRelatedWebView:webView.get()];
+    RetainPtr otherWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300) configuration:configuration.get()]);
+    for (TestWKWebView *view : { webView.get(), otherWebView.get() }) {
+        [view synchronouslyLoadHTMLString:@"<body style='height: 2000px'></body>"];
+        [view waitForNextPresentationUpdate];
+    }
+    EXPECT_EQ([webView _webProcessIdentifier], [otherWebView _webProcessIdentifier]);
+
+    // TestWebKitAPI uses classic scroll bars.
+    EXPECT_EQ(drawnScrollerStyle(webView.get()), NSScrollerStyleLegacy);
+    EXPECT_EQ(drawnScrollerStyle(otherWebView.get()), NSScrollerStyleLegacy);
+
+    setScrollerStyleOverride(webView.get(), @(NSScrollerStyleOverlay));
+    // Layers left from the replaced classic scrollers would make this -1.
+    EXPECT_EQ(drawnScrollerStyle(webView.get()), NSScrollerStyleOverlay);
+    EXPECT_EQ(drawnScrollerStyle(otherWebView.get()), NSScrollerStyleLegacy);
+    EXPECT_EQ(pageScrollbarWidth(webView.get()), 0);
+    EXPECT_GT(pageScrollbarWidth(otherWebView.get()), 0);
+
+    setScrollerStyleOverride(otherWebView.get(), @(NSScrollerStyleOverlay));
+    setScrollerStyleOverride(webView.get(), @(NSScrollerStyleLegacy));
+    EXPECT_EQ(drawnScrollerStyle(webView.get()), NSScrollerStyleLegacy);
+    EXPECT_EQ(drawnScrollerStyle(otherWebView.get()), NSScrollerStyleOverlay);
+    EXPECT_GT(pageScrollbarWidth(webView.get()), 0);
+    EXPECT_EQ(pageScrollbarWidth(otherWebView.get()), 0);
+
+    setScrollerStyleOverride(otherWebView.get(), nil);
+    EXPECT_EQ(drawnScrollerStyle(otherWebView.get()), NSScrollerStyleLegacy);
+    EXPECT_GT(pageScrollbarWidth(otherWebView.get()), 0);
+}
+
+TEST(ScrollbarTests, SnapshotFollowsScrollbarStyleOverride)
+{
+    // Overlay page, classic system setting.
+    {
+        RetainPtr webView = frameScrollbarsWebView(false);
+        setScrollerStyleOverride(webView.get(), @(NSScrollerStyleOverlay));
+        EXPECT_EQ(clientWidthOfPage(webView.get()), 400);
+        EXPECT_EQ(clientWidthOfIFrame(webView.get()), 200);
+
+        RetainPtr image = snapshotOfFrameScrollbars(webView.get(), FrameScrollbarsSnapshot::ViewRect);
+        ASSERT_NOT_NULL(image.get());
+        CGImagePixelReader reader { image.get() };
+        unsigned scale = reader.width() / 400;
+        EXPECT_GE(scale, 1u);
+        for (unsigned x = 185; x < 200; ++x)
+            EXPECT_WK_STREQ("rgb(0, 255, 0)", reader.cssColorAt(x * scale, 10 * scale));
+        for (unsigned x = 385; x < 400; ++x)
+            EXPECT_WK_STREQ("rgb(0, 255, 0)", reader.cssColorAt(x * scale, 10 * scale));
+    }
+
+    // Classic page, overlay system setting.
+    {
+        RetainPtr webView = frameScrollbarsWebView(true);
+        setScrollerStyleOverride(webView.get(), @(NSScrollerStyleLegacy));
+        int pageClientWidth = clientWidthOfPage(webView.get());
+        int iframeClientWidth = clientWidthOfIFrame(webView.get());
+        EXPECT_LT(pageClientWidth, 400);
+        EXPECT_LT(iframeClientWidth, 200);
+
+        RetainPtr image = snapshotOfFrameScrollbars(webView.get(), FrameScrollbarsSnapshot::ViewRect);
+        ASSERT_NOT_NULL(image.get());
+        CGImagePixelReader reader { image.get() };
+        unsigned scale = reader.width() / 400;
+        EXPECT_GE(scale, 1u);
+        EXPECT_WK_STRNE("rgb(0, 255, 0)", reader.cssColorAt((iframeClientWidth + 200) / 2 * scale, 100 * scale));
+        EXPECT_WK_STRNE("rgb(0, 255, 0)", reader.cssColorAt((pageClientWidth + 400) / 2 * scale, 300 * scale));
+    }
+}
+
+static size_t layerCount(CALayer *layer)
+{
+    size_t count = 1;
+    for (CALayer *sublayer in layer.sublayers)
+        count += layerCount(sublayer);
+    return count;
+}
+
+TEST(ScrollbarTests, ScrollerLayersDoNotAccumulate)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView synchronouslyLoadHTMLString:@"<div id=scroller style='width: 200px; height: 200px; overflow: scroll'><div style='width: 1000px; height: 1000px'></div></div>"];
+    EXPECT_EQ(drawnScrollerStyle(webView.get()), NSScrollerStyleLegacy);
+    auto initialLayerCount = layerCount([webView layer]);
+
+    // Each change of the scrolling parameters replaces the scrollers that the UI process draws.
+    for (NSString *overscrollBehavior in @[ @"contain", @"auto", @"contain", @"auto" ]) {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"scroller.style.overscrollBehavior = '%@'", overscrollBehavior]];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_EQ(layerCount([webView layer]), initialLayerCount);
+    }
 }
 
 } // namespace TestWebKitAPI

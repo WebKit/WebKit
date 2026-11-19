@@ -1146,7 +1146,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode->setLayoutViewport(frameView.layoutViewportRect());
     frameScrollingNode->setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
     frameScrollingNode->setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());
-    frameScrollingNode->setOverlayScrollbarsEnabled(ScrollbarTheme::theme().usesOverlayScrollbars());
+    frameScrollingNode->setOverlayScrollbarsEnabled(frameView.usesOverlayScrollbars());
     frameScrollingNode->setScrollbarWidth(frameView.scrollbarWidthStyle());
     frameScrollingNode->setScrollbarColor(frameView.scrollbarColorStyle());
     frameScrollingNode->setWheelEventGesturesBecomeNonBlocking(settings.wheelEventGesturesBecomeNonBlocking());

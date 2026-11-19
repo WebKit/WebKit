@@ -26,12 +26,14 @@
 #include "HTMLInputElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "PlatformRenderTheme.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -92,7 +94,7 @@ void RenderTextControl::styleDidChange(Style::Difference diff, const Style::Comp
 int RenderTextControl::scrollbarThickness() const
 {
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
-    return ScrollbarTheme::theme().scrollbarThickness(Style::toPlatform(this->style().scrollbarWidth()), OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize);
+    return ScrollbarTheme::theme().scrollbarThickness(protect(page())->scrollbarStyle(), Style::toPlatform(this->style().scrollbarWidth()), OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize);
 }
 
 RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const

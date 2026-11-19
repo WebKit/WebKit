@@ -162,6 +162,7 @@ private:
     void didStartScrollAnimation() final;
 
     bool useDarkAppearance() const final;
+    std::optional<ScrollbarStyle> scrollbarStyleOverride() const final;
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(const ScrollPosition&);

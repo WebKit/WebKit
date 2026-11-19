@@ -373,6 +373,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     ListenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
     SetSuppressScrollbarAnimations(bool suppressAnimations)
+    SetScrollbarStyleOverride(enum:uint8_t std::optional<WebCore::ScrollbarStyle> styleOverride)
 
     SetEnableVerticalRubberBanding(bool enableVerticalRubberBanding)
     SetEnableHorizontalRubberBanding(bool enableHorizontalRubberBanding)

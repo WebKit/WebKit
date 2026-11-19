@@ -301,6 +301,7 @@ enum ScrollLogicalDirection : uint8_t;
 enum class ScrollPinningBehavior : uint8_t;
 enum class ScrollbarMode : uint8_t;
 enum class ScrollbarOverlayStyle : uint8_t;
+enum class ScrollbarStyle : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 enum class StorageAccessScope : bool;
 enum class SyntheticClickResult : uint8_t;
@@ -1000,6 +1001,7 @@ public:
     NODELETE void listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
     void setSuppressScrollbarAnimations(bool);
+    void setScrollbarStyleOverride(std::optional<WebCore::ScrollbarStyle>);
 
     void setHasActiveAnimatedScrolls(bool);
 
@@ -2452,6 +2454,7 @@ private:
 
 #if PLATFORM(MAC)
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
+    void updateScrollerPairsForScrollbarStyleOverride();
 #endif
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&&);

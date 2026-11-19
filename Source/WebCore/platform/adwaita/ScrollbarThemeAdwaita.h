@@ -50,7 +50,7 @@ protected:
     void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect&) override;
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
 
-    int scrollbarThickness(ScrollbarWidth, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
+    int scrollbarThickness(ScrollbarStyle, ScrollbarWidth, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
     int minimumThumbLength(Scrollbar&) override;
 
     bool hasButtons(Scrollbar&) override;

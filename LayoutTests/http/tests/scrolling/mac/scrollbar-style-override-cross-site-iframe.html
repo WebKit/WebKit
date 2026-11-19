@@ -1,0 +1,108 @@
+<!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body {
+    margin: 0;
+}
+iframe {
+    display: block;
+    width: 200px;
+    height: 100px;
+    border: none;
+}
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that changing a page's scroll bar style override reaches its cross-site iframes, whether or not they can scroll. With Site Isolation, another process hosts them.");
+jsTestIsAsync = true;
+
+const frames = [];
+
+function addFrame(name, scrollable)
+{
+    return new Promise(resolve => {
+        const iframe = document.createElement("iframe");
+        addEventListener("message", function listener(event) {
+            if (event.source != iframe.contentWindow || !event.data.loaded)
+                return;
+            removeEventListener("message", listener);
+            resolve();
+        });
+        iframe.src = `http://localhost:8000/scrolling/mac/resources/scrollbar-style-override-iframe.html?${scrollable ? "scrollable" : "not-scrollable"}`;
+        document.body.appendChild(iframe);
+        frames.push({ name, iframe });
+    });
+}
+
+function measure(iframe)
+{
+    return new Promise(resolve => {
+        addEventListener("message", function listener(event) {
+            if (event.source != iframe.contentWindow || event.data.scrollbarWidth === undefined)
+                return;
+            removeEventListener("message", listener);
+            resolve(event.data);
+        });
+        iframe.contentWindow.postMessage("measure", "*");
+    });
+}
+
+async function checkFrames(expectScrollbars)
+{
+    for (const { name, iframe } of frames) {
+        const { scrollbarWidth, contentWidth, clientWidth } = await measure(iframe);
+        if ((scrollbarWidth > 0) == expectScrollbars)
+            testPassed(`${name} ${expectScrollbars ? "has a" : "has no"} scroll bar.`);
+        else
+            testFailed(`${name}'s scroll bar is ${scrollbarWidth}px wide.`);
+
+        // The document fills the frame without its scroll bar, so it was laid out again for the new scroll bar.
+        if (contentWidth == clientWidth)
+            testPassed(`${name}'s document is as wide as its client area.`);
+        else
+            testFailed(`${name}'s document is ${contentWidth}px wide, and its client area ${clientWidth}px.`);
+    }
+}
+
+async function setScrollbarStyleOverride(style)
+{
+    debug("");
+    debug(`Scroll bar style override: ${style}`);
+    await testRunner.setScrollbarStyleOverride(style);
+}
+
+onload = async () => {
+    if (!window.testRunner?.setScrollbarStyleOverride) {
+        testFailed("This test needs testRunner.setScrollbarStyleOverride().");
+        finishJSTest();
+        return;
+    }
+
+    await addFrame("scrollable cross-site iframe", true);
+    await addFrame("cross-site iframe that can't scroll", false);
+
+    debug("System setting: classic");
+    await checkFrames(true);
+
+    await setScrollbarStyleOverride("overlay");
+    await checkFrames(false);
+
+    debug("");
+    debug("Adding a cross-site iframe that can't scroll, while the style is overlay");
+    await addFrame("cross-site iframe added while the style is overlay", false);
+    await checkFrames(false);
+
+    await setScrollbarStyleOverride("classic");
+    await checkFrames(true);
+
+    await setScrollbarStyleOverride("overlay");
+    await checkFrames(false);
+
+    await setScrollbarStyleOverride(null);
+    await checkFrames(true);
+
+    finishJSTest();
+};
+</script>
+</body>

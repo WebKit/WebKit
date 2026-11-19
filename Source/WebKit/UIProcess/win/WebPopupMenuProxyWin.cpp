@@ -420,7 +420,7 @@ void WebPopupMenuProxyWin::calculatePositionAndSize(const IntRect& rect)
     // Adjust Width
     // Check that we need room for a scrollbar
     if (popupRect.height() < naturalHeight)
-        popupWidth += ScrollbarTheme::theme().scrollbarThickness(ScrollbarWidth::Thin);
+        popupWidth += ScrollbarTheme::theme().scrollbarThickness(ScrollbarTheme::theme().scrollbarStyle(), ScrollbarWidth::Thin);
     popupWidth *= intrinsicDeviceScaleFactor;
     int clientInsetLeftInDevicePixel = m_data.m_clientInsetLeft * intrinsicDeviceScaleFactor;
     int clientInsetRightInDevicePixel = m_data.m_clientInsetRight * intrinsicDeviceScaleFactor;

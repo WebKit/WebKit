@@ -84,6 +84,10 @@
 
 - (BOOL)isPointInScrollbar:(NSPoint)locationInView;
 
+// An NSScrollerStyle, or nil for the system setting. Calls back once every web process of the page uses the style,
+// and the UI process draws scroll bars with it.
+- (void)_setScrollerStyleOverrideForTesting:(NSNumber *)scrollerStyle completionHandler:(void (^)(void))completionHandler;
+
 @end
 
 #endif // !TARGET_OS_IPHONE

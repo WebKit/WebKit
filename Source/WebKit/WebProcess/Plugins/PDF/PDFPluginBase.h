@@ -457,6 +457,7 @@ protected:
     float deviceScaleFactor() const override;
     bool shouldSuspendScrollAnimations() const final { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
+    std::optional<WebCore::ScrollbarStyle> scrollbarStyleOverride() const final;
 
     WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntRect& scrollbarRect) const final;
     WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntRect& parentRect) const final;

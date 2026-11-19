@@ -37,9 +37,9 @@ IntRect ScrollbarThemeMock::trackRect(Scrollbar& scrollbar, bool)
     return scrollbar.frameRect();
 }
 
-int ScrollbarThemeMock::scrollbarThickness(ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelavancy)
+int ScrollbarThemeMock::scrollbarThickness(ScrollbarStyle scrollbarStyle, ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelavancy)
 {
-    if (usesOverlayScrollbars() && overlayRelavancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize)
+    if (scrollbarStyle == ScrollbarStyle::Overlay && overlayRelavancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize)
         return 0;
 
     switch (scrollbarWidth) {

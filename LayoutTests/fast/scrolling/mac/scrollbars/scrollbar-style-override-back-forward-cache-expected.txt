@@ -1,0 +1,18 @@
+Tests that a page restored from the back/forward cache has the scroll bar style override that the next page set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerWidth - document.documentElement.clientWidth is 0
+PASS scrollable.offsetWidth - scrollable.clientWidth is 0
+PASS notScrollable.offsetWidth - notScrollable.clientWidth is 0
+PASS document.documentElement.getBoundingClientRect().width is document.documentElement.clientWidth
+PASS The page was restored from the back/forward cache.
+PASS innerWidth - document.documentElement.clientWidth is > 0
+PASS scrollable.offsetWidth - scrollable.clientWidth is > 0
+PASS notScrollable.offsetWidth - notScrollable.clientWidth is > 0
+PASS document.documentElement.getBoundingClientRect().width is document.documentElement.clientWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

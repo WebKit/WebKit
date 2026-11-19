@@ -124,6 +124,7 @@ public:
     NODELETE Style::ScrollbarGutter scrollbarGutterStyle() const final;
     NODELETE ScrollbarWidth scrollbarWidthStyle() const final;
     std::optional<ScrollbarColor> scrollbarColorStyle() const final;
+    std::optional<ScrollbarStyle> scrollbarStyleOverride() const final;
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
     void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }
@@ -153,6 +154,7 @@ public:
 public:
     // All methods in this section override ScrollableaArea methods (final).
     void availableContentSizeChanged(AvailableSizeChangeReason) final;
+    void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) final;
 
     NativeScrollbarVisibility horizontalNativeScrollbarVisibility() const final;
     NativeScrollbarVisibility verticalNativeScrollbarVisibility() const final;
@@ -285,6 +287,7 @@ private:
     void computeScrollOrigin();
 
     void updateScrollableAreaSet(bool hasOverflow);
+    void setNeedsLayoutForScrollbarsChange();
 
     void updateScrollCornerStyle();
     void updateResizerStyle();

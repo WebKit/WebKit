@@ -1,0 +1,52 @@
+Tests that changing a page's scroll bar style override reaches its cross-site iframes, whether or not they can scroll. With Site Isolation, another process hosts them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+System setting: classic
+PASS scrollable cross-site iframe has a scroll bar.
+PASS scrollable cross-site iframe's document is as wide as its client area.
+PASS cross-site iframe that can't scroll has a scroll bar.
+PASS cross-site iframe that can't scroll's document is as wide as its client area.
+
+Scroll bar style override: overlay
+PASS scrollable cross-site iframe has no scroll bar.
+PASS scrollable cross-site iframe's document is as wide as its client area.
+PASS cross-site iframe that can't scroll has no scroll bar.
+PASS cross-site iframe that can't scroll's document is as wide as its client area.
+
+Adding a cross-site iframe that can't scroll, while the style is overlay
+PASS scrollable cross-site iframe has no scroll bar.
+PASS scrollable cross-site iframe's document is as wide as its client area.
+PASS cross-site iframe that can't scroll has no scroll bar.
+PASS cross-site iframe that can't scroll's document is as wide as its client area.
+PASS cross-site iframe added while the style is overlay has no scroll bar.
+PASS cross-site iframe added while the style is overlay's document is as wide as its client area.
+
+Scroll bar style override: classic
+PASS scrollable cross-site iframe has a scroll bar.
+PASS scrollable cross-site iframe's document is as wide as its client area.
+PASS cross-site iframe that can't scroll has a scroll bar.
+PASS cross-site iframe that can't scroll's document is as wide as its client area.
+PASS cross-site iframe added while the style is overlay has a scroll bar.
+PASS cross-site iframe added while the style is overlay's document is as wide as its client area.
+
+Scroll bar style override: overlay
+PASS scrollable cross-site iframe has no scroll bar.
+PASS scrollable cross-site iframe's document is as wide as its client area.
+PASS cross-site iframe that can't scroll has no scroll bar.
+PASS cross-site iframe that can't scroll's document is as wide as its client area.
+PASS cross-site iframe added while the style is overlay has no scroll bar.
+PASS cross-site iframe added while the style is overlay's document is as wide as its client area.
+
+Scroll bar style override: null
+PASS scrollable cross-site iframe has a scroll bar.
+PASS scrollable cross-site iframe's document is as wide as its client area.
+PASS cross-site iframe that can't scroll has a scroll bar.
+PASS cross-site iframe that can't scroll's document is as wide as its client area.
+PASS cross-site iframe added while the style is overlay has a scroll bar.
+PASS cross-site iframe added while the style is overlay's document is as wide as its client area.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -763,6 +763,10 @@ public:
     WEBCORE_EXPORT void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
 
+    std::optional<ScrollbarStyle> scrollbarStyleOverride() const { return m_scrollbarStyleOverride; }
+    WEBCORE_EXPORT void setScrollbarStyleOverride(std::optional<ScrollbarStyle>);
+    ScrollbarStyle scrollbarStyle() const;
+
     WEBCORE_EXPORT void setVerticalScrollElasticity(ScrollElasticity);
     ScrollElasticity verticalScrollElasticity() const { return static_cast<ScrollElasticity>(m_verticalScrollElasticity); }
 
@@ -1665,6 +1669,7 @@ private:
     float m_initialScaleIgnoringContentSize { 1.0f };
 
     bool m_suppressScrollbarAnimations { false };
+    std::optional<ScrollbarStyle> m_scrollbarStyleOverride;
 
 #if HAVE(NSREFRESHCONTROLLER)
     bool m_hasRefreshController { false };

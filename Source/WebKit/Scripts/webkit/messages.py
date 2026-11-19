@@ -1768,6 +1768,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::ScrollRectToVisibleOptions': ['<WebCore/RenderLayer.h>'],
         'WebCore::ScrollbarMode': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollbarOverlayStyle': ['<WebCore/ScrollTypes.h>'],
+        'WebCore::ScrollbarStyle': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollDirection': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollIsAnimated': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollGranularity': ['<WebCore/ScrollTypes.h>'],
