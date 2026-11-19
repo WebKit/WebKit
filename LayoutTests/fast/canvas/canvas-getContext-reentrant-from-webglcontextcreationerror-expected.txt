@@ -1,0 +1,5 @@
+gl = null
+context from listener = WebGLRenderingContext
+its canvas is the same element = true
+it still owns the slot = true
+PASS if no crash.
