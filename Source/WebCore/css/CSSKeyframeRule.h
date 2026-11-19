@@ -42,7 +42,7 @@ public:
     static Ref<StyleRuleKeyframe> create(Vector<std::pair<CSSValueID, CSS::Percentage<>>>&& keys, Ref<StyleProperties>&&);
     ~StyleRuleKeyframe();
 
-    Ref<StyleRuleKeyframe> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
+    Ref<StyleRuleKeyframe> copy() const { return adoptRef(*new StyleRuleKeyframe(*this)); }
 
     struct Key {
         CSSValueID rangeName;
@@ -71,6 +71,7 @@ public:
 private:
     explicit StyleRuleKeyframe(Ref<StyleProperties>&&);
     StyleRuleKeyframe(Vector<Key>&&, Ref<StyleProperties>&&);
+    StyleRuleKeyframe(const StyleRuleKeyframe&);
 
     Ref<StyleProperties> m_properties;
     Vector<Key> m_keys;
@@ -80,11 +81,11 @@ class CSSKeyframeRule final : public CSSRule {
 public:
     virtual ~CSSKeyframeRule();
 
-    String cssText() const final { return m_keyframe->cssText(); }
-    NODELETE void reattach(StyleRuleBase&) final;
+    String cssText() const final { return protect(m_keyframe)->cssText(); }
+    void reattach(StyleRuleBase&) final;
 
-    String keyText() const { return m_keyframe->keyText(); }
-    void setKeyText(const String&);
+    String keyText() const { return protect(m_keyframe)->keyText(); }
+    ExceptionOr<void> setKeyText(const String&);
 
     CSSStyleProperties& style();
 
@@ -93,7 +94,7 @@ private:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframe; }
 
-    const Ref<StyleRuleKeyframe> m_keyframe;
+    Ref<StyleRuleKeyframe> m_keyframe;
     mutable RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
     
     friend class CSSKeyframesRule;

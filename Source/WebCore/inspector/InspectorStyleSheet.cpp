@@ -1246,7 +1246,8 @@ ExceptionOr<void> InspectorStyleSheet::setRuleHeaderText(const InspectorCSSId& i
         cssKeyframesRule->setName(tokenRange.consume().value().toAtomString());
     } else if (RefPtr cssKeyframeRule = dynamicDowncast<CSSKeyframeRule>(rule.get())) {
         useCSSOMFastPath = true;
-        cssKeyframeRule->setKeyText(correctedHeaderText);
+        if (auto result = cssKeyframeRule->setKeyText(correctedHeaderText); result.hasException())
+            return result.releaseException();
     }
 
     auto sourceData = ruleSourceDataFor(rule.get());

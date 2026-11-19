@@ -32,6 +32,7 @@
 #include "CSSSerializationContext.h"
 #include "CSSStyleProperties.h"
 #include "CSSStyleSheet.h"
+#include "ExceptionOr.h"
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
@@ -85,6 +86,13 @@ Ref<StyleRuleKeyframe> StyleRuleKeyframe::create(Vector<std::pair<CSSValueID, CS
     return adoptRef(*new StyleRuleKeyframe(WTF::move(keyStructs), WTF::move(properties)));
 }
 
+StyleRuleKeyframe::StyleRuleKeyframe(const StyleRuleKeyframe& o)
+    : StyleRuleBase(o)
+    , m_properties(protect(o.properties())->mutableCopy())
+    , m_keys(o.m_keys)
+{
+}
+
 StyleRuleKeyframe::~StyleRuleKeyframe() = default;
 
 MutableStyleProperties& StyleRuleKeyframe::mutableProperties()
@@ -99,7 +107,7 @@ String StyleRuleKeyframe::keyText() const
     StringBuilder keyText;
     for (size_t i = 0; i < m_keys.size(); ++i) {
         if (i)
-            keyText.append(',');
+            keyText.append(", "_s);
         m_keys[i].writeToString(keyText);
     }
     return keyText.toString();
@@ -140,21 +148,24 @@ CSSKeyframeRule::~CSSKeyframeRule()
 CSSStyleProperties& CSSKeyframeRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(m_keyframe->mutableProperties()), *this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(protect(m_keyframe)->mutableProperties()), *this);
     return *m_propertiesCSSOMWrapper;
 }
 
-void CSSKeyframeRule::reattach(StyleRuleBase&)
+void CSSKeyframeRule::reattach(StyleRuleBase& rule)
 {
-    // No need to reattach, the underlying data is shareable on mutation.
-    ASSERT_NOT_REACHED();
+    m_keyframe = downcast<StyleRuleKeyframe>(rule);
+    if (m_propertiesCSSOMWrapper)
+        protect(m_propertiesCSSOMWrapper)->reattach(protect(protect(m_keyframe)->mutableProperties()));
 }
 
-void CSSKeyframeRule::setKeyText(const String& text)
+ExceptionOr<void> CSSKeyframeRule::setKeyText(const String& text)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    protect(m_keyframe)->setKeyText(text);
+    if (!protect(m_keyframe)->setKeyText(text))
+        return Exception { ExceptionCode::SyntaxError };
+    return { };
 }
 
 } // namespace WebCore
