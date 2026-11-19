@@ -2418,6 +2418,8 @@ static bool didInvokeUpdateState = false;
     _suggestions = suggestions;
     _expectedRects = expectedRects;
 
+    didInvokeShowDetailsForSuggestionWithUUID = false;
+
     return self;
 }
 
