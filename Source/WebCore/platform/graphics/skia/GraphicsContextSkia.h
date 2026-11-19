@@ -117,6 +117,11 @@ public:
 
     RenderingMode renderingMode() const final;
 
+    void setURLForRect(const URL&, const FloatRect&) final;
+    void setDestinationForRect(const String&, const FloatRect&) final;
+    void addDestinationAtPoint(const String&, const FloatPoint&) final;
+    bool supportsInternalLinks() const final;
+
     SkPaint createFillPaint() const;
     SkPaint createStrokePaint() const;
 
