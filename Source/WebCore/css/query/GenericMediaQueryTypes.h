@@ -100,7 +100,7 @@ struct Comparison {
 
 struct Feature {
     AtomString name;
-    Syntax syntax;
+    Syntax syntax { Syntax::Boolean };
     Markable<CSSValueID> functionId { };
     Comparison leftComparison { };
     Comparison rightComparison { };
