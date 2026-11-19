@@ -150,16 +150,6 @@ void Queue::finalizeBlitCommandEncoder()
     // Finalizes the queue-owned staging command buffer, whichever encoder type is
     // currently open on it (blit, or the compute staged-copy encoder).
     if (m_blitCommandEncoder || m_stagedCopyEncoder) {
-        // Hand the command buffer any bytes its copies only alias, before it is committed: Metal
-        // accepts completed handlers on uncommitted command buffers only. Nothing is parked unless a
-        // writeBuffer() staged a copy through a newBufferWithBytesNoCopy MTLBuffer, so this is a
-        // no-op for every other caller. Mirrors the noCopy tail of writeTexture().
-        if (!m_noCopyStagingSource.isEmpty()) {
-            __block Vector<uint8_t> retainedStagingSource = WTF::move(m_noCopyStagingSource);
-            [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-                retainedStagingSource = { };
-            }];
-        }
         id<MTLCommandEncoder> stagingEncoder = m_blitCommandEncoder;
         if (!stagingEncoder)
             stagingEncoder = m_stagedCopyEncoder;

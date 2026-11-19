@@ -87,10 +87,6 @@ public:
     void onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback);
     void submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands);
     void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
-    // For callers whose `data` dies as soon as writeBuffer() returns: at or above
-    // WGPU_LARGE_BUFFER_SIZE the staged copy only aliases the bytes, so those callers cannot use the
-    // borrowing overload above.
-    void writeBuffer(Buffer&, uint64_t bufferOffset, Vector<uint8_t>&& data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
     void clearBuffer(id<MTLBuffer>, NSUInteger offset = 0, NSUInteger size = NSUIntegerMax);
     void copyBuffer(id<MTLBuffer> source, uint64_t sourceOffset, id<MTLBuffer> destination, uint64_t destinationOffset, uint64_t size);
@@ -196,10 +192,6 @@ private:
     const ThreadSafeWeakPtr<Instance> m_instance;
     id<MTLBuffer> _Nullable m_temporaryBuffer;
     uint64_t m_temporaryBufferOffset;
-    // The bytes a pending staged copy aliases, waiting for finalizeBlitCommandEncoder() to attach
-    // them to the staging command buffer. Set only inside
-    // writeBuffer(Buffer&, uint64_t, Vector<uint8_t>&&).
-    Vector<uint8_t> m_noCopyStagingSource;
     Vector<ProvisionalTextureClear> m_provisionalTextureClears;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
 
