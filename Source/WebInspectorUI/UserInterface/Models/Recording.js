@@ -955,6 +955,37 @@ WI.Recording = class Recording extends WI.Object
                     break;
                 }
 
+                case WI.Recording.Swizzle.StackTrace: {
+                    let payload = null;
+                    let previousPayload = null;
+                    let visitedIndexes = new Set;
+                    let currentIndex = index;
+                    // Build the chain of parent stack traces as payloads for WI.StackTrace.fromPayload.
+                    // A recording with a parent that refers to itself or an ancestor would otherwise never finish.
+                    while (currentIndex != null && !visitedIndexes.has(currentIndex)) {
+                        visitedIndexes.add(currentIndex);
+
+                        let array = await this.swizzle(this._data[currentIndex], WI.Recording.Swizzle.JSON);
+                        let currentPayload = {
+                            callFrames: await Promise.all(array[0].map((item) => this.swizzle(item, WI.Recording.Swizzle.CallFramePayload))),
+                            topCallFrameIsBoundary: array.length > 1 ? await this.swizzle(array[1], WI.Recording.Swizzle.Boolean) : undefined,
+                            truncated: array.length > 2 ? await this.swizzle(array[2], WI.Recording.Swizzle.Boolean) : undefined,
+                            parentStackTrace: null,
+                        };
+
+                        if (!payload)
+                            payload = currentPayload;
+                        if (previousPayload)
+                            previousPayload.parentStackTrace = currentPayload;
+                        previousPayload = currentPayload;
+
+                        currentIndex = array.length > 3 ? array[3] : undefined;
+                    }
+
+                    this._swizzle[index][type] = payload;
+                    break;
+                }
+
                 case WI.Recording.Swizzle.CallStack: {
                     let array = await this.swizzle(data, WI.Recording.Swizzle.JSON);
                     if (!isNaN(array[0])) {
@@ -1582,4 +1613,5 @@ WI.Recording.Swizzle = {
     // Special frontend-only swizzle types.
     CallStack: Symbol("CallStack"),
     CallFramePayload: Symbol("CallFramePayload"),
+    StackTrace: Symbol("StackTrace"),
 };
