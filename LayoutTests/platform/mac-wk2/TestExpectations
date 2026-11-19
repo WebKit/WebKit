@@ -1225,6 +1225,23 @@ webkit.org/b/325612 [ x86_64 ] http/wpt/webcodecs/webgl-texImage2D-videoFrame-I4
 [ x86_64 ] http/wpt/webcodecs/2d-drawImage-videoFrame-I420-SMPTE240M.html [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-orientation-webgl-i420.window.html [ Failure ]
 
+# Corner-shape box-shadow exceeds its fuzzy pixel count on Intel Mac Pro.
+webkit.org/b/332403 [ x86_64 ] compositing/corner-shape-box-shadow-composited.html [ ImageOnlyFailure ]
+
+# VP9 profile 1/2/3 WebM playback never produces a frame on Intel Mac Pro.
+webkit.org/b/332406 [ Sequoia x86_64 ] media/media-vp9-yuv422p10.html [ Pass ImageOnlyFailure Timeout ]
+webkit.org/b/332406 [ x86_64 ] http/wpt/media/media-vp9-yuv422p8.html [ Failure ]
+webkit.org/b/332406 [ x86_64 ] webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange.html [ Timeout ]
+webkit.org/b/332406 [ x86_64 ] fast/webgpu/external-texture-10bit-video.html [ Timeout ]
+webkit.org/b/332406 media/video-with-alpha-10bit.html [ Failure Timeout ]
+
+# WebGPU render bundle replay with dynamic offsets and frag_depth produces wrong results on Intel GPUs.
+webkit.org/b/332407 [ x86_64 ] fast/webgpu/render-bundle-dynamic-offsets-persist-across-draws.html [ Failure ]
+webkit.org/b/332407 [ x86_64 ] fast/webgpu/render-bundle-fragment-depth-after-dynamic-offsets.html [ Failure ]
+
+# Takes about 30 seconds on Intel Macs.
+webkit.org/b/332404 [ x86_64 ] http/wpt/webcodecs/configure-encoder-big-frame-size.html [ Slow ]
+
 webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
 
 webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pass Failure ]
@@ -2163,7 +2180,7 @@ webkit.org/b/304851 imported/w3c/web-platform-tests/workers/worker-performance.w
 
 webkit.org/b/304995 [ Release ] imported/w3c/web-platform-tests/largest-contentful-paint/video-poster.html [ Pass Failure ]
 
-webkit.org/b/305086 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
+webkit.org/b/305086 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
 
 webkit.org/b/305403 [ Sequoia ] http/tests/performance/performance-resource-timing-redirection-cross-origin-media.html [ Failure ]
 
