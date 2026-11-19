@@ -74,6 +74,12 @@ public:
         g_main_loop_run(m_mainLoop.get());
     }
 
+    ~AutomationTest()
+    {
+        if (m_connection)
+            m_connection->close();
+    }
+
     struct Target {
         Target() = default;
         Target(guint64 id, UTF8CString&& name, bool isPaired)
