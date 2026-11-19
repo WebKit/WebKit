@@ -1,0 +1,127 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame");
+
+    let frameTarget;
+    let node;
+    let nodeStyles;
+
+    function loadFrontendScript(path) {
+        return new Promise((resolve, reject) => {
+            let script = document.createElement("script");
+            script.src = path;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error("Failed to load " + path));
+            document.head.appendChild(script);
+        });
+    }
+
+    async function frameColor() {
+        let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({expression: `getComputedStyle(document.getElementById("target")).color`, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    function colorProperty() {
+        let rule = nodeStyles.matchedRules.find((rule) => rule.selectors.some((selector) => selector.text === ".test-class"));
+        return rule.style.properties.find((property) => property.name === "color");
+    }
+
+    async function editColor(value) {
+        let style = colorProperty().ownerStyle;
+        let error = await new Promise((resolve) => nodeStyles.changeStyleText(style, `color: ${value};`, resolve));
+        InspectorTest.expectFalse(error, `Editing the color to ${value} should succeed.`);
+        await nodeStyles.refresh();
+    }
+
+    // Runs the Styles sidebar's own handler for the end of a property edit, which marks the undo point.
+    function finishPropertyEdit() {
+        let markedTargets = [];
+        WI.domUndoCoordinator.markUndoableState = function(target) {
+            markedTargets.push(target);
+            return WI.DOMUndoCoordinator.prototype.markUndoableState.call(this, target);
+        };
+
+        let styleProperty = {
+            _addCSSDocumentationButton() { },
+            _renderValue() { },
+            _nameElement: {},
+            _valueElement: {},
+            _nameTextField: {value: "color"},
+            _valueTextField: {value: "blue"},
+            _property: colorProperty(),
+            _delegate: {},
+        };
+        const changed = true;
+        WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur.call(styleProperty, styleProperty._valueTextField, {relatedTarget: null}, changed);
+
+        delete WI.domUndoCoordinator.markUndoableState;
+
+        InspectorTest.expectEqual(markedTargets.length, 1, "Finishing a property edit should mark one undo point.");
+        InspectorTest.expectEqual(markedTargets[0], frameTarget, "The undo point should be on the frame target that owns the edited node.");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame.Setup",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("frame-with-stylesheet.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin iframe's frame target.");
+            InspectorTest.expectNotEqual(frameTarget, WI.assumingMainTarget(), "The main target should not be the iframe's frame target.");
+
+            let frameDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDocument)
+                frameDocument = (await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable)).data.document;
+            let nodeId = await frameDocument.querySelector("#target");
+            node = WI.domManager.nodeForId(nodeId);
+            InspectorTest.expectEqual(node.owningTarget, frameTarget, "The node's owning target should be the frame target.");
+
+            nodeStyles = WI.cssManager.stylesForNode(node);
+            await nodeStyles.refreshIfNeeded();
+            InspectorTest.expectEqual(colorProperty().value, "red", "The color property should start as red.");
+            InspectorTest.expectEqual(await frameColor(), "rgb(255, 0, 0)", "The iframe should render red.");
+
+            await loadFrontendScript("Views/SpreadsheetStyleProperty.js");
+            InspectorTest.expectEqual(typeof WI.SpreadsheetStyleProperty, "function", "Should load the Styles sidebar's property view.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame.UndoEachEdit",
+        description: "Undo after a property edit should revert the edit in the iframe, one edit at a time.",
+        async test() {
+            await editColor("blue");
+            finishPropertyEdit();
+            InspectorTest.expectEqual(await frameColor(), "rgb(0, 0, 255)", "The iframe should render blue after the first edit.");
+
+            await editColor("green");
+            finishPropertyEdit();
+            InspectorTest.expectEqual(await frameColor(), "rgb(0, 128, 0)", "The iframe should render green after the second edit.");
+
+            await WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(await frameColor(), "rgb(0, 0, 255)", "The first undo should revert only the second edit.");
+
+            await WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(await frameColor(), "rgb(255, 0, 0)", "The second undo should revert the first edit.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame.Redo",
+        async test() {
+            await WI.domUndoCoordinator.redo();
+            InspectorTest.expectEqual(await frameColor(), "rgb(0, 0, 255)", "The first redo should re-apply the first edit.");
+
+            await WI.domUndoCoordinator.redo();
+            InspectorTest.expectEqual(await frameColor(), "rgb(0, 128, 0)", "The second redo should re-apply the second edit.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that undo after a CSS property edit made in the Styles sidebar reaches a node in a cross-origin iframe under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
+</body>
