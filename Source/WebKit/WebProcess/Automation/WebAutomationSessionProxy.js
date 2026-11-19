@@ -31,6 +31,7 @@ const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
 // FIXME: These are captured when the session first uses this global object, which can be after page
 // script has replaced them.
+const convertToString = String;
 const dateToISOString = Date.prototype.toISOString;
 const jsonStringify = JSON.stringify;
 const mapForEach = Map.prototype.forEach;
@@ -88,7 +89,13 @@ let AutomationSessionProxy = class AutomationSessionProxy
     {
         this._execute(functionString, argumentStrings, expectsImplicitCallbackArgument, callbackTimeout)
             .then(result => { resultCallback(frameID, callbackID, this._jsonStringify(result)); })
-            .catch(error => { resultCallback(frameID, callbackID, error); });
+            .catch(error => {
+                // A script can throw any value, but the callback treats a string as a successful result, and reads an error's name and message from an object.
+                // The object has its own name, so that page script can't supply one through Object.prototype.
+                if (error === null || (typeof error !== "object" && typeof error !== "function"))
+                    error = { name: "Error", message: convertToString(error) };
+                resultCallback(frameID, callbackID, error);
+            });
     }
 
     evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)

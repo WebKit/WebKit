@@ -454,6 +454,13 @@ static JSValueRef shadowRootForElement(JSContextRef context, JSObjectRef functio
     return toRef(globalObject, WebCore::toJS(globalObject, elementGlobalObject, static_cast<WebCore::Node&>(*shadowRoot)));
 }
 
+// A script can throw an object whose name or message can't be converted to a string, such as a symbol.
+static String toStringIgnoringExceptions(JSContextRef context, JSValueRef value)
+{
+    RefPtr string = adoptRef(JSValueToStringCopy(context, value, nullptr));
+    return string ? string->string() : String();
+}
+
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
     // This is using the JSC C API so we cannot take a std::span in argument directly.
@@ -462,7 +469,6 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     ASSERT(arguments.size() == 3);
     ASSERT(JSValueIsNumber(context, arguments[0]));
     ASSERT(JSValueIsNumber(context, arguments[1]));
-    ASSERT(JSValueIsObject(context, arguments[2]) || JSValueIsString(context, arguments[2]));
 
     RefPtr automationSessionProxy = WebProcess::singleton().automationSessionProxy();
     if (!automationSessionProxy)
@@ -484,7 +490,7 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     } else if (JSValueIsObject(context, arguments[2])) {
         JSObjectRef error = JSValueToObject(context, arguments[2], exception);
         JSValueRef nameValue = JSObjectGetProperty(context, error, OpaqueJSString::tryCreate("name"_s).get(), exception);
-        String exceptionName = adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string();
+        String exceptionName = toStringIgnoringExceptions(context, nameValue);
         String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
         if (exceptionName == "JavaScriptTimeout"_s)
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout);
@@ -504,7 +510,7 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
 
         JSValueRef messageValue = JSObjectGetProperty(context, error, OpaqueJSString::tryCreate("message"_s).get(), exception);
-        auto exceptionMessage = adoptRef(JSValueToStringCopy(context, messageValue, exception))->string();
+        auto exceptionMessage = toStringIgnoringExceptions(context, messageValue);
         automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
     } else {
         String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
