@@ -55,7 +55,6 @@ struct AspectRatio {
 
     bool isAuto() const             { return m_type == AspectRatioType::Auto; }
     bool isAutoAndRatio() const     { return m_type == AspectRatioType::AutoAndRatio; }
-    bool isAutoZero() const         { return m_type == AspectRatioType::AutoZero; }
     bool isRatio() const            { return m_type == AspectRatioType::Ratio; }
 
     bool hasRatio() const           { return isRatio() || isAutoAndRatio(); }

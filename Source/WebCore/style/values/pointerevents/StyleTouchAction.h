@@ -51,7 +51,6 @@ struct TouchAction {
 
     constexpr bool isNone() const { return WTF::holdsAlternative<CSS::Keyword::None>(m_value); }
     constexpr bool isAuto() const { return WTF::holdsAlternative<CSS::Keyword::Auto>(m_value); }
-    constexpr bool isManipulation() const { return WTF::holdsAlternative<CSS::Keyword::Manipulation>(m_value); }
     constexpr bool isEnumSet() const { return WTF::holdsAlternative<TouchActionValueEnumSet>(m_value); }
     constexpr std::optional<TouchActionValueEnumSet> tryEnumSet() const { return isEnumSet() ? std::make_optional(std::get<TouchActionValueEnumSet>(m_value)) : std::nullopt; }
 

@@ -132,24 +132,6 @@ bool WillChangeAnimatableFeatures::Data::operator==(const WillChangeAnimatableFe
     return std::ranges::equal(*this, other);
 }
 
-bool WillChangeAnimatableFeatures::Data::containsScrollPosition() const
-{
-    for (auto& feature : *this) {
-        if (WTF::holdsAlternative<CSS::Keyword::ScrollPosition>(feature))
-            return true;
-    }
-    return false;
-}
-
-bool WillChangeAnimatableFeatures::Data::containsContents() const
-{
-    for (auto& feature : *this) {
-        if (WTF::holdsAlternative<CSS::Keyword::Contents>(feature))
-            return true;
-    }
-    return false;
-}
-
 bool WillChangeAnimatableFeatures::Data::containsProperty(CSSPropertyID property) const
 {
     for (auto& feature : *this) {

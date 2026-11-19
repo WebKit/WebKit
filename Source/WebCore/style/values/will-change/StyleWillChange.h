@@ -131,8 +131,6 @@ struct WillChangeAnimatableFeatures {
         return { Data::map(std::forward<SizedRange>(range), mapper) };
     }
 
-    bool containsScrollPosition() const { return m_data->containsScrollPosition(); }
-    bool containsContents() const { return m_data->containsContents(); }
     bool containsProperty(CSSPropertyID property) const { return m_data->containsProperty(property); }
     bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const { return m_data->createsContainingBlockForAbsolutelyPositioned(isRootElement); }
     bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const { return m_data->createsContainingBlockForOutOfFlowPositioned(isRootElement); }
@@ -164,8 +162,6 @@ private:
             return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) Data(size, std::forward<SizedRange>(range), mapper));
         }
 
-        NODELETE bool containsScrollPosition() const;
-        NODELETE bool containsContents() const;
         NODELETE bool containsProperty(CSSPropertyID) const;
         NODELETE bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const;
         NODELETE bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const;
@@ -221,7 +217,6 @@ struct WillChange {
     }
 
     bool isAuto() const { return !m_data; }
-    bool isAnimateableFeatures() const { return !!m_data; }
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
@@ -232,8 +227,6 @@ struct WillChange {
         return visitor(WillChangeAnimatableFeatures { *m_data });
     }
 
-    bool containsScrollPosition() const { return m_data && m_data->containsScrollPosition(); }
-    bool containsContents() const { return m_data && m_data->containsContents(); }
     bool containsProperty(CSSPropertyID property) const { return m_data && m_data->containsProperty(property); }
     bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const { return m_data && m_data->createsContainingBlockForAbsolutelyPositioned(isRootElement); }
     bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const { return m_data && m_data->createsContainingBlockForOutOfFlowPositioned(isRootElement); }

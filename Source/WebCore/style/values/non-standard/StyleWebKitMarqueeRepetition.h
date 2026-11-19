@@ -40,7 +40,6 @@ struct WebkitMarqueeRepetition : ValueOrKeyword<Integer<CSS::Nonnegative>, CSS::
 
     bool isInfinite() const { return isKeyword(); }
     bool isInteger() const { return isValue(); }
-    std::optional<Integer> tryInteger() const { return tryValue(); }
 };
 
 } // namespace Style

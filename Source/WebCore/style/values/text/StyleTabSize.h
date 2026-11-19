@@ -60,7 +60,6 @@ struct TabSize {
 
     constexpr bool isSpaces() const { return holdsAlternative<Spaces>(); }
     constexpr bool isLength() const { return holdsAlternative<Length>(); }
-    constexpr std::optional<Spaces> trySpaces() const { return isSpaces() ? std::make_optional(std::get<Spaces>(m_value)) : std::nullopt; }
     constexpr std::optional<Length> tryLength() const { return isLength() ? std::make_optional(std::get<Length>(m_value)) : std::nullopt; }
 
     constexpr bool isZero() const { return WTF::switchOn(m_value, [](auto value) { return value.isZero(); }); }

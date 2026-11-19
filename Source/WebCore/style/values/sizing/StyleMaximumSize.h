@@ -65,15 +65,7 @@ struct MaximumSize : SizeOrKeyword<CSS::Keyword::None, CSS::Keyword::MinContent,
             || holdsAlternative<CSS::Keyword::FitContent>();
     }
     ALWAYS_INLINE bool isIntrinsicOrStretch() const { return isIntrinsic() || isStretch(); }
-    ALWAYS_INLINE bool isSizingKeyword() const // Excludes isNone().
-    {
-        return isIntrinsicOrStretch()
-            || holdsAlternative<CSS::Keyword::Intrinsic>()
-            || holdsAlternative<CSS::Keyword::MinIntrinsic>();
-    }
 };
-
-using MaximumSizePair = SpaceSeparatedSize<MaximumSize>;
 
 } // namespace Style
 } // namespace WebCore

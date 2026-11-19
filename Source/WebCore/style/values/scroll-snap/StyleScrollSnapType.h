@@ -47,7 +47,6 @@ struct ScrollSnapType {
     }
 
     constexpr bool isNone() const { return !m_value; }
-    constexpr bool isContainer() const { return !!m_value; }
     constexpr std::optional<ScrollSnapContainer> tryContainer() const { return m_value; }
 
     template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
