@@ -2331,6 +2331,8 @@ static bool shouldClearNullCustomElementRegistryOnAdoption(const Node& node, Doc
         return false;
     if (!is<Element>(node))
         return true;
+    if (downcast<Element>(node).keepsCustomElementRegistryNull())
+        return false;
     RefPtr parent = node.parentNode();
     if (!parent || (parent->isDocumentFragment() && !parent->isShadowRoot()))
         return true;

@@ -1,0 +1,27 @@
+
+PASS A global registry child of a global registry parent does not serialize the attribute
+PASS A null registry child of a global registry parent serializes the attribute
+PASS Serialization entry points agree for a scoped registry boundary
+PASS A null registry child of a null registry parent does not redundantly serialize the attribute
+PASS Serialization entry points omit a child using the same scoped registry as its parent
+PASS outerHTML omits the attribute when a null registry matches its parent
+PASS A different scoped registry child serializes the attribute
+PASS A global registry child of a null registry parent does not serialize an inverse marker
+PASS A global registry child of a scoped registry parent does not serialize an inverse marker
+PASS A detached global registry element does not serialize the attribute
+PASS A detached null registry element serializes the attribute
+PASS A detached scoped registry element serializes the attribute
+PASS A null registry element in a DocumentFragment serializes the attribute like a detached one
+PASS A shadow tree child compares against its null registry ShadowRoot
+PASS A null registry shadow tree child serializes a boundary from a global registry ShadowRoot
+PASS ShadowRoot serialization omits a child using the same scoped registry
+PASS Template serialization uses the template contents registry
+PASS Nested template serialization uses the template contents registry
+PASS A synthesized registry attribute precedes content attributes
+PASS Serialization preserves an existing non-empty attribute value
+PASS Serialization does not repeat the attribute through a null registry subtree
+PASS A serialized null registry boundary survives reparsing without redundant markers
+PASS A serialized scoped registry boundary reparses as null and can be initialized
+PASS A registry boundary on a non-HTML element does not synthesize the attribute
+PASS A literal attribute on a non-HTML element serializes without registry semantics
+

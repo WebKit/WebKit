@@ -770,7 +770,7 @@ Ref<Element> Element::cloneElementWithChildren(Document& document, CustomElement
 Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElementRegistry* fallbackRegistry) const
 {
     RefPtr registry = CustomElementRegistry::registryForElement(*this);
-    if (!registry)
+    if (!registry && !keepsCustomElementRegistryNull())
         registry = fallbackRegistry;
     if (registry && !registry->isScoped() && registry != document.customElementRegistry())
         registry = document.effectiveGlobalCustomElementRegistry();
@@ -783,7 +783,10 @@ Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElem
 
     clone->cloneDataFromElement(*this);
 
-    if (!registry && document.customElementRegistry())
+    if (keepsCustomElementRegistryNull()) [[unlikely]] {
+        clone->setUsesNullCustomElementRegistry();
+        clone->setKeepsCustomElementRegistryNull();
+    } else if (!registry && document.customElementRegistry())
         clone->setUsesNullCustomElementRegistry();
 
     return clone;
@@ -2567,10 +2570,11 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         break;
     }
     case AttributeNames::customelementregistryAttr:
-        if (reason == AttributeModificationReason::Parser && !isDefinedCustomElement()) {
+        if (reason == AttributeModificationReason::Parser && isHTMLElement() && !isDefinedCustomElement()) {
             if (usesScopedCustomElementRegistryMap())
                 CustomElementRegistry::removeFromScopedCustomElementRegistryMap(*this);
             setUsesNullCustomElementRegistry();
+            setKeepsCustomElementRegistryNull();
         }
         break;
     default: {

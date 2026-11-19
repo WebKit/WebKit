@@ -474,6 +474,31 @@ void MarkupAccumulator::appendCustomAttributes(StringBuilder&, const Element&, N
 {
 }
 
+// https://html.spec.whatwg.org/#look-up-a-custom-element-registry
+static CustomElementRegistry* lookUpCustomElementRegistry(const Node& node)
+{
+    if (auto* element = dynamicDowncast<Element>(node))
+        return CustomElementRegistry::registryForElement(*element);
+    if (node.isTreeScope())
+        return node.treeScope().customElementRegistry();
+    return nullptr;
+}
+
+// https://html.spec.whatwg.org/#serialising-html-fragments
+static bool shouldAppendCustomElementRegistryAttribute(const Element& element)
+{
+    if (!element.isHTMLElement())
+        return false;
+    if (auto* registry = CustomElementRegistry::registryForElement(element); registry && !registry->isScoped()) [[likely]]
+        return false;
+    RefPtr parent = element.parentNode();
+    if (parent && parent->isDocumentFragment() && !parent->isShadowRoot())
+        parent = nullptr;
+    if (CustomElementRegistry::registryForElement(element) == (parent ? lookUpCustomElementRegistry(*parent) : element.document().customElementRegistry()))
+        return false;
+    return !element.hasAttributeWithoutSynchronization(HTMLNames::customelementregistryAttr);
+}
+
 static bool shouldAddNamespaceElement(const Element& element)
 {
     // Don't add namespace attribute if it is already defined for this elem.
@@ -650,6 +675,9 @@ void MarkupAccumulator::appendStartTagWithURLReplacement(StringBuilder& result, 
 void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
     appendOpenTag(result, element, namespaces);
+
+    if (!inXMLFragmentSerialization() && shouldAppendCustomElementRegistryAttribute(element)) [[unlikely]]
+        result.append(" customelementregistry=\"\""_s);
 
     if (m_serializationContext) {
         // This function might change ordering of attributes in markup, so it should only be used for URL replacement case.

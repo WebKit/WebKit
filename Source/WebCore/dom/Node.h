@@ -307,6 +307,7 @@ public:
         auto bitfields = rareDataBitfields();
         bitfields.customElementRegistryType = std::to_underlying(CustomElementRegistryType::TreeScope);
         setRareDataBitfields(bitfields);
+        clearStateFlag(StateFlag::KeepsCustomElementRegistryNull);
     }
 
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
@@ -696,7 +697,8 @@ protected:
         DescendantNeedsStyleResolution = 1 << 24,
         DirectChildNeedsStyleResolution = 1 << 25,
         IsInSelectOrDataListSubtree = 1 << 26, // Only used on Element.
-        // 5 bits free.
+        KeepsCustomElementRegistryNull = 1 << 27, // Only used on Element.
+        // 4 bits free.
     };
 
     enum class TabIndexState : uint8_t {

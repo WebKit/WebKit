@@ -63,6 +63,8 @@
     [EnabledBySetting=PopoverAttributeEnabled] boolean togglePopover(optional (TogglePopoverOptions or boolean) options = {});
     [CEReactions=Needed, EnabledBySetting=PopoverAttributeEnabled] attribute [AtomString] DOMString? popover;
 
+    [CEReactions=Needed, EnabledBySetting=ScopedCustomElementRegistryEnabled, Reflect="customelementregistry"] attribute DOMString htmlCustomElementRegistry;
+
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
     [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString outerText;
 
