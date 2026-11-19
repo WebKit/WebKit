@@ -438,6 +438,8 @@ TEST(WKWebView, PrintToPDFUsesPageMargins)
         // 1in = 96px = 72pt.
         expectFirstCharacterOffset(@"@page { margin: 0 } div { margin-left: 1in; padding-top: 1in }", @"@page { margin: 0 }", 72, 72, options);
         expectFirstCharacterOffset(@"@page { margin: 1in 0 0 0.5in }", @"@page { margin: 0 }", 36, 72, options);
+        expectFirstCharacterOffset(@"@page { margin: 25% }", @"@page { margin: 0 }", letterPaperSize.width / 4, letterPaperSize.height / 4, options);
+        expectFirstCharacterOffset(@"@page { margin: 50% }", @"", 0, 0, options);
 
         // Margins narrower than the printer's unprintable edge are not widened.
         expectFirstCharacterOffset(@"@page { margin: 0.125in 0 0 0.125in }", @"@page { margin: 0 }", 9, 9, options);

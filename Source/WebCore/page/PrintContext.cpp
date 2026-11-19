@@ -99,29 +99,22 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
     computePageRectsWithPageSizeInternal(FloatSize(pageWidth / userScaleFactor, pageHeight / userScaleFactor), allowHorizontalTiling);
 }
 
-FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
+FloatBoxExtent PrintContext::computedPageMargin(FloatSize pageBoxSize, const FloatBoxExtent& printMargin)
 {
     RefPtr document = frame() ? frame()->document() : nullptr;
     if (!document)
         return printMargin;
-    // The root element's style may be out of date.
-    document->updateStyleIfNeeded();
-    // FIXME Currently no pseudo class is supported.
-    auto style = protect(protect(document->styleScope())->resolver())->styleForPage(0);
-
-    float pixelToPointScaleFactor = 1.0f / CSS::pixelsPerPt;
-
-    auto marginTop = style->marginTop().tryFixed();
-    auto marginRight = style->marginRight().tryFixed();
-    auto marginBottom = style->marginBottom().tryFixed();
-    auto marginLeft = style->marginLeft().tryFixed();
-    const auto& zoomFactor = style->usedZoomForLength();
-
+    // FIXME: Use each page's own @page margins (rdar://191464090).
+    auto margin = document->pageMargin(0, pageBoxSize * static_cast<float>(CSS::pixelsPerPt));
+    constexpr float pixelToPointScaleFactor = 1.0f / CSS::pixelsPerPt;
+    auto toPoints = [&](std::optional<float> side, float printSide) {
+        return side ? *side * pixelToPointScaleFactor : printSide;
+    };
     return {
-        marginTop ? marginTop->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.top(),
-        marginRight ? marginRight->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.right(),
-        marginBottom ? marginBottom->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.bottom(),
-        marginLeft ? marginLeft->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.left(),
+        toPoints(margin.top(), printMargin.top()),
+        toPoints(margin.right(), printMargin.right()),
+        toPoints(margin.bottom(), printMargin.bottom()),
+        toPoints(margin.left(), printMargin.left()),
     };
 }
 
@@ -561,9 +554,7 @@ auto PrintContext::beginWithPrintBox(const PrintBox& defaultPrintBox) -> std::op
     // FIXME: Lay out each page with its own @page size and margins (rdar://191464090). Every page uses the
     // first page's, so :left, :right and named pages can't change them.
     // FIXME: Size the page area with @page width and height, as css-page-3 does (rdar://191464115).
-    // FIXME: Resolve top and bottom margin percentages against the page height, and margin: auto as for a
-    // block in normal flow, as css-page-3 does (rdar://191464164). They resolve against the width, and auto keeps the default
-    // margin. Real printing (computedPageMargin()) ignores percentage margins.
+    // FIXME: Resolve margin: auto as for a block in normal flow, as css-page-3 does. It keeps the default margin.
     auto pageSize = defaultPrintBox.pageSize();
     auto margin = defaultPrintBox.margin;
     document->pageSizeAndMarginsInPixels(0, pageSize, margin.top(), margin.right(), margin.bottom(), margin.left());

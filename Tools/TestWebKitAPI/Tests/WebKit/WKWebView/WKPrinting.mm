@@ -242,6 +242,13 @@ TEST(Printing, PrintedContentUsesCSSUnits)
     expectFirstCharacterOffset(@"@page { margin: 0 } div { margin-left: 1in; padding-top: 1in }", @"@page { margin: 0 }", oneInch, oneInch);
 }
 
+TEST(Printing, PercentagePageMarginsUsePaperSize)
+{
+    auto paperSize = TestWebKitAPI::usLetterPaperSizeInPoints;
+    expectFirstCharacterOffset(@"@page { margin: 25% }", @"@page { margin: 0 }", paperSize.width / 4, paperSize.height / 4);
+    expectFirstCharacterOffset(@"@page { margin: 50% }", @"", 0, 0);
+}
+
 TEST(Printing, ViewportUnitsUsePageArea)
 {
     NSString *cases[] = {

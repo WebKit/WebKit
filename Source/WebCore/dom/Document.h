@@ -161,6 +161,7 @@ class EventLoopTaskGroup;
 class ExtensionStyleSheets;
 class FloatQuad;
 class FloatRect;
+class FloatSize;
 class FontFaceSet;
 class FontLoadRequest;
 class FormController;
@@ -234,6 +235,7 @@ class Quirks;
 class RTCNetworkManager;
 class Range;
 class RealtimeMediaSource;
+template<typename> class RectEdges;
 class Region;
 class RenderBlockFlow;
 class RenderTreeBuilder;
@@ -837,6 +839,8 @@ public:
     // marginLeft must be initialized to the default values that are used if
     // auto is specified.
     WEBCORE_EXPORT void pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft);
+    // In CSS px for a page box of pageBoxSize CSS px. Auto sides are std::nullopt.
+    RectEdges<std::optional<float>> pageMargin(int pageIndex, FloatSize pageBoxSize);
 
     inline CachedResourceLoader& cachedResourceLoader(); // Defined in DocumentResourceLoader.h
 

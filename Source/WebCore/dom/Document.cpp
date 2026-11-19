@@ -3354,11 +3354,28 @@ bool Document::isPageBoxVisible(int pageIndex)
     return pageStyle->visibility() != Visibility::Hidden; // display property doesn't apply to @page.
 }
 
+// Percentages use the page box left and right its width, top and bottom its height.
+// https://drafts.csswg.org/css-page-3/#page-properties
+static RectEdges<std::optional<float>> pageMarginForStyle(const Style::ComputedStyle& pageStyle, FloatSize pageBoxSize)
+{
+    const auto& zoomFactor = pageStyle.usedZoomForLength();
+    auto resolve = [&](const Style::MarginEdge& margin, float percentageBasis) -> std::optional<float> {
+        if (margin.isAuto())
+            return std::nullopt;
+        return Style::evaluate<float>(margin, percentageBasis, zoomFactor);
+    };
+    return {
+        resolve(pageStyle.marginTop(), pageBoxSize.height()),
+        resolve(pageStyle.marginRight(), pageBoxSize.width()),
+        resolve(pageStyle.marginBottom(), pageBoxSize.height()),
+        resolve(pageStyle.marginLeft(), pageBoxSize.width()),
+    };
+}
+
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
     updateStyleIfNeeded();
     auto style = protect(styleScope().resolver())->styleForPage(pageIndex);
-    const auto& zoomFactor = style->usedZoomForLength();
 
     pageSize = WTF::switchOn(style->pageSize(),
         [&](const CSS::Keyword::Auto&) {
@@ -3383,12 +3400,21 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
         }
     );
 
-    // The percentage is calculated with respect to the width even for margin top and bottom.
-    // http://www.w3.org/TR/CSS2/box.html#margin-properties
-    marginTop = style->marginTop().isAuto() ? marginTop : Style::evaluate<int>(style->marginTop(), pageSize.width(), zoomFactor);
-    marginRight = style->marginRight().isAuto() ? marginRight : Style::evaluate<int>(style->marginRight(), pageSize.width(), zoomFactor);
-    marginBottom = style->marginBottom().isAuto() ? marginBottom : Style::evaluate<int>(style->marginBottom(), pageSize.width(), zoomFactor);
-    marginLeft = style->marginLeft().isAuto() ? marginLeft : Style::evaluate<int>(style->marginLeft(), pageSize.width(), zoomFactor);
+    auto margin = pageMarginForStyle(*style, pageSize);
+    auto toPixels = [](std::optional<float> side, int& value) {
+        if (side)
+            value = static_cast<int>(*side);
+    };
+    toPixels(margin.top(), marginTop);
+    toPixels(margin.right(), marginRight);
+    toPixels(margin.bottom(), marginBottom);
+    toPixels(margin.left(), marginLeft);
+}
+
+RectEdges<std::optional<float>> Document::pageMargin(int pageIndex, FloatSize pageBoxSize)
+{
+    updateStyleIfNeeded();
+    return pageMarginForStyle(*protect(styleScope().resolver())->styleForPage(pageIndex), pageBoxSize);
 }
 
 void Document::fontsNeedUpdate(FontSelector&)
