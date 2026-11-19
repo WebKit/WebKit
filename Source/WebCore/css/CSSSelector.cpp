@@ -254,22 +254,29 @@ unsigned CSSSelector::specificityForPage() const
 {
     ASSERT(isForPage());
 
-    // See http://dev.w3.org/csswg/css3-page/#cascading-and-page-context
-    unsigned s = 0;
+    // https://drafts.csswg.org/css-page/#cascading-and-page-context
+    // Specificity is the tuple (f, g, h), compared lexicographically, where f counts page type names,
+    // g counts :first / :blank and h counts :left / :right. Each component is clamped so it can't
+    // overflow into the next one.
+    static constexpr unsigned maxComponentValue = 0xFF;
+    unsigned f = 0;
+    unsigned g = 0;
+    unsigned h = 0;
 
     for (const CSSSelector* component = this; component; component = component->precedingInComplexSelector()) {
         switch (component->match()) {
         case Match::Tag:
-            s += tagQName().localName() == starAtom() ? 0 : 4;
+            if (component->tagQName().localName() != starAtom())
+                f = std::min(f + 1, maxComponentValue);
             break;
         case Match::PagePseudoClass:
             switch (component->pagePseudoClass()) {
             case PagePseudoClass::First:
-                s += 2;
+                g = std::min(g + 1, maxComponentValue);
                 break;
             case PagePseudoClass::Left:
             case PagePseudoClass::Right:
-                s += 1;
+                h = std::min(h + 1, maxComponentValue);
                 break;
             }
             break;
@@ -277,7 +284,7 @@ unsigned CSSSelector::specificityForPage() const
             break;
         }
     }
-    return s;
+    return (f << 16) | (g << 8) | h;
 }
 
 std::optional<PseudoElementType> CSSSelector::stylePseudoElementTypeFor(PseudoElement type)
