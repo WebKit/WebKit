@@ -119,6 +119,7 @@ class TestExpectationParser(object):
     TIMEOUT_EXPECTATION = 'timeout'
 
     MISSING_BUG_WARNING = 'Test lacks BUG modifier.'
+    MISSING_EXPECTATIONS_WARNING = 'A test that names no expectations is skipped; say [ Skip ].'
 
     def __init__(self, port, full_test_list, allow_rebaseline_modifier, shorten_filename=lambda x: x):
         # type: (Port, Optional[List[str]], bool, Callable[[str], str]) -> None
@@ -414,6 +415,8 @@ class TestExpectationParser(object):
             # FIXME: We can probably simplify this adding 'SKIP' if modifiers is empty
             if 'SKIP' not in modifiers and 'REBASELINE' not in modifiers and 'SLOW' not in modifiers and 'DUMPJSCONSOLELOGINSTDERR' not in modifiers:
                 modifiers.append('SKIP')
+                if not warnings:
+                    warnings.append(TestExpectationParser.MISSING_EXPECTATIONS_WARNING)
             expectations = ['PASS']
 
         # FIXME: expectation line should just store bugs and modifiers separately.
