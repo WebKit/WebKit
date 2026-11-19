@@ -599,7 +599,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                         if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
                             // <wbr> needs to be on the line as an empty run so that we can construct an inline box and compute basic geometry.
                             ++placedInlineItemCount;
-                            m_line.appendWordBreakOpportunity(*wordBreakOpportunity, protect(wordBreakOpportunity->style()));
+                            m_line.appendWordBreakOpportunity(*wordBreakOpportunity);
                         }
                         if (inlineContent.trailingLineBreak()) {
                             // Fully placed (or empty) content followed by a line break means "end of line".
@@ -607,7 +607,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                             // could very well be at an earlier position. This has no visual implications at this point though (only geometry correctness on the line break box).
                             // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
                             auto& trailingLineBreak = *inlineContent.trailingLineBreak();
-                            m_line.appendLineBreak(trailingLineBreak, protect(trailingLineBreak.style()));
+                            m_line.appendLineBreak(trailingLineBreak);
                             if (trailingLineBreak.bidiLevel() != UBIDI_DEFAULT_LTR)
                                 m_line.setContentNeedsBidiReordering();
                             ++placedInlineItemCount;
@@ -1716,12 +1716,12 @@ void LineBuilder::commitCandidateContent(LineCandidate& lineCandidate, std::opti
         }
 
         if (inlineItem.isLineBreak()) {
-            m_line.appendLineBreak(inlineItem, run.style);
+            m_line.appendLineBreak(inlineItem);
             return;
         }
 
         if (inlineItem.isWordBreakOpportunity()) {
-            m_line.appendWordBreakOpportunity(inlineItem, run.style);
+            m_line.appendWordBreakOpportunity(inlineItem);
             return;
         }
 
@@ -1742,7 +1742,7 @@ void LineBuilder::commitCandidateContent(LineCandidate& lineCandidate, std::opti
 
         if (inlineItem.isOutOfFlow()) {
             ASSERT(!run.contentWidth());
-            m_line.appendOutOfFlow(inlineItem, run.style);
+            m_line.appendOutOfFlow(inlineItem);
             return;
         }
 

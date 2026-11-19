@@ -119,19 +119,22 @@ struct LineRun {
     bool isShapingBoundary() const { return m_shapingBoundary != LineShapingBoundary::NotApplicable; }
 
     // FIXME: Maybe add create functions intead?
-    LineRun(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft);
+    LineRun(const InlineItem&, IsFirstFormattedLine, InlineLayoutUnit logicalLeft);
     LineRun(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
-    LineRun(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f, std::optional<LineShapingBoundary> = std::nullopt);
+    LineRun(const InlineTextItem&, IsFirstFormattedLine, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f, std::optional<LineShapingBoundary> = std::nullopt);
 
 private:
     friend class Line;
     friend class InlineContentAligner;
     friend class RubyFormattingContext;
 
-    LineRun(const InlineSoftLineBreakItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft);
-    LineRun(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
+    LineRun(const InlineSoftLineBreakItem&, IsFirstFormattedLine, InlineLayoutUnit logicalLeft);
+    LineRun(const InlineItem&, IsFirstFormattedLine, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
 
-    const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
+    // Looked up through the layout box rather than stored, so that runs kept across style changes (e.g. the cached
+    // maximum intrinsic width line) never refer to a style that has since been replaced.
+    const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_isFirstFormattedLine ? m_layoutBox->firstLineStyle() : m_layoutBox->style(); }
+    bool isOnFirstFormattedLine() const { return m_isFirstFormattedLine; }
     NODELETE void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
     void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
     void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
@@ -166,7 +169,6 @@ private:
     TrailingWhitespace m_trailingWhitespace { };
     Markable<size_t> m_lastNonWhitespaceContentStart { };
     const CheckedPtr<const Box> m_layoutBox;
-    const CheckedRef<const Style::ComputedStyle> m_style;
     Text m_textContent;
     // 4-byte aligned:
     InlineLayoutUnit m_logicalLeft { 0 };
@@ -178,6 +180,7 @@ private:
     LineShapingBoundary m_shapingBoundary { LineShapingBoundary::NotApplicable };
     UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
     GlyphOverflow m_glyphOverflow;
+    bool m_isFirstFormattedLine { false };
 };
 
 using LineRunList = Vector<LineRun, 1>;
@@ -203,7 +206,8 @@ inline void LineRun::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
 
 inline TextDirection LineRun::inlineDirection() const
 {
-    return m_style->writingMode().bidiDirection();
+    // 'direction' does not apply to ::first-line.
+    return m_layoutBox->style().writingMode().bidiDirection();
 }
 
 }
