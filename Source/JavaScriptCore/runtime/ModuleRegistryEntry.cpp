@@ -179,6 +179,11 @@ void ModuleRegistryEntry::setLoadPromise(VM& vm, JSPromise* promise)
     m_loadPromise.set(vm, this, promise);
 }
 
+void ModuleRegistryEntry::clearLoadPromise()
+{
+    m_loadPromise.clear();
+}
+
 void ModuleRegistryEntry::setFetchError(JSGlobalObject* globalObject, JSValue error)
 {
     ASSERT(error);

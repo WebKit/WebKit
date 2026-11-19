@@ -1054,7 +1054,7 @@ static void runModuleRegistryFetchSettled(JSGlobalObject* globalObject, VM& vm, 
     } else {
         JSValue errorValue = argument1;
         if (auto* error = dynamicDowncast<ErrorInstance>(errorValue))
-            JSModuleLoader::attachErrorInfo(globalObject, error, nullptr, entry->key(), entry->moduleType(), JSModuleLoader::ModuleFailure::Kind::Instantiation);
+            JSModuleLoader::attachErrorInfo(globalObject, error, nullptr, entry->key(), entry->moduleType(), JSModuleLoader::ModuleFailure::Kind::Fetch);
         entry->setFetchError(globalObject, errorValue);
         modulePromise->reject(vm, errorValue);
     }
@@ -1096,6 +1096,15 @@ static void runModuleGraphLoadingError(JSGlobalObject* globalObject, VM& vm, Int
         }
         state->promise()->reject(vm, errorValue);
     }
+}
+
+// A failed fetch is recorded only on the entry that failed, which the next load removes. Modules that
+// depend on it stay usable, so their next load fetches it again.
+// https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1
+static bool isModuleFetchFailure(JSGlobalObject* globalObject, JSValue errorValue)
+{
+    auto* error = dynamicDowncast<ErrorInstance>(errorValue);
+    return error && JSModuleLoader::getErrorInfo(globalObject, error).m_kind == JSModuleLoader::ModuleFailure::Kind::Fetch;
 }
 
 static void runModuleLoadStep(JSGlobalObject* globalObject, VM& vm, InternalMicrotask, uint8_t payload, JSValue argument0, JSValue argument1, JSValue argument2, MicrotaskCallCache*)
@@ -1147,10 +1156,14 @@ static void runModuleLoadStep(JSGlobalObject* globalObject, VM& vm, InternalMicr
                 loadPromise->fulfill(vm, entry->record());
             }
         } else {
-            // onRejected logic: store evaluation error on entry
+            // onRejected logic: store the error on the entry, unless a dependency failed to fetch.
             auto* entry = context->entry();
             JSValue errorValue = argument1;
-            entry->setEvaluationError(globalObject, errorValue);
+            if (isModuleFetchFailure(globalObject, errorValue)) {
+                if (entry->loadPromise() == loadPromise)
+                    entry->clearLoadPromise();
+            } else
+                entry->setEvaluationError(globalObject, errorValue);
             loadPromise->reject(vm, errorValue);
         }
         return;
@@ -1168,7 +1181,8 @@ static void runModuleLoadStep(JSGlobalObject* globalObject, VM& vm, InternalMicr
         } else {
             auto* entry = context->entry();
             JSValue errorValue = argument1;
-            entry->setEvaluationError(globalObject, errorValue);
+            if (!isModuleFetchFailure(globalObject, errorValue))
+                entry->setEvaluationError(globalObject, errorValue);
             loadPromise->reject(vm, errorValue);
         }
         return;
@@ -1282,7 +1296,8 @@ static void runModuleLoadTopRejected(JSGlobalObject* globalObject, VM& vm, Inter
         auto type = context->moduleRequest().type();
         // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1
         // Only set an error if the entry already exists.
-        if (ModuleRegistryEntry* entry = globalObject->moduleLoader()->getRegisteredMayBeNull(specifier, type))
+        ModuleRegistryEntry* entry = globalObject->moduleLoader()->getRegisteredMayBeNull(specifier, type);
+        if (entry && !isModuleFetchFailure(globalObject, argument1))
             entry->setEvaluationError(globalObject, argument1);
         resultPromise->reject(vm, argument1);
     }
@@ -1303,7 +1318,7 @@ static void runModuleLoadSpecifierTransform(JSGlobalObject*, VM& vm, InternalMic
         transformedPromise->reject(vm, argument1);
 }
 
-static void runModuleLoadCombinedLoadSettled(JSGlobalObject*, VM& vm, InternalMicrotask, uint8_t payload, JSValue argument0, JSValue argument1, JSValue argument2, MicrotaskCallCache*)
+static void runModuleLoadCombinedLoadSettled(JSGlobalObject* globalObject, VM& vm, InternalMicrotask, uint8_t payload, JSValue argument0, JSValue argument1, JSValue argument2, MicrotaskCallCache*)
 {
     // Combined promise: load side settled
     // argument0 = combinedPromise
@@ -1313,6 +1328,15 @@ static void runModuleLoadCombinedLoadSettled(JSGlobalObject*, VM& vm, InternalMi
     auto* combinedCell = argument2.asCell();
     ASSERT(isModuleLoaderHostDefinedPayload(combinedCell));
     auto status = static_cast<JSPromise::Status>(payload);
+    JSValue result = argument1;
+    if (status == JSPromise::Status::Rejected && combinedPromise->status() == JSPromise::Status::Pending) {
+        // Concurrent loads of a module share its load promise, but each import must reject with its own fetch error.
+        if (isModuleFetchFailure(globalObject, result)) {
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            result = JSModuleLoader::duplicateError(globalObject, uncheckedDowncast<ErrorInstance>(result));
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+    }
     bool fullySettled;
     if (auto* state = dynamicDowncast<ModuleGraphLoadingState>(combinedCell))
         fullySettled = state->decrementRemaining();
@@ -1331,7 +1355,7 @@ static void runModuleLoadCombinedLoadSettled(JSGlobalObject*, VM& vm, InternalMi
             ASSERT(fulfillmentValue);
             combinedPromise->fulfill(vm, fulfillmentValue);
         } else
-            combinedPromise->reject(vm, argument1);
+            combinedPromise->reject(vm, result);
         return;
     }
     default:
@@ -1440,6 +1464,8 @@ static void runModuleLoadStoreError(JSGlobalObject* globalObject, VM&, InternalM
             return;
         if (auto* error = dynamicDowncast<ErrorInstance>(errorValue)) {
             auto failure = JSModuleLoader::getErrorInfo(globalObject, error);
+            if (failure.m_kind == JSModuleLoader::ModuleFailure::Kind::Fetch)
+                return;
             if (failure.isEvaluationError(specifier, type))
                 entry->setEvaluationError(globalObject, error);
             else if (JSModuleLoader::isFetchError(globalObject, error))
