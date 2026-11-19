@@ -1,0 +1,25 @@
+Test that Recording call stacks with a single frame are swizzled.
+
+
+== Running test suite: Model.Recording.Swizzle.CallStack
+-- Running test case: Model.Recording.Swizzle.CallStack.OneFrame
+PASS: One-frame call stack should be a StackTrace.
+PASS: One-frame call stack should have one call frame.
+PASS: One-frame call stack should have the right function name.
+PASS: One-frame call stack should not have a boundary call frame.
+PASS: One-frame call stack should not have a parent stack trace.
+
+-- Running test case: Model.Recording.Swizzle.CallStack.TwoFrames
+PASS: Two-frame call stack should be a StackTrace.
+PASS: Two-frame call stack should have two call frames.
+
+-- Running test case: Model.Recording.Swizzle.CallStack.ZeroFrames
+PASS: Zero-frame call stack should be a StackTrace.
+PASS: Zero-frame call stack should have no call frames.
+PASS: Zero-frame call stack should not have a parent stack trace.
+
+-- Running test case: Model.Recording.Swizzle.CallStack.LegacyCallFrames
+PASS: Legacy call frames should be a StackTrace.
+PASS: Legacy call frames should have two call frames.
+PASS: Legacy call frames should have the right function name.
+

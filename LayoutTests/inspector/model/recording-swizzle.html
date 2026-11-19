@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Model.Recording.Swizzle.CallStack");
+
+    let data = [
+        "callStackFunctionName",                    // 0
+        "http://example.com/recording-swizzle.html", // 1
+        [0, 1, 10, 5],                              // 2
+        [0, 1, 20, 7],                              // 3
+        [[2], false, false],                        // 4
+        [[2, 3], false, false],                     // 5
+        [[], false, false],                         // 6
+        [2, 3],                                     // 7
+    ];
+    let recording = WI.Recording.fromPayload({
+        version: WI.Recording.Version,
+        type: "canvas-2d",
+        initialState: {},
+        frames: [],
+        data,
+    });
+
+    function swizzleCallStack(index)
+    {
+        return recording.swizzle(index, WI.Recording.Swizzle.CallStack);
+    }
+
+    suite.addTestCase({
+        name: "Model.Recording.Swizzle.CallStack.OneFrame",
+        description: "A call stack with exactly one frame should be swizzled.",
+        async test() {
+            let stackTrace = await swizzleCallStack(4);
+
+            InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "One-frame call stack should be a StackTrace.");
+            InspectorTest.expectEqual(stackTrace.callFrames.length, 1, "One-frame call stack should have one call frame.");
+            InspectorTest.expectEqual(stackTrace.callFrames[0].functionName, data[0], "One-frame call stack should have the right function name.");
+            InspectorTest.expectFalse(stackTrace.topCallFrameIsBoundary, "One-frame call stack should not have a boundary call frame.");
+            InspectorTest.expectNull(stackTrace.parentStackTrace, "One-frame call stack should not have a parent stack trace.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Model.Recording.Swizzle.CallStack.TwoFrames",
+        description: "A call stack with more than one frame should be swizzled.",
+        async test() {
+            let stackTrace = await swizzleCallStack(5);
+
+            InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "Two-frame call stack should be a StackTrace.");
+            InspectorTest.expectEqual(stackTrace.callFrames.length, 2, "Two-frame call stack should have two call frames.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Model.Recording.Swizzle.CallStack.ZeroFrames",
+        description: "A call stack with no frames should be swizzled.",
+        async test() {
+            let stackTrace = await swizzleCallStack(6);
+
+            InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "Zero-frame call stack should be a StackTrace.");
+            InspectorTest.expectEqual(stackTrace.callFrames.length, 0, "Zero-frame call stack should have no call frames.");
+            InspectorTest.expectNull(stackTrace.parentStackTrace, "Zero-frame call stack should not have a parent stack trace.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Model.Recording.Swizzle.CallStack.LegacyCallFrames",
+        description: "COMPATIBILITY (macOS 13.0, iOS 16.0): a stack trace sent as an array of call frames should still be swizzled.",
+        async test() {
+            let stackTrace = await swizzleCallStack(7);
+
+            InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "Legacy call frames should be a StackTrace.");
+            InspectorTest.expectEqual(stackTrace.callFrames.length, 2, "Legacy call frames should have two call frames.");
+            InspectorTest.expectEqual(stackTrace.callFrames[0].functionName, data[0], "Legacy call frames should have the right function name.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Recording call stacks with a single frame are swizzled.</p>
+</body>
+</html>
