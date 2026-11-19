@@ -1,0 +1,24 @@
+Test that the demo audit descriptions name APIs the tests use.
+
+
+== Running test suite: Audit.DemoAuditDescriptions
+-- Running test case: Audit.DemoAuditDescriptions.NameAPIsTheTestsUse
+PASS: Default tests should include the demo audit.
+PASS: "Accessibility" description should only name WebInspectorAudit API objects (found "WebInspectorAudit.Accessibility").
+PASS: "getElementsByComputedRole" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getElementsByComputedRole").
+PASS: "getActiveDescendant" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getActiveDescendant").
+PASS: "getChildNodes" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getChildNodes").
+PASS: "getComputedProperties" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getComputedProperties").
+PASS: "getControlledNodes" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getControlledNodes").
+PASS: "getFlowedNodes" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getFlowedNodes").
+PASS: "getMouseEventNode" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getMouseEventNode").
+PASS: "getOwnedNodes" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getOwnedNodes").
+PASS: "getParentNode" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getParentNode").
+PASS: "getSelectedChildNodes" description should only name APIs its test uses (found "WebInspectorAudit.Accessibility.getSelectedChildNodes").
+PASS: "DOM" description should only name WebInspectorAudit API objects (found "WebInspectorAudit.DOM").
+PASS: "hasEventListeners" description should only name APIs its test uses (found "WebInspectorAudit.DOM.hasEventListeners").
+PASS: "hasEventListeners-click" description should only name APIs its test uses (found "WebInspectorAudit.DOM.hasEventListeners").
+PASS: "Resources" description should only name WebInspectorAudit API objects (found "WebInspectorAudit.Resources").
+PASS: "getResources" description should only name APIs its test uses (found "WebInspectorAudit.Resources.getResources").
+PASS: "getResourceContent" description should only name APIs its test uses (found "WebInspectorAudit.Resources.getResourceContent").
+

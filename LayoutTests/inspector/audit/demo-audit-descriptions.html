@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Audit.DemoAuditDescriptions");
+
+    suite.addTestCase({
+        name: "Audit.DemoAuditDescriptions.NameAPIsTheTestsUse",
+        description: "A demo audit description should only name WebInspectorAudit APIs the test actually uses.",
+        async test() {
+            let manager = new WI.AuditManager;
+            manager._addDefaultTests();
+
+            let demoAudit = manager.tests.find((test) => test.name === "Demo Audit");
+            InspectorTest.expectThat(demoAudit, "Default tests should include the demo audit.");
+            if (!demoAudit)
+                return;
+
+            let knownAPIObjects = new Set(["WebInspectorAudit", "WebInspectorAudit.Accessibility", "WebInspectorAudit.DOM", "WebInspectorAudit.Resources"]);
+            let checkDescription = (test) => {
+                if (test.description) {
+                    for (let api of new Set(test.description.match(/WebInspectorAudit\.\w+(?:\.\w+)*/g) || [])) {
+                        if (test instanceof WI.AuditTestCase)
+                            InspectorTest.expectThat(test.test.toString().includes(api), `"${test.name}" description should only name APIs its test uses (found "${api}").`);
+                        else
+                            InspectorTest.expectThat(knownAPIObjects.has(api), `"${test.name}" description should only name WebInspectorAudit API objects (found "${api}").`);
+                    }
+                }
+
+                if (test instanceof WI.AuditTestGroup) {
+                    for (let child of test.tests)
+                        checkDescription(child);
+                }
+            };
+            checkDescription(demoAudit);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the demo audit descriptions name APIs the tests use.</p>
+</body>
+</html>
