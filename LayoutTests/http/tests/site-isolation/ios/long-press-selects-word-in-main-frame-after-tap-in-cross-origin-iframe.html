@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body style="margin: 0;">
+<p id="mainFrameText" style="margin: 0; font: 20px monospace;">Hello world main frame text</p>
+<iframe style="position: absolute; left: 0; top: 100px; width: 300px; height: 200px; border: none;" src="http://localhost:8000/site-isolation/resources/potential-tap-target-and-selectable-text-frame.html"></iframe>
+<script>
+description("After a tap is committed in a cross-origin iframe, long-pressing a word in the main frame should select it. The main frame's process must not keep the iframe as its pending potential tap target.");
+jsTestIsAsync = true;
+
+const iframeTop = 100;
+let clickCount = 0;
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("click:"))
+        ++clickCount;
+});
+
+async function waitForFrames(count, condition)
+{
+    for (let frame = 0; frame < count && !condition(); ++frame)
+        await UIHelper.animationFrame();
+    return condition();
+}
+
+async function runTest()
+{
+    await UIHelper.ensurePresentationUpdate();
+
+    // Gestures are occasionally delivered before the subframe is ready to process them, so retry the tap.
+    for (let attempt = 0; attempt < 10 && !clickCount; ++attempt) {
+        await UIHelper.activateAt(100, iframeTop + 25);
+        await waitForFrames(10, () => clickCount);
+        await UIHelper.waitForDoubleTapDelay();
+    }
+    if (!clickCount) {
+        testFailed("The tap did not reach the cross-origin iframe.");
+        finishJSTest();
+        return;
+    }
+    testPassed("The tap was dispatched in the cross-origin iframe.");
+
+    // Long press over "world". Do not retry: a second selection request would flush a deferred first one,
+    // hiding the failure.
+    await UIHelper.longPressAtPoint(90, 12);
+    if (await waitForFrames(180, () => getSelection().toString().length))
+        testPassed("A word was selected in the main frame.");
+    else
+        testFailed("Long press did not select a word in the main frame.");
+    finishJSTest();
+}
+</script>
+</body>

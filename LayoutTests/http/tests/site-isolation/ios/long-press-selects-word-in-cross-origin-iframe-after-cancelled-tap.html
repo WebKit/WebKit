@@ -1,0 +1,65 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true FasterClicksEnabled=false ] -->
+<html>
+<meta name="viewport" content="initial-scale=1">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body style="margin: 0;">
+<iframe style="position: absolute; left: 0; top: 0; width: 300px; height: 200px; border: none;" src="http://localhost:8000/site-isolation/resources/potential-tap-target-and-selectable-text-frame.html"></iframe>
+<script>
+description("After a potential tap in a cross-origin iframe is cancelled, long-pressing a word in that iframe should select it. The iframe's process must not keep the cancelled tap's target as its pending potential tap target.");
+jsTestIsAsync = true;
+
+const clickDetails = [];
+let lastReportedSelection = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("click:"))
+        clickDetails.push(parseInt(event.data.substring("click:".length)));
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        lastReportedSelection = event.data.substring("selection:".length);
+});
+
+async function waitForFrames(count, condition)
+{
+    for (let frame = 0; frame < count && !condition(); ++frame)
+        await UIHelper.animationFrame();
+    return condition();
+}
+
+async function runTest()
+{
+    await UIHelper.ensurePresentationUpdate();
+    const initialScale = await UIHelper.zoomScale();
+
+    // Faster clicks are disabled and the page is zoomable, so the single tap waits for the double-tap-to-zoom
+    // gesture to fail. Double tapping makes it win instead, which cancels the first tap's potential tap after
+    // it was sent to the iframe's process.
+    await UIHelper.humanSpeedDoubleTapAt(100, 25);
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.waitForZoomScaleToSettle();
+    if (clickDetails.includes(1)) {
+        testFailed("The first tap was committed as a single click instead of being cancelled by the double tap.");
+        finishJSTest();
+        return;
+    }
+    testPassed("The first tap was not committed as a single click.");
+
+    if (await UIHelper.zoomScale() !== initialScale) {
+        await UIHelper.zoomToScale(initialScale);
+        await UIHelper.waitForZoomScaleToSettle();
+    }
+    await UIHelper.ensurePresentationUpdate();
+
+    // Long press over "world". Do not retry: a second selection request would flush a deferred first one,
+    // hiding the failure.
+    await UIHelper.longPressAtPoint(90, 112);
+    if (await waitForFrames(180, () => lastReportedSelection.length))
+        testPassed("A word was selected inside the cross-origin iframe.");
+    else
+        testFailed("Long press did not select a word inside the cross-origin iframe.");
+    finishJSTest();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+After a potential tap in a cross-origin iframe is cancelled, long-pressing a word in that iframe should select it. The iframe's process must not keep the cancelled tap's target as its pending potential tap target.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The first tap was not committed as a single click.
+PASS A word was selected inside the cross-origin iframe.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

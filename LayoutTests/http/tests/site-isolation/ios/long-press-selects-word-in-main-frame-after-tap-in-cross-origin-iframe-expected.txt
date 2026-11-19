@@ -1,0 +1,12 @@
+After a tap is committed in a cross-origin iframe, long-pressing a word in the main frame should select it. The main frame's process must not keep the iframe as its pending potential tap target.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The tap was dispatched in the cross-origin iframe.
+PASS A word was selected in the main frame.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world main frame text
+

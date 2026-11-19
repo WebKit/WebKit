@@ -1,0 +1,9 @@
+<body style="margin: 0; font: 20px monospace;">
+<div id="target" style="width: 200px; height: 50px; background-color: silver;">Tap target</div>
+<p style="margin: 50px 0 0 0;">Hello world selectable text</p>
+<script>
+target.addEventListener("click", (event) => window.top.postMessage(`click:${event.detail}`, "*"));
+document.addEventListener("selectionchange", () => window.top.postMessage("selection:" + getSelection().toString(), "*"));
+addEventListener("load", () => window.top.postMessage("ready", "*"));
+</script>
+</body>

@@ -3578,8 +3578,12 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
 
 Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(std::optional<WebCore::FrameIdentifier> frameID, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId, WebCore::PointerID pointerId, CompletesDoubleClick completesDoubleClick)
 {
-    if (RefPtr remoteFrame = remoteFrameForTapTarget(this->localRootFrame(frameID).get(), protect(m_potentialTapNode).get(), m_potentialTapLocation))
+    if (RefPtr remoteFrame = remoteFrameForTapTarget(this->localRootFrame(frameID).get(), protect(m_potentialTapNode).get(), m_potentialTapLocation)) {
+        if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, { }))
+            selectionChangedHandler();
+        clearPotentialTap();
         co_return remoteFrame->frameID();
+    }
 
 #if ENABLE(TWO_PHASE_CLICKS)
     auto invalidTargetForSingleClick = !m_potentialTapNode;
@@ -3666,12 +3670,25 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
         handleSyntheticClick(frameID, *nodeRespondingToClick, adjustedPoint, modifiers, pointerId);
 #endif // ENABLE(TWO_PHASE_CLICKS)
 
-    m_potentialTapNode = nullptr;
-    m_potentialTapLocation = FloatPoint();
-    m_potentialTapSecurityOrigin = nullptr;
+    clearPotentialTap();
 
     co_return std::nullopt;
 }
+
+void WebPage::clearPotentialTap()
+{
+    m_potentialTapNode = nullptr;
+    m_potentialTapLocation = FloatPoint();
+    m_potentialTapSecurityOrigin = nullptr;
+}
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+static void notifyContentChangeObserversOfCancelledPotentialTap(Page& page)
+{
+    for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(page.rootFrames()))
+        ContentChangeObserver::didCancelPotentialTap(rootFrame);
+}
+#endif
 
 void WebPage::cancelPotentialTapInFrame(WebFrame& frame)
 {
@@ -3684,18 +3701,18 @@ void WebPage::cancelPotentialTapInFrame(WebFrame& frame)
             return;
     }
 
-    m_potentialTapNode = nullptr;
-    m_potentialTapLocation = FloatPoint();
-    m_potentialTapSecurityOrigin = nullptr;
+    clearPotentialTap();
 }
 
 void WebPage::cancelPotentialTap()
 {
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-    if (RefPtr localMainFrame = protect(*m_page)->localMainFrame())
-        ContentChangeObserver::didCancelPotentialTap(*localMainFrame);
+    notifyContentChangeObserversOfCancelledPotentialTap(protect(*m_page));
 #endif
-    cancelPotentialTapInFrame(m_mainFrame);
+
+    if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, { }))
+        selectionChangedHandler();
+    clearPotentialTap();
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     dispatchDeferredSyntheticClickIfNeeded();
@@ -3950,8 +3967,7 @@ void WebPage::commitPotentialTapFailed(LocalFrame* localRootFrame)
         selectionChangedHandler();
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-    if (RefPtr localMainFrame = protect(*m_page)->localMainFrame())
-        ContentChangeObserver::didCancelPotentialTap(*localMainFrame);
+    notifyContentChangeObserversOfCancelledPotentialTap(protect(*m_page));
 #endif
 #if PLATFORM(IOS_FAMILY)
     clearSelectionAfterTapIfNeeded();

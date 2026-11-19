@@ -416,6 +416,15 @@ public:
 
     RefPtr<WebColorPicker> colorPicker;
 
+#if ENABLE(TWO_PHASE_CLICKS)
+    struct PotentialTap {
+        TapIdentifier identifier;
+        Vector<WebCore::FrameIdentifier> forwardedFrameIDs;
+        bool isCommitted { false };
+    };
+    std::optional<PotentialTap> potentialTap;
+#endif
+
 #if ENABLE(MAC_GESTURE_EVENTS)
     Deque<Ref<NativeWebGestureEvent>> gestureEventQueue;
     unsigned droppedGestureEventCount { 0 };

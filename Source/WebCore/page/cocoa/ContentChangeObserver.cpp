@@ -247,9 +247,9 @@ ContentChangeObserver::ContentChangeObserver(Document& document)
 {
 }
 
-static void willNotProceedWithClick(LocalFrame& mainFrame)
+static void willNotProceedWithClick(LocalFrame& rootFrame)
 {
-    for (RefPtr<Frame> frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr<Frame> frame = rootFrame; frame; frame = frame->tree().traverseNext(&rootFrame)) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -258,10 +258,10 @@ static void willNotProceedWithClick(LocalFrame& mainFrame)
     }
 }
 
-void ContentChangeObserver::didCancelPotentialTap(LocalFrame& mainFrame)
+void ContentChangeObserver::didCancelPotentialTap(LocalFrame& rootFrame)
 {
     LOG(ContentObservation, "didCancelPotentialTap: cancel ongoing content change observing.");
-    WebCore::willNotProceedWithClick(mainFrame);
+    WebCore::willNotProceedWithClick(rootFrame);
 }
 
 void ContentChangeObserver::didRecognizeLongPress(LocalFrame& mainFrame)

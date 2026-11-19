@@ -2751,12 +2751,18 @@ FloatRect WebPageProxy::unconstrainedLayoutViewportRect() const
 void WebPageProxy::potentialTapAtPosition(std::optional<WebCore::FrameIdentifier> remoteFrameID, const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation, WebKit::TapIdentifier requestID, WebEventInputSource inputSource)
 {
     hideValidationMessage();
+    if (!remoteFrameID)
+        internals().potentialTap = Internals::PotentialTap { requestID };
     sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::PotentialTapAtPosition(remoteFrameID, requestID, position, shouldRequestMagnificationInformation, inputSource), Messages::WebPage::PotentialTapAtPosition::Reply { [weakThis = WeakPtr { *this }, shouldRequestMagnificationInformation, requestID, inputSource](auto data) {
         if (!data)
             return;
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+        auto& potentialTap = protectedThis->internals().potentialTap;
+        if (!potentialTap || potentialTap->identifier != requestID)
+            return;
+        potentialTap->forwardedFrameIDs.append(data->targetFrameID);
         protectedThis->potentialTapAtPosition(data->targetFrameID, FloatPoint(data->transformedPoint), shouldRequestMagnificationInformation, requestID, inputSource);
     } });
 }
@@ -2765,6 +2771,9 @@ void WebPageProxy::commitPotentialTap(std::optional<WebCore::FrameIdentifier> re
 {
     if (RefPtr frame = remoteFrameID ? WebFrameProxy::webFrame(*remoteFrameID) : m_mainFrame.get())
         frame->notifyActivated(MonotonicTime::now());
+
+    if (auto& potentialTap = internals().potentialTap; !remoteFrameID && potentialTap)
+        potentialTap->isCommitted = true;
 
     sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::CommitPotentialTap(remoteFrameID, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick), Messages::WebPage::CommitPotentialTap::Reply { [weakThis = WeakPtr { *this }, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick](auto targetFrameID) {
         if (!targetFrameID)
@@ -2778,7 +2787,24 @@ void WebPageProxy::commitPotentialTap(std::optional<WebCore::FrameIdentifier> re
 
 void WebPageProxy::cancelPotentialTap()
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::CancelPotentialTap(), webPageIDInMainFrameProcess());
+    Ref mainFrameProcess = legacyMainFrameProcess();
+    mainFrameProcess->send(Messages::WebPage::CancelPotentialTap(), webPageIDInMainFrameProcess());
+
+    auto& potentialTap = internals().potentialTap;
+    if (!potentialTap || potentialTap->isCommitted)
+        return;
+
+    auto forwardedFrameIDs = WTF::move(potentialTap->forwardedFrameIDs);
+    potentialTap = std::nullopt;
+
+    Vector<Ref<WebProcessProxy>> notifiedProcesses { WTF::move(mainFrameProcess) };
+    for (auto frameID : forwardedFrameIDs) {
+        Ref process = processContainingFrame(frameID);
+        if (notifiedProcesses.containsIf([&](auto& notifiedProcess) { return notifiedProcess.ptr() == process.ptr(); }))
+            continue;
+        process->send(Messages::WebPage::CancelPotentialTap(), webPageIDInProcess(process));
+        notifiedProcesses.append(WTF::move(process));
+    }
 }
 
 void WebPageProxy::didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, WebCore::CornerRadii&& cornerRadii, bool nodeHasBuiltInClickHandling)

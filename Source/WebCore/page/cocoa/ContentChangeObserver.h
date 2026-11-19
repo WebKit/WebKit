@@ -85,7 +85,7 @@ public:
 
     WEBCORE_EXPORT static void didRecognizeLongPress(LocalFrame& mainFrame);
     WEBCORE_EXPORT static void didPreventDefaultForEvent(LocalFrame& mainFrame);
-    WEBCORE_EXPORT static void didCancelPotentialTap(LocalFrame& mainFrame);
+    WEBCORE_EXPORT static void didCancelPotentialTap(LocalFrame& rootFrame);
 
     void setClickTarget(Node& target) { m_clickTarget = target; }
 
