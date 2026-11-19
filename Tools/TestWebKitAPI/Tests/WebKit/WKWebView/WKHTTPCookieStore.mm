@@ -687,11 +687,11 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolEphemeralSession)
         NSHTTPCookieDomain: @"127.0.0.1",
     }];
     
+    cookieStoreFinished = false;
     [ephemeralStoreWithCookies.get().httpCookieStore setCookie:sessionCookie.get() completionHandler:^{
         cookieStoreFinished = true;
     }];
     TestWebKitAPI::Util::run(&cookieStoreFinished);
-    cookieStoreFinished = false;
     
     [webView loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");
