@@ -172,6 +172,8 @@ function prioritizedFailures(failures, max = 0, willFilterExpected = false)
         if (failure === null) {
             const params = failures.toParams();
             params.unexpected = [willFilterExpected];
+            if (InvestigateDrawer.subSuite)
+                params.sub_suite = [`${failures.suite}/${InvestigateDrawer.subSuite}`];
             return `<a style="margin-left: calc(var(--mediumSize) + 16px)" target="_blank" href="/investigate?${paramsToQuery(params)}">More...</a>`;
         }
         return `<div>
@@ -351,6 +353,7 @@ class _InvestigateDrawer {
         this.test = null;
         this.agregate = null;
         this.data = [];
+        this.subSuite = null;
 
         this.willFilterExpected = false;
 
@@ -424,12 +427,13 @@ class _InvestigateDrawer {
             document.documentElement.style.removeProperty('--drawerHeight');
         }
     }
-    expand(suite, agregateData, allData, test) {
+    expand(suite, agregateData, allData, test, subSuite) {
         if (!this.isRendered())
             return;
         this.setDisplayed(true);
         this.suite = suite;
         this.test = test;
+        this.subSuite = subSuite;
         this.agregate = agregateData;
         this.data = allData;
         this.dispatch();
@@ -460,6 +464,8 @@ class _InvestigateDrawer {
         }
         if (branch)
             params.branch = [branch];
+        if (this.subSuite)
+            params.sub_suite = [this.subSuite];
 
         // Leave members that differ between the aggregated runs unset so every matching run is returned
         const queryConfiguration = Configuration.combine(...this.data.map(datum => datum.configuration));

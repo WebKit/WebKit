@@ -381,7 +381,7 @@ function combineResults() {
 }
 
 class TimelineFromEndpoint {
-    constructor(endpoint, {suite = null, test = null, viewport = null, searchEvent = null}) {
+    constructor(endpoint, {suite = null, test = null, subSuite = null, viewport = null, searchEvent = null}) {
         this.endpoint = endpoint;
         this.displayAllCommits = true;
 
@@ -397,6 +397,7 @@ class TimelineFromEndpoint {
         // Suite and test can often be implied by the endpoint, but doing so is more confusing then helpful
         this.suite = suite;
         this.test = test;
+        this.subSuite = subSuite;
 
         this.updates = [];
         this.xaxisUpdates = [];
@@ -499,6 +500,9 @@ class TimelineFromEndpoint {
         delete sharedParams.test;
         delete sharedParams.repository_id;
         delete sharedParams.condensed;
+        delete sharedParams.sub_suite;
+        if (this.subSuite)
+            sharedParams.sub_suite = [this.subSuite];
 
         let newConfigs = Configuration.fromQuery();
         if (!deepCompare(newConfigs, this.configurations)) {
@@ -1040,7 +1044,7 @@ class TimelineFromEndpoint {
                 });
                 agregateData['configuration'] = new Configuration(partialConfiguration);
                 ToolTip.unset();
-                InvestigateDrawer.expand(self.suite, agregateData, allData, self.test);
+                InvestigateDrawer.expand(self.suite, agregateData, allData, self.test, self.subSuite);
             }
         }
 
@@ -1095,6 +1099,9 @@ class TimelineFromEndpoint {
                 buildParams['before_time'] = [data.start_time];
                 if (branch)
                     buildParams['branch'] = branch;
+                const investigateParams = Object.assign({}, buildParams);
+                if (self.subSuite)
+                    investigateParams.sub_suite = [`${self.suite}/${self.subSuite}`];
 
                 const typ = TypeForSuite(self.suite);
                 ToolTip.set(
@@ -1105,7 +1112,7 @@ class TimelineFromEndpoint {
                         <br>
                         ${partialConfiguration}
                         <br>
-                        ${data.stats ? `<a href="/investigate?${paramsToQuery(buildParams)}" target="_blank">Investigate failures</a><br>` : ''}
+                        ${data.stats ? `<a href="/investigate?${paramsToQuery(investigateParams)}" target="_blank">Investigate failures</a><br>` : ''}
                         ${data.expected ? `Expected: ${data.expected}<br>` : ''}
                         ${data.actual ? `Actual: ${data.actual}<br>` : ''}
                     </div>`,

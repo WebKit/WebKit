@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import {DOM, REF} from '/library/js/Ref.js';
-import {queryToParams, paramsToQuery, QueryModifier, escapeHTML} from '/assets/js/common.js';
+import {deepCompare, queryToParams, paramsToQuery, QueryModifier, escapeEndpoint, escapeHTML} from '/assets/js/common.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js'
 
@@ -285,6 +285,455 @@ function BranchSelector(callback) {
         </div>`;
 }
 
+const SUB_SUITE_FILTER_ROW_LIMIT = 200;
+const SUB_SUITE_ROW_STYLE = 'margin: 0; padding-top: 2px; padding-bottom: 2px; padding-right: calc(var(--smallSize) * 2 + 8px)';
+const SUB_SUITE_INDENT = 12;
+const SUB_SUITE_BOX_INSET = '5px';
+
+function subSuitesInAddress(suites) {
+    const picked = [];
+    new QueryModifier('sub_suite').current().forEach(value => {
+        const suite = suites.filter(name => value.startsWith(`${name}/`) && value.length > name.length + 1).reduce((longest, name) => (longest && longest.length >= name.length ? longest : name), null);
+        if (!suite)
+            return;
+        const subSuite = value.slice(suite.length + 1);
+        if (!picked.some(pick => pick.suite === suite && pick.subSuite === subSuite))
+            picked.push({suite, subSuite});
+    });
+    return picked;
+}
+
+function suitesShownWhole(suites) {
+    const named = new QueryModifier('suite').current();
+    if (named.length)
+        return suites.filter(suite => named.includes(suite));
+    return subSuitesInAddress(suites).length ? [] : suites;
+}
+
+function writePicks(picks) {
+    const splitURL = document.URL.split('?');
+    const params = queryToParams(splitURL[1]);
+    Object.keys(picks).forEach(key => {
+        if (picks[key].length)
+            params[key] = picks[key];
+        else
+            delete params[key];
+    });
+    const queryString = paramsToQuery(params);
+    window.history.pushState(queryString, '', splitURL[0] + (queryString ? '?' + queryString : ''));
+}
+
+function SubSuiteSelector(suites, onSuitesChange, callback) {
+    const modifier = new QueryModifier('sub_suite');
+    const picked = subSuitesInAddress(suites);
+    let listed = suites;
+    const sections = [];
+    const sectionFor = suite => {
+        let section = sections.find(candidate => candidate.suite === suite);
+        if (!section) {
+            section = {
+                suite,
+                list: null,
+                nodes: new Map(),
+                topLevel: [],
+                openGroups: new Set(),
+                found: new Set(),
+                foundAndAbove: new Set(),
+                openWhileFiltering: new Set(),
+                isExpanded: picked.some(pick => pick.suite === suite),
+                isExpandedWhileFiltering: true,
+                isRequested: false,
+                message: '',
+            };
+            sections.push(section);
+        }
+        return section;
+    };
+    const listedSections = () => listed.map(sectionFor);
+    const suitesOn = () => new QueryModifier('suite').current();
+    const isNothingPicked = () => !suitesOn().length && !subSuitesInAddress(listed).length;
+    let isExpanded = !isNothingPicked();
+    let filterText = '';
+    let refused = null;
+    let sectionsElement = null;
+    let renderedSections = [];
+    let filterInput = null;
+    let clearButton = null;
+
+    const selectedIn = section => subSuitesInAddress(listed).filter(pick => pick.suite === section.suite).map(pick => pick.subSuite);
+    const valueFor = (section, name) => `${section.suite}/${name}`;
+    const ancestorsOf = (section, name) => {
+        const ancestors = [];
+        for (let node = section.nodes.get(name); node && node.parent; node = section.nodes.get(node.parent))
+            ancestors.push(node.parent);
+        return ancestors;
+    };
+    const isOpen = (section, name) => (filterText ? section.openWhileFiltering : section.openGroups).has(name);
+    const isSectionOpen = section => (filterText ? section.isExpandedWhileFiltering : section.isExpanded);
+    const isSectionOn = (section, on) => {
+        if (!filterText)
+            return suitesOn().includes(section.suite);
+        return section.found.size > 0 && [...section.found].every(name => on.includes(name));
+    };
+    const loaded = () => listedSections().filter(section => section.list && !section.list.error);
+    const maxSelected = () => Math.min(...loaded().map(section => section.list.max_selected));
+    const countOnPage = () => subSuitesInAddress(listed).length;
+    const isShown = section => (filterText ? section.found.size > 0 : true);
+    const clearMessages = () => {
+        sections.forEach(section => {
+            section.message = '';
+        });
+        refused = null;
+    };
+    const notesMarkup = notes => notes.length ? `<span class="text tiny" style="flex: none; margin-left: 0.5em; font-style: italic">(${notes.join(', ')})</span>` : '';
+
+    const rowFor = (section, name, depth, on) => {
+        const node = section.nodes.get(name);
+        const hasChildren = Boolean(node && node.children.length);
+        const notes = [];
+        if (!node)
+            notes.push('not in the list');
+        const onUnder = hasChildren ? on.filter(value => ancestorsOf(section, value).includes(name)).length : 0;
+        if (onUnder && !isOpen(section, name))
+            notes.push(`${onUnder} on`);
+        if (refused && refused.section === section && refused.name === name)
+            notes.push(`at most ${maxSelected()} on the page`);
+        const lines = Array.from({length: depth}, (_, level) => `linear-gradient(var(--greyDarker), var(--greyDarker)) no-repeat calc(${level * SUB_SUITE_INDENT}px + 0.5em - 0.5px) 0 / 1px 100%`);
+
+        return `<div class="input" data-sub-suite="${escapeHTML(name)}" title="${escapeHTML([name, ...notes].join(' · '))}" style="${SUB_SUITE_ROW_STYLE}; padding-left: ${depth * SUB_SUITE_INDENT}px${lines.length ? `; background: ${lines.join(', ')}` : ''}">
+                <a class="link-button"${hasChildren ? ' data-expand' : ''} style="flex: none; width: 1em; text-align: center${hasChildren ? '' : '; visibility: hidden'}">${isOpen(section, name) ? '-' : '+'}</a>
+                <label style="display: flex; align-items: baseline; min-width: 0; margin-left: 4px; white-space: nowrap"><span style="overflow: hidden; text-overflow: ellipsis">${escapeHTML(node ? node.label : name)}</span>${notesMarkup(notes)}</label>
+                <label class="switch">
+                    <input type="checkbox"${on.includes(name) ? ' checked' : ''}>
+                    <span class="slider"></span>
+                </label>
+            </div>`;
+    };
+    const treeRows = (section, names, depth, on) => names.map(name => {
+        const row = rowFor(section, name, depth, on);
+        return section.openGroups.has(name) ? row + treeRows(section, section.nodes.get(name).children, depth + 1, on) : row;
+    }).join('');
+    const filteredRows = (section, on) => {
+        const rows = [];
+        let rowCount = 0;
+        const visit = (names, depth, isUnderFound) => names.forEach(name => {
+            if (!isUnderFound && !section.foundAndAbove.has(name))
+                return;
+            if (++rowCount <= SUB_SUITE_FILTER_ROW_LIMIT)
+                rows.push(rowFor(section, name, depth, on));
+            if (section.openWhileFiltering.has(name))
+                visit(section.nodes.get(name).children, depth + 1, isUnderFound || section.found.has(name));
+        });
+        visit(section.topLevel, 0, false);
+        const notShown = rowCount - rows.length;
+        return rows.join('') + (notShown > 0 ? `<div class="text tiny">${notShown.toLocaleString()} more: type more</div>` : '');
+    };
+    const rowsMarkup = section => {
+        if (!section.list || section.list.error)
+            return '';
+        const on = selectedIn(section);
+        const notListed = on.filter(name => !section.nodes.has(name)).map(name => rowFor(section, name, 0, on)).join('');
+        if (!section.topLevel.length)
+            return notListed && `${notListed}<div class="text tiny">This suite has no sub-suites</div>`;
+        if (!isSectionOpen(section))
+            return notListed;
+        return notListed + (filterText ? filteredRows(section, on) : treeRows(section, section.topLevel, 0, on));
+    };
+    const elementsOf = section => {
+        const element = sectionsElement ? sectionsElement.querySelector(`[data-section="${sections.indexOf(section)}"]`) : null;
+        if (!element)
+            return null;
+        return {
+            expander: element.querySelector('[data-section-expand]'),
+            label: element.querySelector('[data-section-label]'),
+            toggle: element.querySelector('[data-section-switch]'),
+            box: element.querySelector('[data-box]'),
+        };
+    };
+    const renderRows = section => {
+        const elements = elementsOf(section);
+        if (!elements)
+            return;
+        const on = selectedIn(section);
+        if (elements.box) {
+            const markup = rowsMarkup(section);
+            DOM.inject(elements.box, markup);
+            elements.box.style.display = markup ? '' : 'none';
+        }
+        if (elements.expander)
+            elements.expander.textContent = isSectionOpen(section) ? '-' : '+';
+        if (elements.toggle)
+            elements.toggle.checked = isSectionOn(section, on);
+        if (elements.label) {
+            const notes = section.message ? [section.message] : [];
+            const onUnder = isSectionOpen(section) ? 0 : on.filter(value => section.nodes.has(value)).length;
+            if (onUnder)
+                notes.push(`${onUnder} on`);
+            DOM.inject(elements.label, `<span style="overflow: hidden; text-overflow: ellipsis">${escapeHTML(section.suite)}</span>${notesMarkup(notes)}`);
+        }
+    };
+    const scrollToFirstOn = section => {
+        const elements = elementsOf(section);
+        const on = selectedIn(section);
+        const firstOn = elements && elements.box ? [...elements.box.querySelectorAll('[data-sub-suite]')].find(row => on.includes(row.dataset.subSuite)) : null;
+        if (firstOn)
+            elements.box.scrollTop = firstOn.offsetTop - elements.box.clientHeight / 3;
+    };
+    const sectionMarkup = section => `<div data-section="${sections.indexOf(section)}">
+            <div class="input" style="${SUB_SUITE_ROW_STYLE}; padding-left: ${SUB_SUITE_BOX_INSET}">
+                <a class="link-button" data-section-expand style="flex: none; width: 1em; text-align: center${section.topLevel.length ? '' : '; visibility: hidden'}">${isSectionOpen(section) ? '-' : '+'}</a>
+                <label data-section-label style="display: flex; align-items: baseline; min-width: 0; margin-left: 4px; white-space: nowrap"></label>
+                <label class="switch">
+                    <input type="checkbox" data-section-switch>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div data-box style="position: relative; max-height: 300px; overflow-y: auto; overscroll-behavior: contain; padding: 2px 4px; border: 1px solid var(--borderColorInlineElement); border-radius: 4px"></div>
+        </div>`;
+    const allMarkup = () => (filterText || !listed.length ? '' : `<div class="input" style="${SUB_SUITE_ROW_STYLE}; padding-left: ${SUB_SUITE_BOX_INSET}">
+                <span style="flex: none; width: 1em"></span>
+                <label style="min-width: 0; margin-left: 4px; white-space: nowrap">All</label>
+                <label class="switch">
+                    <input type="checkbox" data-all-switch>
+                    <span class="slider"></span>
+                </label>
+            </div>`);
+    const renderAll = () => {
+        const toggle = sectionsElement ? sectionsElement.querySelector('[data-all-switch]') : null;
+        if (toggle)
+            toggle.checked = isNothingPicked();
+    };
+    const messagesMarkup = () => {
+        const messages = listedSections().filter(section => section.list && section.list.error).map(section => `The sub-suites of ${escapeHTML(section.suite)} didn't load`);
+        if (listedSections().some(section => !section.list))
+            return `${messages.map(message => `<div class="text tiny">${message}</div>`).join('')}<div class="loader"><div class="spinner"></div></div>`;
+        if (filterText && !loaded().some(isShown))
+            messages.push('No sub-suite matches');
+        else if (!filterText && loaded().length && !loaded().some(section => section.topLevel.length || selectedIn(section).length))
+            messages.push(`${listed.length === 1 ? 'This suite has' : 'These suites have'} no sub-suites`);
+        return messages.map(message => `<div class="text tiny">${message}</div>`).join('');
+    };
+    const renderSections = () => {
+        if (!sectionsElement)
+            return;
+        renderedSections = listedSections().filter(isShown);
+        DOM.inject(sectionsElement, allMarkup() + renderedSections.map(sectionMarkup).join('') + messagesMarkup());
+        renderedSections.forEach(renderRows);
+        renderAll();
+    };
+    const update = () => {
+        const shown = listedSections().filter(isShown);
+        if (shown.length === renderedSections.length && shown.every((section, index) => section === renderedSections[index])) {
+            shown.forEach(renderRows);
+            renderAll();
+        } else
+            renderSections();
+    };
+
+    const find = section => {
+        const lowered = filterText.toLowerCase();
+        section.isExpandedWhileFiltering = true;
+        section.found.clear();
+        section.foundAndAbove.clear();
+        section.openWhileFiltering.clear();
+        section.nodes.forEach((node, name) => {
+            if (!lowered || !name.toLowerCase().includes(lowered) || (node.parent && node.parent.toLowerCase().includes(lowered)))
+                return;
+            section.found.add(name);
+            section.foundAndAbove.add(name);
+            ancestorsOf(section, name).forEach(ancestor => {
+                section.foundAndAbove.add(ancestor);
+                section.openWhileFiltering.add(ancestor);
+            });
+        });
+    };
+    const setFilter = text => {
+        if (text === filterText)
+            return;
+        filterText = text;
+        clearMessages();
+        sections.forEach(find);
+        renderSections();
+    };
+    const turnOn = (section, names) => {
+        const values = names.map(name => valueFor(section, name)).filter(value => !modifier.current().includes(value));
+        if (countOnPage() + values.length > maxSelected())
+            return false;
+        writePicks({sub_suite: [...values, ...modifier.current()]});
+        return true;
+    };
+    const turnOff = (section, names) => {
+        const values = names.map(name => valueFor(section, name));
+        writePicks({sub_suite: modifier.current().filter(value => !values.includes(value))});
+    };
+
+    const bodyRef = REF.createRef({
+        onElementMount: () => render(),
+    });
+    const render = () => {
+        const element = bodyRef.element;
+        if (!element)
+            return;
+        sectionsElement = null;
+        filterInput = null;
+        clearButton = null;
+        if (!isExpanded) {
+            DOM.inject(element, '');
+            return;
+        }
+
+        const hasFolders = loaded().some(section => section.topLevel.length);
+        const filterRef = REF.createRef({
+            onElementMount: (input) => {
+                filterInput = input;
+                input.value = filterText;
+                input.oninput = () => {
+                    if (clearButton)
+                        clearButton.style.display = input.value ? '' : 'none';
+                    setFilter(input.value.trim());
+                };
+            },
+        });
+        const clearRef = REF.createRef({
+            onElementMount: (button) => {
+                clearButton = button;
+                button.onclick = () => {
+                    if (!filterInput)
+                        return;
+                    filterInput.value = '';
+                    button.style.display = 'none';
+                    setFilter('');
+                    filterInput.focus();
+                };
+            },
+        });
+        const sectionsRef = REF.createRef({
+            onElementMount: (container) => {
+                sectionsElement = container;
+                container.onchange = (event) => {
+                    if (event.target.type !== 'checkbox')
+                        return;
+                    clearMessages();
+                    const addressBefore = document.URL;
+                    const sectionElement = event.target.closest('[data-section]');
+                    const section = sectionElement ? sections[sectionElement.dataset.section] : null;
+                    const row = event.target.closest('[data-sub-suite]');
+                    if (event.target.hasAttribute('data-all-switch')) {
+                        if (event.target.checked)
+                            writePicks({suite: [], sub_suite: []});
+                    } else if (row) {
+                        if (!event.target.checked)
+                            turnOff(section, [row.dataset.subSuite]);
+                        else if (!turnOn(section, [row.dataset.subSuite]))
+                            refused = {section, name: row.dataset.subSuite};
+                    } else if (!filterText)
+                        writePicks({suite: listed.filter(suite => (suite === section.suite ? event.target.checked : suitesOn().includes(suite)))});
+                    else if (!event.target.checked)
+                        turnOff(section, [...section.found]);
+                    else if (!turnOn(section, [...section.found]))
+                        section.message = `${section.found.size.toLocaleString()} found, at most ${maxSelected()} on the page`;
+                    update();
+                    if (document.URL !== addressBefore)
+                        callback();
+                };
+                container.onclick = (event) => {
+                    const sectionElement = event.target.closest('[data-section]');
+                    if (!sectionElement)
+                        return;
+                    const section = sections[sectionElement.dataset.section];
+                    if (event.target.closest('[data-section-expand]')) {
+                        if (filterText)
+                            section.isExpandedWhileFiltering = !section.isExpandedWhileFiltering;
+                        else
+                            section.isExpanded = !section.isExpanded;
+                        renderRows(section);
+                        if (isSectionOpen(section))
+                            scrollToFirstOn(section);
+                        return;
+                    }
+                    const expander = event.target.closest('[data-expand]');
+                    const row = expander ? expander.closest('[data-sub-suite]') : null;
+                    if (!row)
+                        return;
+                    const name = row.dataset.subSuite;
+                    const open = filterText ? section.openWhileFiltering : section.openGroups;
+                    if (open.has(name))
+                        open.delete(name);
+                    else
+                        open.add(name);
+                    renderRows(section);
+                };
+                renderSections();
+                sections.forEach(scrollToFirstOn);
+            },
+        });
+
+        DOM.inject(element, `${hasFolders ? `<div class="input">
+                    <input type="text" ref="${filterRef}" autocomplete="off" autocapitalize="none" required style="padding-right: calc(var(--formLabelPadding) + 1em)"/>
+                    <label>Filter sub-suites</label>
+                    <a class="link-button" ref="${clearRef}" title="Clear the filter" aria-label="Clear the filter" style="position: absolute; right: var(--formLabelPadding)${filterText ? '' : '; display: none'}">X</a>
+                </div>` : ''}
+            <div style="--smallSize: 13px">
+                <div ref="${sectionsRef}"></div>
+            </div>`);
+    };
+
+    const expander = REF.createRef({
+        onElementMount: (element) => {
+            element.onclick = () => {
+                isExpanded = !isExpanded;
+                element.innerHTML = isExpanded ? '-' : '+';
+                render();
+                if (!isExpanded)
+                    setFilter('');
+            };
+        },
+    });
+
+    const requestList = section => {
+        if (section.isRequested)
+            return;
+        section.isRequested = true;
+        fetch(`api/${escapeEndpoint(section.suite)}/sub-suites`).then(response => response.json()).then(json => {
+            if (!json.sub_suites)
+                throw new Error(json.description);
+            const addNodes = (children, parent) => Object.keys(children).map(name => {
+                section.nodes.set(name, {
+                    label: parent ? name.slice(parent.length + 1) : name,
+                    parent,
+                    children: addNodes(children[name], name),
+                });
+                return name;
+            });
+            section.topLevel = addNodes(json.sub_suites, null);
+            section.list = json;
+            selectedIn(section).forEach(name => ancestorsOf(section, name).forEach(ancestor => section.openGroups.add(ancestor)));
+            find(section);
+            render();
+        }).catch(error => {
+            section.list = {error: true};
+            render();
+            console.error(error);
+        });
+    };
+    const followListedSuites = suitesNow => {
+        if (deepCompare(suitesNow, listed))
+            return;
+        listed = suitesNow;
+        clearMessages();
+        listedSections().forEach(requestList);
+        update();
+    };
+    onSuitesChange.action(followListedSuites);
+    listedSections().forEach(requestList);
+
+    return `<div style="font-size: var(--smallSize);">
+            <a class="link-button text medium" ref="${expander}">${isExpanded ? '-' : '+'}</a>
+            Sub-suite <br>
+            <div ref="${bodyRef}"></div>
+        </div>`;
+}
+
 function LimitSlider(callback, max = 50000, defaultValue = 5000) {
     const limitModifier = new QueryModifier('limit');
     const startingValue = limitModifier.current().length ? limitModifier.current()[limitModifier.current().length -1]:defaultValue;
@@ -516,4 +965,4 @@ function CommitRepresentation(callback) {
         </div>`;
 }
 
-export {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar};
+export {Drawer, BranchSelector, suitesShownWhole, SubSuiteSelector, subSuitesInAddress, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar};

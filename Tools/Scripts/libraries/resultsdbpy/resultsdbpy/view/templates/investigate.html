@@ -33,7 +33,7 @@ import {CommitBank} from '/assets/js/commit.js';
 import {ErrorDisplay, QueryModifier, paramsToQuery, queryToParams, percentage, elapsedTime, escapeHTML, escapeEndpoint} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {Expectations} from '/assets/js/expectations.js';
-import {Drawer, BranchSelector, ConfigurationSelectors} from '/assets/js/drawer.js';
+import {Drawer, BranchSelector, ConfigurationSelectors, subSuitesInAddress} from '/assets/js/drawer.js';
 import {TypeForSuite} from '/assets/js/suites.js';
 import {Legend} from '/assets/js/timeline.js';
 import {ToolTip} from '/assets/js/tooltip.js';
@@ -63,6 +63,12 @@ class SuiteFailuresView {
         this.suite = suite;
         this.suiteType = TypeForSuite(this.suite);
         this.dataForConfig = {};
+        this.subSuite = subSuitesInAddress(SUITES).find(pick => pick.suite === suite)?.subSuite || null;
+        this.wholeSuite = REF.createRef({
+            onStateUpdate: (element, diff) => {
+                element.href = diff.href;
+            },
+        });
 
         this.ref = REF.createRef({
             state: {displayed: true},
@@ -222,7 +228,7 @@ class SuiteFailuresView {
                                             <div class="dot ${worst} small">
                                                 <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[worst]}</div>
                                             </div>
-                                            <a class="text block" style="width: calc(100% - var(--mediumSize) - 16px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; "href="/investigate?${paramsToQuery(failure.toParams())}">
+                                            <a class="text block" style="width: calc(100% - var(--mediumSize) - 16px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; "href="/investigate?${paramsToQuery(this.withSubSuite(failure.toParams()))}">
                                                 ${commits.length ?
                                                     `${commits[0].label()} ${commits.length > 1 ? commits[commits.length - 1].label() : ''}` :
                                                     '?'} on ${failure.configuration}
@@ -276,6 +282,9 @@ class SuiteFailuresView {
         this.reload();
     }
     reload() {
+        const address = queryToParams(document.URL.split('?')[1]);
+        delete address.sub_suite;
+        this.wholeSuite.setState({href: `/investigate?${paramsToQuery(address)}`});
         if (!Object.keys(rangeParams).length)
             return;
 
@@ -288,8 +297,9 @@ class SuiteFailuresView {
         let failuresDispatched = agregateConnfiguration.length;
         this.failureView.setState({configuration: null, results: [], failures: []});
 
+        const subSuiteParams = this.subSuite ? {sub_suite: [this.subSuite]} : {};
         agregateConnfiguration.forEach(configToSearch => {
-            const resultParams = Object.assign(configToSearch.toParams(), rangeParams);
+            const resultParams = Object.assign(configToSearch.toParams(), rangeParams, subSuiteParams);
             fetch(`/api/results/${escapeEndpoint(this.suite)}?${paramsToQuery(resultParams)}`).then(response => {
                 response.json().then(json => {
                     let minUuid = Math.round(new Date().getTime()/10);
@@ -328,7 +338,7 @@ class SuiteFailuresView {
                 console.error(JSON.stringify(error, null, 4));
             });
 
-            Failures.fromEndpoint(this.suite, configToSearch, Object.assign({unexpected: [willFilterExpected()]}, rangeParams)).then(failures => {
+            Failures.fromEndpoint(this.suite, configToSearch, Object.assign({unexpected: [willFilterExpected()]}, rangeParams, subSuiteParams)).then(failures => {
                 let minUuid = Math.round(new Date().getTime()/10);
                 let maxUuid = 0;
 
@@ -391,10 +401,17 @@ class SuiteFailuresView {
             this.failureView.setState(this.dataForConfig[configurationKeys[this.selected - 1]]);
         }
     }
+    withSubSuite(params) {
+        if (this.subSuite)
+            params.sub_suite = [`${this.suite}/${this.subSuite}`];
+        return params;
+    }
     toString() {
         return `<div class="section" ref="${this.ref}">
                 <div class="header row">
-                    <div class="col-s-4 title">${escapeHTML(this.suite)}</div>
+                    <div class="col-s-4 title">${this.subSuite ?
+                        `${escapeHTML(`${this.suite} › ${this.subSuite}`)} <a ref="${this.wholeSuite}" style="white-space: nowrap">Show all of ${escapeHTML(this.suite)}</a>` :
+                        escapeHTML(this.suite)}</div>
                     <div class="col-s-8">
                         <div class="input">
                             <select required ref="${this.selectConfigurations}"></select>
