@@ -11023,6 +11023,20 @@ static bool shouldSendMainFrameViewportInfo(WebFrameProxy& mainFrame, RemotePage
     return shouldSend;
 }
 
+void WebPageProxy::sendMainFrameViewportInfoIfNeeded(WebFrameProxy& committedFrame)
+{
+    RefPtr mainFrame = m_mainFrame;
+    if (!mainFrame || committedFrame.isMainFrame())
+        return;
+
+    RefPtr remotePage = protect(browsingContextGroup())->remotePageInProcess(*this, protect(committedFrame.process()));
+    if (!remotePage || !shouldSendMainFrameViewportInfo(*mainFrame, *remotePage))
+        return;
+
+    Vector updates { WebCore::FrameGeometryUpdate { mainFrame->frameID(), std::nullopt, mainFrame->frameViewportInfo() } };
+    protect(remotePage->process())->send(Messages::WebPage::FrameGeometryChangedInAnotherProcess(WTF::move(updates)), remotePage->pageID());
+}
+
 void WebPageProxy::handleFrameGeometryUpdates(IPC::Connection& connection, const Vector<WebCore::FrameGeometryUpdate>& updates)
 {
     // The sender may not have seen site isolation being disabled yet.

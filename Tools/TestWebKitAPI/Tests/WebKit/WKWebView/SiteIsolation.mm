@@ -5474,6 +5474,88 @@ TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInNewProcessAfterScrolling)
     EXPECT_EQ(rect.origin.y, 227);
 }
 
+enum class WaitForPresentationUpdates : bool { No, Yes };
+enum class OffscreenSiblingFrame : bool { No, Yes };
+static void runConvertRectToMainFrameCoordinatesAfterRemovingScrollingAndRecreatingIframeTest(bool nested, EnableBackForwardCache enableBackForwardCache = EnableBackForwardCache::No, WaitForPresentationUpdates waitForPresentationUpdates = WaitForPresentationUpdates::Yes, OffscreenSiblingFrame offscreenSiblingFrame = OffscreenSiblingFrame::No)
+{
+    bool hasOffscreenSibling = offscreenSiblingFrame == OffscreenSiblingFrame::Yes;
+    auto mainFrameHTML = hasOffscreenSibling
+        ? "<body style='margin: 0; min-height: 3000px'><iframe style='position: absolute; left: 0; top: 2500px; width: 100px; height: 100px; border: none' src='https://domain2.com/subframe'></iframe></body>"_s
+        : "<body style='margin: 0; min-height: 3000px'></body>"_s;
+    unsigned baselineChildFrameCount = hasOffscreenSibling ? 1 : 0;
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameHTML } },
+        { "/wrapper"_s, { "<body style='margin: 0'><iframe style='position: absolute; left: 10px; top: 20px; width: 100px; height: 80px; border: none' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0; min-height: 1000px'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::Yes, nil, nil, nil, enableBackForwardCache);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto addIframe = [&] {
+        auto url = nested ? "https://domain1.com/wrapper"_s : "https://domain2.com/subframe"_s;
+        auto style = nested ? "position: absolute; left: 50px; top: 400px; width: 500px; height: 400px; border: none"_s : "position: absolute; left: 60px; top: 420px; width: 100px; height: 80px; border: none"_s;
+        RetainPtr<NSString> script = makeString("var iframe = document.createElement('iframe'); iframe.id = 'iframe'; iframe.style = '"_s, style, "'; iframe.src = '"_s, url, "'; document.body.appendChild(iframe); 1;"_s).createNSString();
+        [webView objectByEvaluatingJavaScript:script.get()];
+    };
+
+    auto targetFrameInfo = [&] {
+        RetainPtr<_WKFrameTreeNode> node = [webView mainFrame].childFrames.lastObject;
+        if (nested)
+            node = node.get().childFrames.firstObject;
+        return RetainPtr<WKFrameInfo> { node.get().info };
+    };
+
+    auto convertRect = [&] {
+        RetainPtr info = targetFrameInfo();
+        return info ? convertRectToMainFrameCoordinatesInFrame(webView.get(), info.get(), CGRectMake(5, 7, 10, 15)) : CGRectZero;
+    };
+
+    auto waitForConvertedX = [&] {
+        CGRect rect = CGRectZero;
+        EXPECT_TRUE(Util::waitFor([&] {
+            rect = convertRect();
+            return rect.origin.x == 65;
+        }));
+        return rect;
+    };
+
+    if (hasOffscreenSibling)
+        EXPECT_EQ([webView mainFrame].childFrames.count, 1u);
+    addIframe();
+    CGRect rect = waitForConvertedX();
+    EXPECT_EQ(rect.origin.x, 65);
+    EXPECT_EQ(rect.origin.y, 427);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('iframe').remove()"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView mainFrame].childFrames.count == baselineChildFrameCount;
+    }));
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 200)"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 200;
+    }));
+    if (waitForPresentationUpdates == WaitForPresentationUpdates::Yes)
+        [webView waitForNextPresentationUpdate];
+
+    addIframe();
+    rect = waitForConvertedX();
+    if (waitForPresentationUpdates == WaitForPresentationUpdates::Yes) {
+        [webView waitForNextPresentationUpdate];
+        rect = convertRect();
+    }
+    EXPECT_EQ(rect.origin.x, 65);
+    EXPECT_EQ(rect.origin.y, 227);
+    EXPECT_EQ(rect.size.width, 10);
+    EXPECT_EQ(rect.size.height, 15);
+}
+
+TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesAfterRemovingScrollingAndRecreatingIframeWithOffscreenSiblingFrame)
+{
+    runConvertRectToMainFrameCoordinatesAfterRemovingScrollingAndRecreatingIframeTest(false, EnableBackForwardCache::No, WaitForPresentationUpdates::Yes, OffscreenSiblingFrame::Yes);
+}
+
 TEST(SiteIsolation, SetFocusedFrame)
 {
     auto mainframeHTML = "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s;
