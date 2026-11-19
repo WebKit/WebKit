@@ -44,6 +44,7 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
+#include <WebCore/PictureInPictureSupport.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -188,6 +189,10 @@ void WebPageTesting::resetStateBetweenTests()
         // Force consistent "responsive" behavior for WebPage::eventThrottlingDelay() for testing. Tests can override via internals.
         corePage->setEventThrottlingBehaviorOverride(WebCore::EventThrottlingBehavior::Responsive);
     }
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+    setSupportsPictureInPicture(WebProcess::singleton().supportsPictureInPicture());
+#endif
 }
 
 void WebPageTesting::clearCachedBackForwardListCounts(CompletionHandler<void()>&& completionHandler)
