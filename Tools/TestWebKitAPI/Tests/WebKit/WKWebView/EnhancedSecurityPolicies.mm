@@ -70,8 +70,6 @@ asm(".linker_option \"-delay_framework\", \"LinkSecurity\"");
 
 using namespace TestWebKitAPI;
 
-#if !PLATFORM(IOS)
-
 @interface TestUIDelegate (EnhancedSecurityExtras)
 - (NSArray *)waitForAlertWithEnhancedSecurity;
 @end
@@ -2862,7 +2860,8 @@ TEST(EnhancedSecurityPolicies, OpenDatabaseDoesNotCrashWhenMigrationFails)
     cleanUpEnhancedSecuritySites();
 }
 
-#if HAVE(ENHANCED_SECURITY_LINKS)
+// The LinkSecurity store we rely on is disabled in the simulator.
+#if HAVE(ENHANCED_SECURITY_LINKS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 TEST(EnhancedSecurityPolicies, LinkInStoreEnablesEnhancedSecurity)
 {
@@ -2879,14 +2878,14 @@ TEST(EnhancedSecurityPolicies, LinkInStoreEnablesEnhancedSecurity)
     [LSLinkSecurityManager.sharedManager addFlaggedURL:enhancedURL];
 
     bool isFlagged = false;
-    TestWebKitAPI::Util::waitFor([&] {
+    ASSERT_TRUE(TestWebKitAPI::Util::waitFor([&] {
         if (!LSLinkSecurityManager.sharedManager.hasFlaggedURLs)
             return false;
         [LSLinkSecurityManager.sharedManager checkIsFlaggedURL:enhancedURL completion:makeBlockPtr([&](BOOL flagged) {
             isFlagged = flagged;
         }).get()];
         return isFlagged;
-    });
+    })) << "The LinkSecurity store did not record the flagged URL";
 
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://clicked.example/", {
         { "secure-page"_s, ExpectedEnhancedSecurity::Enabled }
@@ -2912,18 +2911,16 @@ TEST(EnhancedSecurityPolicies, HttpLinkInStoreRemainsOnceUpgraded)
     [LSLinkSecurityManager.sharedManager addFlaggedURL:enhancedURL];
 
     bool isFlagged = false;
-    TestWebKitAPI::Util::waitFor([&] {
+    ASSERT_TRUE(TestWebKitAPI::Util::waitFor([&] {
         [LSLinkSecurityManager.sharedManager checkIsFlaggedURL:enhancedURL completion:makeBlockPtr([&](BOOL flagged) {
             isFlagged = flagged;
         }).get()];
         return isFlagged;
-    });
+    })) << "The LinkSecurity store did not record the flagged URL";
 
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://clicked.example/", {
         { "secure-page"_s, ExpectedEnhancedSecurity::Enabled }
     });
 }
 
-#endif // HAVE(ENHANCED_SECURITY_LINKS)
-
-#endif
+#endif // HAVE(ENHANCED_SECURITY_LINKS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
