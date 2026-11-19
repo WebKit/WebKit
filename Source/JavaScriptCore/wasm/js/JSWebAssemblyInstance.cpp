@@ -89,6 +89,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
     , m_jsModule(module, WriteBarrierEarlyInit)
     , m_moduleRecord(moduleRecord, WriteBarrierEarlyInit)
     , m_memories(cachedMemoryBaseSizePairCount(module->module().moduleInformation()))
+    , m_wasmMemories(cachedMemoryBaseSizePairCount(module->module().moduleInformation()))
     , m_tables(module->module().moduleInformation().tableCount())
     , m_module(module->module())
     , m_moduleInformation(module->moduleInformation())
