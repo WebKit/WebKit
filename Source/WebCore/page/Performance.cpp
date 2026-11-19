@@ -512,6 +512,17 @@ void Performance::resourceTimingBufferFullTimerFired()
     m_waitingForBackupBufferToBeProcessed = false;
 }
 
+#if USE(SYSPROF_CAPTURE)
+// Page-supplied timestamps may be arbitrarily large, so skip the ones that sysprof cannot represent.
+static std::optional<int64_t> sysprofCaptureTime(MonotonicTime time)
+{
+    double nanoseconds = time.secondsSinceEpoch().nanoseconds();
+    if (!std::isfinite(nanoseconds) || nanoseconds < 0 || nanoseconds >= static_cast<double>(std::numeric_limits<int64_t>::max()))
+        return std::nullopt;
+    return static_cast<int64_t>(nanoseconds);
+}
+#endif
+
 ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
     if (!m_userTiming)
@@ -520,6 +531,14 @@ ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalO
     auto mark = m_userTiming->mark(globalObject, markName, WTF::move(markOptions));
     if (mark.hasException())
         return mark.releaseException();
+
+#if USE(SYSPROF_CAPTURE)
+    if (isSignpostEnabled()) {
+        Ref entry { mark.returnValue() };
+        if (auto time = sysprofCaptureTime(m_timeOrigin + Seconds::fromMilliseconds(entry->startTime())))
+            WTFEmitSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformanceMark, *time, "%" PUBLIC_LOG_STRING, markName.utf8());
+    }
+#endif
 
     addToEntryBuffer(mark.returnValue().get());
     queueEntry(mark.returnValue().get());
@@ -560,6 +579,15 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
 
             WTFBeginSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedStartTime, "%" PUBLIC_LOG_STRING, message);
             WTFEndSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedEndTime, "%" PUBLIC_LOG_STRING, message);
+        }
+#elif USE(SYSPROF_CAPTURE)
+        {
+            auto startTime = sysprofCaptureTime(m_timeOrigin + Seconds::fromMilliseconds(entry->startTime()));
+            auto endTime = sysprofCaptureTime(m_timeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration()));
+            if (startTime && endTime) {
+                WTFBeginSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, std::min(*startTime, *endTime), "%" PUBLIC_LOG_STRING, message);
+                WTFEndSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, std::max(*startTime, *endTime), "%" PUBLIC_LOG_STRING, message);
+            }
         }
 #endif
         {

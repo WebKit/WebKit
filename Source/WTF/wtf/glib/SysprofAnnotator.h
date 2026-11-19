@@ -77,8 +77,39 @@ public:
 
     void beginMark(const void* pointer, std::span<const char> name, const char* description, ...) WTF_ATTRIBUTE_PRINTF(4, 5)
     {
-        auto time = SYSPROF_CAPTURE_CURRENT_TIME;
+        va_list args;
+        va_start(args, description);
+        beginMarkWithArgs(SYSPROF_CAPTURE_CURRENT_TIME, pointer, name, description, args);
+        va_end(args);
+    }
 
+    void beginMarkAtTime(int64_t time, const void* pointer, std::span<const char> name, const char* description, ...) WTF_ATTRIBUTE_PRINTF(5, 6)
+    {
+        va_list args;
+        va_start(args, description);
+        beginMarkWithArgs(time, pointer, name, description, args);
+        va_end(args);
+    }
+
+    void endMark(const void* pointer, std::span<const char> name, const char* description, ...) WTF_ATTRIBUTE_PRINTF(4, 5)
+    {
+        va_list args;
+        va_start(args, description);
+        endMarkWithArgs(SYSPROF_CAPTURE_CURRENT_TIME, pointer, name, description, args);
+        va_end(args);
+    }
+
+    void endMarkAtTime(int64_t time, const void* pointer, std::span<const char> name, const char* description, ...) WTF_ATTRIBUTE_PRINTF(5, 6)
+    {
+        va_list args;
+        va_start(args, description);
+        endMarkWithArgs(time, pointer, name, description, args);
+        va_end(args);
+    }
+
+private:
+    void beginMarkWithArgs(int64_t time, const void* pointer, std::span<const char> name, const char* description, va_list args) WTF_ATTRIBUTE_PRINTF(5, 0)
+    {
         Vector<char> buffer(1024);
 
         if (!description || description[0] == '\0') {
@@ -86,16 +117,13 @@ public:
             buffer.append('\0');
         } else {
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            va_list args, copyArgs;
-            va_start(args, description);
-            va_copy(copyArgs, args);
-
-            auto descriptionLength = vsnprintf(nullptr, 0, description, args);
-            va_end(args);
+            va_list lengthArgs;
+            va_copy(lengthArgs, args);
+            auto descriptionLength = vsnprintf(nullptr, 0, description, lengthArgs);
+            va_end(lengthArgs);
             buffer.resize(descriptionLength + 1);
 
-            vsnprintf(buffer.mutableSpan().data(), descriptionLength + 1, description, copyArgs);
-            va_end(copyArgs);
+            vsnprintf(buffer.mutableSpan().data(), descriptionLength + 1, description, args);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
 
@@ -105,9 +133,8 @@ public:
         push(m_ongoingMarks, NameAndPointer { name.data(), pointer }, WTF::move(begin));
     }
 
-    void endMark(const void* pointer, std::span<const char> name, const char* description, ...) WTF_ATTRIBUTE_PRINTF(4, 5)
+    void endMarkWithArgs(int64_t time, const void* pointer, std::span<const char> name, const char* description, va_list args) WTF_ATTRIBUTE_PRINTF(5, 0)
     {
-        auto time = SYSPROF_CAPTURE_CURRENT_TIME;
         auto threadUID = Thread::currentSingleton().uid();
 
         std::optional<OngoingMark> begin;
@@ -122,40 +149,36 @@ public:
 
             if (description && description[0] != '\0') {
                 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                va_list args, copyArgs;
-                va_start(args, description);
-                va_copy(copyArgs, args);
-
-                auto descriptionLength = vsnprintf(nullptr, 0, description, args);
-                va_end(args);
+                va_list lengthArgs;
+                va_copy(lengthArgs, args);
+                auto descriptionLength = vsnprintf(nullptr, 0, description, lengthArgs);
+                va_end(lengthArgs);
 
                 if (descriptionLength > 0) {
-                    bool needsSeparator = buffer.size() > 1;
-                    static constexpr auto separator = " | "_span;
+                    Vector<char> endMessage(descriptionLength + 1);
+                    vsnprintf(endMessage.mutableSpan().data(), endMessage.size(), description, args);
+                    auto endText = endMessage.span().first(descriptionLength);
 
-                    auto oldSize = buffer.size();
-                    buffer.resize(oldSize + (needsSeparator ? separator.size() : 0) + descriptionLength);
-
-                    auto span = buffer.mutableSpan().subspan(oldSize - 1);
-                    if (needsSeparator) {
-                        memcpySpan(span, separator);
-                        skip(span, separator.size());
+                    // An end often repeats the message of its begin, which the mark carries already.
+                    auto beginText = buffer.span().first(buffer.size() - 1);
+                    if (!std::ranges::equal(beginText, endText)) {
+                        static constexpr auto separator = " | "_span;
+                        buffer.removeLast();
+                        if (!buffer.isEmpty())
+                            buffer.append(separator);
+                        buffer.append(endText);
+                        buffer.append('\0');
                     }
-                    vsnprintf(span.data(), descriptionLength + 1, description, copyArgs);
                 }
-                va_end(copyArgs);
                 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             }
 
             writeMark(startTime, time - startTime, name, buffer.span().data());
-        } else {
-            va_list args;
-            va_start(args, description);
+        } else
             writeFormattedMark(time, 0, name, description, args);
-            va_end(args);
-        }
     }
 
+public:
     void tracePoint(TracePointCode code, uint64_t data1 = 0)
     {
         auto name = [code] {
