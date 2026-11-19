@@ -5126,16 +5126,15 @@ void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEve
             return;
         }
 
-        if (!isReplyForCurrentEvent) {
-            MESSAGE_CHECK_BASE(!remoteUserInputEventData || protect(protectedThis->preferences())->siteIsolationEnabled(), connection);
+        if (remoteUserInputEventData && !protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID))
+            remoteUserInputEventData = std::nullopt;
 
+        if (!isReplyForCurrentEvent) {
             if (eventType != WebEventType::MouseMove)
                 WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
             protectedThis->handleMouseEventReplyForParkedEvent(WTF::move(sentEvent), frameID, WTF::move(remoteUserInputEventData));
             return;
         }
-
-        MESSAGE_CHECK_BASE(!remoteUserInputEventData || protect(protectedThis->preferences())->siteIsolationEnabled(), connection);
 
         if (eventType != WebEventType::MouseMove)
             WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
@@ -5214,14 +5213,17 @@ void WebPageProxy::dispatchMouseDidMoveOverElementForModifierFlagsChange(Ref<Nat
 
 void WebPageProxy::performHitTestForModifierFlagsChangeInFrame(FrameIdentifier frameID, Ref<WebMouseEvent>&& event)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformHitTestForModifierFlagsChangeOnMouseEvent { frameID, event }, [this, protectedThis = Ref { *this }, event] (Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, OptionSet<WebEventModifier> modifiers) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformHitTestForModifierFlagsChangeOnMouseEvent { frameID, event }, [this, protectedThis = Ref { *this }, frameID, event](IPC::Connection* connection, Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, OptionSet<WebEventModifier> modifiers) mutable {
         if (isClosed())
             return;
         WTF::switchOn(WTF::move(resultOrRemoteData), [&] (WebHitTestResultData&& hitTestResult) {
             mouseDidMoveOverElement(WTF::move(hitTestResult), modifiers);
         }, [&] (RemoteUserInputEventData&& remoteUserInputEventData) {
+            RefPtr targetFrame = frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData.targetFrameID);
+            if (!targetFrame)
+                return;
             event->setPosition(remoteUserInputEventData.transformedPoint);
-            performHitTestForModifierFlagsChangeInFrame(remoteUserInputEventData.targetFrameID, WTF::move(event));
+            performHitTestForModifierFlagsChangeInFrame(targetFrame->frameID(), WTF::move(event));
         });
     });
 }
@@ -5562,11 +5564,9 @@ void WebPageProxy::sendWheelEvent(WebCore::FrameIdentifier frameID, Ref<WebWheel
             if (protectedThis->isClosed())
                 return;
 
-            MESSAGE_CHECK_BASE(!remoteWheelEventData || protect(protectedThis->preferences())->siteIsolationEnabled(), connection);
-
-            if (remoteWheelEventData) {
+            if (RefPtr targetFrame = remoteWheelEventData ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteWheelEventData->targetFrameID) : nullptr) {
                 wheelEvent->setPosition(roundedIntPoint(remoteWheelEventData->transformedPoint));
-                protectedThis->sendWheelEvent(remoteWheelEventData->targetFrameID, wheelEvent.copyRef(), processingSteps, rubberBandableEdges, willStartSwipe, wasHandledForScrolling);
+                protectedThis->sendWheelEvent(targetFrame->frameID(), wheelEvent.copyRef(), processingSteps, rubberBandableEdges, willStartSwipe, wasHandledForScrolling);
                 return;
             }
 
@@ -5891,7 +5891,7 @@ TrackingType WebPageProxy::touchEventTrackingType(const WebTouchEvent& touchStar
 #if ENABLE(MAC_GESTURE_EVENTS)
 void WebPageProxy::sendGestureEvent(FrameIdentifier frameID, Ref<NativeWebGestureEvent>&& event)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::GestureEvent(frameID, webPageIDInProcess(processContainingFrame(frameID)), WTF::move(event)), [protectedThis = Ref { *this }](IPC::Connection* connection, std::optional<WebEventType>&& eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData>&& remoteUserInputEventData) {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::GestureEvent(frameID, webPageIDInProcess(processContainingFrame(frameID)), WTF::move(event)), [protectedThis = Ref { *this }, frameID](IPC::Connection* connection, std::optional<WebEventType>&& eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData>&& remoteUserInputEventData) {
         if (!protectedThis->m_pageClient)
             return;
         if (!eventType)
@@ -5900,7 +5900,8 @@ void WebPageProxy::sendGestureEvent(FrameIdentifier frameID, Ref<NativeWebGestur
         if (protectedThis->internals().gestureEventQueue.isEmpty())
             return;
 
-        MESSAGE_CHECK_BASE(!remoteUserInputEventData || protect(protectedThis->preferences())->siteIsolationEnabled(), connection);
+        if (remoteUserInputEventData && !protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID))
+            remoteUserInputEventData = std::nullopt;
 
         if (connection)
             WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
