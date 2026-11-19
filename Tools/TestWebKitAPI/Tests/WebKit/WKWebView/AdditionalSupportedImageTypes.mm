@@ -28,7 +28,6 @@
 
 #if PLATFORM(COCOA)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
@@ -81,6 +80,8 @@ static bool didFinishLoadAdditionalSupportedImageTypesTest;
 
 static void runLegacyTest(NSArray *additionalSupportedImageTypes, Boolean expectedToLoad)
 {
+    didFinishLoadAdditionalSupportedImageTypesTest = false;
+
     RetainPtr<WebPreferences> preferences = adoptNS([[WebPreferences alloc] initWithIdentifier:nil]);
     [preferences setAdditionalSupportedImageTypes:additionalSupportedImageTypes];
 
@@ -94,7 +95,6 @@ static void runLegacyTest(NSArray *additionalSupportedImageTypes, Boolean expect
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
 
     TestWebKitAPI::Util::run(&didFinishLoadAdditionalSupportedImageTypesTest);
-    didFinishLoad = false;
 
     DOMDocument *document = webView.get().mainFrameDocument;
     DOMElement *documentElement = [document documentElement];

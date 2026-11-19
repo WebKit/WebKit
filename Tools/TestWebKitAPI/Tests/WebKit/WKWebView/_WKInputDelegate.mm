@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -47,6 +46,8 @@ static bool willSubmitFormValuesCalled;
 
 @implementation InputDelegate {
     BlockPtr<BOOL(id <_WKFocusedElementInfo>)> _shouldStartInputSessionHandler;
+@package
+    bool _done;
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
@@ -56,7 +57,7 @@ static bool willSubmitFormValuesCalled;
     EXPECT_NOT_NULL(task.request.HTTPBody);
     EXPECT_EQ(task.request.HTTPBody.length, 62u);
     EXPECT_STREQ(static_cast<const char*>(task.request.HTTPBody.bytes), "testname1=testvalue1&testname2=testvalue2&testname3=testvalue3");
-    done = true;
+    _done = true;
 }
 
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
@@ -119,21 +120,23 @@ static NSString *documentWithFormHTML = @"<body onload='document.getElementById(
 
 TEST(WebKit, FormSubmission)
 {
+    willSubmitFormValuesCalled = false;
     RetainPtr delegate = adoptNS([[InputDelegate alloc] init]);
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView _setInputDelegate:delegate.get()];
     [webView loadHTMLString:documentWithFormHTML baseURL:nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 TEST(WebKit, FormSubmissionNavigationAPI)
 {
+    willSubmitFormValuesCalled = false;
     RetainPtr inputDelegate = adoptNS([[InputDelegate alloc] init]);
     RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
 
-    static bool done = false;
+    __block bool done = false;
     navigationDelegate.get().willSubmitForm = ^(WKFormInfo *formInfo) {
         EXPECT_EQ(formInfo.formValues.count, 2u);
         EXPECT_STREQ([[formInfo.formValues objectForKey:@"testname1"] UTF8String], "testvalue1");
@@ -154,13 +157,14 @@ TEST(WebKit, FormSubmissionNavigationAPI)
 
 TEST(WebKit, FormSubmissionLegacyAPI)
 {
+    willSubmitFormValuesCalled = false;
     RetainPtr delegate = adoptNS([[InputDelegateLegacyAPI alloc] init]);
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView _setInputDelegate:delegate.get()];
     [webView loadHTMLString:documentWithFormHTML baseURL:nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 #if PLATFORM(IOS_FAMILY)
