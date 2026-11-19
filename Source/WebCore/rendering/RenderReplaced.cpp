@@ -1249,6 +1249,13 @@ LayoutSize RenderReplaced::intrinsicSize() const
     return size;
 }
 
+LayoutSize RenderReplaced::intrinsicSizeWithZoom() const
+{
+    // FIXME: m_intrinsicSize currently stores the zoomed value; it will become an
+    // unzoomed value with the zoom applied here once the writers are converted.
+    return intrinsicSize();
+}
+
 void RenderReplaced::layoutShadowContent(const LayoutSize& oldSize)
 {
     for (auto& renderBox : childrenOfType<RenderBox>(*this)) {

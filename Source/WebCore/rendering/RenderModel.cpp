@@ -133,7 +133,7 @@ void RenderModel::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 NaturalDimensions RenderModel::zoomedNaturalDimensions() const
 {
     // FIXME: Decide what natural dimensions a <model> has.
-    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+    return NaturalDimensions::fixed(FloatSize { intrinsicSizeWithZoom() });
 }
 
 } // namespace WebCore

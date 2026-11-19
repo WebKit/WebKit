@@ -1052,7 +1052,7 @@ bool RenderImage::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintO
 
 LayoutUnit RenderImage::minimumReplacedHeight() const
 {
-    return imageResource().errorOccurred() ? intrinsicSize().height() : 0_lu;
+    return imageResource().errorOccurred() ? intrinsicSizeWithZoom().height() : 0_lu;
 }
 
 RefPtr<HTMLMapElement> RenderImage::imageMap() const

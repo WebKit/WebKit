@@ -84,7 +84,7 @@ void RenderAttachment::layout()
         setIntrinsicSize(size);
         RenderReplaced::layout();
         if (hasShadowContent())
-            layoutShadowContent(intrinsicSize());
+            layoutShadowContent(intrinsicSizeWithZoom());
         return;
     }
 
@@ -98,9 +98,9 @@ void RenderAttachment::layout()
     setIntrinsicSize(newIntrinsicSize);
 
     RenderReplaced::layout();
-    
+
     if (hasShadowContent())
-        layoutShadowContent(newIntrinsicSize);
+        layoutShadowContent(intrinsicSizeWithZoom());
 }
 
 bool RenderAttachment::shouldDrawBorder() const
@@ -170,7 +170,7 @@ bool RenderAttachment::paintWideLayoutAttachmentOnly(const PaintInfo& paintInfo,
 
 NaturalDimensions RenderAttachment::zoomedNaturalDimensions() const
 {
-    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+    return NaturalDimensions::fixed(FloatSize { intrinsicSizeWithZoom() });
 }
 
 } // namespace WebCore

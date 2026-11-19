@@ -5557,7 +5557,7 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
 
 LayoutUnit RenderBox::intrinsicLogicalWidth() const
 {
-    return writingMode().isHorizontal() ? intrinsicSize().width() : intrinsicSize().height();
+    return writingMode().isHorizontal() ? intrinsicSizeWithZoom().width() : intrinsicSizeWithZoom().height();
 }
 
 bool RenderBox::shouldIgnoreLogicalMinMaxHeightSizes() const

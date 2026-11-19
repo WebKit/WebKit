@@ -61,6 +61,7 @@ public:
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
     LayoutSize intrinsicSize() const final;
+    LayoutSize intrinsicSizeWithZoom() const final;
 
     bool isContentLikelyVisibleInViewport();
     bool shouldInvalidateContentWidths() const override;
