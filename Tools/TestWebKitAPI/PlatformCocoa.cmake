@@ -293,6 +293,99 @@ list(APPEND TestWebKit_UNIFIED_SOURCE_LIST_FILES
 )
 if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestWebKit_UNIFIED_SOURCE_LIST_FILES "SourcesMac.txt")
+
+    # These clash with other files in their bundle.
+    set(TestWebKit_NO_UNIFY_SOURCES
+        Helpers/mac/GamepadMappings/LogitechF310.mm
+        Helpers/mac/GamepadMappings/LogitechF710.mm
+        Helpers/mac/GamepadMappings/MicrosoftXboxOne.mm
+        Helpers/mac/GamepadMappings/ShenzhenLongshengweiTechnologyGamepad.mm
+        Helpers/mac/GamepadMappings/SonyDualShock3.mm
+        Helpers/mac/GamepadMappings/SonyDualShock4.mm
+        Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
+        Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
+
+        Tests/WebCore/ResourceResponsePersistence.cpp
+        Tests/WebCore/SharedMemoryTests.cpp
+        Tests/WebCore/TextIterator.cpp
+
+        Tests/WebCore/cocoa/GraphicsContextCGTests.mm
+        Tests/WebCore/cocoa/HEVCUtilitiesCocoaTests.mm
+        Tests/WebCore/cocoa/ImageRotationSessionVT.cpp
+        Tests/WebCore/cocoa/MediaSamplesDecoderTests.mm
+
+        Tests/WebKit/WKPage/CloseThenTerminate.cpp
+        Tests/WebKit/WKPage/DOMWindowExtensionBasic.cpp
+        Tests/WebKit/WKPage/DOMWindowExtensionNoCache.cpp
+        Tests/WebKit/WKPage/DidAssociateFormControls.cpp
+        Tests/WebKit/WKPage/DidRemoveFrameFromHiearchyInPageCache.cpp
+        Tests/WebKit/WKPage/DocumentStartUserScriptAlertCrash.cpp
+        Tests/WebKit/WKPage/EvaluateJavaScript.cpp
+        Tests/WebKit/WKPage/FailedLoad.cpp
+        Tests/WebKit/WKPage/Find.cpp
+        Tests/WebKit/WKPage/ForceRepaint.cpp
+        Tests/WebKit/WKPage/FrameMIMETypeHTML.cpp
+        Tests/WebKit/WKPage/FrameMIMETypePNG.cpp
+        Tests/WebKit/WKPage/HitTestResultNodeHandle.cpp
+        Tests/WebKit/WKPage/InjectedBundleBasic.cpp
+        Tests/WebKit/WKPage/InjectedBundleDisableOverrideBuiltinsBehavior.cpp
+        Tests/WebKit/WKPage/InjectedBundleFrameHitTest.cpp
+        Tests/WebKit/WKPage/InjectedBundleInitializationUserDataCallbackWins.cpp
+        Tests/WebKit/WKPage/InjectedBundleMakeAllShadowRootsOpen.cpp
+        Tests/WebKit/WKPage/LayoutMilestonesWithAllContentInFrame.cpp
+        Tests/WebKit/WKPage/LoadAlternateHTMLStringWithNonDirectoryURL.cpp
+        Tests/WebKit/WKPage/LoadCanceledNoServerRedirectCallback.cpp
+        Tests/WebKit/WKPage/LoadPageOnCrash.cpp
+        Tests/WebKit/WKPage/MenuTypesForMouseEvents.cpp
+        Tests/WebKit/WKPage/ModalAlertsSPI.cpp
+        Tests/WebKit/WKPage/MouseMoveAfterCrash.cpp
+        Tests/WebKit/WKPage/NavigationClientDefaultCrypto.cpp
+        Tests/WebKit/WKPage/NewFirstVisuallyNonEmptyLayout.cpp
+        Tests/WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutFails.cpp
+        Tests/WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutForImages.cpp
+        Tests/WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutFrames.cpp
+        Tests/WebKit/WKPage/PageLoadBasic.cpp
+        Tests/WebKit/WKPage/PageLoadDidChangeLocationWithinPageForFrame.cpp
+        Tests/WebKit/WKPage/PageLoadEmptyURL.cpp
+        Tests/WebKit/WKPage/PageLoadState.cpp
+        Tests/WebKit/WKPage/ParentFrame.cpp
+        Tests/WebKit/WKPage/PendingAPIRequestURL.cpp
+        Tests/WebKit/WKPage/PreventEmptyUserAgent.cpp
+        Tests/WebKit/WKPage/PrivateBrowsingPushStateNoHistoryCallback.cpp
+        Tests/WebKit/WKPage/ProcessDidTerminate.cpp
+        Tests/WebKit/WKPage/ReloadPageAfterCrash.cpp
+        Tests/WebKit/WKPage/ResizeReversePaginatedWebView.cpp
+        Tests/WebKit/WKPage/ResizeWindowAfterCrash.cpp
+        Tests/WebKit/WKPage/RestoreSessionState.cpp
+        Tests/WebKit/WKPage/RestoreSessionStateContainingFormData.cpp
+        Tests/WebKit/WKPage/TerminateTwice.cpp
+        Tests/WebKit/WKPage/UserMedia.cpp
+        Tests/WebKit/WKPage/WKPageConfiguration.cpp
+        Tests/WebKit/WKPage/WKPageCopySessionStateWithFiltering.cpp
+        Tests/WebKit/WKPage/WKPageGetScaleFactorNotZero.cpp
+        Tests/WebKit/WKPage/WKPageIsPlayingAudio.cpp
+        Tests/WebKit/WKPage/WillSendSubmitEvent.cpp
+
+        Tests/WebKit/WKPage/cocoa/AccessibilityIncreaseContrast.mm
+        Tests/WebKit/WKPage/cocoa/AccessibilityReduceMotion.mm
+        Tests/WebKit/WKPage/cocoa/ContextMenuDownload.mm
+        Tests/WebKit/WKPage/cocoa/ContextMenuImgWithVideo.mm
+        Tests/WebKit/WKPage/cocoa/CustomBundleParameter.mm
+        Tests/WebKit/WKPage/cocoa/EditorCommands.mm
+        Tests/WebKit/WKPage/cocoa/FindMatches.mm
+        Tests/WebKit/WKPage/cocoa/ForceLightAppearanceInBundle.mm
+        Tests/WebKit/WKPage/cocoa/GetBackingScaleFactor.mm
+        Tests/WebKit/WKPage/cocoa/GetPIDAfterAbortedProcessLaunch.cpp
+        Tests/WebKit/WKPage/cocoa/InjectedBundleAppleEvent.cpp
+        Tests/WebKit/WKPage/cocoa/PreferenceChanges.mm
+
+        Tests/WebKit/WKPage/mac/WKThumbnailView.mm
+
+        Tests/WebKit/WKWebView/mac/WordBoundaryTypingAttributes.mm
+
+        Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm
+        Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm
+    )
 endif ()
 
 # Files compiled outside unified sources (Xcode membershipExceptions).
