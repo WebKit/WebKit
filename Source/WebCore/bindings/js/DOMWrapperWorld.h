@@ -52,6 +52,7 @@ public:
     void didDestroyWindowProxy(WindowProxy* controller) { m_jsWindowProxies.remove(controller); }
 
     void setAllowAutofill() { m_allowAutofill = true; }
+    void clearAllowAutofillForTesting() { m_allowAutofill = false; }
     bool allowAutofill() const { return m_allowAutofill; }
 
     bool allowsJSHandleCreation() const { return m_allowsJSHandleCreation; }
