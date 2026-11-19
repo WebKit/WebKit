@@ -215,6 +215,28 @@ class ConfigurationContextTest(WaitForDockerTestCase):
             self.assertEqual(configuration_to_search_for, config)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_configuration_by_platform_on_device(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+        self.register_configurations()
+
+        configuration_to_search_for = Configuration(platform='ios', is_simulator=False)
+        matching_configurations = self.database.search_for_configuration(configuration_to_search_for)
+        self.assertEqual(6, len(matching_configurations))
+        for config in matching_configurations:
+            self.assertEqual(configuration_to_search_for, config)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_configuration_by_platform_on_simulator(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+        self.register_configurations()
+
+        configuration_to_search_for = Configuration(platform='ios', is_simulator=True)
+        matching_configurations = self.database.search_for_configuration(configuration_to_search_for)
+        self.assertEqual(6, len(matching_configurations))
+        for config in matching_configurations:
+            self.assertEqual(configuration_to_search_for, config)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_configuration_by_model(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         self.register_configurations()

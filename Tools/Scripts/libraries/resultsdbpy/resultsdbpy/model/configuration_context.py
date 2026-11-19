@@ -196,7 +196,7 @@ class ConfigurationContext(object):
 
         kwargs = dict(branch=branch or CommitContext.DEFAULT_BRANCH_KEY)
         for member in Configuration.REQUIRED_MEMBERS + Configuration.OPTIONAL_MEMBERS:
-            if getattr(configuration, member):
+            if getattr(configuration, member) is not None:
                 kwargs[member] = getattr(configuration, member)
 
         if 'platform' in kwargs and 'version' in kwargs:
