@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ runDefault("--useConcurrentJIT=0", "--forceGCSlowPaths=1", "--useExceptionFuzz=1", "--fireExceptionFuzzAt=70000")
 
 function alloc() { return {}; }

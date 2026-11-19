@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ runDefault("--useConcurrentJIT=false", "--thresholdForOptimizeAfterWarmUp=50", "--thresholdForOptimizeSoon=50", "--thresholdForFTLOptimizeAfterWarmUp=200", "--thresholdForFTLOptimizeSoon=200")
 
 // A GetByVal inline cache runs inside its FTL frame with the caller's registers still live, so
