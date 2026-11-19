@@ -57,6 +57,11 @@ void GLFenceGL::clientWait()
 
 void GLFenceGL::serverWait()
 {
+    // As GLFenceEGL: no server wait on a fence that is already signaled.
+    GLint status = 0;
+    glGetSynciv(m_sync, GL_SYNC_STATUS, 1, nullptr, &status);
+    if (status == GL_SIGNALED)
+        return;
     glWaitSync(m_sync, 0, GL_TIMEOUT_IGNORED);
 }
 

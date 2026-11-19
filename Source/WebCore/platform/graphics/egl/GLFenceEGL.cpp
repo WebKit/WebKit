@@ -118,9 +118,21 @@ void GLFenceEGL::serverWait()
     if (!display)
         return;
 
-    if (display->checkVersion(1, 5))
+    // Fences are nearly always signaled by the time they are waited on, so skip the server wait in
+    // that case. Besides saving work, this avoids an NVIDIA driver leak (580.178.04): the native
+    // fence fd it duplicates in eglWaitSync() is never closed when another wait is queued on the
+    // same context before the next fence is created, and the process runs out of file descriptors.
+    if (display->checkVersion(1, 5)) {
+        EGLAttrib status = 0;
+        if (eglGetSyncAttrib(display->eglDisplay(), m_sync, EGL_SYNC_STATUS, &status) && status == EGL_SIGNALED)
+            return;
+
         eglWaitSync(display->eglDisplay(), m_sync, 0);
-    else {
+    } else {
+        EGLint status = 0;
+        if (eglGetSyncAttribKHR(display->eglDisplay(), m_sync, EGL_SYNC_STATUS_KHR, &status) && status == EGL_SIGNALED_KHR)
+            return;
+
         if (display->extensions().KHR_wait_sync)
             eglWaitSyncKHR(display->eglDisplay(), m_sync, 0);
         else
