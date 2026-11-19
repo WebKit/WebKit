@@ -49,6 +49,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
+#include "PositionedLayoutConstraints.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBlockInlines.h"
@@ -1103,6 +1104,8 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
         updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, child);
 
         if (child.isOutOfFlowPositioned()) {
+            if (relayoutChildren == RelayoutChildren::Yes && PositionedLayoutConstraints::alignmentDependsOnStaticPositionRectangleSize(child))
+                child.setChildNeedsLayout(MarkingBehavior::OnlyThis);
             child.containingBlock()->addOutOfFlowBox(child);
             adjustOutOfFlowBlock(child, marginInfo);
             continue;

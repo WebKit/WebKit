@@ -42,6 +42,7 @@ public:
     void computeInsets();
 
     NODELETE static bool usesStaticPosition(const Style::ComputedStyle&, LogicalBoxAxis, bool isHorizontalWritingMode);
+    static bool alignmentDependsOnStaticPositionRectangleSize(const RenderBox& outOfFlowBox);
 
     /*** The following are available without calling computeInsets(). ***/
 

@@ -149,6 +149,19 @@ bool PositionedLayoutConstraints::usesStaticPosition(const Style::ComputedStyle&
     return style.hasStaticBlockPosition(isHorizontalWritingMode) && !style.alignSelf().isAnchorCenter();
 }
 
+bool PositionedLayoutConstraints::alignmentDependsOnStaticPositionRectangleSize(const RenderBox& outOfFlowBox)
+{
+    CheckedPtr parent = outOfFlowBox.parent();
+    auto& style = outOfFlowBox.style();
+    if (!parent || !style.hasStaticInlinePosition(parent->isHorizontalWritingMode()))
+        return false;
+    auto justifySelf = style.justifySelf().resolve(&parent->style());
+    if (justifySelf.positionType() == ItemPositionType::Legacy)
+        return false;
+    auto alignment = StyleSelfAlignmentData::resolvePositionalAlignment(justifySelf.position(), LogicalBoxAxis::Inline, parent->writingMode(), outOfFlowBox.writingMode());
+    return alignment == ItemPosition::Center || alignment == ItemPosition::End;
+}
+
 void PositionedLayoutConstraints::captureInsets()
 {
     bool isHorizontal = BoxAxis::Horizontal == m_physicalAxis;
