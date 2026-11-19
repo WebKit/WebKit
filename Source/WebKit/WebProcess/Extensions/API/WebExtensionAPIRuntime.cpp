@@ -54,6 +54,21 @@ static inline JSValueRef makeErrorValue(JSGlobalContextRef contextRef, const Str
     return JSObjectMakeError(contextRef, 1, &argument, 0);
 }
 
+bool shouldSkipFrameForRuntimeEvent(const WebExtensionMessageSenderParameters& senderParameters, const WebFrame& frame)
+{
+    RefPtr page = frame.page();
+    if (!page || senderParameters.pageProxyIdentifier != page->webPageProxyIdentifier())
+        return false;
+
+    // Extension senders never send to listeners in their own page.
+    // A web page sender can share its page with extension frames (e.g. an iframe in an offscreen document),
+    // so only skip the sender's own frame.
+    if (senderParameters.contentWorldType != WebExtensionContentWorldType::WebPage || !senderParameters.frameIdentifier)
+        return true;
+
+    return matchesFrame(*senderParameters.frameIdentifier, frame);
+}
+
 JSValueRef WebExtensionAPIRuntimeBase::reportError(String errorMessage, JSGlobalContextRef contextRef, NOESCAPE const Function<void()>& handler)
 {
     ASSERT(!errorMessage.isEmpty());
@@ -669,9 +684,9 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
     enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
-        // Don't send the event to any listeners in the sender's page.
-        auto webPageProxyIdentifier = frame.page()->webPageProxyIdentifier();
-        if (senderParameters.pageProxyIdentifier == webPageProxyIdentifier)
+        // Don't send the event to any listeners in the sender's page. A web page sender can share its page with
+        // extension frames (e.g. an iframe in an offscreen document), so only skip the sender's own frame for those.
+        if (shouldSkipFrameForRuntimeEvent(senderParameters, frame))
             return;
 
         // Skip all frames that don't match the target parameters.
@@ -687,7 +702,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
         if (listeners.isEmpty())
             return;
 
-        firedEventCounts.add(webPageProxyIdentifier, listeners.size());
+        firedEventCounts.add(frame.page()->webPageProxyIdentifier(), listeners.size());
 
         std::optional<WebCore::UserGestureIndicator> gestureIndicator;
         if (userGesture) {

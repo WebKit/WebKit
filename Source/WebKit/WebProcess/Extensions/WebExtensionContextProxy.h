@@ -241,7 +241,7 @@ private:
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
 
     // Port
-    void dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool userGesture);
+    void dispatchPortMessageEvent(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool userGesture);
     void dispatchPortDisconnectEvent(WebExtensionPortChannelIdentifier);
 
     // Runtime

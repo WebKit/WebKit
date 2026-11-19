@@ -660,6 +660,172 @@ struct WKWebExtensionAPIOffscreenTests {
     }
 
     @Test
+    func iframeInOffscreenDocumentCanConnectToBothOffscreenDocumentAndServiceWorker() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("/frame.html", headerFields: ["Content-Type": "text/html"]) {
+                """
+                <script>
+                const extensionIdentifier = location.hash.substring(1)
+                const port = browser.runtime.connect(extensionIdentifier)
+                const repliesReceived = new Set()
+
+                port.onMessage.addListener((message) => {
+                  repliesReceived.add(message)
+
+                  if (repliesReceived.has('Hello from background') && repliesReceived.has('Hello from offscreen'))
+                    browser.test.notifyPass()
+                })
+
+                port.onDisconnect.addListener(() => browser.test.notifyFail('The port to the extension was disconnected'))
+
+                port.postMessage('Hello from iframe')
+
+                setTimeout(() => browser.test.notifyFail('The iframe only received replies from: ' + Array.from(repliesReceived).join(', ')), 5000)
+                </script>
+                """
+            }
+        }
+
+        let manifest: [String: Any] = [
+            "manifest_version": 3,
+            "name": "Offscreen Test",
+            "description": "Offscreen",
+            "version": "1",
+
+            "permissions": ["offscreen"],
+            "background": [
+                "service_worker": "background.js",
+                "type": "module",
+            ],
+            "externally_connectable": [
+                "matches": ["*://localhost/*"]
+            ],
+        ]
+
+        let backgroundScript = """
+            browser.runtime.onConnectExternal.addListener((port) => {
+              port.onMessage.addListener((message) => {
+                browser.test.assertEq(message, 'Hello from iframe', 'The service worker should receive the message from the iframe')
+                port.postMessage('Hello from background')
+              })
+            })
+
+            await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })
+            """
+
+        try await server.run { configuration in
+            // The listener is added before the iframe, so the offscreen document is ready for the connection.
+            let offscreenScript = """
+                browser.runtime.onConnectExternal.addListener((port) => {
+                  browser.test.assertTrue(port.sender.tab === undefined, 'Offscreen iframe sender should not have a tab')
+
+                  port.onMessage.addListener((message) => {
+                    browser.test.assertEq(message, 'Hello from iframe', 'The offscreen document should receive the message from the iframe')
+                    port.postMessage('Hello from offscreen')
+                  })
+                })
+
+                const iframe = document.createElement('iframe')
+                iframe.src = '\(configuration.localhostAddress.absoluteString)frame.html#' + browser.runtime.id
+                document.body.appendChild(iframe)
+                """
+
+            let manager = parseWebExtension(
+                manifest: manifest,
+                resources: [
+                    "background.js": backgroundScript,
+                    "offscreen.html": "<script type='module' src='offscreen.js'></script>",
+                    "offscreen.js": offscreenScript,
+                ],
+                configuration: offscreenConfiguration
+            )
+
+            // Grant access before loading, so the iframe can't load before the permission is in place.
+            let context = try #require(manager.context)
+            context.setPermissionStatus(.grantedExplicitly, for: configuration.localhostAddress)
+
+            manager.load()
+            try manager.checkCollectedFailures()
+
+            try await manager.run()
+        }
+    }
+
+    @Test
+    func iframeInOffscreenDocumentCanSendMessageToOffscreenDocument() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("/frame.html", headerFields: ["Content-Type": "text/html"]) {
+                """
+                <script>
+                const extensionIdentifier = location.hash.substring(1)
+
+                browser.runtime.sendMessage(extensionIdentifier, 'Hello from iframe').then((response) => {
+                  browser.test.assertEq(response, 'Hello from offscreen', 'Should receive the reply from the offscreen document')
+                  browser.test.notifyPass()
+                })
+
+                setTimeout(() => browser.test.notifyFail('The offscreen document never replied to the message from the iframe'), 5000)
+                </script>
+                """
+            }
+        }
+
+        let manifest: [String: Any] = [
+            "manifest_version": 3,
+            "name": "Offscreen Test",
+            "description": "Offscreen",
+            "version": "1",
+
+            "permissions": ["offscreen"],
+            "background": [
+                "service_worker": "background.js",
+                "type": "module",
+            ],
+            "externally_connectable": [
+                "matches": ["*://localhost/*"]
+            ],
+        ]
+
+        // The service worker has no onMessageExternal listener, so only the offscreen document can reply.
+        let backgroundScript = """
+            await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })
+            """
+
+        try await server.run { configuration in
+            let offscreenScript = """
+                browser.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+                  browser.test.assertTrue(sender.tab === undefined, 'Offscreen iframe sender should not have a tab')
+                  browser.test.assertEq(message, 'Hello from iframe', 'The offscreen document should receive the message from the iframe')
+                  sendResponse('Hello from offscreen')
+                })
+
+                const iframe = document.createElement('iframe')
+                iframe.src = '\(configuration.localhostAddress.absoluteString)frame.html#' + browser.runtime.id
+                document.body.appendChild(iframe)
+                """
+
+            let manager = parseWebExtension(
+                manifest: manifest,
+                resources: [
+                    "background.js": backgroundScript,
+                    "offscreen.html": "<script type='module' src='offscreen.js'></script>",
+                    "offscreen.js": offscreenScript,
+                ],
+                configuration: offscreenConfiguration
+            )
+
+            // Grant access before loading, so the iframe can't load before the permission is in place.
+            let context = try #require(manager.context)
+            context.setPermissionStatus(.grantedExplicitly, for: configuration.localhostAddress)
+
+            manager.load()
+            try manager.checkCollectedFailures()
+
+            try await manager.run()
+        }
+    }
+
+    @Test
     func iframeInOffscreenDocumentWakesServiceWorkerWithExternalMessage() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/frame.html", headerFields: ["Content-Type": "text/html"]) {

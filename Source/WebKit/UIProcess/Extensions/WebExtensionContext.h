@@ -264,6 +264,7 @@ public:
 
     struct PortQueuedMessage {
         WebExtensionMessage message;
+        WebExtensionContentWorldType sourceContentWorldType { WebExtensionContentWorldType::Main };
         std::optional<WebPageProxyIdentifier> sendingPageProxyIdentifier;
         bool userGesture { false };
     };
@@ -1064,7 +1065,7 @@ private:
     bool isPortConnected(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
     void clearQueuedPortMessages(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
     Vector<PortQueuedMessage> portQueuedMessages(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
-    void firePortMessageEventsIfNeeded(WebExtensionContentWorldType, std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool userGesture);
+    void firePortMessageEventsIfNeeded(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool userGesture);
     void fireQueuedPortMessageEventsIfNeeded(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
     void sendQueuedNativePortMessagesIfNeeded(WebExtensionPortChannelIdentifier);
     void firePortDisconnectEventIfNeeded(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);

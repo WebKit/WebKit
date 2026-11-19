@@ -237,15 +237,20 @@ WebExtensionAPIEvent& WebExtensionAPIPort::onDisconnect()
     return *m_onDisconnect;
 }
 
-void WebExtensionContextProxy::dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier> sendingPageProxyIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, const WebExtensionMessage& message, bool userGesture)
+void WebExtensionContextProxy::dispatchPortMessageEvent(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, std::optional<WebPageProxyIdentifier> sendingPageProxyIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, const WebExtensionMessage& message, bool userGesture)
 {
     auto ports = WebExtensionAPIPort::get(channelIdentifier);
     if (ports.isEmpty())
         return;
 
     for (Ref port : ports) {
-        // Don't send the message to other ports in the same page as the sender.
-        if (sendingPageProxyIdentifier && sendingPageProxyIdentifier == port->owningPageProxyIdentifier())
+        // Only send the message to ports on the other end of the channel. Ports in different worlds can share a page
+        // (e.g. an extension page and a web page iframe inside it), so the world has to be checked too.
+        if (!isEqual(port->contentWorldType(), targetContentWorldType))
+            continue;
+
+        // Don't send the message to other ports in the same world and page as the sender.
+        if (isEqual(sourceContentWorldType, targetContentWorldType) && sendingPageProxyIdentifier && sendingPageProxyIdentifier == port->owningPageProxyIdentifier())
             continue;
 
         port->fireMessageEventIfNeeded(message, userGesture);

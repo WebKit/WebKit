@@ -83,7 +83,7 @@ messages -> WebExtensionContextProxy {
     DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
 
     // Ports
-    DispatchPortMessageEvent(std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, struct WebKit::WebExtensionMessage message, bool userGesture)
+    DispatchPortMessageEvent(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, struct WebKit::WebExtensionMessage message, bool userGesture)
     DispatchPortDisconnectEvent(WebKit::WebExtensionPortChannelIdentifier channelIdentifier)
 
     // Runtime

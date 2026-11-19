@@ -201,8 +201,9 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
 
     bool anyListenerHandledMessage = false;
     enumerateFramesAndNamespaceObjects([&, callbackAggregatorWrapper = RetainPtr { callbackAggregatorWrapper }](WebFrame& frame, WebExtensionAPINamespace& namespaceObject) {
-        // Don't send the message to any listeners in the sender's page.
-        if (senderParameters.pageProxyIdentifier == frame.page()->webPageProxyIdentifier())
+        // Don't send the message to any listeners in the sender's page. A web page sender can share its page with
+        // extension frames (e.g. an iframe in an offscreen document), so only skip the sender's own frame for those.
+        if (shouldSkipFrameForRuntimeEvent(senderParameters, frame))
             return;
 
         // Skip all frames that don't match the target parameters.

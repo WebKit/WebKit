@@ -59,11 +59,11 @@ void WebExtensionContext::portPostMessage(WebExtensionContentWorldType sourceCon
             return Vector<PortQueuedMessage> { };
         }).iterator->value;
 
-        messages.append({ message, sendingPageProxyIdentifier, resolvedUserGesture });
+        messages.append({ message, sourceContentWorldType, sendingPageProxyIdentifier, resolvedUserGesture });
         return;
     }
 
-    firePortMessageEventsIfNeeded(targetContentWorldType, sendingPageProxyIdentifier, channelIdentifier, message, resolvedUserGesture);
+    firePortMessageEventsIfNeeded(sourceContentWorldType, targetContentWorldType, sendingPageProxyIdentifier, channelIdentifier, message, resolvedUserGesture);
 }
 
 void WebExtensionContext::portRemoved(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionPortChannelIdentifier channelIdentifier)
@@ -204,7 +204,7 @@ Vector<WebExtensionContext::PortQueuedMessage> WebExtensionContext::portQueuedMe
     return messages;
 }
 
-void WebExtensionContext::firePortMessageEventsIfNeeded(WebExtensionContentWorldType targetContentWorldType, std::optional<WebPageProxyIdentifier> sendingPageProxyIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, const WebExtensionMessage& message, bool userGesture)
+void WebExtensionContext::firePortMessageEventsIfNeeded(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, std::optional<WebPageProxyIdentifier> sendingPageProxyIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, const WebExtensionMessage& message, bool userGesture)
 {
     RELEASE_LOG_DEBUG(Extensions, "Sending message to port channel %{public}llu in %{public}@ world", channelIdentifier.toUInt64(), toDebugString(targetContentWorldType).createNSString().get());
 
@@ -215,11 +215,11 @@ void WebExtensionContext::firePortMessageEventsIfNeeded(WebExtensionContentWorld
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case WebExtensionContentWorldType::Inspector:
 #endif
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, message, userGesture));
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sourceContentWorldType, targetContentWorldType, sendingPageProxyIdentifier, channelIdentifier, message, userGesture));
         return;
 
     case WebExtensionContentWorldType::ContentScript:
-        sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, message, userGesture));
+        sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sourceContentWorldType, targetContentWorldType, sendingPageProxyIdentifier, channelIdentifier, message, userGesture));
         return;
 
     case WebExtensionContentWorldType::Native: {
@@ -236,7 +236,7 @@ void WebExtensionContext::firePortMessageEventsIfNeeded(WebExtensionContentWorld
     }
 
     case WebExtensionContentWorldType::WebPage:
-        sendToProcesses(processes(type, WebExtensionContentWorldType::WebPage), Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, message, userGesture));
+        sendToProcesses(processes(type, WebExtensionContentWorldType::WebPage), Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sourceContentWorldType, targetContentWorldType, sendingPageProxyIdentifier, channelIdentifier, message, userGesture));
         return;
     }
 }
@@ -250,7 +250,7 @@ void WebExtensionContext::fireQueuedPortMessageEventsIfNeeded(WebExtensionConten
     RELEASE_LOG_DEBUG(Extensions, "Sending %{public}zu queued message(s) to port channel %{public}llu in %{public}@ world", messages.size(), channelIdentifier.toUInt64(), toDebugString(targetContentWorldType).createNSString().get());
 
     for (auto& entry : messages)
-        firePortMessageEventsIfNeeded(targetContentWorldType, entry.sendingPageProxyIdentifier, channelIdentifier, entry.message, entry.userGesture);
+        firePortMessageEventsIfNeeded(entry.sourceContentWorldType, targetContentWorldType, entry.sendingPageProxyIdentifier, channelIdentifier, entry.message, entry.userGesture);
 }
 
 void WebExtensionContext::sendQueuedNativePortMessagesIfNeeded(WebExtensionPortChannelIdentifier channelIdentifier)

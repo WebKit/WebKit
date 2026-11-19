@@ -119,6 +119,9 @@ public:
 
 JSValueRef toWebAPI(JSContextRef, const WebExtensionMessageSenderParameters&);
 
+// Whether a runtime message or connect event from the sender should not be delivered to listeners in this frame.
+bool shouldSkipFrameForRuntimeEvent(const WebExtensionMessageSenderParameters&, const WebFrame&);
+
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_WEB_EXTENSION(WebExtensionAPIRuntime, runtime);

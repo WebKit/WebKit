@@ -57,7 +57,7 @@ void WebExtensionContextProxy::dispatchPermissionsEvent(WebExtensionEventListene
     notImplemented();
 }
 
-void WebExtensionContextProxy::dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool)
+void WebExtensionContextProxy::dispatchPortMessageEvent(WebExtensionContentWorldType, WebExtensionContentWorldType, std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool)
 {
     notImplemented();
 }
