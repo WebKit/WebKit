@@ -216,6 +216,7 @@ void WebExtensionTab::clearChangedProperties()
 {
     m_changedProperties = { };
     m_pendingChangedParameters = { };
+    ++m_changedPropertiesBatch;
 }
 
 WebExtensionTabParameters WebExtensionTab::changedParameters(ValueSource valueSource) const
