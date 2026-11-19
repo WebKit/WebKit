@@ -5,7 +5,7 @@
 
 import unittest
 
-from webkitexpectationspy.linter import ExpectationsLinter
+from webkitexpectationspy.linter import ExpectationsLinter, comment_groups
 from webkitexpectationspy.suites.api_tests import APITestSuite
 from webkitexpectationspy.suites.layout_tests import LayoutTestSuite
 
@@ -291,6 +291,32 @@ class ExplicitResultsRuleTest(unittest.TestCase):
 
     def test_api_line_without_results_is_not_flagged(self):
         self.assertEqual(self.lint('TestWebKitAPI.A.b\n', APITestSuite())[1], [])
+
+
+class CommentGroupsTest(unittest.TestCase):
+
+    def test_groups_header_with_contiguous_entries(self):
+        lines = ['# Reason', 'a [ Fail ]', 'b [ Fail ]', '', 'c [ Fail ]']
+        self.assertEqual(comment_groups(lines, {2, 3, 5}), [
+            {'comments': [1], 'entries': [2, 3]},
+            {'comments': [], 'entries': [5]},
+        ])
+
+    def test_blank_line_ends_header(self):
+        lines = ['# Banner', '', 'a [ Fail ]']
+        self.assertEqual(comment_groups(lines, {3}), [{'comments': [], 'entries': [3]}])
+
+    def test_comment_after_entries_starts_new_group(self):
+        lines = ['# One', 'a [ Fail ]', '# Two', 'b [ Fail ]']
+        self.assertEqual(comment_groups(lines, {2, 4}), [
+            {'comments': [1], 'entries': [2]},
+            {'comments': [3], 'entries': [4]},
+        ])
+
+    def test_starts_at_given_line(self):
+        lines = ['# License', 'a [ Fail ]', 'b [ Fail ]']
+        self.assertEqual(comment_groups(lines, {2, 3}, start=3), [{'comments': [], 'entries': [3]}])
+
 
 if __name__ == '__main__':
     unittest.main()

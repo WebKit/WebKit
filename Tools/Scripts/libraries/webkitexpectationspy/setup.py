@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='webkitexpectationspy',
-    version='1.0.0',
+    version='3.1.0',
     description='Test expectations management for WebKit',
     long_description=readme(),
     long_description_content_type='text/markdown',

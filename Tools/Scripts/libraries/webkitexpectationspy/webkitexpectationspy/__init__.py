@@ -39,12 +39,13 @@ Example usage:
         print('Test expected to fail')
 """
 
-__version__ = '3.0.0'
+__version__ = '3.1.0'
 
 from webkitexpectationspy.expectations import Expectation, ResultStatus
 from webkitexpectationspy.modifiers import ModifiersBase, LayoutTestModifiers
 from webkitexpectationspy.suites.layout_tests import LayoutTestStatus
 from webkitexpectationspy.manager import ExpectationsManager
+from webkitexpectationspy.editor import remove_expectations, set_expectation_results
 
 __all__ = [
     '__version__',
@@ -54,4 +55,6 @@ __all__ = [
     'LayoutTestStatus',
     'ModifiersBase',
     'LayoutTestModifiers',
+    'remove_expectations',
+    'set_expectation_results',
 ]

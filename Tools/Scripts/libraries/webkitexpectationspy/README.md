@@ -136,6 +136,21 @@ The linter checks for:
 - Universal skip detection
 - Stale expectations
 
+## Editing
+
+```python
+from webkitexpectationspy import remove_expectations, set_expectation_results
+from webkitexpectationspy.suites import LayoutTestSuite
+
+# Delete entries; a comment header left with no entries goes too
+content = remove_expectations(content, [expectation])
+
+# Replace an entry's results, keeping its bugs, configurations, modifiers and comment
+content = set_expectation_results(content, expectation, ['Pass'], suite=LayoutTestSuite())
+```
+
+Both edit only the lines they target, and raise `ValueError` if an expectation's line no longer holds its test.
+
 ## Creating Plugins
 
 ```python

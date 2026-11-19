@@ -373,6 +373,35 @@ def _make_collapse_fixes(entries, category, version_tokens):
     return fixes
 
 
+def comment_groups(lines: List[str], entry_line_numbers, start: int = 1) -> List[dict]:
+    """Group lines from ``start`` on, by line number.
+
+    Each item is a dict with 'comments' (header line numbers) and 'entries' (entry line numbers).
+    A comment run plus the contiguous entries beneath it becomes one group so the header travels
+    with them; entries with no header become individual items. A blank line ends the current group.
+    """
+    groups = []
+    pending_comments = []
+    open_group = None
+    for number in range(start, len(lines) + 1):
+        if number in entry_line_numbers:
+            if pending_comments:
+                open_group = {'comments': pending_comments, 'entries': [number]}
+                groups.append(open_group)
+                pending_comments = []
+            elif open_group is not None:
+                open_group['entries'].append(number)
+            else:
+                groups.append({'comments': [], 'entries': [number]})
+        elif lines[number - 1].strip().startswith('#'):
+            pending_comments.append(number)
+            open_group = None
+        else:
+            pending_comments = []
+            open_group = None
+    return groups
+
+
 _DEFAULT_RULES = [
     CategoryOrderingRule(),
     SectionOrderingRule(),
@@ -488,37 +517,12 @@ class ExpectationsLinter:
         return prologue
 
     def _group_into_items(self) -> List[dict]:
-        """Partition post-prologue lines into orderable items.
-
-        Each item is a dict with 'comments' (header lines) and 'entries' (a list
-        of ``(raw_line, parsed_entry)``). A comment run plus the contiguous
-        entries beneath it becomes one group so the header travels with them;
-        entries with no header become individual items. A blank line ends the
-        current group.
-        """
+        """Partition post-prologue lines into orderable items of raw comment lines and ``(raw_line, parsed_entry)`` pairs."""
         entries_by_line = {entry['line_number']: entry for entry in self._parsed_entries}
-        items = []
-        pending_comments = []
-        open_group = None
-        for index in range(self._prologue_length(), len(self._lines)):
-            line = self._lines[index]
-            entry = entries_by_line.get(index + 1)
-            if entry is not None:
-                if pending_comments:
-                    open_group = {'comments': pending_comments, 'entries': [(line, entry)]}
-                    items.append(open_group)
-                    pending_comments = []
-                elif open_group is not None:
-                    open_group['entries'].append((line, entry))
-                else:
-                    items.append({'comments': [], 'entries': [(line, entry)]})
-            elif line.strip().startswith('#'):
-                pending_comments.append(line)
-                open_group = None
-            else:
-                pending_comments = []
-                open_group = None
-        return items
+        return [{
+            'comments': [self._lines[number - 1] for number in group['comments']],
+            'entries': [(self._lines[number - 1], entries_by_line[number]) for number in group['entries']],
+        } for group in comment_groups(self._lines, entries_by_line, start=self._prologue_length() + 1)]
 
     def _parse_all_lines(self):
         under_header_comment = False
