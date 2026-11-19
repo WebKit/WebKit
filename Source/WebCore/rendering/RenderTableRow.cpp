@@ -139,9 +139,9 @@ void RenderTableRow::didInsertTableCell(RenderTableCell& child, RenderObject* be
     if (auto* section = this->section()) {
         section->addCell(&child, this);
         // rowspan=0 means "span all remaining rows," but during initial construction rows are
-        // inserted one at a time, so calculateRowSpanForRowspanZero()'s render tree walk will
-        // undercount. Force a full cell recalc so the span is resolved correctly at layout time
-        // once all rows are present in the render tree.
+        // inserted one at a time, so the section's row count is still short here. Force a full
+        // cell recalc so the span is resolved correctly at layout time once all rows are present
+        // in the render tree.
         if (beforeChild || nextRow() || child.hasRowSpanZero())
             section->setNeedsCellRecalc();
     }
