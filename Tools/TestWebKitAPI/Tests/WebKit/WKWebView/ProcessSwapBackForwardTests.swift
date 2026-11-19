@@ -21,6 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+import Darwin
 import Foundation
 private import TestWebKitAPILibrary
 import Testing
@@ -239,6 +240,83 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    @Test(arguments: [false, true])
+    func goingBackToCOOPPageAfterItsProcessExited(siteIsolationEnabled: Bool) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) { Self.coopRoutes }
+
+        try await server.run { serverConfiguration in
+            let processPool = Self.processSwappingProcessPool(backForwardCacheEnabled: true)
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.processPool = processPool
+            let (webView, navigationDelegate) = webViewAndDelegate(
+                configuration: configuration,
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/coop"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let coopProcessIdentifier = webView._webProcessIdentifier
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://webkit.org/other"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier != coopProcessIdentifier)
+
+            try await Self.terminate(coopProcessIdentifier, in: processPool)
+
+            try await Self.expectGoingBackLoadsCOOPPageInProvisionalProcess(webView: webView, navigationDelegate: navigationDelegate)
+            #expect(webView._webProcessIdentifier != coopProcessIdentifier)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func goingBackToCOOPPageWithoutBackForwardCache(siteIsolationEnabled: Bool) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) { Self.coopRoutes }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.processPool = Self.processSwappingProcessPool(backForwardCacheEnabled: false)
+            let (webView, navigationDelegate) = webViewAndDelegate(
+                configuration: configuration,
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/coop"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://webkit.org/other"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            try await Self.expectGoingBackLoadsCOOPPageInProvisionalProcess(webView: webView, navigationDelegate: navigationDelegate)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func goingBackToCOOPPageFromCOOPPageOfAnotherSite(siteIsolationEnabled: Bool) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) { Self.coopRoutes }
+
+        try await server.run { serverConfiguration in
+            let processPool = Self.processSwappingProcessPool(backForwardCacheEnabled: true)
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.processPool = processPool
+            let (webView, navigationDelegate) = webViewAndDelegate(
+                configuration: configuration,
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/coop"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let coopProcessIdentifier = webView._webProcessIdentifier
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://webkit.org/other_coop"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier != coopProcessIdentifier)
+
+            try await Self.terminate(coopProcessIdentifier, in: processPool)
+
+            try await Self.expectGoingBackLoadsCOOPPageInProvisionalProcess(webView: webView, navigationDelegate: navigationDelegate)
+        }
+    }
+
     private static let crossOriginIsolation = [
         "Content-Type": "text/html",
         "Cross-Origin-Opener-Policy": "same-origin",
@@ -257,5 +335,53 @@ struct ProcessSwapBackForwardTests {
             frame: CGRect(x: 0, y: 0, width: 800, height: 600),
             siteIsolationEnabled: false
         )
+    }
+
+    private static let coopHeaderFields = ["Cross-Origin-Opener-Policy": "same-origin"]
+
+    @RouteBuilder
+    private static var coopRoutes: Route {
+        Route("/coop", headerFields: coopHeaderFields) {
+            "coop"
+        }
+
+        Route("/other") {
+            "other"
+        }
+
+        Route("/other_coop", headerFields: coopHeaderFields) {
+            "other coop"
+        }
+    }
+
+    private static func processSwappingProcessPool(backForwardCacheEnabled: Bool) -> WKProcessPool {
+        .processSwapping(backForwardCacheEnabled: backForwardCacheEnabled, webProcessCacheEnabled: false)
+    }
+
+    private static func terminate(_ processIdentifier: pid_t, in processPool: WKProcessPool) async throws {
+        let processCount = processPool._webProcessCountIgnoringPrewarmedAndCached()
+        kill(processIdentifier, SIGKILL)
+        try await waitForCondition("the process pool to drop the exited process") {
+            processPool._webProcessCountIgnoringPrewarmedAndCached() < processCount
+        }
+    }
+
+    private static func expectGoingBackLoadsCOOPPageInProvisionalProcess(
+        webView: TestWKWebView,
+        navigationDelegate: TestNavigationDelegate
+    ) async throws {
+        var provisionalProcessIdentifier: pid_t = 0
+        navigationDelegate.didStartProvisionalNavigation = { webView, _ in
+            provisionalProcessIdentifier = webView._provisionalWebProcessIdentifier
+        }
+        defer { navigationDelegate.didStartProvisionalNavigation = nil }
+
+        webView.goBack()
+        try await navigationDelegate.waitForDidFinishNavigation()
+
+        #expect(webView.url == URL(string: "https://example.com/coop"))
+        #expect(try await webView.callJavaScript(returning: String.self) { "return document.body.textContent" } == "coop")
+        #expect(provisionalProcessIdentifier != 0)
+        #expect(webView._webProcessIdentifier == provisionalProcessIdentifier)
     }
 }
