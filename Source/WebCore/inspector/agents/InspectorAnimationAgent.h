@@ -75,6 +75,7 @@ public:
 
     // InspectorInstrumentation
     void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
+    void didChangeStyleOriginatedAnimationPhase(StyleOriginatedAnimation&, AnimationEffectPhase);
     void didChangeWebAnimationName(WebAnimation&);
     void didSetWebAnimationEffect(WebAnimation&);
     void didChangeWebAnimationEffectTiming(WebAnimation&);
@@ -121,7 +122,7 @@ private:
         Inspector::Protocol::Animation::AnimationId trackingAnimationId;
         ComputedEffectTiming lastComputedTiming;
     };
-    HashMap<StyleOriginatedAnimation*, UniqueRef<TrackedStyleOriginatedAnimationData>> m_trackedStyleOriginatedAnimationData;
+    HashMap<WebAnimation*, UniqueRef<TrackedStyleOriginatedAnimationData>> m_trackedStyleOriginatedAnimationData;
 
     WeakHashSet<WebAnimation, WeakPtrImplWithEventTargetData> m_animationsIgnoringEffectChanges;
     WeakHashSet<WebAnimation, WeakPtrImplWithEventTargetData> m_animationsIgnoringTargetChanges;
