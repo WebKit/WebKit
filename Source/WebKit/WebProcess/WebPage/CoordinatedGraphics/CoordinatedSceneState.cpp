@@ -100,14 +100,10 @@ bool CoordinatedSceneState::flush()
             m_pendingLayersToRemove.addAll(std::exchange(m_layersToRemove, { }));
     }
 
-#if !USE(TEXTURE_MAPPER)
     bool didCommitProperties = m_rootLayer->commitPendingRenderingUpdateProperties();
     for (Ref layer : m_layers)
         didCommitProperties |= layer->commitPendingRenderingUpdateProperties();
     return didChangeLayers || didCommitProperties;
-#else
-    return didChangeLayers;
-#endif
 }
 
 void CoordinatedSceneState::commitPendingScrollingPositions()
@@ -162,7 +158,6 @@ CoordinatedSceneState::ChangedPreRenderedTiles CoordinatedSceneState::flushCompo
     for (auto& layer : layersWithPendingTileUpdates)
         layer->processPendingBackingStoreTileUpdates();
 
-#if USE(SKIA)
     Locker locker { m_layersWithPreRenderedTilesLock };
     bool wasEmpty = m_layersWithPreRenderedTiles.isEmpty();
     for (auto& layer : layersWithPendingTileUpdates) {
@@ -170,9 +165,6 @@ CoordinatedSceneState::ChangedPreRenderedTiles CoordinatedSceneState::flushCompo
             m_layersWithPreRenderedTiles.add(layer);
     }
     return wasEmpty && !m_layersWithPreRenderedTiles.isEmpty() ? ChangedPreRenderedTiles::Yes : ChangedPreRenderedTiles::No;
-#else
-    return ChangedPreRenderedTiles::No;
-#endif
 }
 
 void CoordinatedSceneState::invalidateCommittedLayers()
@@ -206,12 +198,10 @@ void CoordinatedSceneState::invalidate()
         m_layersWithPendingScrollingPosition = { };
     }
 
-#if USE(SKIA)
     {
         Locker locker { m_layersWithPreRenderedTilesLock };
         m_layersWithPreRenderedTiles = { };
     }
-#endif
 }
 
 void CoordinatedSceneState::waitUntilPaintingFinished()
@@ -233,7 +223,6 @@ void CoordinatedSceneState::didPaintTile()
     m_pendingTiles--;
 }
 
-#if USE(SKIA)
 CoordinatedSceneState::ChangedPreRenderedTiles CoordinatedSceneState::didPaintPreRenderedTile(WebCore::CoordinatedPlatformLayer& layer)
 {
     Locker locker { m_layersWithPreRenderedTilesLock };
@@ -280,7 +269,6 @@ CoordinatedSceneState::ChangedPreRenderedTiles CoordinatedSceneState::processLay
     // otherwise they already scheduled a new task in the compositor.
     return wasEmpty ? ChangedPreRenderedTiles::Yes : ChangedPreRenderedTiles::No;
 }
-#endif
 
 } // namespace WebKit
 

@@ -70,10 +70,8 @@ public:
 
     void willPaintTile();
     void didPaintTile();
-#if USE(SKIA)
     ChangedPreRenderedTiles didPaintPreRenderedTile(WebCore::CoordinatedPlatformLayer&);
     ChangedPreRenderedTiles processLayersWithPreRenderedTiles(const Function<bool()>& shouldStopProcessingTiles);
-#endif
     unsigned pendingTiles() const { return m_pendingTiles.load(); }
 
 private:
@@ -91,10 +89,8 @@ private:
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_committedLayers;
     Lock m_layersWithPendingScrollingPositionLock;
     Vector<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPendingScrollingPosition WTF_GUARDED_BY_LOCK(m_layersWithPendingScrollingPositionLock);
-#if USE(SKIA)
     Lock m_layersWithPreRenderedTilesLock;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPreRenderedTiles WTF_GUARDED_BY_LOCK(m_layersWithPreRenderedTilesLock);
-#endif
     std::atomic<unsigned> m_pendingTiles { 0 };
     Lock m_stateLock;
 };

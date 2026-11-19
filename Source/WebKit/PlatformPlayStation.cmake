@@ -145,7 +145,7 @@ endif ()
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebKit_SOURCES
         WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
-        WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp
+        WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneStatePlayStation.cpp
         WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostPlayStation.cpp
         WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositorPlayStation.cpp
         WebProcess/WebPage/CoordinatedGraphics/ThreadedDisplayRefreshMonitorPlayStation.cpp

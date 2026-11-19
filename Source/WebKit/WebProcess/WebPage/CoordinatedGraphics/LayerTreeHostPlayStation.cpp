@@ -30,7 +30,7 @@
 #include "LayerTreeHostPlayStation.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedSceneState.h"
+#include "CoordinatedSceneStatePlayStation.h"
 #include "CoordinatedTileManager.h"
 #include "DrawingArea.h"
 #include "WebPageInlines.h"

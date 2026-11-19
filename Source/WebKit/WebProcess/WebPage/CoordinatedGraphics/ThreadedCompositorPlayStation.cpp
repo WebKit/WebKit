@@ -29,7 +29,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "AcceleratedSurfacePlayStation.h"
 #include "CompositingRunLoop.h"
-#include "CoordinatedSceneState.h"
+#include "CoordinatedSceneStatePlayStation.h"
 #include "LayerTreeHostPlayStation.h"
 #include "WebPage.h"
 #include "WebProcess.h"
