@@ -137,28 +137,22 @@ bool ScreenCaptureKitCaptureSource::isAvailable()
     return PAL::isScreenCaptureKitFrameworkAvailable();
 }
 
-std::expected<uint32_t, CaptureSourceError> ScreenCaptureKitCaptureSource::computeDeviceID(const CaptureDevice& device)
-{
-    ASSERT(device.type() == CaptureDevice::DeviceType::Screen || device.type() == CaptureDevice::DeviceType::Window);
-
-    auto deviceID = parseInteger<uint32_t>(device.persistentId());
-    if (!deviceID)
-        return makeUnexpected(CaptureSourceError { "Invalid display device ID"_s, MediaAccessDenialReason::PermissionDenied });
-
-    return *deviceID;
-}
-
-ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(CapturerObserver& observer, const CaptureDevice& device, uint32_t deviceID)
+ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(CapturerObserver& observer, const CaptureDevice& device, ScreenCaptureKitContentFilter&& contentFilter)
     : DisplayCaptureSourceCocoa::Capturer(observer)
+    , m_contentFilter(WTF::move(contentFilter))
     , m_captureDevice(device)
-    , m_deviceID(deviceID)
 {
+    m_contentSize = FloatSize { [m_contentFilter.get() contentRect].size };
+    if (m_contentSize.isEmpty())
+        m_contentSize = defaultIntrinsicSize;
+    if ([m_contentFilter.get() pointPixelScale])
+        m_contentSize.scale([m_contentFilter.get() pointPixelScale]);
 }
 
 ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 {
     if (!m_sessionSource)
-        ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
+        ScreenCaptureKitSharingSessionManager::singleton().captureSourceWasDestroyedWithoutSession();
 
     if (auto callback = std::exchange(m_whenReadyCallback, { })) {
         callOnMainRunLoop([callback = WTF::move(callback)]() mutable {
@@ -227,7 +221,7 @@ void ScreenCaptureKitCaptureSource::stop()
 
     // We do not nullify m_sessionSource to keep the picker active since it is helping capture for some fullscreen cases.
     if (m_sessionSource)
-        m_contentFilter = m_sessionSource->contentFilter();
+        m_contentFilter.setFilter(m_sessionSource->contentFilter());
 }
 
 void ScreenCaptureKitCaptureSource::end()
@@ -371,17 +365,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     if (!m_captureHelper)
         lazyInitialize(m_captureHelper, adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]));
 
-    if (!m_contentFilter) {
-        m_contentFilter = ScreenCaptureKitSharingSessionManager::singleton().contentFilter(m_captureDevice);
-        m_contentSize = FloatSize { [m_contentFilter contentRect].size };
-
-        if (m_contentSize.isEmpty())
-            m_contentSize = defaultIntrinsicSize;
-        if ([m_contentFilter pointPixelScale])
-            m_contentSize.scale([m_contentFilter pointPixelScale]);
-
-        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "contentFilter.contentRect = ", m_contentSize, ", contentFilter.pointPixelScale = ", [m_contentFilter pointPixelScale]);
-    }
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "contentFilter.contentRect = ", m_contentSize, ", contentFilter.pointPixelScale = ", [m_contentFilter.get() pointPixelScale]);
 
     if (!m_contentFilter) {
         sessionFailedWithError(nil, "Unknown display device - no content filter"_s);
@@ -474,7 +458,7 @@ IntSize ScreenCaptureKitCaptureSource::intrinsicSize() const
     if (!m_contentFilter)
         return defaultIntrinsicSize;
 
-    CGRect frame = [m_contentFilter contentRect];
+    CGRect frame = [m_contentFilter.get() contentRect];
     if (!frame.size.width || !frame.size.height)
         return defaultIntrinsicSize;
 #endif
