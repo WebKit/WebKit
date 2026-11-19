@@ -51,6 +51,8 @@ static void didRunJavaScript(WKTypeRef result, WKErrorRef error, void* context)
 
 TEST(WebKit, EvaluateJavaScriptThatThrowsAnException)
 {
+    testDone = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
@@ -70,6 +72,8 @@ static void didRunEmptyJavaScript(WKTypeRef result, WKErrorRef error, void* cont
 
 TEST(WebKit, EvaluateEmptyJavaScript)
 {
+    testDone = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
@@ -87,6 +91,8 @@ static void didCreateBlob(WKTypeRef result, WKErrorRef error, void* context)
 
 TEST(WebKit, EvaluateJavaScriptThatCreatesBlob)
 {
+    testDone = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 

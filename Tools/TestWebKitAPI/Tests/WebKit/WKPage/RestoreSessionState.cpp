@@ -87,6 +87,7 @@ static WKRetainPtr<WKDataRef> createSessionStateData(WKContextRef context)
     PlatformWebView webView(context);
     setPageLoaderClient(webView.page());
 
+    didFinishLoad = false;
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple-form", "html")).get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;

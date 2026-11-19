@@ -60,6 +60,11 @@ static void invalidMessageFunction(WKStringRef messageName)
 
 TEST(WebKit, AttributedSubstringForProposedRangeWithImage)
 {
+    didFinishLoad = false;
+    didFinishTest = false;
+    didObserveWebProcessToCrash = false;
+    didReceiveInvalidMessage = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
     PlatformWebView webView(context.get());
 
@@ -87,6 +92,11 @@ TEST(WebKit, AttributedSubstringForProposedRangeWithImage)
 
 TEST(WebKit, AttributedSubstringForProposedRangeWithAnchorWithInvalidHref)
 {
+    didFinishLoad = false;
+    didFinishTest = false;
+    didObserveWebProcessToCrash = false;
+    didReceiveInvalidMessage = false;
+
     WKRetainPtr context = adoptWK(Util::createContextWithInjectedBundle());
     PlatformWebView webView(context.get());
 

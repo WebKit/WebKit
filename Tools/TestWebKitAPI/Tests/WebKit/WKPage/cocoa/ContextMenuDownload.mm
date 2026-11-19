@@ -97,6 +97,9 @@ static void contextMenuDidCreateDownload(WKPageRef page, WKDownloadRef download,
 // the "Download Linked File" item in the context menu.
 TEST(WebKit, ContextMenuDownloadHTMLDownloadAttribute)
 {
+    didFinishLoad = false;
+    didDecideDownloadDestination = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
     PlatformWebView webView(context.get());
@@ -155,6 +158,9 @@ static void contextMenuDidCreateDownloadWithSuggestedFilenameContainingSlashes(W
 
 TEST(WebKit, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
 {
+    didFinishLoad = false;
+    didDecideDownloadDestination = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
     PlatformWebView webView(context.get());

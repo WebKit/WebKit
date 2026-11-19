@@ -47,6 +47,8 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 
 static void loadAlternateHTMLString(WKURLRef baseURL, WKURLRef unreachableURL)
 {
+    didFinishLoad = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
