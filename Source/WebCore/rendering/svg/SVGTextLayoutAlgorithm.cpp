@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGTextLayoutAlgorithm.h"
 
+#include "FontCascadeFonts.h"
 #include "FontCascadeInlines.h"
 #include "InlineDisplayBoxInlines.h"
 #include "LayoutElementBox.h"
@@ -142,15 +143,33 @@ static void appendRunMetrics(RenderSVGInlineText& text, unsigned runStart, unsig
         return;
     }
 
-    auto glyphBuffer = scaledFont->layoutText(scaledFont->codePath(run), run, 0, length).glyphBuffer;
     auto characterWidths = Vector<float, 64>(FillWith { }, length, 0.f);
     auto characterHasGlyph = Vector<bool, 64>(FillWith { }, length, false);
-    if (auto offset = glyphBuffer.size() ? glyphBuffer.checkedStringOffsetAt(0, length) : std::nullopt)
-        characterWidths[*offset] += width(glyphBuffer.initialAdvance());
-    for (size_t i = 0; i < glyphBuffer.size(); ++i) {
-        if (auto offset = glyphBuffer.checkedStringOffsetAt(i, length)) {
-            characterWidths[*offset] += width(glyphBuffer.advanceAt(i));
-            characterHasGlyph[*offset] |= glyphBuffer.glyphAt(i) != deletedGlyph;
+
+    RefPtr fonts = scaledFont->fonts();
+    auto* cachedAdvances = fonts && length <= CharacterAdvancesCacheEntry::maxLength ? fonts->characterAdvancesCache().add(run, { }, TextShapingContext { scaledFont }) : nullptr;
+    if (cachedAdvances && cachedAdvances->isComputed) {
+        for (unsigned offset = 0; offset < length; ++offset) {
+            characterWidths[offset] = cachedAdvances->advances[offset];
+            characterHasGlyph[offset] = cachedAdvances->codeUnitsWithGlyph.get(offset);
+        }
+    } else {
+        auto glyphBuffer = scaledFont->layoutText(scaledFont->codePath(run), run, 0, length).glyphBuffer;
+        if (auto offset = glyphBuffer.size() ? glyphBuffer.checkedStringOffsetAt(0, length) : std::nullopt)
+            characterWidths[*offset] += width(glyphBuffer.initialAdvance());
+        for (size_t i = 0; i < glyphBuffer.size(); ++i) {
+            if (auto offset = glyphBuffer.checkedStringOffsetAt(i, length)) {
+                characterWidths[*offset] += width(glyphBuffer.advanceAt(i));
+                characterHasGlyph[*offset] |= glyphBuffer.glyphAt(i) != deletedGlyph;
+            }
+        }
+
+        if (cachedAdvances) {
+            for (unsigned offset = 0; offset < length; ++offset) {
+                cachedAdvances->advances[offset] = characterWidths[offset];
+                cachedAdvances->codeUnitsWithGlyph.set(offset, characterHasGlyph[offset]);
+            }
+            cachedAdvances->isComputed = true;
         }
     }
 
