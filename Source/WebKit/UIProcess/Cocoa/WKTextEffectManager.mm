@@ -247,10 +247,11 @@ static RetainPtr<CocoaTextPreview> textPreviewFromIndicator(const RefPtr<WebCore
 
 - (void)forgetEffectForID:(NSUUID *)uuid
 {
-    if (RetainPtr context = [_effectIDToContext objectForKey:uuid])
+    RetainPtr protectedUUID = uuid;
+    if (RetainPtr context = [_effectIDToContext objectForKey:protectedUUID])
         [_contextIDToEffectID removeObjectForKey:[context identifier]];
-    [_effectIDToAnimationID removeObjectForKey:uuid];
-    [_effectIDToContext removeObjectForKey:uuid];
+    [_effectIDToAnimationID removeObjectForKey:protectedUUID];
+    [_effectIDToContext removeObjectForKey:protectedUUID];
 }
 
 - (NSUUID *)effectIDForContext:(CocoaWritingToolsCoordinatorContext *)context
@@ -277,7 +278,7 @@ static RetainPtr<CocoaTextPreview> textPreviewFromIndicator(const RefPtr<WebCore
 - (void)previewForContext:(CocoaWritingToolsCoordinatorContext *)context textDecoration:(CocoaWritingToolsCoordinatorTextDecoration)textDecoration completion:(void(^)(CocoaTextPreview *))completion
 {
     RetainPtr webView = _webView.get();
-    NSUUID *effectID = [self effectIDForContext:context];
+    RetainPtr effectID = [self effectIDForContext:context];
     if (!webView || !effectID)
         return completion(nil);
 
@@ -304,7 +305,7 @@ static RetainPtr<CocoaTextPreview> textPreviewFromIndicator(const RefPtr<WebCore
 
 - (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator prepareForTextAnimation:(CocoaWritingToolsCoordinatorTextAnimation)textAnimation forRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(void))completion
 {
-    NSUUID *effectID = [self effectIDForContext:context];
+    RetainPtr effectID = [self effectIDForContext:context];
     if (!effectID)
         return completion();
 
@@ -313,7 +314,7 @@ static RetainPtr<CocoaTextPreview> textPreviewFromIndicator(const RefPtr<WebCore
 
 - (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator finishTextAnimation:(CocoaWritingToolsCoordinatorTextAnimation)textAnimation forRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(void))completion
 {
-    NSUUID *effectID = [self effectIDForContext:context];
+    RetainPtr effectID = [self effectIDForContext:context];
     if (!effectID)
         return completion();
 

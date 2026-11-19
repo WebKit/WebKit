@@ -1728,6 +1728,7 @@ void WebPageProxy::setSelectionForActiveWritingToolsSession(const WebCore::Chara
 void WebPageProxy::addTextEffectForID(IPC::Connection& connection, const WTF::UUID& uuid, WebCore::TextEffectData&& data, RefPtr<WebCore::TextIndicator>&& textIndicator, RefPtr<WebCore::TextIndicator>&& decorationIndicator)
 {
     MESSAGE_CHECK(uuid.isValid(), connection);
+    MESSAGE_CHECK(!internals().textIndicatorForAnimationID.contains(uuid), connection);
 
     internals().textIndicatorForAnimationID.add(uuid, textIndicator);
     internals().decorationIndicatorForAnimationID.add(uuid, decorationIndicator);

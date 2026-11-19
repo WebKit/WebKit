@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true TextEffectsEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+</script>
+<script type="module">
+if (!window.IPC) {
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import('./coreipc.js');
+const page = CoreIPC.UI.WebPageProxy;
+const pageProxyID = IPC.webPageProxyID;
+
+if (!page.AddTextEffectForID) {
+    testRunner?.notifyDone();
+} else {
+
+const uuid = { high: 916, low: 765 };
+const textEffect = () => ({ uuid, data: { writingDirection: 1 }, textIndicator: { }, decorationIndicator: { } });
+
+page.AddTextEffectForID(pageProxyID, textEffect());
+page.AddTextEffectForID(pageProxyID, textEffect());
+page.RemoveTextEffectForID(pageProxyID, { uuid });
+
+// Messages are handled in order, so a reply to a later message means the ones above are done.
+await new Promise(resolve => {
+    page.AddTextAnimationForAnimationIDWithCompletionHandler(pageProxyID, {
+        uuid: { high: 916, low: 766 },
+        styleData: {
+            style: 1,
+            runMode: 2,
+            unanimatedRangeUUID: { },
+            sourceAnimationUUID: { },
+            destinationAnimationUUID: { },
+        },
+        textIndicator: { },
+    }, resolve);
+});
+
+testRunner?.notifyDone();
+
+}
+}
+</script>
