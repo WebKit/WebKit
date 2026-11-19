@@ -35,6 +35,10 @@
 #include <WebCore/CocoaView.h>
 #endif
 
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+OBJC_CLASS BEWebContentFilter;
+#endif
+
 OBJC_CLASS WCRBrowserEngineClient;
 
 namespace WTF {
@@ -61,7 +65,7 @@ public:
     NODELETE void resetIsEnabled();
 
     WEBCORE_EXPORT virtual ~ParentalControlsURLFilter();
-    virtual bool isEnabledImpl() const;
+    WEBCORE_EXPORT virtual bool isEnabledImpl() const;
     void isURLAllowed(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, ParentalControlsContentFilter&);
     WEBCORE_EXPORT void isURLAllowed(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&);
     virtual void allowURL(const URL&, CompletionHandler<void(bool)>&&);
@@ -81,12 +85,28 @@ protected:
 
     virtual void isURLAllowedImpl(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&);
 
+// ensureWebContentFilter() returns a BEWebContentFilter if BrowserEngineKit provides one. Otherwise, returns a WCRBrowserEngineClient
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+    // iOS platforms should always use a BEWebContentFilter
+    WEBCORE_EXPORT BEWebContentFilter* ensureWebContentFilter();
+#else
+    // Either a BEWebContentFilter or a WCRBrowserEngineClient
+    WEBCORE_EXPORT id ensureWebContentFilter();
+#endif
+
 private:
     WCRBrowserEngineClient* effectiveWCRBrowserEngineClient();
     bool isWCRBrowserEngineClientEnabled() const;
 
     mutable std::optional<bool> m_isEnabled;
-    const RetainPtr<WCRBrowserEngineClient> m_wcrBrowserEngineClient;
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+    // iOS always returns a BEWebContentFilter
+    const RetainPtr<BEWebContentFilter> m_webContentFilter WTF_GUARDED_BY_CAPABILITY(workQueueSingleton());
+#else
+    // Either a BEWebContentFilter or a WCRBrowserEngineClient
+    const RetainPtr<id> m_webContentFilter;
+#endif
+
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     String m_configurationPath;
 #endif

@@ -39,6 +39,7 @@ cocoa/AVFoundationSoftLink.mm @nonARC
 cocoa/AVKitSoftLink.mm @nonARC
 cocoa/AccessibilitySoftLink.mm @nonARC
 cocoa/AppSSOSoftLink.mm @nonARC
+cocoa/BrowserEngineKitSoftLink.mm @nonARC
 cocoa/CompositorServicesSoftLink.mm @nonARC
 cocoa/ContactsSoftLink.mm @nonARC
 cocoa/CoreMLSoftLink.mm @nonARC
