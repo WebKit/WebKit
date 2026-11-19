@@ -44,6 +44,14 @@
     fill: var(--glyph-color);
 }
 
+.timeline.tab.content-view .navigation-bar > .item.record-stop-waiting {
+    border-color: var(--border-color);
+}
+
+.timeline.tab.content-view .navigation-bar > .item.record-stop-waiting:hover {
+    background-color: var(--background-color-alternate);
+}
+
 .timeline.tab.content-view .navigation-bar > .item.radio {
     height: 17px;
 }
