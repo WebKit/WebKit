@@ -74,6 +74,7 @@ private:
         return *m_connection;
     }
 
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
     String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin) final
     {
         if (m_mediaKeysStorageDirectory.isEmpty())
@@ -83,11 +84,12 @@ private:
         FileSystem::makeAllDirectories(originDirectory);
         return originDirectory;
     }
-
+#else
     String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&, std::optional<FrameIdentifier>) final
     {
         return emptyString();
     }
+#endif
 
     void setMediaKeysStorageDirectory(const String& directory) final
     {

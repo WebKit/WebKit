@@ -5684,6 +5684,15 @@ void Page::removeRootFrame(LocalFrame& frame)
     chrome().client().rootFrameRemoved(frame);
 }
 
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin)
+{
+    if (usesEphemeralSession())
+        return emptyString();
+
+    return m_storageProvider->ensureMediaKeysStorageDirectoryForOrigin(origin);
+}
+#else
 String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin, std::optional<FrameIdentifier> frameID)
 {
     if (usesEphemeralSession())
@@ -5691,6 +5700,7 @@ String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& 
 
     return m_storageProvider->ensureMediaKeysStorageDirectoryForOrigin(origin, frameID);
 }
+#endif // ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 
 void Page::setMediaKeysStorageDirectory(const String& directory)
 {

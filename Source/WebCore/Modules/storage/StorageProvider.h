@@ -35,8 +35,11 @@ public:
     StorageProvider() = default;
     virtual ~StorageProvider() = default;
     virtual StorageConnection& storageConnection() = 0;
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
     virtual String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&) = 0;
+#else
     virtual String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&, std::optional<FrameIdentifier>) = 0;
+#endif
     virtual void setMediaKeysStorageDirectory(const String&) = 0;
 };
 

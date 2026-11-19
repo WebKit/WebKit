@@ -57,6 +57,7 @@ private:
         return *m_connection;
     }
 
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
     String ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin) final
     {
         if (m_mediaKeysStorageDirectory.isEmpty())
@@ -67,7 +68,7 @@ private:
         WebCore::StorageUtilities::writeOriginToFile(FileSystem::pathByAppendingComponent(originDirectory, "origin"_s), WebCore::ClientOrigin { origin, origin });
         return originDirectory;
     }
-
+#else
     String ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin, std::optional<WebCore::FrameIdentifier> frameID) final
     {
         RELEASE_LOG(Media, "ensureMediaKeysStorageDirectoryForOrigin %" PRIu64, m_webPageProxyID.toUInt64());
@@ -79,9 +80,9 @@ private:
         WebProcess::singleton().send(Messages::WebProcessProxy::EnsureMediaKeysStorageDirectory(*frameID));
 
         auto originDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(m_mediaKeysStorageSalt, origin);
-        auto originDirectory = FileSystem::pathByAppendingComponent(m_mediaKeysStorageDirectory, originDirectoryName);
-        return originDirectory;
+        return FileSystem::pathByAppendingComponent(m_mediaKeysStorageDirectory, originDirectoryName);
     }
+#endif
 
     void setMediaKeysStorageDirectory(const String&) final
     {
