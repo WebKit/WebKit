@@ -59,8 +59,9 @@ struct _WPEToplevelClass
                                                         gboolean     maximized);
     gboolean          (* set_minimized)                (WPEToplevel *toplevel);
     WPEBufferFormats *(* get_preferred_buffer_formats) (WPEToplevel *toplevel);
+    gboolean          (* begin_move)                   (WPEToplevel *toplevel);
 
-    gpointer padding[32];
+    gpointer padding[31];
 };
 
 /**
@@ -125,6 +126,7 @@ WPE_API gboolean          wpe_toplevel_unfullscreen                     (WPETopl
 WPE_API gboolean          wpe_toplevel_maximize                         (WPEToplevel               *toplevel);
 WPE_API gboolean          wpe_toplevel_unmaximize                       (WPEToplevel               *toplevel);
 WPE_API gboolean          wpe_toplevel_minimize                         (WPEToplevel               *toplevel);
+WPE_API gboolean          wpe_toplevel_begin_move                       (WPEToplevel               *toplevel);
 WPE_API WPEBufferFormats *wpe_toplevel_get_preferred_buffer_formats     (WPEToplevel               *toplevel);
 WPE_API void              wpe_toplevel_preferred_buffer_formats_changed (WPEToplevel               *toplevel);
 
