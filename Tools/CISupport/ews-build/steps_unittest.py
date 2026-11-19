@@ -4391,6 +4391,493 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         self.assertEqual(step.tests_modified_by_change, [])
 
 
+class TestLayoutTestsOnQueuesRunningBothDrivers(BuildStepMixinAdditions, unittest.TestCase):
+    """
+    The mac WK2 queues pass `-2 -1`, so run-webkit-tests runs WebKitTestRunner and then DumpRenderTree,
+    writing the WK1 results to layout-test-results/wk1/full_results.json.
+    """
+
+    WK1_TEST = 'platform/mac/fast/AppleScript/001.html'
+    WK2_TEST = 'fast/forms/input-text.html'
+    JSON = 'layout-test-results/full_results.json'
+    WK1_JSON = 'layout-test-results/wk1/full_results.json'
+    RUN_COMMAND = 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests {} 2>&1 | Tools/Scripts/filter-test-logs layout'
+
+    # FIXME: Several test classes replace filter_failures_using_results_db on RunWebKitTests and its
+    # subclasses with a stub, and never restore it. These tests need the real one, so they capture it
+    # at import, before any of those run, and patch it back for each test. Those classes should use
+    # self.patch() instead.
+    real_filter_failures_using_results_db = staticmethod(RunWebKitTests.filter_failures_using_results_db)
+
+    def setUp(self):
+        self.longMessage = True
+        self.queried = []
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    @staticmethod
+    def results_json(failures=(), interrupted=False):
+        tests = {}
+        for test in failures:
+            node = tests
+            *directories, name = test.split('/')
+            for directory in directories:
+                node = node.setdefault(directory, {})
+            node[name] = {'report': 'REGRESSION', 'expected': 'PASS', 'actual': 'TEXT'}
+        return 'ADD_RESULTS({});'.format(json.dumps({'tests': tests, 'interrupted': interrupted}))
+
+    def configureStep(self, step, pre_existing=(), additional_arguments=('-2', '-1')):
+        self.setup_step(step)
+        self.patch(RunWebKitTests, 'filter_failures_using_results_db', self.real_filter_failures_using_results_db)
+        self.patch(ReRunWebKitTests, 'filter_failures_using_results_db', self.real_filter_failures_using_results_db)
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        if additional_arguments is not None:
+            self.setProperty('additionalArguments', list(additional_arguments))
+
+        def fake_is_pre_existing(cls, test, configuration=None, **kwargs):
+            self.queried.append((test, configuration.get('flavor')))
+            return defer.succeed({
+                'is_existing_failure': test in pre_existing,
+                'pass_rate': 0 if test in pre_existing else 100,
+                'raw_data': {}, 'logs': '', 'request_failed': False,
+            })
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: self.next_steps.extend(steps))
+
+    def expect_layout_tests(self, wk2_failures=(), wk1_failures=(), wk1_interrupted=False, wk2_interrupted=False, arguments='-2 -1', command=None, **kwargs):
+        expected = ExpectShell(
+            workdir='wkdir',
+            logfiles={'json': self.JSON, 'json-wk1': self.WK1_JSON},
+            log_environ=False,
+            timeout=19800,
+            command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', command or self.RUN_COMMAND.format(arguments)],
+            **kwargs,
+        )
+        expected.log('json', stdout=self.results_json(wk2_failures, interrupted=wk2_interrupted))
+        expected.log('json-wk1', stdout=self.results_json(wk1_failures, interrupted=wk1_interrupted))
+        failures = len(wk2_failures) + len(wk1_failures)
+        if failures:
+            expected.log('stdio', stdout=f'Regressions: Unexpected text-only failures ({failures})\n')
+        self.expectRemoteCommands(expected.exit(1 if failures else 0))
+
+    def scheduled(self, step_class):
+        return any(isinstance(step, step_class) for step in self.next_steps)
+
+    @defer.inlineCallbacks
+    def test_a_pre_existing_wk1_failure_is_excused_without_a_rerun(self):
+        self.configureStep(RunWebKitTests(), pre_existing={self.WK1_TEST})
+        self.expect_layout_tests(wk1_failures=[self.WK1_TEST])
+        self.expect_outcome(result=WARNINGS, state_string='Ignored 1 pre-existing failure(s)')
+        yield self.run_step()
+
+        self.assertEqual(self.queried, [(self.WK1_TEST, 'wk1')])
+        self.assertEqual(self.getProperty('first_run_failures'), [])
+        self.assertEqual(self.getProperty('first_run_wk1_failures'), [self.WK1_TEST])
+        self.assertEqual(self.getProperty('first_run_wk1_failures_filtered'), [])
+        self.assertEqual(self.getProperty('results-db_first_run_wk1_pre_existing'), [self.WK1_TEST])
+        self.assertEqual(self.getProperty('build_summary'), f'Ignored pre-existing failures: {self.WK1_TEST} (WK1)')
+        self.assertTrue(self.getProperty('force_build_success'))
+        self.assertFalse(self.scheduled(ReRunWebKitTests))
+
+    @defer.inlineCallbacks
+    def test_a_new_wk1_failure_is_rerun(self):
+        self.configureStep(RunWebKitTests())
+        self.expect_layout_tests(wk1_failures=[self.WK1_TEST])
+        self.expect_outcome(result=FAILURE, state_string='1 failures')
+        yield self.run_step()
+
+        self.assertEqual(self.queried, [(self.WK1_TEST, 'wk1')])
+        self.assertEqual(self.getProperty('first_run_wk1_failures'), [self.WK1_TEST])
+        self.assertEqual(self.getProperty('first_run_wk1_failures_filtered'), [self.WK1_TEST])
+        self.assertTrue(self.scheduled(ReRunWebKitTests))
+        # The build stays labelled wk2, the wk1 queries do not leak into later ones.
+        self.assertEqual(self.getProperty('flavor'), 'wk2')
+        self.assertEqual(self.get_nth_step(0).results_db_query_configuration()['flavor'], 'wk2')
+
+    @defer.inlineCallbacks
+    def test_each_driver_queries_its_own_flavor(self):
+        self.configureStep(RunWebKitTests(), pre_existing={self.WK2_TEST})
+        self.expect_layout_tests(wk2_failures=[self.WK2_TEST], wk1_failures=[self.WK1_TEST])
+        self.expect_outcome(result=FAILURE, state_string='2 failures')
+        yield self.run_step()
+
+        self.assertEqual(self.queried, [(self.WK2_TEST, 'wk2'), (self.WK1_TEST, 'wk1')])
+        self.assertEqual(self.getProperty('first_run_failures_filtered'), [])
+        self.assertEqual(self.getProperty('first_run_wk1_failures_filtered'), [self.WK1_TEST])
+        self.assertEqual(self.getProperty('results-db_first_run_pre_existing'), [self.WK2_TEST])
+        self.assertEqual(self.getProperty('results-db_first_run_wk1_pre_existing'), [])
+        # The unexcused WK1 failure keeps the step from being excused.
+        self.assertTrue(self.scheduled(ReRunWebKitTests))
+
+    @defer.inlineCallbacks
+    def test_wk1_flakiness_verdicts_are_kept_apart_from_the_wk2_ones(self):
+        flaky_queries = []
+
+        def fake_flaky_verdicts_for(cls, tests, configuration=None, **kwargs):
+            flaky_queries.append((sorted(tests), configuration.get('flavor')))
+            return defer.succeed(({
+                test: FlakyVerdict(flaky_type=ResultsDatabase.DIRTY_TREE_VERDICT, intra_build_evidence=True) for test in tests if test == self.WK1_TEST
+            }, ''))
+
+        self.configureStep(RunWebKitTests())
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(fake_flaky_verdicts_for))
+        self.expect_layout_tests(wk2_failures=[self.WK2_TEST], wk1_failures=[self.WK1_TEST])
+        self.expect_outcome(result=FAILURE, state_string='2 failures')
+        yield self.run_step()
+
+        step = self.get_nth_step(0)
+        self.assertEqual(flaky_queries, [([self.WK2_TEST], 'wk2'), ([self.WK1_TEST], 'wk1')])
+        self.assertEqual(self.getProperty('results-db_first_run_flaky'), {})
+        self.assertEqual(self.getProperty('results-db_first_run_wk1_flaky'), {self.WK1_TEST: ResultsDatabase.DIRTY_TREE_VERDICT})
+        self.assertEqual(self.getProperty('results-db_first_run_wk1_flaky_unknown'), [])
+        self.assertEqual(self.getProperty('first_run_failures_filtered'), [self.WK2_TEST])
+        self.assertEqual(self.getProperty('first_run_wk1_failures_filtered'), [])
+        self.assertEqual(step.pre_existing_flakes_in_results_db, {})
+        self.assertEqual(step.failing_tests_filtered, [self.WK2_TEST])
+        self.assertEqual(step.results_db_ignored_tests(), ([], [f'{self.WK1_TEST} (WK1)']))
+        # The unexcused WK2 failure keeps the step from being excused.
+        self.assertTrue(self.scheduled(ReRunWebKitTests))
+
+    @defer.inlineCallbacks
+    def test_pre_existing_failures_under_both_drivers_are_excused(self):
+        self.configureStep(RunWebKitTests(), pre_existing={self.WK2_TEST, self.WK1_TEST})
+        self.expect_layout_tests(wk2_failures=[self.WK2_TEST], wk1_failures=[self.WK1_TEST])
+        self.expect_outcome(result=WARNINGS, state_string='Ignored 2 pre-existing failure(s)')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('build_summary'), f'Ignored pre-existing failures: {self.WK2_TEST}, {self.WK1_TEST} (WK1)')
+        self.assertFalse(self.scheduled(ReRunWebKitTests))
+
+    @defer.inlineCallbacks
+    def test_wk1_failures_left_unchecked_are_not_excused(self):
+        # The WK1 run hit the failure limit, so its failures were never checked against results-db.
+        self.configureStep(RunWebKitTests(), pre_existing={self.WK2_TEST})
+        self.expect_layout_tests(wk2_failures=[self.WK2_TEST], wk1_failures=[self.WK1_TEST], wk1_interrupted=True)
+        self.expect_outcome(result=FAILURE, state_string='2 failures')
+        yield self.run_step()
+
+        self.assertEqual(self.queried, [(self.WK2_TEST, 'wk2')])
+        self.assertTrue(self.getProperty('first_results_wk1_exceed_failure_limit'))
+        self.assertIsNone(self.getProperty('first_run_wk1_failures_filtered'))
+        self.assertTrue(self.scheduled(ReRunWebKitTests))
+
+    @defer.inlineCallbacks
+    def test_a_test_failing_under_wk2_and_passing_under_wk1(self):
+        self.configureStep(RunWebKitTests())
+        self.expect_layout_tests(wk2_failures=[self.WK2_TEST])
+        self.expect_outcome(result=FAILURE, state_string='1 failures')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('first_run_failures'), [self.WK2_TEST])
+        self.assertEqual(self.getProperty('first_run_wk1_failures'), [])
+        self.assertEqual(self.queried, [(self.WK2_TEST, 'wk2')])
+
+    @defer.inlineCallbacks
+    def test_a_queue_without_wk1_reads_only_the_wk2_results(self):
+        self.configureStep(RunWebKitTests(), additional_arguments=['-2'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.JSON},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', self.RUN_COMMAND.format('-2')])
+            .log('json', stdout=self.results_json([self.WK2_TEST]))
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('first_run_failures'), [self.WK2_TEST])
+        self.assertIsNone(self.getProperty('first_run_wk1_failures'))
+        self.assertIsNone(self.getProperty('first_results_wk1_exceed_failure_limit'))
+        self.assertTrue(self.scheduled(ReRunWebKitTests))
+
+    def test_only_a_run_of_both_drivers_reads_the_wk1_results(self):
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        for additional_arguments, driver, expected in (
+            (['-2', '-1'], None, True),
+            (['--webkit-test-runner', '--dump-render-tree'], None, True),
+            (['-1'], 'WebKitTestRunner', True),
+            (['-1'], None, False),
+            (['-1'], 'DumpRenderTree', False),
+            (['-2'], None, False),
+            (['--exclude-tests', 'imported/w3c/web-platform-tests'], None, False),
+            (None, None, False),
+        ):
+            self.setProperty('additionalArguments', additional_arguments)
+            step.layout_test_driver = driver
+            self.assertEqual(step.runs_wk1_in_subdirectory(), expected, (additional_arguments, driver))
+
+    def test_stress_mode_does_not_read_the_wk1_results(self):
+        # It ignores additionalArguments, so it never runs both drivers.
+        self.setup_step(RunWebKitTestsInStressMode())
+        self.setProperty('additionalArguments', ['-2', '-1'])
+        self.assertFalse(self.get_nth_step(0).runs_wk1_in_subdirectory())
+
+    @defer.inlineCallbacks
+    def test_a_consistent_wk1_failure_is_rerun_on_the_clean_tree(self):
+        self.configureStep(ReRunWebKitTests())
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_wk1_failures', [self.WK1_TEST])
+        self.expect_layout_tests(wk1_failures=[self.WK1_TEST])
+        self.expect_outcome(result=FAILURE, state_string='1 failures')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('second_run_wk1_failures'), [self.WK1_TEST])
+        self.assertEqual(self.getProperty('second_run_wk1_failures_filtered'), [self.WK1_TEST])
+        self.assertTrue(self.scheduled(RunWebKitTestsWithoutChange))
+
+    @defer.inlineCallbacks
+    def test_a_missing_wk1_json_is_logged(self):
+        # The WK2 run stopped at the failure limit, so run-webkit-tests never started DumpRenderTree.
+        self.configureStep(RunWebKitTests())
+        expected = ExpectShell(
+            workdir='wkdir',
+            logfiles={'json': self.JSON, 'json-wk1': self.WK1_JSON},
+            log_environ=False,
+            timeout=19800,
+            command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', self.RUN_COMMAND.format('-2 -1')],
+        )
+        expected.log('json', stdout=self.results_json([self.WK2_TEST], interrupted=True))
+        expected.log('stdio', stdout='Regressions: Unexpected text-only failures (1)\n')
+        self.expectRemoteCommands(expected.exit(1))
+        self.expect_outcome(result=FAILURE, state_string='1 failures')
+        yield self.run_step()
+
+        self.assertIsNone(self.getProperty('first_run_wk1_failures'))
+        self.assertIn('No WK1 results for first_run: wk1/full_results.json is missing or unreadable', self.get_nth_step(0).logs['json-wk1'].stdout)
+
+    @defer.inlineCallbacks
+    def test_wk1_runs_past_the_failure_limit_are_not_compared(self):
+        self.configureStep(ReRunWebKitTests())
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_wk1_failures', [self.WK1_TEST])
+        self.setProperty('first_results_wk1_exceed_failure_limit', True)
+        self.expect_layout_tests(wk1_failures=[self.WK1_TEST])
+        self.expect_outcome(result=FAILURE, state_string='1 failures')
+        yield self.run_step()
+
+        step = self.get_nth_step(0)
+        self.assertIn('A WK1 run exceeded the failure limit, so the two WK1 runs are not comparable', step.logs[step.results_db_log_name].stdout)
+
+    @defer.inlineCallbacks
+    def test_wk1_failures_that_do_not_reproduce_are_flaky(self):
+        other_wk1_test = 'platform/mac/fast/AppleScript/array.html'
+        self.configureStep(ReRunWebKitTests())
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_wk1_failures', [self.WK1_TEST])
+        self.expect_layout_tests(wk1_failures=[other_wk1_test])
+        self.expect_outcome(result=WARNINGS, state_string='1 failures')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('build_summary'), f'Found flaky tests in re-run: {self.WK1_TEST} (WK1), {other_wk1_test} (WK1)')
+        self.assertFalse(self.scheduled(RunWebKitTestsWithoutChange))
+
+    @defer.inlineCallbacks
+    def test_the_same_test_failing_under_different_drivers_is_not_consistent(self):
+        self.configureStep(ReRunWebKitTests())
+        self.setProperty('first_run_failures', [self.WK2_TEST])
+        self.expect_layout_tests(wk1_failures=[self.WK2_TEST])
+        self.expect_outcome(result=WARNINGS, state_string='1 failures')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('build_summary'), f'Found flaky tests in re-run: {self.WK2_TEST}, {self.WK2_TEST} (WK1)')
+
+    def clean_tree_command(self, arguments, tests):
+        return (
+            'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release '
+            '--results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests '
+            f'{arguments} --builder-name macOS-Sequoia-Release-WK2-Tests-EWS --build-number 123 --buildbot-worker ews126 '
+            f'--buildbot-master {EWS_BUILD_HOSTNAMES[0]} --report https://results.webkit.org/ --skipped=always {tests} '
+            '2>&1 | Tools/Scripts/filter-test-logs layout'
+        )
+
+    def configure_clean_tree(self):
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
+        self.configureStep(RunWebKitTestsWithoutChange())
+        self.setProperty('buildername', 'macOS-Sequoia-Release-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '123')
+        self.setProperty('workername', 'ews126')
+
+    @defer.inlineCallbacks
+    def test_the_clean_tree_runs_wk1_only_failures(self):
+        self.configure_clean_tree()
+        self.setProperty('first_run_wk1_failures', [self.WK1_TEST])
+        self.setProperty('first_run_wk1_failures_filtered', [self.WK1_TEST])
+        self.setProperty('second_run_wk1_failures', [self.WK1_TEST])
+        self.expect_layout_tests(
+            wk1_failures=[self.WK1_TEST],
+            command=self.clean_tree_command('-2 -1', self.WK1_TEST),
+            env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 failures')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            yield self.run_step()
+
+        self.assertEqual(self.getProperty('clean_tree_run_wk1_failures'), [self.WK1_TEST])
+        self.assertTrue(self.scheduled(AnalyzeLayoutTestsResults))
+
+    @defer.inlineCallbacks
+    def test_the_clean_tree_runs_failures_of_both_drivers(self):
+        # Each test runs under both drivers.
+        self.configure_clean_tree()
+        self.setProperty('first_run_failures', [self.WK2_TEST])
+        self.setProperty('first_run_failures_filtered', [self.WK2_TEST])
+        self.setProperty('first_run_wk1_failures', [self.WK1_TEST, 'pre-existing.html'])
+        self.setProperty('first_run_wk1_failures_filtered', [self.WK1_TEST])
+        self.setProperty('second_run_failures', [self.WK2_TEST])
+        self.setProperty('second_run_wk1_failures', [self.WK1_TEST])
+        self.expect_layout_tests(
+            command=self.clean_tree_command('-2 -1', f'{self.WK2_TEST} {self.WK1_TEST}'),
+            env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+        )
+        self.expect_outcome(result=SUCCESS, state_string='layout-tests')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            yield self.run_step()
+
+        self.assertEqual(self.getProperty('clean_tree_run_failures'), [])
+        self.assertEqual(self.getProperty('clean_tree_run_wk1_failures'), [])
+
+    def configure_analysis(self, first_run=(), second_run=(), clean_tree=(), first_run_wk1=(), second_run_wk1=(), clean_tree_wk1=()):
+        self.setup_step(AnalyzeLayoutTestsResults())
+        self.stdio = []
+        step = self.get_nth_step(0)
+        add_to_log = step._addToLog
+
+        def record_stdio(log_name, message):
+            if log_name == 'stdio':
+                self.stdio.append(message)
+            return add_to_log(log_name, message)
+        step._addToLog = record_stdio
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.setProperty('os_version', '15.5')
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('first_results_exceed_failure_limit', False)
+        self.setProperty('second_results_exceed_failure_limit', False)
+        self.setProperty('clean_tree_results_exceed_failure_limit', False)
+        self.setProperty('first_run_failures', list(first_run))
+        self.setProperty('second_run_failures', list(second_run))
+        self.setProperty('clean_tree_run_failures', list(clean_tree))
+        for name, tests in (('first_run_wk1', first_run_wk1), ('second_run_wk1', second_run_wk1), ('clean_tree_run_wk1', clean_tree_wk1)):
+            if tests is not None:
+                self.setProperty(f'{name}_failures', list(tests))
+        results = {test: {'actual': 'TEXT', 'expected': 'PASS'} for test in set(first_run) | set(second_run) | set(first_run_wk1) | set(second_run_wk1 or [])}
+        for name in ('first_run_results', 'second_run_results', 'first_run_wk1_results', 'second_run_wk1_results'):
+            self.setProperty(name, results)
+
+    @defer.inlineCallbacks
+    def test_a_new_wk1_failure_is_blamed_with_the_wk1_label(self):
+        self.configure_analysis(first_run_wk1=[self.WK1_TEST], second_run_wk1=[self.WK1_TEST])
+        self.expect_outcome(result=FAILURE, state_string=f'Found 1 new test failure: {self.WK1_TEST} (WK1) (failure)')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('new_failures_introduced_by_change'), [])
+        self.assertEqual(self.getProperty('new_wk1_failures_introduced_by_change'), [self.WK1_TEST])
+        self.assertEqual([(report['configuration']['flavor'], list(report['results'])) for report in self.results_db_reports], [('wk1', [self.WK1_TEST])])
+
+    @defer.inlineCallbacks
+    def test_a_wk1_failure_is_only_explained_by_a_wk1_clean_tree_failure(self):
+        self.configure_analysis(first_run_wk1=[self.WK1_TEST], second_run_wk1=[self.WK1_TEST], clean_tree=[self.WK1_TEST])
+        self.expect_outcome(result=FAILURE, state_string=f'Found 1 new test failure: {self.WK1_TEST} (WK1) (failure)')
+        yield self.run_step()
+
+    @defer.inlineCallbacks
+    def test_a_wk1_failure_on_the_clean_tree_is_pre_existing(self):
+        self.configure_analysis(first_run_wk1=[self.WK1_TEST], second_run_wk1=[self.WK1_TEST], clean_tree_wk1=[self.WK1_TEST])
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('build_summary'), f'Found 1 pre-existing test failure: {self.WK1_TEST} (WK1)')
+
+    @defer.inlineCallbacks
+    def test_a_wk2_failure_is_not_explained_by_a_wk1_clean_tree_failure(self):
+        self.configure_analysis(first_run=[self.WK2_TEST], second_run=[self.WK2_TEST], clean_tree_wk1=[self.WK2_TEST])
+        self.expect_outcome(result=FAILURE, state_string=f'Found 1 new test failure: {self.WK2_TEST} (failure)')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('new_failures_introduced_by_change'), [self.WK2_TEST])
+        self.assertIsNone(self.getProperty('new_wk1_failures_introduced_by_change'))
+
+    @defer.inlineCallbacks
+    def test_new_and_pre_existing_failures_under_both_drivers(self):
+        self.configure_analysis(
+            first_run=[self.WK2_TEST], second_run=[self.WK2_TEST],
+            first_run_wk1=[self.WK1_TEST, self.WK2_TEST], second_run_wk1=[self.WK1_TEST, self.WK2_TEST], clean_tree_wk1=[self.WK2_TEST],
+        )
+        self.expect_outcome(result=FAILURE, state_string=f'Found 2 new test failures: {self.WK2_TEST} {self.WK1_TEST} (WK1) (failure)')
+        yield self.run_step()
+
+        self.assertEqual(self.getProperty('new_failures_introduced_by_change'), [self.WK2_TEST])
+        self.assertEqual(self.getProperty('new_wk1_failures_introduced_by_change'), [self.WK1_TEST])
+        self.assertEqual(
+            sorted((report['configuration']['flavor'], list(report['results'])) for report in self.results_db_reports),
+            [('wk1', [self.WK1_TEST]), ('wk2', [self.WK2_TEST])],
+        )
+
+    @defer.inlineCallbacks
+    def test_wk1_failures_are_not_blamed_without_wk1_clean_tree_results(self):
+        self.configure_analysis(
+            first_run=[self.WK2_TEST], second_run=[self.WK2_TEST],
+            first_run_wk1=[self.WK1_TEST], second_run_wk1=[self.WK1_TEST], clean_tree_wk1=None,
+        )
+        self.expect_outcome(result=FAILURE, state_string=f'Found 1 new test failure: {self.WK2_TEST} (failure)')
+        yield self.run_step()
+
+        self.assertEqual(self.stdio, [
+            'The clean tree run produced no WK1 results, so these WK1 failures are left out of the analysis instead of being blamed on the change: '
+            f'{self.WK1_TEST}\n',
+        ])
+        self.assertIsNone(self.getProperty('new_wk1_failures_introduced_by_change'))
+
+    @defer.inlineCallbacks
+    def test_wk1_failures_excused_by_results_db_need_no_wk1_clean_tree_results(self):
+        # The clean tree only runs the failures results-db did not excuse, so it has no WK1 results to report.
+        self.configure_analysis(
+            first_run=[self.WK2_TEST], second_run=[self.WK2_TEST],
+            first_run_wk1=[self.WK1_TEST], second_run_wk1=[self.WK1_TEST], clean_tree_wk1=None,
+        )
+        self.setProperty('first_run_wk1_failures_filtered', [])
+        self.setProperty('second_run_wk1_failures_filtered', [])
+        self.expect_outcome(result=FAILURE, state_string=f'Found 1 new test failure: {self.WK2_TEST} (failure)')
+        yield self.run_step()
+
+        self.assertEqual(self.stdio, [])
+        self.assertIsNone(self.getProperty('new_wk1_failures_introduced_by_change'))
+
+    @defer.inlineCallbacks
+    def test_only_wk1_failures_without_wk1_clean_tree_results(self):
+        # With the WK1 failures left out, nothing is left to analyze; the build is handled like runs
+        # that listed no failing tests.
+        self.configure_analysis(first_run_wk1=[self.WK1_TEST], second_run_wk1=[self.WK1_TEST], clean_tree_wk1=None)
+        self.setProperty('clean_tree_run_status', SUCCESS)
+        self.expect_outcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
+        yield self.run_step()
+
+        self.assertEqual(self.stdio, [
+            'The clean tree run produced no WK1 results, so these WK1 failures are left out of the analysis instead of being blamed on the change: '
+            f'{self.WK1_TEST}\n'
+            'No other test failed with the change, so the runs with the change are handled as if they had reported no failing tests.\n',
+        ])
+        self.assertIsNone(self.getProperty('new_wk1_failures_introduced_by_change'))
+
+    def test_wk1_tags_round_trip(self):
+        tagged = {self.WK2_TEST} | tag_wk1_tests([self.WK1_TEST, self.WK2_TEST])
+        self.assertEqual(tagged, {self.WK2_TEST, f'{self.WK1_TEST} (WK1)', f'{self.WK2_TEST} (WK1)'})
+        self.assertEqual(split_wk1_tagged_tests(tagged), ({self.WK2_TEST}, {self.WK1_TEST, self.WK2_TEST}))
+        self.assertEqual(strip_wk1_tag(f'{self.WK1_TEST} (WK1)'), self.WK1_TEST)
+        self.assertEqual(strip_wk1_tag(self.WK2_TEST), self.WK2_TEST)
+
+
 class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
