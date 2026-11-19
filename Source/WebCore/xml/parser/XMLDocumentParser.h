@@ -79,6 +79,9 @@ public:
     XMLDocumentParser() = delete;
     ~XMLDocumentParser();
 
+    void ref() const final { DocumentParser::ref(); }
+    void deref() const final { DocumentParser::deref(); }
+
     // Exposed for callbacks:
     void handleError(XMLErrors::Type, const char* message, TextPosition);
 

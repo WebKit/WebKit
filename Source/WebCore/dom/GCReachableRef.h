@@ -65,6 +65,12 @@ public:
         GCReachableRefMap::add(object);
     }
 
+    GCReachableRef(Ref<T>&& object)
+        : m_ptr(WTF::move(object))
+    {
+        SUPPRESS_UNCOUNTED_ARG GCReachableRefMap::add(*m_ptr);
+    }
+
     ~GCReachableRef()
     {
         if (RefPtr<EventTarget> target = WTF::move(m_ptr))

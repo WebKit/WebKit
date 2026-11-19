@@ -54,6 +54,9 @@ public:
     static Ref<HTMLDocumentParser> create(HTMLDocument&, OptionSet<ParserContentPolicy> = DefaultParserContentPolicy);
     virtual ~HTMLDocumentParser();
 
+    void ref() const final { DocumentParser::ref(); }
+    void deref() const final { DocumentParser::deref(); }
+
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }

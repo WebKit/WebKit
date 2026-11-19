@@ -1,10 +1,4 @@
 StyleChangedAnimatablePropertiesGenerated.cpp
-dom/Attr.cpp
-dom/ComposedTreeIterator.h
-dom/Document.cpp
-dom/Element.cpp
-dom/MutationObserver.cpp
-dom/ShadowRoot.cpp
 rendering/MarkedText.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBox.cpp

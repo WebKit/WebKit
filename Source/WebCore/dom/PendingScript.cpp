@@ -66,9 +66,8 @@ PendingScript::~PendingScript()
 void PendingScript::notifyClientFinished()
 {
     Ref<PendingScript> protectedThis(*this);
-    // FIXME: We cannot use a CheckedPtr local here since the client may get destroyed during notifyFinished().
-    if (m_client)
-        m_client->notifyFinished(*this);
+    if (RefPtr client = m_client)
+        client->notifyFinished(*this);
 }
 
 void PendingScript::notifyFinished(LoadableScript&)

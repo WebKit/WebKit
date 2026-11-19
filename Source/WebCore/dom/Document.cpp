@@ -3058,7 +3058,7 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
     UpdateLayoutResult result = UpdateLayoutResult::NoChange;
 
     {
-        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(protect(renderView()));
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         if (!layoutOptions.contains(LayoutOptions::DoNotLayoutAncestorDocuments)) {
@@ -3210,7 +3210,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
         return true;
     }
 
-    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(protect(renderView()));
 
     // Mimic the structure of updateLayout(), but at each step, see if we have been forced into doing a full layout.
     if (RefPtr owner = ownerElement()) {
@@ -3574,10 +3574,12 @@ void Document::destroyRenderTree()
 
     // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
     {
-        RenderTreeBuilder builder(*m_renderView);
+        RenderTreeBuilder builder(protect(*m_renderView));
         // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
-        while (WeakPtr child = m_renderView->firstChild())
-            builder.destroy(*child);
+        while (WeakPtr child = m_renderView->firstChild()) {
+            // destroy() deletes the renderer, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG builder.destroy(*child);
+        }
 
         if (RefPtr view = this->view()) {
             CheckedRef layoutContext = view->layoutContext();
@@ -7615,7 +7617,7 @@ HTMLFrameOwnerElement* Document::ownerElement() const
 
 std::optional<OwnerPermissionsPolicyData> Document::ownerPermissionsPolicy() const
 {
-    if (WeakPtr currentFrame = frame())
+    if (RefPtr currentFrame = frame())
         return currentFrame->ownerPermissionsPolicy();
 
     return std::nullopt;
@@ -10700,8 +10702,7 @@ void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& clien
     m_idToClientMap.remove(clientId);
     m_clientToIDMap.remove(client);
 
-    // Unable to ref the page as it may have started destruction.
-    if (WeakPtr page = this->page())
+    if (RefPtr page = this->page())
         page->removePlaybackTargetPickerClient(clientId);
 }
 

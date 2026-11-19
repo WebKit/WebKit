@@ -1248,7 +1248,7 @@ static Position upstreamIgnoringEditingBoundaries(Position position)
     return position;
 }
 
-std::pair<RenderObject*, unsigned> Position::rendererAndOffset() const
+std::pair<CheckedPtr<RenderObject>, unsigned> Position::rendererAndOffset() const
 {
     RefPtr node = anchorNode();
     if (!node)
@@ -1259,10 +1259,10 @@ std::pair<RenderObject*, unsigned> Position::rendererAndOffset() const
     unsigned offset = deprecatedEditingOffset();
     CheckedPtr textFragment = dynamicDowncast<RenderTextFragment>(*renderer);
     if (!textFragment || !textFragment->firstLetter())
-        return { renderer, offset };
+        return { WTF::move(renderer), offset };
 
     if (offset >= textFragment->start() && textFragment->text().length())
-        return { renderer, offset - textFragment->start() };
+        return { WTF::move(renderer), offset - textFragment->start() };
 
     // It looks like we are on the first letter renderer.
     CheckedPtr firstLetterRenderer = dynamicDowncast<RenderText>(textFragment->firstLetter()->firstChild());
@@ -1275,14 +1275,14 @@ std::pair<RenderObject*, unsigned> Position::rendererAndOffset() const
     auto firstLetterStart = textFragment->start() - firstLetterRenderer->text().length();
     if (offset < firstLetterStart)
         return { nullptr, 0 };
-    return { firstLetterRenderer, offset - firstLetterStart };
+    return { WTF::move(firstLetterRenderer), offset - firstLetterStart };
 }
 
-std::pair<RenderText*, unsigned> Position::resolvedTextRendererAndOffset() const
+std::pair<CheckedPtr<RenderText>, unsigned> Position::resolvedTextRendererAndOffset() const
 {
     auto [renderer, offset] = rendererAndOffset();
-    if (auto* renderText = dynamicDowncast<RenderText>(renderer))
-        return { renderText, offset };
+    if (CheckedPtr renderText = dynamicDowncast<RenderText>(WTF::move(renderer)))
+        return { WTF::move(renderText), offset };
     return { nullptr, 0 };
 }
 

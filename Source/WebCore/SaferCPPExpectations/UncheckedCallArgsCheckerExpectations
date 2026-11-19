@@ -1,11 +1,4 @@
 StyleBuilderGenerated.cpp
-dom/Attr.cpp
-dom/ComposedTreeIterator.h
-dom/Document.cpp
-dom/Element.cpp
-dom/MutationObserver.cpp
-dom/PendingScript.cpp
-dom/ShadowRoot.cpp
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/CSSFilterRenderer.cpp

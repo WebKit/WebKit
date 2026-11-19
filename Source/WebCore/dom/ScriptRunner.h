@@ -50,8 +50,8 @@ public:
     explicit ScriptRunner(Document&);
     ~ScriptRunner();
 
-    NODELETE void ref() const;
-    void deref() const;
+    NODELETE void ref() const final;
+    void deref() const final;
 
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }

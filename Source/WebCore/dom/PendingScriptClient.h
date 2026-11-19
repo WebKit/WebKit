@@ -35,6 +35,9 @@ class PendingScriptClient : public AbstractCanMakeCheckedPtr {
 public:
     virtual ~PendingScriptClient() = default;
 
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
     virtual void notifyFinished(PendingScript&) = 0;
 };
 

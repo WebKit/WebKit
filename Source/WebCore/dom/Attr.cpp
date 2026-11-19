@@ -82,8 +82,7 @@ Attr::~Attr()
     ASSERT_WITH_SECURITY_IMPLICATION(!isInShadowTree());
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope().rootNode().isDocumentNode());
 
-    // Unable to protect the document here as it may have started destruction.
-    willBeDeletedFrom(document());
+    willBeDeletedFrom(protect(document()));
 }
 
 ExceptionOr<void> Attr::setValue(const AtomString& value)

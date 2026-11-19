@@ -109,8 +109,8 @@ public:
     // Returns the renderer and fragment-local offset for this position, correctly
     // handling first-letter text fragment splits where the DOM text node's renderer
     // is the remaining fragment rather than the first-letter fragment.
-    std::pair<RenderObject*, unsigned> rendererAndOffset() const;
-    std::pair<RenderText*, unsigned> resolvedTextRendererAndOffset() const;
+    std::pair<CheckedPtr<RenderObject>, unsigned> rendererAndOffset() const;
+    std::pair<CheckedPtr<RenderText>, unsigned> resolvedTextRendererAndOffset() const;
 
     NODELETE RefPtr<Node> firstNode() const;
 

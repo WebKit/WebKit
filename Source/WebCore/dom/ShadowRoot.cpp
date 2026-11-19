@@ -109,7 +109,7 @@ ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slo
 ShadowRoot::~ShadowRoot()
 {
     if (isConnected())
-        document().didRemoveInDocumentShadowRoot(*this);
+        protect(document())->didRemoveInDocumentShadowRoot(*this);
 
     if (RefPtr styleSheetList = m_styleSheetList)
         styleSheetList->detach();
@@ -118,8 +118,7 @@ ShadowRoot::~ShadowRoot()
     // for this ShadowRoot instance because TreeScope destructor
     // clears Node::m_treeScope thus ContainerNode is no longer able
     // to access it Document reference after that.
-    // We can't ref document() here since it may have started destruction.
-    willBeDeletedFrom(document());
+    willBeDeletedFrom(protect(document()));
 
     ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBegunDeletingDetachedChildren);
     m_hasBegunDeletingDetachedChildren = true;

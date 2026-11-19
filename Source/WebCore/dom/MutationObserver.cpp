@@ -158,7 +158,7 @@ void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     Ref document = mutation->target().document();
 
-    m_pendingTargets.add(mutation->target());
+    m_pendingTargets.add(protect(mutation->target()));
     m_records.append(WTF::move(mutation));
 
     Ref eventLoop = document->windowEventLoop();

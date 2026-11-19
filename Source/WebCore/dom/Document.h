@@ -2189,7 +2189,7 @@ public:
     WEBCORE_EXPORT void invalidateDOMCookieCache();
 
     void detachFromFrame();
-    NODELETE void willBeDisconnectedFromFrame(Document&);
+    void willBeDisconnectedFromFrame(Document&);
 
     PermissionsPolicy permissionsPolicy() const;
 
