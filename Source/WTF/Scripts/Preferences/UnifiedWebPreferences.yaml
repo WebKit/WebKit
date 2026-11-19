@@ -3746,11 +3746,13 @@ LazyImageLoadingEnabled:
 
 LazyMediaLoadingEnabled:
   type: bool
-  status: testable
+  status: stable
   category: html
   humanReadableName: "Lazy media loading"
   humanReadableDescription: "Enable lazy loading for audio and video elements via the loading attribute"
-  defaultValue: false
+  defaultValue:
+    default: false
+    WebKit: true
 
 LegacyEncryptedMediaAPIEnabled:
   type: bool
