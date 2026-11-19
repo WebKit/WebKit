@@ -64,10 +64,6 @@ struct SingleAnimationTimeline {
     bool isNone() const { return std::holds_alternative<CSS::Keyword::None>(m_value); }
     bool isScopedName() const { return std::holds_alternative<ScopedName>(m_value); }
     std::optional<ScopedName> tryScopedName() const { return isScopedName() ? std::make_optional(std::get<ScopedName>(m_value)) : std::nullopt; }
-    bool isScrollFunction() const { return std::holds_alternative<ScrollFunction>(m_value); }
-    std::optional<ScrollFunction> tryScrollFunction() const { return isScrollFunction() ? std::make_optional(std::get<ScrollFunction>(m_value)) : std::nullopt; }
-    bool isViewFunction() const { return std::holds_alternative<ViewFunction>(m_value); }
-    std::optional<ViewFunction> tryViewFunction() const { return isViewFunction() ? std::make_optional(std::get<ViewFunction>(m_value)) : std::nullopt; }
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {

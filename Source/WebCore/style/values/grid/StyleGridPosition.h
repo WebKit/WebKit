@@ -96,7 +96,6 @@ struct GridPosition {
     bool isAuto() const { return m_type == GridPositionType::Auto; }
     bool isExplicit() const { return m_type == GridPositionType::Explicit; }
     bool isSpan() const { return m_type == GridPositionType::Span; }
-    bool isNamedGridArea() const { return m_type == GridPositionType::NamedGridArea; }
 
     NODELETE WEBCORE_EXPORT int explicitPosition() const;
     NODELETE WEBCORE_EXPORT int spanPosition() const;

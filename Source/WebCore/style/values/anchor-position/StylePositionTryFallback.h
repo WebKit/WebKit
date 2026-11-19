@@ -60,7 +60,6 @@ struct PositionTryFallback {
     PositionArea positionArea { };
 
     bool isPositionArea() const { return !!positionArea.properties; }
-    bool isRuleAndTactics() const { return !positionArea.properties; }
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {

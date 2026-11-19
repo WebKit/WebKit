@@ -139,16 +139,6 @@ template<Shadow ShadowType> auto shadowVerticalExtent(const Shadows<ShadowType>&
     return { top, bottom };
 }
 
-template<Shadow ShadowType> auto shadowBlockDirectionExtent(const Shadows<ShadowType>& shadows, WritingMode writingMode, const Style::ZoomFactor& zoomFactor) -> std::pair<LayoutUnit, LayoutUnit>
-{
-    return writingMode.isHorizontal() ? shadowVerticalExtent(shadows, zoomFactor) : shadowHorizontalExtent(shadows, zoomFactor);
-}
-
-template<Shadow ShadowType> auto shadowInlineDirectionExtent(const Shadows<ShadowType>& shadows, WritingMode writingMode, const Style::ZoomFactor& zoomFactor) -> std::pair<LayoutUnit, LayoutUnit>
-{
-    return writingMode.isHorizontal() ? shadowHorizontalExtent(shadows, zoomFactor) : shadowVerticalExtent(shadows, zoomFactor);
-}
-
 template<Shadow ShadowType> void adjustRectForShadow(LayoutRect& rect, const Shadows<ShadowType>& shadows, const Style::ZoomFactor& zoomFactor)
 {
     auto shadowExtent = shadowOutsetExtent(shadows, zoomFactor);
