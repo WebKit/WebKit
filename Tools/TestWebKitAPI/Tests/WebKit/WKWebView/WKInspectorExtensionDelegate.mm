@@ -27,7 +27,6 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestInspectorURLSchemeHandler.h"
@@ -46,43 +45,58 @@ static RetainPtr<NSURL> sharedNewURLAfterNavigation;
 static bool extensionTabDidNavigateWasCalled;
 
 @interface UIDelegateForTestingInspectorExtensionDelegate : NSObject <WKUIDelegate>
+- (void)waitForDidAttachLocalInspector;
 @end
 
-@implementation UIDelegateForTestingInspectorExtensionDelegate
+@implementation UIDelegateForTestingInspectorExtensionDelegate {
+    bool _didAttachLocalInspector;
+    RetainPtr<TestInspectorURLSchemeHandler> _urlSchemeHandler;
+}
 
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
 {
     EXPECT_EQ(webView._inspector, inspector);
-    didAttachLocalInspectorCalled = true;
+    _didAttachLocalInspector = true;
 }
 
 - (_WKInspectorConfiguration *)_webView:(WKWebView *)webView configurationForLocalInspector:(_WKInspector *)inspector
 {
-    if (!sharedURLSchemeHandler)
-        sharedURLSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
+    if (!_urlSchemeHandler)
+        _urlSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
 
     RetainPtr inspectorConfiguration = adoptNS([[_WKInspectorConfiguration alloc] init]);
-    [inspectorConfiguration setURLSchemeHandler:sharedURLSchemeHandler.get() forURLScheme:@"test-resource"];
+    [inspectorConfiguration setURLSchemeHandler:_urlSchemeHandler.get() forURLScheme:@"test-resource"];
     return inspectorConfiguration.autorelease();
+}
+
+- (void)waitForDidAttachLocalInspector
+{
+    TestWebKitAPI::Util::run(&_didAttachLocalInspector);
 }
 
 @end
 
 
 @interface InspectorExtensionDelegateForTesting : NSObject <_WKInspectorExtensionDelegate>
+@property (nonatomic) bool inspectedPageDidNavigate;
+- (void)waitForDidShowExtensionTab;
+- (void)waitForDidHideExtensionTab;
+- (void)waitForInspectedPageDidNavigate;
 @end
 
 @implementation InspectorExtensionDelegateForTesting {
+    bool _didShowExtensionTab;
+    bool _didHideExtensionTab;
 }
 
 - (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier withFrameHandle:(_WKFrameHandle *)frameHandle
 {
-    didShowExtensionTabWasCalled = true;
+    _didShowExtensionTab = true;
 }
 
 - (void)inspectorExtension:(_WKInspectorExtension *)extension didHideTabWithIdentifier:(NSString *)tabIdentifier
 {
-    didHideExtensionTabWasCalled = true;
+    _didHideExtensionTab = true;
 }
 
 - (void)inspectorExtension:(_WKInspectorExtension *)extension didNavigateTabWithIdentifier:(NSString *)tabIdentifier newURL:(NSURL *)newURL
@@ -92,8 +106,23 @@ static bool extensionTabDidNavigateWasCalled;
 
 - (void)inspectorExtension:(_WKInspectorExtension *)extension inspectedPageDidNavigate:(NSURL *)newURL
 {
-    inspectedPageDidNavigateWasCalled = true;
+    _inspectedPageDidNavigate = true;
     sharedNewURLAfterNavigation = newURL;
+}
+
+- (void)waitForDidShowExtensionTab
+{
+    TestWebKitAPI::Util::run(&_didShowExtensionTab);
+}
+
+- (void)waitForDidHideExtensionTab
+{
+    TestWebKitAPI::Util::run(&_didHideExtensionTab);
+}
+
+- (void)waitForInspectedPageDidNavigate
+{
+    TestWebKitAPI::Util::run(&_inspectedPageDidNavigate);
 }
 
 @end
@@ -101,8 +130,6 @@ static bool extensionTabDidNavigateWasCalled;
 // FIXME: Re-enable this test once webkit.org/b/231847 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_ShowAndHideTabCallbacks)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -112,55 +139,57 @@ TEST(WKInspectorExtensionDelegate, DISABLED_ShowAndHideTabCallbacks)
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
     [[webView _inspector] show];
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
 
     auto extensionID = [NSUUID UUID].UUIDString;
     auto extensionBundleIdentifier = @"com.apple.webkit.FirstExtension";
     auto extensionDisplayName = @"FirstExtension";
+    __block RetainPtr<_WKInspectorExtension> inspectorExtension;
+    __block RetainPtr<NSString> tabIdentifier;
 
     // Register the test extension.
-    pendingCallbackWasCalled = false;
+    __block bool pendingCallbackWasCalled = false;
     [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
-        sharedInspectorExtension = extension;
+        inspectorExtension = extension;
 
         pendingCallbackWasCalled = true;
     }];
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     RetainPtr extensionDelegate = adoptNS([InspectorExtensionDelegateForTesting new]);
-    [sharedInspectorExtension setDelegate:extensionDelegate.get()];
+    [inspectorExtension setDelegate:extensionDelegate.get()];
 
     // Create an extension tab.
     auto iconURL = [NSURL URLWithString:@"test-resource://FirstExtension/InspectorExtension-TabIcon-30x30.png"];
     auto sourceURL = [NSURL URLWithString:@"test-resource://FirstExtension/InspectorExtension-basic-tab.html"];
 
     pendingCallbackWasCalled = false;
-    [sharedInspectorExtension createTabWithName:@"FirstExtension-Tab" tabIconURL:iconURL sourceURL:sourceURL completionHandler:^(NSError * _Nullable error, NSString * _Nullable extensionTabIdentifier) {
+    [inspectorExtension createTabWithName:@"FirstExtension-Tab" tabIconURL:iconURL sourceURL:sourceURL completionHandler:^(NSError * _Nullable error, NSString * _Nullable extensionTabIdentifier) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extensionTabIdentifier);
-        sharedExtensionTabIdentifier = extensionTabIdentifier;
+        tabIdentifier = extensionTabIdentifier;
 
         pendingCallbackWasCalled = true;
     }];
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     pendingCallbackWasCalled = false;
-    [[webView _inspector] showExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error) {
+    [[webView _inspector] showExtensionTabWithIdentifier:tabIdentifier.get() completionHandler:^(NSError * _Nullable error) {
         EXPECT_NULL(error);
 
         pendingCallbackWasCalled = true;
     }];
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
-    TestWebKitAPI::Util::run(&didShowExtensionTabWasCalled);
+    [extensionDelegate waitForDidShowExtensionTab];
 
     [[webView _inspector] showConsole];
-    TestWebKitAPI::Util::run(&didHideExtensionTabWasCalled);
+    [extensionDelegate waitForDidHideExtensionTab];
 
     // Unregister the test extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] unregisterExtension:sharedInspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
+    [[webView _inspector] unregisterExtension:inspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
         EXPECT_NULL(error);
 
         pendingCallbackWasCalled = true;
@@ -171,15 +200,12 @@ TEST(WKInspectorExtensionDelegate, DISABLED_ShowAndHideTabCallbacks)
 // FIXME: Re-enable this test once webkit.org/b/257332 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_InspectedPageNavigatedCallbacks)
 {
-    resetGlobalState();
-
     // Hook up the test-resource: handler so that we can navigate to a different test file.
-    if (!sharedURLSchemeHandler)
-        sharedURLSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
+    RetainPtr urlSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
 
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
-    [webViewConfiguration setURLSchemeHandler:sharedURLSchemeHandler.get() forURLScheme:@"test-resource"];
+    [webViewConfiguration setURLSchemeHandler:urlSchemeHandler.get() forURLScheme:@"test-resource"];
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     RetainPtr uiDelegate = adoptNS([UIDelegateForTestingInspectorExtensionDelegate new]);
@@ -187,49 +213,50 @@ TEST(WKInspectorExtensionDelegate, DISABLED_InspectedPageNavigatedCallbacks)
     [webView setUIDelegate:uiDelegate.get()];
 
     [[webView _inspector] show];
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
 
     // Register the test extension.
     auto extensionID = [NSUUID UUID].UUIDString;
     auto extensionBundleIdentifier = @"com.apple.webkit.SecondExtension";
     auto extensionDisplayName = @"SecondExtension";
-    pendingCallbackWasCalled = false;
+    __block RetainPtr<_WKInspectorExtension> inspectorExtension;
+    __block bool pendingCallbackWasCalled = false;
     [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
-        sharedInspectorExtension = extension;
+        inspectorExtension = extension;
 
         pendingCallbackWasCalled = true;
     }];
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     RetainPtr extensionDelegate = adoptNS([InspectorExtensionDelegateForTesting new]);
-    [sharedInspectorExtension setDelegate:extensionDelegate.get()];
+    [inspectorExtension setDelegate:extensionDelegate.get()];
 
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
     [webView _test_waitForDidFinishNavigation];
 
-    inspectedPageDidNavigateWasCalled = false;
-    TestWebKitAPI::Util::run(&inspectedPageDidNavigateWasCalled);
+    extensionDelegate.get().inspectedPageDidNavigate = false;
+    [extensionDelegate waitForInspectedPageDidNavigate];
     EXPECT_NS_EQUAL(sharedNewURLAfterNavigation.get().absoluteString, @"http://example.com/");
-    inspectedPageDidNavigateWasCalled = false;
+    extensionDelegate.get().inspectedPageDidNavigate = false;
 
     // Initiate a navigation in the inspected WKWebView to a test-resource:// URL.
     auto newURL = [NSURL URLWithString:@"test-resource://SecondExtension/InspectorExtension-basic-page.html"];
     auto result = [webView loadRequest:[NSURLRequest requestWithURL:newURL]];
     EXPECT_NOT_NULL(result);
 
-    inspectedPageDidNavigateWasCalled = false;
-    TestWebKitAPI::Util::run(&inspectedPageDidNavigateWasCalled);
+    extensionDelegate.get().inspectedPageDidNavigate = false;
+    [extensionDelegate waitForInspectedPageDidNavigate];
     EXPECT_NS_EQUAL(sharedNewURLAfterNavigation.get().absoluteString, @"about:blank");
 
-    inspectedPageDidNavigateWasCalled = false;
-    TestWebKitAPI::Util::run(&inspectedPageDidNavigateWasCalled);
+    extensionDelegate.get().inspectedPageDidNavigate = false;
+    [extensionDelegate waitForInspectedPageDidNavigate];
     EXPECT_NS_EQUAL(sharedNewURLAfterNavigation.get().absoluteString, newURL.absoluteString);
 
     // Unregister the test extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] unregisterExtension:sharedInspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
+    [[webView _inspector] unregisterExtension:inspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
         EXPECT_NULL(error);
 
         pendingCallbackWasCalled = true;
@@ -240,15 +267,12 @@ TEST(WKInspectorExtensionDelegate, DISABLED_InspectedPageNavigatedCallbacks)
 // FIXME: Re-enable this test once webkit.org/b/257332 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_ExtensionTabNavigatedCallbacks)
 {
-    resetGlobalState();
-
     // Hook up the test-resource: handler so that we can navigate to a different test file.
-    if (!sharedURLSchemeHandler)
-        sharedURLSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
+    RetainPtr urlSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
 
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
-    [webViewConfiguration setURLSchemeHandler:sharedURLSchemeHandler.get() forURLScheme:@"test-resource"];
+    [webViewConfiguration setURLSchemeHandler:urlSchemeHandler.get() forURLScheme:@"test-resource"];
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     RetainPtr uiDelegate = adoptNS([UIDelegateForTestingInspectorExtensionDelegate new]);
@@ -256,50 +280,52 @@ TEST(WKInspectorExtensionDelegate, DISABLED_ExtensionTabNavigatedCallbacks)
     [webView setUIDelegate:uiDelegate.get()];
 
     [[webView _inspector] show];
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
 
     // Register the test extension.
     auto extensionID = [NSUUID UUID].UUIDString;
     auto extensionBundleIdentifier = @"com.apple.webkit.ThirdExtension";
     auto extensionDisplayName = @"ThirdExtension";
-    pendingCallbackWasCalled = false;
+    __block RetainPtr<_WKInspectorExtension> inspectorExtension;
+    __block RetainPtr<NSString> tabIdentifier;
+    __block bool pendingCallbackWasCalled = false;
     [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError *error, _WKInspectorExtension *extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
-        sharedInspectorExtension = extension;
+        inspectorExtension = extension;
 
         pendingCallbackWasCalled = true;
     }];
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     RetainPtr extensionDelegate = adoptNS([InspectorExtensionDelegateForTesting new]);
-    [sharedInspectorExtension setDelegate:extensionDelegate.get()];
+    [inspectorExtension setDelegate:extensionDelegate.get()];
 
     auto baseURL = [NSURL URLWithString:@"http://example.com/"];
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:baseURL];
     [webView _test_waitForDidFinishNavigation];
 
-    inspectedPageDidNavigateWasCalled = false;
-    TestWebKitAPI::Util::run(&inspectedPageDidNavigateWasCalled);
+    extensionDelegate.get().inspectedPageDidNavigate = false;
+    [extensionDelegate waitForInspectedPageDidNavigate];
     EXPECT_NS_EQUAL(sharedNewURLAfterNavigation.get().absoluteString, baseURL.absoluteString);
-    inspectedPageDidNavigateWasCalled = false;
+    extensionDelegate.get().inspectedPageDidNavigate = false;
 
     // Create an extension tab.
     auto iconURL = [NSURL URLWithString:@"test-resource://ThirdExtension/InspectorExtension-TabIcon-30x30.png"];
     auto sourceURL = [NSURL URLWithString:@"test-resource://ThirdExtension/InspectorExtension-basic-tab.html"];
 
     pendingCallbackWasCalled = false;
-    [sharedInspectorExtension createTabWithName:@"ThirdExtension-Tab" tabIconURL:iconURL sourceURL:sourceURL completionHandler:^(NSError *error, NSString *extensionTabIdentifier) {
+    [inspectorExtension createTabWithName:@"ThirdExtension-Tab" tabIconURL:iconURL sourceURL:sourceURL completionHandler:^(NSError *error, NSString *extensionTabIdentifier) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extensionTabIdentifier);
-        sharedExtensionTabIdentifier = extensionTabIdentifier;
+        tabIdentifier = extensionTabIdentifier;
 
         pendingCallbackWasCalled = true;
     }];
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     pendingCallbackWasCalled = false;
-    [[webView _inspector] showExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError *error) {
+    [[webView _inspector] showExtensionTabWithIdentifier:tabIdentifier.get() completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
 
         pendingCallbackWasCalled = true;
@@ -309,7 +335,7 @@ TEST(WKInspectorExtensionDelegate, DISABLED_ExtensionTabNavigatedCallbacks)
     pendingCallbackWasCalled = false;
     extensionTabDidNavigateWasCalled = false;
     auto newURL = [NSURL URLWithString:@"test-resource://ThirdExtension/InspectorExtension-basic-page.html"];
-    [sharedInspectorExtension evaluateScript:[NSString stringWithFormat:@"window.location.replace(\"%@\")", newURL] inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError *error, id result) {
+    [inspectorExtension evaluateScript:[NSString stringWithFormat:@"window.location.replace(\"%@\")", newURL] inTabWithIdentifier:tabIdentifier.get() completionHandler:^(NSError *error, id result) {
         EXPECT_NULL(error);
 
         pendingCallbackWasCalled = true;
@@ -319,7 +345,7 @@ TEST(WKInspectorExtensionDelegate, DISABLED_ExtensionTabNavigatedCallbacks)
 
     // Unregister the test extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] unregisterExtension:sharedInspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
+    [[webView _inspector] unregisterExtension:inspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
         EXPECT_NULL(error);
 
         pendingCallbackWasCalled = true;

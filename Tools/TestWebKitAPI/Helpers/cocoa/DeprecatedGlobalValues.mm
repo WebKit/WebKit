@@ -28,10 +28,7 @@
 
 #import "Helpers/Utilities.h"
 
-RetainPtr<NSString> sharedExtensionTabIdentifier;
 RetainPtr<WKScriptMessage> lastScriptMessage;
-RetainPtr<TestInspectorURLSchemeHandler> sharedURLSchemeHandler;
-RetainPtr<_WKInspectorExtension> sharedInspectorExtension;
 RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 

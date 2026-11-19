@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -37,22 +36,28 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
 @interface UIDelegateForTestingInspectorExtensionHost : NSObject <WKUIDelegate>
+- (void)waitForDidAttachLocalInspector;
 @end
 
-@implementation UIDelegateForTestingInspectorExtensionHost
+@implementation UIDelegateForTestingInspectorExtensionHost {
+    bool _didAttachLocalInspector;
+}
 
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
 {
     EXPECT_EQ(webView._inspector, inspector);
-    didAttachLocalInspectorCalled = true;
+    _didAttachLocalInspector = true;
+}
+
+- (void)waitForDidAttachLocalInspector
+{
+    TestWebKitAPI::Util::run(&_didAttachLocalInspector);
 }
 
 @end
 
 TEST(WKInspectorExtensionHost, RegisterExtension)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -62,13 +67,13 @@ TEST(WKInspectorExtensionHost, RegisterExtension)
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
     [[webView _inspector] show];
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
 
     auto firstID = [NSUUID UUID].UUIDString;
     auto secondID = [NSUUID UUID].UUIDString;
 
     // Normal registration.
-    pendingCallbackWasCalled = false;
+    __block bool pendingCallbackWasCalled = false;
     [[webView _inspector] registerExtensionWithID:firstID extensionBundleIdentifier:@"com.apple.webkit.FirstExtension" displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
@@ -101,8 +106,6 @@ TEST(WKInspectorExtensionHost, RegisterExtension)
 
 TEST(WKInspectorExtensionHost, UnregisterExtension)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -112,13 +115,13 @@ TEST(WKInspectorExtensionHost, UnregisterExtension)
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
     [[webView _inspector] show];
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
 
     auto firstID = [NSUUID UUID].UUIDString;
     __block RetainPtr<_WKInspectorExtension> foundExtension;
 
     // Unregister a known extension.
-    pendingCallbackWasCalled = false;
+    __block bool pendingCallbackWasCalled = false;
     [[webView _inspector] registerExtensionWithID:firstID extensionBundleIdentifier:@"com.apple.webkit.FirstExtension" displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);

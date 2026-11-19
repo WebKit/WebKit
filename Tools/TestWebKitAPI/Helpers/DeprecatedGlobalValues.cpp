@@ -29,11 +29,6 @@
 bool receivedScriptMessage { false };
 bool isDone { false };
 bool done { false };
-bool didAttachLocalInspectorCalled { false };
-bool didShowExtensionTabWasCalled { false };
-bool pendingCallbackWasCalled { false };
-bool didHideExtensionTabWasCalled { false };
-bool inspectedPageDidNavigateWasCalled { false };
 bool didEnterPiP { false };
 bool didExitPiP { false };
 bool readyToContinue { false };
@@ -43,12 +38,3 @@ bool wasPrompted { false };
 bool didFinishNavigationBoolean { false };
 bool didCreateWebView { false };
 bool receivedLoadedMessage { false };
-
-void resetGlobalState()
-{
-    didAttachLocalInspectorCalled = false;
-    didShowExtensionTabWasCalled = false;
-    didHideExtensionTabWasCalled = false;
-    inspectedPageDidNavigateWasCalled = false;
-    pendingCallbackWasCalled = false;
-}

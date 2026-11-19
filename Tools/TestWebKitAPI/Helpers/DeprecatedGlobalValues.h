@@ -35,11 +35,6 @@
 extern bool receivedScriptMessage;
 extern bool isDone;
 extern bool done;
-extern bool didAttachLocalInspectorCalled;
-extern bool didShowExtensionTabWasCalled;
-extern bool pendingCallbackWasCalled;
-extern bool didHideExtensionTabWasCalled;
-extern bool inspectedPageDidNavigateWasCalled;
 extern bool didEnterPiP;
 extern bool didExitPiP;
 extern bool readyToContinue;
@@ -50,18 +45,10 @@ extern bool didFinishNavigationBoolean;
 extern bool didCreateWebView;
 extern bool receivedLoadedMessage;
 
-void resetGlobalState();
-
 #if PLATFORM(COCOA)
-OBJC_CLASS NSString;
 OBJC_CLASS NSMutableArray;
-OBJC_CLASS TestInspectorURLSchemeHandler;
 OBJC_CLASS WKScriptMessage;
-OBJC_CLASS _WKInspectorExtension;
 extern RetainPtr<WKScriptMessage> lastScriptMessage;
-extern RetainPtr<TestInspectorURLSchemeHandler> sharedURLSchemeHandler;
-extern RetainPtr<_WKInspectorExtension> sharedInspectorExtension;
-extern RetainPtr<NSString> sharedExtensionTabIdentifier;
 extern RetainPtr<NSMutableArray> receivedMessages;
 extern Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 WKScriptMessage *getNextMessage();

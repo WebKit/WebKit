@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
@@ -65,7 +64,6 @@ static RetainPtr<NSURL> urlToOpen;
 
 static void resetInspectorGlobalState()
 {
-    didAttachLocalInspectorCalled = false;
     inspectorFrontendLoadedCalled = false;
     willCloseLocalInspectorCalled = false;
     browserDomainEnabledForInspectorCalled = false;
@@ -140,9 +138,12 @@ static void resetInspectorGlobalState()
 @end
 
 @interface UIDelegateForTesting : NSObject <WKUIDelegate>
+- (void)waitForDidAttachLocalInspector;
 @end
 
-@implementation UIDelegateForTesting
+@implementation UIDelegateForTesting {
+    bool _didAttachLocalInspector;
+}
 
 - (_WKInspectorConfiguration *)_webView:(WKWebView *)webView configurationForLocalInspector:(_WKInspector *)inspector
 {
@@ -161,7 +162,7 @@ static void resetInspectorGlobalState()
 {
     EXPECT_EQ(webView._inspector, inspector);
 
-    didAttachLocalInspectorCalled = true;
+    _didAttachLocalInspector = true;
 }
 
 - (void)_webView:(WKWebView *)webView willCloseLocalInspector:(_WKInspector *)inspector
@@ -183,6 +184,11 @@ static void resetInspectorGlobalState()
     browserDomainDisabledForInspectorCalled = true;
 }
 
+- (void)waitForDidAttachLocalInspector
+{
+    TestWebKitAPI::Util::run(&_didAttachLocalInspector);
+}
+
 @end
 
 TEST(WKInspectorDelegate, InspectorLifecycleCallbacks)
@@ -201,7 +207,7 @@ TEST(WKInspectorDelegate, InspectorLifecycleCallbacks)
 
     [[webView _inspector] show];
 
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
     TestWebKitAPI::Util::run(&browserDomainEnabledForInspectorCalled);
 
     [[webView _inspector] close];
@@ -224,7 +230,7 @@ TEST(WKInspectorDelegate, InspectorCloseCalledReentrantly)
     EXPECT_FALSE(webView.get()._isBeingInspected);
 
     [[webView _inspector] show];
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
 
     {
         SetForScope closeReentrantlyFromDelegate(shouldCallInspectorCloseReentrantly, true);
@@ -246,7 +252,7 @@ TEST(WKInspectorDelegate, ShowURLExternally)
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
     [[webView _inspector] show];
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
     TestWebKitAPI::Util::run(&inspectorFrontendLoadedCalled);
 
     urlToOpen = [NSURL URLWithString:@"https://www.webkit.org/"];
@@ -276,7 +282,7 @@ TEST(WKInspectorDelegate, InspectorConfiguration)
 
     [[webView _inspector] show];
     TestWebKitAPI::Util::run(&configurationForLocalInspectorCalled);
-    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+    [uiDelegate waitForDidAttachLocalInspector];
     TestWebKitAPI::Util::run(&inspectorFrontendLoadedCalled);
 
     urlToOpen = [NSURL URLWithString:@"testing:main1"];
