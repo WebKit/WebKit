@@ -15,7 +15,7 @@ PASS Table-row is 100px tall
 FAIL Table-row-group is 100px wide assert_equals: expected 100 but got 120
 FAIL Table-row-group is 100px tall assert_equals: expected 100 but got 120
 PASS Table-column is 100px wide
-FAIL Table-column is 100px tall assert_equals: expected 100 but got 120
+PASS Table-column is 100px tall
 PASS Table-column-group is 100px wide
-FAIL Table-column-group is 100px tall assert_equals: expected 100 but got 120
+PASS Table-column-group is 100px tall
 

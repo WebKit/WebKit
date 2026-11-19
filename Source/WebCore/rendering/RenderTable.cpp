@@ -1185,8 +1185,10 @@ LayoutUnit RenderTable::offsetTopForColumn(const RenderTableCol& column) const
         ASSERT(!needsLayout());
         return m_columnOffsetTop;
     }
-    RenderTableSection* section = topNonEmptySection();
-    return m_columnOffsetTop = section ? section->offsetTop() : 0_lu;
+    // Use rows, not sections: sections include the vertical border-spacing around their rows.
+    CheckedPtr section = topNonEmptySection();
+    CheckedPtr firstRow = section ? section->firstRow() : nullptr;
+    return m_columnOffsetTop = firstRow ? section->offsetTop() + firstRow->y() : 0_lu;
 }
 
 LayoutUnit RenderTable::offsetLeftForColumn(const RenderTableCol& column) const
@@ -1235,11 +1237,12 @@ LayoutUnit RenderTable::offsetHeightForColumn(const RenderTableCol& column) cons
         ASSERT(!needsLayout());
         return m_columnOffsetHeight;
     }
-    LayoutUnit height;
-    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
-        height += section->offsetHeight();
-    m_columnOffsetHeight = height;
-    return m_columnOffsetHeight;
+    CheckedPtr bottomSection = bottomNonEmptySection();
+    CheckedPtr lastRow = bottomSection ? bottomSection->lastRow() : nullptr;
+    if (!lastRow)
+        return m_columnOffsetHeight = 0_lu;
+    LayoutUnit bottom = bottomSection->offsetTop() + lastRow->y() + lastRow->borderBoxHeight();
+    return m_columnOffsetHeight = std::max(bottom - offsetTopForColumn(column), 0_lu);
 }
 
 RenderTableCol* RenderTable::slowColElement(unsigned col, bool* startEdge, bool* endEdge) const
