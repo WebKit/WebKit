@@ -271,14 +271,13 @@ static void triggerAttributionWithSubresourceRedirect(Connection& connection, co
     });
 }
 
-static void runDestinationWebView(RetainPtr<WKWebView> webView, NSURL *serverURL)
+static void runDestinationWebView(RetainPtr<WKWebView> webView, NSURL *serverURL, NSString *html)
 {
     [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             [webView _setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:serverURL completionHandler:^{
                 [webView _setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:serverURL completionHandler:^{
                     [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
-                        NSString *html = [NSString stringWithFormat:@"<script>setTimeout(function(){ fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'}); }, 100);</script>", serverURL];
                         [webView loadHTMLString:html baseURL:exampleURL()];
                     }];
                 }];
@@ -291,6 +290,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
 {
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
+    bool sentSignedUnlinkableToken = false;
 
     // Generate the server key pair.
     size_t modulusNBits = 4096;
@@ -317,14 +317,14 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
 
     auto keyData = base64URLEncodeToString(wrappedKeyBytes);
     // The server.
-    HTTPServer server([signingParty, &done, connectionCount = signingParty == TokenSigningParty::Source ? 1 : 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {
+    HTTPServer server([signingParty, &done, &sentSignedUnlinkableToken, connectionCount = signingParty == TokenSigningParty::Source ? 1 : 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {
         switch (++connectionCount) {
         case 1:
             EXPECT_TRUE(signingParty == TokenSigningParty::Destination);
             triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789"_s);
             break;
         case 2:
-            connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
+            connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &sentSignedUnlinkableToken, &secKey](Vector<char>&& request1) {
                 EXPECT_TRUE(contains(request1.span(), "GET / HTTP/1.1\r\n"_span));
 
                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
@@ -332,8 +332,8 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                     "Content-Type: application/json\r\n"
                     "Content-Length: "_s, 24 + keyData.length(), "\r\n\r\n"
                     "{\"token_public_key\": \""_s, keyData, "\"}"_s);
-                connection.send(WTF::move(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
-                    connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
+                connection.send(WTF::move(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &sentSignedUnlinkableToken, &secKey] {
+                    connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &sentSignedUnlinkableToken, &secKey](Vector<char>&& request2) {
                         EXPECT_TRUE(contains(request2.span(), "POST / HTTP/1.1\r\n"_span));
 
                         auto request2String = String::fromLatin1(request2.span());
@@ -355,7 +355,8 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                             "Content-Type: application/json\r\n"
                             "Content-Length: "_s, 24 + unlinkableToken.length(), "\r\n\r\n"
                             "{\"unlinkable_token\": \""_s, unlinkableToken, "\"}"_s);
-                        connection.send(WTF::move(response), [signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] {
+                        connection.send(WTF::move(response), [signingParty, connection, &keyData, &done, &sentSignedUnlinkableToken, unlinkableToken, token, &secKey] {
+                            sentSignedUnlinkableToken = true;
                             connection.receiveHTTPRequest([signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
                                 EXPECT_TRUE(contains(request3.span(), "GET / HTTP/1.1\r\n"_span));
 
@@ -416,7 +417,13 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
 
-    runDestinationWebView(webView, serverURL);
+    NSString *conversionRequest = [NSString stringWithFormat:@"fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})", serverURL];
+    if (signingParty == TokenSigningParty::Source) {
+        runDestinationWebView(webView, serverURL, @"");
+        Util::run(&sentSignedUnlinkableToken);
+        [webView evaluateJavaScript:conversionRequest completionHandler:nil];
+    } else
+        runDestinationWebView(webView, serverURL, [NSString stringWithFormat:@"<script>setTimeout(function(){ %@; }, 100);</script>", conversionRequest]);
     Util::run(&done);
 }
 
