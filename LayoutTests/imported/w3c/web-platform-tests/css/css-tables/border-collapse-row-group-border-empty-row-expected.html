@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<title>CSS Reference</title>
+<style>
+table {
+    border-collapse: collapse;
+    margin: 20px;
+}
+tbody {
+    border: 20px solid green;
+}
+tbody.asymmetric {
+    border-left-width: 30px;
+    border-right-width: 10px;
+}
+td {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+}
+</style>
+<p>Test passes if each green frame has no gaps.</p>
+<table>
+    <tbody>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table>
+    <tbody>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+    </tbody>
+</table>
+<table>
+    <tbody class="asymmetric">
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody class="asymmetric">
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<title>Collapsed row group borders are painted along rows that have no cells</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#border-collapse-property">
+<link rel="match" href="border-collapse-row-group-border-empty-row-ref.html">
+<meta name="assert" content="The inline-start and inline-end borders of a row group are painted along a row that has no cells.">
+<style>
+table {
+    border-collapse: collapse;
+    margin: 20px;
+}
+tbody {
+    border: 20px solid green;
+}
+tbody.asymmetric {
+    border-left-width: 30px;
+    border-right-width: 10px;
+}
+td {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+}
+tr.empty {
+    height: 50px;
+}
+</style>
+<p>Test passes if each green frame has no gaps.</p>
+<table>
+    <tbody>
+        <tr><td></td><td></td></tr>
+        <tr class="empty"></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr><td></td><td></td></tr>
+        <tr class="empty"></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table>
+    <tbody>
+        <tr><td></td></tr>
+        <tr class="empty"></tr>
+        <tr><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr><td></td></tr>
+        <tr class="empty"></tr>
+        <tr><td></td></tr>
+    </tbody>
+</table>
+<table>
+    <tbody class="asymmetric">
+        <tr><td></td><td></td></tr>
+        <tr class="empty"></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody class="asymmetric">
+        <tr><td></td><td></td></tr>
+        <tr class="empty"></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>

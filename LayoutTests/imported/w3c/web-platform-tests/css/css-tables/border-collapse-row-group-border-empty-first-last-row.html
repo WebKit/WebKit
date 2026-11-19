@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<title>Collapsed row group borders are painted along empty first and last rows</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#border-collapse-property">
+<link rel="match" href="border-collapse-row-group-border-empty-first-last-row-ref.html">
+<meta name="assert" content="The borders of a row group are painted along an empty first or last row, in both directions.">
+<style>
+table {
+    border-collapse: collapse;
+    margin: 20px;
+}
+tbody {
+    border: 20px solid green;
+}
+tr {
+    height: 50px;
+}
+td {
+    width: 50px;
+    padding: 0;
+}
+</style>
+<p>Test passes if each green frame has no gaps.</p>
+<table>
+    <tbody>
+        <tr class="empty"></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table>
+    <tbody>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+        <tr class="empty"></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr class="empty"></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+        <tr class="empty"></tr>
+    </tbody>
+</table>
