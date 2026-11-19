@@ -184,6 +184,10 @@ public:
     void startTrackingRenderLayerPositionUpdates() { m_renderLayerPositionUpdateCount = 0; }
     unsigned renderLayerPositionUpdateCount() const { return m_renderLayerPositionUpdateCount; }
 
+    void incrementRenderersWithNamedPage() { ++m_renderersWithNamedPageCount; }
+    void decrementRenderersWithNamedPage() { ASSERT(m_renderersWithNamedPageCount > 0); --m_renderersWithNamedPageCount; }
+    bool hasRenderersWithNamedPage() const { return m_renderersWithNamedPageCount; }
+
     bool addToDetachedRendererList(RenderPtr<RenderObject>&& renderer) const { return m_detachedRendererList.append(WTF::move(renderer)); }
     void deleteDetachedRenderersNow() const { m_detachedRendererList.clear(); }
 
@@ -297,6 +301,7 @@ private:
     unsigned m_paintOffsetCacheDisableCount { 0 };
     unsigned m_layoutUpdateCount { 0 };
     unsigned m_renderLayerPositionUpdateCount { 0 };
+    unsigned m_renderersWithNamedPageCount { 0 };
     LayoutStateStack m_layoutStateStack;
     const std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
     SingleThreadWeakHashMap<RenderBoxModelObject, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
