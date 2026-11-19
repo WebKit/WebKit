@@ -62,6 +62,7 @@ fast/forms/switch/pointer-tracking-transform.html [ Skip ]
 http/tests/site-isolation/magnify-gesture-coordinates.html [ Skip ]
 http/tests/site-isolation/touch-events/tap-after-adding-listener-in-idle-cross-origin-iframe.html [ Skip ]
 http/tests/site-isolation/touch-events/tap-pointer-event-screen-coordinates-in-cross-origin-iframe.html [ Skip ]
+http/tests/site-isolation/touch-events/pointercancel-on-scroll-in-cross-origin-iframe.html [ Skip ]
 
 # Shadow of Liquid Glass switches is different between transform and zoom.
 fast/forms/switch/zoom-approximates-transform.html [ Skip ]
