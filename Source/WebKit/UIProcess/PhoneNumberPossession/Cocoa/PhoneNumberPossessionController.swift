@@ -40,7 +40,11 @@ final class PhoneNumberPossessionController {
 
     @_expose(Cxx)
     init() {
-        base = Base(manager: UnavailablePhoneNumberPossessionManager())
+        if let platformManager = WebKit.phoneNumberPossessionPlatformManager() {
+            base = Base(manager: CocoaPhoneNumberPossessionManager(platformManager: platformManager))
+        } else {
+            base = Base(manager: UnavailablePhoneNumberPossessionManager())
+        }
     }
 
     @_expose(Cxx)
@@ -61,13 +65,12 @@ final class PhoneNumberPossessionController {
     @_expose(Cxx)
     func request(
         _ request: sending WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: sending WTF.String,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor?,
         completionHandler: sending WebKit.PhoneNumberPossessionRequestCompletionHandler
     ) {
         Task.immediate { @MainActor [base, completionHandler] in
             let result = await WebKit.PhoneNumberPossessionResult { () async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) in
-                try await base.request(request, origin: origin, presentationAnchor: presentationAnchor)
+                try await base.request(request, presentationAnchor: presentationAnchor)
             }
 
             completionHandler.pointee(result)
@@ -125,7 +128,6 @@ extension PhoneNumberPossessionController {
 
         func request(
             _ request: sending WebKit.RefCountedPhoneNumberPossessionRequest,
-            origin: sending WTF.String,
             presentationAnchor: PhoneNumberPossessionPresentationAnchor?
         ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse {
             if hasStartedRequest {
@@ -149,7 +151,6 @@ extension PhoneNumberPossessionController {
                 requestResult = await Result { () async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) in
                     try await manager.requestPhoneNumberPossession(
                         request: request,
-                        origin: origin,
                         presentationAnchor: presentationAnchor
                     )
                 }

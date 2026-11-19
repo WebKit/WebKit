@@ -72,19 +72,15 @@ promise_test(async () => {
 
 promise_test(async () => {
     const credential = await getWithActivation(makeOptions());
-    assert_true(
-        credential.encryptedDecryptionKey instanceof ArrayBuffer,
+    assertBufferFilled(
+        credential.encryptedDecryptionKey,
+        mockResponse.decryptionKey,
         "encryptedDecryptionKey",
     );
     assert_equals(
         credential.encryptedDecryptionKey,
         credential.encryptedDecryptionKey,
         "encryptedDecryptionKey is the same object every time",
-    );
-    const { value, length } = mockResponse.decryptionKey;
-    assert_array_equals(
-        decodeJSON(credential.encryptedDecryptionKey).decryptionKey,
-        new Array(length).fill(value),
     );
 }, "get() returns encryptedDecryptionKey.");
 

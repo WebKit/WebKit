@@ -41,10 +41,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-class SecurityOriginData;
-}
-
 namespace WebKit {
 
 class WebFrameProxy;
@@ -84,7 +80,7 @@ private:
     void didCompleteRequest(uint64_t identifier, PhoneNumberPossessionResult&&);
 
     void platformIsAvailable(CompletionHandler<void(bool)>&&);
-    void platformRequestPhoneNumberPossession(WebCore::PhoneNumberPossessionRequest&&, const WebCore::SecurityOriginData&, WebPageProxy&, CompletionHandler<void(PhoneNumberPossessionResult&&)>&&);
+    void platformRequestPhoneNumberPossession(WebCore::PhoneNumberPossessionRequest&&, WebPageProxy&, CompletionHandler<void(PhoneNumberPossessionResult&&)>&&);
 
     struct PendingRequest {
         uint64_t identifier;

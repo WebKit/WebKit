@@ -49,7 +49,6 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
 
     func requestPhoneNumberPossession(
         request: WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: WTF.String,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor
     ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse {
         // Like the platform, fail a request when the preflight check would fail.
@@ -76,15 +75,7 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
     private func response(
         for request: WebKit.RefCountedPhoneNumberPossessionRequest
     ) throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse {
-        #if compiler(>=6.5)
-        let challengeBuffer = request.pointee.challenge
-        let challenge = Data(copying: challengeBuffer.span().bytes)
-        #else
-        // FIXME: rdar://191033367 Reading a request's BufferSource copies it, which crashes the compiler, so read
-        // the challenge's bytes through a copy that C++ makes. Remove the copy and this #if once that's fixed.
-        let challengeBytes = WebKit.challengeBytes(request)
-        let challenge = data(challengeBytes.span())
-        #endif
+        let challenge = phoneNumberPossessionChallenge(request)
 
         let clientData = ClientData(
             challenge: challenge.base64EncodedString(options: [.base64URLAlphabet, .omitPaddingCharacter]),
@@ -107,27 +98,22 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
 
         let resultJSON: Data
         let clientDataJSON: Data
-        let decryptionKeyJSON: Data
         do {
             resultJSON = try encoder.encode(result)
             clientDataJSON = try encoder.encode(clientData)
-            decryptionKeyJSON = try encoder.encode(DecryptionKey(decryptionKey: Array(repeating: 0x04, count: 32)))
         } catch {
             throw CxxUnexpected(error: .Failed)
         }
 
         var response = WebCore.PhoneNumberPossessionResponse(
-            encryptedResult: JSC.ArrayBuffer.createFromSpan(resultJSON.span),
-            carrierDomain: WTF.String("carrier.example" as CFString),
+            encryptedResult: resultJSON,
+            carrierDomain: "carrier.example",
             carrierConfigurationID: 1,
-            encryptedDecryptionKey: .init(),
-            carrierPubKey: .init(),
-            clientDataJSON: JSC.ArrayBuffer.createFromSpan(clientDataJSON.span),
-            portingZKP: .init()
+            encryptedDecryptionKey: configuration.includesOptionalFields ? Data(repeating: 0x04, count: 32) : nil,
+            clientDataJSON: clientDataJSON
         )
 
         if configuration.includesOptionalFields {
-            response.encryptedDecryptionKey = .init(JSC.ArrayBuffer.createFromSpan(decryptionKeyJSON.span).get())
             response.carrierPubKey = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x05, count: 65).span).get())
             response.portingZKP = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x09, count: 32).span).get())
         }
@@ -147,20 +133,5 @@ private struct EncryptedResult: Encodable {
     let zkProof: String
     let msisdn: String?
 }
-
-private struct DecryptionKey: Encodable {
-    let decryptionKey: [UInt8]
-}
-
-#if compiler(<6.5)
-// Data has no initializer that takes a Span.
-private func data(_ bytes: Span<UInt8>) -> Data {
-    var data = Data(capacity: bytes.count)
-    for index in bytes.indices {
-        data.append(bytes[index])
-    }
-    return data
-}
-#endif
 
 #endif // ENABLE_PHONE_NUMBER_POSSESSION
