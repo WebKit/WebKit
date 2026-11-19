@@ -23,9 +23,11 @@
 """ResultsDB status codes and severity-ordered sort helpers.
 
 ResultsDB stores test outcomes as integer codes whose numeric ordering is the
-canonical severity order (lowest = most severe). This module is the single
-authority for that ordering — callers who need to sort result statuses should
-use ``sort_key`` rather than reinventing one.
+canonical severity order (lowest = most severe); ResultsDBStatus mirrors
+resultsdbpy's Expectations.STATE_ID_TO_STRING. A status with no ResultsDB state
+takes the code webkitpy uploads for it, the more severe one for IMAGE_PLUS_TEXT.
+SKIP is never uploaded, so it has no code. Callers who need to sort result
+statuses should use ``sort_key`` rather than reinventing an ordering.
 """
 
 from enum import Flag, IntEnum
@@ -37,15 +39,13 @@ from webkitexpectationspy.expectations import ResultStatus
 class ResultsDBStatus(IntEnum):
     CRASH = 0x00
     TIMEOUT = 0x08
-    LEAK = 0x10
+    IMAGE = 0x10
     AUDIO = 0x18
     TEXT = 0x20
-    IMAGE_PLUS_TEXT = 0x24
     FAIL = 0x28
-    IMAGE = 0x30
-    MISSING = 0x38
+    ERROR = 0x30
+    WARNING = 0x38
     PASS = 0x40
-    SKIP = 0x50
 
 
 _RESULTSDB_MAP = {
@@ -53,16 +53,24 @@ _RESULTSDB_MAP = {
     'FAIL': ResultsDBStatus.FAIL,
     'CRASH': ResultsDBStatus.CRASH,
     'TIMEOUT': ResultsDBStatus.TIMEOUT,
-    'SKIP': ResultsDBStatus.SKIP,
     'IMAGE': ResultsDBStatus.IMAGE,
     'TEXT': ResultsDBStatus.TEXT,
-    'IMAGE_PLUS_TEXT': ResultsDBStatus.IMAGE_PLUS_TEXT,
+    'IMAGE_PLUS_TEXT': ResultsDBStatus.IMAGE,
     'AUDIO': ResultsDBStatus.AUDIO,
-    'LEAK': ResultsDBStatus.LEAK,
-    'MISSING': ResultsDBStatus.MISSING,
+    'LEAK': ResultsDBStatus.FAIL,
+    'MISSING': ResultsDBStatus.WARNING,
 }
 
-_RESULTSDB_REVERSE = {v: k for k, v in _RESULTSDB_MAP.items()}
+_RESULTSDB_REVERSE = {
+    ResultsDBStatus.PASS: 'PASS',
+    ResultsDBStatus.FAIL: 'FAIL',
+    ResultsDBStatus.CRASH: 'CRASH',
+    ResultsDBStatus.TIMEOUT: 'TIMEOUT',
+    ResultsDBStatus.IMAGE: 'IMAGE',
+    ResultsDBStatus.TEXT: 'TEXT',
+    ResultsDBStatus.AUDIO: 'AUDIO',
+    ResultsDBStatus.WARNING: 'MISSING',
+}
 
 
 def to_resultsdb(status: Flag) -> int:
