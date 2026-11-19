@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/META.yml
@@ -23,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/big5-encoder.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/bom-handling.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/bom-handling.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/encodeInto-tail-unmodified.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/encodeInto.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/encodeInto.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/encoding/eof-shift_jis-expected.html
@@ -40,11 +39,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/iso-2022-jp-decoder.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/iso-2022-jp-encoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/json-document-utf8.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/remove-only-one-bom.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/replacement-encodings.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/sharedarraybuffer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/sharedarraybuffer.https.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/encoding/single-byte-decoder.window.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/single-byte-decoder-iframe.window.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/single-byte-decoder.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/sniffing.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-arguments.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-byte-order-marks.any.js

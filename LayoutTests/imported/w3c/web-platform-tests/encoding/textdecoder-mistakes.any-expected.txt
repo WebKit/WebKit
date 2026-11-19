@@ -56,6 +56,27 @@ PASS Replacement, push back ASCII characters: euc-jp
 PASS Replacement, push back ASCII characters: euc-kr
 PASS Replacement, push back ASCII characters: shift_jis
 PASS Replacement, push back ASCII characters: gbk
+PASS EUC-JP JIS0212 state: 143,162,32,161,161
+PASS EUC-JP JIS0212 state: 143,162,32,161,161, split at 1
+PASS EUC-JP JIS0212 state: 143,162,32,161,161, split at 2
+PASS EUC-JP JIS0212 state: 143,162,32,161,161, split at 3
+PASS EUC-JP JIS0212 state: 143,162,32,161,161, split at 4
+PASS EUC-JP JIS0212 state: 143,162,160,161,161
+PASS EUC-JP JIS0212 state: 143,162,160,161,161, split at 1
+PASS EUC-JP JIS0212 state: 143,162,160,161,161, split at 2
+PASS EUC-JP JIS0212 state: 143,162,160,161,161, split at 3
+PASS EUC-JP JIS0212 state: 143,162,160,161,161, split at 4
+PASS EUC-JP JIS0212 state: 143,162,255,176,161
+PASS EUC-JP JIS0212 state: 143,162,255,176,161, split at 1
+PASS EUC-JP JIS0212 state: 143,162,255,176,161, split at 2
+PASS EUC-JP JIS0212 state: 143,162,255,176,161, split at 3
+PASS EUC-JP JIS0212 state: 143,162,255,176,161, split at 4
+PASS EUC-JP JIS0212 state: 143,162,175,161,161
+PASS EUC-JP JIS0212 state: 143,162,175,161,161, split at 1
+PASS EUC-JP JIS0212 state: 143,162,175,161,161, split at 2
+PASS EUC-JP JIS0212 state: 143,162,175,161,161, split at 3
+PASS EUC-JP JIS0212 state: 143,162,175,161,161, split at 4
+FAIL EUC-JP JIS0212 state after a fatal streaming error assert_equals: expected " 　" but got "　"
 PASS Sticky multibyte state: iso-2022-jp
 PASS Sticky multibyte state: gb18030
 PASS Sticky multibyte state: big5

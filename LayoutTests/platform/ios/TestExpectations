@@ -9513,7 +9513,7 @@ imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.sharedworker.
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.any.sharedworker.html [ Pass Failure ] # rdar://178158917
 
 imported/w3c/web-platform-tests/encoding/unsupported-labels.window.html [ Pass Failure ] # rdar://178158838
-imported/w3c/web-platform-tests/encoding/single-byte-decoder.window.html [ Pass Failure ] # rdar://178158838
+imported/w3c/web-platform-tests/encoding/single-byte-decoder-iframe.window.html [ Pass Failure ] # rdar://178158838
 imported/w3c/web-platform-tests/encoding/utf-32-from-win1252.html [ Pass Failure ] # rdar://178158838
 
 imported/w3c/web-platform-tests/html/anonymous-iframe/embedding.tentative.https.window.html [ Pass Failure ] # rdar://178158843

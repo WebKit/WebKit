@@ -1,9 +1,3 @@
-// META: timeout=long
-// META: variant=?XMLHttpRequest
-// META: variant=?TextDecoder
-// META: variant=?document
-// META: script=resources/encodings.js
-
 var singleByteEncodings = encodings_table.filter(function(group) {
   return group.heading === "Legacy single-byte encodings";
 })[0].encodings,
@@ -57,51 +51,5 @@ function assert_decode(data, encoding) {
       expectedCp = 0xFFFD
     }
     assert_equals(cp, expectedCp, encoding + ":" + i)
-  }
-}
-
-var subsetTest = "";
-if (location.search) {
-  subsetTest = location.search.substr(1);
-}
-
-// Setting up all the tests
-for(var i = 0, l = singleByteEncodings.length; i < l; i++) {
-  var encoding = singleByteEncodings[i]
-  for(var ii = 0, ll = encoding.labels.length; ii < ll; ii++) {
-    var label = encoding.labels[ii]
-
-    if (subsetTest == "XMLHttpRequest" || !subsetTest) {
-      async_test(function(t) {
-        var xhr = new XMLHttpRequest,
-            name = encoding.name // need scoped variable
-        xhr.open("GET", "resources/single-byte-raw.py?label=" + label)
-        xhr.send(null)
-        xhr.onload = t.step_func_done(function() { assert_decode(xhr.responseText, name) })
-      }, encoding.name + ": " + label + " (XMLHttpRequest)")
-    }
-
-    if (subsetTest == "TextDecoder" || !subsetTest) {
-      test(function() {
-        var d = new TextDecoder(label),
-            data = d.decode(view)
-        assert_equals(d.encoding, encoding.name.toLowerCase()) // ASCII names only, so safe
-        assert_decode(data, encoding.name)
-      }, encoding.name + ": " + label + " (TextDecoder)")
-    }
-
-    if (subsetTest == "document" || !subsetTest) {
-      async_test(function(t) {
-        var frame = document.createElement("iframe"),
-            name = encoding.name;
-        frame.src = "resources/text-plain-charset.py?label=" + label
-        frame.onload = t.step_func_done(function() {
-          assert_equals(frame.contentDocument.characterSet, name)
-          assert_equals(frame.contentDocument.inputEncoding, name)
-        })
-        t.add_cleanup(function() { document.body.removeChild(frame) })
-        document.body.appendChild(frame)
-      }, encoding.name + ": " + label + " (document.characterSet and document.inputEncoding)")
-    }
   }
 }

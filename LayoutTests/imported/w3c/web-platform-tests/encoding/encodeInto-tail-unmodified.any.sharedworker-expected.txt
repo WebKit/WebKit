@@ -1,0 +1,3 @@
+
+PASS encodeInto() leaves the destination beyond written unmodified
+

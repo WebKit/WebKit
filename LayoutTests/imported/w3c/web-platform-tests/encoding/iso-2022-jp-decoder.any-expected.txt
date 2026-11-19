@@ -33,4 +33,8 @@ PASS iso-2022-jp decoder: character, Roman ESC
 PASS iso-2022-jp decoder: character, Katakana ESC
 PASS iso-2022-jp decoder: character, Multibyte ESC
 PASS iso-2022-jp decoder: character, Multibyte ESC #2
+PASS iso-2022-jp decoder: reset after a final chunk, fatal=false
+PASS iso-2022-jp decoder: reset after an empty flush, fatal=false
+PASS iso-2022-jp decoder: reset after a final chunk, fatal=true
+PASS iso-2022-jp decoder: reset after an empty flush, fatal=true
 

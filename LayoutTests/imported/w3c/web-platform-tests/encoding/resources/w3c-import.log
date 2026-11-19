@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/decode-common.js
@@ -19,7 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/encode-form-common.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/encode-href-common.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/encodings.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/json-charset.py
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/ranges.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/single-byte-decoder.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/single-byte-raw.py
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/text-html-meta-charset.py
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/text-plain-charset.py
