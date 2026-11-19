@@ -63,8 +63,6 @@ public:
     uint64_t testIdentifier() const { return m_testIdentifier; }
     size_t pageCount() const { return m_pages.size(); }
 
-    void dumpBackForwardListsForAllPages(StringBuilder&);
-
     void done();
     void setAudioResult(WKDataRef audioData) { m_audioResult = audioData; }
     void setPixelResult(WKImageRef image) { m_pixelResult = image; m_pixelResultIsPending = false; }

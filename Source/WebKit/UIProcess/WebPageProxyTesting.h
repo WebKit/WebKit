@@ -102,6 +102,7 @@ public:
     void setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&&);
 
     void clearBackForwardList(CompletionHandler<void()>&&);
+    String dumpBackForwardList(const String& directory);
 
     void setTracksRepaints(bool, CompletionHandler<void()>&&);
     void displayAndTrackRepaints(CompletionHandler<void()>&&);

@@ -244,6 +244,7 @@ typedef void (*WKPageSetPageScaleFactorForTestingFunction)(void* functionContext
 WK_EXPORT void WKPageSetPageScaleFactorForTesting(WKPageRef page, float scaleFactor, WKPoint point, void* context, WKPageSetPageScaleFactorForTestingFunction completionHandler);
 typedef void (*WKPageClearBackForwardListForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageClearBackForwardListForTesting(WKPageRef page, void* context, WKPageClearBackForwardListForTestingFunction completionHandler);
+WK_EXPORT WKStringRef WKPageCopyBackForwardListDumpForTesting(WKPageRef page, WKStringRef directory);
 typedef void (*WKPageSetTracksRepaintsForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetTracksRepaintsForTesting(WKPageRef page, void* context, bool trackRepaints, WKPageSetTracksRepaintsForTestingFunction completionHandler);
 typedef void (*WKPageDisplayAndTrackRepaintsForTestingFunction)(void* functionContext);

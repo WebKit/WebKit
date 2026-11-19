@@ -320,11 +320,6 @@ double WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
     return protect(WebKit::toImpl(pageRef))->pageZoomFactor();
 }
 
-WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory)
-{
-    return WebKit::toCopiedAPI(protect(WebKit::toImpl(page))->dumpHistoryForTesting(WebKit::toWTFString(directory)));
-}
-
 WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRef)
 {
     return nullptr;

@@ -5778,6 +5778,25 @@ static void privateClickMeasurementStringResultCallback(WKStringRef privateClick
     context->testController.notifyDone();
 }
 
+String TestController::dumpBackForwardListsForAllPages()
+{
+    auto dumpPage = [](WKPageRef page) {
+        auto history = adoptWK(WKPageCopyBackForwardListDumpForTesting(page, toWK("/LayoutTests/").get()));
+        return makeString(
+            "\n============== Back Forward List ==============\n"_s,
+            toWTFString(history.get()),
+            "===============================================\n"_s
+        );
+    };
+
+    StringBuilder builder;
+    if (m_mainWebView)
+        builder.append(dumpPage(m_mainWebView->page()));
+    for (auto& auxiliaryWebView : m_auxiliaryWebViews)
+        builder.append(dumpPage(auxiliaryWebView->page()));
+    return builder.toString();
+}
+
 String TestController::dumpPrivateClickMeasurement()
 {
     PrivateClickMeasurementStringResultCallbackContext callbackContext(*this);

@@ -578,9 +578,6 @@ void InjectedBundlePage::dump()
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
-    if (testRunner->shouldDumpBackForwardListsForAllWindows())
-        injectedBundle.dumpBackForwardListsForAllPages(stringBuilder);
-
     if (injectedBundle.shouldDumpPixels() && testRunner->shouldDumpPixels()) {
         bool shouldCreateSnapshot = injectedBundle.isPrinting();
         if (injectedBundle.shouldDumpCSSPageBoxes())
@@ -1043,15 +1040,6 @@ void InjectedBundlePage::didChangeSelection(WKStringRef notificationName)
         return;
 
     injectedBundle.outputText(makeString("EDITING DELEGATE: webViewDidChangeSelection:"_s, notificationName, '\n'));
-}
-
-String InjectedBundlePage::dumpHistory()
-{
-    return makeString(
-        "\n============== Back Forward List ==============\n"_s,
-        adoptWK(WKBundlePageDumpHistoryForTesting(m_page, toWK("/LayoutTests/").get())).get(),
-        "===============================================\n"_s
-    );
 }
 
 #if !PLATFORM(COCOA)

@@ -361,6 +361,9 @@ void TestInvocation::dumpResults()
     if (m_options.enhancedSecurityEnabled() && !testController.isEnhancedSecurity())
         m_textOutput.append("FAIL: Enhanced Security was requested for this test but is not enabled in the web process\n"_s);
 
+    if (m_shouldDumpBackForwardListsForAllWindows)
+        m_textOutput.append(testController.dumpBackForwardListsForAllPages());
+
     if (!m_savedResourceLoadCallbacks.isEmpty()) {
         m_textOutput.append(m_savedResourceLoadCallbacks.toString());
         m_savedResourceLoadCallbacks.clear();
@@ -1427,9 +1430,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         m_shouldDumpBackForwardListsForAllWindows = true;
         return nullptr;
     }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "ShouldDumpBackForwardListsForAllWindows"))
-        return adoptWK(WKBooleanCreate(m_shouldDumpBackForwardListsForAllWindows));
 
     if (WKStringIsEqualToUTF8CString(messageName, "DumpChildFrameScrollPositions")) {
         m_shouldDumpAllFrameScrollPositions = true;

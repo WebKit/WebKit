@@ -220,7 +220,6 @@ public:
     void setWhatToDump(WhatToDump);
 
     bool shouldDumpAllFrameScrollPositions() const;
-    bool shouldDumpBackForwardListsForAllWindows() const;
     bool shouldDumpEditingCallbacks() const { return m_dumpEditingCallbacks; }
     bool shouldDumpMainFrameScrollPosition() const { return whatToDump() == WhatToDump::RenderTree; }
     bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }

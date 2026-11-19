@@ -957,7 +957,6 @@ public:
     double pageZoomFactor() const;
     void didSetPageZoomFactor(double);
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
-    String dumpHistoryForTesting(const String& directory);
 
     void accessibilitySettingsDidChange();
 #if PLATFORM(COCOA)

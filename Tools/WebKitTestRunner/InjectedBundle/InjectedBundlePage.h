@@ -51,8 +51,6 @@ public:
 
     void resetAfterTest();
 
-    String dumpHistory();
-
 private:
     // Loader Client
     static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);

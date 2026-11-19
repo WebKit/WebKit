@@ -454,6 +454,7 @@ public:
     bool isEnhancedSecurity() const;
 
     String dumpPrivateClickMeasurement();
+    String dumpBackForwardListsForAllPages();
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);

@@ -3634,6 +3634,14 @@ void WKPageClearBackForwardListForTesting(WKPageRef pageRef, void* context, WKPa
     });
 }
 
+WKStringRef WKPageCopyBackForwardListDumpForTesting(WKPageRef pageRef, WKStringRef directory)
+{
+    RefPtr pageForTesting = toImpl(pageRef)->pageForTesting();
+    if (!pageForTesting)
+        return toCopiedAPI(String { });
+    return toCopiedAPI(pageForTesting->dumpBackForwardList(toWTFString(directory)));
+}
+
 void WKPageSetTracksRepaintsForTesting(WKPageRef pageRef, void* context, bool trackRepaints, WKPageSetTracksRepaintsForTestingFunction completionHandler)
 {
     RefPtr pageForTesting = toImpl(pageRef)->pageForTesting();

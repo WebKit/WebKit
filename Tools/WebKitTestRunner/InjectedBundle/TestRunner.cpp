@@ -1615,11 +1615,6 @@ void TestRunner::dumpBackForwardList()
     postSynchronousPageMessage("DumpBackForwardList");
 }
 
-bool TestRunner::shouldDumpBackForwardListsForAllWindows() const
-{
-    return postSynchronousPageMessageReturningBoolean("ShouldDumpBackForwardListsForAllWindows");
-}
-
 void TestRunner::dumpChildFrameScrollPositions()
 {
     postSynchronousPageMessage("DumpChildFrameScrollPositions");

@@ -453,13 +453,6 @@ void InjectedBundle::reloadFromOrigin()
     postPageMessage("ReloadFromOrigin");
 }
 
-void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilder)
-{
-    size_t size = m_pages.size();
-    for (size_t i = 0; i < size; ++i)
-        stringBuilder.append(m_pages[i]->dumpHistory());
-}
-
 void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTestOutput)
 {
     if (!isTestRunning())
