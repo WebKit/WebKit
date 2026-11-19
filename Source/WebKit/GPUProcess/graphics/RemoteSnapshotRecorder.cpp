@@ -73,7 +73,10 @@ Ref<RemoteSnapshot> RemoteSnapshotRecorder::snapshot() const
 void RemoteSnapshotRecorder::drawSnapshotFrame(FrameIdentifier frameIdentifier)
 {
     m_snapshot->addFrameReference(frameIdentifier);
-    m_recorder->drawPlaceholder([snapshot = m_snapshot, frameIdentifier] (GraphicsContext& context) {
+    m_recorder->drawPlaceholder([weakSnapshot = ThreadSafeWeakPtr { m_snapshot.get() }, frameIdentifier](GraphicsContext& context) {
+        RefPtr snapshot = weakSnapshot;
+        if (!snapshot)
+            return;
         bool result = snapshot->applyFrame(frameIdentifier, context);
         ASSERT_UNUSED(result, result); // Programming error, consistency checked with isComplete().
     });
