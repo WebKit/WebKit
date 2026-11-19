@@ -1060,6 +1060,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     if (hasRunningProcess())
         didAttachToRunningProcess();
 
+    m_lastForceLockdownMode = protect(m_preferences)->forceLockdownMode();
+
     addAllMessageReceivers();
 
 #if PLATFORM(IOS_FAMILY)
@@ -6739,7 +6741,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         securityRestrictionsSourceFrame = m_mainFrame;
 
     auto lockdownMode = securityRestrictionsSourceFrame ? securityRestrictionsSourceFrame->process().lockdownMode()
-        : ((websitePolicies ? websitePolicies->lockdownModeEnabled() : shouldEnableLockdownMode()) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
+        : ((preferences->forceLockdownMode() || (websitePolicies ? websitePolicies->lockdownModeEnabled() : shouldEnableLockdownMode())) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
 
     // Apply CSP upgrade-insecure-requests before computing Site. Only needed for remote-frame
     // navigations. Same-process navigations are already upgraded in the WebProcess.
@@ -9415,6 +9417,15 @@ void WebPageProxy::preferencesDidChange()
 
     if (!hasRunningProcess())
         return;
+
+    bool forceLockdownMode = protect(preferences())->forceLockdownMode();
+    if (std::exchange(m_lastForceLockdownMode, forceLockdownMode) != forceLockdownMode) {
+        if (RefPtr mainFrame = m_mainFrame; mainFrame && !pageLoadState().url().isEmpty()) {
+            bool processIsLockdown = mainFrame->process().lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
+            if (processIsLockdown != shouldEnableLockdownMode())
+                reload({ });
+        }
+    }
 
     updateThrottleState();
     updateHiddenPageThrottlingAutoIncreases();
@@ -21852,7 +21863,7 @@ EnhancedSecurity WebPageProxy::currentEnhancedSecurityState(const API::WebsitePo
     } else if (m_configuration->isEnhancedSecurityEnabled())
         return EnhancedSecurity::EnabledPolicy;
 
-    bool isLockdownModeActive = websitePolicies ? websitePolicies->lockdownModeEnabled() : m_configuration->lockdownModeEnabled();
+    bool isLockdownModeActive = protect(preferences())->forceLockdownMode() || (websitePolicies ? websitePolicies->lockdownModeEnabled() : m_configuration->lockdownModeEnabled());
     if (m_configuration->isEnhancedSecurityEnabledByDefault(isLockdownModeActive))
         return EnhancedSecurity::EnabledPolicy;
 
