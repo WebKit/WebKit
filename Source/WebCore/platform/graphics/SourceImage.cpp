@@ -112,6 +112,11 @@ ImageBuffer* SourceImage::imageBuffer() const
     return imageBufferOf(*m_transformedImageVariant);
 }
 
+bool SourceImage::isResolved() const
+{
+    return !std::holds_alternative<RenderingResourceIdentifier>(m_imageVariant);
+}
+
 RenderingResourceIdentifier SourceImage::imageIdentifier() const
 {
     return WTF::switchOn(m_imageVariant,

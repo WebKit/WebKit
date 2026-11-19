@@ -195,6 +195,7 @@ def types_that_must_be_moved():
         'WebKit::WebIDBResult',
         'WebKit::LoadParameters',
         'WebKit::AdditionalFonts',
+        'WebKit::DisplayListData',
         'WebCore::ShareableBitmapHandle',
         'WebCore::ShareableResourceHandle',
         'WebCore::ShareableSpatialImage',

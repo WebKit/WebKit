@@ -30,6 +30,9 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/FontCustomPlatformData.h>
+#include <WebCore/ImageBufferParameters.h>
+#include <WebCore/ShareableBitmap.h>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -38,6 +41,17 @@ struct DisplayListDataFont {
     WebCore::FontInternalAttributes attributes;
     WebCore::FontPlatformDataAttributes platformData;
     std::optional<uint64_t> customFontIndex;
+};
+
+struct DisplayListDataNativeImage {
+    WebCore::RenderingResourceIdentifier identifier;
+    WebCore::ShareableBitmapHandle handle;
+};
+
+struct DisplayListDataImageBuffer {
+    WebCore::RenderingResourceIdentifier identifier;
+    WebCore::ShareableBitmapHandle handle;
+    WebCore::ImageBufferParameters parameters;
 };
 
 using DisplayListDataItem = Variant
@@ -52,6 +66,7 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::ClipOutToPath
     , WebCore::DisplayList::ClipPath
     , WebCore::DisplayList::ClipTransformedPath
+    , WebCore::DisplayList::ClipToNativeImage
     , WebCore::DisplayList::ConcatenateCTM
     , WebCore::DisplayList::DrawControlPart
     , WebCore::DisplayList::DrawDotsForDocumentMarker
@@ -61,9 +76,14 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::DrawFocusRingRects
     , WebCore::DisplayList::DrawGlyphs
     , WebCore::DisplayList::DrawDisplayList
+    , WebCore::DisplayList::DrawImageBuffer
     , WebCore::DisplayList::DrawLine
     , WebCore::DisplayList::DrawLinesForText
+    , WebCore::DisplayList::DrawMeshGradient
+    , WebCore::DisplayList::DrawNativeImage
     , WebCore::DisplayList::DrawPath
+    , WebCore::DisplayList::DrawPatternNativeImage
+    , WebCore::DisplayList::DrawPatternImageBuffer
     , WebCore::DisplayList::DrawRect
     , WebCore::DisplayList::DrawSystemImage
     , WebCore::DisplayList::EndTransparencyLayer
@@ -106,17 +126,25 @@ public:
     // Placeholders are drawn into the result, so whatever they draw has to be ready.
     static std::optional<DisplayListData> create(const WebCore::DisplayList::DisplayList&);
 
-    DisplayListData(Vector<WebCore::FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&&, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists);
+    DisplayListData(Vector<WebCore::FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&&, Vector<DisplayListDataNativeImage>&&, Vector<DisplayListDataImageBuffer>&&, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists);
 
     const Vector<WebCore::FontCustomPlatformSerializedData>& customFonts() const LIFETIME_BOUND { return m_customFonts; }
     const Vector<DisplayListDataFont>& fonts() const LIFETIME_BOUND { return m_fonts; }
+    const Vector<DisplayListDataNativeImage>& nativeImages() const LIFETIME_BOUND { return m_nativeImages; }
+    const Vector<DisplayListDataImageBuffer>& imageBuffers() const LIFETIME_BOUND { return m_imageBuffers; }
     const Vector<Vector<DisplayListDataItem>>& bottomUpDisplayLists() const LIFETIME_BOUND { return m_bottomUpDisplayLists; }
+
+    void setOwnershipOfMemory(const WebCore::ProcessIdentity&) const;
 
     RefPtr<const WebCore::DisplayList::DisplayList> createDisplayList(bool shouldUseLockdownFontParser) &&;
 
 private:
+    friend struct IPC::ArgumentCoder<DisplayListData>;
+
     Vector<WebCore::FontCustomPlatformSerializedData> m_customFonts;
     Vector<DisplayListDataFont> m_fonts;
+    Vector<DisplayListDataNativeImage> m_nativeImages;
+    Vector<DisplayListDataImageBuffer> m_imageBuffers;
     Vector<Vector<DisplayListDataItem>> m_bottomUpDisplayLists;
 };
 

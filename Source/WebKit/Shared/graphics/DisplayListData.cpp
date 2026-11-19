@@ -30,6 +30,11 @@
 
 #include "SharedFont.h"
 #include <WebCore/DisplayListRecorderImpl.h>
+#include <WebCore/DisplayListResourceCache.h>
+#include <WebCore/FEImage.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/NativeImage.h>
+#include <WebCore/Pattern.h>
 #include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -45,7 +50,7 @@ public:
     {
         if (!encodeDisplayList(displayList))
             return std::nullopt;
-        return DisplayListData { WTF::move(m_customFonts), WTF::move(m_fonts), WTF::move(m_bottomUpDisplayLists) };
+        return DisplayListData { WTF::move(m_customFonts), WTF::move(m_fonts), WTF::move(m_nativeImages), WTF::move(m_imageBuffers), WTF::move(m_bottomUpDisplayLists) };
     }
 
 private:
@@ -110,25 +115,39 @@ private:
                 result.append(item);
                 return true;
             },
-            // FIXME: Serialize images, image buffers and patterns by value.
             [&](const DisplayList::SetState& item) {
-                if (item.state().fillBrush().pattern() || item.state().strokeBrush().pattern())
+                if (!addPatternImage(item.state().fillBrush()) || !addPatternImage(item.state().strokeBrush()))
                     return false;
                 result.append(item);
                 return true;
             },
             [&](const DisplayList::DrawFilteredImageBuffer& item) {
-                if (item.sourceImage() || !item.filter().effectsOfType(FilterFunction::Type::FEImage).isEmpty())
+                if (RefPtr sourceImage = item.sourceImage(); sourceImage && !addImage(*sourceImage))
                     return false;
+                Ref filter = item.filter();
+                for (auto& effect : filter->effectsOfType(FilterFunction::Type::FEImage)) {
+                    Ref feImage = downcast<FEImage>(effect);
+                    if (!addImage(feImage->sourceImage()))
+                        return false;
+                }
                 result.append(item);
                 return true;
             },
-            [](const DisplayList::ClipToNativeImage&) { return false; },
-            [](const DisplayList::DrawImageBuffer&) { return false; },
-            [](const DisplayList::DrawMeshGradient&) { return false; },
-            [](const DisplayList::DrawNativeImage&) { return false; },
-            [](const DisplayList::DrawPatternNativeImage&) { return false; },
-            [](const DisplayList::DrawPatternImageBuffer&) { return false; },
+            [&](const DisplayList::ClipToNativeImage& item) {
+                return appendItemWithImage(item, protect(item.nativeImage()), result);
+            },
+            [&](const DisplayList::DrawImageBuffer& item) {
+                return appendItemWithImage(item, protect(item.imageBuffer()), result);
+            },
+            [&](const DisplayList::DrawNativeImage& item) {
+                return appendItemWithImage(item, protect(item.nativeImage()), result);
+            },
+            [&](const DisplayList::DrawPatternNativeImage& item) {
+                return appendItemWithImage(item, protect(item.nativeImage()), result);
+            },
+            [&](const DisplayList::DrawPatternImageBuffer& item) {
+                return appendItemWithImage(item, protect(item.imageBuffer()), result);
+            },
 #if USE(SKIA)
             [](const DisplayList::DrawTextBlob&) { return false; },
 #endif
@@ -136,6 +155,71 @@ private:
                 result.constructAndAppend(WTF::InPlaceType<std::decay_t<decltype(item)>>, item);
                 return true;
             });
+    }
+
+    bool appendItemWithImage(const auto& item, const auto& image, Vector<DisplayListDataItem>& result)
+    {
+        if (!addImage(image.get()))
+            return false;
+        result.append(item);
+        return true;
+    }
+
+    bool addPatternImage(const SourceBrush& brush)
+    {
+        RefPtr pattern = brush.pattern();
+        return !pattern || addImage(pattern->tileImage());
+    }
+
+    bool addImage(const SourceImage& image)
+    {
+        if (RefPtr nativeImage = image.nativeImageIfExists())
+            return addImage(*nativeImage);
+        if (RefPtr imageBuffer = image.imageBufferIfExists())
+            return addImage(*imageBuffer);
+        return false;
+    }
+
+    bool addImage(const NativeImage& image)
+    {
+        auto identifier = image.renderingResourceIdentifier();
+        if (m_imageIdentifiers.contains(identifier))
+            return true;
+        auto handle = createHandle(image);
+        if (!handle)
+            return false;
+        m_nativeImages.append(DisplayListDataNativeImage { identifier, WTF::move(*handle) });
+        m_imageIdentifiers.add(identifier);
+        return true;
+    }
+
+    bool addImage(ImageBuffer& imageBuffer)
+    {
+        auto identifier = imageBuffer.renderingResourceIdentifier();
+        if (m_imageIdentifiers.contains(identifier))
+            return true;
+        RefPtr image = imageBuffer.copyNativeImage();
+        if (!image)
+            return false;
+        auto handle = createHandle(*image);
+        if (!handle)
+            return false;
+        m_imageBuffers.append(DisplayListDataImageBuffer { identifier, WTF::move(*handle), imageBuffer.parameters() });
+        m_imageIdentifiers.add(identifier);
+        return true;
+    }
+
+    static std::optional<ShareableBitmapHandle> createHandle(const NativeImage& image)
+    {
+        RefPtr<ShareableBitmap> bitmap;
+#if USE(CG)
+        bitmap = ShareableBitmap::createFromImagePixels(image);
+#endif
+        if (!bitmap)
+            bitmap = image.toShareableBitmap();
+        if (!bitmap)
+            return std::nullopt;
+        return bitmap->createReadOnlyHandle();
     }
 
     uint64_t fontIndex(const FontBase& font)
@@ -155,37 +239,76 @@ private:
 
     Vector<FontCustomPlatformSerializedData> m_customFonts;
     Vector<DisplayListDataFont> m_fonts;
+    Vector<DisplayListDataNativeImage> m_nativeImages;
+    Vector<DisplayListDataImageBuffer> m_imageBuffers;
     Vector<Vector<DisplayListDataItem>> m_bottomUpDisplayLists;
     HashMap<Ref<const FontCustomPlatformData>, uint64_t> m_customFontIndices;
     HashMap<Ref<const FontBase>, uint64_t> m_fontIndices;
+    HashSet<RenderingResourceIdentifier> m_imageIdentifiers;
     HashMap<Ref<const DisplayList::DisplayList>, uint64_t> m_indices;
     HashSet<Ref<const DisplayList::DisplayList>> m_displayListsBeingEncoded;
 };
 
 } // namespace
 
-static std::optional<Vector<Ref<const FontBase>>> createFonts(const Vector<FontCustomPlatformSerializedData>& customFontData, const Vector<DisplayListDataFont>& fontData, bool shouldUseLockdownFontParser)
+static bool cacheFonts(DisplayList::ResourceCache& resourceCache, const Vector<FontCustomPlatformSerializedData>& customFontData, const Vector<DisplayListDataFont>& fontData, bool shouldUseLockdownFontParser)
 {
     Vector<Ref<FontCustomPlatformData>> customFonts(ReserveCapacityTag { }, customFontData.size());
     for (auto data : customFontData) {
         auto customFont = FontCustomPlatformData::tryMakeFromSerializationData(WTF::move(data), shouldUseLockdownFontParser);
         if (!customFont)
-            return std::nullopt;
+            return false;
         customFonts.append(WTF::move(*customFont));
     }
 
-    Vector<Ref<const FontBase>> fonts(ReserveCapacityTag { }, fontData.size());
     for (auto& data : borrow(fontData)) {
         RefPtr<FontCustomPlatformData> customFont;
         if (data.customFontIndex) {
             if (*data.customFontIndex >= customFonts.size())
-                return std::nullopt;
+                return false;
             customFont = customFonts[*data.customFontIndex].ptr();
         }
         auto platformData = FontPlatformData::create(data.platformData, customFont.get());
-        fonts.append(SharedFont::create(platformData, data.attributes.origin, data.attributes.isInterstitial, data.attributes.visibility, data.attributes.isTextOrientationFallback, data.attributes.isSmallCapsFace, data.attributes.renderingResourceIdentifier));
+        resourceCache.appendFont(SharedFont::create(platformData, data.attributes.origin, data.attributes.isInterstitial, data.attributes.visibility, data.attributes.isTextOrientationFallback, data.attributes.isSmallCapsFace, data.attributes.renderingResourceIdentifier));
     }
-    return fonts;
+    return true;
+}
+
+static RefPtr<NativeImage> createNativeImage(ShareableBitmapHandle&& handle)
+{
+    RefPtr bitmap = ShareableBitmap::create(WTF::move(handle), SharedMemory::Protection::ReadOnly);
+    if (!bitmap)
+        return nullptr;
+    return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes));
+}
+
+static bool cacheNativeImages(DisplayList::ResourceCache& resourceCache, Vector<DisplayListDataNativeImage>&& nativeImages)
+{
+    for (auto& data : borrow(nativeImages)) {
+        RefPtr nativeImage = createNativeImage(WTF::move(data.handle));
+        if (!nativeImage || !resourceCache.cacheNativeImage(data.identifier, nativeImage.releaseNonNull()))
+            return false;
+    }
+    return true;
+}
+
+static bool cacheImageBuffers(DisplayList::ResourceCache& resourceCache, Vector<DisplayListDataImageBuffer>&& imageBuffers)
+{
+    for (auto& data : borrow(imageBuffers)) {
+        RefPtr nativeImage = createNativeImage(WTF::move(data.handle));
+        if (!nativeImage)
+            return false;
+        auto& parameters = data.parameters;
+        if (nativeImage->size() != parameters.backendSize())
+            return false;
+        RefPtr imageBuffer = ImageBuffer::create(parameters.logicalSize, RenderingMode::Unaccelerated, parameters.purpose, parameters.resolutionScale, parameters.colorSpace, parameters.bufferFormat);
+        if (!imageBuffer)
+            return false;
+        imageBuffer->context().drawNativeImage(*nativeImage, FloatRect { { }, parameters.logicalSize }, FloatRect { { }, nativeImage->size() }, { CompositeOperator::Copy });
+        if (!resourceCache.cacheImageBuffer(data.identifier, imageBuffer.releaseNonNull()))
+            return false;
+    }
+    return true;
 }
 
 std::optional<DisplayListData> DisplayListData::create(const DisplayList::DisplayList& displayList)
@@ -193,37 +316,46 @@ std::optional<DisplayListData> DisplayListData::create(const DisplayList::Displa
     return DisplayListDataEncoder { }.encode(displayList);
 }
 
-DisplayListData::DisplayListData(Vector<FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&& fonts, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists)
+DisplayListData::DisplayListData(Vector<FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&& fonts, Vector<DisplayListDataNativeImage>&& nativeImages, Vector<DisplayListDataImageBuffer>&& imageBuffers, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists)
     : m_customFonts(WTF::move(customFonts))
     , m_fonts(WTF::move(fonts))
+    , m_nativeImages(WTF::move(nativeImages))
+    , m_imageBuffers(WTF::move(imageBuffers))
     , m_bottomUpDisplayLists(WTF::move(bottomUpDisplayLists))
 {
 }
 
+void DisplayListData::setOwnershipOfMemory(const ProcessIdentity& processIdentity) const
+{
+    for (auto& image : borrow(m_nativeImages))
+        image.handle.setOwnershipOfMemory(processIdentity, MemoryLedger::Graphics);
+    for (auto& imageBuffer : borrow(m_imageBuffers))
+        imageBuffer.handle.setOwnershipOfMemory(processIdentity, MemoryLedger::Graphics);
+}
+
 RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool shouldUseLockdownFontParser) &&
 {
-    auto fonts = createFonts(m_customFonts, m_fonts, shouldUseLockdownFontParser);
-    if (!fonts)
+    DisplayList::ResourceCache resourceCache;
+    if (!cacheFonts(resourceCache, m_customFonts, m_fonts, shouldUseLockdownFontParser))
         return nullptr;
 
-    Vector<Ref<const DisplayList::DisplayList>> displayLists(ReserveCapacityTag { }, m_bottomUpDisplayLists.size());
+    if (!cacheNativeImages(resourceCache, WTF::move(m_nativeImages)) || !cacheImageBuffers(resourceCache, WTF::move(m_imageBuffers)))
+        return nullptr;
+
+    RefPtr<const DisplayList::DisplayList> displayList;
     for (auto& dataItems : borrow(m_bottomUpDisplayLists)) {
         Vector<DisplayList::Item> items(ReserveCapacityTag { }, dataItems.size());
         for (auto& dataItem : borrow(dataItems)) {
-            if (auto* item = std::get_if<DisplayList::DrawFilteredImageBuffer>(&dataItem); item && !item->filter().effectsOfType(FilterFunction::Type::FEImage).isEmpty())
-                return nullptr;
             WTF::switchOn(dataItem, [&](auto& item) {
                 items.constructAndAppend(WTF::InPlaceType<std::decay_t<decltype(item)>>, WTF::move(item));
             });
         }
-        RefPtr displayList = DisplayList::DisplayList::createResolvingResources(WTF::move(items), borrow(*fonts)->span(), borrow(displayLists)->span());
+        displayList = DisplayList::DisplayList::createResolved(WTF::move(items), resourceCache);
         if (!displayList)
             return nullptr;
-        displayLists.append(displayList.releaseNonNull());
+        resourceCache.appendDisplayList(*displayList);
     }
-    if (displayLists.isEmpty())
-        return nullptr;
-    return displayLists.takeLast();
+    return displayList;
 }
 
 } // namespace WebKit
