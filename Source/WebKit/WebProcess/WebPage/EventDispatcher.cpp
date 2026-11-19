@@ -301,19 +301,19 @@ void EventDispatcher::dispatchTouchEvents()
     }
 }
 #elif ENABLE(COORDINATED_TOUCH_EVENTS)
-void EventDispatcher::dispatchTouchEventViaMainThread(WebCore::PageIdentifier pageID, Ref<WebTouchEvent>&& touchEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
+void EventDispatcher::dispatchTouchEventViaMainThread(WebCore::PageIdentifier pageID, Ref<WebTouchEvent>&& touchEvent, OptionSet<TouchAction> touchActions, CompletionHandler<void(WebEventType, bool, OptionSet<TouchAction>)>&& completionHandler)
 {
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, pageID, touchEvent = WTF::move(touchEvent), completionHandler = WTF::move(completionHandler)] mutable {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, pageID, touchEvent = WTF::move(touchEvent), touchActions, completionHandler = WTF::move(completionHandler)] mutable {
         RefPtr webPage = WebProcess::singleton().webPage(pageID);
         bool handled = false;
         if (webPage)
             handled = webPage->dispatchTouchEvent(touchEvent.copyRef());
         if (completionHandler)
-            completionHandler(touchEvent->type(), handled);
+            completionHandler(touchEvent->type(), handled, touchActions);
     });
 }
 
-void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID, Ref<WebTouchEvent>&& touchEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
+void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID, Ref<WebTouchEvent>&& touchEvent, CompletionHandler<void(WebEventType, bool, OptionSet<TouchAction>)>&& completionHandler)
 {
     RefPtr<WebCore::ThreadedScrollingTree> scrollingTree;
     {
@@ -322,22 +322,22 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID,
     }
 
     if (!scrollingTree) {
-        dispatchTouchEventViaMainThread(pageID, WTF::move(touchEvent), WTF::move(completionHandler));
+        dispatchTouchEventViaMainThread(pageID, WTF::move(touchEvent), TouchAction::Auto, WTF::move(completionHandler));
         return;
     }
 
-    auto trackingType = scrollingTree->eventTrackingTypeForTouchEvent(platform(touchEvent));
+    auto [trackingType, touchActions] = scrollingTree->trackTouchEvent(platform(touchEvent));
 
     if (trackingType == TrackingType::NotTracking) {
-        completionHandler(touchEvent->type(), false);
+        completionHandler(touchEvent->type(), false, touchActions);
         return;
     }
     if (trackingType == TrackingType::Asynchronous) {
-        completionHandler(touchEvent->type(), false);
-        dispatchTouchEventViaMainThread(pageID, WTF::move(touchEvent), nullptr);
+        completionHandler(touchEvent->type(), false, touchActions);
+        dispatchTouchEventViaMainThread(pageID, WTF::move(touchEvent), touchActions, nullptr);
         return;
     }
-    dispatchTouchEventViaMainThread(pageID, WTF::move(touchEvent), WTF::move(completionHandler));
+    dispatchTouchEventViaMainThread(pageID, WTF::move(touchEvent), touchActions, WTF::move(completionHandler));
 }
 #endif
 

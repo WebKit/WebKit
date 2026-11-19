@@ -6147,7 +6147,7 @@ void WebPageProxy::processNextQueuedTouchEvent()
 
     auto& queuedEvent = internals().touchEventQueue.first();
     protect(legacyMainFrameProcess())->startResponsivenessTimer();
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, queuedEvent.forwardedEvent.copyRef()), [this, protectedThis = Ref { *this }] (IPC::Connection* connection, WebKit::WebEventType eventType, bool handled) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, queuedEvent.forwardedEvent.copyRef()), [this, protectedThis = Ref { *this }](IPC::Connection* connection, WebKit::WebEventType eventType, bool handled, OptionSet<WebCore::TouchAction> touchActions) mutable {
         RefPtr pageClient = this->pageClient();
         if (!pageClient)
             return;
@@ -6162,6 +6162,7 @@ void WebPageProxy::processNextQueuedTouchEvent()
         };
 
         if (!connection) {
+            internals().touchActions = WebCore::TouchAction::Auto;
             while (!internals().touchEventQueue.isEmpty())
                 doneWithTouchEvents(internals().touchEventQueue.takeFirst(), false);
             didFinishProcessingAllPendingTouchEvents();
@@ -6174,6 +6175,8 @@ void WebPageProxy::processNextQueuedTouchEvent()
         MESSAGE_CHECK_BASE(eventType == queuedEvents.forwardedEvent->type(), connection);
         protect(legacyMainFrameProcess())->stopResponsivenessTimer();
 
+        internals().touchActions = touchActions;
+
         doneWithTouchEvents(queuedEvents, handled);
 
         if (!internals().touchEventQueue.isEmpty())
@@ -6181,6 +6184,11 @@ void WebPageProxy::processNextQueuedTouchEvent()
         else
             didFinishProcessingAllPendingTouchEvents();
     });
+}
+
+OptionSet<WebCore::TouchAction> WebPageProxy::touchActionsForCurrentTouches() const
+{
+    return internals().touchActions;
 }
 
 void WebPageProxy::handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&& event)

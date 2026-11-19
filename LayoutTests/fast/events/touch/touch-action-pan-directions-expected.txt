@@ -1,0 +1,27 @@
+
+Tests that touch-action stops touch drags from panning in the directions it doesn't allow, and that a tap on an element with touch-action: none still clicks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A drag that starts outside of the boxes pans:
+PASS scrollAfterDrag > 20 is true
+
+touch-action: none
+PASS scrollAfterDrag is 0
+
+touch-action: pan-x, with a vertical drag
+PASS scrollAfterDrag is 0
+
+touch-action: pan-y, with a vertical drag
+PASS scrollAfterDrag > 20 is true
+
+touch-action: none on the parent of the touched element
+PASS scrollAfterDrag is 0
+
+A tap on an element with touch-action: none clicks:
+PASS clickCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

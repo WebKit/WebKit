@@ -53,6 +53,10 @@
 #include <wtf/CompletionHandler.h>
 #endif
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+#include <WebCore/TouchAction.h>
+#endif
+
 namespace WebCore {
 class ThreadedScrollingTree;
 struct DisplayUpdate;
@@ -126,8 +130,8 @@ private:
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, Ref<WebTouchEvent>&&, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>&&);
 #elif ENABLE(COORDINATED_TOUCH_EVENTS)
-    void dispatchTouchEventViaMainThread(WebCore::PageIdentifier, Ref<WebTouchEvent>&&, CompletionHandler<void(WebEventType, bool)>&&);
-    void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, Ref<WebTouchEvent>&&, CompletionHandler<void(WebEventType, bool)>&&);
+    void dispatchTouchEventViaMainThread(WebCore::PageIdentifier, Ref<WebTouchEvent>&&, OptionSet<WebCore::TouchAction>, CompletionHandler<void(WebEventType, bool, OptionSet<WebCore::TouchAction>)>&&);
+    void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, Ref<WebTouchEvent>&&, CompletionHandler<void(WebEventType, bool, OptionSet<WebCore::TouchAction>)>&&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, Ref<WebGestureEvent>&&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);

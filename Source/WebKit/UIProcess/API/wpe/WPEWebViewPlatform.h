@@ -102,6 +102,7 @@ private:
     unsigned long m_bufferRenderedID { 0 };
     Vector<CompletionHandler<void()>> m_nextPresentationUpdateCallbacks;
     HashMap<uint32_t, GRefPtr<WPEEvent>> m_touchEvents;
+    bool m_isTouchDragScrolling { false };
 #if ENABLE(FULLSCREEN_API)
     bool m_viewWasAlreadyInFullScreen { false };
 #endif

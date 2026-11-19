@@ -31,6 +31,7 @@
 #include <WebCore/ScrollingStateScrollingNode.h>
 #include <WebCore/ScrollingStateTree.h>
 #include <WebCore/ScrollingTree.h>
+#include <WebCore/TouchAction.h>
 #include <wtf/Condition.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -71,7 +72,11 @@ public:
     void removePendingScrollAnimationForNode(ScrollingNodeID) WTF_REQUIRES_LOCK(m_treeLock) final;
 
 #if ENABLE(COORDINATED_TOUCH_EVENTS)
-    virtual TrackingType eventTrackingTypeForTouchEvent(const PlatformTouchEvent&) { return TrackingType::NotTracking; }
+    struct TouchEventTrackingResult {
+        TrackingType trackingType { TrackingType::NotTracking };
+        OptionSet<TouchAction> touchActions { TouchAction::Auto };
+    };
+    virtual TouchEventTrackingResult trackTouchEvent(const PlatformTouchEvent&) { return { }; }
 #endif
 
 protected:

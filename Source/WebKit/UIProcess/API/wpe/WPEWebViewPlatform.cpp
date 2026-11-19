@@ -44,6 +44,10 @@
 #include <WebCore/SystemSettings.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+#include <WebCore/TouchAction.h>
+#endif
+
 #if ENABLE(DEVELOPER_MODE)
 #include "WPEEventInternal.h"
 #endif
@@ -549,6 +553,16 @@ void ViewPlatform::handleGesture(WPEEvent* event)
             // are non-zero and cause a jump at the end of the gesture. Resetting the delta avoids the jump.
             if (phase == WebWheelEvent::Phase::Ended)
                 dx = dy = 0;
+
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+            // A drag that can't pan still ends the scroll it has begun.
+            if (!WebCore::constrainPanToTouchActions(page().touchActionsForCurrentTouches(), dx, dy) && (!m_isTouchDragScrolling || phase != WebWheelEvent::Phase::Ended))
+                return;
+            if (phase == WebWheelEvent::Phase::Began)
+                m_isTouchDragScrolling = true;
+            else if (phase == WebWheelEvent::Phase::Ended)
+                m_isTouchDragScrolling = false;
+#endif
 
             GRefPtr<WPEEvent> simulatedScrollEvent = adoptGRef(wpe_event_scroll_new(
                 m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, wpe_event_get_time(event), static_cast<WPEModifiers>(0), dx, dy, TRUE, FALSE, x, y

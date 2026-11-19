@@ -45,6 +45,23 @@ inline bool touchActionAllowsDoubleTapToZoom(OptionSet<TouchAction> touchActions
     return !touchActions.containsAny({ TouchAction::None, TouchAction::Manipulation });
 }
 
+// Zeroes the components of a pan that the touch actions don't allow. Returns false if they don't allow panning at all.
+inline bool constrainPanToTouchActions(OptionSet<TouchAction> touchActions, double& deltaX, double& deltaY)
+{
+    bool canPanX = touchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation, TouchAction::PanX });
+    bool canPanY = touchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation, TouchAction::PanY });
+    if (!canPanX)
+        deltaX = 0;
+    if (!canPanY)
+        deltaY = 0;
+    return canPanX || canPanY;
+}
+
+inline bool touchActionsAllowPinchZoom(OptionSet<TouchAction> touchActions)
+{
+    return touchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation, TouchAction::PinchZoom });
+}
+
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, TouchAction);
 
 }

@@ -293,6 +293,7 @@ enum class TextCheckingType : uint8_t;
 enum class TextGranularity : uint8_t;
 enum class TextIndicatorDismissalAnimation : uint8_t;
 enum class TextIndicatorLifetime : uint8_t;
+enum class TouchAction : uint8_t;
 enum class TrackingType : uint8_t;
 enum class UserInterfaceLayoutDirection : bool;
 enum class VideoFrameRotation : uint16_t;
@@ -1655,6 +1656,9 @@ public:
 
 #elif ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&&);
+#endif
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    OptionSet<WebCore::TouchAction> touchActionsForCurrentTouches() const;
 #endif
 
 #if PLATFORM(MAC)
