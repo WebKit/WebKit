@@ -642,6 +642,7 @@ TEST(WebAuthenticationPanel, CloseHidCancel)
 
 TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
 {
+    reset();
     HTTPServer server([parentFrame = String(parentFrame), subFrame = String(subFrame)] (const Connection& connection) {
         RetainPtr<NSString> firstResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
@@ -685,6 +686,7 @@ TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
 
 TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
 {
+    reset();
     HTTPServer server([parentFrame = String(parentFrame), subFrame = String(subFrame)] (const Connection& connection) {
         RetainPtr<NSString> firstResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
