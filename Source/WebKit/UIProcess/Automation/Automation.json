@@ -91,7 +91,8 @@
                 "NoSuchUserContext",
                 "NoSuchScript",
                 "NoSuchHistoryEntry",
-                "NodeIsNotAnElement"
+                "NodeIsNotAnElement",
+                "UnableToSetFileInput"
             ]
         },
         {

@@ -51,6 +51,7 @@ namespace WebCore {
 struct Cookie;
 class AccessibilityObject;
 class Element;
+class HTMLInputElement;
 class Node;
 class ShareableBitmapHandle;
 }
@@ -96,6 +97,7 @@ private:
     JSObjectRef scriptObjectForFrame(WebFrame&);
     std::expected<Ref<WebCore::Element>, String> elementForNodeHandle(WebFrame&, const String&);
     RefPtr<WebCore::Node> nodeForNodeHandle(WebFrame&, const String&);
+    std::expected<Ref<WebCore::HTMLInputElement>, String> fileInputForBidi(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, uint64_t fileCount);
     static String errorTypeFromJavaScriptExceptionName(const String& exceptionName);
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
 
@@ -119,6 +121,8 @@ private:
     void consumeUserActivation(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<String>, bool)>&&);
     void selectOptionElement(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>)>&&);
     void setFilesForInputFileUpload(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, Vector<String>&& filenames, CompletionHandler<void(std::optional<String>)>&&);
+    void validateFileInputForBidi(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, uint64_t fileCount, CompletionHandler<void(std::expected<void, String>)>&&);
+    void setFilesForBidi(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, Vector<String>&& paths, CompletionHandler<void(std::expected<void, String>)>&&);
     void takeScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&, String&&)>&&);
     void documentRectForScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<String>, WebCore::IntRect&&)>&&);
     void snapshotRectForScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<String>, WebCore::IntRect&&)>&&);

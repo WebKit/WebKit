@@ -43,6 +43,8 @@ messages -> WebAutomationSessionProxy {
     SelectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> errorType)
 
     SetFilesForInputFileUpload(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, Vector<String> filenames) -> (std::optional<String> errorType)
+    ValidateFileInputForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, uint64_t fileCount) -> (std::expected<void, String> errorType)
+    SetFilesForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, Vector<String> paths) -> (std::expected<void, String> errorType)
 
     TakeScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport) -> (std::optional<WebCore::ShareableBitmapHandle> imageDataHandle, String errorType)
 

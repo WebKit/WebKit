@@ -1394,6 +1394,58 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
     completionHandler(std::nullopt);
 }
 
+// https://w3c.github.io/webdriver-bidi/#command-input-setFiles
+std::expected<Ref<WebCore::HTMLInputElement>, String> WebAutomationSessionProxy::fileInputForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, const String& nodeHandle, uint64_t fileCount)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    if (!coreLocalFrame || !coreLocalFrame->view())
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    RefPtr node = nodeForNodeHandle(*frame, nodeHandle);
+    if (!node)
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound));
+    if (!is<WebCore::Element>(*node))
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeIsNotAnElement));
+    RefPtr inputElement = dynamicDowncast<WebCore::HTMLInputElement>(*node);
+    if (!inputElement || !inputElement->isFileUpload() || inputElement->isDisabledFormControl() || (fileCount > 1 && !inputElement->multiple()))
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::UnableToSetFileInput));
+
+    return inputElement.releaseNonNull();
+}
+
+void WebAutomationSessionProxy::validateFileInputForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, uint64_t fileCount, CompletionHandler<void(std::expected<void, String>)>&& completionHandler)
+{
+    auto inputElementOrError = fileInputForBidi(pageID, frameID, nodeHandle, fileCount);
+    if (!inputElementOrError) {
+        completionHandler(makeUnexpected(inputElementOrError.error()));
+        return;
+    }
+
+    completionHandler({ });
+}
+
+void WebAutomationSessionProxy::setFilesForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, Vector<String>&& paths, CompletionHandler<void(std::expected<void, String>)>&& completionHandler)
+{
+    auto inputElementOrError = fileInputForBidi(pageID, frameID, nodeHandle, paths.size());
+    if (!inputElementOrError) {
+        completionHandler(makeUnexpected(inputElementOrError.error()));
+        return;
+    }
+
+    Ref inputElement = WTF::move(*inputElementOrError);
+    Vector<Ref<WebCore::File>> fileObjects = paths.map([&](auto& path) {
+        return WebCore::File::create(protect(inputElement->document()).ptr(), path);
+    });
+    inputElement->setFiles(WebCore::FileList::create(WTF::move(fileObjects)));
+
+    completionHandler({ });
+}
+
 // In the main frame's document coordinates, even for an element in a subframe, including one hosted by another process.
 static WebCore::IntRect snapshotElementRectForScreenshot(WebPage& page, WebCore::Element* element, bool clipToViewport)
 {

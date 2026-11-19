@@ -4118,13 +4118,18 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/input/set_files/context.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/287926"}}
+        "expected": {"glib": {"status": ["SKIP"], "bug": "webkit.org/b/281949"}}
     },
     "imported/w3c/webdriver/tests/bidi/input/set_files/files.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/287926"}}
+        "expected": {"glib": {"status": ["SKIP"], "bug": "webkit.org/b/281949"}},
+        "subtests": {
+            "test_non_existent_file": {
+                "expected": {"all": {"status": ["FAIL"], "note": "WebKit rejects files that don't exist, which the test only allows Firefox to do"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/input/set_files/invalid.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/287926"}}
+        "expected": {"glib": {"status": ["SKIP"], "bug": "webkit.org/b/281949"}}
     },
 
     "imported/w3c/webdriver/tests/bidi/integration/parallel_execution/browsing_context_set_viewport.py": {
