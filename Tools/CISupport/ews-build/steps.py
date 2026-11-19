@@ -25,10 +25,11 @@ from buildbot.process import buildstep, logobserver, properties, remotecommand
 from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
+from contextlib import contextmanager
 from dataclasses import replace
 from datetime import date
 from shlex import quote
-from typing import Any, Generator
+from typing import Any, Generator, NamedTuple
 from unittest import mock
 
 from twisted.internet import defer, reactor, task
@@ -563,6 +564,13 @@ class AddToLogMixin(object):
         log.addStdout(message)
 
 
+class FlakinessVerdicts(NamedTuple):
+    flaky: dict  # Every test with a flaky verdict, mapped to its flaky type, whether excused or not.
+    unsupported: list  # Flaky between builds with no evidence from within a build, never excused.
+    unknown: list
+    excused: set
+
+
 class ResultsDBReportMixin(abc.ABC):
     """
     Reports test results to the results database. Hosts supply AddToLogMixin, a `suite`, and
@@ -578,6 +586,7 @@ class ResultsDBReportMixin(abc.ABC):
     MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
     NUM_FAILURES_TO_DISPLAY = 10
     prefix = ''
+    results_db_flavor_override = None
 
     # From Tools/Scripts/libraries/resultsdbpy/resultsdbpy/controller/configuration.py
     RESULTS_REQUIRED_CONFIG = ['platform', 'is_simulator', 'version', 'architecture']
@@ -595,7 +604,10 @@ class ResultsDBReportMixin(abc.ABC):
             configuration['platform'] = ResultsDatabase.platform_for_query(platform)
         if (style := self.getProperty('configuration', None)) in ('debug', 'release'):
             configuration['style'] = style
-        if (flavor := self.getProperty('flavor', None)) in ('wk1', 'wk2', 'site-isolation'):
+        # A step that runs more than one driver (run-webkit-tests -2 -1) queries and reports each
+        # driver's results under that driver's flavor, which overrides the build's `flavor`.
+        flavor = self.results_db_flavor_override or self.getProperty('flavor', None)
+        if flavor in ('wk1', 'wk2', 'site-isolation'):
             configuration['flavor'] = flavor
         # GTK and WPE post-commit bots run on more than one architecture, and pooling their history
         # can excuse a failure on this architecture with failures seen only on another one.
@@ -604,6 +616,15 @@ class ResultsDBReportMixin(abc.ABC):
             if architecture and ' ' not in architecture:
                 configuration['architecture'] = architecture
         return configuration
+
+    @contextmanager
+    def overriding_results_db_flavor(self, flavor):
+        previous = self.results_db_flavor_override
+        self.results_db_flavor_override = flavor
+        try:
+            yield
+        finally:
+            self.results_db_flavor_override = previous
 
     def results_db_configuration(self):
         architecture = self.getProperty('machine_architecture', None) or self.getProperty('architecture', None)
@@ -717,20 +738,25 @@ class ResultsDBReportMixin(abc.ABC):
             return False
         return reported
 
+    def results_db_ignored_tests(self) -> tuple[list[str], list[str]]:
+        return list(self.pre_existing_failures_in_results_db), sorted(self.pre_existing_flakes_in_results_db)
+
     def results_db_ignore_message(self) -> str:
+        failures, flakes = self.results_db_ignored_tests()
         parts = []
-        if self.pre_existing_failures_in_results_db:
-            parts.append(f"Ignored pre-existing failures: {', '.join(self.pre_existing_failures_in_results_db)}")
-        if self.pre_existing_flakes_in_results_db:
-            parts.append(f"Ignored pre-existing flakes: {', '.join(sorted(self.pre_existing_flakes_in_results_db))}")
+        if failures:
+            parts.append(f"Ignored pre-existing failures: {', '.join(failures)}")
+        if flakes:
+            parts.append(f"Ignored pre-existing flakes: {', '.join(flakes)}")
         return '\n'.join(parts)
 
     def results_db_ignore_counts_message(self) -> str:
+        failures, flakes = self.results_db_ignored_tests()
         counts = []
-        if self.pre_existing_failures_in_results_db:
-            counts.append(f'{len(self.pre_existing_failures_in_results_db)} pre-existing')
-        if self.pre_existing_flakes_in_results_db:
-            counts.append(f'{len(self.pre_existing_flakes_in_results_db)} flaky')
+        if failures:
+            counts.append(f'{len(failures)} pre-existing')
+        if flakes:
+            counts.append(f'{len(flakes)} flaky')
         return f"Ignored {' and '.join(counts)} failure(s)"
 
     @defer.inlineCallbacks
@@ -740,6 +766,24 @@ class ResultsDBReportMixin(abc.ABC):
         Only the first MAX_FAILURES_TO_CHECK_RESULTS_DB names, sorted, are queried; the rest are
         absent from the result rather than reported as unexcused. Every verdict seen is recorded on
         the step and in the results-db_<prefix>flaky, _flaky_unsupported and _flaky_unknown properties.
+        """
+        verdicts = yield self.flaky_verdicts_using_results_db(new_failures)
+        self.pre_existing_flakes_in_results_db = verdicts.flaky
+        self.unsupported_flakes_in_results_db = verdicts.unsupported
+        self.unknown_flakes_in_results_db = verdicts.unknown
+        self.set_flaky_verdict_properties(verdicts, self.prefix)
+        defer.returnValue(verdicts.excused)
+
+    def set_flaky_verdict_properties(self, verdicts: FlakinessVerdicts, prefix: str):
+        self.setProperty('results-db_' + prefix + 'flaky', verdicts.flaky)
+        self.setProperty('results-db_' + prefix + 'flaky_unsupported', sorted(verdicts.unsupported))
+        self.setProperty('results-db_' + prefix + 'flaky_unknown', sorted(verdicts.unknown))
+
+    @defer.inlineCallbacks
+    def flaky_verdicts_using_results_db(self, new_failures: set[str]) -> Generator[Any, Any, FlakinessVerdicts]:
+        """
+        The results database's flakiness verdicts for `new_failures`, without recording them on the
+        step; pre_existing_flakes_using_results_db() describes which tests are queried and excused.
         """
         tests = sorted(new_failures)[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
         configuration = self.results_db_query_configuration()
@@ -772,20 +816,13 @@ class ResultsDBReportMixin(abc.ABC):
 
             yield self._addToLog(self.results_db_log_name, f'\n{test}: pre-existing-flake={flake_summary}\n')
 
-        self.pre_existing_flakes_in_results_db = flaky
-        self.unsupported_flakes_in_results_db = unsupported
-        self.unknown_flakes_in_results_db = unknown
-        self.setProperty('results-db_' + self.prefix + 'flaky', flaky)
-        self.setProperty('results-db_' + self.prefix + 'flaky_unsupported', sorted(unsupported))
-        self.setProperty('results-db_' + self.prefix + 'flaky_unknown', sorted(unknown))
-
         for action, acted_on in (('Ignored', ignored), ('Would have ignored', shadowed)):
             if acted_on:
                 yield self._addToLog(
                     self.results_db_log_name,
                     f"\n{action} {len(acted_on)} flaky test(s): {', '.join(sorted(acted_on))}\n",
                 )
-        defer.returnValue(set(ignored))
+        defer.returnValue(FlakinessVerdicts(flaky=flaky, unsupported=unsupported, unknown=unknown, excused=set(ignored)))
 
 
 class Contributors(object):

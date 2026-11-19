@@ -4204,6 +4204,36 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
             {'platform': 'mac', 'style': 'release', 'flavor': 'wk2'},
         )
 
+    def test_a_flavor_override_takes_precedence_over_the_flavor_property(self):
+        # A step running more than one driver queries each driver's results under its own flavor.
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        with step.overriding_results_db_flavor('wk1'):
+            self.assertEqual(step.results_db_query_configuration()['flavor'], 'wk1')
+            with step.overriding_results_db_flavor(None):
+                self.assertEqual(step.results_db_query_configuration()['flavor'], 'wk2')
+            self.assertEqual(step.results_db_query_configuration()['flavor'], 'wk1')
+        self.assertEqual(step.results_db_query_configuration()['flavor'], 'wk2')
+        self.assertIsNone(step.results_db_flavor_override)
+
+    @defer.inlineCallbacks
+    def test_flaky_verdicts_are_returned_without_being_recorded_on_the_step(self):
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(lambda cls, tests, **kwargs: defer.succeed((
+            {'flaky.html': FlakyVerdict(flaky_type=ResultsDatabase.DIRTY_TREE_VERDICT, intra_build_evidence=True)}, ''))))
+
+        verdicts = yield step.flaky_verdicts_using_results_db({'flaky.html', 'unknown.html'})
+        self.assertEqual(verdicts.flaky, {'flaky.html': ResultsDatabase.DIRTY_TREE_VERDICT})
+        self.assertEqual(verdicts.unknown, ['unknown.html'])
+        self.assertEqual(verdicts.excused, {'flaky.html'})
+        self.assertEqual(step.pre_existing_flakes_in_results_db, {})
+        self.assertIsNone(self.getProperty('results-db_first_run_flaky'))
+
     def test_glib_queries_include_the_architecture(self):
         self.setup_step(RunWebKitTests())
         self.setProperty('platform', 'wpe')
