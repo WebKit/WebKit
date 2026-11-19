@@ -707,6 +707,14 @@ void SpatialPortalController::promotedChildEventRegionDidChange()
 }
 #endif
 
+static TransformationMatrix rotationOf(const TransformationMatrix& transform)
+{
+    TransformationMatrix::Decomposed4Type decomposition;
+    if (!transform.decompose4(decomposition))
+        return { };
+    return TransformationMatrix::fromQuaternion(decomposition.quaternion);
+}
+
 // The distance, in CSS pixels, from the portal's center to the viewer that hosted content is projected for.
 static constexpr double hostedContentViewerDistance()
 {
@@ -727,10 +735,21 @@ TransformationMatrix SpatialPortalController::hostedContentProjection() const
     if (!portalBox)
         return { };
 
+    TransformationMatrix orbit;
+    if (m_resolvedPortalTransform) {
+        orbit = rotationOf(*m_resolvedPortalTransform);
+        if (auto contentRotation = rotationOf(m_portalTransform.contentTransform()).inverse())
+            orbit.multiply(*contentRotation);
+    }
+
     auto center = FloatRect { portalBox->paddingBoxRect() }.center();
     TransformationMatrix projection;
     projection.translate(center.x(), center.y());
     projection.applyPerspective(hostedContentViewerDistance());
+    projection.scaleNonUniform(1, -1);
+    projection.multiply(orbit);
+    projection.multiply(m_portalTransform.transformAfterAuto);
+    projection.scaleNonUniform(1, -1);
     projection.translate(-center.x(), -center.y());
     return projection;
 }

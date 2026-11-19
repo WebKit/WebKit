@@ -69,6 +69,34 @@ promise_test(async test => {
 }, "A hosted child behind the portal is hit where the scene draws it");
 
 promise_test(async test => {
+    const depth = -200;
+    const portal = createPortal(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    portal.innerHTML = `<div class="content" style="transform: translateZ(${depth}px)"><button style="left: 320px; top: 220px"></button></div>`;
+    const button = portal.querySelector("button");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    const buttonCenter = { x: 340, y: 240 };
+    const perspective = new DOMMatrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -1 / viewerDistance, 0, 0, 0, 1]);
+    const projection = new DOMMatrix().translate(portalCenter.x, portalCenter.y).multiply(perspective).rotateAxisAngle(0, 1, 0, 40).translate(-portalCenter.x, -portalCenter.y);
+    const drawnCenter = projection.transformPoint(new DOMPoint(buttonCenter.x, buttonCenter.y, depth));
+
+    assert_equals(document.elementFromPoint(drawnCenter.x / drawnCenter.w, drawnCenter.y / drawnCenter.w), button, "the button is hit where the scene draws it");
+    assert_not_equals(document.elementFromPoint(buttonCenter.x, buttonCenter.y), button, "the button is not hit where it would be without the portal-transform");
+}, "A hosted child of a portal with a portal-transform is hit where the scene draws it");
+
+promise_test(async test => {
+    const portal = createPortal(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    portal.innerHTML = `<div class="content"><button style="left: 320px; top: 220px"></button></div>`;
+    const button = portal.querySelector("button");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    button.parentElement.style.opacity = "0.5";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    assert_equals(document.elementFromPoint(340, 240), button);
+}, "A promoted child that stays flat is hit where its box is");
+
+promise_test(async test => {
     const portal = createPortal(test);
     portal.innerHTML = `<div class="card small" style="transform: translateZ(60px)"></div><div class="card large"></div>`;
     await waitForHostedPromotedChildren(portal, 2);

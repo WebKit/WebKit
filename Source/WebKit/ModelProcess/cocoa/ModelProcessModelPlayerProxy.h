@@ -346,7 +346,7 @@ private:
 
     float m_pitch { 0 };
 
-    RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
+    RESRT m_transformSRT { RESRTIdentity() }; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
     bool m_transformNeedsUpdateAfterNextLayout { false };
     bool m_entityTransformSetByScript { false };
 

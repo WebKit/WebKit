@@ -771,6 +771,7 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
 
 #if ENABLE(SPATIAL_PORTAL)
     send(Messages::ModelProcessModelPlayer::DidUpdatePortalTransform(transform));
+    updatePortalSceneLayerGeometry();
 #endif
 
     if (!m_nodeID)
@@ -1764,6 +1765,7 @@ void ModelProcessModelPlayerProxy::setPortalTransform(const WebCore::UsedPortalT
 
     computeTransform(effectiveStageModeOperation() == WebCore::StageModeOperation::None);
     updateTransform();
+    updatePortalSceneLayerGeometry();
 }
 
 void ModelProcessModelPlayerProxy::setPortalAction(WebCore::PortalActionKind kind)
@@ -1969,6 +1971,16 @@ void ModelProcessModelPlayerProxy::updatePortalSceneLayerGeometry()
     [m_portalSceneLayerContainer setBounds:CGRectMake(0, 0, width, height)];
     [m_portalSceneLayerContainer setPosition:CGPointZero];
 
+    WebCore::TransformationMatrix sceneTransform { simd_matrix4x4(m_transformSRT.rotation) };
+    sceneTransform.multiply(m_portalTransform.transformAfterAuto);
+
+    WebCore::TransformationMatrix portalToLayer;
+    portalToLayer.translate(width / 2, height / 2);
+    portalToLayer.scaleNonUniform(1, -1);
+    portalToLayer.multiply(sceneTransform);
+    portalToLayer.scaleNonUniform(1, -1);
+    portalToLayer.translate(-width / 2, -height / 2);
+
     for (auto& sceneLayer : m_portalSceneLayers) {
         if (!sceneLayer.layer)
             continue;
@@ -1976,7 +1988,7 @@ void ModelProcessModelPlayerProxy::updatePortalSceneLayerGeometry()
         auto& hostedLayer = sceneLayer.hostedLayer;
         auto quadRect = hostedLayer.quadRectInChildSpace;
 
-        WebCore::TransformationMatrix transform;
+        auto transform = portalToLayer;
         transform.translate(hostedLayer.childOriginInPortal.x(), hostedLayer.childOriginInPortal.y());
         transform.multiply(hostedLayer.transform);
         transform.translate(quadRect.x(), quadRect.y());
