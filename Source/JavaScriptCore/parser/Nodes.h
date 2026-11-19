@@ -38,6 +38,7 @@
 #include "SymbolTable.h"
 #include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
+#include <wtf/FixedVector.h>
 #include <wtf/MathExtras.h>
 #include <wtf/SmallSet.h>
 
@@ -680,17 +681,65 @@ namespace JSC {
         int m_elision;
     };
 
+    class ConstantArrayElements final : public ParserArenaDeletable {
+        JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ConstantArrayElements);
+    public:
+        ConstantArrayElements(std::span<const JSValue> values, std::span<const unsigned> int32DoubleLiteralIndices, IndexingType indexingType)
+            : m_values(values)
+            , m_int32DoubleLiteralIndices(int32DoubleLiteralIndices)
+            , m_indexingType(indexingType)
+        {
+        }
+
+        std::span<const JSValue> values() const LIFETIME_BOUND { return m_values.span(); }
+        IndexingType indexingType() const { return m_indexingType; }
+
+        void forEach(const ConstInvocable<void(JSValue, SourceCodeRepresentation)> auto& functor) const { forEach(values(), m_int32DoubleLiteralIndices.span(), functor); }
+
+        static void forEach(std::span<const JSValue> values, std::span<const unsigned> int32DoubleLiteralIndices, const ConstInvocable<void(JSValue, SourceCodeRepresentation)> auto& functor)
+        {
+            size_t nextInt32DoubleLiteral = 0;
+            for (size_t index = 0; index < values.size(); ++index) {
+                JSValue value = values[index];
+                if (value.isNull()) {
+                    functor(value, SourceCodeRepresentation::Other);
+                    continue;
+                }
+                bool isInt32DoubleLiteral = nextInt32DoubleLiteral < int32DoubleLiteralIndices.size() && int32DoubleLiteralIndices[nextInt32DoubleLiteral] == index;
+                if (isInt32DoubleLiteral)
+                    ++nextInt32DoubleLiteral;
+                functor(value, value.isInt32() && !isInt32DoubleLiteral ? SourceCodeRepresentation::Integer : SourceCodeRepresentation::Double);
+            }
+        }
+
+        static ExpressionNode* createNode(ParserArena&, const JSTokenLocation&, JSValue, SourceCodeRepresentation);
+
+    private:
+        FixedVector<JSValue> m_values;
+        // Ascending indices of elements like `1.0`: an int32 value written as a double literal, which must stay a double constant.
+        FixedVector<unsigned> m_int32DoubleLiteralIndices;
+        IndexingType m_indexingType;
+    };
+
     class ArrayNode final : public ExpressionNode {
     public:
         ArrayNode(const JSTokenLocation&, int elision);
         ArrayNode(const JSTokenLocation&, ElementNode*);
         ArrayNode(const JSTokenLocation&, int elision, ElementNode*);
+        ArrayNode(const JSTokenLocation&, ConstantArrayElements*);
 
         bool isArrayLiteral() const final { return true; }
 
-        NODELETE ArgumentListNode* toArgumentList(ParserArena&, int) const;
+        ArgumentListNode* toArgumentList(ParserArena&, int) const;
 
-        ElementNode* elements() const { return m_element; }
+        // A literal with constantElements() has no ElementNode list, so check that first: a null elements()
+        // alone does not mean the literal is empty.
+        ElementNode* elements() const
+        {
+            ASSERT(!m_constantElements);
+            return m_element;
+        }
+        const ConstantArrayElements* constantElements() const { return m_constantElements; }
 
         // True if any array slot is a hole, either between elements or trailing. Spread-based
         // emission (op_new_array_with_spread, op_call_varargs_with_spread) cannot express holes.
@@ -701,6 +750,7 @@ namespace JSC {
         bool isSimpleArray() const final;
 
         ElementNode* m_element;
+        ConstantArrayElements* m_constantElements { nullptr };
         int m_elision;
     };
 
