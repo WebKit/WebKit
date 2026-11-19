@@ -28,8 +28,8 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "CVUtilities.h"
 #import "Color.h"
-#import "ImageTransferSessionVT.h"
 #import "IntSize.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
@@ -440,17 +440,43 @@ void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 
 static const double rendererLatency = 0.02;
 
+RetainPtr<CVPixelBufferRef> LocalSampleBufferDisplayLayer::displayablePixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    assertIsCurrent(workQueue());
+
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    auto displayableFormat = PlanarImageConverter::displayablePixelFormat(pixelFormat);
+    if (displayableFormat == pixelFormat)
+        return pixelBuffer;
+
+    IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer)) };
+    if (!m_displayablePixelBufferPool || m_displayablePixelFormat != displayableFormat || m_displayablePixelBufferSize != size) {
+        auto pool = createCVPixelBufferPool(size.width(), size.height(), displayableFormat);
+        if (!pool)
+            return nullptr;
+        m_displayablePixelBufferPool = WTF::move(*pool);
+        m_displayablePixelFormat = displayableFormat;
+        m_displayablePixelBufferSize = size;
+    }
+
+    auto result = createCVPixelBufferFromPool(m_displayablePixelBufferPool);
+    if (!result)
+        return nullptr;
+    RetainPtr output = WTF::move(*result);
+    if (!PlanarImageConverter::copyColorPlanes(pixelBuffer, output) || !PlanarImageConverter::copyAlphaPlane(pixelBuffer, output))
+        return nullptr;
+    CVBufferPropagateAttachments(pixelBuffer, output);
+    return output;
+}
+
 void LocalSampleBufferDisplayLayer::enqueueBufferInternal(CVPixelBufferRef pixelBuffer, MediaTime presentationTime)
 {
     assertIsCurrent(workQueue());
 
-    // AVSampleBufferDisplayLayer doesn't support the pixel formats WebKit registers; 32BGRA keeps their alpha.
-    RetainPtr<CVPixelBufferRef> displayedBuffer = pixelBuffer;
-    if (PlanarImageConverter::isRegisteredPixelFormat(CVPixelBufferGetPixelFormatType(pixelBuffer))) {
-        displayedBuffer = ImageTransferSessionVT::convertPixelBuffer(pixelBuffer, kCVPixelFormatType_32BGRA, ImageTransferSessionVT::DestinationColorSpace::Unspecified);
-        if (!displayedBuffer)
-            return;
-    }
+    // AVSampleBufferDisplayLayer doesn't support the pixel formats WebKit registers; they're copied into the closest CoreVideo format.
+    RetainPtr displayedBuffer = displayablePixelBuffer(pixelBuffer);
+    if (!displayedBuffer)
+        return;
 
     auto sampleBuffer = createVideoSampleBuffer(displayedBuffer, PAL::toCMTime(presentationTime));
     auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);

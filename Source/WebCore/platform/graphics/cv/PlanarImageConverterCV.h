@@ -77,6 +77,9 @@ WEBCORE_EXPORT std::optional<OSType> pixelFormat(ChromaSubsampling, SampleFormat
 // One of the formats registered with CoreVideo above. VideoToolbox and AVFoundation don't support them.
 WEBCORE_EXPORT bool isRegisteredPixelFormat(OSType);
 
+// The closest matching CoreVideo built-in pixel format for a WebKit-registered pixel format with alpha; other formats are returned unchanged.
+WEBCORE_EXPORT OSType displayablePixelFormat(OSType);
+
 // The color sample format of the pixel buffer formats that hold samples of the given format without loss. 12-bit samples
 // use the 10-bit formats: stored MSB aligned, all 12 bits are kept.
 WEBCORE_EXPORT std::optional<SampleFormat> pixelBufferSampleFormat(SampleFormat);
@@ -174,6 +177,9 @@ WEBCORE_EXPORT bool copyFromPixelBuffer(CVPixelBufferRef source, size_t left, si
 
 // The pixel buffers have the same size and chroma subsampling. Alpha planes are not copied.
 WEBCORE_EXPORT bool copyColorPlanes(CVPixelBufferRef source, CVPixelBufferRef destination);
+
+// The pixel buffers have the same size and an alpha plane each. 16-bit alpha keeps its top 8 bits in an 8-bit alpha plane.
+WEBCORE_EXPORT bool copyAlphaPlane(CVPixelBufferRef source, CVPixelBufferRef destination);
 
 // The luma of alphaSource becomes the alpha. Alpha spans the whole sample range whatever range the luma is tagged with.
 WEBCORE_EXPORT bool copyLumaToAlphaPlane(CVPixelBufferRef alphaSource, CVPixelBufferRef destination);

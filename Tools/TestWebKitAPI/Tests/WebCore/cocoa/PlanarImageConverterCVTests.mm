@@ -551,6 +551,117 @@ TEST(PlanarImageConverterCV, CopyAlphaPlaneToPackedPixelBuffer)
     EXPECT_FALSE(copyAlphaPlaneToPackedPixelBuffer(source, rgba));
 }
 
+TEST(PlanarImageConverterCV, DisplayablePixelFormat)
+{
+    for (auto format : knownPixelFormats) {
+        auto displayableFormat = displayablePixelFormat(format);
+        if (!isRegisteredPixelFormat(format)) {
+            EXPECT_EQ(displayableFormat, format) << "pixel format " << format;
+            continue;
+        }
+        EXPECT_FALSE(isRegisteredPixelFormat(displayableFormat)) << "pixel format " << format;
+        auto description = pixelFormatDescription(format);
+        auto displayableDescription = pixelFormatDescription(displayableFormat);
+        ASSERT_TRUE(description && displayableDescription) << "pixel format " << format;
+        EXPECT_TRUE(displayableDescription->subsampling == description->subsampling) << "pixel format " << format;
+        EXPECT_EQ(displayableDescription->color, tenBitMSB) << "pixel format " << format;
+        EXPECT_FALSE(displayableDescription->isFullRange) << "pixel format " << format;
+        EXPECT_TRUE(displayableDescription->alpha) << "pixel format " << format;
+    }
+    EXPECT_EQ(displayablePixelFormat(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar), kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar);
+    EXPECT_EQ(displayablePixelFormat(pixelFormatWK422YpCbCr10FullRange16ATriPlanar), kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar);
+    EXPECT_EQ(displayablePixelFormat(kCVPixelFormatType_32BGRA), static_cast<OSType>(kCVPixelFormatType_32BGRA));
+}
+
+static void testCopyAlphaPlane(OSType sourceFormat, OSType destinationFormat)
+{
+    auto description = pixelFormatDescription(sourceFormat);
+    auto destinationDescription = pixelFormatDescription(destinationFormat);
+    ASSERT_TRUE(description && description->alpha && destinationDescription && destinationDescription->alpha);
+    RetainPtr source = createPixelBuffer(sourceFormat);
+    FrameStorage sourceStorage;
+    auto color = description->color.bitDepth > 8 ? tenBitLSB : eightBit;
+    auto frame = allocateFrame(sourceStorage, description->subsampling, color, description->isFullRange, description->alpha);
+    fillFrame(frame);
+    if (description->alpha->bitDepth > 8) {
+        for (size_t y = 0; y < testHeight; ++y) {
+            for (size_t x = 0; x < testWidth; ++x)
+                setSampleAt(*frame.alpha, x, y, ((x * 7 + y * 13) % 256) << 8 | 0x5a);
+        }
+    }
+    ASSERT_TRUE(copyFrame(asSource(frame), source));
+
+    RetainPtr destination = createPixelBuffer(destinationFormat);
+    ASSERT_TRUE(copyAlphaPlane(source, destination));
+
+    ReadOnlyYUVPixelBufferPlanes lockedPlanes { destination };
+    ASSERT_TRUE(lockedPlanes);
+    Borrow planes = lockedPlanes;
+    auto shift = description->alpha->bitDepth - destinationDescription->alpha->bitDepth;
+    for (size_t y = 0; y < testHeight; ++y) {
+        for (size_t x = 0; x < testWidth; ++x)
+            EXPECT_EQ(sampleAt(*planes->alpha(), x, y), sampleAt(PlanarImageConverter::asSource(*frame.alpha), x, y) >> shift) << "at " << x << "," << y;
+    }
+}
+
+TEST(PlanarImageConverterCV, CopyAlphaPlane)
+{
+    testCopyAlphaPlane(pixelFormatWK420YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar);
+    testCopyAlphaPlane(pixelFormatWK422YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar);
+    testCopyAlphaPlane(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar, kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar);
+
+    RetainPtr source = createPixelBuffer(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar);
+    RetainPtr opaque = createPixelBuffer(kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange);
+    RetainPtr smaller = createPixelBuffer(kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar, testWidth - 1, testHeight);
+    EXPECT_FALSE(copyAlphaPlane(source, opaque));
+    EXPECT_FALSE(copyAlphaPlane(opaque, source));
+    EXPECT_FALSE(copyAlphaPlane(source, smaller));
+}
+
+TEST(PlanarImageConverterCV, CopyColorPlanesIntoDisplayablePixelFormat)
+{
+    static constexpr std::array<OSType, 7> registeredFormats {
+        pixelFormatWK420YpCbCr8FullRange8ATriPlanar,
+        pixelFormatWK422YpCbCr8FullRange8ATriPlanar,
+        pixelFormatWK444YpCbCr8FullRange8ATriPlanar,
+        pixelFormatWK420YpCbCr10VideoRange16ATriPlanar,
+        pixelFormatWK420YpCbCr10FullRange16ATriPlanar,
+        pixelFormatWK422YpCbCr10FullRange16ATriPlanar,
+        pixelFormatWK444YpCbCr10FullRange16ATriPlanar,
+    };
+    for (auto format : registeredFormats) {
+        auto description = pixelFormatDescription(format);
+        ASSERT_TRUE(description) << "pixel format " << format;
+        RetainPtr source = createPixelBuffer(format);
+        FrameStorage sourceStorage;
+        auto color = description->color.bitDepth > 8 ? tenBitLSB : eightBit;
+        auto frame = allocateFrame(sourceStorage, description->subsampling, color, description->isFullRange, description->alpha);
+        unsigned shift = color.bitDepth - 8;
+        uint16_t black = description->isFullRange ? 0 : 16 << shift;
+        uint16_t white = description->isFullRange ? (1 << color.bitDepth) - 1 : 235 << shift;
+        for (size_t y = 0; y < frame.u.height; ++y) {
+            for (size_t x = 0; x < frame.u.width; ++x) {
+                setSampleAt(frame.u, x, y, 128 << shift);
+                setSampleAt(frame.v, x, y, 128 << shift);
+            }
+        }
+        setSampleAt(frame.y, 0, 0, black);
+        setSampleAt(frame.y, 1, 0, white);
+        ASSERT_TRUE(copyFrame(asSource(frame), source)) << "pixel format " << format;
+
+        RetainPtr destination = createPixelBuffer(displayablePixelFormat(format));
+        ASSERT_TRUE(copyColorPlanes(source, destination)) << "pixel format " << format;
+
+        ReadOnlyYUVPixelBufferPlanes lockedPlanes { destination };
+        ASSERT_TRUE(lockedPlanes) << "pixel format " << format;
+        Borrow planes = lockedPlanes;
+        EXPECT_EQ(sampleAt(planes->y(), 0, 0), 64 << 6) << "pixel format " << format;
+        EXPECT_EQ(sampleAt(planes->y(), 1, 0), 940 << 6) << "pixel format " << format;
+        EXPECT_EQ(sampleAt(planes->uv(), 0, 0, 0), 512 << 6) << "pixel format " << format;
+        EXPECT_EQ(sampleAt(planes->uv(), 0, 0, 1), 512 << 6) << "pixel format " << format;
+    }
+}
+
 TEST(PlanarImageConverterCV, CopyBiPlanarFrame)
 {
     constexpr auto subsampling = ChromaSubsampling::HorizontalAndVertical;

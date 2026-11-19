@@ -91,6 +91,16 @@ static constexpr std::array registeredPixelFormatDescriptions {
     YUVPixelFormatDescription { pixelFormatWK444YpCbCr10FullRange16ATriPlanar, subsampled444, tenBitMSB, true, sixteenBit },
 };
 
+static constexpr std::array<std::pair<OSType, OSType>, registeredPixelFormatDescriptions.size()> displayablePixelFormats { {
+    { pixelFormatWK420YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar },
+    { pixelFormatWK422YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar },
+    { pixelFormatWK444YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_444YpCbCr10VideoRange_8A_TriPlanar },
+    { pixelFormatWK420YpCbCr10VideoRange16ATriPlanar, kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar },
+    { pixelFormatWK420YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar },
+    { pixelFormatWK422YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+    { pixelFormatWK444YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar },
+} };
+
 // A sample of the given format holding eightBitValue scaled to its bit depth.
 static uint16_t sampleValue(SampleFormat format, unsigned eightBitValue)
 {
@@ -206,6 +216,15 @@ bool isRegisteredPixelFormat(OSType pixelFormat)
     return std::ranges::any_of(registeredPixelFormatDescriptions, [&](auto& description) {
         return description.pixelFormat == pixelFormat;
     });
+}
+
+OSType displayablePixelFormat(OSType pixelFormat)
+{
+    for (auto& [registeredFormat, displayableFormat] : displayablePixelFormats) {
+        if (registeredFormat == pixelFormat)
+            return displayableFormat;
+    }
+    return pixelFormat;
 }
 
 std::optional<SampleFormat> pixelBufferSampleFormat(SampleFormat format)
@@ -376,6 +395,17 @@ bool copyColorPlanes(CVPixelBufferRef source, CVPixelBufferRef destination)
     auto conversion = rangeConversion(sourcePlanes->description().isFullRange, destinationPlanes->description().isFullRange);
     return copyPlane(sourcePlanes->y(), destinationPlanes->y(), conversion, Component::Luma)
         && copyPlane(sourcePlanes->uv(), destinationPlanes->uv(), conversion, Component::Chroma);
+}
+
+bool copyAlphaPlane(CVPixelBufferRef source, CVPixelBufferRef destination)
+{
+    ReadOnlyYUVPixelBufferPlanes lockedSourcePlanes { source };
+    WritableYUVPixelBufferPlanes lockedDestinationPlanes { destination };
+    if (!lockedSourcePlanes || !lockedDestinationPlanes)
+        return false;
+    Borrow sourcePlanes = lockedSourcePlanes;
+    Borrow destinationPlanes = lockedDestinationPlanes;
+    return sourcePlanes->alpha() && destinationPlanes->alpha() && copyPlane(*sourcePlanes->alpha(), *destinationPlanes->alpha());
 }
 
 bool copyLumaToAlpha(CVPixelBufferRef alphaSource, const DestinationPlane& destination)
