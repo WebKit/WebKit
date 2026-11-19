@@ -53,7 +53,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
-    void movingSteps(MovingType, ContainerNode&) final;
+    void movingSteps(MovingType, ContainerNode&, Node&) final;
 
     AtomString m_name;
     AtomString m_registeredId;

@@ -192,6 +192,7 @@ protected:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType , ContainerNode& parentOfInsertedTree) override;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) override;
+    void movingSteps(MovingType, ContainerNode& oldParent, Node& subtreeRoot) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     unsigned parseBorderWidthAttribute(const AtomString&) const;

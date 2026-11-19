@@ -158,6 +158,24 @@ void HTMLFormElement::removingSteps(RemovalType removalType, ContainerNode& oldP
       m_controlsCollection = nullptr; // Avoid leaks since HTMLCollection has a back Ref to this element.
 }
 
+void HTMLFormElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
+{
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
+
+    auto listedElements = copyListedElementsVector();
+    for (auto& listedElement : listedElements) {
+        if (!subtreeRoot.isShadowIncludingInclusiveAncestorOf(listedElement->asHTMLElement()))
+            listedElement->resetFormOwner(FallbackToCurrentForm::No);
+    }
+    auto imageElements = WTF::compactMap(m_imageElements, [](auto& weakPtr) {
+        return RefPtr { weakPtr };
+    });
+    for (auto& imageElement : imageElements) {
+        if (!subtreeRoot.isShadowIncludingInclusiveAncestorOf(imageElement.get()))
+            imageElement->resetFormOwner(FallbackToCurrentForm::No);
+    }
+}
+
 unsigned HTMLFormElement::length()
 {
     return elements()->length();
@@ -678,6 +696,9 @@ void HTMLFormElement::unregisterImgElement(HTMLImageElement& element)
     removeFromPastNamesMap(element);
     bool removed = m_imageElements.removeFirst(&element);
     ASSERT_UNUSED(removed, removed);
+
+    if (auto* nodeLists = this->nodeLists())
+        nodeLists->invalidateCaches();
 }
 
 Ref<HTMLFormControlsCollection> HTMLFormElement::elements()

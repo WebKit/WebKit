@@ -24,6 +24,8 @@
 
 namespace WebCore {
 
+enum class FallbackToCurrentForm : bool { No, Yes };
+
 // https://html.spec.whatwg.org/multipage/forms.html#form-associated-element
 class FormAssociatedElement {
 public:
@@ -44,13 +46,13 @@ public:
     void setFormSetByParser(HTMLFormElement* form) { ASSERT(!m_formSetByParser); m_formSetByParser = form; }
     virtual void elementInsertedIntoAncestor(Element&, Node::InsertionType);
     virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
+    virtual void resetFormOwner(FallbackToCurrentForm) = 0;
 
     NODELETE virtual FormAssociatedElement* asFormAssociatedElement() = 0;
 
 protected:
     FormAssociatedElement() = default;
 
-    virtual void resetFormOwner() = 0;
     virtual void setFormInternal(RefPtr<HTMLFormElement>&&);
 
 private:

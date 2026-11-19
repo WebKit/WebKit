@@ -128,6 +128,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
+    void movingSteps(MovingType, ContainerNode&, Node& subtreeRoot) final;
     void finishParsingChildren() final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

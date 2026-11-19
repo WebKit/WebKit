@@ -133,7 +133,7 @@ HTMLImageElement::~HTMLImageElement()
         page->removeIndividuallyPlayingAnimationElement(*this);
 }
 
-void HTMLImageElement::resetFormOwner()
+void HTMLImageElement::resetFormOwner(FallbackToCurrentForm)
 {
     setForm(HTMLFormElement::findClosestFormAncestor(*this));
 }
@@ -614,7 +614,7 @@ Node::NeedsPostConnectionSteps HTMLImageElement::insertionSteps(InsertionType in
 {
     FormAssociatedElement::elementInsertedIntoAncestor(*this, insertionType);
     if (!form())
-        resetFormOwner();
+        resetFormOwner(FallbackToCurrentForm::Yes);
 
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
@@ -659,9 +659,9 @@ void HTMLImageElement::removingSteps(RemovalType removalType, ContainerNode& old
 #endif
 }
 
-void HTMLImageElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void HTMLImageElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    HTMLElement::movingSteps(movingType, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
 
     if (!m_parsedUsemap.isNull()) {
         if (movingType.didRemoveFromOldTreeScope)

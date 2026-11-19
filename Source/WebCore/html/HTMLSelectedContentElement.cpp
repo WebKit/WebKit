@@ -93,9 +93,9 @@ void HTMLSelectedContentElement::removingSteps(RemovalType removalType, Containe
     recalculateDisabledness();
 }
 
-void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    HTMLElement::movingSteps(movingType, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
 
     RefPtr oldSelect = m_owningSelect;
     bool wasDisabled = m_isDisabled;

@@ -1533,7 +1533,7 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
     }
 }
 
-void Node::movingSteps(MovingType, ContainerNode&)
+void Node::movingSteps(MovingType, ContainerNode&, Node&)
 {
     setEventTargetFlag(EventTargetFlag::IsInShadowTree, treeScope().rootNode().isShadowRoot());
 

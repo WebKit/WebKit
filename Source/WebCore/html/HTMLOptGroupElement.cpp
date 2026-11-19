@@ -160,9 +160,9 @@ void HTMLOptGroupElement::removingSteps(RemovalType removalType, ContainerNode& 
     }
 }
 
-void HTMLOptGroupElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void HTMLOptGroupElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    HTMLElement::movingSteps(movingType, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
 
     RefPtr oldSelect = m_ownerSelect;
     RefPtr newSelect = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes);
