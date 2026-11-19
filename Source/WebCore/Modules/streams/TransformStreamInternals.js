@@ -50,7 +50,8 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     if (writableStrategy === @undefined)
         writableStrategy = { };
 
-    let transformerDict = { };
+    // We set __proto__ to null so property assignments can never hit an Object.prototype setter installed by page script.
+    let transformerDict = { __proto__: null };
     if (transformer !== null) {
         if ("start" in transformer) {
             transformerDict["start"] = transformer["start"];
@@ -82,7 +83,7 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
 
     const internalTransformStream = {};
     const startPromiseCapability = @newPromiseCapability(@Promise);
-    const [readable, writable] = @initializeTransformStream(internalTransformStream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+    const streams = @initializeTransformStream(internalTransformStream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
     @setUpTransformStreamDefaultControllerFromTransformer(internalTransformStream, transformer, transformerDict);
 
     if ("start" in transformerDict) {
@@ -97,7 +98,7 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     } else
         startPromiseCapability.resolve.@call();
 
-    return [internalTransformStream, readable, writable];
+    return [internalTransformStream, streams[0], streams[1]];
 }
 
 function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)
@@ -115,7 +116,7 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
 
     const stream = {};
     const startPromiseCapability = @newPromiseCapability(@Promise);
-    const [readable, writable] = @initializeTransformStream(stream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+    const streams = @initializeTransformStream(stream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
 
     const controller = new @TransformStreamDefaultController(@isTransformStream);
     @setUpTransformStreamDefaultController(stream, controller, transformAlgorithm, flushAlgorithm);
@@ -126,7 +127,7 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
         startPromiseCapability.reject.@call(@undefined, error);
     });
 
-    return [stream, readable, writable];
+    return [stream, streams[0], streams[1]];
 }
 
 function initializeTransformStream(stream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)

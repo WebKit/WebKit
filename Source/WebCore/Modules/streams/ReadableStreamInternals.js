@@ -249,7 +249,9 @@ function readableStreamTee(stream, shouldClone)
 
     const reader = @acquireReadableStreamDefaultReader(stream);
 
+    // We set __proto__ to null so property assignments can never hit an Object.prototype setter installed by page script.
     const teeState = {
+        __proto__: null,
         stream: stream,
         canceled1: false,
         canceled2: false,
