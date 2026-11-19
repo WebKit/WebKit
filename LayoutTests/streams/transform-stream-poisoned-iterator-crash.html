@@ -17,17 +17,15 @@ if (window.testRunner) {
 // the C++ side then treats those objects as JSReadableStream/JSWritableStream
 // and dereferences attacker-controlled memory.
 
-function check(label, fn) {
+function check(label, fn, isTypeErrorExpected) {
+    let result;
     let message;
     try {
         fn();
-        message = "FAIL: " + label + " did not throw";
     } catch (e) {
-        if (e instanceof TypeError)
-            message = "PASS: " + label + " threw TypeError";
-        else
-            message = "FAIL: " + label + " threw " + e;
+        result = e;
     }
+    message = result ? `FAIL: ${label} threw ${result}` : `PASS: ${label} did not throw`;
     const div = document.createElement("div");
     div.textContent = message;
     document.getElementById("result").appendChild(div);
@@ -41,6 +39,7 @@ Array.prototype[Symbol.iterator] = function() {
     let i = 0;
     return {
         next() {
+            console.log("poisoned next called");
             if (i >= arr.length)
                 return { done: true };
             let val = arr[i];
