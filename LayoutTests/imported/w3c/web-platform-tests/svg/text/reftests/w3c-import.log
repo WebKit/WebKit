@@ -68,12 +68,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001-ref.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-ref.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill.svg
@@ -128,12 +122,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-positioning-list-combining-marks-indexing.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-positioning-list-combining-marks-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-positioning-list-combining-marks.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001-ref.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002-ref.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-transform-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-transform-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-transform-001.html

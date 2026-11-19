@@ -14,12 +14,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/inline-size-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/inline-size-valid.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/shape-inside-invalid.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/shape-inside-valid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/shape-margin-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/shape-margin-valid.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/shape-subtract-invalid.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/shape-subtract-valid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-anchor-computed.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-anchor-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-anchor-valid.svg

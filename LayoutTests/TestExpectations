@@ -3042,8 +3042,6 @@ webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm
 webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-bidi-controls-anchors-1.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-bidi-controls-anchors-2.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-003.svg [ ImageOnlyFailure ]
@@ -3055,8 +3053,6 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201.svg [ Ima
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-003.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image.html [ Skip ]
 
