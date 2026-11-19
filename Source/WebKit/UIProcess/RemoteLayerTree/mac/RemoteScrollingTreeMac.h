@@ -32,6 +32,7 @@
 #include "RemoteScrollingCoordinator.h"
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingTree.h>
+#include <WebCore/WebCoreCALayerExtras.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -92,6 +93,28 @@ private:
     void lockLayersForHitTesting() final WTF_ACQUIRES_LOCK(m_layerHitTestMutex);
     void unlockLayersForHitTesting() final WTF_RELEASES_LOCK(m_layerHitTestMutex);
 
+    // A wheel event hit-tests the layer tree several times (event listener regions, then the scrolling node to stop spring
+    // animations and to handle the event), and each test needs the list of layers under the point. The list is kept until
+    // the hit test lock is released or layers move (a scrolling node scrolls or layer positions are applied).
+    struct WheelHitTestLayers {
+        void invalidate()
+        {
+            isValid = false;
+            scrolledContentsLayer = nullptr;
+            layers.shrink(0);
+        }
+
+        bool isValid { false };
+        uint64_t layerPositionGeneration { 0 };
+        RetainPtr<CALayer> scrolledContentsLayer;
+        WebCore::FloatPoint pointInScrolledContentsLayer;
+        Vector<WebCore::LayerAndPoint, 16> layers; // Front to back.
+        bool hasAnyNonInteractiveScrollingLayers { false };
+    };
+    const WheelHitTestLayers& wheelHitTestLayersAtPoint(WebCore::FloatPoint) const WTF_REQUIRES_LOCK(m_layerHitTestMutex);
+
+    void applyLayerPositionsInternal() final WTF_REQUIRES_LOCK(m_treeLock);
+
     void startPendingScrollAnimations() WTF_REQUIRES_LOCK(m_treeLock);
 
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
@@ -109,6 +132,8 @@ private:
     HashMap<WebCore::ScrollingNodeID, WebCore::RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
 
     mutable Lock m_layerHitTestMutex;
+    mutable WheelHitTestLayers m_wheelHitTestLayers WTF_GUARDED_BY_LOCK(m_layerHitTestMutex);
+    std::atomic<uint64_t> m_layerPositionGeneration { 0 }; // Bumped when layers move; a kept wheel hit test is only reused within one generation.
 
     Condition m_waitingForBeganEventCondition;
     bool m_receivedBeganEventFromMainThread WTF_GUARDED_BY_LOCK(m_treeLock) { false };

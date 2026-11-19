@@ -44,8 +44,10 @@
 #import <WebCore/ScrollingTreeFrameScrollingNodeMac.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
+#import <WebCore/TransformationMatrix.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/SetForScope.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
@@ -210,6 +212,7 @@ void RemoteScrollingTreeMac::setRubberBandingInProgressForNode(ScrollingNodeID n
 
 void RemoteScrollingTreeMac::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction action)
 {
+    ++m_layerPositionGeneration;
     ScrollingTree::scrollingTreeNodeDidScroll(node, action);
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -443,7 +446,15 @@ void RemoteScrollingTreeMac::lockLayersForHitTesting()
 
 void RemoteScrollingTreeMac::unlockLayersForHitTesting()
 {
+    m_wheelHitTestLayers.invalidate();
     m_layerHitTestMutex.unlock();
+}
+
+void RemoteScrollingTreeMac::applyLayerPositionsInternal()
+{
+    RemoteScrollingTree::applyLayerPositionsInternal();
+    // This moves layers without a scroll (after a commit, outside the hit test lock), so a kept wheel hit test must not be reused.
+    ++m_layerPositionGeneration;
 }
 
 static std::optional<ScrollingNodeID> scrollingNodeIDForLayer(CALayer *layer)
@@ -478,6 +489,35 @@ static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNod
     return false;
 }
 
+static FloatPoint pointInScrolledContentsLayer(const ScrollingTreeFrameScrollingNode& rootScrollingNode, FloatPoint point)
+{
+    auto rootContentsLayerPosition = LocalFrameView::positionForRootContentLayer(rootScrollingNode.currentScrollPosition(), { }, rootScrollingNode.obscuredContentInsets(), rootScrollingNode.headerHeight());
+    point.moveBy(rootContentsLayerPosition);
+    return point;
+}
+
+const RemoteScrollingTreeMac::WheelHitTestLayers& RemoteScrollingTreeMac::wheelHitTestLayersAtPoint(FloatPoint point) const
+{
+    RefPtr rootScrollingNode = rootNode();
+    ASSERT(rootScrollingNode);
+
+    RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
+    auto pointInContentsLayer = pointInScrolledContentsLayer(*rootScrollingNode, point);
+
+    auto& hitTestLayers = m_wheelHitTestLayers;
+    auto layerPositionGeneration = m_layerPositionGeneration.load();
+    if (hitTestLayers.isValid && hitTestLayers.layerPositionGeneration == layerPositionGeneration && hitTestLayers.scrolledContentsLayer == scrolledContentsLayer && hitTestLayers.pointInScrolledContentsLayer == pointInContentsLayer)
+        return hitTestLayers;
+
+    hitTestLayers.hasAnyNonInteractiveScrollingLayers = false;
+    hitTestLayers.layers = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, scrolledContentsLayer.get(), pointInContentsLayer, hitTestLayers.hasAnyNonInteractiveScrollingLayers);
+    hitTestLayers.scrolledContentsLayer = WTF::move(scrolledContentsLayer);
+    hitTestLayers.pointInScrolledContentsLayer = pointInContentsLayer;
+    hitTestLayers.layerPositionGeneration = layerPositionGeneration;
+    hitTestLayers.isValid = true;
+    return hitTestLayers;
+}
+
 RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoint point)
 {
     RefPtr rootScrollingNode = rootNode();
@@ -485,25 +525,21 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
         return nullptr;
 
     ASSERT_WITH_SECURITY_IMPLICATION(m_layerHitTestMutex.isLocked());
+    assertIsHeld(m_layerHitTestMutex);
 
-    RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
+    auto& hitTestLayers = wheelHitTestLayersAtPoint(point);
+    Borrow layersAtPoint = hitTestLayers.layers;
+    bool hasAnyNonInteractiveScrollingLayers = hitTestLayers.hasAnyNonInteractiveScrollingLayers;
 
-    auto rootContentsLayerPosition = LocalFrameView::positionForRootContentLayer(rootScrollingNode->currentScrollPosition(), { }, rootScrollingNode->obscuredContentInsets(), rootScrollingNode->headerHeight());
-    auto pointInContentsLayer = point;
-    pointInContentsLayer.moveBy(rootContentsLayerPosition);
-
-    bool hasAnyNonInteractiveScrollingLayers = false;
-    const Vector layersAtPoint = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, scrolledContentsLayer.get(), pointInContentsLayer, hasAnyNonInteractiveScrollingLayers);
-
-    LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " (converted to layer point " << pointInContentsLayer << ") found " << layersAtPoint.size() << " layers");
+    LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " (converted to layer point " << hitTestLayers.pointInScrolledContentsLayer << ") found " << layersAtPoint->size() << " layers");
 #if !LOG_DISABLED
     for (auto [layer, point] : layersAtPoint)
         LOG_WITH_STREAM(UIHitTesting, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer.get()));
 #endif
 
-    if (layersAtPoint.size()) {
+    if (layersAtPoint->size()) {
         RetainPtr<CALayer> frontmostInteractiveLayer;
-        for (size_t i = 0 ; i < layersAtPoint.size() ; i++) {
+        for (size_t i = 0 ; i < layersAtPoint->size() ; i++) {
             auto [layer, point] = layersAtPoint[i];
 
             if (!layerEventRegionContainsPoint(layer.get(), point))
@@ -531,7 +567,7 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
 
             // This layer may be scrolled by some other layer further back which may itself be non-interactive.
             if (hasAnyNonInteractiveScrollingLayers) {
-                for (size_t j = i + 1; j < layersAtPoint.size() ; j++) {
+                for (size_t j = i + 1; j < layersAtPoint->size() ; j++) {
                     auto [behindLayer, behindPoint] = layersAtPoint[j];
                     if (RefPtr scrollingNode = scrollingNodeForLayer(behindLayer, behindPoint))
                         return scrollingNode;
@@ -600,12 +636,48 @@ OptionSet<EventListenerRegionType> RemoteScrollingTreeMac::eventListenerRegionTy
         return { };
 
     ASSERT_WITH_SECURITY_IMPLICATION(m_layerHitTestMutex.isLocked());
+    assertIsHeld(m_layerHitTestMutex);
 
-    auto rootContentsLayer = rootScrollingNode->rootContentsLayer();
+    RetainPtr rootContentsLayer = rootScrollingNode->rootContentsLayer();
+    RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
 
-    return eventRegionForPoint(rootScrollingNode->rootContentsLayer().get(), point).transform([&point](const WebCore::EventRegion& eventRegion) {
-        return eventRegion.eventListenerRegionTypesForPoint(roundedIntPoint(point));
-    }).value_or(OptionSet<EventListenerRegionType> { });
+    // The shared walk (wheelHitTestLayersAtPoint()) starts at the scrolled contents layer. Its part below the root contents layer
+    // is the same walk as eventRegionForPoint(rootContentsLayer, point) only if it enters the root contents layer the same way:
+    // as a direct sublayer, not clipped or masked above it, through the model layer, at exactly the same point. This is checked
+    // before walking, so that otherwise this test costs exactly the original walk.
+    bool sharedWalkMatchesRootContentsLayerWalk = [rootContentsLayer superlayer] == scrolledContentsLayer
+        && ![scrolledContentsLayer masksToBounds] && ![scrolledContentsLayer mask]
+        && ![[rootContentsLayer animationKeys] count]
+        && TransformationMatrix { [rootContentsLayer transform] }.isInvertible()
+        && CGPointEqualToPoint([rootContentsLayer convertPoint:pointInScrolledContentsLayer(*rootScrollingNode, point) fromLayer:scrolledContentsLayer.get()], point);
+    if (!sharedWalkMatchesRootContentsLayerWalk) {
+        return eventRegionForPoint(rootContentsLayer.get(), point).transform([&point](const WebCore::EventRegion& eventRegion) {
+            return eventRegion.eventListenerRegionTypesForPoint(roundedIntPoint(point));
+        }).value_or(OptionSet<EventListenerRegionType> { });
+    }
+
+    auto& hitTestLayers = wheelHitTestLayersAtPoint(point);
+
+    auto isInRootContentsLayer = [&](CALayer *layer) {
+        for (RetainPtr ancestor = [layer superlayer]; ancestor; ancestor = [ancestor superlayer]) {
+            if (ancestor == rootContentsLayer)
+                return true;
+        }
+        return false;
+    };
+
+    // Like eventRegionForPoint(rootContentsLayer), the frontmost layer below the root contents layer whose event region
+    // contains the point decides.
+    for (auto [layer, layerPoint] : borrow(hitTestLayers.layers)) {
+        if (!isInRootContentsLayer(layer.get()) || !layerEventRegionContainsPoint(layer.get(), layerPoint))
+            continue;
+
+        return eventRegionForLayer(layer.get()).transform([&layerPoint](const WebCore::EventRegion& eventRegion) {
+            return eventRegion.eventListenerRegionTypesForPoint(roundedIntPoint(layerPoint));
+        }).value_or(OptionSet<EventListenerRegionType> { });
+    }
+
+    return { };
 }
 #endif
 
