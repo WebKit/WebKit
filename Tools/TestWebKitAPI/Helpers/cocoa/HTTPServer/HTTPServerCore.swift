@@ -421,7 +421,7 @@ extension HTTPServerCore {
         sec_protocol_options_set_local_identity(securityOptions, sec_identity_create(identity)!)
 
         if let verifier {
-            sec_protocol_options_set_peer_authentication_required(securityOptions, true)
+            sec_protocol_options_set_peer_authentication_optional(securityOptions, true)
             sec_protocol_options_set_verify_block(securityOptions, verifier, .main)
         }
 
@@ -451,7 +451,7 @@ extension HTTPServerCore {
         }
 
         if let verifier {
-            sec_protocol_options_set_peer_authentication_required(securityOptions, true)
+            sec_protocol_options_set_peer_authentication_optional(securityOptions, true)
             sec_protocol_options_set_verify_block(securityOptions, verifier, .main)
         }
 

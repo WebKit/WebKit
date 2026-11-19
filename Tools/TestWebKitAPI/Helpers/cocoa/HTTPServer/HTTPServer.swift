@@ -258,8 +258,8 @@ public struct HTTPServer: ~Copyable {
     /// - Parameters:
     ///   - protocol: The HTTP protocol to use for this server.
     ///   - requiresClientCertificate: Whether the server asks clients for a certificate during the TLS handshake. The
-    ///     server accepts any certificate a client presents. This has no effect on the `.http` protocol, which has no
-    ///     TLS handshake.
+    ///     server accepts any certificate a client presents, and clients that present none. This has no effect on the
+    ///     `.http` protocol, which has no TLS handshake.
     ///   - route: A group of routes that correspond to a mapping of request paths to responses.
     /// - Throws: Any error that happens during creation of the server.
     public init(protocol: `Protocol`, requiresClientCertificate: Bool = false, @RouteBuilder _ route: () -> Route) throws {

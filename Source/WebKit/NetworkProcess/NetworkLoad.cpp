@@ -463,6 +463,8 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negot
     
     if (RefPtr pendingDownload = m_task->pendingDownload())
         protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTF::move(completionHandler));
+    else if (scheme == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested && m_parameters.storedCredentialsPolicy != StoredCredentialsPolicy::Use)
+        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, { });
     else
         protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
 }

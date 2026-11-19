@@ -156,6 +156,55 @@ struct ChallengeTests {
 
         #expect(authenticationMethods == [NSURLAuthenticationMethodServerTrust, NSURLAuthenticationMethodClientCertificate])
     }
+
+    @Test
+    func noClientCertificateForRequestsWithoutCredentials() async throws {
+        var server = try HTTPServer(protocol: .https, requiresClientCertificate: true) {
+            Route("/", headerFields: ["Access-Control-Allow-Origin": "http://example.com", "Access-Control-Allow-Credentials": "true"]) {
+                "hello"
+            }
+        }
+
+        let webView = WKWebView()
+        let delegate = TestNavigationDelegate()
+        var authenticationMethods: [String] = []
+        delegate.didReceiveAuthenticationChallenge = { _, challenge, completionHandler in
+            authenticationMethods.append(challenge.protectionSpace.authenticationMethod)
+
+            if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+                completionHandler(.useCredential, challenge.protectionSpace.serverTrust.map(URLCredential.init(trust:)))
+                return
+            }
+
+            completionHandler(
+                .useCredential,
+                URLCredential(identity: TestCertificates.identity, certificates: [TestCertificates.certificate], persistence: .none)
+            )
+        }
+        webView.navigationDelegate = delegate
+
+        webView.loadHTMLString("<body>", baseURL: URL(string: "http://example.com/"))
+        try await delegate.waitForDidFinishNavigation()
+
+        try await server.run { configuration in
+            func fetch(credentials: String) async throws -> String {
+                try await webView.callJavaScript(
+                    returning: String.self,
+                    arguments: ["url": configuration.address.absoluteString, "credentials": credentials]
+                ) {
+                    "const response = await fetch(url, { credentials }); return await response.text();"
+                }
+            }
+
+            let resultWithoutCredentials = try await fetch(credentials: "omit")
+            #expect(resultWithoutCredentials == "hello")
+            #expect(!authenticationMethods.contains(NSURLAuthenticationMethodClientCertificate))
+
+            let resultWithCredentials = try await fetch(credentials: "include")
+            #expect(resultWithCredentials == "hello")
+            #expect(authenticationMethods.contains(NSURLAuthenticationMethodClientCertificate))
+        }
+    }
     #endif // HAVE_SEC_KEY_PROXY
 
     #if hasAttribute(diagnose)
