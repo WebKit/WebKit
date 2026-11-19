@@ -1,0 +1,6 @@
+
+PASS treat-as-public-address to loopback: no permission required.
+PASS treat-as-public-address to loopback (same-origin): no permission required.
+PASS treat-as-public-address to local: no permission required.
+PASS treat-as-public-address to public: no permission required.
+

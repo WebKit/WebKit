@@ -30,12 +30,16 @@
 import unittest
 
 from collections import OrderedDict
+from pyfakefs.fake_filesystem_unittest import TestCaseMixin
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.filesystem import FileSystem
 
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_configuration import *
+
+from webkitpy.port.test import TestPort, add_unit_tests_to_mock_filesystem
 
 from webkitcorepy import OutputCapture
 
@@ -196,6 +200,19 @@ class MiscTests(Base):
                         "expectations:2 Path does not exist. non-existent-test.html")
             self.assertEqual(str(e), warnings)
 
+    def test_disabled_fallback_removed_now_warns(self):
+        # The dead `-disabled` fallback is gone: a test present only as
+        # `<name>-disabled` on disk (i.e. renamed to disable it, per the old
+        # convention) now warns as missing rather than being silently
+        # accepted.
+        try:
+            filesystem = self._port.host.filesystem
+            filesystem.write_text_file(filesystem.join(self._port.layout_tests_dir(), 'renamed.html-disabled'), 'content')
+            self.parse_exp("Bug(rniwa) renamed.html [ Failure ]", is_lint_mode=True)
+            self.assertFalse(True, "ParseError wasn't raised")
+        except ParseError as e:
+            self.assertEqual(str(e), "expectations:1 Path does not exist. renamed.html")
+
     def test_parse_warnings_are_logged_if_not_in_lint_mode(self):
         with OutputCapture() as captured:
             self.parse_exp('-- this should be a syntax error', is_lint_mode=False)
@@ -335,6 +352,33 @@ class SkippedTests(Base):
             captured.root.log.getvalue(),
             'The following test foo/bar/baz.html from the Skipped list doesn\'t exist\n',
         )
+
+    def test_overlapping_skipped_entries_most_specific_wins_in_any_order(self):
+        # A list, not a set, so the order of the input is kept: each order must give the same winner.
+        for skips in (['failures/expected', 'failures/expected/text.html'],
+                      ['failures/expected/text.html', 'failures/expected']):
+            port = MockHost().port_factory.get('mac')
+            port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
+            expectations_dict = OrderedDict()
+            expectations_dict['expectations'] = ''
+            port.expectations_dict = lambda **kwargs: expectations_dict
+            port.skipped_layout_tests = lambda **kwargs: skips
+            exp = TestExpectations(port, ['failures/expected/text.html'])
+            exp.parse_all_expectations()
+            self.assertEqual(exp.model().get_expectation_line('failures/expected/text.html').name, 'failures/expected/text.html')
+
+    def test_test_list_line_supersedes_synthetic_pass(self):
+        port = MockHost().port_factory.get('mac')
+        port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = ''
+        port.expectations_dict = lambda **kwargs: expectations_dict
+        exp = TestExpectations(port, ['failures/expected/text.html'])
+        exp.parse_all_expectations(test_list_expectations=[('test-list.txt', 1, 'Bug(x) failures/expected/text.html [ Failure ]')])
+        lines = exp.model().get_expectation_lines('failures/expected/text.html')
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0].filename, 'test-list.txt')
+        self.assertEqual(exp.model().get_expectations('failures/expected/text.html'), set([FAIL]))
 
 
 class ExpectationSyntaxTests(Base):
@@ -510,6 +554,96 @@ Bug(y) failures/expected/text.html [ Failure ]
                                      "Bug(test) [ XP ] passes/text.html [ Failure ]\n")
 
 
+class VariantMatchingTests(Base):
+    """Tests for _collect_matching_tests: a file-level entry covers variants.
+
+    Note on [ Skip ] expectations: Skip is parsed as a modifier, so
+    parsed_expectations stores PASS (not SKIP).  We verify coverage via
+    has_modifier(test, SKIP) rather than get_expectations(test).
+    """
+
+    def parse_exp_with_tests(self, expectations, test_list):
+        """Like parse_exp but with an explicit test list instead of get_basic_tests()."""
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = expectations
+        self._port.expectations_dict = lambda **kwargs: expectations_dict
+        self._exp = TestExpectations(self._port, test_list)
+        self._exp.parse_all_expectations()
+
+    def _is_skipped(self, test):
+        """Return True if the model has a Skip modifier applied to test."""
+        return self._exp.model().has_modifier(test, SKIP)
+
+    def test_file_entry_matches_query_variant(self):
+        # A bare file entry foo.html [ Skip ] must cover foo.html?bar
+        # (query-string variant).  Before the fix, _collect_matching_tests
+        # only did exact-string lookup for is_file=True lines, so
+        # foo.html?bar was never added to matching_tests and the Skip was
+        # silently ignored for the variant — leaving it with only the
+        # default PASS expectation and no Skip modifier.
+        self.parse_exp_with_tests(
+            'Bug(test) failures/expected/text.html [ Skip ]',
+            ['failures/expected/text.html',
+             'failures/expected/text.html?var=1',
+             'failures/expected/text.html#frag'],
+        )
+        self.assertTrue(self._is_skipped('failures/expected/text.html?var=1'),
+                        'query-string variant must inherit Skip from file-level entry')
+        self.assertTrue(self._is_skipped('failures/expected/text.html#frag'),
+                        'fragment variant must inherit Skip from file-level entry')
+
+    def test_specific_variant_wins_over_file_entry(self):
+        # When a more-specific foo.html?bar [ Failure ] entry also exists,
+        # it must win over the file-level foo.html [ Skip ] for that variant,
+        # while the file-level entry still covers the other variants.
+        # _already_seen_better_match keeps the longer-path entry.
+        self.parse_exp_with_tests(
+            'Bug(test) failures/expected/text.html [ Skip ]\n'
+            'Bug(test) failures/expected/text.html?var=1 [ Failure ]',
+            ['failures/expected/text.html',
+             'failures/expected/text.html?var=1',
+             'failures/expected/text.html?var=2'],
+        )
+        # The variant-specific Failure entry wins for the variant: not Skipped.
+        self.assertFalse(self._is_skipped('failures/expected/text.html?var=1'),
+                         'specific variant entry must override file-level Skip')
+        self.assert_exp('failures/expected/text.html?var=1', FAIL)
+        # The file-level Skip still applies to the bare file and to a variant
+        # with no entry of its own.
+        self.assertTrue(self._is_skipped('failures/expected/text.html'),
+                        'file-level Skip must still apply to the bare file')
+        self.assertTrue(self._is_skipped('failures/expected/text.html?var=2'),
+                        'file-level Skip must still apply to other variants')
+
+    def test_directory_entry_does_not_match_sibling_with_same_prefix(self):
+        # A directory entry like `failures/expected [ Skip ]` must match
+        # tests INSIDE that directory but NOT a sibling directory or file
+        # whose name happens to share the prefix (e.g. `failures/expected2`).
+        # The directory branch's prefix match relies on the path being
+        # normalized with a trailing `/`; if a future refactor collapsed
+        # the file/directory branches into a single startswith check
+        # without preserving that invariant, `failures/expected` would
+        # spuriously match `failures/expectedfoo.html` etc.
+        self.parse_exp_with_tests(
+            'Bug(test) failures/expected [ Skip ]',
+            ['failures/expected/text.html',
+             'failures/expected/image.html',
+             'failures/expected-not-this-one/text.html',
+             'failures/expectedfoo.html'],
+        )
+        # Tests inside the directory ARE covered.
+        self.assertTrue(self._is_skipped('failures/expected/text.html'),
+                        'file inside the directory must inherit directory Skip')
+        self.assertTrue(self._is_skipped('failures/expected/image.html'),
+                        'file inside the directory must inherit directory Skip')
+        # Sibling directory whose name shares the prefix is NOT covered.
+        self.assertFalse(self._is_skipped('failures/expected-not-this-one/text.html'),
+                         'sibling directory with shared prefix must NOT inherit Skip')
+        # Sibling file whose name shares the prefix is NOT covered.
+        self.assertFalse(self._is_skipped('failures/expectedfoo.html'),
+                         'sibling file with shared prefix must NOT inherit Skip')
+
+
 class PrintExpectationsTests(Base):
     def test_absent(self):
         self.parse_exp('')
@@ -551,6 +685,40 @@ class PrintExpectationsTests(Base):
         for line, exp_str in zip(lines, exp_strs):
             self.assertEqual(str(line), exp_str)
         self.assertEqual(lines.count(main_line), 1)
+
+    def statuses(self, test):
+        return [status.name for status, _ in self._exp._model.get_classified_expectation_lines(test)]
+
+    def test_statuses_overrides_with_dir(self):
+        self.parse_exp('\n'.join(['Bug(exp) failures/expected [ Failure ]',
+                                  'Bug(override) failures/expected/text.html [ ImageOnlyFailure ]',
+                                  'Bug(override2) failures [ ImageOnlyFailure ]']))
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'EFFECTIVE', 'SHADOWED'])
+
+    def test_statuses_shadowed_line_before_a_later_file_winner(self):
+        # The shadowed line never took effect, even though it comes before the line that did.
+        self.parse_exp('Bug(exp) failures/expected [ Failure ]\nBug(shadowed) failures [ ImageOnlyFailure ]',
+                       overrides='Bug(override) failures/expected/text.html [ ImageOnlyFailure ]')
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'SHADOWED', 'EFFECTIVE'])
+
+    def test_statuses_skipped_line_is_effective(self):
+        self._port.skipped_layout_tests = lambda **kwargs: {'failures/expected/text.html'}
+        self.parse_exp('Bug(exp) failures/expected/text.html [ Failure ]')
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'EFFECTIVE'])
+
+    def test_statuses_disjoint_configurations_both_apply_in_lint_mode(self):
+        self.parse_exp('Bug(a) [ Release ] failures/expected/text.html [ Failure ]\n'
+                       'Bug(b) [ Debug ] failures/expected/text.html [ ImageOnlyFailure ]', is_lint_mode=True)
+        self.assertFalse(self._exp.has_warnings())
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'EFFECTIVE'])
+
+    def test_statuses_unknown_test_is_empty(self):
+        self.parse_exp('')
+        self.assertEqual(self.statuses('some_unknown_file.html'), [])
+
+    def test_statuses_test_without_an_expectation_is_its_synthetic_pass(self):
+        self.parse_exp('')
+        self.assertEqual(self.statuses('passes/text.html'), ['EFFECTIVE'])
 
 
 class RebaseliningTest(Base):
@@ -755,3 +923,74 @@ class TestExpectationSerializationTests(unittest.TestCase):
         self.assert_round_trip('[ FOO ] bar [        BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
         self.assert_round_trip('[ FOO ]       bar [    BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
         self.assert_round_trip('[ FOO ]       bar     [    BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
+
+
+class GeneratedVariantExistenceTests(unittest.TestCase, TestCaseMixin):
+    WPT_PREFIX = 'imported/w3c/web-platform-tests'
+
+    def setUp(self):
+        self.setUpPyfakefs()
+        host = MockHost(create_stub_repository_files=True, filesystem=FileSystem())
+        add_unit_tests_to_mock_filesystem(host.filesystem)
+        self.port = TestPort(host)
+        self.filesystem = host.filesystem
+        base = self.filesystem.join(self.port.layout_tests_dir(), self.WPT_PREFIX, 'foo')
+        self.filesystem.maybe_make_directory(base)
+        self.filesystem.write_text_file(
+            self.filesystem.join(base, 'basic.any.js'),
+            '// META: global=window,worker\ntest(() => {}, "pass");\n')
+        # Stub-backed variant: an on-disk .any.worker.html stub exists.
+        self.filesystem.write_text_file(
+            self.filesystem.join(base, 'basic.any.worker.html'), '<!-- stub -->')
+
+    def _parse(self, name):
+        parser = TestExpectationParser(self.port, [], allow_rebaseline_modifier=False)
+        line = parser._tokenize_line('TestExpectations', 'Bug(x) %s [ Failure ]' % name, 1)
+        parser._parse_line(line)
+        return line
+
+    def _exists(self, name):
+        return TestExpectationParser(
+            self.port, [], allow_rebaseline_modifier=False)._test_exists(name)
+
+    def test_stub_backed_variant_does_not_warn(self):
+        stub = self.WPT_PREFIX + '/foo/basic.any.worker.html'
+        self.assertNotIn('Path does not exist.', self._parse(stub).warnings)
+
+    def test_stubless_variant_does_not_warn(self):
+        # basic.any.js declares global=window,worker but only the worker
+        # variant has an on-disk stub (see setUp) -- the window variant
+        # (basic.any.html) exists purely via LayoutTestFinder synthesis, with
+        # no file on disk at all. This is the case test_stub_backed_variant_
+        # does_not_warn can't cover: that test's stub file means _test_exists
+        # returns True from the plain os.path fast path, without ever
+        # reaching the synthesis fallback.
+        stubless = self.WPT_PREFIX + '/foo/basic.any.html'
+        self.assertFalse(self.filesystem.exists(
+            self.filesystem.join(self.port.layout_tests_dir(), stubless)))
+        self.assertTrue(self._exists(stubless))
+        self.assertNotIn('Path does not exist.', self._parse(stubless).warnings)
+
+    def test_nonexistent_test_still_warns(self):
+        line = self._parse(self.WPT_PREFIX + '/foo/does-not-exist-xyz.html')
+        self.assertIn('Path does not exist.', line.warnings)
+
+    def test_disabled_by_rename_now_warns(self):
+        # The dead `-disabled` fallback is gone: a test present only as
+        # `<name>-disabled` on disk now warns (it was silently accepted before).
+        self.filesystem.write_text_file(
+            self.filesystem.join(self.port.layout_tests_dir(), 'renamed.html-disabled'), 'x')
+        self.assertIn('Path does not exist.', self._parse('renamed.html').warnings)
+
+    def test_filesystem_and_variant_fast_paths(self):
+        self.assertTrue(self._exists('passes'))
+        self.assertTrue(self._exists('passes/text.html'))
+        self.assertFalse(self._exists('passes/does_not_exist.html'))
+        self.assertTrue(self._exists('variant/variant.any.html?1-100'))
+        self.assertTrue(self._exists('variant/variant.any.html#frag'))
+        self.assertTrue(self._exists('variant/variant.any.html#frag?1-100'))
+        self.assertTrue(self._exists('variant/variant.any.html?a.b.c'))
+        self.assertTrue(self._exists('variant/variant.any.html#frag.name'))
+        self.assertTrue(self._exists('variant/variant.any.html?a.b#c.d'))
+        self.assertFalse(self._exists('passes/does_not_exist.html?variant'))
+        self.assertFalse(self._exists('passes/does_not_exist.html#frag'))

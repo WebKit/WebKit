@@ -31,7 +31,13 @@
 
 import attr
 
-from .test import Test
+from .test import Test, Reference
+
+
+@attr.s(frozen=True, slots=True)
+class ReferenceInput(object):
+    reference = attr.ib(type=Reference)
+    url = attr.ib(type=str)
 
 
 @attr.s(frozen=True, slots=True)
@@ -41,13 +47,18 @@ class TestInput(object):
     This differs from a Test object insofar as it contains metadata not specific to the test,
     derived from TestExpectations/test execution options (e.g., timeout).
     """
-    test = attr.ib(type=Test)
-    timeout = attr.ib(default=None)  # type: Union[None, int, str]
-    is_slow = attr.ib(default=None)  # type: Optional[bool]
-    needs_servers = attr.ib(default=None)  # type: Optional[bool]
-    should_dump_jsconsolelog_in_stderr = attr.ib(default=None)  # type: Optional[bool]
-    should_run_pixel_test = attr.ib(default=None)  # type: Optional[bool]
-    expected_results = attr.ib(default=None)  # type: Optional[FrozenSet[int]]
+    test = attr.ib(type=Test)  # ordering delegates to Test's __lt__ etc.
+    url = attr.ib(default=None, type=str, order=False)
+    reference_inputs = attr.ib(default=(), type=tuple, order=False)
+    timeout = attr.ib(default=None, order=False)  # type: Union[None, int, str]
+    is_slow = attr.ib(default=None, order=False)  # type: Optional[bool]
+    should_dump_jsconsolelog_in_stderr = attr.ib(default=None, order=False)  # type: Optional[bool]
+    should_run_pixel_test = attr.ib(default=None, order=False)  # type: Optional[bool]
+    expected_results = attr.ib(default=None, order=False)  # type: Optional[FrozenSet[int]]
+
+    @property
+    def needs_servers(self):
+        return self.test.needs_any_server
 
     @property
     def test_name(self):

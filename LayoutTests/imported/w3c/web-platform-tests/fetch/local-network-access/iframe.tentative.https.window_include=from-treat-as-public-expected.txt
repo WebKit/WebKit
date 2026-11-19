@@ -1,0 +1,8 @@
+
+PASS treat-as-public-address to loopback: permission denied.
+FAIL treat-as-public-address to loopback: success. assert_equals: expected "loaded" but got "timeout"
+FAIL treat-as-public-address to local (same-origin): no permission required. assert_equals: expected "loaded" but got "timeout"
+PASS treat-as-public-address to local: permission denied.
+FAIL treat-as-public-address to local: success. assert_equals: expected "loaded" but got "timeout"
+FAIL treat-as-public-address to public: no permission required. assert_equals: expected "loaded" but got "timeout"
+

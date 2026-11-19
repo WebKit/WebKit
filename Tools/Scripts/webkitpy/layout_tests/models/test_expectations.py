@@ -31,14 +31,18 @@ for layout tests.
 """
 
 import bisect
+import enum
+import functools
 import logging
 import re
 
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
+from webkitpy.layout_tests.models.test import test_name_and_variant
 from webkitpy.layout_tests.models.test_configuration import (
     TestConfiguration,
     TestConfigurationConverter,
 )
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.port.base import Port
 
 _BUG_TOKEN_RE = re.compile(r'Bug\((\w+)\)$')
@@ -126,9 +130,13 @@ class TestExpectationParser(object):
         self._test_configuration_converter = TestConfigurationConverter(set(port.all_test_configurations()), port.configuration_specifier_macros())
         if full_test_list is None:
             self._full_test_list = None  # type: Optional[Set[str]]
+            self._tests_by_file_path = None  # type: Optional[Dict[str, List[str]]]
         else:
             self._full_test_list = set(full_test_list)
-        self._sorted_full_test_list = None
+            self._sorted_full_test_list = None
+            self._tests_by_file_path = {}
+            for test in self._full_test_list:
+                self._tests_by_file_path.setdefault(test_name_and_variant(test)[0], []).append(test)
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
         self._shorten_filename = shorten_filename
 
@@ -145,7 +153,7 @@ class TestExpectationParser(object):
 
     def expectation_for_skipped_test(self, test_name):
         # type: (str) -> TestExpectationLine
-        if not self._port.test_exists(test_name):
+        if not self._test_exists(test_name):
             _log.warning('The following test %s from the Skipped list doesn\'t exist' % test_name)
         expectation_line = TestExpectationLine()
         expectation_line.original_string = test_name
@@ -227,13 +235,33 @@ class TestExpectationParser(object):
             result.add(expectation)
         expectation_line.parsed_expectations = result
 
+    @functools.cached_property
+    def _layout_test_finder(self):
+        return LayoutTestFinder(
+            self._port.host.filesystem,
+            self._port.layout_tests_dir(),
+            self._port.baseline_search_path(),
+            test_routes=self._port.test_routes(),
+        )
+
+    def _test_exists(self, test_name):
+        # type: (str) -> bool
+        # Fast filesystem checks for on-disk tests and directories.
+        if self._port.test_isfile(test_name) or self._port.test_isdir(test_name):
+            return True
+        if '?' in test_name or '#' in test_name:
+            file_path = self._port.test_name_and_variant(test_name)[0]
+            if self._port.test_isfile(file_path):
+                return True
+        # Not on disk: the finder synthesizes runnable URLs for generated WPT
+        # variants (e.g. foo.any.js -> foo.any.worker.html), which have no file.
+        return any(test.test_path == test_name
+                   for test in self._layout_test_finder.get_tests([test_name]))
+
     def _check_test_exists(self, expectation_line):
         # type: (TestExpectationLine) -> bool
         assert expectation_line.name is not None
-        # WebKit's way of skipping tests is to add a -disabled suffix.
-        # So we should consider the path existing if the path or the
-        # -disabled version exists.
-        if not self._port.test_exists(expectation_line.name) and not self._port.test_exists(expectation_line.name + '-disabled'):
+        if not self._test_exists(expectation_line.name):
             # Log a warning here since you hit this case any
             # time you update TestExpectations without syncing
             # the LayoutTests directory
@@ -264,10 +292,11 @@ class TestExpectationParser(object):
             expectation_line.matching_tests = self._sorted_full_test_list[start:end]
             return
 
-        # this is a test file, do a quick check if it's in the
-        # full test suite.
-        if expectation_line.path in self._full_test_list:
-            expectation_line.matching_tests.append(expectation_line.path)
+        # File expectation: match the file itself and every variant of it. A
+        # bare file name in TestExpectations covers all variants of that file
+        # unless a more-specific entry overrides — _already_seen_better_match
+        # handles precedence by path length.
+        expectation_line.matching_tests = list(self._tests_by_file_path.get(expectation_line.path, ()))
 
     # FIXME: Update the original modifiers and remove this once the old syntax is gone.
     _configuration_tokens_list = [
@@ -582,6 +611,12 @@ class TestExpectationLine(object):
 
 
 # FIXME: Refactor API to be a proper CRUD.
+class TestExpectationLineStatus(enum.Enum):
+    EFFECTIVE = enum.auto()  # determines the test's expectations
+    SUPERSEDED = enum.auto()  # was effective, then replaced by a later line
+    SHADOWED = enum.auto()  # never took effect: a more specific line in the same file was already effective
+
+
 class TestExpectationsModel(object):
     """Represents relational store of all expectations and provides CRUD semantics to manage it."""
 
@@ -679,6 +714,23 @@ class TestExpectationsModel(object):
         # type: (str) -> Optional[List[TestExpectationLine]]
         return self._test_to_expectation_lines.get(test)
 
+    def get_classified_expectation_lines(self, test):
+        # type: (str) -> List[Tuple[TestExpectationLineStatus, TestExpectationLine]]
+        """Returns every line added for the test, with what happened to it, by replaying the rule in add_expectation_line."""
+        lines = self._test_to_expectation_lines.get(test, [])
+        statuses = []
+        effective = None  # index into lines
+        for index, line in enumerate(lines):
+            if effective is not None and not line.not_applicable_to_current_platform and self._shadows(lines[effective], line):
+                statuses.append(TestExpectationLineStatus.SHADOWED)
+                continue
+            if effective is not None:
+                statuses[effective] = TestExpectationLineStatus.SUPERSEDED
+            statuses.append(TestExpectationLineStatus.EFFECTIVE)
+            effective = index
+        assert effective is None or lines[effective] is self._test_to_expectation_line[test]  # the replay agrees with the model
+        return list(zip(statuses, lines))
+
     def get_expectations(self, test):
         # type: (str) -> Set[int]
         return self._test_to_expectations[test]
@@ -725,6 +777,8 @@ class TestExpectationsModel(object):
     def add_expectation_line(self, expectation_line, in_skipped=False):
         # type: (TestExpectationLine, bool) -> None
         """Returns a list of warnings encountered while matching modifiers."""
+        # get_classified_expectation_lines replays the rule below using not_applicable_to_current_platform for in_skipped.
+        assert in_skipped == expectation_line.not_applicable_to_current_platform
 
         if expectation_line.is_invalid():
             return
@@ -794,6 +848,24 @@ class TestExpectationsModel(object):
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
+    @staticmethod
+    def _shadows(prev_expectation_line, expectation_line):
+        # type: (TestExpectationLine, TestExpectationLine) -> bool
+        """Returns whether expectation_line, matching a test whose effective line is prev_expectation_line, leaves prev_expectation_line in effect."""
+        if prev_expectation_line.filename != expectation_line.filename:
+            # We've moved on to a new expectation file, which overrides older ones.
+            return False
+
+        if len(prev_expectation_line.path) != len(expectation_line.path):
+            # The longer path matches more of the test.
+            return len(prev_expectation_line.path) > len(expectation_line.path)
+
+        # Equal, nested or overlapping configurations keep the previous line in effect (only the warnings differ).
+        # Disjoint configurations let the new line win.
+        prev_configs = prev_expectation_line.matching_configurations
+        configs = expectation_line.matching_configurations
+        return prev_configs == configs or prev_configs >= configs or prev_configs <= configs or bool(prev_configs & configs)
+
     def _already_seen_better_match(self, test, expectation_line):
         # type: (str, TestExpectationLine) -> bool
         """Returns whether we've seen a better match already in the file.
@@ -808,20 +880,15 @@ class TestExpectationsModel(object):
 
         prev_expectation_line = self._test_to_expectation_line[test]
 
-        if prev_expectation_line.filename != expectation_line.filename:
-            # We've moved on to a new expectation file, which overrides older ones.
+        if not self._shadows(prev_expectation_line, expectation_line):
             return False
 
         assert prev_expectation_line.path is not None
         assert expectation_line.path is not None
 
-        if len(prev_expectation_line.path) > len(expectation_line.path):
-            # The previous path matched more of the test.
+        if len(prev_expectation_line.path) != len(expectation_line.path):
+            # The previous path matched more of the test, and it stays in effect.
             return True
-
-        if len(prev_expectation_line.path) < len(expectation_line.path):
-            # This path matches more of the test.
-            return False
 
         # At this point we know we have seen a previous exact match on this
         # base path, so we need to check the two sets of modifiers.
@@ -860,10 +927,6 @@ class TestExpectationsModel(object):
             expectation_line.warnings.append('Entries for %s on lines %s:%d and %s:%d match overlapping sets of configurations.' % (expectation_line.name,
                 shortened_previous_expectation_filename, prev_expectation_line.line_number,
                 shortened_expectation_filename, expectation_line.line_number))
-
-        else:
-            # Configuration sets are disjoint.
-            return False
 
         # Missing files will be 'None'. It should be impossible to have a missing file which also has a line associated with it.
         if shortened_previous_expectation_filename not in expectation_line.related_files:
@@ -1064,15 +1127,27 @@ class TestExpectations(object):
         self._include_overrides = include_overrides
         self._expectations_to_lint = expectations_to_lint
 
+    def readable_filename(self, line):
+        # type: (TestExpectationLine) -> Optional[str]
+        if line.not_applicable_to_current_platform:
+            return None
+
+        if not line.filename:
+            return None
+
+        if line.filename.startswith(self._port.path_from_webkit_base()):
+            return self._port.host.filesystem.relpath(line.filename, self._port.path_from_webkit_base())
+        return line.filename
+
     def readable_filename_and_line_number(self, line):
         # type: (TestExpectationLine) -> str
         if line.not_applicable_to_current_platform:
             return "(skipped for this platform)"
-        if not line.filename:
+
+        filename = self.readable_filename(line)
+        if filename is None:
             return ''
-        if line.filename.startswith(self._port.path_from_webkit_base()):
-            return '{}:{}'.format(self._port.host.filesystem.relpath(line.filename, self._port.path_from_webkit_base()), line.line_number)
-        return '{}:{}'.format(line.filename, line.line_number)
+        return '{}:{}'.format(filename, line.line_number)
 
     def parse_generic_expectations(self):
         # type: () -> None
@@ -1099,8 +1174,8 @@ class TestExpectations(object):
             self._expectations += expectations
             self._expectations_dict_index += 1
 
-    def parse_all_expectations(self):
-        # type: () -> None
+    def parse_all_expectations(self, test_list_expectations=None):
+        # type: (Optional[List[Tuple[str, int, str]]]) -> None
         self._expectations_dict = self._expectations_to_lint or self._port.expectations_dict(device_type=self._device_type)  # type: Dict[str, str]
         self._expectations_dict_index = 0
 
@@ -1113,6 +1188,7 @@ class TestExpectations(object):
         self.add_skipped_tests(self._port.skipped_layout_tests(device_type=self._device_type))
 
         self._report_warnings()
+        self.add_test_list_expectations(test_list_expectations)
         self._process_tests_without_expectations()
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
@@ -1225,12 +1301,14 @@ class TestExpectations(object):
                 assert test.line_number is not None
                 test.warnings.append('%s:%d %s is also in a Skipped file.' % (test.filename, test.line_number, test.name))
 
-        for test_name in tests_to_skip:
+        # Skipped lines bypass the specificity check, so the last one added wins: sort them so that a
+        # parent directory comes before its children, and the most specific entry wins.
+        for test_name in sorted(tests_to_skip):
             expectation_line = self._parser.expectation_for_skipped_test(test_name)
             self._model.add_expectation_line(expectation_line, in_skipped=True)
 
     def add_test_list_expectations(self, test_list_expectations):
-        # type: (List[Tuple[str, int, str]]) -> None
+        # type: (Optional[List[Tuple[str, int, str]]]) -> None
         if not test_list_expectations:
             return
 

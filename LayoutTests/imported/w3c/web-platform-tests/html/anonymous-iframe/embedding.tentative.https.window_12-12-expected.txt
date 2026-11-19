@@ -1,0 +1,3 @@
+
+PASS Cross-Origin-Isolated parent embeds same-origin COEP credentialless iframe
+

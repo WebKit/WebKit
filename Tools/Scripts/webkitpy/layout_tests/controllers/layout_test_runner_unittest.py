@@ -38,6 +38,7 @@ from webkitpy.layout_tests.controllers.layout_test_runner import (
     TestRunInterruptedException,
 )
 from webkitpy.layout_tests.models import test_expectations, test_failures
+from webkitpy.layout_tests.models.server_routing import ServerType
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_results import TestResult
@@ -286,7 +287,8 @@ class SharderTests(unittest.TestCase):
     ]
 
     def get_test_input(self, test_file):
-        return TestInput(Test(test_file), needs_servers=(test_file.startswith('http')))
+        served_by = ServerType.HTTP if test_file.startswith('http') else ServerType.FILE
+        return TestInput(Test(test_file, served_by=served_by))
 
     def get_shards(self, num_workers, fully_parallel, test_list=None):
         port = TestPort(MockSystemHost())

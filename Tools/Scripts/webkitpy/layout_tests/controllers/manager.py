@@ -52,6 +52,7 @@ from webkitcorepy.string_utils import pluralize
 
 from webkitpy.common.net import results_database
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
+from webkitpy.common.system import path
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
@@ -62,7 +63,9 @@ from webkitpy.layout_tests.models import (
     test_results,
     test_run_results,
 )
-from webkitpy.layout_tests.models.test_input import TestInput
+from webkitpy.layout_tests.models.server_routing import ServerType
+from webkitpy.layout_tests.models.test import Test
+from webkitpy.layout_tests.models.test_input import ReferenceInput, TestInput
 from webkitpy.layout_tests.models.test_run_results import (
     INTERRUPTED_EXIT_STATUS,
     TestRunResults,
@@ -181,8 +184,7 @@ class Manager(object):
 
             self._printer.write_update(u'Parsing expectations {}...'.format(for_device_type))
             self._expectations[(driver_name, device_type)] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)
-            self._expectations[(driver_name, device_type)].parse_all_expectations()
-            self._expectations[(driver_name, device_type)].add_test_list_expectations(self._finder.get_test_list_expectations())
+            self._expectations[(driver_name, device_type)].parse_all_expectations(test_list_expectations=self._finder.get_test_list_expectations())
             if driver_name == 'DumpRenderTree':
                 # FIXME: DumpRenderTree can't render WPT print reftests as printed pages (rdar://191464040).
                 self._expectations[(driver_name, device_type)].add_skipped_tests({test.test_path for test in tests if test.is_wpt_print_reftest})
@@ -286,7 +288,7 @@ class Manager(object):
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
         if self._options.order == 'natural':
-            tests_to_run.sort(key=lambda x: self._port.test_key(x.test_path))
+            tests_to_run.sort()
         elif self._options.order == 'random':
             random.shuffle(tests_to_run)
 
@@ -319,15 +321,83 @@ class Manager(object):
             should_run_pixel_test = True
 
         expectations = self._expectations[(self._current_driver_name, device_type)]
+        url = self._compute_test_url(test_file)
+        reference_inputs = ()
+        if test_file.reference_files:
+            reference_inputs = tuple(
+                ReferenceInput(reference=ref, url=self._compute_reference_url(ref, test_file))
+                for ref in test_file.reference_files
+            )
+
         return TestInput(
             test_file,
+            url=url,
+            reference_inputs=reference_inputs,
             timeout=timeout,
             is_slow=test_is_slow,
-            needs_servers=test_file.needs_any_server,
             should_dump_jsconsolelog_in_stderr=should_dump_jsconsolelog_in_stderr,
             should_run_pixel_test=should_run_pixel_test,
             expected_results=frozenset(expectations.filtered_expectations_for_test(test_file.test_path, self._options.pixel_tests or bool(test_file.reference_files), self._options.world_leaks)),
         )
+
+    def _compute_test_url(self, test_file):
+        """Compute the full URL for a test."""
+        additional_header = self._options.additional_header
+        cross_origin = bool(additional_header and 'runInCrossOriginFrame=true' in additional_header)
+        return self._compute_url_for_test_name(test_file, cross_origin=cross_origin)
+
+    def _compute_reference_url(self, reference, test_file):
+        """Compute the full URL for a reference file.
+
+        References use the same server as their parent test.
+        """
+        ref_test_name = self._port.relative_test_filename(reference.path)
+        ref_test = Test(ref_test_name, served_by=test_file.served_by, protocol=test_file.protocol)
+        return self._compute_url_for_test_name(ref_test)
+
+    def _compute_url_for_test_name(self, test, cross_origin=False):
+        """Compute the URL for a test.
+
+        A test to be embedded in a cross-origin frame must be loaded over HTTP,
+        so when cross_origin is set, tests that would be loaded from file://
+        (including http/tests/local) are served by Apache instead. This mirrors
+        the legacy Driver.is_http_test() behavior."""
+        # Sort by test_file_dir specificity (deeper wins) so that more-specific
+        # routes shadow less-specific ones regardless of their order in the table.
+        routes = sorted(self._port.test_routes(), key=lambda r: r.test_file_dir.count("/"), reverse=True)
+        for route in routes:
+            if not test.test_path.startswith(route.test_file_dir + "/"):
+                continue
+            rel_path = test.test_path[len(route.test_file_dir) + 1:]
+            if route.server_type & ServerType.WPT:
+                url_path = route.url_base.lstrip("/") + rel_path
+                localhost_only = route.url_base != "/"
+                return self._wpt_path_to_uri(url_path, test, localhost_only)
+            if route.server_type & ServerType.HTTP:
+                if rel_path.startswith("local/") and not cross_origin:
+                    break
+                return self._http_test_path_to_uri(rel_path, test)
+            break
+
+        if cross_origin:
+            return "http://127.0.0.1:8000/root/" + test.test_path
+        return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test.test_path))
+
+    def _wpt_path_to_uri(self, url_path, test, localhost_only=False):
+        """Convert a WPT URL path to a full URL, selecting the right base URL."""
+        if test.protocol == "h2":
+            return self._port.web_platform_test_server_base_h2_url(localhost_only=localhost_only) + url_path
+        elif test.protocol == "https":
+            return self._port.web_platform_test_server_base_https_url(localhost_only=localhost_only) + url_path
+        else:
+            return self._port.web_platform_test_server_base_http_url(localhost_only=localhost_only) + url_path
+
+    def _http_test_path_to_uri(self, rel_path, test):
+        """Convert an HTTP test relative path to a full URL."""
+        secure = test.protocol == 'https'
+        scheme = 'https' if secure else 'http'
+        port = 8443 if secure else 8000
+        return "%s://127.0.0.1:%d/%s" % (scheme, port, rel_path)
 
     def _test_is_slow(self, test_file, device_type):
         if self._expectations[(self._current_driver_name, device_type)].model().has_modifier(test_file, test_expectations.SLOW):
@@ -950,21 +1020,12 @@ class Manager(object):
                                        self._expectations[(self._current_driver_name, device_type)].readable_filename_and_line_number(main_line),
                                        main_line.original_string or ''))
         else:
-            lines = self._expectations[(self._current_driver_name, device_type)].model().get_expectation_lines(test_path)
-            before_main_line = True
-            decision = ""
-            for line in lines:
-                if line == main_line:
-                    decision = "-> "
-                    before_main_line = False
-                elif before_main_line:
-                    decision = "v  "
-                else:
-                    decision = "^  "
+            expectations = self._expectations[(self._current_driver_name, device_type)]
+            for status, line in expectations.model().get_classified_expectation_lines(test_path):
                 print(format_string.format(test_path,
-                                           decision,
+                                           '{:<10} '.format(status.name.lower()),
                                            line.expected_behavior,
-                                           self._expectations[(self._current_driver_name, device_type)].readable_filename_and_line_number(line),
+                                           expectations.readable_filename_and_line_number(line),
                                            line.original_string or ''))
 
     def _print_expectations_for_subset(self, device_type, test_col_width, tests_to_run, tests_to_skip=None):
@@ -980,16 +1041,16 @@ class Manager(object):
         for test in sorted(tests_to_run):
             self._print_expectation_line_for_test(format_string, test, device_type=device_type)
 
-    def print_expectations(self, args):
-        if self._options.test_list:
-            for list_path in self._options.test_list:
-                if not self._port.host.filesystem.isfile(list_path):
-                    _log.critical('')
-                    _log.critical('--test-list file "{}" not found'.format(list_path))
-                    return -1
+    def _test_list_files_exist(self):
+        # type: () -> bool
+        for list_path in self._options.test_list or []:
+            if not self._port.host.filesystem.isfile(list_path):
+                _log.critical('')
+                _log.critical('--test-list file "{}" not found'.format(list_path))
+                return False
+        return True
 
-        worst_exit_code = 0
-
+    def _for_each_driver(self, args):
         # Loop over all drivers (like Manager.run() does)
         for driver_name in self._driver_names:
             self._current_driver_name = driver_name
@@ -999,7 +1060,15 @@ class Manager(object):
 
             device_type_list = self._port.supported_device_types()
             tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list, driver_name)
+            yield driver_name, device_type_list, tests_to_run_by_device, aggregate_tests_to_skip
 
+    def print_expectations(self, args):
+        if not self._test_list_files_exist():
+            return -1
+
+        worst_exit_code = 0
+
+        for _, device_type_list, tests_to_run_by_device, aggregate_tests_to_skip in self._for_each_driver(args):
             aggregate_tests_to_run = set()
             for v in tests_to_run_by_device.values():
                 aggregate_tests_to_run.update(v)
@@ -1017,27 +1086,50 @@ class Manager(object):
 
         return worst_exit_code
 
+    def print_expectations_json(self, args):
+        if not self._test_list_files_exist():
+            return -1
+
+        output = {}
+        for driver_name, device_type_list, tests_to_run_by_device, aggregate_tests_to_skip in self._for_each_driver(args):
+            first = self._expectations[(driver_name, device_type_list[0])]  # skipped tests use these, as in the text
+            output[driver_name] = {
+                'skip': {test.test_path: self._expectations_json(first, test.test_path) for test in sorted(aggregate_tests_to_skip)},
+                'run': {
+                    str(device_type) if device_type else 'default': {
+                        test.test_path: self._expectations_json(self._expectations[(driver_name, device_type)], test.test_path)
+                        for test in sorted(tests_to_run_by_device[device_type])}
+                    for device_type in device_type_list},
+            }
+        print(json.dumps(output))
+        return 0
+
+    def _expectations_json(self, expectations, test_path):
+        model = expectations.model()
+        lines = []
+        for status, line in model.get_classified_expectation_lines(test_path):
+            if line.filename is None:  # the synthetic PASS line
+                continue
+            filename = expectations.readable_filename(line)
+            lines.append({
+                'status': status.name.lower(),
+                'expected': line.expected_behavior,
+                'path': line.name,
+                'filename': filename,
+                'line_number': line.line_number if filename is not None else None,
+                'original_string': line.original_string,
+                'from_skipped_list': line.not_applicable_to_current_platform,
+            })
+        return {'expected': model.get_expectation_line(test_path).expected_behavior, 'lines': lines}
+
     def print_summary(self, args):
-        if self._options.test_list:
-            for list_path in self._options.test_list:
-                if not self._port.host.filesystem.isfile(list_path):
-                    _log.critical('')
-                    _log.critical('--test-list file "{}" not found'.format(list_path))
-                    return -1
+        if not self._test_list_files_exist():
+            return -1
 
         worst_exit_code = 0
 
-        # Loop over all drivers (like Manager.run() does)
-        for driver_name in self._driver_names:
-            self._current_driver_name = driver_name
-            self._port = self._create_port_for_driver(driver_name)
-            self._results_directory = self._port.results_directory()
-            self._finder = LayoutTestFinder(self._port, self._options)
-
-            device_type_list = self._port.supported_device_types()
+        for driver_name, device_type_list, _, _ in self._for_each_driver(args):
             test_stats = {}
-
-            self._collect_tests(args, device_type_list, driver_name)
 
             for (drv_name, device_type), expectations in self._expectations.items():
                 if drv_name != driver_name:

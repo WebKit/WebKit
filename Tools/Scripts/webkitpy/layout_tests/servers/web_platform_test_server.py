@@ -29,6 +29,7 @@ import time
 
 from webkitcorepy import AutoInstall
 
+from webkitpy.layout_tests.models.server_routing import ServerRoute, ServerType
 from webkitpy.layout_tests.servers import http_server_base
 try:
     from webkitpy.layout_tests.servers.basic_dns_server import DNSLogger, DNSServer, Resolver
@@ -43,6 +44,20 @@ def doc_root(port_obj):
     if doc_root is None:
         return port_obj.host.filesystem.join("imported", "w3c", "web-platform-tests")
     return doc_root
+
+
+def test_routes(port_obj):
+    """Returns the ServerRoutes for the directories of tests WPT serves.
+
+    The config's aliases map resources into the URL space; they are not roots
+    of tests, so are not included. http/wpt is only declared as an alias in
+    the config, but is a root of tests too. Each test_file_dir is
+    "/"-separated, whatever the host separator."""
+    base_dir = doc_root(port_obj).replace(port_obj.host.filesystem.sep, "/")
+    return [
+        ServerRoute(base_dir, "/", ServerType.WPT),
+        ServerRoute("http/wpt", "/WebKit/", ServerType.WPT),
+    ]
 
 
 def wpt_config_json(port_obj):

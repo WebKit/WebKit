@@ -1,0 +1,3 @@
+
+PASS COOP:same-origin + COEP:credentialless embeds cross-origin credentialless iframe
+
