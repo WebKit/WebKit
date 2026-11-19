@@ -49,7 +49,7 @@ enum class VideoPixelFormat {
     BGRX
 };
 
-NODELETE std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t, bool shouldDiscardAlpha = false);
+std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t, bool shouldDiscardAlpha = false);
 
 inline bool isRGBVideoPixelFormat(VideoPixelFormat format)
 {

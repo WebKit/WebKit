@@ -206,7 +206,7 @@ RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeV
     }
 
     WebCodecsVideoFrame::BufferInit init {
-        .format = convertVideoFramePixelFormat(videoFrame->pixelFormat()),
+        .format = WebCodecsVideoFrame::videoPixelFormatForContext(context, *videoFrame),
         .codedWidth = static_cast<size_t>(videoFrame->presentationSize().width()),
         .codedHeight = static_cast<size_t>(videoFrame->presentationSize().height()),
         .timestamp = Seconds(videoFrame->presentationTime().toDouble()).microsecondsAs<int64_t>(),

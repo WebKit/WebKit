@@ -25,7 +25,7 @@ promise_test(async () => {
     assert_true(support.supported, "HEVC Main 10 profile is supported");
 }, "HEVC Main 10 isConfigSupported");
 
-promise_test(async (t) => {
+promise_test(async () => {
     const frames = [];
     const decoder = new VideoDecoder({
         output: frame => frames.push(frame),
@@ -46,18 +46,20 @@ promise_test(async (t) => {
     assert_equals(frame.colorSpace.matrix, "bt2020-ncl", "matrix from bitstream");
     assert_false(frame.colorSpace.fullRange, "limited range from bitstream");
 
-    // 10-bit 4:2:0 cannot currently be represented by a VideoPixelFormat value.
-    assert_equals(frame.format, null, "format is null for unrepresentable 10-bit content");
+    assert_equals(frame.format, "I420P10", "format");
     assert_true(!window.internals?.is10bitsVideoFrame || internals.is10bitsVideoFrame(frame), "frame is actually 10 bits");
 
-    const rgba = new Uint8Array(frame.allocationSize({format: "RGBA"}));
-    await promise_rejects_dom(t, 'NotSupportedError', frame.copyTo(rgba));
+    assert_equals(frame.allocationSize(), 2 * (32 * 32 + 2 * 16 * 16), "allocationSize");
+    const layout = await frame.copyTo(new ArrayBuffer(frame.allocationSize()));
+    assert_array_equals(layout.map(plane => plane.offset), [0, 2048, 2560], "plane offsets");
+    assert_array_equals(layout.map(plane => plane.stride), [64, 32, 32], "plane strides");
 
     promise_test(async t => {
         t.add_cleanup(() => frame.close());
+        const rgba = new Uint8Array(frame.allocationSize({format: "RGBA"}));
         await frame.copyTo(rgba, {format: "RGBA"});
-    }, "copyTo with RGBA works on VideoFrame with null format");
-}, "HEVC Main 10 (BT.2020/PQ) decoding surfaces bitstream colorSpace and null format");
+    }, "copyTo with RGBA works on a 10-bit VideoFrame");
+}, "HEVC Main 10 (BT.2020/PQ) decoding surfaces bitstream colorSpace and I420P10 format");
 </script>
 </body>
 </html>

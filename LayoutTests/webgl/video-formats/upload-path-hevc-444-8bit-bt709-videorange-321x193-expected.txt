@@ -8,10 +8,10 @@ PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> default path: hardware (
 PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> software path: software (forced)
 PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> hardware path: hardware (converted)
 PASS hevc-444-8bit-bt709-videorange-321x193.mp4 <video> hardware vs software: match
-PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) default path: software (gate-videoframe-format)
-PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) software path: software (forced)
-hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) hardware path: hardware not available (gate-videoframe-format)
-hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format I444) default path: software (gate-videoframe-format)
+PASS hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format I444) software path: software (forced)
+hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format I444) hardware path: hardware not available (gate-videoframe-format)
+hevc-444-8bit-bt709-videorange-321x193.mp4 VideoFrame(video) (format I444) hardware vs software: not compared, hardware not available (gate-videoframe-format)
 
 PASS successfullyParsed is true
 

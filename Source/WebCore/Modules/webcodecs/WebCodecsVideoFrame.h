@@ -107,6 +107,8 @@ public:
     WEBCORE_EXPORT static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext&, Ref<VideoFrame>&&, BufferInit&&);
     static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext& context, WebCodecsVideoFrameData&& data) { return adoptRef(*new WebCodecsVideoFrame(context, WTF::move(data))); }
 
+    static std::optional<VideoPixelFormat> videoPixelFormatForContext(const ScriptExecutionContext&, const VideoFrame&);
+
     std::optional<VideoPixelFormat> format() const { return m_data.format; }
     size_t codedWidth() const { return m_data.codedWidth; }
     size_t codedHeight() const { return m_data.codedHeight; }

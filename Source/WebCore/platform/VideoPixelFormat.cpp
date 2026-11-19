@@ -34,11 +34,24 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "PlanarImageConverterCV.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 #endif
 
 namespace WebCore {
+
+#if PLATFORM(COCOA)
+static std::optional<VideoPixelFormat> planarYUVVideoPixelFormat(PlanarImageConverter::ChromaSubsampling subsampling, uint8_t bitDepth)
+{
+    for (auto format : { VideoPixelFormat::I420, VideoPixelFormat::I420P10, VideoPixelFormat::I420P12, VideoPixelFormat::I422, VideoPixelFormat::I422P10, VideoPixelFormat::I422P12, VideoPixelFormat::I444, VideoPixelFormat::I444P10, VideoPixelFormat::I444P12 }) {
+        auto layout = planarYUVFormatLayout(format);
+        if (layout->subsampling == subsampling && layout->format.bitDepth == bitDepth)
+            return format;
+    }
+    return { };
+}
+#endif
 
 std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bool shouldDiscardAlpha)
 {
@@ -49,6 +62,8 @@ std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bo
         return shouldDiscardAlpha ? VideoPixelFormat::BGRX : VideoPixelFormat::BGRA;
     if (format == kCVPixelFormatType_32ARGB)
         return shouldDiscardAlpha ? VideoPixelFormat::RGBX : VideoPixelFormat::RGBA;
+    if (auto description = PlanarImageConverter::pixelFormatDescription(format); description && !description->alpha)
+        return planarYUVVideoPixelFormat(description->subsampling, description->color.bitDepth);
 #elif USE(GSTREAMER)
     switch (format) {
     case GST_VIDEO_FORMAT_I420:
@@ -59,6 +74,33 @@ std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bo
         return VideoPixelFormat::I422;
     case GST_VIDEO_FORMAT_Y444:
         return VideoPixelFormat::I444;
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    case GST_VIDEO_FORMAT_I420_10LE:
+        return VideoPixelFormat::I420P10;
+    case GST_VIDEO_FORMAT_I420_12LE:
+        return VideoPixelFormat::I420P12;
+    case GST_VIDEO_FORMAT_I422_10LE:
+        return VideoPixelFormat::I422P10;
+    case GST_VIDEO_FORMAT_I422_12LE:
+        return VideoPixelFormat::I422P12;
+    case GST_VIDEO_FORMAT_Y444_10LE:
+        return VideoPixelFormat::I444P10;
+    case GST_VIDEO_FORMAT_Y444_12LE:
+        return VideoPixelFormat::I444P12;
+#else
+    case GST_VIDEO_FORMAT_I420_10BE:
+        return VideoPixelFormat::I420P10;
+    case GST_VIDEO_FORMAT_I420_12BE:
+        return VideoPixelFormat::I420P12;
+    case GST_VIDEO_FORMAT_I422_10BE:
+        return VideoPixelFormat::I422P10;
+    case GST_VIDEO_FORMAT_I422_12BE:
+        return VideoPixelFormat::I422P12;
+    case GST_VIDEO_FORMAT_Y444_10BE:
+        return VideoPixelFormat::I444P10;
+    case GST_VIDEO_FORMAT_Y444_12BE:
+        return VideoPixelFormat::I444P12;
+#endif
     case GST_VIDEO_FORMAT_NV12:
         return VideoPixelFormat::NV12;
     case GST_VIDEO_FORMAT_RGBA:

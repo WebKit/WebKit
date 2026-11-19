@@ -204,8 +204,9 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 // Decoders should create frames with the orientation of the configuration, we override for decoders that do not know about orientation.
                 frame = frame->updateOrientation(rotation, isMirrored, VideoFrame::ShouldClone::No);
                 auto presentationSize = frame->presentationSize();
+                Ref context = *decoder.scriptExecutionContext();
                 WebCodecsVideoFrame::BufferInit init {
-                    .format = convertVideoFramePixelFormat(frame->pixelFormat()),
+                    .format = WebCodecsVideoFrame::videoPixelFormatForContext(context, frame),
                     .codedWidth = static_cast<size_t>(presentationSize.width()),
                     .codedHeight = static_cast<size_t>(presentationSize.height()),
                     .timestamp = decodedResult.timestamp,
@@ -215,7 +216,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                     .colorSpace = frame->colorSpace()
                 };
 
-                auto videoFrame = WebCodecsVideoFrame::create(protect(*decoder.scriptExecutionContext()), WTF::move(frame), WTF::move(init));
+                auto videoFrame = WebCodecsVideoFrame::create(context, WTF::move(frame), WTF::move(init));
                 decoder.m_output->invoke(WTF::move(videoFrame));
             });
         });

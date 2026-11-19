@@ -393,22 +393,37 @@ static std::optional<GstVideoFormat> gstVideoFormatForPlanarYUV(VideoPixelFormat
     switch (format) {
     case VideoPixelFormat::I420:
         return GST_VIDEO_FORMAT_I420;
+    case VideoPixelFormat::I422:
+        return GST_VIDEO_FORMAT_Y42B;
+    case VideoPixelFormat::I444:
+        return GST_VIDEO_FORMAT_Y444;
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
     case VideoPixelFormat::I420P10:
         return GST_VIDEO_FORMAT_I420_10LE;
     case VideoPixelFormat::I420P12:
         return GST_VIDEO_FORMAT_I420_12LE;
-    case VideoPixelFormat::I422:
-        return GST_VIDEO_FORMAT_Y42B;
     case VideoPixelFormat::I422P10:
         return GST_VIDEO_FORMAT_I422_10LE;
     case VideoPixelFormat::I422P12:
         return GST_VIDEO_FORMAT_I422_12LE;
-    case VideoPixelFormat::I444:
-        return GST_VIDEO_FORMAT_Y444;
     case VideoPixelFormat::I444P10:
         return GST_VIDEO_FORMAT_Y444_10LE;
     case VideoPixelFormat::I444P12:
         return GST_VIDEO_FORMAT_Y444_12LE;
+#else
+    case VideoPixelFormat::I420P10:
+        return GST_VIDEO_FORMAT_I420_10BE;
+    case VideoPixelFormat::I420P12:
+        return GST_VIDEO_FORMAT_I420_12BE;
+    case VideoPixelFormat::I422P10:
+        return GST_VIDEO_FORMAT_I422_10BE;
+    case VideoPixelFormat::I422P12:
+        return GST_VIDEO_FORMAT_I422_12BE;
+    case VideoPixelFormat::I444P10:
+        return GST_VIDEO_FORMAT_Y444_10BE;
+    case VideoPixelFormat::I444P12:
+        return GST_VIDEO_FORMAT_Y444_12BE;
+#endif
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::NV12:
     case VideoPixelFormat::RGBA:
