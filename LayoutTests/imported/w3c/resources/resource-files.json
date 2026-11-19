@@ -12929,6 +12929,7 @@
         "web-platform-tests/html/canvas/element/manual/draw-element-image/css-object-fit-none-wide-ref.html",
         "web-platform-tests/html/canvas/element/manual/draw-element-image/css-opacity-on-div-ref.html",
         "web-platform-tests/html/canvas/element/manual/draw-element-image/css-transform-on-div-ref.html",
+        "web-platform-tests/html/canvas/element/manual/draw-element-image/css-transform-on-siblings-ref.html",
         "web-platform-tests/html/canvas/element/manual/draw-element-image/descendant-filter-ref.html",
         "web-platform-tests/html/canvas/element/manual/draw-element-image/dialog-paints-in-top-layer-ref.html",
         "web-platform-tests/html/canvas/element/manual/draw-element-image/draw-element-image-scale-variant-ref.html",
