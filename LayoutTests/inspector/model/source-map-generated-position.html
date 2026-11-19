@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SourceMap.GeneratedPosition");
+
+    const sourceMappingURL = "bundle.js";
+
+    // Generated: `function f(){x();y();}`.
+    // Original line 1 has two mappings, at original columns 4 and 9.
+    const twoColumnsPayload = {
+        version: 3,
+        sources: ["original.js"],
+        sourcesContent: ["function f() {\n    x();\n    y();\n}\n// end\n"],
+        names: [],
+        mappings: "AAAA,aACI,IAAK,GACT",
+    };
+
+    // Mappings for original lines 0, 4 and 1, in that generated order,
+    // so the last inserted original line (1) is not the largest (4).
+    const outOfOrderPayload = {
+        version: 3,
+        sources: ["original.js"],
+        sourcesContent: ["var p = 1;\nvar q = 2;\n\n// gap\nvar r = 3;\n"],
+        names: [],
+        mappings: "AAAA,QAIA,QAHA",
+    };
+
+    // One mapping per original line, at column 0 (webpack `cheap-source-map` style).
+    const lineGranularPayload = {
+        version: 3,
+        sources: ["original.js"],
+        sourcesContent: ["a();\nb();\nc();\nd();\ne();\n"],
+        names: [],
+        mappings: "AAAA;AACA;AACA;AACA;AACA",
+    };
+
+    // Two mappings share the same original position, at generated columns 0 and 10.
+    const sameOriginalColumnPayload = {
+        version: 3,
+        sources: ["original.js"],
+        sourcesContent: ["a();\nx(); y();\n"],
+        names: [],
+        mappings: "AACI,UAAA",
+    };
+
+    async function makeSourceMap(payload)
+    {
+        return await WI.SourceMap.fromJSON(WI.networkManager.mainFrame.mainResource, sourceMappingURL, payload);
+    }
+
+    function checkPosition(sourceMap, sourceURL, lineNumber, columnNumber, expected)
+    {
+        let position = sourceMap.findGeneratedPosition(sourceURL, lineNumber, columnNumber);
+        let actual = position ? position.slice(0, 2) : null;
+        let description = `findGeneratedPosition for original (${lineNumber}, ${columnNumber})`;
+        if (expected === null)
+            InspectorTest.expectNull(actual, `${description} should be null.`);
+        else {
+            InspectorTest.expectNotNull(actual, `${description} should not be null.`);
+            if (actual)
+                InspectorTest.expectShallowEqual(actual, expected, `${description} should be [${expected}].`);
+        }
+    }
+
+    suite.addTestCase({
+        name: "SourceMap.GeneratedPosition.HonorOriginalColumn",
+        description: "The mapping at or after the original column should be used, not the first mapping of the line.",
+        async test()
+        {
+            let sourceMap = await makeSourceMap(twoColumnsPayload);
+            let resource = sourceMap.resources[0];
+
+            checkPosition(sourceMap, resource.url, 0, 0, [0, 0]);
+            checkPosition(sourceMap, resource.url, 1, 0, [0, 13]);
+            checkPosition(sourceMap, resource.url, 1, 4, [0, 13]);
+            checkPosition(sourceMap, resource.url, 1, 9, [0, 17]);
+            checkPosition(sourceMap, resource.url, 1, 100, [0, 17]);
+            checkPosition(sourceMap, resource.url, 2, 0, [0, 20]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMap.GeneratedPosition.PastLastMapping",
+        description: "A position after the last mapping should not resolve to the first mapping of the file.",
+        async test()
+        {
+            let sourceMap = await makeSourceMap(twoColumnsPayload);
+            let resource = sourceMap.resources[0];
+
+            checkPosition(sourceMap, resource.url, 3, 0, null);
+            checkPosition(sourceMap, resource.url, 10, 0, null);
+            checkPosition(sourceMap, "missing.js", 0, 0, null);
+
+            let sourceCodeLocation = resource.createSourceCodeLocation(3, 0);
+            InspectorTest.expectNull(sourceCodeLocation, "createSourceCodeLocation for an unmapped position should be null.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMap.GeneratedPosition.OutOfOrderLines",
+        description: "A mapping whose original line is larger than the last inserted original line should still be found.",
+        async test()
+        {
+            let sourceMap = await makeSourceMap(outOfOrderPayload);
+            let resource = sourceMap.resources[0];
+
+            checkPosition(sourceMap, resource.url, 0, 0, [0, 0]);
+            checkPosition(sourceMap, resource.url, 1, 0, [0, 16]);
+            checkPosition(sourceMap, resource.url, 3, 0, [0, 8]);
+            checkPosition(sourceMap, resource.url, 4, 0, [0, 8]);
+            checkPosition(sourceMap, resource.url, 5, 0, null);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMap.GeneratedPosition.LineGranularMap",
+        description: "A column after the last mapping of a line should still resolve on that line.",
+        async test() {
+            let sourceMap = await makeSourceMap(lineGranularPayload);
+            let resource = sourceMap.resources[0];
+
+            checkPosition(sourceMap, resource.url, 0, 0, [0, 0]);
+            checkPosition(sourceMap, resource.url, 2, 5, [2, 0]);
+            checkPosition(sourceMap, resource.url, 4, 40, [4, 0]);
+            checkPosition(sourceMap, resource.url, 5, 0, null);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMap.GeneratedPosition.SameOriginalColumn",
+        description: "When several mappings share the same original column, the first in generated order wins.",
+        async test() {
+            let sourceMap = await makeSourceMap(sameOriginalColumnPayload);
+            let resource = sourceMap.resources[0];
+
+            checkPosition(sourceMap, resource.url, 1, 4, [0, 0]);
+            checkPosition(sourceMap, resource.url, 1, 100, [0, 0]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMap.GeneratedPosition.SourceCodeLocation",
+        description: "createSourceCodeLocation should resolve the clicked original position to the mapped generated location.",
+        async test()
+        {
+            let sourceMap = await makeSourceMap(twoColumnsPayload);
+            let resource = sourceMap.resources[0];
+
+            let sourceCodeLocation = resource.createSourceCodeLocation(1, 9);
+            InspectorTest.expectNotNull(sourceCodeLocation, "createSourceCodeLocation for a mapped position should not be null.");
+            if (!sourceCodeLocation)
+                return;
+            InspectorTest.expectEqual(sourceCodeLocation.sourceCode, WI.networkManager.mainFrame.mainResource, "The raw location should be on the generated source code.");
+            InspectorTest.expectEqual(sourceCodeLocation.lineNumber, 0, "Raw line should be 0.");
+            InspectorTest.expectEqual(sourceCodeLocation.columnNumber, 17, "Raw column should be 17.");
+            InspectorTest.expectTrue(sourceCodeLocation.hasMappedLocation(), "Should have a mapped location.");
+            InspectorTest.expectEqual(sourceCodeLocation.displaySourceCode, resource, "The display location should be the source map resource.");
+            InspectorTest.expectEqual(sourceCodeLocation.displayLineNumber, 1, "Display line should be 1.");
+            InspectorTest.expectEqual(sourceCodeLocation.displayColumnNumber, 9, "Display column should be 9.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WI.SourceMap.findGeneratedPosition resolves an original position to the generated position at or after it.</p>
+</body>
+</html>

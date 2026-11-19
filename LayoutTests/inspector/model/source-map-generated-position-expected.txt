@@ -1,0 +1,60 @@
+Tests that WI.SourceMap.findGeneratedPosition resolves an original position to the generated position at or after it.
+
+
+== Running test suite: SourceMap.GeneratedPosition
+-- Running test case: SourceMap.GeneratedPosition.HonorOriginalColumn
+PASS: findGeneratedPosition for original (0, 0) should not be null.
+PASS: findGeneratedPosition for original (0, 0) should be [0,0].
+PASS: findGeneratedPosition for original (1, 0) should not be null.
+PASS: findGeneratedPosition for original (1, 0) should be [0,13].
+PASS: findGeneratedPosition for original (1, 4) should not be null.
+PASS: findGeneratedPosition for original (1, 4) should be [0,13].
+PASS: findGeneratedPosition for original (1, 9) should not be null.
+PASS: findGeneratedPosition for original (1, 9) should be [0,17].
+PASS: findGeneratedPosition for original (1, 100) should not be null.
+PASS: findGeneratedPosition for original (1, 100) should be [0,17].
+PASS: findGeneratedPosition for original (2, 0) should not be null.
+PASS: findGeneratedPosition for original (2, 0) should be [0,20].
+
+-- Running test case: SourceMap.GeneratedPosition.PastLastMapping
+PASS: findGeneratedPosition for original (3, 0) should be null.
+PASS: findGeneratedPosition for original (10, 0) should be null.
+PASS: findGeneratedPosition for original (0, 0) should be null.
+PASS: createSourceCodeLocation for an unmapped position should be null.
+
+-- Running test case: SourceMap.GeneratedPosition.OutOfOrderLines
+PASS: findGeneratedPosition for original (0, 0) should not be null.
+PASS: findGeneratedPosition for original (0, 0) should be [0,0].
+PASS: findGeneratedPosition for original (1, 0) should not be null.
+PASS: findGeneratedPosition for original (1, 0) should be [0,16].
+PASS: findGeneratedPosition for original (3, 0) should not be null.
+PASS: findGeneratedPosition for original (3, 0) should be [0,8].
+PASS: findGeneratedPosition for original (4, 0) should not be null.
+PASS: findGeneratedPosition for original (4, 0) should be [0,8].
+PASS: findGeneratedPosition for original (5, 0) should be null.
+
+-- Running test case: SourceMap.GeneratedPosition.LineGranularMap
+PASS: findGeneratedPosition for original (0, 0) should not be null.
+PASS: findGeneratedPosition for original (0, 0) should be [0,0].
+PASS: findGeneratedPosition for original (2, 5) should not be null.
+PASS: findGeneratedPosition for original (2, 5) should be [2,0].
+PASS: findGeneratedPosition for original (4, 40) should not be null.
+PASS: findGeneratedPosition for original (4, 40) should be [4,0].
+PASS: findGeneratedPosition for original (5, 0) should be null.
+
+-- Running test case: SourceMap.GeneratedPosition.SameOriginalColumn
+PASS: findGeneratedPosition for original (1, 4) should not be null.
+PASS: findGeneratedPosition for original (1, 4) should be [0,0].
+PASS: findGeneratedPosition for original (1, 100) should not be null.
+PASS: findGeneratedPosition for original (1, 100) should be [0,0].
+
+-- Running test case: SourceMap.GeneratedPosition.SourceCodeLocation
+PASS: createSourceCodeLocation for a mapped position should not be null.
+PASS: The raw location should be on the generated source code.
+PASS: Raw line should be 0.
+PASS: Raw column should be 17.
+PASS: Should have a mapped location.
+PASS: The display location should be the source map resource.
+PASS: Display line should be 1.
+PASS: Display column should be 9.
+

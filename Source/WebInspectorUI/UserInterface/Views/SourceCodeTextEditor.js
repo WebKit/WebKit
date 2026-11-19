@@ -1338,7 +1338,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         let addBreakpoint = () => {
             let data = this.textEditorBreakpointAdded(this, lineNumber, columnNumber);
-            this.setBreakpointInfoForLineAndColumn(data.lineNumber, data.columnNumber, data.breakpointInfo);
+            if (data)
+                this.setBreakpointInfoForLineAndColumn(data.lineNumber, data.columnNumber, data.breakpointInfo);
         };
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
@@ -1348,18 +1349,19 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             let editorLineInfo = {lineNumber, columnNumber};
             let unformattedLineInfo = this._unformattedLineInfoForEditorLineInfo(editorLineInfo);
             let sourceCodeLocation = this._sourceCode.createSourceCodeLocation(unformattedLineInfo.lineNumber, unformattedLineInfo.columnNumber);
+            if (sourceCodeLocation) {
+                let script;
+                if (sourceCodeLocation.sourceCode instanceof WI.Script)
+                    script = sourceCodeLocation.sourceCode;
+                else if (sourceCodeLocation.sourceCode instanceof WI.Resource)
+                    script = sourceCodeLocation.sourceCode.scriptForLocation(sourceCodeLocation);
 
-            let script;
-            if (sourceCodeLocation.sourceCode instanceof WI.Script)
-                script = sourceCodeLocation.sourceCode;
-            else if (sourceCodeLocation.sourceCode instanceof WI.Resource)
-                script = sourceCodeLocation.sourceCode.scriptForLocation(sourceCodeLocation);
-
-            if (script) {
-                contextMenu.appendItem(WI.UIString("Continue to Here"), () => {
-                    WI.debuggerManager.continueToLocation(script, sourceCodeLocation.lineNumber, sourceCodeLocation.columnNumber);
-                });
-                contextMenu.appendSeparator();
+                if (script) {
+                    contextMenu.appendItem(WI.UIString("Continue to Here"), () => {
+                        WI.debuggerManager.continueToLocation(script, sourceCodeLocation.lineNumber, sourceCodeLocation.columnNumber);
+                    });
+                    contextMenu.appendSeparator();
+                }
             }
         }
 
@@ -1414,6 +1416,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         var editorLineInfo = {lineNumber, columnNumber};
         var unformattedLineInfo = this._unformattedLineInfoForEditorLineInfo(editorLineInfo);
         var sourceCodeLocation = this._sourceCode.createSourceCodeLocation(unformattedLineInfo.lineNumber, unformattedLineInfo.columnNumber);
+        // There is no mapped location for this position, so no breakpoint can be created for it.
+        if (!sourceCodeLocation)
+            return null;
         var breakpoint = new WI.JavaScriptBreakpoint(sourceCodeLocation);
 
         var lineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
@@ -1836,6 +1841,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         };
 
         var sourceCodeLocation = this._sourceCodeLocationForEditorPosition(this.tokenTrackingController.candidate.hoveredTokenRange.start);
+        if (!sourceCodeLocation)
+            return;
         if (this.sourceCode instanceof WI.SourceMapResource)
             WI.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation, options);
         else

@@ -210,6 +210,9 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
             return;
 
         var newSourceCodeLocation = sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
+        // The new position may have no generated location, in which case keep the current location.
+        if (!newSourceCodeLocation)
+            return;
         console.assert(newSourceCodeLocation.sourceCode === this._sourceCode);
 
         this._makeChangeAndDispatchChangeEventIfNeeded(function() {
