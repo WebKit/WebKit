@@ -756,6 +756,17 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     return LayoutSize(constraints.computeStickyOffset(constrainingRect));
 }
 
+RectEdges<bool> RenderBoxModelObject::stuckEdgesForStickyPosition() const
+{
+    auto offset = stickyPositionOffset();
+    return {
+        offset.height() > 0,
+        offset.width() < 0,
+        offset.height() < 0,
+        offset.width() > 0
+    };
+}
+
 LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
 {
     if (isRelativelyPositioned())

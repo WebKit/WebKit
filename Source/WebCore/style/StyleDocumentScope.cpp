@@ -314,10 +314,22 @@ bool DocumentScope::invalidateForContainerDependencies(LayoutDependencyUpdateCon
     return !containersToInvalidate.isEmpty();
 }
 
-// The scroll state a scroll-state query container exposes: which edges it can still be scrolled
-// toward, and which it was most recently scrolled toward.
+static std::optional<RectEdges<bool>> stuckEdges(const RenderBox& containerRenderer)
+{
+    if (!containerRenderer.isStickilyPositioned())
+        return std::nullopt;
+
+    return containerRenderer.stuckEdgesForStickyPosition();
+}
+
+// The scroll state a scroll-state query container exposes, one field per supported feature:
+// scrollable (scrollableEdges), scrolled (scrolledDirections), stuck (stuckEdges)
+// https://drafts.csswg.org/css-conditional-5/#scroll-state-container
 static DocumentScope::ScrollState scrollStateFor(const RenderBox& containerRenderer)
 {
+    DocumentScope::ScrollState scrollState;
+    scrollState.stuckEdges = stuckEdges(containerRenderer);
+
     CheckedPtr<const ScrollableArea> scrollableArea;
     bool canScrollHorizontally = false;
     bool canScrollVertically = false;
@@ -338,22 +350,21 @@ static DocumentScope::ScrollState scrollStateFor(const RenderBox& containerRende
     }
 
     if (!scrollableArea)
-        return { };
+        return scrollState;
 
     auto scrollPosition = scrollableArea->scrollPosition();
     auto minimumScrollPosition = scrollableArea->minimumScrollPosition();
     auto maximumScrollPosition = scrollableArea->maximumScrollPosition();
 
-    return {
-        // Top, right, bottom, left.
-        {
-            canScrollVertically && scrollPosition.y() > minimumScrollPosition.y(),
-            canScrollHorizontally && scrollPosition.x() < maximumScrollPosition.x(),
-            canScrollVertically && scrollPosition.y() < maximumScrollPosition.y(),
-            canScrollHorizontally && scrollPosition.x() > minimumScrollPosition.x()
-        },
-        scrollableArea->scrolledDirections()
+    // Top, right, bottom, left.
+    scrollState.scrollableEdges = {
+        canScrollVertically && scrollPosition.y() > minimumScrollPosition.y(),
+        canScrollHorizontally && scrollPosition.x() < maximumScrollPosition.x(),
+        canScrollVertically && scrollPosition.y() < maximumScrollPosition.y(),
+        canScrollHorizontally && scrollPosition.x() > minimumScrollPosition.x()
     };
+    scrollState.scrolledDirections = scrollableArea->scrolledDirections();
+    return scrollState;
 }
 
 // https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
