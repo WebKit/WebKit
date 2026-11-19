@@ -1,0 +1,10 @@
+<body style="margin: 0; height: 100%;">
+<div id="target" style="position: absolute; left: 20px; top: 20px; width: 40px; height: 40px; background-color: silver;"></div>
+<script>
+const target = document.getElementById("target");
+// Like fast/forms/ios/dismiss-keyboard-after-tapping.html: keep the tap from moving focus out of the page's text field.
+for (const type of ["touchend", "mousedown", "click"])
+    target.addEventListener(type, event => event.preventDefault());
+window.top.postMessage({ type: "ready" }, "*");
+</script>
+</body>

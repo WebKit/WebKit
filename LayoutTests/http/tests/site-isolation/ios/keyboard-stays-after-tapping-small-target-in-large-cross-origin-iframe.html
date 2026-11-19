@@ -1,0 +1,49 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true KeyboardDismissalGestureEnabled=true ] -->
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("With the keyboard up, tapping a small target inside a large cross-origin iframe should not dismiss the keyboard. Only a tap on a large target should.");
+jsTestIsAsync = true;
+
+const iframeTop = 150;
+
+function waitForMessage(type)
+{
+    return new Promise(resolve => {
+        addEventListener("message", function listener(event) {
+            if (event.data.type !== type)
+                return;
+            removeEventListener("message", listener);
+            resolve(event.data);
+        });
+    });
+}
+
+// The iframe reports that it's ready when it loads, which is before this page's load event.
+const ready = waitForMessage("ready");
+
+addEventListener("load", async () => {
+    await ready;
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.activateElementAndWaitForInputSession(document.querySelector("input"));
+    initialKeyboardWillHideCount = await UIHelper.keyboardWillHideCount();
+
+    // The target is 40 by 40 at (20, 20) inside the iframe, which spans the page's width and is 400 tall.
+    await UIHelper.activateAt(40, iframeTop + 40);
+    await UIHelper.waitForDoubleTapDelay();
+    keyboardWillHideCountAfterTap = await UIHelper.keyboardWillHideCount();
+    shouldBe("initialKeyboardWillHideCount", "keyboardWillHideCountAfterTap");
+
+    // Tapping a blank spot in this page should still dismiss the keyboard.
+    await UIHelper.tapAt(10, 100);
+    await UIHelper.waitForKeyboardToHide();
+    testPassed("Dismissed keyboard after tapping a blank spot");
+
+    finishJSTest();
+});
+</script>
+<body style="margin: 0;">
+<input type="text" autocomplete="none" spellcheck="false" style="position: absolute; left: 20px; top: 20px; font-size: 16px; width: 250px; height: 24px;">
+<iframe style="position: absolute; left: 0; top: 150px; width: 100%; height: 400px; border: none;" src="http://localhost:8000/site-isolation/resources/small-click-target-frame.html"></iframe>
+</body>

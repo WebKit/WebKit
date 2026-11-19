@@ -934,7 +934,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ApplyTextExtractionFilter(String input) -> (String output)
 
 #if PLATFORM(IOS_FAMILY)
-    ShouldDismissKeyboardAfterTapAtPoint(WebCore::FloatPoint point) -> (bool shouldDismiss)
+    ShouldDismissKeyboardAfterTapAtPoint(std::optional<WebCore::FrameIdentifier> frameID, WebCore::FloatPoint point, std::optional<float> unobscuredContentWidth) -> (Variant<bool, WebCore::RemoteUserInputEventData> result)
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)

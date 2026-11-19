@@ -1,0 +1,11 @@
+With the keyboard up, tapping a small target inside a large cross-origin iframe should not dismiss the keyboard. Only a tap on a large target should.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialKeyboardWillHideCount is keyboardWillHideCountAfterTap
+PASS Dismissed keyboard after tapping a blank spot
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

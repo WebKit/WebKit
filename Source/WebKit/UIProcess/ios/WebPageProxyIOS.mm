@@ -1837,7 +1837,29 @@ void WebPageProxy::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, Comple
     if (!hasRunningProcess())
         return completion(false);
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ShouldDismissKeyboardAfterTapAtPoint(point), WTF::move(completion), webPageIDInMainFrameProcess());
+    shouldDismissKeyboardAfterTapAtPointInFrame(std::nullopt, point, WTF::move(completion));
+}
+
+void WebPageProxy::shouldDismissKeyboardAfterTapAtPointInFrame(std::optional<FrameIdentifier> frameID, FloatPoint point, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr frame = frameID ? WebFrameProxy::webFrame(*frameID) : m_mainFrame.get();
+    if (!frame || frame->page() != this)
+        return completion(false);
+
+    // Only the main frame's view has the unobscured content size, so pass it along to other frames' processes.
+    std::optional<float> unobscuredContentWidth;
+    if (frameID)
+        unobscuredContentWidth = unobscuredContentRect().width();
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ShouldDismissKeyboardAfterTapAtPoint(frameID, point, unobscuredContentWidth), Messages::WebPage::ShouldDismissKeyboardAfterTapAtPoint::Reply { [weakThis = WeakPtr { *this }, completion = WTF::move(completion)](Variant<bool, RemoteUserInputEventData>&& result) mutable {
+        auto* remoteUserInputEventData = std::get_if<RemoteUserInputEventData>(&result);
+        if (!remoteUserInputEventData)
+            return completion(std::get<bool>(result));
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return completion(false);
+        protectedThis->shouldDismissKeyboardAfterTapAtPointInFrame(remoteUserInputEventData->targetFrameID, FloatPoint { remoteUserInputEventData->transformedPoint }, WTF::move(completion));
+    } });
 }
 
 Color WebPageProxy::platformUnderPageBackgroundColor() const

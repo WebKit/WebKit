@@ -1658,7 +1658,7 @@ public:
 
     bool canShowWhileLocked() const;
 
-    void shouldDismissKeyboardAfterTapAtPoint(WebCore::FloatPoint, CompletionHandler<void(bool)>&&);
+    void shouldDismissKeyboardAfterTapAtPoint(std::optional<WebCore::FrameIdentifier>, WebCore::FloatPoint, std::optional<float> unobscuredContentWidth, CompletionHandler<void(Variant<bool, WebCore::RemoteUserInputEventData>&&)>&&);
 #endif
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)

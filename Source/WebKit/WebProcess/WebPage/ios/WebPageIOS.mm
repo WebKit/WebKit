@@ -4668,18 +4668,29 @@ FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame&, Flo
     return std::get<std::tuple_size_v<decltype(fixedSizes)> - 1>(fixedSizes);
 }
 
-void WebPage::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionHandler<void(bool)>&& completion)
+void WebPage::shouldDismissKeyboardAfterTapAtPoint(std::optional<FrameIdentifier> frameID, FloatPoint point, std::optional<float> unobscuredContentWidth, CompletionHandler<void(Variant<bool, RemoteUserInputEventData>&&)>&& completion)
 {
-    RefPtr localMainFrame = protect(m_page)->localMainFrame();
-    if (!localMainFrame)
+    if (frameID && !WebProcess::singleton().webFrame(*frameID))
         return completion(false);
 
-    RefPtr mainFrameView = localMainFrame->view();
-    if (!mainFrameView)
+    RefPtr localRootFrame = this->localRootFrame(frameID);
+    if (!localRootFrame)
         return completion(false);
+
+    // Only the main frame's view has the unobscured content size. The UI process passes it along to other frames' processes.
+    if (!unobscuredContentWidth) {
+        RefPtr localMainFrame = protect(m_page)->localMainFrame();
+        RefPtr mainFrameView = localMainFrame ? localMainFrame->view() : nullptr;
+        if (!mainFrameView)
+            return completion(false);
+        unobscuredContentWidth = mainFrameView->unobscuredContentSize().width();
+    }
 
     FloatPoint adjustedPoint;
-    RefPtr target = localMainFrame->nodeRespondingToClickEvents(point, adjustedPoint);
+    RefPtr target = localRootFrame->nodeRespondingToClickEvents(point, adjustedPoint);
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForTapTarget(localRootFrame.get(), target.get(), adjustedPoint))
+        return completion(WTF::move(*remoteUserInputEventData));
+
     if (!target)
         return completion(true);
 
@@ -4689,7 +4700,7 @@ void WebPage::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionH
     if (RefPtr element = dynamicDowncast<Element>(*target); element && element->isFormControlElement())
         return completion(false);
 
-    auto minimumSizeForDismissal = FloatSize { 0.9f * mainFrameView->unobscuredContentSize().width(), 150.f };
+    auto minimumSizeForDismissal = FloatSize { 0.9f * *unobscuredContentWidth, 150.f };
 
     bool isReplaced;
     FloatSize targetSize = target->absoluteBoundingRect(&isReplaced).size();
