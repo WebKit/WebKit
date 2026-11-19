@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+if (window.internals)
+    window.internals.setUserPreferredLanguages(["zh-tw"]);
+</script>
+</head>
+<body>
+This test makes sure that the serif and sans-serif generic font families pick a font that matches the content language for CJK text, instead of falling back to a Simplified Chinese font, when the primary font (Helvetica) has no CJK glyphs.
+<div style="font-size: 40px;">
+<div lang="ja" style='font-family: Helvetica, sans-serif;'>&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+<div lang="ja" style='font-family: Times, serif;'>&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+<div lang="zh-Hant" style='font-family: Helvetica, sans-serif;'>&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+<div lang="zh-Hant" style='font-family: Times, serif;'>&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+<div lang="zh" style='font-family: Helvetica, sans-serif;'>&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+<div lang="ko" style='font-family: Helvetica, sans-serif;'>&#xD55C;&#xAD6D;&#xC5B4;&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+<div lang="ko" style='font-family: Times, serif;'>&#xD55C;&#xAD6D;&#xC5B4;&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+</div>
+</body>
+</html>

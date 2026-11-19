@@ -47,6 +47,16 @@ void SettingsBase::initializeDefaultFontFamilies()
     setStandardFontFamily("Songti SC"_s, USCRIPT_SIMPLIFIED_HAN);
     setStandardFontFamily("Hiragino Mincho ProN"_s, USCRIPT_KATAKANA_OR_HIRAGANA);
     setStandardFontFamily("AppleMyungjo"_s, USCRIPT_HANGUL);
+
+    setSerifFontFamily("Songti TC"_s, USCRIPT_TRADITIONAL_HAN);
+    setSerifFontFamily("Songti SC"_s, USCRIPT_SIMPLIFIED_HAN);
+    setSerifFontFamily("Hiragino Mincho ProN"_s, USCRIPT_KATAKANA_OR_HIRAGANA);
+    setSerifFontFamily("AppleMyungjo"_s, USCRIPT_HANGUL);
+
+    setSansSerifFontFamily("PingFang TC"_s, USCRIPT_TRADITIONAL_HAN);
+    setSansSerifFontFamily("PingFang SC"_s, USCRIPT_SIMPLIFIED_HAN);
+    setSansSerifFontFamily("Hiragino Sans"_s, USCRIPT_KATAKANA_OR_HIRAGANA);
+    setSansSerifFontFamily("Apple SD Gothic Neo"_s, USCRIPT_HANGUL);
 }
 
 #else
