@@ -62,6 +62,7 @@
 #import <WebCore/AttributedString.h>
 #import <WebCore/BoxSides.h>
 #import <WebCore/Color.h>
+#import <WebCore/HighlightVisibility.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/ScrollingNodeID.h>
 #import <WebCore/SharedBuffer.h>
@@ -601,6 +602,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
 - (void)_setUseDarkAppearanceForTesting:(BOOL)useDarkAppearance
 {
     _page->setUseDarkAppearanceForTesting(useDarkAppearance);
+}
+
+- (void)_setAppHighlightsVisibleForTesting:(BOOL)visible
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    _page->setAppHighlightsVisibility(visible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
+#else
+    UNUSED_PARAM(visible);
+#endif
 }
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem

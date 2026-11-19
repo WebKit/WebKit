@@ -5048,8 +5048,10 @@ void WebPage::setBackgroundColor(const std::optional<WebCore::Color>& background
 
     m_backgroundColor = backgroundColor;
 
-    if (RefPtr frameView = localMainFrameView())
-        frameView->updateBackgroundRecursively(backgroundColor);
+    for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames())) {
+        if (RefPtr frameView = rootFrame->view())
+            frameView->updateBackgroundRecursively(backgroundColor);
+    }
 
     RefPtr drawingArea = m_drawingArea;
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
@@ -10984,12 +10986,14 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(Vector<SharedMemory::Handle>&
 void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightVisibility)
 {
     m_appHighlightsVisible = appHighlightVisibility;
-    for (RefPtr<Frame> frame = m_mainFrame->coreLocalFrame(); frame; frame = frame->tree().traverseNextRendered()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
-        if (!localFrame)
-            continue;
-        if (RefPtr document = localFrame->document())
-            protect(document->appHighlightRegistry())->setHighlightVisibility(appHighlightVisibility);
+    for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames())) {
+        for (RefPtr<Frame> frame = rootFrame.ptr(); frame; frame = frame->tree().traverseNextRendered(rootFrame.ptr())) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+            if (!localFrame)
+                continue;
+            if (RefPtr document = localFrame->document())
+                protect(document->appHighlightRegistry())->setHighlightVisibility(appHighlightVisibility);
+        }
     }
 }
 

@@ -1904,6 +1904,36 @@ TEST(SiteIsolation, ExtendedProofreadingReplyReachesCrossOriginIframe)
     pendingExtendedCheckString = nil;
 }
 
+TEST(SiteIsolation, DrawsBackgroundInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configurationWithInternals(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    auto baseBackgroundColor = [&](WKFrameInfo *frame) -> String {
+        return [webView stringByEvaluatingJavaScript:@"internals.viewBaseBackgroundColor()" inFrame:frame];
+    };
+    auto opaqueColor = baseBackgroundColor(nil);
+    EXPECT_WK_STREQ(baseBackgroundColor(childFrame.get()), opaqueColor);
+
+    [webView _setDrawsBackground:NO];
+    String transparentColor;
+    EXPECT_TRUE(Util::waitFor([&] {
+        transparentColor = baseBackgroundColor(nil);
+        return transparentColor != opaqueColor;
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return baseBackgroundColor(childFrame.get()) == transparentColor;
+    }));
+}
+
 #endif // PLATFORM(MAC)
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -1986,6 +2016,35 @@ TEST(SiteIsolation, RestoreAppHighlightInFocusedCrossOriginIframe)
     [webView _restoreAppHighlights:@[ [highlight highlight] ]];
     EXPECT_TRUE(Util::waitFor([&] {
         return [[webView objectByEvaluatingJavaScript:@"internals.numberOfAppHighlights()" inFrame:childFrame.get()] unsignedIntegerValue] == 1;
+    }));
+}
+
+TEST(SiteIsolation, AppHighlightsVisibilityInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configurationWithInternals(server));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    // Reading the visibility creates each document's highlight registry, which takes the page's visibility only when it's created.
+    auto highlightsVisible = [&](WKFrameInfo *frame) {
+        return [[webView objectByEvaluatingJavaScript:@"internals.appHighlightsVisible()" inFrame:frame] boolValue];
+    };
+    EXPECT_FALSE(highlightsVisible(nil));
+    EXPECT_FALSE(highlightsVisible(childFrame.get()));
+
+    [webView _setAppHighlightsVisibleForTesting:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return highlightsVisible(nil);
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return highlightsVisible(childFrame.get());
     }));
 }
 

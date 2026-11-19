@@ -3663,8 +3663,12 @@ void WebPageProxy::setBackgroundColor(const std::optional<Color>& color)
         return;
 
     internals().backgroundColor = color;
-    if (hasRunningProcess())
-        send(Messages::WebPage::SetBackgroundColor(color));
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetBackgroundColor(color), pageID);
+    });
 }
 
 void WebPageProxy::setObscuredContentInsets(const WebCore::FloatBoxExtent& obscuredContentInsets)

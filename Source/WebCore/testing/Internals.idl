@@ -1576,6 +1576,7 @@ enum LayerType {
 
     [Conditional=APP_HIGHLIGHTS] readonly attribute sequence<DOMString> appHighlightContextMenuItemTitles;
     [Conditional=APP_HIGHLIGHTS] unsigned long numberOfAppHighlights();
+    [Conditional=APP_HIGHLIGHTS] boolean appHighlightsVisible();
 
     readonly attribute sequence<AbstractRange> textExtractionHighlightRanges;
 

@@ -1647,6 +1647,7 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<String> appHighlightContextMenuItemTitles() const;
     unsigned numberOfAppHighlights();
+    bool appHighlightsVisible();
 #endif
 
     Vector<Ref<AbstractRange>> textExtractionHighlightRanges() const;

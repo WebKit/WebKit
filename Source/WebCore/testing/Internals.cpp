@@ -8709,6 +8709,12 @@ unsigned Internals::numberOfAppHighlights()
         numHighlights += highlight.value->highlightRanges().size();
     return numHighlights;
 }
+
+bool Internals::appHighlightsVisible()
+{
+    RefPtr document = contextDocument();
+    return document && protect(document->appHighlightRegistry())->highlightsVisibility() == HighlightVisibility::Visible;
+}
 #endif
 
 Vector<Ref<AbstractRange>> Internals::textExtractionHighlightRanges() const
