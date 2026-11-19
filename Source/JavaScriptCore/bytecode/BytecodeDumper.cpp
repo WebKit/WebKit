@@ -163,7 +163,7 @@ void CodeBlockBytecodeDumper<Block>::dumpExceptionHandlers()
         unsigned i = 0;
         do {
             const auto& handler = this->block()->exceptionHandler(i);
-            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] } %s\n", i + 1, handler.start, handler.end, handler.target, handler.typeName());
+            this->m_out.printf("\t %u: { start: [%4u] end: [%4u] target: [%4u] } %s\n", i + 1, handler.start, handler.end, handler.target, handler.typeName());
             ++i;
         } while (i < count);
     }
@@ -176,7 +176,7 @@ void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
         this->m_out.printf("Switch Jump Tables:\n");
         unsigned i = 0;
         do {
-            this->m_out.printf("  %1d = {\n", i);
+            this->m_out.printf("  %1u = {\n", i);
             const auto& unlinkedTable = this->block()->unlinkedSwitchJumpTable(i);
             int entry = 0;
             auto end = unlinkedTable.m_branchOffsets.end();
@@ -207,7 +207,7 @@ void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
         this->m_out.printf("\nString Switch Jump Tables:\n");
         unsigned i = 0;
         do {
-            this->m_out.printf("  %1d = {\n", i);
+            this->m_out.printf("  %1u = {\n", i);
             auto& unlinkedTable = this->block()->unlinkedStringSwitchJumpTable(i);
             for (const auto& entry : unlinkedTable.m_offsetTable) {
                 this->m_out.print("\t\t\"", entry.key->utf8(), "\" => ");
@@ -240,7 +240,7 @@ static void dumpHeader(Block* block, const JSInstructionStream& instructions, Pr
 
     out.print(*block);
     out.printf(
-        ": %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions, %lu instructions with metadata); %lu bytes (%lu metadata bytes); %d parameter(s); %d callee register(s); %d variable(s)",
+        ": %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions, %lu instructions with metadata); %lu bytes (%lu metadata bytes); %u parameter(s); %u callee register(s); %u variable(s)",
         static_cast<unsigned long>(instructionCount),
         static_cast<unsigned long>(wide16InstructionCount),
         static_cast<unsigned long>(wide32InstructionCount),
