@@ -8464,7 +8464,9 @@ void WebPageProxy::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPa
 
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::SetBackgroundExtendsBeyondPage(backgroundExtendsBeyondPage));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetBackgroundExtendsBeyondPage(backgroundExtendsBeyondPage), pageID);
+    });
 }
 
 bool WebPageProxy::backgroundExtendsBeyondPage() const

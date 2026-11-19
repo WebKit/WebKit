@@ -1198,6 +1198,37 @@ TEST(SiteIsolation, UserInterfaceLayoutDirectionInCrossOriginIframe)
     }));
 }
 
+TEST(SiteIsolation, BackgroundExtendsBeyondPageInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body><div style='height: 2000px'></div><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body><div style='height: 2000px'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configurationWithInternals(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    // A frame's scrolling node rereads the setting when its geometry changes, so each check grows the page.
+    auto behaviorForFixedElements = [&](WKFrameInfo *frame) -> String {
+        return [webView stringByEvaluatingJavaScript:@"(() => { const div = document.querySelector('div'); div.style.height = `${div.offsetHeight + 100}px`;"
+            "return internals.scrollingStateTreeAsText().match(/behavior for fixed (\\d)/)?.[1] ?? '' })()" inFrame:frame];
+    };
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return behaviorForFixedElements(nil) == "1"_s && behaviorForFixedElements(childFrame.get()) == "1"_s;
+    }));
+
+    [webView _setBackgroundExtendsBeyondPage:NO];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return behaviorForFixedElements(nil) == "0"_s;
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return behaviorForFixedElements(childFrame.get()) == "0"_s;
+    }));
+}
+
 #if PLATFORM(MAC)
 
 TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)
