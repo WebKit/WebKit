@@ -406,6 +406,18 @@ static NSData *testJPEGData()
     return size;
 }
 
+- (void)observeAttachmentIconLoads
+{
+    [self objectByEvaluatingJavaScript:@"document.addEventListener('load', event => { if (event.target.localName == 'attachment') window.attachmentIconLoaded = true; }, true)"];
+}
+
+- (void)waitForAttachmentIconToLoad
+{
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[self objectByEvaluatingJavaScript:@"!!window.attachmentIconLoaded"] boolValue];
+    }));
+}
+
 - (void)waitForImageElementSizeToBecome:(CGSize)expectedSize
 {
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
@@ -574,8 +586,8 @@ static void simulateFolderDragWithURL(DragAndDropSimulator *simulator, NSURL *fo
 BOOL isCompletelyTransparent(NSImage *image)
 {
     RetainPtr representation = adoptNS([[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation]);
-    for (int row = 0; row < image.size.height; ++row) {
-        for (int column = 0; column < image.size.width; ++column) {
+    for (NSInteger row = 0; row < [representation pixelsHigh]; ++row) {
+        for (NSInteger column = 0; column < [representation pixelsWide]; ++column) {
             if ([representation colorAtX:column y:row].alphaComponent)
                 return false;
         }
@@ -1457,6 +1469,9 @@ TEST(WKAttachmentTests, MoveAttachmentElementAsIconByDragging)
     RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     TestWKWebView *webView = [simulator webView];
     [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+#if PLATFORM(MAC)
+    [webView observeAttachmentIconLoads];
+#endif
 
     auto data = retainPtr(testPDFData());
     auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"document.pdf" contentType:@"application/pdf" data:data.get()]);
@@ -1465,6 +1480,9 @@ TEST(WKAttachmentTests, MoveAttachmentElementAsIconByDragging)
     [webView _executeEditCommand:@"InsertHTML" argument:@"<strong>text</strong>" completion:nil];
     [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
     [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
+#if PLATFORM(MAC)
+    [webView waitForAttachmentIconToLoad];
+#endif
 
     // Drag the attachment element to somewhere below the strong text.
     [simulator runFrom:[webView attachmentElementMidPoint] to:CGPointMake(50, 300)];
@@ -2127,9 +2145,11 @@ TEST(WKAttachmentTestsMac, DragAttachmentAsFilePromise)
     RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     TestWKWebView *webView = [simulator webView];
     [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+    [webView observeAttachmentIconLoads];
 
     RetainPtr fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:testPDFFileURL() options:0 error:nil]);
     auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFileWrapper:fileWrapper.get() contentType:nil]);
+    [webView waitForAttachmentIconToLoad];
     [simulator runFrom:[webView attachmentElementMidPoint] to:CGPointMake(300, 300)];
 
     NSArray<NSURL *> *urls = [simulator receivePromisedFiles];
