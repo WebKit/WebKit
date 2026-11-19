@@ -1,0 +1,23 @@
+Test that every canvas color space has a display name.
+
+
+== Running test suite: Canvas.ColorSpaceDisplayName
+-- Running test case: Canvas.ColorSpaceDisplayName.EveryProtocolColorSpace
+PASS: The Canvas domain should define a ColorSpace enum.
+PASS: Color space "srgb" should have a display name.
+PASS: Color space "srgb-linear" should have a display name.
+PASS: Color space "display-p3" should have a display name.
+PASS: Color space "display-p3-linear" should have a display name.
+
+-- Running test case: Canvas.ColorSpaceDisplayName.SRGB
+PASS: Canvas context should have color space "srgb".
+PASS: Color space "srgb" should have display name "sRGB".
+
+-- Running test case: Canvas.ColorSpaceDisplayName.SRGBLinear
+PASS: Canvas context should have color space "srgb-linear".
+PASS: Color space "srgb-linear" should have display name "Linear sRGB".
+
+-- Running test case: Canvas.ColorSpaceDisplayName.DisplayP3
+PASS: Color space "display-p3" should have display name "Display P3".
+PASS: Color space "display-p3-linear" should have display name "Linear Display P3".
+
