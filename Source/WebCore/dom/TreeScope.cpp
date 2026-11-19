@@ -435,15 +435,13 @@ RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY, HitT
 
 Vector<Ref<Element>> TreeScope::elementsFromPoint(double clientX, double clientY, HitTestSource source)
 {
-    Vector<Ref<Element>> elements;
-
     Ref document = documentScope();
     if (document->renderTreeState() != Document::RenderTreeState::Built)
-        return elements;
+        return { };
 
     auto absolutePoint = absolutePointIfNotClipped(document, LayoutPoint(clientX, clientY));
     if (!absolutePoint)
-        return elements;
+        return { };
 
     static constexpr OptionSet hitTypes {
         HitTestRequest::Type::ReadOnly,
@@ -458,7 +456,7 @@ Vector<Ref<Element>> TreeScope::elementsFromPoint(double clientX, double clientY
 
     RefPtr<Node> lastNode;
     auto& nodeSet = result.listBasedTestResult();
-    elements.reserveInitialCapacity(nodeSet.size());
+    Vector<Ref<Element>> elements(ReserveCapacityTag { }, nodeSet.size());
     for (auto& listBasedNode : nodeSet) {
         RefPtr<Node> node = retargetToScope(listBasedNode);
         while (!is<Element>(node)) {
