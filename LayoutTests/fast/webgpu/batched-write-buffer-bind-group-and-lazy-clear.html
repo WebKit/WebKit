@@ -1,0 +1,562 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Tests shared zero-buffer lazy texture clears on dirty memory, loadOp:'load' render pass clears, " +
+           "idle-queue validated and indirect indexed draw scratch allocation, writeBuffer ordering across open blit encoders, " +
+           "and interleaved queue.writeBuffer + device.createBindGroup batches on both idle and busy queues.");
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter({});
+    const device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    async function dirtyTextureMemory(width, height) {
+        const dirtyTextures = [];
+        const bytesPerRow = width * 4;
+        const fillBytes = new Uint8Array(bytesPerRow * height).fill(0xAA);
+        const encoder = device.createCommandEncoder();
+        for (let i = 0; i < 6; ++i) {
+            const tex = device.createTexture({
+                size: [width, height],
+                format: 'rgba8unorm',
+                usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC,
+            });
+            device.queue.writeTexture({ texture: tex }, fillBytes, { bytesPerRow, rowsPerImage: height }, [width, height, 1]);
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{
+                    view: tex.createView(),
+                    loadOp: 'clear',
+                    storeOp: 'store',
+                    clearValue: { r: 1, g: 1, b: 1, a: 1 },
+                }],
+            });
+            pass.end();
+            dirtyTextures.push(tex);
+        }
+        device.queue.submit([encoder.finish()]);
+        await device.queue.onSubmittedWorkDone();
+        for (const tex of dirtyTextures)
+            tex.destroy();
+    }
+
+    // 1. Verify lazy zero-clear using shared Device::zeroBuffer across multiple texture sizes after dirtying memory.
+    async function checkLazyZeroClear(width, height) {
+        await dirtyTextureMemory(width, height);
+        const bytesPerRow = Math.ceil((width * 4) / 256) * 256;
+        const byteLength = bytesPerRow * height;
+        const texture = device.createTexture({
+            size: [width, height],
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+        });
+        const readback = device.createBuffer({
+            size: byteLength,
+            usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        });
+        const encoder = device.createCommandEncoder();
+        encoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow, rowsPerImage: height }, [width, height, 1]);
+        device.queue.submit([encoder.finish()]);
+        await readback.mapAsync(GPUMapMode.READ);
+        const bytes = new Uint8Array(readback.getMappedRange());
+        let nonZero = 0;
+        for (let i = 0; i < bytes.length; ++i)
+            nonZero |= bytes[i];
+        readback.unmap();
+        texture.destroy();
+        readback.destroy();
+        return nonZero === 0;
+    }
+
+    window.lazyClearSmallZeroed = await checkLazyZeroClear(64, 64);
+    window.lazyClearLargeZeroed = await checkLazyZeroClear(512, 512);
+    shouldBeTrue("lazyClearSmallZeroed");
+    shouldBeTrue("lazyClearLargeZeroed");
+
+    // 2. Verify uninitialized render pass attachments with loadOp: 'load' clear to (0, 0, 0, 0) across
+    // storeOp: 'store' (MTLLoadActionClear), MSAA resolve + storeOp: 'discard' (attachmentsToClear fallback),
+    // and 3D depthSlice attachments, and that unsubmitted encoders do not forge clear state.
+    await dirtyTextureMemory(64, 64);
+    const rtWidth = 64;
+    const rtHeight = 64;
+    const rtBytesPerRow = 256;
+    const rtByteLength = rtBytesPerRow * rtHeight;
+    const renderTarget = device.createTexture({
+        size: [rtWidth, rtHeight],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+
+    {
+        const unsubmitted = device.createCommandEncoder();
+        const pass = unsubmitted.beginRenderPass({
+            colorAttachments: [{
+                view: renderTarget.createView(),
+                loadOp: 'load',
+                storeOp: 'store',
+            }],
+        });
+        pass.end();
+        unsubmitted.finish();
+    }
+
+    {
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginRenderPass({
+            colorAttachments: [{
+                view: renderTarget.createView(),
+                loadOp: 'load',
+                storeOp: 'store',
+            }],
+        });
+        pass.end();
+        const readback = device.createBuffer({
+            size: rtByteLength,
+            usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        });
+        encoder.copyTextureToBuffer({ texture: renderTarget }, { buffer: readback, bytesPerRow: rtBytesPerRow, rowsPerImage: rtHeight }, [rtWidth, rtHeight, 1]);
+        device.queue.submit([encoder.finish()]);
+        await readback.mapAsync(GPUMapMode.READ);
+        const bytes = new Uint8Array(readback.getMappedRange());
+        let nonZero = 0;
+        for (let i = 0; i < bytes.length; ++i)
+            nonZero |= bytes[i];
+        readback.unmap();
+        window.renderPassLoadClearedToZero = (nonZero === 0);
+        shouldBeTrue("renderPassLoadClearedToZero");
+    }
+
+    {
+        const msaaTarget = device.createTexture({
+            size: [rtWidth, rtHeight],
+            sampleCount: 4,
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        });
+        const resolveTarget = device.createTexture({
+            size: [rtWidth, rtHeight],
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+        });
+        const readback = device.createBuffer({
+            size: rtByteLength,
+            usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        });
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginRenderPass({
+            colorAttachments: [{
+                view: msaaTarget.createView(),
+                resolveTarget: resolveTarget.createView(),
+                loadOp: 'load',
+                storeOp: 'discard',
+            }],
+        });
+        pass.end();
+        encoder.copyTextureToBuffer({ texture: resolveTarget }, { buffer: readback, bytesPerRow: rtBytesPerRow, rowsPerImage: rtHeight }, [rtWidth, rtHeight, 1]);
+        device.queue.submit([encoder.finish()]);
+        await readback.mapAsync(GPUMapMode.READ);
+        const bytes = new Uint8Array(readback.getMappedRange());
+        let nonZero = 0;
+        for (let i = 0; i < bytes.length; ++i)
+            nonZero |= bytes[i];
+        readback.unmap();
+        window.renderPassResolveDiscardClearedToZero = (nonZero === 0);
+        shouldBeTrue("renderPassResolveDiscardClearedToZero");
+    }
+
+    {
+        const tex3D = device.createTexture({
+            size: [16, 16, 2],
+            dimension: '3d',
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
+        });
+        device.queue.writeTexture(
+            { texture: tex3D, origin: [0, 0, 0] },
+            new Uint8Array(16 * 16 * 4).fill(0xFF),
+            { bytesPerRow: 16 * 4, rowsPerImage: 16 },
+            [16, 16, 1]
+        );
+        const readback3D = device.createBuffer({
+            size: 256 * 16 * 2,
+            usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        });
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginRenderPass({
+            colorAttachments: [{
+                view: tex3D.createView(),
+                depthSlice: 1,
+                loadOp: 'load',
+                storeOp: 'store',
+            }],
+        });
+        pass.end();
+        encoder.copyTextureToBuffer({ texture: tex3D }, { buffer: readback3D, bytesPerRow: 256, rowsPerImage: 16 }, [16, 16, 2]);
+        device.queue.submit([encoder.finish()]);
+        await readback3D.mapAsync(GPUMapMode.READ);
+        const bytes = new Uint8Array(readback3D.getMappedRange());
+        let slice0AllFF = true;
+        let slice1AllZero = true;
+        const sliceBytes = 256 * 16;
+        for (let row = 0; row < 16; ++row) {
+            for (let col = 0; col < 16 * 4; ++col) {
+                if (bytes[row * 256 + col] !== 0xFF)
+                    slice0AllFF = false;
+                if (bytes[sliceBytes + row * 256 + col] !== 0)
+                    slice1AllZero = false;
+            }
+        }
+        readback3D.unmap();
+        window.renderPass3DSliceClearedCorrectly = slice0AllFF && slice1AllZero;
+        shouldBeTrue("renderPass3DSliceClearedCorrectly");
+    }
+
+    // 3. Multiple validated drawIndexed calls and drawIndexedIndirect calls in one render pass while the queue is idle
+    // must not alias Queue::m_temporaryBuffer scratch slices.
+    const drawShader = device.createShaderModule({
+        code: `
+            struct VSOut {
+                @builtin(position) pos: vec4f,
+                @location(0) color: vec4f,
+            };
+
+            @vertex
+            fn vs(@location(0) pos: vec2f, @location(1) color: vec4f) -> VSOut {
+                var out: VSOut;
+                out.pos = vec4f(pos, 0.0, 1.0);
+                out.color = color;
+                return out;
+            }
+
+            @fragment
+            fn fs(@location(0) color: vec4f) -> @location(0) vec4f {
+                return color;
+            }
+        `,
+    });
+    const pointPipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module: drawShader,
+            entryPoint: 'vs',
+            buffers: [{
+                arrayStride: 24,
+                attributes: [
+                    { shaderLocation: 0, offset: 0, format: 'float32x2' },
+                    { shaderLocation: 1, offset: 8, format: 'float32x4' },
+                ],
+            }],
+        },
+        fragment: {
+            module: drawShader,
+            entryPoint: 'fs',
+            targets: [{ format: 'rgba8unorm' }],
+        },
+        primitive: { topology: 'point-list' },
+    });
+
+    const vertexData = new Float32Array([
+        -0.75, 0.0,   1.0, 0.0, 0.0, 1.0, // pixel 0: red
+        -0.25, 0.0,   0.0, 1.0, 0.0, 1.0, // pixel 1: green
+         0.25, 0.0,   0.0, 0.0, 1.0, 1.0, // pixel 2: blue
+         0.75, 0.0,   1.0, 1.0, 0.0, 1.0, // pixel 3: yellow (only reached if OOB clamp is broken)
+    ]);
+    const vertexBuffer = device.createBuffer({
+        size: vertexData.byteLength,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+    });
+    device.queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    // Populate indexBuffer via GPU copyBufferToBuffer so CPU writeBuffer index pre-validation is bypassed
+    // and RenderPassEncoder::clampIndexBufferToValidValues runs on the subsequent drawIndexed calls.
+    const indexStaging = device.createBuffer({
+        size: 16,
+        usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
+    device.queue.writeBuffer(indexStaging, 0, new Uint32Array([0, 1, 2, 3]));
+    const indexBuffer = device.createBuffer({
+        size: 16,
+        usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
+    });
+    const indirectBuffer = device.createBuffer({
+        size: 64,
+        usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST,
+    });
+    // Offset 0: valid indirect draw of vertex 2 (blue at pixel 2).
+    device.queue.writeBuffer(indirectBuffer, 0, new Uint32Array([1, 1, 2, 0, 0]));
+    // Offset 32: out-of-bounds firstIndex (100 > 4) that must be clamped to 0 indices (leaving pixel 3 clear).
+    device.queue.writeBuffer(indirectBuffer, 32, new Uint32Array([1, 1, 100, 0, 0]));
+
+    {
+        const setupEncoder = device.createCommandEncoder();
+        setupEncoder.copyBufferToBuffer(indexStaging, 0, indexBuffer, 0, 16);
+        device.queue.submit([setupEncoder.finish()]);
+        await device.queue.onSubmittedWorkDone();
+    }
+
+    {
+        const drawTarget = device.createTexture({
+            size: [4, 1],
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+        });
+        const drawReadback = device.createBuffer({
+            size: 256,
+            usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        });
+        // Queue is idle here while encoding multiple validated drawIndexed + drawIndexedIndirect calls.
+        const drawEncoder = device.createCommandEncoder();
+        const pass = drawEncoder.beginRenderPass({
+            colorAttachments: [{
+                view: drawTarget.createView(),
+                loadOp: 'clear',
+                storeOp: 'store',
+                clearValue: { r: 0, g: 0, b: 0, a: 0 },
+            }],
+        });
+        pass.setPipeline(pointPipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, 'uint32');
+        pass.drawIndexed(1, 1, 0, 0, 0);
+        pass.drawIndexed(1, 1, 1, 0, 0);
+        pass.drawIndexedIndirect(indirectBuffer, 0);
+        pass.drawIndexedIndirect(indirectBuffer, 32);
+        pass.drawIndexed(1, 1, 1, 0, 0);
+        pass.end();
+        drawEncoder.copyTextureToBuffer({ texture: drawTarget }, { buffer: drawReadback, bytesPerRow: 256, rowsPerImage: 1 }, [4, 1, 1]);
+        device.queue.submit([drawEncoder.finish()]);
+        await drawReadback.mapAsync(GPUMapMode.READ);
+        const pixels = Array.from(new Uint8Array(drawReadback.getMappedRange(), 0, 16)).join(',');
+        drawReadback.unmap();
+        window.idleQueueClampedDrawsPixels = pixels;
+        shouldBeEqualToString("idleQueueClampedDrawsPixels", "255,0,0,255,0,255,0,255,0,0,255,255,0,0,0,0");
+    }
+
+    // 4. Staged writeBuffer followed by partial writeTexture (which switches the uncommitted staging command buffer
+    // to m_blitCommandEncoder), a GPU drain of prior submitted work, and an overlapping writeBuffer must preserve
+    // queue-timeline write ordering rather than letting the older staged copy overwrite the newer write.
+    const spinBuffer = device.createBuffer({
+        size: 16,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
+    const spinModule = device.createShaderModule({
+        code: `
+            @group(0) @binding(0) var<storage, read_write> counter: array<atomic<u32>>;
+            @compute @workgroup_size(1)
+            fn main() {
+                for (var i = 0u; i < 60000u; i = i + 1u) {
+                    atomicAdd(&counter[0], 1u);
+                }
+            }
+        `,
+    });
+    const spinPipeline = device.createComputePipeline({
+        layout: 'auto',
+        compute: { module: spinModule, entryPoint: 'main' },
+    });
+    const spinBindGroup = device.createBindGroup({
+        layout: spinPipeline.getBindGroupLayout(0),
+        entries: [{ binding: 0, resource: { buffer: spinBuffer } }],
+    });
+
+    function submitBusyWork() {
+        const busyEncoder = device.createCommandEncoder();
+        const busyPass = busyEncoder.beginComputePass();
+        busyPass.setPipeline(spinPipeline);
+        busyPass.setBindGroup(0, spinBindGroup);
+        busyPass.dispatchWorkgroups(1);
+        busyPass.end();
+        device.queue.submit([busyEncoder.finish()]);
+    }
+
+    {
+        const orderBuffer = device.createBuffer({
+            size: 8,
+            usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+        });
+        const orderIndexBuffer = device.createBuffer({
+            size: 4,
+            usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
+        });
+        const partialTexture = device.createTexture({
+            size: [16, 16],
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+        });
+        const orderReadback = device.createBuffer({
+            size: 8,
+            usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        });
+        const indexDrawTarget = device.createTexture({
+            size: [4, 1],
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+        });
+        const indexDrawReadback = device.createBuffer({
+            size: 256,
+            usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        });
+
+        submitBusyWork();
+        const priorWorkDone = device.queue.onSubmittedWorkDone();
+
+        // Staged onto m_stagedCopyEncoder while busyEncoder is in flight.
+        device.queue.writeBuffer(orderBuffer, 0, new Uint32Array([0x11111111, 0x22222222]));
+        device.queue.writeBuffer(orderIndexBuffer, 0, new Uint32Array([0]));
+        // Partial write to an uninitialized texture switches the uncommitted staging command buffer to m_blitCommandEncoder.
+        device.queue.writeTexture(
+            { texture: partialTexture, origin: [0, 0, 0] },
+            new Uint8Array(4 * 4 * 4).fill(0x77),
+            { bytesPerRow: 16, rowsPerImage: 4 },
+            [4, 4, 1]
+        );
+
+        // Wait for busyEncoder to finish; the staging command buffer is still uncommitted with m_blitCommandEncoder open.
+        await priorWorkDone;
+
+        // Overlapping writes must stay ordered after the uncommitted staged writes.
+        device.queue.writeBuffer(orderBuffer, 0, new Uint32Array([0x33333333, 0x44444444]));
+        device.queue.writeBuffer(orderIndexBuffer, 0, new Uint32Array([2]));
+
+        const verifyEncoder = device.createCommandEncoder();
+        verifyEncoder.copyBufferToBuffer(orderBuffer, 0, orderReadback, 0, 8);
+        const pass = verifyEncoder.beginRenderPass({
+            colorAttachments: [{
+                view: indexDrawTarget.createView(),
+                loadOp: 'clear',
+                storeOp: 'store',
+                clearValue: { r: 0, g: 0, b: 0, a: 0 },
+            }],
+        });
+        pass.setPipeline(pointPipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(orderIndexBuffer, 'uint32');
+        pass.drawIndexed(1, 1, 0, 0, 0);
+        pass.end();
+        verifyEncoder.copyTextureToBuffer({ texture: indexDrawTarget }, { buffer: indexDrawReadback, bytesPerRow: 256, rowsPerImage: 1 }, [4, 1, 1]);
+        device.queue.submit([verifyEncoder.finish()]);
+
+        await Promise.all([orderReadback.mapAsync(GPUMapMode.READ), indexDrawReadback.mapAsync(GPUMapMode.READ)]);
+        window.orderedWriteBufferWords = Array.from(new Uint32Array(orderReadback.getMappedRange())).map(x => '0x' + x.toString(16)).join(',');
+        window.orderedIndexDrawPixels = Array.from(new Uint8Array(indexDrawReadback.getMappedRange(), 0, 12)).join(',');
+        orderReadback.unmap();
+        indexDrawReadback.unmap();
+
+        shouldBeEqualToString("orderedWriteBufferWords", "0x33333333,0x44444444");
+        shouldBeEqualToString("orderedIndexDrawPixels", "0,0,0,0,0,0,0,0,0,0,255,255");
+    }
+
+    // 5. Interleaved queue.writeBuffer + device.createBindGroup + compute dispatches + strided copyBufferToBuffer
+    // + partial getMappedRange(offset, size) readback on both an idle queue and a busy (staged) queue.
+    const tileCount = 16;
+    const uniformStride = 256;
+    const uniformArena = device.createBuffer({
+        size: tileCount * uniformStride,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
+    const scratchBuffer = device.createBuffer({
+        size: tileCount * 16,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
+    const destinationBuffer = device.createBuffer({
+        size: tileCount * 16,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+    const sampledTexture = device.createTexture({
+        size: [16, 16],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+    });
+    device.queue.writeTexture(
+        { texture: sampledTexture },
+        new Uint8Array(16 * 16 * 4).fill(255),
+        { bytesPerRow: 16 * 4, rowsPerImage: 16 },
+        [16, 16, 1]
+    );
+    const sampler = device.createSampler();
+
+    const module = device.createShaderModule({
+        code: `
+            struct Params {
+                tileIndex: u32,
+                baseBias: u32,
+            };
+            @group(0) @binding(0) var<uniform> params: Params;
+            @group(0) @binding(1) var<storage, read_write> outWords: array<u32>;
+            @group(0) @binding(2) var tex: texture_2d<f32>;
+            @group(0) @binding(3) var samp: sampler;
+
+            @compute @workgroup_size(1)
+            fn main() {
+                let sample = u32(textureLoad(tex, vec2u(0u, 0u), 0).r * 255.0);
+                outWords[params.tileIndex] = params.baseBias + (params.tileIndex + 1u) * 1000u + sample;
+            }
+        `,
+    });
+    const pipeline = device.createComputePipeline({
+        layout: 'auto',
+        compute: { module, entryPoint: 'main' },
+    });
+    const bgl = pipeline.getBindGroupLayout(0);
+
+    async function runTileBatch(baseBias, stageWhileBusy) {
+        await device.queue.onSubmittedWorkDone();
+        if (stageWhileBusy)
+            submitBusyWork();
+
+        const encoder = device.createCommandEncoder();
+        encoder.clearBuffer(scratchBuffer);
+        for (let i = 0; i < tileCount; ++i) {
+            device.queue.writeBuffer(uniformArena, i * uniformStride, new Uint32Array([i, baseBias]));
+            const bindGroup = device.createBindGroup({
+                layout: bgl,
+                entries: [
+                    { binding: 0, resource: { buffer: uniformArena, offset: i * uniformStride, size: 8 } },
+                    { binding: 1, resource: { buffer: scratchBuffer } },
+                    { binding: 2, resource: sampledTexture.createView() },
+                    { binding: 3, resource: sampler },
+                ],
+            });
+            const pass = encoder.beginComputePass();
+            pass.setPipeline(pipeline);
+            pass.setBindGroup(0, bindGroup);
+            pass.dispatchWorkgroups(1);
+            pass.end();
+            encoder.copyBufferToBuffer(scratchBuffer, i * 4, destinationBuffer, i * 4, 4);
+        }
+        device.queue.submit([encoder.finish()]);
+
+        await destinationBuffer.mapAsync(GPUMapMode.READ, 8, 16);
+        const subrange = new Uint32Array(destinationBuffer.getMappedRange(8, 16));
+        const result = {
+            length: subrange.length,
+            values: Array.from(subrange).join(','),
+        };
+        destinationBuffer.unmap();
+        return result;
+    }
+
+    const idleBatch = await runTileBatch(0, false);
+    window.subrangeLength = idleBatch.length;
+    window.subrangeValues = idleBatch.values;
+    shouldBe("subrangeLength", "4");
+    shouldBeEqualToString("subrangeValues", "3255,4255,5255,6255");
+
+    const stagedBatch = await runTileBatch(10000, true);
+    window.stagedSubrangeLength = stagedBatch.length;
+    window.stagedSubrangeValues = stagedBatch.values;
+    shouldBe("stagedSubrangeLength", "4");
+    shouldBeEqualToString("stagedSubrangeValues", "13255,14255,15255,16255");
+
+    window.validationError = await device.popErrorScope();
+    shouldBeNull("validationError");
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

@@ -208,6 +208,7 @@ public:
     id<MTLFunction> icbIndirectEncodeFunction(bool isIndexed, MTLIndexType);
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, bool skipMemoryAttribution = false, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger, bool skipMemoryAttribution = false) const;
+    id<MTLBuffer> zeroBuffer(NSUInteger length) const;
     template<typename T>
     id<MTLBuffer> safeCreateBufferWithData(const T& data) const
     {
@@ -339,6 +340,7 @@ private:
     HardwareCapabilities m_capabilities { };
 
     id<MTLBuffer> m_placeholderBuffer { };
+    mutable id<MTLBuffer> _Nullable m_zeroBuffer { nil };
     id<MTLTexture> m_placeholderTexture { nil };
     id<MTLTexture> m_placeholderDepthStencilTexture { nil };
     id<MTLBuffer> _Nullable m_dispatchCallBuffer { nil };
