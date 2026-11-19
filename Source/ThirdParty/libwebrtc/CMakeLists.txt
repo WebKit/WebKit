@@ -21,6 +21,11 @@ endif ()
 # Suppress all warnings for third-party libwebrtc code.
 add_compile_options(-w)
 
+# Unified source bundles include their files by path relative to this directory.
+if (PORT STREQUAL "Cocoa" AND WEBKIT_PLATFORM_MAC AND ENABLE_UNIFIED_BUILDS)
+    add_compile_options(-I${CMAKE_CURRENT_SOURCE_DIR})
+endif ()
+
 # The tree-wide -fvisibility=hidden makes these symbols private-extern, which
 # -exported_symbols_list cannot then export from libwebrtc.dylib.
 if (APPLE)
@@ -33,6 +38,15 @@ endif ()
 # which only retains/copies under ARC. Compiling them MRR produces immediate
 # use-after-free of the GPU-process encoder callback blocks.
 add_compile_options("$<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:-fobjc-arc>")
+
+macro(LIBWEBRTC_UNIFY_SOURCES _target)
+    if (PORT STREQUAL "Cocoa" AND WEBKIT_PLATFORM_MAC AND ENABLE_UNIFIED_BUILDS)
+        set(${_target}_DERIVED_SOURCES_DIR ${libwebrtc_DERIVED_SOURCES_DIR}/${_target})
+        WEBKIT_ADD_UNIFIED_SOURCE_LIST(${_target})
+        WEBKIT_COMPUTE_SOURCES(${_target})
+        list(APPEND ${_target}_SOURCES ${${_target}_C_SOURCES} ${${_target}_ARC_SOURCES})
+    endif ()
+endmacro()
 
 if (NOT APPLE)
     find_package(LibEvent)
@@ -2451,6 +2465,7 @@ if (APPLE)
         Source/third_party/libwebm/webm_parser/src/istream_reader.cc
         Source/third_party/libwebm/webm_parser/src/id_parser.cc
     )
+    LIBWEBRTC_UNIFY_SOURCES(webm)
     add_library(webm STATIC ${webm_SOURCES})
     set(webm_INCLUDE_DIRECTORIES
         Source/third_party/libwebm
@@ -2528,8 +2543,67 @@ else ()
     endif ()
 endif ()
 
+set_source_files_properties(Source/third_party/libyuv/util/color.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+set_source_files_properties(Source/webrtc/rtc_base/logging.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+set_source_files_properties(
+    Source/third_party/boringssl/src/crypto/bio/connect.cc
+    Source/third_party/boringssl/src/crypto/bio/socket.cc
+    PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+
 if (APPLE)
     list(REMOVE_ITEM webrtc_SOURCES ${webrtc_SOURCES_NOT_IN_XCODE})
+    set(webrtc_NO_UNIFY_SOURCES
+        Source/third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc
+        Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.cc
+        Source/third_party/boringssl/src/crypto/dsa/dsa.cc
+        Source/third_party/boringssl/src/crypto/dsa/dsa_asn1.cc
+        Source/third_party/boringssl/src/crypto/ecdsa/ecdsa_asn1.cc
+        Source/third_party/boringssl/src/crypto/evp/p_mlkem.cc
+        Source/third_party/boringssl/src/crypto/pkcs8/pkcs8_x509.cc
+        Source/third_party/boringssl/src/ssl/handshake_server.cc
+        Source/third_party/boringssl/src/ssl/tls13_server.cc
+        Source/third_party/libyuv/source/convert_from.cc
+        Source/third_party/libyuv/source/convert_from_argb.cc
+        Source/third_party/libyuv/source/scale.cc
+        Source/third_party/libyuv/source/scale_argb.cc
+        Source/webrtc/api/audio_codecs/builtin_audio_encoder_factory.cc
+        Source/webrtc/api/video/i210_buffer.cc
+        Source/webrtc/api/video/i410_buffer.cc
+        Source/webrtc/api/video/i420_buffer.cc
+        Source/webrtc/api/video/i422_buffer.cc
+        Source/webrtc/api/video/i444_buffer.cc
+        Source/webrtc/api/video_codecs/h265_profile_tier_level.cc
+        Source/webrtc/api/webrtc_sdp.cc
+        Source/webrtc/common_audio/vad/webrtc_vad.c
+        Source/webrtc/common_audio/wav_header.cc
+        Source/webrtc/common_video/h265/h265_bitstream_parser.cc
+        Source/webrtc/logging/rtc_event_log/encoder/delta_encoding.cc
+        Source/webrtc/logging/rtc_event_log/events/rtc_event_field_encoding_parser.cc
+        Source/webrtc/media/engine/webrtc_voice_engine.cc
+        Source/webrtc/modules/audio_coding/codecs/opus/audio_encoder_opus.cc
+        Source/webrtc/modules/audio_coding/neteq/underrun_optimizer.cc
+        Source/webrtc/modules/audio_processing/agc/agc_manager_direct.cc
+        Source/webrtc/modules/audio_processing/agc2/input_volume_stats_reporter.cc
+        Source/webrtc/modules/audio_processing/agc2/speech_level_estimator_impl.cc
+        Source/webrtc/modules/audio_processing/echo_detector/normalized_covariance_estimator.cc
+        Source/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.cc
+        Source/webrtc/modules/rtp_rtcp/source/flexfec_header_reader_writer.cc
+        Source/webrtc/modules/rtp_rtcp/source/flexfec_sender.cc
+        Source/webrtc/modules/third_party/g722/g722_encode.c
+        Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc
+        Source/webrtc/modules/video_coding/codecs/vp9/libvpx_vp9_encoder.cc
+        Source/webrtc/modules/video_coding/svc/scalability_structure_simulcast.cc
+        Source/webrtc/pc/channel.cc
+        Source/webrtc/pc/media_session.cc
+        Source/webrtc/pc/sctp_data_channel.cc
+        Source/webrtc/rtc_base/experiments/encoder_speed_experiment.cc
+        Source/webrtc/rtc_base/experiments/quality_scaling_experiment.cc
+        Source/webrtc/rtc_base/experiments/retransmit_flushed_packets_settings.cc
+        Source/webrtc/video/adaptation/video_stream_encoder_resource_manager.cc
+        Source/webrtc/webkit_sdk/objc/components/video_codec/RTCVideoDecoderH265.mm
+        Source/webrtc/webkit_sdk/objc/components/video_codec/RTCVideoEncoderH265.mm
+    )
+    LIBWEBRTC_UNIFY_SOURCES(webrtc)
     add_library(webrtc SHARED ${webrtc_SOURCES})
 else ()
     add_library(webrtc STATIC ${webrtc_SOURCES})
@@ -2746,12 +2820,6 @@ if (APPLE)
     target_include_directories(webrtc_objc_categories ${webrtc_INCLUDE_DIRECTORIES})
 endif ()
 
-set_source_files_properties(Source/third_party/libyuv/util/color.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
-set_source_files_properties(Source/webrtc/rtc_base/logging.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
-set_source_files_properties(
-    Source/third_party/boringssl/src/crypto/bio/connect.cc
-    Source/third_party/boringssl/src/crypto/bio/socket.cc
-    PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 if (LIBPULSE_FOUND)
     target_include_directories(webrtc PRIVATE ${LibPulse_INCLUDE_DIRS})
     target_compile_options(webrtc PRIVATE ${LibPulse_COMPILE_OPTIONS})
@@ -3025,6 +3093,21 @@ if (APPLE)
       )
     endif ()
 
+    set(opus_NO_UNIFY_SOURCES
+        Source/third_party/opus/src/celt/celt_decoder.c
+        Source/third_party/opus/src/celt/celt_encoder.c
+        Source/third_party/opus/src/silk/float/LPC_analysis_filter_FLP.c
+        Source/third_party/opus/src/silk/float/LTP_analysis_filter_FLP.c
+        Source/third_party/opus/src/silk/float/LTP_scale_ctrl_FLP.c
+        Source/third_party/opus/src/silk/float/apply_sine_window_FLP.c
+        Source/third_party/opus/src/silk/float/corrMatrix_FLP.c
+        Source/third_party/opus/src/silk/float/encode_frame_FLP.c
+        Source/third_party/opus/src/silk/float/find_LPC_FLP.c
+        Source/third_party/opus/src/silk/float/find_LTP_FLP.c
+        Source/third_party/opus/src/silk/float/find_pitch_lags_FLP.c
+        Source/third_party/opus/src/silk/float/find_pred_coefs_FLP.c
+    )
+    LIBWEBRTC_UNIFY_SOURCES(opus)
     add_library(opus STATIC ${opus_SOURCES})
 
     target_include_directories(opus PRIVATE
@@ -3669,6 +3752,82 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/webmdec.cc
         Source/third_party/libvpx/source/libvpx/y4menc.c
     )
+    # The x86_64 intrinsics files clash when bundled.
+    if (WTF_CPU_ARM64)
+        set(vpx_NO_UNIFY_SOURCES
+            Source/third_party/libvpx/source/libvpx/ivfenc.c
+            Source/third_party/libvpx/source/libvpx/tools_common.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/alloccommon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/idct_blk_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/shortidct4x4llm_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/blockd.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/context.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/debugmodes.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/dequantize.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/entropy.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/entropymode.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/findnearmv.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/reconintra4x4.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/rtcd.c
+            Source/third_party/libvpx/source/libvpx/vp8/vp8_cx_iface.c
+            Source/third_party/libvpx/source/libvpx/vp8/vp8_dx_iface.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_highbd_iht16x16_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_highbd_iht4x4_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_highbd_iht8x8_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_iht16x16_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_iht4x4_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_iht8x8_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_alloccommon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_blockd.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_common_data.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_debugmodes.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_entropy.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_entropymode.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_entropymv.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_idct.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_loopfilter.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_mvref_common.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_pred_common.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_reconinter.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_reconintra.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_rtcd.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_scale.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_scan.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_seg_common.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_thread_common.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/vp9_tile_common.c
+            Source/third_party/libvpx/source/libvpx/vp9/decoder/vp9_decodeframe.c
+            Source/third_party/libvpx/source/libvpx/vp9/decoder/vp9_decodemv.c
+            Source/third_party/libvpx/source/libvpx/vp9/decoder/vp9_decoder.c
+            Source/third_party/libvpx/source/libvpx/vp9/decoder/vp9_detokenize.c
+            Source/third_party/libvpx/source/libvpx/vp9/decoder/vp9_dsubexp.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_alt_ref_aq.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_aq_360.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_aq_complexity.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_aq_cyclicrefresh.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_aq_variance.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_bitstream.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_context_tree.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_denoiser.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_encodeframe.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_encodemb.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_encodemv.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_encoder.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_ethread.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_ext_ratectrl.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_frame_scale.c
+            Source/third_party/libvpx/source/libvpx/vp9/vp9_cx_iface.c
+            Source/third_party/libvpx/source/libvpx/vp9/vp9_dx_iface.c
+            Source/third_party/libvpx/source/libvpx/vp9/vp9_iface_common.c
+            Source/third_party/libvpx/source/libvpx/vpx/src/vpx_encoder.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/fdct32x32_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sad4d_neon_dotprod.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/vpx_dsp_rtcd.c
+            Source/third_party/libvpx/source/libvpx/vpx_scale/generic/yv12config.c
+            Source/third_party/libvpx/source/libvpx/vpx_scale/vpx_scale_rtcd.c
+        )
+        LIBWEBRTC_UNIFY_SOURCES(vpx)
+    endif ()
 endif ()
 
 if (WTF_CPU_X86_64)
@@ -3726,7 +3885,7 @@ target_compile_options(vpx PRIVATE $<$<COMPILE_LANGUAGE:C,CXX>:-Wno-cast-align> 
 # the aom_config.h there has __APPLE__ guards. Defines mirror BaseTarget-libaom.xcconfig:41.
 # No .asm files are listed (Xcode source list omits them too); .S files don't exist.
 if (ENABLE_AV1 AND APPLE)
-    set(aom_SOURCES_common
+    set(aom_SOURCES
         Source/third_party/libaom/source/libaom/aom/src/aom_codec.c
         Source/third_party/libaom/source/libaom/aom/src/aom_decoder.c
         Source/third_party/libaom/source/libaom/aom/src/aom_encoder.c
@@ -3885,7 +4044,7 @@ if (ENABLE_AV1 AND APPLE)
         list(APPEND aom_INCLUDE_DIRECTORIES
             Source/third_party/libaom/source/config/linux/arm64-cpu-detect
         )
-        list(APPEND aom_SOURCES_common
+        list(APPEND aom_SOURCES
             Source/third_party/libaom/source/config/linux/arm64-cpu-detect/config/aom_config.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve8_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve8_neon_dotprod.c
@@ -3964,7 +4123,7 @@ if (ENABLE_AV1 AND APPLE)
         list(APPEND aom_INCLUDE_DIRECTORIES
             Source/third_party/libaom/source/config/linux/generic
         )
-        list(APPEND aom_SOURCES_common
+        list(APPEND aom_SOURCES
             Source/third_party/libaom/source/config/linux/generic/config/aom_config.c
             Source/third_party/libaom/source/libaom/av1/common/x86/resize_sse2.c
         )
@@ -3974,7 +4133,27 @@ if (ENABLE_AV1 AND APPLE)
     # files behind the loop restoration, warped motion, CNN and temporal
     # denoising paths, so the objects referencing them link only while nothing
     # pulls them out of the archive.
-    add_library(aom STATIC ${aom_SOURCES_common})
+    set(aom_NO_UNIFY_SOURCES
+        Source/third_party/libaom/source/libaom/aom/src/aom_encoder.c
+        Source/third_party/libaom/source/libaom/aom_dsp/aom_dsp_rtcd.c
+        Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_scaled_convolve8_neon_dotprod.c
+        Source/third_party/libaom/source/libaom/aom_dsp/arm/obmc_variance_neon.c
+        Source/third_party/libaom/source/libaom/aom_dsp/arm/sadxd_neon_dotprod.c
+        Source/third_party/libaom/source/libaom/aom_scale/aom_scale_rtcd.c
+        Source/third_party/libaom/source/libaom/av1/arg_defs.c
+        Source/third_party/libaom/source/libaom/av1/av1_cx_iface.c
+        Source/third_party/libaom/source/libaom/av1/common/arm/av1_convolve_scale_neon_dotprod.c
+        Source/third_party/libaom/source/libaom/av1/common/arm/compound_convolve_neon_dotprod.c
+        Source/third_party/libaom/source/libaom/av1/common/arm/convolve_neon.c
+        Source/third_party/libaom/source/libaom/av1/common/arm/convolve_neon_dotprod.c
+        Source/third_party/libaom/source/libaom/av1/common/arm/highbd_inv_txfm_neon.c
+        Source/third_party/libaom/source/libaom/av1/common/av1_rtcd.c
+        Source/third_party/libaom/source/libaom/av1/common/reconintra.c
+        Source/third_party/libaom/source/libaom/av1/encoder/arm/pickrst_neon.c
+        Source/third_party/libaom/source/libaom/av1/encoder/arm/temporal_filter_neon_dotprod.c
+    )
+    LIBWEBRTC_UNIFY_SOURCES(aom)
+    add_library(aom STATIC ${aom_SOURCES})
     target_include_directories(aom PRIVATE ${aom_INCLUDE_DIRECTORIES})
     target_compile_definitions(aom PRIVATE
         CONFIG_REALTIME_ONLY=1

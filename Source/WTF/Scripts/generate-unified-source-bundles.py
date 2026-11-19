@@ -99,7 +99,7 @@ class SourceFile:
         self.path = Path(file_line.strip())
         if self.path.is_absolute():
             raise RuntimeError(f'path parsed from "{file_line}" is absolute; use a relative path')
-        self.bundle_manager_key = self.path.suffix
+        self.bundle_manager_key = '.cpp' if self.path.suffix == '.cc' else self.path.suffix
         if self._non_arc:
             if self.bundle_manager_key == '.mm':
                 self.bundle_manager_key = '.nonARC-mm'
