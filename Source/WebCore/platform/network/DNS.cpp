@@ -121,8 +121,13 @@ bool IPAddress::isLoopback() const
 std::optional<IPAddress> IPAddress::fromString(const String& string)
 {
 #if OS(UNIX)
+    auto zoneSeparator = string.find('%');
+    if (zoneSeparator != notFound && zoneSeparator + 1 == string.length())
+        return std::nullopt;
+    auto unscoped = zoneSeparator != notFound ? string.left(zoneSeparator) : string;
+
     struct in6_addr addressV6;
-    if (inet_pton(AF_INET6, string.utf8().legacyCStringPointer(), &addressV6))
+    if (inet_pton(AF_INET6, unscoped.utf8().legacyCStringPointer(), &addressV6))
         return IPAddress { addressV6 };
 
     struct in_addr addressV4;

@@ -502,4 +502,15 @@ TEST(IPAddressSpace, SurvivesResourceResponsePersistenceRoundTrip)
     }
 }
 
+#if OS(UNIX)
+TEST(IPAddressSpace, ParsesScopedIPv6)
+{
+    auto scoped = WebCore::IPAddress::fromString("fe80::1%en0"_s);
+    ASSERT_TRUE(scoped.has_value());
+    EXPECT_EQ(WebCore::classifyIPAddressSpace(*scoped), WebCore::IPAddressSpace::Local);
+    EXPECT_FALSE(WebCore::IPAddress::fromString("fe80::1%"_s).has_value());
+    EXPECT_FALSE(WebCore::IPAddress::fromString("%en0"_s).has_value());
+}
+#endif
+
 }
