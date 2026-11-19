@@ -1639,12 +1639,15 @@ class UploadFileToS3(shell.ShellCommand):
     descriptionDone = name
     haltOnFailure = True
     flunkOnFailure = True
+    MAX_ATTEMPTS = 3
 
-    def __init__(self, file, links=None, content_type=None, **kwargs):
+    def __init__(self, file, links=None, content_type=None, attempt=1, **kwargs):
         super().__init__(timeout=31 * 60, logEnviron=False, **kwargs)
         self.file = file
         self.links = links or dict()
         self.content_type = content_type
+        self.attempt = attempt
+        self.retrying = False
 
     def getLastBuildStepByName(self, name):
         for step in reversed(self.build.executedSteps):
@@ -1678,12 +1681,35 @@ class UploadFileToS3(shell.ShellCommand):
                     continue
                 step.addURL(message, self.build.s3_archives[-1])
 
+        if rc == FAILURE and self.attempt < self.MAX_ATTEMPTS:
+            generate_step = self.getLastBuildStepByName(GenerateS3URL.name)
+            if generate_step:
+                # The presigned URL can expire mid-upload, so each attempt needs a freshly generated one.
+                self.build.addStepsAfterCurrentStep([
+                    GenerateS3URL(
+                        generate_step.identifier,
+                        extension=generate_step.extension,
+                        additions=generate_step.additions,
+                        content_type=generate_step.content_type,
+                        minified=generate_step.minified,
+                    ), UploadFileToS3(
+                        self.file,
+                        links=self.links,
+                        content_type=self.content_type,
+                        attempt=self.attempt + 1,
+                    )
+                ])
+                self.retrying = True
+                rc = WARNINGS
+
         return defer.returnValue(rc)
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES
 
     def getResultSummary(self):
+        if self.retrying:
+            return {'step': f'Failed to upload {self.file} to S3 (attempt {self.attempt} of {self.MAX_ATTEMPTS}), retrying'}
         if self.results == FAILURE:
             return {'step': f'Failed to upload {self.file} to S3. Please inform an admin.'}
         if self.results == SKIPPED:

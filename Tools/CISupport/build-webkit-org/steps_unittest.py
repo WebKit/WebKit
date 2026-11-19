@@ -2463,6 +2463,57 @@ exit 1''')
         with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]):
             return self.run_step()
 
+    @defer.inlineCallbacks
+    def test_failure_retries_with_new_url(self):
+        generate_step = GenerateS3URL('mac-sequoia-x86_64-release', minified=True)
+        self.setup_step(UploadFileToS3('WebKitBuild/minified-release.zip', links={'compile-webkit': 'Minified Archive'}), previous_steps=[generate_step])
+        self.build.s3url = 'https://test-s3-url'
+        steps_added = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: steps_added.extend(steps))
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        env=dict(UPLOAD_URL='https://test-s3-url'),
+                        log_environ=False,
+                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/minified-release.zip'],
+                        timeout=1860,
+                        )
+            .exit(255),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Failed to upload WebKitBuild/minified-release.zip to S3 (attempt 1 of 3), retrying')
+        with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]):
+            yield self.run_step()
+
+        self.assertEqual([step.name for step in steps_added], ['generate-s3-url', 'upload-file-to-s3'])
+        new_generate_step, new_upload_step = steps_added
+        self.assertEqual(
+            (new_generate_step.identifier, new_generate_step.extension, new_generate_step.additions, new_generate_step.content_type, new_generate_step.minified),
+            ('mac-sequoia-x86_64-release', 'zip', None, None, True),
+        )
+        self.assertEqual(
+            (new_upload_step.file, new_upload_step.links, new_upload_step.content_type, new_upload_step.attempt),
+            ('WebKitBuild/minified-release.zip', {'compile-webkit': 'Minified Archive'}, None, 2),
+        )
+
+    @defer.inlineCallbacks
+    def test_failure_after_max_attempts(self):
+        self.setup_step(UploadFileToS3('WebKitBuild/release.zip', attempt=UploadFileToS3.MAX_ATTEMPTS), previous_steps=[GenerateS3URL('mac-sequoia-x86_64-release')])
+        self.build.s3url = 'https://test-s3-url'
+        steps_added = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: steps_added.extend(steps))
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        env=dict(UPLOAD_URL='https://test-s3-url'),
+                        log_environ=False,
+                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
+                        timeout=1860,
+                        )
+            .exit(255),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to upload WebKitBuild/release.zip to S3. Please inform an admin.')
+        with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]):
+            yield self.run_step()
+        self.assertEqual(steps_added, [])
+
     def test_skipped(self):
         self.configureStep()
         self.expect_outcome(result=SKIPPED, state_string='Skipped upload to S3')
