@@ -343,3 +343,17 @@ TEST(WKPreferences, NonCanonicalBoolValueDoesNotCrashWebProcess)
 }
 
 #endif // ENABLE(FULLSCREEN_API)
+
+TEST(WKPreferences, CopyKeepsSiteIsolationEnabled)
+{
+    bool defaultValue = [adoptNS([[WKPreferences alloc] init]) _siteIsolationEnabled];
+
+    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
+    [preferences _setSiteIsolationEnabled:!defaultValue];
+    RetainPtr<WKPreferences> copy = adoptNS([preferences copy]);
+    EXPECT_EQ([copy _siteIsolationEnabled], !defaultValue);
+
+    [preferences _setSiteIsolationEnabled:defaultValue];
+    copy = adoptNS([preferences copy]);
+    EXPECT_EQ([copy _siteIsolationEnabled], defaultValue);
+}

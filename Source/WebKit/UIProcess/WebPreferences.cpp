@@ -72,6 +72,10 @@ WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix
     , m_keyPrefix(keyPrefix)
     , m_globalDebugKeyPrefix(globalDebugKeyPrefix)
 {
+    // Set this before platformInitializeStore() so debug defaults can override it. The copy constructor
+    // does not set it, so that a copy keeps the value the client set on the original.
+    m_store.setBoolValueForKey(WebPreferencesKey::siteIsolationEnabledKey(), defaultSiteIsolationEnabled());
+
     platformInitializeStore();
 
     if (WebKit::forceSiteIsolationAlwaysOnForTesting)
