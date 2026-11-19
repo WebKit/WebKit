@@ -392,6 +392,12 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/XRCompositionLayer.cpp
     )
 
+    if (APPLE)
+        list(APPEND TestWebCore_SOURCES
+            Tests/WebCore/AdaptiveDarkModeTests.mm
+        )
+    endif ()
+
     if (USE_SKIA)
         list(APPEND TestWebCore_SOURCES
             Tests/WebCore/skia/SkiaTextureAtlasPackerTests.cpp

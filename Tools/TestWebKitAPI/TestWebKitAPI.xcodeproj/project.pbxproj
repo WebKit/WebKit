@@ -838,6 +838,7 @@
 				Misc/TestRunnerTests.cpp,
 				TestRunnerShared/TestFeaturesTests.cpp,
 				TestWebKitAPIAdditionsHook.mm,
+				WebCore/AdaptiveDarkModeTests.mm,
 				WebCore/AffineTransform.cpp,
 				WebCore/AnimationFrameRate.cpp,
 				WebCore/ApduTest.cpp,
