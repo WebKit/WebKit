@@ -34,6 +34,7 @@
 #include "WebProcessProxy.h"
 
 #include <wtf/Borrow.h>
+#include <wtf/CheckedArithmetic.h>
 
 namespace WebKit {
 
@@ -49,8 +50,15 @@ void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> fr
     if (!frameID)
         return;
 
-    m_matchCount += matchCount;
     m_matches.set(*frameID, FrameMatchResult { matchCount, didWrap });
+
+    // Shadows kWKMoreThanMaximumMatchCount.
+    static constexpr uint32_t moreThanMaximumMatchCount = -1;
+    if (m_matchCount == moreThanMaximumMatchCount)
+        return;
+
+    auto total = CheckedUint32(m_matchCount) + matchCount;
+    m_matchCount = matchCount == moreThanMaximumMatchCount || total.hasOverflowed() || total.value() > m_maxMatchCount ? moreThanMaximumMatchCount : total.value();
 }
 
 void FindStringCallbackAggregator::foundMatchCountsByFrame(Vector<std::pair<FrameIdentifier, uint32_t>>&& counts)

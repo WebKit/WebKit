@@ -42,6 +42,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
+#import "WKWebViewFindStringFindDelegate.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/Color.h>
 #import <WebKit/WKContentWorldPrivate.h>
@@ -52,6 +53,7 @@
 #import <WebKit/WKJSHandle.h>
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKPage.h>
+#import <WebKit/WKPageFindMatchesClient.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURL.h>
@@ -5268,5 +5270,32 @@ TEST(SiteIsolation, ClosePageFromIframeProcessIsCheckedAgainstClosePolicy)
 }
 
 #endif // ENABLE(IPC_TESTING_API)
+
+TEST(SiteIsolation, FindStringMatchCountOverMaximumSaturates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<p>word</p><iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<p>word word word</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, [webView _webProcessIdentifier]);
+
+    auto matchCountForFind = [&](NSUInteger maxCount) {
+        [webView _findString:@"word" options:_WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsDetermineMatchIndex maxCount:maxCount];
+        [findDelegate waitForFindResult];
+        return [findDelegate matchesCount];
+    };
+    EXPECT_EQ(4u, matchCountForFind(100));
+
+    // Only the iframe's process has more matches than the maximum.
+    EXPECT_EQ(static_cast<uint32_t>(kWKMoreThanMaximumMatchCount), matchCountForFind(2));
+
+    // Neither process has more than the maximum, but together they do.
+    EXPECT_EQ(static_cast<uint32_t>(kWKMoreThanMaximumMatchCount), matchCountForFind(3));
+}
 
 } // namespace TestWebKitAPI
