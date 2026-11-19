@@ -264,7 +264,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         const zoomValues = zoomLevels.map((level) => [level, Number.percentageString(level, 0)]);
 
         let zoomEditor = generalSettingsView.addGroupWithCustomSetting(WI.UIString("Zoom:"), WI.SettingEditor.Type.Select, {values: zoomValues});
-        zoomEditor.value = WI.getZoomFactor();
+        zoomEditor.value = WI.getZoomFactor().maxDecimals(2);
         zoomEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, function(event) {
             WI.setZoomFactor(this.value);
         }, zoomEditor);
