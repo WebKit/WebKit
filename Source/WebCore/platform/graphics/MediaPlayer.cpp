@@ -1203,6 +1203,16 @@ void MediaPlayer::setPageIsVisible(bool visible)
     protect(m_private)->setPageIsVisible(visible);
 }
 
+void MediaPlayer::didRemovingSteps()
+{
+    m_private->didRemovingSteps();
+}
+
+void MediaPlayer::didPostConnectionSteps()
+{
+    m_private->didPostConnectionSteps();
+}
+
 void MediaPlayer::setVisibleForCanvas(bool visible)
 {
     if (visible == m_visibleForCanvas)

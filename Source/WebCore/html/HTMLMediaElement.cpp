@@ -1205,6 +1205,9 @@ void HTMLMediaElement::postConnectionSteps()
 
     configureMediaControls();
 
+    if (RefPtr player = m_player)
+        player->didPostConnectionSteps();
+
     if (protect(document())->quirks().needsYouTubeCaptionsQuirk()) {
         DocumentMediaElement::from(protect(document())).setupAndCallYouTubeQuirkJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
             auto& vm = globalObject.vm();
@@ -1268,10 +1271,6 @@ void HTMLMediaElement::postConnectionSteps()
 
 void HTMLMediaElement::pauseAfterDetachedTask()
 {
-    // If we were re-inserted into an active document, no need to pause.
-    if (m_inActiveDocument)
-        return;
-
     // Don't pause during an in-flight seek: pause()'s spec-mandated 'timeupdate' would race
     // with the seek's own seeking/timeupdate/seeked events, and listeners attached to the
     // (now-detached) element by an active test still receive these events.
@@ -1339,8 +1338,17 @@ void HTMLMediaElement::removingSteps(RemovalType removalType, ContainerNode& old
     if (removalType.disconnectedFromDocument) {
         // Pause asynchronously to let the operation that removed us finish, in case we get inserted back into a document.
         queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& element) {
-            if (!element.isContextStopped())
-                element.pauseAfterDetachedTask();
+            if (element.isContextStopped())
+                return;
+
+            // If we were re-inserted into an active document, no need to pause.
+            if (element.m_inActiveDocument)
+                return;
+
+            element.pauseAfterDetachedTask();
+
+            if (RefPtr player = element.m_player; player && element.m_videoFullscreenMode != VideoFullscreenModePictureInPicture)
+                player->didRemovingSteps();
         });
     }
 

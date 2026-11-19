@@ -101,7 +101,7 @@ static gboolean webKitMediaSrcActivateMode(GstPad*, GstObject*, GstPadMode, gboo
 static void webKitMediaSrcLoop(void*);
 static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, TrackID);
 static void webKitMediaSrcGetProperty(GObject*, unsigned propId, GValue*, GParamSpec*);
-static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush);
+static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush, bool suspend = false);
 static gboolean webKitMediaSrcSendEvent(GstElement*, GstEvent*);
 static RefPtr<MediaPlayerPrivateGStreamerMSE> webKitMediaSrcPlayer(WebKitMediaSrc*);
 
@@ -685,7 +685,7 @@ static void webKitMediaSrcLoop(void* userData)
         ASSERT_NOT_REACHED();
 }
 
-static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
+static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush, bool suspend)
 {
     ASSERT(isMainThread());
     bool skipFlush = false;
@@ -695,7 +695,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
     {
         DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
 
-        if (!streamingMembers->hasPoppedFirstObject) {
+        if (!streamingMembers->hasPoppedFirstObject && !suspend) {
             GST_DEBUG_OBJECT(stream->source, "Flush request for stream '%" PRIu64 "' occurred before hasPoppedFirstObject, just clearing the queue and readjusting the segment.", stream->track->id());
             DataMutexLocker queue { stream->track->queueDataMutex() };
             // We use clear() instead of flush() because the WebKitMediaSrc streaming thread could be waiting
@@ -797,8 +797,11 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
             streamingMembers->hasPoppedFirstObject = false;
         }
 
-        GST_DEBUG_OBJECT(stream->pad.get(), "Starting webKitMediaSrcLoop task and releasing the STREAM_LOCK.");
-        gst_pad_start_task(stream->pad.get(), webKitMediaSrcLoop, stream->pad.ref(), gst_object_unref);
+        if (!suspend) {
+            GST_DEBUG_OBJECT(stream->pad.get(), "Starting webKitMediaSrcLoop task and releasing the STREAM_LOCK.");
+            gst_pad_start_task(stream->pad.get(), webKitMediaSrcLoop, stream->pad.ref(), gst_object_unref);
+        } else
+            GST_INFO_OBJECT(stream->pad.get(), "Data flow is suspended, not starting webKitMediaSrcLoop task.");
     }
 
     GST_DEBUG_OBJECT(stream->source, "Flush request for stream '%" PRIu64 "' (isSeekingFlush = %s) satisfied.",
@@ -817,6 +820,29 @@ void webKitMediaSrcFlush(WebKitMediaSrc* source, TrackID streamId)
     }
 
     webKitMediaSrcStreamFlush(stream, false);
+}
+
+void webKitMediaSrcFlushAndSuspend(WebKitMediaSrc* source)
+{
+    ASSERT(isMainThread());
+    GST_INFO_OBJECT(source, "Flushing all streams and suspending data flow.");
+
+    // Flush all streams and pause streaming threads.
+    // The streaming threads will remain paused until webKitMediaSrcResume is called,
+    // hasPoppedFirstObject will prevent the streaming threads from resuming until explicitly requested.
+    for (const RefPtr<Stream>& stream : source->priv->streams.values())
+        webKitMediaSrcStreamFlush(stream.get(), false, true);
+}
+
+void webKitMediaSrcResume(WebKitMediaSrc* source)
+{
+    ASSERT(isMainThread());
+    GST_INFO_OBJECT(source, "Resuming data flow for all streams.");
+
+    for (const RefPtr<Stream>& stream : source->priv->streams.values()) {
+        ASSERT(stream->pad);
+        gst_pad_start_task(stream->pad.get(), webKitMediaSrcLoop, stream->pad.get(), nullptr);
+    }
 }
 
 static void webKitMediaSrcSeek(WebKitMediaSrc* source, uint64_t startTime, double rate)
