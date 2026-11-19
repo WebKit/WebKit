@@ -59,6 +59,7 @@
 #include "StyleContent.h"
 #include "StyleListStyleImageSizing.h"
 #include "StyleListStyleType.h"
+#include "TextUtil.h"
 #include "UnicodeBidi.h"
 #include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
@@ -414,13 +415,18 @@ void RenderListItem::updateValue()
     }
 }
 
+static RenderImage* imageForMarker(const RenderListOutsideMarker& marker)
+{
+    if (listMarkerHasContent(marker.style(), marker.document()) || !listMarkerImage(marker.style()))
+        return nullptr;
+    CheckedPtr contentContainer = marker.contentContainer();
+    return contentContainer ? dynamicDowncast<RenderImage>(contentContainer->firstChild()) : nullptr;
+}
+
 RenderImage* RenderListItem::markerImage() const
 {
     CheckedPtr marker = markerBox();
-    if (!marker || listMarkerHasContent(marker->style(), document()) || !listMarkerImage(marker->style()))
-        return nullptr;
-    CheckedPtr contentContainer = marker->contentContainer();
-    return contentContainer ? dynamicDowncast<RenderImage>(contentContainer->firstChild()) : nullptr;
+    return marker ? imageForMarker(*marker) : nullptr;
 }
 
 LayoutSize RenderListItem::markerImageSize(const Style::Image& image) const
@@ -602,6 +608,61 @@ void RenderListItem::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit p
     addOverflowFromContainedBox(*excludedMarker);
 }
 
+static std::pair<float, float> layoutBoundsForMarkerText(const Style::ComputedStyle& style, const String& text)
+{
+    // FIXME: This should be part of InlineBoxBuilder (webkit.org/b/294342)
+    // This is essentially what we do in LineBoxBuilder::enclosingAscentDescentWithFallbackFonts.
+    auto ascentAndDescent = [&](auto& fontMetrics) {
+        auto ascent = fontMetrics.ascent();
+        auto descent = fontMetrics.descent();
+        auto halfLeading = (fontMetrics.lineSpacing() - (ascent + descent)) / 2.f;
+        return std::pair<float, float> { ascent + halfLeading, descent + halfLeading };
+    };
+    auto& metricsOfPrimaryFont = style.metricsOfPrimaryFont();
+    auto primaryFontHeight = metricsOfPrimaryFont.height();
+
+    if (style.textAutosizingAdjustedLineHeight().isNormal()) {
+        auto maxAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
+
+        for (Ref fallbackFont : Layout::TextUtil::fallbackFontsForText(text, style, Layout::TextUtil::IncludeHyphen::No)) {
+            auto& fontMetrics = fallbackFont->fontMetrics();
+            if (primaryFontHeight >= fontMetrics.height()) {
+                // FIXME: Figure out why certain symbols (e.g. disclosure-open) would initiate fallback fonts with just slightly different (subpixel) metrics.
+                // This is mainly about preserving legacy behavior.
+                continue;
+            }
+            auto ascentDescent = ascentAndDescent(fontMetrics);
+            maxAscentAndDescent.first = std::max(maxAscentAndDescent.first, ascentDescent.first);
+            maxAscentAndDescent.second = std::max(maxAscentAndDescent.second, ascentDescent.second);
+        }
+        return { maxAscentAndDescent.first, maxAscentAndDescent.second };
+    }
+
+    auto primaryFontAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
+    auto halfLeading = (style.usedLineHeight() - (primaryFontAscentAndDescent.first + primaryFontAscentAndDescent.second)) / 2.f;
+    return { primaryFontAscentAndDescent.first + halfLeading, primaryFontAscentAndDescent.second + halfLeading };
+}
+
+static std::pair<float, float> excludedMarkerLayoutBounds(const RenderListOutsideMarker& marker, const String& markerText)
+{
+    CheckedPtr content = marker.contentContainer();
+    if (!content) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (CheckedPtr image = imageForMarker(marker))
+        return { image->logicalHeight().toFloat(), 0.f };
+
+    CheckedRef style = marker.style();
+    if (listMarkerHasContent(style, protect(marker.document()))) {
+        auto contentLogicalHeight = content->logicalHeight();
+        auto contentBaseline = content->firstLineBaseline().value_or(contentLogicalHeight);
+        return { contentBaseline.toFloat(), (contentLogicalHeight - contentBaseline).toFloat() };
+    }
+    return layoutBoundsForMarkerText(style, markerText);
+}
+
 void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     CheckedPtr excludedMarker = this->excludedMarker();
@@ -626,11 +687,16 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     excludedMarker->setIsExcludedFromNormalLayout(true);
     if (relayoutChildren == RelayoutChildren::Yes)
         excludedMarker->setNeedsLayout(MarkingBehavior::OnlyThis);
-    auto oldLayoutBounds = excludedMarker->layoutBounds();
+    auto markerNeedsLayout = excludedMarker->needsLayout();
     excludedMarker->layoutIfNeeded();
 
-    if (m_excludedMarkerPosition && excludedMarker->layoutBounds() != oldLayoutBounds)
-        invalidateExcludedMarkerContainer();
+    if (markerNeedsLayout) {
+        auto layoutBounds = excludedMarkerLayoutBounds(*excludedMarker, markerText());
+        // The line the marker is aligned with made room for it, so it has to be laid out again when the marker needs a different amount.
+        if (m_excludedMarkerPosition && layoutBounds != m_markerLayoutBounds)
+            invalidateExcludedMarkerContainer();
+        m_markerLayoutBounds = layoutBounds;
+    }
 
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 }

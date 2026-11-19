@@ -46,8 +46,6 @@ public:
 
     NODELETE RenderListItem* listItem() const;
 
-    std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
-
 private:
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
@@ -61,7 +59,6 @@ private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
     Node* nodeForHitTest() const final;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { ASSERT_NOT_REACHED(); return { }; }
-    std::pair<float, float> layoutBoundForTextContent(String) const;
 
     void element() const = delete;
 
@@ -70,7 +67,6 @@ private:
 
 private:
     SingleThreadWeakPtr<RenderListItem> m_listItem;
-    std::pair<float, float> m_layoutBounds;
 };
 
 } // namespace WebCore

@@ -525,10 +525,8 @@ LineLayout::ExcludedMarkerList LineLayout::excludedMarkersForFirstFormattedLine(
 
     auto layoutBounds = Vector<Layout::InlineLayoutState::AscentAndDescent> { };
     layoutBounds.reserveInitialCapacity(listItems.size());
-    for (auto& listItem : listItems) {
-        CheckedPtr marker = listItem->markerBox();
-        layoutBounds.append(marker->layoutBounds());
-    }
+    for (auto& listItem : listItems)
+        layoutBounds.append(listItem->markerLayoutBounds());
     layoutState.setExcludedMarkerLayoutBounds(WTF::move(layoutBounds));
 
     return listItems;

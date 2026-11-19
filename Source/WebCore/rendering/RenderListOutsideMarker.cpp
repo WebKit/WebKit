@@ -49,7 +49,6 @@
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
-#include "TextUtil.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -163,20 +162,16 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
     if (CheckedPtr imageRenderer = isImage() ? dynamicDowncast<RenderBox>(container.firstChild()) : nullptr) {
         container.setLogicalTop(-imageRenderer->logicalTop());
         setLogicalHeight(imageRenderer->logicalHeight());
-        m_layoutBounds = { imageRenderer->logicalHeight(), 0 };
     } else {
         // The inline formatting context aligns a text marker box on the marker's primary-font baseline
         // (see InlineLineBoxBuilder), then we paint the content box at the marker box origin. Offset the
         // content box along the block axis so its own first-line baseline lands on that font baseline —
         // otherwise the content's line-box half-leading shifts it off the list item's baseline. Logical
         // setters keep this correct in vertical writing modes.
-        if (listMarkerHasContent(style(), document())) {
+        if (listMarkerHasContent(style(), document()))
             setLogicalHeight(container.logicalHeight());
-            m_layoutBounds = { contentBaseline, container.logicalHeight() - contentBaseline };
-        } else {
+        else
             setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
-            m_layoutBounds = layoutBoundForTextContent(m_listItem->markerText());
-        }
 
         auto baselineOffset = writingMode().prefersCentralBaseline() ? logicalHeight() / 2 : LayoutUnit { style().metricsOfPrimaryFont().ascent(BaselineAlignment::dominantBaseline(writingMode())) };
         container.setLogicalTop(baselineOffset - contentBaseline);
@@ -235,42 +230,6 @@ LayoutRect RenderListOutsideMarker::selectionRectForRepaint(const RenderLayerMod
 {
     ASSERT(!needsLayout());
     return { };
-}
-
-std::pair<float, float> RenderListOutsideMarker::layoutBoundForTextContent(String text) const
-{
-    // FIXME: This should be part of InlineBoxBuilder (webkit.org/b/294342)
-    // This is essentially what we do in LineBoxBuilder::enclosingAscentDescentWithFallbackFonts.
-    auto ascentAndDescent = [&] (auto& fontMetrics) {
-        auto ascent = fontMetrics.ascent();
-        auto descent = fontMetrics.descent();
-        auto halfLeading = (fontMetrics.lineSpacing() - (ascent + descent)) / 2.f;
-        return std::pair<float, float> { ascent + halfLeading, descent + halfLeading };
-    };
-    auto& style = this->style();
-    auto& metricsOfPrimaryFont = style.metricsOfPrimaryFont();
-    auto primaryFontHeight = metricsOfPrimaryFont.height();
-
-    if (style.textAutosizingAdjustedLineHeight().isNormal()) {
-        auto maxAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
-
-        for (Ref fallbackFont : Layout::TextUtil::fallbackFontsForText(text, style, Layout::TextUtil::IncludeHyphen::No)) {
-            auto& fontMetrics = fallbackFont->fontMetrics();
-            if (primaryFontHeight >= fontMetrics.height()) {
-                // FIXME: Figure out why certain symbols (e.g. disclosure-open) would initiate fallback fonts with just slightly different (subpixel) metrics.
-                // This is mainly about preserving legacy behavior.
-                continue;
-            }
-            auto ascentDescent = ascentAndDescent(fontMetrics);
-            maxAscentAndDescent.first = std::max(maxAscentAndDescent.first, ascentDescent.first);
-            maxAscentAndDescent.second = std::max(maxAscentAndDescent.second, ascentDescent.second);
-        }
-        return { maxAscentAndDescent.first, maxAscentAndDescent.second };
-    }
-
-    auto primaryFontAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
-    auto halfLeading = (style.usedLineHeight() - (primaryFontAscentAndDescent.first + primaryFontAscentAndDescent.second)) / 2.f;
-    return { primaryFontAscentAndDescent.first + halfLeading, primaryFontAscentAndDescent.second + halfLeading };
 }
 
 } // namespace WebCore

@@ -98,6 +98,8 @@ public:
     };
     void setExcludedMarkerPosition(ExcludedMarkerPosition&&);
     const std::optional<ExcludedMarkerPosition>& excludedMarkerPosition() const LIFETIME_BOUND { return m_excludedMarkerPosition; }
+    // The layout bounds of our excluded marker on its line, computed when the marker is laid out.
+    std::pair<float, float> markerLayoutBounds() const { return m_markerLayoutBounds; }
 
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
@@ -128,6 +130,7 @@ private:
 
     SingleThreadWeakPtr<RenderBoxModelObject> m_marker;
     std::optional<ExcludedMarkerPosition> m_excludedMarkerPosition;
+    std::pair<float, float> m_markerLayoutBounds;
     mutable std::optional<int> m_value;
 };
 
