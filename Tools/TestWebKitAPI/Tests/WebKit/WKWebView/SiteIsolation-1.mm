@@ -1230,6 +1230,42 @@ TEST(SiteIsolation, BackgroundExtendsBeyondPageInCrossOriginIframe)
     }));
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+TEST(SiteIsolation, TintColorChangeReachesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>main frame text<iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configurationWithInternals(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    // Without a caret-color, autocorrection markers take their color from the web view's tint.
+    auto markerColor = [&](WKFrameInfo *frame) -> String {
+        return [webView stringByEvaluatingJavaScript:@"internals.autocorrectionReplacementMarkerColor(document.body.firstChild)" inFrame:frame];
+    };
+    auto originalMarkerColor = markerColor(nil);
+    EXPECT_FALSE(originalMarkerColor.isEmpty());
+    EXPECT_WK_STREQ(markerColor(childFrame.get()), originalMarkerColor);
+
+    [webView setTintColor:UIColor.greenColor];
+    String newMarkerColor;
+    EXPECT_TRUE(Util::waitFor([&] {
+        newMarkerColor = markerColor(nil);
+        return newMarkerColor != originalMarkerColor;
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return markerColor(childFrame.get()) == newMarkerColor;
+    }));
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 #if PLATFORM(MAC)
 
 TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)

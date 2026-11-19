@@ -112,6 +112,7 @@
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"
 #include "GraphicsLayer.h"
+#include "GraphicsTypes.h"
 #include "HEVCUtilities.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAttachmentElement.h"
@@ -223,6 +224,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
 #include "RenderObjectInlines.h"
+#include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
@@ -8756,6 +8758,15 @@ bool Internals::supportsPictureInPicture()
 String Internals::focusRingColor()
 {
     return serializationForCSS(RenderTheme::singleton().focusRingColor(StyleColorOptions::UseSystemAppearance));
+}
+
+String Internals::autocorrectionReplacementMarkerColor(Node& textNode)
+{
+    protect(textNode.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+    CheckedPtr renderer = dynamicDowncast<RenderText>(textNode.renderer());
+    if (!renderer)
+        return { };
+    return serializationForCSS(RenderTheme::singleton().documentMarkerLineColor(*renderer, DocumentMarkerLineStyleMode::AutocorrectionReplacement));
 }
 
 double Internals::switchAnimationVisuallyOnDuration() const

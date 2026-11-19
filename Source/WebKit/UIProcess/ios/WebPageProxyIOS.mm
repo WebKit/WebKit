@@ -1845,8 +1845,14 @@ void WebPageProxy::showDataDetectorsUIForPositionInformation(const InteractionIn
 
 void WebPageProxy::insertionPointColorDidChange()
 {
-    if (RefPtr pageClient = this->pageClient())
-        protect(legacyMainFrameProcess())->send(Messages::WebPage::SetInsertionPointColor(pageClient->insertionPointColor()), webPageIDInMainFrameProcess());
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        return;
+
+    auto insertionPointColor = pageClient->insertionPointColor();
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetInsertionPointColor(insertionPointColor), pageID);
+    });
 }
 
 void WebPageProxy::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionHandler<void(bool)>&& completion)

@@ -200,7 +200,7 @@ public:
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    Color documentMarkerLineColor(const RenderText&, DocumentMarkerLineStyleMode) const;
+    WEBCORE_EXPORT Color documentMarkerLineColor(const RenderText&, DocumentMarkerLineStyleMode) const;
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }

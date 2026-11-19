@@ -1632,6 +1632,7 @@ public:
     bool supportsPictureInPicture();
 
     String focusRingColor();
+    String autocorrectionReplacementMarkerColor(Node&);
 
     double switchAnimationVisuallyOnDuration() const;
 

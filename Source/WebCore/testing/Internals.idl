@@ -1556,6 +1556,7 @@ enum LayerType {
 
     DOMString systemColorForCSSValue(DOMString cssValue, boolean useDarkModeAppearance, boolean useElevatedUserInterfaceLevel);
     DOMString focusRingColor();
+    DOMString autocorrectionReplacementMarkerColor(Node textNode);
 
     readonly attribute double switchAnimationVisuallyOnDuration;
 
