@@ -1213,14 +1213,11 @@ imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-fractional-valid.
 webkit.org/b/329966 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Crash Failure Pass Timeout ]
 webkit.org/b/329966 [ x86_64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Pass Timeout ]
 
-webkit.org/b/329967 [ arm64 ] fast/forms/time/time-editable-components/time-editable-components-keyboard-events.html [ Failure ]
-
 webkit.org/b/329968 [ arm64 ] media/track/texttrackcue/texttrackcue-adopt-node-display-tree-crash.html [ Pass Timeout ]
 
 webkit.org/b/329972 [ arm64 ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout ]
 
 webkit.org/b/310411 [ arm64 ] fast/events/site-isolation/event-timing-back-forward-cache-duration.html [ Pass Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/event-timing/pointerdown-pointerup-no-overlap.html [ Failure ]
 webkit.org/b/330312 [ arm64 ] accessibility/accessible-name-chain-depth-no-crash.html [ Timeout Pass ]
 webkit.org/b/330315 [ Release ] imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Crash Pass ]
 
