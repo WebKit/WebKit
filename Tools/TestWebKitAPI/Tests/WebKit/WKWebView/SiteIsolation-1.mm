@@ -1237,6 +1237,37 @@ TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)
     [webView performSelector:@selector(toggleSmartInsertDelete:) withObject:nil];
 }
 
+TEST(SiteIsolation, AlwaysShowsVerticalScrollerInCrossOriginIframe)
+{
+    // A custom scrollbar takes up layout width, unlike an overlay scrollbar.
+    static constexpr auto iframeHTML = "<body><style>::-webkit-scrollbar { width: 20px; height: 20px; }</style>iframe</body>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { "<body><iframe style='width: 300px; height: 300px; border: none' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { iframeHTML } },
+        { "/iframe2"_s, { iframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    auto iframeHasVerticalScrollbar = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.documentElement.clientWidth < innerWidth" inFrame:[webView firstChildFrame]] boolValue];
+    };
+    EXPECT_FALSE(iframeHasVerticalScrollbar());
+
+    // Like a same-process iframe, the iframe's frame view reads the setting when its next document commits.
+    [webView _setAlwaysShowsVerticalScroller:YES];
+    [webView objectByEvaluatingJavaScript:@"location.href = '/iframe2'; true" inFrame:childFrame.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView firstChildFrame].request.URL.path isEqualToString:@"/iframe2"];
+    }));
+    EXPECT_TRUE(iframeHasVerticalScrollbar());
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, childFrame.get()._processIdentifier);
+}
+
 #endif // PLATFORM(MAC)
 
 #if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
