@@ -27,15 +27,8 @@
 
 namespace WTF {
 
-typedef enum {
-    LenientConversion,
-    StrictConversion,
-    StrictConversionReplacingUnpairedSurrogatesWithFFFD,
-} ConversionMode;
+enum class ConversionMode : bool { Lenient, Strict };
 
 } // namespace WTF
 
 using WTF::ConversionMode;
-using WTF::LenientConversion;
-using WTF::StrictConversion;
-using WTF::StrictConversionReplacingUnpairedSurrogatesWithFFFD;

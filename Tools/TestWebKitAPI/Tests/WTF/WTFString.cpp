@@ -528,14 +528,14 @@ TEST(WTF, StringMakeStringByJoining)
 
 TEST(WTF, StringUTF8ConversionInvalidUTF16LenientMode)
 {
-    // Test invalid UTF-16 (orphan surrogates) with LenientConversion mode.
+    // Test invalid UTF-16 (orphan surrogates) with ConversionMode::Lenient.
     // Invalid sequences should be replaced with U+FFFD (replacement character).
 
     // Create a string with an orphan high surrogate (0xD800)
     char16_t orphanHighSurrogate[] = { 'a', 'b', 'c', 0xD800, 'd', 'e', 'f', 0 };
     String stringWithOrphanHigh = String(std::span { orphanHighSurrogate, 7 });
 
-    auto result = stringWithOrphanHigh.utf8(LenientConversion);
+    auto result = stringWithOrphanHigh.utf8();
     // U+FFFD in UTF-8 is 0xEF 0xBF 0xBD
     EXPECT_EQ(UTF8CString { u8"abc\xEF\xBF\xBD" "def"_span }, result);
 
@@ -543,14 +543,14 @@ TEST(WTF, StringUTF8ConversionInvalidUTF16LenientMode)
     char16_t orphanLowSurrogate[] = { 'x', 0xDC00, 'y', 0 };
     String stringWithOrphanLow = String(std::span { orphanLowSurrogate, 3 });
 
-    auto resultLow = stringWithOrphanLow.utf8(LenientConversion);
+    auto resultLow = stringWithOrphanLow.utf8();
     EXPECT_EQ(UTF8CString { u8"x\xEF\xBF\xBDy"_span }, resultLow);
 
     // Create a string with two consecutive orphan surrogates
     char16_t doubleOrphan[] = { 0xD800, 0xD800, 0 };
     String stringWithDoubleOrphan = String(std::span { doubleOrphan, 2 });
 
-    auto resultDouble = stringWithDoubleOrphan.utf8(LenientConversion);
+    auto resultDouble = stringWithDoubleOrphan.utf8();
     // Each orphan should become one replacement character
     EXPECT_EQ(UTF8CString { u8"\xEF\xBF\xBD\xEF\xBF\xBD"_span }, resultDouble);
 
@@ -558,22 +558,41 @@ TEST(WTF, StringUTF8ConversionInvalidUTF16LenientMode)
     char16_t reversedPair[] = { 0xDC00, 0xD800, 0 };
     String stringWithReversed = String(std::span { reversedPair, 2 });
 
-    auto resultReversed = stringWithReversed.utf8(LenientConversion);
+    auto resultReversed = stringWithReversed.utf8();
     // Both are invalid, should become two replacement characters
     EXPECT_EQ(UTF8CString { u8"\xEF\xBF\xBD\xEF\xBF\xBD"_span }, resultReversed);
 }
 
-TEST(WTF, StringUTF8ConversionStrictReplacingMode)
+TEST(WTF, StringUTF8ConversionLongStrings)
 {
-    // Test StrictConversionReplacingUnpairedSurrogatesWithFFFD mode.
-    // This mode replaces unpaired surrogates with U+FFFD.
+    // Long enough for simdutf's vectorized paths, with the interesting character around their block boundaries.
+    for (size_t position : { 0, 15, 16, 17, 31, 32, 63, 64, 99 }) {
+        for (Latin1Character filler : { 0x61, 0xB6 }) {
+            Vector<Latin1Character> characters(FillWith { }, 100, filler);
+            characters[position] = 0xFF;
+            String string { characters.span() };
+            auto bytes = string.utf8Bytes();
+            EXPECT_EQ(bytes.size(), bytes.capacity());
+            EXPECT_EQ(string, String::fromUTF8(bytes.span()));
+            EXPECT_EQ(string, String::fromUTF8(string.utf8().span()));
+        }
 
-    // Create a string with an orphan high surrogate
-    char16_t orphanHighSurrogate[] = { 'a', 'b', 0xD800, 'c', 0 };
-    String stringWithOrphan = String(std::span { orphanHighSurrogate, 4 });
+        for (char16_t filler : { 0x61, 0xB6, 0x2603 }) {
+            for (char16_t surrogate : { 0xD800, 0xDC00 }) {
+                Vector<char16_t> characters(FillWith { }, 100, filler);
+                characters[position] = surrogate;
+                String string { characters.span() };
+                characters[position] = 0xFFFD;
+                String expected { characters.span() };
 
-    auto result = stringWithOrphan.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
-    EXPECT_EQ(UTF8CString { u8"ab\xEF\xBF\xBD" "c"_span }, result);
+                auto bytes = string.utf8Bytes();
+                EXPECT_EQ(bytes.size(), bytes.capacity());
+                EXPECT_EQ(expected, String::fromUTF8(bytes.span()));
+                EXPECT_EQ(expected, String::fromUTF8(string.utf8().span()));
+                EXPECT_FALSE(string.tryGetUTF8(ConversionMode::Strict).has_value());
+            }
+        }
+    }
 }
 
 TEST(WTF, StringSimplifyWhiteSpace)

@@ -49,7 +49,6 @@
 #include "TransformStream.h"
 #include "WritableStream.h"
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <pal/text/TextCodecUTF8.h>
 #include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
@@ -204,10 +203,10 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
     else if (isArrayBufferView())
         closeStream = source.enqueue(ArrayBuffer::tryCreate(protect(arrayBufferViewBody())->span()));
     else if (isText()) {
-        auto data = PAL::TextCodecUTF8::encodeUTF8(textBody());
+        auto data = textBody().utf8Bytes();
         closeStream = source.enqueue(ArrayBuffer::tryCreate(borrow(data)->span()));
     } else if (isURLSearchParams()) {
-        auto data = PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString());
+        auto data = protect(urlSearchParamsBody())->toString().utf8Bytes();
         closeStream = source.enqueue(ArrayBuffer::tryCreate(borrow(data)->span()));
     } else if (isBlob())
         owner.loadBlob(protect(blobBody()).get(), nullptr);
@@ -236,7 +235,7 @@ void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromis
 
 void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
 {
-    auto data = PAL::TextCodecUTF8::encodeUTF8(text);
+    auto data = text.utf8Bytes();
     protect(consumer())->resolveWithData(WTF::move(promise), owner.contentType(), borrow(data)->span());
     m_data = nullptr;
 }
@@ -269,9 +268,9 @@ void FetchBody::loadingSucceeded(const String& contentType)
 RefPtr<FormData> FetchBody::bodyAsFormData() const
 {
     if (isText())
-        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
+        return FormData::create(textBody().utf8Bytes());
     if (isURLSearchParams())
-        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString()));
+        return FormData::create(protect(urlSearchParamsBody())->toString().utf8Bytes());
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
@@ -386,9 +385,9 @@ FetchBody::TakenData FetchBody::take()
         return formDataBody();
 
     if (isText())
-        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
+        return SharedBuffer::create(textBody().utf8Bytes());
     if (isURLSearchParams())
-        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString()));
+        return SharedBuffer::create(protect(urlSearchParamsBody())->toString().utf8Bytes());
 
     if (isArrayBuffer())
         return SharedBuffer::create(protect(arrayBufferBody())->span());

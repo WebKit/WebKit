@@ -1083,7 +1083,7 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
             // FIXME: Converting to JS just to JSON-Stringify seems inefficient. We should find a way to go directly from the struct to JSON.
             auto jwk = toJS<IDLDictionary<JsonWebKey>>(*(promise->globalObject()), *(promise->globalObject()), WTF::move(std::get<JsonWebKey>(key)));
             String jwkString = JSONStringify(promise->globalObject(), jwk, 0);
-            bytes.append(jwkString.utf8(StrictConversion).span());
+            bytes.append(jwkString.utf8(ConversionMode::Strict).span());
         }
         }
 

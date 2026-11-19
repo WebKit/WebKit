@@ -66,7 +66,6 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <pal/text/TextCodecUTF8.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -470,8 +469,7 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<Document>&& document)
 
         // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send Step 4.2.
         auto serialized = serializeFragment(document, SerializedNodes::SubtreeIncludingNode);
-        auto converted = replaceUnpairedSurrogatesWithReplacementCharacter(WTF::move(serialized));
-        auto encoded = PAL::TextCodecUTF8::encodeUTF8(WTF::move(converted));
+        auto encoded = serialized.utf8Bytes();
         m_requestEntityBody = FormData::create(WTF::move(encoded));
         Locker locker { m_gcLock };
         if (m_upload)
@@ -541,7 +539,7 @@ ExceptionOr<void> XMLHttpRequest::sendStringData(String&& body, const String& de
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 
-        m_requestEntityBody = FormData::create(PAL::TextCodecUTF8::encodeUTF8(body));
+        m_requestEntityBody = FormData::create(body.utf8Bytes());
         Locker locker { m_gcLock };
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);

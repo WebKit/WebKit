@@ -237,4 +237,37 @@ TEST(TextCodec, UTF8InvalidSequences)
     EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FF 80" }));
 }
 
+static Vector<uint8_t> testEncode(StringView string)
+{
+    auto bytes = PAL::TextEncoding { "UTF-8"_s }.encode(string, PAL::UnencodableHandling::Entities, PAL::NFCNormalize::No);
+    EXPECT_EQ(bytes.capacity(), bytes.size()) << escapeNonASCIIPrintableCharacters(string);
+    return bytes;
+}
+
+static Vector<uint8_t> testEncodeLatin1(std::initializer_list<Latin1Character> characters)
+{
+    return testEncode(std::span<const Latin1Character> { characters });
+}
+
+static Vector<uint8_t> testEncodeUTF16(std::initializer_list<char16_t> characters)
+{
+    return testEncode(std::span<const char16_t> { characters });
+}
+
+TEST(TextCodec, UTF8Encode)
+{
+    EXPECT_EQ(decodeHexTestBytes("61 62 63"), testEncode("abc"_s));
+    EXPECT_EQ(decodeHexTestBytes("78 C2 B6 C3 BF"), testEncodeLatin1({ 'x', 0xB6, 0xFF }));
+
+    EXPECT_EQ(decodeHexTestBytes("61 62 63"), testEncodeUTF16({ 'a', 'b', 'c' }));
+    EXPECT_EQ(decodeHexTestBytes("C2 B6 E2 98 83 E4 B8 AD"), testEncodeUTF16({ 0xB6, 0x2603, 0x4E2D }));
+    EXPECT_EQ(decodeHexTestBytes("78 F0 9F 92 A9"), testEncodeUTF16({ 'x', 0xD83D, 0xDCA9 }));
+
+    EXPECT_EQ(decodeHexTestBytes("61 EF BF BD 62"), testEncodeUTF16({ 'a', 0xD800, 'b' }));
+    EXPECT_EQ(decodeHexTestBytes("EF BF BD"), testEncodeUTF16({ 0xDC00 }));
+    EXPECT_EQ(decodeHexTestBytes("E2 98 83 EF BF BD"), testEncodeUTF16({ 0x2603, 0xD83D }));
+    EXPECT_EQ(decodeHexTestBytes("EF BF BD EF BF BD"), testEncodeUTF16({ 0xDCA9, 0xD83D }));
+    EXPECT_EQ(decodeHexTestBytes("F0 9F 92 A9 EF BF BD"), testEncodeUTF16({ 0xD83D, 0xDCA9, 0xD800 }));
+}
+
 }

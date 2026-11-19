@@ -151,7 +151,7 @@ void ModuleInformation::setNameSection(Ref<NameSection>&& section)
 
 static std::optional<Name> encodeAsImportName(const String& string)
 {
-    auto utf8 = string.tryGetUTF8(StrictConversion);
+    auto utf8 = string.tryGetUTF8(ConversionMode::Strict);
     if (!utf8)
         return std::nullopt;
     return Name(byteCast<char8_t>(utf8->span()));

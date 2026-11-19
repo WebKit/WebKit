@@ -419,11 +419,6 @@ std::expected<UTF8CString, UTF8ConversionError> String::tryGetUTF8(ConversionMod
     SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->tryGetUTF8(mode) : UTF8CString { u8""_span };
 }
 
-std::expected<UTF8CString, UTF8ConversionError> String::tryGetUTF8() const
-{
-    return tryGetUTF8(LenientConversion);
-}
-
 UTF8CString String::utf8(ConversionMode mode) const
 {
     auto expectedString = tryGetUTF8(mode);

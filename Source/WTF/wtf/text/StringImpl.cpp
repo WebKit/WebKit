@@ -1637,34 +1637,14 @@ std::expected<UTF8CString, UTF8ConversionError> StringImpl::utf8ForCharacters(st
     }, characters, mode);
 }
 
-std::expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const char16_t> span, ConversionMode mode, Vector<char8_t, 1024>& bufferVector)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(bufferVector.size() == span.size() * 3);
-
-    auto conversionResult = simdutf::convert_utf16le_to_utf8_with_errors(span, bufferVector.mutableSpan());
-
-    if (conversionResult.error == simdutf::error_code::SUCCESS)
-        return conversionResult.count;
-
-    ConversionResult<char8_t> result;
-    switch (mode) {
-    case StrictConversion:
-        result = Unicode::convert(span, bufferVector.mutableSpan());
-        break;
-    // FIXME: Lenient is exactly the same as "replacing unpaired surrogates with FFFD"; we don't need both.
-    case StrictConversionReplacingUnpairedSurrogatesWithFFFD:
-    case LenientConversion:
-        result = Unicode::convertReplacingInvalidSequences(span, bufferVector.mutableSpan());
-        break;
-    }
-    if (result.code == ConversionResultCode::SourceInvalid)
-        return makeUnexpected(UTF8ConversionError::Invalid);
-    return result.buffer.size();
-}
-
 size_t StringImpl::utf8LengthFromUTF16(std::span<const char16_t> characters)
 {
     return simdutf::utf8_length_from_utf16le(characters);
+}
+
+size_t StringImpl::utf8LengthFromUTF16ReplacingUnpairedSurrogates(std::span<const char16_t> characters)
+{
+    return simdutf::utf8_length_from_utf16le_with_replacement(characters).count;
 }
 
 size_t StringImpl::tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::span<char8_t> destination)
@@ -1673,6 +1653,13 @@ size_t StringImpl::tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::
     if (result.error == simdutf::error_code::SUCCESS)
         return result.count;
     return notFound;
+}
+
+void StringImpl::convertUTF16ToUTF8ReplacingUnpairedSurrogates(std::span<const char16_t> source, std::span<char8_t> destination)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(destination.size() == utf8LengthFromUTF16ReplacingUnpairedSurrogates(source));
+    auto written = simdutf::convert_utf16le_to_utf8_with_replacement(source, destination);
+    ASSERT_UNUSED(written, written == destination.size());
 }
 
 std::expected<UTF8CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const

@@ -130,11 +130,12 @@ public:
 
     WTF_EXPORT_PRIVATE ASCIICString ascii() const;
 
-    WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = LenientConversion) const;
-    WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = ConversionMode::Lenient) const;
+    WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = ConversionMode::Lenient) const;
+    WTF_EXPORT_PRIVATE Vector<uint8_t> utf8Bytes() const;
 
     template<typename Func>
-    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = LenientConversion) const;
+    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = ConversionMode::Lenient) const;
 
     template<size_t N>
     class UpconvertedCharactersWithSize;
@@ -1435,6 +1436,11 @@ NODELETE inline bool endsWithIgnoringASCIICase(StringView reference, StringView 
     if (suffix.is8Bit())
         return equalIgnoringASCIICaseWithLength(reference.span16().subspan(startOffset), suffix.span8(), suffix.length());
     return equalIgnoringASCIICaseWithLength(reference.span16().subspan(startOffset), suffix.span16(), suffix.length());
+}
+
+inline Vector<uint8_t> String::utf8Bytes() const
+{
+    return StringView { *this }.utf8Bytes();
 }
 
 inline size_t String::find(StringView string) const

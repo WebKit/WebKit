@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "TextCodecUTF8.h"
+#include "TextCodec.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace PAL {

@@ -2938,7 +2938,7 @@ std::optional<String> URLParser::formURLDecode(StringView input)
     if (input.containsOnlyASCII() && input.find('%') == notFound)
         return input.toString();
 
-    auto utf8 = input.utf8(StrictConversion);
+    auto utf8 = input.utf8(ConversionMode::Strict);
     if (utf8.isNull())
         return std::nullopt;
     auto percentDecoded = percentDecode(byteCast<Latin1Character>(utf8.span()));
@@ -2974,7 +2974,7 @@ std::optional<KeyValuePair<String, String>> URLParser::parseQueryNameAndValue(St
 
 static void serializeURLEncodedForm(const String& input, Vector<Latin1Character>& output)
 {
-    auto utf8 = input.utf8(StrictConversion);
+    auto utf8 = input.utf8(ConversionMode::Strict);
     for (char byte : utf8.span()) {
         if (byte == 0x20)
             output.append(0x2B);

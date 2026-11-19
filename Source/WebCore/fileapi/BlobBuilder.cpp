@@ -35,7 +35,6 @@
 #include "Blob.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <pal/text/TextCodecUTF8.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/LineEnding.h>
 
@@ -65,7 +64,7 @@ void BlobBuilder::append(Ref<Blob>&& blob)
 
 void BlobBuilder::append(const String& text)
 {
-    auto bytes = PAL::TextCodecUTF8::encodeUTF8(text);
+    auto bytes = text.utf8Bytes();
 
     if (m_endings == EndingType::Native)
         bytes = normalizeLineEndingsToNative(WTF::move(bytes));
