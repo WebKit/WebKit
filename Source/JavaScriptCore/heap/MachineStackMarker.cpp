@@ -23,6 +23,7 @@
 #include "MachineStackMarker.h"
 
 #include "ConservativeRoots.h"
+#include "JSCConfig.h"
 #include "MachineContext.h"
 #include <wtf/BitVector.h>
 #include <wtf/PageBlock.h>
@@ -97,6 +98,8 @@ NODELETE static void copyMemory(void* dst, const void* src, size_t size)
     RELEASE_ASSERT(dstAsSize == WTF::roundUpToMultipleOf<sizeof(CPURegister)>(dstAsSize));
     RELEASE_ASSERT(srcAsSize == WTF::roundUpToMultipleOf<sizeof(CPURegister)>(srcAsSize));
     RELEASE_ASSERT(size == WTF::roundUpToMultipleOf<sizeof(CPURegister)>(size));
+
+    MTETagCheckOverrideScope mteTagCheckOverrideScope;
 
     CPURegister* dstPtr = reinterpret_cast<CPURegister*>(dst);
     const CPURegister* srcPtr = reinterpret_cast<const CPURegister*>(src);

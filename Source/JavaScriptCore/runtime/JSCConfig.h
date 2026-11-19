@@ -29,6 +29,8 @@
 #include <JavaScriptCore/OptionsList.h>
 #include <JavaScriptCore/SecureARM64EHashPins.h>
 #include <JavaScriptCore/StopTheWorldCallback.h>
+#include <wtf/ForbidHeapAllocation.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/PtrTag.h>
 #include <wtf/WTFConfig.h>
 
@@ -124,6 +126,9 @@ struct Config {
 #if CPU(ARM64E) && ENABLE(JIT)
     SecureARM64EHashPins arm64eHashPins;
 #endif
+
+    // True if the CPU implements MTE. Set by isARM64_MTE().
+    bool hasMTE;
 };
 
 constexpr size_t alignmentOfJSCConfig = std::alignment_of<JSC::Config>::value;
@@ -140,6 +145,46 @@ inline Config* addressOfJSCConfig() { return std::bit_cast<Config*>(&g_wtfConfig
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #define g_jscConfig (*JSC::addressOfJSCConfig())
+
+// Sets TCO (Tag Check Override) so that reads of stack memory in MTE-tagged
+// frames don't take a tag-check fault.
+class MTETagCheckOverrideScope {
+    WTF_MAKE_NONCOPYABLE(MTETagCheckOverrideScope);
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+#if CPU(ARM64) && OS(DARWIN)
+    NODELETE SUPPRESS_NODELETE ALWAYS_INLINE MTETagCheckOverrideScope()
+    {
+        if (g_jscConfig.hasMTE) [[unlikely]] {
+            m_active = true;
+            __asm__ volatile(".arch_extension memtag\nmrs %0, tco\nmsr tco, #1" : "=&r"(m_savedTCO) : : "memory");
+        }
+    }
+
+    NODELETE SUPPRESS_NODELETE ALWAYS_INLINE ~MTETagCheckOverrideScope()
+    {
+        if (!m_active) [[likely]]
+            return;
+        __asm__ volatile(".arch_extension memtag\nmsr tco, %0" : : "r"(m_savedTCO) : "memory");
+    }
+
+    // Sets TCO again. Call this before each read that needs the override if anything run since the
+    // previous read, such as an allocation, may have cleared it.
+    ALWAYS_INLINE void reassert()
+    {
+        ASSERT(m_active);
+        __asm__ volatile(".arch_extension memtag\nmsr tco, #1" : : : "memory");
+    }
+
+private:
+    bool m_active { false };
+    uint64_t m_savedTCO { 0 };
+#else
+    NODELETE ALWAYS_INLINE MTETagCheckOverrideScope() { }
+    NODELETE ALWAYS_INLINE ~MTETagCheckOverrideScope() { }
+    ALWAYS_INLINE void reassert() { }
+#endif
+};
 
 constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config, initializeHasBeenCalled);
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);

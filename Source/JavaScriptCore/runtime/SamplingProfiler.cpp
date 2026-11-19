@@ -33,6 +33,7 @@
 #include "HeapIterationScope.h"
 #include "HeapUtil.h"
 #include "InlineCallFrame.h"
+#include "JSCConfig.h"
 #include "JSCInlines.h"
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
@@ -94,6 +95,7 @@ public:
     SUPPRESS_ASAN
     size_t walk(Vector<UnprocessedStackFrame>& stackTrace, bool& didRunOutOfSpace)
     {
+        MTETagCheckOverrideScope mteTagCheckOverrideScope;
         if (sReportStats)
             sNumTotalWalks++;
         resetAtMachineFrame();
@@ -246,6 +248,7 @@ public:
 
     size_t walk(Vector<UnprocessedStackFrame>& stackTrace, bool& didRunOutOfSpace)
     {
+        MTETagCheckOverrideScope mteTagCheckOverrideScope;
         if (sReportStats)
             sNumTotalWalks++;
         resetAtMachineFrame();

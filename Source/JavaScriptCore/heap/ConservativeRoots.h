@@ -52,6 +52,9 @@ private:
 
     template<typename MarkHook>
     void genericAddSpan(void* begin, void* end, MarkHook&);
+
+    template<bool overrideTagChecks, typename MarkHook>
+    void genericAddSpanImpl(void* begin, void* end, MarkHook&);
     
     void grow();
 
