@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that ApplePaySession.completePayment() validates orderDetails.webServiceURL.");
+
+window.jsTestIsAsync = true;
+
+function validRequest()
+{
+    return {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['supports3DS'],
+        total: { label: 'Your Label', amount: '10.00' },
+    }
+}
+
+var session;
+var resultWithInvalidWebServiceURL = {
+    status: ApplePaySession.STATUS_SUCCESS,
+    orderDetails: {
+        orderTypeIdentifier: 'orderTypeIdentifier',
+        orderIdentifier: 'orderIdentifier',
+        webServiceURL: 'not a valid URL',
+        authenticationToken: 'authenticationToken',
+    },
+};
+var resultWithValidWebServiceURL = {
+    status: ApplePaySession.STATUS_SUCCESS,
+    orderDetails: {
+        orderTypeIdentifier: 'orderTypeIdentifier',
+        orderIdentifier: 'orderIdentifier',
+        webServiceURL: 'https://apple.com',
+        authenticationToken: 'authenticationToken',
+    },
+};
+
+activateThen(() => {
+    session = new ApplePaySession(3, validRequest());
+    session.onpaymentauthorized = (event) => {
+        shouldThrowErrorName("session.completePayment(resultWithInvalidWebServiceURL)", "TypeError");
+        shouldNotThrow("session.completePayment(resultWithValidWebServiceURL)");
+        finishJSTest();
+    };
+
+    session.begin();
+    internals.mockPaymentCoordinator.acceptPayment();
+});
+</script>
+</body>
+</html>

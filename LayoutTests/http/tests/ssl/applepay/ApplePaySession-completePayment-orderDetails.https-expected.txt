@@ -1,0 +1,11 @@
+Test that ApplePaySession.completePayment() validates orderDetails.webServiceURL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS session.completePayment(resultWithInvalidWebServiceURL) threw exception TypeError: "not a valid URL" is not a valid URL..
+PASS session.completePayment(resultWithValidWebServiceURL) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
