@@ -132,7 +132,7 @@
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
-#include "RenderListOutsideMarker.h"
+#include "RenderListItem.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMeter.h"
 #include "RenderObjectInlines.h"
@@ -2134,7 +2134,7 @@ void AXObjectCache::setDirtyStitchGroups(const RenderBlock& renderBlock)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AXObjectCache::onTextRunsChanged(const RenderObject& renderer)
 {
-    if (renderer.isInlineBox() || is<RenderListOutsideMarker>(renderer)) {
+    if (renderer.isInlineBox() || renderer.isOutsideListMarker()) {
         // Fast-path exit for common renderers that will never produce text runs.
         return;
     }

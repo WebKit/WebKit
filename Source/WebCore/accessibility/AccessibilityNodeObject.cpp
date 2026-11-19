@@ -924,8 +924,8 @@ bool AccessibilityNodeObject::canHaveChildren() const
     if (!altTextFromStyle().isNull())
         return false;
 
-    if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer()))
-        return listMarkerHasContent(listMarker->style(), protect(listMarker->document()));
+    if (CheckedPtr renderer = this->renderer(); renderer && renderer->isOutsideListMarker())
+        return listMarkerHasContent(renderer->style(), protect(renderer->document()));
 
     // Markers are exposed as markerText(), so ignore any children.
     if (CheckedPtr renderer = this->renderer(); renderer && renderer->isListMarkerBox())

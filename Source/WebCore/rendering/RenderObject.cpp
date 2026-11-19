@@ -3264,6 +3264,11 @@ VisibleInViewportState RenderObject::imageFrameAvailable(CachedImage& image, Ima
     return VisibleInViewportState::No;
 }
 
+bool RenderObject::isOutsideListMarker() const
+{
+    return isRenderListOutsideMarker();
+}
+
 bool RenderObject::isExcludedMarker() const
 {
     // An excluded list marker is the direct child of its list item, never wrapped in an anonymous block, and no part of in-flow layout.

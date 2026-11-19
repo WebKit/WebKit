@@ -91,7 +91,7 @@ struct ParentAndBeforeChild {
 
 NODELETE static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& child)
 {
-    return is<RenderListOutsideMarker>(child) && is<RenderListItem>(parent);
+    return child.isOutsideListMarker() && is<RenderListItem>(parent);
 }
 
 NODELETE static bool hasInlineInFlowChild(const RenderBlock& parent)

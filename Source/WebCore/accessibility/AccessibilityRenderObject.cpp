@@ -666,7 +666,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
                         if (axID == objectID())
                             break;
                         if (RefPtr object = cache->objectForID(axID)) {
-                            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(object->renderer())) {
+                            if (CheckedPtr renderListMarker = object->renderer(); renderListMarker && renderListMarker->isOutsideListMarker()) {
                                 if (!object->isAXHidden())
                                     renderListMarker->absoluteFocusRingQuads(quads);
                             }
@@ -1576,9 +1576,9 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
     for (CheckedPtr ancestor = renderText->parent(); ancestor && !ancestor->element(); ancestor = ancestor->parent()) {
         // A marker that needs renderers for its content (a synthesized glyph, bidi text, or a `content`
-        // value) puts them in an anonymous inline-block inside the RenderListOutsideMarker, and that anonymous
+        // value) puts them in an anonymous inline-block inside the outside marker, and that anonymous
         // style carries no pseudo type for the ::marker case above to catch. We do so here instead.
-        if (ancestor->isRenderListOutsideMarker())
+        if (ancestor->isOutsideListMarker())
             return { };
     }
 

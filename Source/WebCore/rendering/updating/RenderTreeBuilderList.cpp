@@ -50,7 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::List);
 NODELETE static RenderObject* firstNonMarkerChild(RenderBlock& parent)
 {
     RenderObject* child = parent.firstChild();
-    while (is<RenderListOutsideMarker>(child))
+    while (child && child->isOutsideListMarker())
         child = child->nextSibling();
     return child;
 }

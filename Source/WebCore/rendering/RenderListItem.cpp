@@ -746,9 +746,8 @@ RenderListOutsideMarker* RenderListItem::markerBox() const
 
 RenderListItem* RenderListItem::listItemForMarker(const RenderObject& marker)
 {
-    if (CheckedPtr outsideMarker = dynamicDowncast<RenderListOutsideMarker>(marker))
-        return outsideMarker->listItem();
-    // An inside marker is an anonymous inline box in the item's content, so find the item that holds it.
+    // An outside marker is its list item's child and an inside marker an anonymous inline box in its content, so find
+    // the list item whose marker it is.
     for (CheckedPtr ancestor = marker.parent(); ancestor; ancestor = ancestor->parent()) {
         auto* listItem = dynamicDowncast<RenderListItem>(ancestor);
         if (listItem && listItem->markerRenderer() == &marker)
@@ -911,7 +910,7 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
                     break;
                 }
                 // An inside marker takes a line ahead of the block, so only an outside marker follows the content in.
-                if (is<RenderListOutsideMarker>(marker)) {
+                if (marker.isOutsideListMarker()) {
                     if (CheckedPtr leadingBlock = dynamicDowncast<RenderBlock>(firstContentfulChild(inlineBox.get()))) {
                         if (auto firstFormattedLineRoot = firstFormattedLineRootIn(*leadingBlock))
                             return { firstFormattedLineRoot, { } };

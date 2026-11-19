@@ -64,7 +64,6 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
@@ -366,8 +365,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (auto* cell = dynamicDowncast<RenderTableCell>(o))
         ts << " [r="_s << cell->rowIndex() << " c="_s << cell->col() << " rs="_s << cell->rowSpan() << " cs="_s << cell->colSpan() << ']';
 
-    if (auto* listMarker = dynamicDowncast<RenderListOutsideMarker>(o)) {
-        auto text = RenderListItem::markerText(*listMarker, ListMarkerIncludeSuffix::No);
+    if (o.isOutsideListMarker()) {
+        auto text = RenderListItem::markerText(o, ListMarkerIncludeSuffix::No);
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);
@@ -551,7 +550,7 @@ void write(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextF
         return;
     }
 
-    if (is<RenderListOutsideMarker>(renderer))
+    if (renderer.isOutsideListMarker())
         return;
 
     for (CheckedRef child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
