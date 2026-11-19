@@ -67,7 +67,8 @@ public:
     size_t length() const { return hasDetachedChannelBuffer() ? 0 : m_originalLength; }
     double duration() const { return length() / static_cast<double>(sampleRate()); }
 
-    NODELETE void markBuffersAsNonDetachable();
+    // https://webaudio.github.io/web-audio-api/#acquire-the-content
+    bool acquireContents(FixedVector<Ref<JSC::Float32Array>>& acquired);
 
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }

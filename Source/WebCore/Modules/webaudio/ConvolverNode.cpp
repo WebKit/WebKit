@@ -36,6 +36,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "Reverb.h"
+#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -137,11 +138,21 @@ ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buff
     if (!isChannelCountGood)
         return Exception { ExceptionCode::NotSupportedError, "Buffer should have 1, 2 or 4 channels"_s };
 
-    // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpySpan().
-    // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.
+    FixedVector<Ref<JSC::Float32Array>> acquired;
+    if (!buffer->acquireContents(acquired)) {
+        Locker contextLocker { context().graphLock() };
+        Locker locker { m_processLock };
+        m_reverb = nullptr;
+        m_buffer = WTF::move(buffer);
+        protect(output(0))->setNumberOfChannels(computeNumberOfOutputChannels(protect(input(0))->numberOfChannels(), m_buffer->numberOfChannels()));
+        return { };
+    }
+
     auto bufferBus = AudioBus::create(numberOfChannels, bufferLength, false);
-    for (unsigned i = 0; i < numberOfChannels; ++i)
-        bufferBus->setChannelMemory(i, buffer->channelData(i)->typedMutableSpan().first(bufferLength));
+    for (unsigned i = 0; i < numberOfChannels; ++i) {
+        RefPtr<JSC::Float32Array> channel = acquired[i].ptr();
+        bufferBus->setChannelMemory(i, channel->typedMutableSpan().first(bufferLength));
+    }
 
     bufferBus->setSampleRate(buffer->sampleRate());
 

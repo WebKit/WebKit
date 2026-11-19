@@ -1,0 +1,11 @@
+AudioBufferSourceNode.start acquires the AudioBuffer, so later edits do not change playback.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS after !== data is true
+PASS firstSample is 0.5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

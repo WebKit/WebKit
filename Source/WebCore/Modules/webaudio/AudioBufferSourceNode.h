@@ -104,7 +104,8 @@ private:
     // m_buffer holds the sample data which this node outputs.
     RefPtr<AudioBuffer> m_buffer WTF_GUARDED_BY_LOCK(m_processLock); // Only modified on the main thread but used on the audio thread.
 
-    // Spans for the buffer and destination.
+    // Spans for the buffer and destination. m_acquiredChannels owns the samples after acquire.
+    FixedVector<Ref<JSC::Float32Array>> m_acquiredChannels WTF_GUARDED_BY_LOCK(m_processLock);
     FixedVector<std::span<const float>> m_sourceChannels;
     FixedVector<std::span<float>> m_destinationChannels;
 

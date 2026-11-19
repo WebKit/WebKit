@@ -149,17 +149,35 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     m_channelWrappers = FixedVector<JSValueInWrappedObject> { m_channels.size() };
 }
 
-// FIXME: We don't currently implement "acquire the content" [1] and
-// AudioBuffer::getChannelData() correctly. As a result, the audio thread
-// may be reading an array buffer that the JS can detach. To guard against
-// this, we mark the array buffers as non-detachable as soon as their content
-// has been acquired.
-// [1] https://www.w3.org/TR/webaudio/#acquire-the-content
-void AudioBuffer::markBuffersAsNonDetachable()
+bool AudioBuffer::acquireContents(FixedVector<Ref<Float32Array>>& acquired)
 {
     Locker locker { m_channelsLock };
-    for (auto& channel : m_channels)
-        channel->setDetachable(false);
+    if (m_channels.isEmpty())
+        return false;
+
+    for (auto& channel : m_channels) {
+        if (channel->isDetached() || channel->isShared() || !channel->data())
+            return false;
+    }
+
+    Vector<Ref<Float32Array>> copies;
+    Vector<Ref<Float32Array>> retained;
+    copies.reserveInitialCapacity(m_channels.size());
+    retained.reserveInitialCapacity(m_channels.size());
+    for (auto& channel : m_channels) {
+        auto copy = Float32Array::tryCreate(channel->typedSpan());
+        auto playback = Float32Array::tryCreate(channel->typedSpan());
+        if (!copy || !playback)
+            return false;
+        copies.append(copy.releaseNonNull());
+        retained.append(playback.releaseNonNull());
+    }
+
+    m_channels = FixedVector<Ref<Float32Array>>(WTF::move(copies));
+    for (auto& wrapper : m_channelWrappers)
+        wrapper.clear();
+    acquired = FixedVector<Ref<Float32Array>>(WTF::move(retained));
+    return true;
 }
 
 void AudioBuffer::invalidate()
