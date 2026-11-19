@@ -1,0 +1,93 @@
+Tests the choice of one target per process to report process-wide data, such as CPU usage and memory.
+
+
+== Running test suite: TargetManager.ProcessLeaders
+-- Running test case: TargetManager.ProcessLeaders.PageTargetPreferred
+PASS: The page target should lead its process.
+PASS: There should be one process.
+
+-- Running test case: TargetManager.ProcessLeaders.ProvisionalNeverLeads
+PASS: A process with only provisional targets should have no leader.
+PASS: The committed frame target should lead, not the provisional one.
+
+-- Running test case: TargetManager.ProcessLeaders.EarliestCommittedFrameTarget
+PASS: The first committed frame target should lead.
+
+-- Running test case: TargetManager.ProcessLeaders.StickyWhenProvisionalFrameCommitsLater
+PASS: The committed frame target should lead while the other is provisional.
+PASS: The leader should stay after the other frame target commits.
+PASS: The leader should stay in any order of the other targets.
+
+-- Running test case: TargetManager.ProcessLeaders.PageTargetTakesOver
+PASS: The frame target should lead while the page target is provisional.
+PASS: The page target should lead after it commits.
+
+-- Running test case: TargetManager.ProcessLeaders.NoProcessIdentifier
+PASS: The page target should be the key of its own process.
+PASS: The page target should lead its own process.
+PASS: The frame target without a process identifier should have no process.
+PASS: The frame target without a process identifier should not lead.
+PASS: The frame target with a process identifier should lead its process.
+PASS: There should be two processes.
+
+-- Running test case: TargetManager.ProcessLeaders.PausedTargetCanLead
+PASS: The paused page target should lead.
+PASS: The paused frame target should lead.
+
+-- Running test case: TargetManager.ProcessLeaders.LeaderRemoved
+PASS: The first frame target should lead.
+PASS: The next committed frame target should lead after the leader is removed.
+PASS: The process should have no leader after its last target is removed.
+
+-- Running test case: TargetManager.ProcessLeaders.OrphanedFrameTargets
+PASS: The frame targets of the page target's process should be orphaned.
+PASS: Removing a frame target that leads should orphan nothing.
+PASS: Removing a page target that does not lead should orphan nothing.
+
+-- Running test case: TargetManager.ProcessLeaders.PageSwapOverSeveralTasks
+PASS: The previous page target should lead its process.
+PASS: The previous page's process should have no leader while its frame targets remain.
+PASS: The new page target should lead its process.
+PASS: The cross-origin frame target should still lead its process.
+PASS: The previous page's process should still have no leader.
+PASS: A frame target added to that process later should lead.
+
+-- Running test case: TargetManager.ProcessLeaders.CancelledProvisionalPage
+PASS: Removing the provisional targets should orphan nothing.
+PASS: The page target should still lead its process.
+PASS: The provisional page's process should have no leader.
+
+-- Running test case: TargetManager.ProcessLeaders.WorkersDoNotTakePart
+PASS: A worker target should have no process.
+PASS: A service worker target should have no process.
+PASS: The page target should lead its process.
+PASS: There should be one process.
+
+-- Running test case: TargetManager.ProcessLeaders.ElectionAfterTargetEvents
+PASS: The election should not run while targets are added.
+PASS: The committed frame target should lead.
+PASS: The provisional frame target should have the committed frame target as its leader.
+PASS: The leaders should include the committed frame target.
+PASS: There should be one change: the committed frame target leads.
+PASS: The leader should stay after the other frame target commits.
+PASS: There should be no change.
+PASS: A removed leader should not be reported as a leader before the next election.
+PASS: The process should have no leader before the next election.
+PASS: The leaders should not include a removed leader.
+PASS: The remaining frame target should lead after the leader is removed.
+PASS: There should be one change: the remaining frame target replaces the removed leader.
+PASS: The process should have no leader after its last target is removed.
+PASS: There should be one change: the process has no leader.
+
+-- Running test case: TargetManager.ProcessLeaders.PageSwapOverSeveralTasksInTargetManager
+PASS: The page target should lead its process.
+PASS: The removed page target should not be reported as the leader before the next election.
+PASS: There should be no leader before the next election.
+PASS: The previous page's process should lose its leader, and the new page target should lead its process.
+PASS: The previous page's process should have no leader while its frame targets remain.
+PASS: Removing a frame target of the previous page should change nothing.
+PASS: A frame target added to that process later should lead.
+PASS: Removing the last frame target of the previous page should change nothing.
+PASS: Adding and removing a provisional page target should change nothing.
+PASS: The new page target and the new frame target should still lead.
+

@@ -1,0 +1,116 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addIframe(url) {
+    let iframe = document.createElement("iframe");
+    iframe.src = url;
+    document.body.append(iframe);
+}
+
+function removeIframe(urlSubstring) {
+    document.querySelector(`iframe[src*="${urlSubstring}"]`).remove();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target.ProcessLeaders");
+
+    let crossOriginFrameTarget = null;
+    let addedFrameTarget = null;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.ProcessLeaders.OneLeaderPerProcess",
+        description: "The page target leads its process, the cross-origin frame target leads the other process, and the same-site frame target does not lead.",
+        timeout: 30000,
+        async test() {
+            let mainFrameTarget = await waitForFrameTargetForURLContaining("target-process-leaders.html");
+            let sameSiteFrameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html?same-site");
+            crossOriginFrameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html?cross-origin");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+            InspectorTest.expectNotNull(sameSiteFrameTarget, "Should find the same-site frame's target.");
+            InspectorTest.expectNotNull(crossOriginFrameTarget, "Should find the cross-origin frame's target.");
+            if (!mainFrameTarget || !sameSiteFrameTarget || !crossOriginFrameTarget)
+                return;
+
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(WI.pageTarget), "The page target should lead its process.");
+            InspectorTest.expectEqual(WI.targetManager.processLeaderForTarget(mainFrameTarget), WI.pageTarget, "The main frame's target should have the page target as its leader.");
+            InspectorTest.expectEqual(WI.targetManager.processLeaderForTarget(sameSiteFrameTarget), WI.pageTarget, "The same-site frame's target should have the page target as its leader.");
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(crossOriginFrameTarget), "The cross-origin frame's target should lead its process.");
+
+            let processIdentifiers = new Set(WI.targets.filter((target) => target.type === WI.TargetType.Page || target.type === WI.TargetType.Frame).map((target) => target.processIdentifier));
+            InspectorTest.expectEqual(WI.targetManager.processLeaders.length, processIdentifiers.size, "There should be one leader per process.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.ProcessLeaders.ProvisionalFrameTargetCommits",
+        description: "A frame target that commits into a process that another frame target leads does not take over.",
+        timeout: 30000,
+        async test() {
+            let provisionalTargetPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                    let {target} = event.data;
+                    if (target.type !== WI.TargetType.Frame || !target.isProvisional)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);
+                    resolve(target);
+                });
+            });
+
+            InspectorTest.evaluateInPage(`addIframe("http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?added")`);
+
+            addedFrameTarget = await provisionalTargetPromise;
+            let committedPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, (event) => {
+                    if (event.data.target !== addedFrameTarget)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, listener);
+                    resolve();
+                });
+            });
+            InspectorTest.expectEqual(addedFrameTarget.processIdentifier, crossOriginFrameTarget.processIdentifier, "The added frame should load in the cross-origin frame's process.");
+            await Promise.resolve();
+            InspectorTest.expectFalse(WI.targetManager.isProcessLeader(addedFrameTarget), "The provisional frame target should not lead.");
+
+            await committedPromise;
+            await Promise.resolve();
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(crossOriginFrameTarget), "The cross-origin frame's target should still lead after the added frame target commits.");
+            InspectorTest.expectEqual(WI.targetManager.processLeaderForTarget(addedFrameTarget), crossOriginFrameTarget, "The added frame's target should have the cross-origin frame's target as its leader.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.ProcessLeaders.LeaderRemoved",
+        description: "When the leading frame target is removed, the other frame target of its process leads.",
+        timeout: 30000,
+        async test() {
+            let leaderChangedPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.ProcessLeaderChanged, (event) => {
+                    if (event.data.previousLeader !== crossOriginFrameTarget)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.ProcessLeaderChanged, listener);
+                    resolve(event.data.leader);
+                });
+            });
+
+            InspectorTest.evaluateInPage(`removeIframe("?cross-origin")`);
+
+            let leader = await leaderChangedPromise;
+            InspectorTest.expectThat(crossOriginFrameTarget.isDestroyed, "The cross-origin frame's target should be removed.");
+            InspectorTest.expectEqual(leader, addedFrameTarget, "The added frame's target should lead its process.");
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(WI.pageTarget), "The page target should still lead its process.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that one target per process is chosen to report process-wide data.</p>
+<iframe src="resources/frame-with-name.html?same-site"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?cross-origin"></iframe>
+</body>
