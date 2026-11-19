@@ -117,6 +117,7 @@ private:
     void initialize();
     void workQueueInitialize();
     void workQueueUninitialize();
+    void clearObjectHeaps();
 
     template<typename T>
     IPC::Error send(T&& message) const

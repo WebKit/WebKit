@@ -63,6 +63,11 @@ void WebGPUIntegrationImpl::requestAdapter(const WebGPU::RequestAdapterOptions& 
     m_backing->requestAdapter(backingOptions, WTF::move(callback));
 }
 
+void WebGPUIntegrationImpl::destroy()
+{
+    m_backing->destroy();
+}
+
 RefPtr<WebGPU::PresentationContext> WebGPUIntegrationImpl::createPresentationContext(const WebGPUPresentationContextDescriptor& presentationContextDescriptor)
 {
     // Every WebCore::WebGPUCompositorIntegration that WebGPUIntegrationImpl creates is a WebGPUCompositorIntegrationImpl.
