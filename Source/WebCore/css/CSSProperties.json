@@ -585,6 +585,25 @@
                 "url": "https://drafts.csswg.org/css-display-4/#propdef-display"
             }
         },
+        "display-visibility": {
+            "animation-type": "discrete",
+            "initial": "normal",
+            "values": [
+                "normal",
+                "discard"
+            ],
+            "codegen-properties": {
+                "parser-grammar": "<<values>>",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "DisplayVisibility",
+                "settings-flag": "cssDisplayVisibilityEnabled"
+            },
+            "specification": {
+                "category": "css-display",
+                "url": "https://drafts.csswg.org/css-display-4/#display-visibility"
+            }
+        },
         "field-sizing": {
             "animation-type": "discrete",
             "initial": "fixed",

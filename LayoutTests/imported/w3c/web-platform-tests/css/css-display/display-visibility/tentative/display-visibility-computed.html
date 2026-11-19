@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Display: getComputedStyle().displayVisibility</title>
+<link rel="help" href="https://drafts.csswg.org/css-display-4/#display-visibility">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/computed-testcommon.js"></script>
+<body>
+<div id="target"></div>
+<script>
+test_computed_value('display-visibility', 'normal');
+test_computed_value('display-visibility', 'discard');
+</script>
+</body>

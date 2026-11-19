@@ -1,0 +1,10 @@
+
+PASS e.style['display-visibility'] = "normal" should set the property value
+PASS e.style['display-visibility'] = "discard" should set the property value
+PASS e.style['display-visibility'] = "NORMAL" should set the property value
+PASS e.style['display-visibility'] = "Discard" should set the property value
+PASS e.style['display-visibility'] = "initial" should set the property value
+PASS e.style['display-visibility'] = "inherit" should set the property value
+PASS e.style['display-visibility'] = "unset" should set the property value
+PASS e.style['display-visibility'] = "revert" should set the property value
+

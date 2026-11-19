@@ -1,0 +1,4 @@
+
+PASS Property display-visibility has initial value normal
+PASS Property display-visibility does not inherit
+

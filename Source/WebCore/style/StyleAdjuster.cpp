@@ -464,6 +464,9 @@ void Adjuster::setOverrideBackgroundColorForTesting(Element& element, std::optio
 
 void Adjuster::adjust(Style::ComputedStyle& style) const
 {
+    if (style.displayVisibility() == DisplayVisibility::Discard)
+        style.setDisplay(DisplayType::None);
+
     if (style.display() == DisplayType::Contents)
         adjustDisplayContentsStyle(style);
     else if (style.display() != DisplayType::None) {

@@ -1082,6 +1082,11 @@ enum class FieldSizing : bool {
     Content
 };
 
+enum class DisplayVisibility : bool {
+    Normal,
+    Discard
+};
+
 enum class BaselineSource : uint8_t {
     Auto,
     First,
@@ -1311,6 +1316,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, MathShift);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FieldSizing);
+WTF::TextStream& operator<<(WTF::TextStream&, DisplayVisibility);
 WTF::TextStream& operator<<(WTF::TextStream&, BaselineSource);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowContinue);
 
