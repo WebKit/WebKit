@@ -46,7 +46,7 @@ public:
     NODELETE static WebBackForwardListFrameItem* itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
 
     FrameState& frameState() const { return m_frameState; }
-    void updateFrameStatePayload(Ref<FrameState>&&);
+    void updateFrameStatePayload(Ref<FrameState>&&, WebCore::ProcessIdentifier documentProcessIdentifier);
 
     Ref<FrameState> copyFrameState();
     Ref<FrameState> copyFrameStateWithChildren();
@@ -92,6 +92,9 @@ private:
     WeakPtr<WebBackForwardListItem> m_backForwardListItem;
     const WebCore::BackForwardFrameItemIdentifier m_identifier;
     const Ref<FrameState> m_frameState;
+    // The process whose document m_frameState describes: the one that created the item, or the last one to update its
+    // payload, which can be another process when a frame navigates cross-site without adding an entry.
+    WebCore::ProcessIdentifier m_documentProcessIdentifier;
     WeakPtr<WebBackForwardListFrameItem> m_parent;
     Vector<Ref<WebBackForwardListFrameItem>> m_children;
 

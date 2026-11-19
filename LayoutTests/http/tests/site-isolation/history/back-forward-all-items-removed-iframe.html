@@ -1,0 +1,61 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+const SAME_SITE_SENTINEL = "removed-same-site-iframe-sentinel";
+const CROSS_SITE_SENTINEL = "removed-cross-site-iframe-sentinel";
+const REPLACED_SENTINEL = "replaced-cross-site-iframe-sentinel";
+
+function addIframe(url)
+{
+    const iframe = document.createElement("iframe");
+    const loaded = new Promise(resolve => iframe.onload = resolve);
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    return loaded.then(() => iframe);
+}
+
+const allItemsPromise = (async () => {
+    const sameSite = await addIframe("resources/same-site-iframe-content.html?" + SAME_SITE_SENTINEL);
+    const crossSite = await addIframe("http://localhost:8000/site-isolation/history/resources/cross-site-iframe-content.html?" + CROSS_SITE_SENTINEL);
+    const replaced = await addIframe("resources/same-site-iframe-content.html");
+    await new Promise(resolve => {
+        replaced.onload = resolve;
+        replaced.contentWindow.location.replace("http://localhost:8000/site-isolation/history/resources/cross-site-iframe-content.html?" + REPLACED_SENTINEL);
+    });
+    sameSite.remove();
+    crossSite.remove();
+    replaced.remove();
+    history.pushState(null, "", "#newState");
+
+    if (!window.IPC)
+        return null;
+    const reply = IPC.sendSyncMessage("UI", IPC.pageID, IPC.messages.WebBackForwardList_BackForwardAllItems.name, 1000, [{ type: "FrameID", value: IPC.frameID }])?.arguments?.[0];
+    if (!(reply instanceof ArrayBuffer))
+        throw new Error("No reply");
+    return new TextDecoder("latin1").decode(new Uint8Array(reply));
+})();
+
+function allItemsTest(name, body)
+{
+    promise_test(async () => {
+        const allItems = await allItemsPromise;
+        if (allItems)
+            body(allItems);
+    }, name);
+}
+
+allItemsTest("BackForwardAllItems sends a process the state of a same-site subframe it hosted before the subframe was removed", allItems => {
+    assert_true(allItems.includes(SAME_SITE_SENTINEL));
+});
+
+allItemsTest("BackForwardAllItems does not send a process the state of a removed cross-site subframe", allItems => {
+    assert_false(allItems.includes(CROSS_SITE_SENTINEL));
+});
+
+allItemsTest("BackForwardAllItems does not send a process the state of a subframe that replaced itself cross-site before it was removed", allItems => {
+    assert_false(allItems.includes(REPLACED_SENTINEL));
+});
+</script>
