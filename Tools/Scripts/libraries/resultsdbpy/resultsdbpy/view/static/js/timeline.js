@@ -27,8 +27,7 @@ import {Configuration} from '/assets/js/configuration.js';
 import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams, linkify, escapeEndpoint, QueryModifier} from '/assets/js/common.js';
 import {Dashboard} from '/assets/js/dashboard.js';
 import {Expectations} from '/assets/js/expectations.js';
-import {InvestigateDrawer} from '/assets/js/investigate.js';
-import {TypeForSuite} from '/assets/js/suites.js';
+import {InvestigateDrawer, requestLinks, testRunLink} from '/assets/js/investigate.js';
 import {ToolTip} from '/assets/js/tooltip.js';
 import {Timeline} from '/library/js/components/TimelineComponents.js';
 import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
@@ -1103,10 +1102,15 @@ class TimelineFromEndpoint {
                 if (self.subSuite)
                     investigateParams.sub_suite = [`${self.suite}/${self.subSuite}`];
 
-                const typ = TypeForSuite(self.suite);
-                ToolTip.set(
-                    `<div class="content">
-                        ${data.start_time ? `<a href="/urls/build?${paramsToQuery(buildParams)}" target="_blank">${typ.runDescription}</a> @ ${new Date(data.start_time * 1000).toLocaleString()}<br>` : ''}
+                const run = {...data, configuration: configuration};
+                const linksRequest = requestLinks(self.suite, run);
+                const content = REF.createRef({});
+                const points = data.tipPoints.map((point) => {
+                    return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
+                });
+                const setToolTip = () => ToolTip.set(
+                    `<div class="content" ref="${content}">
+                        ${data.start_time ? `${testRunLink(self.suite, run)}<br>` : ''}
                         ${data.start_time && ArchiveRouter.hasArchive(self.suite, data.actual) ? `<a href="/archive/${ArchiveRouter.pathFor(self.suite, data.actual, self.test)}?${paramsToQuery(buildParams)}" target="_blank">${ArchiveRouter.labelFor(self.suite, data.actual)}</a><br>` : ''}
                         Commits: ${commitLinksFor(data.uuid)}
                         <br>
@@ -1116,12 +1120,17 @@ class TimelineFromEndpoint {
                         ${data.expected ? `Expected: ${data.expected}<br>` : ''}
                         ${data.actual ? `Actual: ${data.actual}<br>` : ''}
                     </div>`,
-                    data.tipPoints.map((point) => {
-                        return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
-                    }),
+                    points,
                     (event) => {onDotClickFactory(configuration)(data);},
                     self.viewport,
                 );
+                setToolTip();
+                if (linksRequest) {
+                    linksRequest.then(() => {
+                        if (content.element && content.element.isConnected)
+                            setToolTip();
+                    });
+                }
             }
         }
 

@@ -69,6 +69,7 @@ function parametersForLog(data)
 
 // Keep fetched links and requests here, by query, not on the run: each click copies the runs, and their fields come from the upload
 const linksForRun = new Map();
+const linksRequestForRun = new Map();
 const logForRun = new Map();
 
 function logKey(suite, test, data)
@@ -94,6 +95,23 @@ function linksAllRowsAgreeOn(urlsByConfiguration)
     if (!linksPerRow.length || !linksPerRow.every(links => deepCompare(links, linksPerRow[0])))
         return [];
     return linksPerRow[0];
+}
+
+// One request per run for the drawer and the timeline's tooltip; returned only while it's on its way
+function requestLinks(suite, run)
+{
+    if (!run.start_time || !numberOfLinks(run))
+        return null;
+    const query = parametersForInstance(suite, run);
+    if (!linksForRun.has(query)) {
+        linksForRun.set(query, null);
+        linksRequestForRun.set(query, fetch(`api/urls?${query}`)
+            .then(response => response.json())
+            .then(linksAllRowsAgreeOn)
+            .then(links => linksForRun.set(query, links), () => linksForRun.delete(query))
+            .finally(() => linksRequestForRun.delete(query)));
+    }
+    return linksRequestForRun.get(query) || null;
 }
 
 function anchorFor([name, url])
@@ -497,21 +515,15 @@ class _InvestigateDrawer {
         });
     }
     fetchLinks(run) {
-        if (!run.start_time || !numberOfLinks(run))
+        const request = requestLinks(this.suite, run);
+        if (!request)
             return;
         const query = parametersForInstance(this.suite, run);
-        if (linksForRun.has(query))
-            return;
-        linksForRun.set(query, null);
-        fetch(`api/urls?${query}`)
-            .then(response => response.json())
-            .then(linksAllRowsAgreeOn)
-            .then(links => linksForRun.set(query, links), () => linksForRun.delete(query))
-            .then(() => {
-                const selectedRun = this.selectedRun();
-                if (selectedRun && parametersForInstance(this.suite, selectedRun) === query)
-                    this.content.setState(contentForData(this.suite, selectedRun, this.willFilterExpected, this.test));
-            });
+        request.then(() => {
+            const selectedRun = this.selectedRun();
+            if (selectedRun && parametersForInstance(this.suite, selectedRun) === query)
+                this.content.setState(contentForData(this.suite, selectedRun, this.willFilterExpected, this.test));
+        });
     }
     fetchLog(run) {
         if (!this.test || !run.start_time || !run.has_log)
@@ -589,4 +601,4 @@ class _InvestigateDrawer {
 
 const InvestigateDrawer = new _InvestigateDrawer();
 
-export {InvestigateDrawer};
+export {InvestigateDrawer, requestLinks, testRunLink};
