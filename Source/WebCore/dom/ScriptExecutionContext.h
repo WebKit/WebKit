@@ -78,7 +78,7 @@ class SessionID;
 namespace WebCore {
 
 namespace CSS {
-struct URLModifiers;
+struct URL;
 }
 
 class ActiveDOMObject;
@@ -243,7 +243,7 @@ public:
 
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
     virtual CSSValuePool& cssValuePool();
-    virtual RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, const CSS::URLModifiers&);
+    virtual RefPtr<FontLoadRequest> fontLoadRequest(const CSS::URL&, bool isSVG, bool isInitiatingElementInUserAgentShadowTree);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
     NODELETE WEBCORE_EXPORT static void setCrossOriginMode(CrossOriginMode);

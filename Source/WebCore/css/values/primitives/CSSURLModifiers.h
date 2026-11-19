@@ -27,7 +27,6 @@
 #include <WebCore/CSSLinkParameter.h>
 #include <WebCore/CSSString.h>
 #include <WebCore/CSSValueTypes.h>
-#include <WebCore/LoadedFromOpaqueSource.h>
 
 namespace WebCore {
 
@@ -79,9 +78,6 @@ struct URLModifiers {
     std::optional<URLIntegrityFunction> integrity { };
     std::optional<URLReferrerPolicyFunction> referrerPolicy { };
     URLLinkParameterList linkParameters { };
-
-    // This is not a parsed value, but is implicit from context the modifiers were parsed with.
-    LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 
     bool operator==(const URLModifiers&) const = default;
 };

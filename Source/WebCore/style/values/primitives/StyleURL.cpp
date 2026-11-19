@@ -70,12 +70,14 @@ auto toStyleWithScriptExecutionContext(const CSS::URL& url, const ScriptExecutio
         return {
             .resolved = context.encodingParseURL(url.specified),
             .modifiers = url.modifiers,
+            .provenance = url.provenance,
         };
     }
 
     return {
         .resolved = url.resolved,
         .modifiers = url.modifiers,
+        .provenance = url.provenance,
     };
 }
 
@@ -85,6 +87,7 @@ auto ToCSS<URL>::operator()(const URL& url, const Style::ComputedStyle&) -> CSS:
         .specified = url.resolved.string(),
         .resolved = url.resolved,
         .modifiers = url.modifiers,
+        .provenance = url.provenance,
     };
 }
 

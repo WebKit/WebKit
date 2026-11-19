@@ -4236,9 +4236,9 @@ void Document::implicitOpen()
     setReadyState(ReadyState::Loading);
 }
 
-RefPtr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, const CSS::URLModifiers& modifiers)
+RefPtr<FontLoadRequest> Document::fontLoadRequest(const CSS::URL& location, bool isSVG, bool isInitiatingElementInUserAgentShadowTree)
 {
-    RefPtr cachedFont = protect(fontLoader())->cachedFont(encodingParseURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, modifiers);
+    RefPtr cachedFont = protect(fontLoader())->cachedFont(location, isSVG, isInitiatingElementInUserAgentShadowTree);
     if (!cachedFont)
         return nullptr;
     return CachedFontLoadRequest::create(*cachedFont, *this);

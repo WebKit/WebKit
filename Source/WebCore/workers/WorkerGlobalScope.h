@@ -163,7 +163,7 @@ public:
     CSSValuePool& cssValuePool() final;
     CSSFontSelector* cssFontSelector() final;
     Ref<FontFaceSet> fonts();
-    RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, const CSS::URLModifiers&) final;
+    RefPtr<FontLoadRequest> fontLoadRequest(const CSS::URL&, bool isSVG, bool isInitiatingElementInUserAgentShadowTree) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     NODELETE const SettingsValues& settingsValues() const LIFETIME_BOUND final { return m_settingsValues; }

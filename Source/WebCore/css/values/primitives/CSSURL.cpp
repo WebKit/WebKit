@@ -105,7 +105,7 @@ std::optional<URL> completeURL(const WTF::String& string, const CSSParserContext
     if (context.mode == WebVTTMode && !result.resolved.protocolIsData())
         return { };
 
-    result.modifiers.loadedFromOpaqueSource = context.loadedFromOpaqueSource;
+    result.provenance = { .loadedFromOpaqueSource = context.loadedFromOpaqueSource };
 
     return result;
 }

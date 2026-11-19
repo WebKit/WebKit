@@ -112,7 +112,7 @@ RefPtr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecu
         }
     }
 
-    RefPtr request = context.fontLoadRequest(m_location.resolved.string(), isFormatSVG, isInitiatingElementInUserAgentShadowTree, m_location.modifiers);
+    RefPtr request = context.fontLoadRequest(m_location, isFormatSVG, isInitiatingElementInUserAgentShadowTree);
     if (RefPtr cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
         m_cachedFont = &cachedRequest->cachedFont();
 

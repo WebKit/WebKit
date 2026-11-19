@@ -29,10 +29,10 @@
 #include "DocumentFontLoader.h"
 
 #include "CSSFontSelector.h"
-#include "CSSURLModifiers.h"
+#include "CSSStyleResource.h"
+#include "CSSURL.h"
 #include "CachedFont.h"
 #include "CachedResourceRequest.h"
-#include "CachedResourceRequestInitiatorTypes.h"
 #include "DocumentResourceLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
@@ -65,17 +65,15 @@ void DocumentFontLoader::deref() const
     m_document->deref();
 }
 
-RefPtr<CachedFont> DocumentFontLoader::cachedFont(URL&& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, const CSS::URLModifiers& modifiers)
+RefPtr<CachedFont> DocumentFontLoader::cachedFont(const CSS::URL& location, bool isSVG, bool isInitiatingElementInUserAgentShadowTree)
 {
-    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.contentSecurityPolicyImposition = isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    Ref document = m_document;
+    auto url = document->encodingParseURL(location.resolved.string());
+    auto options = CSS::styleResourceLoaderOptions(isInitiatingElementInUserAgentShadowTree);
 
-    CSS::applyModifiersToLoaderOptions(modifiers, options);
-
-    CachedResourceRequest request(ResourceRequest(WTF::move(url)), options);
-    request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
-    auto result = protect(protect(m_document)->cachedResourceLoader())->requestFont(WTF::move(request), isSVG);
+    // FIXME: CSS Fonts says to fetch fonts in "cors" mode. https://drafts.csswg.org/css-fonts-4/#font-fetching-requirements
+    auto request = CSS::createStyleResourceRequest(document, url, location.modifiers, location.provenance, FetchOptions::Mode::NoCors, options);
+    auto result = protect(document->cachedResourceLoader())->requestFont(WTF::move(request), isSVG);
     return result ? RefPtr { WTF::move(result.value()) } : nullptr;
 }
 

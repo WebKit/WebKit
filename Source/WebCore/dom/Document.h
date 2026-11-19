@@ -2298,7 +2298,7 @@ private:
 
     // ScriptExecutionContext
     CSSFontSelector* cssFontSelector() final;
-    RefPtr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, const CSS::URLModifiers&) final;
+    RefPtr<FontLoadRequest> fontLoadRequest(const CSS::URL&, bool isSVG, bool isInitiatingElementInUserAgentShadowTree) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     // FontSelectorClient

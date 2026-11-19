@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "CSSURLModifiers.h"
+#include "CSSURL.h"
 #include "FontLoadRequest.h"
 #include "ResourceLoaderOptions.h"
 #include "SharedBuffer.h"
@@ -46,7 +46,7 @@ struct FontCustomPlatformData;
 class WorkerFontLoadRequest final : public FontLoadRequest, public ThreadableLoaderClient, public RefCounted<WorkerFontLoadRequest> {
     WTF_MAKE_TZONE_ALLOCATED(WorkerFontLoadRequest);
 public:
-    NODELETE static Ref<WorkerFontLoadRequest> create(URL&&, const CSS::URLModifiers&);
+    NODELETE static Ref<WorkerFontLoadRequest> create(URL&&, const CSS::URLModifiers&, const CSS::URLProvenance&);
 
     void load(WorkerGlobalScope&);
 
@@ -55,7 +55,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
 private:
-    WorkerFontLoadRequest(URL&&, const CSS::URLModifiers&);
+    WorkerFontLoadRequest(URL&&, const CSS::URLModifiers&, const CSS::URLProvenance&);
 
     URL url() const LIFETIME_BOUND final { return m_url; }
     bool isPending() const final { return !m_isLoading && !m_errorOccurred && !m_data; }
@@ -78,6 +78,7 @@ private:
 
     URL m_url;
     CSS::URLModifiers m_modifiers;
+    CSS::URLProvenance m_provenance;
 
     bool m_isLoading { false };
     bool m_notifyOnClientSet { false };

@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/CSSURLModifiers.h>
+#include <WebCore/CSSURLProvenance.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -39,6 +40,9 @@ struct URL {
     WTF::String specified;
     WTF::URL resolved;
     URLModifiers modifiers;
+
+    // This is not a parsed value, but is implicit from the context the url() was parsed with.
+    URLProvenance provenance { };
 
     static URL none() { return { .specified = { }, .resolved = { }, .modifiers = { } }; }
     bool isNone() const { return specified.isNull(); }

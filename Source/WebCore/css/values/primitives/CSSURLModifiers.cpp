@@ -87,8 +87,6 @@ void applyModifiersToLoaderOptions(const URLModifiers& modifiers, ResourceLoader
             }
         );
     }
-
-    loaderOptions.loadedFromOpaqueSource = modifiers.loadedFromOpaqueSource;
 }
 
 // MARK: - Hashing
@@ -110,8 +108,6 @@ void add(Hasher& hasher, const URLModifiers& modifiers)
     add(hasher, modifiers.linkParameters.size());
     for (auto& parameter : modifiers.linkParameters)
         add(hasher, parameter.parameters);
-
-    add(hasher, modifiers.loadedFromOpaqueSource);
 }
 
 } // namespace CSS

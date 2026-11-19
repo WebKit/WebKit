@@ -90,8 +90,8 @@ public:
 
 private:
     DOMMatrix() = default;
-    DOMMatrix(const TransformationMatrix&, Is2D);
-    DOMMatrix(TransformationMatrix&&, Is2D);
+    NODELETE DOMMatrix(const TransformationMatrix&, Is2D);
+    NODELETE DOMMatrix(TransformationMatrix&&, Is2D);
 };
 static_assert(sizeof(DOMMatrix) == sizeof(DOMMatrixReadOnly));
 

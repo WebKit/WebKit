@@ -27,10 +27,10 @@
 #include "StylePendingResources.h"
 
 #include "CSSCursorImageValue.h"
+#include "CSSStyleResource.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "CachedResourceRequestInitiatorTypes.h"
 #include "Document.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
@@ -60,9 +60,7 @@ static void loadPendingImage(Document& document, const Image* image, const Eleme
         return;
 
     bool isInUserAgentShadowTree = element && element->isInUserAgentShadowTree();
-    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.contentSecurityPolicyImposition = isInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-    options.shouldEnableContentExtensionsCheck = isInUserAgentShadowTree ? ShouldEnableContentExtensionsCheck::No : ShouldEnableContentExtensionsCheck::Yes;
+    auto options = CSS::styleResourceLoaderOptions(isInUserAgentShadowTree);
 
     if (!isInUserAgentShadowTree && document.settings().useAnonymousModeWhenFetchingMaskImages()) {
         switch (loadPolicy) {
@@ -71,8 +69,6 @@ static void loadPendingImage(Document& document, const Image* image, const Eleme
             [[fallthrough]];
         case LoadPolicy::CORS:
             options.mode = FetchOptions::Mode::Cors;
-            options.credentials = FetchOptions::Credentials::SameOrigin;
-            options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
             break;
         case LoadPolicy::NoCORS:
             break;
@@ -98,20 +94,12 @@ static void loadExternalSVGResource(Document& document, const Element* element, 
     if (extensions->hasExternalSVGResource(location))
         return;
 
-    // The resource is fetched as an image, so it is subject to img-src CSP unless it lives in a user-agent
-    // shadow tree (matching loadPendingImage).
+    // The resource is fetched as an image, so it is subject to img-src CSP unless it lives in a user-agent shadow tree.
     bool isInUserAgentShadowTree = element && element->isInUserAgentShadowTree();
-    auto options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.mode = FetchOptions::Mode::SameOrigin;
-    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
-    options.contentSecurityPolicyImposition = isInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-    options.shouldEnableContentExtensionsCheck = isInUserAgentShadowTree ? ShouldEnableContentExtensionsCheck::No : ShouldEnableContentExtensionsCheck::Yes;
-    CSS::applyModifiersToLoaderOptions(location.modifiers, options);
+    auto options = CSS::styleResourceLoaderOptions(isInUserAgentShadowTree);
 
-    CachedResourceRequest request(ResourceRequest(WTF::URL { documentURL }), options);
-    request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
-    if (options.mode == FetchOptions::Mode::Cors)
-        request.updateForAccessControl(document);
+    // FIXME: Filter Effects says to fetch filters in "cors" mode. https://drafts.csswg.org/filter-effects-1/#origin-restrictions
+    auto request = CSS::createStyleResourceRequest(document, documentURL, location.modifiers, location.provenance, FetchOptions::Mode::SameOrigin, options);
     RefPtr cachedImage = protect(document.cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
     if (!cachedImage)
         return;

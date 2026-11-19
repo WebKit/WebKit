@@ -191,7 +191,7 @@ static SVGExternalResourceKey externalResourceKey(const Style::URL& location)
 {
     auto url = location.resolved;
     url.removeFragmentIdentifier();
-    return { .url = WTF::move(url), .modifiers = location.modifiers };
+    return { .url = WTF::move(url), .modifiers = location.modifiers, .provenance = location.provenance };
 }
 
 bool SVGDocumentExtensions::hasExternalSVGResource(const Style::URL& location) const

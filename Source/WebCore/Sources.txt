@@ -1054,6 +1054,7 @@ css/CSSStartingStyleRule.cpp
 css/CSSStringValue.cpp
 css/CSSStyleDeclaration.cpp
 css/CSSStyleProperties.cpp @cost:3
+css/CSSStyleResource.cpp
 css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp @cost:3
 css/CSSStyleSheetObservableArray.cpp @cost:4
@@ -1307,6 +1308,7 @@ css/values/primitives/CSSSymbol.cpp
 css/values/primitives/CSSTypeSpecifier.cpp
 css/values/primitives/CSSURL.cpp
 css/values/primitives/CSSURLModifiers.cpp
+css/values/primitives/CSSURLProvenance.cpp
 css/values/primitives/CSSUnevaluatedCalc.cpp
 css/values/sizing/CSSCalcSizeFunction.cpp
 css/values/shapes/CSSCircleFunction.cpp

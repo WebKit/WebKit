@@ -1133,6 +1133,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/primitives/CSSTypeSpecifier.h
     css/values/primitives/CSSURL.h
     css/values/primitives/CSSURLModifiers.h
+    css/values/primitives/CSSURLProvenance.h
     css/values/primitives/CSSUnevaluatedCalc.h
 
     css/values/shapes/CSSBasicShape.h

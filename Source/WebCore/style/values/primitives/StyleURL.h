@@ -39,6 +39,9 @@ struct URL {
     WTF::URL resolved;
     CSS::URLModifiers modifiers;
 
+    // This is not a parsed value, but is implicit from the context the url() was parsed with.
+    CSS::URLProvenance provenance { };
+
     // The fragment identifier of `resolved`. `resolved` may be a bare "#id" same-document reference,
     // which is not a valid standalone URL, so this handles that case as well as absolute URLs.
     AtomString fragment() const;

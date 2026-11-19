@@ -128,8 +128,8 @@ public:
 
 protected:
     DOMMatrixReadOnly() = default;
-    DOMMatrixReadOnly(const TransformationMatrix&, Is2D);
-    DOMMatrixReadOnly(TransformationMatrix&&, Is2D);
+    NODELETE DOMMatrixReadOnly(const TransformationMatrix&, Is2D);
+    NODELETE DOMMatrixReadOnly(TransformationMatrix&&, Is2D);
 
     struct AbstractMatrix {
         TransformationMatrix matrix;

@@ -324,7 +324,7 @@ CSSValuePool& ScriptExecutionContext::cssValuePool()
     return CSSValuePool::singleton();
 }
 
-RefPtr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(const String&, bool, bool, const CSS::URLModifiers&)
+RefPtr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(const CSS::URL&, bool, bool)
 {
     return nullptr;
 }

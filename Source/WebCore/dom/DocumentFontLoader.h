@@ -47,7 +47,7 @@ public:
     NODELETE void ref() const;
     void deref() const;
 
-    RefPtr<CachedFont> cachedFont(URL&&, bool, bool, const CSS::URLModifiers&);
+    RefPtr<CachedFont> cachedFont(const CSS::URL&, bool isSVG, bool isInitiatingElementInUserAgentShadowTree);
     void beginLoadingFontSoon(CachedFont&);
 
     void loadPendingFonts();

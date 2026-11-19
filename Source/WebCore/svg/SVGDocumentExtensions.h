@@ -48,13 +48,14 @@ class WeakPtrImplWithEventTargetData;
 struct SVGExternalResourceKey {
     URL url;
     CSS::URLModifiers modifiers;
+    CSS::URLProvenance provenance;
 
     friend bool operator==(const SVGExternalResourceKey&, const SVGExternalResourceKey&) = default;
 };
 
 inline void add(Hasher& hasher, const SVGExternalResourceKey& key)
 {
-    add(hasher, key.url, key.modifiers);
+    add(hasher, key.url, key.modifiers, key.provenance);
 }
 
 } // namespace WebCore

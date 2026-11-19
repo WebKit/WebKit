@@ -22,13 +22,13 @@
 #include "config.h"
 #include "CSSImageValue.h"
 
+#include "CSSStyleResource.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "CachedResourceRequestInitiatorTypes.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
@@ -94,7 +94,7 @@ Ref<CSSImageValue> CSSImageValue::copyForComputedStyle(const CSS::URL& resolvedU
 
 bool CSSImageValue::isLoadedFromOpaqueSource() const
 {
-    return m_location.modifiers.loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes;
+    return m_location.provenance.loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes;
 }
 
 bool CSSImageValue::isPending() const
@@ -124,16 +124,7 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
     if (!m_cachedImage) {
         ASSERT(loader.document());
 
-        ResourceLoaderOptions loadOptions = options;
-        CSS::applyModifiersToLoaderOptions(m_location.modifiers, loadOptions);
-
-        CachedResourceRequest request(ResourceRequest(URL { m_location.resolved }), loadOptions);
-        if (m_initiatorType.isEmpty())
-            request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
-        else
-            request.setInitiatorType(m_initiatorType);
-        if (options.mode == FetchOptions::Mode::Cors)
-            request.updateForAccessControl(*protect(loader.document()));
+        auto request = CSS::createStyleResourceRequest(*protect(loader.document()), m_location.resolved, m_location.modifiers, m_location.provenance, options.mode, options, m_initiatorType);
         m_cachedImage = loader.requestImage(WTF::move(request)).value_or(nullptr);
         for (RefPtr<CSSImageValue> imageValue = this; (imageValue = imageValue->m_unresolvedValue.get()); )
             imageValue->m_cachedImage = m_cachedImage;
