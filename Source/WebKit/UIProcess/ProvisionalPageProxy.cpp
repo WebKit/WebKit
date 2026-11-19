@@ -473,8 +473,10 @@ void ProvisionalPageProxy::didPerformClientRedirect(String&& sourceURLString, St
         page->didPerformClientRedirectShared(protect(process()), WTF::move(sourceURLString), WTF::move(destinationURLString), frameID);
 }
 
-void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
+void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<URL>&& untrustedUnreachableURL, const UserData& userData, WallTime timestamp)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto unreachableURL = WTF::move(untrustedUnreachableURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (!validateInput(frameID, navigationID))
         return;
 
@@ -587,8 +589,9 @@ void ProvisionalPageProxy::didNavigateWithNavigationData(const WebNavigationData
         page->didNavigateWithNavigationDataShared(protect(process()), store, frameID);
 }
 
-void ProvisionalPageProxy::didChangeProvisionalURLForFrame(FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url)
+void ProvisionalPageProxy::didChangeProvisionalURLForFrame(FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL>&& untrustedURL)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (!validateInput(frameID, navigationID))
         return;
 

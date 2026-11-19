@@ -341,8 +341,10 @@ std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtens
 #endif // !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
 
 #if ENABLE(REMOTE_INSPECTOR)
-void WebProcessProxy::createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, URL&& url, WebCore::ServiceWorkerIsInspectable isInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&& completionHandler)
+void WebProcessProxy::createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedURL, WebCore::ServiceWorkerIsInspectable isInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&& completionHandler)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     MESSAGE_CHECK_URL(url);
     RELEASE_LOG(Inspector, "WebProcessProxy::createServiceWorkerDebuggable");
     if (!shouldEnableRemoteInspector()) {

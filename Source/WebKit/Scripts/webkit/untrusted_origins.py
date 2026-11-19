@@ -37,6 +37,8 @@ import re
 # Types that name a web origin, site, or domain. A privileged process must not
 # trust one of these when it came from web content.
 UNTRUSTED_TYPES = {
+    "URL",
+    "WTF::URL",
     "WebCore::ClientOrigin",
     "WebCore::RegistrableDomain",
     "WebCore::SecurityOrigin",
@@ -187,6 +189,7 @@ if __name__ == '__main__':
 
         def test_containers(self):
             self.assertEqual(conveys_untrusted_value('std::optional<WebCore::Site>'), 'WebCore::Site')
+            self.assertEqual(conveys_untrusted_value('std::optional<URL>'), 'URL')
             self.assertEqual(conveys_untrusted_value('HashSet<WebCore::SecurityOriginData>'), 'WebCore::SecurityOriginData')
             self.assertEqual(conveys_untrusted_value('Vector<std::pair<String, WebCore::RegistrableDomain>>'),
                              'WebCore::RegistrableDomain')
@@ -199,11 +202,13 @@ if __name__ == '__main__':
 
         def test_wrapper_is_transparent_to_detection(self):
             self.assertEqual(conveys_untrusted_value('IPC::Untrusted<WebCore::Site>'), 'WebCore::Site')
+            self.assertEqual(conveys_untrusted_value('IPC::Untrusted<URL>'), 'URL')
             self.assertEqual(conveys_untrusted_value('IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>'),
                              'WebCore::SecurityOriginData')
 
         def test_unwrap_untrusted(self):
             self.assertEqual(unwrap_untrusted('IPC::Untrusted<WebCore::Site>'), 'WebCore::Site')
+            self.assertEqual(unwrap_untrusted('IPC::Untrusted<URL>'), 'URL')
             self.assertEqual(unwrap_untrusted('IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>'),
                              'HashSet<WebCore::SecurityOriginData>')
             self.assertIsNone(unwrap_untrusted('URL'))

@@ -3587,8 +3587,10 @@ void WebProcessProxy::systemBeep()
 }
 #endif
 
-void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
+void WebProcessProxy::getNotifications(IPC::Untrusted<URL>&& untrustedRegistrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
+    auto registrationURL = WTF::move(untrustedRegistrationURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (RefPtr websiteDataStore = m_websiteDataStore; websiteDataStore->hasClientGetDisplayedNotifications()) {
         auto callbackHandlingTags = [tag, callback = WTF::move(callback)] (Vector<NotificationData>&& notifications) mutable {
             if (tag.isEmpty()) {

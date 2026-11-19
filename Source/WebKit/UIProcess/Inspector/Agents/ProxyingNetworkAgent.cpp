@@ -615,8 +615,10 @@ void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp
     m_frontendDispatcher->loadingFailed(requestId, timestamp, errorText, canceled);
 }
 
-void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& documentURL, const URL& url, const ResourceResponse& response, ResourceType resourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&& initiator)
+void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& documentURL, IPC::Untrusted<URL>&& untrustedURL, const ResourceResponse& response, ResourceType resourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&& initiator)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (!m_enabled)
         return;
 

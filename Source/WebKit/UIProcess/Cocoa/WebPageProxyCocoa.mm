@@ -957,8 +957,10 @@ MediaUsageManager& WebPageProxy::mediaUsageManager()
     return *m_mediaUsageManager;
 }
 
-void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, IPC::Untrusted<URL>&& untrustedPageURL)
 {
+    auto pageURL = WTF::move(untrustedPageURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     mediaUsageManager().addMediaSession(identifier, bundleIdentifier, pageURL);
 }
 
@@ -1182,8 +1184,10 @@ void WebPageProxy::didCompleteApplePayPayment()
 
 #if ENABLE(APPLE_PAY_AMS_UI)
 
-void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+void WebPageProxy::startApplePayAMSUISession(IPC::Untrusted<URL>&& untrustedOriginatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
+    auto originatingURL = WTF::move(untrustedOriginatingURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (!AppleMediaServicesUILibrary()) {
         completionHandler(std::nullopt);
         return;

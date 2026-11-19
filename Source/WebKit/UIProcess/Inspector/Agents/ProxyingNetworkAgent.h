@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "Untrusted.h"
 #include "WebPageInspectorAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
@@ -114,7 +115,7 @@ private:
     void dataReceived(ResourceID, int dataLength, int encodedDataLength, double timestamp);
     void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL, WebCore::NetworkLoadMetrics&&);
     void loadingFailed(ResourceID, double timestamp, const String& errorText, bool canceled);
-    void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, const URL&, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&&);
+    void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, IPC::Untrusted<URL>&&, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&&);
 
     void removeAllRegisteredReceivers();
 

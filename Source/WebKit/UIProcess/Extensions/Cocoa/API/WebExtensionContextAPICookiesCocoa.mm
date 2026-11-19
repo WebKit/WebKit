@@ -116,8 +116,10 @@ void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& u
         protect(dataStore.cookieStore())->cookies(WTF::move(internalCompletionHandler));
 }
 
-void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, const URL& url, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.get()", nullString(), @"cookie store not found"));
@@ -148,8 +150,10 @@ void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, co
     });
 }
 
-void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID, const URL& url, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID, IPC::Untrusted<URL>&& untrustedURL, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.getAll()", nullString(), @"cookie store not found"));
@@ -183,8 +187,10 @@ void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, co
     });
 }
 
-void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID, const String& name, const URL& url, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID, const String& name, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.remove()", nullString(), @"cookie store not found"));
