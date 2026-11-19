@@ -548,8 +548,10 @@ bool BackForwardCache::addIfCacheable(BackForwardFrameItemIdentifier identifier,
         return false;
 
     // Bug 316458: no-LocalFrame pages null-deref on restore via
-    // loadDifferentDocumentItem; FrameLoader::commitProvisionalLoad gates this out.
-    ASSERT(page.hasAnyLocalFrame());
+    // loadDifferentDocumentItem. FrameLoader::commitProvisionalLoad gates this out, but callers
+    // that suspend a page for a process swap (e.g. WebPage::suspendWithFrameItem) do not.
+    if (!page.hasAnyLocalFrame())
+        return false;
 
     auto cachedPage = trySuspendPage(page, ForceSuspension::No, loadWillContinueInAnotherProcess);
     if (!cachedPage)
