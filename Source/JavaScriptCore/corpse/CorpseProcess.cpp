@@ -38,6 +38,10 @@
 #include <sys/proc.h>
 #include <sys/sysctl.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <sys/proc_private.h>
+#endif
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
@@ -79,7 +83,11 @@ bool Process::attach()
     }
 
     mach_port_t taskPort = MACH_PORT_NULL;
+#if USE(APPLE_INTERNAL_SDK)
+    kern_return_t kr = task_read_for_pid(mach_task_self(), m_pid, &taskPort);
+#else
     kern_return_t kr = task_for_pid(mach_task_self(), m_pid, &taskPort);
+#endif
     if (kr == KERN_SUCCESS) {
         m_taskPort = taskPort;
         return true;

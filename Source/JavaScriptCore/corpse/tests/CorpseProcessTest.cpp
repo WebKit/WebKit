@@ -32,7 +32,6 @@
 
 #include <JavaScriptCore/CorpseProcess.h>
 #include <errno.h>
-#include <signal.h>
 #include <spawn.h>
 #include <string.h>
 #include <sys/wait.h>
@@ -125,43 +124,66 @@ void testProcess()
         process->detach();
         TEST_ASSERT(!process->isAttached(), "detaching twice is harmless");
     }
+
+    // Test 2 things:
+    // 1. leak test:
+    //    - attach and detach handle Mach send right refCounts correctly, and do not produce leaks.
+    //    - relevant operations of concern:
+    //      a. re-attaching while a Process is already attached.
+    //      b. detaching from an attached Process.
+    //      c. destruction of a Process while attached.
+    // 2. no double release:
+    //    - detaching an already detached Process should not repeat the "free" of the send right.
     {
-        // Attaching takes a send right to the target's task port, and every path out of
-        // an attach has to give it back. Attaching to this very process yields the name
-        // this task already holds for itself, so the kernel adds a reference to that
-        // name rather than handing out a new one: a right that is never given back
-        // shows up in the reference count and not in the size of the name space.
+        // We'll conduct this test by checking the refCount on the send right via machPortSendRightCount()
+        // on its name (i.e. something like a file descriptor ID). Once the refCount decrements to 0,
+        // the send right name will be released. Acquiring a send right again subsequently for this Process
+        // will give us a different name and a different refCount counter. So, for this test (for leak and
+        // double free detection) to work, we want to make sure we're checking the refCount on the same name.
+        //
+        // To achieve this, we first create a Process before the test merely to serve as an "anchor" to keep
+        // the name refCount from going to 0. Subsequent requests for a send right name for the tested Process
+        // while its name is still alive will be given the same name. Hence, the "anchor" will keep the name
+        // alive for the duration of the test.
+
         unsigned namesBefore = machPortNameCount();
-        mach_port_t port = MACH_PORT_NULL;
-        unsigned refsAttached = 0;
         {
-            RefPtr<Process> process = Process::create(getpid());
-            TEST_ASSERT(process->attach(), "attaching to this process succeeds");
-            if (process->isAttached()) {
-                port = process->taskPort();
-                refsAttached = machPortSendRightCount(port);
-                TEST_ASSERT(refsAttached, "an attached Process holds a send right to the task port");
+            RefPtr<Process> anchor = Process::create(getpid());
+            TEST_ASSERT(anchor->attach(), "an anchor Process attaches to this process");
+            if (anchor->isAttached()) {
+                mach_port_t port = anchor->taskPort();
+                unsigned refsAttached = 0;
+                {
+                    RefPtr<Process> process = Process::create(getpid());
+                    TEST_ASSERT(process->attach(), "attaching to this process succeeds");
+                    if (process->isAttached()) {
+                        TEST_ASSERT_HEX_EQ(process->taskPort(), port, "attaching shares the anchor's name for the task port");
+                        refsAttached = machPortSendRightCount(port);
+                        TEST_ASSERT(refsAttached >= 2, "the anchor and an attached Process each hold a reference to the name");
 
-                process->attach();
-                TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached,
-                    "attaching an attached Process takes no further send right");
+                        process->attach();
+                        TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached,
+                            "leak test: attaching an attached Process takes no further send right");
 
-                process->detach();
-                TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached - 1,
-                    "detaching gives the send right back");
-                process->detach();
-                TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached - 1,
-                    "detaching twice gives back only what one attach took");
+                        process->detach();
+                        TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached - 1,
+                            "leak test: detaching gives the send right back");
+                        process->detach();
+                        TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached - 1,
+                            "no double release: detaching twice gives back only what one attach took");
 
-                process->attach(); // Left attached, so the destructor has to release it.
+                        process->attach(); // Left attached, so the destructor has to release it.
+                        TEST_ASSERT_HEX_EQ(process->taskPort(), port, "attaching again shares the anchor's name");
+                    }
+                }
+                if (refsAttached) {
+                    TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached - 1,
+                        "leak test: destroying an attached Process gives its send right back");
+                }
             }
         }
-        if (refsAttached) {
-            TEST_ASSERT_EQ(machPortSendRightCount(port), refsAttached - 1,
-                "destroying an attached Process gives its send right back");
-            TEST_ASSERT_EQ(machPortNameCount(), namesBefore,
-                "attaching and detaching leaves no port name behind");
-        }
+        TEST_ASSERT_EQ(machPortNameCount(), namesBefore,
+            "leak test: attaching and detaching leaves no port name behind");
     }
     {
         pid_t gone = reapedChildPid();
@@ -201,9 +223,7 @@ void testProcess()
         else {
             RefPtr<Process> process = Process::create(translated);
             TEST_ASSERT(process->isTranslated(), "a process running x86_64 code is translated");
-            kill(translated, SIGKILL);
-            int status = 0;
-            while (waitpid(translated, &status, 0) < 0 && errno == EINTR) { }
+            killChild(translated);
         }
     }
 #endif // CPU(ARM64)
