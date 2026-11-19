@@ -3174,6 +3174,7 @@ rendering/mathml/RenderMathMLToken.cpp @header:RenderStyleGetters
 rendering/mathml/RenderMathMLUnderOver.cpp @header:RenderStyleGetters
 rendering/mathml/MathVariant.cpp
 rendering/paint/BackgroundPainter.cpp @header:RenderStyleGetters @cost:7
+rendering/paint/BlockPainter.cpp @header:RenderStyleGetters @cost:8
 rendering/paint/BorderPainter.cpp @header:RenderStyleGetters @cost:6
 rendering/paint/BoxDecorationPainter.cpp @header:RenderStyleGetters @cost:5
 rendering/paint/ContentfulPaintChecker.cpp

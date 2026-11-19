@@ -26,6 +26,7 @@
 #include "RenderBlock.h"
 
 #include "AXObjectCache.h"
+#include "BlockPainter.h"
 #include "BorderShape.h"
 #include "BoxDecorationPainter.h"
 #include "ContainerNodeInlines.h"
@@ -969,370 +970,6 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
         setChildNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
-void RenderBlock::paintCarets(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (paintInfo.phase == PaintPhase::Foreground) {
-        paintCaret(paintInfo, paintOffset, CursorCaret);
-        paintCaret(paintInfo, paintOffset, DragCaret);
-    }
-}
-
-void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    auto adjustedPaintOffset = paintOffset + location();
-    PaintPhase phase = paintInfo.phase;
-
-    // FIXME: Could eliminate the isDocumentElementRenderer() check if we fix background painting so that the RenderView paints the root's background.
-    auto visualContentIsClippedOut = [&](LayoutRect paintingRect) {
-        if (isDocumentElementRenderer())
-            return false;
-
-        if (paintInfo.paintBehavior.contains(PaintBehavior::CompositedOverflowScrollContent) && hasLayer() && layer()->usesCompositedScrolling())
-            return false;
-
-        auto overflowBox = visualOverflowRect();
-        blockStartRelativeToPhysical(overflowBox);
-        overflowBox.moveBy(adjustedPaintOffset);
-        return !overflowBox.intersects(paintingRect);
-    };
-
-    if (visualContentIsClippedOut(paintInfo.rect))
-        return;
-
-    bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
-    paintObject(paintInfo, adjustedPaintOffset);
-    if (pushedClip)
-        popContentsClip(paintInfo, phase, adjustedPaintOffset);
-
-    // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
-    // z-index. We paint after we painted the background/border, so that the scrollbars will
-    // sit above the background/border.
-    if (phase == PaintPhase::BlockBackground || phase == PaintPhase::ChildBlockBackground) {
-        CheckedPtr layer = this->layer();
-        if (hasNonVisibleOverflow() && layer && layer->scrollableArea() && usedStyle().visibility() == UsedVisibility::Visible
-            && paintInfo.shouldPaintWithinRoot(*this) && !paintInfo.paintRootBackgroundOnly()) {
-            protect(layer->scrollableArea())->paintOverflowControls(paintInfo.context(), paintInfo.paintBehavior, roundedIntPoint(adjustedPaintOffset), snappedIntRect(paintInfo.rect));
-        }
-    }
-}
-
-PaintInfo RenderBlock::paintInfoForBlockChildren(const PaintInfo& paintInfo) const
-{
-    auto phaseForChildren = [&] {
-        switch (paintInfo.phase) {
-        case PaintPhase::ChildOutlines:
-            return PaintPhase::Outline;
-        case PaintPhase::ChildBlockBackgrounds:
-            return PaintPhase::ChildBlockBackground;
-        default:
-            return paintInfo.phase;
-        }
-    };
-
-    PaintInfo paintInfoForChildren(paintInfo);
-    paintInfoForChildren.phase = phaseForChildren();
-    paintInfoForChildren.updateSubtreePaintRootForChildren(this);
-
-    if (paintInfoForChildren.eventRegionContext())
-        paintInfoForChildren.paintBehavior.add(PaintBehavior::EventRegionIncludeBackground);
-
-    return paintInfoForChildren;
-}
-
-void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    ASSERT(!isSkippedContentRoot(*this));
-
-    if (childrenInline())
-        paintInlineChildren(paintInfo, paintOffset);
-    else {
-        PaintInfo paintInfoForChildren = paintInfoForBlockChildren(paintInfo);
-
-        // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
-        // NSViews. Do not add any more code for this.
-        bool usePrintRect = !view().printRect().isEmpty();
-        paintChildren(paintInfo, paintOffset, paintInfoForChildren, usePrintRect);
-    }
-}
-
-void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
-{
-    ASSERT(!isSkippedContentRoot(*this));
-
-    for (auto& child : childrenOfType<RenderBox>(*this)) {
-        if (!paintChild(child, paintInfo, paintOffset, paintInfoForChild, usePrintRect))
-            return;
-    }
-}
-
-bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect, PaintBlockType paintType)
-{
-    ASSERT(!isSkippedContentRoot(*this));
-
-    if (child.isExcludedAndPlacedInBorder())
-        return true;
-
-    if (child.isExcludedMarker())
-        return true;
-
-    if (child.isSkippedContent()) {
-        ASSERT(child.isColumnSpanner());
-        return true;
-    }
-
-    // Check for page-break-before: always, and if it's set, break and bail.
-    bool checkBeforeAlways = !childrenInline() && (usePrintRect && alwaysPageBreak(child.style().breakBefore()));
-    LayoutUnit absoluteChildY = paintOffset.y() + child.y();
-    if (checkBeforeAlways
-        && absoluteChildY > paintInfo.rect.y()
-        && absoluteChildY < paintInfo.rect.maxY()) {
-        view().setBestTruncatedAt(absoluteChildY, this, true);
-        return false;
-    }
-
-    if (!child.isFloating() && child.isBlockLevelReplacedOrAtomicInline() && usePrintRect && child.borderBoxHeight() <= view().printRect().height()) {
-        // Paginate block-level replaced elements.
-        if (absoluteChildY + child.borderBoxHeight() > view().printRect().maxY()) {
-            if (absoluteChildY < view().truncatedAt())
-                view().setBestTruncatedAt(absoluteChildY, &child);
-            // If we were able to truncate, don't paint.
-            if (absoluteChildY >= view().truncatedAt())
-                return false;
-        }
-    }
-
-    LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(child, paintOffset);
-    if (!child.hasSelfPaintingLayer() && !child.isFloating()) {
-        if (paintType == PaintAsInlineBlock)
-            child.paintAsInlineBlock(paintInfoForChild, childPoint);
-        else
-            child.paint(paintInfoForChild, childPoint);
-    }
-
-    // Check for page-break-after: always, and if it's set, break and bail.
-    bool checkAfterAlways = !childrenInline() && (usePrintRect && alwaysPageBreak(child.style().breakAfter()));
-    if (checkAfterAlways
-        && (absoluteChildY + child.borderBoxHeight()) > paintInfo.rect.y()
-        && (absoluteChildY + child.borderBoxHeight()) < paintInfo.rect.maxY()) {
-        view().setBestTruncatedAt(absoluteChildY + child.borderBoxHeight() + std::max<LayoutUnit>(0, child.collapsedMarginAfter()), this, true);
-        return false;
-    }
-
-    return true;
-}
-
-void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffset, CaretType type)
-{
-    auto shouldPaintCaret = [&](RenderBlock* caretPainter, bool isContentEditable) {
-        if (caretPainter != this)
-            return false;
-
-        return isContentEditable || settings().caretBrowsingEnabled();
-    };
-
-    switch (type) {
-    case CaretType::CursorCaret: {
-        auto caretPainter = frame().selection().caretRendererWithoutUpdatingLayout();
-        if (!caretPainter)
-            return;
-
-        bool isContentEditable = frame().selection().selection().hasEditableStyle();
-
-        if (shouldPaintCaret(caretPainter, isContentEditable))
-            frame().selection().paintCaret(paintInfo.context(), paintOffset);
-        break;
-    }
-    case CaretType::DragCaret: {
-        auto caretPainter = page().dragCaretController().caretRenderer();
-        if (!caretPainter)
-            return;
-
-        bool isContentEditable = page().dragCaretController().isContentEditable();
-        if (shouldPaintCaret(caretPainter, isContentEditable))
-            page().dragCaretController().paintDragCaret(protect(frame()).ptr(), paintInfo.context(), paintOffset);
-
-        break;
-    }
-    }
-}
-
-void RenderBlock::paintDebugBoxShadowIfApplicable(GraphicsContext& context, const LayoutRect& paintRect) const
-{
-    // FIXME: Use a more generic, modern-layout wide setting instead.
-    if (!settings().legacyLineLayoutVisualCoverageEnabled())
-        return;
-
-    auto* flexBox = dynamicDowncast<RenderFlexibleBox>(this);
-    if (!flexBox)
-        return;
-
-    constexpr size_t shadowExtent = 3;
-    GraphicsContextStateSaver stateSaver(context);
-
-    auto shadowRect = paintRect;
-    shadowRect.inflate(shadowExtent);
-    context.clip(shadowRect);
-    context.setDropShadow({ { -shadowRect.width(), 0 }, 30, SRGBA<uint8_t> { 0, 180, 230, 200 }, ShadowRadiusMode::Default });
-    context.clipOut(paintRect);
-    shadowRect.move(shadowRect.width(), 0);
-    context.fillRect(shadowRect, Color::black);
-}
-
-void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    PaintPhase paintPhase = paintInfo.phase;
-    auto shouldPaintContent = !isSkippedContentRoot(*this);
-
-    // 1. paint background, borders etc
-    if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && usedStyle().visibility() == UsedVisibility::Visible) {
-        if (hasVisibleBoxDecorations())
-            Paint::BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
-        paintDebugBoxShadowIfApplicable(paintInfo.context(), { paintOffset, borderBoxSize() });
-    }
-    
-    // Paint legends just above the border before we scroll or clip.
-    if (shouldPaintContent && (paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground || paintPhase == PaintPhase::Selection))
-        paintExcludedChildrenInBorder(paintInfo, paintOffset);
-    
-    if (paintPhase == PaintPhase::Mask && usedStyle().visibility() == UsedVisibility::Visible) {
-        Paint::MaskPainter { *this, paintInfo, paintOffset }.paintMask();
-        return;
-    }
-
-    if (paintPhase == PaintPhase::ClippingMask && usedStyle().visibility() == UsedVisibility::Visible) {
-        Paint::MaskPainter { *this, paintInfo, paintOffset }.paintClippingMask();
-        return;
-    }
-
-    // If just painting the root background, then return.
-    if (paintInfo.paintRootBackgroundOnly())
-        return;
-
-    if (paintPhase == PaintPhase::Accessibility)
-        paintInfo.accessibilityRegionContext()->takeBounds(*this, paintOffset);
-
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    if (paintPhase == PaintPhase::AXCustomColorCollectBackgrounds)
-        paintInfo.axCustomColorBackdropContext()->recordBackdrop(*this, FloatRect { LayoutRect(paintOffset, borderBoxSize()) }, paintInfo.paintBehavior);
-#endif
-
-    if (paintPhase == PaintPhase::EventRegion) {
-        auto borderRect = LayoutRect(paintOffset, borderBoxSize());
-
-        Ref document = this->document();
-        if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
-            auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), borderRect);
-            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderShape.deprecatedRoundedRect() << " event listener types " << style().eventListenerRegionTypes());
-            bool overrideUserModifyIsEditable = isRenderTextControl() && protect(downcast<RenderTextControl>(*this).textFormControlElement())->isInnerTextElementEditable();
-            paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(document->deviceScaleFactor()), *this, style(), overrideUserModifyIsEditable);
-        }
-
-        if (!paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeForeground))
-            return;
-
-        bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext()->contains(enclosingIntRect(borderRect)) || view().needsEventRegionUpdateForNonCompositedFrame();
-        LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " needsTraverseDescendants for event region: hasVisualOverflow: " << hasVisualOverflow() << " containsFloats: "
-            << containsFloats() <<  " border box is outside current region: " << !paintInfo.eventRegionContext()->contains(enclosingIntRect(borderRect)) << " needsEventRegionUpdateForNonCompositedFrame:" << view().needsEventRegionUpdateForNonCompositedFrame());
-#if ENABLE(TOUCH_ACTION_REGIONS)
-        needsTraverseDescendants |= document->mayHaveElementsWithNonAutoTouchAction();
-        LOG_WITH_STREAM(EventRegions, stream << "  may have touch-action elements: " << document->mayHaveElementsWithNonAutoTouchAction());
-#endif
-#if ENABLE(WHEEL_EVENT_REGIONS)
-        needsTraverseDescendants |= document->hasWheelEventHandlers() || document->mayHaveListBoxes();
-        LOG_WITH_STREAM(EventRegions, stream << "  has wheel event handlers: " << document->hasWheelEventHandlers() << " may have list boxes: " << document->mayHaveListBoxes());
-#endif
-
-#if ENABLE(EDITABLE_REGION)
-        // We treat the entire text control as editable to match users' expectation even
-        // though it's actually the inner text element of the control that is editable.
-        // So, no need to traverse to find the inner text element in this case.
-        if (!isRenderTextControl()) {
-            needsTraverseDescendants |= document->mayHaveEditableElements() && protect(page())->shouldBuildEditableRegion();
-            LOG_WITH_STREAM(EventRegions, stream << "  needs editable event region: " << (document->mayHaveEditableElements() && page().shouldBuildEditableRegion()));
-        }
-#endif
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        needsTraverseDescendants |= page().shouldBuildInteractionRegions();
-#endif
-
-#if ENABLE(TOUCH_EVENT_REGIONS)
-        ASSERT_IMPLIES(!needsTraverseDescendants, !hasVisualOverflow() && !containsFloats());
-
-        // Skip traversing descendants of this block when building event regions if:
-        //
-        // 1. This block has no visual overflow or floats, so all descendants paint inside its
-        //    border box.
-        // 2. No descendant is a touch event target (e.g. an element with its own touch listener).
-        //    Since listener types are inherited, every descendant has this block's touch listener
-        //    types, and we don't have to traverse descendants to discover differing types.
-        // 3. The touch listener regions already cover the clipped border box for those types. By
-        //    (1) and (2), they then also cover each descendant's touch rect, so we don't have to
-        //    traverse descendants to discover their touch rects.
-        if (!needsTraverseDescendants && document->shouldUseTouchEventRegions() && document->hasTouchEventHandlers()) {
-            CheckedRef eventRegionContext = *paintInfo.eventRegionContext();
-            needsTraverseDescendants = eventRegionContext->mayHaveDescendantTouchEventTargets(*this)
-                || !eventRegionContext->touchEventListenerRegionsContain(enclosingIntRect(borderRect), style().eventListenerRegionTypes());
-            LOG_WITH_STREAM(EventRegions, stream << "  needs to traverse descendants for touch event listeners: " << needsTraverseDescendants);
-        }
-#endif
-
-        if (!needsTraverseDescendants)
-            return;
-    }
-
-    // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
-    LayoutPoint scrolledOffset = paintOffset;
-    scrolledOffset.moveBy(-scrollPosition());
-
-    // Column rules need to account for scrolling and clipping.
-    // FIXME: Clipping of column rules does not work. We will need a separate paint phase for column rules I suspect in order to get
-    // clipping correct (since it has to paint as background but is still considered "contents").
-    if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && usedStyle().visibility() == UsedVisibility::Visible)
-        paintColumnRules(paintInfo, scrolledOffset);
-
-    // Done with backgrounds, borders and column rules.
-    if (paintPhase == PaintPhase::BlockBackground)
-        return;
-    
-    // 2. paint contents
-    if (shouldPaintContent) {
-        if (paintPhase != PaintPhase::SelfOutline)
-            paintContents(paintInfo, scrolledOffset);
-    }
-
-    // 3. paint selection
-    if (!document().printing()) {
-        // Fill in gaps in selection on lines, between blocks and "empty space" when content is skipped.
-        paintSelection(paintInfo, scrolledOffset);
-    }
-
-    if (shouldPaintContent) {
-        // 4. paint floats.
-        auto isNonPaintingTraversalPhase = paintPhase == PaintPhase::Selection
-            || paintPhase == PaintPhase::TextClip
-            || paintPhase == PaintPhase::EventRegion
-            || paintPhase == PaintPhase::Accessibility
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-            || paintPhase == PaintPhase::AXCustomColorComputeBackdrops
-            || paintPhase == PaintPhase::AXCustomColorCollectBackgrounds
-#endif
-            ;
-        if (paintPhase == PaintPhase::Float || isNonPaintingTraversalPhase)
-            paintFloats(paintInfo, scrolledOffset, isNonPaintingTraversalPhase);
-    }
-
-    // 5. paint outline.
-    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && usedStyle().visibility() == UsedVisibility::Visible)
-        paintOutline(paintInfo, LayoutRect(paintOffset, borderBoxSize()));
-
-    // 7. paint caret.
-    // If the caret's node's render object's containing block is this block, and the paint action is PaintPhase::Foreground,
-    // then paint the caret.
-    if (shouldPaintContent)
-        paintCarets(paintInfo, paintOffset);
-}
-
 bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle& style) const
 {
     RefPtr element = this->element();
@@ -1459,6 +1096,21 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
     LayoutUnit lastRight = logicalRightSelectionOffset(*this, lastTop, cache);
     
     return selectionGaps(*this, offsetFromRepaintContainer, IntSize(), lastTop, lastLeft, lastRight, cache);
+}
+
+void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    Paint::BlockPainter { *this, paintInfo, paintOffset }.paint();
+}
+
+void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    Paint::BlockPainter { *this, paintInfo, paintOffset }.paintObject();
+}
+
+void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+{
+    Paint::BlockPainter { *this, paintInfo, paintOffset }.paintChildren(paintInfoForChild, usePrintRect);
 }
 
 void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -3423,19 +3075,6 @@ LayoutSize RenderBlock::intrinsicSize() const
         height = LayoutUnit { fixedHeight->resolveZoom(style().usedZoomForLength()) };
 
     return { width, height };
-}
-
-void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!isFieldset())
-        return;
-    
-    RenderBox* box = findFieldsetLegend();
-    if (!box || !box->isExcludedFromNormalLayout() || box->hasSelfPaintingLayer())
-        return;
-    
-    LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*box, paintOffset);
-    box->paintAsInlineBlock(paintInfo, childPoint);
 }
 
 bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

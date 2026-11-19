@@ -160,7 +160,6 @@ protected:
     LayoutUnit collapsedMarginBefore() const final { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
     LayoutUnit collapsedMarginAfter() const final { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
-    void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
 
 public:
     MarginValues marginValuesForChild(RenderBox& child) const;
@@ -400,7 +399,6 @@ public:
 
     NODELETE std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
 
-    void paintBlockLevelContentInInline(PaintInfo&, const LayoutPoint& paintOffset);
 
     std::optional<LayoutUnit> firstLineBaseline() const override;
     std::optional<LayoutUnit> lastLineBaseline() const override;
@@ -466,8 +464,6 @@ private:
 
     void checkForPaginationLogicalHeightChange(RelayoutChildren&, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged);
 
-    void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
-    void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
 
     void repaintOverhangingFloats(bool paintAllDescendants) final;
     void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;

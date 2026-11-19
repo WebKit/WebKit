@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationInlineContentPainter.h"
 
+#include "BlockPainter.h"
 #include "EllipsisBoxPainter.h"
 #include "InlineBoxPainter.h"
 #include "InlineDisplayBoxInlines.h"
@@ -152,7 +153,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
             auto childPaintOffset = paintOffsetForChild(*renderer);
             if (box.isBlockLevelBox()) {
                 // Blocks-in-inline.
-                auto paintInfoForChild = m_root->paintInfoForBlockChildren(m_paintInfo);
+                auto paintInfoForChild = Paint::BlockPainter::paintInfoForBlockChildren(m_root, m_paintInfo);
                 paintRenderer->paint(paintInfoForChild, childPaintOffset);
             } else
                 paintRenderer->paintAsInlineBlock(m_paintInfo, childPaintOffset);

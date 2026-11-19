@@ -2812,71 +2812,6 @@ void RenderBlockFlow::repaintOverhangingFloats(bool paintAllDescendants)
     }
 }
 
-void RenderBlockFlow::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& point)
-{
-    RenderBlock::paintColumnRules(paintInfo, point);
-    
-    if (!multiColumnFlow() || paintInfo.context().paintingDisabled())
-        return;
-
-    // Iterate over our children and paint the column rules as needed.
-    for (auto& columnSet : childrenOfType<RenderMultiColumnSet>(*this)) {
-        LayoutPoint childPoint = columnSet.location() + blockStartRelativeToPhysicalForChild(columnSet, point);
-        columnSet.paintColumnRules(paintInfo, childPoint);
-    }
-}
-
-void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paintOffset, bool preservePhase)
-{
-    if (!m_floatingObjects)
-        return;
-
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        if (!floatingObject->shouldPaint())
-            continue;
-
-        auto floatBoxLocation = blockStartRelativeToPhysicalForFloat(*floatingObject, paintOffset + floatingObject->translationOffsetToAncestor());
-        auto& renderer = *floatingObject->renderer();
-        GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
-
-        auto clipBlockEndIfNeeded = [&] {
-            // The clip rect in the float's own coordinates, moved to where the float's border box paints.
-            auto clipRect = LineClampUpdater::blockEndClipRect(renderer, renderer);
-            if (!clipRect)
-                return;
-            clipRect->moveBy(floatBoxLocation + renderer.locationOffset());
-            // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
-            clipRect->intersect(paintInfo.rect);
-            stateSaver.save();
-            paintInfo.context().clip(*clipRect);
-        };
-        clipBlockEndIfNeeded();
-
-        if (preservePhase) {
-            renderer.paint(paintInfo, floatBoxLocation);
-            continue;
-        }
-        auto paintInfoForFloat = PaintInfo { paintInfo };
-
-        paintInfoForFloat.phase = PaintPhase::BlockBackground;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::ChildBlockBackgrounds;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Float;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Foreground;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Outline;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-    }
-}
-
 void RenderBlockFlow::clipOutFloatingBoxes(RenderBlock& rootBlock, const PaintInfo* paintInfo, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock)
 {
     if (!m_floatingObjects)
@@ -4155,31 +4090,6 @@ Position RenderBlockFlow::positionForPoint(const LayoutPoint& point, HitTestSour
 PositionWithAffinity RenderBlockFlow::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer*)
 {
     return RenderBlock::positionForPoint(point, source, nullptr);
-}
-
-void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    ASSERT(childrenInline());
-
-    if (!inlineLayout())
-        return;
-
-    inlineLayout()->paint(paintInfo, paintOffset);
-}
-
-void RenderBlockFlow::paintBlockLevelContentInInline(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    ASSERT(childrenInline());
-
-    PaintInfo paintInfoForChildren = paintInfoForBlockChildren(paintInfo);
-
-    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
-        auto* child = dynamicDowncast<RenderBox>(walker.current());
-        if (!child)
-            continue;
-        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChildren, false))
-            return;
-    }
 }
 
 bool RenderBlockFlow::relayoutForPagination()

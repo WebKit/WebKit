@@ -28,6 +28,7 @@
 #include "RenderGrid.h"
 
 #include "BaselineAlignmentInlines.h"
+#include "BlockPainter.h"
 #include "GridArea.h"
 #include "GridLanesLayout.h"
 #include "GridLayoutFunctions.h"
@@ -2653,8 +2654,9 @@ unsigned RenderGrid::numTracks(Style::GridTrackSizingDirection direction) const
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)
 {
     ASSERT(!currentGrid().needsItemsPlacement());
+    auto painter = Paint::BlockPainter { *this, paintInfo, paintOffset };
     for (CheckedRef gridItem : currentGrid().orderIterator().gridItems())
-        paintChild(gridItem, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
+        painter.paintChild(gridItem, forChild, usePrintRect, Paint::BlockPainter::PaintAsInlineBlock);
 }
 
 bool RenderGrid::hitTestChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)

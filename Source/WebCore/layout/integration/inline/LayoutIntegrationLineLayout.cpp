@@ -28,6 +28,7 @@
 
 #include "BlockFormattingState.h"
 #include "BlockLayoutState.h"
+#include "BlockPainter.h"
 #include "EventRegion.h"
 #include "FloatingObjects.h"
 #include "FontCascadeInlines.h"
@@ -1561,7 +1562,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
             return;
         if (!layerRenderer) {
             // Shortcut block-only painting.
-            protect(flow())->paintBlockLevelContentInInline(paintInfo, paintOffset);
+            Paint::BlockPainter { protect(flow()), paintInfo, paintOffset }.paintBlockLevelContentInInline();
             return;
         }
     }

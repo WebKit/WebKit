@@ -75,13 +75,14 @@ public:
 
     void updateCachedNominalTransform() final;
 
+    void paintInlineChildren(PaintInfo&, const LayoutPoint&);
+
 private:
     void graphicsElement() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
 
     void paint(PaintInfo&, const LayoutPoint&) override;
-    void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
