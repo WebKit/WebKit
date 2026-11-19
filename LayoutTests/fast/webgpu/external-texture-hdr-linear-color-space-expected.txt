@@ -1,0 +1,23 @@
+Tests that GPUDevice.importExternalTexture and GPUQueue.copyExternalImageToTexture into a linear color space ("srgb-linear" or "display-p3-linear") keep an HDR (PQ or HLG) frame's headroom rather than tone mapping it to SDR, and leave an SDR frame linear, from both a video element and a WebCodecs VideoDecoder.
+
+PASS hevc-420-10bit-pq-videorange.mp4 into srgb-linear from a video element: importExternalTexture
+PASS hevc-420-10bit-pq-videorange.mp4 into srgb-linear from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-pq-videorange.mp4 into srgb-linear from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-pq-videorange.mp4 into srgb-linear from a VideoDecoder: importExternalTexture
+PASS hevc-420-10bit-pq-videorange.mp4 into srgb-linear from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-420-10bit-pq-videorange.mp4 into srgb-linear from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-pq-videorange.mp4 into display-p3-linear from a video element: importExternalTexture
+PASS hevc-420-10bit-pq-videorange.mp4 into display-p3-linear from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-pq-videorange.mp4 into display-p3-linear from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-hlg-videorange.mp4 into srgb-linear from a video element: importExternalTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 into srgb-linear from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 into srgb-linear from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-hlg-videorange.mp4 into srgb-linear from a VideoDecoder: importExternalTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 into srgb-linear from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 into srgb-linear from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-bt709-videorange.mp4 into srgb-linear from a video element: importExternalTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 into srgb-linear from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 into srgb-linear from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-bt709-videorange.mp4 into srgb-linear from a VideoDecoder: importExternalTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 into srgb-linear from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 into srgb-linear from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree

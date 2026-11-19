@@ -1835,9 +1835,12 @@ struct WebKitCopyExternalImageVertexOut {
     if ((args.flags & webKitCopyExternalImageUnpremultiplySource) && color.a > 0.f)
         color.rgb /= color.a;
     bool sourceIsHDR = args.flags & (webKitCopyExternalImageSourceIsPQ | webKitCopyExternalImageSourceIsHLG);
-    if (sourceIsHDR)
-        color.rgb = __wgslToneMapHDR(__wgslDecodeHDR(saturate(color.rgb), args.flags & webKitCopyExternalImageSourceIsHLG));
-    else if (args.flags & webKitCopyExternalImageDecodeSourceTransferFunction)
+    if (sourceIsHDR) {
+        bool keepsHeadroom = !(args.flags & webKitCopyExternalImageEncodeDestinationTransferFunction);
+        color.rgb = __wgslDecodeHDR(saturate(color.rgb), args.flags & webKitCopyExternalImageSourceIsHLG, keepsHeadroom);
+        if (!keepsHeadroom)
+            color.rgb = __wgslToneMapHDR(color.rgb);
+    } else if (args.flags & webKitCopyExternalImageDecodeSourceTransferFunction)
         color.rgb = webKitSRGBToLinear(color.rgb);
     // Explicit dot products, so that the host's row-major storage order is unambiguous. The matrix is
     // the identity when the source and destination share primaries, which leaves the values alone.
@@ -2124,7 +2127,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool primariesDiffer = colorMatrix != identityColorMatrix;
     bool transferFunctionsDiffer = isLinear(source.colorSpace) != isLinear(destination.colorSpace);
     // An HDR frame is never in the destination's transfer function, so it is always decoded, by the
-    // shader's HDR path rather than the sRGB one, and tone mapped on the way.
+    // shader's HDR path rather than the sRGB one, and tone mapped on the way unless the destination is
+    // linear, which keeps what is brighter than SDR white above 1.0.
     bool sourceIsHDR = flags & (CopyExternalImageSourceIsPQ | CopyExternalImageSourceIsHLG);
     bool convertsColor = primariesDiffer || transferFunctionsDiffer || sourceIsHDR;
     if (convertsColor) {

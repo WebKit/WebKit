@@ -660,6 +660,8 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         primariesConversionMatrix = simd::float3x4(simd::make_float4(m[0], m[3], m[6], 0.f), simd::make_float4(m[1], m[4], m[7], 0.f), simd::make_float4(m[2], m[5], m[8], 0.f));
     }
     primariesConversionMatrix.columns[0].w = static_cast<float>(hdrTransferFunctionForPixelBuffer(pixelBuffer));
+    bool destinationIsLinear = colorSpace == WebGPU::PredefinedColorSpace::SRGBLinear || colorSpace == WebGPU::PredefinedColorSpace::DisplayP3Linear;
+    primariesConversionMatrix.columns[1].w = destinationIsLinear ? 1.f : 0.f;
 
     auto premultiplyParameters = premultiplyAlpha == PremultiplyAlpha::Yes ? premultiplyAlphaParameters(pixelBuffer) : PremultiplyAlphaParameters { };
 
