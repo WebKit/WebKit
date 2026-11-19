@@ -69,13 +69,9 @@ struct CoordinatedValueList {
 
     value_type& usedFirst() LIFETIME_BOUND { return m_data->container.first(); }
     const value_type& usedFirst() const LIFETIME_BOUND { return m_data->container.first(); }
-    value_type& computedFirst() LIFETIME_BOUND { return m_data->container.first(); }
-    const value_type& computedFirst() const LIFETIME_BOUND { return m_data->container.first(); }
 
     value_type& usedLast() LIFETIME_BOUND { return m_data->container[m_data->usedLength - 1]; }
     const value_type& usedLast() const LIFETIME_BOUND { return m_data->container[m_data->usedLength - 1]; }
-    value_type& computedLast() LIFETIME_BOUND { return m_data->container.last(); }
-    const value_type& computedLast() const LIFETIME_BOUND { return m_data->container.last(); }
 
     T& operator[](size_t i) LIFETIME_BOUND { return m_data->container[i]; }
     const T& operator[](size_t i) const LIFETIME_BOUND { return m_data->container[i]; }

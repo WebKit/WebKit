@@ -83,7 +83,6 @@ template<CSS::Numeric CSSType> struct PrimitiveNumeric {
     constexpr bool isPositiveOrZero() const requires (range.max >= 0) { return value >= 0; }
     constexpr bool isNegative() const requires (range.min < 0) { return value < 0; }
     constexpr bool isKnownNegative() const requires (range.min < 0) { return isNegative(); }
-    constexpr bool isNegativeOrZero() const requires (range.min <= 0) { return value <= 0; }
 
     constexpr bool operator==(const PrimitiveNumeric&) const = default;
     constexpr bool operator==(ResolvedValueType other) const { return value == other; }
@@ -157,7 +156,6 @@ template<CSS::Range R, typename V> struct PrimitiveNumeric<CSS::Length<R, V>> {
     constexpr bool isPositiveOrZero() const requires (range.max >= 0) { return value >= 0; }
     constexpr bool isNegative() const requires (range.min < 0) { return value < 0; }
     constexpr bool isKnownNegative() const requires (range.min < 0) { return isNegative(); }
-    constexpr bool isNegativeOrZero() const requires (range.min <= 0) { return value <= 0; }
 
     constexpr bool operator==(const PrimitiveNumeric&) const = default;
 
@@ -335,14 +333,11 @@ template<CSS::Range R, typename V> struct PrimitiveNumeric<CSS::LengthPercentage
 
     bool hasQuirk() const { return m_value.hasQuirk(); }
 
-    ALWAYS_INLINE bool isDimension() const { return holdsAlternative<Dimension>(); }
     ALWAYS_INLINE bool isPercentage() const { return holdsAlternative<Percentage>(); }
     ALWAYS_INLINE bool isCalc() const { return holdsAlternative<Calc>();}
-    ALWAYS_INLINE bool isPercentageOrCalc() const { return !holdsAlternative<Dimension>(); }
 
     std::optional<Dimension> tryDimension() const { return tryGet<Dimension>(); }
     std::optional<Percentage> tryPercentage() const { return tryGet<Percentage>(); }
-    std::optional<Calc> tryCalc() const { return tryGet<Calc>(); }
 
     // `isKnownZero` returns whether the value can be guaranteed to be `0`. calc() returns `false`.
     ALWAYS_INLINE bool isKnownZero() const requires (range.min <= 0 && range.max >= 0) { return m_value.isKnownZero(evaluationKind()); }
@@ -617,14 +612,11 @@ template<CSS::Range R, typename V> struct PrimitiveNumericWrapperBase<LengthPerc
         return value.switchOn(std::forward<F>(f)...);
     }
 
-    ALWAYS_INLINE bool isDimension() const { return value.isDimension(); }
     ALWAYS_INLINE bool isPercentage() const { return value.isPercentage(); }
     ALWAYS_INLINE bool isCalc() const { return value.isCalc(); }
-    ALWAYS_INLINE bool isPercentageOrCalc() const { return value.isPercentageOrCalc(); }
 
     ALWAYS_INLINE std::optional<Dimension> tryDimension() const { return value.tryDimension(); }
     ALWAYS_INLINE std::optional<Percentage> tryPercentage() const { return value.tryPercentage(); }
-    ALWAYS_INLINE std::optional<Calc> tryCalc() const { return value.tryCalc(); }
 
     ALWAYS_INLINE bool isKnownZero() const requires (range.min <= 0 && range.max >= 0) { return value.isKnownZero(); }
     ALWAYS_INLINE bool isKnownPositive() const requires (range.max > 0) { return value.isKnownPositive(); }
