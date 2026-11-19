@@ -870,7 +870,9 @@ void WebPageProxy::attemptSyntheticClickInFrame(std::optional<FrameIdentifier> f
 
 void WebPageProxy::didRecognizeLongPress()
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::DidRecognizeLongPress(), webPageIDInMainFrameProcess());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidRecognizeLongPress(), pageID);
+    });
 }
 
 void WebPageProxy::inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint& position)
@@ -1021,7 +1023,9 @@ void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)
 
 void WebPageProxy::didReleaseAllTouchPoints()
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::DidReleaseAllTouchPoints(), webPageIDInMainFrameProcess());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidReleaseAllTouchPoints(), pageID);
+    });
 
     if (!m_pendingInputModeChange)
         return;

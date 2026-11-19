@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body {
+    margin: 0;
+    font-size: 18px;
+    font-family: system-ui;
+}
+
+.start {
+    border: 1px solid tomato;
+    padding: 4px;
+}
+
+.stop {
+    border: 1px solid orange;
+    padding: 4px;
+}
+
+</style>
+<p id="paragraph"><span class="start">Arabic</span> text هذه جملة <span class="stop">باللغة</span> العربية</p>
+<script>
+document.addEventListener("selectionchange", () => {
+    window.top.postMessage({ selection: getSelection().toString() }, "*");
+});
+
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        const start = document.querySelector(".start").getBoundingClientRect();
+        const stop = document.querySelector(".stop").getBoundingClientRect();
+        window.top.postMessage({
+            startX: start.left + start.width / 2,
+            startY: start.top + start.height / 2,
+            stopX: stop.left + stop.width / 2,
+            stopY: stop.top + stop.height / 2,
+        }, "*");
+    });
+});
+</script>

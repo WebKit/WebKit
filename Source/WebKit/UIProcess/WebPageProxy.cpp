@@ -6099,7 +6099,9 @@ void WebPageProxy::didBeginTouchPoint(FloatPoint locationInRootView)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::DidBeginTouchPoint(locationInRootView));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidBeginTouchPoint(locationInRootView), pageID);
+    });
 }
 
 void WebPageProxy::sendUnpreventableTouchEvent(WebCore::FrameIdentifier frameID, Ref<WebTouchEvent>&& event)

@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tap-and-drag from left-to-right text into right-to-left text in a cross-origin iframe should extend the selection into the right-to-left text while dragging, the same way it does in the main frame.");
+jsTestIsAsync = true;
+
+const iframeLeft = 20;
+const iframeTop = 100;
+
+let selection = "";
+addEventListener("message", async (event) => {
+    if (event.data.selection !== undefined) {
+        selection = event.data.selection;
+        return;
+    }
+
+    const startX = iframeLeft + event.data.startX;
+    const startY = iframeTop + event.data.startY;
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(startX, startY)
+        .wait(1.5)
+        .move(iframeLeft + event.data.stopX, iframeTop + event.data.stopY, 0.25)
+        .wait(0.25)
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    // Check while the drag is still in progress. Each process only keeps a selection visually (rather than logically)
+    // contiguous across bidi boundaries while it knows a touch is active.
+    shouldBeEqualToString("selection", "Arabic text هذه جملة باللغة");
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<iframe style="position: absolute; left: 20px; top: 100px; width: 600px; height: 200px; border: none;" src="http://localhost:8000/site-isolation/resources/bidi-text-frame.html"></iframe>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

@@ -1192,8 +1192,8 @@ void WebPage::clearSelectionAfterTapIfNeeded()
 
 void WebPage::didRecognizeLongPress()
 {
-    if (RefPtr localMainFrame = protect(*m_page)->localMainFrame())
-        ContentChangeObserver::didRecognizeLongPress(*localMainFrame);
+    for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames()))
+        ContentChangeObserver::didRecognizeLongPress(rootFrame);
 }
 
 void WebPage::tapHighlightAtPosition(std::optional<WebCore::FrameIdentifier> frameID, WebKit::TapIdentifier requestID, const FloatPoint& position, CompletionHandler<void(std::optional<RemoteUserInputEventData>)>&& completionHandler)

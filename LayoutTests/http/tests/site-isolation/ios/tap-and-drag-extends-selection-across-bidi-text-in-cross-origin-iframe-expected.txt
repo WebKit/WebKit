@@ -1,0 +1,11 @@
+Tap-and-drag from left-to-right text into right-to-left text in a cross-origin iframe should extend the selection into the right-to-left text while dragging, the same way it does in the main frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selection is "Arabic text هذه جملة باللغة"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
