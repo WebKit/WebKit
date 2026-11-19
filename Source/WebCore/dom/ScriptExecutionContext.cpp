@@ -1107,7 +1107,7 @@ bool ScriptExecutionContext::requiresScriptTrackingPrivacyProtection(ScriptTrack
     if ((includeConsoleLog == IncludeConsoleLog::No || !page->reportScriptTrackingPrivacy(taintedURL, category)) && !shouldApplyConsistently)
         return true;
 
-    addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeLogMessage(taintedURL, category));
+    addConsoleMessage(MessageSource::Security, MessageLevel::Info, makeLogMessage(taintedURL, category));
     return true;
 }
 

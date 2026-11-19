@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/DocumentEnums.h>
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTargetInterfaces.h>
@@ -242,7 +243,7 @@ public:
     // frame), we would like to zero out m_frame to avoid being confused
     // by the document that is currently active in m_frame.
     bool isCurrentlyDisplayedInFrame() const;
-    void printErrorMessage(const String&) const;
+    void printErrorMessage(const String&, MessageSource = MessageSource::JS) const;
     String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
     bool isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const URL&);
 

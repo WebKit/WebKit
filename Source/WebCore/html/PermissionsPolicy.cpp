@@ -347,7 +347,7 @@ static bool computeFeatureEnabled(PermissionsPolicy::Feature feature, const Docu
     // FIXME: Spec suggests generating violation report for Reporting API but we only add log now.
     if (!enabled && shouldReportViolation == PermissionsPolicy::ShouldReportViolation::Yes) {
         if (RefPtr window = document.window())
-            window->printErrorMessage(makeString("Permission policy '"_s, toFeatureNameForLogging(feature), "' check failed for document with origin '"_s, origin.toString(), "'."_s));
+            window->printErrorMessage(makeString("Permission policy '"_s, toFeatureNameForLogging(feature), "' check failed for document with origin '"_s, origin.toString(), "'."_s), MessageSource::Security);
     }
 
     return enabled;

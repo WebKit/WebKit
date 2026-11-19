@@ -867,12 +867,12 @@ bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xF
     }
     case XFrameOptionsDisposition::Conflict: {
         auto errorMessage = makeString("Multiple 'X-Frame-Options' headers with conflicting values ('"_s, xFrameOptions, "') encountered when loading '"_s, url.stringCenterEllipsizedToLength(), "'. Falling back to 'DENY'."_s);
-        send(Messages::WebPage::AddConsoleMessage { frameID(),  MessageSource::JS, MessageLevel::Error, errorMessage, coreIdentifier() }, pageID());
+        send(Messages::WebPage::AddConsoleMessage { frameID(), MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, pageID());
         return true;
     }
     case XFrameOptionsDisposition::Invalid: {
         auto errorMessage = makeString("Invalid 'X-Frame-Options' header encountered when loading '"_s, url.stringCenterEllipsizedToLength(), "': '"_s, xFrameOptions, "' is not a recognized directive. The header will be ignored."_s);
-        send(Messages::WebPage::AddConsoleMessage { frameID(),  MessageSource::JS, MessageLevel::Error, errorMessage, coreIdentifier() }, pageID());
+        send(Messages::WebPage::AddConsoleMessage { frameID(), MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, pageID());
         return false;
     }
     }

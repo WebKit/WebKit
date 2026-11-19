@@ -295,7 +295,7 @@ void Location::reload(LocalDOMWindow& activeWindow)
     // Other location operations simply block use of JavaScript URLs cross origin.
     if (!protect(activeDocument->securityOrigin())->isSameOriginDomain(protect(targetDocument->securityOrigin()))) {
         Ref targetWindow = *targetDocument->window();
-        targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
+        targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes), MessageSource::Security);
         return;
     }
 

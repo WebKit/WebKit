@@ -107,7 +107,8 @@ void NavigatorBeacon::logError(const ResourceError& error)
             messageMiddle = "."_s;
     }
 
-    document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString("Beacon API cannot load "_s, error.failingURL().string(), messageMiddle, description));
+    auto source = error.isAccessControl() ? MessageSource::Security : MessageSource::Network;
+    document->addConsoleMessage(source, MessageLevel::Error, makeString("Beacon API cannot load "_s, error.failingURL().string(), messageMiddle, description));
 }
 
 ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& url, std::optional<FetchBody::Init>&& body)

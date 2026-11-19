@@ -135,7 +135,7 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
         String invalidTokens;
         setSandboxFlags(newValue.isNull() ? SandboxFlags { } : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
         if (!invalidTokens.isNull())
-            protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
+            protect(document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
         break;
     }
     case AttributeNames::allowAttr:

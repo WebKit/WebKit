@@ -96,7 +96,7 @@ void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const
         m_error = Error {
             ErrorType::CrossOriginLoad,
             ConsoleMessage {
-                MessageSource::JS,
+                MessageSource::Security,
                 MessageLevel::Error,
                 consoleMessage
             },

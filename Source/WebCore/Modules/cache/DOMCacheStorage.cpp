@@ -228,7 +228,7 @@ static void logConsolePersistencyError(ScriptExecutionContext* context, const St
     if (!context)
         return;
 
-    context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("There was an error making "_s, cacheName, " persistent on the filesystem"_s));
+    context->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, makeString("There was an error making "_s, cacheName, " persistent on the filesystem"_s));
 }
 
 void DOMCacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)

@@ -694,7 +694,7 @@ void HTMLSelectElement::queuePickerClose(PickerCloseReason reason)
         auto message = reason == PickerCloseReason::Appearance
             ? "The select element's appearance property changed while its picker was open. The picker has been closed."_s
             : "The select element stopped being a dropdown box while its picker was open. The picker has been closed."_s;
-        protect(select->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, message);
+        protect(select->document())->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
         select->hidePickerPopoverElement();
     });
 }

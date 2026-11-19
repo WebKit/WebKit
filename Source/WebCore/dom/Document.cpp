@@ -607,7 +607,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
 static void printNavigationErrorMessage(Document& document, Frame& frame, const URL& activeURL, ASCIILiteral reason)
 {
     auto documentURL = frame.urlForConsoleLog();
-    protect(document.window())->printErrorMessage(makeString("Unsafe JavaScript attempt to initiate navigation for frame with URL '"_s, documentURL.string(), "' from frame with URL '"_s, activeURL.string(), "'. "_s, reason, '\n'));
+    protect(document.window())->printErrorMessage(makeString("Unsafe JavaScript attempt to initiate navigation for frame with URL '"_s, documentURL.string(), "' from frame with URL '"_s, activeURL.string(), "'. "_s, reason, '\n'), MessageSource::Security);
 }
 
 uint64_t Document::s_globalTreeVersion = 0;
@@ -4815,7 +4815,7 @@ const URL& Document::urlForBindings()
                 if (areSameSiteIgnoringPublicSuffix(sourceURL.host(), currentHost))
                     return false;
             }
-            addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeLogMessage(m_url, ScriptTrackingPrivacyCategory::QueryParameters));
+            addConsoleMessage(MessageSource::Security, MessageLevel::Info, makeLogMessage(m_url, ScriptTrackingPrivacyCategory::QueryParameters));
 
             return true;
         };
@@ -5450,7 +5450,7 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
 
     case HTTPHeaderName::SetCookie:
         if (isHTMLDocument())
-            addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Set-Cookie meta tag is obsolete and was ignored. Use the HTTP header Set-Cookie or document.cookie instead."_s);
+            addConsoleMessage(MessageSource::Storage, MessageLevel::Error, "The Set-Cookie meta tag is obsolete and was ignored. Use the HTTP header Set-Cookie or document.cookie instead."_s);
         break;
 
     case HTTPHeaderName::ContentLanguage:
@@ -5832,7 +5832,7 @@ void Document::processReferrerPolicy(const String& policy, ReferrerPolicySource 
     auto referrerPolicy = parseReferrerPolicy(policy, source);
     if (!referrerPolicy) {
         // Unknown policy values are ignored (https://w3c.github.io/webappsec-referrer-policy/#unknown-policy-values).
-        addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, makeString("Failed to set referrer policy: The value '"_s, policy, "' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'."_s));
+        addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString("Failed to set referrer policy: The value '"_s, policy, "' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'."_s));
         return;
     }
     setReferrerPolicy(referrerPolicy.value());
@@ -8274,7 +8274,7 @@ void Document::logXSLTDeprecationWarningIfNeeded()
     if (m_hasLoggedXSLTDeprecationWarning)
         return;
     m_hasLoggedXSLTDeprecationWarning = true;
-    addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XSLT is deprecated and will be removed in a future version of WebKit."_s);
+    addConsoleMessage(MessageSource::XML, MessageLevel::Warning, "XSLT is deprecated and will be removed in a future version of WebKit."_s);
 }
 
 void Document::applyPendingXSLTransformsTimerFired()
@@ -8334,7 +8334,7 @@ void Document::logXMLExternalEntityDeprecationWarningIfNeeded()
     if (document->m_hasLoggedXMLExternalEntityDeprecationWarning)
         return;
     document->m_hasLoggedXMLExternalEntityDeprecationWarning = true;
-    document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XML external entities are deprecated and will be removed in a future version of WebKit."_s);
+    document->addConsoleMessage(MessageSource::XML, MessageLevel::Warning, "XML external entities are deprecated and will be removed in a future version of WebKit."_s);
 }
 
 String Document::designMode() const

@@ -185,13 +185,13 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     auto destination = parseEnumerationFromString<FetchRequestDestination>(as.convertToASCIILowercase());
     if (!destination) {
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_s);
+            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_s);
         return std::nullopt;
     }
     switch (*destination) {
     case FetchRequestDestination::EmptyString:
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> cannot have the empty string as `as` value"_s);
+            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "<link rel=preload> cannot have the empty string as `as` value"_s);
         return std::nullopt;
     case FetchRequestDestination::Audio:
         if (document.settings().mediaPreloadingEnabled())
@@ -217,7 +217,7 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         if (isModulePreload == IsModulePreload::Yes)
             return CachedResource::Type::JSON;
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `json` as `as` value"_s);
+            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "<link rel=preload> does not support `json` as `as` value"_s);
         return std::nullopt;
     case FetchRequestDestination::Manifest:
         return std::nullopt;
@@ -243,7 +243,7 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         if (isModulePreload == IsModulePreload::Yes)
             return CachedResource::Type::Text;
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `text` as `as` value"_s);
+            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "<link rel=preload> does not support `text` as `as` value"_s);
         return std::nullopt;
     case FetchRequestDestination::Track:
 #if ENABLE(VIDEO)
@@ -413,11 +413,11 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
 
     if (!url.isValid()) {
         if (params.relAttribute.isLinkModulePreload)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=modulepreload> has an invalid `href` value"_s);
+            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "<link rel=modulepreload> has an invalid `href` value"_s);
         else if (params.imageSrcSet.isEmpty())
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `href` value"_s);
+            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "<link rel=preload> has an invalid `href` value"_s);
         else
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `imagesrcset` value"_s);
+            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "<link rel=preload> has an invalid `imagesrcset` value"_s);
         return nullptr;
     }
     auto queries = MQ::MediaQueryParser::parse(params.media, document.cssParserContext());
@@ -534,7 +534,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::loadCompressionDictionaryIfNeeded(
 
     URL url = document.encodingParseURL(params.href.string());
     if (!url.isValid()) {
-        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "rel=compression-dictionary has an invalid URL"_s);
+        document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, "rel=compression-dictionary has an invalid URL"_s);
         return nullptr;
     }
 

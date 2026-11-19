@@ -205,7 +205,7 @@ void TrackBase::setLanguage(const AtomString& language)
     else
         message = makeString("The language '"_s, language, "' is not a valid BCP 47 language tag."_s);
 
-    context->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
+    context->addConsoleMessage(MessageSource::Media, MessageLevel::Warning, message);
 }
 
 #if !RELEASE_LOG_DISABLED

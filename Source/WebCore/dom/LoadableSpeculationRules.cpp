@@ -115,13 +115,13 @@ void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const Ne
     // 2. If response's status is not an ok status, then abort these steps.
     RefPtr cachedScript = m_cachedScript;
     if (cachedScript->errorOccurred()) {
-        document->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Failed to load speculation rules from "_s, m_url.string()));
+        document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString("Failed to load speculation rules from "_s, m_url.string()));
         return;
     }
 
     // 3. If the result of extracting a MIME type from response's header list does not have an essence of "application/speculationrules+json", then abort these steps.
     if (resource.mimeType() != "application/speculationrules+json") {
-        document->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Invalid speculation rules MIME type "_s, m_url.string()));
+        document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString("Invalid speculation rules MIME type "_s, m_url.string()));
         return;
     }
 

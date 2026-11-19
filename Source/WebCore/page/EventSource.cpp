@@ -209,7 +209,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     if (!equalLettersIgnoringASCIICase(response.mimeType(), "text/event-stream"_s)) {
         auto message = makeString("EventSource's response has a MIME type (\""_s, response.mimeType(), "\") that is not \"text/event-stream\". Aborting the connection."_s);
         // FIXME: Console message would be better with a source code location; where would we get that?
-        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, WTF::move(message));
+        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::Network, MessageLevel::Error, WTF::move(message));
         return false;
     }
 
@@ -219,7 +219,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     if (!charset.isEmpty() && !equalLettersIgnoringASCIICase(charset, "utf-8"_s)) {
         auto message = makeString("EventSource's response has a charset (\""_s, charset, "\") that is not UTF-8. The response will be decoded as UTF-8."_s);
         // FIXME: Console message would be better with a source code location; where would we get that?
-        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, WTF::move(message));
+        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::Network, MessageLevel::Error, WTF::move(message));
     }
 
     return true;

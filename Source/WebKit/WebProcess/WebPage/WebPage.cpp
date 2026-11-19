@@ -2654,7 +2654,7 @@ void WebPage::dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentif
     if (frameOrigin->isSameOriginDomain(navigatingFrameOrigin.securityOrigin()))
         return;
 
-    document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Blocked attempt to show beforeunload confirmation dialog on behalf of a frame with different security origin. Protocols, domains, and ports must match."_s);
+    document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked attempt to show beforeunload confirmation dialog on behalf of a frame with different security origin. Protocols, domains, and ports must match."_s);
 }
 
 void WebPage::sendClose()

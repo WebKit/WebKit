@@ -165,7 +165,7 @@ void FileInputType::handleDOMActivateEvent(Event& event)
 
     RefPtr window = element()->document().window();
     if (!window || !window->consumeTransientActivation()) {
-        protect(element()->document())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File chooser dialog can only be shown with a user activation."_s);
+        protect(element()->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "File chooser dialog can only be shown with a user activation."_s);
         return;
     }
 

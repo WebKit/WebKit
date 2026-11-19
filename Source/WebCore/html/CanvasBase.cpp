@@ -290,7 +290,7 @@ bool CanvasBase::validateArea() const
         if (!m_hasWarnedExceedsArea) {
             if (RefPtr scriptExecutionContext = this->scriptExecutionContext()) {
                 auto message = makeString("Canvas area exceeds the maximum limit (width * height > "_s, maxCanvasArea(), ")."_s);
-                scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+                scriptExecutionContext->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
             }
             m_hasWarnedExceedsArea = true;
         }

@@ -65,8 +65,9 @@ WI.IssueMessage = class IssueMessage extends WI.Object
         case WI.ConsoleMessage.MessageSource.ConsoleAPI:
         case WI.ConsoleMessage.MessageSource.Storage:
         case WI.ConsoleMessage.MessageSource.Rendering:
+        case WI.ConsoleMessage.MessageSource.ContentBlocker:
         case WI.ConsoleMessage.MessageSource.Media:
-        case WI.ConsoleMessage.MessageSource.Mediasource:
+        case WI.ConsoleMessage.MessageSource.MediaSource:
         case WI.ConsoleMessage.MessageSource.WebRTC:
         case WI.ConsoleMessage.MessageSource.ITPDebug:
         case WI.ConsoleMessage.MessageSource.PrivateClickMeasurement:

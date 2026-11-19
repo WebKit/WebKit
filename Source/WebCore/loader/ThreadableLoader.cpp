@@ -167,7 +167,8 @@ void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceE
         messageStart = "Cannot load "_s;
 
     String messageEnd = error.isAccessControl() ? " due to access control checks."_s : "."_s;
-    context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString(messageStart, error.failingURL().stringCenterEllipsizedToLength(), messageEnd));
+    auto source = error.isAccessControl() ? MessageSource::Security : MessageSource::Network;
+    context.addConsoleMessage(source, MessageLevel::Error, makeString(messageStart, error.failingURL().stringCenterEllipsizedToLength(), messageEnd));
 }
 
 } // namespace WebCore

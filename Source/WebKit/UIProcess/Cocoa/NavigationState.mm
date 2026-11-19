@@ -467,12 +467,12 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
     if (RefPtr sourceFrame = action->sourceFrame())
         sourceFrameID = sourceFrame->handle()->frameID();
 
-    auto addConsoleError = [sourceFrameID, url = action->request().url(), weakPage = WeakPtr { page }](const String& error) {
+    auto addConsoleError = [sourceFrameID, url = action->request().url(), weakPage = WeakPtr { page }](MessageSource source, const String& error) {
         RefPtr page = weakPage;
         if (!sourceFrameID || !page)
             return;
 
-        page->addConsoleMessage(*sourceFrameID, MessageSource::Network, MessageLevel::Error, makeString("Can't handle MarketplaceKit link "_s, url.string(), " due to error: "_s, error));
+        page->addConsoleMessage(*sourceFrameID, source, MessageLevel::Error, makeString("Can't handle MarketplaceKit link "_s, url.string(), " due to error: "_s, error));
     };
 
     RefPtr mainFrame = page.mainFrame();
@@ -481,9 +481,9 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
         RELEASE_LOG_ERROR(Loading, "NavigationState: can't handle MarketplaceKit navigation with shouldOpenExternalSchemes: %d, isProcessingUserGesture: %d, isRedirect: %d, requesterTopOriginIsNull: %d", action->shouldOpenExternalSchemes(), action->isProcessingUserGesture(), action->isRedirect(), topOrigin.isNull());
 
         if (!action->isProcessingUserGesture())
-            addConsoleError("must be activated via a user gesture"_s);
+            addConsoleError(MessageSource::Security, "must be activated via a user gesture"_s);
         else if (action->isRedirect())
-            addConsoleError("must be a direct link without a redirect"_s);
+            addConsoleError(MessageSource::Security, "must be a direct link without a redirect"_s);
 
         return;
     }
@@ -501,7 +501,7 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
             return;
 
         ensureOnMainRunLoop([addConsoleError = WTF::move(addConsoleError), error = protect(error)] mutable {
-            addConsoleError([error description]);
+            addConsoleError(MessageSource::Other, [error description]);
         });
     }).get()];
 }

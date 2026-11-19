@@ -108,6 +108,7 @@ WI.ConsoleMessage.MessageSource = {
     CSS: "css",
     Accessibility: "accessibility",
     Security: "security",
+    ContentBlocker: "content-blocker",
     Media: "media",
     MediaSource: "mediasource",
     WebRTC: "webrtc",

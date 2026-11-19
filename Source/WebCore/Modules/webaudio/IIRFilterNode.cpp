@@ -103,7 +103,7 @@ ExceptionOr<Ref<IIRFilterNode>> IIRFilterNode::create(ScriptExecutionContext& sc
 
     bool isFilterStable = WebCore::isFilterStable(options.feedback);
     if (!isFilterStable)
-        scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "IIRFilter is unstable with provided feedback coefficients"_s);
+        scriptExecutionContext.addConsoleMessage(MessageSource::Media, MessageLevel::Warning, "IIRFilter is unstable with provided feedback coefficients"_s);
 
     auto node = adoptRef(*new IIRFilterNode(context, options.feedforward, options.feedback, isFilterStable));
 

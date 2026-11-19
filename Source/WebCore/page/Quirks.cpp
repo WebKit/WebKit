@@ -631,7 +631,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
 
-    document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \""_s, domainInNeedOfStorageAccess.string(), "\""_s));
+    document->addConsoleMessage(MessageSource::Storage, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \""_s, domainInNeedOfStorageAccess.string(), "\""_s));
     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, WTF::move(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTF::move(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
         if (storageAccessGranted == StorageAccessWasGranted::No) {
             completionHandler(ShouldDispatchClick::Yes);
@@ -995,7 +995,7 @@ ConsistentQueryParameterFilteringLevel Quirks::consistentQueryParameterFiltering
 
     if (level != ConsistentQueryParameterFilteringLevel::Disabled && !wasLoggedOnce) {
         RELEASE_LOG(Loading, "Quirks::consistentQueryParameterFilteringLevel: Enabling consistent privacy protections");
-        protect(m_document)->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Enabling consistent privacy protections"_s);
+        protect(m_document)->addConsoleMessage(MessageSource::Security, MessageLevel::Info, "Enabling consistent privacy protections"_s);
         wasLoggedOnce = true;
     }
 

@@ -1390,7 +1390,7 @@ void MediaSource::failedToCreateRenderer(RendererType type)
     ERROR_LOG(LOGIDENTIFIER, type == RendererType::Video ? "video"_s : "audio"_s);
 
     if (RefPtr context = scriptExecutionContext())
-        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("MediaSource "_s, type == RendererType::Video ? "video"_s : "audio"_s, " renderer creation failed."_s));
+        context->addConsoleMessage(MessageSource::MediaSource, MessageLevel::Error, makeString("MediaSource "_s, type == RendererType::Video ? "video"_s : "audio"_s, " renderer creation failed."_s));
 
     ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
         mediaElement.mediaLoadingFailedFatally(MediaPlayer::NetworkState::DecodeError);

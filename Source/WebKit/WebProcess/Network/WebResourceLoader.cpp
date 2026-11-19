@@ -410,10 +410,11 @@ void WebResourceLoader::didFailServiceWorkerLoad(const ResourceError& error)
 {
     RefPtr coreLoader = m_coreLoader;
     if (RefPtr document = coreLoader->frame() ? coreLoader->frame()->document() : nullptr) {
+        auto source = error.isAccessControl() ? MessageSource::Security : MessageSource::Network;
         if (coreLoader->options().destination != FetchOptions::Destination::EmptyString || error.isGeneral())
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.localizedDescription());
+            document->addConsoleMessage(source, MessageLevel::Error, error.localizedDescription());
         if (coreLoader->options().destination != FetchOptions::Destination::EmptyString)
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cannot load "_s, error.failingURL().string(), '.'));
+            document->addConsoleMessage(source, MessageLevel::Error, makeString("Cannot load "_s, error.failingURL().string(), '.'));
     }
 
     didFailResourceLoad(error);

@@ -77,20 +77,20 @@ Ref<NetworkSendQueue> RTCDataChannel::createMessageQueue(ScriptExecutionContext&
         if (!channel || !channel->m_handler)
             return;
         if (!channel->m_handler->sendStringData(utf8))
-            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending string through RTCDataChannel."_s);
+            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::WebRTC, MessageLevel::Error, "Error sending string through RTCDataChannel."_s);
     }, [weakChannel = WeakPtr { channel }](auto span) {
         RefPtr channel = weakChannel;
         if (!channel || !channel->m_handler)
             return;
         if (!channel->m_handler->sendRawData(span))
-            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending binary data through RTCDataChannel."_s);
+            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::WebRTC, MessageLevel::Error, "Error sending binary data through RTCDataChannel."_s);
     }, [weakChannel = WeakPtr { channel }](ExceptionCode errorCode) {
         RefPtr channel = weakChannel;
         if (!channel)
             return NetworkSendQueue::Continue::Yes;
         if (RefPtr context = channel->scriptExecutionContext()) {
             auto code = static_cast<int>(errorCode);
-            context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Error "_s, code, " in retrieving a blob data to be sent through RTCDataChannel."_s));
+            context->addConsoleMessage(MessageSource::WebRTC, MessageLevel::Error, makeString("Error "_s, code, " in retrieving a blob data to be sent through RTCDataChannel."_s));
         }
         return NetworkSendQueue::Continue::Yes;
     });

@@ -98,7 +98,7 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
         return;
     if (RefPtr context = scriptExecutionContext()) {
         context->postTask([](auto& context) {
-            context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "A VideoFrame was destroyed without having been closed explicitly"_s);
+            context.addConsoleMessage(MessageSource::Media, MessageLevel::Warning, "A VideoFrame was destroyed without having been closed explicitly"_s);
         });
     }
 }

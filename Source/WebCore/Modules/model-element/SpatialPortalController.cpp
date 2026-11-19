@@ -1564,7 +1564,7 @@ void SpatialPortalController::addConsoleWarning(const String& warningMessage) co
         return;
 
     Ref document = element->document();
-    document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warningMessage);
+    document->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, warningMessage);
 }
 
 void SpatialPortalController::logWarning(ModelPlayer& player, const String& warningMessage)

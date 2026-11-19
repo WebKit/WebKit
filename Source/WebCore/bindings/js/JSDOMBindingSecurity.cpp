@@ -89,7 +89,7 @@ static inline bool canAccessTargetOrigin(JSC::JSGlobalObject* lexicalGlobalObjec
         break;
     }
     case LogSecurityError:
-        active->printErrorMessage(targetDOMWindow->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::Yes));
+        active->printErrorMessage(targetDOMWindow->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::Yes), MessageSource::Security);
         break;
     case DoNotReportSecurityError:
         break;

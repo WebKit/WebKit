@@ -281,7 +281,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
             message = makeString("WebSocket port "_s, m_url.port().value(), " blocked"_s);
         else
             message = "WebSocket without port blocked"_s;
-        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
+        context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
         failAsynchronously();
         return { };
     }

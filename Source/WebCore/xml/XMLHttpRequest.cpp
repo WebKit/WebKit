@@ -94,13 +94,13 @@ static void replaceCharsetInMediaTypeIfNeeded(String& mediaType)
     mediaType = parsedContentType->serialize();
 }
 
-static void logConsoleError(ScriptExecutionContext* context, const String& message)
+static void logConsoleError(ScriptExecutionContext* context, const String& message, MessageSource source = MessageSource::JS)
 {
     if (!context)
         return;
     // FIXME: It's not good to report the bad usage without indicating what source line it came from.
     // We should pass additional parameters so we can tell the console where the mistake occurred.
-    context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
+    context->addConsoleMessage(source, MessageLevel::Error, message);
 }
 
 Ref<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext& context)
@@ -818,7 +818,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
         return Exception { ExceptionCode::SyntaxError };
 
     if (isForbiddenHeader(name, normalizedValue)) {
-        logConsoleError(protect(scriptExecutionContext()).get(), makeString("Refused to set unsafe header \""_s, name, '"'));
+        logConsoleError(protect(scriptExecutionContext()).get(), makeString("Refused to set unsafe header \""_s, name, '"'), MessageSource::Security);
         return { };
     }
 

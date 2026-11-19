@@ -643,7 +643,7 @@ ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::JSGlobalObjec
     String errorMessage;
     auto merchantSession = PaymentMerchantSession::fromJS(state, asObject(merchantSessionValue), errorMessage);
     if (!merchantSession) {
-        window->printErrorMessage(errorMessage);
+        window->printErrorMessage(errorMessage, MessageSource::PaymentRequest);
         return Exception { ExceptionCode::InvalidAccessError };
     }
 

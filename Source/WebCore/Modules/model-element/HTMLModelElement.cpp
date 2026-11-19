@@ -846,7 +846,7 @@ void HTMLModelElement::logWarning(ModelPlayer& modelPlayer, const String& warnin
     ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
 #endif
 
-    protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warningMessage);
+    protect(document())->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, warningMessage);
 }
 
 // MARK: - ModelPlayer support

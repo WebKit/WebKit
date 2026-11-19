@@ -372,7 +372,7 @@ std::optional<URL> HTMLAnchorElement::attributionDestinationURLForPCM() const
     if (destinationURL.isValid() && destinationURL.protocolIsInHTTPFamily())
         return destinationURL;
 
-    protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+    protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
     return std::nullopt;
 }
 
@@ -384,7 +384,7 @@ std::optional<RegistrableDomain> HTMLAnchorElement::mainDocumentRegistrableDomai
             return RegistrableDomain(mainFrameURL);
     }
 
-    document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+    document->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
     return std::nullopt;
 }
 
@@ -396,7 +396,7 @@ std::optional<PCM::EphemeralNonce> HTMLAnchorElement::attributionSourceNonceForP
 
     auto ephemeralNonce = PCM::EphemeralNonce { attributionSourceNonceAttr };
     if (!ephemeralNonce.isValid()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
+        protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
         return std::nullopt;
     }
 
@@ -469,36 +469,36 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     auto attributionDestinationAttr = attributeWithoutSynchronization(attributiondestinationAttr);
 
     if (!hasAttributionSourceIDAttr || !hasAttributionDestinationAttr || attributionSourceIDAttr.isEmpty() || attributionDestinationAttr.isEmpty()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
+        protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
         return std::nullopt;
     }
 
     auto attributionSourceID = parseHTMLNonNegativeInteger(attributionSourceIDAttr);
     if (!attributionSourceID) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
+        protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
         return std::nullopt;
     }
     
     if (attributionSourceID.value() > std::numeric_limits<uint8_t>::max()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to "_s, std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."_s));
+        protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to "_s, std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."_s));
         return std::nullopt;
     }
 
     URL destinationURL { attributionDestinationAttr };
     if (!destinationURL.isValid() || !destinationURL.protocolIsInHTTPFamily()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+        protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
         return std::nullopt;
     }
 
     auto& mainURL = page->mainFrameURL();
     if (mainURL.isEmpty()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+        protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
         return std::nullopt;
     }
 
     RegistrableDomain mainDocumentRegistrableDomain = RegistrableDomain { mainURL };
     if (mainDocumentRegistrableDomain.matches(destinationURL)) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
+        protect(document())->addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
         return std::nullopt;
     }
 

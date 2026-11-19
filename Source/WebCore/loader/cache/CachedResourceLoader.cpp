@@ -2116,7 +2116,7 @@ void CachedResourceLoader::warnUnusedPreloads()
 
     for (const auto& resource : *m_preloads) {
         if (resource->isLinkPreload() && resource->preloadResult() == CachedResource::PreloadResult::PreloadNotReferenced) {
-            document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning,
+            document->addConsoleMessage(MessageSource::Network, MessageLevel::Warning,
                 makeString("The resource "_s, resource->url().string(),
                 " was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing."_s));
         }

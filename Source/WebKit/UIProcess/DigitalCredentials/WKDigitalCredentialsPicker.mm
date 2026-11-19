@@ -260,7 +260,7 @@ using WebCore::DigitalCredentialPresentationProtocol;
                 consoleMessage = makeString(consoleMessage, " ("_s, String(debugDescription.get()), ")"_s);
 
             auto targetFrameID = page->focusedFrame() ? page->focusedFrame()->frameID() : page->mainFrame()->frameID();
-            page->addConsoleMessage(targetFrameID, MessageSource::JS, MessageLevel::Error, makeString("Digital Credential request failed: "_s, consoleMessage));
+            page->addConsoleMessage(targetFrameID, MessageSource::Other, MessageLevel::Error, makeString("Digital Credential request failed: "_s, consoleMessage));
         }
     }
     [self completeWith:WTF::move(result)];
