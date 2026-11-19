@@ -521,7 +521,8 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
 #endif
     m_calendarSwizzler = nullptr;
     m_overriddenCalendarAndLocaleIdentifiers = { nil, nil };
-    
+    removeTestKeysFromKeychain();
+
     if (auto* webView = mainWebView()) {
         TestRunnerWKWebView *platformView = webView->platformView();
         platformView._viewScale = 1;
@@ -686,10 +687,14 @@ void TestController::addTestKeyToKeychain(const String& privateKeyBase64, const 
         (id)kSecAttrLabel: attrLabel.createNSString().get(),
         (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationTagBase64.createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
-        (id)kSecUseDataProtectionKeychain: @YES
+        (id)kSecUseDataProtectionKeychain: @YES,
+        (id)kSecReturnPersistentRef: @YES
     };
-    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
+    CFTypeRef persistentReference = nullptr;
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, &persistentReference);
     ASSERT_UNUSED(status, !status);
+    if (persistentReference)
+        m_testKeyPersistentReferences.append(adoptCF(persistentReference));
 }
 
 void TestController::cleanUpKeychain(const String& attrLabel, const String& applicationLabelBase64)
@@ -708,6 +713,18 @@ void TestController::cleanUpKeychain(const String& attrLabel, const String& appl
         [deleteQuery removeObjectForKey:(id)kSecAttrAlias];
         [deleteQuery setObject:credentialID.get() forKey:(id)kSecAttrApplicationLabel];
         SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
+    }
+}
+
+void TestController::removeTestKeysFromKeychain()
+{
+    for (auto& persistentReference : std::exchange(m_testKeyPersistentReferences, { })) {
+        OSStatus status = SecItemDelete((__bridge CFDictionaryRef)@{
+            (id)kSecClass: (id)kSecClassKey,
+            (id)kSecValuePersistentRef: bridge_id_cast(persistentReference.get()),
+            (id)kSecUseDataProtectionKeychain: @YES
+        });
+        ASSERT_UNUSED(status, !status || status == errSecItemNotFound);
     }
 }
 
