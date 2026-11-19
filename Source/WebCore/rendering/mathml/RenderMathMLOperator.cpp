@@ -367,14 +367,6 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     m_mathOperator.paint(usedStyle(), info, operatorTopLeft, document().deviceScaleFactor());
 }
 
-void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
-{
-    // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
-    if (useMathOperator() || isInvisibleOperator())
-        return;
-    RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
-}
-
 }
 
 #endif

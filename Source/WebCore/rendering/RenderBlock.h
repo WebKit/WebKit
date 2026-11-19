@@ -273,7 +273,6 @@ protected:
 
     void paint(PaintInfo&, const LayoutPoint&) override;
     void paintObject(PaintInfo&, const LayoutPoint&) override;
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

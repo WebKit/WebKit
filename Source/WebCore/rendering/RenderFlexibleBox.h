@@ -61,7 +61,6 @@ public:
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
     void flexItemWillBeRemoved(const RenderBox& flexItem);
     bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
-    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
@@ -88,6 +87,8 @@ public:
 
     NODELETE bool isComputingFlexBaseSizes() const;
     NODELETE bool isInCrossAxisStretchLayout() const;
+
+    const LayoutIntegration::FlexLayout& flexLayout() const LIFETIME_BOUND { return m_flexLayout; }
 
 protected:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;

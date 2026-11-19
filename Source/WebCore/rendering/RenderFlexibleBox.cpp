@@ -172,11 +172,6 @@ bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestRe
     return m_flexLayout.hitTest(request, result, locationInContainer, adjustedLocation, hitTestAction);
 }
 
-void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForFlexItem, bool usePrintRect)
-{
-    m_flexLayout.paint(paintInfo, paintOffset, paintInfoForFlexItem, usePrintRect);
-}
-
 void RenderFlexibleBox::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);

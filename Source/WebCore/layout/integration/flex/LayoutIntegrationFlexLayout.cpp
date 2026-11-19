@@ -26,7 +26,6 @@
 #include "config.h"
 #include "LayoutIntegrationFlexLayout.h"
 
-#include "BlockPainter.h"
 #include "FlexFormattingUtils.h"
 #include "HitTestResult.h"
 #include "RenderBlockInlines.h"
@@ -190,16 +189,6 @@ LayoutOptionalOutsets FlexLayout::adjustAllowedLayoutOverflow(LayoutOptionalOuts
     }
 
     return allowance;
-}
-
-void FlexLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForFlexItem, bool usePrintRect)
-{
-    auto painter = Paint::BlockPainter { flexBox(), paintInfo, paintOffset };
-    for (auto& renderer : m_flexItems) {
-        CheckedPtr flexItem = renderer.get();
-        if (flexItem && !painter.paintChild(*flexItem, paintInfoForFlexItem, usePrintRect, Paint::BlockPainter::PaintAsInlineBlock))
-            return;
-    }
 }
 
 bool FlexLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)

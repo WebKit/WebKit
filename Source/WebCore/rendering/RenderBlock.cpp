@@ -1108,11 +1108,6 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     Paint::BlockPainter { *this, paintInfo, paintOffset }.paintObject();
 }
 
-void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
-{
-    Paint::BlockPainter { *this, paintInfo, paintOffset }.paintChildren(paintInfoForChild, usePrintRect);
-}
-
 void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
 #if ENABLE(TEXT_SELECTION)

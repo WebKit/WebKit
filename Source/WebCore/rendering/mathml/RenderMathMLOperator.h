@@ -63,6 +63,10 @@ public:
     virtual char32_t singleCharCodePoint() const;
     bool isStretchy() const { return singleCharCodePoint() && hasOperatorFlag(MathMLOperatorDictionary::Stretchy); }
 
+    // Whether the operator paints itself instead of its children.
+    bool paintsOperatorInsteadOfChildren() const { return useMathOperator() || isInvisibleOperator(); }
+    bool isInvisibleOperator() const;
+
 protected:
     virtual void updateMathOperator();
     virtual LayoutUnit leadingSpace() const;
@@ -79,9 +83,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     ASCIILiteral renderName() const final { return isAnonymous() ? "RenderMathMLOperator (anonymous)"_s : "RenderMathMLOperator"_s; }
-    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
     bool isRenderMathMLOperator() const final { return true; }
-    bool isInvisibleOperator() const;
 
     std::optional<LayoutUnit> firstLineBaseline() const final;
     CheckedPtr<RenderMathMLOperator> unembellishedOperator() const final { return const_cast<RenderMathMLOperator*>(this); }

@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
+#include "LayoutIntegrationFlexLayout.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LineClampUpdater.h"
 #include "LocalFrame.h"
@@ -50,8 +51,10 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderGrid.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderMathMLOperator.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderObjectInlines.h"
@@ -145,13 +148,37 @@ void BlockPainter::paintContents(const LayoutPoint& paintOffset)
         // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
         // NSViews. Do not add any more code for this.
         bool usePrintRect = !m_block->view().printRect().isEmpty();
-        m_block->paintChildren(m_paintInfo, paintOffset, paintInfoForChildren, usePrintRect);
+        BlockPainter { m_block, m_paintInfo, paintOffset }.paintChildren(paintInfoForChildren, usePrintRect);
     }
 }
 
 void BlockPainter::paintChildren(PaintInfo& paintInfoForChild, bool usePrintRect)
 {
     ASSERT(!isSkippedContentRoot(m_block));
+
+    if (CheckedPtr grid = dynamicDowncast<RenderGrid>(m_block)) {
+        ASSERT(!grid->currentGrid().needsItemsPlacement());
+        for (CheckedRef gridItem : grid->currentGrid().orderIterator().gridItems())
+            paintChild(gridItem, paintInfoForChild, usePrintRect, PaintAsInlineBlock);
+        return;
+    }
+
+    if (CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(m_block)) {
+        for (auto& renderer : flexBox->flexLayout().flexItems()) {
+            CheckedPtr flexItem = renderer;
+            if (flexItem && !paintChild(*flexItem, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
+                return;
+        }
+        return;
+    }
+
+#if ENABLE(MATHML)
+    // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
+    if (CheckedPtr mathOperator = dynamicDowncast<RenderMathMLOperator>(m_block); mathOperator && mathOperator->paintsOperatorInsteadOfChildren())
+        return;
+    if (CheckedPtr token = dynamicDowncast<RenderMathMLToken>(m_block); token && token->hasMathVariantGlyph())
+        return;
+#endif
 
     for (CheckedRef child : childrenOfType<RenderBox>(m_block.get())) {
         if (!paintChild(child, paintInfoForChild, usePrintRect))
