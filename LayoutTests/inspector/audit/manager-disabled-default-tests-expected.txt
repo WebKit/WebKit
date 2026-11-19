@@ -1,0 +1,57 @@
+Test that disabled default audits are saved and restored by a locale-independent identity.
+
+
+== Running test suite: Audit.ManagerDisabledDefaultTests
+-- Running test case: Audit.ManagerDisabledDefaultTests.SaveByIdentity
+PASS: Saved disabled tests should include the demo audit.
+PASS: Saved disabled tests should include the demo audit's nested accessibility group path.
+PASS: Saved disabled tests should include nested leaf tests by their name.
+PASS: Saved disabled tests should not include the bare "Accessibility" name.
+PASS: Demo audit should be disabled after reload.
+PASS: Accessibility audit should be enabled after reload.
+PASS: All accessibility audit tests should be enabled after reload.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.DisableAccessibilityAudit
+PASS: Saved disabled tests should include the accessibility audit.
+PASS: Saved disabled tests should not include the demo audit.
+PASS: Accessibility audit should be disabled after reload.
+PASS: Demo audit should be enabled after reload.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.MigrateDeletedDemoAudit
+PASS: Demo audit should be disabled by a legacy saved list.
+PASS: Accessibility audit should not be disabled by a legacy saved list.
+PASS: All accessibility audit tests should be enabled after a legacy saved list was restored.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.MigrateDisabledAccessibilityAudit
+PASS: Accessibility audit should stay disabled when its own legacy name and all of its children were saved.
+PASS: Demo audit should be enabled.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.MigratePartiallyDisabledAccessibilityAudit
+PASS: Accessibility audit should not be disabled when only one of its tests was disabled.
+PASS: The disabled accessibility test should stay disabled.
+PASS: All other accessibility audit tests should be enabled.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.PartiallyDisabledNestedDemoAudit
+PASS: Accessibility audit should stay disabled.
+PASS: Demo audit should have a Specially Exposed Data group.
+PASS: Demo audit should have a nested accessibility group.
+PASS: Nested accessibility group should not be disabled when only one of its tests was disabled.
+PASS: The disabled nested demo test should stay disabled.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.RemoveTestWithoutLeavingEditMode
+PASS: Saved disabled tests should include the accessibility audit.
+PASS: Saved disabled tests should include the descendants of the removed test.
+PASS: Saved disabled tests should include every descendant of the removed test.
+PASS: Accessibility audit should be disabled after reload.
+PASS: Demo audit should be enabled after reload.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.LocaleChange
+PASS: Saved disabled tests should include the leaf test by its name.
+PASS: Reloaded tests should include the disabled leaf test.
+PASS: The disabled leaf test should stay disabled after a locale change.
+
+-- Running test case: Audit.ManagerDisabledDefaultTests.MigrateAmbiguousRemovedAccessibilityAudit
+PASS: The real accessibility audit cannot be told from the nested one by a bare shared name, so it restores enabled.
+PASS: Demo audit should have a nested accessibility group.
+PASS: The nested accessibility group restores enabled.
+

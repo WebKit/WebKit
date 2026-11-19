@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Audit.ManagerDisabledDefaultTests");
+
+    function makeManager(disabledDefaultTests)
+    {
+        let manager = new WI.AuditManager;
+        manager._disabledDefaultTestsSetting.value = disabledDefaultTests;
+        manager._addDefaultTests();
+        return manager;
+    }
+
+    function topLevelTest(manager, name)
+    {
+        return manager.tests.find((test) => test.name === name);
+    }
+
+    function findTest(group, name)
+    {
+        for (let test of group.tests) {
+            if (test.name === name)
+                return test;
+            if (test instanceof WI.AuditTestGroup) {
+                let result = findTest(test, name);
+                if (result)
+                    return result;
+            }
+        }
+        return null;
+    }
+
+    // Returns the list an older version saved: the bare name of every disabled default test.
+    function legacySavedNames(manager)
+    {
+        let names = [];
+        let walk = (test) => {
+            if (test.supported && test.disabled)
+                names.push(test.name);
+            if (test instanceof WI.AuditTestGroup) {
+                for (let child of test.tests)
+                    walk(child);
+            }
+        };
+        for (let test of manager.tests)
+            walk(test);
+        return names;
+    }
+
+    function withStubbedAuditObjectStore(callback)
+    {
+        let originalClear = WI.objectStores.audits.clear;
+        WI.objectStores.audits.clear = () => {};
+        try {
+            return callback();
+        } finally {
+            WI.objectStores.audits.clear = originalClear;
+        }
+    }
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.SaveByIdentity",
+        description: "Removing the demo audit should save its identity, not the names of its descendants.",
+        async test() {
+            let saved = withStubbedAuditObjectStore(() => {
+                let manager = makeManager([]);
+                manager.editing = true;
+                manager.removeTest(topLevelTest(manager, "Demo Audit"));
+                manager.editing = false;
+                return manager._disabledDefaultTestsSetting.value.slice();
+            });
+
+            InspectorTest.expectThat(saved.includes("Demo Audit"), "Saved disabled tests should include the demo audit.");
+            InspectorTest.expectThat(saved.includes("Demo Audit/Specially Exposed Data/Accessibility"), "Saved disabled tests should include the demo audit's nested accessibility group path.");
+            InspectorTest.expectThat(saved.includes("getElementsByComputedRole"), "Saved disabled tests should include nested leaf tests by their name.");
+            InspectorTest.expectFalse(saved.includes("Accessibility"), "Saved disabled tests should not include the bare \"Accessibility\" name.");
+
+            let reloadedManager = makeManager(saved);
+            InspectorTest.expectTrue(topLevelTest(reloadedManager, "Demo Audit").disabled, "Demo audit should be disabled after reload.");
+            let reloadedAccessibilityAudit = topLevelTest(reloadedManager, "Accessibility");
+            InspectorTest.expectFalse(reloadedAccessibilityAudit.disabled, "Accessibility audit should be enabled after reload.");
+            InspectorTest.expectEqual(reloadedAccessibilityAudit.tests.filter((test) => !test.disabled).length, reloadedAccessibilityAudit.tests.length, "All accessibility audit tests should be enabled after reload.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.DisableAccessibilityAudit",
+        description: "Saving a disabled top-level accessibility audit should keep it disabled after reload.",
+        async test() {
+            let saved = withStubbedAuditObjectStore(() => {
+                let manager = makeManager([]);
+                manager.editing = true;
+                topLevelTest(manager, "Accessibility").disabled = true;
+                manager.editing = false;
+                return manager._disabledDefaultTestsSetting.value.slice();
+            });
+
+            InspectorTest.expectThat(saved.includes("Accessibility"), "Saved disabled tests should include the accessibility audit.");
+            InspectorTest.expectFalse(saved.includes("Demo Audit"), "Saved disabled tests should not include the demo audit.");
+
+            let reloadedManager = makeManager(saved);
+            InspectorTest.expectTrue(topLevelTest(reloadedManager, "Accessibility").disabled, "Accessibility audit should be disabled after reload.");
+            InspectorTest.expectFalse(topLevelTest(reloadedManager, "Demo Audit").disabled, "Demo audit should be enabled after reload.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.MigrateDeletedDemoAudit",
+        description: "A legacy saved list from deleting the demo audit should keep the accessibility audit enabled.",
+        async test() {
+            let manager = makeManager([]);
+            manager.editing = true;
+            manager.removeTest(topLevelTest(manager, "Demo Audit"));
+
+            let reloadedManager = makeManager(legacySavedNames(manager));
+            InspectorTest.expectTrue(topLevelTest(reloadedManager, "Demo Audit").disabled, "Demo audit should be disabled by a legacy saved list.");
+            let accessibilityAudit = topLevelTest(reloadedManager, "Accessibility");
+            InspectorTest.expectFalse(accessibilityAudit.disabled, "Accessibility audit should not be disabled by a legacy saved list.");
+            InspectorTest.expectEqual(accessibilityAudit.tests.filter((test) => !test.disabled).length, accessibilityAudit.tests.length, "All accessibility audit tests should be enabled after a legacy saved list was restored.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.MigrateDisabledAccessibilityAudit",
+        description: "A legacy saved list from disabling the accessibility audit should keep it disabled.",
+        async test() {
+            let manager = makeManager([]);
+            manager.editing = true;
+            topLevelTest(manager, "Accessibility").disabled = true;
+
+            let reloadedManager = makeManager(legacySavedNames(manager));
+            let accessibilityAudit = topLevelTest(reloadedManager, "Accessibility");
+            InspectorTest.expectTrue(accessibilityAudit.disabled, "Accessibility audit should stay disabled when its own legacy name and all of its children were saved.");
+            InspectorTest.expectFalse(topLevelTest(reloadedManager, "Demo Audit").disabled, "Demo audit should be enabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.MigratePartiallyDisabledAccessibilityAudit",
+        description: "A legacy saved list from deleting the demo audit and disabling one accessibility test should disable only that test.",
+        async test() {
+            let manager = makeManager([]);
+            manager.editing = true;
+            manager.removeTest(topLevelTest(manager, "Demo Audit"));
+            findTest(topLevelTest(manager, "Accessibility"), "testButtonLabels").disabled = true;
+
+            let reloadedManager = makeManager(legacySavedNames(manager));
+            let accessibilityAudit = topLevelTest(reloadedManager, "Accessibility");
+            InspectorTest.expectFalse(accessibilityAudit.disabled, "Accessibility audit should not be disabled when only one of its tests was disabled.");
+            InspectorTest.expectTrue(findTest(accessibilityAudit, "testButtonLabels").disabled, "The disabled accessibility test should stay disabled.");
+            InspectorTest.expectEqual(accessibilityAudit.tests.filter((test) => !test.disabled).length, accessibilityAudit.tests.length - 1, "All other accessibility audit tests should be enabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.PartiallyDisabledNestedDemoAudit",
+        description: "Disabling the accessibility audit and one nested demo test should not disable the whole nested demo group.",
+        async test() {
+            let saved = withStubbedAuditObjectStore(() => {
+                let manager = makeManager([]);
+                manager.editing = true;
+                topLevelTest(manager, "Accessibility").disabled = true;
+                findTest(topLevelTest(manager, "Demo Audit"), "getElementsByComputedRole").disabled = true;
+                manager.editing = false;
+                return manager._disabledDefaultTestsSetting.value.slice();
+            });
+
+            let reloadedManager = makeManager(saved);
+            InspectorTest.expectTrue(topLevelTest(reloadedManager, "Accessibility").disabled, "Accessibility audit should stay disabled.");
+            let nestedAccessibilityAudit = findTest(topLevelTest(reloadedManager, "Demo Audit"), "Specially Exposed Data");
+            InspectorTest.expectThat(nestedAccessibilityAudit, "Demo audit should have a Specially Exposed Data group.");
+            let nestedAccessibilityGroup = findTest(nestedAccessibilityAudit, "Accessibility");
+            InspectorTest.expectThat(nestedAccessibilityGroup, "Demo audit should have a nested accessibility group.");
+            InspectorTest.expectFalse(nestedAccessibilityGroup.disabled, "Nested accessibility group should not be disabled when only one of its tests was disabled.");
+            InspectorTest.expectTrue(findTest(nestedAccessibilityGroup, "getElementsByComputedRole").disabled, "The disabled nested demo test should stay disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.RemoveTestWithoutLeavingEditMode",
+        description: "Removing a default test before edit mode ends should still save its descendants.",
+        async test() {
+            let manager = makeManager([]);
+            manager.editing = true;
+            manager.removeTest(topLevelTest(manager, "Accessibility"));
+
+            let saved = manager._disabledDefaultTestsSetting.value.slice();
+            InspectorTest.expectThat(saved.includes("Accessibility"), "Saved disabled tests should include the accessibility audit.");
+            InspectorTest.expectThat(saved.includes("testMenuRoleForRequiredChildren"), "Saved disabled tests should include the descendants of the removed test.");
+            InspectorTest.expectEqual(saved.length, 1 + topLevelTest(manager, "Accessibility").tests.length, "Saved disabled tests should include every descendant of the removed test.");
+
+            let reloadedManager = makeManager(saved);
+            InspectorTest.expectTrue(topLevelTest(reloadedManager, "Accessibility").disabled, "Accessibility audit should be disabled after reload.");
+            InspectorTest.expectFalse(topLevelTest(reloadedManager, "Demo Audit").disabled, "Demo audit should be enabled after reload.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.LocaleChange",
+        description: "A disabled leaf test should survive a locale change of its group names.",
+        async test() {
+            let saved = withStubbedAuditObjectStore(() => {
+                let manager = makeManager([]);
+                manager.editing = true;
+                findTest(topLevelTest(manager, "Accessibility"), "testButtonLabels").disabled = true;
+                manager.editing = false;
+                return manager._disabledDefaultTestsSetting.value.slice();
+            });
+            InspectorTest.expectThat(saved.includes("testButtonLabels"), "Saved disabled tests should include the leaf test by its name.");
+
+            let originalUIString = WI.UIString;
+            let reloadedManager;
+            try {
+                WI.UIString = (string, key, comment) => originalUIString("Translated " + string, key, comment);
+                reloadedManager = makeManager(saved);
+            } finally {
+                WI.UIString = originalUIString;
+            }
+
+            let testButtonLabels = null;
+            let walk = (test) => {
+                if (test.name === "testButtonLabels")
+                    testButtonLabels = test;
+                if (test instanceof WI.AuditTestGroup) {
+                    for (let child of test.tests)
+                        walk(child);
+                }
+            };
+            for (let test of reloadedManager.tests)
+                walk(test);
+            InspectorTest.expectThat(testButtonLabels, "Reloaded tests should include the disabled leaf test.");
+            if (testButtonLabels)
+                InspectorTest.expectTrue(testButtonLabels.disabled, "The disabled leaf test should stay disabled after a locale change.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.ManagerDisabledDefaultTests.MigrateAmbiguousRemovedAccessibilityAudit",
+        description: "A list written by the old removeTest without leaving edit mode is ambiguous and restores both accessibility groups enabled.",
+        async test() {
+            let manager = makeManager(["Accessibility"]);
+
+            let accessibilityAudit = topLevelTest(manager, "Accessibility");
+            InspectorTest.expectFalse(accessibilityAudit.disabled, "The real accessibility audit cannot be told from the nested one by a bare shared name, so it restores enabled.");
+
+            let nestedAccessibilityGroup = findTest(topLevelTest(manager, "Demo Audit"), "Accessibility");
+            InspectorTest.expectThat(nestedAccessibilityGroup, "Demo audit should have a nested accessibility group.");
+            if (nestedAccessibilityGroup)
+                InspectorTest.expectFalse(nestedAccessibilityGroup.disabled, "The nested accessibility group restores enabled.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that disabled default audits are saved and restored by a locale-independent identity.</p>
+</body>
+</html>
