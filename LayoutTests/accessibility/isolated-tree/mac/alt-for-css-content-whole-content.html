@@ -39,6 +39,14 @@ body { counter-reset: c 3; }
 #unusedContentAlt { content: "x" / "ALT UNUSED"; }
 #replacedLabel { content: url(../../mac/resources/cake.png) / "ALT LABEL"; }
 #replacedLabelTitled { content: url(../../mac/resources/cake.png) / "ALT LABEL TITLED"; }
+#replacedLabelEmptyAlt { content: url(../../mac/resources/cake.png) / ""; }
+#replacedImgTitleAlt { content: url(../../mac/resources/cake.png) / "ALT IMG TITLE"; }
+#replacedImgTitleNoAlt { content: url(../../mac/resources/cake.png); }
+#replacedImgAttrAlt { content: url(../../mac/resources/cake.png) / "ALT IMG CONTENT"; }
+#replacedDivTitleAlt { content: url(../../mac/resources/cake.png) / "ALT DIV TITLE"; }
+#replacedDivTitleNoAlt { content: url(../../mac/resources/cake.png); }
+#replacedDivTitleEmptyAlt { content: url(../../mac/resources/cake.png) / ""; }
+#replacedButtonTitleEmptyAlt { content: url(../../mac/resources/cake.png) / ""; }
 </style>
 </head>
 <body>
@@ -85,6 +93,17 @@ body { counter-reset: c 3; }
 <div id="unusedContentAlt" role="img"></div>
 <label id="replacedLabel" for="replacedLabelInput">LABEL TEXT</label><input id="replacedLabelInput">
 <label id="replacedLabelTitled" for="replacedLabelTitledInput" title="LABEL TITLE">LABEL TEXT</label><input id="replacedLabelTitledInput">
+<label id="replacedLabelEmptyAlt" for="replacedLabelEmptyAltInput" title="EMPTY ALT TITLE">LABEL TEXT</label><input id="replacedLabelEmptyAltInput">
+<label id="titledLabel" for="titledLabelInput" title="TITLE LABEL TITLE">TITLE LABEL TEXT</label><input id="titledLabelInput">
+<label id="titledEmptyLabel" for="titledEmptyLabelInput" title="EMPTY LABEL TITLE"></label><input id="titledEmptyLabelInput">
+<label id="altOnLabel" for="altOnLabelInput" alt="" title="ALT ON LABEL TITLE">ALT ON LABEL TEXT</label><input id="altOnLabelInput">
+<img id="replacedImgTitleAlt" title="TIP ALT">
+<img id="replacedImgTitleNoAlt" title="TIP NO ALT">
+<img id="replacedImgAttrAlt" alt="ALT IMG ATTRIBUTE" title="TIP ATTR">
+<div id="replacedDivTitleAlt" title="TIP DIV ALT"></div>
+<div id="replacedDivTitleNoAlt" title="TIP DIV NO ALT"></div>
+<div id="replacedDivTitleEmptyAlt" title="TIP DIV EMPTY ALT"></div>
+<div id="replacedButtonTitleEmptyAlt" role="button" tabindex="0" title="TIP BUTTON EMPTY ALT"></div>
 </div>
 
 <p id="description"></p>
@@ -141,6 +160,13 @@ function outputReplaced(id) {
     return id + " children: " + (element ? element.childrenCount : 0) + "\n" + outputElement(element);
 }
 
+function outputDescribed(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    if (!element)
+        return id + "\nnot exposed\n\n";
+    return id + "\n" + element.description + "\n" + element.helpText + "\n\n";
+}
+
 function outputHasChildren(id) {
     var element = accessibilityController.accessibleElementById(id);
     return id + " has children: " + (element ? element.childrenCount > 0 : false) + "\n"
@@ -183,6 +209,10 @@ if (window.accessibilityController) {
             output += outputTitle("emptyStringButton");
             output += outputTitle("replacedLabelInput");
             output += outputTitle("replacedLabelTitledInput");
+            output += outputTitle("replacedLabelEmptyAltInput");
+            output += outputTitle("titledLabelInput");
+            output += outputTitle("titledEmptyLabelInput");
+            output += outputTitle("altOnLabelInput");
 
             output += "Elements replaced by a content image\n";
             output += outputReplaced("replacedFocusable");
@@ -192,6 +222,13 @@ if (window.accessibilityController) {
             output += outputReplaced("replacedButton");
             output += outputHasChildren("replacedImageMap");
             output += outputHasChildren("replacedOverlay");
+            output += outputDescribed("replacedImgTitleAlt");
+            output += outputDescribed("replacedImgTitleNoAlt");
+            output += outputDescribed("replacedImgAttrAlt");
+            output += outputDescribed("replacedDivTitleAlt");
+            output += outputDescribed("replacedDivTitleNoAlt");
+            output += outputDescribed("replacedDivTitleEmptyAlt");
+            output += outputDescribed("replacedButtonTitleEmptyAlt");
 
             output += "Unused content alt text\n";
             output += outputReplaced("unusedContentAlt");
