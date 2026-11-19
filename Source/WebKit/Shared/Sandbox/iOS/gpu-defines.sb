@@ -184,8 +184,10 @@
             "kern.boottime"))
 
     (allow mach-lookup
-       ;; <rdar://problem/47268166>
-       (xpc-service-name "com.apple.MTLCompilerService"))
+       ;; <rdar://problem/193093374>
+       (xpc-service-name "com.apple.MTLCompilerService")
+       ;; Used by Metal when the process has the hardened-compiler entitlement.
+       (xpc-service-name "com.apple.MTLCompilerService.Hardened"))
     
     (mobile-preferences-read
         "com.apple.Metal")) ;; <rdar://problem/25535471>
