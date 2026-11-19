@@ -29,6 +29,7 @@
 #include "MIMETypeRegistry.h"
 #include <array>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore::StringEntropyHelpers {
 
@@ -143,33 +144,66 @@ bool isProbablyHumanReadable(StringView text)
     return entropyScore(text) >= 0;
 }
 
+static StringView fileExtensionWithoutFullStop(StringView component)
+{
+    auto fullStopIndex = component.reverseFind('.');
+    if (fullStopIndex == notFound || fullStopIndex >= component.length() - 1)
+        return { };
+
+    auto extensionWithoutFullStop = component.right(component.length() - fullStopIndex - 1);
+    auto firstNonAlphaNumericCharacterIndex = extensionWithoutFullStop.find([](char16_t character) {
+        return !u_isalpha(character) && !u_isdigit(character);
+    });
+
+    if (firstNonAlphaNumericCharacterIndex != notFound)
+        extensionWithoutFullStop = extensionWithoutFullStop.left(firstNonAlphaNumericCharacterIndex);
+
+    return extensionWithoutFullStop;
+}
+
+String humanReadableLastPathComponent(const URL& url)
+{
+    if (url.protocolIsData() || url.protocolIsBlob() || url.protocolIsJavaScript())
+        return { };
+
+    auto component = url.lastPathComponent();
+    if (isProbablyHumanReadable(component))
+        return component.toString();
+
+    auto extensionWithoutFullStop = fileExtensionWithoutFullStop(component);
+    if (extensionWithoutFullStop.isEmpty())
+        return { };
+
+    StringBuilder humanReadableName;
+    for (auto segment : component.left(component.reverseFind('.')).split('.')) {
+        if (!isProbablyHumanReadable(segment))
+            continue;
+
+        if (!humanReadableName.isEmpty())
+            humanReadableName.append('.');
+        humanReadableName.append(segment);
+    }
+
+    if (humanReadableName.isEmpty())
+        return { };
+
+    humanReadableName.append('.', extensionWithoutFullStop);
+    return humanReadableName.toString();
+}
+
 String lowEntropyLastPathComponent(const URL& url, const String& fallbackName, const String& mimeType)
 {
     if (url.protocolIsData() || url.protocolIsBlob() || url.protocolIsJavaScript())
         return fallbackName;
 
-    auto result = [&url, &fallbackName] -> String {
-        auto component = url.lastPathComponent();
-        if (isProbablyHumanReadable(component))
-            return component.toString();
-
-        auto fullStopIndex = component.reverseFind('.');
-        if (fullStopIndex == notFound || fullStopIndex >= component.length() - 1)
-            return fallbackName;
-
-        auto extensionWithoutFullStop = component.right(component.length() - fullStopIndex - 1);
-        auto firstNonAlphaNumericCharacterIndex = extensionWithoutFullStop.find([](char16_t character) {
-            return !u_isalpha(character) && !u_isdigit(character);
-        });
-
-        if (firstNonAlphaNumericCharacterIndex != notFound)
-            extensionWithoutFullStop = extensionWithoutFullStop.left(firstNonAlphaNumericCharacterIndex);
-
-        if (extensionWithoutFullStop.isEmpty())
-            return fallbackName;
-
-        return makeString(fallbackName, '.', WTF::move(extensionWithoutFullStop));
-    }();
+    auto component = url.lastPathComponent();
+    auto result = humanReadableLastPathComponent(url);
+    if (result.isNull() && !component.isEmpty()) {
+        if (auto extensionWithoutFullStop = fileExtensionWithoutFullStop(component); !extensionWithoutFullStop.isEmpty())
+            result = makeString(fallbackName, '.', extensionWithoutFullStop);
+        else
+            result = fallbackName;
+    }
 
     return MIMETypeRegistry::appendFileExtensionIfNecessary(WTF::move(result), mimeType);
 }

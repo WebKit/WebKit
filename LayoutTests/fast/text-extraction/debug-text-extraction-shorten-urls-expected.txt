@@ -37,6 +37,7 @@ root
 		image src=image2.gif alt='Image with high entropy name (duplicate)'
 		image src=image.png alt='Image with high entropy name, no extension'
 		image src=image.jpg alt='File extension with trailing text'
+		image src=logo-example-2025-crop.svg alt='Cache-busting suffix'
 
 -- markdown
 
@@ -75,6 +76,7 @@ Self link \(opaque fragment\)
 ![Image with high entropy name \(duplicate\)](image2.gif)
 ![Image with high entropy name, no extension](image.png)
 ![File extension with trailing text](image.jpg)
+![Cache-busting suffix](logo-example-2025-crop.svg)
 
 -- html
 
@@ -116,6 +118,7 @@ Self link \(opaque fragment\)
 		<img src='image2.gif' alt='Image with high entropy name (duplicate)'>
 		<img src='image.png' alt='Image with high entropy name, no extension'>
 		<img src='image.jpg' alt='File extension with trailing text'>
+		<img src='logo-example-2025-crop.svg' alt='Cache-busting suffix'>
 	</section>
 </body>
 

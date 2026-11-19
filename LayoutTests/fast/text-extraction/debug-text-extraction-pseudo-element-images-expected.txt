@@ -1,0 +1,10 @@
+root
+    link uid=… url=example.com/signin 'Sign in with'
+        image src=logo-example-2025-crop.svg
+    link uid=… url=example.com/signin2 'Sign in with'
+    link uid=… url=example.com/signin3 'Sign in with'
+    image src=green-256x256.jpg
+    'Leading icon'
+    'Hidden logo'
+    'Gradient'
+    'Empty logo'

@@ -1,0 +1,87 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+.case {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.case::before, .case::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 16px;
+}
+
+.remote-logo::after {
+    background-image: url("https://assets.example.com/images/G/01/ui/logo-example-2025-crop._CB1753135756_.svg");
+}
+
+.inline-logo::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='15'%3E%3Crect width='50' height='15' fill='orange'/%3E%3C/svg%3E");
+}
+
+.hashed-logo::after {
+    background-image: url("https://assets.example.com/61d7035fa8d4.svg");
+}
+
+.leading-icon::before {
+    background-image: url("../images/resources/green-256x256.jpg");
+}
+
+.hidden-logo::after {
+    visibility: hidden;
+    background-image: url("https://assets.example.com/hidden-logo.svg");
+}
+
+.gradient::after {
+    background-image: linear-gradient(red, blue);
+}
+
+.empty-logo::after {
+    width: 0;
+    height: 0;
+    background-image: url("https://assets.example.com/empty-logo.svg");
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<a class="case remote-logo" href="https://example.com/signin?provider=remote">Sign in with</a>
+<a class="case inline-logo" href="https://example.com/signin?provider=inline">Sign in with</a>
+<a class="case hashed-logo" href="https://example.com/signin?provider=hashed">Sign in with</a>
+<div class="case leading-icon">Leading icon</div>
+<div class="case hidden-logo">Hidden logo</div>
+<div class="case gradient">Gradient</div>
+<div class="case empty-logo">Empty logo</div>
+
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        includeURLs: true,
+        shortenURLs: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

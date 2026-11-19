@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "BoundaryPointInlines.h"
+#include "CachedImage.h"
 #include "CommonVM.h"
 #include "ComposedTreeIterator.h"
 #include "ContainerNodeInlines.h"
@@ -78,6 +79,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PositionInlines.h"
+#include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
@@ -96,6 +98,7 @@
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include "StringEntropyHelpers.h"
+#include "StyleImage.h"
 #include "StyleTextDecorationLine.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -1311,6 +1314,81 @@ static bool looksVisuallyClickable(const RenderObject& renderer)
     return parentStyle->cursorType() != CursorType::Pointer || parentStyle->pointerEvents() == PointerEvents::None;
 }
 
+static void extractPseudoElementBackgroundImage(PseudoElement* pseudoElement, Item& parentItem, TraversalContext& context)
+{
+    if (!pseudoElement || context.onlyCollectTextAndLinksCount)
+        return;
+
+    CheckedPtr renderer = pseudoElement->renderer();
+    if (!renderer)
+        return;
+
+    CheckedRef style = renderer->style();
+    if (renderer->usedStyle().visibility() != UsedVisibility::Visible || style->opacity() < minOpacityToConsiderVisible)
+        return;
+
+    RefPtr<Style::Image> image;
+    for (auto& layer : style->backgroundLayers().usedValues()) {
+        if (RefPtr layerImage = layer.image().tryStyleImage(); layerImage && !layerImage->url().resolved.isEmpty()) {
+            image = WTF::move(layerImage);
+            break;
+        }
+    }
+
+    if (!image)
+        return;
+
+    auto url = image->url().resolved;
+    if (StringEntropyHelpers::humanReadableLastPathComponent(url).isEmpty())
+        return;
+
+    auto bounds = mainFrameViewBounds(*pseudoElement);
+    if (isNearlyEmpty(bounds))
+        return;
+
+    if (!context.originalRequest.includeClippedContent && isClippedOutByAncestors(*pseudoElement, bounds))
+        return;
+
+    if (!context.inAdditionalContainerToCollectCount && !context.shouldIncludeNodeWithRect(bounds)) {
+        if (!context.hasOverflowItemsStack.isEmpty())
+            context.hasOverflowItemsStack.last() = true;
+        return;
+    }
+
+    String mimeType;
+    if (RefPtr cachedImage = image->cachedImage()) {
+        if (RefPtr underlyingImage = cachedImage->image())
+            mimeType = underlyingImage->mimeType();
+    }
+
+    if (mimeType.isEmpty())
+        mimeType = "image/png"_s;
+
+    auto shortenedName = StringEntropyHelpers::lowEntropyLastPathComponent(url, "image"_s, mimeType);
+    Item item {
+        ImageItemData {
+            .completedSource = WTF::move(url),
+            .shortenedName = WTF::move(shortenedName),
+            .altText = { },
+        },
+        WTF::move(bounds),
+        { },
+        "IMG"_s,
+        { },
+        { context.frameIdentifier },
+        { },
+        { },
+        { },
+        { },
+        { },
+        { },
+        { },
+        context.enclosingBlockNumber(),
+    };
+    item.visualBlockContainerNumber = context.currentVisualBlockContainerNumber();
+    parentItem.children.append(WTF::move(item));
+}
+
 static inline void extractRecursive(Node& node, Item& parentItem, TraversalContext& context)
 {
     if (context.depth >= maxExtractionRecursionDepth)
@@ -1634,8 +1712,16 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         context.hasOverflowItemsStack.append(false);
 
     if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
+        auto& itemForChildren = item ? *item : parentItem;
+        RefPtr element = dynamicDowncast<Element>(*container);
+        if (element)
+            extractPseudoElementBackgroundImage(protect(element->beforePseudoElement()), itemForChildren, context);
+
         for (Ref child : composedTreeChildren<0>(*container))
-            extractRecursive(child.get(), item ? *item : parentItem, context);
+            extractRecursive(child.get(), itemForChildren, context);
+
+        if (element)
+            extractPseudoElementBackgroundImage(protect(element->afterPseudoElement()), itemForChildren, context);
 
         if (RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(node); iframe && item && context.originalRequest.includeSameOriginSubframes) {
             if (RefPtr frame = dynamicDowncast<LocalFrame>(iframe->contentFrame())) {
