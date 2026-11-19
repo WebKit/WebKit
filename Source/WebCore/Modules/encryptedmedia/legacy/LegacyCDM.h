@@ -62,6 +62,8 @@ public:
     static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
     static RefPtr<LegacyCDM> create(const String& keySystem);
     static void registerCDMFactory(CreateCDM&&, CDMSupportsKeySystem&&, CDMSupportsKeySystemAndMimeType&&);
+    static void setMockCDMFactory(CreateCDM&&, CDMSupportsKeySystem&&, CDMSupportsKeySystemAndMimeType&&);
+    static void clearMockCDMFactory();
     ~LegacyCDM();
 
     static void resetFactories();

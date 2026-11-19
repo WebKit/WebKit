@@ -73,6 +73,12 @@ static Vector<LegacyCDMFactory>& installedCDMFactories()
     return cdms;
 }
 
+static std::optional<LegacyCDMFactory>& mockCDMFactory()
+{
+    static NeverDestroyed<std::optional<LegacyCDMFactory>> factory;
+    return factory;
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCDM);
 
 void LegacyCDM::resetFactories()
@@ -91,6 +97,16 @@ void LegacyCDM::registerCDMFactory(CreateCDM&& constructor, CDMSupportsKeySystem
     installedCDMFactories().append({ WTF::move(constructor), WTF::move(supportsKeySystem), WTF::move(supportsKeySystemAndMimeType) });
 }
 
+void LegacyCDM::setMockCDMFactory(CreateCDM&& constructor, CDMSupportsKeySystem&& supportsKeySystem, CDMSupportsKeySystemAndMimeType&& supportsKeySystemAndMIMEType)
+{
+    mockCDMFactory() = LegacyCDMFactory { WTF::move(constructor), WTF::move(supportsKeySystem), WTF::move(supportsKeySystemAndMIMEType) };
+}
+
+void LegacyCDM::clearMockCDMFactory()
+{
+    mockCDMFactory() = std::nullopt;
+}
+
 static LegacyCDMFactory* CDMFactoryForKeySystem(const String& keySystem)
 {
     auto& factories = installedCDMFactories();
@@ -98,6 +114,9 @@ static LegacyCDMFactory* CDMFactoryForKeySystem(const String& keySystem)
         if (borrow(factories)[i].supportsKeySystem(keySystem))
             return &factories[i];
     }
+    auto& mockFactory = mockCDMFactory();
+    if (mockFactory && mockFactory->supportsKeySystem(keySystem))
+        return &*mockFactory;
     return nullptr;
 }
 

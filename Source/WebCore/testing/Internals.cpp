@@ -805,6 +805,10 @@ void Internals::resetToConsistentState(Page& page)
 
     PlatformMediaEngineConfigurationFactory::disableMock();
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    LegacyCDM::clearMockCDMFactory();
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
     MockCDMFactory::unregisterAllMockFactories();
 #endif
@@ -5242,7 +5246,7 @@ void Internals::enableSizeToContentAutoSizeMode(bool enabled, int width, int hei
 
 void Internals::initializeMockCDM()
 {
-    LegacyCDM::registerCDMFactory([] (LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<LegacyMockCDM>(cdm); },
+    LegacyCDM::setMockCDMFactory([](LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<LegacyMockCDM>(cdm); },
         LegacyMockCDM::supportsKeySystem, LegacyMockCDM::supportsKeySystemAndMimeType);
 }
 
