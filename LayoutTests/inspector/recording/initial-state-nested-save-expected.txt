@@ -1,0 +1,23 @@
+Tests that a recording that starts inside save() replays at the right transform and keeps its context attributes.
+
+
+== Running test suite: Recording.InitialState.NestedSave
+-- Running test case: Recording.InitialState.NestedSave.Preview
+PASS: Should have one state per save level.
+PASS: The first state should keep the absolute matrix.
+PASS: The second state should keep the absolute matrix.
+PASS: The preview should not compound the saved transforms.
+
+-- Running test case: Recording.InitialState.NestedSave.Reduction
+PASS: The reduction should not multiply the saved matrices.
+PASS: The replayed reduction should end at the starting matrix.
+
+-- Running test case: Recording.InitialState.NestedSave.Snapshot
+PASS: The last action should be the fillRect().
+PASS: Two recorded save() calls should leave two saved states and the current state.
+PASS: The snapshot should not compound the saved transforms.
+
+-- Running test case: Recording.InitialState.NestedSave.ContextAttributes
+PASS: The getContext() call should carry the attributes inline.
+PASS: The attributes should not be left as an object reference.
+
