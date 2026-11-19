@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>CSS selectors corner case - :has(:nth-child()) on the subject element is invalidated on insertion</title>
+    <style>
+      .container {
+          padding: 10px;
+          background: green;
+      }
+      .container > div {
+          background: lightgray;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div>First</div>
+      <div>Second</div>
+      <div>Third</div>
+    </div>
+  </body>
+</html>

@@ -45,6 +45,7 @@ private:
     void invalidateForHasBeforeMutation();
     void invalidateForHasAfterMutation();
     void invalidateAfterChange();
+    NODELETE void resetCachedChildIndexes();
     void checkForSiblingStyleChanges();
     using MatchingHasSelectors = HashSet<const CSSSelector*>;
     enum class ChangedElementRelation : uint8_t { SelfOrDescendant, Sibling, FirstOrLastChild };
@@ -53,6 +54,7 @@ private:
     void invalidateForHasSiblings(MatchingHasSelectors&, MutationPhase);
 
     NODELETE bool emptyStateMayChange() const;
+    bool mayChangeElementOrder() const;
 
     template<typename Function> void traverseRemovedElements(NOESCAPE const Function&);
     template<typename Function> void traverseAddedElements(NOESCAPE const Function&);
@@ -84,8 +86,40 @@ inline ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container
         invalidateForHasBeforeMutation();
 }
 
+inline bool ChildChangeInvalidation::mayChangeElementOrder() const
+{
+    using Type = ContainerNode::ChildChange::Type;
+    switch (m_childChange.type) {
+    case Type::ElementInserted:
+    case Type::ElementRemoved:
+    case Type::ElementMovedInto:
+    case Type::ElementMovedFrom:
+    case Type::ElementAndTextInserted:
+    case Type::AllChildrenRemoved:
+    case Type::AllChildrenReplaced:
+        return true;
+    case Type::TextInserted:
+    case Type::TextRemoved:
+    case Type::TextChanged:
+    case Type::TextMovedFrom:
+    case Type::TextMovedInto:
+    case Type::NonContentsChildRemoved:
+    case Type::NonContentsChildInserted:
+    case Type::NonContentsChildMovedInto:
+    case Type::NonContentsChildMovedFrom:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
 inline ChildChangeInvalidation::~ChildChangeInvalidation()
 {
+    // This must happen even when style invalidation is disabled as the cached indexes are also
+    // read by selector matching outside of style resolution (querySelector(), :has() invalidation).
+    if (m_parentElement && mayChangeElementOrder())
+        resetCachedChildIndexes();
+
     if (!m_isEnabled)
         return;
 

@@ -1354,10 +1354,10 @@ void TreeResolver::resetDescendantStyleRelations(Element& element, DescendantsTo
         break;
     case DescendantsToResolve::All:
         element.resetAllDescendantStyleRelations();
-        if (&element == m_document->documentElement())
+        if (&element == m_document->documentElement()) {
             m_isFullDocumentStyleRebuild = true;
-        if (m_isFullDocumentStyleRebuild)
             element.resetHasSiblingFlags();
+        }
         break;
     };
 }
@@ -1457,6 +1457,10 @@ void TreeResolver::resolveComposedTree()
 
             if (*resolutionType == ResolutionType::Full)
                 element->resetStyleRelations();
+
+            // Do it before resolving element as matching :has() against the element itself may set the flags on it.
+            if (m_isFullDocumentStyleRebuild)
+                element->resetHasSiblingFlags();
 
             if (element->hasCustomStyleResolveCallbacks())
                 element->willRecalcStyle(parent.changes);
