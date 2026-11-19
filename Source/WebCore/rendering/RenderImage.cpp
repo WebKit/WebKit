@@ -268,10 +268,12 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
-    if (imageSize == intrinsicSize())
+    if (LayoutSize(imageSize) == intrinsicSizeWithZoom())
         return ImageSizeChangeNone;
 
-    setIntrinsicSize(imageSize);
+    auto unzoomedImageSize = LayoutSize(imageSize);
+    unzoomedImageSize.scale(1 / style().usedZoom());
+    setIntrinsicSize(unzoomedImageSize);
     return ImageSizeChangeForAltText;
 }
 
@@ -551,7 +553,7 @@ Ref<NativePromise<Ref<ShareableBitmap>, void>> RenderImage::createShareableBitma
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
 {
-    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().usedZoom());
+    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(1.0f);
     LayoutSize oldIntrinsicSize = intrinsicSize();
 
     updateIntrinsicSizeIfNeeded(newIntrinsicSize);

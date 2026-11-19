@@ -104,6 +104,7 @@ protected:
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
+    // Writers store the unzoomed intrinsic size here; zoom is applied at the point of use by intrinsicSizeWithZoom().
     void setIntrinsicSize(const LayoutSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
     virtual void intrinsicSizeChanged();
     virtual bool hasRelativeIntrinsicLogicalWidth() const { return false; }
@@ -156,6 +157,7 @@ private:
 
     bool hasReplacedLogicalHeight() const;
 
+    // Unzoomed intrinsic size; most consumers should use intrinsicSizeWithZoom().
     mutable LayoutSize m_intrinsicSize;
 };
 

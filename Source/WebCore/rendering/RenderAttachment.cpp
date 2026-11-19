@@ -81,14 +81,17 @@ LayoutSize RenderAttachment::layoutWideLayoutAttachmentOnly()
 void RenderAttachment::layout()
 {
     if (auto size = layoutWideLayoutAttachmentOnly(); !size.isEmpty()) {
-        setIntrinsicSize(size);
+        auto unzoomedSize = size;
+        unzoomedSize.scale(1 / style().usedZoom());
+        setIntrinsicSize(unzoomedSize);
         RenderReplaced::layout();
         if (hasShadowContent())
             layoutShadowContent(intrinsicSizeWithZoom());
         return;
     }
 
-    LayoutSize newIntrinsicSize = theme().attachmentIntrinsicSize(*this);
+    auto newIntrinsicSize = theme().attachmentIntrinsicSize(*this);
+    newIntrinsicSize.scale(1 / style().usedZoom());
 
     if (!theme().attachmentShouldAllowWidthToShrink(*this)) {
         m_minimumIntrinsicWidth = std::max(m_minimumIntrinsicWidth, newIntrinsicSize.width());

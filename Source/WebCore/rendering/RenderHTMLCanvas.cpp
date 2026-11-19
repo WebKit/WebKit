@@ -226,7 +226,7 @@ void RenderHTMLCanvas::canvasSizeChanged()
     if (zoomedSize == intrinsicSizeWithZoom())
         return;
 
-    setIntrinsicSize(zoomedSize);
+    setIntrinsicSize(LayoutSize(canvasSize));
 
     if (!parent())
         return;

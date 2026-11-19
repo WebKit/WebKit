@@ -189,9 +189,7 @@ void RenderReplaced::layout()
 
 void RenderReplaced::intrinsicSizeChanged()
 {
-    int scaledWidth = static_cast<int>(cDefaultWidth * style().usedZoom());
-    int scaledHeight = static_cast<int>(cDefaultHeight * style().usedZoom());
-    m_intrinsicSize = IntSize(scaledWidth, scaledHeight);
+    m_intrinsicSize = IntSize(cDefaultWidth, cDefaultHeight);
     setNeedsLayoutAndInvalidateContentLogicalWidths();
 }
 
@@ -547,11 +545,21 @@ static FloatSize computeIntrinsicSizeForRenderer(const RenderReplaced& replacedR
     if (CheckedPtr renderWidget =dynamicDowncast<RenderWidget>(replacedRenderer))
         return { replacedRenderer.intrinsicLogicalWidth(), replacedRenderer.intrinsicLogicalHeight() };
 
-    if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(replacedRenderer))
-        return svgRoot->computeIntrinsicSize();
+    if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(replacedRenderer)) {
+        auto intrinsicSize = svgRoot->computeIntrinsicSize();
+        // The containment path already reads the cache through zoomed accessors; only the
+        // attribute-derived size needs the zoom applied to match this function's zoomed contract.
+        if (!svgRoot->shouldApplySizeOrInlineSizeContainment())
+            intrinsicSize.scale(replacedRenderer.style().usedZoom());
+        return intrinsicSize;
+    }
 
-    if (CheckedPtr legacySVGRoot = dynamicDowncast<LegacyRenderSVGRoot>(replacedRenderer))
-        return legacySVGRoot->computeIntrinsicSize();
+    if (CheckedPtr legacySVGRoot = dynamicDowncast<LegacyRenderSVGRoot>(replacedRenderer)) {
+        auto intrinsicSize = legacySVGRoot->computeIntrinsicSize();
+        if (!legacySVGRoot->shouldApplySizeOrInlineSizeContainment())
+            intrinsicSize.scale(replacedRenderer.style().usedZoom());
+        return intrinsicSize;
+    }
 
     return { replacedRenderer.intrinsicLogicalWidth(), replacedRenderer.intrinsicLogicalHeight() };
 }
@@ -565,15 +573,22 @@ void RenderReplaced::computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(Fl
         intrinsicSize = computeIntrinsicSizeForRenderer(*this);
         intrinsicRatio = preferredAspectRatioAsSize();
 
+        // computeIntrinsicSizeForRenderer returns a zoomed size, but the cache holds the unzoomed
+        // intrinsic size. Skip the write when the cache already yields the computed size: the value
+        // came from the cache itself, and un-scaling + re-truncating on every call would steadily
+        // shrink it under non-dyadic zooms.
         auto sizeToCache = isHorizontalWritingMode() ? intrinsicSize : intrinsicSize.transposedSize();
-        if (embeddedSVGRoot() && isRenderWidget()) {
-            if (!sizeToCache.width())
-                sizeToCache.setWidth(cDefaultWidth);
-            if (!sizeToCache.height())
-                sizeToCache.setHeight(cDefaultHeight);
-            m_intrinsicSize = LayoutSize(sizeToCache);
-        } else if (!intrinsicRatio.isEmpty() && !intrinsicSize.isZero())
-            m_intrinsicSize = LayoutSize(sizeToCache);
+        if (LayoutSize(sizeToCache) != intrinsicSizeWithZoom()) {
+            sizeToCache.scale(1 / style().usedZoom());
+            if (embeddedSVGRoot() && isRenderWidget()) {
+                if (!sizeToCache.width())
+                    sizeToCache.setWidth(cDefaultWidth);
+                if (!sizeToCache.height())
+                    sizeToCache.setHeight(cDefaultHeight);
+                m_intrinsicSize = LayoutSize(sizeToCache);
+            } else if (!intrinsicRatio.isEmpty() && !intrinsicSize.isZero())
+                m_intrinsicSize = LayoutSize(sizeToCache);
+        }
 
         // Apply object-view-box: use view box dimensions as the element's effective natural size.
         // intrinsicSize here is in logical coordinates; convert to physical for resolvedObjectViewBox,
@@ -1241,19 +1256,18 @@ LayoutSize RenderReplaced::intrinsicSize() const
     }
 
     auto size = m_intrinsicSize;
-    auto zoomValue = style().usedZoom();
     if (isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment())
-        size.setWidth(explicitIntrinsicInnerWidth().value_or(0_lu) * zoomValue);
+        size.setWidth(explicitIntrinsicInnerWidth().value_or(0_lu));
     if (isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment())
-        size.setHeight(explicitIntrinsicInnerHeight().value_or(0_lu) * zoomValue);
+        size.setHeight(explicitIntrinsicInnerHeight().value_or(0_lu));
     return size;
 }
 
 LayoutSize RenderReplaced::intrinsicSizeWithZoom() const
 {
-    // FIXME: m_intrinsicSize currently stores the zoomed value; it will become an
-    // unzoomed value with the zoom applied here once the writers are converted.
-    return intrinsicSize();
+    auto size = intrinsicSize();
+    size.scale(style().usedZoom());
+    return size;
 }
 
 void RenderReplaced::layoutShadowContent(const LayoutSize& oldSize)

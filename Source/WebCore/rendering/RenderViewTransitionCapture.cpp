@@ -95,10 +95,12 @@ void RenderViewTransitionCapture::setDisplayOnlyImage(RefPtr<NativeImage>&& oldI
 
 bool RenderViewTransitionCapture::setCapturedSize(const LayoutSize& size, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset)
 {
-    if (m_overflowRect == overflowRect && intrinsicSize() == size && m_layerToLayoutOffset == layerToLayoutOffset)
+    auto unzoomedSize = size;
+    unzoomedSize.scale(1 / style().usedZoom());
+    if (m_overflowRect == overflowRect && intrinsicSize() == unzoomedSize && m_layerToLayoutOffset == layerToLayoutOffset)
         return false;
-    m_imageIntrinsicSize = size;
-    setIntrinsicSize(size);
+    m_imageIntrinsicSize = unzoomedSize;
+    setIntrinsicSize(unzoomedSize);
     m_overflowRect = overflowRect;
     m_layerToLayoutOffset = layerToLayoutOffset;
     return true;
