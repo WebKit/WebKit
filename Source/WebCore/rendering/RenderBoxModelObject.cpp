@@ -1366,6 +1366,11 @@ std::optional<LayoutUnit> RenderBoxModelObject::availableLogicalHeightForPercent
     return paddingBoxLogicalHeight();
 }
 
+bool RenderBoxModelObject::hasDefiniteLogicalHeight() const
+{
+    return (bool)availableLogicalHeightForPercentageComputation();
+}
+
 bool RenderBoxModelObject::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const
 {
     ASSERT(isInlineBox());
