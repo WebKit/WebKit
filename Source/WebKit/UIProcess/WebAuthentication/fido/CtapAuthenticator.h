@@ -70,6 +70,8 @@ private:
     void continueRequestAfterGetPinToken(Vector<uint8_t>&&, const fido::pin::TokenRequest&);
     bool tryRestartPin(const fido::CtapDeviceResponseCode&);
 
+    void fetchKeyAgreement(bool includeCurrentBatch = false);
+    void continueAfterFetchKeyAgreement(Vector<uint8_t>&&, bool includeCurrentBatch);
     std::optional<fido::HmacSecretParameters> prepareHmacSecretParameters(const WebCore::AuthenticationExtensionsClientInputs::PRFInputs&, const std::optional<Vector<uint8_t>>& credentialId);
 
     bool canDowngradeToU2f() const;
