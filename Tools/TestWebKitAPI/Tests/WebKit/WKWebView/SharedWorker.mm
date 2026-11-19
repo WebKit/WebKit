@@ -443,6 +443,63 @@ TEST(SharedWorkerProcessPlacement, CustomSchemeDocumentWithoutHostCanStartShared
     EXPECT_WK_STREQ("connected", [webView stringByEvaluatingJavaScript:@"window.workerResult || ''"]);
 }
 
+// HTTPS-by-default upgrades the main resource in the web content process, after the UI process has
+// recorded the http site of the navigation request, so the document's top origin is the https site.
+TEST(SharedWorkerProcessPlacement, HTTPSByDefaultUpgradedDocumentCanStartSharedWorker)
+{
+    HTTPServer httpsServer({
+        { "/main.html"_s, { dataURLSharedWorkerBytes } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    HTTPServer httpServer({
+        { "http://site.example/main.html"_s, { dataURLSharedWorkerBytes } }
+    }, HTTPServer::Protocol::Http);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"HTTPSByDefaultEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    bool webContentProcessTerminated = false;
+    auto* terminatedFlag = &webContentProcessTerminated;
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
+        *terminatedFlag = true;
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/main.html"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Without the upgrade, the top origin is the site the UI process recorded and this test checks nothing.
+    EXPECT_WK_STREQ("https:", [webView stringByEvaluatingJavaScript:@"window.location.protocol"]);
+
+    auto webProcessBeforeWorker = [webView _webProcessIdentifier];
+    EXPECT_NE(0, webProcessBeforeWorker);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return webContentProcessTerminated || [[webView stringByEvaluatingJavaScript:@"window.workerResult || ''"] isEqualToString:@"connected"];
+    }, 100));
+
+    ASSERT_FALSE(webContentProcessTerminated);
+    EXPECT_EQ(webProcessBeforeWorker, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ("connected", [webView stringByEvaluatingJavaScript:@"window.workerResult || ''"]);
+}
+
 static constexpr auto siteIsolationMismatchMainBytes = R"TESTRESOURCE(
 <!DOCTYPE html>
 <body>

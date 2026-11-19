@@ -701,7 +701,13 @@ bool NetworkProcess::allowsFirstPartySite(WebCore::ProcessIdentifier processIden
     if (iterator->value.loadedWebArchive == LoadedWebArchive::Yes)
         return true;
 
-    return iterator->value.sites.contains(site);
+    auto& sites = iterator->value.sites;
+    if (sites.contains(site))
+        return true;
+
+    // The web content process may upgrade an http navigation to https (HTTPS-by-default, content
+    // blocker make-https) after the UI process recorded the http site of the navigation request.
+    return site.protocol() == "https"_s && sites.contains(WebCore::Site { String { "http"_s }, WebCore::RegistrableDomain { site.domain() } });
 }
 
 void NetworkProcess::addAllowedWebPageProxyIdentifier(WebCore::ProcessIdentifier processIdentifier, WebPageProxyIdentifier pageID)
