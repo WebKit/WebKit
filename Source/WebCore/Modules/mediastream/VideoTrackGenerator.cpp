@@ -177,6 +177,7 @@ void VideoTrackGenerator::Source::writeVideoFrame(VideoFrame& frame, VideoFrameT
         });
     }
 
+    m_frameRateMonitor.update();
     videoFrameAvailable(frame, metadata);
 }
 

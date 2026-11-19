@@ -256,6 +256,7 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     gstVideoFrame.setMetadata({ metadata }, VideoFrameContentHint::Canvas, { });
 #endif
 
+    m_frameRateMonitor.update();
     videoFrameAvailable(*videoFrame, metadata);
 }
 

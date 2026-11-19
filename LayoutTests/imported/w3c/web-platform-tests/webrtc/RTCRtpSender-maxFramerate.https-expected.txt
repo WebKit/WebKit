@@ -1,0 +1,4 @@
+
+PASS setParameters() with maxFramerate limits the encoded frame rate of a canvas track generated at 60 fps
+PASS setParameters() with maxFramerate limits the encoded frame rate of a VideoTrackGenerator track generated at 60 fps
+

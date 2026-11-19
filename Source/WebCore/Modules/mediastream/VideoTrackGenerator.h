@@ -26,6 +26,7 @@
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
 
+#include "FrameRateMonitor.h"
 #include "RealtimeMediaSource.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "WritableStreamSink.h"
@@ -70,6 +71,7 @@ private:
         const RealtimeMediaSourceCapabilities& capabilities() LIFETIME_BOUND final { return m_capabilities; }
         const RealtimeMediaSourceSettings& settings() LIFETIME_BOUND final { return m_settings; }
         void endProducingData() final;
+        double observedFrameRate() const final { return m_frameRateMonitor.observedFrameRate(); }
 
         ScriptExecutionContextIdentifier m_contextIdentifier;
         WeakPtr<WritableStream> m_writable;
@@ -78,6 +80,7 @@ private:
         RealtimeMediaSourceSettings m_settings;
         IntSize m_videoFrameSize;
         IntSize m_maxVideoFrameSize;
+        FrameRateMonitor m_frameRateMonitor { [](auto) { } };
     };
 
     class Sink final : public WritableStreamSink {

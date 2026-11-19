@@ -28,6 +28,7 @@
 
 #include "CanvasBase.h"
 #include "CanvasObserver.h"
+#include "FrameRateMonitor.h"
 #include "MediaStreamTrack.h"
 #include "Timer.h"
 #include <wtf/CheckedRef.h>
@@ -93,11 +94,13 @@ private:
         void captureCanvas();
         NODELETE void requestFrameTimerFired();
         CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Canvas; }
+        double observedFrameRate() const final { return m_frameRateMonitor.observedFrameRate(); }
 
         bool m_shouldEmitFrame { true };
         std::optional<double> m_frameRequestRate;
         Timer m_requestFrameTimer;
         Timer m_captureCanvasTimer;
+        FrameRateMonitor m_frameRateMonitor { [](auto) { } };
         std::optional<RealtimeMediaSourceSettings> m_currentSettings;
         WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvas;
 #if USE(GSTREAMER)

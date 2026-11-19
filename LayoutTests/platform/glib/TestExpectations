@@ -2920,6 +2920,7 @@ webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
 
 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-currentTime.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCRtpSender-maxFramerate.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure ]
 
 # The last promise test here fails because webrtcbin doesn't rely on a singleton signaling thread.
