@@ -24,6 +24,7 @@
 
 import unittest
 
+from webkitexpectationspy.manager import ExpectationsManager
 from webkitexpectationspy.suites.api_tests import APITestSuite
 from webkitexpectationspy.expectations import ResultStatus
 
@@ -114,6 +115,31 @@ class APITestSuiteTest(unittest.TestCase):
         for pattern in invalid_patterns:
             self.assertIsNone(self.suite.validate_test_pattern(pattern),
                               f"Pattern should be invalid: {pattern}")
+
+
+class APITestWildcardTest(unittest.TestCase):
+
+    def manager(self, content):
+        manager = ExpectationsManager(suite=APITestSuite())
+        manager.load_content('apitests', content)
+        return manager
+
+    def test_wildcard_is_a_wildcard(self):
+        self.assertTrue(APITestSuite().is_wildcard_pattern('TestWebKitAPI.WTF.*'))
+        self.assertFalse(APITestSuite().is_wildcard_pattern('TestWebKitAPI.WTF.StringTest'))
+
+    def test_wildcard_applies_to_matching_tests(self):
+        manager = self.manager('TestWebKitAPI.WTF.* [ Skip ]\n')
+        self.assertTrue(manager.get_expectation('TestWebKitAPI.WTF.StringTest').skip)
+        self.assertIsNone(manager.get_expectation('TestWebKitAPI.WebKit.Load'))
+
+    def test_exact_entry_wins_over_wildcard(self):
+        manager = self.manager('TestWebKitAPI.WTF.* [ Skip ]\nTestWebKitAPI.WTF.StringTest [ Fail ]\n')
+        self.assertEqual(manager.get_expectation('TestWebKitAPI.WTF.StringTest').expected, ResultStatus.FAIL)
+
+    def test_wildcard_matching_a_test_is_not_stale(self):
+        warnings = self.manager('TestWebKitAPI.WTF.* [ Skip ]\n').lint(all_tests=['TestWebKitAPI.WTF.StringTest'])
+        self.assertFalse([warning for warning in warnings if 'matches no tests' in warning.message])
 
 
 if __name__ == '__main__':
