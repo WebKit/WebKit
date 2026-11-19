@@ -1,0 +1,10 @@
+
+PASS I420P10 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I422P10 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I444P10 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I420P12 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I422P12 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I444P12 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I420P10 frame scaled by a vp09.02.10.10 encoder keeps 10 bits
+PASS I420P10 frame encoded with vp09.00.10.08 decodes to 8 bits
+

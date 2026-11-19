@@ -53,7 +53,7 @@ public:
 private:
     LibWebRTCVPXVideoEncoder(Type, DescriptionCallback&&, OutputCallback&&);
 
-    int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
+    int initialize(const VideoEncoder::Config&);
     Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) final;
     Ref<GenericPromise> flush() final;
     void reset() final;

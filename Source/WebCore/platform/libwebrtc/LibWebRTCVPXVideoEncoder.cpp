@@ -34,6 +34,7 @@
 #include "LibWebRTCColorSpaceUtilities.h"
 #include "LibWebRTCVideoFrameUtilities.h"
 #include "Logging.h"
+#include "PlanarImageConverterCV.h"
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -46,6 +47,7 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/api/environment/environment_factory.h>
+#include <webrtc/api/video/i010_buffer.h>
 #include <webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder.h>
 #include <webrtc/modules/video_coding/codecs/vp8/include/vp8.h>
 #include <webrtc/modules/video_coding/codecs/vp9/include/vp9.h>
@@ -77,7 +79,7 @@ public:
     NODELETE static Ref<LibWebRTCVPXInternalVideoEncoder> create(LibWebRTCVPXVideoEncoder::Type type, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoEncoder(type, WTF::move(descriptionCallback), WTF::move(outputCallback))); }
     ~LibWebRTCVPXInternalVideoEncoder() = default;
 
-    int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
+    int initialize(const VideoEncoder::Config&);
 
     Ref<VideoEncoder::EncodePromise> encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
     NODELETE void close() { m_isClosed = true; }
@@ -88,8 +90,11 @@ private:
     webrtc::EncodedImageCallback::Result OnEncodedImage(const webrtc::EncodedImage&, const webrtc::CodecSpecificInfo*) final;
     void OnFrameDropped(uint32_t rtpTimestamp, int spatialID, bool isEndOfTemporalUnit) final;
 
+    webrtc::scoped_refptr<webrtc::VideoFrameBuffer> frameBufferForEncoding(VideoFrame&, PlatformVideoColorSpace&);
+
     VideoEncoder::DescriptionCallback m_descriptionCallback;
     VideoEncoder::OutputCallback m_outputCallback;
+    const LibWebRTCVPXVideoEncoder::Type m_type;
     const UniqueRef<webrtc::VideoEncoder> m_internalEncoder;
     int64_t m_timestamp { 0 };
     int64_t m_timestampOffset { 0 };
@@ -109,7 +114,7 @@ private:
 void LibWebRTCVPXVideoEncoder::create(Type type, const VideoEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     Ref encoder = adoptRef(*new LibWebRTCVPXVideoEncoder(type, WTF::move(descriptionCallback), WTF::move(outputCallback)));
-    auto error = encoder->initialize(type, config);
+    auto error = encoder->initialize(config);
 
     if (error) {
         callback(makeUnexpected(makeString("VPx encoding initialization failed with error "_s, error)));
@@ -125,9 +130,9 @@ LibWebRTCVPXVideoEncoder::LibWebRTCVPXVideoEncoder(Type type, DescriptionCallbac
 
 LibWebRTCVPXVideoEncoder::~LibWebRTCVPXVideoEncoder() = default;
 
-int LibWebRTCVPXVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type type, const VideoEncoder::Config& config)
+int LibWebRTCVPXVideoEncoder::initialize(const VideoEncoder::Config& config)
 {
-    return m_internalEncoder->initialize(type, config);
+    return m_internalEncoder->initialize(config);
 }
 
 Ref<VideoEncoder::EncodePromise> LibWebRTCVPXVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame)
@@ -181,8 +186,40 @@ static UniqueRef<webrtc::VideoEncoder> createInternalEncoder(LibWebRTCVPXVideoEn
 LibWebRTCVPXInternalVideoEncoder::LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXVideoEncoder::Type type, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback)
     : m_descriptionCallback(WTF::move(descriptionCallback))
     , m_outputCallback(WTF::move(outputCallback))
+    , m_type(type)
     , m_internalEncoder(createInternalEncoder(type))
 {
+}
+
+static std::optional<PlanarImageConverter::DestinationPlane> i010Plane(uint16_t* data, int stride, size_t width, size_t height)
+{
+    return PlanarImageConverter::makePlane(unsafeMakeSpan(data, static_cast<size_t>(stride) * height), 0, stride, width, height, PlanarImageConverter::tenBitLSB);
+}
+
+// 12-bit frames keep their top 10 bits.
+static webrtc::scoped_refptr<webrtc::I010Buffer> createI010Buffer(CVPixelBufferRef pixelBuffer, bool isFullRange, int targetWidth, int targetHeight)
+{
+    int width = CVPixelBufferGetWidth(pixelBuffer);
+    int height = CVPixelBufferGetHeight(pixelBuffer);
+    auto buffer = webrtc::I010Buffer::Create(width, height);
+    size_t chromaWidth = PlanarImageConverter::chromaWidth(PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical, width);
+    size_t chromaHeight = PlanarImageConverter::chromaHeight(PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical, height);
+    auto y = i010Plane(buffer->MutableDataY(), buffer->StrideY(), width, height);
+    auto u = i010Plane(buffer->MutableDataU(), buffer->StrideU(), chromaWidth, chromaHeight);
+    auto v = i010Plane(buffer->MutableDataV(), buffer->StrideV(), chromaWidth, chromaHeight);
+    if (!y || !u || !v)
+        return nullptr;
+
+    PlanarImageConverter::DestinationFrame frame { PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical, isFullRange, *y, *u, *v, { } };
+    if (!PlanarImageConverter::copyFrame(pixelBuffer, 0, 0, frame))
+        return nullptr;
+
+    if (width == targetWidth && height == targetHeight)
+        return buffer;
+
+    auto scaledBuffer = webrtc::I010Buffer::Create(targetWidth, targetHeight);
+    scaledBuffer->ScaleFrom(*buffer);
+    return scaledBuffer;
 }
 
 static webrtc::VideoBitrateAllocation computeAllocation(const VideoEncoder::Config& config)
@@ -207,7 +244,7 @@ static webrtc::VideoBitrateAllocation computeAllocation(const VideoEncoder::Conf
     return allocation;
 }
 
-int LibWebRTCVPXInternalVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type type, const VideoEncoder::Config& config)
+int LibWebRTCVPXInternalVideoEncoder::initialize(const VideoEncoder::Config& config)
 {
     m_config = config;
 
@@ -231,7 +268,7 @@ int LibWebRTCVPXInternalVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type 
         break;
     }
 
-    switch (type) {
+    switch (m_type) {
     case LibWebRTCVPXVideoEncoder::Type::VP8:
         videoCodec.codecType = webrtc::kVideoCodecVP8;
         switch (config.scalabilityMode) {
@@ -269,6 +306,79 @@ int LibWebRTCVPXInternalVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type 
     return 0;
 }
 
+static webrtc::scoped_refptr<webrtc::VideoFrameBuffer> scaledFrameBuffer(CVPixelBufferRef pixelBuffer, size_t width, size_t height)
+{
+    if (!pixelBuffer)
+        return nullptr;
+
+    auto frameBuffer = webrtc::pixelBufferToFrame(pixelBuffer);
+    if (width == static_cast<size_t>(frameBuffer->width()) && height == static_cast<size_t>(frameBuffer->height()))
+        return frameBuffer;
+    return frameBuffer->Scale(width, height);
+}
+
+static bool canEncodeFrameBufferDirectly(webrtc::VideoFrameBuffer::Type bufferType, bool isHighBitDepthEncoder)
+{
+    switch (bufferType) {
+    case webrtc::VideoFrameBuffer::Type::kI420:
+    case webrtc::VideoFrameBuffer::Type::kI420A:
+    case webrtc::VideoFrameBuffer::Type::kNV12:
+        return true;
+    case webrtc::VideoFrameBuffer::Type::kI010:
+        return isHighBitDepthEncoder;
+    default:
+        return false;
+    }
+}
+
+webrtc::scoped_refptr<webrtc::VideoFrameBuffer> LibWebRTCVPXInternalVideoEncoder::frameBufferForEncoding(VideoFrame& videoFrame, PlatformVideoColorSpace& colorSpace)
+{
+    bool isHighBitDepthEncoder = m_type == LibWebRTCVPXVideoEncoder::Type::VP9_P2;
+    if (RefPtr libWebRTCFrame = dynamicDowncast<VideoFrameLibWebRTC>(videoFrame); libWebRTCFrame && canEncodeFrameBufferDirectly(libWebRTCFrame->buffer()->type(), isHighBitDepthEncoder)) {
+        auto buffer = libWebRTCFrame->buffer();
+        if (m_config.width == static_cast<size_t>(buffer->width()) && m_config.height == static_cast<size_t>(buffer->height()))
+            return buffer;
+        if (buffer->type() != webrtc::VideoFrameBuffer::Type::kI010)
+            return buffer->Scale(m_config.width, m_config.height);
+        // VideoFrameBuffer::Scale() goes through 8-bit I420.
+        auto scaledBuffer = webrtc::I010Buffer::Create(m_config.width, m_config.height);
+        scaledBuffer->ScaleFrom(*buffer->GetI010());
+        return scaledBuffer;
+    }
+
+    RetainPtr pixelBuffer = videoFrame.pixelBuffer();
+    if (!pixelBuffer)
+        return nullptr;
+
+    if (auto pixelFormat = convertVideoFramePixelFormat(videoFrame.pixelFormat(), true); pixelFormat && isRGBVideoPixelFormat(*pixelFormat)) {
+        // We do our own conversion to get matching color space handling, instead of letting libwebrtc do it.
+        colorSpace = srgbAsBT709YUVColorSpace();
+        return scaledFrameBuffer(ImageTransferSessionVT::convertPixelBuffer(pixelBuffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, ImageTransferSessionVT::DestinationColorSpace::BT709).get(), m_config.width, m_config.height);
+    }
+
+    auto bufferPixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer.get());
+    // Any alpha plane is discarded, as alpha "keep" is not supported yet.
+    if (auto description = PlanarImageConverter::pixelFormatDescription(bufferPixelFormat); isHighBitDepthEncoder && description && description->color.bitDepth > 8)
+        return createI010Buffer(pixelBuffer.get(), description->isFullRange, m_config.width, m_config.height);
+
+    if (bufferPixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || bufferPixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
+        return scaledFrameBuffer(pixelBuffer.get(), m_config.width, m_config.height);
+
+    // FIXME: Encode non-4:2:0 formats natively, and high bit depth for codecs other than VP9 profile 2, instead of converting to 8-bit NV12.
+    if (!m_hasLoggedPixelFormatConversion) {
+        m_hasLoggedPixelFormatConversion = true;
+        RELEASE_LOG_ERROR(Media, "LibWebRTCVPXInternalVideoEncoder::encode converting unsupported pixel format '%{public}s' to 8-bit NV12", FourCC { bufferPixelFormat }.string().data());
+    }
+    bool fullRange = colorSpace.fullRange.value_or(false);
+    colorSpace = {
+        .primaries = PlatformVideoColorPrimaries::Bt709,
+        .transfer = PlatformVideoTransferCharacteristics::Bt709,
+        .matrix = PlatformVideoMatrixCoefficients::Bt709,
+        .fullRange = fullRange
+    };
+    return scaledFrameBuffer(ImageTransferSessionVT::convertPixelBuffer(pixelBuffer.get(), fullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, ImageTransferSessionVT::DestinationColorSpace::BT709).get(), m_config.width, m_config.height);
+}
+
 Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
 {
     if (!m_isInitialized)
@@ -285,32 +395,10 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
     std::vector<webrtc::VideoFrameType> frameTypes { frameType };
 
     Ref protectedFrame = rawFrame.frame;
-    RetainPtr buffer = protectedFrame->pixelBuffer();
     auto colorSpace = protectedFrame->colorSpace();
-    if (auto pixelFormat = convertVideoFramePixelFormat(protectedFrame->pixelFormat(), true); pixelFormat && isRGBVideoPixelFormat(*pixelFormat)) {
-        // We do our own conversion to get matching color space handling, instead of letting libwebrtc do it.
-        colorSpace = srgbAsBT709YUVColorSpace();
-        buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
-    } else if (buffer) {
-        auto bufferPixelFormat = CVPixelBufferGetPixelFormatType(buffer.get());
-        if (bufferPixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange && bufferPixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) {
-            // FIXME: Encode high bit depth and non-4:2:0 formats natively instead of converting to 8-bit NV12.
-            if (!m_hasLoggedPixelFormatConversion) {
-                m_hasLoggedPixelFormatConversion = true;
-                RELEASE_LOG_ERROR(Media, "LibWebRTCVPXInternalVideoEncoder::encode converting unsupported pixel format '%{public}s' to 8-bit NV12", FourCC { bufferPixelFormat }.string().data());
-            }
-            bool fullRange = colorSpace.fullRange.value_or(false);
-            colorSpace = { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Bt709, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = fullRange };
-            buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), fullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
-        }
-    }
-
-    if (!buffer)
+    auto frameBuffer = frameBufferForEncoding(protectedFrame, colorSpace);
+    if (!frameBuffer)
         return VideoEncoder::EncodePromise::createAndReject("Unsupported pixel format"_s);
-
-    auto frameBuffer = webrtc::pixelBufferToFrame(buffer.get());
-    if (m_config.width != static_cast<size_t>(frameBuffer->width()) || m_config.height != static_cast<size_t>(frameBuffer->height()))
-        frameBuffer = frameBuffer->Scale(m_config.width, m_config.height);
 
     webrtc::VideoFrame frame { frameBuffer, webrtc::kVideoRotation_0, rawFrame.timestamp + m_timestampOffset };
 
