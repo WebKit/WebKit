@@ -4236,7 +4236,19 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
             {'platform': 'WPE', 'style': 'release'},
         )
 
-    def test_mac_queries_pool_architectures(self):
+    def test_mac_queries_include_the_intel_architecture(self):
+        # Most mac history is arm64, so a failure seen only on x86_64 has a high pooled pass rate.
+        self.setup_step(RunWebKitTests())
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.setProperty('machine_architecture', 'x86_64')
+        self.assertEqual(
+            self.get_nth_step(0).results_db_query_configuration(),
+            {'platform': 'mac', 'style': 'release', 'flavor': 'wk2', 'architecture': 'x86_64'},
+        )
+
+    def test_mac_queries_include_the_apple_silicon_architecture(self):
         self.setup_step(RunWebKitTests())
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'release')
@@ -4244,8 +4256,97 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         self.setProperty('machine_architecture', 'arm64')
         self.assertEqual(
             self.get_nth_step(0).results_db_query_configuration(),
+            {'platform': 'mac', 'style': 'release', 'flavor': 'wk2', 'architecture': 'arm64'},
+        )
+
+    def test_mac_queries_pool_architectures_when_the_architecture_is_unknown(self):
+        self.setup_step(RunWebKitTests())
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.assertEqual(
+            self.get_nth_step(0).results_db_query_configuration(),
             {'platform': 'mac', 'style': 'release', 'flavor': 'wk2'},
         )
+
+    def test_mac_queries_skip_a_multi_architecture_value(self):
+        # The build queue's config.json lists both architectures, which says nothing about this worker.
+        self.setup_step(RunWebKitTests())
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.setProperty('architecture', 'x86_64 arm64')
+        self.assertEqual(
+            self.get_nth_step(0).results_db_query_configuration(),
+            {'platform': 'mac', 'style': 'release', 'flavor': 'wk2'},
+        )
+
+    @defer.inlineCallbacks
+    def test_mac_flaky_query_uses_the_same_architecture(self):
+        # EWS rows carry the worker's architecture, so the flaky-window query is scoped the same way.
+        configurations = []
+
+        def fake_flaky_verdicts_for(cls, tests, configuration=None, **kwargs):
+            configurations.append(configuration)
+            return defer.succeed(({test: FlakyVerdict() for test in tests}, ''))
+
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.setProperty('machine_architecture', 'x86_64')
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(fake_flaky_verdicts_for))
+
+        yield step.pre_existing_flakes_using_results_db({'flaky.html'})
+        self.assertEqual(configurations, [{'platform': 'mac', 'style': 'release', 'flavor': 'wk2', 'architecture': 'x86_64'}])
+
+    def _configure_architecture_fallback(self, platform, has_results_for_architecture):
+        # Records each pre-existing query's configuration; the architecture-specific one has results only if asked.
+        configurations = []
+        step = self._configure(pre_existing=set())
+        self.setProperty('platform', platform)
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.setProperty('machine_architecture', 'x86_64')
+
+        def fake_is_pre_existing(cls, test, configuration=None, **kwargs):
+            configurations.append(configuration)
+            if 'architecture' in configuration and not has_results_for_architecture:
+                return defer.succeed({'is_existing_failure': False, 'pass_rate': 'Unknown', 'raw_data': {}, 'logs': '', 'request_failed': True})
+            return defer.succeed({'is_existing_failure': True, 'pass_rate': 0, 'raw_data': {}, 'logs': '', 'request_failed': False})
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        return step, configurations
+
+    @defer.inlineCallbacks
+    def test_mac_queries_across_architectures_when_the_architecture_has_no_results(self):
+        # Intel results reach the results database after Apple Silicon ones, so a recent commit can have none yet.
+        step, configurations = self._configure_architecture_fallback('mac', has_results_for_architecture=False)
+        yield step.filter_failures_using_results_db(['failing.html'])
+        self.assertEqual(configurations, [
+            {'platform': 'mac', 'style': 'release', 'flavor': 'wk2', 'architecture': 'x86_64'},
+            {'platform': 'mac', 'style': 'release', 'flavor': 'wk2'},
+        ])
+        self.assertEqual(step.pre_existing_failures_in_results_db, ['failing.html'])
+        self.assertEqual(step.failing_tests_filtered, [])
+
+    @defer.inlineCallbacks
+    def test_mac_does_not_query_across_architectures_when_the_architecture_has_results(self):
+        step, configurations = self._configure_architecture_fallback('mac', has_results_for_architecture=True)
+        yield step.filter_failures_using_results_db(['failing.html'])
+        self.assertEqual(configurations, [{'platform': 'mac', 'style': 'release', 'flavor': 'wk2', 'architecture': 'x86_64'}])
+        self.assertEqual(step.pre_existing_failures_in_results_db, ['failing.html'])
+
+    @defer.inlineCallbacks
+    def test_gtk_does_not_query_across_architectures_when_the_architecture_has_no_results(self):
+        # GTK and WPE query per architecture so that another architecture's failures never excuse this one's.
+        step, configurations = self._configure_architecture_fallback('gtk', has_results_for_architecture=False)
+        yield step.filter_failures_using_results_db(['failing.html'])
+        self.assertEqual(configurations, [{'platform': 'GTK', 'style': 'release', 'flavor': 'wk2', 'architecture': 'x86_64'}])
+        self.assertEqual(step.pre_existing_failures_in_results_db, [])
+        self.assertEqual(step.failing_tests_filtered, ['failing.html'])
 
     def test_site_isolation_queries_keep_their_platform(self) -> None:
         # mac has its own site-isolation post-commit queue, so dropping the platform here would
@@ -4851,7 +4952,7 @@ class TestAPITestFlakinessReadUsingResultsDB(BuildStepMixinAdditions, unittest.T
 
         yield step.run()
 
-        self.assertEqual(queried, [(['suite.new'], {'platform': 'mac', 'style': 'release'}, 'api-tests', [], None)])
+        self.assertEqual(queried, [(['suite.new'], {'platform': 'mac', 'style': 'release', 'architecture': 'arm64'}, 'api-tests', [], None)])
 
     @defer.inlineCallbacks
     def test_a_test_flaky_only_between_builds_without_intra_build_evidence_is_unsupported(self) -> Generator[Any, Any, None]:
@@ -5010,7 +5111,7 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
 
         yield step.doOnFailure()
 
-        self.assertEqual(queried, [(['suite.both'], {'platform': 'mac', 'style': 'release'}, 'api-tests', [], None)])
+        self.assertEqual(queried, [(['suite.both'], {'platform': 'mac', 'style': 'release', 'architecture': 'arm64'}, 'api-tests', [], None)])
         self.assertEqual(step.steps_to_add, [])
 
     @defer.inlineCallbacks

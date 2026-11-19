@@ -597,13 +597,24 @@ class ResultsDBReportMixin(abc.ABC):
             configuration['style'] = style
         if (flavor := self.getProperty('flavor', None)) in ('wk1', 'wk2', 'site-isolation'):
             configuration['flavor'] = flavor
-        # GTK and WPE post-commit bots run on more than one architecture, and pooling their history
-        # can excuse a failure on this architecture with failures seen only on another one.
-        if platform and platform.lower() in ('gtk', 'wpe'):
+        # GTK, WPE and mac bots run on more than one architecture. Pooling their history can excuse a
+        # failure on this architecture with failures seen only on another one, and on mac, where most
+        # runs are arm64, it hides a failure seen only on x86_64 behind a high pooled pass rate.
+        if platform and platform.lower() in ('gtk', 'wpe', 'mac'):
             architecture = self.getProperty('machine_architecture', None) or self.getProperty('architecture', None)
             if architecture and ' ' not in architecture:
                 configuration['architecture'] = architecture
         return configuration
+
+    @defer.inlineCallbacks
+    def is_test_pre_existing_failure_in_results_db(self, test, configuration, commit=None, suite=None):
+        data = yield ResultsDatabase.is_test_pre_existing_failure(test, configuration=configuration, commit=commit, suite=suite)
+        if data.get('request_failed') and 'architecture' in configuration and (configuration.get('platform') or '').lower() == 'mac':
+            pooled_configuration = {key: value for key, value in configuration.items() if key != 'architecture'}
+            pooled_data = yield ResultsDatabase.is_test_pre_existing_failure(test, configuration=pooled_configuration, commit=commit, suite=suite)
+            pooled_data['logs'] = f"{data.get('logs', '')}No {configuration['architecture']} results, querying across architectures\n{pooled_data.get('logs', '')}"
+            data = pooled_data
+        return data
 
     def results_db_configuration(self):
         architecture = self.getProperty('machine_architecture', None) or self.getProperty('architecture', None)
@@ -3821,7 +3832,7 @@ class RunJavaScriptCoreTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, Sh
     @defer.inlineCallbacks
     def _check_for_pre_existing_failures(self, tests, filtered_tests, configuration, identifier, has_commit):
         for test in tests[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]:
-            data = yield ResultsDatabase.is_test_pre_existing_failure(
+            data = yield self.is_test_pre_existing_failure_in_results_db(
                 test, configuration=configuration,
                 commit=identifier if has_commit else None,
                 suite='javascriptcore-tests'
@@ -4298,7 +4309,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         tests = candidates[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
         unexplained = set()
         for test in tests:
-            data = yield ResultsDatabase.is_test_pre_existing_failure(
+            data = yield self.is_test_pre_existing_failure_in_results_db(
                 test, configuration=configuration,
                 commit=identifier if has_commit else None,
             )
@@ -6131,7 +6142,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
         identifier, has_commit = yield self.resolve_identifier_for_results_db(configuration, bool(failing_tests))
 
         for test in failing_tests[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]:
-            data = yield ResultsDatabase.is_test_pre_existing_failure(
+            data = yield self.is_test_pre_existing_failure_in_results_db(
                 test, configuration=configuration,
                 commit=identifier if has_commit else None,
                 suite='api-tests',
