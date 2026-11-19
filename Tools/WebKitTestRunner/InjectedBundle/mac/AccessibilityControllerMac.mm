@@ -280,13 +280,24 @@ static RefPtr<AccessibilityUIElement> findElementByIdRecursive(AccessibilityUIEl
     return nullptr;
 }
 
-void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value)
+static void injectPreference(WKStringRef domain, WKStringRef key, NSInteger value)
 {
     auto page = InjectedBundle::singleton().page()->page();
-    NSNumber *numberValue = @([[NSString stringWithJSStringRef:value] integerValue]);
-    NSData *encodedData = [NSKeyedArchiver archivedDataWithRootObject:numberValue requiringSecureCoding:YES error:nil];
+    NSData *encodedData = [NSKeyedArchiver archivedDataWithRootObject:@(value) requiringSecureCoding:YES error:nil];
     NSString *encodedString = [encodedData base64EncodedStringWithOptions:0];
-    WKAccessibilityTestingInjectPreference(page, toWK(domain).get(), toWK(key).get(), toWK(encodedString).get());
+    WKAccessibilityTestingInjectPreference(page, domain, key, toWK(encodedString).get());
+}
+
+void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value)
+{
+    injectPreference(toWK(domain).get(), toWK(key).get(), [[NSString stringWithJSStringRef:value] integerValue]);
+    m_injectedAccessibilityPreferences.add({ toWTFString(domain), toWTFString(key) });
+}
+
+void AccessibilityController::resetInjectedAccessibilityPreferences()
+{
+    for (auto& [domain, key] : std::exchange(m_injectedAccessibilityPreferences, { }))
+        injectPreference(toWK(domain).get(), toWK(key).get(), 0);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef context, JSStringRef idAttribute)
