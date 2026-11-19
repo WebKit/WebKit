@@ -5082,7 +5082,7 @@
     "imported/w3c/webdriver/tests/bidi/script/get_realms/get_realms.py": {
         "subtests": {
             "test_iframes": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/331770 - Cross-origin iframe stays at its initial empty document"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/331770 - Cross-origin iframe stays at its initial empty document"}}
             },
             "test_multiple_top_level_contexts[tab]": {
                 "expected": { "all": { "status": ["PASS", "FAIL"], "bug": "webkit.org/b/288061 - Passes individually, timing issues in parallel execution"}}
@@ -5104,7 +5104,7 @@
     "imported/w3c/webdriver/tests/bidi/script/get_realms/context.py": {
         "subtests": {
             "test_context": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/331770 - Cross-origin iframe stays at its initial empty document"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/331770 - Cross-origin iframe stays at its initial empty document"}}
             }
         }
     },
@@ -5130,7 +5130,7 @@
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_iframe[cross_origin]": {
-                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "With Site Isolation, there's no realmCreated event for a cross-origin iframe"}, "mac": {"status": ["PASS"]},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/304305"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/331770 - Cross-origin iframe stays at its initial empty document"}}
             },
             "test_sandbox[evaluate]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
@@ -5188,14 +5188,8 @@
             "test_sandbox[call_function]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
-            "test_iframe[same_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
             "test_iframe[cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
-            "test_iframe_destroy_parent": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/331770 - Cross-origin iframe stays at its initial empty document"}}
             },
             "test_dedicated_worker": {
                 "expected": { "all": { "status": ["PASS"]}}

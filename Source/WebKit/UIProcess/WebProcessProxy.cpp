@@ -1947,6 +1947,11 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     for (auto& page : pages)
         page->markProcessesIneligibleForWebProcessCache();
 
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr automationSession = processPool().automationSession())
+        automationSession->webProcessDidTerminate(coreProcessIdentifier());
+#endif
+
     shutDown();
 
     // FIXME: Perhaps this should consider ProcessTerminationReasons ExceededMemoryLimit, ExceededCPULimit, Unresponsive as well.

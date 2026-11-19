@@ -1807,6 +1807,11 @@ void WebAutomationSession::willDestroyFrame(const WebFrameProxy& frame)
 #endif
 }
 
+void WebAutomationSession::webProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
+{
+    m_bidiProcessor->scriptAgent().notifyRealmsDestroyedForProcess(processIdentifier);
+}
+
 void WebAutomationSession::contextCreatedForFrame(const WebFrameProxy& frame)
 {
     auto frameHandle = effectiveHandleForWebFrameProxy(frame);

@@ -1019,7 +1019,7 @@ void BidiScriptAgent::sendRealmDestroyedEvent(RealmIdentifier realmIdentifier, c
         return;
 
     session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, realmInfo.associatedTopLevelContexts, [&] {
-        session->bidiProcessor().scriptDomainNotifier().realmDestroyed(protocolRealmIdentifierString(realmIdentifier), realmInfo.context.value_or(nullString()));
+        session->bidiProcessor().scriptDomainNotifier().realmDestroyed(protocolRealmIdentifierString(realmIdentifier));
     });
 }
 
@@ -1131,6 +1131,35 @@ void BidiScriptAgent::removeDedicatedWorkerRealmsForBrowsingContext(const Browsi
 
     for (auto realmIdentifier : realmIdentifiers)
         removeDedicatedWorkerRealm(realmIdentifier);
+}
+
+void BidiScriptAgent::notifyRealmsDestroyedForProcess(WebCore::ProcessIdentifier processIdentifier)
+{
+    Vector<RealmIdentifier> realmIdentifiers;
+    for (const auto& realmIdentifier : m_activeRealms.keys()) {
+        if (realmIdentifier.processIdentifier() == processIdentifier)
+            realmIdentifiers.append(realmIdentifier);
+    }
+
+    for (auto realmIdentifier : realmIdentifiers) {
+        auto activeRealmIterator = m_activeRealms.find(realmIdentifier);
+        if (activeRealmIterator == m_activeRealms.end())
+            continue;
+
+        if (activeRealmIterator->value.type == Inspector::Protocol::BidiScript::RealmType::DedicatedWorker) {
+            removeDedicatedWorkerRealm(realmIdentifier);
+            continue;
+        }
+
+        if (activeRealmIterator->value.type == Inspector::Protocol::BidiScript::RealmType::Window && activeRealmIterator->value.context) {
+            notifyRealmDestroyedFromBrowsingContext(realmIdentifier, *activeRealmIterator->value.context);
+            continue;
+        }
+
+        RealmInfo realmInfo = WTF::move(activeRealmIterator->value);
+        m_activeRealms.remove(activeRealmIterator);
+        sendRealmDestroyedEvent(realmIdentifier, realmInfo);
+    }
 }
 
 std::optional<RealmIdentifier> BidiScriptAgent::realmIdentifierForBrowsingContext(const String& browsingContext) const

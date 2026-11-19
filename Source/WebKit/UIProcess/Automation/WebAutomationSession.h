@@ -217,6 +217,7 @@ public:
     void emitContextCreatedEvent(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
     void willDestroyFrame(const WebFrameProxy&);
+    void webProcessDidTerminate(WebCore::ProcessIdentifier);
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);

@@ -3427,13 +3427,6 @@ void Session::dispatchBidiMessage(RefPtr<JSON::Object>&& message)
 
         auto bidiMethod = bidiMessage->getString("method"_s);
 
-        // Keep the public script.realmDestroyed payload aligned with current client expectations,
-        // while still using context internally for subscription matching.
-        if (bidiMethod == "script.realmDestroyed"_s) {
-            if (auto eventParameters = bidiMessage->getObject("params"_s))
-                eventParameters->remove("context"_s);
-        }
-
         if (bidiMethod == "log.entryAdded"_s)
             bidiMessage = processLogEntryAdded(WTF::move(bidiMessage));
 

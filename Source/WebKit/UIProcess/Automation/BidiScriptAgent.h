@@ -89,6 +89,7 @@ public:
     // Realm lifecycle events.
     void notifyRealmCreatedFromBrowsingContext(RealmIdentifier, WebCore::FrameIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, Inspector::Protocol::BidiBrowsingContext::BrowsingContext topLevelContext, const WebCore::SecurityOriginData&);
     void notifyRealmDestroyedFromBrowsingContext(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void notifyRealmsDestroyedForProcess(WebCore::ProcessIdentifier);
     void notifyRealmCreatedFromWorker(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext ownerBrowsingContext, const WebCore::SecurityOriginData&);
     void notifyRealmDestroyedFromWorker(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier);
     void removeDedicatedWorkerRealmsForBrowsingContext(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&);
