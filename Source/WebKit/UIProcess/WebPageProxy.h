@@ -3942,6 +3942,7 @@ private:
 #endif
 
     void prepareToLoadWebPage(WebProcessProxy&, LoadParameters&);
+    std::tuple<Ref<WebProcessProxy>, Ref<BrowsingContextGroup>, RefPtr<ProvisionalPageProxy>> prepareProcessForAlternateHTMLLoad(const WebCore::Site&, const URL& baseURL, const URL& unreachableURL, API::WebsitePolicies*);
 
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 

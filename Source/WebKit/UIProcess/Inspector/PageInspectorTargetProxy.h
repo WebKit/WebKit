@@ -48,6 +48,7 @@ public:
 
     void didCommitProvisionalTarget() override;
     bool isProvisional() const override;
+    ProvisionalPageProxy* provisionalPage() const { return m_provisionalPage.get(); }
     String processIdentifier() const override;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
@@ -62,7 +63,7 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::PageInspectorTargetProxy)
-static bool isType(const WebKit::PageInspectorTargetProxy& target)
+static bool isType(const Inspector::InspectorTarget& target)
 {
     return target.type() == Inspector::InspectorTargetType::Page;
 }
