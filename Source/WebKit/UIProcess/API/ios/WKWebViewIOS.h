@@ -31,11 +31,17 @@
 #import "WKBaseScrollView.h"
 #import "WKWebViewInternal.h"
 
+#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
 #import "APINavigation.h"
 #import "_WKTapHandlingResult.h"
 #import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
+#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
 @class WKBEScrollViewScrollUpdate;
+
+#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 
 namespace WebKit {
 enum class TapHandlingResult : uint8_t;
@@ -252,6 +258,8 @@ enum class TapHandlingResult : uint8_t;
 
 @end
 
+#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
 @interface WKWebView (WKViewInternalIOS_SwiftNonObjCxxSupport)
 
 // No new properties/functions should need to be added to this category anymore.
@@ -260,6 +268,10 @@ enum class TapHandlingResult : uint8_t;
 
 @end
 
+#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
 _WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult);
+
+#endif
 
 #endif // PLATFORM(IOS_FAMILY)
