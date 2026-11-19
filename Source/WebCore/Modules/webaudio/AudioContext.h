@@ -44,6 +44,8 @@ class HTMLMediaElement;
 class MediaStream;
 class MediaStreamAudioDestinationNode;
 class MediaStreamAudioSourceNode;
+class MediaStreamTrack;
+class MediaStreamTrackAudioSourceNode;
 
 struct AudioContextOptions;
 struct AudioTimestamp;
@@ -82,6 +84,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
     ExceptionOr<Ref<MediaStreamAudioSourceNode>> createMediaStreamSource(MediaStream&);
+    ExceptionOr<Ref<MediaStreamTrackAudioSourceNode>> createMediaStreamTrackSource(MediaStreamTrack&);
     ExceptionOr<Ref<MediaStreamAudioDestinationNode>> createMediaStreamDestination();
 #endif
 

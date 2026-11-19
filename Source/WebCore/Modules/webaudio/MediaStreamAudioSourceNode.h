@@ -29,17 +29,49 @@
 #include "AudioNode.h"
 #include "AudioSourceProviderClient.h"
 #include "MediaStream.h"
-#include "MultiChannelResampler.h"
 #include <wtf/Lock.h>
 
 namespace WebCore {
 
+class AudioBus;
 class AudioContext;
 struct MediaStreamAudioSourceOptions;
 class MultiChannelResampler;
 class WebAudioSourceProvider;
 
-class MediaStreamAudioSourceNode final : public AudioNode, public AudioSourceProviderClient {
+class MediaStreamAudioSourceNodeBase : public AudioNode, public AudioSourceProviderClient {
+public:
+    void ref() const final { AudioNode::ref(); }
+    void deref() const final { AudioNode::deref(); }
+
+protected:
+    MediaStreamAudioSourceNodeBase(BaseAudioContext&, NodeType, Ref<WebAudioSourceProvider>&&);
+    ~MediaStreamAudioSourceNodeBase();
+
+    void detachProvider();
+    void preparePlayback();
+
+private:
+    void process(size_t framesToProcess) final;
+    void setFormat(size_t numberOfChannels, float sampleRate) final;
+
+    void provideInput(AudioBus&, size_t framesToProcess);
+
+    double tailTime() const final { return 0; }
+    double latencyTime() const final { return 0; }
+    bool requiresTailProcessing() const final { return false; }
+    bool propagatesSilence() const final { return false; }
+
+    const Ref<WebAudioSourceProvider> m_provider;
+    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler WTF_GUARDED_BY_LOCK(m_processLock);
+
+    Lock m_processLock;
+
+    unsigned m_sourceNumberOfChannels WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
+    double m_sourceSampleRate WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
+};
+
+class MediaStreamAudioSourceNode final : public MediaStreamAudioSourceNodeBase {
     WTF_MAKE_TZONE_ALLOCATED(MediaStreamAudioSourceNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaStreamAudioSourceNode);
 public:
@@ -49,34 +81,10 @@ public:
 
     MediaStream& mediaStream() { return m_mediaStream; }
 
-    void ref() const final { AudioNode::ref(); }
-    void deref() const final { AudioNode::deref(); }
-
 private:
     MediaStreamAudioSourceNode(BaseAudioContext&, Ref<MediaStream>&&, Ref<WebAudioSourceProvider>&&);
 
-    // AudioNode
-    void process(size_t framesToProcess) final;
-    // AudioSourceProviderClient
-    void setFormat(size_t numberOfChannels, float sampleRate) final;
-
-    void provideInput(AudioBus&, size_t framesToProcess);
-
-    double tailTime() const override { return 0; }
-    double latencyTime() const override { return 0; }
-    bool requiresTailProcessing() const final { return false; }
-
-    // As an audio source, we will never propagate silence.
-    bool propagatesSilence() const override { return false; }
-
     const Ref<MediaStream> m_mediaStream;
-    const Ref<WebAudioSourceProvider> m_provider;
-    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler WTF_GUARDED_BY_LOCK(m_processLock);
-
-    Lock m_processLock;
-
-    unsigned m_sourceNumberOfChannels WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
-    double m_sourceSampleRate WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
 };
 
 } // namespace WebCore
