@@ -1,0 +1,21 @@
+Tests that when currentColor is set to fillColor or strokeColor, it's always evaluated to the current color
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS canvas.style.color = '#261200'; canvas.style.color is 'rgb(38, 18, 0)'
+PASS ctx.setFillColor('currentColor'); ctx.fillStyle is '#261200'
+PASS ctx.setStrokeColor('currentColor'); ctx.strokeStyle is '#261200'
+PASS canvas.style.color = '#261201'; canvas.style.color is 'rgb(38, 18, 1)'
+PASS ctx.setFillColor('currentColor'); ctx.fillStyle is '#261201'
+PASS ctx.setStrokeColor('currentColor'); ctx.strokeStyle is '#261201'
+PASS canvas.style.color = '#261200'; canvas.style.color is 'rgb(38, 18, 0)'
+PASS ctx.setFillColor('currentColor', 0.0); ctx.fillStyle is 'rgba(38, 18, 0, 0)'
+PASS ctx.setStrokeColor('currentColor', 0.0); ctx.strokeStyle is 'rgba(38, 18, 0, 0)'
+PASS canvas.style.color = '#261201'; canvas.style.color is 'rgb(38, 18, 1)'
+PASS ctx.setFillColor('currentColor', 0.0); ctx.fillStyle is 'rgba(38, 18, 1, 0)'
+PASS ctx.setStrokeColor('currentColor', 0.0); ctx.strokeStyle is 'rgba(38, 18, 1, 0)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

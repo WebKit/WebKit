@@ -1,0 +1,8 @@
+2d.fillStyle.parse.current.notcached
+Setting fillStyle to currentColor always re-computes it
+Actual output:
+Expected output:
+
+
+PASS Setting fillStyle to currentColor always re-computes it
+

@@ -64,6 +64,8 @@ RefPtr<CSSValue> consumeColor(CSSParserTokenRange&, CSS::PropertyParserState&, c
 
 // MARK: <color> parsing (raw)
 
+std::optional<CSS::Color> parseUnresolvedColor(StringView, CSS::PropertyParserState&, const CSSColorParsingOptions& = { });
+
 // Parse with default options.
 // NOTE: Callers must include CSSPropertyParserConsumer+ColorInlines.h to use this.
 WebCore::Color parseColorRaw(StringView, const CSSParserContext&, ScriptExecutionContext&);

@@ -1,0 +1,8 @@
+2d.strokeStyle.parse.current.notcached
+Setting strokeStyle to currentColor always re-computes it
+Actual output:
+Expected output:
+
+
+PASS Setting strokeStyle to currentColor always re-computes it
+

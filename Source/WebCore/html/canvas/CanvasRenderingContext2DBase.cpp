@@ -265,7 +265,7 @@ NODELETE static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTex
 
 static Color parseColorWithOverrideAlpha(const String& colorString, float alpha, CanvasBase& canvasBase)
 {
-    auto color = parseColor(colorString, canvasBase);
+    auto color = parseColor(colorString, canvasBase).color();
     if (!color.isValid())
         return color;
     return color.colorWithAlpha(alpha);
@@ -1021,7 +1021,7 @@ void CanvasRenderingContext2DBase::setShadowBlur(float blur)
 
 void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
 {
-    Color color = parseColor(colorString, protect(canvasBase()));
+    Color color = parseColor(colorString, protect(canvasBase())).color();
     if (!color.isValid())
         return;
     if (state().shadowColor == color)
@@ -1325,12 +1325,18 @@ void CanvasRenderingContext2DBase::setStrokeColor(String&& colorString, std::opt
         setStrokeColorImpl(WTF::move(color));
         return;
     }
+
     if (colorString == state().unparsedStrokeColor)
         return;
-    auto color = parseColor(colorString, protect(canvasBase()));
-    if (!color.isValid())
+
+    auto parsedColor = parseColor(colorString, protect(canvasBase()));
+    if (!parsedColor.color().isValid())
         return;
-    setStrokeColorImpl(WTF::move(color), WTF::move(colorString));
+
+    if (!parsedColor.isCacheable())
+        colorString = WTF::nullString();
+
+    setStrokeColorImpl(WTF::move(parsedColor).color(), WTF::move(colorString));
 }
 
 void CanvasRenderingContext2DBase::setStrokeColor(float grayLevel, float alpha)
@@ -1360,12 +1366,18 @@ void CanvasRenderingContext2DBase::setFillColor(String&& colorString, std::optio
         setFillColorImpl(WTF::move(color));
         return;
     }
+
     if (colorString == state().unparsedFillColor)
         return;
-    auto color = parseColor(colorString, protect(canvasBase()));
-    if (!color.isValid())
+
+    auto parsedColor = parseColor(colorString, protect(canvasBase()));
+    if (!parsedColor.color().isValid())
         return;
-    setFillColorImpl(WTF::move(color), WTF::move(colorString));
+
+    if (!parsedColor.isCacheable())
+        colorString = WTF::nullString();
+
+    setFillColorImpl(WTF::move(parsedColor).color(), WTF::move(colorString));
 }
 
 void CanvasRenderingContext2DBase::setFillColor(float grayLevel, float alpha)
@@ -1771,7 +1783,7 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
 
     Color color = Color::transparentBlack;
     if (!colorString.isNull()) {
-        color = parseColor(colorString, protect(canvasBase()));
+        color = parseColor(colorString, protect(canvasBase())).color();
         if (!color.isValid())
             return;
     }
@@ -2673,11 +2685,14 @@ void CanvasRenderingContext2DBase::setStrokeStyle(String&& colorString)
     if (colorString == state().unparsedStrokeColor)
         return;
 
-    auto color = parseColor(colorString, protect(canvasBase()));
-    if (!color.isValid())
+    auto parsedColor = parseColor(colorString, protect(canvasBase()));
+    if (!parsedColor.color().isValid())
         return;
 
-    setStrokeColorImpl(WTF::move(color), WTF::move(colorString));
+    if (!parsedColor.isCacheable())
+        colorString = WTF::nullString();
+
+    setStrokeColorImpl(WTF::move(parsedColor).color(), WTF::move(colorString));
 }
 
 void CanvasRenderingContext2DBase::setStrokeStyle(Ref<CanvasGradient>&& gradient)
@@ -2709,11 +2724,14 @@ void CanvasRenderingContext2DBase::setFillStyle(String&& colorString)
     if (colorString == state().unparsedFillColor)
         return;
 
-    auto color = parseColor(colorString, protect(canvasBase()));
-    if (!color.isValid())
+    auto parsedColor = parseColor(colorString, protect(canvasBase()));
+    if (!parsedColor.color().isValid())
         return;
 
-    setFillColorImpl(WTF::move(color), WTF::move(colorString));
+    if (!parsedColor.isCacheable())
+        colorString = WTF::nullString();
+
+    setFillColorImpl(WTF::move(parsedColor).color(), WTF::move(colorString));
 }
 
 void CanvasRenderingContext2DBase::setFillStyle(Ref<CanvasGradient>&& gradient)

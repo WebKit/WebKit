@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<title>Tests that when currentColor is set to fillColor or strokeColor, it's always evaluated to the current color</title>
+<script src="../../resources/js-test.js"></script>
+
+<canvas id="canvas" width="100" height="100"></canvas>
+
+<script>
+  description("Tests that when currentColor is set to fillColor or strokeColor, it's always evaluated to the current color");
+  ctx = canvas.getContext("2d");
+
+  // 1. Using setFillColor/setStrokeColor without alpha
+  shouldBe("canvas.style.color = '#261200'; canvas.style.color", "'rgb(38, 18, 0)'");
+  shouldBe("ctx.setFillColor('currentColor'); ctx.fillStyle", "'#261200'");
+  shouldBe("ctx.setStrokeColor('currentColor'); ctx.strokeStyle", "'#261200'");
+
+  shouldBe("canvas.style.color = '#261201'; canvas.style.color", "'rgb(38, 18, 1)'");
+  shouldBe("ctx.setFillColor('currentColor'); ctx.fillStyle", "'#261201'");
+  shouldBe("ctx.setStrokeColor('currentColor'); ctx.strokeStyle", "'#261201'");
+
+  // 2. Using setFillColor/setStrokeColor with alpha
+  shouldBe("canvas.style.color = '#261200'; canvas.style.color", "'rgb(38, 18, 0)'");
+  shouldBe("ctx.setFillColor('currentColor', 0.0); ctx.fillStyle", "'rgba(38, 18, 0, 0)'");
+  shouldBe("ctx.setStrokeColor('currentColor', 0.0); ctx.strokeStyle", "'rgba(38, 18, 0, 0)'");
+
+  shouldBe("canvas.style.color = '#261201'; canvas.style.color", "'rgb(38, 18, 1)'");
+  shouldBe("ctx.setFillColor('currentColor', 0.0); ctx.fillStyle", "'rgba(38, 18, 1, 0)'");
+  shouldBe("ctx.setStrokeColor('currentColor', 0.0); ctx.strokeStyle", "'rgba(38, 18, 1, 0)'");
+
+  // Setting color to ctx.fillStyle/strokeStyle is tested in WPT.
+</script>
