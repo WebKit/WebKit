@@ -100,6 +100,10 @@ WI.TargetManager = class TargetManager extends WI.Object
 
         this._cachedTargetsList = null;
         this._targets.delete(target.identifier);
+        if (WI.runtimeManager.activeExecutionContext?.target === target) {
+            WI.runtimeManager.activeExecutionContext = null;
+            this._resetMainExecutionContext();
+        }
         target.destroy();
 
         this.dispatchEventToListeners(WI.TargetManager.Event.TargetRemoved, {target});

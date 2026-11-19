@@ -271,6 +271,7 @@ WI.Target = class Target extends WI.Object
     destroy()
     {
         this._isDestroyed = true;
+        this._connection.close();
     }
 
     hasDomain(domainName)
