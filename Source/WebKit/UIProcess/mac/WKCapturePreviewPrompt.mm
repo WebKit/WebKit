@@ -31,6 +31,7 @@
 #import "CapturePreviewDeviceSelection.h"
 #import "CapturePreviewLevelMeterState.h"
 #import "CapturePreviewPromptModel.h"
+#import "CapturePromptUtilities.h"
 #import "LayerHostingContext.h"
 #import "Logging.h"
 #import <WebCore/LocalizedStrings.h>
@@ -53,24 +54,8 @@ constexpr CGFloat previewBadgeInset = 8;
 constexpr CGFloat previewBadgeHorizontalPadding = 6;
 constexpr CGFloat previewBadgeVerticalPadding = 2;
 constexpr CGFloat previewBadgeCapsuleCornerRadius = 100;
-constexpr CGFloat promptSheetInset = 16;
-constexpr CGFloat promptSheetTopInset = 20;
-constexpr CGFloat promptSheetSpacing = 16;
-constexpr CGFloat promptSheetInformativeTextSpacing = 9;
-constexpr CGFloat promptSheetButtonSpacing = 6;
-constexpr CGFloat promptSheetMinimumContentWidth = 260;
-constexpr CGFloat promptSheetMaximumContentWidth = 420;
 constexpr CGFloat promptSheetMinimumScrolledHeight = 120;
 constexpr CGFloat promptSheetScreenMargin = 32;
-
-static void pinToWidthOfStack(NSView *view, NSStackView *stack)
-{
-    // NSStackView does not stretch its views to its own width.
-    [NSLayoutConstraint activateConstraints:@[
-        [[view leadingAnchor] constraintEqualToAnchor:[stack leadingAnchor]],
-        [[view trailingAnchor] constraintEqualToAnchor:[stack trailingAnchor]],
-    ]];
-}
 
 @interface WKCaptureDeviceChooserLevelView : NSView {
     WebKit::CapturePreviewLevelMeterState _state;
@@ -256,12 +241,12 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
         [cameraStack setTranslatesAutoresizingMaskIntoConstraints:NO];
         [cameraStack addArrangedSubview:_previewContainer.get()];
         [cameraStack addArrangedSubview:_videoPopUp.get()];
-        pinToWidthOfStack(_previewContainer.get(), cameraStack.get());
-        pinToWidthOfStack(_videoPopUp.get(), cameraStack.get());
+        WebKit::pinToWidthOfStack(_previewContainer, cameraStack);
+        WebKit::pinToWidthOfStack(_videoPopUp, cameraStack);
 
         RetainPtr cameraSection = [self _createSectionWithContentView:cameraStack.get()];
         [contentStack addArrangedSubview:cameraSection.get()];
-        pinToWidthOfStack(cameraSection.get(), contentStack.get());
+        WebKit::pinToWidthOfStack(cameraSection, contentStack);
 
         [NSLayoutConstraint activateConstraints:@[
             [[_previewContainer widthAnchor] constraintEqualToConstant:previewWidth],
@@ -308,12 +293,12 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
         [microphoneStack setTranslatesAutoresizingMaskIntoConstraints:NO];
         [microphoneStack addArrangedSubview:meterRow.get()];
         [microphoneStack addArrangedSubview:_audioPopUp.get()];
-        pinToWidthOfStack(meterRow.get(), microphoneStack.get());
-        pinToWidthOfStack(_audioPopUp.get(), microphoneStack.get());
+        WebKit::pinToWidthOfStack(meterRow, microphoneStack);
+        WebKit::pinToWidthOfStack(_audioPopUp, microphoneStack);
 
         RetainPtr microphoneSection = [self _createSectionWithContentView:microphoneStack.get()];
         [contentStack addArrangedSubview:microphoneSection.get()];
-        pinToWidthOfStack(microphoneSection.get(), contentStack.get());
+        WebKit::pinToWidthOfStack(microphoneSection, contentStack);
     }
 
     _view = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
@@ -540,7 +525,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     _buttonStack = adoptNS([[NSStackView alloc] init]);
     [_buttonStack setOrientation:NSUserInterfaceLayoutOrientationVertical];
     [_buttonStack setDistribution:NSStackViewDistributionFill];
-    [_buttonStack setSpacing:promptSheetButtonSpacing];
+    [_buttonStack setSpacing:WebKit::capturePromptButtonSpacing];
     [_buttonStack setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     return self;
@@ -556,7 +541,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
     _widestButtonWidth = std::max(_widestButtonWidth, [button fittingSize].width);
     [_buttonStack addArrangedSubview:button.get()];
-    pinToWidthOfStack(button.get(), _buttonStack.get());
+    WebKit::pinToWidthOfStack(button, _buttonStack);
     return button.autorelease();
 }
 
@@ -568,7 +553,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
 
 - (void)beginSheetModalForWindow:(NSWindow *)parentWindow didPresentHandler:(void (^)(void))didPresentHandler completionHandler:(void (^)(NSModalResponse))completionHandler
 {
-    CGFloat contentWidth = std::max({ promptSheetMinimumContentWidth, NSWidth([_accessoryView frame]), std::min(_widestButtonWidth, promptSheetMaximumContentWidth) });
+    CGFloat contentWidth = std::max({ WebKit::capturePromptMinimumContentWidth, NSWidth([_accessoryView frame]), std::min(_widestButtonWidth, WebKit::capturePromptMaximumContentWidth) });
 
     RetainPtr<NSMutableArray<NSView *>> arrangedViews = adoptNS([[NSMutableArray alloc] init]);
 
@@ -594,14 +579,14 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     RetainPtr scrolledStack = adoptNS([[NSStackView alloc] init]);
     [scrolledStack setOrientation:NSUserInterfaceLayoutOrientationVertical];
     [scrolledStack setDistribution:NSStackViewDistributionFill];
-    [scrolledStack setSpacing:promptSheetSpacing];
+    [scrolledStack setSpacing:WebKit::capturePromptSpacing];
     [scrolledStack setTranslatesAutoresizingMaskIntoConstraints:NO];
     for (NSView *view in arrangedViews.get()) {
         [scrolledStack addArrangedSubview:view];
-        pinToWidthOfStack(view, scrolledStack.get());
+        WebKit::pinToWidthOfStack(view, scrolledStack);
     }
     if (_informativeText)
-        [scrolledStack setCustomSpacing:promptSheetInformativeTextSpacing afterView:messageLabel.get()];
+        [scrolledStack setCustomSpacing:WebKit::capturePromptInformativeTextSpacing afterView:messageLabel];
 
     RetainPtr scrollView = adoptNS([[NSScrollView alloc] initWithFrame:NSZeroRect]);
     [scrollView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -620,27 +605,27 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     RetainPtr screen = [parentWindow screen] ?: [NSScreen mainScreen];
     NSRect visibleFrame = [screen visibleFrame];
     CGFloat sheetTop = std::min(NSMaxY([parentWindow convertRectToScreen:[parentWindow contentLayoutRect]]), NSMaxY(visibleFrame));
-    CGFloat availableHeight = sheetTop - NSMinY(visibleFrame) - promptSheetTopInset - promptSheetInset - promptSheetScreenMargin - promptSheetSpacing - [_buttonStack fittingSize].height;
+    CGFloat availableHeight = sheetTop - NSMinY(visibleFrame) - WebKit::capturePromptTopInset - WebKit::capturePromptInset - promptSheetScreenMargin - WebKit::capturePromptSpacing - [_buttonStack fittingSize].height;
     CGFloat scrolledHeight = std::min([scrolledStack fittingSize].height, std::max(availableHeight, promptSheetMinimumScrolledHeight));
     [[[scrollView heightAnchor] constraintEqualToConstant:scrolledHeight] setActive:YES];
 
     RetainPtr contentStack = adoptNS([[NSStackView alloc] init]);
     [contentStack setOrientation:NSUserInterfaceLayoutOrientationVertical];
     [contentStack setDistribution:NSStackViewDistributionFill];
-    [contentStack setSpacing:promptSheetSpacing];
+    [contentStack setSpacing:WebKit::capturePromptSpacing];
     [contentStack setTranslatesAutoresizingMaskIntoConstraints:NO];
     for (NSView *view in @[ scrollView.get(), _buttonStack.get() ]) {
         [contentStack addArrangedSubview:view];
-        pinToWidthOfStack(view, contentStack.get());
+        WebKit::pinToWidthOfStack(view, contentStack);
     }
 
     RetainPtr contentView = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
     [contentView addSubview:contentStack.get()];
     [NSLayoutConstraint activateConstraints:@[
-        [[contentStack topAnchor] constraintEqualToAnchor:[contentView topAnchor] constant:promptSheetTopInset],
-        [[contentStack bottomAnchor] constraintEqualToAnchor:[contentView bottomAnchor] constant:-promptSheetInset],
-        [[contentStack leadingAnchor] constraintEqualToAnchor:[contentView leadingAnchor] constant:promptSheetInset],
-        [[contentStack trailingAnchor] constraintEqualToAnchor:[contentView trailingAnchor] constant:-promptSheetInset],
+        [[contentStack topAnchor] constraintEqualToAnchor:[contentView topAnchor] constant:WebKit::capturePromptTopInset],
+        [[contentStack bottomAnchor] constraintEqualToAnchor:[contentView bottomAnchor] constant:-WebKit::capturePromptInset],
+        [[contentStack leadingAnchor] constraintEqualToAnchor:[contentView leadingAnchor] constant:WebKit::capturePromptInset],
+        [[contentStack trailingAnchor] constraintEqualToAnchor:[contentView trailingAnchor] constant:-WebKit::capturePromptInset],
         [[contentStack widthAnchor] constraintEqualToConstant:contentWidth],
     ]];
 

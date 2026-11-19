@@ -5584,6 +5584,15 @@ ScreenCaptureEnabled:
     default: false
     WebKit: WebKit::defaultShouldEnableScreenCapture()
 
+ScreenCaptureForTabEnabled:
+  type: bool
+  status: unstable
+  category: media
+  condition: ENABLE(MEDIA_STREAM)
+  humanReadableName: "Screen Capture for Tab"
+  humanReadableDescription: "Enable sharing a tab with getDisplayMedia"
+  defaultValue: false
+
 ScreenOrientationAPIEnabled:
   type: bool
   status: stable

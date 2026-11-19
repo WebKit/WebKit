@@ -39,6 +39,8 @@ class SecurityOrigin;
 
 namespace WebKit {
 
+class TabCapturePicker;
+
 class DisplayCaptureSessionManager {
 public:
     NODELETE static DisplayCaptureSessionManager& singleton();
@@ -49,6 +51,8 @@ public:
 
     void promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType, WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt(WebPageProxy&);
+    void pageVisibilityDidChange();
+    void pageObscuredContentRectDidChange();
     bool canRequestDisplayCapturePermission();
     void setIndexOfDeviceSelectedForTesting(std::optional<unsigned> index) { m_indexOfDeviceSelectedForTesting = index; }
 
@@ -59,8 +63,12 @@ public:
 private:
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-    enum class CaptureSessionType { None, Screen, Window };
+    enum class CaptureSessionType : uint8_t { None, Screen, Window, WindowOrScreen, Tab };
     void alertForGetDisplayMedia(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(DisplayCaptureSessionManager::CaptureSessionType)>&&);
+#if HAVE(WINDOW_CAPTURE)
+    void showTabPicker(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+#endif
+    void showWindowOrScreenPicker(WebPageProxy&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
     void showWindowPicker(const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void showScreenPicker(const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
@@ -70,6 +78,10 @@ private:
 
     std::optional<unsigned> m_indexOfDeviceSelectedForTesting;
     PromptOverride m_systemCanPromptForTesting { PromptOverride::Default };
+
+#if HAVE(WINDOW_CAPTURE)
+    RefPtr<TabCapturePicker> m_tabCapturePicker;
+#endif
 };
 
 } // namespace WebKit

@@ -3684,6 +3684,10 @@ void WebPageProxy::setObscuredContentInsets(const WebCore::FloatBoxExtent& obscu
     if (RefPtr pageClient = this->pageClient())
         pageClient->obscuredContentInsetsDidChange();
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(SCREEN_CAPTURE_KIT)
+    DisplayCaptureSessionManager::singleton().pageObscuredContentRectDidChange();
+#endif
+
     if (!hasRunningProcess())
         return;
 
@@ -3959,6 +3963,11 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
 
     internals().potentiallyChangedActivityStateFlags.add(mayHaveChanged);
     m_activityStateChangeWantsSynchronousReply = m_activityStateChangeWantsSynchronousReply || replyMode == ActivityStateChangeReplyMode::Synchronous;
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(SCREEN_CAPTURE_KIT)
+    if (mayHaveChanged.containsAny({ ActivityState::IsVisible, ActivityState::IsInWindow }))
+        DisplayCaptureSessionManager::singleton().pageVisibilityDidChange();
+#endif
 
     // We need to do this here instead of inside dispatchActivityStateChange() or viewIsBecomingVisible() because these don't run when the view doesn't
     // have a running WebProcess.
