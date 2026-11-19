@@ -696,7 +696,12 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
 void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completionHandler)
 {
     m_firePendingAttributionRequestsTimer.stop();
+    m_isRunningTest = false;
+    m_tokenPublicKeyURLForTesting = std::nullopt;
+    m_tokenSignatureURLForTesting = std::nullopt;
     m_privateClickMeasurementAppBundleIDForTesting = std::nullopt;
+    m_attributionReportTestConfig = std::nullopt;
+    m_fraudPreventionValuesForTesting = std::nullopt;
 
     if (!featureEnabled())
         return completionHandler();
@@ -731,8 +736,9 @@ void PrivateClickMeasurementManager::toStringForTesting(CompletionHandler<void(S
 void PrivateClickMeasurementManager::setTokenPublicKeyURLForTesting(URL&& testURL)
 {
     if (testURL.isEmpty())
-        return;
-    m_tokenPublicKeyURLForTesting = WTF::move(testURL);
+        m_tokenPublicKeyURLForTesting = std::nullopt;
+    else
+        m_tokenPublicKeyURLForTesting = WTF::move(testURL);
 }
 
 void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testURL)
