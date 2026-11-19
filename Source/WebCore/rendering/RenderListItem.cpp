@@ -121,7 +121,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
     // The marker is on the inline start side of its list item, which is not that of a box running the other way, so
     // the boxes in between are measured on the list item's side.
     auto isLeftToRight = listItem.writingMode().isLogicalLeftInlineStart();
-    auto borderAndPaddingOnMarkerSide = [&](const RenderBlock& box) {
+    auto borderAndPaddingOnMarkerSide = [&](const RenderBoxModelObject& box) {
         return isLeftToRight ? box.borderAndPaddingLogicalLeft() : box.borderAndPaddingLogicalRight();
     };
     auto toEnclosingListItem = LayoutUnit { };
@@ -144,7 +144,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
 
     auto toAssociatedListItem = LayoutUnit { };
     if (ancestor && ancestor.get() != &listItem) {
-        for (CheckedPtr<const RenderBlock> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
+        for (CheckedPtr<const RenderBoxModelObject> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
             toAssociatedListItem -= (box->marginStart(listItem.writingMode()) + borderAndPaddingOnMarkerSide(*box));
             if (box.get() == &listItem)
                 break;
