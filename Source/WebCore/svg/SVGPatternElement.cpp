@@ -61,10 +61,10 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGPatternElement::m_x>();
-        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGPatternElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGPatternElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGPatternElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGPatternElement::m_x>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGPatternElement::m_y>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGPatternElement::m_width>(SVGLengthMode::Width, SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGPatternElement::m_height>(SVGLengthMode::Height, SVGLengthNegativeValuesMode::Forbid);
         PropertyRegistry::registerProperty<SVGNames::patternUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternUnits>();
         PropertyRegistry::registerProperty<SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternContentUnits>();
         PropertyRegistry::registerProperty<SVGNames::patternTransformAttr, &SVGPatternElement::m_patternTransform>();

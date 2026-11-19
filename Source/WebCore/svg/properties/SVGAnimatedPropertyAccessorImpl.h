@@ -115,12 +115,34 @@ class SVGAnimatedLengthAccessor final : public SVGAnimatedPropertyAccessor<Owner
     using Base::property;
 
 public:
-    using Base::Base;
+    SVGAnimatedLengthAccessor(const Ref<SVGAnimatedLength> OwnerType::*property, SVGLengthMode lengthMode, SVGLengthNegativeValuesMode negativeValuesMode, ASCIILiteral initialValue)
+        : Base(property)
+        , m_negativeValuesMode(negativeValuesMode)
+        , m_initialValue(initialValue.isNull() ? SVGLengthValue(lengthMode) : SVGLengthValue(lengthMode, initialValue))
+    {
+    }
+
+    // property stays a template argument so that each attribute gets its own singleton.
     template<auto property>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedLengthAccessor, property>(); }
+    static const SVGMemberAccessor<OwnerType>& singleton(SVGLengthMode lengthMode, SVGLengthNegativeValuesMode negativeValuesMode, ASCIILiteral initialValue)
+    {
+        static NeverDestroyed<SVGAnimatedLengthAccessor> propertyAccessor { property, lengthMode, negativeValuesMode, initialValue };
+        return propertyAccessor;
+    }
 
 private:
     bool isAnimatedLength() const override { return true; }
+
+    bool isBaseValOutOfRange(const OwnerType& owner) const final
+    {
+        return m_negativeValuesMode == SVGLengthNegativeValuesMode::Forbid && property(owner)->baseVal()->value().valueInSpecifiedUnits() < 0;
+    }
+
+    void resetBaseVal(const OwnerType& owner) const final
+    {
+        ASSERT(property(owner)->baseVal()->value().lengthMode() == m_initialValue.lengthMode());
+        Ref { property(owner) }->setBaseValInternal(m_initialValue);
+    }
 
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
@@ -132,6 +154,9 @@ private:
     {
         downcast<SVGAnimatedLengthAnimator>(animator).appendAnimatedInstance(property(owner));
     }
+
+    const SVGLengthNegativeValuesMode m_negativeValuesMode;
+    const SVGLengthValue m_initialValue;
 };
 
 template<typename OwnerType>

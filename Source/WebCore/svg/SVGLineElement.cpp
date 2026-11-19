@@ -45,10 +45,10 @@ inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& do
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::x1Attr, &SVGLineElement::m_x1>();
-        PropertyRegistry::registerProperty<SVGNames::y1Attr, &SVGLineElement::m_y1>();
-        PropertyRegistry::registerProperty<SVGNames::x2Attr, &SVGLineElement::m_x2>();
-        PropertyRegistry::registerProperty<SVGNames::y2Attr, &SVGLineElement::m_y2>();
+        PropertyRegistry::registerProperty<SVGNames::x1Attr, &SVGLineElement::m_x1>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::y1Attr, &SVGLineElement::m_y1>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::x2Attr, &SVGLineElement::m_x2>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::y2Attr, &SVGLineElement::m_y2>(SVGLengthMode::Height);
     }
 }
 

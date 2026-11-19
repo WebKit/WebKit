@@ -56,10 +56,10 @@ inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::filterUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_filterUnits>();
         PropertyRegistry::registerProperty<SVGNames::primitiveUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_primitiveUnits>();
-        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGFilterElement::m_x>();
-        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGFilterElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGFilterElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGFilterElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGFilterElement::m_x>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGFilterElement::m_y>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGFilterElement::m_width>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGFilterElement::m_height>(SVGLengthMode::Height);
     }
 }
 

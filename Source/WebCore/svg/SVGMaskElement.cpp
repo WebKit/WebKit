@@ -59,10 +59,10 @@ inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& do
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGMaskElement::m_x>();
-        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGMaskElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGMaskElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGMaskElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGMaskElement::m_x>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGMaskElement::m_y>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGMaskElement::m_width>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGMaskElement::m_height>(SVGLengthMode::Height);
         PropertyRegistry::registerProperty<SVGNames::maskUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskUnits>();
         PropertyRegistry::registerProperty<SVGNames::maskContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskContentUnits>();
     }

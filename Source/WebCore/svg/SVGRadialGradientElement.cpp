@@ -53,12 +53,12 @@ inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& t
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGRadialGradientElement::m_cx>();
-        PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGRadialGradientElement::m_cy>();
-        PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGRadialGradientElement::m_r>();
-        PropertyRegistry::registerProperty<SVGNames::fxAttr, &SVGRadialGradientElement::m_fx>();
-        PropertyRegistry::registerProperty<SVGNames::fyAttr, &SVGRadialGradientElement::m_fy>();
-        PropertyRegistry::registerProperty<SVGNames::frAttr, &SVGRadialGradientElement::m_fr>();
+        PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGRadialGradientElement::m_cx>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGRadialGradientElement::m_cy>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGRadialGradientElement::m_r>(SVGLengthMode::Other);
+        PropertyRegistry::registerProperty<SVGNames::fxAttr, &SVGRadialGradientElement::m_fx>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::fyAttr, &SVGRadialGradientElement::m_fy>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::frAttr, &SVGRadialGradientElement::m_fr>(SVGLengthMode::Other, SVGLengthNegativeValuesMode::Forbid, "0%"_s);
     }
 }
 

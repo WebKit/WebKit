@@ -47,6 +47,9 @@ public:
     // that resetting exists to fix.
     virtual void resetBaseVal(const OwnerType&) const { ASSERT_NOT_REACHED(); }
 
+    // True when the base value is one that the attribute refuses in markup, e.g. a negative width.
+    virtual bool isBaseValOutOfRange(const OwnerType&) const { return false; }
+
     virtual bool matches(const OwnerType&, const SVGProperty&) const { return false; }
     virtual bool matches(const OwnerType&, const SVGAnimatedPropertyBase&) const { return false; }
     virtual void setDirty(const OwnerType&, SVGAnimatedPropertyBase& animatedProperty) const { animatedProperty.setDirty(); }
