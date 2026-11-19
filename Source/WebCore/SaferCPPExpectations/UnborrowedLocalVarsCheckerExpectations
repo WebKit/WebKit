@@ -187,7 +187,6 @@ html/DirectoryFileListCreator.cpp
 html/FormController.cpp
 html/HTMLElement.cpp
 html/HTMLFormControlsCollection.cpp
-html/HTMLFormElement.cpp
 html/HTMLImageElement.cpp
 html/HTMLMediaElement.cpp
 html/HTMLPlugInElement.cpp
