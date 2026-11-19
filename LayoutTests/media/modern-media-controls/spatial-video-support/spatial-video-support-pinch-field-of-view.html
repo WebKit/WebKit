@@ -1,0 +1,99 @@
+<!-- webkit-test-runner [ SpatialVideoRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" projection="equirectangular"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing that the spatial video renderer maps a recognized pinch onto the camera's field of view, and suspends panning while one is in progress.");
+
+window.jsTestIsAsync = true;
+
+const media = document.querySelector("video");
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const container = shadowRoot.appendChild(document.createElement("div"));
+
+function pointerEvent(type, pointerId, x, y)
+{
+    container.dispatchEvent(new PointerEvent(type, { pointerId, clientX: x, clientY: y, bubbles: true, cancelable: true }));
+}
+
+media.addEventListener("loadedmetadata", () => {
+    window.support = new SpatialVideoSupport({
+        media,
+        host: { spatialVideoRenderingEnabled: true },
+        shadowRoot,
+        container,
+    });
+
+    shouldBeTrue("support._active");
+    shouldBe("support._cameraFieldOfView", "80");
+
+    window.recognizer = support._pinchGestureRecognizer;
+    shouldBeTrue("recognizer instanceof PinchGestureRecognizer");
+    shouldBe("recognizer.scaleThreshold", "SpatialVideoSupport.PinchScaleThreshold");
+
+    debug("");
+    debug("Driving the recognizer's states directly, so that the pointer events below only exercise panning:");
+    recognizer.enabled = false;
+    shouldBeFalse("recognizer.enabled");
+
+    debug("");
+    debug("Starting a drag, then beginning a pinch:");
+    pointerEvent("pointerdown", 1, 100, 100);
+    shouldBeTrue("support._dragging");
+    recognizer.state = GestureRecognizer.States.Began;
+    shouldBeTrue("support._pinching");
+    shouldBeFalse("support._dragging");
+    shouldBe("support._pinchStartFieldOfView", "80");
+
+    debug("");
+    debug("Scaling up halves the field of view:");
+    recognizer.scale = 2;
+    recognizer.state = GestureRecognizer.States.Changed;
+    shouldBe("support._cameraFieldOfView", "40");
+
+    debug("");
+    debug("Scaling down clamps at the maximum:");
+    recognizer.scale = 0.5;
+    recognizer.state = GestureRecognizer.States.Changed;
+    shouldBe("support._cameraFieldOfView", "SpatialVideoSupport.MaximumCameraFieldOfView");
+
+    debug("");
+    debug("A pointer going down mid-pinch does not start a drag:");
+    pointerEvent("pointerdown", 2, 200, 100);
+    shouldBeFalse("support._dragging");
+
+    debug("");
+    debug("Moving a pointer mid-pinch does not pan:");
+    pointerEvent("pointermove", 1, 150, 100);
+    shouldBe("support._yaw", "0");
+
+    debug("");
+    debug("Ending the pinch asks for a fresh pan anchor:");
+    recognizer.state = GestureRecognizer.States.Ended;
+    shouldBeFalse("support._pinching");
+    shouldBeTrue("support._needsPanAnchor");
+
+    debug("");
+    debug("The first move after a pinch re-anchors instead of panning:");
+    pointerEvent("pointermove", 1, 300, 100);
+    shouldBe("support._yaw", "0");
+    shouldBe("support._lastX", "300");
+    shouldBeFalse("support._needsPanAnchor");
+
+    debug("");
+    debug("The next move pans from there:");
+    pointerEvent("pointerdown", 1, 300, 100);
+    pointerEvent("pointermove", 1, 250, 100);
+    shouldBe("support._yaw", "50 * SpatialVideoSupport.DragSpeed");
+
+    media.remove();
+    shadowRoot.host.remove();
+    finishJSTest();
+}, { once: true });
+
+</script>
+</body>
