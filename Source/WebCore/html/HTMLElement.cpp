@@ -164,7 +164,10 @@ String HTMLElement::nodeName() const
 
 NODELETE static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
 {
-    if (element.hasTagName(preTag) || element.hasTagName(textareaTag))
+    ASSERT(!element.hasTagName(bdoTag));
+    ASSERT(!element.hasTagName(preTag));
+    ASSERT(!element.hasTagName(textareaTag));
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); input && (input->isTelephoneField() || input->isEmailField() || input->isSearchField() || input->isURLField()))
         return CSSValueID::Plaintext;
     return CSSValueID::Isolate;
 }
@@ -271,13 +274,11 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitUserDrag, CSSValueID::None);
         break;
     case AttributeNames::dirAttr:
-        if (equalLettersIgnoringASCIICase(value, "auto"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::UnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
-        else if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s)) {
+        if (equalLettersIgnoringASCIICase(value, "auto"_s)) {
+            if (!hasTagName(bdoTag) && !hasTagName(preTag) && !hasTagName(textareaTag))
+                addPropertyToPresentationalHintStyle(style, CSSPropertyID::UnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
+        } else if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::Direction, value);
-            if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-                addPropertyToPresentationalHintStyle(style, CSSPropertyID::UnicodeBidi, CSSValueID::Isolate);
-        }
         break;
     case AttributeNames::XML::langAttr:
         mapLanguageAttributeToLocale(value, style);
