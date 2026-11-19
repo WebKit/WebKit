@@ -1,0 +1,34 @@
+Tests MediaStreamTrackAudioSourceNode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS audioTrack.kind is 'audio'
+PASS videoTrack.kind is 'video'
+PASS typeof context.createMediaStreamTrackSource is 'function'
+PASS typeof offline.createMediaStreamTrackSource is 'undefined'
+PASS new MediaStreamTrackAudioSourceNode(); threw exception TypeError: Not enough arguments.
+PASS new MediaStreamTrackAudioSourceNode(context); threw exception TypeError: Not enough arguments.
+PASS new MediaStreamTrackAudioSourceNode(context, { }); threw exception TypeError: Member MediaStreamTrackAudioSourceOptions.mediaStreamTrack is required and must be an instance of MediaStreamTrack.
+PASS new MediaStreamTrackAudioSourceNode(context, { mediaStreamTrack: document.body }); threw exception TypeError: Type error.
+PASS context.createMediaStreamTrackSource(); threw exception TypeError: Not enough arguments.
+PASS context.createMediaStreamTrackSource(null); threw exception TypeError: Argument 1 ('mediaStreamTrack') to AudioContext.createMediaStreamTrackSource must be an instance of MediaStreamTrack.
+PASS new MediaStreamTrackAudioSourceNode(offline, { mediaStreamTrack: audioTrack }); threw exception TypeError: Argument 1 ('context') to the MediaStreamTrackAudioSourceNode constructor must be an instance of AudioContext.
+PASS context.createMediaStreamTrackSource(videoTrack); threw exception InvalidStateError: MediaStreamTrack is not an audio track.
+PASS new MediaStreamTrackAudioSourceNode(context, { mediaStreamTrack: videoTrack }); threw exception InvalidStateError: MediaStreamTrack is not an audio track.
+PASS source = context.createMediaStreamTrackSource(audioTrack); did not throw exception.
+PASS source instanceof MediaStreamTrackAudioSourceNode is true
+PASS source instanceof MediaStreamAudioSourceNode is false
+PASS source.numberOfInputs is 0
+PASS source.numberOfOutputs is 1
+PASS source.connect(context.destination); did not throw exception.
+PASS constructed = new MediaStreamTrackAudioSourceNode(context, { mediaStreamTrack: audioTrack }); did not throw exception.
+PASS constructed instanceof MediaStreamTrackAudioSourceNode is true
+PASS constructed !== source is true
+PASS constructed.numberOfInputs is 0
+PASS constructed.numberOfOutputs is 1
+PASS constructed.connect(context.destination); did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

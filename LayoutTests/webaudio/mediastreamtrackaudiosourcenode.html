@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests MediaStreamTrackAudioSourceNode.");
+
+context = new AudioContext();
+offline = new OfflineAudioContext(1, 128, 44100);
+audioTrack = context.createMediaStreamDestination().stream.getAudioTracks()[0];
+videoTrack = document.createElement("canvas").captureStream().getVideoTracks()[0];
+
+shouldBe("audioTrack.kind", "'audio'");
+shouldBe("videoTrack.kind", "'video'");
+shouldBe("typeof context.createMediaStreamTrackSource", "'function'");
+shouldBe("typeof offline.createMediaStreamTrackSource", "'undefined'");
+
+shouldThrowErrorName("new MediaStreamTrackAudioSourceNode();", "TypeError");
+shouldThrowErrorName("new MediaStreamTrackAudioSourceNode(context);", "TypeError");
+shouldThrowErrorName("new MediaStreamTrackAudioSourceNode(context, { });", "TypeError");
+shouldThrowErrorName("new MediaStreamTrackAudioSourceNode(context, { mediaStreamTrack: document.body });", "TypeError");
+shouldThrowErrorName("context.createMediaStreamTrackSource();", "TypeError");
+shouldThrowErrorName("context.createMediaStreamTrackSource(null);", "TypeError");
+shouldThrowErrorName("new MediaStreamTrackAudioSourceNode(offline, { mediaStreamTrack: audioTrack });", "TypeError");
+shouldThrowErrorName("context.createMediaStreamTrackSource(videoTrack);", "InvalidStateError");
+shouldThrowErrorName("new MediaStreamTrackAudioSourceNode(context, { mediaStreamTrack: videoTrack });", "InvalidStateError");
+
+shouldNotThrow("source = context.createMediaStreamTrackSource(audioTrack);");
+shouldBeTrue("source instanceof MediaStreamTrackAudioSourceNode");
+shouldBeFalse("source instanceof MediaStreamAudioSourceNode");
+shouldBe("source.numberOfInputs", "0");
+shouldBe("source.numberOfOutputs", "1");
+shouldNotThrow("source.connect(context.destination);");
+
+shouldNotThrow("constructed = new MediaStreamTrackAudioSourceNode(context, { mediaStreamTrack: audioTrack });");
+shouldBeTrue("constructed instanceof MediaStreamTrackAudioSourceNode");
+shouldBeTrue("constructed !== source");
+shouldBe("constructed.numberOfInputs", "0");
+shouldBe("constructed.numberOfOutputs", "1");
+shouldNotThrow("constructed.connect(context.destination);");
+
+</script>
+</body>
+</html>

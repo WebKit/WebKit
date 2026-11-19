@@ -30,11 +30,10 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
-#include "AudioSourceProvider.h"
 #include "AudioUtilities.h"
-#include "EventTargetInlines.h"
 #include "Logging.h"
 #include "MediaStreamAudioSourceOptions.h"
+#include "MultiChannelResampler.h"
 #include "WebAudioSourceProvider.h"
 #include <algorithm>
 #include <wtf/Locker.h>
@@ -64,45 +63,56 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
         return Exception { ExceptionCode::InvalidStateError, "Could not find an audio track with an audio source provider"_s };
 
     auto node = adoptRef(*new MediaStreamAudioSourceNode(context, WTF::move(mediaStream), provider.releaseNonNull()));
-    node->setFormat(2, context.sampleRate());
-
-    // Context keeps reference until node is disconnected.
-    context.sourceNodeWillBeginPlayback(node);
-
+    node->preparePlayback();
     return node;
 }
 
-MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, Ref<MediaStream>&& mediaStream, Ref<WebAudioSourceProvider>&& provider)
-    : AudioNode(context, NodeTypeMediaStreamAudioSource)
-    , m_mediaStream(WTF::move(mediaStream))
-    , m_provider(provider)
+MediaStreamAudioSourceNodeBase::MediaStreamAudioSourceNodeBase(BaseAudioContext& context, NodeType type, Ref<WebAudioSourceProvider>&& provider)
+    : AudioNode(context, type)
+    , m_provider(WTF::move(provider))
 {
     m_provider->setClient(this);
-    
-    // Default to stereo. This could change depending on the format of the MediaStream's audio track.
     addOutput(2);
-
     initialize();
 }
 
-MediaStreamAudioSourceNode::~MediaStreamAudioSourceNode()
+MediaStreamAudioSourceNodeBase::~MediaStreamAudioSourceNodeBase()
+{
+    detachProvider();
+}
+
+void MediaStreamAudioSourceNodeBase::detachProvider()
 {
     m_provider->setClient(nullptr);
     uninitialize();
 }
 
-void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
+void MediaStreamAudioSourceNodeBase::preparePlayback()
 {
-    // Synchronize with process().
+    setFormat(2, sampleRate());
+    context().sourceNodeWillBeginPlayback(*this);
+}
+
+MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, Ref<MediaStream>&& mediaStream, Ref<WebAudioSourceProvider>&& provider)
+    : MediaStreamAudioSourceNodeBase(context, NodeTypeMediaStreamAudioSource, WTF::move(provider))
+    , m_mediaStream(WTF::move(mediaStream))
+{
+}
+
+MediaStreamAudioSourceNode::~MediaStreamAudioSourceNode()
+{
+    detachProvider();
+}
+
+void MediaStreamAudioSourceNodeBase::setFormat(size_t numberOfChannels, float sourceSampleRate)
+{
     Locker locker { m_processLock };
 
     if (numberOfChannels == m_sourceNumberOfChannels && sourceSampleRate == m_sourceSampleRate)
         return;
 
-    // The sample-rate must be equal to the context's sample-rate.
     if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels) {
-        // process() will generate silence for these uninitialized values.
-        LOG(Media, "MediaStreamAudioSourceNode::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
+        LOG(Media, "MediaStreamAudioSourceNodeBase::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
         m_sourceNumberOfChannels = 0;
         return;
     }
@@ -115,34 +125,27 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         m_multiChannelResampler = nullptr;
     else {
         double scaleFactor = sourceSampleRate / sampleRate;
-        m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels, AudioUtilities::renderQuantumSize, [this, checkedThis = CheckedRef { *this }](AudioBus& bus, size_t framesToProcess) {
-            provideInput(bus, framesToProcess);
+        m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels, AudioUtilities::renderQuantumSize, [protectedThis = Ref { *this }](AudioBus& bus, size_t framesToProcess) {
+            protectedThis->provideInput(bus, framesToProcess);
         });
     }
 
     {
-        // The context must be locked when changing the number of output channels.
         Locker contextLocker { context().graphLock() };
-
-        // Do any necesssary re-configuration to the output's number of channels.
         protect(output(0))->setNumberOfChannels(numberOfChannels);
     }
 }
 
-void MediaStreamAudioSourceNode::provideInput(AudioBus& bus, size_t framesToProcess)
+void MediaStreamAudioSourceNodeBase::provideInput(AudioBus& bus, size_t framesToProcess)
 {
     m_provider->provideInput(bus, framesToProcess);
 }
 
-void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
+void MediaStreamAudioSourceNodeBase::process(size_t numberOfFrames)
 {
     Ref outputBus = output(0)->bus();
 
-    // Use tryLock() to avoid contention in the real-time audio thread.
-    // If we fail to acquire the lock then the MediaStream must be in the middle of
-    // a format change, so we output silence in this case.
     if (!m_processLock.tryLock()) {
-        // We failed to acquire the lock.
         outputBus->zero();
         return;
     }
@@ -160,7 +163,6 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
         ASSERT(m_sourceSampleRate != sampleRate());
         m_multiChannelResampler->process(outputBus.get(), numberOfFrames);
     } else {
-        // Bypass the resampler completely if the source is at the context's sample-rate.
         ASSERT(m_sourceSampleRate == sampleRate());
         provideInput(outputBus, numberOfFrames);
     }
