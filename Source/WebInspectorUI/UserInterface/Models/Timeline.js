@@ -53,6 +53,26 @@ WI.Timeline = class Timeline extends WI.Object
         return new WI.Timeline(type);
     }
 
+    static timeWeightedAverage(records, startTime, endTime, getValue)
+    {
+        let total = 0;
+        let weightedSum = 0;
+        let totalTime = 0;
+        for (let record of records) {
+            total += getValue(record);
+            // A record may begin before or end after the time range, so only weight the part inside it.
+            let duration = Math.min(record.endTime, endTime) - Math.max(record.startTime, startTime);
+            if (duration <= 0)
+                continue;
+            weightedSum += getValue(record) * duration;
+            totalTime += duration;
+        }
+        // Records can neighbor the time range without overlapping it, such as a selection inside
+        // a gap between records. Fall back to the plain mean so the average stays consistent with
+        // the min and max computed from the same records.
+        return totalTime ? weightedSum / totalTime : (records.length ? total / records.length : 0);
+    }
+
     // Public
 
     get type() { return this._type; }
