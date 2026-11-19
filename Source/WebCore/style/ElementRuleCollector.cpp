@@ -210,8 +210,7 @@ void ElementRuleCollector::collectMatchingRules(DeclarationOrigin origin)
         return;
     }
 
-    auto* parent = element().parentElement();
-    if (parent && parent->shadowRoot()) {
+    if (element().parentElement() && element().parentElement()->shadowRoot()) {
         matchSlottedPseudoElementRules(origin);
         if (isFirstMatchModeAndHasMatchedAnyRules())
             return;
@@ -239,8 +238,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::StyleInvalidation && m_pseudoElementRequest), "When in StyleInvalidation or SharingRules, SelectorChecker does not try to match the pseudo ID. While ElementRuleCollector supports matching a particular pseudoId in this case, this would indicate a error at the call site since matching a particular element should be unnecessary.");
 
     auto& element = this->element();
-    auto* shadowRoot = element.containingShadowRoot();
-    if (shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent)
+    if (element.isInUserAgentShadowTree())
         collectMatchingUserAgentPartRules(matchRequest);
 
     bool isHTMLElement = element.isHTMLElement();
@@ -510,11 +508,10 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
 void ElementRuleCollector::matchSlottedPseudoElementRulesInUserAgentShadowTree(DeclarationOrigin origin)
 {
     ASSERT(element().isInShadowTree());
-    auto* shadowRoot = element().containingShadowRoot();
-    if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent)
+    if (!element().isInUserAgentShadowTree())
         return;
 
-    auto* host = shadowRoot->host();
+    auto* host = element().containingShadowRoot()->host();
     if (!host)
         return;
 

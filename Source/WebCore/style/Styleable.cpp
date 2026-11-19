@@ -81,7 +81,7 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
     switch (*pseudoElementType) {
     case PseudoElementType::Backdrop:
         for (auto& topLayerElement : renderer.document().topLayerElements()) {
-            if (topLayerElement->renderer() && topLayerElement->renderer()->pseudoElementRenderer(PseudoElementType::Backdrop) == &renderer)
+            if (CheckedPtr topLayerRenderer = topLayerElement->renderer(); topLayerRenderer && topLayerRenderer->pseudoElementRenderer(PseudoElementType::Backdrop) == &renderer)
                 return Styleable(topLayerElement.get(), Style::PseudoElementIdentifier { PseudoElementType::Backdrop });
         }
         break;
@@ -93,7 +93,7 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
     }
     case PseudoElementType::Checkmark:
     case PseudoElementType::PickerIcon: {
-        auto* ancestor = renderer.parent();
+        CheckedPtr ancestor = renderer.parent();
         while (ancestor) {
             if (ancestor->element() && ancestor->pseudoElementRenderer(*pseudoElementType) == &renderer)
                 return Styleable(*ancestor->element(), Style::PseudoElementIdentifier { *pseudoElementType });
@@ -147,7 +147,7 @@ RenderElement* Styleable::renderer() const
     case PseudoElementType::Backdrop:
     case PseudoElementType::Checkmark:
     case PseudoElementType::PickerIcon:
-        if (auto* hostRenderer = element->renderer())
+        if (CheckedPtr hostRenderer = element->renderer())
             return hostRenderer->pseudoElementRenderer(pseudoElementIdentifier->type).get();
         break;
     case PseudoElementType::Before:
@@ -690,9 +690,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         ASSERT(matchingTransition);
         auto delay = Seconds(matchingTransition->delay().value);
         auto duration = Seconds(matchingTransition->duration().value);
-        auto& reversingAdjustedStartStyle = beforeChangeStyle;
         auto reversingShorteningFactor = 1;
-        createCSSTransition(beforeChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor);
+        createCSSTransition(beforeChangeStyle, delay, duration, beforeChangeStyle, reversingShorteningFactor);
         ASSERT(styleable.hasRunningTransitionForProperty(property));
         hasRunningTransition = true;
     } else if (styleable.hasCompletedTransitionForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)) {

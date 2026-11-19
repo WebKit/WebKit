@@ -843,8 +843,11 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 void Resolver::setGlobalStateAfterApplyingProperties(const BuilderState& builderState)
 {
     // FIXME: This stuff should be somewhere else.
-    auto* currentScope = builderState.element() ? &Scope::forNode(*builderState.element()) : nullptr;
-    for (auto& entry : builderState.registeredSubstitutionAttributes()) {
+    auto& registeredSubstitutionAttributes = builderState.registeredSubstitutionAttributes();
+    CheckedPtr<const Scope> currentScope;
+    if (!registeredSubstitutionAttributes.isEmpty() && builderState.element())
+        currentScope = &Scope::forNode(*protect(builderState.element()));
+    for (auto& entry : registeredSubstitutionAttributes) {
         // Register on the scope of the element the attribute is read from, which is where
         // AttributeChangeInvalidation looks when that attribute changes. For attr() applied to a
         // pseudo-element that may differ from the scope being styled (e.g. ::placeholder styled in
@@ -852,7 +855,7 @@ void Resolver::setGlobalStateAfterApplyingProperties(const BuilderState& builder
         // we only invalidate the host's shadow subtree when a shadow-piercing rule is the source of
         // the dependency.
         CheckedPtr targetScope = entry.targetScope.get();
-        auto* scope = targetScope ? targetScope.get() : currentScope;
+        CheckedPtr scope = targetScope ? targetScope : currentScope;
         if (!scope)
             continue;
         auto affectsShadowTree = scope != currentScope ? AttributeAffectsShadowTree::Yes : AttributeAffectsShadowTree::No;

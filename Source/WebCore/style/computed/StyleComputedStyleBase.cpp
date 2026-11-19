@@ -207,8 +207,7 @@ const FontCascadeDescription& ComputedStyleBase::fontDescription() const
 
 FontCascadeDescription& ComputedStyleBase::mutableFontDescriptionWithoutUpdate()
 {
-    auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
-    return cascade.mutableFontDescription();
+    return m_inheritedData.access().fontData.access().fontCascade.mutableFontDescription();
 }
 
 void ComputedStyleBase::setFontDescription(FontCascadeDescription&& description)
@@ -281,13 +280,10 @@ void ComputedStyleBase::setLineHeightFromAnimation(LineHeight&& lineHeight)
 {
     bool lineHeightChanged = m_inheritedData->lineHeight != lineHeight;
     bool textAutosizingAdjustedLineHeightChanged = m_inheritedData->textAutosizingAdjustedLineHeight != lineHeight;
-    if (lineHeightChanged || textAutosizingAdjustedLineHeightChanged) {
-        auto& access = m_inheritedData.access();
-        if (lineHeightChanged)
-            access.lineHeight = lineHeight;
-        if (textAutosizingAdjustedLineHeightChanged)
-            access.textAutosizingAdjustedLineHeight = WTF::move(lineHeight);
-    }
+    if (lineHeightChanged)
+        m_inheritedData.access().lineHeight = lineHeight;
+    if (textAutosizingAdjustedLineHeightChanged)
+        m_inheritedData.access().textAutosizingAdjustedLineHeight = WTF::move(lineHeight);
 }
 
 void ComputedStyleBase::setLetterSpacingFromAnimation(LetterSpacing&& value)
@@ -325,13 +321,10 @@ void ComputedStyleBase::setZoomFromAnimation(Zoom value)
 
 void ComputedStyleBase::synchronizeLetterSpacingWithFontCascade()
 {
-    auto& fontCascade = mutableFontCascadeWithoutUpdate();
-    auto fontSize = fontCascade.size();
+    auto newLetterSpacing = evaluate<float>(m_inheritedData->fontData->letterSpacing, fontCascade().size(), usedZoomForLength());
 
-    auto newLetterSpacing = evaluate<float>(m_inheritedData->fontData->letterSpacing, fontSize, usedZoomForLength());
-
-    if (newLetterSpacing != fontCascade.letterSpacing()) {
-        fontCascade.setLetterSpacing(newLetterSpacing);
+    if (newLetterSpacing != fontCascade().letterSpacing()) {
+        mutableFontCascadeWithoutUpdate().setLetterSpacing(newLetterSpacing);
 
         auto oldFontDescription = fontDescription();
 
@@ -349,13 +342,10 @@ void ComputedStyleBase::synchronizeLetterSpacingWithFontCascade()
 
 void ComputedStyleBase::synchronizeLetterSpacingWithFontCascadeWithoutUpdate()
 {
-    auto& fontCascade = mutableFontCascadeWithoutUpdate();
-    auto fontSize = fontCascade.size();
+    auto newLetterSpacing = evaluate<float>(m_inheritedData->fontData->letterSpacing, fontCascade().size(), usedZoomForLength());
 
-    auto newLetterSpacing = evaluate<float>(m_inheritedData->fontData->letterSpacing, fontSize, usedZoomForLength());
-
-    if (newLetterSpacing != fontCascade.letterSpacing()) {
-        fontCascade.setLetterSpacing(newLetterSpacing);
+    if (newLetterSpacing != fontCascade().letterSpacing()) {
+        mutableFontCascadeWithoutUpdate().setLetterSpacing(newLetterSpacing);
 
         auto oldFontDescription = fontDescription();
 
@@ -373,13 +363,10 @@ void ComputedStyleBase::synchronizeLetterSpacingWithFontCascadeWithoutUpdate()
 
 void ComputedStyleBase::synchronizeWordSpacingWithFontCascade()
 {
-    auto& fontCascade = mutableFontCascadeWithoutUpdate();
-    auto fontSize = fontCascade.size();
+    auto newWordSpacing = evaluate<float>(m_inheritedData->fontData->wordSpacing, fontCascade().size(), usedZoomForLength());
 
-    auto newWordSpacing = evaluate<float>(m_inheritedData->fontData->wordSpacing, fontSize, usedZoomForLength());
-
-    if (newWordSpacing != fontCascade.wordSpacing())
-        fontCascade.setWordSpacing(newWordSpacing);
+    if (newWordSpacing != fontCascade().wordSpacing())
+        mutableFontCascadeWithoutUpdate().setWordSpacing(newWordSpacing);
 }
 
 void ComputedStyleBase::synchronizeWordSpacingWithFontCascadeWithoutUpdate()

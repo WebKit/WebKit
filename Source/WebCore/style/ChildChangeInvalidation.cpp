@@ -379,17 +379,25 @@ static void invalidateForBackwardPositionalRules(Element& parent, Element* eleme
     }
 }
 
+NODELETE static bool needsInvalidationForFirstChildState(const Style::ComputedStyle* style, bool state)
+{
+    return !style || style->firstChildState() == state;
+}
+
+NODELETE static bool needsInvalidationForLastChildState(const Style::ComputedStyle* style, bool state)
+{
+    return !style || style->lastChildState() == state;
+}
+
 static void invalidateForFirstChildState(Element& child, bool state)
 {
-    auto* style = child.renderStyle();
-    if (!style || style->firstChildState() == state)
+    if (needsInvalidationForFirstChildState(child.renderStyle(), state))
         child.invalidateStyleForSubtree();
 }
 
 static void invalidateForLastChildState(Element& child, bool state)
 {
-    auto* style = child.renderStyle();
-    if (!style || style->lastChildState() == state)
+    if (needsInvalidationForLastChildState(child.renderStyle(), state))
         child.invalidateStyleForSubtree();
 }
 

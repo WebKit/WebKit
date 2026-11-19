@@ -64,15 +64,11 @@ rendering/updating/RenderTreeBuilderTable.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 rendering/updating/RenderTreeUpdaterViewTransition.cpp
-style/ChildChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
-style/InlineTextBoxStyle.cpp
-style/StyleBuilderCustom.h
 style/StyleBuilderStateInlines.h
 style/StyleInvalidationFunctions.h
 style/StyleResolver.cpp
 style/StyleTreeResolver.cpp
 style/Styleable.cpp
 style/computed/StyleComputedStyleBase.cpp
-style/values/grid/StyleGridPositionsResolver.cpp
 style/values/primitives/StyleLengthResolution.cpp

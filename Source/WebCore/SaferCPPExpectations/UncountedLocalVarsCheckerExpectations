@@ -4,6 +4,3 @@ rendering/RenderLayerCompositor.cpp
 style/ElementRuleCollector.cpp
 style/StyleInvalidationFunctions.h
 style/UserAgentStyle.cpp
-style/computed/StyleComputedStyleBase+SettersInlines.h
-style/computed/StyleComputedStyleBase.cpp
-style/computed/StyleComputedStyleProperties+SettersCustomInlines.h

@@ -161,7 +161,7 @@ private:
     void popParent();
     void popParentsToDepth(unsigned depth);
 
-    void incrementNestedInlineFormattingContextCountIfNeeded(Parent&);
+    void incrementNestedInlineFormattingContextCountIfNeeded(Parent&, const Style::ComputedStyle&);
 
     DescendantsToResolve computeDescendantsToResolve(const ElementUpdate&, const Style::ComputedStyle* existingStyle, Validity) const;
     static std::optional<ResolutionType> determineResolutionType(const Element&, const Style::ComputedStyle*, DescendantsToResolve, OptionSet<Change> parentChange);

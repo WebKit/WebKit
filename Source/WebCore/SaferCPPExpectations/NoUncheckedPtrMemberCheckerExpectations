@@ -28,7 +28,6 @@ rendering/shapes/ShapeOutsideInfo.h
 rendering/updating/RenderTreeBuilder.h
 rendering/updating/RenderTreeBuilderBlock.cpp
 rendering/updating/RenderTreeUpdater.h
-style/InlineTextBoxStyle.cpp
 style/PseudoClassChangeInvalidation.h
 style/StyleAdjuster.h
 style/StyleBuilderState.h
@@ -36,4 +35,3 @@ style/StyleRelations.h
 style/StyleResolver.cpp
 style/StyleResolver.h
 style/StyleTreeResolver.h
-style/values/primitives/StyleLengthResolution.cpp

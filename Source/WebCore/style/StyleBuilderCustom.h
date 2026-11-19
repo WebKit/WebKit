@@ -420,7 +420,7 @@ inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
 
 inline void BuilderCustom::applyInheritFontFamily(BuilderState& builderState)
 {
-    builderState.setFontDescriptionFamilies(forwardInheritedValue(builderState.parentStyle().fontFamily()));
+    builderState.setFontDescriptionFamilies(forwardInheritedValue(protect(builderState.parentStyle())->fontFamily()));
 }
 
 inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSValue& value)
@@ -529,7 +529,7 @@ inline float BuilderCustom::determineMathDepthScale(BuilderState& builderState)
 
     // Step 4.
 #if ENABLE(MATHML)
-    Ref primaryFont = builderState.style().fontCascade().primaryFont();
+    Ref primaryFont = protect(builderState.style().fontCascade())->primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         float scriptPercentScaleDown = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::ScriptPercentScaleDown);
         if (!scriptPercentScaleDown)
@@ -665,7 +665,7 @@ inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
 
     if (builderState.applyPropertyToRegularStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::No);
-        builderState.style().setColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        builderState.style().setColor(styleColor.resolveColor(ResolvedColors::fromStyle(protect(builderState.parentStyle()), StyleColorOptionsPurpose::ComputedStyle)));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         if (axCustomColorModeActive)
             builderState.style().setOverrideColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
@@ -674,7 +674,7 @@ inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
 
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        builderState.style().setVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(protect(builderState.parentStyle()), StyleColorOptionsPurpose::ComputedStyle)));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         if (axCustomColorModeActive)
             builderState.style().setOverrideVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
@@ -736,7 +736,7 @@ inline void BuilderCustom::applyHighlightInheritColor(BuilderState& builderState
     auto& inheritedColor = parentHighlightStyle ? parentHighlightStyle->colorForHighlight() : Color::currentColor();
 
     if (builderState.applyPropertyToRegularStyle()) {
-        builderState.style().setColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        builderState.style().setColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(protect(builderState.parentStyle()), StyleColorOptionsPurpose::ComputedStyle)));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         if (axCustomColorModeActive)
             builderState.style().setOverrideColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
@@ -745,7 +745,7 @@ inline void BuilderCustom::applyHighlightInheritColor(BuilderState& builderState
     }
     // FIXME: visitedLinkColor needs its own unresolved value for this.
     if (builderState.applyPropertyToVisitedLinkStyle()) {
-        builderState.style().setVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        builderState.style().setVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(protect(builderState.parentStyle()), StyleColorOptionsPurpose::ComputedStyle)));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         if (axCustomColorModeActive)
             builderState.style().setOverrideVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
@@ -758,8 +758,8 @@ inline void BuilderCustom::applyHighlightInheritColor(BuilderState& builderState
     // FIXME: At the start of the chain the source is the originating element, so a color set on the
     // element makes the highlight look like it set one itself. Painting uses this bit to decide whether
     // the highlight overrides the text color of the layers below it.
-    auto& sourceStyle = parentHighlightStyle ? *parentHighlightStyle : builderState.parentStyle();
-    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin() || sourceStyle.hasExplicitlySetColor());
+    CheckedRef sourceStyle = parentHighlightStyle ? *parentHighlightStyle : builderState.parentStyle();
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin() || sourceStyle->hasExplicitlySetColor());
 }
 
 inline void BuilderCustom::applyHighlightValueColor(BuilderState& builderState, CSSValue& value)

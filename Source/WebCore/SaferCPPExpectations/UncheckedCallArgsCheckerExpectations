@@ -88,7 +88,6 @@ rendering/updating/RenderTreeUpdaterViewTransition.cpp
 style/AttributeChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
-style/InlineTextBoxStyle.cpp
 style/MatchResultCache.cpp
 style/MatchedDeclarationsCache.cpp
 style/PseudoClassChangeInvalidation.cpp
@@ -98,6 +97,5 @@ style/StyleBuilderState.cpp
 style/StyleInvalidationFunctions.h
 style/StyleResolver.cpp
 style/StyleTreeResolver.cpp
-style/Styleable.cpp
 style/computed/StyleComputedStyleBase.cpp
 style/values/primitives/StyleLengthResolution.cpp

@@ -659,8 +659,8 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     // Same for the additional translation component present in RenderSVGTransformableContainer (that stems from <use> x/y
     // properties, that are transferred to the internal RenderSVGTransformableContainer), or for the viewBox-induced transformation
     // in RenderSVGViewportContainer. They all need to return true for 'hasTransformRelatedProperty'.
-    auto hasTransformRelatedProperty = [](const Style::ComputedStyle& style, const Element* element, const Style::ComputedStyle& parentStyle) {
-        if (element && element->document().settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled() && style.backfaceVisibility() == BackfaceVisibility::Hidden && parentStyle.usedTransformStyle3D() == TransformStyle3D::Preserve3D)
+    auto hasTransformRelatedProperty = [](const Style::ComputedStyle& style, const Element* element, bool parentPreserves3D) {
+        if (element && element->document().settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled() && style.backfaceVisibility() == BackfaceVisibility::Hidden && parentPreserves3D)
             return true;
 
         if (style.hasTransformRelatedProperty())
@@ -681,7 +681,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         if ((m_element && m_document->documentElement() == m_element.get())
             || (m_element && m_element->isCanvasDrawable())
             || (is<HTMLCanvasElement>(m_element.get()) && downcast<HTMLCanvasElement>(*m_element).hasDrawableContent())
-            || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle)
+            || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle.usedTransformStyle3D() == TransformStyle3D::Preserve3D)
             || shouldTreatAutoZIndexAsZero(style)
             || isInTopLayerOrBackdrop(style, m_element.get()))
             style.setUsedZIndex(0);
@@ -1164,6 +1164,8 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     if (!documentQuirks.hasRelevantQuirks())
         return;
 
+    CheckedRef parentStyle = m_parentStyle;
+
     if (documentQuirks.needsBodyScrollbarWidthNoneDisabledQuirk() && is<HTMLBodyElement>(*m_element)) {
         if (style.scrollbarWidth() == ScrollbarWidth::None)
             style.setScrollbarWidth(ScrollbarWidth::Auto);
@@ -1205,7 +1207,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
         style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlex);
 #endif // PLATFORM(IOS_FAMILY)
 
-    if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), m_parentStyle)) {
+    if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), parentStyle)) {
         if (*tikTokOverflowingContentQuery == Quirks::TikTokOverflowingContentQuirkType::CommentsSectionQuirk)  {
             style.setFlexShrink({ 1 });
             style.setMinWidth(0_css_px);
@@ -1249,7 +1251,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setHeight(PreferredSize::Fixed { *openRiceAdPopupHeight->clampedHeight });
     }
 
-    if (documentQuirks.needsAmazonDesignMenuViewportUnitQuirk(style, m_parentStyle)) {
+    if (documentQuirks.needsAmazonDesignMenuViewportUnitQuirk(style, parentStyle)) {
         if (auto fixedHeight = style.height().tryFixed()) {
             auto resolvedHeight = fixedHeight->resolveZoom(ZoomFactor::none());
             CheckedPtr renderView = m_document->renderView();
@@ -1270,7 +1272,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     }
 #endif
 
-    if (documentQuirks.needsInstagramResizingReelsQuirk(protect(*m_element), style, m_parentStyle))
+    if (documentQuirks.needsInstagramResizingReelsQuirk(protect(*m_element), style, parentStyle))
         style.setFlexGrow(1);
 }
 
