@@ -134,11 +134,13 @@ WI.LocalResource = class LocalResource extends WI.Resource
             responseEnd: NaN,
         };
 
-        if (!isNaN(requestSentWalltime) && !isNaN(archiveStartWalltime)) {
-            let hasBlocked = timings.blocked !== -1;
-            let hasDNS = timings.dns !== -1;
-            let hasConnect = timings.connect !== -1;
-            let hasSecureConnect = timings.ssl !== -1;
+        if (!isNaN(requestSentWalltime) && !isNaN(archiveStartWalltime) && timings) {
+            // blocked, dns, connect and ssl are optional in HAR 1.2; treat anything missing or negative like the -1 placeholder.
+            let hasBlocked = typeof timings.blocked === "number" && timings.blocked >= 0;
+            let hasDNS = typeof timings.dns === "number" && timings.dns >= 0;
+            let hasConnect = typeof timings.connect === "number" && timings.connect >= 0;
+            let hasSecureConnect = typeof timings.ssl === "number" && timings.ssl >= 0;
+            let phaseDuration = (value) => typeof value === "number" && value >= 0 ? value : 0;
 
             // FIXME: <https://webkit.org/b/195692> Web Inspector: ResourceTimingData should allow a startTime of 0
             timing.startTime = requestSentTimestamp || Number.EPSILON;
@@ -164,13 +166,13 @@ WI.LocalResource = class LocalResource extends WI.Resource
                     timing.secureConnectionStart = timing.connectEnd - (timings.ssl / 1000);
             }
 
-            accumulation += (timings.send / 1000);
+            accumulation += (phaseDuration(timings.send) / 1000);
             timing.requestStart = accumulation;
 
-            accumulation += (timings.wait / 1000);
+            accumulation += (phaseDuration(timings.wait) / 1000);
             timing.responseStart = accumulation;
 
-            accumulation += (timings.receive / 1000);
+            accumulation += (phaseDuration(timings.receive) / 1000);
             timing.responseEnd = accumulation;
 
             finishedTimestamp = timing.responseEnd;
