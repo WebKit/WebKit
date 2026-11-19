@@ -65,6 +65,9 @@ protected:
 private:
     virtual Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() = 0;
 
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const final;
+
     String m_identifier;
     Vector<Ref<WorkletGlobalScopeProxy>> m_proxies;
     HashSet<Ref<WorkletPendingTasks>> m_pendingTasksSet;
