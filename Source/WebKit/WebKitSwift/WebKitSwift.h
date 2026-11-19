@@ -35,6 +35,7 @@
 #import "WKIdentityDocumentPresentmentRequest.h"
 #import "WKIdentityDocumentPresentmentResponse.h"
 #import "WKIdentityDocumentRawRequestValidator.h"
+#import "WKIdentityDocumentSystemPresentmentController.h"
 #import "WKIntelligenceReplacementTextEffectCoordinator.h"
 #import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
 #import "WKIntelligenceTextEffectCoordinator.h"

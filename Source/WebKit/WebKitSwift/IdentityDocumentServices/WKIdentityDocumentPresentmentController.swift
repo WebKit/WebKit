@@ -24,7 +24,7 @@
 #if HAVE_DIGITAL_CREDENTIALS_UI
 
 import IdentityDocumentServices
-import IdentityDocumentServicesUI
+@_weakLinked import IdentityDocumentServicesUI
 import os
 
 #if WTF_PLATFORM_IOS_FAMILY

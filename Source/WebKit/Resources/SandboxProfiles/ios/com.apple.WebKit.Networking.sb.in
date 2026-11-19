@@ -160,6 +160,13 @@
 (allow mach-lookup (with telemetry) (global-name "com.apple.webkit.adattributiond.service"))
 (allow mach-lookup (with telemetry) (global-name "com.apple.webkit.webpushd.service"))
 
+#if HAVE(IDENTITY_DOCUMENT_SERVICES_SYSTEM_PRESENTMENT)
+(allow mach-lookup (with telemetry)
+    (require-all
+        (require-entitlement "com.apple.private.identity-document-services.web-presentment.host")
+        (global-name "com.apple.coreidvd.web-presentment-remote-alert.xpc")))
+#endif
+
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
         (global-name

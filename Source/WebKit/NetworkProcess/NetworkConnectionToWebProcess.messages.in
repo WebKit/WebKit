@@ -46,7 +46,8 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PreconnectTo(struct WebKit::PreconnectRequest request);
     IsResourceLoadFinished(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (bool isFinished)
 #if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
-    PresentDigitalCredentialRequest(WebKit::WebPageProxyIdentifier webPageProxyID, struct WebCore::DigitalCredentialsRequestData requestData, Vector<WebCore::UnvalidatedDigitalCredentialRequest> rawRequests) -> (std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
+    PresentDigitalCredentialRequest(WebKit::WebPageProxyIdentifier webPageProxyID, uint64_t requestIdentifier, WebCore::SecurityOriginData topOrigin, Vector<WebCore::UnvalidatedDigitalCredentialRequest> rawRequests) -> (std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
+    CancelDigitalCredentialRequest(WebKit::WebPageProxyIdentifier webPageProxyID, uint64_t requestIdentifier)
 #endif
 
     StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, String suggestedName, enum:bool WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)

@@ -35,6 +35,31 @@ import struct Foundation.URL
 import struct Foundation.URLRequest
 import struct Swift.String
 
+import Foundation
+
+private let useMockPlatformWallet = ["DigitalCredentialsUseMockPlatformWalletForTesting"]
+
+private struct MockPlatformWalletAnswer: Decodable {
+    let mockPlatformWallet: Bool
+    let origin: String
+    let presentation: Int
+}
+
+private func mockPlatformWalletAnswer(_ result: String) -> MockPlatformWalletAnswer? {
+    guard let data = result.data(using: .utf8),
+        let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+        let encoded = object["response"] as? String
+    else {
+        return nil
+    }
+    var base64 = encoded.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+    base64 += String(repeating: "=", count: (4 - base64.count % 4) % 4)
+    guard let decoded = Data(base64Encoded: base64) else {
+        return nil
+    }
+    return try? JSONDecoder().decode(MockPlatformWalletAnswer.self, from: decoded)
+}
+
 @MainActor
 private let unsignedOpenID4VPRequest: [String: Any] = [
     "protocol": "openid4vp-v1-unsigned",
@@ -63,7 +88,7 @@ private let invalidMobileDocumentRequest: [String: Any] = [
 
 @MainActor
 struct DigitalCredentialsNetworkProcessTests {
-    private func requestCredential(_ request: [String: Any]) async throws -> String {
+    private func withFocusedPage<Result>(features: [String] = [], _ body: (TestWKWebView) async throws -> Result) async throws -> Result {
         var server = try HTTPServer(protocol: .httpsProxy) {
             Route("/") {
                 "<!DOCTYPE html><body></body>"
@@ -74,6 +99,9 @@ struct DigitalCredentialsNetworkProcessTests {
             let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
             configuration.setFeature("DigitalCredentialsEnabled", enabled: true)
             configuration.setFeature("DigitalCredentialsOpenID4VPEnabled", enabled: true)
+            for feature in features {
+                configuration.setFeature(feature, enabled: true)
+            }
             let webView = TestWKWebView(frame: CGRect(x: 0, y: 0, width: 400, height: 400), configuration: configuration, addToWindow: true)
             let navigationDelegate = TestNavigationDelegate()
             navigationDelegate.allowAnyTLSCertificate()
@@ -87,7 +115,13 @@ struct DigitalCredentialsNetworkProcessTests {
                 "if (!document.hasFocus()) await new Promise(resolve => window.addEventListener('focus', resolve, { once: true }))"
             }
 
-            return try await webView.callJavaScript(returning: String.self, arguments: ["request": request]) {
+            return try await body(webView)
+        }
+    }
+
+    private func requestCredential(_ request: [String: Any], features: [String] = []) async throws -> String {
+        try await withFocusedPage(features: features) { webView in
+            try await webView.callJavaScript(returning: String.self, arguments: ["request": request]) {
                 """
                 try {
                     const credential = await navigator.credentials.get({ digital: { requests: [request] }, mediation: "required" });
@@ -100,10 +134,55 @@ struct DigitalCredentialsNetworkProcessTests {
         }
     }
 
+    #if !HAVE_IDENTITY_DOCUMENT_SERVICES_SYSTEM_PRESENTMENT
     @Test
     func requestFromAppWithoutEntitlementGoesToNetworkProcess() async throws {
         let result = try await requestCredential(unsignedOpenID4VPRequest)
         #expect(result == "NotSupportedError: Digital credentials are not available in this app.")
+    }
+    #endif
+
+    @Test
+    func networkProcessPresentsTheRequestForTheOrigin() async throws {
+        let result = try await requestCredential(unsignedOpenID4VPRequest, features: useMockPlatformWallet)
+
+        let answer = try #require(mockPlatformWalletAnswer(result), "\(result)")
+        #expect(answer.mockPlatformWallet)
+        #expect(answer.origin == "https://example.com/")
+    }
+
+    @Test
+    func requestAbortedBeforeReachingTheNetworkProcessIsNotPresented() async throws {
+        let results = try await withFocusedPage(features: useMockPlatformWallet) { webView in
+            let request = """
+                try {
+                    return JSON.stringify((await navigator.credentials.get({ digital: { requests: [request] }, mediation: "required" })).data);
+                } catch (error) {
+                    return error.name + ": " + error.message;
+                }
+                """
+            let first = try await webView.callJavaScript(returning: String.self, arguments: ["request": unsignedOpenID4VPRequest]) {
+                request
+            }
+            let aborted = try await webView.callJavaScript(returning: String.self, arguments: ["request": unsignedOpenID4VPRequest]) {
+                """
+                const controller = new AbortController();
+                const result = navigator.credentials.get({ digital: { requests: [request] }, mediation: "required", signal: controller.signal })
+                    .then(() => "resolved", error => error.name);
+                controller.abort();
+                return await result;
+                """
+            }
+            let next = try await webView.callJavaScript(returning: String.self, arguments: ["request": unsignedOpenID4VPRequest]) {
+                request
+            }
+            return (first, aborted, next)
+        }
+
+        #expect(results.1 == "AbortError")
+        let first = try #require(mockPlatformWalletAnswer(results.0), "\(results.0)")
+        let next = try #require(mockPlatformWalletAnswer(results.2), "\(results.2)")
+        #expect(next.presentation == first.presentation + 1)
     }
 
     @Test

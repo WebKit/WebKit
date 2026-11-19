@@ -2095,7 +2095,19 @@ DigitalCredentialsOpenID4VPEnabled:
   defaultValue:
     "HAVE(DIGITAL_CREDENTIALS_OPENID4VP)": true
     default: false
+  sharedPreferenceForWebProcess: true
   disableInLockdownMode: true
+
+DigitalCredentialsUseMockPlatformWalletForTesting:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "Digital Credentials Mock Platform Wallet"
+  humanReadableDescription: "Present Digital Credentials requests from the network process with a mock platform wallet (development builds of WebKit only)"
+  condition: ENABLE(WEB_AUTHN)
+  webKitLegacyExposed: false
+  defaultValue: false
+  sharedPreferenceForWebProcess: true
 
 DirectoryUploadEnabled:
   type: bool
