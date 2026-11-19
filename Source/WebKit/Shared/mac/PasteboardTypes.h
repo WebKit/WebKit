@@ -40,8 +40,6 @@ public:
 
     static NSArray *forEditingSingleton();
     static NSArray *forURLSingleton();
-    static NSArray *forImagesSingleton();
-    static NSArray *forImagesWithArchiveSingleton();
     static NSArray *forSelectionSingleton();
 };
 
