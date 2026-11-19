@@ -84,20 +84,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "52FFC86FB9FD70E37E9950AD"
-               BuildableName = "ANGLE Tests (Platform filters)"
-               BlueprintName = "ANGLE Tests (Platform filters)"
-               ReferencedContainer = "container:Source/ThirdParty/ANGLE/ANGLE.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "7C83E02B1D0A5E1000FEBCF3"
                BuildableName = "All"
                BlueprintName = "All"

@@ -39,11 +39,6 @@ ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit;
 // The Xcode 16+ debug-dylib stub ignores -e, which would strand UIKit init.
 ENABLE_DEBUG_DYLIB = NO;
 
-// Public SDK embedded builds have no provisioning profile; leave the identity
-// empty so Xcode falls back to ad hoc signing (matches WebKitTestRunnerApp).
-CODE_SIGN_IDENTITY[sdk=embedded] = $(CODE_SIGN_IDENTITY_EMBEDDED_$(USE_INTERNAL_SDK));
-CODE_SIGN_IDENTITY_EMBEDDED_YES = -;
-
 CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/ANGLEEnd2EndTestsApp-iOS-simulator.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]        = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=appletv*]         = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;

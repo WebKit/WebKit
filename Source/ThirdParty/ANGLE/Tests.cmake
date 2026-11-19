@@ -1,8 +1,7 @@
 # ANGLE test executables: ANGLEUnitTests, ANGLEEnd2EndTests, ANGLEDeqpGLES2Tests and
 # ANGLEDeqpGLES3Tests. They mirror the targets of the same name in ANGLE.xcodeproj.
-# On macOS and iOS, the ANGLETests target builds them as part of the default build, as the
-# "ANGLE Tests (Platform filters)" target does in Xcode. Elsewhere, build the ANGLETests
-# target (or one of the executables) to get them.
+# Nothing here is part of the default build; build the ANGLETests target (or one of the
+# executables) to get them.
 #
 # On iOS, ANGLEEnd2EndTests and the dEQP tests open a window, so they are app bundles named
 # <name>App, as in the Xcode project. ANGLEUnitTests stays a test executable.
@@ -326,11 +325,7 @@ foreach (_module IN ITEMS gles2 gles3)
     list(APPEND angle_deqp_tests_targets ${_target})
 endforeach ()
 
-if (WEBKIT_PLATFORM_MAC OR WEBKIT_SDK_IS_IOS)
-    add_custom_target(ANGLETests ALL)
-else ()
-    add_custom_target(ANGLETests)
-endif ()
+add_custom_target(ANGLETests)
 add_dependencies(ANGLETests
     ANGLEUnitTests
     ${angle_end2end_tests_target}
