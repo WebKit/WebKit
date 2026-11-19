@@ -198,6 +198,11 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     // code, which can deref it.
     Ref<Widget> protectedThis(*this);
 
+    // AppKit draws into the current NSGraphicsContext, which is the platform context of the context,
+    // so apply the pending state of the context to it first.
+    if (p.hasPlatformContext())
+        p.platformContext();
+
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
