@@ -489,7 +489,6 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
 
 static bool s_slowScriptWasServed;
 static bool s_stalledLoadWasRequested;
-static bool s_slowReplacementWasServed;
 static GRefPtr<SoupServerMessage> s_heldReplacementRequest;
 
 // Answers the /slow-replacement request the server has been holding.
@@ -503,7 +502,6 @@ static void serveHeldReplacement()
     static const char* html = "<p>replacement</p>";
     soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, html, strlen(html));
     soup_message_body_complete(responseBody);
-    s_slowReplacementWasServed = true;
     soup_server_unpause_message(kServer->soupServer(), message.get());
 }
 static GRefPtr<WebKitPolicyDecision> s_heldPolicyDecision;
@@ -579,7 +577,6 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     // the command: that is still the replacement's load. The server holds the replacement's response; its
     // request means the replacement has passed its policy check, which cancelled the held one.
     s_heldPolicyDecision = nullptr;
-    s_slowReplacementWasServed = false;
     heldCommandID = test->sendNavigateCommand(pageHandle, String::fromUTF8(kServer->getURIForPath("/held").span()));
     test->waitUntil([&] {
         return !!s_heldPolicyDecision;
