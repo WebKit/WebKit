@@ -1990,6 +1990,8 @@ void WebViewImpl::updateWindowAndViewFrames()
 
     updateTitlebarAdjacencyState();
 
+    m_page->willScheduleWindowAndViewFramesUpdate();
+
     if (m_didScheduleWindowAndViewFrameUpdate)
         return;
 
@@ -2981,6 +2983,7 @@ void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
     if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
         return;
 
+    m_page->noteMouseEventHandledForFrameUpdate();
     Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::Default);
     m_page->handleMouseEvent(WTF::move(webEvent));
 
@@ -3055,7 +3058,8 @@ NSView *WebViewImpl::fullScreenPlaceholderView()
 NSWindow *WebViewImpl::fullScreenWindow()
 {
 #if ENABLE(FULLSCREEN_API)
-    return adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:[[NSScreen mainScreen] frame] styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskUnifiedTitleAndToolbar | NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskResizable | NSWindowStyleMaskClosable) backing:NSBackingStoreBuffered defer:NO]).autorelease();
+    RetainPtr screen = [protect(window()) screen] ?: [NSScreen mainScreen];
+    return adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:[screen frame] styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskUnifiedTitleAndToolbar | NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskResizable | NSWindowStyleMaskClosable) backing:NSBackingStoreBuffered defer:NO]).autorelease();
 #else
     return nil;
 #endif
@@ -6914,6 +6918,8 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event, WebEventInputSource in
         RELEASE_LOG(MouseHandling, "[pageProxyID=%lld] WebViewImpl::nativeMouseEventHandler: ignored event", m_page->identifier().toUInt64());
         return;
     }
+
+    m_page->noteMouseEventHandledForFrameUpdate();
 
     RetainPtr context = [m_view.get() inputContext];
     if (!context && m_pendingMouseEvents.isEmpty()) {
