@@ -44,6 +44,7 @@ class JSArray;
 class JSONCache;
 
 enum ParserMode : uint8_t { StrictJSON, SloppyJSON, JSONP };
+enum class SafeStringCharacterSet : uint8_t { Strict, Sloppy };
 enum class JSONReviverMode : uint8_t { Disabled, Enabled };
 
 enum JSONPPathEntryType : uint8_t {
@@ -291,6 +292,11 @@ private:
         ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&, CharType terminator);
         ALWAYS_INLINE const CharType* findUnsafeStringCharacter(const CharType* start, const CharType* end, CharType terminator) const;
         TokenType lexStringSlow(LiteralParserToken<CharType>&, const CharType* runStart, CharType terminator);
+        template<SafeStringCharacterSet>
+        ALWAYS_INLINE TokenType lexStringWithEscapes(LiteralParserToken<CharType>&, const CharType* runStart, CharType terminator);
+        template<SafeStringCharacterSet, typename OutputCharType>
+        TokenType lexStringWithEscapesImpl(LiteralParserToken<CharType>&, Vector<OutputCharType>&, size_t length, const CharType*, CharType terminator);
+        TokenType lexStringError(const CharType*);
         ALWAYS_INLINE TokenType lexNumber(LiteralParserToken<CharType>&);
         TokenType lexDouble(LiteralParserToken<CharType>&, const CharType* initial, const CharType* start, uint64_t integer);
         TokenType lexNumberError(LiteralParserToken<CharType>&);
@@ -300,7 +306,8 @@ private:
         ParserMode m_mode;
         const CharType* m_ptr;
         const CharType* m_end;
-        StringBuilder m_builder;
+        Vector<CharType> m_unescapedCharacters;
+        Vector<char16_t> m_widenedUnescapedCharacters;
         const CharType* m_start;
         const CharType* m_currentTokenStart { nullptr };
         const CharType* m_currentTokenEnd { nullptr };

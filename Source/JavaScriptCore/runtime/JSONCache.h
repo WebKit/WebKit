@@ -42,6 +42,17 @@ namespace JSC {
 class Structure;
 class VM;
 
+// The index of the first lane of a SIMD vector of characters that strict JSON must escape between quotes: '"', '\',
+// or a control character.
+template<typename UnsignedType, typename VectorType>
+ALWAYS_INLINE auto findUnsafeJSONStringCharacter(VectorType input)
+{
+    auto quotes = SIMD::equal(input, SIMD::splat<UnsignedType>('"'));
+    auto escapes = SIMD::equal(input, SIMD::splat<UnsignedType>('\\'));
+    auto controls = SIMD::lessThan(input, SIMD::splat<UnsignedType>(' '));
+    return SIMD::findFirstNonZeroIndex(SIMD::bitOr(quotes, escapes, controls));
+}
+
 // Caches for JSON.parse: atoms and JSStrings for short keys and values, a map from (Structure, property
 // name) to the Structure's existing property addition transition, so that a key seen before skips both the
 // atom lookup and the transition table lookup, and name tables that let such a key be matched directly

@@ -1014,11 +1014,7 @@ ALWAYS_INLINE bool LiteralParser<CharType, reviverMode>::Lexer::tryConsumeString
     if (sizeof(CharType) == 1 && expected.size() < stride8) {
         if (m_end - body < static_cast<ptrdiff_t>(stride8) || *m_ptr != '"')
             return false;
-        auto input = SIMD::load(std::bit_cast<const uint8_t*>(body));
-        auto quotes = SIMD::equal(input, SIMD::splat<uint8_t>('"'));
-        auto escapes = SIMD::equal(input, SIMD::splat<uint8_t>('\\'));
-        auto controls = SIMD::lessThan(input, SIMD::splat<uint8_t>(' '));
-        auto index = SIMD::findFirstNonZeroIndex(SIMD::bitOr(quotes, escapes, controls));
+        auto index = findUnsafeJSONStringCharacter<uint8_t>(SIMD::load(std::bit_cast<const uint8_t*>(body)));
         if (!index || *index != expected.size() || body[expected.size()] != '"')
             return false;
     } else {
@@ -1072,8 +1068,6 @@ ALWAYS_INLINE void setParserTokenString<char16_t>(LiteralParserToken<char16_t>& 
     token.stringStart16 = string;
 }
 
-enum class SafeStringCharacterSet { Strict, Sloppy };
-
 template <SafeStringCharacterSet set>
 NODELETE static ALWAYS_INLINE bool isSafeStringCharacter(Latin1Character c, Latin1Character terminator)
 {
@@ -1100,47 +1094,41 @@ NODELETE static ALWAYS_INLINE bool isSafeStringCharacterForIdentifier(char16_t c
         return (c >= ' ' && isLatin1(c) && c != '\\' && c != terminator) || (c == '\t');
 }
 
+template<SafeStringCharacterSet set, typename UnsignedType, typename VectorType>
+static ALWAYS_INLINE auto findUnsafeStringCharacterInVector(VectorType input, UnsignedType terminator)
+{
+    if constexpr (set == SafeStringCharacterSet::Strict) {
+        ASSERT_UNUSED(terminator, terminator == '"');
+        return findUnsafeJSONStringCharacter<UnsignedType>(input);
+    } else {
+        auto quotes = SIMD::equal(input, SIMD::splat<UnsignedType>(terminator));
+        auto escapes = SIMD::equal(input, SIMD::splat<UnsignedType>('\\'));
+        auto controls = SIMD::lessThan(input, SIMD::splat<UnsignedType>(' '));
+        auto notTabs = SIMD::bitNot(SIMD::equal(input, SIMD::splat<UnsignedType>('\t')));
+        auto controlsExceptTabs = SIMD::bitAnd(notTabs, controls);
+        return SIMD::findFirstNonZeroIndex(SIMD::bitOr(quotes, escapes, controlsExceptTabs));
+    }
+}
+
+template<SafeStringCharacterSet set, typename CharType>
+static ALWAYS_INLINE const CharType* findUnsafeStringCharacterInRange(const CharType* start, const CharType* end, CharType terminator)
+{
+    using UnsignedType = SameSizeUnsignedInteger<CharType>;
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+        return findUnsafeStringCharacterInVector<set>(input, static_cast<UnsignedType>(terminator));
+    };
+    auto scalarMatch = [&](CharType character) ALWAYS_INLINE_LAMBDA {
+        return !isSafeStringCharacter<set>(character, terminator);
+    };
+    return SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
+}
+
 template<typename CharType, JSONReviverMode reviverMode>
 ALWAYS_INLINE const CharType* LiteralParser<CharType, reviverMode>::Lexer::findUnsafeStringCharacter(const CharType* start, const CharType* end, CharType terminator) const
 {
-    using UnsignedType = SameSizeUnsignedInteger<CharType>;
-    constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
-    constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
-    if (m_mode == StrictJSON) {
-        ASSERT(terminator == '"');
-        constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
-        auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-            auto quotes = SIMD::equal(input, quoteMask);
-            auto escapes = SIMD::equal(input, escapeMask);
-            auto controls = SIMD::lessThan(input, controlMask);
-            auto mask = SIMD::bitOr(quotes, escapes, controls);
-            return SIMD::findFirstNonZeroIndex(mask);
-        };
-
-        auto scalarMatch = [&](CharType character) ALWAYS_INLINE_LAMBDA {
-            return !isSafeStringCharacter<SafeStringCharacterSet::Strict>(character, terminator);
-        };
-
-        return SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
-    }
-
-    auto quoteMask = SIMD::splat<UnsignedType>(terminator);
-    constexpr auto tabMask = SIMD::splat<UnsignedType>('\t');
-    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-        auto quotes = SIMD::equal(input, quoteMask);
-        auto escapes = SIMD::equal(input, escapeMask);
-        auto controls = SIMD::lessThan(input, controlMask);
-        auto notTabs = SIMD::bitNot(SIMD::equal(input, tabMask));
-        auto controlsExceptTabs = SIMD::bitAnd(notTabs, controls);
-        auto mask = SIMD::bitOr(quotes, escapes, controlsExceptTabs);
-        return SIMD::findFirstNonZeroIndex(mask);
-    };
-
-    auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
-        return !isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(character, terminator);
-    };
-
-    return SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
+    if (m_mode == StrictJSON)
+        return findUnsafeStringCharacterInRange<SafeStringCharacterSet::Strict>(start, end, terminator);
+    return findUnsafeStringCharacterInRange<SafeStringCharacterSet::Sloppy>(start, end, terminator);
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
@@ -1171,109 +1159,191 @@ ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lexString(L
     return lexStringSlow(token, runStart, terminator);
 }
 
+template<typename CharType>
+static constexpr size_t escapedStringBufferRoom = SIMD::stride<SameSizeUnsignedInteger<CharType>> + 1;
+
+// The character that each single-character escape stands for, indexed by the character after the backslash, or 0.
+static constexpr auto singleCharacterEscapes = [] {
+    std::array<Latin1Character, 256> table { };
+    table['"'] = '"';
+    table['\\'] = '\\';
+    table['/'] = '/';
+    table['b'] = '\b';
+    table['f'] = '\f';
+    table['n'] = '\n';
+    table['r'] = '\r';
+    table['t'] = '\t';
+    return table;
+}();
+
+template<typename CharType>
+NODELETE static ALWAYS_INLINE Latin1Character decodeSingleCharacterEscape(CharType escaped)
+{
+    if (!isLatin1(escaped))
+        return { };
+    return singleCharacterEscapes[escaped];
+}
+
 template<typename CharType, JSONReviverMode reviverMode>
 TokenType LiteralParser<CharType, reviverMode>::Lexer::lexStringSlow(LiteralParserToken<CharType>& token, const CharType* runStart, CharType terminator)
 {
-    m_builder.clear();
-    goto slowPathBegin;
-    do {
-        runStart = m_ptr;
-        m_ptr = findUnsafeStringCharacter(m_ptr, m_end, terminator);
-
-        if (!m_builder.isEmpty())
-            m_builder.append(std::span { runStart, m_ptr });
-
-slowPathBegin:
-        if ((m_mode != SloppyJSON) && m_ptr < m_end && *m_ptr == '\\') {
-            if (m_builder.isEmpty() && runStart < m_ptr)
-                m_builder.append(std::span { runStart, m_ptr });
-            ++m_ptr;
-            if (m_ptr >= m_end) {
-                m_lexErrorMessage = "Unterminated string"_s;
-                return TokError;
-            }
-            switch (*m_ptr) {
-                case '"':
-                    m_builder.append('"');
-                    m_ptr++;
-                    break;
-                case '\\':
-                    m_builder.append('\\');
-                    m_ptr++;
-                    break;
-                case '/':
-                    m_builder.append('/');
-                    m_ptr++;
-                    break;
-                case 'b':
-                    m_builder.append('\b');
-                    m_ptr++;
-                    break;
-                case 'f':
-                    m_builder.append('\f');
-                    m_ptr++;
-                    break;
-                case 'n':
-                    m_builder.append('\n');
-                    m_ptr++;
-                    break;
-                case 'r':
-                    m_builder.append('\r');
-                    m_ptr++;
-                    break;
-                case 't':
-                    m_builder.append('\t');
-                    m_ptr++;
-                    break;
-
-                case 'u':
-                    if ((m_end - m_ptr) < 5) { 
-                        m_lexErrorMessage = "\\u must be followed by 4 hex digits"_s;
-                        return TokError;
-                    } // uNNNN == 5 characters
-                    for (int i = 1; i < 5; i++) {
-                        if (!isASCIIHexDigit(m_ptr[i])) {
-                            m_lexErrorMessage = makeString("\"\\"_s, std::span { m_ptr, 5 }, "\" is not a valid unicode escape"_s);
-                            return TokError;
-                        }
-                    }
-                    m_builder.append(convertUnicode(m_ptr[1], m_ptr[2], m_ptr[3], m_ptr[4]));
-                    m_ptr += 5;
-                    break;
-
-                default:
-                    if (*m_ptr == '\'' && m_mode != StrictJSON) {
-                        m_builder.append('\'');
-                        m_ptr++;
-                        break;
-                    }
-                    m_lexErrorMessage = makeString("Invalid escape character "_s, span(*m_ptr));
-                    return TokError;
-            }
-        }
-    } while ((m_mode != SloppyJSON) && m_ptr != runStart && (m_ptr < m_end) && *m_ptr != terminator);
-
-    if (m_ptr >= m_end || *m_ptr != terminator) {
+    switch (m_mode) {
+    case StrictJSON:
+        return lexStringWithEscapes<SafeStringCharacterSet::Strict>(token, runStart, terminator);
+    case JSONP:
+        return lexStringWithEscapes<SafeStringCharacterSet::Sloppy>(token, runStart, terminator);
+    case SloppyJSON:
+        // The eval pre-parser leaves every string it cannot take directly from the source to the full parser.
         m_lexErrorMessage = "Unterminated string"_s;
         return TokError;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-    if (m_builder.isEmpty()) {
-        setParserTokenString<CharType>(token, runStart);
-        token.stringOrIdentifierLength = m_ptr - runStart;
-    } else {
-        if (m_builder.is8Bit()) {
-            token.stringIs8Bit = 1;
-            token.stringStart8 = m_builder.span8().data();
-        } else {
-            token.stringIs8Bit = 0;
-            token.stringStart16 = m_builder.span16().data();
+template<typename CharType, JSONReviverMode reviverMode>
+template<SafeStringCharacterSet set>
+ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lexStringWithEscapes(LiteralParserToken<CharType>& token, const CharType* runStart, CharType terminator)
+{
+    const CharType* ptr = m_ptr;
+    if (ptr >= m_end || (*ptr != '\\' && !isSafeStringCharacter<set>(*ptr, terminator))) [[unlikely]]
+        return lexStringError(ptr);
+
+    size_t length = ptr - runStart;
+    size_t needed = length + escapedStringBufferRoom<CharType>;
+    if (m_unescapedCharacters.size() < needed)
+        m_unescapedCharacters.grow(needed);
+    memcpySpan(m_unescapedCharacters.mutableSpan().first(length), std::span { runStart, length });
+    return lexStringWithEscapesImpl<set>(token, m_unescapedCharacters, length, ptr, terminator);
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
+template<SafeStringCharacterSet set, typename OutputCharType>
+TokenType LiteralParser<CharType, reviverMode>::Lexer::lexStringWithEscapesImpl(LiteralParserToken<CharType>& token, Vector<OutputCharType>& characters, size_t length, const CharType* ptr, CharType terminator)
+{
+    static_assert(sizeof(OutputCharType) >= sizeof(CharType));
+    using UnsignedType = SameSizeUnsignedInteger<CharType>;
+    constexpr size_t stride = SIMD::stride<UnsignedType>;
+    constexpr size_t room = escapedStringBufferRoom<CharType>;
+    const CharType* end = m_end;
+
+    // Writes go at most room characters past length before the room is checked again. Decoding never makes the string
+    // longer, so the buffer never needs more than the characters decoded so far plus the rest of the input.
+    size_t maximumCapacity = length + (end - ptr) + room;
+    SUPPRESS_UNBORROWED_LOCAL OutputCharType* buffer = characters.mutableSpan().data();
+    size_t capacity = characters.size();
+    ASSERT(capacity >= length);
+    auto reserve = [&](size_t needed) ALWAYS_INLINE_LAMBDA {
+        if (needed > capacity) [[unlikely]] {
+            ASSERT(needed <= maximumCapacity);
+            size_t newCapacity = std::min(std::max(needed, capacity * 2), maximumCapacity);
+            characters.grow(newCapacity);
+            buffer = characters.mutableSpan().data();
+            capacity = characters.size();
         }
-        token.stringOrIdentifierLength = m_builder.length();
+    };
+    reserve(length + room);
+
+    while (true) {
+        if (ptr >= end) [[unlikely]]
+            break;
+        CharType character = *ptr;
+        if (character == terminator) {
+            m_ptr = ptr + 1;
+            if constexpr (sizeof(OutputCharType) == 1) {
+                token.stringIs8Bit = 1;
+                token.stringStart8 = buffer;
+            } else {
+                token.stringIs8Bit = 0;
+                token.stringStart16 = buffer;
+            }
+            token.stringOrIdentifierLength = length;
+            token.type = TokString;
+            return TokString;
+        }
+        if (character == '\\') {
+            if (end - ptr < 2) [[unlikely]]
+                break;
+            CharType escaped = ptr[1];
+            if (escaped == 'u') {
+                if (end - ptr < 6 || !isASCIIHexDigit(ptr[2]) || !isASCIIHexDigit(ptr[3]) || !isASCIIHexDigit(ptr[4]) || !isASCIIHexDigit(ptr[5])) [[unlikely]]
+                    break;
+                char16_t unicode = convertUnicode(ptr[2], ptr[3], ptr[4], ptr[5]);
+                if constexpr (sizeof(OutputCharType) == 1) {
+                    if (!isLatin1(unicode)) {
+                        size_t needed = length + room;
+                        if (m_widenedUnescapedCharacters.size() < needed)
+                            m_widenedUnescapedCharacters.grow(needed);
+                        StringImpl::copyCharacters(m_widenedUnescapedCharacters.mutableSpan().first(length), std::span<const Latin1Character> { buffer, length });
+                        return lexStringWithEscapesImpl<set>(token, m_widenedUnescapedCharacters, length, ptr, terminator);
+                    }
+                }
+                buffer[length++] = unicode;
+                ptr += 6;
+            } else if (Latin1Character decoded = decodeSingleCharacterEscape(escaped)) {
+                buffer[length++] = decoded;
+                ptr += 2;
+            } else if (set == SafeStringCharacterSet::Sloppy && escaped == '\'') {
+                buffer[length++] = '\'';
+                ptr += 2;
+            } else [[unlikely]]
+                break;
+        } else if (isSafeStringCharacter<set>(character, terminator)) {
+            // lexString stops at characters outside Latin-1 when it scans for an identifier.
+            buffer[length++] = character;
+            ++ptr;
+        } else [[unlikely]]
+            break;
+
+        if constexpr (sizeof(OutputCharType) != sizeof(CharType)) {
+            const CharType* runEnd = findUnsafeStringCharacterInRange<set>(ptr, end, terminator);
+            size_t runLength = runEnd - ptr;
+            reserve(length + runLength + room);
+            StringImpl::copyCharacters(unsafeMakeSpan(buffer + length, runLength), unsafeMakeSpan(ptr, runLength));
+            ptr = runEnd;
+            length += runLength;
+        } else {
+            // When input and output characters are the same, we do check and copy in the same tight loop.
+            // Microbenchmarks showed this is faster.
+            while (true) {
+                if (static_cast<size_t>(end - ptr) < stride) {
+                    while (ptr < end && isSafeStringCharacter<set>(*ptr, terminator))
+                        buffer[length++] = *ptr++;
+                    break;
+                }
+                auto input = SIMD::load(std::bit_cast<const UnsignedType*>(ptr));
+                SIMD::store(input, std::bit_cast<UnsignedType*>(buffer + length));
+                if (auto index = findUnsafeStringCharacterInVector<set>(input, static_cast<UnsignedType>(terminator))) {
+                    ptr += *index;
+                    length += *index;
+                    break;
+                }
+                ptr += stride;
+                length += stride;
+                reserve(length + room);
+            }
+        }
+        reserve(length + room);
     }
-    token.type = TokString;
-    ++m_ptr;
-    return TokString;
+
+    return lexStringError(ptr);
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
+NEVER_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lexStringError(const CharType* ptr)
+{
+    m_ptr = ptr;
+    if (ptr >= m_end || *ptr != '\\' || m_end - ptr < 2) {
+        m_lexErrorMessage = "Unterminated string"_s;
+        return TokError;
+    }
+    const CharType* escaped = ptr + 1;
+    if (*escaped != 'u')
+        m_lexErrorMessage = makeString("Invalid escape character "_s, span(*escaped));
+    else if (m_end - escaped < 5)
+        m_lexErrorMessage = "\\u must be followed by 4 hex digits"_s;
+    else
+        m_lexErrorMessage = makeString("\"\\"_s, std::span { escaped, 5 }, "\" is not a valid unicode escape"_s);
+    return TokError;
 }
 
 template<typename CharType, JSONReviverMode reviverMode>

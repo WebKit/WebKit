@@ -204,10 +204,7 @@ ALWAYS_INLINE bool JSONCache::hasUnsafeStringCharacter(std::span<const Character
 {
     using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
     auto vectorMatch = [](auto input) ALWAYS_INLINE_LAMBDA {
-        auto quotes = SIMD::equal(input, SIMD::splat<UnsignedType>('"'));
-        auto escapes = SIMD::equal(input, SIMD::splat<UnsignedType>('\\'));
-        auto controls = SIMD::lessThan(input, SIMD::splat<UnsignedType>(' '));
-        return SIMD::findFirstNonZeroIndex(SIMD::bitOr(quotes, escapes, controls));
+        return findUnsafeJSONStringCharacter<UnsignedType>(input);
     };
     auto scalarMatch = [](CharacterType character) ALWAYS_INLINE_LAMBDA {
         return character < ' ' || character == '"' || character == '\\';
