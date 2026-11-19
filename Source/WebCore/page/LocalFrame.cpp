@@ -244,7 +244,7 @@ LocalFrame::~LocalFrame()
     if (!loader->isComplete())
         loader->closeURL();
 
-    loader->clear(protect(document()), false);
+    loader->detachCurrentDocument(nullptr, ClearWindowProperties::No);
     protect(script())->updatePlatformScriptObjects();
 
     // FIXME: We should not be doing all this work inside the destructor

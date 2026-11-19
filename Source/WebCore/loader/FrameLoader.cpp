@@ -474,7 +474,7 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     // stops recording responses on the DocumentLoader.
     if (RefPtr documentLoader = m_documentLoader)
         documentLoader->stopRecordingResponses();
-    m_needsClear = true;
+    m_needsToDetachDocument = true;
 
     m_networkingContext = m_client->createNetworkingContext();
     m_progressTracker = makeUnique<FrameProgressTracker>(frame);
@@ -739,18 +739,19 @@ static inline bool shouldClearWindowName(const LocalFrame& frame, const Document
     return !protect(newDocument.securityOrigin())->isSameOriginAs(protect(protect(frame.document())->securityOrigin()));
 }
 
-void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView, NOESCAPE const Function<void()>& handleDOMWindowCreation)
+void FrameLoader::detachCurrentDocument(RefPtr<Document>&& newDocument, ClearWindowProperties clearWindowProperties, ClearScriptObjects clearScriptObjects, ClearFrameView clearFrameView, NOESCAPE const Function<void()>& handleDOMWindowCreation)
 {
-    bool neededClear = m_needsClear;
-    m_needsClear = false;
+    ASSERT(newDocument || clearWindowProperties == ClearWindowProperties::No);
+    bool neededToDetachDocument = m_needsToDetachDocument;
+    m_needsToDetachDocument = false;
 
     Ref frame = m_frame;
 
     RefPtr document = frame->document();
-    if (neededClear)
+    if (neededToDetachDocument && newDocument)
         document->transferViewTransitionParams(*newDocument);
 
-    if (neededClear && document->backForwardCacheState() != Document::InBackForwardCache) {
+    if (neededToDetachDocument && document->backForwardCacheState() != Document::InBackForwardCache) {
         document->cancelParsing();
         document->stopActiveDOMObjects();
         // Taken before willBeRemovedFromFrame() detaches the document, which makes it no longer fully active.
@@ -763,11 +764,11 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     if (handleDOMWindowCreation)
         handleDOMWindowCreation();
 
-    if (!neededClear)
+    if (!neededToDetachDocument)
         return;
     
     // Do this after detaching the document so that the unload event works.
-    if (clearWindowProperties) {
+    if (clearWindowProperties == ClearWindowProperties::Yes) {
         InspectorInstrumentation::frameWindowDiscarded(frame, protect(document->window()).get());
         protect(document->window())->resetUnlessSuspendedForDocumentSuspension();
         protect(frame->windowProxy())->clearJSWindowProxiesNotMatchingDOMWindow(protect(newDocument->window()).get(), frame->document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache);
@@ -778,7 +779,7 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
 
     frame->eventHandler().clear();
 
-    if (clearFrameView && frame->view())
+    if (clearFrameView == ClearFrameView::Yes && frame->view())
         protect(frame->view())->clear();
 
     // Do not drop the document before the ScriptController and view are cleared
@@ -787,10 +788,10 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
 
     subframeLoader().clear();
 
-    if (clearWindowProperties)
+    if (clearWindowProperties == ClearWindowProperties::Yes)
         protect(frame->windowProxy())->setDOMWindow(protect(newDocument->window()).get());
 
-    if (clearScriptObjects)
+    if (clearScriptObjects == ClearScriptObjects::Yes)
         protect(frame->script())->clearScriptObjects();
 
     protect(frame->navigationScheduler())->clear();
@@ -930,7 +931,7 @@ static void logCrossOriginIsolationDiagnostics(Document& document, const Resourc
 
 void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow)
 {
-    m_needsClear = true;
+    m_needsToDetachDocument = true;
     m_isComplete = false;
     m_isWaitingForDelegatedBackForwardLoad = false;
     m_delegatedBackForwardLoadDecision = std::nullopt;
@@ -3067,12 +3068,12 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     Ref document = *cachedFrame.document();
     ASSERT(document->window());
 
-    clear(document.ptr(), true, true, cachedFrame.isMainFrame());
+    detachCurrentDocument(document.ptr(), ClearWindowProperties::Yes, ClearScriptObjects::Yes, cachedFrame.isMainFrame() ? ClearFrameView::Yes : ClearFrameView::No);
 
     document->attachToCachedFrame(cachedFrame);
     document->setBackForwardCacheState(Document::NotInBackForwardCache);
 
-    m_needsClear = true;
+    m_needsToDetachDocument = true;
     m_isComplete = false;
     m_didCallImplicitClose = false;
     setOutgoingReferrer(url);

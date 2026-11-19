@@ -682,7 +682,7 @@ void FrameDOMAgent::setDocument(Document* document)
     // Clears the flex line-start cache and re-seeds it for the new document, as the page agent does.
     relayoutDocument();
 
-    // FrameLoader::clear() sets a null document just before the new one. Only report the new one.
+    // FrameLoader::detachCurrentDocument() sets a null document just before the new one. Only report the new one.
     if (!document || !m_documentRequested)
         return;
 

@@ -167,7 +167,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (document->isPluginDocument() && document->isSandboxed(SandboxFlag::Plugins))
         document = SinkDocument::create(frame, url);
 
-    // Keep the existing document alive through FrameLoader::clear(), as FrameLoader::didBeginDocument() still uses the previous window's document.
+    // Keep the existing document alive through FrameLoader::detachCurrentDocument(), as FrameLoader::didBeginDocument() still uses the previous window's document.
     RefPtr existingDocument = frame->document();
 
     if (ownerDocument) {
@@ -261,10 +261,10 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
             document->createDOMWindow();
     };
 
-    frameLoader->clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView, true, WTF::move(handleDOMWindowCreation));
+    frameLoader->detachCurrentDocument(document.ptr(), shouldReuseDefaultView ? ClearWindowProperties::No : ClearWindowProperties::Yes, shouldReuseDefaultView ? ClearScriptObjects::No : ClearScriptObjects::Yes, ClearFrameView::Yes, WTF::move(handleDOMWindowCreation));
     clear();
 
-    // frameLoader->clear() might fire unload event which could remove the view of the document.
+    // frameLoader->detachCurrentDocument() might fire unload event which could remove the view of the document.
     // Bail out if document has no view.
     if (!document->view())
         return false;

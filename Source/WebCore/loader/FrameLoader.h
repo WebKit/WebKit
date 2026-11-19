@@ -105,6 +105,9 @@ enum class NavigationPolicyDecision : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 enum class IsMainResource : bool { No, Yes };
 enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
+enum class ClearWindowProperties : bool { No, Yes };
+enum class ClearScriptObjects : bool { No, Yes };
+enum class ClearFrameView : bool { No, Yes };
 
 struct WindowFeatures;
 
@@ -181,8 +184,8 @@ public:
     void stop();
     void stopLoading(UnloadEventPolicy);
     WEBCORE_EXPORT void closeURL();
-    // FIXME: clear() is trying to do too many things. We should break it down into smaller functions (ideally with fewer raw Boolean parameters).
-    void clear(RefPtr<Document>&& newDocument, bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true, NOESCAPE const Function<void()>& handleDOMWindowCreation = nullptr);
+    // FIXME: detachCurrentDocument() is trying to do too many things. We should break it down into smaller functions.
+    void detachCurrentDocument(RefPtr<Document>&& newDocument, ClearWindowProperties = ClearWindowProperties::Yes, ClearScriptObjects = ClearScriptObjects::Yes, ClearFrameView = ClearFrameView::Yes, NOESCAPE const Function<void()>& handleDOMWindowCreation = nullptr);
 
     NODELETE bool isLoading() const;
     NODELETE WEBCORE_EXPORT bool frameHasLoaded() const;
@@ -566,7 +569,7 @@ private:
 
     PageDismissalType m_pageDismissalEventBeingDispatched { PageDismissalType::None };
     bool m_isComplete { false };
-    bool m_needsClear { false };
+    bool m_needsToDetachDocument { false };
 
     URL m_submittedFormURL;
 
