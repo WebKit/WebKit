@@ -204,14 +204,19 @@ void CredentialRequestCoordinator::initiateTheCredentialRequest(const Document& 
         requestingFrameID,
         WTF::move(rawRequests),
         requestData,
-        [weakThis = WeakPtr { *this }, signal](std::expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException) {
+        [weakThis = WeakPtr { *this }, session = m_activeSession, signal](std::expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException) {
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->processCredentialChooserResponse(WTF::move(responseOrException), signal);
+                protectedThis->processCredentialChooserResponse(WTF::move(responseOrException), *session, signal);
         });
 }
 
-void CredentialRequestCoordinator::processCredentialChooserResponse(std::expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, RefPtr<AbortSignal> signal)
+void CredentialRequestCoordinator::processCredentialChooserResponse(std::expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, DigitalCredentialsSession& session, RefPtr<AbortSignal> signal)
 {
+    if (m_activeSession.get() != &session) {
+        LOG(DigitalCredentials, "Ignoring credential chooser response for a request that has already settled.");
+        return;
+    }
+
     if (signal && signal->aborted()) {
         LOG(DigitalCredentials, "Credential chooser response received after AbortSignal aborted");
         abortTheCredentialRequest(ExceptionOr<JSC::JSValue> { signal->reason().getValue() });
@@ -223,13 +228,6 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(std::expecte
         return;
     }
 
-    RefPtr session = m_activeSession;
-    if (!session) {
-        LOG(DigitalCredentials, "No active credential request session in coordinator.");
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     if (!responseOrException)
         return rejectTheCredentialRequestWith(responseOrException.error().toException());
 
@@ -238,7 +236,7 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(std::expecte
     if (responseData.responseDataJSON.isEmpty())
         return rejectTheCredentialRequestWith(Exception { ExceptionCode::NotAllowedError, "The user cancelled the credential request."_s });
 
-    session->queueSettlement([weakThis = WeakPtr { *this }, responseDataJSON = responseData.responseDataJSON, protocol = responseData.protocol](auto& promise) mutable {
+    protect(session)->queueSettlement([weakThis = WeakPtr { *this }, responseDataJSON = responseData.responseDataJSON, protocol = responseData.protocol](auto& promise) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             promise.reject(Exception { ExceptionCode::AbortError, "Page was destroyed."_s });

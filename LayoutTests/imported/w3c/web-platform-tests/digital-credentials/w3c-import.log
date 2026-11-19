@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get.disabled-by-permissions-policy.https.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/historical.any.js
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/late-chooser-response.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/non-secure-contexts.http.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-mdoc.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-openid4vp.https.html
