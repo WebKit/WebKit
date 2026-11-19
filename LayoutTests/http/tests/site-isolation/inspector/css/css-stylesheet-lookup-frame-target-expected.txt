@@ -1,0 +1,53 @@
+Tests that style sheet lookups for Sources edits and Inspector Style Sheets use the target that reports the frame's style sheets under Site Isolation.
+
+Main frame.
+
+
+== Running test suite: SiteIsolation.CSS.StyleSheetLookup.FrameTarget
+-- Running test case: SiteIsolation.CSS.StyleSheetLookup.FrameTarget.Setup
+PASS: Should find the main frame's target.
+PASS: Should find the same-site, cross-origin frame, with its frame target's execution context.
+PASS: The same-site frame should be in the main frame's process.
+PASS: Should find the cross-site frame, with its frame target's execution context.
+PASS: The cross-site frame should be in another process than the main frame.
+PASS: Should find the main frame's style sheet resource.
+PASS: Should find the same-site frame's style sheet resource.
+PASS: Should find the cross-site frame's style sheet resource.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetLookup.FrameTarget.EditMainFrameResource
+PASS: The main frame's #target should start red.
+PASS: The main frame's #target should become green.
+PASS: There should be one style sheet object for the main frame's style sheet.
+PASS: The main frame's style sheet should not be owned by a frame target.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetLookup.FrameTarget.EditSameSiteFrameResource
+PASS: The same-site frame's #target should start red.
+PASS: The same-site frame's #target should become green.
+PASS: There should be one style sheet object for the same-site frame's style sheet.
+PASS: The same-site frame's style sheet should not be owned by a frame target.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetLookup.FrameTarget.EditCrossSiteFrameResource
+PASS: The cross-site frame's #target should start red.
+PASS: The cross-site frame's #target should become green.
+PASS: There should be one style sheet object for the cross-site frame's style sheet.
+PASS: The cross-site frame's style sheet should be owned by its frame target.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetLookup.FrameTarget.MainFrameInspectorStyleSheet
+PASS: Should create an Inspector Style Sheet for the main frame.
+PASS: The style sheet should be an Inspector Style Sheet.
+PASS: The style sheet should belong to the main frame.
+PASS: The style sheet should not be owned by a frame target.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetLookup.FrameTarget.SameSiteFrameInspectorStyleSheet
+PASS: Should create an Inspector Style Sheet for the same-site frame.
+PASS: The style sheet should be an Inspector Style Sheet.
+PASS: The style sheet should belong to the same-site frame.
+PASS: The style sheet should not be owned by a frame target.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetLookup.FrameTarget.CrossSiteFrameInspectorStyleSheet
+PASS: Should create an Inspector Style Sheet for the cross-site frame.
+PASS: The style sheet should be an Inspector Style Sheet.
+PASS: The style sheet should belong to the cross-site frame.
+PASS: The style sheet should be owned by the cross-site frame's target.
+PASS: The cross-site frame's target should know the new, empty style sheet.
+
