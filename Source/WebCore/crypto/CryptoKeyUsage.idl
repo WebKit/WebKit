@@ -31,5 +31,9 @@ enum CryptoKeyUsage {
     "deriveKey",
     "deriveBits",
     "wrapKey",
-    "unwrapKey"
+    "unwrapKey",
+    "encapsulateKey",
+    "encapsulateBits",
+    "decapsulateKey",
+    "decapsulateBits"
 };

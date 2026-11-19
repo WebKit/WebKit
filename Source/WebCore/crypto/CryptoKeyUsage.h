@@ -35,7 +35,11 @@ enum {
     CryptoKeyUsageDeriveKey = 1 << 4,
     CryptoKeyUsageDeriveBits = 1 << 5,
     CryptoKeyUsageWrapKey = 1 << 6,
-    CryptoKeyUsageUnwrapKey = 1 << 7
+    CryptoKeyUsageUnwrapKey = 1 << 7,
+    CryptoKeyUsageEncapsulateKey = 1 << 8,
+    CryptoKeyUsageEncapsulateBits = 1 << 9,
+    CryptoKeyUsageDecapsulateKey = 1 << 10,
+    CryptoKeyUsageDecapsulateBits = 1 << 11
 };
 
 typedef int CryptoKeyUsageBitmap;
@@ -49,7 +53,11 @@ enum class CryptoKeyUsage : uint8_t {
     DeriveKey,
     DeriveBits,
     WrapKey,
-    UnwrapKey
+    UnwrapKey,
+    EncapsulateKey,
+    EncapsulateBits,
+    DecapsulateKey,
+    DecapsulateBits
 };
 
 } // namespace WebCore

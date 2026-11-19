@@ -1,0 +1,33 @@
+
+PASS generateKey AES-CBC with encapsulateKey
+PASS generateKey ECDH with deriveBits and encapsulateKey
+PASS importKey HKDF with encapsulateKey
+PASS importKey PBKDF2 with encapsulateKey
+PASS importKey AES-GCM with encrypt and encapsulateKey
+PASS deriveKey with encapsulateKey
+PASS unwrapKey with encapsulateKey
+PASS generateKey AES-CBC with encapsulateBits
+PASS generateKey ECDH with deriveBits and encapsulateBits
+PASS importKey HKDF with encapsulateBits
+PASS importKey PBKDF2 with encapsulateBits
+PASS importKey AES-GCM with encrypt and encapsulateBits
+PASS deriveKey with encapsulateBits
+PASS unwrapKey with encapsulateBits
+PASS generateKey AES-CBC with decapsulateKey
+PASS generateKey ECDH with deriveBits and decapsulateKey
+PASS importKey HKDF with decapsulateKey
+PASS importKey PBKDF2 with decapsulateKey
+PASS importKey AES-GCM with encrypt and decapsulateKey
+PASS deriveKey with decapsulateKey
+PASS unwrapKey with decapsulateKey
+PASS generateKey AES-CBC with decapsulateBits
+PASS generateKey ECDH with deriveBits and decapsulateBits
+PASS importKey HKDF with decapsulateBits
+PASS importKey PBKDF2 with decapsulateBits
+PASS importKey AES-GCM with encrypt and decapsulateBits
+PASS deriveKey with decapsulateBits
+PASS unwrapKey with decapsulateBits
+PASS A string that is not a KeyUsage is still a TypeError
+PASS Valid usages are unaffected
+PASS A JWK key_ops that lists a KEM usage does not leak it into the imported key
+

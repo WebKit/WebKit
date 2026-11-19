@@ -23,22 +23,22 @@ PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKC
 PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encrypt])
@@ -63,22 +63,22 @@ PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-P
 PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign, verify, sign, sign, verify, decapsulateBits])
 PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1}}, false, [sign])
 PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1}}, true, [sign])
 PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSASSA-PKCS1-v1_5, publicExponent: {0: 1}}, false, [verify, sign])
