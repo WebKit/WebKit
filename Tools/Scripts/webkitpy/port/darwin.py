@@ -60,22 +60,21 @@ class DarwinPort(ApplePort):
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
 
-    def _load_api_test_suite_allowlist(self):
-        """Load the allowlist entries for this port's configuration, whose tests and suites should not go to the system shard.
+    def _load_api_test_blocklist(self):
+        """Load the blocklist entries for this port's configuration, whose tests and suites run in the system shard.
 
         Accepts optional configuration gates at the start of a line, e.g.:
             TestIPC.PortableTest            # applies to every port
-            [ ios ] TestIPC.IOSOnlyTest     # only allowlisted on iOS ports
+            [ ios ] TestIPC.IOSOnlyTest     # only blocklisted on iOS ports
             [ mac debug ] TestFoo.Bar       # only on macOS debug builds
-        Entries without a gate behave the same as before. Expectations or modifiers
-        (Pass/Fail/Skip/etc.) are not meaningful here and will be warned on by the parser.
+        Expectations or modifiers (Pass/Fail/Skip/etc.) are not meaningful here and will be warned on by the parser.
         """
-        allowlist_path = os.path.join(os.path.dirname(__file__), '..', 'api_tests', 'allowlist.txt')
-        if not self._filesystem.exists(allowlist_path):
+        blocklist_path = os.path.join(os.path.dirname(__file__), '..', 'api_tests', 'blocklist.txt')
+        if not self._filesystem.exists(blocklist_path):
             return []
 
         try:
-            content = self._filesystem.read_text_file(allowlist_path)
+            content = self._filesystem.read_text_file(blocklist_path)
         except OSError:
             return []
 
@@ -87,7 +86,7 @@ class DarwinPort(ApplePort):
 
         parser = ExpectationParser(APITestSuite())
         entries = []
-        for expectation, warnings in parser.parse(allowlist_path, content):
+        for expectation, warnings in parser.parse(blocklist_path, content):
             for warning in warnings:
                 _log.warning(str(warning))
             if expectation is None:
@@ -99,35 +98,35 @@ class DarwinPort(ApplePort):
         return entries
 
     @memoized
-    def _allowlist_entries(self):
-        """Map each allowlisted test or suite name to its first matching entry."""
+    def _blocklist_entries(self):
+        """Map each blocklisted test or suite name to its first matching entry."""
         entries = {}
-        for entry in self._load_api_test_suite_allowlist():
+        for entry in self._load_api_test_blocklist():
             entries.setdefault(entry.test_pattern, entry)
         return entries
 
-    def is_test_allowlisted(self, test_name):
-        """Return the allowlist entry for a test, or None if it is not allowlisted.
+    def is_test_blocklisted(self, test_name):
+        """Return the blocklist entry for a test, or None if it is not blocklisted.
 
-        A test is allowlisted if:
-        1. Its full name (BINARY.SUITE.TESTCASE) is in the allowlist, OR
-        2. Its suite prefix (BINARY.SUITE) is in the allowlist
-        The entry's configurations and version_specifiers are its gate, and its line_number is its line in the allowlist.
+        A test is blocklisted if:
+        1. Its full name (BINARY.SUITE.TESTCASE) is in the blocklist, OR
+        2. Its suite prefix (BINARY.SUITE) is in the blocklist
+        The entry's configurations and version_specifiers are its gate, and its line_number is its line in the blocklist.
         """
-        entries = self._allowlist_entries()
+        entries = self._blocklist_entries()
         suite_prefix = '.'.join(test_name.split('.')[:-1])
         return entries.get(test_name) or entries.get(suite_prefix)
 
-    def filter_api_tests_by_allowlist(self, tests):
-        """Split API tests into allowlisted (parallel) and non-allowlisted (system) groups."""
-        allowlisted = []
-        non_allowlisted = []
-        for t in tests:
-            if self.is_test_allowlisted(t):
-                allowlisted.append(t)
+    def filter_api_tests_by_blocklist(self, tests):
+        """Split API tests into parallel and blocklisted (system shard) groups."""
+        parallel = []
+        blocklisted = []
+        for test in tests:
+            if self.is_test_blocklisted(test):
+                blocklisted.append(test)
             else:
-                non_allowlisted.append(t)
-        return allowlisted, non_allowlisted
+                parallel.append(test)
+        return parallel, blocklisted
 
     def sharding_groups(self, suite=None):
         return {

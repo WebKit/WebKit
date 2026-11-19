@@ -35,14 +35,14 @@ _ENTRY_PATTERN = re.compile(r'^(Test\w+)\.([^.]+(?:/[^.]+)*)(?:\.(.+))?$')
 _UNGATED = (frozenset(), ())
 
 
-class APITestAllowlistChecker(object):
-    """Processes api_tests/allowlist.txt to enforce allowlist conventions."""
+class APITestBlocklistChecker(object):
+    """Processes api_tests/blocklist.txt to enforce blocklist conventions."""
 
     categories = set([
-        'api-test-allowlist/duplicate',
-        'api-test-allowlist/format',
-        'api-test-allowlist/order',
-        'api-test-allowlist/redundant',
+        'api-test-blocklist/duplicate',
+        'api-test-blocklist/format',
+        'api-test-blocklist/order',
+        'api-test-blocklist/redundant',
     ])
 
     def __init__(self, file_path, handle_style_error):
@@ -57,18 +57,18 @@ class APITestAllowlistChecker(object):
         parsed_lines = ExpectationParser(APITestSuite()).parse(self.file_path, '\n'.join(lines))
         for line_number, (entry, warnings) in enumerate(parsed_lines, 1):
             for warning in warnings:
-                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, warning.error)
+                self.handle_style_error(line_number, 'api-test-blocklist/format', 5, warning.error)
             if entry is None:
                 continue
 
             entry_text = lines[line_number - 1].split('#')[0].strip()
             pattern = entry.test_pattern
             if not _ENTRY_PATTERN.match(pattern):
-                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, f"Invalid entry format: '{entry_text}' (expected BINARY.SUITE or BINARY.SUITE.TESTCASE)")
+                self.handle_style_error(line_number, 'api-test-blocklist/format', 5, f"Invalid entry format: '{entry_text}' (expected BINARY.SUITE or BINARY.SUITE.TESTCASE)")
             elif '*' in pattern:
-                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, f"Wildcard entries match no tests: '{entry_text}'")
+                self.handle_style_error(line_number, 'api-test-blocklist/format', 5, f"Wildcard entries match no tests: '{entry_text}'")
             elif not entry_text.endswith(pattern):
-                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, f"Allowlist entries take no expectations or modifiers: '{entry_text}'")
+                self.handle_style_error(line_number, 'api-test-blocklist/format', 5, f"Blocklist entries take no expectations or modifiers: '{entry_text}'")
             else:
                 entries.append((line_number, entry_text, (entry.configurations, entry.version_specifiers), pattern))
 
@@ -82,12 +82,12 @@ class APITestAllowlistChecker(object):
             suite_key = pattern.rsplit('.', 1)[0]
             covering_entries = [listed[key] for key in [(_UNGATED, pattern), (_UNGATED, suite_key), (gate, suite_key)] if key != (gate, pattern) and key in listed]
             if (gate, pattern) in seen:
-                self.handle_style_error(line_number, 'api-test-allowlist/duplicate', 5, f"Duplicate entry: '{entry_text}'")
+                self.handle_style_error(line_number, 'api-test-blocklist/duplicate', 5, f"Duplicate entry: '{entry_text}'")
             elif covering_entries:
-                self.handle_style_error(line_number, 'api-test-allowlist/redundant', 5, f"Redundant entry: '{entry_text}' ('{covering_entries[0]}' already covers it)")
+                self.handle_style_error(line_number, 'api-test-blocklist/redundant', 5, f"Redundant entry: '{entry_text}' ('{covering_entries[0]}' already covers it)")
             seen.add((gate, pattern))
 
             previous_pattern = previous_pattern_by_gate.get(gate, '')
             if pattern < previous_pattern:
-                self.handle_style_error(line_number, 'api-test-allowlist/order', 5, f"Entry not in alphabetical order: '{pattern}' should come before '{previous_pattern}'")
+                self.handle_style_error(line_number, 'api-test-blocklist/order', 5, f"Entry not in alphabetical order: '{pattern}' should come before '{previous_pattern}'")
             previous_pattern_by_gate[gate] = pattern

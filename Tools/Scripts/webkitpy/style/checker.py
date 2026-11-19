@@ -64,7 +64,7 @@ from webkitpy.style.checkers.messagesin import MessagesInChecker
 from webkitpy.style.checkers.png import PNGChecker
 from webkitpy.style.checkers.python import PythonChecker, Python3Checker
 from webkitpy.style.checkers.spi_allowlist import SPIAllowlistChecker
-from webkitpy.style.checkers.api_test_allowlist import APITestAllowlistChecker
+from webkitpy.style.checkers.api_test_blocklist import APITestBlocklistChecker
 from webkitpy.style.checkers.api_test_expectations import APITestExpectationsChecker
 from webkitpy.style.checkers.swift import SwiftChecker
 from webkitpy.style.checkers.swift_association import SwiftAssociationChecker
@@ -703,7 +703,7 @@ def _all_categories():
     categories = categories.union(JSTestChecker.categories)
     categories = categories.union(TestExpectationsChecker.categories)
     categories = categories.union(APITestExpectationsChecker.categories)
-    categories = categories.union(APITestAllowlistChecker.categories)
+    categories = categories.union(APITestBlocklistChecker.categories)
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
     categories = categories.union(FeatureDefinesChecker.categories)
@@ -884,7 +884,7 @@ class FileType:
     XCSCHEME = 14
     SWIFT = 15
     SPI_ALLOWLIST = 16
-    API_TEST_ALLOWLIST = 17
+    API_TEST_BLOCKLIST = 17
 
 
 class ANSIColor:
@@ -996,8 +996,8 @@ class CheckerDispatcher(object):
             return FileType.PNG
         elif ((file_extension == _CMAKE_FILE_EXTENSION) or os.path.basename(file_path) == 'CMakeLists.txt'):
             return FileType.CMAKE
-        elif 'api_tests' in file_path and os.path.basename(file_path) == 'allowlist.txt':
-            return FileType.API_TEST_ALLOWLIST
+        elif 'api_tests' in file_path and os.path.basename(file_path) == 'blocklist.txt':
+            return FileType.API_TEST_BLOCKLIST
         elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS or os.path.basename(file_path) == 'TestExpectations'):
             return FileType.TEXT
@@ -1094,8 +1094,8 @@ class CheckerDispatcher(object):
             checker = BaseXcconfigChecker(file_path, handle_style_error)
         elif file_type == FileType.SPI_ALLOWLIST:
             checker = SPIAllowlistChecker(file_path, handle_style_error)
-        elif file_type == FileType.API_TEST_ALLOWLIST:
-            checker = APITestAllowlistChecker(file_path, handle_style_error)
+        elif file_type == FileType.API_TEST_BLOCKLIST:
+            checker = APITestBlocklistChecker(file_path, handle_style_error)
         else:
             raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
                              "are %(NONE)s, %(CPP)s, and %(TEXT)s."

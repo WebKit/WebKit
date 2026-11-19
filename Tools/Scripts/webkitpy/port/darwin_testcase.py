@@ -85,39 +85,39 @@ class DarwinTest(port_testcase.PortTestCase):
         port._warm_up_runner(1)
         port.create_driver.assert_not_called()
 
-    def test_api_test_allowlist_platform_gating(self):
+    def test_api_test_blocklist_platform_gating(self):
         port = self.make_port()
         current_platform = port.api_test_current_configuration().get('platform')
         if current_platform not in ('mac', 'ios'):
             return
 
-        allowlist_path = os.path.join(os.path.dirname(darwin_module.__file__), '..', 'api_tests', 'allowlist.txt')
-        port._filesystem.write_text_file(allowlist_path, '\n'.join([
-            'TestIPC.AlwaysAllowed',
+        blocklist_path = os.path.join(os.path.dirname(darwin_module.__file__), '..', 'api_tests', 'blocklist.txt')
+        port._filesystem.write_text_file(blocklist_path, '\n'.join([
+            'TestIPC.AlwaysBlocked',
             'TestIPC.SharedSuite',
             '[ mac ] TestIPC.MacOnly',
             '[ ios ] TestIPC.IOSOnly',
             '',
         ]))
 
-        self.assertTrue(port.is_test_allowlisted('TestIPC.AlwaysAllowed'))
-        self.assertTrue(port.is_test_allowlisted('TestIPC.SharedSuite.NestedCase'))
+        self.assertTrue(port.is_test_blocklisted('TestIPC.AlwaysBlocked'))
+        self.assertTrue(port.is_test_blocklisted('TestIPC.SharedSuite.NestedCase'))
 
         if current_platform == 'mac':
-            self.assertTrue(port.is_test_allowlisted('TestIPC.MacOnly'))
-            self.assertFalse(port.is_test_allowlisted('TestIPC.IOSOnly'))
+            self.assertTrue(port.is_test_blocklisted('TestIPC.MacOnly'))
+            self.assertFalse(port.is_test_blocklisted('TestIPC.IOSOnly'))
         else:
-            self.assertFalse(port.is_test_allowlisted('TestIPC.MacOnly'))
-            self.assertTrue(port.is_test_allowlisted('TestIPC.IOSOnly'))
+            self.assertFalse(port.is_test_blocklisted('TestIPC.MacOnly'))
+            self.assertTrue(port.is_test_blocklisted('TestIPC.IOSOnly'))
 
-    def test_api_test_allowlist_entries(self):
+    def test_api_test_blocklist_entries(self):
         port = self.make_port()
         current_platform = port.api_test_current_configuration().get('platform')
         if current_platform not in ('mac', 'ios'):
             return
 
-        allowlist_path = os.path.join(os.path.dirname(darwin_module.__file__), '..', 'api_tests', 'allowlist.txt')
-        port._filesystem.write_text_file(allowlist_path, '\n'.join([
+        blocklist_path = os.path.join(os.path.dirname(darwin_module.__file__), '..', 'api_tests', 'blocklist.txt')
+        port._filesystem.write_text_file(blocklist_path, '\n'.join([
             'TestIPC.SharedSuite',
             '[ {} ] TestIPC.SharedSuite.GatedCase'.format(current_platform),
             '[ {} ] TestIPC.Gated'.format(current_platform),
@@ -125,17 +125,17 @@ class DarwinTest(port_testcase.PortTestCase):
             '',
         ]))
 
-        entry = port.is_test_allowlisted('TestIPC.SharedSuite.Case')
+        entry = port.is_test_blocklisted('TestIPC.SharedSuite.Case')
         self.assertEqual((entry.test_pattern, entry.configurations, entry.line_number), ('TestIPC.SharedSuite', frozenset(), 1))
 
-        entry = port.is_test_allowlisted('TestIPC.SharedSuite.GatedCase')
+        entry = port.is_test_blocklisted('TestIPC.SharedSuite.GatedCase')
         self.assertEqual((entry.test_pattern, entry.configurations, entry.line_number), ('TestIPC.SharedSuite.GatedCase', frozenset([current_platform]), 2))
 
-        entry = port.is_test_allowlisted('TestIPC.Gated')
+        entry = port.is_test_blocklisted('TestIPC.Gated')
         self.assertEqual((entry.configurations, entry.line_number), (frozenset([current_platform]), 3))
 
-        self.assertIsNone(port.is_test_allowlisted('TestIPC.Unlisted'))
-        self.assertEqual(port.filter_api_tests_by_allowlist(['TestIPC.Gated', 'TestIPC.Unlisted']), (['TestIPC.Gated'], ['TestIPC.Unlisted']))
+        self.assertIsNone(port.is_test_blocklisted('TestIPC.Unlisted'))
+        self.assertEqual(port.filter_api_tests_by_blocklist(['TestIPC.Gated', 'TestIPC.Unlisted']), (['TestIPC.Unlisted'], ['TestIPC.Gated']))
 
     def assert_name(self, port_name, os_version_string, expected):
         host = MockSystemHost(os_name=self.os_name, os_version=VersionNameMap.map().from_name(os_version_string)[1])

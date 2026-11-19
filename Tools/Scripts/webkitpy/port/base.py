@@ -325,11 +325,11 @@ class Port(object):
                 return group
         return None
 
-    def filter_api_tests_by_allowlist(self, tests):
-        """Split API tests into allowlisted (parallel) and non-allowlisted (system) groups.
+    def filter_api_tests_by_blocklist(self, tests):
+        """Split API tests into parallel and blocklisted (system shard) groups.
 
-        Default implementation: all tests are allowlisted (no system shard).
-        Override in platform-specific ports to implement allowlist filtering.
+        Default implementation: no test is blocklisted (no system shard).
+        Override in platform-specific ports to implement blocklist filtering.
         """
         return tests, []
 

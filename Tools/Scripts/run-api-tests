@@ -227,9 +227,11 @@ def parse_args(args):
         optparse.make_option('--additional-env-var', type='string', action='append', default=[],
                              help='Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)'),
         optparse.make_option('--test-parallel-safety', type='string', action='append', default=[],
-                             help='Run specified test(s) repeatedly while the allowlisted tests run on repeat as background load'),
+                             help='Run specified test(s) repeatedly while the tests that are not blocklisted run on repeat as background load'),
         optparse.make_option('--parallel-safety-iterations', type='int', default=10,
                              help='Number of times to run each --test-parallel-safety test (default: %default)'),
+        optparse.make_option('--skip-blocklisted', action='store_true', default=False,
+                             help='Skip the tests in the blocklist, which run sequentially in the system shard'),
 
         optparse.make_option('--site-isolation-enabled-by-default', action='store_true', default=False,
                              help='Enable Site Isolation'),

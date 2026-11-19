@@ -218,12 +218,11 @@ class Runner(object):
 
         self.begin_tests(len(tests))
 
-        self.printer.write_update('Filtering tests by allowlist ...')
-        # Split tests by allowlist BEFORE sharding
-        allowlisted_tests, non_allowlisted_tests = self.port.filter_api_tests_by_allowlist(tests)
+        self.printer.write_update('Filtering tests by blocklist ...')
+        parallel_tests, blocklisted_tests = self.port.filter_api_tests_by_blocklist(tests)
 
-        if non_allowlisted_tests and not self.port.get_option('test_parallel_safety'):
-            _log.info(f'{len(non_allowlisted_tests)} tests not in allowlist will run in system shard')
+        if blocklisted_tests and not self.port.get_option('test_parallel_safety'):
+            _log.info(f'{len(blocklisted_tests)} tests in blocklist will run in system shard')
 
         original_level = server_process_logger.level
         server_process_logger.setLevel(logging.CRITICAL)
@@ -244,12 +243,11 @@ class Runner(object):
             setupkwargs = dict(port=self.port, devices=devices, log_limit=self.log_limit)
 
             if self.port.get_option('test_parallel_safety'):
-                self._run_parallel_safety(tests, allowlisted_tests, workers, setupkwargs)
+                self._run_parallel_safety(tests, parallel_tests, workers, setupkwargs)
                 return
 
             self.printer.write_update('Sharding tests ...')
-            # Only shard allowlisted tests for parallel execution
-            shards = Runner._shard_tests(allowlisted_tests, self.port.get_option('fully_parallel'))
+            shards = Runner._shard_tests(parallel_tests, self.port.get_option('fully_parallel'))
             self._num_workers = min(workers, max(len(shards), 1))
 
             with TaskPool(
@@ -263,16 +261,16 @@ class Runner(object):
                 pool.wait()
 
             # Run system shard tests after all parallel tests complete
-            if non_allowlisted_tests:
-                _log.info(f'Running {len(non_allowlisted_tests)} system shard tests sequentially')
+            if blocklisted_tests:
+                _log.info(f'Running {len(blocklisted_tests)} system shard tests sequentially')
                 with TaskPool(
                     workers=1,  # System shard tests run with single worker to avoid conflicts
                     mutually_exclusive_groups=[],
                     setup=setup_shard, setupkwargs=setupkwargs, teardown=teardown_shard,
                 ) as pool:
                     # Group system shard tests by suite for efficiency
-                    non_allowlisted_shards = Runner._shard_tests(non_allowlisted_tests, False)
-                    for name, shard_tests in iteritems(non_allowlisted_shards):
+                    blocklisted_shards = Runner._shard_tests(blocklisted_tests, False)
+                    for name, shard_tests in iteritems(blocklisted_shards):
                         pool.do(run_shard, name, *shard_tests)
 
                     pool.wait()
@@ -281,7 +279,7 @@ class Runner(object):
             server_process_logger.setLevel(original_level)
             Runner.instance = None
 
-    def _run_parallel_safety(self, tests, allowlisted_tests, workers, setupkwargs):
+    def _run_parallel_safety(self, tests, parallel_tests, workers, setupkwargs):
         supplied_tests = []
         for test_arg in self.port.get_option('test_parallel_safety'):
             supplied_tests.extend(test_arg.split())
@@ -296,7 +294,7 @@ class Runner(object):
             return
 
         checked_suites = {Runner._suite_name(test) for test in checked_tests}
-        background_chunks = Runner._parallel_safety_background_chunks([test for test in allowlisted_tests if Runner._suite_name(test) not in checked_suites], checked_tests)
+        background_chunks = Runner._parallel_safety_background_chunks([test for test in parallel_tests if Runner._suite_name(test) not in checked_suites], checked_tests)
         iterations = self.port.get_option('parallel_safety_iterations') or 1
         checked_workers = min(len(checked_tests), max(1, workers // 3))
         background_workers = min(len(background_chunks), workers - checked_workers)

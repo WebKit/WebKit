@@ -251,6 +251,13 @@ class Manager(object):
     _SPECIFIC_TEST_ARG_RE = re.compile(r'\S+\..+')
 
     @staticmethod
+    def _tests_outside_the_blocklist(port, test_names):
+        parallel_tests, blocklisted_tests = port.filter_api_tests_by_blocklist(test_names)
+        if blocklisted_tests:
+            _log.info(f'Skipping {len(blocklisted_tests)} tests in the blocklist')
+        return parallel_tests
+
+    @staticmethod
     def _arguments_with_parallel_safety_tests(args, parallel_safety_arguments):
         # With no arguments every test is collected, including the ones being checked.
         if not args:
@@ -422,6 +429,9 @@ class Manager(object):
         if len(test_names) == 0:
             self._stream.writeln('No tests found')
             return Manager.FAILED_COLLECT_TESTS
+
+        if self._port.get_option('skip_blocklisted'):
+            test_names = Manager._tests_outside_the_blocklist(self._port, test_names)
 
         if self._port.get_option('dump'):
             for test in test_names:

@@ -22,18 +22,18 @@
 
 import unittest
 
-from webkitpy.style.checkers.api_test_allowlist import APITestAllowlistChecker
+from webkitpy.style.checkers.api_test_blocklist import APITestBlocklistChecker
 
 
-class APITestAllowlistCheckerTest(unittest.TestCase):
+class APITestBlocklistCheckerTest(unittest.TestCase):
 
     def check(self, content):
         errors = []
-        checker = APITestAllowlistChecker('allowlist.txt', lambda *args: errors.append(args))
+        checker = APITestBlocklistChecker('blocklist.txt', lambda *args: errors.append(args))
         checker.check(content.splitlines(), line_numbers=None)
         return errors
 
-    def test_valid_allowlist(self):
+    def test_valid_blocklist(self):
         self.assertEqual([], self.check('''\
 # Comment
 TestIPC.ArgumentCoderTest/ArgumentCoderEncodingCounterTest
@@ -47,10 +47,10 @@ TestWebKitAPI.SwiftSuite/works()
 
     def test_format(self):
         self.assertEqual([
-            (1, 'api-test-allowlist/format', 5, 'Expecting "[", "#", or end of line instead of "TestIPC.Bar"'),
-            (2, 'api-test-allowlist/format', 5, "Invalid entry format: '[ ios ] WTF_Lock.Basic' (expected BINARY.SUITE or BINARY.SUITE.TESTCASE)"),
-            (3, 'api-test-allowlist/format', 5, "Wildcard entries match no tests: 'TestWTF.WTF_Lock*'"),
-            (4, 'api-test-allowlist/format', 5, "Allowlist entries take no expectations or modifiers: 'TestWTF.WTF_Lock [ Skip ]'"),
+            (1, 'api-test-blocklist/format', 5, 'Expecting "[", "#", or end of line instead of "TestIPC.Bar"'),
+            (2, 'api-test-blocklist/format', 5, "Invalid entry format: '[ ios ] WTF_Lock.Basic' (expected BINARY.SUITE or BINARY.SUITE.TESTCASE)"),
+            (3, 'api-test-blocklist/format', 5, "Wildcard entries match no tests: 'TestWTF.WTF_Lock*'"),
+            (4, 'api-test-blocklist/format', 5, "Blocklist entries take no expectations or modifiers: 'TestWTF.WTF_Lock [ Skip ]'"),
         ], self.check('''\
 TestIPC.Foo TestIPC.Bar
 [ ios ] WTF_Lock.Basic
@@ -65,7 +65,7 @@ TestWTF.WTF_Lock [ Skip ]
 
     def test_duplicate(self):
         self.assertEqual([
-            (3, 'api-test-allowlist/duplicate', 5, "Duplicate entry: '[ ios ] TestWTF.WTF_Lock.Basic'"),
+            (3, 'api-test-blocklist/duplicate', 5, "Duplicate entry: '[ ios ] TestWTF.WTF_Lock.Basic'"),
         ], self.check('''\
 TestIPC.Suite
 [ ios ] TestWTF.WTF_Lock.Basic
@@ -74,10 +74,10 @@ TestIPC.Suite
 
     def test_redundant(self):
         self.assertEqual([
-            (2, 'api-test-allowlist/redundant', 5, "Redundant entry: 'TestWTF.WTF_Lock.Basic' ('TestWTF.WTF_Lock' already covers it)"),
-            (4, 'api-test-allowlist/redundant', 5, "Redundant entry: '[ ios ] TestWTF.WTF_Lock' ('TestWTF.WTF_Lock' already covers it)"),
-            (5, 'api-test-allowlist/redundant', 5, "Redundant entry: '[ ios ] TestWTF.WTF_Lock.Basic' ('TestWTF.WTF_Lock.Basic' already covers it)"),
-            (7, 'api-test-allowlist/redundant', 5, "Redundant entry: '[ mac ] TestIPC.Suite.test' ('[ mac ] TestIPC.Suite' already covers it)"),
+            (2, 'api-test-blocklist/redundant', 5, "Redundant entry: 'TestWTF.WTF_Lock.Basic' ('TestWTF.WTF_Lock' already covers it)"),
+            (4, 'api-test-blocklist/redundant', 5, "Redundant entry: '[ ios ] TestWTF.WTF_Lock' ('TestWTF.WTF_Lock' already covers it)"),
+            (5, 'api-test-blocklist/redundant', 5, "Redundant entry: '[ ios ] TestWTF.WTF_Lock.Basic' ('TestWTF.WTF_Lock.Basic' already covers it)"),
+            (7, 'api-test-blocklist/redundant', 5, "Redundant entry: '[ mac ] TestIPC.Suite.test' ('[ mac ] TestIPC.Suite' already covers it)"),
         ], self.check('''\
 TestWTF.WTF_Lock
 TestWTF.WTF_Lock.Basic
@@ -90,7 +90,7 @@ TestWTF.WTF_Lock.Basic
 
     def test_redundant_before_covering_entry(self):
         self.assertEqual([
-            (1, 'api-test-allowlist/redundant', 5, "Redundant entry: '[ ios ] TestWTF.WTF_Lock.Basic' ('TestWTF.WTF_Lock' already covers it)"),
+            (1, 'api-test-blocklist/redundant', 5, "Redundant entry: '[ ios ] TestWTF.WTF_Lock.Basic' ('TestWTF.WTF_Lock' already covers it)"),
         ], self.check('''\
 [ ios ] TestWTF.WTF_Lock.Basic
 TestWTF.WTF_Lock
@@ -98,8 +98,8 @@ TestWTF.WTF_Lock
 
     def test_order_within_each_gate(self):
         self.assertEqual([
-            (2, 'api-test-allowlist/order', 5, "Entry not in alphabetical order: 'TestIPC.Suite' should come before 'TestWTF.WTF_Lock'"),
-            (5, 'api-test-allowlist/order', 5, "Entry not in alphabetical order: 'TestIPC.Third' should come before 'TestWTF.Other'"),
+            (2, 'api-test-blocklist/order', 5, "Entry not in alphabetical order: 'TestIPC.Suite' should come before 'TestWTF.WTF_Lock'"),
+            (5, 'api-test-blocklist/order', 5, "Entry not in alphabetical order: 'TestIPC.Third' should come before 'TestWTF.Other'"),
         ], self.check('''\
 TestWTF.WTF_Lock
 TestIPC.Suite

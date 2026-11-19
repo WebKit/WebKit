@@ -136,6 +136,13 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
     def test_parallel_safety_tests_need_no_arguments_when_collecting_everything(self):
         self.assertEqual(Manager._arguments_with_parallel_safety_tests([], ['TestWTF.WTF_Vector.Basic']), [])
 
+    def test_blocklisted_tests_are_left_out(self):
+        port = MagicMock()
+        port.filter_api_tests_by_blocklist.return_value = (['TestWTF.WTF_Vector.Basic'], ['TestWebKitAPI.Serial.Test'])
+        with OutputCapture():
+            self.assertEqual(Manager._tests_outside_the_blocklist(port, ['TestWTF.WTF_Vector.Basic', 'TestWebKitAPI.Serial.Test']), ['TestWTF.WTF_Vector.Basic'])
+        port.filter_api_tests_by_blocklist.assert_called_once_with(['TestWTF.WTF_Vector.Basic', 'TestWebKitAPI.Serial.Test'])
+
     def test_args_specify_individual_tests(self):
         self.assertTrue(Manager._args_specify_individual_tests(["WebKit.SomeTest"]))
         self.assertTrue(Manager._args_specify_individual_tests(["TestWebKitAPI.WebKit.SomeTest"]))

@@ -78,13 +78,13 @@ class RunnerTest(unittest.TestCase):
 
 
 class RunnerRunTest(unittest.TestCase):
-    ALLOWLISTED = [
+    PARALLEL = [
         'TestWebKitAPI.SiteIsolation.Target',
         'TestWebKitAPI.SiteIsolation.Other',
         'TestWebKitAPI.WebKit.A',
         'TestWebKitAPI.WebKit.B',
     ]
-    NOT_ALLOWLISTED = ['TestWebKitAPI.System.Target']
+    BLOCKLISTED = ['TestWebKitAPI.System.Target']
 
     def setUp(self):
         self._saved_instance = Runner.instance
@@ -97,10 +97,10 @@ class RunnerRunTest(unittest.TestCase):
         options = dict(test_parallel_safety=parallel_safety_tests, parallel_safety_iterations=iterations, fully_parallel=False)
         port = MagicMock()
         port.get_option.side_effect = lambda name: options.get(name)
-        port.filter_api_tests_by_allowlist.return_value = (self.ALLOWLISTED, self.NOT_ALLOWLISTED)
+        port.filter_api_tests_by_blocklist.return_value = (self.PARALLEL, self.BLOCKLISTED)
         port.sharding_groups.return_value = {}
         with patch('webkitpy.api_tests.runner.TaskPool') as task_pool:
-            Runner(port, MagicMock()).run(self.ALLOWLISTED + self.NOT_ALLOWLISTED, num_workers)
+            Runner(port, MagicMock()).run(self.PARALLEL + self.BLOCKLISTED, num_workers)
         return task_pool
 
     @staticmethod
@@ -122,12 +122,12 @@ class RunnerRunTest(unittest.TestCase):
         self.assertEqual(background_tests, ['TestWebKitAPI.WebKit.A', 'TestWebKitAPI.WebKit.B'])
         self.assertEqual(task_pool.call_args.kwargs['workers'], 2 + len(background_calls))
 
-    def test_parallel_safety_checks_a_test_outside_the_allowlist(self):
+    def test_parallel_safety_checks_a_blocklisted_test(self):
         task_pool = self._run(['TestWebKitAPI.System.Target'], iterations=1)
 
         self.assertEqual([call.args[1:] for call in self._calls(task_pool, run_parallel_safety_iterations)], [('TestWebKitAPI.System.Target', 1)])
         background_tests = sorted(test for call in self._calls(task_pool, run_background_load) for _, tests in call.args[1] for test in tests)
-        self.assertEqual(background_tests, sorted(self.ALLOWLISTED))
+        self.assertEqual(background_tests, sorted(self.PARALLEL))
         self.assertEqual(self._calls(task_pool, run_shard), [])
 
     def test_parallel_safety_skips_unavailable_tests(self):
