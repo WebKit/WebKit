@@ -4,12 +4,10 @@
 description("Verifies that navigating the main frame while adding an iframe only increments history.length by one.");
 jsTestIsAsync = true;
 
-onmessage = () => {
-    onmessage = null;
-    setTimeout(() => {
-        sessionStorage.didNavigate = true;
-        location.href = 'data:text/html,<script> history.back(); <\/script>';
-    }, 10);
+function addIframe() {
+    const iframe = document.createElement('iframe');
+    iframe.src = 'http://localhost:8000/site-isolation/resources/green-background.html';
+    document.body.appendChild(iframe);
 }
 
 onload = async () => {
@@ -17,13 +15,25 @@ onload = async () => {
         delete sessionStorage.didNavigate;
         shouldBe("history.length", "2");
         finishJSTest();
-    } else {
-        await testRunner?.clearBackForwardList();
-        setInterval(() => {
-            const iframe = document.createElement('iframe');
-            iframe.src = 'http://localhost:8000/site-isolation/resources/green-background.html';
-            document.body.appendChild(iframe);
-        }, 1);
+        return;
     }
+
+    // Load one cross-site iframe first so that its process is running before iframes are added in a loop.
+    // Otherwise the loop adds iframes for as long as that process takes to launch and load its first frame,
+    // which on slow configurations is hundreds of iframes and makes the test time out.
+    await new Promise(resolve => {
+        onmessage = resolve;
+        addIframe();
+    });
+    await testRunner?.clearBackForwardList();
+
+    onmessage = () => {
+        onmessage = null;
+        setTimeout(() => {
+            sessionStorage.didNavigate = true;
+            location.href = 'data:text/html,<script> history.back(); <\/script>';
+        }, 10);
+    };
+    setInterval(addIframe, 1);
 }
 </script>

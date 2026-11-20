@@ -9046,8 +9046,6 @@ http/tests/websocket/tests/hybi/interleaved-fragments.html [ Pass Failure ] # rd
 
 http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html [ Pass Crash ] # rdar://176377254
 
-webkit.org/b/328340 http/tests/site-isolation/history/add-iframes-and-navigate-mainframe.html [ Pass Crash Timeout ] # rdar://170336250
-
 media/modern-media-controls/tracks-support/audio-single-track.html [ Pass Timeout ] # rdar://170345395
 
 fast/forms/ios/focus-input-via-button.html [ Pass Failure ] # rdar://133813319
