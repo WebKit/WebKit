@@ -181,6 +181,7 @@ inline bool RenderElement::shouldApplyPaintContainment() const
     return element() && Style::ContainmentChecker { style(), *element() }.shouldApplyPaintContainment();
 }
 
+// When changing which style properties are checked here, update isStyleVisibleToHitTesting() in RenderWidget.cpp.
 inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestRequest>& request) const
 {
     auto isVisible = !request || request->userTriggered() ? usedStyle().visibility() == UsedVisibility::Visible : style().visibility() == Visibility::Visible;
