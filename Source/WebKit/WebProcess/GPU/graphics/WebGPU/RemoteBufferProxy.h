@@ -50,6 +50,7 @@ public:
     RemoteDeviceProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    RemoteDeviceProxy& device() const final { return m_parent; }
     void mapAsync(OptionSet<::WebGPU::MapMode>, uint64_t offset, std::optional<uint64_t> sizeForMap, CompletionHandler<void(bool)>&&) final;
     void getMappedRange(uint64_t offset, std::optional<uint64_t>, NOESCAPE const Function<void(std::span<uint8_t>)>&) final;
     std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) final;

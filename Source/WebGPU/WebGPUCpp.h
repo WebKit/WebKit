@@ -1365,6 +1365,8 @@ public:
     // The whole contents, where the implementation can reach them. Only the GPU Process can.
     virtual std::span<uint8_t> getBufferContents() = 0;
     virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
+    // The device that created the buffer.
+    virtual Device& device() const = 0;
     // https://gpuweb.github.io/gpuweb/#gpubuffer: the size the buffer was created with, its usage and
     // its map state.
     virtual uint64_t size() const = 0;
@@ -1464,6 +1466,8 @@ public:
 
     // The adapter that created the device.
     virtual Adapter& adapter() const = 0;
+    // The instance that created the adapter of the device. Null when the instance is gone.
+    virtual RefPtr<Instance> instance() const = 0;
     virtual Vector<FeatureName> features() const = 0;
     virtual const Limits& limits() const = 0;
     virtual Ref<Queue> queue() = 0;
@@ -1756,6 +1760,8 @@ public:
     virtual ~ShaderModule() = default;
 
     virtual void compilationInfo(CompletionHandler<void(CompilationInfo&&)>&&) = 0;
+    // The device that created the shader module.
+    virtual Device& device() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 

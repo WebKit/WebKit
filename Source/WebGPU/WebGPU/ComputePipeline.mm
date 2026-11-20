@@ -194,7 +194,7 @@ static CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)> asy
         };
 
         // Resolve on a later turn of the WebGPU thread, never re-entrantly from the caller.
-        if (RefPtr protectedInstance = protectedDevice->instance()) {
+        if (RefPtr protectedInstance = protectedDevice->weakInstance()) {
             protectedInstance->scheduleWork(WTF::move(reportResult));
             return;
         }

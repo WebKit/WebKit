@@ -59,7 +59,8 @@ static void getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<
 WGPUFuture wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        WebGPU::CAPI::Future future { WebGPU::CAPI::metalFromAPI(shaderModule).device().instance() };
+        Ref protectedShaderModule = WebGPU::CAPI::fromAPI(shaderModule);
+        WebGPU::CAPI::Future future { protect(protectedShaderModule->device())->instance() };
         getCompilationInfo(shaderModule, [callbackInfo, future](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
             callbackInfo.callback(status, &compilationInfo, callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
