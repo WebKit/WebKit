@@ -45,6 +45,10 @@
 #include <drm_fourcc.h>
 #endif
 
+#if USE(GBM) && USE(GSTREAMER)
+#include "DMABufBuffer.h"
+#endif
+
 #if !USE(LIBEPOXY)
 typedef EGLImage (EGLAPIENTRYP PFNEGLCREATEIMAGEPROC) (EGLDisplay, EGLContext, EGLenum, EGLClientBuffer, const EGLAttrib*);
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEPROC) (EGLDisplay, EGLImage);
@@ -293,6 +297,31 @@ const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormats()
 }
 
 #if USE(GSTREAMER)
+static bool isModifierSampledAsTexture2D(EGLDisplay eglDisplay, uint32_t format, uint64_t modifier)
+{
+    if (modifier == DRM_FORMAT_MOD_INVALID)
+        return true;
+
+    static PFNEGLQUERYDMABUFMODIFIERSEXTPROC s_eglQueryDmaBufModifiersEXT = reinterpret_cast<PFNEGLQUERYDMABUFMODIFIERSEXTPROC>(eglGetProcAddress("eglQueryDmaBufModifiersEXT"));
+    if (!s_eglQueryDmaBufModifiersEXT)
+        return false;
+
+    EGLint modifiersCount;
+    if (!s_eglQueryDmaBufModifiersEXT(eglDisplay, format, 0, nullptr, nullptr, &modifiersCount) || !modifiersCount)
+        return false;
+
+    Vector<EGLuint64KHR> modifiers(modifiersCount);
+    Vector<EGLBoolean> externalOnly(modifiersCount);
+    if (!s_eglQueryDmaBufModifiersEXT(eglDisplay, format, modifiersCount, modifiers.mutableSpan().data(), externalOnly.mutableSpan().data(), &modifiersCount))
+        return false;
+
+    for (EGLint i = 0; i < modifiersCount; ++i) {
+        if (modifiers[i] == modifier)
+            return !externalOnly[i];
+    }
+    return false;
+}
+
 const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormatsForVideo()
 {
     Locker locker { m_bufferFormatsForVideoLock };
@@ -306,6 +335,19 @@ const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormatsForVideo()
                 DRM_FORMAT_YUV444, DRM_FORMAT_YUV411, DRM_FORMAT_YUV422, DRM_FORMAT_P010
             };
             m_bufferFormatsForVideo = queryDMABufFormats(m_display, s_supportedFormats, m_extensions.EXT_image_dma_buf_import_modifiers);
+
+            // DMABufBuffer::importIfNeeded() binds every plane it imports to GL_TEXTURE_2D, which an external-only modifier does not allow.
+            for (auto& format : m_bufferFormatsForVideo) {
+                auto planeFormats = DMABufBuffer::allPlaneFormats(format.fourcc.value);
+                format.modifiers.removeAllMatching([&](uint64_t modifier) {
+                    return !std::ranges::all_of(planeFormats, [&](uint32_t planeFormat) {
+                        return isModifierSampledAsTexture2D(m_display, planeFormat, modifier);
+                    });
+                });
+            }
+            m_bufferFormatsForVideo.removeAllMatching([](const BufferFormat& format) {
+                return format.modifiers.isEmpty();
+            });
         }
         m_bufferFormatsForVideoInitialized = true;
     }
