@@ -402,11 +402,11 @@ class GitHubEWS(GitHub):
             hover_over_text = 'Build was cancelled. Recent messages:' + self._steps_messages(build)
         elif build.result == Buildbot.SKIPPED:
             icon = GitHubEWS.ICON_EMPTY_SPACE
-            if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
-                return u'| '
             name = u'~~{}~~'.format(name)
             hover_over_text = 'The change is no longer eligible for processing.'
-            if re.search(r'Pull request .* is already closed', build.state_string):
+            if StatusBubble.is_skipped_for_no_relevant_changes(build):
+                hover_over_text = StatusBubble.NO_RELEVANT_CHANGES_MESSAGE
+            elif re.search(r'Pull request .* is already closed', build.state_string):
                 hover_over_text += ' Pull Request was already closed when EWS attempted to process it.'
             elif re.search(r'Hash .* on PR .* is outdated', build.state_string):
                 hover_over_text += ' Commit was outdated when EWS attempted to process it.'

@@ -28,11 +28,13 @@ from unittest import mock
 from django.test import RequestFactory, TestCase
 
 from ews.common.buildbot import Buildbot
+from ews.common.github import GitHubEWS
 from ews.config import SUCCESS
 from ews.models.build import Build
 from ews.models.buildbotinstance import BuildbotInstance
 from ews.models.patch import Change
 from ews.views.status import Status
+from ews.views.statusbubble import StatusBubble
 import ews.config as config
 
 CHANGE_ID = '1234567890abcdef1234567890abcdef12345678'
@@ -79,9 +81,9 @@ class BuildUpdateTest(TestCase):
         self.assertEqual(build.state_string, 'build successful')
 
 
-def save_queue_build(queue, build_id, result, builder_id=None):
+def save_queue_build(queue, build_id, result, builder_id=None, state_string='state'):
     return Build.save_build(change_id=CHANGE_ID, hostname=HOSTNAME, build_id=build_id, builder_id=builder_id or build_id, builder_name=queue.title() + '-EWS',
-                            builder_display_name=queue, number=1, result=result, state_string='state', started_at=1700000000,
+                            builder_display_name=queue, number=1, result=result, state_string=state_string, started_at=1700000000,
                             complete_at=1700000060, pr_number=PR_NUMBER, pr_project=PR_PROJECT)
 
 
@@ -108,3 +110,42 @@ class StatusViewTest(TestCase):
         self.assertEqual(status['mac']['state'], Buildbot.SUCCESS)
         self.assertNotIn('mac-wk2', status)
         self.assertNotIn('api-mac', status)
+
+
+class SkippedBuildBubbleTest(TestCase):
+    NO_RELEVANT_CHANGES = f"Pull request {PR_NUMBER} doesn't have relevant changes"
+
+    def setUp(self):
+        Change.save_change(CHANGE_ID, pr_number=PR_NUMBER, pr_project=PR_PROJECT)
+        for patcher in [
+            mock.patch.dict(Buildbot.QUEUE_TRIGGERS, {'mac-wk2': 'mac'}),
+            mock.patch.dict(Buildbot.icons_for_queues_mapping, {'mac': 'buildOnly', 'mac-wk2': 'testOnly', 'webkitpy': 'testOnly'}),
+        ]:
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def change(self):
+        return Change.get_change(CHANGE_ID)
+
+    def test_build_skipped_for_no_relevant_changes_is_struck_out(self):
+        save_queue_build('mac', 1, Buildbot.SKIPPED, state_string=self.NO_RELEVANT_CHANGES)
+        cell = GitHubEWS().github_status_for_buildbot_queue(self.change(), 'mac')
+        self.assertIn(f'~~{StatusBubble.BUILDER_ICON} mac~~', cell)
+        self.assertIn("this PR doesn't change any files relevant to this queue", cell)
+
+    def test_tester_of_a_build_skipped_for_no_relevant_changes_is_struck_out(self):
+        save_queue_build('mac', 1, Buildbot.SKIPPED, state_string=self.NO_RELEVANT_CHANGES)
+        cell = GitHubEWS().github_status_for_buildbot_queue(self.change(), 'mac-wk2')
+        self.assertIn(f'~~{StatusBubble.TESTER_ICON} mac-wk2~~', cell)
+        self.assertIn("this PR doesn't change any files relevant to this queue", cell)
+
+    def test_path_filtered_queue_skipped_for_no_relevant_changes_is_struck_out(self):
+        save_queue_build('webkitpy', 1, Buildbot.SKIPPED, state_string=self.NO_RELEVANT_CHANGES)
+        cell = GitHubEWS().github_status_for_buildbot_queue(self.change(), 'webkitpy')
+        self.assertIn(f'~~{StatusBubble.TESTER_ICON} webkitpy~~', cell)
+
+    def test_web_bubble_for_no_relevant_changes_explains_the_skip(self):
+        save_queue_build('mac', 1, Buildbot.SKIPPED, state_string=self.NO_RELEVANT_CHANGES)
+        bubble = StatusBubble()._build_bubble(self.change(), 'mac')
+        self.assertEqual(bubble['state'], 'skipped')
+        self.assertIn(StatusBubble.NO_RELEVANT_CHANGES_MESSAGE, bubble['details_message'])
