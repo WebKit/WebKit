@@ -10,11 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/external-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/filter-no-referrer-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/filter-no-referrer.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/filter.css
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/filter.py
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/inline-style-with-differentorigin-base-tag.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/inline-style.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/internal-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/presentation-attribute.html

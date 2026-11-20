@@ -1,0 +1,5 @@
+
+PASS Referrerpolicy attribute on <object> is ignored and falls back to document policy
+PASS Referrerpolicy attribute on <embed> is ignored and falls back to document policy
+PASS Referrerpolicy attribute on <frame> is ignored and falls back to document policy
+

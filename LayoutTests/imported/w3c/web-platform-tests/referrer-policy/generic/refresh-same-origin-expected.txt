@@ -1,0 +1,20 @@
+
+PASS same-origin meta refresh with referrer policy "no-referrer" refreshes with the empty string as referrer
+PASS same-origin header refresh with referrer policy "no-referrer" refreshes with the empty string as referrer
+PASS same-origin meta refresh with referrer policy "no-referrer-when-downgrade" refreshes with full url as referrer
+PASS same-origin header refresh with referrer policy "no-referrer-when-downgrade" refreshes with full url as referrer
+PASS same-origin meta refresh with referrer policy "origin" refreshes with origin as referrer
+PASS same-origin header refresh with referrer policy "origin" refreshes with origin as referrer
+PASS same-origin meta refresh with referrer policy "origin-when-cross-origin" refreshes with full url as referrer
+PASS same-origin header refresh with referrer policy "origin-when-cross-origin" refreshes with full url as referrer
+PASS same-origin meta refresh with referrer policy "same-origin" refreshes with full url as referrer
+PASS same-origin header refresh with referrer policy "same-origin" refreshes with full url as referrer
+PASS same-origin meta refresh with referrer policy "strict-origin" refreshes with origin as referrer
+PASS same-origin header refresh with referrer policy "strict-origin" refreshes with origin as referrer
+PASS same-origin meta refresh with referrer policy "strict-origin-when-cross-origin" refreshes with full url as referrer
+PASS same-origin header refresh with referrer policy "strict-origin-when-cross-origin" refreshes with full url as referrer
+PASS same-origin meta refresh with referrer policy "unsafe-url" refreshes with full url as referrer
+PASS same-origin header refresh with referrer policy "unsafe-url" refreshes with full url as referrer
+PASS same-origin meta refresh with referrer policy "" refreshes with full url as referrer
+PASS same-origin header refresh with referrer policy "" refreshes with full url as referrer
+

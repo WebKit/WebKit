@@ -10,14 +10,15 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/external-import-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/external-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/inline-style-with-color-scheme-no-referrer.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/inline-style-with-differentorigin-base-tag.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/inline-style.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/internal-import-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/internal-stylesheet-no-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/internal-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/presentation-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/processing-instruction.html

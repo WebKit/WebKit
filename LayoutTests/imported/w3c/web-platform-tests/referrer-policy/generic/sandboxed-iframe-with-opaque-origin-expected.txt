@@ -2,6 +2,8 @@ Referrer Policy: A document with an opaque origin doesn't send referrers
 
 
 
-FAIL Sandboxed iframe with opaque origin doesn't send referrers. assert_equals: expected (undefined) undefined but got (string) "FAILURE"
-FAIL Sandboxed iframe with tuple origin sends referrers. assert_equals: expected "http://localhost:8800/referrer-policy/generic/sandboxed-iframe-with-opaque-origin.html" but got "FAILURE"
+PASS Sandboxed iframe with opaque origin doesn't send referrers to subresources
+FAIL Sandboxed iframe with tuple origin sends referrers to subresources assert_equals: expected (string) "http://web-platform.test:8800/referrer-policy/generic/sandboxed-iframe-with-opaque-origin.html" but got (undefined) undefined
+FAIL Sandboxed iframe with opaque origin doesn't send referrers on navigation assert_equals: expected "" but got "http://web-platform.test:8800/referrer-policy/generic/sandboxed-iframe-with-opaque-origin.html"
+PASS Sandboxed iframe with tuple origin sends referrers on navigation
 

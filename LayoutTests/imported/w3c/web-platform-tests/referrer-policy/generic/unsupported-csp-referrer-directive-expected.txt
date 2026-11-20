@@ -1,4 +1,3 @@
-
 Referrer Policy: CSP 'referrer' directive should not be supported
 
 CSP used to have a 'referrer' directive to set a Referrer Policy. This directive has been removed and should not be supported.

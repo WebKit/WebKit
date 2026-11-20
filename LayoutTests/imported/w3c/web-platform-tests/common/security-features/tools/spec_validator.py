@@ -104,7 +104,7 @@ def validate(spec_json, details):
     # Should be consistent with `sourceContextMap` in
     # `/common/security-features/resources/common.sub.js`.
     valid_source_context_names = [
-        "top", "iframe", "iframe-blank", "srcdoc", "worker-classic",
+        "top", "iframe", "iframe-blank", "iframe-data", "srcdoc", "worker-classic",
         "worker-module", "worker-classic-data", "worker-module-data",
         "sharedworker-classic", "sharedworker-module",
         "sharedworker-classic-data", "sharedworker-module-data"
@@ -113,7 +113,8 @@ def validate(spec_json, details):
     valid_subresource_names = [
         "a-tag", "area-tag", "audio-tag", "form-tag", "iframe-tag", "img-tag",
         "link-css-tag", "link-prefetch-tag", "object-tag", "picture-tag",
-        "script-tag", "script-tag-dynamic-import", "video-tag"
+        "mathml-a-tag", "script-tag", "script-tag-dynamic-import", "svg-a-tag",
+        "video-tag"
     ] + ["beacon", "fetch", "xhr", "websocket"] + [
         "worker-classic", "worker-module", "worker-import",
         "worker-import-data", "sharedworker-classic", "sharedworker-module",

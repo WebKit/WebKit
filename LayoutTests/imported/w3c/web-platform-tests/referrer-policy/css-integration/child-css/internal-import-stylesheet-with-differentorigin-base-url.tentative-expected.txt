@@ -1,0 +1,3 @@
+
+PASS A child stylesheet from inline style should use the document's URL, not the document's base URL, as its referrer.
+

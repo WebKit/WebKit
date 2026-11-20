@@ -9295,6 +9295,11 @@ imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-video-frame.html [ Fai
 
 imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Failure ] # rdar://178008433
 
+# After these upgrade-insecure-requests tests, later subresource loads from http://web-platform.test:8800
+# go out over TLS, so the tests that follow on the same simulator fail.
+imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-cross-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-same-origin.sub.https.html [ Skip ]
+
 imported/w3c/web-platform-tests/service-workers/service-worker/controlled-iframe-postMessage.https.html [ Failure ] # rdar://178008306
 
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/picker-and-slotted-invalidation.html [ ImageOnlyFailure ] # rdar://178008583

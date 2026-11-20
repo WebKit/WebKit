@@ -166,7 +166,7 @@ function setAttributes(el, attrs) {
   attrs = attrs || {}
   for (var attr in attrs) {
     if (attr !== 'src')
-      el.setAttribute(attr, attrs[attr]);
+      el.setAttribute(attr.toLowerCase(), attrs[attr]);
   }
   // Workaround for Chromium: set <img>'s src attribute after all other
   // attributes to ensure the policy is applied.
@@ -827,6 +827,99 @@ function requestViaWebSocket(url) {
 }
 
 /**
+ * Creates a svg anchor element and the corresponding svg setup, appends the
+ * setup to {@code document.body} and performs the navigation.
+ * @param {string} url The URL to navigate to.
+ * @return {Promise} The promise for success/error events.
+ */
+function requestViaSVGAnchor(url, additionalAttributes) {
+  const name = guid();
+
+  const iframe =
+    createElement("iframe", { "name": name, "id": name }, document.body, false);
+
+  // Create SVG container
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+  // Create SVG anchor element
+  const svgAnchor = document.createElementNS("http://www.w3.org/2000/svg", "a");
+  const link_attributes = Object.assign({ "href": url, "target": name }, additionalAttributes);
+  setAttributes(svgAnchor, link_attributes);
+
+  // Add some text content for the anchor
+  const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  text.setAttribute("y", "50");
+  text.textContent = "SVG Link to resource";
+
+  svgAnchor.appendChild(text);
+  svg.appendChild(svgAnchor);
+  document.body.appendChild(svg);
+
+  const promise =
+    bindEvents2(window, "message", iframe, "error", window, "error")
+      .then(event => {
+        if (event.source !== iframe.contentWindow)
+          return Promise.reject(new Error('Unexpected event.source'));
+        return event.data;
+      });
+
+  // Simulate a click event on the SVG anchor
+  const event = new MouseEvent('click', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+  svgAnchor.dispatchEvent(event);
+
+  return promise;
+}
+
+/**
+ * Creates a MathML anchor element and the corresponding MathML setup, appends
+ * the setup to {@code document.body} and performs the navigation.
+ * @param {string} url The URL to navigate to.
+ * @return {Promise} The promise for success/error events.
+ */
+function requestViaMathMLAnchor(url, additionalAttributes) {
+  const name = guid();
+
+  const iframe =
+      createElement('iframe', {'name': name, 'id': name}, document.body, false);
+
+  // Create MathML container
+  const math =
+      document.createElementNS('http://www.w3.org/1998/Math/MathML', 'math');
+
+  // Create MathML anchor element
+  const mathmlAnchor =
+      document.createElementNS('http://www.w3.org/1998/Math/MathML', 'a');
+  const link_attributes =
+      Object.assign({'href': url, 'target': name}, additionalAttributes);
+  setAttributes(mathmlAnchor, link_attributes);
+
+  // Add text content
+  mathmlAnchor.textContent = 'MathML Link to resource';
+
+  math.appendChild(mathmlAnchor);
+  document.body.appendChild(math);
+
+  const promise =
+      bindEvents2(window, 'message', iframe, 'error', window, 'error')
+          .then(event => {
+            if (event.source !== iframe.contentWindow)
+              return Promise.reject(new Error('Unexpected event.source'));
+            return event.data;
+          });
+
+  // Simulate a click event on the MathML anchor
+  const event =
+      new MouseEvent('click', {view: window, bubbles: true, cancelable: true});
+  mathmlAnchor.dispatchEvent(event);
+
+  return promise;
+}
+
+/**
   @typedef SubresourceType
   @type {string}
 
@@ -876,6 +969,10 @@ const subresourceMap = {
     path: "/common/security-features/subresource/empty.py",
     invoker: requestViaLinkPrefetch,
   },
+  "mathml-a-tag": {
+    path: "/common/security-features/subresource/document.py",
+    invoker: requestViaMathMLAnchor,
+  },
   "object-tag": {
     path: "/common/security-features/subresource/empty.py",
     invoker: requestViaObject,
@@ -891,6 +988,10 @@ const subresourceMap = {
   "script-tag-dynamic-import": {
     path: "/common/security-features/subresource/script.py",
     invoker: requestViaDynamicImport,
+  },
+  "svg-a-tag": {
+    path: "/common/security-features/subresource/document.py",
+    invoker: requestViaSVGAnchor,
   },
   "video-tag": {
     path: "/common/security-features/subresource/video.py",
@@ -1009,13 +1110,12 @@ function getSubresourceOrigin(originType) {
     "cross-wss": wssProtocol + "://" + crossOriginHost + wssPort,
     "cross-ws": wsProtocol + "://" + crossOriginHost + wsPort,
 
-    // The following origin types are used for upgrade-insecure-requests tests:
-    // These rely on some unintuitive cleverness due to WPT's test setup:
-    // 'Upgrade-Insecure-Requests' does not upgrade the port number,
-    // so we use URLs in the form `http://[domain]:[https-port]`,
-    // which will be upgraded to `https://[domain]:[https-port]`.
-    // If the upgrade fails, the load will fail, as we don't serve HTTP over
-    // the secure port.
+    // The following origin types are used for upgrade-insecure-requests and
+    // mixed content tests tests. These rely on some unintuitive cleverness due
+    // to WPT's test setup: 'Upgrade-Insecure-Requests' does not upgrade the
+    // port number, so we use URLs in the form `http://[domain]:[https-port]`,
+    // which will be upgraded to `https://[domain]:[https-port]`. If the upgrade
+    // fails, the load will fail, as we don't serve HTTP over the secure port.
     "same-http-downgrade":
         httpProtocol + "://" + sameOriginHost + ":" + httpsRawPort,
     "cross-http-downgrade":
@@ -1035,6 +1135,7 @@ function getSubresourceOrigin(originType) {
   @param {SubresourceType} subresourceType
   @param {OriginType} originType
   @param {RedirectionType} redirectionType
+  @param {boolean} checkScheme Optional
   @returns {object} with following properties:
     {string} testUrl
       The subresource request URL.
@@ -1045,10 +1146,12 @@ function getSubresourceOrigin(originType) {
       1. Fetch `announceUrl` first,
       2. then possibly fetch `testUrl`, and
       3. finally fetch `assertUrl`.
-         The fetch result of `assertUrl` should indicate whether
-         `testUrl` is actually sent to the server or not.
+         The fetch result of `assertUrl` should indicate whether `testUrl` is
+         actually sent to the server or not, or if `checkScheme` is specified
+         and this is a insecure origin type, whether the request was upgraded or
+         not.
 */
-function getRequestURLs(subresourceType, originType, redirectionType) {
+function getRequestURLs(subresourceType, originType, redirectionType, checkScheme = false) {
   const key = guid();
   const value = guid();
 
@@ -1062,7 +1165,8 @@ function getRequestURLs(subresourceType, originType, redirectionType) {
       getSubresourceOrigin(originType) +
         subresourceMap[subresourceType].path +
         "?redirection=" + encodeURIComponent(redirectionType) +
-        "&action=purge&key=" + key +
+        "&action=" + (checkScheme && !["https", "wss"].includes(originType.split("-").pop()) ? "check-scheme" : "purge") +
+        "&key=" + key +
         "&path=" + stashPath,
     announceUrl: stashEndpoint + "&action=put&value=" + value,
     assertUrl: stashEndpoint + "&action=take",
@@ -1137,6 +1241,9 @@ function invokeRequest(subresource, sourceContextList) {
       invoker: invokeFromIframe,
     },
     "iframe-blank": { // <iframe></iframe>
+      invoker: invokeFromIframe,
+    },
+    "iframe-data": {
       invoker: invokeFromIframe,
     },
     "worker-classic": {
@@ -1282,6 +1389,15 @@ function invokeFromIframe(subresource, sourceContextList) {
 
           iframe.contentDocument.write(frameContent);
           iframe.contentDocument.close();
+          return iframe.eventPromise;
+        });
+  } else if (currentSourceContext.sourceContextType === 'iframe-data') {
+    promise = fetch(frameUrl)
+      .then(r => r.text())
+      .then(content => {
+          let dataSrc = "data:text/html;base64," + btoa(content)
+          iframe = createElement(
+              "iframe", {src: dataSrc}, document.body, true);
           return iframe.eventPromise;
         });
   }

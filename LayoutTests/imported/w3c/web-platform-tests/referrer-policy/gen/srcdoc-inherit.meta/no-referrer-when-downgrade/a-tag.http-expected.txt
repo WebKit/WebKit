@@ -1,0 +1,6 @@
+
+PASS Referrer Policy: Expects stripped-referrer for a-tag to cross-http origin and no-redirect redirection from http context.
+PASS Referrer Policy: Expects stripped-referrer for a-tag to cross-https origin and no-redirect redirection from http context.
+PASS Referrer Policy: Expects stripped-referrer for a-tag to same-http origin and no-redirect redirection from http context.
+PASS Referrer Policy: Expects stripped-referrer for a-tag to same-https origin and no-redirect redirection from http context.
+

@@ -1,0 +1,3 @@
+
+PASS Checks that referrerpolicy is respected when an iframe's src changes.
+

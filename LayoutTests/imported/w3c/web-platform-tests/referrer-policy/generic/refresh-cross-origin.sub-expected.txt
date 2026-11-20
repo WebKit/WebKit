@@ -1,0 +1,20 @@
+
+PASS cross-origin meta refresh with referrer policy "no-referrer" refreshes with the empty string as referrer
+PASS cross-origin header refresh with referrer policy "no-referrer" refreshes with the empty string as referrer
+FAIL cross-origin meta refresh with referrer policy "no-referrer-when-downgrade" refreshes with full url as referrer assert_equals: document referrer is previous page expected "http://web-platform.test:8800/referrer-policy/generic/resources/refresh-policy.sub.html?url=http%3A%2F%2Fnot-web-platform.test%3A8800%2Freferrer-policy%2Fgeneric%2Fresources%2Freferrer-info.sub.html&policy=no-referrer-when-downgrade" but got "http://web-platform.test:8800/"
+FAIL cross-origin header refresh with referrer policy "no-referrer-when-downgrade" refreshes with full url as referrer assert_equals: document referrer is previous page expected "http://web-platform.test:8800/referrer-policy/generic/resources/refresh-policy.py?url=http%3A%2F%2Fnot-web-platform.test%3A8800%2Freferrer-policy%2Fgeneric%2Fresources%2Freferrer-info.sub.html&policy=no-referrer-when-downgrade" but got "http://web-platform.test:8800/"
+PASS cross-origin meta refresh with referrer policy "origin" refreshes with origin as referrer
+PASS cross-origin header refresh with referrer policy "origin" refreshes with origin as referrer
+PASS cross-origin meta refresh with referrer policy "origin-when-cross-origin" refreshes with origin as referrer
+PASS cross-origin header refresh with referrer policy "origin-when-cross-origin" refreshes with origin as referrer
+PASS cross-origin meta refresh with referrer policy "same-origin" refreshes with the empty string as referrer
+PASS cross-origin header refresh with referrer policy "same-origin" refreshes with the empty string as referrer
+PASS cross-origin meta refresh with referrer policy "strict-origin" refreshes with origin as referrer
+PASS cross-origin header refresh with referrer policy "strict-origin" refreshes with origin as referrer
+PASS cross-origin meta refresh with referrer policy "strict-origin-when-cross-origin" refreshes with origin as referrer
+PASS cross-origin header refresh with referrer policy "strict-origin-when-cross-origin" refreshes with origin as referrer
+FAIL cross-origin meta refresh with referrer policy "unsafe-url" refreshes with full url as referrer assert_equals: document referrer is previous page expected "http://web-platform.test:8800/referrer-policy/generic/resources/refresh-policy.sub.html?url=http%3A%2F%2Fnot-web-platform.test%3A8800%2Freferrer-policy%2Fgeneric%2Fresources%2Freferrer-info.sub.html&policy=unsafe-url" but got "http://web-platform.test:8800/"
+FAIL cross-origin header refresh with referrer policy "unsafe-url" refreshes with full url as referrer assert_equals: document referrer is previous page expected "http://web-platform.test:8800/referrer-policy/generic/resources/refresh-policy.py?url=http%3A%2F%2Fnot-web-platform.test%3A8800%2Freferrer-policy%2Fgeneric%2Fresources%2Freferrer-info.sub.html&policy=unsafe-url" but got "http://web-platform.test:8800/"
+PASS cross-origin meta refresh with referrer policy "" refreshes with origin as referrer
+PASS cross-origin header refresh with referrer policy "" refreshes with origin as referrer
+

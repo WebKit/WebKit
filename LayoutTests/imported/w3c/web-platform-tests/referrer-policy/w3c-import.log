@@ -10,11 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/README.md
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/spec.src.json
-/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/spec_json.js

@@ -103,6 +103,7 @@
         "img-tag",
         "link-css-tag",
         "link-prefetch-tag",
+        "mathml-a-tag",
         "object-tag",
         "picture-tag",
         "script-tag",
@@ -111,6 +112,7 @@
         "sharedworker-import",
         "sharedworker-import-data",
         "sharedworker-module",
+        "svg-a-tag",
         "video-tag",
         "worker-classic",
         "worker-import",
@@ -164,6 +166,7 @@
       "iframe": "*",
       "iframe-blank": "*",
       "srcdoc": "*",
+      "iframe-data": "*",
       "worker-classic": [
         "xhr",
         "fetch",
@@ -293,6 +296,21 @@
       ],
       "subresourcePolicyDeliveries": []
     },
+    "iframe-inherit": {
+      "description": "iframe should inherit parent Document's policy",
+      "sourceContextList": [
+        {
+          "sourceContextType": "top",
+          "policyDeliveries": [
+            "policy"
+          ]
+        },
+        {
+          "sourceContextType": "iframe"
+        }
+      ],
+      "subresourcePolicyDeliveries": []
+    },
     "iframe-blank-inherit": {
       "description": "blank iframe should inherit parent Document's policy",
       "sourceContextList": [
@@ -304,6 +322,21 @@
         },
         {
           "sourceContextType": "iframe-blank"
+        }
+      ],
+      "subresourcePolicyDeliveries": []
+    },
+    "iframe-data-inherit": {
+      "description": "iframe-data-inherit",
+      "sourceContextList": [
+        {
+          "sourceContextType": "top",
+          "policyDeliveries": [
+            "policy"
+          ]
+        },
+        {
+          "sourceContextType": "iframe-data"
         }
       ],
       "subresourcePolicyDeliveries": []
@@ -463,7 +496,9 @@
       "srcdoc-inherit",
       "srcdoc",
       "iframe",
+      "iframe-inherit",
       "iframe-blank-inherit",
+      "iframe-data-inherit",
       "worker-classic",
       "worker-classic-data",
       "worker-module",
@@ -505,6 +540,7 @@
       "img-tag",
       "link-css-tag",
       "link-prefetch-tag",
+      "mathml-a-tag",
       "object-tag",
       "picture-tag",
       "script-tag",
@@ -513,6 +549,7 @@
       "sharedworker-import",
       "sharedworker-import-data",
       "sharedworker-module",
+      "svg-a-tag",
       "video-tag",
       "websocket",
       "worker-classic",

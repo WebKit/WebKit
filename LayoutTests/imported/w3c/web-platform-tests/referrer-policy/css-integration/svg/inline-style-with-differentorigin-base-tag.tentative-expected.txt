@@ -1,0 +1,13 @@
+Check that resources from inline styles are loaded with the referrer and referrer policy from the document and, in particular, not from the document's overridden base URL.
+
+
+PASS Styling SVG from inline styles fill
+PASS Styling SVG from inline styles stroke
+PASS Styling SVG from inline styles filter
+PASS Styling SVG from inline styles clip-path
+PASS Styling SVG from inline styles marker-start
+PASS Styling SVG from inline styles marker-mid
+PASS Styling SVG from inline styles marker-end
+PASS Styling SVG from inline styles mask
+PASS Styling SVG from inline styles mask-image
+

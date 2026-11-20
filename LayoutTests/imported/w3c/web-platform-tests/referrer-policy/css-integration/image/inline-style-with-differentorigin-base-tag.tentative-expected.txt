@@ -1,0 +1,6 @@
+Check that resources from inline styles are loaded with the referrer and referrer policy from the document and, in particular, not with the different base URL set in the base tag.
+
+
+
+PASS Image from inline styles.
+

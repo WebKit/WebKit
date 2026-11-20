@@ -1,0 +1,5 @@
+
+PASS DOMParser().parseFromString should not affect creator document's referrer policy
+PASS Parsing <meta name='referrer'> inside <template> should not affect creator document's referrer policy
+PASS Document.parseHTMLUnsafe() should not affect creator document's referrer policy
+

@@ -1,0 +1,5 @@
+Referrer Policy: iframes with data url uses no referrer
+
+
+PASS iframes with data url uses no referrer
+

@@ -1,0 +1,6 @@
+
+PASS Referrer Policy: iframes with javascript url reuse referrer policy
+FAIL Referrer Policy: iframes with javascript url reuse referrer policy 1 assert_equals: expected (undefined) undefined but got (string) "http://web-platform.test:8800/custom"
+FAIL Referrer Policy: iframes with javascript url reuse referrer policy 2 assert_equals: expected (string) "http://web-platform.test:8800/referrer-policy/generic/inheritance/iframe-inheritance-javascript-child.html" but got (undefined) undefined
+PASS Referrer Policy: iframes with javascript url reuse referrer policy 3
+

@@ -1,0 +1,5 @@
+
+
+PASS Referrer Policy: Expects stripped-referrer for iframe-tag to same-http origin and keep-origin redirection from http context.
+PASS Referrer Policy: Expects stripped-referrer for iframe-tag to same-http origin and no-redirect redirection from http context.
+

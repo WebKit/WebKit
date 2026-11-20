@@ -1,0 +1,5 @@
+Check that resources from inline styles are loaded with the document's referrer policy even when the element sheet was initialized before the referrer meta element.
+
+
+PASS Image from inline style after color-scheme meta.
+

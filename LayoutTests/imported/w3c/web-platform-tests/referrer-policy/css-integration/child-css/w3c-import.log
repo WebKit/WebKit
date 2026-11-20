@@ -10,10 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/external-import-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-import-stylesheet-with-differentorigin-base-url-from-preload.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-import-stylesheet-with-differentorigin-base-url.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-import-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-stylesheet-no-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/processing-instruction.html
