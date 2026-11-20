@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<title>Clone all options on singular select element: script, frame, iframe, embed, object elements are not cloned</title>
+
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+
+<script>
+window.scriptRunCount = 0;
+</script>
+
+<select size="1">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected><span>one</span><iframe></iframe><script>scriptRunCount++</script></option>
+  <option><span>two</span><embed /><object></object></option>
+</select>
+
+<script>
+test(() => {
+  const select = document.querySelector("select");
+  const selectedcontent = document.querySelector("selectedcontent");
+  assert_equals(selectedcontent.querySelectorAll("option").length, select.options.length,
+                "Every option should be cloned");
+  assert_equals(selectedcontent.querySelectorAll("span").length, 2,
+                "The rest of each option should be cloned");
+  assert_equals(selectedcontent.querySelectorAll("script, frame, iframe, embed, object").length, 0,
+                "No script, frame, iframe, embed, or object element should be cloned");
+  assert_equals(scriptRunCount, 1, "The script should run once");
+}, "Option clones in selectedcontent omit script, frame, iframe, embed, and object elements");
+</script>

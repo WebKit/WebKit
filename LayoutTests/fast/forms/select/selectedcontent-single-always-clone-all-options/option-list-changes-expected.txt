@@ -1,0 +1,11 @@
+
+PASS Adding an option clones the option into selectedcontent again in a microtask
+PASS Removing an option clones the option into selectedcontent again in a microtask
+PASS Reordering options with insertBefore() clones the options again into selectedelement in a microtask
+PASS Reordering options with moveBefore() clones the options again into selectedelement in a microtask
+PASS Adding many options only clones once, instead of one per new option
+PASS Selectedness is reflected immediately, without waiting for clone
+PASS An option inserted into selectedcontent is not an option of the select
+PASS Inserting a selectedcontent element clones the options right away
+PASS When moving a selectedcontent of select A to another select B, options of select B is cloned to the selectedcontent in a microtask
+

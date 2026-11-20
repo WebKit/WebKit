@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+
+<title>Clone all options on singular select element: rendering test</title>
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+
+<select>
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>

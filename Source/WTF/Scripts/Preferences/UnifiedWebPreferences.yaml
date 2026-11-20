@@ -2861,6 +2861,14 @@ HDRAcceleratedApplyGainMapEnabled:
   humanReadableDescription: "Enable HDR Accelerated Apply GainMap"
   defaultValue: true
 
+HTMLEnhancedSelectCloneAllOptionsIntoSelectedContent:
+  type: bool
+  status: preview
+  category: dom
+  humanReadableName: "Enhanced HTML select element: clone all <option>s into <selectedcontent>"
+  humanReadableDescription: "In a singular <select>, clone all <option>s into <selectedcontent> instead of just the selected <option>"
+  defaultValue: false
+
 HTMLEnhancedSelectEnabled:
   type: bool
   status: stable

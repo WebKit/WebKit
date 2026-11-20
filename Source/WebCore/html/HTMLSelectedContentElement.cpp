@@ -76,7 +76,7 @@ void HTMLSelectedContentElement::postConnectionSteps()
     if (!select || !select->updatesSelectedContent())
         return;
 
-    if (select->multiple()) {
+    if (select->shouldCloneAllOptionsToSelectedContent()) {
         if (!m_isDisabled)
             select->cloneOptionsIntoSelectedContent(*this);
         return;
@@ -109,6 +109,13 @@ void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNod
     select->queueSelectedContentUpdate();
 }
 
+bool HTMLSelectedContentElement::allowsUpdatingMultipleOptions() const
+{
+    RefPtr document = this->document();
+    RefPtr settings = document->settings();
+    return settings->htmlEnhancedSelectMultipleAndListBoxEnabled() || settings->htmlEnhancedSelectCloneAllOptionsIntoSelectedContent();
+}
+
 void HTMLSelectedContentElement::updateFromOption(HTMLOptionElement* option)
 {
     if (option)
@@ -119,7 +126,7 @@ void HTMLSelectedContentElement::updateFromOption(HTMLOptionElement* option)
 
 void HTMLSelectedContentElement::updateFromOptions(const Vector<Ref<HTMLOptionElement>>& options)
 {
-    ASSERT(document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
+    ASSERT(allowsUpdatingMultipleOptions());
 
     NodeVector clones;
     for (auto& option : options)
@@ -129,7 +136,7 @@ void HTMLSelectedContentElement::updateFromOptions(const Vector<Ref<HTMLOptionEl
 
 void HTMLSelectedContentElement::updateClonedOptionSelectedStates()
 {
-    ASSERT(document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
+    ASSERT(allowsUpdatingMultipleOptions());
 
     for (Ref clone : childrenOfType<HTMLOptionElement>(*this)) {
         if (RefPtr option = clone->selectedContentSource())
