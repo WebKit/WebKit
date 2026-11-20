@@ -37,6 +37,10 @@
 #include <wtf/linux/HighPriorityThreads.h>
 #endif
 
+#if BENABLE(LIBPAS) && OS(LINUX)
+#include <bmalloc/pas_thread_suspend_lock.h>
+#endif
+
 namespace TestWebKitAPI {
 
 #if USE(PTHREADS)
@@ -253,5 +257,54 @@ TEST(WTF_Thread, HighPriorityThreadsRestoresClampWhenReenabled)
     EXPECT_EQ(1024u, restored->minUtil);
 }
 #endif // OS(LINUX)
+
+#if BENABLE(LIBPAS) && OS(LINUX)
+// libpas suspends threads through WTF's signal handler, and WTF suspension still gets registers.
+TEST(WTF_Thread, LibpasAndWTFShareSuspendSignal)
+{
+    std::atomic<bool> isDone { false };
+    std::atomic<unsigned> spins { 0 };
+    pthread_t handle;
+    BinarySemaphore started;
+    Ref thread = Thread::create("SuspendProbe"_s, [&] {
+        handle = pthread_self();
+        started.signal();
+        while (!isDone)
+            spins++;
+    });
+    started.wait();
+
+    auto expectSuspended = [&] {
+        unsigned before = spins;
+        sleep(10_ms);
+        EXPECT_EQ(before, spins.load());
+    };
+    auto expectRunning = [&] {
+        unsigned before = spins;
+        while (spins == before)
+            Thread::yield();
+    };
+
+    pas_thread_suspend_lock_lock();
+    EXPECT_TRUE(pas_thread_suspend_suspend(handle));
+    expectSuspended();
+    pas_thread_suspend_resume(handle);
+    pas_thread_suspend_lock_unlock();
+    expectRunning();
+
+    {
+        ThreadSuspendLocker locker;
+        EXPECT_TRUE(thread->suspend(locker).has_value());
+        PlatformRegisters registers;
+        EXPECT_GT(thread->getRegisters(locker, registers), 0u);
+        expectSuspended();
+        thread->resume(locker);
+    }
+    expectRunning();
+
+    isDone = true;
+    thread->waitForCompletion();
+}
+#endif // BENABLE(LIBPAS) && OS(LINUX)
 
 } // namespace TestWebKitAPI
