@@ -62,6 +62,11 @@ void ResourceCache::appendDisplayList(Ref<const DisplayList>&& displayList)
     m_displayLists.append(WTF::move(displayList));
 }
 
+bool ResourceCache::cachePDFDocument(RenderingResourceIdentifier identifier, Ref<SharedPDFDocument>&& document)
+{
+    return m_pdfDocuments.add(identifier, WTF::move(document)).isNewEntry;
+}
+
 bool ResourceCache::resolveItem(Item& item) const
 {
     return WTF::switchOn(item, [&](auto& item) {
@@ -168,6 +173,17 @@ bool ResourceCache::resolve(DrawImageBuffer& item) const
 bool ResourceCache::resolve(DrawNativeImage& item) const
 {
     return resolveNativeImage(item);
+}
+
+bool ResourceCache::resolve(DrawPDFPage& item) const
+{
+    if (item.isResolved())
+        return true;
+    RefPtr document = m_pdfDocuments.get(item.documentIdentifier());
+    if (!document)
+        return false;
+    item.setDocument(document.releaseNonNull());
+    return true;
 }
 
 bool ResourceCache::resolve(DrawPatternImageBuffer& item) const

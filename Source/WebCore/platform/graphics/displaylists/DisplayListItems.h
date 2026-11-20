@@ -38,6 +38,7 @@
 #include <WebCore/MeshGradient.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SharedPDFDocument.h>
 #include <WebCore/SystemImage.h>
 #include <WebCore/TextFlags.h>
 #include <wtf/ArgumentCoder.h>
@@ -933,6 +934,48 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const { }
+};
+
+using SourcePDFDocument = Variant<Ref<SharedPDFDocument>, RenderingResourceIdentifier>;
+
+class DrawPDFPage {
+public:
+    static constexpr ASCIILiteral name = "draw-pdf-page"_s;
+
+    DrawPDFPage(SourcePDFDocument&& document, unsigned pageIndex, const FloatRect& pageRect, std::optional<SourceNativeImage>&& fallbackImage = std::nullopt)
+        : m_document(WTF::move(document))
+        , m_pageIndex(pageIndex)
+        , m_pageRect(pageRect)
+        , m_fallbackImage(WTF::move(fallbackImage))
+    {
+    }
+
+    SharedPDFDocument& document() const
+    {
+        RELEASE_ASSERT(std::holds_alternative<Ref<SharedPDFDocument>>(m_document));
+        return std::get<Ref<SharedPDFDocument>>(m_document);
+    }
+    void setDocument(Ref<SharedPDFDocument>&& document) { m_document = WTF::move(document); }
+    bool isResolved() const;
+
+    RenderingResourceIdentifier documentIdentifier() const
+    {
+        if (auto* identifier = std::get_if<RenderingResourceIdentifier>(&m_document))
+            return *identifier;
+        return document().renderingResourceIdentifier();
+    }
+
+    unsigned pageIndex() const { return m_pageIndex; }
+    const FloatRect& pageRect() const LIFETIME_BOUND { return m_pageRect; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    SourcePDFDocument m_document;
+    unsigned m_pageIndex { 0 };
+    FloatRect m_pageRect;
+    std::optional<SourceNativeImage> m_fallbackImage;
 };
 
 class DrawRect {

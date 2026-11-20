@@ -949,6 +949,19 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer& layer, GraphicsContext
     ASSERT_NOT_REACHED();
 }
 
+static void drawPDFPage(GraphicsContext& context, PDFPage *page, FloatPoint pageOrigin, PDFAccessibilityDisplayMode displayMode)
+{
+    GraphicsContextStateSaver stateSaver(context);
+    // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
+    // from this page's drawing origin.
+    context.translate(pageOrigin);
+    context.scale({ 1, -1 });
+
+    RetainPtr platformContext = context.platformContext();
+    applyPDFContentAXColorAdjustment(platformContext.get(), page, displayMode);
+    [page drawWithBox:kPDFDisplayBoxCropBox toContext:platformContext.get()];
+}
+
 void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, const std::optional<PDFLayoutRow>& row, AsyncPDFRenderer* asyncRenderer)
 {
     if (visibleOrDocumentSizeIsEmpty())
@@ -1014,26 +1027,10 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
 
             LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << pageDestinationRect << " with clip " << clipRect);
 
-            auto drawPage = [&](GraphicsContext& pageContext, FloatPoint pageOrigin) {
-                GraphicsContextStateSaver pageContextStateSaver(pageContext);
-                // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
-                // from this page's drawing origin.
-                pageContext.translate(pageOrigin);
-                pageContext.scale({ 1, -1 });
-
-                RetainPtr platformContext = pageContext.platformContext();
-                applyPDFContentAXColorAdjustment(platformContext, page.get(), displayMode);
-                [page drawWithBox:kPDFDisplayBoxCropBox toContext:platformContext];
-            };
-
             if (context.hasPlatformContext())
-                drawPage(context, pageDestinationRect.minXMaxYCorner());
-            else if (RefPtr pageBuffer = context.createAlignedImageBuffer(pageDestinationRect.size(), context.colorSpace(), RenderingMethod::Local)) {
-                // Recording contexts (e.g. for remote snapshotting) have no platform context for PDFKit to draw into,
-                // so render into a local (non-remote) buffer first.
-                drawPage(pageBuffer->context(), { 0, pageDestinationRect.height() });
-                context.drawImageBuffer(*pageBuffer, pageDestinationRect);
-            }
+                drawPDFPage(context, page.get(), pageDestinationRect.minXMaxYCorner(), displayMode);
+            else
+                drawPageIntoRecordingContext(context, page.get(), pageInfo.pageIndex, pageDestinationRect, displayMode);
         }
 
         // Translate the context to the bottom of pageBounds and flip, to match PDFKit's page coordinate space.
@@ -1050,6 +1047,34 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
             }
         }
     }
+}
+
+void UnifiedPDFPlugin::drawPageIntoRecordingContext(GraphicsContext& context, PDFPage *page, PDFDocumentLayout::PageIndex pageIndex, const FloatRect& pageRect, PDFAccessibilityDisplayMode displayMode)
+{
+    // Recording contexts (e.g. for remote snapshotting) have no platform context for PDFKit to draw into,
+    // so render into a local (non-remote) buffer first.
+    RefPtr pageBuffer = context.createAlignedImageBuffer(pageRect.size(), context.colorSpace(), RenderingMethod::Local);
+    if (!pageBuffer)
+        return;
+    drawPDFPage(pageBuffer->context(), page, { 0, pageRect.height() }, displayMode);
+
+#if ENABLE(GPU_PROCESS)
+    RefPtr webPage = this->webPage();
+    if (webPage && displayMode == PDFAccessibilityDisplayMode::None) {
+        bool recorded = webPage->recordPDFPageIntoRemoteSnapshot(context, identifier(), [&] -> RefPtr<SharedBuffer> {
+            RetainPtr data = liveData();
+            if (!data)
+                return nullptr;
+            return SharedBuffer::create(data.get());
+        }, static_cast<unsigned>(pageIndex), pageRect, *pageBuffer);
+        if (recorded)
+            return;
+    }
+#else
+    UNUSED_PARAM(pageIndex);
+#endif
+
+    context.drawImageBuffer(*pageBuffer, pageRect);
 }
 
 bool UnifiedPDFPlugin::hasSelection() const

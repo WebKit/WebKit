@@ -515,5 +515,11 @@ void RecorderImpl::drawPlaceholder(Function<void(GraphicsContext&)>&& function)
     m_items.append(DrawPlaceholder(WTF::move(function)));
 }
 
+void RecorderImpl::drawPDFPage(Ref<SharedPDFDocument>&& document, unsigned pageIndex, const FloatRect& pageRect, std::optional<SourceNativeImage>&& fallbackImage)
+{
+    appendStateChangeItemIfNecessary();
+    m_items.append(DrawPDFPage(WTF::move(document), pageIndex, pageRect, WTF::move(fallbackImage)));
+}
+
 } // namespace DisplayList
 } // namespace WebCore

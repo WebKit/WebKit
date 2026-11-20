@@ -166,7 +166,6 @@ private:
     void endPage() final;
     void setURLForRect(const URL&, const WebCore::FloatRect&) final;
 
-    [[nodiscard]] bool recordResourceUse(const WebCore::NativeImage&);
     [[nodiscard]] bool recordResourceUse(WebCore::ImageBuffer&);
     std::optional<RemotePathImplIdentifier> recordResourceUse(const WebCore::PathImpl&);
     bool recordResourceUse(const WebCore::SourceImage&);
@@ -179,6 +178,8 @@ private:
     // Synchronizes draw state.
 protected:
     void appendStateChangeItemIfNecessary() final;
+
+    [[nodiscard]] bool recordResourceUse(const WebCore::NativeImage&);
 
 private:
     struct InlineStrokeData {
