@@ -28,6 +28,7 @@
 #include "KeyframeEffectStack.h"
 #include "PseudoElementIdentifier.h"
 #include "WebAnimationTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ class ComputedStyle;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
 class ElementAnimationRareData {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementAnimationRareData, ElementAnimationRareData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementAnimationRareData, ElementAnimationRareData);
     WTF_MAKE_NONCOPYABLE(ElementAnimationRareData);
 public:
     explicit ElementAnimationRareData();

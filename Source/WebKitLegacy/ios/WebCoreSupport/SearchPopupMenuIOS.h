@@ -23,12 +23,14 @@
 
 #include "PopupMenuIOS.h"
 #include <WebCore/SearchPopupMenu.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class PopupMenuClient;
 }
 
 class SearchPopupMenuIOS : public WebCore::SearchPopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(SearchPopupMenuIOS);
 public:
     SearchPopupMenuIOS(WebCore::PopupMenuClient*);
 

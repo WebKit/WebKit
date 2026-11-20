@@ -35,8 +35,11 @@
 #include "WasmMachineThreads.h"
 #include "WasmModuleInformation.h"
 #include "WasmWorklist.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CalleeGroup);
 
 Ref<CalleeGroup> CalleeGroup::createFromIPInt(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, Ref<IPIntCallees>&& ipintCallees)
 {

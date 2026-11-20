@@ -28,6 +28,7 @@
 #include "CompositeEditCommand.h"
 #include "FontAttributes.h"
 #include "InsertListCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class StyledElement;
 enum class CSSPropertyID : uint16_t;
 
 class ApplyBlockPresentationIntentCommand final : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ApplyBlockPresentationIntentCommand);
 public:
     static Ref<ApplyBlockPresentationIntentCommand> create(Ref<Document>&& document, const BlockPresentationIntent& intent)
     {

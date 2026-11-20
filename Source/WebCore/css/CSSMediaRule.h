@@ -23,6 +23,7 @@
 #pragma once
 
 #include <WebCore/CSSConditionRule.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ using MediaQueryList = Vector<MediaQuery>;
 }
 
 class CSSMediaRule final : public CSSConditionRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSMediaRule);
 public:
     static Ref<CSSMediaRule> create(StyleRuleMedia& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSMediaRule(rule, sheet)); }
     virtual ~CSSMediaRule();

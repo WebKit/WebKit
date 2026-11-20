@@ -30,6 +30,7 @@
 #include <wtf/MallocSpan.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -37,6 +38,7 @@ namespace JSC {
 class UnlinkedFunctionExecutable;
 
 class CachedBytecode : public RefCounted<CachedBytecode> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CachedBytecode, JS_EXPORT_PRIVATE);
     WTF_MAKE_NONCOPYABLE(CachedBytecode);
 
 public:

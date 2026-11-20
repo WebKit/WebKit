@@ -33,10 +33,13 @@
 #include "JSCJSValueInlines.h"
 #include "JSFunctionInlines.h"
 #include "LinkBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PolymorphicCallNode);
 
 void PolymorphicCallNode::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock)
 {

@@ -29,6 +29,7 @@
 #include <JavaScriptCore/FreeList.h>
 #include <JavaScriptCore/MarkedBlock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -37,6 +38,7 @@ class GCDeferralContext;
 class Heap;
 
 class LocalAllocator : public BasicRawSentinelNode<LocalAllocator> {
+    WTF_MAKE_TZONE_ALLOCATED(LocalAllocator);
     WTF_MAKE_NONCOPYABLE(LocalAllocator);
     
 public:

@@ -27,7 +27,9 @@
 #import "BackForwardList.h"
 
 #import <WebCore/BackForwardCache.h>
+#import <wtf/TZoneMallocInlines.h>
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackForwardList);
 
 static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;

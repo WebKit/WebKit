@@ -35,9 +35,12 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleString.h"
 #include <numeric>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSImageSetValue);
 
 Ref<CSSImageSetValue> CSSImageSetValue::create(CSSValueListBuilder builder)
 {

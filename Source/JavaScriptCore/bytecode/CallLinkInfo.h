@@ -35,6 +35,7 @@
 #include <JavaScriptCore/PolymorphicCallStubRoutine.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/ScopedLambda.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 namespace DFG {
@@ -56,6 +57,7 @@ struct BaselineUnlinkedCallLinkInfo;
 using CompileTimeCallLinkInfo = Variant<OptimizingCallLinkInfo*, BaselineUnlinkedCallLinkInfo*, DFG::UnlinkedCallLinkInfo*>;
 
 class CallLinkInfo : public CallLinkInfoBase {
+    WTF_MAKE_TZONE_ALLOCATED(CallLinkInfo);
 public:
     friend class LLIntOffsetsExtractor;
 
@@ -306,6 +308,7 @@ protected:
 };
 
 class DataOnlyCallLinkInfo final : public CallLinkInfo {
+    WTF_MAKE_TZONE_ALLOCATED(DataOnlyCallLinkInfo);
 public:
     DataOnlyCallLinkInfo()
         : CallLinkInfo(Type::DataOnly, nullptr, CodeOrigin { })
@@ -330,6 +333,7 @@ struct BaselineUnlinkedCallLinkInfo : public JSC::UnlinkedCallLinkInfo {
 
 class DirectCallLinkInfo final : public CallLinkInfoBase {
     WTF_MAKE_NONCOPYABLE(DirectCallLinkInfo);
+    WTF_MAKE_TZONE_ALLOCATED(DirectCallLinkInfo);
 public:
     DirectCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC, JSCell* owner, ExecutableBase* executable)
         : CallLinkInfoBase(CallSiteType::DirectCall)
@@ -423,6 +427,7 @@ private:
 };
 
 class OptimizingCallLinkInfo final : public CallLinkInfo {
+    WTF_MAKE_TZONE_ALLOCATED(OptimizingCallLinkInfo);
 public:
     friend class CallLinkInfo;
 

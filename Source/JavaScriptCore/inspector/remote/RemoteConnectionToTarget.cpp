@@ -32,8 +32,11 @@
 #include "RemoteInspectionTarget.h"
 #include "RemoteInspector.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteConnectionToTarget);
 
 RemoteConnectionToTarget::RemoteConnectionToTarget(RemoteControllableTarget& target)
     : m_target(&target)

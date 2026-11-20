@@ -34,8 +34,11 @@
 #include "Element.h"
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSImageValue);
 
 CSSImageValue::CSSImageValue()
     : CSSValue(ClassType::Image)

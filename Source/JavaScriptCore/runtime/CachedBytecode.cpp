@@ -28,10 +28,13 @@
 
 #include "CachedTypes.h"
 #include "UnlinkedFunctionExecutable.h"
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedBytecode);
 
 void CachedBytecode::addGlobalUpdate(Ref<CachedBytecode> bytecode)
 {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSValueList.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class Image;
 }
 
 class CSSImageSetValue final : public CSSValueContainingVector {
+    WTF_MAKE_TZONE_ALLOCATED(CSSImageSetValue);
 public:
     static Ref<CSSImageSetValue> create(CSSValueListBuilder);
 

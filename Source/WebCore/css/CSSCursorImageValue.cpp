@@ -28,10 +28,13 @@
 #include "StyleBuilderState.h"
 #include "StyleCursorImage.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSCursorImageValue);
 
 Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& value, std::optional<HotSpot>&& hotSpot)
 {

@@ -62,7 +62,7 @@ class InlineContent;
 enum class LayoutOptions : uint8_t;
 
 struct UpdateScrollInfoAfterLayoutTransaction {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UpdateScrollInfoAfterLayoutTransaction);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(UpdateScrollInfoAfterLayoutTransaction);
 
     UpdateScrollInfoAfterLayoutTransaction();
     ~UpdateScrollInfoAfterLayoutTransaction();

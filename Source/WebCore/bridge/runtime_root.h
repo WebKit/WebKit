@@ -34,6 +34,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -51,6 +52,7 @@ extern RootObject* findProtectingRootObject(JSObject*);
 extern RootObject* findRootObject(JSGlobalObject*);
 
 class RootObject : public RefCounted<RootObject>, private JSC::WeakHandleOwner {
+    WTF_MAKE_TZONE_ALLOCATED(RootObject);
     friend class JavaJSObject;
 
 public:

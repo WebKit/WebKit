@@ -32,8 +32,12 @@
 #include "KeyframeEffectStack.h"
 #include "ScriptExecutionContext.h"
 #include "StyleComputedStyle.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(ElementAnimationRareData);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
 
 ElementAnimationRareData::ElementAnimationRareData() = default;

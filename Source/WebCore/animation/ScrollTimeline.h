@@ -34,6 +34,7 @@
 #include <WebCore/StyleScrollFunction.h>
 #include <WebCore/Styleable.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,6 +51,7 @@ class ComputedStyle;
 }
 
 class ScrollTimeline : public AnimationTimeline {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollTimeline, WEBCORE_EXPORT);
 public:
     static Ref<ScrollTimeline> create(Document&, ScrollTimelineOptions&& = { });
     static Ref<ScrollTimeline> create(const Style::ScopedName&, ScrollAxis);

@@ -59,6 +59,7 @@ using RefArrayBuffer = Ref<ArrayBuffer>;
 #endif
 
 class SharedArrayBufferContents final : public ThreadSafeRefCounted<SharedArrayBufferContents> {
+    WTF_MAKE_TZONE_ALLOCATED(SharedArrayBufferContents);
 public:
     enum class Mode : uint8_t {
         Default,

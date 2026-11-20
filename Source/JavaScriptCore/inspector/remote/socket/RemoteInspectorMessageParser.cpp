@@ -27,10 +27,13 @@
 #include "RemoteInspectorMessageParser.h"
 
 #include <wtf/ByteOrder.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MessageParser);
 
 /*
 | <--- one message for send / didReceiveData ---> |

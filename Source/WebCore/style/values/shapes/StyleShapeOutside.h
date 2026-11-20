@@ -29,6 +29,7 @@
 #include <WebCore/StyleImageWrapper.h>
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -104,6 +105,7 @@ private:
     friend struct Blending<ShapeOutside>;
 
     class Value : public RefCounted<Value> {
+        WTF_MAKE_TZONE_ALLOCATED(Value);
     public:
         using Kind = Variant<Shape, ShapeBox, ShapeAndShapeBox, Image>;
 

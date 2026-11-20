@@ -32,8 +32,11 @@
 #include "StyleBuilderState.h"
 #include "StyleCrossfadeImage.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSCrossfadeValue);
 
 inline CSSCrossfadeValue::CSSCrossfadeValue(CSS::CrossfadeFunction&& function)
     : CSSValue { ClassType::Crossfade }

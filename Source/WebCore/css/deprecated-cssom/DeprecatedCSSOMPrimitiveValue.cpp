@@ -34,8 +34,11 @@
 #include "DeprecatedCSSOMPrimitiveValueData.h"
 #include "DeprecatedCSSOMRGBColor.h"
 #include "DeprecatedCSSOMRect.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecatedCSSOMPrimitiveValue);
 
 Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(Function<String(const CSS::SerializationContext&)>&& value, CSSStyleDeclaration& owner)
 {

@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/DumpContext.h>
 #include <JavaScriptCore/Structure.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TinyPtrSet.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -36,6 +37,7 @@ namespace JSC {
 class TrackedReferences;
 
 class StructureSet : public TinyPtrSet<Structure*> {
+    WTF_MAKE_TZONE_ALLOCATED(StructureSet);
 public:
     // I really want to do this:
     // using TinyPtrSet::TinyPtrSet;

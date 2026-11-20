@@ -33,6 +33,7 @@
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
@@ -44,6 +45,7 @@ class JSObject;
 class JSGlobalObject;
 
 class DeferredWorkTimer final : public JSRunLoopTimer {
+    WTF_MAKE_TZONE_ALLOCATED(DeferredWorkTimer);
 public:
     using Base = JSRunLoopTimer;
 

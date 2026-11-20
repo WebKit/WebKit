@@ -29,6 +29,7 @@
 #include "RenderTableSection.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 /*
   The text below is from the CSS 2.1 specs.
@@ -72,6 +73,8 @@
 */
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FixedTableLayout);
 
 FixedTableLayout::FixedTableLayout(RenderTable* table)
     : TableLayout(table)

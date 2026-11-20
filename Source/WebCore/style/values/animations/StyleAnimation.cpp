@@ -29,9 +29,12 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Animation::Data);
 
 Animation::Animation()
     : m_data { Data::create() }

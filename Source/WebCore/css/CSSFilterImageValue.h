@@ -30,6 +30,7 @@
 #include "CSSFilter.h"
 #include "CSSValue.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ class Image;
 }
 
 class CSSFilterImageValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFilterImageValue);
 public:
     static Ref<CSSFilterImageValue> create(Ref<CSSValue>&& imageValueOrNone, CSS::Filter&& filter)
     {

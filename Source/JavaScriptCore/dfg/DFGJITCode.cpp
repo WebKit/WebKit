@@ -31,8 +31,11 @@
 #include "CodeBlock.h"
 #include "FTLForOSREntryJITCode.h"
 #include "JumpTable.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCode);
 
 JITData::JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode& jitCode, ExitJumpTable&& exitJumpTable)
     : Base(propertyCacheSize, poolSize)

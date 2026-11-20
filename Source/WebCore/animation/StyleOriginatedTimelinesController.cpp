@@ -47,6 +47,7 @@
 #include "WebAnimationUtilities.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -54,6 +55,9 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(StyleOriginatedTimelinesController);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleOriginatedTimelinesController);
 
 NODELETE static const WeakStyleable& originatingStyleable(const Ref<ScrollTimeline>& timeline LIFETIME_BOUND)

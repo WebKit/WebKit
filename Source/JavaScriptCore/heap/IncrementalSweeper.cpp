@@ -31,8 +31,11 @@
 #include "HeapInlines.h"
 #include "MarkedBlockInlines.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IncrementalSweeper);
 
 static constexpr Seconds sweepTimeSlice = 10_ms;
 static constexpr double sweepTimeTotal = .10;

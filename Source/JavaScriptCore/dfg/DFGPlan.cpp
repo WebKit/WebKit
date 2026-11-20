@@ -83,6 +83,7 @@
 #include "StructureID.h"
 #include "TrackedReferences.h"
 #include "VMInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(FTL_JIT)
 #include "FTLCapabilities.h"
@@ -94,6 +95,8 @@
 #endif
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Plan);
 
 namespace {
 

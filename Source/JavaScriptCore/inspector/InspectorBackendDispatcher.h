@@ -33,6 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,10 +65,12 @@ protected:
 };
 
 class BackendDispatcher : public RefCountedAndCanMakeWeakPtr<BackendDispatcher> {
+    WTF_MAKE_TZONE_ALLOCATED(BackendDispatcher);
 public:
     JS_EXPORT_PRIVATE static Ref<BackendDispatcher> create(Ref<FrontendRouter>&&, BackendDispatcher* fallback = nullptr);
 
     class CallbackBase : public RefCounted<CallbackBase> {
+        WTF_MAKE_TZONE_ALLOCATED(CallbackBase);
     public:
         JS_EXPORT_PRIVATE CallbackBase(Ref<BackendDispatcher>&&, long requestId);
         virtual ~CallbackBase() { }

@@ -33,6 +33,7 @@
 #include "SpeculatedType.h"
 #include <JavaScriptCore/ArrayProfile.h>
 #include <JavaScriptCore/StructureSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TinyPtrSet.h>
 
 namespace JSC {
@@ -45,6 +46,7 @@ struct AbstractValue;
 class StructureAbstractValue;
 
 class RegisteredStructureSet : public TinyPtrSet<RegisteredStructure> {
+    WTF_MAKE_TZONE_ALLOCATED(RegisteredStructureSet);
 public:
 
     RegisteredStructureSet()

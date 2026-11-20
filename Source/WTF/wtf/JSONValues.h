@@ -35,6 +35,7 @@
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/NoVirtualDestructorBase.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -166,6 +167,7 @@ private:
 };
 
 class ObjectBase : public Value {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ObjectBase, WTF_EXPORT_PRIVATE);
 private:
     friend class Value;
     using DataStorage = HashMap<String, Ref<Value>>;
@@ -228,6 +230,7 @@ private:
 };
 
 class Object : public ObjectBase {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Object, WTF_EXPORT_PRIVATE);
 public:
     NODELETE static WTF_EXPORT_PRIVATE Ref<Object> create();
 
@@ -261,6 +264,7 @@ public:
 
 
 class WTF_EXPORT_PRIVATE ArrayBase : public Value {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ArrayBase, WTF_EXPORT_PRIVATE);
 private:
     friend class Value;
     using DataStorage = Vector<Ref<Value>>;
@@ -308,6 +312,7 @@ private:
 };
 
 class Array final : public ArrayBase {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Array, WTF_EXPORT_PRIVATE);
 public:
     NODELETE static WTF_EXPORT_PRIVATE Ref<Array> create();
 

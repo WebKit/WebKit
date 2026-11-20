@@ -27,8 +27,11 @@
 #include "InlineCallFrameSet.h"
 
 #include "InlineCallFrame.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineCallFrameSet);
 
 InlineCallFrameSet::InlineCallFrameSet() = default;
 InlineCallFrameSet::~InlineCallFrameSet() = default;

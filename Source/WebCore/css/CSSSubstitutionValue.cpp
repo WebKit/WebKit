@@ -33,8 +33,11 @@
 #include "CSSSubstitutionParser.h"
 #include "CSSVariableData.h"
 #include "StyleCustomProperty.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSubstitutionValue);
 
 // The tokens are flat, including nested ones, and functionId() is CSSValueID::Invalid for anything that
 // is not a function token, so a linear scan finds inherit() at any depth.

@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/XPathNodeSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>
 
 namespace WebCore::XPath {
@@ -92,6 +93,7 @@ private:
     Value(void*) = delete;
 
     struct NodeSetHolder : public RefCounted<NodeSetHolder> {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(NodeSetHolder);
         static Ref<NodeSetHolder> create(NodeSet&& nodeSet) { return adoptRef(*new NodeSetHolder(WTF::move(nodeSet))); }
         NodeSet nodeSet;
     private:

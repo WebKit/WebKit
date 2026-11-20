@@ -29,8 +29,11 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITToDFGDeferredCompilationCallback);
 
 JITToDFGDeferredCompilationCallback::JITToDFGDeferredCompilationCallback() = default;
 JITToDFGDeferredCompilationCallback::~JITToDFGDeferredCompilationCallback() = default;

@@ -32,11 +32,12 @@
 #include "InByStatus.h"
 #include "PutByStatus.h"
 #include "SetPrivateBrandStatus.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 struct RecordedStatuses {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RecordedStatuses);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RecordedStatuses);
 
     RecordedStatuses() = default;
 

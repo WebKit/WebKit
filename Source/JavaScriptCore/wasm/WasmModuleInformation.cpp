@@ -31,6 +31,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmNameSection.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
 #include "WasmIPIntGenerator.h"
@@ -40,6 +41,8 @@
 #endif
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ModuleInformation);
 
 ModuleInformation::ModuleInformation()
     : m_nameSection(NameSection::create())

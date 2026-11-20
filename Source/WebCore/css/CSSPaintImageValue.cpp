@@ -29,9 +29,12 @@
 
 #include "CSSVariableData.h"
 #include "StylePaintImage.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPaintImageValue);
 
 CSSPaintImageValue::CSSPaintImageValue(CSS::CustomIdent&& name, Ref<CSSVariableData>&& arguments)
     : CSSValue { ClassType::PaintImage }

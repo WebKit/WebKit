@@ -30,12 +30,14 @@
 #if ENABLE(JIT)
 
 #include "JIT.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class BaselineJITCode;
 
 class BaselineJITPlan final : public JITPlan {
+    WTF_MAKE_TZONE_ALLOCATED(BaselineJITPlan);
     using Base = JITPlan;
 
 public:

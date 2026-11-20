@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "AccessCase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -36,6 +37,7 @@ class JSModuleEnvironment;
 class JSModuleNamespaceObject;
 
 class ModuleNamespaceAccessCase final : public AccessCase {
+    WTF_MAKE_TZONE_ALLOCATED(ModuleNamespaceAccessCase);
 public:
     using Base = AccessCase;
     friend class AccessCase;

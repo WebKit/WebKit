@@ -28,6 +28,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 
@@ -47,6 +48,7 @@ class Expression;
 }
 
 class XPathExpression : public RefCounted<XPathExpression> {
+    WTF_MAKE_TZONE_ALLOCATED(XPathExpression);
 public:
     static ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
     WEBCORE_EXPORT ~XPathExpression();

@@ -29,6 +29,7 @@
 #include <JavaScriptCore/StructureID.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/FixedVector.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -40,6 +41,7 @@ class PropertySlot;
 class Structure;
 
 class PolyProtoAccessChain final : public ThreadSafeRefCounted<PolyProtoAccessChain> {
+    WTF_MAKE_TZONE_ALLOCATED(PolyProtoAccessChain);
 public:
     // Returns nullptr when invalid.
     static RefPtr<PolyProtoAccessChain> tryCreate(JSGlobalObject*, JSCell* base, CacheableIdentifier, const PropertySlot&);

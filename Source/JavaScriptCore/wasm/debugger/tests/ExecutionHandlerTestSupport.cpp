@@ -108,6 +108,7 @@ public:
 };
 
 class Worker : public BasicRawSentinelNode<Worker> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Worker);
 public:
     Worker(Workers& workers, bool isMain)
         : m_workers(workers)

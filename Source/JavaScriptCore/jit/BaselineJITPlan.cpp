@@ -28,10 +28,13 @@
 #include "LOLJIT.h"
 
 #include "JITSafepoint.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(JIT)
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineJITPlan);
 
 BaselineJITPlan::BaselineJITPlan(CodeBlock* codeBlock)
     : JITPlan(JITCompilationMode::Baseline, codeBlock)

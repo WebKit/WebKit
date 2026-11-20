@@ -31,11 +31,13 @@
 
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/CodeOrigin.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC { namespace DFG {
 
 class CodeOriginPool : public ThreadSafeRefCounted<CodeOriginPool> {
+    WTF_MAKE_TZONE_ALLOCATED(CodeOriginPool);
 public:
     static Ref<CodeOriginPool> create()
     {

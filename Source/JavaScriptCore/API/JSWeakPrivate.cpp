@@ -30,11 +30,14 @@
 #include "IntegrityInlines.h"
 #include "JSCellInlines.h"
 #include "Weak.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 using namespace JSC;
 
 struct OpaqueJSWeak : ThreadSafeRefCounted<OpaqueJSWeak> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OpaqueJSWeak);
+public:
     OpaqueJSWeak(JSObject* object)
         : weak(object)
     {

@@ -55,6 +55,7 @@
 #include "Timer.h"
 #include "TypedArrayPixelBuffer.h"
 #include <wtf/ScopedLambda.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -274,6 +275,7 @@ public:
     void setDirection(Direction);
 
     class FontProxy final : public RefCounted<FontProxy>, public FontSelectorClient {
+        WTF_MAKE_TZONE_ALLOCATED(FontProxy);
     public:
         static Ref<FontProxy> create();
         Ref<FontProxy> clone() const;

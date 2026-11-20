@@ -33,9 +33,12 @@
 #include "StyleBuilderChecking.h"
 #include "StyleKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShapeOutside::Value);
 
 // MARK: - ShapeOutside
 

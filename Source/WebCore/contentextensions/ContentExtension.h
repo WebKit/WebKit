@@ -32,6 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ namespace ContentExtensions {
 class CompiledContentExtension;
 
 class ContentExtension : public RefCounted<ContentExtension> {
+    WTF_MAKE_TZONE_ALLOCATED(ContentExtension);
 public:
     enum class ShouldCompileCSS : bool { No, Yes };
     static Ref<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);

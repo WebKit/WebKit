@@ -43,6 +43,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleSingleAnimationRange.h"
 #include "WebAnimation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
 #include "AcceleratedEffectStackUpdater.h"
@@ -53,6 +54,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollTimeline);
 
 Ref<ScrollTimeline> ScrollTimeline::create(Document& document, ScrollTimelineOptions&& options)
 {

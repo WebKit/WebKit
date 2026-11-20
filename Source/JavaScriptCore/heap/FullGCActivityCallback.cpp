@@ -26,10 +26,13 @@
 #include "config.h"
 #include "FullGCActivityCallback.h"
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include "VM.h"
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FullGCActivityCallback);
 
 FullGCActivityCallback::FullGCActivityCallback(JSC::Heap& heap, Synchronousness synchronousness)
     : GCActivityCallback(heap, synchronousness)

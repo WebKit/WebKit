@@ -30,6 +30,7 @@
 #include <wtf/BitSet.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeLazyUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -240,7 +241,7 @@ private:
 #endif
 
     struct RareData {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RareData);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
         unsigned m_numDuplicateNamedCaptureGroups;
         FixedVector<AtomString> m_captureGroupNames;
 

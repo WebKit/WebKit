@@ -40,6 +40,8 @@
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapSnapshotBuilder::Client);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapSnapshotBuilder);
 
 HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type)

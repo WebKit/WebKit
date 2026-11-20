@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Observer.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(GLIB)
@@ -70,7 +71,7 @@ class SessionHost final
     , public CanMakeWeakPtr<SessionHost>
 #endif
 {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SessionHost);
+    WTF_MAKE_TZONE_ALLOCATED(SessionHost);
 public:
 
     static Ref<SessionHost> create(Capabilities&& capabilities)

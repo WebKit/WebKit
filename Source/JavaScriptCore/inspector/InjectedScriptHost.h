@@ -28,10 +28,12 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/PerGlobalObjectWrapperWorld.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 
 class InjectedScriptHost : public RefCounted<InjectedScriptHost> {
+    WTF_MAKE_TZONE_ALLOCATED(InjectedScriptHost);
 public:
     static Ref<InjectedScriptHost> create() { return adoptRef(*new InjectedScriptHost); }
     JS_EXPORT_PRIVATE InjectedScriptHost();

@@ -56,6 +56,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::CQ {
 
@@ -519,6 +520,8 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
 // scroll-state(scrolled): the direction of the container's most recent delta scroll, which holds
 // until the next one.
 struct ScrolledFeatureSchema : public ScrollStateFeatureSchema {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ScrolledFeatureSchema);
+public:
     using ScrollStateFeatureSchema::ScrollStateFeatureSchema;
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override

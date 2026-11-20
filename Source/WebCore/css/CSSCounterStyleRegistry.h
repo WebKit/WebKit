@@ -29,6 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OrderedHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ using SymbolsFunctionCounterStyleMap = Vector<std::pair<Style::SymbolsFunction, 
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
 class CSSCounterStyleRegistry {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry, CSSCounterStyleRegistry);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry, CSSCounterStyleRegistry);
 public:
     CSSCounterStyleRegistry() = default;
 

@@ -31,8 +31,11 @@
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimpleTypedArrayController);
 
 SimpleTypedArrayController::SimpleTypedArrayController(bool allowAtomicsWait)
     : m_allowAtomicsWait(allowAtomicsWait)

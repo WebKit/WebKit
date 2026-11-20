@@ -33,8 +33,11 @@
 #include "FTLThunks.h"
 #include "LinkBuffer.h"
 #include "ProfilerCompilation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace FTL {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(OSRExitHandle);
 
 void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
 {

@@ -38,6 +38,8 @@
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeferredWorkTimer);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DeferredWorkTimer::Ticket);
 
 namespace DeferredWorkTimerInternal {

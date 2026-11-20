@@ -23,10 +23,12 @@
 #include <WebCore/PopupMenu.h>
 #include <WebCore/PopupMenuClient.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 @class NSPopUpButtonCell;
 
 class PopupMenuMac : public WebCore::PopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(PopupMenuMac);
 public:
     PopupMenuMac(WebCore::PopupMenuClient*);
     ~PopupMenuMac();

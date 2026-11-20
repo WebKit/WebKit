@@ -26,7 +26,11 @@
 #include "config.h"
 #include "JavaScriptCallFrame.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JavaScriptCallFrame);
 
 using namespace JSC;
 

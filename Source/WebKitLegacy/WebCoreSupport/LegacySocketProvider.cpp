@@ -31,6 +31,9 @@
 #import <WebCore/WebTransportSession.h>
 #import <WebCore/WorkerGlobalScope.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/TZoneMallocInlines.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacySocketProvider);
 
 RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocketChannel(WebCore::ScriptExecutionContext& context, WebCore::WebSocketChannelClient& client, WebCore::IsInitiatedByWorker)
 {

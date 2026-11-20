@@ -24,6 +24,7 @@
 #include "CSSURL.h"
 #include "CSSValue.h"
 #include "CSSValuePair.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class Image;
 }
 
 class CSSCursorImageValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCursorImageValue);
 public:
     using HotSpot = SpaceSeparatedPoint<CSS::Number<>>;
 

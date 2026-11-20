@@ -29,9 +29,11 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PopupMenu.h>
 #include <WebCore/PopupMenuClient.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 class PopupMenuIOS : public WebCore::PopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(PopupMenuIOS);
 public:
     PopupMenuIOS(WebCore::PopupMenuClient*);
 

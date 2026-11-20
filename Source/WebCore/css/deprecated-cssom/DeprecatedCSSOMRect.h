@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/DeprecatedCSSOMPrimitiveValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ struct ClipRect;
 }
 
 class DeprecatedCSSOMRect final : public RefCounted<DeprecatedCSSOMRect> {
+    WTF_MAKE_TZONE_ALLOCATED(DeprecatedCSSOMRect);
 public:
     NODELETE static Ref<DeprecatedCSSOMRect> create(const CSS::ClipRect&, CSSStyleDeclaration&);
 

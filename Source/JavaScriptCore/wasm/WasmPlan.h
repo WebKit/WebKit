@@ -36,6 +36,7 @@
 #include <wtf/Bag.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -49,6 +50,7 @@ namespace Wasm {
 class CalleeGroup;
 
 class Plan : public ThreadSafeRefCounted<Plan> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Plan, JS_EXPORT_PRIVATE);
 public:
     typedef void CallbackType(Plan&);
     using CompletionTask = RefPtr<SharedTask<CallbackType>>;

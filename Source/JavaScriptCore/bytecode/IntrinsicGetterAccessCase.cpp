@@ -31,8 +31,11 @@
 #include "HeapInlines.h"
 #include "JSCellInlines.h"
 #include "JSTypedArrays.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IntrinsicGetterAccessCase);
 
 IntrinsicGetterAccessCase::IntrinsicGetterAccessCase(VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, JSFunction* intrinsicFunction, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
     : Base(vm, owner, IntrinsicGetter, identifier, offset, structure, conditionSet, WTF::move(prototypeAccessChain))

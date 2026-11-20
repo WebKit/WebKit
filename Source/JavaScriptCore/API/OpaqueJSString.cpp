@@ -29,9 +29,12 @@
 #include "Identifier.h"
 #include "IdentifierInlines.h"
 #include <wtf/MallocSpan.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 using namespace JSC;
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(OpaqueJSString);
 
 RefPtr<OpaqueJSString> OpaqueJSString::tryCreate(const String& string)
 {

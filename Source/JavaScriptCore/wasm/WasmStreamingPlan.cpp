@@ -35,8 +35,11 @@
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamingPlan);
 
 namespace WasmStreamingPlanInternal {
 static constexpr bool verbose = false;

@@ -28,6 +28,7 @@
 #include "CSSCrossfade.h"
 #include "CSSValue.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ class Image;
 }
 
 class CSSCrossfadeValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCrossfadeValue);
 public:
     static Ref<CSSCrossfadeValue> create(CSS::CrossfadeFunction&&);
     static Ref<CSSCrossfadeValue> create(CSS::WebkitCrossfadeFunction&&);

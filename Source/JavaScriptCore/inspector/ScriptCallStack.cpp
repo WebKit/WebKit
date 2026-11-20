@@ -32,7 +32,11 @@
 #include "config.h"
 #include "ScriptCallStack.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptCallStack);
 
 Ref<ScriptCallStack> ScriptCallStack::create()
 {

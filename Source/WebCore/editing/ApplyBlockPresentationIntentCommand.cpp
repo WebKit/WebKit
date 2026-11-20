@@ -47,9 +47,12 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplyBlockPresentationIntentCommand);
 
 using namespace HTMLNames;
 

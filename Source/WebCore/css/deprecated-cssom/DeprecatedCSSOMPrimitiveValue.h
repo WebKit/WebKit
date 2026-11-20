@@ -28,6 +28,7 @@
 
 #include <WebCore/DeprecatedCSSOMValue.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -52,6 +53,7 @@ class DeprecatedCSSOMRect;
 struct DeprecatedCSSOMPrimitiveValueData;
 
 class DeprecatedCSSOMPrimitiveValue final : public DeprecatedCSSOMValue {
+    WTF_MAKE_TZONE_ALLOCATED(DeprecatedCSSOMPrimitiveValue);
 public:
     // Only expose what's in the IDL file.
     enum UnitType {

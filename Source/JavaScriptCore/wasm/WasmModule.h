@@ -40,6 +40,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/WasmOps.h>
 #include <wtf/Lock.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -57,6 +58,7 @@ struct ModuleInformation;
 enum class BindingFailure;
 
 class Module : public ThreadSafeRefCounted<Module> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Module, JS_EXPORT_PRIVATE);
 public:
     using ValidationResult = std::expected<Ref<Module>, String>;
     typedef void CallbackType(ValidationResult&&);

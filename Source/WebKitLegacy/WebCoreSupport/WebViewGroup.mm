@@ -30,8 +30,10 @@
 #include "WebVisitedLinkStore.h"
 #include <WebCore/UserContentController.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebViewGroup);
 
 // Any named groups will live for the lifetime of the process, thanks to the reference held by the RefPtr.
 NODELETE static HashMap<String, RefPtr<WebViewGroup>>& webViewGroups()

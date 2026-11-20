@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class Image;
 }
 
 class CSSLightDarkImageValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSLightDarkImageValue);
 public:
     NODELETE static Ref<CSSLightDarkImageValue> create(Ref<CSSValue>&& lightValue, Ref<CSSValue>&& darkValue);
     ~CSSLightDarkImageValue();

@@ -28,12 +28,17 @@
 
 #include "HeapInlines.h"
 #include "InspectorProtocolObjects.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureShape);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeSet);
 
 TypeSet::TypeSet()
     : m_isOverflown(false)

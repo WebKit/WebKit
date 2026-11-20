@@ -31,8 +31,11 @@
 #include "StyleBuilderState.h"
 #include "StyleMeshGradientImage.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMeshGradientValue);
 
 RefPtr<Style::Image> CSSMeshGradientValue::createStyleImage(const Style::BuilderState& state) const
 {

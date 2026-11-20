@@ -30,8 +30,14 @@
 #include "InitializeThreading.h"
 #include "JSCInlines.h"
 #include "JSCallbackObject.h"
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StaticValueEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StaticFunctionEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpaqueJSClassContextData);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(OpaqueJSClass);
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

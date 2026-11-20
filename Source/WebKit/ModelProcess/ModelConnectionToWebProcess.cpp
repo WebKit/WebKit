@@ -45,6 +45,7 @@
 #include "WebErrors.h"
 #include "WebProcessMessages.h"
 #include <WebCore/LogInitialization.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(IPC_TESTING_API)
 #include "IPCTesterMessages.h"
@@ -53,6 +54,9 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelConnectionToWebProcess);
+
 using namespace WebCore;
 
 Ref<ModelConnectionToWebProcess> ModelConnectionToWebProcess::create(

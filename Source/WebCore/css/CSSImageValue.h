@@ -27,6 +27,7 @@
 #include "ResourceLoaderOptions.h"
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,6 +43,7 @@ class Image;
 }
 
 class CSSImageValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSImageValue);
 public:
     NODELETE static Ref<CSSImageValue> create();
     static Ref<CSSImageValue> create(CSS::URL, AtomString initiatorType = { });

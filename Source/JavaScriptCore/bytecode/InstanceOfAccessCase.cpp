@@ -29,8 +29,11 @@
 #if ENABLE(JIT)
 
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InstanceOfAccessCase);
 
 Ref<AccessCase> InstanceOfAccessCase::create(
     VM& vm, JSCell* owner, AccessType accessType, Structure* structure,

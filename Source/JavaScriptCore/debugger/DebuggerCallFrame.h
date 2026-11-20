@@ -34,6 +34,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/NakedPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
@@ -42,6 +43,7 @@ class DebuggerScope;
 class Exception;
 
 class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
+    WTF_MAKE_TZONE_ALLOCATED(DebuggerCallFrame);
 public:
     enum Type { ProgramType, FunctionType };
 

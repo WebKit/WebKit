@@ -29,6 +29,7 @@
 #include "VMTrapsInlines.h"
 #include <wtf/SpinBackoff.h>
 #include <wtf/StackPointer.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
 
@@ -41,6 +42,8 @@
 #endif
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSLock);
 
 JSLockHolder::JSLockHolder(JSGlobalObject* globalObject)
     : JSLockHolder(globalObject->vm())

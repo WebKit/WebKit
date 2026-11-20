@@ -32,6 +32,7 @@
 #include <wtf/Bag.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -56,6 +57,7 @@ class WatchpointsOnPropertyInlineCache;
 // keep other routines alive (for example due to the use of a slow-path
 // list which does not get reclaimed all at once).
 class GCAwareJITStubRoutine : public JITStubRoutine {
+    WTF_MAKE_TZONE_ALLOCATED(GCAwareJITStubRoutine);
 public:
     using Base = JITStubRoutine;
     friend class JITStubRoutine;

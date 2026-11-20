@@ -34,6 +34,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 
@@ -45,6 +46,7 @@ class JSGlobalObject;
 namespace Inspector {
 
 class ScriptArguments : public RefCounted<ScriptArguments> {
+    WTF_MAKE_TZONE_ALLOCATED(ScriptArguments);
 public:
     JS_EXPORT_PRIVATE static Ref<ScriptArguments> create(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     JS_EXPORT_PRIVATE ~ScriptArguments();

@@ -22,6 +22,7 @@
 #define SearchPopupMenuMac_h
 
 #include <WebCore/SearchPopupMenuCocoa.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class PopupMenuClient;
@@ -30,6 +31,7 @@ class PopupMenuClient;
 class PopupMenuMac;
 
 class SearchPopupMenuMac : public WebCore::SearchPopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(SearchPopupMenuMac);
 public:
     SearchPopupMenuMac(WebCore::PopupMenuClient*);
     ~SearchPopupMenuMac();

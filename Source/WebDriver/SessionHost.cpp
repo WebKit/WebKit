@@ -29,11 +29,14 @@
 #include "Logging.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Observer.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebDriver {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SessionHost);
 
 #if ENABLE(WEBDRIVER_BIDI)
 static WeakHashSet<SessionHost::BrowserTerminatedObserver>& browserTerminatedObservers()

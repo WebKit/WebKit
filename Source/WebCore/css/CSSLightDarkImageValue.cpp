@@ -30,8 +30,11 @@
 #include "Document.h"
 #include "StyleBuilderState.h"
 #include "StyleColorImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSLightDarkImageValue);
 
 Ref<CSSLightDarkImageValue> CSSLightDarkImageValue::create(Ref<CSSValue>&& lightValue, Ref<CSSValue>&& darkValue)
 {

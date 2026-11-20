@@ -34,6 +34,7 @@
 #include <WebCore/CSSValue.h>
 #include <WebCore/CSSValueKeywords.h>
 #include <WebCore/CSSVariableData.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -51,6 +52,7 @@ class SubstitutionResolver;
 // that need to be resolved during style resolution.
 // https://drafts.csswg.org/css-values-5/#arbitrary-substitution
 class CSSSubstitutionValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSSubstitutionValue);
 public:
     static Ref<CSSSubstitutionValue> create(const CSSParserTokenRange&, const CSSNamespacePrefixMap&, const CSSParserContext&);
     static Ref<CSSSubstitutionValue> create(Ref<CSSVariableData>&&);

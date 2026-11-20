@@ -25,6 +25,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomStringTable.h>
 
@@ -70,6 +71,7 @@ private:
 };
 
 class JSLock : public ThreadSafeRefCounted<JSLock> {
+    WTF_MAKE_TZONE_ALLOCATED(JSLock);
     WTF_MAKE_NONCOPYABLE(JSLock);
 public:
     JSLock(VM*);

@@ -33,8 +33,11 @@
 #include "ReadableStream.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/Uint8Array.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStreamToSharedBufferSink);
 
 ReadableStreamToSharedBufferSink::ReadableStreamToSharedBufferSink(Callback&& callback)
     : m_callback { WTF::move(callback) }

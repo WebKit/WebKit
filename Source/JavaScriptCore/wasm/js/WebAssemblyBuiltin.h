@@ -31,6 +31,7 @@
 
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/WasmCallee.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/WTFString.h>
 
@@ -81,7 +82,7 @@ public:
 };
 
 class WebAssemblyArrayMutI16TypeExpectation : public WebAssemblyBuiltinTypeExpectation {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebAssemblyArrayMutI16TypeExpectation);
+    WTF_MAKE_TZONE_ALLOCATED(WebAssemblyArrayMutI16TypeExpectation);
 public:
     bool isValid(const Wasm::Type&) const;
 };

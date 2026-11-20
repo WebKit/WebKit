@@ -49,8 +49,11 @@
 #include "StyleSingleAnimationRange.h"
 #include "ViewTimelineOptions.h"
 #include "WebAnimation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTimeline);
 
 ExceptionOr<Ref<ViewTimeline>> ViewTimeline::create(Document& document, ViewTimelineOptions&& options)
 {

@@ -32,6 +32,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 namespace Corpse {
@@ -40,6 +41,7 @@ namespace Corpse {
 // port for that process: attach() acquires it, detach() releases it (but keeps the
 // PID so the same Process can be reattached later).
 class Process final : public RefCounted<Process> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Process, JS_EXPORT_PRIVATE);
 public:
     static Ref<Process> create(pid_t pid) { return adoptRef(*new Process(pid)); }
 

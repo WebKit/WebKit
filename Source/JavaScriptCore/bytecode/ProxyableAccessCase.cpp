@@ -26,9 +26,13 @@
 #include "config.h"
 #include "ProxyableAccessCase.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(JIT)
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProxyableAccessCase);
 
 ProxyableAccessCase::ProxyableAccessCase(VM& vm, JSCell* owner, AccessType accessType, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure,
     const ObjectPropertyConditionSet& conditionSet, bool viaGlobalProxy, WatchpointSet* additionalSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)

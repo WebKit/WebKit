@@ -28,6 +28,7 @@
 #include "BitmapImageDescriptor.h"
 #include "ImageSource.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ class ImageDecoder;
 class ImageObserver;
 
 class BitmapImageSource final : public ImageSource, public CanMakeCheckedPtr<BitmapImageSource> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BitmapImageSource);
+    WTF_MAKE_TZONE_ALLOCATED(BitmapImageSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BitmapImageSource);
 public:
     NODELETE static Ref<BitmapImageSource> create(BitmapImage&, AlphaOption, GammaAndColorProfileOption);

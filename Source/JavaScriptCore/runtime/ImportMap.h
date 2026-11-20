@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/Vector.h>
@@ -38,6 +39,7 @@ namespace JSC {
 class SourceCode;
 
 class ImportMap final : public RefCounted<ImportMap> {
+    WTF_MAKE_TZONE_ALLOCATED(ImportMap);
 public:
     using SpecifierMap = HashMap<AtomString, URL>;
     using ScopesMap = HashMap<URL, SpecifierMap>;

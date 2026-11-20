@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CString.h>
@@ -116,6 +117,7 @@ private:
 };
 
 class WebSocketServer : public RefCountedAndCanMakeWeakPtr<WebSocketServer> {
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketServer);
 public:
     static Ref<WebSocketServer> create(WebSocketMessageHandler& messageHandler)
     {

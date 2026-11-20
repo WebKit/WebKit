@@ -76,6 +76,8 @@ WTF_WEAK_LINK_FORCE_IMPORT(be_memory_inline_jit_restrict_with_witness_supported)
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExecutableAllocator);
+
 using namespace WTF;
 
 #if OS(DARWIN) && CPU(ARM64)

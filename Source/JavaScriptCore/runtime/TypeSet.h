@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
@@ -49,6 +50,7 @@ class TypeSet;
 namespace JSC {
 
 class StructureShape : public RefCounted<StructureShape> {
+    WTF_MAKE_TZONE_ALLOCATED(StructureShape);
     friend class TypeSet;
 
 public:
@@ -81,6 +83,7 @@ private:
 };
 
 class TypeSet : public ThreadSafeRefCounted<TypeSet> {
+    WTF_MAKE_TZONE_ALLOCATED(TypeSet);
 
 public:
     static Ref<TypeSet> create() { return adoptRef(*new TypeSet); }

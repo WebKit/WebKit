@@ -30,8 +30,11 @@
 
 #include "CodeBlockInlines.h"
 #include "JSCellInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AdaptiveStructureWatchpoint);
 
 AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint(const ObjectPropertyCondition& key, CodeBlock* codeBlock)
     : Watchpoint(Watchpoint::Type::AdaptiveStructure)

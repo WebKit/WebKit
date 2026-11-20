@@ -34,11 +34,14 @@
 #include <optional>
 #include <ranges>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebDriver {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketServer);
 
 WebSocketServer::WebSocketServer(WebSocketMessageHandler& messageHandler)
     : m_messageHandler(messageHandler)

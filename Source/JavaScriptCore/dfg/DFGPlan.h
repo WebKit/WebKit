@@ -40,6 +40,7 @@
 #include "RecordedStatuses.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -54,6 +55,7 @@ class JITData;
 #if ENABLE(DFG_JIT)
 
 class Plan final : public JITPlan {
+    WTF_MAKE_TZONE_ALLOCATED(Plan);
     using Base = JITPlan;
 
 public:

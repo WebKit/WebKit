@@ -27,6 +27,7 @@
 
 #include "CSSCustomIdent.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class Image;
 }
 
 class CSSCanvasValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCanvasValue);
 public:
     static Ref<CSSCanvasValue> create(CSS::CustomIdent&& name) { return adoptRef(*new CSSCanvasValue(WTF::move(name))); }
     ~CSSCanvasValue();

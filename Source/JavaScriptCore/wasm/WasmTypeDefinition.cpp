@@ -50,6 +50,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace Wasm {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTTGroup);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeInformation);
 
 void StorageType::dump(PrintStream& out) const

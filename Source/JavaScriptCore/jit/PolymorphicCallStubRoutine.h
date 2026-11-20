@@ -31,6 +31,7 @@
 #include <JavaScriptCore/GCAwareJITStubRoutine.h>
 #include <wtf/ButterflyArray.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 
@@ -39,6 +40,7 @@ namespace JSC {
 class CallLinkInfo;
 
 class PolymorphicCallNode final : public CallLinkInfoBase {
+    WTF_MAKE_TZONE_ALLOCATED(PolymorphicCallNode);
     WTF_MAKE_NONCOPYABLE(PolymorphicCallNode);
 public:
     PolymorphicCallNode()

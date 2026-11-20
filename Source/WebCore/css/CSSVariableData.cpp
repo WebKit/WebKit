@@ -35,12 +35,16 @@
 #include "CSSValuePool.h"
 #include "StyleComputedStyle.h"
 #include "StyleCustomProperty.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CSSVariableData);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
 
 template<typename CharacterType> NODELETE void CSSVariableData::updateBackingStringsInTokens()

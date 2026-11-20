@@ -32,8 +32,11 @@
 #include "JSCJSValueInlines.h"
 #include "ModuleScopeData.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(ParserArenaRoot);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
 

@@ -374,6 +374,7 @@ private:
     bool m_afterBlackboxedScript { false };
 
     class AbandonPauseInAwaitTimer final : public JSRunLoopTimer {
+        WTF_MAKE_TZONE_ALLOCATED(AbandonPauseInAwaitTimer);
     public:
         explicit AbandonPauseInAwaitTimer(Debugger&);
         void doWork(VM&) final;

@@ -34,9 +34,12 @@
 #include "RenderElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MeshGradientImage);
 
 MeshGradientImage::MeshGradientImage(Gradient&& gradient)
     : GeneratedImage { Type::MeshGradientImage }

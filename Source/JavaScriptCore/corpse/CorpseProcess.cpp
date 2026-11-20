@@ -37,6 +37,7 @@
 #include <signal.h>
 #include <sys/proc.h>
 #include <sys/sysctl.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <sys/proc_private.h>
@@ -46,6 +47,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace Corpse {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Process);
 
 // A task port name outlives the task it named: when the target exits, the right we
 // hold becomes a dead name while the name itself is unchanged. MACH_PORT_VALID only

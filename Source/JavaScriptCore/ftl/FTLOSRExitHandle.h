@@ -30,6 +30,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "CCallHelpers.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC { namespace FTL {
@@ -40,6 +41,7 @@ struct OSRExit;
 // This is an object that stores some interesting data about an OSR exit. It's expected that you will
 // scrape this data from this object by the time compilation finishes.
 struct OSRExitHandle : public ThreadSafeRefCounted<OSRExitHandle> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(OSRExitHandle);
     explicit OSRExitHandle(unsigned index)
         : m_index(index)
     {

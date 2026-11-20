@@ -36,8 +36,11 @@
 #include "Options.h"
 #include "ResourceExhaustion.h"
 #include "SuperSampler.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalAllocator);
 
 LocalAllocator::LocalAllocator(BlockDirectory* directory)
     : m_directory(directory)

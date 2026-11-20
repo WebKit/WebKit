@@ -34,10 +34,13 @@
 #include "WasmMergedProfile.h"
 #include "WasmModuleInformation.h"
 #include "WasmWorklist.h"
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Module);
 
 Module::Module(IPIntPlan& plan, Name&& sourceURL)
     : m_moduleInformation(plan.takeModuleInformation())

@@ -32,8 +32,11 @@
 #include "JSFunctionInlines.h"
 #include "MicrotaskCall.h"
 #include "PolymorphicCallStubRoutine.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallLinkInfoBase);
 
 void CallLinkInfoBase::unlinkOrUpgrade(VM& vm, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock)
 {

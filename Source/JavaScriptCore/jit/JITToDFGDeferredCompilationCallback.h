@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(DFG_JIT)
 
@@ -36,6 +37,7 @@ namespace JSC {
 class ScriptExecutable;
 
 class JITToDFGDeferredCompilationCallback final : public DeferredCompilationCallback {
+    WTF_MAKE_TZONE_ALLOCATED(JITToDFGDeferredCompilationCallback);
 public:
     ~JITToDFGDeferredCompilationCallback() final;
 

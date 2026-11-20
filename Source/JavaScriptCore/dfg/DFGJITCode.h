@@ -39,6 +39,7 @@
 #include "JumpTable.h"
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/SegmentedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -222,6 +223,7 @@ private:
 };
 
 class JITCode final : public DirectJITCode {
+    WTF_MAKE_TZONE_ALLOCATED(JITCode);
 public:
     JITCode(bool isUnlinked);
     ~JITCode() final;

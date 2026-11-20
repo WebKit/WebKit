@@ -27,8 +27,11 @@
 #include "CrossTaskToken.h"
 
 #include "MicrotaskQueue.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CrossTaskToken);
 
 CrossTaskToken::CrossTaskToken() = default;
 CrossTaskToken::~CrossTaskToken() = default;

@@ -26,6 +26,7 @@
 
 #include <WebCore/StyleScopeIdentifier.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ struct ScopedName;
 
 // A ScopedName that has been resolved to determine which specific scope it belongs to.
 class ResolvedScopedName {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResolvedScopedName);
+    WTF_MAKE_TZONE_ALLOCATED(ResolvedScopedName);
 public:
     ResolvedScopedName(AtomString, ScopeIdentifier);
 
