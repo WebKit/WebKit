@@ -1,0 +1,4 @@
+
+PASS Removing the requesting iframe lets the next request start.
+PASS Removing the requesting iframe while its request data is serialized lets the next request start.
+
