@@ -547,13 +547,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case VarargsLengthWithSpread: {
-        clobberWorld();
         setTypeForNode(node, SpecInt32Only);
         break;
     }
 
     case LoadVarargsWithSpread: {
-        clobberWorld();
         LoadVarargsData* data = node->loadVarargsData();
         m_state.operand(data->count).setNonCellType(SpecInt32Only);
         for (unsigned i = data->limit - 1; i--;)

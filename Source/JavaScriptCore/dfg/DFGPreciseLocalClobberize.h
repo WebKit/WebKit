@@ -264,13 +264,11 @@ private:
         }
 
         case LoadVarargsWithSpread: {
-            readWorld(m_node);
             readSpreadOperands(m_node, 1);
             break;
         }
 
         case VarargsLengthWithSpread: {
-            readWorld(m_node);
             readSpreadOperands(m_node, 0);
             break;
         }

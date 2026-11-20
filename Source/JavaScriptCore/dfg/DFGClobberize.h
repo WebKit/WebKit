@@ -47,6 +47,15 @@ enum class DateField : int64_t {
     Milliseconds,
 };
 
+inline bool hasPhantomSpreadOperand(Graph& graph, Node* node)
+{
+    for (unsigned i = 0; i < node->numChildren(); i++) {
+        if (graph.varArgChild(node, i)->op() == PhantomSpread)
+            return true;
+    }
+    return false;
+}
+
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
 void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOESCAPE const WriteFunctor& write, NOESCAPE const DefFunctor& def)
 {
@@ -1050,12 +1059,17 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     }
 
     case VarargsLengthWithSpread: {
-        clobberTop();
+        read(Butterfly_publicLength);
+        if (hasPhantomSpreadOperand(graph, node))
+            read(Stack);
         return;
     }
 
     case LoadVarargsWithSpread: {
-        clobberTop();
+        read(Butterfly_publicLength);
+        read(IndexedContiguousProperties);
+        if (hasPhantomSpreadOperand(graph, node))
+            read(Stack);
         LoadVarargsData* data = node->loadVarargsData();
         write(AbstractHeap(Stack, data->count));
         for (unsigned i = data->limit; i--;)
@@ -2106,13 +2120,8 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     case NewArrayWithSpread: {
         read(HeapObjectCount);
         // This appears to read nothing because it's only reading immutable butterfly data.
-        for (unsigned i = 0; i < node->numChildren(); i++) {
-            Node* child = graph.varArgChild(node, i).node();
-            if (child->op() == PhantomSpread) {
-                read(Stack);
-                break;
-            }
-        }
+        if (hasPhantomSpreadOperand(graph, node))
+            read(Stack);
         write(HeapObjectCount);
         return;
     }
