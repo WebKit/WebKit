@@ -1071,11 +1071,47 @@ bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) c
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
+static void addPropertyToPresentationalHintStyleUsingCache(Document& document, MutableStyleProperties& style, CSSPropertyID propertyID, const AtomString& value)
+{
+    if (value.isEmpty() || style.cssParserMode() != SVGAttributeMode || !isLonghand(propertyID)) {
+        style.setProperty(propertyID, value.string(), document.cssParserContext());
+        return;
+    }
+
+    CheckedRef svgExtensions = document.svgExtensions();
+    if (auto cachedValue = svgExtensions->cachedPresentationalHintValue(propertyID, value)) {
+        if (RefPtr parsedValue = WTF::move(*cachedValue))
+            style.addParsedProperty(CSSProperty(propertyID, parsedValue.releaseNonNull()));
+        return;
+    }
+
+    unsigned propertyCountBefore = style.propertyCount();
+    bool hadProperty = style.findPropertyIndex(propertyID) != -1;
+    bool didFailParsing = true;
+    style.setProperty(propertyID, value.string(), document.cssParserContext(), IsImportant::No, &didFailParsing);
+
+    RefPtr<CSSValue> parsedValue;
+    if (!didFailParsing) {
+        if (style.propertyCount() != propertyCountBefore + (hadProperty ? 0 : 1))
+            return;
+        int index = style.findPropertyIndex(propertyID);
+        if (index == -1)
+            return;
+        auto property = style.propertyAt(index).toCSSProperty();
+        if (property.isImportant() || property.isSetFromShorthand() || property.metadata().m_implicit)
+            return;
+        parsedValue = property.value();
+        if (!parsedValue || parsedValue->mayDependOnBaseURL())
+            return;
+    }
+    svgExtensions->cachePresentationalHintValue(propertyID, value, WTF::move(parsedValue));
+}
+
 void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID != CSSPropertyID::Invalid)
-        addPropertyToPresentationalHintStyle(style, propertyID, value);
+        addPropertyToPresentationalHintStyleUsingCache(protect(document()), style, propertyID, value);
     else if (name.matches(XMLNames::langAttr) || (name.matches(HTMLNames::langAttr) && !hasAttributeWithoutSynchronization(XMLNames::langAttr)))
         mapLanguageAttributeToLocale(value, style);
 }
