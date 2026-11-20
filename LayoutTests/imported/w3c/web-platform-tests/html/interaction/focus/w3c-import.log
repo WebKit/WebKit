@@ -29,7 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focus-selection.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focused-element-move-documents-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-after-disabled.html
-/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-starting-point.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-starting-point.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/setSequentialFocusStartingPoint.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/tab-table-caption.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/tabindex-focus-flag.html

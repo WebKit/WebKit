@@ -1,0 +1,29 @@
+(before container)
+prev
+tabindex=2 before
+Start here.
+tabindex=2 after
+next
+(after container)
+
+PASS Focus navigation starting point should be maintained when focused element is removed.
+PASS Focus navigation starting point should be maintained when parent element is removed.
+PASS Focus navigation starting point should be maintained when shadow host is removed.
+PASS Focus navigation starting point should be maintained when focused button is disabled.
+PASS Focus navigation starting point should not change when previous element is removed.
+PASS Focus navigation starting point should not change when next element is removed.
+PASS Focus navigation starting point should not change when next element is moved with moveBefore.
+FAIL Focus navigation starting point should not change when previous element is moved with moveBefore. assert_equals: Forwards sequential focus navigation should go to BUTTON#button2 expected Element node <button id="button2" data-next="" tabindex="0">button2</b... but got Element node <button id="button4" tabindex="0">button4</button>
+FAIL Focus navigation starting point should not change when previous element gets new children. assert_equals: Forwards sequential focus navigation should go to BUTTON#button2 expected Element node <button id="button2" data-next="" tabindex="0">button2</b... but got Element node <button id="child" data-prev="">child</button>
+PASS Focus navigation starting point should not change when focused element at end of shadow tree is removed.
+PASS Focus navigation starting point should stay on element when it is disabled and re-enabled.
+FAIL Focus navigation starting point should stay on element when it is blurred. assert_equals: Forwards sequential focus navigation should go to BUTTON# expected Element node <button data-next="" tabindex="0">button3</button> but got Element node <button id="before-container" tabindex="0">(before contai...
+FAIL Focus navigation starting point should be maintained when slotted focused element is removed. assert_equals: Forwards sequential focus navigation should go to BUTTON# expected Element node <button data-next="" slot="d" tabindex="0">button 4</button> but got Element node <button data-prev="" slot="b" tabindex="0">button 2</button>
+PASS Focus navigation starting point should be set when scrolling to fragment (and should not be overwritten when <a> is blurred).
+PASS Focus navigation starting point should be used when it's a descendant of the focused element.
+PASS Backwards focus navigation should not be stuck when starting point is inside focused element but before any other focusable areas.
+PASS Should start from focused element if it was focused after the selection was set.
+FAIL Focus navigation starting point should be maintained when ancestor of slotted focused element is removed. assert_equals: Forwards sequential focus navigation should go to BUTTON# expected Element node <button data-next="" slot="d" tabindex="0">button 4</button> but got Element node <button data-prev="" slot="b" tabindex="0">button 2</button>
+FAIL Focus navigation starting point should be maintained when slotted shadow host is removed. assert_equals: Forwards sequential focus navigation should go to BUTTON# expected Element node <button data-next="" slot="d" tabindex="0">button 4</button> but got Element node <button data-prev="" slot="b" tabindex="0">button 2</button>
+FAIL tabindex should be respected focus navigation starting point is inside focused element and after all other focusable content assert_equals: Forwards sequential focus navigation should go to DIV# expected Element node <div tabindex="1" data-next="">next</div> but got Element node <div tabindex="2">tabindex=2 after</div>
+

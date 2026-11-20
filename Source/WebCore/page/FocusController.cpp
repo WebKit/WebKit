@@ -835,6 +835,11 @@ FocusableElementSearchResult FocusController::findFocusableElementInDocumentOrde
     ASSERT(element);
 
     if (element == document->focusedElement()) {
+        // A backward search from inside the focused element finds the element itself if nothing focusable precedes the
+        // starting point within it. Continue past it so focus doesn't get stuck. See <https://github.com/whatwg/html/issues/12514>.
+        if (direction == FocusDirection::Backward && startingNode && startingNode->isDescendantOf(*element))
+            return findFocusableElementInDocumentOrderStartingWithFrame(frame, element, element, direction, focusEventData, initialFocus, continuingRemoteSearch, shouldFocusElement);
+
         // Focus wrapped around to the same element.
         return findResult;
     }
