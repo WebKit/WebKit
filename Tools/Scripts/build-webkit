@@ -157,6 +157,7 @@ Usage: $programName [options] [options to pass to build system]
   --gtk                             Build the GTK+ port
   --haiku                           Build the Haiku port
   --wpe                             Build the WPE port
+  --android                         Build the WPE port for Android
   --win                             Build the Windows port
   --playstation                     Build the PlayStation port
 
@@ -258,6 +259,25 @@ if (isWinCrossCompileFromLinux()) {
     $ENV{"PATH"} = "$winBinDir:$ENV{PATH}";
 }
 
+if (isAndroid()) {
+    # Get the NDK and the dependencies, which a clean does not need.
+    updateAndroidDependencies() unless $clean;
+
+    # Find only the dependencies built for Android: the WebKit container SDK
+    # points these to libraries and headers of the host.
+    my $dependencies = androidDependenciesPath();
+    $ENV{"PKG_CONFIG_LIBDIR"} = join(":", map { File::Spec->catdir($dependencies, $_, "pkgconfig") } ("lib", "share"));
+    $ENV{"PKG_CONFIG_PATH"} = "";
+    delete $ENV{"PKG_CONFIG_SYSROOT_DIR"};
+    delete $ENV{"C_INCLUDE_PATH"};
+    delete $ENV{"CPLUS_INCLUDE_PATH"};
+    delete $ENV{"CPATH"};
+    delete $ENV{"LIBRARY_PATH"};
+    delete $ENV{"LD_LIBRARY_PATH"};
+    delete $ENV{"LDFLAGS"};
+    delete $ENV{"CMAKE_PREFIX_PATH"};
+}
+
 if (shouldUseVcpkg() && ! defined $ENV{"VCPKG_ROOT"}) {
     die "Error: VCPKG_ROOT is unset. Please set that environment variable to the location of vcpkg.exe.\n";
 }
@@ -320,6 +340,12 @@ if (isCMakeBuild() && !isAnyWindows() && !isWin()) {
     # Disable experimental features by default when using CMake on macOS,
     # since the Xcode build does not enable them either.
     if (isAppleCocoaWebKit()) {
+        $noExperimentalFeatures = 1;
+    }
+
+    # Likewise for Android, although selected experimental features are
+    # enabled by androidCMakeArguments().
+    if (isAndroid()) {
         $noExperimentalFeatures = 1;
     }
 
@@ -473,7 +499,8 @@ sub writeCongrats()
     if (my $ccacheSummary = ccacheSummary()) {
         print " $ccacheSummary\n";
     }
-    if ($launcherCommand && $launcherName) {
+    # WPE WebKit's MiniBrowser has no Android display backend here; wpe-android ships its own.
+    if ($launcherCommand && $launcherName && !isAndroid()) {
         print " To run $launcherName with this newly-built code, use\n";
         print " the command \"$launcherCommand\".\n";
     }
