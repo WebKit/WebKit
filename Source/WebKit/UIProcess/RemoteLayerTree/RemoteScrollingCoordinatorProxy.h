@@ -105,7 +105,7 @@ public:
     bool isPointInScrollbar(WebCore::FloatPoint);
 
     // Called externally when native views move around.
-    void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
+    virtual void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
 
     virtual void applyScrollingTreeLayerPositionsAfterCommit();
     virtual void flushMainThreadTransactionIfNeeded() { }
@@ -177,6 +177,9 @@ public:
     virtual HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const { return { }; }
     virtual HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const { return { }; }
     virtual bool hasHighImpactMonotonicAnimations() const { return false; }
+    virtual bool hasMonotonicAnimations() const { return false; }
+    virtual void setAnimatedContentVisibilityNeedsUpdate() { }
+    virtual void updateAnimatedContentVisibilityIfNeeded() { }
 #endif
 
     String scrollingTreeAsText() const;
