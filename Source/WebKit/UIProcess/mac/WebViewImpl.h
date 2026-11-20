@@ -1274,12 +1274,12 @@ private:
 
 // FIXME: (rdar://173210238) Use `SWIFT_SHARED_REFERENCE(.incrementCheckedPtrCount, .decrementCheckedPtrCount)` when possible.
 
-inline void incrementCheckedPtrCountOnWebViewImpl(WebKit::WebViewImpl* obj)
+SWIFT_UNSAFE inline void incrementCheckedPtrCountOnWebViewImpl(WebKit::WebViewImpl* obj)
 {
     obj->incrementCheckedPtrCount();
 }
 
-inline void decrementCheckedPtrCountOnWebViewImpl(WebKit::WebViewImpl* obj)
+SWIFT_UNSAFE inline void decrementCheckedPtrCountOnWebViewImpl(WebKit::WebViewImpl* obj)
 {
     obj->decrementCheckedPtrCount();
 }

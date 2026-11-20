@@ -27,33 +27,24 @@ import Foundation
 import WebKit_Internal
 private import CoreGraphics
 
-@_expose(Cxx)
 struct WKFastScrollTracker {
-    // @used ensures these, and the type metadata, are retained even under -O -wmo: rdar://179098545
-    @used
-    static let cxxTypeMetadata: Any.Type = Self.self
-
     private var multiplier: CGFloat = 1
     private var endTime: TimeInterval = 0
     private var count = 0
     private var lastHorizontalDirection: Direction = .negative
     private var lastVerticalDirection: Direction = .negative
 
-    // Set when this gesture begins atop a live (decelerating) momentum. Unlike _caughtDeceleratingScroll it
-    // is not cleared when the momentum ends, so it remains valid until the gesture ends and consumes it.
+    // Set when this gesture begins atop a live (decelerating) momentum. Unlike the controller's
+    // caughtDeceleratingScroll, it is not cleared when the momentum ends, so it remains valid until the gesture ends and
+    // consumes it.
     private var caughtMomentum = false
 
     private var gestureStartLocation = CGPoint.zero
-
-    @used
-    init() {
-    }
 
     // Advances the swipe chain for a swipe that just ended and returns the momentum multiplier to apply
     // to it (1 = unaccelerated): expire the chain if stale or not continuing a live momentum, break it on
     // a direction reversal or too-slow swipe, then (once enough same-direction swipes have stacked up)
     // scale the multiplier by this swipe's drag distance and how deep it is in the chain.
-    @used
     mutating func update(location: CGPoint, velocity: CGSize, time: TimeInterval) -> Double {
         let speed = hypot(velocity.width, velocity.height)
 
@@ -121,17 +112,14 @@ struct WKFastScrollTracker {
     // Called when a new gesture interrupts a still-decelerating momentum (the signal that this swipe is
     // continuing an in-flight fling rather than starting from rest). The next `update(...)` consumes it;
     // without it, that update treats the swipe as the start of a new (unaccelerated) chain.
-    @used
     mutating func didCatchMomentum() {
         caughtMomentum = true
     }
 
-    @used
     mutating func didStartGesture(atLocation location: CGPoint) {
         gestureStartLocation = location
     }
 
-    @used
     mutating func reset() {
         count = 0
         multiplier = 1

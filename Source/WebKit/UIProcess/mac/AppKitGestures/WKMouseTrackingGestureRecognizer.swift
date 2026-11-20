@@ -33,6 +33,16 @@ extension WKMouseTrackingGestureRecognizer {
     @nonobjc
     private var mouseLocationOffsetInWindow: CGSize = .zero
 
+    override init(target: Any?, action: Selector?) {
+        super.init(target: target, action: action)
+    }
+
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @objc
+    public required dynamic init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
     final override func reset() {
         mouseLocationOffsetInWindow = .zero
         super.reset()

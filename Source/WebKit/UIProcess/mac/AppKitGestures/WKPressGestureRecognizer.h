@@ -43,6 +43,8 @@ NS_SWIFT_UI_ACTOR
 NS_SWIFT_UI_ACTOR
 @interface WKPressGestureRecognizer : NSPressGestureRecognizer
 
+- (instancetype)initWithTarget:(nullable id)target action:(nullable SEL)action NS_DESIGNATED_INITIALIZER;
+
 @property (nonatomic) BOOL refusesToBeFailureRequirement;
 @property (nonatomic, weak, nullable) id<WKPressGestureRecognizerDelegate> pressDelegate;
 

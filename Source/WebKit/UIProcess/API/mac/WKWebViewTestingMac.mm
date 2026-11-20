@@ -242,7 +242,7 @@
 - (NSRect)_hoverActivatedByClickBoundsForTesting
 {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    if (auto& bounds = _page->hoverActivatedByClickBounds())
+    if (auto bounds = _page->hoverActivatedByClickBounds())
         return *bounds;
 #endif
     return NSZeroRect;
