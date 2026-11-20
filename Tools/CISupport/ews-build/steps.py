@@ -5976,6 +5976,8 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
     test_failures_log_name = 'test-failures'
     suffix = 'api_first_run'
     prefix = 'api_'
+    results_db_flaky_type = 'WithinStepDirtyTree'
+    results_db_stage = 'first-run'
     MAX_FAILURES_TO_CHECK_RESULTS_DB = 60
     command = ['python3', 'Tools/Scripts/run-api-tests', '--timestamps', '--no-build',
                WithProperties('--%(configuration)s'), '--verbose', '--json-output={0}'.format(jsonFileName)]
@@ -6015,7 +6017,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
             if self._should_apply_failure_limits():
                 if self.EXIT_AFTER_FAILURES is not None:
                     self.command += ['--exit-after-n-failures', f'{self.EXIT_AFTER_FAILURES}']
-                self.command += ['--skip-failing-tests']
+                self.command += ['--skip-failing-tests', '--retry-failures']
 
         additionalArguments = self.getProperty('additionalArguments')
         if additionalArguments:
@@ -6139,6 +6141,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
         if results.get('results'):
             self.setProperty(f'{self.suffix}_results', results['results'])
         self.setProperty(f'{self.suffix}_failures', sorted(failures))
+        yield self.report_to_results_db(results.get('flaky_results'), flaky_type=self.results_db_flaky_type, stage=self.results_db_stage)
         defer.returnValue(failures)
 
     @defer.inlineCallbacks
@@ -6213,6 +6216,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
 class ReRunAPITests(RunAPITests):
     name = 're-run-api-tests'
     suffix = 'api_second_run'
+    results_db_stage = 'second-run'
 
     @defer.inlineCallbacks
     def parse_and_set_failures(self):
@@ -6332,6 +6336,8 @@ class ReRunAPITests(RunAPITests):
 class RunAPITestsWithoutChange(RunAPITests):
     name = 'run-api-tests-without-change'
     suffix = 'api_clean_tree_run'
+    results_db_flaky_type = 'WithinStepCleanTree'
+    results_db_stage = 'clean-tree'
     EXIT_AFTER_FAILURES = None
 
     def doOnFailure(self):
