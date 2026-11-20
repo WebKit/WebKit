@@ -31,7 +31,6 @@
 #import "CAFrameRateRangeUtilities.h"
 #import "PageClient.h"
 #import "RemoteLayerTreeCommitBundle.h"
-#import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -555,7 +554,7 @@ UIView *RemoteLayerTreeDrawingAreaProxyIOS::viewWithLayerIDForTesting(WebCore::P
     return nil;
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData, const TransactionID&)
+void RemoteLayerTreeDrawingAreaProxyIOS::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData, const TransactionID&)
 {
 #if ENABLE(THREADED_ANIMATIONS)
     updateHighImpactMonotonicAnimations();
@@ -570,13 +569,6 @@ void RemoteLayerTreeDrawingAreaProxyIOS::didCommitLayerTree(IPC::Connection&, co
 
     Ref scrollingCoordinatorProxy = *page->scrollingCoordinatorProxy();
     page->setScrollPerformanceDataCollectionEnabled(scrollingCoordinatorProxy->scrollingPerformanceTestingEnabled());
-
-    if (transaction.createdLayers().size() > 0) {
-        if (auto* scrollPerfData = page->scrollingPerformanceData()) {
-            auto visibleRect = WebCore::FloatRect(transaction.scrollPosition(), mainFrameData->baseLayoutViewportSize);
-            scrollPerfData->didCommitLayerTree(visibleRect);
-        }
-    }
 }
 
 } // namespace WebKit
