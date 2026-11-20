@@ -2616,7 +2616,6 @@
 376553328 LINUX INTEL WGPU : BasicUniformUsageTest.* = SKIP
 // Can't use a uniform struct outside of uniform address space.
 376553328 WGPU : SimpleUniformTestES3.UseUniformStructOutsideOfUniformAddressSpace/* = SKIP
-520464738 WGPU : GLSLTest.ParameterWithNoName/* = SKIP
 42267012 WGPU : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB* = SKIP
 42267012 WGPU : ClearTestES3.ClearAndReadPixels3DTexture/* = SKIP
 42267012 WGPU : ClearTestES3.DrawAfterClearWithGaps/* = SKIP
@@ -2689,7 +2688,6 @@
 42267100 WGPU : GLSLTest.VaryingMatrixArray/* = SKIP
 42267100 AST WGPU : GLSLTest.InactiveVaryingInVertexActiveInFragment/* = SKIP
 42267100 WGPU : GLSLTest.StructsWithSamplersAsFunctionArgWithPrototype/* = SKIP
-42267100 WGPU : GLSLTest.StructsWithSamplersAsFunctionArgWithPrototypeAndUnnamedParam/* = SKIP
 42267100 WGPU : GLSLTest.ArrayOfStructsWithSamplersAsFunctionArg/* = SKIP
 42267100 WGPU : GLSLTest.StructWithSamplerArrayAsFunctionArg/* = SKIP
 42267100 WGPU : GLSLTest.SamplerInStructAsFunctionArg/* = SKIP

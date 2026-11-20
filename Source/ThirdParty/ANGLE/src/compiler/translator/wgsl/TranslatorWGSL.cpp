@@ -1578,7 +1578,10 @@ void OutputWGSLTraverser::emitFunctionParameter(const TFunction &func, const TVa
     // they are mutated.
     EmitVariableDeclarationConfig evdConfig;
     evdConfig.isParameter = true;
-    emitVariableDeclaration({param.symbolType(), param.name(), param.getType()}, evdConfig);
+    // WGSL requires a name, so use the one name() generates for a nameless parameter.
+    const SymbolType symbolType =
+        param.symbolType() == SymbolType::Empty ? SymbolType::AngleInternal : param.symbolType();
+    emitVariableDeclaration({symbolType, param.name(), param.getType()}, evdConfig);
 }
 
 void OutputWGSLTraverser::visitFunctionPrototype(TIntermFunctionPrototype *funcProtoNode)
