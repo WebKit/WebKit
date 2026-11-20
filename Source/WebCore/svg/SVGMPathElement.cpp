@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,8 +25,8 @@
 #include "SVGAnimateMotionElement.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGGeometryElement.h"
 #include "SVGNames.h"
-#include "SVGPathElement.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -116,10 +116,10 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGElement::svgAttributeChanged(attrName);
 }
 
-RefPtr<SVGPathElement> SVGMPathElement::pathElement()
+RefPtr<SVGGeometryElement> SVGMPathElement::pathElement()
 {
     auto target = targetElementFromIRIString(href(), protect(treeScopeForSVGReferences()));
-    return dynamicDowncast<SVGPathElement>(target.element);
+    return dynamicDowncast<SVGGeometryElement>(target.element);
 }
 
 void SVGMPathElement::targetPathChanged()
