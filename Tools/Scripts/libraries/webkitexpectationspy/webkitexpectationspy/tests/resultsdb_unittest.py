@@ -39,7 +39,24 @@ class SortKeyTest(unittest.TestCase):
         self.assertEqual(sort_key(ResultStatus.CRASH), ResultsDBStatus.CRASH.value)
         self.assertEqual(sort_key(ResultStatus.TIMEOUT), ResultsDBStatus.TIMEOUT.value)
         self.assertEqual(sort_key(ResultStatus.PASS), ResultsDBStatus.PASS.value)
-        self.assertEqual(sort_key(ResultStatus.SKIP), ResultsDBStatus.SKIP.value)
+
+    def test_codes_match_resultsdbpy(self):
+        self.assertEqual(
+            {status.name: status.value for status in ResultsDBStatus},
+            dict(CRASH=0x00, TIMEOUT=0x08, IMAGE=0x10, AUDIO=0x18, TEXT=0x20, FAIL=0x28, ERROR=0x30, WARNING=0x38, PASS=0x40),
+        )
+
+    def test_statuses_without_a_state_take_the_code_webkitpy_uploads(self):
+        self.assertEqual(to_resultsdb(LayoutTestStatus.IMAGE_PLUS_TEXT), ResultsDBStatus.IMAGE.value)
+        self.assertEqual(to_resultsdb(LayoutTestStatus.LEAK), ResultsDBStatus.FAIL.value)
+        self.assertEqual(to_resultsdb(LayoutTestStatus.MISSING), ResultsDBStatus.WARNING.value)
+
+    def test_skip_has_no_code_and_sorts_last(self):
+        self.assertEqual(to_resultsdb(ResultStatus.SKIP), -1)
+        self.assertEqual(sorted_by_severity([ResultStatus.SKIP, ResultStatus.PASS]), [ResultStatus.PASS, ResultStatus.SKIP])
+
+    def test_image_is_more_severe_than_text(self):
+        self.assertEqual(sorted_by_severity([LayoutTestStatus.TEXT, LayoutTestStatus.IMAGE]), [LayoutTestStatus.IMAGE, LayoutTestStatus.TEXT])
 
     def test_sorted_by_severity_puts_crash_first(self):
         statuses = [ResultStatus.PASS, ResultStatus.CRASH, ResultStatus.FAIL, ResultStatus.TIMEOUT]
@@ -69,7 +86,13 @@ class SortKeyTest(unittest.TestCase):
 class ConversionRoundTripTest(unittest.TestCase):
 
     def test_to_and_from_resultsdb_round_trip(self):
-        for status in (ResultStatus.PASS, ResultStatus.FAIL, ResultStatus.CRASH,
-                       ResultStatus.TIMEOUT, ResultStatus.SKIP):
+        for status in (ResultStatus.PASS, ResultStatus.FAIL, ResultStatus.CRASH, ResultStatus.TIMEOUT):
             code = to_resultsdb(status)
             self.assertEqual(from_resultsdb(code, ResultStatus), status)
+
+    def test_warning_reads_back_as_missing(self):
+        self.assertEqual(from_resultsdb(ResultsDBStatus.WARNING.value, LayoutTestStatus), LayoutTestStatus.MISSING)
+
+    def test_error_has_no_status(self):
+        with self.assertRaises(ValueError):
+            from_resultsdb(ResultsDBStatus.ERROR.value, LayoutTestStatus)
