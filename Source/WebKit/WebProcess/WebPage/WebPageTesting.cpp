@@ -123,6 +123,13 @@ void WebPageTesting::screenIsBeingCaptured(CompletionHandler<void(bool)>&& compl
 }
 #endif
 
+#if USE(UICONTEXTMENU)
+void WebPageTesting::hasActiveContextMenuInteraction(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_page && m_page->hasActiveContextMenuInteraction());
+}
+#endif
+
 #if ENABLE(NOTIFICATIONS)
 void WebPageTesting::clearNotificationPermissionState()
 {

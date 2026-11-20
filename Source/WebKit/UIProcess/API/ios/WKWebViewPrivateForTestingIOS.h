@@ -120,6 +120,8 @@
 
 - (void)_screenIsBeingCapturedForFrame:(_WKFrameHandle *)frameHandle completionHandler:(void (^)(BOOL))completionHandler;
 
+- (void)_hasActiveContextMenuInteractionInFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler;
+
 @property (nonatomic, readonly) NSArray<NSNumber *> *_processIdentifiersWithVisibilityPropagationForTesting;
 
 @end

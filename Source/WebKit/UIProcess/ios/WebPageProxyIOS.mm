@@ -2050,7 +2050,9 @@ void WebPageProxy::willBeginContextMenuInteraction()
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::WillBeginContextMenuInteraction(), webPageIDInMainFrameProcess());
+    forEachWebContentProcess([](auto& process, auto pageID) {
+        process.send(Messages::WebPage::WillBeginContextMenuInteraction(), pageID);
+    });
 }
 
 void WebPageProxy::didEndContextMenuInteraction()
@@ -2058,7 +2060,9 @@ void WebPageProxy::didEndContextMenuInteraction()
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::DidEndContextMenuInteraction(), webPageIDInMainFrameProcess());
+    forEachWebContentProcess([](auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidEndContextMenuInteraction(), pageID);
+    });
 }
 
 #endif // USE(UICONTEXTMENU)

@@ -35,6 +35,10 @@ messages -> WebPageTesting {
     ScreenIsBeingCaptured() -> (bool captured)
 #endif
 
+#if USE(UICONTEXTMENU)
+    HasActiveContextMenuInteraction() -> (bool active)
+#endif
+
 #if ENABLE(NOTIFICATIONS)
     ClearNotificationPermissionState()
 #endif

@@ -827,6 +827,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationBackForwardTests.swift
     Tests/WebKit/WKWebView/SiteIsolationBrowsingContextGroupTests.swift
     Tests/WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationContextMenuInteractionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationCookieTests.swift
     Tests/WebKit/WKWebView/SiteIsolationDataDetectionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationDragAndDropTests.swift

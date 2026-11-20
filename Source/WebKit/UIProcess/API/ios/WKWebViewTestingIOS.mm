@@ -35,6 +35,7 @@
 #import "UIKitSPI.h"
 #import "WKColorExtensionView.h"
 #import "WKContentViewInteraction.h"
+#import "WKFrameInfoInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
@@ -607,6 +608,21 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     pageForTesting->screenIsBeingCaptured(*frameID, [completionHandler = makeBlockPtr(completionHandler)](bool captured) {
         completionHandler(captured);
     });
+}
+
+- (void)_hasActiveContextMenuInteractionInFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler
+{
+#if USE(UICONTEXTMENU)
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting || !frame)
+        return completionHandler(NO);
+
+    pageForTesting->hasActiveContextMenuInteraction(frame->_frameInfo->frameInfoData().frameID, [completionHandler = makeBlockPtr(completionHandler)](bool active) {
+        completionHandler(active);
+    });
+#else
+    completionHandler(NO);
+#endif
 }
 
 - (NSArray<NSNumber *> *)_processIdentifiersWithVisibilityPropagationForTesting

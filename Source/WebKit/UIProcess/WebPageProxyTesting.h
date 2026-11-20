@@ -70,6 +70,10 @@ public:
     void screenIsBeingCaptured(WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
 #endif
 
+#if USE(UICONTEXTMENU)
+    void hasActiveContextMenuInteraction(WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
+#endif
+
     void dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&&);
     void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
     void setPrivateClickMeasurementOverrideTimer(bool value, CompletionHandler<void()>&&);

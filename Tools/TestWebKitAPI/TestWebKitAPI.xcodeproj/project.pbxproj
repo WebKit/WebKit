@@ -626,6 +626,7 @@
 				WebKit/WKWebView/SiteIsolationBackForwardTests.swift,
 				WebKit/WKWebView/SiteIsolationBrowsingContextGroupTests.swift,
 				WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift,
+				WebKit/WKWebView/SiteIsolationContextMenuInteractionTests.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
 				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,
 				WebKit/WKWebView/SiteIsolationDragAndDropTests.swift,

@@ -69,6 +69,10 @@ private:
     void screenIsBeingCaptured(CompletionHandler<void(bool)>&&);
 #endif
 
+#if USE(UICONTEXTMENU)
+    void hasActiveContextMenuInteraction(CompletionHandler<void(bool)>&&);
+#endif
+
 #if ENABLE(NOTIFICATIONS)
     void clearNotificationPermissionState();
 #endif
