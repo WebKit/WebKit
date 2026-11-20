@@ -97,6 +97,7 @@ private:
 #if ENABLE(SPATIAL_PORTAL)
     void didUpdatePortalTransform(const WebCore::TransformationMatrix&);
     void didUpdateDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&&);
+    void didUpdateAnchoredPortalChildTransforms(Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>>&&);
 #endif
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     void didUpdateVolumetricHitSphere(const WebCore::FloatPoint3D& center, float radius);
@@ -158,6 +159,8 @@ private:
     void portalPromotedChildEventRegionDidChange() final;
 #endif
     bool hostsPortalPromotedChild(WebCore::NodeIdentifier) const final;
+    void setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    std::optional<WebCore::TransformationMatrix> anchoredPromotedChildTransform(WebCore::NodeIdentifier rootNodeID) const final;
 
     // The model process draws each hosted layer of a promoted child from that layer's front buffer.
     struct PortalHostedLayerContentsState {
@@ -212,6 +215,7 @@ private:
     Vector<WebCore::PortalHostedLayer> m_portalHostedLayers;
     HashMap<WebCore::NodeIdentifier, PortalHostedLayerContentsState> m_portalHostedLayerContents;
     Vector<WebCore::NodeIdentifier> m_displayedPortalChildren;
+    HashMap<WebCore::NodeIdentifier, WebCore::TransformationMatrix> m_anchoredPortalChildTransforms;
     RunLoop::Timer m_portalFrameTimer;
     unsigned m_portalFrameRetries { 0 };
     bool m_portalHostedLayersNeedResolution { false };

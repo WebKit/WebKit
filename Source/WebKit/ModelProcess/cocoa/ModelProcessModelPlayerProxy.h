@@ -185,6 +185,7 @@ public:
     void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
     void setPortalHostedLayers(Vector<WebCore::PortalHostedLayer>&&);
     void setPortalHostedLayerContents(WebCore::NodeIdentifier, MachSendRight&&);
+    void setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement);
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -278,7 +279,9 @@ private:
     void updateAnchorParenting();
     void updatePortalSceneLayerGeometry();
     void updateDisplayedPortalChildren();
+    void updatePortalChildAnchoring();
     void updatePortalSceneLayerHierarchy();
+    void updateAnchoredPortalChildTransforms();
 #endif
     void applyDefaultIBL();
     void removeIBL();
@@ -373,6 +376,17 @@ private:
     Vector<PortalSceneLayer> m_portalSceneLayers;
     RetainPtr<CALayer> m_portalSceneLayerContainer;
 
+    struct AnchoredPortalChild {
+        std::optional<WebCore::NodeIdentifier> anchorNode;
+        String placement;
+        RetainPtr<CALayer> groupLayer;
+        RetainPtr<WKRKEntity> groupEntity;
+        RetainPtr<WKRKEntity> placementEntity;
+        simd_quatf correction { simd_quaternion(0.0f, simd_make_float3(1, 0, 0)) };
+        bool isAttached { false };
+    };
+    HashMap<WebCore::NodeIdentifier, AnchoredPortalChild> m_anchoredPortalChildren;
+    Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>> m_lastSentAnchoredPortalChildTransforms;
     Vector<WebCore::NodeIdentifier> m_displayedPortalChildren;
 #endif
 

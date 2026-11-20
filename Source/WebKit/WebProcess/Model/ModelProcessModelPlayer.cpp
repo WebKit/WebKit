@@ -189,6 +189,13 @@ void ModelProcessModelPlayer::didUpdatePortalTransform(const WebCore::Transforma
     protect(client())->didUpdatePortalTransform(*this, transform);
 }
 
+void ModelProcessModelPlayer::didUpdateAnchoredPortalChildTransforms(Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>>&& transforms)
+{
+    m_anchoredPortalChildTransforms.clear();
+    for (auto& [rootNodeID, transform] : transforms)
+        m_anchoredPortalChildTransforms.set(rootNodeID, transform);
+}
+
 void ModelProcessModelPlayer::didUpdateDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&& rootNodeIDs)
 {
     RELEASE_ASSERT(modelProcessEnabled());
@@ -661,6 +668,22 @@ void ModelProcessModelPlayer::portalPromotedChildEventRegionDidChange()
 bool ModelProcessModelPlayer::hostsPortalPromotedChild(WebCore::NodeIdentifier rootNodeID) const
 {
     return m_displayedPortalChildren.contains(rootNodeID);
+}
+
+void ModelProcessModelPlayer::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    send(Messages::ModelProcessModelPlayerProxy::SetPromotedChildAnchor(rootNodeID, anchorNode, placement));
+}
+
+std::optional<WebCore::TransformationMatrix> ModelProcessModelPlayer::anchoredPromotedChildTransform(WebCore::NodeIdentifier rootNodeID) const
+{
+    if (!m_displayedPortalChildren.contains(rootNodeID))
+        return std::nullopt;
+
+    auto it = m_anchoredPortalChildTransforms.find(rootNodeID);
+    if (it == m_anchoredPortalChildTransforms.end())
+        return std::nullopt;
+    return it->value;
 }
 
 void ModelProcessModelPlayer::resolvePortalHostedLayers()

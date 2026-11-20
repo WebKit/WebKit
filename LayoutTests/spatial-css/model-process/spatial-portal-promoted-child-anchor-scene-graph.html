@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../model-element/resources/model-utils.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        position: relative;
+        width: 400px;
+        height: 300px;
+    }
+    .label {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 60px;
+        height: 40px;
+        background-color: rgb(70, 70, 140);
+        transform-style: preserve-3d;
+    }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const hostedLayerContainer = "WebKit:PortalHostedLayerContainer";
+
+const anchoredLabel = async (test, style = "position-anchor: --host; position-context: anchor") => {
+    const portal = createPortal(test);
+    const host = appendModel(portal, "2x2x2-center.usdz");
+    host.id = "host";
+    host.style.anchorName = "--host";
+    portal.insertAdjacentHTML("beforeend", `<div id="label" class="label" style="${style}"></div>`);
+
+    await host.ready;
+    await waitForHostedPromotedChildren(portal, 1);
+    return { portal, host, label: portal.querySelector("#label") };
+};
+
+promise_test(async t => {
+    const { portal, host, label } = await anchoredLabel(t);
+    await waitFor(() => internals.spatialPortalAnchorForPromotedChild(label) === host, "the label resolves to the host");
+    await waitForSceneGraph(portal, entities => parentOfElement(entities, "#label")?.element === "#host", "the label's group is reparented under the host's entity");
+}, "A promoted child with position-anchor and position-context: anchor is anchored to the named model");
+
+promise_test(async t => {
+    const { portal, host, label } = await anchoredLabel(t, "position-anchor: --host#Cube; position-context: anchor");
+    await waitFor(() => internals.spatialPortalAnchorForPromotedChild(label) === host, "the label resolves to the host");
+    await waitForSceneGraph(portal, entities => parentOfElement(entities, "#label")?.name === "Cube", "the label's group is reparented under the placement");
+
+    label.style.positionAnchor = "--host#missing";
+    await waitForSceneGraph(portal, entities => parentOfElement(entities, "#label")?.element === "#host", "an unknown placement falls back to the host's root");
+}, "An anchor name with a placement anchors a promoted child to that entity of the model");
+
+promise_test(async t => {
+    const { portal, host, label } = await anchoredLabel(t);
+    await waitFor(() => internals.spatialPortalAnchorForPromotedChild(label) === host, "anchored");
+    await waitForSceneGraph(portal, entities => parentOfElement(entities, "#label")?.element === "#host", "the label's group is under the host's entity");
+
+    label.style.positionAnchor = "";
+    await waitFor(() => internals.spatialPortalAnchorForPromotedChild(label) === null, "un-anchored");
+    await waitForSceneGraph(portal, entities => parentOfElement(entities, "#label")?.name === hostedLayerContainer, "the label's layer is back beside the models");
+}, "Clearing position-anchor puts a promoted child back where layout places it");
+
+promise_test(async t => {
+    const { portal, label } = await anchoredLabel(t, "position-anchor: --host; position-context: container");
+    await waitForSceneGraph(portal, entities => parentOfElement(entities, "#label")?.name === hostedLayerContainer, "the label's layer stays beside the models");
+    assert_equals(internals.spatialPortalAnchorForPromotedChild(label), null, "the label isn't anchored");
+}, "position-anchor alone doesn't anchor a promoted child, as it is also CSS anchor positioning");
+
+promise_test(async t => {
+    const { portal, host, label } = await anchoredLabel(t);
+    await waitFor(() => internals.spatialPortalAnchorForPromotedChild(label) === host, "the label resolves to the host");
+
+    const rect = portal.getBoundingClientRect();
+    await waitFor(() => document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2) === label, "the label is hit on its anchor");
+    assert_not_equals(document.elementFromPoint(rect.left + 50, rect.top + 40), label, "the label isn't hit where layout puts it");
+}, "An anchored promoted child is hit where its anchor places it");
+</script>
+</body>
+</html>

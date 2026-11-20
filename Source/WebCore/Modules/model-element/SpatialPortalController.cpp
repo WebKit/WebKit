@@ -627,6 +627,7 @@ void SpatialPortalController::updatePromotedChildren(Vector<PortalPromotedChild>
 
     bool hadPromotedChildren = !m_promotedChildren.isEmpty();
     m_promotedChildren = WTF::move(children);
+    scheduleAnchorUpdate();
 
     if (!m_promotedChildren.isEmpty()) {
         if (!hadPromotedChildren)
@@ -751,6 +752,28 @@ TransformationMatrix SpatialPortalController::hostedContentProjection() const
     projection.multiply(m_portalTransform.transformAfterAuto);
     projection.scaleNonUniform(1, -1);
     projection.translate(-center.x(), -center.y());
+    return projection;
+}
+
+std::optional<TransformationMatrix> SpatialPortalController::anchoredPromotedChildProjection(NodeIdentifier rootNodeID) const
+{
+    RefPtr player = m_modelPlayer;
+    auto anchoredTransform = player ? player->anchoredPromotedChildTransform(rootNodeID) : std::nullopt;
+    if (!anchoredTransform)
+        return std::nullopt;
+
+    RefPtr element = m_portalElement;
+    CheckedPtr portalBox = element ? dynamicDowncast<RenderBox>(element->renderer()) : nullptr;
+    if (!portalBox)
+        return std::nullopt;
+
+    auto center = FloatRect { portalBox->paddingBoxRect() }.center();
+    TransformationMatrix projection;
+    projection.translate(center.x(), center.y());
+    projection.applyPerspective(hostedContentViewerDistance());
+    projection.translate(-center.x(), -center.y());
+    projection.translate(portalBox->borderLeft().toFloat(), portalBox->borderTop().toFloat());
+    projection.multiply(*anchoredTransform);
     return projection;
 }
 
@@ -891,6 +914,7 @@ void SpatialPortalController::pushPromotedChildrenToPlayer()
 
     sizeMayHaveChanged();
     player->setPortalPromotedChildren(m_promotedChildren);
+    scheduleAnchorUpdate();
 }
 
 bool SpatialPortalController::refreshPromotedChildTransforms()
@@ -1199,6 +1223,7 @@ void SpatialPortalController::deleteModelPlayer()
         hostedModel.anchorPlacement = { };
         hostedModel.anchorWarningIssued = false;
     }
+    m_promotedChildAnchors.clear();
 
     m_lastPushedContentSize = std::nullopt;
     m_resolvedPortalTransform = std::nullopt;
@@ -1402,6 +1427,15 @@ HTMLModelElement* SpatialPortalController::anchorModelForChild(NodeIdentifier no
     return hostedModelElement(*it->value.anchorNode);
 }
 
+HTMLModelElement* SpatialPortalController::anchorModelForPromotedChild(NodeIdentifier rootNodeID) const
+{
+    auto it = m_promotedChildAnchors.find(rootNodeID);
+    if (it == m_promotedChildAnchors.end() || !it->value.anchorNode)
+        return nullptr;
+
+    return hostedModelElement(*it->value.anchorNode);
+}
+
 auto SpatialPortalController::collectAnchorNames(const Vector<Ref<HTMLModelElement>>& modelsInTreeOrder) -> AnchorsByName
 {
     AnchorsByName anchorsByName;
@@ -1418,14 +1452,14 @@ auto SpatialPortalController::collectAnchorNames(const Vector<Ref<HTMLModelEleme
     return anchorsByName;
 }
 
-std::optional<NodeIdentifier> SpatialPortalController::anchorNodeForName(const HTMLModelElement& model, const Style::ScopedName& anchorName, const AnchorsByName& anchorsByName)
+std::optional<NodeIdentifier> SpatialPortalController::anchorNodeForName(const Element& element, const Style::ScopedName& anchorName, const AnchorsByName& anchorsByName)
 {
-    auto it = anchorsByName.find(Style::ResolvedScopedName::createFromScopedName(model, anchorName));
+    auto it = anchorsByName.find(Style::ResolvedScopedName::createFromScopedName(element, anchorName));
     if (it == anchorsByName.end())
         return std::nullopt;
 
     for (auto candidateID : it->value | std::views::reverse) {
-        if (candidateID != model.nodeIdentifier())
+        if (candidateID != element.nodeIdentifier())
             return candidateID;
     }
 
@@ -1462,33 +1496,36 @@ bool SpatialPortalController::anchorChainReaches(NodeIdentifier startNode, NodeI
     return false;
 }
 
-SpatialPortalController::AnchorResolution SpatialPortalController::resolvedAnchorNode(const HTMLModelElement& model, const Style::ComputedStyle& style, const AnchorsByName& anchorsByName) const
+SpatialPortalController::AnchorResolution SpatialPortalController::resolvedAnchorNode(const Element& element, const Style::ComputedStyle& style, const AnchorsByName& anchorsByName) const
 {
     auto anchorName = style.positionAnchorOutOfLine().tryName();
     if (!anchorName)
         return { };
 
-    if (style.positionContextOutOfLine() != PositionContextType::Anchor)
+    if (style.positionContextOutOfLine() != PositionContextType::Anchor) {
+        if (!is<HTMLModelElement>(element))
+            return { };
         return { { }, "position-anchor on a <model> inside a spatial portal has no effect without position-context: anchor."_s };
+    }
 
-    auto anchorNode = anchorNodeForName(model, *anchorName, anchorsByName);
+    auto anchorNode = anchorNodeForName(element, *anchorName, anchorsByName);
     if (!anchorNode)
         return { { }, makeString("No other <model> in this spatial portal has anchor-name: "_s, anchorName->name, '.') };
 
-    if (anchorChainReaches(*anchorNode, model.nodeIdentifier(), anchorsByName))
+    if (anchorChainReaches(*anchorNode, element.nodeIdentifier(), anchorsByName))
         return { { }, makeString("Ignoring position-anchor: "_s, anchorName->name, " because it would create a cycle between anchored models."_s) };
 
     return { anchorNode, { } };
 }
 
-void SpatialPortalController::updateAnchorForChild(const HTMLModelElement& model, HostedModel& hostedModel, const Style::ComputedStyle& style, const AnchorsByName& anchorsByName)
+auto SpatialPortalController::resolvedAnchor(const Element& element, const Style::ComputedStyle& style, const AnchorsByName& anchorsByName, bool& warningIssued) const -> ResolvedAnchor
 {
-    auto resolution = resolvedAnchorNode(model, style, anchorsByName);
+    auto resolution = resolvedAnchorNode(element, style, anchorsByName);
 
     if (resolution.node)
-        hostedModel.anchorWarningIssued = false;
-    else if (!resolution.warning.isNull() && !hostedModel.anchorWarningIssued) {
-        hostedModel.anchorWarningIssued = true;
+        warningIssued = false;
+    else if (!resolution.warning.isNull() && !warningIssued) {
+        warningIssued = true;
         addConsoleWarning(resolution.warning);
     }
 
@@ -1498,22 +1535,61 @@ void SpatialPortalController::updateAnchorForChild(const HTMLModelElement& model
             placement = attachment->value;
     }
 
-    if (hostedModel.anchorNode == resolution.node && hostedModel.anchorPlacement == placement)
+    return { resolution.node, WTF::move(placement) };
+}
+
+void SpatialPortalController::updateAnchorForChild(const HTMLModelElement& model, HostedModel& hostedModel, const Style::ComputedStyle& style, const AnchorsByName& anchorsByName)
+{
+    auto anchor = resolvedAnchor(model, style, anchorsByName, hostedModel.anchorWarningIssued);
+
+    if (hostedModel.anchorNode == anchor.node && hostedModel.anchorPlacement == anchor.placement)
         return;
 
     RefPtr player = m_modelPlayer;
     if (!player)
         return;
 
-    hostedModel.anchorNode = resolution.node;
-    hostedModel.anchorPlacement = placement;
+    hostedModel.anchorNode = anchor.node;
+    hostedModel.anchorPlacement = anchor.placement;
 
-    player->setAnchor(model.nodeIdentifier(), resolution.node, placement);
+    player->setAnchor(model.nodeIdentifier(), anchor.node, anchor.placement);
+}
+
+void SpatialPortalController::updatePromotedChildAnchors(const AnchorsByName& anchorsByName)
+{
+    RefPtr player = m_modelPlayer;
+    if (!player)
+        return;
+
+    auto roots = promotedChildRoots();
+    for (auto rootNodeID : roots) {
+        RefPtr element = dynamicDowncast<Element>(Node::fromIdentifier(rootNodeID));
+        CheckedPtr renderer = element ? element->renderer() : nullptr;
+        if (!renderer)
+            continue;
+
+        auto& state = m_promotedChildAnchors.add(rootNodeID, PromotedChildAnchor { }).iterator->value;
+        auto anchor = resolvedAnchor(*element, renderer->style(), anchorsByName, state.anchorWarningIssued);
+        if (state.anchorNode == anchor.node && state.anchorPlacement == anchor.placement)
+            continue;
+
+        state.anchorNode = anchor.node;
+        state.anchorPlacement = WTF::move(anchor.placement);
+        player->setPromotedChildAnchor(rootNodeID, state.anchorNode, state.anchorPlacement);
+    }
+
+    m_promotedChildAnchors.removeIf([&](auto& entry) {
+        if (roots.contains(entry.key))
+            return false;
+        if (entry.value.anchorNode)
+            player->setPromotedChildAnchor(entry.key, std::nullopt, { });
+        return true;
+    });
 }
 
 void SpatialPortalController::updateAnchors()
 {
-    if (!m_modelPlayer || m_hostedModels.isEmpty())
+    if (!m_modelPlayer)
         return;
 
     auto models = hostedModelsInTreeOrder();
@@ -1530,6 +1606,8 @@ void SpatialPortalController::updateAnchors()
 
         updateAnchorForChild(model, it->value, *style, anchorsByName);
     }
+
+    updatePromotedChildAnchors(anchorsByName);
 }
 
 void SpatialPortalController::scheduleAnchorUpdate()

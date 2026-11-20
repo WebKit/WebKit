@@ -235,6 +235,15 @@ bool ModelPlayer::hostsPortalPromotedChild(NodeIdentifier) const
     return false;
 }
 
+void ModelPlayer::setPromotedChildAnchor(NodeIdentifier, std::optional<NodeIdentifier>, const String&)
+{
+}
+
+std::optional<TransformationMatrix> ModelPlayer::anchoredPromotedChildTransform(NodeIdentifier) const
+{
+    return std::nullopt;
+}
+
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)

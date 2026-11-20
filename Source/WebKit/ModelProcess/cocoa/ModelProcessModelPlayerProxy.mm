@@ -772,6 +772,7 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
 #if ENABLE(SPATIAL_PORTAL)
     send(Messages::ModelProcessModelPlayer::DidUpdatePortalTransform(transform));
     updatePortalSceneLayerGeometry();
+    updateAnchoredPortalChildTransforms();
 #endif
 
     if (!m_nodeID)
@@ -888,6 +889,8 @@ void ModelProcessModelPlayerProxy::updateAnchorParenting()
         [trackedEntity setReferenceEntity:placementEntity.get()];
     }
 #endif // HAVE(CORE_RE)
+
+    updatePortalChildAnchoring();
 }
 
 void ModelProcessModelPlayerProxy::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
@@ -927,6 +930,9 @@ void ModelProcessModelPlayerProxy::updateTransform()
 #endif
         [tracked->entity setTransform:WKEntityTransform({ childSRT.scale, childSRT.rotation, childSRT.translation })];
     }
+#if ENABLE(SPATIAL_PORTAL)
+    updateAnchoredPortalChildTransforms();
+#endif
 #else
     RetainPtr reportingEntity = m_modelRKEntity;
     if (!reportingEntity)
@@ -1369,6 +1375,7 @@ void ModelProcessModelPlayerProxy::sizeDidChange(WebCore::LayoutSize layoutSize)
 
 #if ENABLE(SPATIAL_PORTAL)
     updatePortalSceneLayerGeometry();
+    updateAnchoredPortalChildTransforms();
 #endif
 
     if (!isPresentedInline())
@@ -1920,8 +1927,7 @@ void ModelProcessModelPlayerProxy::setPortalHostedLayers(Vector<WebCore::PortalH
 
     m_portalSceneLayers = WTF::move(sceneLayers);
 
-    updatePortalSceneLayerHierarchy();
-    updatePortalSceneLayerGeometry();
+    updatePortalChildAnchoring();
     updateDisplayedPortalChildren();
 }
 
@@ -1988,8 +1994,14 @@ void ModelProcessModelPlayerProxy::updatePortalSceneLayerGeometry()
         auto& hostedLayer = sceneLayer.hostedLayer;
         auto quadRect = hostedLayer.quadRectInChildSpace;
 
-        auto transform = portalToLayer;
-        transform.translate(hostedLayer.childOriginInPortal.x(), hostedLayer.childOriginInPortal.y());
+        WebCore::TransformationMatrix transform;
+        auto anchoredChild = m_anchoredPortalChildren.find(hostedLayer.rootNodeID);
+        if (anchoredChild != m_anchoredPortalChildren.end() && anchoredChild->value.isAttached)
+            transform.translate(-hostedLayer.childSize.width() / 2, -hostedLayer.childSize.height() / 2);
+        else {
+            transform = portalToLayer;
+            transform.translate(hostedLayer.childOriginInPortal.x(), hostedLayer.childOriginInPortal.y());
+        }
         transform.multiply(hostedLayer.transform);
         transform.translate(quadRect.x(), quadRect.y());
 
@@ -2047,27 +2059,222 @@ static void setEntityNameForCALayer(CALayer *layer, ASCIILiteral name)
 }
 #endif
 
+static RetainPtr<CALayer> makeAnchoredPortalChildGroupLayer()
+{
+    RetainPtr layer = adoptNS([[CALayer alloc] init]);
+    [layer setName:@"WebKit:PortalAnchoredChild"];
+    [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+    [layer setAnchorPoint:CGPointZero];
+    [layer setBounds:CGRectZero];
+    [layer setPosition:CGPointZero];
+    [layer setValue:@NO forKeyPath:@"separatedOptions.updates.transform"];
+    [layer setSeparatedState:kCALayerSeparatedStateTracked];
+    allowCrossingPortal(layer.get());
+    return layer;
+}
+
+void ModelProcessModelPlayerProxy::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    MESSAGE_CHECK_BASE(m_anchoredPortalChildren.size() < maximumPortalHostedLayers || m_anchoredPortalChildren.contains(rootNodeID), m_webProcessConnection.get());
+
+    if (!anchorNode && !m_anchoredPortalChildren.contains(rootNodeID))
+        return;
+
+    auto& child = m_anchoredPortalChildren.add(rootNodeID, AnchoredPortalChild { }).iterator->value;
+    if (child.anchorNode == anchorNode && child.placement == placement)
+        return;
+
+    child.anchorNode = anchorNode;
+    child.placement = placement;
+    child.isAttached = false;
+
+    updatePortalChildAnchoring();
+}
+
+void ModelProcessModelPlayerProxy::updatePortalChildAnchoring()
+{
+#if HAVE(CORE_RE)
+    for (auto& [rootNodeID, child] : m_anchoredPortalChildren) {
+        auto* anchor = child.anchorNode ? trackedModel(*child.anchorNode) : nullptr;
+        RetainPtr anchorEntity = anchor ? anchor->entity : nil;
+        bool hasLayers = m_portalSceneLayers.containsIf([&](auto& sceneLayer) {
+            return sceneLayer.layer && sceneLayer.hostedLayer.rootNodeID == rootNodeID;
+        });
+
+        if (!anchorEntity || !hasLayers || !m_portalSceneLayerContainer) {
+            [child.groupLayer removeFromSuperlayer];
+            child.groupLayer = nil;
+            child.groupEntity = nil;
+            child.placementEntity = nil;
+            child.isAttached = false;
+            continue;
+        }
+
+        if (!child.groupLayer) {
+            child.groupLayer = makeAnchoredPortalChildGroupLayer();
+            [m_portalSceneLayerContainer addSublayer:child.groupLayer.get()];
+        }
+
+        if (!child.groupEntity) {
+            REEntityRef entity = entityForCALayer(child.groupLayer.get());
+            if (!entity) {
+                child.isAttached = false;
+                continue;
+            }
+            REEntitySetName(entity, "WebKit:PortalAnchoredChild");
+            child.groupEntity = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:entity]);
+        }
+
+        REEntityRef placementEntity = [anchorEntity coreEntity];
+        if (!child.placement.isEmpty()) {
+            auto placementName = child.placement.utf8();
+            if (REEntityRef namedEntity = REEntityFindInHierarchyByName(placementEntity, placementName.legacyCStringPointer()))
+                placementEntity = namedEntity;
+            else if (!child.isAttached)
+                RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::updatePortalChildAnchoring: the anchor's asset has no entity named '%s', anchoring to its root instead. nodeID=%" PRIu64, this, placementName.legacyCStringPointer(), rootNodeID.toUInt64()); // NOLINT
+        }
+
+        if (child.isAttached && REEntityGetParent([child.groupEntity coreEntity]) == placementEntity)
+            continue;
+
+        RetainPtr placementInAnchor = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:placementEntity]);
+        [placementInAnchor setReferenceEntity:anchorEntity.get()];
+        child.correction = simd_inverse([placementInAnchor transform].rotation);
+
+        child.placementEntity = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:placementEntity]);
+        [child.groupEntity setParentCoreEntity:placementEntity preservingWorldTransform:NO];
+        [child.groupEntity setReferenceEntity:child.placementEntity.get()];
+        child.isAttached = true;
+    }
+
+    m_anchoredPortalChildren.removeIf([](auto& entry) {
+        return !entry.value.anchorNode && !entry.value.groupLayer;
+    });
+#endif
+
+    updatePortalSceneLayerHierarchy();
+    updatePortalSceneLayerGeometry();
+    updateAnchoredPortalChildTransforms();
+}
+
 void ModelProcessModelPlayerProxy::updatePortalSceneLayerHierarchy()
 {
     if (!m_portalSceneLayerContainer)
         return;
 
+    auto attachedChild = [&](WebCore::NodeIdentifier rootNodeID) -> AnchoredPortalChild* {
+        auto it = m_anchoredPortalChildren.find(rootNodeID);
+        return it != m_anchoredPortalChildren.end() && it->value.isAttached ? &it->value : nullptr;
+    };
+
     // Sublayers are drawn in order, which keeps hosted layers in the same plane in paint order.
     RetainPtr containerSublayers = adoptNS([[NSMutableArray alloc] initWithCapacity:m_portalSceneLayers.size()]);
+    HashMap<WebCore::NodeIdentifier, RetainPtr<NSMutableArray>> groupSublayers;
     for (auto& sceneLayer : m_portalSceneLayers) {
-        if (sceneLayer.layer)
+        if (!sceneLayer.layer)
+            continue;
+
+        auto rootNodeID = sceneLayer.hostedLayer.rootNodeID;
+        auto* child = attachedChild(rootNodeID);
+        if (!child) {
             [containerSublayers addObject:sceneLayer.layer.get()];
+            continue;
+        }
+
+        auto& sublayers = groupSublayers.ensure(rootNodeID, [&] {
+            [containerSublayers addObject:child->groupLayer.get()];
+            return adoptNS([[NSMutableArray alloc] init]);
+        }).iterator->value;
+        [sublayers addObject:sceneLayer.layer.get()];
+    }
+
+    for (auto& [rootNodeID, child] : m_anchoredPortalChildren) {
+        if (!child.groupLayer)
+            continue;
+
+        auto it = groupSublayers.find(rootNodeID);
+        if (it == groupSublayers.end()) {
+            [child.groupLayer setSublayers:nil];
+            [containerSublayers addObject:child.groupLayer.get()];
+        } else
+            [child.groupLayer setSublayers:it->value.get()];
     }
 
     [m_portalSceneLayerContainer setSublayers:containerSublayers.get()];
 
 #if HAVE(CORE_RE)
+    for (auto& child : m_anchoredPortalChildren.values()) {
+        if (child.isAttached && child.groupEntity && child.placementEntity)
+            [child.groupEntity setParentCoreEntity:[child.placementEntity coreEntity] preservingWorldTransform:NO];
+    }
+
     // Named so that the scene graph dumps for testing find them.
     setEntityNameForCALayer(m_portalSceneLayerContainer.get(), "WebKit:PortalHostedLayerContainer"_s);
     for (auto& sceneLayer : m_portalSceneLayers) {
         if (sceneLayer.layer)
             setEntityNameForCALayer(sceneLayer.layer.get(), "WebKit:PortalHostedLayer"_s);
     }
+#endif
+}
+
+void ModelProcessModelPlayerProxy::updateAnchoredPortalChildTransforms()
+{
+#if HAVE(CORE_RE)
+    REEntityRef glassEntity = entityForCALayer(m_layer.get());
+    RetainPtr glass = glassEntity ? adoptNS([allocWKRKEntityInstance() initWithCoreEntity:glassEntity]) : nil;
+
+    float width = m_layoutSize.width().toFloat();
+    float height = m_layoutSize.height().toFloat();
+    float pointsPerMeter = effectivePointsPerMeter(m_layer.get());
+
+    Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>> transforms;
+    for (auto& [rootNodeID, child] : m_anchoredPortalChildren) {
+        if (!child.isAttached || !glass)
+            continue;
+
+        RetainPtr placementInGlass = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:[child.placementEntity coreEntity]]);
+        [placementInGlass setReferenceEntity:glass.get()];
+        simd_float3 placementScale = [placementInGlass transform].scale;
+        if (simd_reduce_min(simd_abs(placementScale)) <= std::numeric_limits<float>::epsilon())
+            placementScale = simd_make_float3(1, 1, 1);
+        [child.groupEntity setTransform:WKEntityTransform({
+            .scale = simd_make_float3(1, 1, 1) / placementScale,
+            .rotation = child.correction,
+            .translation = simd_make_float3(0, 0, 0)
+        })];
+
+        auto rootLayerIndex = m_portalSceneLayers.findIf([&](auto& sceneLayer) {
+            return sceneLayer.hostedLayer.rootNodeID == rootNodeID;
+        });
+        if (rootLayerIndex == notFound)
+            continue;
+        auto childSize = m_portalSceneLayers[rootLayerIndex].hostedLayer.childSize;
+
+        RetainPtr groupInGlass = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:[child.groupEntity coreEntity]]);
+        [groupInGlass setReferenceEntity:glass.get()];
+        auto groupTransform = [groupInGlass transform];
+
+        auto translation = [](float x, float y) {
+            simd_float4x4 matrix = matrix_identity_float4x4;
+            matrix.columns[3] = simd_make_float4(x, y, 0, 1);
+            return matrix;
+        };
+        auto scale = [](float x, float y, float z) {
+            return simd_diagonal_matrix(simd_make_float4(x, y, z, 1));
+        };
+
+        simd_float4x4 transform = simd_mul(translation(width / 2, height / 2), scale(pointsPerMeter, -pointsPerMeter, pointsPerMeter));
+        transform = simd_mul(transform, RESRTMatrix(REMakeSRT(groupTransform.scale, groupTransform.rotation, groupTransform.translation)));
+        transform = simd_mul(transform, scale(1 / pointsPerMeter, -1 / pointsPerMeter, 1 / pointsPerMeter));
+        transform = simd_mul(transform, translation(-childSize.width() / 2, -childSize.height() / 2));
+        transforms.append({ rootNodeID, WebCore::TransformationMatrix { transform } });
+    }
+
+    if (transforms == m_lastSentAnchoredPortalChildTransforms)
+        return;
+
+    m_lastSentAnchoredPortalChildTransforms = transforms;
+    send(Messages::ModelProcessModelPlayer::DidUpdateAnchoredPortalChildTransforms(WTF::move(transforms)));
 #endif
 }
 
@@ -2362,6 +2569,8 @@ void ModelProcessModelPlayerProxy::sceneGraphAsTextForTesting(std::optional<WebC
             continue;
         }
 #if ENABLE(SPATIAL_PORTAL)
+        if (auto it = m_anchoredPortalChildren.find(nodeID); it != m_anchoredPortalChildren.end() && it->value.isAttached)
+            labels.append({ [it->value.groupEntity coreEntity], label });
         // The layers of promoted children are labeled by their elements.
         for (auto& sceneLayer : m_portalSceneLayers) {
             if (sceneLayer.layer && sceneLayer.hostedLayer.nodeID == nodeID) {

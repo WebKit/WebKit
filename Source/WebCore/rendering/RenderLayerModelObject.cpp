@@ -69,6 +69,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "SpatialPortalController.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayerModelObject);
@@ -271,6 +275,14 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
         if (auto* scrollSnapBox = enclosingScrollableContainer())
             scrollSnapBox->setNeedsLayout();
     }
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (oldStyle && (oldStyle->positionAnchor() != style().positionAnchor() || oldStyle->positionContext() != style().positionContext())) {
+        RefPtr parentElement = element() ? element()->parentElement() : nullptr;
+        if (CheckedPtr controller = parentElement ? parentElement->spatialPortalController() : nullptr)
+            controller->scheduleAnchorUpdate();
+    }
+#endif
 }
 
 bool RenderLayerModelObject::applyCachedClipAndScrollPosition(RepaintRects&, const RenderLayerModelObject*, const VisibleRectContext&) const

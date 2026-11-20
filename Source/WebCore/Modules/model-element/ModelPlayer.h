@@ -183,6 +183,8 @@ public:
     virtual void portalPromotedChildEventRegionDidChange();
 #endif
     virtual bool hostsPortalPromotedChild(NodeIdentifier) const;
+    virtual void setPromotedChildAnchor(NodeIdentifier rootNodeID, std::optional<NodeIdentifier> anchorNode, const String& placement);
+    virtual std::optional<TransformationMatrix> anchoredPromotedChildTransform(NodeIdentifier rootNodeID) const;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
