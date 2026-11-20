@@ -1,0 +1,72 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsHighBitDepthEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// Offsets of the hvcC payload and the first key frame in each file.
+const streams = [
+    {
+        src: '/webkit-test-resources/video-formats/hevc-422-10bit-bt709-videorange.mp4',
+        codec: 'hvc1.4.10.L60.9D.08',
+        description: { offset: 1497, size: 2438 },
+        keyFrame: { offset: 44, size: 189 },
+        format: 'I422P10',
+        chromaSize: [160, 192],
+        sampleBytes: 2,
+    },
+    {
+        src: '/webkit-test-resources/video-formats/hevc-444-8bit-bt709-videorange.mp4',
+        codec: 'hvc1.4.10.L60.9E.08',
+        description: { offset: 1584, size: 2448 },
+        keyFrame: { offset: 44, size: 225 },
+        format: 'I444',
+        chromaSize: [320, 192],
+        sampleBytes: 1,
+    },
+];
+const width = 320;
+const height = 192;
+
+for (const stream of streams) {
+    promise_test(async t => {
+        const data = await (await fetch(stream.src)).arrayBuffer();
+        const config = {
+            codec: stream.codec,
+            codedWidth: width,
+            codedHeight: height,
+            description: data.slice(stream.description.offset, stream.description.offset + stream.description.size),
+        };
+        const support = await VideoDecoder.isConfigSupported(config);
+        assert_implements_optional(support.supported, `${stream.codec} decoding is not supported`);
+
+        const frames = [];
+        const decoder = new VideoDecoder({
+            output: frame => frames.push(frame),
+            error: t.unreached_func('decoder error'),
+        });
+        decoder.configure(config);
+        decoder.decode(new EncodedVideoChunk({
+            type: 'key',
+            timestamp: 0,
+            data: data.slice(stream.keyFrame.offset, stream.keyFrame.offset + stream.keyFrame.size),
+        }));
+        await decoder.flush();
+        decoder.close();
+        assert_equals(frames.length, 1, 'decoded frame count');
+        const frame = frames[0];
+        t.add_cleanup(() => frame.close());
+
+        assert_equals(frame.format, stream.format, 'format');
+        assert_false(frame.colorSpace.fullRange, 'colorSpace.fullRange');
+        assert_equals(frame.codedWidth, width, 'codedWidth');
+        assert_equals(frame.codedHeight, height, 'codedHeight');
+
+        const [chromaWidth, chromaHeight] = stream.chromaSize;
+        const lumaSize = width * height * stream.sampleBytes;
+        const chromaSize = chromaWidth * chromaHeight * stream.sampleBytes;
+        assert_equals(frame.allocationSize(), lumaSize + 2 * chromaSize, 'allocationSize');
+        const layout = await frame.copyTo(new ArrayBuffer(frame.allocationSize()));
+        assert_equals(layout.length, 3, 'plane count');
+        assert_equals(layout[1].stride, chromaWidth * stream.sampleBytes, 'chroma stride');
+    }, `${stream.codec} decodes to ${stream.format}`);
+}
+</script>

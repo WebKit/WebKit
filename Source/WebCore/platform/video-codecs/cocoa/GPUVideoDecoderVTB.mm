@@ -30,9 +30,11 @@
 
 #import "MediaReorderQueue.h"
 #import <WebCore/CMUtilities.h>
+#import <WebCore/PlanarImageConverterCV.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cf/VectorCF.h>
 
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
@@ -56,8 +58,38 @@ static int bitDepthFromFormat(CMVideoFormatDescriptionRef format)
     return bitDepth;
 }
 
+static PlanarImageConverter::ChromaSubsampling chromaSubsamplingFromFormat(CMVideoFormatDescriptionRef format)
+{
+    using enum PlanarImageConverter::ChromaSubsampling;
+    RetainPtr atoms = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(format, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    if (!atoms)
+        return HorizontalAndVertical;
+    RetainPtr hvcC = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(atoms, CFSTR("hvcC")));
+    if (!hvcC)
+        return HorizontalAndVertical;
+    // ISO/IEC 14496-15 8.3.3.1: chroma_format_idc is in byte 16 of the 23-byte fixed part of the HEVCDecoderConfigurationRecord.
+    auto record = span(hvcC);
+    if (record.size() < 23)
+        return HorizontalAndVertical;
+    switch (record[16] & 0x3) {
+    case 2:
+        return Horizontal;
+    case 3:
+        return None;
+    default:
+        return HorizontalAndVertical;
+    }
+}
+
 static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescriptionRef format)
 {
+    auto sampleFormat = PlanarImageConverter::pixelBufferSampleFormat({ static_cast<uint8_t>(bitDepthFromFormat(format)), false });
+    if (!sampleFormat)
+        return nullptr;
+    auto pixelFormatType = PlanarImageConverter::pixelFormat(chromaSubsamplingFromFormat(format), *sampleFormat, shouldUseFullRange(format));
+    if (!pixelFormatType)
+        return nullptr;
+
     static size_t const attributesSize = 3;
     CFTypeRef keys[attributesSize] = {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -70,16 +102,8 @@ static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescr
     };
 
     RetainPtr ioSurfaceValue = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, nullptr, nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    bool isFullRange = shouldUseFullRange(format);
-    int bitDepth = bitDepthFromFormat(format);
-    ASSERT(bitDepth == 8 || bitDepth == 10);
-
-    int64_t pixelFormatType;
-    if (bitDepth > 8)
-        pixelFormatType = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
-    else
-        pixelFormatType = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
-    RetainPtr pixelFormat = adoptCF(CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType));
+    int64_t pixelFormatValue = *pixelFormatType;
+    RetainPtr pixelFormat = adoptCF(CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatValue));
     CFTypeRef values[attributesSize] = { kCFBooleanTrue, ioSurfaceValue.get(), pixelFormat.get() };
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, attributesSize, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
@@ -160,7 +184,10 @@ bool GPUVideoDecoderVTB::ensureDecoder()
 
     if (RefPtr decoder = std::exchange(m_decoder, { }))
         decoder->flush();
-    m_decoder = VideoDecoderVTBSession::create(m_format.get(), createPixelBufferAttributes(m_format.get()).get());
+    RetainPtr attributes = createPixelBufferAttributes(m_format);
+    if (!attributes)
+        return false;
+    m_decoder = VideoDecoderVTBSession::create(m_format, attributes);
     return !!m_decoder;
 }
 
