@@ -70,7 +70,7 @@ public:
     void setMarkerRenderer(RenderBoxModelObject& marker)
     {
         m_marker = marker;
-        m_excludedMarkerPosition = { };
+        m_outsideMarkerPosition = { };
     }
     // The outside marker. We place it against our first formatted line after layout.
     NODELETE RenderBlockFlow* markerBox() const;
@@ -88,17 +88,17 @@ public:
         CheckedPtr<RenderBlock> fallbackParent;
     };
     static FirstFormattedLineCandidate firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderBoxModelObject& marker);
-    static Vector<CheckedPtr<RenderListItem>> listItemsWithExcludedMarkerFor(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListItem>>&);
+    static Vector<CheckedPtr<RenderListItem>> listItemsWithOutsideMarkerFor(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListItem>>&);
 
-    // Where the line our excluded marker is aligned with put it.
-    struct ExcludedMarkerPosition {
+    // Where the line our outside marker is aligned with put it.
+    struct OutsideMarkerPosition {
         SingleThreadWeakPtr<RenderBlockFlow> firstFormattedLineRoot;
         FloatPoint topLeft;
         bool isLineStartConstrainedByFloat { false };
     };
-    void setExcludedMarkerPosition(ExcludedMarkerPosition&&);
-    const std::optional<ExcludedMarkerPosition>& excludedMarkerPosition() const LIFETIME_BOUND { return m_excludedMarkerPosition; }
-    // The layout bounds of our excluded marker on its line, computed when the marker is laid out.
+    void setOutsideMarkerPosition(OutsideMarkerPosition&&);
+    const std::optional<OutsideMarkerPosition>& outsideMarkerPosition() const LIFETIME_BOUND { return m_outsideMarkerPosition; }
+    // The layout bounds of our outside marker on its line, computed when the marker is laid out.
     std::pair<float, float> markerLayoutBounds() const { return m_markerLayoutBounds; }
 
 private:
@@ -112,8 +112,8 @@ private:
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void layoutExcludedChildren(RelayoutChildren) final;
 
-    void placeExcludedMarker(RenderBlockFlow&);
-    void invalidateExcludedMarkerContainer();
+    void placeOutsideMarker(RenderBlockFlow&);
+    void invalidateOutsideMarkerContainer();
     LayoutSize markerImageSize(const Style::Image&) const;
 
     void willBeDestroyed() final;
@@ -128,7 +128,7 @@ private:
     void usedCounterDirectivesChanged();
 
     SingleThreadWeakPtr<RenderBoxModelObject> m_marker;
-    std::optional<ExcludedMarkerPosition> m_excludedMarkerPosition;
+    std::optional<OutsideMarkerPosition> m_outsideMarkerPosition;
     std::pair<float, float> m_markerLayoutBounds;
     mutable std::optional<int> m_value;
 };
@@ -145,12 +145,12 @@ bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);
 bool listMarkerIsDisclosure(const RenderElement*);
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd);
 
-// The start margin of an excluded marker, in its list item's inline direction, against the start edge of the line it
+// The start margin of an outside marker, in its list item's inline direction, against the start edge of the line it
 // goes on. It is negative: the marker hangs off the start of the line.
-LayoutUnit excludedMarkerMarginStart(const RenderBlockFlow&);
-// The logical top of an excluded marker in the box of its primary font or image, which puts its first baseline on
+LayoutUnit outsideMarkerMarginStart(const RenderBlockFlow&);
+// The logical top of an outside marker in the box of its primary font or image, which puts its first baseline on
 // theirs. A marker with `content` is that box itself.
-LayoutUnit excludedMarkerContentLogicalTop(const RenderBlockFlow&);
+LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow&);
 
 inline int RenderListItem::value() const
 {

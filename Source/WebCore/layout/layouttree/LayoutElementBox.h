@@ -39,7 +39,7 @@ namespace Layout {
 
 class ElementBox : public Box {
 public:
-    // The render tree children, without excluded list markers. RenderView's box is the only child of the initial containing block.
+    // The render tree children, without outside list markers. RenderView's box is the only child of the initial containing block.
     // Defined in RenderElement.h.
     inline const Box* firstChild() const;
     NODELETE const Box* firstInFlowChild() const;

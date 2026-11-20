@@ -203,7 +203,7 @@ static LayoutRect listMarkerRectForRenderTreeAsText(const RenderListItem& listIt
     }();
     // Like the marker's location, the rect is block-start relative, so in every writing mode, flipped ones included, the
     // primary font or image box starts this far after the marker on the block axis.
-    auto boxOffset = -excludedMarkerContentLogicalTop(marker);
+    auto boxOffset = -outsideMarkerContentLogicalTop(marker);
     auto rect = marker.borderBoxRectInContainer();
     if (listItem.isHorizontalWritingMode())
         return { rect.x(), rect.y() + boxOffset, rect.width(), boxLogicalHeight };

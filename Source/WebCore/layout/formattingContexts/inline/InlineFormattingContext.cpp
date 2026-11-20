@@ -118,8 +118,8 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
         return { };
     }
 
-    auto hasExcludedMarker = !layoutState().excludedMarkerLayoutBounds().isEmpty();
-    if (!root().hasInFlowChild() && !root().hasOutOfFlowChild() && !hasExcludedMarker) {
+    auto hasOutsideMarker = !layoutState().outsideMarkerLayoutBounds().isEmpty();
+    if (!root().hasInFlowChild() && !root().hasOutOfFlowChild() && !hasOutsideMarker) {
         // Float only content does not support partial layout.
         ASSERT(!InlineInvalidation::mayOnlyNeedPartialLayout(lineDamage));
         layoutFloatContentOnly(constraints);
@@ -128,7 +128,7 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
 
     auto& inlineItems = inlineContentCache().inlineItems();
     auto& inlineItemList = inlineItems.content();
-    if (inlineItemList.isEmpty() && hasExcludedMarker) {
+    if (inlineItemList.isEmpty() && hasOutsideMarker) {
         auto layoutResult = makeUniqueRef<InlineLayoutResult>();
         createDisplayContentForEmptyInlineContent(constraints, inlineItemList, layoutResult.get());
         layoutResult->range = InlineLayoutResult::Range::Full;
