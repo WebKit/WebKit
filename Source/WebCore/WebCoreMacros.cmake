@@ -106,19 +106,22 @@ function(GENERATE_BINDINGS target)
     foreach (f ${_abs_input_files} ${_abs_supplemental_files})
         set(content "${content}${f}\n")
     endforeach ()
-    file(WRITE ${idl_files_list} ${content})
+    file(WRITE ${idl_files_list}.in "${content}")
+    configure_file(${idl_files_list}.in ${idl_files_list} COPYONLY)
 
     set(pp_content)
     foreach (f ${_abs_pp_input_files})
         set(pp_content "${pp_content}${f}\n")
     endforeach ()
-    file(WRITE ${pp_idl_files_list} ${pp_content})
+    file(WRITE ${pp_idl_files_list}.in "${pp_content}")
+    configure_file(${pp_idl_files_list}.in ${pp_idl_files_list} COPYONLY)
 
     set(include_content)
     foreach (f ${_abs_input_files} ${_abs_supplemental_files} ${_abs_included_files})
         set(include_content "${include_content}${f}\n")
     endforeach ()
-    file(WRITE ${included_idl_files_list} ${include_content})
+    file(WRITE ${included_idl_files_list}.in "${include_content}")
+    configure_file(${included_idl_files_list}.in ${included_idl_files_list} COPYONLY)
 
     set(args
         --defines ${arg_FEATURES}
@@ -212,6 +215,9 @@ function(GENERATE_BINDINGS target)
             ${_abs_input_files}
             ${_abs_supplemental_files}
             ${_abs_pp_input_files}
+            ${idl_files_list}
+            ${pp_idl_files_list}
+            ${included_idl_files_list}
             ${common_generator_dependencies}
             ${binding_generator}
             ${idl_attributes_file}
