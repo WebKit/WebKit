@@ -408,11 +408,13 @@ private:
         return sizeof(void*) << 3;
     }
 
+public:
     static constexpr unsigned maxInlineBits()
     {
         return bitsInPointer() - 1;
     }
 
+private:
     static constexpr size_t byteCount(size_t bitCount)
     {
         return (bitCount + 7) >> 3;

@@ -953,7 +953,7 @@ private:
                 }
 
                 auto* slowUpsilon = emitWasmGCSlowPath(slowPath, mergeBlock, instance, typeIndex,
-                    tagCFunction<OperationPtrTag>(Wasm::operationWasmArrayNewEmpty), Wasm::ExceptionType::BadArrayNew, size);
+                    tagCFunction<OperationPtrTag>(Wasm::operationWasmArrayNewEmpty), arrayNew->allocationFailure(), size);
 
                 auto* phi = mergeBlock->appendNew<Value>(m_proc, Phi, pointerType(), m_origin);
                 if (fastUpsilon)
