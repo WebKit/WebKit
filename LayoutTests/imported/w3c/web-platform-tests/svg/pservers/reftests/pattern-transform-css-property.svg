@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml" width="300" height="100">
+  <title>SVG Paint Servers: the CSS transform property applies to patterns and wins over patternTransform.</title>
+  <metadata>
+    <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/pservers.html#PatternElementPatternTransformAttribute"/>
+    <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/styling.html#PresentationAttributes"/>
+    <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/pservers.html#PaintServerTemplates"/>
+    <html:link rel="help" href="https://drafts.csswg.org/css-transforms-1/#transform-attribute-specificity"/>
+    <html:link rel="match" href="reference/green-300x100.svg"/>
+  </metadata>
+  <!-- The 100x100 tile is green from 0 to 75 and red from 75 to 100.
+       translate(-25px, -25px) scale(2) stretches the green part over the
+       whole square. translate(50 50) brings the red part into view.
+
+       Each square is drawn inside its own svg element, so that the pattern
+       tiles start at the top left corner of each square.
+
+       First square: the style sheet sets transform on a pattern that has no
+       patternTransform attribute.
+       Second square: patternTransform is a presentation attribute for
+       transform, so the style sheet declaration wins over it.
+       Third square: the referencing pattern specifies transform through the
+       style sheet, so the patternTransform of its template is not used. -->
+  <style>
+    #pat-css, #pat-css-over-attr, #pat-css-over-template {
+      transform: translate(-25px, -25px) scale(2);
+    }
+  </style>
+  <defs>
+    <pattern id="pat-css" width="100" height="100" patternUnits="userSpaceOnUse">
+      <rect x="25" y="25" width="75" height="75" fill="red"/>
+      <rect width="75" height="75" fill="green"/>
+    </pattern>
+    <pattern id="pat-css-over-attr" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="translate(50 50)">
+      <rect x="25" y="25" width="75" height="75" fill="red"/>
+      <rect width="75" height="75" fill="green"/>
+    </pattern>
+    <pattern id="pat-template" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="translate(50 50)">
+      <rect x="25" y="25" width="75" height="75" fill="red"/>
+      <rect width="75" height="75" fill="green"/>
+    </pattern>
+    <pattern id="pat-css-over-template" href="#pat-template"/>
+  </defs>
+  <svg x="0" width="100" height="100">
+    <rect width="100" height="100" fill="url(#pat-css)"/>
+  </svg>
+  <svg x="100" width="100" height="100">
+    <rect width="100" height="100" fill="url(#pat-css-over-attr)"/>
+  </svg>
+  <svg x="200" width="100" height="100">
+    <rect width="100" height="100" fill="url(#pat-css-over-template)"/>
+  </svg>
+</svg>

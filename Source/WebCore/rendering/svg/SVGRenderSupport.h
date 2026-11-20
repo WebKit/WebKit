@@ -113,6 +113,10 @@ public:
     // Determines if any ancestor's transform has changed.
     static bool transformToRootChanged(RenderElement*);
 
+    // std::nullopt when CSS sets no transform: gradientTransform and patternTransform are not in the cascade.
+    static std::optional<AffineTransform> paintServerTransformFromStyle(const RenderElement&);
+    static bool paintServerTransformStyleChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
+
     static void clipContextToCSSClippingArea(GraphicsContext&, const RenderElement& renderer);
 
     // Offset from a renderer's origin-relative bounding box to where it actually paints its content.
