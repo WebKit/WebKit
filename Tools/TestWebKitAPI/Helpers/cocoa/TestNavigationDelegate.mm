@@ -112,6 +112,12 @@
         didFailNavigation(webView, navigation, error);
 }
 
+- (void)_webView:(WKWebView *)webView didFailLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame withError:(NSError *)error
+{
+    if (auto didFailLoadWithRequestInFrameWithError = makeBlockPtr(_didFailLoadWithRequestInFrameWithError))
+        didFailLoadWithRequestInFrameWithError(webView, request, frame, error);
+}
+
 - (void)_webView:(WKWebView *)webView didFinishLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
 {
     if (_didFinishLoadWithRequestInFrame)

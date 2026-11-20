@@ -28,7 +28,8 @@ onmessage = event => {
         return;
     }
     testPassed("The page finished loading after going back.");
-    shouldBeEqualToString("popup.frames[0].location.href", "about:blank");
+    // The child frame failed to load, so it shows an error document, whose origin is opaque.
+    shouldThrowErrorName("popup.frames[0].location.href", "SecurityError");
     popup.close();
     finishJSTest();
 };
