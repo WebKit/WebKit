@@ -421,7 +421,7 @@ static void verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(c
 {
     // The fast path is more correct than the slow path for these cases.
     auto& logicalHeight = containingBlock.style().logicalHeight();
-    if (containingBlock.shouldComputeLogicalHeightFromAspectRatio() || containingBlock.stretchesToViewport() || logicalHeight.isStretch() || logicalHeight.isPercentOrCalculated() || logicalHeight.isIntrinsic())
+    if (is<RenderView>(containingBlock) || containingBlock.shouldComputeLogicalHeightFromAspectRatio() || containingBlock.stretchesToViewport() || logicalHeight.isStretch() || logicalHeight.isPercentOrCalculated() || logicalHeight.isIntrinsic())
         return;
 
     for (auto* ancestor = containingBlock.parent(); ancestor; ancestor = ancestor->parent()) {
