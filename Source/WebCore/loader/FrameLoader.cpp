@@ -2199,6 +2199,10 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (RefPtr parent = dynamicDowncast<LocalFrame>(frame->tree().parent()))
         loader->setOverrideEncoding(parent->loader().documentLoader()->overrideEncoding());
+    else if (!frame->isMainFrame()) {
+        if (RefPtr page = frame->page(); page && !page->customTextEncodingName().isEmpty())
+            loader->setOverrideEncoding(page->customTextEncodingName());
+    }
 
     policyChecker().stopCheck();
     setPolicyDocumentLoader(loader);

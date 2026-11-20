@@ -7772,7 +7772,9 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
 
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::SetCustomTextEncodingName(encodingName));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetCustomTextEncodingName(encodingName), pageID);
+    });
 }
 
 SessionState WebPageProxy::sessionState(WTF::Function<bool (WebBackForwardListItem&)>&& filter) const
@@ -17315,6 +17317,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.useDarkAppearance = useDarkAppearance();
     parameters.useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel();
     parameters.contentInversion = internals().contentInversion;
+    parameters.customTextEncodingName = m_customTextEncodingName;
 #if PLATFORM(MAC)
     parameters.colorSpace = pageClient ? std::optional { pageClient->colorSpace() } : std::nullopt;
     parameters.useFormSemanticContext = useFormSemanticContext();

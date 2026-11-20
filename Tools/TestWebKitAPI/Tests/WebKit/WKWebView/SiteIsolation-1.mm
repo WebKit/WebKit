@@ -52,6 +52,8 @@
 #import <WebKit/WKJSHandle.h>
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKPage.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKString.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURL.h>
@@ -4884,6 +4886,37 @@ TEST(SiteIsolation, PopupNavigationWithWebsiteDataStoreOfOpenerKeepsOpener)
     [opened.webView evaluateJavaScript:@"alert(!!window.opener)" completionHandler:nil];
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
 }
+
+#if PLATFORM(MAC)
+
+TEST(SiteIsolation, CustomTextEncodingAppliesToCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto characterSetInChildFrame = [&] {
+        return [webView stringByEvaluatingJavaScript:@"document.characterSet" inFrame:childFrame.get()];
+    };
+    EXPECT_WK_STREQ(@"UTF-8", characterSetInChildFrame());
+
+    WKPageSetCustomTextEncodingName([webView _pageRefForTransitionToWKWebView], adoptWK(WKStringCreateWithUTF8CString("windows-1251")).get());
+
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"windows-1251", [webView stringByEvaluatingJavaScript:@"document.characterSet"]);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [characterSetInChildFrame() isEqualToString:@"windows-1251"];
+    }));
+}
+
+#endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
 

@@ -1154,6 +1154,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebCore::AXObjectCache::enableAccessibility(WebCore::AXObjectCache::AXThreadModePreconditions::None);
 #endif // PLATFORM(MAC)
 
+    setCustomTextEncodingName(parameters.customTextEncodingName);
+
 #if PLATFORM(MAC)
     setUseFormSemanticContext(parameters.useFormSemanticContext);
     setHeaderBannerHeight(parameters.headerBannerHeight);
@@ -7431,6 +7433,8 @@ void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
 
 void WebPage::setCustomTextEncodingName(const String& encoding)
 {
+    protect(corePage())->setCustomTextEncodingName(encoding);
+
     if (RefPtr localMainFrame = this->localMainFrame())
         localMainFrame->loader().reloadWithOverrideEncoding(encoding);
 }
