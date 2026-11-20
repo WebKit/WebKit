@@ -6784,9 +6784,7 @@ UseAVCaptureDeviceRotationCoordinatorAPI:
   humanReadableDescription: "Use AVCaptureDeviceRotationCoordinator API"
   condition: HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue:
-    "PLATFORM(APPLETV)": true
-    default: false
+  defaultValue: true
   sharedPreferenceForWebProcess: true
 
 UseAlternatePDFHUD:
@@ -7445,12 +7443,14 @@ WebCodecsVideoEnabled:
 
 WebCodecsVideoFrameRotationEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "WebCodecs VideoFrame rotation"
   humanReadableDescription: "Enable the rotation attribute and init members of WebCodecs VideoFrame"
   condition: ENABLE(WEB_CODECS)
-  defaultValue: false
+  defaultValue:
+    "PLATFORM(COCOA)": true
+    default: false
 
 WebContentRestrictionsAskToEnabled:
   type: bool
