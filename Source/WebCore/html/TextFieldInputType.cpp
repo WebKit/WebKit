@@ -646,8 +646,8 @@ void TextFieldInputType::updatePlaceholderText()
     if (!m_placeholder) {
         Ref placeholder = TextControlPlaceholderElement::create(protect(element->document()));
         m_placeholder = placeholder.copyRef();
-        if (RefPtr container = m_container)
-            protect(element->userAgentShadowRoot())->insertBefore(placeholder, container);
+        if (RefPtr innerBlock = m_innerBlock)
+            innerBlock->insertBefore(placeholder, innerTextElement());
         else
             protect(element->userAgentShadowRoot())->insertBefore(placeholder, innerTextElement());
     }
@@ -825,6 +825,8 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
     Ref innerBlock = TextControlInnerElement::create(document);
     m_innerBlock = innerBlock.copyRef();
     RefPtr { m_container }->appendChild(innerBlock);
+    if (RefPtr placeholder = m_placeholder)
+        innerBlock->appendChild(*placeholder);
     innerBlock->appendChild(Ref { *m_innerText });
 
     if (selectionState) {

@@ -227,12 +227,8 @@ void RenderTextControlSingleLine::layout()
     bool innerTextSizeChanged = innerTextRenderer && innerTextRenderer->borderBoxSize() != oldInnerTextSize;
 
     RefPtr placeholderElement = protect(inputElement())->placeholderElement();
-    if (CheckedPtr placeholderBox = placeholderElement ? placeholderElement->renderBox() : nullptr) {
-        auto innerTextWidth = LayoutUnit { };
-        auto usedZoomForLength = placeholderBox->style().usedZoomForLength().value;
-        if (innerTextRenderer)
-            innerTextWidth = innerTextRenderer->logicalWidth();
-        protect(placeholderBox->mutableStyle())->setWidth(Style::PreferredSize::Fixed { (innerTextWidth - placeholderBox->horizontalBorderAndPaddingExtent()) / usedZoomForLength });
+    CheckedPtr placeholderBox = placeholderElement ? placeholderElement->renderBox() : nullptr;
+    if (placeholderBox && placeholderBox->parent() == this) {
         bool neededLayout = placeholderBox->needsLayout();
         bool placeholderBoxEverHadLayout = placeholderBox->everHadLayout();
         if (innerTextSizeChanged) {

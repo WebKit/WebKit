@@ -235,7 +235,7 @@ void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren
         return;
 
     CheckedPtr placeholderRenderer = placeholder->renderer();
-    if (!placeholderRenderer)
+    if (!placeholderRenderer || placeholderRenderer->parent() != this)
         return;
 
     placeholderRenderer->setIsExcludedFromNormalLayout(true);
