@@ -21823,8 +21823,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(INSTALL_ROOT)$(SYSTEM_CONTENT_PATH)$(SYSTEM_PREFIX)/usr/lib/swift/libswiftWebKit.dylib",
-				"$(INSTALL_ROOT)$(SYSTEM_CONTENT_PATH)$(SYSTEM_PREFIX)/usr/lib/swift/libswiftWebKit.tbd",
+				"$(INSTALL_ROOT)$(SYSTEM_CONTENT_PATH)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/usr/lib/swift/libswiftWebKit.dylib",
+				"$(INSTALL_ROOT)$(SYSTEM_CONTENT_PATH)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/usr/lib/swift/libswiftWebKit.tbd",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
