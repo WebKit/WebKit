@@ -2576,15 +2576,9 @@ void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)
         // since the object may not have gotten a layout.
         m_borderBoxRectInContainer = oldRect;
         repaint();
-        repaintOverhangingFloats(true);
         m_borderBoxRectInContainer = newRect;
         repaint();
-        repaintOverhangingFloats(true);
     }
-}
-
-void RenderBox::repaintOverhangingFloats(bool)
-{
 }
 
 void RenderBox::updateLogicalWidth()

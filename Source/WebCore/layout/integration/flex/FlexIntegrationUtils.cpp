@@ -148,10 +148,8 @@ void FlexIntegrationUtils::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayout
         flexLayoutState().setFlexItemHasCompletedLayout(flexItem);
     }
 
-    if (!flexLayoutItem.everHadLayout && flexItem->checkForRepaintDuringLayout()) {
+    if (!flexLayoutItem.everHadLayout && flexItem->checkForRepaintDuringLayout())
         flexItem->repaint();
-        flexItem->repaintOverhangingFloats(true);
-    }
 }
 
 FlexContainerUsedExtents FlexIntegrationUtils::updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent)

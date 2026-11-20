@@ -446,7 +446,6 @@ static void issueFullRepaintOnFirstLayout(RenderBox& flexItem, bool everHadLayou
         return;
 
     flexItem.repaint();
-    flexItem.repaintOverhangingFloats(true);
 }
 
 static void layoutChildIfNeededApplyingDelta(RenderBox* child, const LayoutSize& layoutDelta)

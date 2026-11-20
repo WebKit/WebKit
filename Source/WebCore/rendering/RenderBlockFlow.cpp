@@ -1415,10 +1415,8 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
             child.repaintDuringLayoutIfMoved(oldRect);
     }
 
-    if (!childHadLayout && child.checkForRepaintDuringLayout()) {
+    if (!childHadLayout && child.checkForRepaintDuringLayout())
         child.repaint();
-        child.repaintOverhangingFloats(true);
-    }
 
     if (paginated) {
         if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow())
@@ -2852,32 +2850,6 @@ void RenderBlockFlow::computeInFlowOverflow(LayoutRect contentArea, OptionSet<Co
         }
     };
     addOverflowFromFloats();
-}
-
-void RenderBlockFlow::repaintOverhangingFloats(bool paintAllDescendants)
-{
-    // Repaint any overhanging floats (if we know we're the one to paint them).
-    // Otherwise, bail out.
-    if (!hasOverhangingFloats())
-        return;
-
-    // FIXME: Avoid disabling LayoutState. At the very least, don't disable it for floats originating
-    // in this block. Better yet would be to push extra state for the containers of other floats.
-    LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        // Only repaint the object if it is overhanging, is not in its own layer, and
-        // is our responsibility to paint (we are its containing block). When paintAllDescendants is true, the latter
-        // condition is replaced with being a descendant of us.
-        auto& renderer = *floatingObject->renderer();
-        if (logicalBottomForFloat(*floatingObject) > logicalHeight()
-            && !renderer.hasSelfPaintingLayer()
-            && (renderer.containingBlock() == this || (paintAllDescendants && renderer.isDescendantOf(this)))) {
-            renderer.repaint();
-            renderer.repaintOverhangingFloats(false);
-        }
-    }
 }
 
 void RenderBlockFlow::clipOutFloatingBoxes(RenderBlock& rootBlock, const PaintInfo* paintInfo, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock)
