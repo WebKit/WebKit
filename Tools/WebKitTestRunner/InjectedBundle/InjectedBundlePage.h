@@ -42,7 +42,7 @@ public:
     WKBundlePageRef page() const { return m_page; }
     uint64_t mainFrameCommitOrder() const { return m_mainFrameCommitOrder; }
 
-    WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
+    WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame.get(); }
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
 
     void notifyDone();
@@ -124,7 +124,7 @@ private:
     void frameDidChangeLocation(WKBundleFrameRef);
 
     WKBundlePageRef m_page;
-    WKBundleFrameRef m_topLoadingFrame { nullptr };
+    WKRetainPtr<WKBundleFrameRef> m_topLoadingFrame;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     bool m_didCommitMainFrameLoad { false };
     uint64_t m_mainFrameCommitOrder { 0 };
