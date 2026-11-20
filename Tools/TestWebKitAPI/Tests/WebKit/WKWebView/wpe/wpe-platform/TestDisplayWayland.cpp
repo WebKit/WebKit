@@ -29,6 +29,7 @@
 #include <sys/eventfd.h>
 #include <unistd.h>
 #include <wayland-server.h>
+#include <wpe/wayland/text-input-unstable-v1-client-protocol.h>
 #include <wpe/wayland/wpe-wayland.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
@@ -186,6 +187,13 @@ public:
         });
     }
 
+    void addTextInputManagerV1()
+    {
+        runInCompositorThread([this] {
+            wl_global_create(m_display, &zwp_text_input_manager_v1_interface, 1, const_cast<struct wl_interface*>(&zwp_text_input_manager_v1_interface), bind);
+        });
+    }
+
     void removeFirstSeat()
     {
         runInCompositorThread([this] {
@@ -288,6 +296,31 @@ static void testDisplayWaylandSeatAddedAndRemoved(WPEWaylandPlatformTest* test, 
     waitForAvailableInputDevices(test->display(), WPE_AVAILABLE_INPUT_DEVICE_MOUSE);
 }
 
+static void testDisplayWaylandInputMethodContextV1Reset(WPEWaylandPlatformTest* test, gconstpointer)
+{
+    TestCompositor compositor;
+    if (!compositor.socketName()) {
+        g_test_skip("Could not create a Wayland socket");
+        return;
+    }
+    compositor.addTextInputManagerV1();
+
+    GUniqueOutPtr<GError> error;
+    g_assert_true(wpe_display_wayland_connect(WPE_DISPLAY_WAYLAND(test->display()), compositor.socketName(), &error.outPtr()));
+    g_assert_no_error(error.get());
+
+    auto* settings = wpe_display_get_settings(test->display());
+    wpe_settings_set_boolean(settings, WPE_SETTING_CREATE_VIEWS_WITH_A_TOPLEVEL, FALSE, WPE_SETTINGS_SOURCE_APPLICATION, &error.outPtr());
+    g_assert_no_error(error.get());
+    GRefPtr<WPEView> view = adoptGRef(wpe_view_new(test->display()));
+    GRefPtr<WPEInputMethodContext> context = adoptGRef(wpe_input_method_context_new(view.get()));
+    g_assert_nonnull(context.get());
+    g_assert_cmpstr(G_OBJECT_TYPE_NAME(context.get()), ==, "WPEIMContextWaylandV1");
+
+    // Resetting a context that is not focused must not crash.
+    wpe_input_method_context_reset(context.get());
+}
+
 static void testDisplayWaylandCreateView(WPEWaylandPlatformTest* test, gconstpointer)
 {
     connectOrSkipIfNotUnderWayland();
@@ -321,6 +354,7 @@ void beforeAll()
     WPEWaylandPlatformTest::add("DisplayWayland", "available-input-devices", testDisplayWaylandAvailableInputDevices);
     WPEWaylandPlatformTest::add("DisplayWayland", "create-view", testDisplayWaylandCreateView);
     WPEWaylandPlatformTest::add("DisplayWayland", "seat-added-and-removed", testDisplayWaylandSeatAddedAndRemoved);
+    WPEWaylandPlatformTest::add("DisplayWayland", "input-method-context-v1-reset", testDisplayWaylandInputMethodContextV1Reset);
 }
 
 void afterAll()
