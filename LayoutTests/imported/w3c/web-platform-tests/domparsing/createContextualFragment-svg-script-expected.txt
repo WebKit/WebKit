@@ -1,0 +1,6 @@
+
+PASS HTML <script> from createContextualFragment() runs when inserted
+PASS SVG <script> inside <svg> from createContextualFragment() with an HTML context runs when inserted
+PASS SVG <script> from createContextualFragment() with an SVG context runs when inserted
+PASS Clone of an SVG <script> from createContextualFragment() runs when inserted
+
