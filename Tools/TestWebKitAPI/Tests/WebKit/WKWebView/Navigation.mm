@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
@@ -70,7 +69,10 @@ static bool didReceiveAllowPrivateToken;
 @interface NavigationDelegate : NSObject <WKNavigationDelegate, _WKWebsiteDataStoreDelegate>
 @end
 
-@implementation NavigationDelegate
+@implementation NavigationDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
@@ -87,7 +89,7 @@ static bool didReceiveAllowPrivateToken;
 {
     EXPECT_EQ(currentNavigation, navigation);
 
-    isDone = true;
+    _done = true;
 }
 
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore didAllowPrivateTokenUsageByThirdPartyForTesting:(BOOL)wasAllowed forResourceURL:(NSURL *)resourceURL
@@ -144,8 +146,7 @@ TEST(WKNavigation, LoadRequest)
     ASSERT_NOT_NULL(currentNavigation);
     ASSERT_TRUE([[currentNavigation _request] isEqual:request]);
 
-    isDone = false;
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 TEST(WKNavigation, HTTPBody)
@@ -544,41 +545,27 @@ TEST(WKNavigation, FramesWithLoadingError)
     }];
 }
 
-@interface DidFailProvisionalNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation DidFailProvisionalNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
-{
-    EXPECT_EQ(currentNavigation, navigation);
-    EXPECT_NOT_NULL(navigation._request);
-}
-
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
-{
-    EXPECT_EQ(currentNavigation, navigation);
-    EXPECT_NOT_NULL(navigation._request);
-
-    EXPECT_TRUE([error.domain isEqualToString:NSURLErrorDomain]);
-    EXPECT_EQ(NSURLErrorUnsupportedURL, error.code);
-
-    isDone = true;
-}
-
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
-{
-    decisionHandler(WKNavigationActionPolicyAllow);
-}
-
-@end
-
 TEST(WKNavigation, DidFailProvisionalNavigation)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    RetainPtr<DidFailProvisionalNavigationDelegate> delegate = adoptNS([[DidFailProvisionalNavigationDelegate alloc] init]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
+
+    __block bool done = false;
+    delegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        EXPECT_EQ(currentNavigation, navigation);
+        EXPECT_NOT_NULL(navigation._request);
+    };
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation, NSError *error) {
+        EXPECT_EQ(currentNavigation, navigation);
+        EXPECT_NOT_NULL(navigation._request);
+
+        EXPECT_TRUE([error.domain isEqualToString:NSURLErrorDomain]);
+        EXPECT_EQ(NSURLErrorUnsupportedURL, error.code);
+
+        done = true;
+    };
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"non-existant-scheme://"]];
 
@@ -586,45 +573,40 @@ TEST(WKNavigation, DidFailProvisionalNavigation)
     ASSERT_NOT_NULL(currentNavigation);
     ASSERT_TRUE([[currentNavigation _request] isEqual:request]);
 
-    isDone = false;
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&done);
 }
-
-@interface CrashReasonDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation CrashReasonDelegate
-
-- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
-{
-    EXPECT_EQ(reason, _WKProcessTerminationReasonRequestedByClient);
-    isDone = true;
-}
-
-@end
 
 TEST(WKNavigation, CrashReason)
 {
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     
-    RetainPtr delegate = adoptNS([[CrashReasonDelegate alloc] init]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
     
+    __block bool done = false;
+    delegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason reason) {
+        EXPECT_EQ(reason, _WKProcessTerminationReasonRequestedByClient);
+        done = true;
+    };
+
     [webView loadHTMLString:@"<html>start the web process</html>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
     [webView _killWebContentProcessAndResetState];
     
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&done);
 }
 
 @interface DecidePolicyForPageCacheNavigationDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic) BOOL decidedPolicyForBackForwardNavigation;
 @end
 
-@implementation DecidePolicyForPageCacheNavigationDelegate
+@implementation DecidePolicyForPageCacheNavigationDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    isDone = true;
+    _done = true;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
@@ -646,19 +628,18 @@ TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,1"]];
 
-    isDone = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,2"]];
 
-    isDone = false;
+    delegate->_done = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
-    isDone = false;
+    delegate->_done = false;
     [webView goBack];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_TRUE([delegate decidedPolicyForBackForwardNavigation]);
 }
@@ -669,11 +650,14 @@ TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
 }
 @end
 
-@implementation NavigationActionHasNavigationDelegate
+@implementation NavigationActionHasNavigationDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    isDone = true;
+    _done = true;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
@@ -696,15 +680,18 @@ TEST(WKNavigation, NavigationActionHasNavigation)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,1"]];
 
-    isDone = false;
     delegate->navigation = [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 @interface ClientRedirectNavigationDelegate : NSObject<WKNavigationDelegatePrivate>
 @end
 
-@implementation ClientRedirectNavigationDelegate
+@implementation ClientRedirectNavigationDelegate {
+@package
+    bool _done;
+}
+
 - (void)_webView:(WKWebView *)webView willPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)delay
 {
     redirectURL = URL;
@@ -716,7 +703,7 @@ TEST(WKNavigation, NavigationActionHasNavigation)
 }
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    isDone = true;
+    _done = true;
 }
 @end
 
@@ -731,21 +718,20 @@ TEST(WKNavigation, WebViewWillPerformClientRedirect)
 
     auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cmeta%20http-equiv=%22refresh%22%20content=%22123;URL=data:text/html,Page1%22%3E"]];
 
-    isDone = false;
     redirectURL = nil;
     redirectDelay = 0;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_DOUBLE_EQ(redirectDelay, 123);
     ASSERT_STREQ(redirectURL.get().absoluteString.UTF8String, "data:text/html,Page1");
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cscript%3Ewindow.location=%22data:text/html,Page2%22;%3C/script%3E"]];
-    isDone = false;
+    delegate->_done = false;
     redirectURL = nil;
     redirectDelay = NSTimeIntervalSince1970; // Use any non-zero value, we will test that the delegate receives a delay of 0.
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_DOUBLE_EQ(redirectDelay, 0);
     ASSERT_STREQ(redirectURL.get().absoluteString.UTF8String, "data:text/html,Page2");
@@ -764,10 +750,9 @@ TEST(WKNavigation, WebViewDidCancelClientRedirect)
 
     auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,Page1"]];
 
-    isDone = false;
     didCancelRedirect = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_FALSE(didCancelRedirect);
 
@@ -775,15 +760,15 @@ TEST(WKNavigation, WebViewDidCancelClientRedirect)
     // is called whenever the web view transitions from "expecting a redirect" to "not expecting a redirect".
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cscript%3Ewindow.location=%22data:text/html,Page2%22;%3C/script%3E"]];
-    isDone = false;
+    delegate->_done = false;
     didCancelRedirect = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_FALSE(didCancelRedirect);
 
-    isDone = false;
-    TestWebKitAPI::Util::run(&isDone);
+    delegate->_done = false;
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_TRUE(didCancelRedirect);
 
@@ -792,17 +777,17 @@ TEST(WKNavigation, WebViewDidCancelClientRedirect)
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cmeta%20http-equiv=%22refresh%22%20content=%2210000;URL=data:text/html,Page3%22%3E"]];
 
-    isDone = false;
+    delegate->_done = false;
     didCancelRedirect = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_FALSE(didCancelRedirect);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,Page4"]];
-    isDone = false;
+    delegate->_done = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     ASSERT_TRUE(didCancelRedirect);
 }
@@ -814,11 +799,14 @@ TEST(WKNavigation, WebViewDidCancelClientRedirect)
 - (BOOL)spiCalled;
 @end
 
-@implementation NavigationActionSPIDelegate
+@implementation NavigationActionSPIDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    isDone = true;
+    _done = true;
 }
 
 -(void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler {
@@ -839,7 +827,7 @@ TEST(WKNavigation, NavigationActionSPI)
     RetainPtr delegate = adoptNS([[NavigationActionSPIDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,1"]]];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
     EXPECT_TRUE([delegate spiCalled]);
 }
 
@@ -847,7 +835,11 @@ static bool navigationTestComplete;
 
 @interface BackForwardDelegate : NSObject<WKNavigationDelegatePrivate>
 @end
-@implementation BackForwardDelegate
+@implementation BackForwardDelegate {
+@package
+    bool _done;
+}
+
 - (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache
 {
     const char* expectedURL = [[[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"] absoluteString] UTF8String];
@@ -855,7 +847,7 @@ static bool navigationTestComplete;
     EXPECT_TRUE(item.title == nil);
     EXPECT_STREQ(item.initialURL.absoluteString.UTF8String, expectedURL);
     EXPECT_TRUE(inPageCache);
-    isDone = true;
+    _done = true;
 }
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
@@ -868,13 +860,14 @@ TEST(WKNavigation, WillGoToBackForwardListItem)
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     RetainPtr delegate = adoptNS([[BackForwardDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+    navigationTestComplete = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationTestComplete);
     navigationTestComplete = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationTestComplete);
     [webView goBack];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 static bool didRejectNavigation = false;
@@ -943,6 +936,7 @@ TEST(WKNavigation, ShouldGoToBackForwardListItem)
 {
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     navigationTestComplete = false;
+    didRejectNavigation = false;
     RetainPtr delegate = adoptNS([[BackForwardDelegateWithShouldGo alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
@@ -994,7 +988,11 @@ RetainPtr<WKBackForwardListItem> secondItem;
 
 @interface ListItemDelegate : NSObject<WKNavigationDelegatePrivate>
 @end
-@implementation ListItemDelegate
+@implementation ListItemDelegate {
+@package
+    bool _done;
+}
+
 - (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved
 {
     NSString *firstURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"].absoluteString;
@@ -1022,7 +1020,7 @@ RetainPtr<WKBackForwardListItem> secondItem;
         EXPECT_EQ([itemsRemoved count], 2u);
         EXPECT_STREQ(firstURL.UTF8String, [itemsRemoved objectAtIndex:0].URL.absoluteString.UTF8String);
         EXPECT_STREQ(secondURL.UTF8String, [itemsRemoved objectAtIndex:1].URL.absoluteString.UTF8String);
-        isDone = true;
+        _done = true;
     }
 }
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
@@ -1036,13 +1034,16 @@ TEST(WKNavigation, ListItemAddedRemoved)
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     RetainPtr delegate = adoptNS([[ListItemDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+    firstItem = nullptr;
+    secondItem = nullptr;
+    navigationTestComplete = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationTestComplete);
     navigationTestComplete = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationTestComplete);
     [[webView backForwardList] _removeAllItems];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 #endif // PLATFORM(MAC)
@@ -4720,6 +4721,7 @@ TEST(WKNavigation, NavigationToUnknownBlankURL)
     RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
 
+    __block bool done = false;
     __block bool navigationFailed = false;
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation, NSError *error) {
         navigationFailed = true;
@@ -4730,7 +4732,6 @@ TEST(WKNavigation, NavigationToUnknownBlankURL)
         done = true;
     };
 
-    done = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     TestWebKitAPI::Util::run(&done);
     EXPECT_FALSE(navigationFailed);
