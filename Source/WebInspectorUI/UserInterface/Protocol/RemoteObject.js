@@ -142,12 +142,33 @@ WI.RemoteObject = class RemoteObject
     {
         console.assert(typeof callback === "function");
 
-        let target = WI.assumingMainTarget();
+        let target = WI.networkManager.networkTargetForCommand(WI.assumingMainTarget(), "Network.resolveWebSocket");
+        let objectTarget = webSocketResource.target;
+
+        // Under Site Isolation the Network domain lives on the backend target. A main-frame socket is wrapped by the
+        // page's injected script, so it belongs to the page target, which holds the console's default context. Any other
+        // socket is wrapped by the injected script of the frame that opened it, so it belongs to that frame's target.
+        // Object ids are only meaningful on the target whose injected script made them, so never guess another target.
+        // FIXME: Keep this main-frame check in sync with the one in Inspector::ResourceUtilities::resolveWebSocketInFrame: injected script object ids restart at 1 in each injected script manager. Remove both when the page target goes away, or have the reply say which target's injected script wrapped the object. https://bugs.webkit.org/show_bug.cgi?id=332480
+        if (target === WI.backendTarget) {
+            let parentFrame = webSocketResource.parentFrame;
+            if (!parentFrame)
+                objectTarget = null;
+            else if (parentFrame.isMainFrame())
+                objectTarget = WI.pageTarget;
+            else
+                objectTarget = WI.targets.find((candidate) => candidate instanceof WI.FrameTarget && candidate.executionContext?.frame === parentFrame);
+            if (!objectTarget) {
+                callback(null);
+                return;
+            }
+        }
+
         target.NetworkAgent.resolveWebSocket(webSocketResource.requestIdentifier, objectGroup, (error, object) => {
             if (error || !object)
                 callback(null);
             else
-                callback(WI.RemoteObject.fromPayload(object, webSocketResource.target));
+                callback(WI.RemoteObject.fromPayload(object, objectTarget));
         });
     }
 

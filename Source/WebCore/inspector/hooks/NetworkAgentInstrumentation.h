@@ -31,6 +31,7 @@
 #include <WebCore/UncachedLoadType.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 class CachedResource;
@@ -44,6 +45,9 @@ class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
+class WebSocketChannel;
+struct WebSocketFrame;
+using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 }
 
 namespace Inspector {
@@ -79,6 +83,15 @@ public:
     virtual void didReceiveThreadableLoaderResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentThreadableLoader&) = 0;
     virtual void willDestroyCachedResource(WebCore::CachedResource&) = 0;
     virtual void mainFrameNavigated(WebCore::DocumentLoader&) = 0;
+
+    virtual void didCreateWebSocket(WebCore::WebSocketChannelIdentifier, const URL& requestURL) = 0;
+    virtual void willSendWebSocketHandshakeRequest(WebCore::WebSocketChannelIdentifier, WebCore::ResourceRequest&) = 0;
+    virtual void didSendWebSocketHandshakeRequest(WebCore::WebSocketChannelIdentifier, const WebCore::ResourceRequest&) = 0;
+    virtual void didReceiveWebSocketHandshakeResponse(WebCore::WebSocketChannelIdentifier, const WebCore::ResourceResponse&) = 0;
+    virtual void didCloseWebSocket(WebCore::WebSocketChannelIdentifier) = 0;
+    virtual void didReceiveWebSocketFrame(WebCore::WebSocketChannelIdentifier, const WebCore::WebSocketFrame&) = 0;
+    virtual void didSendWebSocketFrame(WebCore::WebSocketChannelIdentifier, const WebCore::WebSocketFrame&) = 0;
+    virtual void didReceiveWebSocketFrameError(WebCore::WebSocketChannelIdentifier, const String& errorMessage) = 0;
 
     virtual bool willIntercept(const WebCore::ResourceRequest&) = 0;
     virtual bool shouldInterceptRequest(const WebCore::ResourceLoader&) = 0;
