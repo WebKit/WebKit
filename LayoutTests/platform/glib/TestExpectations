@@ -1581,6 +1581,8 @@ webkit.org/b/144690 editing/spelling/context-menu-suggestions-subword-selection.
 webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Skip ]
 webkit.org/b/144690 editing/spelling/grammar-arrow-downstream-into-multiword-phrase.html [ Skip ]
 webkit.org/b/144690 editing/spelling/grammar-arrow-upstream-into-multiword-phrase.html [ Skip ]
+webkit.org/b/144690 editing/spelling/grammar-correction-shown-after-text-shifts-under-previous-caret.html [ Skip ]
+webkit.org/b/144690 editing/spelling/grammar-correction-shown-again-after-leaving-word.html [ Skip ]
 webkit.org/b/144690 editing/spelling/grammar-correction-shown-clicking-middle-of-word.html [ Skip ]
 webkit.org/b/144690 editing/spelling/grammar-correction-shown-clicking-multiword-phrase.html [ Skip ]
 webkit.org/b/144690 editing/spelling/grammar-edit-word.html [ Skip ]
