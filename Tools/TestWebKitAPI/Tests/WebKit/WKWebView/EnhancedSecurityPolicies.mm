@@ -207,6 +207,9 @@ static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
             [preferences _setEnabled:useSharedProcess != UseSharedProcess::No forFeature:feature];
         if ([feature.key isEqualToString:@"SiteIsolationSharedProcessEnhancedSecurityEnabled"])
             [preferences _setEnabled:useSharedProcess == UseSharedProcess::YesWithEnhancedSecurity forFeature:feature];
+        // The platform default would override the heuristics these tests cover.
+        if ([feature.key isEqualToString:@"EnhancedSecurityEnabledByDefault"])
+            [preferences _setEnabled:NO forFeature:feature];
     }
 
     auto storeConfiguration = useNonPersistentStore

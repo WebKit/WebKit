@@ -2251,7 +2251,10 @@ EnhancedSecurityEnabledByDefault:
   humanReadableDescription: "Enables Enhanced Security by default for WebViews that do not explicitly set it"
   webKitLegacyExposed: false
   excludeFrom: [ WebCore ]
-  defaultValue: false
+  defaultValue:
+    "PLATFORM(WATCHOS)": true
+    "PLATFORM(APPLETV)": true
+    default: false
 
 EnhancedSecurityEnabledByDefaultForSystemApps:
   type: bool

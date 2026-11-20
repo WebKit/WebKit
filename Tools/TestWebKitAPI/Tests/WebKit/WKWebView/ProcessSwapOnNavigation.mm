@@ -30,6 +30,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/ProcessTerminationTestUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -9429,6 +9430,7 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
 
 static void configureLockdownWKWebViewConfiguration(WKWebViewConfiguration *config)
 {
+    TestWebKitAPI::setFeatureEnabled(config, @"EnhancedSecurityEnabledByDefault", false);
     [config.preferences _setMediaDevicesEnabled:YES];
     config.preferences._mediaCaptureRequiresSecureConnection = NO;
     [config.preferences _setNotificationsEnabled:YES];
@@ -9514,6 +9516,7 @@ TEST(ProcessSwap, LockdownModeSystemSettingChange)
     RetainPtr kvo = adoptNS([LockdownModeKVO new]);
 
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    TestWebKitAPI::setFeatureEnabled(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefault", false);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
     [webViewConfiguration.get().defaultWebpagePreferences addObserver:kvo.get() forKeyPath:@"lockdownModeEnabled" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
 
@@ -9783,6 +9786,7 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     // Captive portal mode is disabled globally and explicitly opted out via defaultWebpagePreferences.
 
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    TestWebKitAPI::setFeatureEnabled(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefault", false);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = NO; // Explicitly opt out via default WKWebpagePreferences.
 
@@ -9828,6 +9832,7 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    TestWebKitAPI::setFeatureEnabled(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefault", false);
     EXPECT_TRUE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = NO; // Explicitly opt out via default WKWebpagePreferences.
 
@@ -9872,6 +9877,7 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     // Captive portal mode is disabled globally and explicitly opted out for the load.
 
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    TestWebKitAPI::setFeatureEnabled(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefault", false);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -9922,6 +9928,7 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    TestWebKitAPI::setFeatureEnabled(webViewConfiguration.get(), @"EnhancedSecurityEnabledByDefault", false);
     EXPECT_TRUE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);

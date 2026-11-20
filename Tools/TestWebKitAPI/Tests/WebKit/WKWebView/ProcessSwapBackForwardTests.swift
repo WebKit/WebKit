@@ -252,6 +252,7 @@ struct ProcessSwapBackForwardTests {
         let configuration = WKWebViewConfiguration(httpsProxyFor: server)
         configuration.processPool = processPool
         configuration.enableCrossOriginOpenerAndEmbedderPolicies()
+        configuration.setFeature("EnhancedSecurityEnabledByDefault", enabled: false)
         return webViewAndDelegate(
             configuration: configuration,
             frame: CGRect(x: 0, y: 0, width: 800, height: 600),
