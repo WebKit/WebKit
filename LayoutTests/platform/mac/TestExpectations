@@ -1766,21 +1766,19 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/can
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Pass ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.worker.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Pass ]
+
+# Encoding a float16 linear canvas to PNG crashes in QuartzCore.
+webkit.org/b/332044 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.png.linear.float.html [ Skip ]
+webkit.org/b/332044 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.png.linear.float.html [ Skip ]
+
+# CoreGraphics clamps fills to [0, 1] in IOSurface-backed extended-range contexts on x86_64.
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html [ Failure ]
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html [ Failure ]
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.worker.html [ Failure ]
 
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Failure ]

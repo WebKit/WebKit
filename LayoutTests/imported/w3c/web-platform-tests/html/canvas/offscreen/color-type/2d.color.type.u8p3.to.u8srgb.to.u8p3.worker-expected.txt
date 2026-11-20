@@ -1,0 +1,3 @@
+
+PASS test srgb unorm8 canvas storing 8-bit display-p3 data accurately
+

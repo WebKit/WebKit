@@ -1,0 +1,7 @@
+2d.imageData.createImageBitmap.srgb.rgba.unorm8
+
+Verify round-trip of 8-bit sRGB data ImageData through ImageBitmap
+
+
+PASS Verify round-trip of 8-bit sRGB data ImageData through ImageBitmap
+

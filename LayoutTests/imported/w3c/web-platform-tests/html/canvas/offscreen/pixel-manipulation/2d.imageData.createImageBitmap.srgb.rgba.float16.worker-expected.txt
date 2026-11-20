@@ -1,0 +1,3 @@
+
+PASS Verify round-trip of 16-bit float sRGB data ImageData through ImageBitmap
+

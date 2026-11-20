@@ -1,0 +1,7 @@
+2d.color.space.toBlob.toDataURL.jpeg.linear.float
+
+FAIL Test toBlob creates a jpeg image using an appropriate encoding to not lose precision from a srgb-linear float16 canvas promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Test toBlob creates a jpeg image using an appropriate encoding to not lose precision from a display-p3-linear float16 canvas promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Test toDataURL creates a jpeg image using an appropriate encoding to not lose precision from a srgb-linear float16 canvas promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Test toDataURL creates a jpeg image using an appropriate encoding to not lose precision from a display-p3-linear float16 canvas promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

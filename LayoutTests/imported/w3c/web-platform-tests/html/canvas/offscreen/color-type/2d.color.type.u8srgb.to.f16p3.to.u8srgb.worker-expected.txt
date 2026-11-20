@@ -1,0 +1,3 @@
+
+PASS test display-p3 float16 canvas storing 8-bit srgb data accurately
+

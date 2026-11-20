@@ -10,20 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.display-p3-linear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.getImageData.convert.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.srgb-linear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toBlob.convert.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.jpeg.linear.float.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.png.linear.float.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toDataURL.convert.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/WEB_FEATURES.yml

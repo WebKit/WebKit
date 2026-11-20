@@ -1,0 +1,3 @@
+
+FAIL Verify round-trip of 16-bit float sRGB data ImageData through ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

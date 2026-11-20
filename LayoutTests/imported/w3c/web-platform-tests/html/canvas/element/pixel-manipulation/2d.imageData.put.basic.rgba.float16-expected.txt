@@ -1,0 +1,6 @@
+2d.imageData.put.basic.rgba.float16
+putImageData() puts 16-bit floating point image data from getImageData() onto the canvas
+Actual output:
+
+PASS putImageData() puts 16-bit floating point image data from getImageData() onto the canvas
+

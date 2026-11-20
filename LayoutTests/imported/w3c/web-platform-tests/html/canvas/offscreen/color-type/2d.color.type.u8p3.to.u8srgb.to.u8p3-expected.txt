@@ -1,0 +1,7 @@
+2d.color.type.u8p3.to.u8srgb.to.u8p3
+
+test srgb unorm8 canvas storing 8-bit display-p3 data accurately
+
+
+PASS test srgb unorm8 canvas storing 8-bit display-p3 data accurately
+

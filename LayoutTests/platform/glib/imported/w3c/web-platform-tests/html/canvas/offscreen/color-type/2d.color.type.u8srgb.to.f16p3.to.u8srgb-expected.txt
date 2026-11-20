@@ -1,0 +1,7 @@
+2d.color.type.u8srgb.to.f16p3.to.u8srgb
+
+test display-p3 float16 canvas storing 8-bit srgb data accurately
+
+
+FAIL test display-p3 float16 canvas storing 8-bit srgb data accurately Type error
+

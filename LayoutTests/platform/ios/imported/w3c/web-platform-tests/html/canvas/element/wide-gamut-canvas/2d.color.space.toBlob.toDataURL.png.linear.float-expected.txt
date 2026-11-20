@@ -1,0 +1,7 @@
+2d.color.space.toBlob.toDataURL.png.linear.float
+
+PASS Test toBlob creates a png image using an appropriate encoding to not lose precision from a srgb-linear float16 canvas
+PASS Test toBlob creates a png image using an appropriate encoding to not lose precision from a display-p3-linear float16 canvas
+PASS Test toDataURL creates a png image using an appropriate encoding to not lose precision from a srgb-linear float16 canvas
+PASS Test toDataURL creates a png image using an appropriate encoding to not lose precision from a display-p3-linear float16 canvas
+

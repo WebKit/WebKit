@@ -1,0 +1,7 @@
+2d.imageData.createImageBitmap.srgb.rgba.float16
+
+Verify round-trip of 16-bit float sRGB data ImageData through ImageBitmap
+
+
+PASS Verify round-trip of 16-bit float sRGB data ImageData through ImageBitmap
+

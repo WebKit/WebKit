@@ -1,0 +1,3 @@
+
+PASS Verify round-trip of 8-bit sRGB data ImageData through ImageBitmap
+

@@ -1,6 +1,0 @@
-2d.color.space.srgb-linear
-test getImageData color conversion with a srgb-linear uint8 canvas
-Actual output:
-
-PASS test getImageData color conversion with a srgb-linear uint8 canvas
-
