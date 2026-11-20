@@ -61,8 +61,15 @@ JSFormatter = class JSFormatter
         }
 
         let walker = new ESTreeWalker(this._before.bind(this), this._after.bind(this));
-        walker.walk(tree);
-        this._afterProgram(tree);
+        // The formatter may share a builder with another formatter (e.g. HTML), so save and restore the state.
+        let wasAvoidTokenFusing = this._builder.avoidTokenFusing;
+        this._builder.avoidTokenFusing = true;
+        try {
+            walker.walk(tree);
+            this._afterProgram(tree);
+        } finally {
+            this._builder.avoidTokenFusing = wasAvoidTokenFusing;
+        }
         this._builder.appendNewline();
 
         this._success = true;
