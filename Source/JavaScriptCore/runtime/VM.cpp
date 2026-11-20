@@ -1190,13 +1190,24 @@ size_t VM::updateSoftReservedZoneSize(size_t softReservedZoneSize)
 // By touching every page up to the stack limit with a dummy operation,
 // we force the system to move the guard page, and commit memory.
 
-static void preCommitStackMemory(void* stackLimit)
+static void preCommitStackMemory(Thread& thread, void* stackLimit)
 {
+    // Stack pages stay committed, so only touch the pages below the lowest one touched so far.
+    char* lowestPreCommittedAddress = static_cast<char*>(thread.lowestPreCommittedStackAddress());
+
     const int pageSize = 4096;
-    for (volatile char* p = reinterpret_cast<char*>(&stackLimit); p > stackLimit; p -= pageSize) {
+    char* start = reinterpret_cast<char*>(&stackLimit);
+    if (lowestPreCommittedAddress && lowestPreCommittedAddress < start)
+        start = lowestPreCommittedAddress;
+    if (start <= stackLimit)
+        return;
+
+    volatile char* p = start;
+    for (; p > stackLimit; p -= pageSize) {
         char ch = *p;
         *p = ch;
     }
+    thread.setLowestPreCommittedStackAddress(const_cast<char*>(p + pageSize));
 }
 #endif
 
@@ -1204,7 +1215,8 @@ void VM::updateStackLimits()
 {
     void* lastSoftStackLimit = traps().softStackLimit();
 
-    const StackBounds& stack = Thread::currentSingleton().stack();
+    Thread& thread = Thread::currentSingleton();
+    const StackBounds& stack = thread.stack();
     size_t reservedZoneSize = Options::reservedZoneSize();
     // We should have already ensured that Options::reservedZoneSize() >= minimumReserveZoneSize at
     // options initialization time, and the option value should not have been changed thereafter.
@@ -1233,7 +1245,7 @@ void VM::updateStackLimits()
         // In contrast, we do not need to worry about VM::m_stackLimit because that limit is
         // used exclusively by C++ code, and the C++ compiler will automatically commit the
         // needed stack pages.
-        preCommitStackMemory(newSoftStackLimit);
+        preCommitStackMemory(thread, newSoftStackLimit);
 #endif
     }
 }

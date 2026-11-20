@@ -291,6 +291,11 @@ public:
         m_savedLastStackTop = lastStackTop;
     }
 
+#if OS(WINDOWS)
+    void* lowestPreCommittedStackAddress() const { return m_lowestPreCommittedStackAddress; }
+    void setLowestPreCommittedStackAddress(void* address) { m_lowestPreCommittedStackAddress = address; }
+#endif
+
 #if OS(DARWIN)
     mach_port_t machThread() { return m_platformThread; }
 #endif
@@ -437,6 +442,9 @@ protected:
 #endif
     void* m_savedStackPointerAtVMEntry { nullptr };
     void* m_savedLastStackTop;
+#if OS(WINDOWS)
+    void* m_lowestPreCommittedStackAddress { nullptr };
+#endif
 public:
     void* m_apiData { nullptr };
     RefPtr<ClientData> m_clientData { nullptr };
