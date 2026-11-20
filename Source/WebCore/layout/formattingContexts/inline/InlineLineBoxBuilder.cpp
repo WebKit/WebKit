@@ -66,10 +66,11 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         constructBlockContent(lineBox);
     else {
         constructInlineLevelBoxes(lineBox);
-        if (lineLayoutResult.hasContentfulInlineContent()) {
-            adjustIdeographicBaselineIfApplicable(lineBox);
+        // A vertical line sits on the ideographic baseline whether or not it has content.
+        adjustIdeographicBaselineIfApplicable(lineBox);
+        if (lineLayoutResult.hasContentfulInlineContent())
             adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
-        } else {
+        else {
             // Collapse all inline boxes (they are supposed to be empty as well).
             for (auto& inlineBox : lineBox.nonRootInlineLevelBoxes()) {
                 if (!inlineBox.isInlineBox()) {
