@@ -136,6 +136,7 @@
 		0269BED42C8FDDEA00DC2FEC /* WebProcessActivityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269BED32C8FDDCB00DC2FEC /* WebProcessActivityState.h */; };
 		028648C62C3F5A3A00E474D4 /* WebExtensionAPISidePanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 028648C52C3F5A2E00E474D4 /* WebExtensionAPISidePanel.h */; };
 		028D30772C616E8A004F4FC6 /* WebExtensionSidebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */; };
+		1C0B4E0A2F9A1B2C00D0E5A1 /* CocoaObjectForKeyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0B4E092F9A1B2C00D0E5A1 /* CocoaObjectForKeyHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAFE0C0E2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0A2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h */; };
 		CAFE0C0F2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0B2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAFE0C102E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0D2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h */; };
@@ -3499,6 +3500,7 @@
 		02789F0528D44ED800F77E40 /* WebGPUVertexBufferLayout.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUVertexBufferLayout.serialization.in; sourceTree = "<group>"; };
 		028648C52C3F5A2E00E474D4 /* WebExtensionAPISidePanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPISidePanel.h; sourceTree = "<group>"; };
 		028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionSidebar.h; sourceTree = "<group>"; };
+		1C0B4E092F9A1B2C00D0E5A1 /* CocoaObjectForKeyHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaObjectForKeyHelpers.h; sourceTree = "<group>"; };
 		1D57F7303B1A2D564EB92486 /* CapturePreviewDeviceSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CapturePreviewDeviceSelection.cpp; sourceTree = "<group>"; };
 		8ACE28DB326302A048CEEE7C /* CapturePreviewLevelMeterState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CapturePreviewLevelMeterState.cpp; sourceTree = "<group>"; };
 		CAFE0C0A2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPermissionPromptCustomization.h; sourceTree = "<group>"; };
@@ -14338,6 +14340,7 @@
 				1C62747C288B4C3E00CED3A2 /* CocoaHelpers.mm */,
 				4482734624528F6000A95493 /* CocoaImage.h */,
 				F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */,
+				1C0B4E092F9A1B2C00D0E5A1 /* CocoaObjectForKeyHelpers.h */,
 				F468770A2C6402650068A20C /* CocoaWindow.h */,
 				A1D615622B06BBAB002D0E19 /* ExtensionCapability.h */,
 				A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */,
@@ -18633,6 +18636,7 @@
 				57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */,
 				1C62747D288B4C3E00CED3A2 /* CocoaHelpers.h in Headers */,
 				4482734724528F6000A95493 /* CocoaImage.h in Headers */,
+				1C0B4E0A2F9A1B2C00D0E5A1 /* CocoaObjectForKeyHelpers.h in Headers */,
 				F468770B2C6402650068A20C /* CocoaWindow.h in Headers */,
 				CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */,
 				D243D71F2CC1764C006D5E35 /* ColorControlSupportsAlpha.h in Headers */,

@@ -11,6 +11,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module CocoaObjectForKeyHelpers {
+    header "CocoaObjectForKeyHelpers.h"
+    export *
+  }
+
   explicit module DOM {
     header "DOM.h"
     export *

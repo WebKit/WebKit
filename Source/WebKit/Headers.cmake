@@ -233,6 +233,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
 )
 
 list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
+    Platform/cocoa/CocoaObjectForKeyHelpers.h
     Platform/cocoa/WKCrashReporter.h
 
     Platform/unix/EnvironmentUtilities.h

@@ -112,6 +112,7 @@ Tests/WebKit/WKWebView/LockdownModeFonts.mm @nonARC
 Tests/WebKit/WKWebView/ClipboardTests.mm @nonARC
 Tests/WebKit/WKWebView/CloseWebViewAfterEnterFullscreen.mm @nonARC
 Tests/WebKit/WKWebView/CloseWebViewDuringEnterFullscreen.mm @nonARC
+Tests/WebKit/WKWebView/CocoaHelpersTests.mm @nonARC
 Tests/WebKit/WKWebView/CommandBackForward.mm @nonARC
 Tests/WebKit/WKWebView/CompressionDictionary.mm @nonARC
 Tests/WebKit/WKWebView/Configuration.mm @nonARC

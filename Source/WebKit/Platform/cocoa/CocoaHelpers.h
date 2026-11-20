@@ -25,6 +25,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaObjectForKeyHelpers.h"
 #import <WebCore/Icon.h>
 #import <wtf/HashSet.h>
 #import <wtf/OptionSet.h>
@@ -63,15 +64,6 @@ template<typename T> T *mapObjects(T *container, id NS_NOESCAPE (^block)(id key,
 template<> NSArray *mapObjects<NSArray>(NSArray *, id NS_NOESCAPE (^block)(id key, id value));
 template<> NSDictionary *mapObjects<NSDictionary>(NSDictionary *, id NS_NOESCAPE (^block)(id key, id value));
 template<> NSSet *mapObjects<NSSet>(NSSet *, id NS_NOESCAPE (^block)(id key, id value));
-
-template<typename T>
-T *objectForKey(NSDictionary *dictionary, id key, bool returningNilIfEmpty = true, Class containingObjectsOfClass = Nil)
-{
-    ASSERT(returningNilIfEmpty);
-    ASSERT(!containingObjectsOfClass);
-    // Specialized implementations in CocoaHelpers.mm handle returningNilIfEmpty and containingObjectsOfClass for different Foundation types.
-    return dynamic_objc_cast<T>(dictionary[key]);
-}
 
 inline bool boolForKey(NSDictionary *dictionary, id key, bool defaultValue)
 {

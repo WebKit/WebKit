@@ -1806,6 +1806,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
 # platform (no per-target exclusions), so the iOS WebKit.framework needs them
 # staged for the framework module's `header "X.h"` declarations to resolve.
 list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
+    Platform/cocoa/CocoaObjectForKeyHelpers.h
     Platform/cocoa/WKCrashReporter.h
 
     Platform/unix/EnvironmentUtilities.h
