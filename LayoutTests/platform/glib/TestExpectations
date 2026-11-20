@@ -492,6 +492,7 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-invali
 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-invalid-3.html [ Pass ]
 mathml/non-core/mathvariant/mathvariant-double-struck-font-style-font-weight.html [ Pass ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/mi-fontstyle-fontweight.html [ Pass ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/transform.html [ Pass ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/semantics-002.html [ Pass ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/semantics-003.html [ Pass ]
 
