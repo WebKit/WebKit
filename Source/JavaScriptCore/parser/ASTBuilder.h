@@ -413,7 +413,7 @@ public:
 
     DefineFieldNode* createDefineField(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* initializer, DefineFieldNode::Type type)
     {
-        if (initializer && type != DefineFieldNode::Type::ComputedName) {
+        if (initializer && type != DefineFieldNode::Type::ComputedName && type != DefineFieldNode::Type::StaticComputedName) {
             if (initializer->isBaseFuncExprNode())
                 static_cast<BaseFuncExprNode*>(initializer)->metadata()->setEcmaName(ident);
             else if (initializer->isClassExprNode())

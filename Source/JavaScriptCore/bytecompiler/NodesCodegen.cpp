@@ -715,7 +715,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
         if (p->m_node->isStaticClassBlock())
             kind = Kind::StaticInitializationBlock;
         else if (p->m_node->hasComputedName())
-            kind = Kind::FieldWithComputedPropertyKey;
+            kind = p->m_node->isStaticClassField() ? Kind::StaticFieldWithComputedPropertyKey : Kind::FieldWithComputedPropertyKey;
         else if (p->m_node->isPrivate())
             kind = Kind::FieldWithPrivatePropertyKey;
 
@@ -1030,14 +1030,6 @@ void PropertyListNode::emitSaveComputedFieldName(BytecodeGenerator& generator, P
 
     RefPtr<RegisterID> propertyExpr = generator.emitNode(node.m_expression);
     RefPtr<RegisterID> propertyName = generator.emitToPropertyKey(generator.newTemporary(), propertyExpr.get());
-
-    if (node.isStaticClassField()) {
-        Ref<Label> validPropertyNameLabel = generator.newLabel();
-        RefPtr<RegisterID> prototypeString = generator.emitLoad(nullptr, JSValue(generator.addStringConstant(generator.propertyNames().prototype)));
-        generator.emitJumpIfFalse(generator.emitBinaryOp<OpStricteq>(generator.newTemporary(), prototypeString.get(), propertyName.get(), OperandTypes(ResultType::stringType(), ResultType::stringType())), validPropertyNameLabel.get());
-        generator.emitThrowTypeError("Cannot declare a static field named 'prototype'"_s);
-        generator.emitLabel(validPropertyNameLabel.get());
-    }
 
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
     generator.emitPutToScope(scope.get(), var, propertyName.get(), ThrowIfNotFound, InitializationMode::ConstInitialization);
@@ -5723,7 +5715,7 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     else {
         generator.emitNode(value.get(), m_assign);
         shouldSetFunctionName = generator.shouldSetFunctionName(m_assign);
-        if (shouldSetFunctionName && m_type != DefineFieldNode::Type::ComputedName)
+        if (shouldSetFunctionName && m_type != DefineFieldNode::Type::ComputedName && m_type != DefineFieldNode::Type::StaticComputedName)
             generator.emitSetFunctionName(value.get(), m_ident);
     }
 
@@ -5746,7 +5738,8 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         generator.emitDefinePrivateField(generator.thisRegister(), privateName.get(), value.get());
         break;
     }
-    case DefineFieldNode::Type::ComputedName: {
+    case DefineFieldNode::Type::ComputedName:
+    case DefineFieldNode::Type::StaticComputedName: {
         // For ComputedNames, the expression has already been evaluated earlier during evaluation of a ClassExprNode.
         // Here, `m_ident` refers to private symbol ID in a class lexical scope, containing the value already converted to an Expression.
         Variable var = generator.variable(m_ident);
@@ -5759,6 +5752,13 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         if (shouldSetFunctionName)
             generator.emitSetFunctionName(value.get(), privateName.get());
         generator.emitProfileType(privateName.get(), var, m_position, m_position + m_ident.length());
+        if (m_type == DefineFieldNode::Type::StaticComputedName) {
+            Ref<Label> validPropertyNameLabel = generator.newLabel();
+            RefPtr<RegisterID> prototypeString = generator.emitLoad(nullptr, JSValue(generator.addStringConstant(generator.propertyNames().prototype)));
+            generator.emitJumpIfFalse(generator.emitBinaryOp<OpStricteq>(generator.newTemporary(), prototypeString.get(), privateName.get(), OperandTypes(ResultType::stringType(), ResultType::stringType())), validPropertyNameLabel.get());
+            generator.emitThrowTypeError("Cannot declare a static field named 'prototype'"_s);
+            generator.emitLabel(validPropertyNameLabel.get());
+        }
         {
             StrictModeScope strictModeScope(generator);
             generator.emitDirectPutByVal(generator.thisRegister(), privateName.get(), value.get());
