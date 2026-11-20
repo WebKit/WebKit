@@ -25,9 +25,9 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestScriptMessageHandler.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -37,22 +37,9 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-@interface IDBDeleteRecoveryMessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation IDBDeleteRecoveryMessageHandler
-
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    receivedScriptMessage = true;
-    lastScriptMessage = message;
-}
-
-@end
-
 TEST(IndexedDB, DeleteRecovery)
 {
-    RetainPtr<IDBDeleteRecoveryMessageHandler> handler = adoptNS([[IDBDeleteRecoveryMessageHandler alloc] init]);
+    RetainPtr handler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
@@ -75,7 +62,5 @@ TEST(IndexedDB, DeleteRecovery)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IDBDeleteRecovery" withExtension:@"html"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-
-    EXPECT_WK_STREQ(@"Deleted database", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Deleted database", [handler waitForMessage].body);
 }
