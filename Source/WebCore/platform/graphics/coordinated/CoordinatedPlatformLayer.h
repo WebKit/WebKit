@@ -34,6 +34,7 @@
 #include "FloatSize.h"
 #include "PlatformLayerIdentifier.h"
 #include "TransformationMatrix.h"
+#include <wtf/Atomics.h>
 #include <wtf/Deque.h>
 #include <wtf/EnumSet.h>
 #include <wtf/Lock.h>
@@ -91,6 +92,7 @@ public:
         virtual void willPaintTile() = 0;
         virtual void didPaintTile() = 0;
 #if USE(SKIA)
+        virtual void notifyPreRenderedTilesPending() = 0;
         virtual void didPaintPreRenderedTile(CoordinatedPlatformLayer&) = 0;
 #endif
     };
@@ -242,6 +244,8 @@ public:
     bool hasPendingBackingStoreTileUpdates() const;
     void processPendingBackingStoreTileUpdates();
 #if USE(SKIA)
+    void notifyPreRenderedTilesPending();
+    void schedulePaintForPendingPreRenderedTiles();
     bool processPendingBackingStoreTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles);
 #endif
     bool isCompositionRequiredOrOngoing() const;
@@ -400,6 +404,7 @@ private:
     bool m_pendingTilesCreation WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
 #endif
     bool m_needsTilesUpdate WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    bool m_hasPendingPreRenderedTiles WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     FloatRect m_visibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
     IntRect m_transformedVisibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
     Vector<IntRect, 1> m_dirtyRegion WTF_GUARDED_BY_CAPABILITY(mainThread);
@@ -533,6 +538,10 @@ private:
 #if !USE(TEXTURE_MAPPER)
     Lock m_committedRenderingUpdatesLock;
     Deque<RenderingUpdateProperties> m_committedRenderingUpdates WTF_GUARDED_BY_LOCK(m_committedRenderingUpdatesLock);
+
+    Lock m_preRenderedPendingTileUpdatesLock;
+    Vector<CoordinatedBackingStoreProxy::Update::TileUpdate> m_preRenderedPendingTileUpdates WTF_GUARDED_BY_LOCK(m_preRenderedPendingTileUpdatesLock);
+    Atomic<int> m_preRenderedTilesDeferredNotifications { -1 };
 #endif
 };
 

@@ -40,9 +40,11 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/CoordinatedTileManager.h>
 #include <WebCore/Damage.h>
+#include <WebCore/DocumentView.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/GraphicsLayerCoordinated.h>
-#include <WebCore/LocalFrame.h>
-#include <WebCore/LocalFrameView.h>
+#include <WebCore/LocalFrameInlines.h>
+#include <WebCore/LocalFrameViewInlines.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PlatformDisplay.h>
@@ -85,7 +87,11 @@ std::unique_ptr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 LayerTreeHost::LayerTreeHost(WebPage& webPage)
     : m_webPage(webPage)
     , m_sceneState(CoordinatedSceneState::create())
+    , m_pendingPreRenderedTilesTimer(RunLoop::mainSingleton(), "LayerTreeHost::PendingPreRenderedTilesTimer"_s, this, &LayerTreeHost::pendingPreRenderedTilesTimerFired)
 {
+    // Use lower priority than WebCore timers.
+    m_pendingPreRenderedTilesTimer.setPriority(RunLoopSourcePriority::MainThreadSharedTimer + 1);
+
     {
         auto& rootLayer = m_sceneState->rootLayer();
 #if ENABLE(DAMAGE_TRACKING)
@@ -151,6 +157,8 @@ void LayerTreeHost::scheduleRenderingUpdate()
 
 void LayerTreeHost::scheduleRenderingUpdateRunLoopObserver()
 {
+    m_pendingPreRenderedTilesTimer.stop();
+
     FrameRenderer::scheduleRenderingUpdateRunLoopObserver();
 
     // Avoid running any more tasks before the runloop observer fires.
@@ -165,6 +173,8 @@ bool LayerTreeHost::canUpdateRendering() const
 void LayerTreeHost::updateRendering()
 {
     invalidateRenderingUpdateRunLoopObserver();
+
+    m_pendingPreRenderedTilesTimer.stop();
 
     RELEASE_ASSERT(!m_isUpdatingRendering);
     if (m_layerTreeStateIsFrozen)
@@ -232,6 +242,9 @@ void LayerTreeHost::updateRendering()
         m_sceneState->waitUntilPaintingFinished();
         m_waitUntilPaintingFinished = false;
     }
+
+    if (m_pendingPreRenderedTiles && !m_isWaitingForRenderer)
+        m_pendingPreRenderedTilesTimer.startOneShot(0_s);
 }
 
 void LayerTreeHost::updateRootLayer()
@@ -418,13 +431,61 @@ void LayerTreeHost::didPaintTile()
     m_compositor->pendingTilesDidChange();
 }
 
-#if USE(SKIA)
 void LayerTreeHost::didPaintPreRenderedTile(CoordinatedPlatformLayer& layer)
 {
     if (m_sceneState->didPaintPreRenderedTile(layer) == CoordinatedSceneState::ChangedPreRenderedTiles::Yes)
         m_compositor->preRenderedTilesDidChange();
 }
-#endif
+
+void LayerTreeHost::notifyPreRenderedTilesPending()
+{
+    m_pendingPreRenderedTiles = true;
+}
+
+static bool pageHasPendingStyleOrLayout(WebPage& webPage)
+{
+    auto documentHasPendingStyleOrLayout = [](const Document& document) {
+        if (document.hasPendingStyleRecalc())
+            return true;
+
+        if (RefPtr frameView = document.view()) {
+            if (frameView->needsLayout() || frameView->layoutContext().isLayoutPending())
+                return true;
+        }
+
+        return false;
+    };
+
+    Ref mainFrame = webPage.corePage()->mainFrame();
+    for (RefPtr frame = mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        if (!localFrame)
+            continue;
+
+        RefPtr document = localFrame->document();
+        if (!document)
+            continue;
+
+        if (documentHasPendingStyleOrLayout(*document))
+            return true;
+    }
+
+    return false;
+}
+
+void LayerTreeHost::pendingPreRenderedTilesTimerFired()
+{
+    if (isRenderingUpdateScheduled() || m_layerTreeStateIsFrozen || m_isSuspended)
+        return;
+
+    // Pre-rendered tiles are recorded outside of a rendering update, so if the render tree changed we
+    // have to wait until the next flush to schedule pre-rendered tiles painting.
+    if (pageHasPendingStyleOrLayout(protect(m_webPage)))
+        return;
+
+    m_pendingPreRenderedTiles = false;
+    m_sceneState->schedulePaintForPendingPreRenderedTiles();
+}
 
 Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeImage>&& nativeImage)
 {
@@ -467,6 +528,8 @@ void LayerTreeHost::requestCompositionForRenderingUpdate()
             m_forcedRepaintAsyncCallback();
 
         m_isWaitingForRenderer = false;
+        if (m_pendingPreRenderedTiles)
+            m_pendingPreRenderedTilesTimer.startOneShot(0_s);
         bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
         if (m_pendingForceRepaint) {
             if (!m_layerTreeStateIsFrozen)

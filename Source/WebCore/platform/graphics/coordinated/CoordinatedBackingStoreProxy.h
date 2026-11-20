@@ -80,6 +80,7 @@ public:
         bool isEmpty() const { return m_tilesToCreate.isEmpty() && m_tilesToUpdate.isEmpty() && m_tilesToRemove.isEmpty() && m_tilesToUpdateVisibility.isEmpty(); }
 #else
         void merge(Update&&);
+        void prependTileUpdates(Vector<TileUpdate>&&);
 #endif
 
     private:
@@ -99,6 +100,7 @@ public:
     Update takePendingUpdate();
 #else
     std::optional<Update> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
+    Vector<Update::TileUpdate> schedulePaintForPreRenderedTiles(CoordinatedPlatformLayer&);
 #endif
 
     void waitUntilPaintingFinished();
@@ -168,6 +170,11 @@ private:
     std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;
     void adjustForContentsRect(IntRect&) const;
 
+#if !USE(TEXTURE_MAPPER)
+    enum class UpdateDirtyTilesType : bool { Visible, PreRender };
+    Vector<Update::TileUpdate> updateDirtyTiles(const IntRect& tileDirtyRectUnion, unsigned dirtyTilesCount, UpdateDirtyTilesType, CoordinatedPlatformLayer&);
+#endif
+
     IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;
     IntRect tileRectForPosition(const IntPoint&) const;
@@ -175,6 +182,9 @@ private:
     void forEachTilePositionInRect(const IntRect&, NOESCAPE const Function<void(IntPoint&&)>&);
 
     float m_contentsScale { 1 };
+#if !USE(TEXTURE_MAPPER)
+    bool m_contentsOpaque { false };
+#endif
     IntSize m_tileSize;
     float m_coverAreaMultiplier { 2 };
 #if USE(CAIRO)

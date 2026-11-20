@@ -101,6 +101,23 @@ void CoordinatedBackingStoreProxy::Update::merge(Update&& other)
     }
 }
 
+void CoordinatedBackingStoreProxy::Update::prependTileUpdates(Vector<TileUpdate>&& tilesToUpdate)
+{
+    // Drop updates for tiles removed by the newer flush update.
+    if (!m_tilesToRemove.isEmpty()) {
+        tilesToUpdate.removeAllMatching([this](const auto& update) {
+            return m_tilesToRemove.contains(update.tileID);
+        });
+        if (tilesToUpdate.isEmpty())
+            return;
+    }
+
+    if (m_tilesToUpdate.isEmpty())
+        m_tilesToUpdate = WTF::move(tilesToUpdate);
+    else
+        m_tilesToUpdate.insertVector(0, WTF::move(tilesToUpdate));
+}
+
 CoordinatedBackingStoreProxy::Tile::Tile(uint32_t id, IntRect&& tileRect)
     : id(id)
     , rect(WTF::move(tileRect))
@@ -159,13 +176,16 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
 {
     assertIsMainThread();
     ASSERT(layer.owner());
+
+    m_contentsOpaque = contentsOpaque;
+
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
         createOrDestroyTiles(layer, unscaledVisibleRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
 
     if (m_animatedBackingStoreClient)
-        m_animatedBackingStoreClient->update(layer.owner(), unscaledViewportRect, m_coverRect, unscaledSize, contentsScale);
+        m_animatedBackingStoreClient->update(layer.owner(), unscaledViewportRect, m_coverRect, unscaledSize, m_contentsScale);
 
     if (!m_tiles.isEmpty())
         invalidateRegion(dirtyRegion);
@@ -174,6 +194,7 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
 
     IntRect tileDirtyRectUnion;
     unsigned dirtyTilesCount = 0;
+    bool preRenderedTilesPending = false;
     HashMap<uint32_t, bool> tilesToUpdateVisibility;
     for (auto& tile : m_tiles.values()) {
         const bool distanceChanged = std::exchange(tile.distanceChanged, false);
@@ -228,52 +249,90 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
                 }
             }
 
+            if (tile.distance)
+                preRenderedTilesPending = true;
+            else {
+                tileDirtyRectUnion.unite(tile.dirtyRect);
+                ++dirtyTilesCount;
+            }
+        }
+    }
+
+    if (preRenderedTilesPending)
+        layer.notifyPreRenderedTilesPending();
+
+    auto tilesToUpdate = updateDirtyTiles(tileDirtyRectUnion, dirtyTilesCount, UpdateDirtyTilesType::Visible, layer);
+    if (tilesToCreate.isEmpty() && tilesToUpdate.isEmpty() && tilesToRemove.isEmpty() && tilesToUpdateVisibility.isEmpty())
+        return std::nullopt;
+
+    return Update(WTF::move(tilesToCreate), WTF::move(tilesToUpdate), WTF::move(tilesToRemove), WTF::move(tilesToUpdateVisibility));
+}
+
+Vector<CoordinatedBackingStoreProxy::Update::TileUpdate> CoordinatedBackingStoreProxy::schedulePaintForPreRenderedTiles(CoordinatedPlatformLayer& layer)
+{
+    IntRect tileDirtyRectUnion;
+    unsigned dirtyTilesCount = 0;
+    for (auto& tile : m_tiles.values()) {
+        if (!tile.isDirty())
+            continue;
+
+        if (tile.distance) {
             tileDirtyRectUnion.unite(tile.dirtyRect);
             ++dirtyTilesCount;
         }
     }
 
+    return updateDirtyTiles(tileDirtyRectUnion, dirtyTilesCount, UpdateDirtyTilesType::PreRender, layer);
+}
+
+Vector<CoordinatedBackingStoreProxy::Update::TileUpdate> CoordinatedBackingStoreProxy::updateDirtyTiles(const IntRect& tileDirtyRectUnion, unsigned dirtyTilesCount, UpdateDirtyTilesType tilesType, CoordinatedPlatformLayer& layer)
+{
     Vector<Update::TileUpdate> tilesToUpdate;
-    if (dirtyTilesCount) {
-        WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %u", dirtyTilesCount);
 
-        // Record only once the whole layer.
-        auto recording = tileManager.record(*layer.owner(), tileDirtyRectUnion, contentsOpaque, contentsScale, dirtyTilesCount);
+    if (!dirtyTilesCount)
+        return tilesToUpdate;
 
-        unsigned dirtyTileIndex = 0;
-        for (auto& tile : m_tiles.values()) {
-            if (!tile.isDirty())
-                continue;
+    auto& tileManager = layer.tileManager();
 
-            WTFBeginSignpost(this, UpdateTile, "%u/%u, id: %d, rect: %ix%i+%i+%i, dirty: %ix%i+%i+%i", ++dirtyTileIndex, dirtyTilesCount, tile.id,
-                tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
+    WTFBeginSignpost(this, UpdateTiles, "%s dirty tiles: %u", tilesType == UpdateDirtyTilesType::Visible ? "visible" : "pre-rendered", dirtyTilesCount);
 
-            auto buffer = tileManager.scheduleReplay(*layer.owner(), recording, tile.rect, tile.dirtyRect, tile.distance);
-            tile.activeBuffers.append(buffer);
+    auto recording = tileManager.record(*layer.owner(), tileDirtyRectUnion, m_contentsOpaque, m_contentsScale, dirtyTilesCount);
 
-            IntRect updateRect(tile.dirtyRect);
-            updateRect.move(-tile.rect.x(), -tile.rect.y());
-            tilesToUpdate.append({ tile.id, tile.rect, WTF::move(updateRect), WTF::move(buffer) });
-            tile.markClean();
+    unsigned dirtyTileIndex = 0;
+    for (auto& tile : m_tiles.values()) {
+        if (!tile.isDirty())
+            continue;
 
-            WTFEndSignpost(this, UpdateTile);
-        }
+        if (tilesType == UpdateDirtyTilesType::Visible && tile.distance)
+            continue;
 
-#if !HAVE(OS_SIGNPOST) && !USE(SYSPROF_CAPTURE) && !USE(ATRACE_CAPTURE)
-        UNUSED_VARIABLE(dirtyTileIndex);
-#endif
+        if (tilesType == UpdateDirtyTilesType::PreRender && !tile.distance)
+            continue;
 
-        WTFEndSignpost(this, UpdateTiles);
+        WTFBeginSignpost(this, UpdateTile, "%u/%u, id: %d, rect: %ix%i+%i+%i, dirty: %ix%i+%i+%i", ++dirtyTileIndex, dirtyTilesCount, tile.id,
+            tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
+
+        auto buffer = tileManager.scheduleReplay(*layer.owner(), recording, tile.rect, tile.dirtyRect, tile.distance);
+        tile.activeBuffers.append(buffer);
+
+        IntRect updateRect(tile.dirtyRect);
+        updateRect.move(-tile.rect.x(), -tile.rect.y());
+        tilesToUpdate.append({ tile.id, tile.rect, WTF::move(updateRect), WTF::move(buffer) });
+        tile.markClean();
+
+        WTFEndSignpost(this, UpdateTile);
     }
 
 #if !HAVE(OS_SIGNPOST) && !USE(SYSPROF_CAPTURE) && !USE(ATRACE_CAPTURE)
-    UNUSED_VARIABLE(dirtyTilesCount);
+    UNUSED_VARIABLE(dirtyTileIndex);
+#if USE(CAIRO)
+    UNUSED_VARIABLE(tilesType);
+#endif
 #endif
 
-    if (tilesToCreate.isEmpty() && tilesToUpdate.isEmpty() && tilesToRemove.isEmpty() && tilesToUpdateVisibility.isEmpty())
-        return std::nullopt;
+    WTFEndSignpost(this, UpdateTiles);
 
-    return Update(WTF::move(tilesToCreate), WTF::move(tilesToUpdate), WTF::move(tilesToRemove), WTF::move(tilesToUpdateVisibility));
+    return tilesToUpdate;
 }
 
 void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& dirtyRegion)
