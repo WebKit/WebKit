@@ -798,7 +798,7 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
         updateInFlowDescendantTransformsAfterLayout();
-        computeInFlowOverflow(contentOverflowRect());
+        computeInFlowOverflow(contentOverflowRect(), ComputeOverflowOptions::MarginsExtendLayoutOverflow);
 
         if (isDocumentElementRenderer() || borderBoxSize() != previousSize)
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
@@ -1876,9 +1876,6 @@ void RenderGrid::populateGridPositionsForDirection(const GridTrackSizingAlgorith
             positions[i + 1] = positions[i] + offsetBetweenTracks.distributionOffset + tracks[i]->unclampedBaseSize() + gap;
         positions[lastLine] = positions[nextToLastLine] + tracks[nextToLastLine]->unclampedBaseSize();
 
-        if (isStackingAxis(direction))
-            positions[lastLine] = gridLanesResult->get().gridContentSize() + positions[0];
-
         // Adjust collapsed gaps. Collapsed tracks cause the surrounding gutters to collapse (they
         // coincide exactly) except on the edges of the grid where they become 0.
         if (hasCollapsedTracks) {
@@ -1901,6 +1898,9 @@ void RenderGrid::populateGridPositionsForDirection(const GridTrackSizingAlgorith
             }
             positions[lastLine] += gapAccumulator - offsetAccumulator;
         }
+
+        if (isStackingAxis(direction))
+            positions[lastLine] = gridLanesResult->get().gridContentSize() + positions[0];
     }
 }
 
@@ -2568,8 +2568,8 @@ ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Sty
 
 LayoutRect RenderGrid::contentOverflowRect() const
 {
-    // FIXME: Handle subgrids and grid lanes.
-    if (!hasPotentiallyScrollableOverflow() || isGridLanes() || isSubgridRows() || isSubgridColumns())
+    // FIXME: Handle subgrids.
+    if (!hasPotentiallyScrollableOverflow() || isSubgridRows() || isSubgridColumns())
         return blockStartRelativeContentBoxRect();
 
     // Get the grid rectangle.
