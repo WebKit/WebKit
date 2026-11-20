@@ -64,6 +64,7 @@ public:
 
     RemoteDeviceProxy& device() const final { return m_device; }
     RefPtr<::WebGPU::TextureView> createView(const std::optional<::WebGPU::TextureViewDescriptor>&) final;
+    RefPtr<::WebGPU::TextureView> createInvalidView() final;
 
     void destroy() final;
     void setLabel(String&&) final;

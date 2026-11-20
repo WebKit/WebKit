@@ -110,7 +110,6 @@ public:
     void setCommittedSignalEvent(id<MTLSharedEvent>, size_t frameIndex);
 
     RefPtr<WebGPU::Device> device() const final;
-    void generateAValidationError(String&&);
     void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger);
     id<MTLCommandBuffer> _Nullable commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
     void commitMTLCommandBuffer(id<MTLCommandBuffer>);

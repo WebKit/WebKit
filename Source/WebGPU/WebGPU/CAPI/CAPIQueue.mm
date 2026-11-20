@@ -80,10 +80,12 @@ void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUTexelCopyTextureInfo* dest
 {
     @autoreleasepool {
         auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), dataSize);
-        Ref protectedQueue = WebGPU::CAPI::metalFromAPI(queue);
+        Ref protectedQueue = WebGPU::CAPI::fromAPI(queue);
         auto apiDestination = WebGPU::CAPI::fromAPI(*destination);
         if (!apiDestination) {
-            protectedQueue->generateAValidationError("GPUQueue.writeTexture: the destination has a null texture or an invalid aspect"_s);
+            // No error once the device is gone.
+            if (RefPtr device = protectedQueue->device())
+                device->generateAValidationError("GPUQueue.writeTexture: the destination has a null texture or an invalid aspect"_s);
             return;
         }
         protectedQueue->writeTexture(*apiDestination, bytes, WebGPU::CAPI::fromAPI(*dataLayout), WebGPU::CAPI::fromAPI(*writeSize));

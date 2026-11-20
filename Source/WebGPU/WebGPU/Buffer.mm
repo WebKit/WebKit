@@ -493,16 +493,6 @@ void Buffer::setLabel(String&& label)
     m_buffer.label = label.createNSString().get();
 }
 
-void Buffer::generateAValidationError()
-{
-    generateAValidationError("Buffer state was not unmapped"_s);
-}
-
-void Buffer::generateAValidationError(String&& message)
-{
-    m_device->generateAValidationError(WTF::move(message));
-}
-
 uint64_t Buffer::initialSize() const
 {
     return m_initialSize;

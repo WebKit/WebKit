@@ -183,12 +183,6 @@ void RemoteBufferProxy::destroy()
     m_mappedSize = std::nullopt;
 }
 
-void RemoteBufferProxy::generateAValidationError()
-{
-    auto sendResult = send(Messages::RemoteBuffer::GenerateAValidationError());
-    UNUSED_VARIABLE(sendResult);
-}
-
 void RemoteBufferProxy::setLabel(String&& label)
 {
     auto sendResult = send(Messages::RemoteBuffer::SetLabel(WTF::move(label)));

@@ -361,6 +361,16 @@ RefPtr<WebGPU::ComputePassEncoder> CommandEncoder::beginComputePass(const std::o
     return beginComputePass(descriptor ? *descriptor : WebGPU::ComputePassDescriptor { });
 }
 
+RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginInvalidRenderPass(String&& error)
+{
+    return RenderPassEncoder::createInvalid(*this, m_device, error.createNSString().get());
+}
+
+RefPtr<WebGPU::ComputePassEncoder> CommandEncoder::beginInvalidComputePass(String&& error)
+{
+    return ComputePassEncoder::createInvalid(*this, m_device, error.createNSString().get());
+}
+
 void CommandEncoder::copyBufferToBuffer(const WebGPU::Buffer& source, uint64_t sourceOffset, WebGPU::Buffer& destination, uint64_t destinationOffset, uint64_t size)
 {
     copyBufferToBuffer(downcast<Buffer>(source), sourceOffset, downcast<Buffer>(destination), destinationOffset, size);

@@ -35,7 +35,6 @@ messages -> RemoteBuffer Stream {
     void CopyWithCopy(Vector<uint8_t> data, uint64_t offset)
     void Unmap()
     void Destroy()
-    void GenerateAValidationError()
     void Destruct()
     void SetLabel(String label)
 }

@@ -54,6 +54,21 @@ messages -> RemoteDevice Stream {
     void ResolveDeviceLostPromise() -> (::WebGPU::DeviceLostReason reason)
     void SetLabel(String label)
     void PauseAllErrorReporting(bool pauseErrorReporting)
+
+    void CreateInvalidBindGroup(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidBindGroupLayout(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidBuffer(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidCommandBuffer(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidCommandEncoder(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidComputePipeline(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidPipelineLayout(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidQuerySet(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidRenderBundleEncoder(String error, WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidRenderPipeline(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidSampler(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidShaderModule(WebKit::WebGPUIdentifier identifier)
+    void CreateInvalidTexture(WebKit::WebGPUIdentifier identifier)
+    void GenerateAValidationError(String message)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable

@@ -959,12 +959,6 @@ RefPtr<WebGPU::Device> Queue::device() const
     return m_device.get();
 }
 
-void Queue::generateAValidationError(String&& message)
-{
-    if (RefPtr device = m_device.get())
-        device->generateAValidationError(WTF::move(message));
-}
-
 void Queue::clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo& destination, NSUInteger slice)
 {
     auto device = m_device.get();

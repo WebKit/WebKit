@@ -335,11 +335,6 @@ inline Metal::ShaderModule& metalFromAPI(WGPUShaderModule handle)
     return downcast<Metal::ShaderModule>(fromAPI(handle));
 }
 
-inline Metal::Texture& metalFromAPI(WGPUTexture handle)
-{
-    return downcast<Metal::Texture>(fromAPI(handle));
-}
-
 // A future of the C API on an instance. complete() is called after the callback it stands for
 // has run. Without an instance, the future is WGPU_FUTURE_INIT, which nothing waits on.
 class Future {

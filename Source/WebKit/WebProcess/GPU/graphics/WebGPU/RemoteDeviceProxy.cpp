@@ -31,6 +31,7 @@
 #include "RemoteBindGroupLayoutProxy.h"
 #include "RemoteBindGroupProxy.h"
 #include "RemoteBufferProxy.h"
+#include "RemoteCommandBufferProxy.h"
 #include "RemoteCommandEncoderProxy.h"
 #include "RemoteComputePipelineProxy.h"
 #include "RemoteDeviceMessages.h"
@@ -470,6 +471,150 @@ void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU
 void RemoteDeviceProxy::pauseAllErrorReporting(bool pause)
 {
     auto sendResult = send(Messages::RemoteDevice::PauseAllErrorReporting(pause));
+    UNUSED_PARAM(sendResult);
+}
+
+RefPtr<::WebGPU::BindGroup> RemoteDeviceProxy::createInvalidBindGroup()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidBindGroup(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteBindGroupProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::BindGroupLayout> RemoteDeviceProxy::createInvalidBindGroupLayout()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidBindGroupLayout(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteBindGroupLayoutProxy::create(protect(root()), m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createInvalidBuffer()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidBuffer(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier, ::WebGPU::BufferDescriptor { });
+}
+
+RefPtr<::WebGPU::CommandBuffer> RemoteDeviceProxy::createInvalidCommandBuffer()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidCommandBuffer(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteCommandBufferProxy::create(protect(root()), m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::CommandEncoder> RemoteDeviceProxy::createInvalidCommandEncoder()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidCommandEncoder(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteCommandEncoderProxy::create(protect(root()), m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::ComputePipeline> RemoteDeviceProxy::createInvalidComputePipeline()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidComputePipeline(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteComputePipelineProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::PipelineLayout> RemoteDeviceProxy::createInvalidPipelineLayout()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidPipelineLayout(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemotePipelineLayoutProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createInvalidQuerySet()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidQuerySet(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteQuerySetProxy::createInvalid(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createInvalidRenderBundleEncoder(String&& error)
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidRenderBundleEncoder(WTF::move(error), identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteRenderBundleEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::RenderPipeline> RemoteDeviceProxy::createInvalidRenderPipeline()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidRenderPipeline(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteRenderPipelineProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::Sampler> RemoteDeviceProxy::createInvalidSampler()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidSampler(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteSamplerProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::ShaderModule> RemoteDeviceProxy::createInvalidShaderModule()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidShaderModule(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteShaderModuleProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createInvalidTexture()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateInvalidTexture(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    // The properties of the Metal invalid texture.
+    return RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier, {
+        .size = { 0, 0, 0 },
+        .mipLevelCount = 0,
+        .sampleCount = 0,
+        .dimension = ::WebGPU::TextureDimension::_2d,
+        .format = std::nullopt,
+        .usage = { },
+    });
+}
+
+void RemoteDeviceProxy::generateAValidationError(String&& message)
+{
+    auto sendResult = send(Messages::RemoteDevice::GenerateAValidationError(WTF::move(message)));
     UNUSED_PARAM(sendResult);
 }
 

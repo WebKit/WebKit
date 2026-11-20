@@ -74,6 +74,7 @@ public:
 
     // std::nullopt is a descriptor with all members at their defaults.
     RefPtr<WebGPU::TextureView> createView(const std::optional<WebGPU::TextureViewDescriptor>&) final;
+    RefPtr<WebGPU::TextureView> createInvalidView() final;
     void destroy() final;
     void undestroy() final;
     void setLabel(String&&) final;
