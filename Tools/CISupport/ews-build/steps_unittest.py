@@ -4944,6 +4944,7 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
         CompileWebKitWithoutChange(retry_build_on_failure=True), ValidateChange(verifyPRClosed=False, addURLs=False),
         KillOldProcesses(), RunAPITestsWithoutChange(), AnalyzeAPITestsResults(),
     ]
+    PARALLEL_SAFETY = [FindModifiedAPITests(skipBuildIfNoResult=False), FilterAPITestsForPlatform(), RunAPITestsParallelSafety()]
 
     def setUp(self) -> defer.Deferred:
         self.longMessage = True
@@ -4976,7 +4977,7 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
 
         yield step.doOnFailure()
 
-        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
         self.assertEqual(step.build.results, SUCCESS)
         self.assertEqual(self.getProperty('build_summary'), 'Ignored pre-existing flakes: suite.flaky')
         self.assertEqual(self.getProperty('force_build_success'), True)
@@ -5041,7 +5042,7 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
         yield step.doOnFailure()
 
         self.assertEqual(queried, [(['suite.both'], {'platform': 'mac', 'style': 'release'}, 'api-tests', [], None)])
-        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
 
     @defer.inlineCallbacks
     def test_a_pre_existing_failure_filtered_out_of_a_run_is_not_a_candidate(self) -> Generator[Any, Any, None]:
@@ -5055,7 +5056,7 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
         yield step.doOnFailure()
 
         self.assertEqual([tests for tests, _, _, _, _ in queried], [['suite.flaky']])
-        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
 
     @defer.inlineCallbacks
     def test_an_unparsed_run_queries_nothing_and_retries_the_build(self) -> Generator[Any, Any, None]:
@@ -5202,6 +5203,7 @@ class TestReRunAPITestsSkipsCleanTreeWithoutRepeatedFailures(BuildStepMixinAddit
     to rebuild without the change and run the clean tree."""
 
     LADDER = TestReRunAPITestsExcusesKnownFlakes.LADDER
+    PARALLEL_SAFETY = TestReRunAPITestsExcusesKnownFlakes.PARALLEL_SAFETY
 
     def setUp(self) -> defer.Deferred:
         self.longMessage = True
@@ -5221,7 +5223,7 @@ class TestReRunAPITestsSkipsCleanTreeWithoutRepeatedFailures(BuildStepMixinAddit
         yield step.doOnFailure()
 
         self.assertEqual(queried, [])
-        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
         self.assertEqual(step.build.results, SUCCESS)
         self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: suite.first, suite.second')
         self.assertEqual(self.getProperty('force_build_success'), True)
@@ -5234,7 +5236,7 @@ class TestReRunAPITestsSkipsCleanTreeWithoutRepeatedFailures(BuildStepMixinAddit
 
         yield step.doOnFailure()
 
-        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
         self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: suite.first, suite.second')
 
     @defer.inlineCallbacks
@@ -5245,7 +5247,7 @@ class TestReRunAPITestsSkipsCleanTreeWithoutRepeatedFailures(BuildStepMixinAddit
 
         yield step.doOnFailure()
 
-        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
         self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: suite.flaky, suite.other')
 
     @defer.inlineCallbacks
@@ -9159,7 +9161,7 @@ class TestRunAPITestsParallelSafety(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --skip-blocklisted --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -9184,7 +9186,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --ios-simulator --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --ios-simulator --skip-blocklisted --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -9209,7 +9211,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --skip-failing-tests --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --skip-failing-tests --skip-blocklisted --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -9241,7 +9243,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --test-parallel-safety TestWebKitAPI.Test1 --test-parallel-safety TestWebKitAPI.Test2 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --skip-blocklisted --test-parallel-safety TestWebKitAPI.Test1 --test-parallel-safety TestWebKitAPI.Test2 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -9256,6 +9258,290 @@ All tests successfully passed!
         )
         self.expect_outcome(result=SUCCESS, state_string='Passed parallel safety for 2 test(s)')
         return self.run_step()
+
+
+class TestAPITestParallelSafetyScheduling(BuildStepMixinAdditions, unittest.TestCase):
+    PARALLEL_SAFETY = TestReRunAPITestsExcusesKnownFlakes.PARALLEL_SAFETY
+    COMMAND = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api']
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configure(self, step, platform='mac'):
+        self.setup_step(step)
+        self.setProperty('fullPlatform', 'mac-sonoma' if platform == 'mac' else platform)
+        self.setProperty('platform', platform)
+        self.setProperty('configuration', 'release')
+        self.steps_added = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: self.steps_added.extend(steps))
+        return self.get_nth_step(0)
+
+    def test_the_first_run_schedules_parallel_safety(self):
+        step = self.configure(RunAPITests())
+        step.add_parallel_safety_steps()
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
+
+    def test_the_re_run_schedules_parallel_safety(self):
+        step = self.configure(ReRunAPITests())
+        step.add_parallel_safety_steps()
+        self.assertEqual(step.steps_to_add, self.PARALLEL_SAFETY)
+
+    def test_the_run_without_the_change_does_not_schedule_parallel_safety(self):
+        step = self.configure(RunAPITestsWithoutChange())
+        step.add_parallel_safety_steps()
+        self.assertEqual(step.steps_to_add, [])
+
+    def test_the_parallel_safety_run_does_not_schedule_itself(self):
+        step = self.configure(RunAPITestsParallelSafety())
+        step.add_parallel_safety_steps()
+        self.assertEqual(step.steps_to_add, [])
+
+    def test_unsupported_platforms_do_not_schedule_parallel_safety(self):
+        step = self.configure(RunAPITests(), platform='gtk')
+        step.add_parallel_safety_steps()
+        self.assertEqual(step.steps_to_add, [])
+
+    @defer.inlineCallbacks
+    def test_a_passing_first_run_schedules_parallel_safety(self):
+        self.configure(RunAPITests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, command=self.COMMAND, logfiles={'json': 'api_test_results.json'}, timeout=20 * 60)
+            .log('stdio', stdout='worker/0 TestWebKitAPI.Suite.Passes Passed\nRan 1 tests of 1 with 1 successful\n------------------------------\nAll tests successfully passed!\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='run-api-tests')
+        yield self.run_step()
+        self.assertEqual(self.steps_added[-3:], self.PARALLEL_SAFETY)
+
+    @defer.inlineCallbacks
+    def test_a_first_run_with_only_pre_existing_failures_schedules_parallel_safety(self):
+        step = self.configure(RunAPITests())
+
+        def filter_failures(failing_tests):
+            step.failing_tests_filtered = []
+            step.pre_existing_failures_in_results_db = list(failing_tests)
+            return defer.succeed(None)
+        step.filter_api_test_failures_using_results_db = filter_failures
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, command=self.COMMAND, logfiles={'json': 'api_test_results.json'}, timeout=20 * 60)
+            .log('stdio', stdout='worker/0 TestWebKitAPI.Suite.PreExisting Failed\nRan 1 tests of 1 with 0 successful\n------------------------------\nTest suite failed\n')
+            .log('json', stdout='{"Failed": [{"name": "TestWebKitAPI.Suite.PreExisting"}]}')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 api test failed or timed out')
+        yield self.run_step()
+        self.assertEqual(self.build.results, SUCCESS)
+        self.assertEqual(self.steps_added[-3:], self.PARALLEL_SAFETY)
+
+
+class TestRunAPITestsParallelSafetyFailureSummary(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    @defer.inlineCallbacks
+    def test_a_failure_fails_the_build_after_the_api_test_runs_passed(self):
+        self.setup_step(RunAPITestsParallelSafety())
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_api_tests', ['TestWebKitAPI.Suite.Unsafe'])
+        self.setProperty('build_summary', 'Passed API tests')
+        self.setProperty('force_build_success', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json --skip-failing-tests --skip-blocklisted --test-parallel-safety TestWebKitAPI.Suite.Unsafe 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': 'api_test_results.json'}, timeout=20 * 60)
+            .log('stdio', stdout='worker/0 TestWebKitAPI.Suite.Unsafe Failed\nRan 1 tests of 1 with 0 successful\n------------------------------\nTest suite failed\n')
+            .log('json', stdout='{"Failed": [{"name": "TestWebKitAPI.Suite.Unsafe"}]}')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 parallel safety test failed')
+        yield self.run_step()
+        self.assertEqual(self.getProperty('build_summary'), 'Found 1 API test that failed when run in parallel: TestWebKitAPI.Suite.Unsafe. Fix it or add it to Tools/Scripts/webkitpy/api_tests/blocklist.txt')
+        self.assertEqual(self.getProperty('force_build_success'), False)
+        self.assertEqual(self.build.results, FAILURE)
+
+    def test_the_run_uses_the_queue_s_arguments(self):
+        self.setup_step(RunAPITestsParallelSafety())
+        self.setProperty('fullPlatform', 'ios-simulator-27')
+        self.setProperty('platform', 'ios')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['--child-processes=5'])
+        self.setProperty('modified_api_tests', ['TestWebKitAPI.Suite.Test'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json --skip-failing-tests --ios-simulator --child-processes=5 --skip-blocklisted --test-parallel-safety TestWebKitAPI.Suite.Test 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': 'api_test_results.json'}, timeout=20 * 60)
+            .log('stdio', stdout='worker/0 TestWebKitAPI.Suite.Test Passed\nRan 1 tests of 1 with 1 successful\n------------------------------\nAll tests successfully passed!\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed parallel safety for 1 test(s)')
+        return self.run_step()
+
+    def test_swift_test_names_are_quoted_for_the_shell(self):
+        self.setup_step(RunAPITestsParallelSafety())
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_api_tests', ['TestWebKitAPI.ExampleTests/basicTest()'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json --skip-failing-tests --skip-blocklisted --test-parallel-safety 'TestWebKitAPI.ExampleTests/basicTest()' 2>&1 | Tools/Scripts/filter-test-logs api"],
+                        logfiles={'json': 'api_test_results.json'}, timeout=20 * 60)
+            .log('stdio', stdout='worker/0 TestWebKitAPI.ExampleTests/basicTest() Passed\nRan 1 tests of 1 with 1 successful\n------------------------------\nAll tests successfully passed!\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed parallel safety for 1 test(s)')
+        return self.run_step()
+
+    @defer.inlineCallbacks
+    def test_a_run_without_parsed_failures_leaves_the_summary_alone(self):
+        self.setup_step(RunAPITestsParallelSafety())
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_api_tests', ['TestWebKitAPI.Suite.Test'])
+        self.setProperty('build_summary', 'Passed API tests')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json --skip-failing-tests --skip-blocklisted --test-parallel-safety TestWebKitAPI.Suite.Test 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': 'api_test_results.json'}, timeout=20 * 60)
+            .log('stdio', stdout='Traceback (most recent call last):\n')
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='run-api-tests-parallel-safety (failure)')
+        yield self.run_step()
+        self.assertEqual(self.getProperty('build_summary'), 'Passed API tests')
+
+
+class TestFindModifiedAPITestsParsing(unittest.TestCase):
+    CPP = '''#include "config.h"
+
+TEST(WTF_Vector, Basic)
+{
+    EXPECT_TRUE(true);
+}
+
+TEST_F(SuiteFixture,
+    MultiLine)
+{
+}
+'''
+    SWIFT = '''struct ExampleTests {
+    @Test
+    func first() {
+        let html = """
+            class Decoy extends HTMLElement {}
+            """
+    }
+
+    @Test(.enabled(if: true)) func second(value: Int) {
+    }
+}
+'''
+
+    def test_cpp_test_spans(self):
+        self.assertEqual(FindModifiedAPITests._test_spans_from_content(self.CPP), [('WTF_Vector', 'Basic', 3, 7), ('SuiteFixture', 'MultiLine', 8, 11)])
+
+    def test_swift_test_spans_ignore_string_literals(self):
+        self.assertEqual(FindModifiedAPITests._test_spans_from_content(self.SWIFT, swift=True), [('ExampleTests', 'first', 2, 8), ('ExampleTests', 'second', 9, 11)])
+
+    def test_changed_line_ranges(self):
+        self.assertEqual(FindModifiedAPITests._changed_line_ranges('@@ -3,0 +4,2 @@\n+a\n+b\n@@ -10 +12 @@\n-c\n+d\n@@ -5,2 +4,0 @@\n'), [(4, 5), (12, 12), (4, 4)])
+
+    def test_binary_for_test_path(self):
+        self.assertEqual(FindModifiedAPITests._get_binary_for_test_path('Tools/TestWebKitAPI/Tests/IPC/ArgumentCoderTests.cpp'), 'TestIPC')
+        self.assertEqual(FindModifiedAPITests._get_binary_for_test_path('Tools/TestWebKitAPI/Tests/WebGPU/UncapturedErrorCallbackTests.cpp'), 'TestWGSL')
+        self.assertEqual(FindModifiedAPITests._get_binary_for_test_path('Tools/TestWebKitAPI/Tests/WTF/Vector.cpp'), 'TestWTF')
+        self.assertEqual(FindModifiedAPITests._get_binary_for_test_path('Tools/TestWebKitAPI/Tests/WebKit/WKWebView/PasteHTML.mm'), 'TestWebKitAPI')
+
+    def test_touched_cpp_tests_come_first(self):
+        tests = FindModifiedAPITests._tests_in_file('Tools/TestWebKitAPI/Tests/WTF/Vector.cpp', self.CPP, '@@ -9 +9 @@\n')
+        self.assertEqual(tests, [
+            {'file': 'Tools/TestWebKitAPI/Tests/WTF/Vector.cpp', 'test': 'TestWTF.SuiteFixture.MultiLine', 'touched': True},
+            {'file': 'Tools/TestWebKitAPI/Tests/WTF/Vector.cpp', 'test': 'TestWTF.WTF_Vector.Basic', 'touched': False},
+        ])
+
+    def test_swift_tests_name_their_suite_and_function(self):
+        tests = FindModifiedAPITests._tests_in_file('Tools/TestWebKitAPI/Tests/WebKit/ExampleTests.swift', self.SWIFT, '@@ -0,0 +9,3 @@\n')
+        self.assertEqual(tests[0], {'file': 'Tools/TestWebKitAPI/Tests/WebKit/ExampleTests.swift', 'test': 'TestWebKitAPI.ExampleTests/second()', 'touched': True, 'swift': ['ExampleTests', 'second']})
+        self.assertFalse(tests[1]['touched'])
+
+
+class TestFilterAPITestsForPlatformSelection(BuildStepMixinAdditions, unittest.TestCase):
+    AVAILABLE = ['TestWTF.WTF_Vector.Basic', 'TestWebKitAPI.URLExtras.Basic', 'TestWebKitAPI.ExampleTests/second(value:)', 'TestWebKitAPI.Outer/ExampleTests/first()']
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_the_binary_comes_from_the_available_tests(self):
+        index = FilterAPITestsForPlatform.index_available_tests(self.AVAILABLE)
+        self.assertEqual(FilterAPITestsForPlatform.available_test_names({'test': 'TestWebKitAPI.WTF_Vector.Basic'}, index), ['TestWTF.WTF_Vector.Basic'])
+        self.assertEqual(FilterAPITestsForPlatform.available_test_names({'test': 'TestWTF.URLExtras.Basic'}, index), ['TestWebKitAPI.URLExtras.Basic'])
+        self.assertEqual(FilterAPITestsForPlatform.available_test_names({'test': 'TestWebKitAPI.Missing.Test'}, index), [])
+
+    def test_swift_tests_match_their_suite_and_function(self):
+        index = FilterAPITestsForPlatform.index_available_tests(self.AVAILABLE)
+        self.assertEqual(FilterAPITestsForPlatform.available_test_names({'test': 'TestWebKitAPI.ExampleTests/second()', 'swift': ['ExampleTests', 'second']}, index), ['TestWebKitAPI.ExampleTests/second(value:)'])
+        self.assertEqual(FilterAPITestsForPlatform.available_test_names({'test': 'TestWebKitAPI.ExampleTests/first()', 'swift': ['ExampleTests', 'first']}, index), ['TestWebKitAPI.Outer/ExampleTests/first()'])
+        self.assertEqual(FilterAPITestsForPlatform.available_test_names({'test': 'TestWebKitAPI.OtherTests/first()', 'swift': ['OtherTests', 'first']}, index), [])
+
+    def test_round_robin(self):
+        tests_by_file = {'a.mm': ['A1', 'A2', 'A3'], 'b.mm': ['B1']}
+        self.assertEqual(FilterAPITestsForPlatform.round_robin(tests_by_file, 3, set()), ['A1', 'B1', 'A2'])
+        self.assertEqual(FilterAPITestsForPlatform.round_robin(tests_by_file, 3, {'A1'}), ['B1', 'A2', 'A3'])
+
+    def test_the_change_s_own_tests_are_selected_first(self):
+        self.setup_step(FilterAPITestsForPlatform())
+        self.setProperty('platform', 'ios')
+        self.setProperty('fullPlatform', 'ios-simulator-27')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_api_tests', [
+            {'file': 'Tools/TestWebKitAPI/Tests/WebKit/A.mm', 'test': 'TestWebKitAPI.Suite.A1', 'touched': False},
+            {'file': 'Tools/TestWebKitAPI/Tests/WebKit/A.mm', 'test': 'TestWebKitAPI.Suite.A2', 'touched': False},
+            {'file': 'Tools/TestWebKitAPI/Tests/WTF/B.cpp', 'test': 'TestWebKitAPI.WTF_Suite.B1', 'touched': True},
+        ])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, timeout=120, command=['python3', 'Tools/Scripts/run-api-tests', '--dump', '--skip-blocklisted', '--release', '--ios-simulator'])
+            .log('stdio', stdout='TestWebKitAPI.Suite.A1\nTestWebKitAPI.Suite.A2\nTestWTF.WTF_Suite.B1\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='2 test(s) available on platform')
+        self.expect_property('modified_api_tests', ['TestWTF.WTF_Suite.B1', 'TestWebKitAPI.Suite.A1'])
+        return self.run_step()
+
+    def test_ios_checks_one_test_per_simulator_but_one(self):
+        self.setup_step(FilterAPITestsForPlatform())
+        self.setProperty('platform', 'ios')
+        self.setProperty('fullPlatform', 'ios-simulator-27')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['--child-processes=5'])
+        self.setProperty('modified_api_tests', [{'file': 'Tools/TestWebKitAPI/Tests/WebKit/A.mm', 'test': f'TestWebKitAPI.Suite.A{index}', 'touched': True} for index in range(6)])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, timeout=120, command=['python3', 'Tools/Scripts/run-api-tests', '--dump', '--skip-blocklisted', '--release', '--ios-simulator'])
+            .log('stdio', stdout=''.join(f'TestWebKitAPI.Suite.A{index}\n' for index in range(6)))
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='4 test(s) available on platform')
+        self.expect_property('modified_api_tests', [f'TestWebKitAPI.Suite.A{index}' for index in range(4)])
+        return self.run_step()
+
+    def test_child_processes(self):
+        self.assertEqual(FilterAPITestsForPlatform.child_processes(['--child-processes=5']), 5)
+        self.assertEqual(FilterAPITestsForPlatform.child_processes(None), FilterAPITestsForPlatform.DEFAULT_IOS_SIMULATORS)
 
 
 class TestFindChangedAPITests(BuildStepMixinAdditions, unittest.TestCase):
