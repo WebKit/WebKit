@@ -154,14 +154,14 @@ WGPUFuture wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUCom
 WGPUPipelineLayout wgpuDeviceCreatePipelineLayout(WGPUDevice device, const WGPUPipelineLayoutDescriptor* descriptor)
 {
     @autoreleasepool {
-        Ref protectedDevice = WebGPU::CAPI::metalFromAPI(device);
+        Ref protectedDevice = WebGPU::CAPI::fromAPI(device);
         WebGPU::CAPI::PipelineLayoutDescriptorStorage storage;
         auto apiDescriptor = WebGPU::CAPI::fromAPI(*descriptor, storage);
         if (!apiDescriptor) {
             protectedDevice->generateAValidationError("GPUPipelineLayoutDescriptor has a null bind group layout"_s);
             return WebGPU::CAPI::releaseToAPI(protectedDevice->createInvalidPipelineLayout());
         }
-        return WebGPU::CAPI::releaseToAPI(protectedDevice->createPipelineLayout(*apiDescriptor, !apiDescriptor->bindGroupLayouts));
+        return WebGPU::CAPI::releaseToAPI(protectedDevice->createPipelineLayout(*apiDescriptor));
     }
 }
 
