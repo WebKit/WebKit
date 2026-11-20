@@ -2,9 +2,11 @@ abc
 abc
 هيabc
 هيabc
+abcd
 
 PASS latin text
 PASS latin text and tspan
 PASS mixed-rtl text and tspan
 PASS mixed-rtl text and tested tspan
+PASS textPath with characters after the end of the path
 
