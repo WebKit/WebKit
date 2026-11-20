@@ -9,6 +9,8 @@ const tenBitSamples = [403, 507, 516];
 const tolerance = 1;
 
 const inputFormats = ['I420P10', 'I422P10', 'I444P10', 'I420P12', 'I422P12', 'I444P12'];
+const alphaInputFormats = ['I420AP10', 'I422AP10', 'I444AP10', 'I420AP12', 'I422AP12', 'I444AP12'];
+const opaqueAlpha = 1023;
 const highBitDepthCodec = 'vp09.02.10.10';
 const eightBitCodec = 'vp09.00.10.08';
 const hevcMain10Codec = 'hvc1.2.4.L93.B0';
@@ -29,10 +31,15 @@ function createFrame(format)
     const shift = format.endsWith('P12') ? 2 : 0;
     const [chromaWidth, chromaHeight] = chromaSize(format);
     const planeSizes = [width * height, chromaWidth * chromaHeight, chromaWidth * chromaHeight];
-    const data = new Uint16Array(planeSizes[0] + planeSizes[1] + planeSizes[2]);
+    const planeSamples = [...tenBitSamples];
+    if (alphaInputFormats.includes(format)) {
+        planeSizes.push(width * height);
+        planeSamples.push(opaqueAlpha);
+    }
+    const data = new Uint16Array(planeSizes.reduce((total, size) => total + size));
     let offset = 0;
-    for (let plane = 0; plane < 3; ++plane) {
-        data.fill(tenBitSamples[plane] << shift, offset, offset + planeSizes[plane]);
+    for (let plane = 0; plane < planeSizes.length; ++plane) {
+        data.fill(planeSamples[plane] << shift, offset, offset + planeSizes[plane]);
         offset += planeSizes[plane];
     }
     return new VideoFrame(data, {
@@ -109,7 +116,7 @@ async function checkTenBitSamples(decoded, expectedFormat = 'I420P10')
     }
 }
 
-for (const format of inputFormats) {
+for (const format of [...inputFormats, ...alphaInputFormats]) {
     promise_test(async t => {
         const frame = createFrame(format);
         t.add_cleanup(() => frame.close());
@@ -137,7 +144,7 @@ promise_test(async t => {
     assert_in_array(decoded.format, ['I420', 'NV12'], 'decoded format');
 }, `I420P10 frame encoded with ${eightBitCodec} decodes to 8 bits`);
 
-for (const format of inputFormats) {
+for (const format of [...inputFormats, ...alphaInputFormats]) {
     promise_test(async t => {
         const frame = createFrame(format);
         t.add_cleanup(() => frame.close());

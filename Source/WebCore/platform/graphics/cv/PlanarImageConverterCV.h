@@ -49,9 +49,20 @@ private:
     const bool m_isLocked;
 };
 
+// Tri-planar formats CoreVideo doesn't define, registered by WebKit. Their values are 'W', then 'f' or 'v' for full or video range,
+// '0', '2' or '4' for 4:2:0, 4:2:2 or 4:4:4, and '8' or 's' for 8-bit alpha (with 8-bit samples) or 16-bit alpha (with 10-bit samples).
+inline constexpr OSType pixelFormatWK420YpCbCr8FullRange8ATriPlanar = 'Wf08';
+inline constexpr OSType pixelFormatWK422YpCbCr8FullRange8ATriPlanar = 'Wf28';
+inline constexpr OSType pixelFormatWK444YpCbCr8FullRange8ATriPlanar = 'Wf48';
+inline constexpr OSType pixelFormatWK420YpCbCr10VideoRange16ATriPlanar = 'Wv0s';
+inline constexpr OSType pixelFormatWK420YpCbCr10FullRange16ATriPlanar = 'Wf0s';
+inline constexpr OSType pixelFormatWK422YpCbCr10FullRange16ATriPlanar = 'Wf2s';
+inline constexpr OSType pixelFormatWK444YpCbCr10FullRange16ATriPlanar = 'Wf4s';
+
 namespace PlanarImageConverter {
 
-// Bi-planar Y'CbCr formats, and the tri-planar ones that add a full size alpha plane.
+// Bi-planar Y'CbCr formats, and the tri-planar ones that add a full size alpha plane. The tri-planar formats CoreVideo
+// doesn't define are registered with CoreVideo, in the calling process, by the first pixelFormatDescription() or pixelFormat() call.
 struct YUVPixelFormatDescription {
     OSType pixelFormat { 0 };
     ChromaSubsampling subsampling { ChromaSubsampling::HorizontalAndVertical };
@@ -62,6 +73,12 @@ struct YUVPixelFormatDescription {
 
 WEBCORE_EXPORT std::optional<YUVPixelFormatDescription> pixelFormatDescription(OSType);
 WEBCORE_EXPORT std::optional<OSType> pixelFormat(ChromaSubsampling, SampleFormat color, bool isFullRange, std::optional<SampleFormat> alpha = { });
+
+// One of the formats registered with CoreVideo above. VideoToolbox and AVFoundation don't support them.
+WEBCORE_EXPORT bool isRegisteredPixelFormat(OSType);
+
+// The closest matching CoreVideo built-in pixel format for a WebKit-registered pixel format with alpha; other formats are returned unchanged.
+WEBCORE_EXPORT OSType displayablePixelFormat(OSType);
 
 // The color sample format of the pixel buffer formats that hold samples of the given format without loss. 12-bit samples
 // use the 10-bit formats: stored MSB aligned, all 12 bits are kept.
@@ -161,12 +178,15 @@ WEBCORE_EXPORT bool copyFromPixelBuffer(CVPixelBufferRef source, size_t left, si
 // The pixel buffers have the same size and chroma subsampling. Alpha planes are not copied.
 WEBCORE_EXPORT bool copyColorPlanes(CVPixelBufferRef source, CVPixelBufferRef destination);
 
+// The pixel buffers have the same size and an alpha plane each. 16-bit alpha keeps its top 8 bits in an 8-bit alpha plane.
+WEBCORE_EXPORT bool copyAlphaPlane(CVPixelBufferRef source, CVPixelBufferRef destination);
+
 // The luma of alphaSource becomes the alpha. Alpha spans the whole sample range whatever range the luma is tagged with.
 WEBCORE_EXPORT bool copyLumaToAlphaPlane(CVPixelBufferRef alphaSource, CVPixelBufferRef destination);
 WEBCORE_EXPORT bool copyLumaToAlpha(CVPixelBufferRef alphaSource, const DestinationPlane&);
 
-// Overwrites the alpha of a 32BGRA pixel buffer with the 8-bit alpha plane of source.
-WEBCORE_EXPORT bool copyAlphaPlaneToBGRA(CVPixelBufferRef source, CVPixelBufferRef destination);
+// Overwrites the alpha of a 32BGRA or 32ARGB pixel buffer with the alpha plane of source. 16-bit alpha keeps its top 8 bits.
+WEBCORE_EXPORT bool copyAlphaPlaneToPackedPixelBuffer(CVPixelBufferRef source, CVPixelBufferRef destination);
 
 } // namespace PlanarImageConverter
 

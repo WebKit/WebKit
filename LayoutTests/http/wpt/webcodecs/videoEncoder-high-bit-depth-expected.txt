@@ -5,6 +5,12 @@ PASS I444P10 frame encoded with vp09.02.10.10 keeps 10 bits
 PASS I420P12 frame encoded with vp09.02.10.10 keeps 10 bits
 PASS I422P12 frame encoded with vp09.02.10.10 keeps 10 bits
 PASS I444P12 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I420AP10 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I422AP10 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I444AP10 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I420AP12 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I422AP12 frame encoded with vp09.02.10.10 keeps 10 bits
+PASS I444AP12 frame encoded with vp09.02.10.10 keeps 10 bits
 PASS I420P10 frame scaled by a vp09.02.10.10 encoder keeps 10 bits
 PASS I420P10 frame encoded with vp09.00.10.08 decodes to 8 bits
 PASS I420P10 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
@@ -13,6 +19,12 @@ PASS I444P10 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
 PASS I420P12 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
 PASS I422P12 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
 PASS I444P12 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
+PASS I420AP10 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
+PASS I422AP10 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
+PASS I444AP10 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
+PASS I420AP12 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
+PASS I422AP12 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
+PASS I444AP12 frame encoded with hvc1.2.4.L93.B0 keeps 10 bits
 PASS I420P10 frame encoded with hvc1.1.6.L93.B0 decodes to 8 bits
 PASS I422P10 frame encoded with hvc1.4.10.L93.9D.08 keeps 10 bits and 4:2:2
 PASS hvc1.4.10.L93.98 encoding is not supported

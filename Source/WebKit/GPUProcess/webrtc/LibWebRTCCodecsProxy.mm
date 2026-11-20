@@ -471,6 +471,12 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
             callback(false);
             return;
         }
+    } else if (isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(pixelBuffer))) {
+        pixelBuffer = createBiPlanarPixelBufferFromColorPlanes(pixelBuffer);
+        if (!pixelBuffer) {
+            callback(false);
+            return;
+        }
     }
 
 #if !PLATFORM(MACCATALYST)

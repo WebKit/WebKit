@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include <WebCore/FrameRateMonitor.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <WebCore/VideoFrame.h>
 #include <wtf/Deque.h>
@@ -41,6 +42,7 @@ OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS WebAVSampleBufferStatusChangeListener;
 
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 
 namespace WebCore {
 
@@ -92,6 +94,7 @@ public:
 
 private:
     void enqueueBufferInternal(CVPixelBufferRef, MediaTime);
+    RetainPtr<CVPixelBufferRef> displayablePixelBuffer(CVPixelBufferRef);
     void removeOldVideoFramesFromPendingQueue();
     void addVideoFrameToPendingQueue(Ref<VideoFrame>&&);
     void requestNotificationWhenReadyForVideoData();
@@ -121,6 +124,9 @@ private:
     bool m_paused { false };
     bool m_didFail { false };
     Seconds m_lastMetricsSampleTime WTF_GUARDED_BY_CAPABILITY(workQueue());
+    RetainPtr<CVPixelBufferPoolRef> m_displayablePixelBufferPool WTF_GUARDED_BY_CAPABILITY(workQueue());
+    uint32_t m_displayablePixelFormat WTF_GUARDED_BY_CAPABILITY(workQueue()) { 0 };
+    IntSize m_displayablePixelBufferSize WTF_GUARDED_BY_CAPABILITY(workQueue());
 #if !RELEASE_LOG_DISABLED
     uint64_t m_logIdentifier;
     FrameRateMonitor m_frameRateMonitor WTF_GUARDED_BY_CAPABILITY(workQueue());
