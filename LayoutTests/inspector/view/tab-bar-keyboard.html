@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("TabBar.Keyboard");
+
+    function createTabBar(tabCount = 3) {
+        let tabBar = new WI.TabBar(document.createElement("div"));
+        document.body.appendChild(tabBar.element);
+
+        let items = [];
+        for (let i = 0; i < tabCount; ++i) {
+            let item = new WI.GeneralTabBarItem(new WI.TabContentView({identifier: `test-tab-${i}`}), "", `Tab ${i}`, `Tab ${i}`);
+            tabBar.addTabBarItem(item, {suppressAnimations: true});
+            items.push(item);
+        }
+        return {tabBar, items};
+    }
+
+    function pressKey(element, code, options = {}) {
+        let event = new KeyboardEvent("keydown", {code, bubbles: true, cancelable: true, ...options});
+        element.dispatchEvent(event);
+        return event;
+    }
+
+    function tabIndexes(items) {
+        return items.map((item) => item.element.tabIndex).join();
+    }
+
+    function focusedIndex(items) {
+        return items.findIndex((item) => item.element === document.activeElement);
+    }
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.TabIndex",
+        description: "Only one tab should be in the tab order, and pinned buttons should stay in it.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            InspectorTest.expectEqual(tabIndexes(items), "0,-1,-1", "Without a selection, the first tab should be in the tab order.");
+
+            tabBar.selectTabBarItem(items[1]);
+            InspectorTest.expectEqual(tabIndexes(items), "-1,0,-1", "The selected tab should be in the tab order.");
+            InspectorTest.expectEqual(items.map((item) => item.element.getAttribute("aria-selected")).join(), "false,true,false", "Every tab should say whether it is selected.");
+
+            InspectorTest.expectEqual(tabBar._showHiddenTabsTabBarItem.element.tabIndex, 0, "The show hidden tabs button should be in the tab order.");
+            InspectorTest.expectEqual(tabBar._openClosedTabsTabBarItem.element.tabIndex, 0, "The open closed tabs button should be in the tab order.");
+
+            // Removing a tab asks `WI.Main` which tabs can be reopened.
+            WI.knownTabClasses = () => new Set;
+            try {
+                tabBar.removeTabBarItem(items[1], {suppressAnimations: true});
+            } finally {
+                delete WI.knownTabClasses;
+            }
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[2], "Removing the selected tab should select the next one.");
+            InspectorTest.expectEqual(tabIndexes([items[0], items[2]]), "-1,0", "The new selected tab should be in the tab order.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.ArrowKeys",
+        description: "Arrow keys, Home and End should move focus between tabs without selecting them.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[0]);
+            items[0].element.focus();
+
+            let event = pressKey(document.activeElement, "ArrowRight");
+            InspectorTest.expectEqual(focusedIndex(items), 1, "ArrowRight should focus the next tab.");
+            InspectorTest.expectTrue(event.defaultPrevented, "ArrowRight should be handled.");
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[0], "Moving focus should not select the tab.");
+            InspectorTest.expectEqual(tabIndexes(items), "-1,0,-1", "The tab order should follow the focus.");
+
+            pressKey(document.activeElement, "ArrowRight");
+            InspectorTest.expectEqual(focusedIndex(items), 2, "ArrowRight should focus the last tab.");
+
+            pressKey(document.activeElement, "ArrowRight");
+            InspectorTest.expectEqual(focusedIndex(items), 0, "ArrowRight on the last tab should wrap to the first tab.");
+
+            pressKey(document.activeElement, "ArrowLeft");
+            InspectorTest.expectEqual(focusedIndex(items), 2, "ArrowLeft on the first tab should wrap to the last tab.");
+
+            pressKey(document.activeElement, "ArrowLeft");
+            InspectorTest.expectEqual(focusedIndex(items), 1, "ArrowLeft should focus the previous tab.");
+
+            pressKey(document.activeElement, "End");
+            InspectorTest.expectEqual(focusedIndex(items), 2, "End should focus the last tab.");
+
+            pressKey(document.activeElement, "Home");
+            InspectorTest.expectEqual(focusedIndex(items), 0, "Home should focus the first tab.");
+
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[0], "No key press so far should have changed the selection.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.Activate",
+        description: "Enter and Space should select the focused tab.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[0]);
+
+            let initiators = [];
+            tabBar.addEventListener(WI.TabBar.Event.TabBarItemSelected, (event) => initiators.push(event.data.initiatorHint));
+
+            // `WI.TabBrowser` can move focus into the content of the tab that it shows.
+            let contentElement = document.body.appendChild(document.createElement("input"));
+            tabBar.addEventListener(WI.TabBar.Event.TabBarItemSelected, () => contentElement.focus());
+
+            items[0].element.focus();
+            pressKey(document.activeElement, "ArrowRight");
+            let event = pressKey(document.activeElement, "Enter");
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[1], "Enter should select the focused tab.");
+            InspectorTest.expectTrue(event.defaultPrevented, "Enter should be handled.");
+            InspectorTest.expectEqual(focusedIndex(items), 1, "The selected tab should keep focus.");
+
+            pressKey(document.activeElement, "End");
+            event = pressKey(document.activeElement, "Space");
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[2], "Space should select the focused tab.");
+            InspectorTest.expectTrue(event.defaultPrevented, "Space should be handled.");
+
+            InspectorTest.expectEqual(initiators.join(), [WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut, WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut].join(), "Selections should report the keyboard as the initiator.");
+
+            items[0].disabled = true;
+            pressKey(document.activeElement, "Home");
+            pressKey(document.activeElement, "Enter");
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[2], "A disabled tab should not be selectable.");
+
+            contentElement.remove();
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.HiddenTabs",
+        description: "Hidden tabs should be skipped.",
+        test() {
+            let {tabBar, items} = createTabBar(4);
+            tabBar.selectTabBarItem(items[0]);
+            items[1].hidden = true;
+            items[3].hidden = true;
+            items[0].element.focus();
+
+            pressKey(document.activeElement, "ArrowRight");
+            InspectorTest.expectEqual(focusedIndex(items), 2, "ArrowRight should skip a hidden tab.");
+
+            pressKey(document.activeElement, "ArrowRight");
+            InspectorTest.expectEqual(focusedIndex(items), 0, "ArrowRight should wrap past a hidden last tab.");
+
+            pressKey(document.activeElement, "End");
+            InspectorTest.expectEqual(focusedIndex(items), 2, "End should focus the last visible tab.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.HiddenFocusableTab",
+        description: "A tab that layout hides should not stay the only tab stop.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[0]);
+            items[0].element.focus();
+
+            pressKey(document.activeElement, "End");
+            InspectorTest.expectEqual(tabIndexes(items), "-1,-1,0", "The last tab should be in the tab order.");
+
+            items[2].hidden = true;
+            tabBar._updateTabIndexes();
+            InspectorTest.expectEqual(tabIndexes(items), "0,-1,-1", "A hidden tab should leave the tab order for the selected tab.");
+
+            items[2].hidden = false;
+            tabBar._updateTabIndexes();
+            InspectorTest.expectEqual(tabIndexes(items), "0,-1,-1", "A tab that shows again should not take the tab stop back.");
+
+            // Layout hides the tabs that do not fit, so it has to update the tab order afterwards.
+            let updateCount = 0;
+            let updateTabIndexes = tabBar._updateTabIndexes;
+            tabBar._updateTabIndexes = function() {
+                ++updateCount;
+                return updateTabIndexes.call(this);
+            };
+            WI.knownTabClasses = () => new Set;
+            WI.DockConfiguration = {Undocked: "undocked"};
+            try {
+                tabBar.layout();
+            } finally {
+                delete WI.knownTabClasses;
+                delete WI.DockConfiguration;
+            }
+            InspectorTest.expectEqual(updateCount, 1, "Layout should update the tab order once.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.RemoveFocusableTab",
+        description: "Removing the tab that holds the tab stop, without selecting it, should put the tab stop on the selected tab.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[0]);
+            items[0].element.focus();
+
+            pressKey(document.activeElement, "End");
+            InspectorTest.expectEqual(tabIndexes(items), "-1,-1,0", "The last tab should be in the tab order.");
+
+            WI.knownTabClasses = () => new Set;
+            try {
+                tabBar.removeTabBarItem(items[2], {suppressAnimations: true});
+            } finally {
+                delete WI.knownTabClasses;
+            }
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[0], "Removing another tab should not change the selection.");
+            InspectorTest.expectEqual(tabIndexes([items[0], items[1]]), "0,-1", "The selected tab should be in the tab order.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.PinnedTab",
+        description: "A pinned tab, like Settings, is a real tab, so it should take part in keyboard navigation and not trap the tab stop.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            let pinnedItem = new WI.PinnedTabBarItem(new WI.TabContentView({identifier: "test-pinned-tab"}), "", "Pinned", "Pinned");
+            tabBar.addTabBarItem(pinnedItem, {suppressAnimations: true});
+
+            let allItems = [...items, pinnedItem];
+            let pressed = [];
+            tabBar._handleShowHiddenTabsTabBarItemMouseDown = (event) => pressed.push("hidden tabs");
+            tabBar._handleAddClosedTabsTabBarItemMouseDown = (event) => pressed.push("closed tabs");
+
+            tabBar.selectTabBarItem(pinnedItem);
+            InspectorTest.expectEqual(tabIndexes(allItems), "-1,-1,-1,0", "The selected pinned tab should be the only tab stop of the tabs.");
+
+            pinnedItem.element.focus();
+            let event = pressKey(document.activeElement, "ArrowLeft");
+            InspectorTest.expectTrue(event.defaultPrevented, "ArrowLeft should be handled on a pinned tab.");
+            InspectorTest.expectEqual(focusedIndex(allItems), 2, "ArrowLeft should move from the pinned tab to the last normal tab.");
+            InspectorTest.expectEqual(tabIndexes(allItems), "-1,-1,0,-1", "The tab stop should follow the focus off the pinned tab.");
+
+            pressKey(document.activeElement, "Home");
+            InspectorTest.expectEqual(focusedIndex(allItems), 0, "Home should focus the first normal tab.");
+
+            pressKey(document.activeElement, "End");
+            InspectorTest.expectEqual(focusedIndex(allItems), 3, "End should focus the pinned tab.");
+
+            pressKey(document.activeElement, "ArrowRight");
+            InspectorTest.expectEqual(focusedIndex(allItems), 0, "ArrowRight on the pinned tab should wrap to the first normal tab.");
+
+            tabBar.selectTabBarItem(items[0]);
+            pressKey(document.activeElement, "End");
+            pressKey(document.activeElement, "Enter");
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, pinnedItem, "Enter should select the pinned tab.");
+            InspectorTest.expectEqual(pressed.join(), "", "Enter should select a pinned tab instead of opening a menu.");
+
+            tabBar.selectTabBarItem(items[1]);
+            InspectorTest.expectEqual(tabIndexes(allItems), "-1,0,-1,-1", "Selecting a normal tab should move the tab stop to it.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.Reselect",
+        description: "Selecting the selected tab again should put the tab stop back on it.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[0]);
+            items[0].element.focus();
+
+            pressKey(document.activeElement, "ArrowRight");
+            InspectorTest.expectEqual(tabIndexes(items), "-1,0,-1", "Arrow keys should move the tab stop.");
+
+            tabBar.selectTabBarItem(items[0]);
+            InspectorTest.expectEqual(tabIndexes(items), "0,-1,-1", "Selecting the selected tab again should move the tab stop back.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.RightToLeft",
+        description: "ArrowRight should move toward the start of the tab bar in a right to left layout.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[1]);
+            items[1].element.focus();
+
+            let resolvedLayoutDirection = WI.resolvedLayoutDirection;
+            WI.resolvedLayoutDirection = () => WI.LayoutDirection.RTL;
+            try {
+                pressKey(document.activeElement, "ArrowRight");
+                InspectorTest.expectEqual(focusedIndex(items), 0, "ArrowRight should focus the previous tab.");
+
+                pressKey(document.activeElement, "ArrowLeft");
+                InspectorTest.expectEqual(focusedIndex(items), 1, "ArrowLeft should focus the next tab.");
+
+                pressKey(document.activeElement, "Home");
+                InspectorTest.expectEqual(focusedIndex(items), 0, "Home should still focus the first tab.");
+            } finally {
+                WI.resolvedLayoutDirection = resolvedLayoutDirection;
+            }
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.IgnoredKeys",
+        description: "Other keys and shortcuts with modifiers should not be handled.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[0]);
+            items[0].element.focus();
+
+            for (let options of [{metaKey: true}, {ctrlKey: true}, {altKey: true}, {shiftKey: true}]) {
+                let event = pressKey(document.activeElement, "ArrowRight", options);
+                InspectorTest.expectFalse(event.defaultPrevented, `ArrowRight with ${Object.keys(options)[0]} should not be handled.`);
+            }
+            InspectorTest.expectEqual(focusedIndex(items), 0, "Shortcuts with modifiers should not move focus.");
+
+            let event = pressKey(document.activeElement, "KeyA");
+            InspectorTest.expectFalse(event.defaultPrevented, "Other keys should not be handled.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "TabBar.Keyboard.PinnedButtons",
+        description: "Enter and Space should press a pinned button, and arrow keys should leave it alone.",
+        test() {
+            let {tabBar, items} = createTabBar();
+            tabBar.selectTabBarItem(items[0]);
+
+            let pressed = [];
+            // The menu is placed from the event, which needs its `view` to account for the zoom.
+            tabBar._handleShowHiddenTabsTabBarItemMouseDown = (event) => pressed.push(`hidden tabs ${event.type} ${event.view === window}`);
+            tabBar._handleAddClosedTabsTabBarItemMouseDown = (event) => pressed.push(`closed tabs ${event.type} ${event.view === window}`);
+
+            let showHiddenElement = tabBar._showHiddenTabsTabBarItem.element;
+            showHiddenElement.focus();
+            let event = pressKey(showHiddenElement, "ArrowLeft");
+            InspectorTest.expectFalse(event.defaultPrevented, "Arrow keys should not be handled on a pinned button.");
+            InspectorTest.expectEqual(document.activeElement, showHiddenElement, "Arrow keys should not move focus off a pinned button.");
+
+            pressKey(showHiddenElement, "Enter");
+            pressKey(tabBar._openClosedTabsTabBarItem.element, "Space");
+            InspectorTest.expectEqual(pressed.join(), "hidden tabs mousedown true,closed tabs mousedown true", "Enter and Space should press the pinned buttons.");
+            InspectorTest.expectEqual(tabBar.selectedTabBarItem, items[0], "Pressing a pinned button should not change the selection.");
+
+            tabBar.element.remove();
+            return true;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests keyboard navigation in WI.TabBar.</p>
+</body>
+</html>

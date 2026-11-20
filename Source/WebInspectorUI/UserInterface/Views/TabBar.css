@@ -144,6 +144,11 @@ body.window-inactive .tab-bar > .navigation-bar > .item.divider {
     --tab-bar-item-height: 100%;
 }
 
+.tab-bar > .tabs > .item:focus-visible {
+    outline: auto -webkit-focus-ring-color;
+    outline-offset: -3px;
+}
+
 body.mac-platform .tab-bar > .tabs > .item {
     --tab-item-background: var(--tab-bar-background);
 }
