@@ -124,8 +124,6 @@
             name: "SiteIsolation.CSS.EditingCommands.FrameTarget.SetStyleSheetTextThenUndo",
             description: "setStyleSheetText should replace the stylesheet text, and undo on the frame target should restore the previous text via the frame's InspectorHistory.",
             async test() {
-                // Use the frame document's own style sheet. For inspector style sheets, the frontend writes the content
-                // back with setStyleSheetText after each styleSheetChanged event, which would race with these edits.
                 let { headers } = await childFrameTarget.CSSAgent.getAllStyleSheets();
                 for (let header of headers) {
                     let { text } = await childFrameTarget.CSSAgent.getStyleSheetText(header.styleSheetId);

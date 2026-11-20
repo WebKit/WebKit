@@ -1,0 +1,47 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.InspectorStyleSheetChangedNoWriteBack.FrameTarget");
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.InspectorStyleSheetChangedNoWriteBack.FrameTarget.AddRule",
+            description: "Refreshing an inspector style sheet after CSS.styleSheetChanged should not send its text back to the frame target.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                let childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+
+                let { styleSheetId } = await childFrameTarget.CSSAgent.createStyleSheet("");
+                let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId, childFrameTarget);
+                InspectorTest.assert(styleSheet.isInspectorStyleSheet(), "Should be an inspector style sheet.");
+
+                let writeBackCount = 0;
+                let originalSetStyleSheetText = childFrameTarget.CSSAgent.setStyleSheetText;
+                childFrameTarget.CSSAgent.setStyleSheetText = function(...args) {
+                    ++writeBackCount;
+                    return originalSetStyleSheetText.apply(this, args);
+                };
+
+                // CSSManager re-fetches the text after CSS.styleSheetChanged, then dispatches this event.
+                let refreshed = styleSheet.awaitEvent(WI.SourceCode.Event.ContentDidChange);
+                await childFrameTarget.CSSAgent.addRule(styleSheetId, ".added-rule");
+                await refreshed;
+
+                childFrameTarget.CSSAgent.setStyleSheetText = originalSetStyleSheetText;
+
+                InspectorTest.expectThat(styleSheet.content.includes(".added-rule"), "Refreshed content should contain the added rule.");
+                InspectorTest.expectEqual(writeBackCount, 0, "Refreshing the content should not call CSS.setStyleSheetText.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that the frontend does not write an inspector style sheet's text back to a frame target after re-fetching it for CSS.styleSheetChanged. That stale write could land after a later edit, undo or redo and revert it.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
+</body>
