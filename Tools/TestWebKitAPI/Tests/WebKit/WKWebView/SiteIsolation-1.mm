@@ -45,11 +45,16 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/Color.h>
 #import <WebKit/WKContentWorldPrivate.h>
+#import <WebKit/WKData.h>
+#import <WebKit/WKFrame.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHitTestResult.h>
 #import <WebKit/WKJSHandle.h>
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
+#import <WebKit/WKPage.h>
+#import <WebKit/WKStringCF.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKURL.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -5044,6 +5049,135 @@ TEST(SiteIsolation, SelectWithTwoTouchesRedispatchToTheSourceFrameIsRejected)
 }
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
+
+//  Tests for frame-targeted data queries
+#if PLATFORM(MAC)
+
+struct CrossSiteChildFrame {
+    RetainPtr<TestWKWebView> webView;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    WKRetainPtr<WKFrameRef> frame;
+    bool mainFrameFinished { false };
+};
+
+static bool loadCrossSiteChildFrame(CrossSiteChildFrame& child, const HTTPServer& server)
+{
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    child.webView = webView;
+    child.navigationDelegate = navigationDelegate;
+
+    WKPageLoaderClientV0 loaderClient;
+    zeroBytes(loaderClient);
+    loaderClient.base.version = 0;
+    loaderClient.base.clientInfo = &child;
+    loaderClient.didFinishLoadForFrame = [](WKPageRef, WKFrameRef frame, WKTypeRef, const void* clientInfo) {
+        auto* child = static_cast<CrossSiteChildFrame*>(const_cast<void*>(clientInfo));
+        if (WKFrameIsMainFrame(frame))
+            child->mainFrameFinished = true;
+        else
+            child->frame = frame;
+    };
+    WKPageSetPageLoaderClient([webView _pageRefForTransitionToWKWebView], &loaderClient.base);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    return Util::waitFor([&] {
+        return child.mainFrameFinished && !!child.frame;
+    });
+}
+
+TEST(SiteIsolation, GetSourceForFrameInCrossSiteIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<html><body><!-- iframe-source-marker --><p>iframe</p></body></html>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    CrossSiteChildFrame child;
+    ASSERT_TRUE(loadCrossSiteChildFrame(child, server));
+
+    struct Result {
+        bool done { false };
+        RetainPtr<NSString> string;
+    } result;
+    WKPageGetSourceForFrame([child.webView _pageRefForTransitionToWKWebView], child.frame.get(), &result, [](WKStringRef string, WKErrorRef, void* context) {
+        auto* result = static_cast<Result*>(context);
+        if (string)
+            result->string = bridge_cast(adoptCF(WKStringCopyCFString(kCFAllocatorDefault, string)).get());
+        result->done = true;
+    });
+    EXPECT_TRUE(Util::runFor(&result.done, 10_s));
+    EXPECT_TRUE([result.string containsString:@"iframe-source-marker"]);
+}
+
+TEST(SiteIsolation, GetMainResourceDataOfCrossSiteIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<html><body><!-- iframe-main-resource-marker --><p>iframe</p></body></html>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    CrossSiteChildFrame child;
+    ASSERT_TRUE(loadCrossSiteChildFrame(child, server));
+    pid_t mainFrameProcess = [child.webView _webProcessIdentifier];
+
+    struct Result {
+        bool done { false };
+        bool hasData { false };
+        RetainPtr<NSData> data;
+    } result;
+    WKFrameGetMainResourceData(child.frame.get(), [](WKDataRef data, WKErrorRef, void* context) {
+        auto* result = static_cast<Result*>(context);
+        if (data) {
+            result->hasData = true;
+            result->data = adoptNS([[NSData alloc] initWithBytes:WKDataGetBytes(data) length:WKDataGetSize(data)]);
+        }
+        result->done = true;
+    }, &result);
+    EXPECT_TRUE(Util::runFor(&result.done, 10_s));
+    EXPECT_TRUE(result.hasData);
+    RetainPtr resourceString = adoptNS([[NSString alloc] initWithData:result.data.get() encoding:NSUTF8StringEncoding]);
+    EXPECT_TRUE([resourceString containsString:@"iframe-main-resource-marker"]);
+
+    EXPECT_EQ(mainFrameProcess, [child.webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ("2", [child.webView stringByEvaluatingJavaScript:@"String(1 + 1)"]);
+}
+
+TEST(SiteIsolation, GetResourceDataFromCrossSiteIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<script src='/iframe-resource.js'></script>"_s } },
+        { "/iframe-resource.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, "// iframe-subresource-marker"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    CrossSiteChildFrame child;
+    ASSERT_TRUE(loadCrossSiteChildFrame(child, server));
+    pid_t mainFrameProcess = [child.webView _webProcessIdentifier];
+
+    struct Result {
+        bool done { false };
+        bool hasData { false };
+        RetainPtr<NSData> data;
+    } result;
+    WKRetainPtr<WKURLRef> resourceURL = adoptWK(WKURLCreateWithUTF8CString("https://webkit.org/iframe-resource.js"));
+    WKFrameGetResourceData(child.frame.get(), resourceURL.get(), [](WKDataRef data, WKErrorRef, void* context) {
+        auto* result = static_cast<Result*>(context);
+        if (data) {
+            result->hasData = true;
+            result->data = adoptNS([[NSData alloc] initWithBytes:WKDataGetBytes(data) length:WKDataGetSize(data)]);
+        }
+        result->done = true;
+    }, &result);
+    EXPECT_TRUE(Util::runFor(&result.done, 10_s));
+    EXPECT_TRUE(result.hasData);
+    RetainPtr resourceString = adoptNS([[NSString alloc] initWithData:result.data.get() encoding:NSUTF8StringEncoding]);
+    EXPECT_TRUE([resourceString containsString:@"iframe-subresource-marker"]);
+
+    EXPECT_EQ(mainFrameProcess, [child.webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ("2", [child.webView stringByEvaluatingJavaScript:@"String(1 + 1)"]);
+}
+
+#endif // PLATFORM(MAC)
 
 TEST(SiteIsolation, TopCloseFromCrossOriginIframeRunsMainFrameBeforeUnload)
 {

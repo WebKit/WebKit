@@ -9010,7 +9010,7 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, CompletionHandler<voi
 {
     if (!frame)
         return callback({ });
-    sendWithAsyncReply(Messages::WebPage::GetSourceForFrame(frame->frameID()), WTF::move(callback));
+    sendWithAsyncReplyToProcessContainingFrame(frame->frameID(), Messages::WebPage::GetSourceForFrame(frame->frameID()), WTF::move(callback));
 }
 
 void WebPageProxy::getContentsAsString(ContentAsStringIncludesChildFrames includesChildFrames, CompletionHandler<void(const String&)>&& callback)
@@ -9353,12 +9353,12 @@ void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, CompletionHa
 {
     if (!frame)
         return callback(nullptr);
-    sendWithAsyncReply(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID()), toAPIDataCallback(WTF::move(callback)));
+    sendWithAsyncReplyToProcessContainingFrame(frame->frameID(), Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID()), toAPIDataCallback(WTF::move(callback)));
 }
 
 void WebPageProxy::getResourceDataFromFrame(WebFrameProxy& frame, API::URL* resourceURL, CompletionHandler<void(API::Data*)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::GetResourceDataFromFrame(frame.frameID(), resourceURL->string()), toAPIDataCallback(WTF::move(callback)));
+    sendWithAsyncReplyToProcessContainingFrame(frame.frameID(), Messages::WebPage::GetResourceDataFromFrame(frame.frameID(), resourceURL->string()), toAPIDataCallback(WTF::move(callback)));
 }
 
 void WebPageProxy::getAccessibilityTreeData(CompletionHandler<void(API::Data*)>&& callback)

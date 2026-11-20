@@ -5593,7 +5593,7 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
         if (!buffer)
 #endif
         {
-            if (RefPtr loader = coreFrame->loader().documentLoader())
+            if (RefPtr loader = coreFrame ? coreFrame->loader().documentLoader() : nullptr)
                 buffer = loader->mainResourceData();
         }
     }
@@ -5603,6 +5603,9 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
 
 static RefPtr<FragmentedSharedBuffer> resourceDataForFrame(LocalFrame* frame, const URL& resourceURL)
 {
+    if (!frame)
+        return nullptr;
+
     RefPtr loader = frame->loader().documentLoader();
     if (!loader)
         return nullptr;
