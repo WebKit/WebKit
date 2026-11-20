@@ -171,6 +171,7 @@ private:
     RefPtr<SVGViewElement> findViewAnchor(StringView fragmentIdentifier) const;
     NODELETE SVGSVGElement* findRootAnchor(const SVGViewElement*) const;
     SVGSVGElement* findRootAnchor(StringView) const;
+    void copyViewAttributesTo(SVGViewSpec&) const;
 
     const Ref<SMILTimeContainer> m_timeContainer;
     const RefPtr<SVGViewSpec> m_viewSpec;
