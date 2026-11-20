@@ -4769,6 +4769,7 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
             self.setProperty('clean_tree_results_exceed_failure_limit', clean_tree_results.did_exceed_test_failure_limit)
             self.setProperty('clean_tree_run_failures', clean_tree_results.failing_tests)
             self.setProperty('clean_tree_run_flakies', sorted(clean_tree_results.flaky_results))
+            self.setProperty('clean_tree_run_results', clean_tree_results.results)
             if clean_tree_results.failing_tests:
                 yield self._addToLog(self.test_failures_log_name, '\n'.join(clean_tree_results.failing_tests))
 
@@ -4901,7 +4902,7 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
         self.build.addStepsAfterCurrentStep([BlockPullRequest()])
         defer.returnValue(FAILURE)
 
-    def report_pre_existing_failures(self, clean_tree_failures, flaky_failures):
+    def report_pre_existing_failures(self, clean_tree_failures, flaky_failures, clean_tree_flaky_failures=None):
         self.build.results = SUCCESS
         self.descriptionDone = 'Passed layout tests'
         previous_build_summary = self.getProperty('build_summary', '')
@@ -4923,6 +4924,15 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
                 message += ' ...'
             for flaky_failure in list(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]:
                 self.send_email_for_flaky_failure(flaky_failure)
+
+        if clean_tree_flaky_failures:
+            clean_tree_flaky_failures_string = ', '.join(sorted(clean_tree_flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY])
+            pluralSuffix = 's' if len(clean_tree_flaky_failures) > 1 else ''
+            message += ' Found test{} flaky on the clean tree: {}'.format(pluralSuffix, clean_tree_flaky_failures_string)
+            if len(clean_tree_flaky_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
+            for clean_tree_flaky_failure in list(clean_tree_flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]:
+                self.send_email_for_flaky_failure(clean_tree_flaky_failure, step_str=RunWebKitTestsWithoutChange.name)
 
         if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
             self.setProperty('build_summary', message)
@@ -4951,6 +4961,25 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
 
     def _results_failed_different_tests(self, first_results_failing_tests, second_results_failing_tests):
         return first_results_failing_tests != second_results_failing_tests
+
+    def _clean_tree_flakes_matching_failures(self, tests):
+        # A test that flaked on the clean tree is only excused if it failed with the change in the same
+        # way(s) it failed on the clean tree, so that e.g. a flaky TIMEOUT that becomes a CRASH still blocks.
+        # Result types are compared as whole tokens, so IMAGE+TEXT and TEXT differ (deliberately conservative).
+        clean_tree_flakies = set(self.getProperty('clean_tree_run_flakies', None) or [])
+        clean_tree_results = self.getProperty('clean_tree_run_results', None) or {}
+        candidates = {test for test in tests if test in clean_tree_flakies and test in clean_tree_results}
+        results_with_change = self.merged_results(candidates, {'first-run': 'first_run_results', 'second-run': 'second_run_results'})
+
+        def failure_types(result):
+            return set((result or {}).get('actual', '').split()) - {'PASS'}
+
+        excused = set()
+        for test in candidates:
+            types_with_change = failure_types(results_with_change.get(test))
+            if types_with_change and types_with_change <= failure_types(clean_tree_results[test]):
+                excused.add(test)
+        return excused
 
     def send_email_for_flaky_failure(self, test_name, step_str=None):
         try:
@@ -5087,6 +5116,7 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
             if clean_tree_results_did_exceed_test_failure_limit:
                 return defer.returnValue(self.retry_build())
             failures_introduced_by_change = first_results_failing_tests - clean_tree_results_failing_tests
+            failures_introduced_by_change -= self._clean_tree_flakes_matching_failures(failures_introduced_by_change)
             if failures_introduced_by_change:
                 rc = yield self.report_failure(failures_introduced_by_change)
                 return defer.returnValue(rc)
@@ -5096,6 +5126,7 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
             if clean_tree_results_did_exceed_test_failure_limit:
                 return defer.returnValue(self.retry_build())
             failures_introduced_by_change = second_results_failing_tests - clean_tree_results_failing_tests
+            failures_introduced_by_change -= self._clean_tree_flakes_matching_failures(failures_introduced_by_change)
             if failures_introduced_by_change:
                 rc = yield self.report_failure(failures_introduced_by_change)
                 return defer.returnValue(rc)
@@ -5110,10 +5141,13 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
             self._report_flaky_tests(tests_that_only_failed_second)
 
             tests_that_consistently_failed = first_results_failing_tests.intersection(second_results_failing_tests)
+            clean_tree_flaky_failures = set()
             if tests_that_consistently_failed:
                 if clean_tree_results_did_exceed_test_failure_limit:
                     return defer.returnValue(self.retry_build())
                 failures_introduced_by_change = tests_that_consistently_failed - clean_tree_results_failing_tests
+                clean_tree_flaky_failures = self._clean_tree_flakes_matching_failures(failures_introduced_by_change)
+                failures_introduced_by_change -= clean_tree_flaky_failures
                 if failures_introduced_by_change:
                     rc = yield self.report_failure(failures_introduced_by_change)
                     return defer.returnValue(rc)
@@ -5124,19 +5158,21 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
             # At this point we know that at least one test flaked, but no consistent failures
             # were introduced. This is a bit of a grey-zone. It's possible that the change introduced some flakiness.
             # We still mark the build as SUCCESS.
-            return defer.returnValue(self.report_pre_existing_failures(clean_tree_results_failing_tests, flaky_failures))
+            return defer.returnValue(self.report_pre_existing_failures(clean_tree_results_failing_tests, flaky_failures, clean_tree_flaky_failures))
 
         if clean_tree_results_did_exceed_test_failure_limit:
             return defer.returnValue(self.retry_build())
         failures_introduced_by_change = first_results_failing_tests - clean_tree_results_failing_tests
+        clean_tree_flaky_failures = self._clean_tree_flakes_matching_failures(failures_introduced_by_change)
+        failures_introduced_by_change -= clean_tree_flaky_failures
         if failures_introduced_by_change:
             rc = yield self.report_failure(failures_introduced_by_change)
             return defer.returnValue(rc)
 
         # At this point, we know that the first and second runs had the exact same failures,
-        # and that those failures are all present on the clean tree, so we can say with certainty
-        # that the change is good.
-        return defer.returnValue(self.report_pre_existing_failures(clean_tree_results_failing_tests, flaky_failures))
+        # and that those failures are all present on the clean tree (or flaked there the same way),
+        # so we consider the change good.
+        return defer.returnValue(self.report_pre_existing_failures(clean_tree_results_failing_tests, flaky_failures, clean_tree_flaky_failures))
 
 
 class RunWebKit1Tests(RunWebKitTests):
