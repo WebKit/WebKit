@@ -153,6 +153,7 @@ struct PendingBackForwardIframeRestore {
 struct SpeechSynthesisData {
     Ref<WebCore::PlatformSpeechSynthesizer> synthesizer;
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance;
+    WeakPtr<WebProcessProxy> processSpeaking;
     CompletionHandler<void()> speakingStartedCompletionHandler;
     CompletionHandler<void()> speakingFinishedCompletionHandler;
     CompletionHandler<void()> speakingPausedCompletionHandler;
