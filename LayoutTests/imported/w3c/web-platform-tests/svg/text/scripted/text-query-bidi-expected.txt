@@ -18,6 +18,26 @@ abc שלום def
 שלום abc עולם
 שלום abc עולם
 שלום abc עולם
+مرحبا بالعالم
+مرحبا بالعالم
+مرحبا بالعالم
+مرحبا بالعالم
+مرحبا بالعالم
+abc مرحبا def
+abc مرحبا def
+abc مرحبا def
+abc مرحبا def
+abc مرحبا def
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
 שלום עולם
 שלום עולם
 שלום עולם
@@ -38,7 +58,27 @@ abc שלום def
 שלום abc עולם
 שלום abc עולם
 שלום abc עולם
- שלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולם
+مرحبا بالعالم
+مرحبا بالعالم
+مرحبا بالعالم
+مرحبا بالعالم
+مرحبا بالعالم
+abc مرحبا def
+abc مرحبا def
+abc مرحبا def
+abc مرحبا def
+abc مرحبا def
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+مرحبا abc عالم
+ שלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםمرحبا بالعالممرحبا بالعالممرحبا بالعالممرحبا بالعالممرحبا بالعالمabc مرحبا defabc مرحبا defabc مرحبا defabc مرحبا defabc مرحبا defمرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالمשלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםمرحبا بالعالممرحبا بالعالممرحبا بالعالممرحبا بالعالممرحبا بالعالمabc مرحبا defabc مرحبا defabc مرحبا defabc مرحبا defabc مرحبا defمرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالممرحبا abc عالم
 
 PASS getExtentOfChar() on Hebrew in ltr text
 PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew in ltr text
@@ -60,6 +100,26 @@ PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew and Latin in 
 PASS getSubStringLength() on Hebrew and Latin in a tspan in ltr text
 PASS getCharNumAtPosition() on Hebrew and Latin in a tspan in ltr text
 PASS getRotationOfChar() on Hebrew and Latin in a tspan in ltr text
+PASS getExtentOfChar() on Arabic in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Arabic in ltr text
+PASS getSubStringLength() on Arabic in ltr text
+PASS getCharNumAtPosition() on Arabic in ltr text
+PASS getRotationOfChar() on Arabic in ltr text
+PASS getExtentOfChar() on Latin, then Arabic in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Latin, then Arabic in ltr text
+PASS getSubStringLength() on Latin, then Arabic in ltr text
+PASS getCharNumAtPosition() on Latin, then Arabic in ltr text
+PASS getRotationOfChar() on Latin, then Arabic in ltr text
+PASS getExtentOfChar() on Arabic, then Latin in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Arabic, then Latin in ltr text
+PASS getSubStringLength() on Arabic, then Latin in ltr text
+PASS getCharNumAtPosition() on Arabic, then Latin in ltr text
+PASS getRotationOfChar() on Arabic, then Latin in ltr text
+PASS getExtentOfChar() on Arabic and Latin in a tspan in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Arabic and Latin in a tspan in ltr text
+PASS getSubStringLength() on Arabic and Latin in a tspan in ltr text
+PASS getCharNumAtPosition() on Arabic and Latin in a tspan in ltr text
+PASS getRotationOfChar() on Arabic and Latin in a tspan in ltr text
 PASS getExtentOfChar() on Hebrew in rtl text
 PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew in rtl text
 PASS getSubStringLength() on Hebrew in rtl text
@@ -80,4 +140,24 @@ PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew and Latin in 
 PASS getSubStringLength() on Hebrew and Latin in a tspan in rtl text
 PASS getCharNumAtPosition() on Hebrew and Latin in a tspan in rtl text
 PASS getRotationOfChar() on Hebrew and Latin in a tspan in rtl text
+PASS getExtentOfChar() on Arabic in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Arabic in rtl text
+PASS getSubStringLength() on Arabic in rtl text
+PASS getCharNumAtPosition() on Arabic in rtl text
+PASS getRotationOfChar() on Arabic in rtl text
+PASS getExtentOfChar() on Latin, then Arabic in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Latin, then Arabic in rtl text
+PASS getSubStringLength() on Latin, then Arabic in rtl text
+PASS getCharNumAtPosition() on Latin, then Arabic in rtl text
+PASS getRotationOfChar() on Latin, then Arabic in rtl text
+PASS getExtentOfChar() on Arabic, then Latin in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Arabic, then Latin in rtl text
+PASS getSubStringLength() on Arabic, then Latin in rtl text
+PASS getCharNumAtPosition() on Arabic, then Latin in rtl text
+PASS getRotationOfChar() on Arabic, then Latin in rtl text
+PASS getExtentOfChar() on Arabic and Latin in a tspan in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Arabic and Latin in a tspan in rtl text
+PASS getSubStringLength() on Arabic and Latin in a tspan in rtl text
+PASS getCharNumAtPosition() on Arabic and Latin in a tspan in rtl text
+PASS getRotationOfChar() on Arabic and Latin in a tspan in rtl text
 
