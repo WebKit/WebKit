@@ -34,19 +34,18 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteComputePassEncoderProxy final : public ::WebGPU::ComputePassEncoder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteComputePassEncoderProxy);
 public:
-    static Ref<RemoteComputePassEncoderProxy> create(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUComputePassEncoderIdentifier identifier)
+    static Ref<RemoteComputePassEncoderProxy> create(RemoteCommandEncoderProxy& parent, WebGPUComputePassEncoderIdentifier identifier)
     {
-        return adoptRef(*new RemoteComputePassEncoderProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteComputePassEncoderProxy(parent, identifier));
     }
 
     virtual ~RemoteComputePassEncoderProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
+    WebGPUComputePassEncoderIdentifier backing() const { return m_backing; }
 
     void setPipeline(const ::WebGPU::ComputePipeline&) final;
     void dispatch(uint32_t workgroupCountX, uint32_t workgroupCountY = 1, uint32_t workgroupCountZ = 1) final;
@@ -61,17 +60,13 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteComputePassEncoderProxy(RemoteCommandEncoderProxy&, ConvertToBackingContext&, WebGPUComputePassEncoderIdentifier);
+    RemoteComputePassEncoderProxy(RemoteCommandEncoderProxy&, WebGPUComputePassEncoderIdentifier);
 
     RemoteComputePassEncoderProxy(const RemoteComputePassEncoderProxy&) = delete;
     RemoteComputePassEncoderProxy(RemoteComputePassEncoderProxy&&) = delete;
     RemoteComputePassEncoderProxy& operator=(const RemoteComputePassEncoderProxy&) = delete;
     RemoteComputePassEncoderProxy& operator=(RemoteComputePassEncoderProxy&&) = delete;
 
-    WebGPUComputePassEncoderIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -79,7 +74,6 @@ private:
     }
 
     WebGPUComputePassEncoderIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
 };
 

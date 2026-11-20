@@ -29,16 +29,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteBindGroupLayoutMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBindGroupLayoutProxy);
 
-RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBindGroupLayoutIdentifier identifier)
+RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(RemoteGPUProxy& parent, WebGPUBindGroupLayoutIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }

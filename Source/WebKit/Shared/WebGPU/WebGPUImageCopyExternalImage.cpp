@@ -29,15 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUImageCopyExternalImage.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<ImageCopyExternalImage> ConvertToBackingContext::convertToBacking(const WebCore::WebGPUExternalImageSource& imageCopyExternalImage)
-{
-    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, imageCopyExternalImage.imageBuffer ? std::optional { imageCopyExternalImage.imageBuffer->renderingResourceIdentifier() } : std::nullopt, imageCopyExternalImage.premultipliedAlpha } };
-}
 
 std::optional<WebCore::WebGPUExternalImageSource> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImage& imageCopyExternalImage)
 {
@@ -47,21 +41,6 @@ std::optional<WebCore::WebGPUExternalImageSource> ConvertFromBackingContext::con
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-std::optional<ImageCopyExternalImageVideoSource> ConvertToBackingContext::convertToBackingVideoSource(const WebCore::WebGPUExternalImageSource& imageCopyExternalImage)
-{
-    ASSERT(imageCopyExternalImage.videoSource);
-    if (!imageCopyExternalImage.videoSource)
-        return std::nullopt;
-
-    std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
-    if (auto* identifier = std::get_if<std::optional<WebCore::MediaPlayerIdentifier>>(&*imageCopyExternalImage.videoSource))
-        mediaIdentifier = *identifier;
-
-    // A frame which has no media player behind it has to travel through the shared video frame
-    // memory instead, which only RemoteQueueProxy can write to, so it fills sharedFrame in.
-    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, mediaIdentifier, imageCopyExternalImage.videoSourceSize, std::nullopt } };
-}
-
 std::optional<WebCore::WebGPUExternalImageSource> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImageVideoSource& imageCopyExternalImage, ConvertFromBackingContext::PixelBufferType pixelBuffer, WebCore::VideoFrameRotation rotation, bool isMirrored)
 {
     // RemoteQueue has already resolved the media player identifier, or read the shared frame, into

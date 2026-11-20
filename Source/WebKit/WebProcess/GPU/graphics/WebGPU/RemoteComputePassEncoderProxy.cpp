@@ -29,16 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteComputePassEncoderMessages.h"
-#include "WebGPUConvertToBackingContext.h"
+#include "WebGPUProxyIdentifiers.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteComputePassEncoderProxy);
 
-RemoteComputePassEncoderProxy::RemoteComputePassEncoderProxy(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUComputePassEncoderIdentifier identifier)
+RemoteComputePassEncoderProxy::RemoteComputePassEncoderProxy(RemoteCommandEncoderProxy& parent, WebGPUComputePassEncoderIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_root(parent.root())
 {
 }
@@ -51,7 +50,7 @@ RemoteComputePassEncoderProxy::~RemoteComputePassEncoderProxy()
 
 void RemoteComputePassEncoderProxy::setPipeline(const ::WebGPU::ComputePipeline& computePipeline)
 {
-    auto convertedComputePipeline = m_convertToBackingContext->convertToBacking(computePipeline);
+    auto convertedComputePipeline = identifier(computePipeline);
 
     auto sendResult = send(Messages::RemoteComputePassEncoder::SetPipeline(convertedComputePipeline));
     UNUSED_VARIABLE(sendResult);
@@ -65,7 +64,7 @@ void RemoteComputePassEncoderProxy::dispatch(uint32_t workgroupCountX, uint32_t 
 
 void RemoteComputePassEncoderProxy::dispatchIndirect(const ::WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
+    auto convertedIndirectBuffer = identifier(indirectBuffer);
 
     auto sendResult = send(Messages::RemoteComputePassEncoder::DispatchIndirect(convertedIndirectBuffer, indirectOffset));
     UNUSED_VARIABLE(sendResult);
@@ -81,7 +80,7 @@ void RemoteComputePassEncoderProxy::setBindGroup(uint32_t index, const ::WebGPU:
 {
     std::optional<WebGPUBindGroupIdentifier> convertedBindGroup;
     if (bindGroup)
-        convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
+        convertedBindGroup = identifier(*bindGroup);
 
     auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, dynamicOffsets ? std::optional { Vector<uint32_t>(*dynamicOffsets) } : std::nullopt));
     UNUSED_VARIABLE(sendResult);

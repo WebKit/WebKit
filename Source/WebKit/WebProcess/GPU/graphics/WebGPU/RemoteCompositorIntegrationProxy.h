@@ -40,28 +40,25 @@ class NativeImage;
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteCompositorIntegrationProxy final : public WebCore::WebGPUCompositorIntegration {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCompositorIntegrationProxy);
 public:
-    static Ref<RemoteCompositorIntegrationProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUCompositorIntegrationIdentifier identifier)
+    static Ref<RemoteCompositorIntegrationProxy> create(RemoteGPUProxy& parent, WebGPUCompositorIntegrationIdentifier identifier)
     {
-        return adoptRef(*new RemoteCompositorIntegrationProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteCompositorIntegrationProxy(parent, identifier));
     }
 
     virtual ~RemoteCompositorIntegrationProxy();
 
     RemoteGPUProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() const { return m_parent; }
+    WebGPUCompositorIntegrationIdentifier backing() const { return m_backing; }
 
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
     void withDisplayBufferAsNativeImage(uint32_t, Function<void(WebCore::NativeImage*)>) final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteCompositorIntegrationProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUCompositorIntegrationIdentifier);
+    RemoteCompositorIntegrationProxy(RemoteGPUProxy&, WebGPUCompositorIntegrationIdentifier);
 
     RemoteCompositorIntegrationProxy(const RemoteCompositorIntegrationProxy&) = delete;
     RemoteCompositorIntegrationProxy(RemoteCompositorIntegrationProxy&&) = delete;
@@ -70,8 +67,6 @@ private:
 
     bool isRemoteCompositorIntegrationProxy() const final { return true; }
 
-    WebGPUCompositorIntegrationIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -94,7 +89,6 @@ private:
     Seconds lastFramePresentStall() const final { return m_lastFramePresentStall; }
 
     WebGPUCompositorIntegrationIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
     Seconds m_lastFrameGPUCost { 0_s };
     Seconds m_lastFramePresentStall { 0_s };

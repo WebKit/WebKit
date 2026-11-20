@@ -29,16 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUVertexBufferLayout.h>
 #include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<VertexBufferLayout> ConvertToBackingContext::convertToBacking(const ::WebGPU::VertexBufferLayout& vertexBufferLayout)
-{
-    return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, Vector<VertexAttribute> { vertexBufferLayout.attributes } } };
-}
 
 std::optional<::WebGPU::VertexBufferLayout> ConvertFromBackingContext::convertFromBacking(const VertexBufferLayout& vertexBufferLayout, Vector<::WebGPU::VertexAttribute>& attributesStorage)
 {

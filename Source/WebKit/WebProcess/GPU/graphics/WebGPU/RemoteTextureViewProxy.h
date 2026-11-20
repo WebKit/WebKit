@@ -34,35 +34,30 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteTextureViewProxy final : public ::WebGPU::TextureView {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextureViewProxy);
 public:
-    static Ref<RemoteTextureViewProxy> create(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUTextureViewIdentifier identifier)
+    static Ref<RemoteTextureViewProxy> create(RemoteTextureProxy& parent, WebGPUTextureViewIdentifier identifier)
     {
-        return adoptRef(*new RemoteTextureViewProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteTextureViewProxy(parent, identifier));
     }
 
     virtual ~RemoteTextureViewProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
+    WebGPUTextureViewIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteTextureViewProxy(RemoteTextureProxy&, ConvertToBackingContext&, WebGPUTextureViewIdentifier);
+    RemoteTextureViewProxy(RemoteTextureProxy&, WebGPUTextureViewIdentifier);
 
     RemoteTextureViewProxy(const RemoteTextureViewProxy&) = delete;
     RemoteTextureViewProxy(RemoteTextureViewProxy&&) = delete;
     RemoteTextureViewProxy& operator=(const RemoteTextureViewProxy&) = delete;
     RemoteTextureViewProxy& operator=(RemoteTextureViewProxy&&) = delete;
 
-    WebGPUTextureViewIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -70,7 +65,6 @@ private:
     }
 
     WebGPUTextureViewIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
 };
 

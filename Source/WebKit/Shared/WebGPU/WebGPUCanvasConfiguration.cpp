@@ -29,17 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCanvasConfiguration.h>
 #include <WebCore/WebGPUDevice.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(const ::WebGPU::CanvasConfiguration& canvasConfiguration)
-{
-    auto device = convertToBacking(canvasConfiguration.device.get());
-    return { { device, canvasConfiguration.format, canvasConfiguration.usage, Vector<::WebGPU::TextureFormat> { canvasConfiguration.viewFormats }, WebCore::convertFromWebGPU(canvasConfiguration.colorSpace), canvasConfiguration.toneMappingMode, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors, canvasConfiguration.width, canvasConfiguration.height } };
-}
 
 std::optional<::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
 {

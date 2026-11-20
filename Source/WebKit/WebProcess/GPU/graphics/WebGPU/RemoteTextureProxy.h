@@ -34,19 +34,18 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteTextureProxy final : public ::WebGPU::Texture {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextureProxy);
 public:
-    static Ref<RemoteTextureProxy> create(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUTextureIdentifier identifier, bool isCanvasBacking = false)
+    static Ref<RemoteTextureProxy> create(Ref<RemoteGPUProxy>&& root, WebGPUTextureIdentifier identifier, bool isCanvasBacking = false)
     {
-        return adoptRef(*new RemoteTextureProxy(WTF::move(root), convertToBackingContext, identifier, isCanvasBacking));
+        return adoptRef(*new RemoteTextureProxy(WTF::move(root), identifier, isCanvasBacking));
     }
 
     virtual ~RemoteTextureProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
+    WebGPUTextureIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::TextureView> createView(const std::optional<::WebGPU::TextureViewDescriptor>&) final;
 
@@ -56,17 +55,13 @@ public:
     void undestroy() final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteTextureProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUTextureIdentifier, bool isCanvasBacking);
+    RemoteTextureProxy(Ref<RemoteGPUProxy>&&, WebGPUTextureIdentifier, bool isCanvasBacking);
 
     RemoteTextureProxy(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy(RemoteTextureProxy&&) = delete;
     RemoteTextureProxy& operator=(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy& operator=(RemoteTextureProxy&&) = delete;
 
-    WebGPUTextureIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -74,7 +69,6 @@ private:
     }
 
     WebGPUTextureIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
 
     RefPtr<::WebGPU::TextureView> m_lastCreatedView;

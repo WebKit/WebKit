@@ -29,31 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUVertexState.h>
 #include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<VertexState> ConvertToBackingContext::convertToBacking(const ::WebGPU::VertexState& vertexState)
-{
-    auto base = convertToBacking(vertexState.stage);
-    if (!base)
-        return std::nullopt;
-
-    Vector<std::optional<VertexBufferLayout>> buffers(ReserveCapacityTag { }, vertexState.buffers.size());
-    for (const auto& buffer : vertexState.buffers) {
-        if (buffer) {
-            auto convertedBuffer = convertToBacking(*buffer);
-            if (!convertedBuffer)
-                return std::nullopt;
-            buffers.append(WTF::move(*convertedBuffer));
-        } else
-            buffers.append(std::nullopt);
-    }
-
-    return { { WTF::move(*base), WTF::move(buffers) } };
-}
 
 std::optional<::WebGPU::VertexState> ConvertFromBackingContext::convertFromBacking(const VertexState& vertexState, RenderPipelineDescriptorStorage& storage)
 {

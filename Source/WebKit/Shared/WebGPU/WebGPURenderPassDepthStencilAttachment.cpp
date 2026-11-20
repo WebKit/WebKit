@@ -30,24 +30,9 @@
 
 #include "RemoteImageBufferGraphicsContext.h"
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
-
-static WebGPURenderPassAttachmentViewIdentifier depthStencilAttachmentViewIdentifier(ConvertToBackingContext& convertToBacking, const ::WebGPU::RenderPassAttachmentView& view)
-{
-    // RenderPassAttachmentView is a std::variant, see WebGPUCpp.h.
-    if (auto* textureView = std::get_if<Ref<::WebGPU::TextureView>>(&view))
-        return convertToBacking.convertToBacking(textureView->get());
-    return convertToBacking.convertToBacking(std::get_if<Ref<::WebGPU::Texture>>(&view)->get());
-}
-std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
-{
-    auto identifier = depthStencilAttachmentViewIdentifier(*this, renderPassDepthStencilAttachment.view);
-
-    return { { identifier, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
-}
 
 static std::optional<::WebGPU::RenderPassAttachmentView> depthStencilAttachmentViewFromBacking(ConvertFromBackingContext& convertFromBacking, const WebGPURenderPassAttachmentViewIdentifier& view)
 {

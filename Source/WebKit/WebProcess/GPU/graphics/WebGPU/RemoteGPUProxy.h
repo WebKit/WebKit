@@ -48,23 +48,17 @@ class NativeImage;
 }
 
 namespace WebKit {
-class ConvertToBackingContext;
 class Mesh;
 class ModelConvertToBackingContext;
 class RemoteRenderingBackendProxy;
 class WebPage;
 
-namespace WebGPU {
-class ConvertToBackingContext;
-class DowncastConvertToBackingContext;
-}
-
 class RemoteGPUProxy final : public WebCore::WebGPUIntegration, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy>, SerialFunctionDispatcher {
     WTF_MAKE_TZONE_ALLOCATED(RemoteGPUProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGPUProxy);
 public:
-    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, WebPage&);
-    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
+    static RefPtr<RemoteGPUProxy> create(ModelConvertToBackingContext&, WebPage&);
+    static RefPtr<RemoteGPUProxy> create(ModelConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
 
     virtual ~RemoteGPUProxy();
 
@@ -89,9 +83,7 @@ public:
     NODELETE RefPtr<WebKit::Mesh> createModelBacking(unsigned width, unsigned height, WebModel::ImageAsset&& diffuseTexture, WebModel::ImageAsset&& specularTexture, bool standardDynamicRange, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 
 private:
-    friend class WebGPU::DowncastConvertToBackingContext;
-
-    RemoteGPUProxy(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
+    RemoteGPUProxy(ModelConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
     void initializeIPC(Ref<IPC::StreamClientConnection>&&, IPC::Connection& renderingBackendIPCConnection, IPC::StreamServerConnection::Handle&&);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
@@ -171,7 +163,6 @@ private:
     void dispatch(Function<void()>&&) final;
     bool isCurrent() const final;
 
-    const Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
     const Ref<ModelConvertToBackingContext> m_modelConvertToBackingContext;
     ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;

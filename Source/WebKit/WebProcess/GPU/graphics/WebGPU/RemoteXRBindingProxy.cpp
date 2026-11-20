@@ -33,7 +33,6 @@
 #include "RemoteXRBindingMessages.h"
 #include "RemoteXRProjectionLayerProxy.h"
 #include "RemoteXRSubImageProxy.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/WebGPUCppAPI.h>
 
@@ -41,9 +40,8 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRBindingProxy);
 
-RemoteXRBindingProxy::RemoteXRBindingProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRBindingIdentifier identifier)
+RemoteXRBindingProxy::RemoteXRBindingProxy(RemoteDeviceProxy& parent, WebGPUXRBindingIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }
@@ -62,7 +60,7 @@ RefPtr<::WebGPU::XRProjectionLayer> RemoteXRBindingProxy::createProjectionLayer(
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteXRProjectionLayerProxy::create(protect(root()), m_convertToBackingContext, identifier);
+    auto result = RemoteXRProjectionLayerProxy::create(protect(root()), identifier);
     return result;
 }
 
@@ -73,7 +71,7 @@ RefPtr<::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(::WebGPU::XRP
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteXRSubImageProxy::create(protect(root()), m_convertToBackingContext, identifier);
+    auto result = RemoteXRSubImageProxy::create(protect(root()), identifier);
     return result;
 }
 

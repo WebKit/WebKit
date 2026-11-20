@@ -39,21 +39,21 @@ class NativeImage;
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
 class RemoteTextureProxy;
 
 class RemotePresentationContextProxy final : public ::WebGPU::PresentationContext {
     WTF_MAKE_TZONE_ALLOCATED(RemotePresentationContextProxy);
 public:
-    static Ref<RemotePresentationContextProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUPresentationContextIdentifier identifier)
+    static Ref<RemotePresentationContextProxy> create(RemoteGPUProxy& parent, WebGPUPresentationContextIdentifier identifier)
     {
-        return adoptRef(*new RemotePresentationContextProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemotePresentationContextProxy(parent, identifier));
     }
 
     virtual ~RemotePresentationContextProxy();
 
     RemoteGPUProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUPresentationContextIdentifier backing() const { return m_backing; }
 
     void configure(const ::WebGPU::CanvasConfiguration&) final;
     void unconfigure() final;
@@ -69,16 +69,12 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemotePresentationContextProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUPresentationContextIdentifier);
+    RemotePresentationContextProxy(RemoteGPUProxy&, WebGPUPresentationContextIdentifier);
 
     RemotePresentationContextProxy(const RemotePresentationContextProxy&) = delete;
     RemotePresentationContextProxy(RemotePresentationContextProxy&&) = delete;
     RemotePresentationContextProxy& operator=(const RemotePresentationContextProxy&) = delete;
     RemotePresentationContextProxy& operator=(RemotePresentationContextProxy&&) = delete;
-
-    WebGPUPresentationContextIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -87,7 +83,6 @@ private:
     }
 
     WebGPUPresentationContextIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
     static constexpr size_t textureCount = 3;
     std::array<RefPtr<RemoteTextureProxy>, textureCount> m_currentTexture;
