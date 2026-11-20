@@ -109,8 +109,11 @@ bool RenderVideo::updateIntrinsicSize()
         return false;
 
     // Treat the media player's natural size as visually non-empty.
-    if (protect(videoElement())->readyState() >= HTMLMediaElementEnums::HAVE_METADATA)
-        incrementVisuallyNonEmptyPixelCountIfNeeded(roundedIntSize(size));
+    if (protect(videoElement())->readyState() >= HTMLMediaElementEnums::HAVE_METADATA) {
+        auto zoomedSize = size;
+        zoomedSize.scale(style().usedZoom());
+        incrementVisuallyNonEmptyPixelCountIfNeeded(roundedIntSize(zoomedSize));
+    }
 
     if (size == intrinsicSize())
         return false;
@@ -152,7 +155,7 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
     if (shouldApplySizeContainment())
         return intrinsicSize();
 
-    // Return cached poster size directly if we're using it, since it's already scaled.
+    // Return cached poster size directly if we're using it, since it's in the cache's (unzoomed) coordinate space.
     // Determine what we should display: poster or video.
     // If the show-poster-flag is set (or there is no video frame to display) AND
     // there is a poster image, display the poster.
@@ -172,7 +175,6 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
     }
 
     auto calculatedIntrinsicSize = calculateIntrinsicSizeInternal();
-    calculatedIntrinsicSize.scale(style().usedZoom());
 
     if (shouldApplyInlineSizeContainment()) {
         if (isHorizontalWritingMode())
@@ -201,16 +203,19 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
 LayoutSize RenderVideo::posterAwareIntrinsicSize() const
 {
-    if (protect(videoElement())->shouldDisplayPosterImage())
-        return m_cachedImageSize;
-    return intrinsicSize();
+    if (protect(videoElement())->shouldDisplayPosterImage()) {
+        auto size = m_cachedImageSize;
+        size.scale(style().usedZoom());
+        return size;
+    }
+    return intrinsicSizeWithZoom();
 }
 
 NaturalDimensions RenderVideo::zoomedNaturalDimensions() const
 {
     if (protect(videoElement())->shouldDisplayPosterImage())
         return RenderImage::zoomedNaturalDimensions();
-    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+    return NaturalDimensions::fixed(FloatSize { intrinsicSizeWithZoom() });
 }
 
 IntRect RenderVideo::videoBox() const

@@ -81,14 +81,17 @@ LayoutSize RenderAttachment::layoutWideLayoutAttachmentOnly()
 void RenderAttachment::layout()
 {
     if (auto size = layoutWideLayoutAttachmentOnly(); !size.isEmpty()) {
-        setIntrinsicSize(size);
+        auto unzoomedSize = size;
+        unzoomedSize.scale(1 / style().usedZoom());
+        setIntrinsicSize(unzoomedSize);
         RenderReplaced::layout();
         if (hasShadowContent())
-            layoutShadowContent(intrinsicSize());
+            layoutShadowContent(intrinsicSizeWithZoom());
         return;
     }
 
-    LayoutSize newIntrinsicSize = theme().attachmentIntrinsicSize(*this);
+    auto newIntrinsicSize = theme().attachmentIntrinsicSize(*this);
+    newIntrinsicSize.scale(1 / style().usedZoom());
 
     if (!theme().attachmentShouldAllowWidthToShrink(*this)) {
         m_minimumIntrinsicWidth = std::max(m_minimumIntrinsicWidth, newIntrinsicSize.width());
@@ -98,9 +101,9 @@ void RenderAttachment::layout()
     setIntrinsicSize(newIntrinsicSize);
 
     RenderReplaced::layout();
-    
+
     if (hasShadowContent())
-        layoutShadowContent(newIntrinsicSize);
+        layoutShadowContent(intrinsicSizeWithZoom());
 }
 
 bool RenderAttachment::shouldDrawBorder() const
@@ -170,7 +173,7 @@ bool RenderAttachment::paintWideLayoutAttachmentOnly(const PaintInfo& paintInfo,
 
 NaturalDimensions RenderAttachment::zoomedNaturalDimensions() const
 {
-    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+    return NaturalDimensions::fixed(FloatSize { intrinsicSizeWithZoom() });
 }
 
 } // namespace WebCore

@@ -267,10 +267,15 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
-    if (imageSize == intrinsicSize())
+    // The cache holds the unzoomed intrinsic size, so compare the unscaled candidate against it
+    // directly: comparing against the re-zoomed cache would almost never match after truncation
+    // and report a change on every call.
+    auto unzoomedImageSize = LayoutSize(imageSize);
+    unzoomedImageSize.scale(1 / style().usedZoom());
+    if (unzoomedImageSize == intrinsicSize())
         return ImageSizeChangeNone;
 
-    setIntrinsicSize(imageSize);
+    setIntrinsicSize(unzoomedImageSize);
     return ImageSizeChangeForAltText;
 }
 
@@ -289,6 +294,13 @@ void RenderImage::styleDidChange(Style::Difference diff, const Style::ComputedSt
             repaintOrMarkForLayout(ImageSizeChangeForAltText);
         m_needsToSetSizeForAltText = false;
     }
+
+    // Alt text and broken-image sizes come from zoomed font metrics, fixed padding and
+    // zoomed-space clamps, so they do not scale linearly with zoom: recompute them when the
+    // used zoom changes. Guarding on oldStyle keeps this from running during initializeStyle(),
+    // before the renderer is attached to the tree.
+    if (oldStyle && oldStyle->usedZoom() != style().usedZoom() && imageResource().errorOccurred())
+        intrinsicSizeChanged();
 
     if (oldStyle && diff == Style::DifferenceResult::Layout) {
         if (oldStyle->imageOrientation() != style().imageOrientation())
@@ -552,7 +564,7 @@ Ref<NativePromise<Ref<ShareableBitmap>, void>> RenderImage::createShareableBitma
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
 {
-    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().usedZoom());
+    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(1.0f);
     LayoutSize oldIntrinsicSize = intrinsicSize();
 
     updateIntrinsicSizeIfNeeded(newIntrinsicSize);
@@ -1054,7 +1066,7 @@ bool RenderImage::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintO
 
 LayoutUnit RenderImage::minimumReplacedHeight() const
 {
-    return imageResource().errorOccurred() ? intrinsicSize().height() : 0_lu;
+    return imageResource().errorOccurred() ? intrinsicSizeWithZoom().height() : 0_lu;
 }
 
 RefPtr<HTMLMapElement> RenderImage::imageMap() const

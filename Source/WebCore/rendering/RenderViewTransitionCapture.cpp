@@ -95,10 +95,12 @@ void RenderViewTransitionCapture::setDisplayOnlyImage(RefPtr<NativeImage>&& oldI
 
 bool RenderViewTransitionCapture::setCapturedSize(const LayoutSize& size, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset)
 {
-    if (m_overflowRect == overflowRect && intrinsicSize() == size && m_layerToLayoutOffset == layerToLayoutOffset)
+    auto unzoomedSize = size;
+    unzoomedSize.scale(1 / style().usedZoom());
+    if (m_overflowRect == overflowRect && intrinsicSize() == unzoomedSize && m_layerToLayoutOffset == layerToLayoutOffset)
         return false;
-    m_imageIntrinsicSize = size;
-    setIntrinsicSize(size);
+    m_imageIntrinsicSize = unzoomedSize;
+    setIntrinsicSize(unzoomedSize);
     m_overflowRect = overflowRect;
     m_layerToLayoutOffset = layerToLayoutOffset;
     return true;
@@ -126,7 +128,7 @@ void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const Layo
     LayoutRect replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);
 
-    auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize()));
+    auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSizeWithZoom()));
 
     // dstRect: where to draw on screen.
     // srcRect: which portion of the snapshot to draw (defaults to the full image).
@@ -155,11 +157,11 @@ void RenderViewTransitionCapture::layout()
     // our replaced content rect.
     m_localOverflowRect = m_overflowRect;
     m_localOverflowRect.moveBy(-m_layerToLayoutOffset);
-    m_scale = { replacedContentRect().width().toFloat() / intrinsicSize().width().toFloat() , replacedContentRect().height().toFloat() / intrinsicSize().height().toFloat()  };
+    m_scale = { replacedContentRect().width().toFloat() / intrinsicSizeWithZoom().width().toFloat() , replacedContentRect().height().toFloat() / intrinsicSizeWithZoom().height().toFloat()  };
     m_localOverflowRect.scale(m_scale.width(), m_scale.height());
     m_localOverflowRect.moveBy(replacedContentRect().location());
 
-    auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize()));
+    auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSizeWithZoom()));
 
     // For the clipped view-box case, don't expand visual overflow: the element clips to its
     // own border, and expanding would expose stale CA contents outside the painted area.
@@ -229,7 +231,7 @@ String RenderViewTransitionCapture::debugDescription() const
 
 NaturalDimensions RenderViewTransitionCapture::zoomedNaturalDimensions() const
 {
-    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+    return NaturalDimensions::fixed(FloatSize { intrinsicSizeWithZoom() });
 }
 
 } // namespace WebCore

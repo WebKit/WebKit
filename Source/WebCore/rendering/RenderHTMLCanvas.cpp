@@ -222,10 +222,10 @@ void RenderHTMLCanvas::canvasSizeChanged()
     IntSize canvasSize = canvasElement().size();
     LayoutSize zoomedSize(canvasSize.width() * style().usedZoom(), canvasSize.height() * style().usedZoom());
 
-    if (zoomedSize == intrinsicSize())
+    if (zoomedSize == intrinsicSizeWithZoom())
         return;
 
-    setIntrinsicSize(zoomedSize);
+    setIntrinsicSize(LayoutSize(canvasSize));
 
     if (!parent())
         return;
@@ -244,7 +244,7 @@ void RenderHTMLCanvas::styleDidChange(Style::Difference difference, const Style:
 
 NaturalDimensions RenderHTMLCanvas::zoomedNaturalDimensions() const
 {
-    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+    return NaturalDimensions::fixed(FloatSize { intrinsicSizeWithZoom() });
 }
 
 } // namespace WebCore

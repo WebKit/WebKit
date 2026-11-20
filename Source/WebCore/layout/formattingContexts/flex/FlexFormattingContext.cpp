@@ -1318,7 +1318,7 @@ LayoutUnit FlexLayoutItem::borderAndPaddingLogicalHeight() const
 LayoutSize FlexLayoutItem::intrinsicSize() const
 {
     CheckedRef flexItem = renderer;
-    return flexItem->intrinsicSize();
+    return flexItem->intrinsicSizeWithZoom();
 }
 
 #if ASSERT_ENABLED

@@ -351,6 +351,8 @@ public:
     virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const = 0;
 
     virtual LayoutSize intrinsicSize() const { return LayoutSize(); }
+    // The intrinsic size with the renderer's used zoom applied. Most consumers want this.
+    virtual LayoutSize intrinsicSizeWithZoom() const { return intrinsicSize(); }
     LayoutUnit intrinsicLogicalWidth() const;
     inline LayoutUnit intrinsicLogicalHeight() const;
 
