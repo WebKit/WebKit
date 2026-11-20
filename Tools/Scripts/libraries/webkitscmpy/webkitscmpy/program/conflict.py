@@ -20,11 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import sys
 
 from webkitbugspy import Tracker, radar
 from .command import Command
-from .. import local
+from .. import local, log, remote
 from ..commit import Commit
 
 
@@ -32,6 +33,10 @@ class Conflict(Command):
     name = 'conflict'
     help = "Given the representative Radar ID of a conflicting merge, checkout the branch with conflict markers in place."
     INTEGRATION_BRANCH_PREFIX = 'integration'
+    COMMENT_PR_URL_RES = [
+        re.compile(r'(?P<url>https?://\S+/projects/\S+/repos/\S+)/pull-requests/(?P<number>\d+)'),
+        re.compile(r'(?P<url>https?://github\.\S+/\S+)/pull/(?P<number>\d+)'),
+    ]
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -40,40 +45,66 @@ class Conflict(Command):
             type=str, default=None,
             help='Radar ID that caused a merge conflict. Ex. rdar://problem/123, rdar://123, 123',
         )
+        parser.add_argument(
+            '--branch',
+            type=str, default=None,
+            help='Target branch of the conflict, used to pick between multiple matching conflict pull requests',
+        )
 
     @classmethod
-    def find_conflict_pr(cls, remote, radar_id):
+    def find_conflict_pr_via_comments(cls, radar_obj, branch=None):
         """
-        Because we don't know what the target branch was just given the radar id,
-        we need to search for PRs with branches that start with the integration prefix
-        and have the first and last sha.
+        Return the open pull request linked by the most recent radar comment that references this radar.
         """
-        radar_obj = Tracker.from_string(f'rdar://{radar_id}')
-        assert radar_obj, 'Could not fetch radar object for id {}'.format(radar_id)
-        shas = []
+        radar_ref = re.compile(rf'rdar://(?:problem/)?{re.escape(str(radar_obj.id))}\b')
+        comments = sorted(radar_obj.comments or [], key=lambda comment: comment.timestamp or 0, reverse=True)
 
-        repo_name = remote.name if '/' not in remote.name else remote.name.split('/', 1)[-1]
-        for entry in radar_obj.source_changes:
+        for comment in comments:
+            for candidate in cls.COMMENT_PR_URL_RES:
+                match = candidate.search(comment.content or '')
+                if not match:
+                    continue
+                try:
+                    rmt = remote.Scm.from_url(match.group('url'))
+                except OSError as e:
+                    log.debug(f"{radar_obj}: couldn't resolve '{match.group('url')}' to a known SCM server: {e}")
+                    continue
+                pr = rmt.pull_requests.get(match.group('number'))
+                if not pr or not pr.opened or (branch and pr.base != branch):
+                    log.debug(f"{radar_obj}: PR #{match.group('number')} on {match.group('url')} is missing, closed or not targeting {branch or 'any branch'}, skipping")
+                    continue
+                if not radar_ref.search(f"{pr.title or ''} {pr.body or ''}"):
+                    log.debug(f"{radar_obj}: {pr} doesn't reference this radar, skipping")
+                    continue
+                return pr
+        return None
+
+    @classmethod
+    def find_conflict_prs_via_branch_guess(cls, remote_obj, radar_obj):
+        """
+        Return open pull requests on the remote whose branch matches the radar's source-change shas.
+
+        Automation applies source changes in order and stops at the first one that conflicts,
+        so with changes [1, 2, 3] where 2 conflicts, the real branch spans {1}_{2}, not {1}_{3}.
+        """
+        repo_name = remote_obj.name if '/' not in remote_obj.name else remote_obj.name.split('/', 1)[-1]
+        shas = []
+        for entry in radar_obj.source_changes or []:
             repo, action, sha = entry.split(', ')
             if repo.lower() == repo_name.lower():
                 shas.append(sha)
-
         if not shas:
-            print(f'No source changes for {repo_name} found in {radar_obj}', file=sys.stderr)
-            return None
+            return []
 
-        integration_branches = []
-        for prefix in ('ci', 'conflict'):
-            integration_branches.append("{}/{}/{}_{}".format(cls.INTEGRATION_BRANCH_PREFIX, prefix, shas[0][:Commit.HASH_LABEL_SIZE], shas[-1][:Commit.HASH_LABEL_SIZE]))
-
-        for pr in cls.get_open_integration_prs(remote):
-            for branch in integration_branches:
-                if pr.head.startswith(branch):
-                    return pr
-
-    @classmethod
-    def get_open_integration_prs(cls, remote):
-        return remote.pull_requests.find(head=cls.INTEGRATION_BRANCH_PREFIX, opened=True)
+        integration_branches = [
+            f'{cls.INTEGRATION_BRANCH_PREFIX}/{prefix}/{shas[0][:Commit.HASH_LABEL_SIZE]}_{sha[:Commit.HASH_LABEL_SIZE]}'
+            for prefix in ('ci', 'conflict')
+            for sha in shas
+        ]
+        return [
+            pr for pr in remote_obj.pull_requests.find(head=cls.INTEGRATION_BRANCH_PREFIX, opened=True)
+            if any(pr.head.startswith(branch) for branch in integration_branches)
+        ]
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -87,17 +118,28 @@ class Conflict(Command):
         # This is to remove any extra inputs like rdar://problem/
         radar_id = ''.join(i for i in args.radar if i.isdigit())
         radar_obj = Tracker.from_string(f'rdar://{radar_id}')
-        expected_branch = 'integration/conflict/{}'.format(radar_obj.id)
-        conflict_pr = None
-        source_remote = None
-        for source_remote in repository.source_remotes():
-            rmt = repository.remote(name=source_remote)
-            conflict_pr = cls.find_conflict_pr(rmt, radar_obj.id)
-            if conflict_pr:
-                break
+        if not radar_obj:
+            sys.stderr.write(f'Unable to access rdar://{radar_id}, check out the conflict pull request linked in the merge conflict alert instead\n')
+            return 1
+
+        conflict_pr = cls.find_conflict_pr_via_comments(radar_obj, branch=args.branch)
+        if not conflict_pr:
+            log.debug(f'rdar://{radar_id}: no pull-request link in comments, falling back to branch-guessing')
+            candidates = [
+                pr for source_remote in repository.source_remotes()
+                for pr in cls.find_conflict_prs_via_branch_guess(repository.remote(name=source_remote), radar_obj)
+                if not args.branch or pr.base == args.branch
+            ]
+            if len(candidates) > 1:
+                sys.stderr.write(f'Multiple conflict pull requests found for rdar://{radar_id}:\n')
+                for pr in candidates:
+                    sys.stderr.write(f"    {pr._metadata['full_name']}:{pr.head} (targeting {pr.base})\n")
+                sys.stderr.write('Re-run with --branch <target branch> to pick one\n')
+                return 1
+            conflict_pr = candidates[0] if candidates else None
 
         if not conflict_pr:
-            sys.stderr.write('No conflict pull request found with branch {}\n'.format(expected_branch))
+            sys.stderr.write(f'No conflict pull request found for rdar://{radar_id}, check out the conflict pull request linked in the merge conflict alert instead\n')
             return 1
 
         full_branch = '{}:{}'.format(conflict_pr._metadata['full_name'], conflict_pr.head)
@@ -106,6 +148,7 @@ class Conflict(Command):
         if conflict_pr.hash and checkout_response and checkout_response.hash != conflict_pr.hash:
             sys.stderr.write('Checked out {} but {} is at {}, your local branch may be stale\n'.format(checkout_response.hash, conflict_pr, conflict_pr.hash))
 
+        source_remote = repository.remote_for(conflict_pr.base) or repository.default_remote
         msg = "\n\n-------------------------------------------------------"
         msg += "\nYou are now checked out into the conflict branch.\n"
         msg += "Conflict markers are present in files.\n"
@@ -118,4 +161,3 @@ class Conflict(Command):
             msg += 'git cherry-pick {}\n'.format(source_sha)
         print(msg)
         return checkout_response
-
