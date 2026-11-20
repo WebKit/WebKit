@@ -9000,7 +9000,10 @@ void WebPageProxy::clearContentWorld(API::ContentWorld& world, CompletionHandler
     if (!hasRunningProcess())
         return completionHandler();
 
-    sendWithAsyncReply(Messages::WebPage::ClearContentWorld(world.identifier()), WTF::move(completionHandler));
+    auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::ClearContentWorld(world.identifier()), [callbackAggregator] { }, pageID);
+    });
 }
 
 void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, CompletionHandler<void(const String&)>&& callback)

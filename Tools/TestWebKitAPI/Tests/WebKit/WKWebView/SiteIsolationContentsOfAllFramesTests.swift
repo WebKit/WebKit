@@ -27,6 +27,7 @@ import WebKit
 private import WebKit_Private.WKWebViewPrivate
 
 import struct Foundation.URL
+import struct Swift.String
 
 @MainActor
 struct SiteIsolationContentsOfAllFramesTests {
@@ -60,6 +61,54 @@ struct SiteIsolationContentsOfAllFramesTests {
 
             let contents = await webView._getContentsOfAllFramesAsString()
             #expect(contents == "main frame text\n\ncross-site text\n\nsame-site text")
+        }
+    }
+
+    @Test
+    func clearContentWorldReachesCrossSiteIframe() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/mainframe") {
+                "<iframe src='https://webkit.org/iframe'></iframe>"
+            }
+
+            Route("/iframe") {
+                "<p>iframe</p>"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: configuration,
+                frame: CGRect(x: 0, y: 0, width: 800, height: 600)
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/mainframe"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let childFrame = try #require(await webView.firstChildFrame)
+
+            let worldConfiguration = WKContentWorld.Configuration()
+            worldConfiguration.nodeSnapshotCreationEnabled = true
+            let world = WKContentWorld(configuration: worldConfiguration)
+
+            func expando(in frame: WKFrameInfo?) async throws -> String {
+                try await webView.callJavaScript(returning: String.self, in: frame, contentWorld: world) {
+                    "return String(document.contentWorldExpando)"
+                }
+            }
+
+            for frame in [nil, childFrame] {
+                try await webView.callJavaScript(in: frame, contentWorld: world) {
+                    "document.contentWorldExpando = 'set'"
+                }
+                #expect(try await expando(in: frame) == "set")
+            }
+
+            await webView._clearContentWorld(world)
+
+            for frame in [nil, childFrame] {
+                #expect(try await expando(in: frame) == "undefined")
+            }
         }
     }
 }
