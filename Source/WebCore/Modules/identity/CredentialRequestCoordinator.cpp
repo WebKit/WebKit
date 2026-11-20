@@ -167,7 +167,9 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
         return rejectTheCredentialRequestWith(Exception { ExceptionCode::TypeError, "No valid credential requests remain after validation"_s });
 
     if (signal) {
-        ASSERT(!signal->aborted());
+        if (signal->aborted())
+            return rejectTheCredentialRequestWith(ExceptionOr<JSC::JSValue> { signal->reason().getValue() });
+
         auto identifier = signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue reason) {
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
@@ -177,9 +179,6 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
         });
         session->setAbortAlgorithm(RefPtr { signal }, identifier);
     }
-
-    if (signal && signal->aborted())
-        return rejectTheCredentialRequestWith(Exception { ExceptionCode::AbortError, "Signal was already aborted."_s });
 
     initiateTheCredentialRequest(document, WTF::move(validatedCredentialRequests), WTF::move(unvalidatedRequests), signal);
 }
@@ -319,6 +318,16 @@ void CredentialRequestCoordinator::abortTheCredentialRequest(ExceptionOr<JSC::JS
 
     setInteractionState(InteractionState::Aborting);
     dismissChooser();
+    rejectTheCredentialRequestWith(WTF::move(reason));
+}
+
+void CredentialRequestCoordinator::rejectTheCredentialRequestWith(ExceptionOr<JSC::JSValue>&& reason)
+{
+    ASSERT(m_interactionState != InteractionState::Idle);
+
+    RefPtr session = m_activeSession;
+    if (!session)
+        return;
 
     std::optional<Exception> abortException;
     std::optional<JSC::Strong<JSC::Unknown>> protectedReason;

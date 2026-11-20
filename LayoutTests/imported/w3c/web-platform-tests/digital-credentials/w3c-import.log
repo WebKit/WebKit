@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/abort-during-validation.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-create.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/concurrent-requests.https.html
