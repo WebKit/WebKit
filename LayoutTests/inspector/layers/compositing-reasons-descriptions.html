@@ -1,0 +1,169 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ PasswordFieldScreenCaptureProtectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/layer-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LayerTreeManager.descriptionsForCompositingReasons");
+
+    // Every property of `LayerTree.CompositingReasons`.
+    const allReasons = [
+        "transform3D",
+        "video",
+        "canvas",
+        "plugin",
+        "iFrame",
+        "model",
+        "backfaceVisibilityHidden",
+        "clipsCompositingDescendants",
+        "animation",
+        "filters",
+        "positionFixed",
+        "positionSticky",
+        "overflowScrollingTouch",
+        "stacking",
+        "overlap",
+        "negativeZIndexChildren",
+        "transformWithCompositedDescendants",
+        "opacityWithCompositedDescendants",
+        "maskWithCompositedDescendants",
+        "reflectionWithCompositedDescendants",
+        "filterWithCompositedDescendants",
+        "blendingWithCompositedDescendants",
+        "isolatesCompositedBlendingDescendants",
+        "perspective",
+        "preserve3D",
+        "willChange",
+        "root",
+        "blending",
+        "backdropRoot",
+        "overflowScrollPositioning",
+        "anchorPositioning",
+        "spatialPortal",
+        "spatialPortalHosting",
+        "screenCaptureProtection",
+    ];
+
+    suite.addTestCase({
+        name: "LayerTreeManager.descriptionsForCompositingReasons.EveryReason",
+        description: "Each compositing reason should have its own description.",
+        async test() {
+            let descriptions = new Set;
+            let problems = [];
+            for (let reason of allReasons) {
+                let result = WI.LayerTreeManager.descriptionsForCompositingReasons({[reason]: true});
+                if (result.length !== 1 || !result[0])
+                    problems.push(`${reason} produced ${result.length} descriptions`);
+                else if (descriptions.has(result[0]))
+                    problems.push(`${reason} shares its description`);
+                descriptions.add(result[0]);
+            }
+            InspectorTest.expectEqual(problems.join(), "", "Each compositing reason should produce one distinct description.");
+
+            InspectorTest.expectEqual(WI.LayerTreeManager.descriptionsForCompositingReasons({}).length, 0, "No reasons should produce no descriptions.");
+            InspectorTest.expectEqual(WI.LayerTreeManager.descriptionsForCompositingReasons({backdropRoot: false, root: false}).length, 0, "Reasons that are false should be ignored.");
+            InspectorTest.expectEqual(WI.LayerTreeManager.descriptionsForCompositingReasons({backdropRoot: true, root: true}).join(), ["Element is the root element", "Element is a backdrop root"].join(), "Descriptions should follow a fixed order.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "LayerTreeManager.descriptionsForCompositingReasons.BackendReasons",
+        description: "Every reason the backend reports for a layer should have a description.",
+        async test() {
+            let {documentNode, layers} = await getDocumentAndLayers();
+
+            async function reasonsForElement(selector) {
+                let node = await getNodeForSelector(documentNode, selector);
+                InspectorTest.expectNotNull(node, `Should have a node for ${selector}.`);
+
+                let layer = layers.find((existingLayer) => existingLayer.nodeId === node.id);
+                InspectorTest.expectNotNull(layer, `Should have a layer for ${selector}.`);
+                if (!layer)
+                    return {};
+
+                return await getReasonsForCompositingLayer(layer);
+            }
+
+            let backdropRootReasons = await reasonsForElement("#backdrop-root");
+            InspectorTest.expectTrue(backdropRootReasons.backdropRoot, "#backdrop-root should be composited because it is a backdrop root.");
+            InspectorTest.expectTrue(WI.LayerTreeManager.descriptionsForCompositingReasons(backdropRootReasons).includes("Element is a backdrop root"), "The descriptions of #backdrop-root should include the backdrop root reason.");
+
+            let anchoredReasons = await reasonsForElement("#anchored");
+            InspectorTest.expectTrue(anchoredReasons.anchorPositioning, "#anchored should be composited because it is anchor-positioned.");
+            InspectorTest.expectTrue(WI.LayerTreeManager.descriptionsForCompositingReasons(anchoredReasons).includes("Element is anchor-positioned and moves with the scrolling of its anchor"), "The descriptions of #anchored should include the anchor positioning reason.");
+
+            let unknownReasons = [];
+            let undescribedLayers = 0;
+            let hasScreenCaptureProtection = false;
+            for (let layer of layers) {
+                let reasons = await getReasonsForCompositingLayer(layer);
+                if (reasons.screenCaptureProtection) {
+                    hasScreenCaptureProtection = true;
+                    InspectorTest.expectTrue(WI.LayerTreeManager.descriptionsForCompositingReasons(reasons).includes("Element is protected from screen capture"), "The descriptions of the password field layer should include the screen capture protection reason.");
+                }
+                unknownReasons.push(...Object.keys(reasons).filter((name) => !allReasons.includes(name)));
+
+                let reported = Object.keys(reasons).filter((name) => reasons[name]);
+                if (WI.LayerTreeManager.descriptionsForCompositingReasons(reasons).length !== reported.length)
+                    ++undescribedLayers;
+            }
+            InspectorTest.expectTrue(hasScreenCaptureProtection, "A password field with a value should have a layer that is protected from screen capture.");
+            InspectorTest.expectEqual(unknownReasons.join(), "", "The backend should only report known compositing reasons.");
+            InspectorTest.expectEqual(undescribedLayers, 0, "Every reported reason should have a description.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    #backdrop-root {
+        opacity: 0.5;
+    }
+
+    #backdrop-child {
+        backdrop-filter: blur(2px);
+        width: 50px;
+        height: 50px;
+    }
+
+    #scroller {
+        overflow: scroll;
+        width: 100px;
+        height: 100px;
+    }
+
+    #anchor {
+        anchor-name: --anchor;
+        width: 20px;
+        height: 20px;
+    }
+
+    #spacer {
+        height: 500px;
+    }
+
+    #anchored {
+        position: absolute;
+        position-anchor: --anchor;
+        top: anchor(bottom);
+        left: anchor(left);
+        width: 10px;
+        height: 10px;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <div id="backdrop-root">
+        <div id="backdrop-child"></div>
+    </div>
+    <div id="scroller">
+        <div id="anchor"></div>
+        <div id="spacer"></div>
+    </div>
+    <div id="anchored"></div>
+    <input id="password" type="password" value="secret">
+</body>
+</html>
