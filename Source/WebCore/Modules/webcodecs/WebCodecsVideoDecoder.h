@@ -81,6 +81,7 @@ private:
     ExceptionOr<void> closeDecoder(Exception&&);
     ExceptionOr<void> resetDecoder(const Exception&);
     void setInternalDecoder(Ref<VideoDecoder>&&);
+    void createInternalDecoder(const String& codec, const VideoDecoder::Config&);
 
     const Ref<WebCodecsVideoFrameOutputCallback> m_output;
     const Ref<WebCodecsErrorCallback> m_error;

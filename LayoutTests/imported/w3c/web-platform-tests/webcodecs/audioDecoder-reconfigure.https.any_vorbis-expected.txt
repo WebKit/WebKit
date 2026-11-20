@@ -1,0 +1,5 @@
+
+PASS Test configure() between decode() calls outputs the audio decoded with the previous configuration
+PASS Test reset() while configure() waits for the previous decoder discards its audio
+PASS Test configure() with an unsupported codec outputs the audio decoded with the previous configuration
+
