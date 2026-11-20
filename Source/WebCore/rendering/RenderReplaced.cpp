@@ -133,9 +133,6 @@ bool RenderReplaced::shouldRespectZeroIntrinsicHeight() const
 void RenderReplaced::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
-    auto previousUsedZoom = oldStyle ? oldStyle->usedZoom() : Style::evaluate<float>(Style::ComputedStyle::initialZoom());
-    if (previousUsedZoom != style().usedZoom())
-        intrinsicSizeChanged();
     // object-view-box affects the element's natural size, so layout is needed when
     // dimensions are auto. With explicit sizing, a repaint suffices (see StyleDifference.cpp).
     if (oldStyle && style().objectViewBox() != oldStyle->objectViewBox()) {
