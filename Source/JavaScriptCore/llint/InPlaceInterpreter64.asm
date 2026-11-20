@@ -388,7 +388,7 @@ end)
 ipintOp(_br, macro()
     # br
     validateOpcodeConfig(t0)
-    loadh IPInt::BranchTargetMetadata::toPop[MC], t0
+    loadi IPInt::BranchTargetMetadata::toPop[MC], t0
     # number to keep
     loadh IPInt::BranchTargetMetadata::toKeep[MC], t1
 
@@ -399,8 +399,8 @@ ipintOp(_br, macro()
     # d  e
     #
     # [sp + k + numToPop] = [sp + k] for k in numToKeep-1 -> 0
-    mulq StackValueSize, t0, t2
-    leap [sp, t2], t2
+    mulq StackValueSize, t0
+    leap [sp, t0], t2
 
 .ipint_br_poploop:
     bqeq t1, 0, .ipint_br_popend
@@ -410,9 +410,7 @@ ipintOp(_br, macro()
     storev v0, [t2, t3]
     jmp .ipint_br_poploop
 .ipint_br_popend:
-    loadh IPInt::BranchTargetMetadata::toPop[MC], t0
-    mulq StackValueSize, t0
-    leap [sp, t0], sp
+    move t2, sp
 
 if ARM64 or ARM64E
     loadpairi IPInt::BlockMetadata::deltaPC[MC], t0, t1
