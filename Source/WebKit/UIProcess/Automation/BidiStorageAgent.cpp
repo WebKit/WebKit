@@ -40,7 +40,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/Cookie.h>
 #include <wtf/Borrow.h>
-#include <wtf/Deque.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 
@@ -420,19 +420,6 @@ void BidiStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::Object
     });
 };
 
-static void deleteCookiesSequentially(RefPtr<API::HTTPCookieStore> store, Deque<WebCore::Cookie> cookies, Ref<PartitionKey> partitionKey, Inspector::CommandCallback<Ref<PartitionKey>> callback)
-{
-    if (cookies.isEmpty()) {
-        callback({ partitionKey });
-        return;
-    }
-    WebCore::Cookie cookie = cookies.takeFirst();
-    store->deleteCookie(cookie, [store, cookies = WTF::move(cookies), partitionKey = WTF::move(partitionKey), callback = WTF::move(callback)] mutable {
-        deleteCookiesSequentially(store, WTF::move(cookies), partitionKey, WTF::move(callback));
-    });
-}
-
-// FIXME: deleteCookies is being reworked in https://bugs.webkit.org/show_bug.cgi?id=288112.
 void BidiStorageAgent::deleteCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<JSON::Object>&& optionalPartition, Inspector::CommandCallback<Ref<PartitionKey>>&& callback)
 {
     auto filter = BidiCookieFilter::fromProtocol(optionalFilter);
@@ -447,22 +434,18 @@ void BidiStorageAgent::deleteCookies(RefPtr<JSON::Object>&& optionalFilter, RefP
         return;
     }
 
+    // Cookies are read and removed through the website data store's cookie store, which lives in the
+    // network process, so this works the same however the partition's frames are split across web processes.
     Ref cookieStore = partition->cookieStore();
     cookieStore->cookies([callback = WTF::move(callback), filter = WTF::move(*filter), partition = WTF::move(*partition), cookieStore](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
-        Deque<WebCore::Cookie> toDelete;
+        Ref callbackAggregator = CallbackAggregator::create([callback = WTF::move(callback), partitionKey = partition.partitionKey.copyRef()] mutable {
+            callback({ WTF::move(partitionKey) });
+        });
 
         for (auto& cookie : borrow(fetchedCookies)) {
             if (partition.containsCookie(cookie) && filter.matches(cookie))
-                toDelete.append(cookie);
+                cookieStore->deleteCookie(cookie, [callbackAggregator] { });
         }
-
-        if (toDelete.isEmpty()) {
-            callback({ WTF::move(partition.partitionKey) });
-            return;
-        }
-
-        LOG(Automation, "deleteCookies: %zu cookies matched; deleting one-by-one.", toDelete.size());
-        deleteCookiesSequentially(WTF::move(cookieStore), WTF::move(toDelete), WTF::move(partition.partitionKey), WTF::move(callback));
     });
 }
 
