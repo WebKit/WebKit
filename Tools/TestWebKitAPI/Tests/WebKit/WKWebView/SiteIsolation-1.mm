@@ -88,6 +88,10 @@
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
 - (void)_accessibilityDidGetSelectionRects:(NSArray *)selectionRects withGranularity:(UITextGranularity)granularity atOffset:(NSInteger)offset;
 @end
+
+#if ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
+#import "Helpers/cocoa/DragAndDropSimulator.h"
+#endif
 #endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -5067,6 +5071,39 @@ TEST(SiteIsolation, SelectWithTwoTouchesRedispatchToTheSourceFrameIsRejected)
         [[webView textInputContentView] changeSelectionWithTouchesFrom:CGPointMake(10, 10) to:CGPointMake(20, 10) withGesture:UIWKGestureLoupe withState:UIGestureRecognizerStateEnded];
     });
 }
+
+#if ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
+
+// The drag starting from a layout test is covered by http/tests/site-isolation/ios/drag-start-redispatch-to-the-source-frame-is-rejected.html.
+// A layout test can't add items to a drag in progress, so this one stays here.
+TEST(SiteIsolation, RequestAdditionalItemsForDragSessionRedispatchToTheSourceFrameIsRejected)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><div draggable='true' style='width: 100px; height: 100px;' ondragstart='event.dataTransfer.setData(\"text/plain\", \"dragged\")'>drag me</div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(ipcTestingConfiguration(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // DragInitiationResult's RemoteFrameData (variant index 1): the target frame, then the client and global positions.
+    static NSString * const additionalItemsRequest = @"WebPage_RequestAdditionalItemsForDragSession";
+    static NSString * const dragRedispatchReply = @"[{ type: 'uint8_t', value: 1 }, remote[0], { type: 'int32_t', value: 10 }, { type: 'int32_t', value: 10 }, { type: 'int32_t', value: 10 }, { type: 'int32_t', value: 10 }]";
+
+    // Additional items can only be requested once a drag has started, so only that request gets a forged reply.
+    countRequestsAndForgeRedispatch(webView.get(), additionalItemsRequest, ipcFrameIdentifier(webView.get()).get(), dragRedispatchReply);
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 300) additionalItemRequestLocations:@{ @0.5: [NSValue valueWithCGPoint:CGPointMake(50, 50)] }];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return redispatchRequestCount(webView.get(), additionalItemsRequest) >= 1;
+    }));
+    Util::runFor(0.5_s);
+    EXPECT_EQ(1, redispatchRequestCount(webView.get(), additionalItemsRequest));
+    EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
+}
+
+#endif // ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
 

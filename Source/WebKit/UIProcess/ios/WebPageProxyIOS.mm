@@ -1392,14 +1392,15 @@ void WebPageProxy::requestDragStart(std::optional<WebCore::FrameIdentifier> remo
     if (!hasRunningProcess())
         return completionHandler(false);
 
-    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::RequestDragStart(remoteFrameID, clientPosition, globalPosition, allowedActionsMask), Messages::WebPage::RequestDragStart::Reply { [weakThis = WeakPtr { *this }, allowedActionsMask, completionHandler = WTF::move(completionHandler)] (auto result) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::RequestDragStart(remoteFrameID, clientPosition, globalPosition, allowedActionsMask), ReplyWithConnection<Messages::WebPage::RequestDragStart> { [weakThis = WeakPtr { *this }, remoteFrameID, allowedActionsMask, completionHandler = WTF::move(completionHandler)](IPC::Connection* connection, auto result) mutable {
         WTF::switchOn(result.result, [&] (bool handled) {
             completionHandler(handled);
         }, [&] (DragInitiationResult::RemoteFrameData& data) {
             RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
+            RefPtr targetFrame = protectedThis ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, remoteFrameID, data.targetFrameID) : nullptr;
+            if (!targetFrame)
                 return completionHandler(false);
-            protectedThis->requestDragStart(data.targetFrameID, data.transformedClientPosition, data.transformedGlobalPosition, allowedActionsMask, WTF::move(completionHandler));
+            protectedThis->requestDragStart(targetFrame->frameID(), data.transformedClientPosition, data.transformedGlobalPosition, allowedActionsMask, WTF::move(completionHandler));
         });
     } });
 }
@@ -1409,14 +1410,15 @@ void WebPageProxy::requestAdditionalItemsForDragSession(std::optional<WebCore::F
     if (!hasRunningProcess())
         return completionHandler(false);
 
-    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::RequestAdditionalItemsForDragSession(remoteFrameID, clientPosition, globalPosition, allowedActionsMask), Messages::WebPage::RequestAdditionalItemsForDragSession::Reply { [weakThis = WeakPtr { *this }, allowedActionsMask, completionHandler = WTF::move(completionHandler)] (auto result) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::RequestAdditionalItemsForDragSession(remoteFrameID, clientPosition, globalPosition, allowedActionsMask), ReplyWithConnection<Messages::WebPage::RequestAdditionalItemsForDragSession> { [weakThis = WeakPtr { *this }, remoteFrameID, allowedActionsMask, completionHandler = WTF::move(completionHandler)](IPC::Connection* connection, auto result) mutable {
         WTF::switchOn(result.result, [&] (bool handled) {
             completionHandler(handled);
         }, [&] (DragInitiationResult::RemoteFrameData& data) {
             RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
+            RefPtr targetFrame = protectedThis ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, remoteFrameID, data.targetFrameID) : nullptr;
+            if (!targetFrame)
                 return completionHandler(false);
-            protectedThis->requestAdditionalItemsForDragSession(data.targetFrameID, data.transformedClientPosition, data.transformedGlobalPosition, allowedActionsMask, WTF::move(completionHandler));
+            protectedThis->requestAdditionalItemsForDragSession(targetFrame->frameID(), data.transformedClientPosition, data.transformedGlobalPosition, allowedActionsMask, WTF::move(completionHandler));
         });
     } });
 }
