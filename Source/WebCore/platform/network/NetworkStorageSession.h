@@ -204,7 +204,7 @@ public:
     WEBCORE_EXPORT HTTPCookieAcceptPolicy cookieAcceptPolicy() const;
     WEBCORE_EXPORT void setCookie(const Cookie&);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-    WEBCORE_EXPORT void setCookie(const URL& firstParty, const Cookie&, ShouldPartitionCookie);
+    WEBCORE_EXPORT void setCookie(const Cookie&, const URL&, const URL& mainDocumentURL, ShouldPartitionCookie);
 #endif
     WEBCORE_EXPORT void setCookie(const Cookie&, const URL&, const URL& mainDocumentURL);
     WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
