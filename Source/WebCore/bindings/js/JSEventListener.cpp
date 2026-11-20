@@ -225,7 +225,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         callData = JSC::getCallData(handleEventFunction);
         if (callData.type == CallData::Type::None) {
             protect(event.target())->uncaughtExceptionInEventHandler();
-            reportException(jsFunctionGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s));
+            reportException(jsFunctionGlobalObject, JSC::Exception::create(vm, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s)));
             return;
         }
     }

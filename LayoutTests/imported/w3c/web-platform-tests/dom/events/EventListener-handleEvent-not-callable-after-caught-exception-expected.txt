@@ -1,0 +1,4 @@
+
+PASS reports a TypeError when the handleEvent getter caught an exception before returning a non-callable value
+PASS reports a TypeError when a previous listener caught an exception
+
