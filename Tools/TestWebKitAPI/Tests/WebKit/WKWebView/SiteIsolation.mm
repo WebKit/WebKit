@@ -9166,6 +9166,41 @@ TEST(SiteIsolation, MainFrameRedirectBackToCommittedProcessKeepsBackForwardCache
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__pageshowPersisted === true"] boolValue]);
 }
 
+// A custom scheme main frame with an opaque origin (here via CSP sandbox) has a real URL but no site. The UI process
+// used to tell the network process only about the opaque site for a cross-site subframe's process, while the subframe's
+// WebContent process derives firstPartyForCookies from the main frame URL, so its loads were rejected as invalid IPC.
+TEST(SiteIsolation, CrossSiteIframeOfOpaqueOriginCustomSchemeMainFrame)
+{
+    HTTPServer server({
+        { "/iframe"_s, { "<script>fetch('/fetched');</script>"_s } },
+        { "/fetched"_s, { "ok"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        RetainPtr headers = @{
+            @"Content-Type": @"text/html",
+            @"Content-Security-Policy": @"sandbox allow-scripts"
+        };
+        RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:task.request.URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headers.get()]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[@"<iframe src='https://webkit.org/iframe'></iframe>" dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    };
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"customscheme"];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+
+    // If the iframe's WebContent process is terminated for an invalid ScheduleResourceLoad, the server never sees
+    // the iframe's document request, let alone the subresource request that its script makes.
+    // (Alerts are not usable as a signal because the CSP sandbox on the main frame does not allow modals.)
+    EXPECT_TRUE(Util::waitFor([&] {
+        return server.totalRequests() >= 2u;
+    }));
+}
+
 TEST(SiteIsolation, URLSchemeTask)
 {
     HTTPServer server({

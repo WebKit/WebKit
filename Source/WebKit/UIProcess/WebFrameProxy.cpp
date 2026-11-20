@@ -698,7 +698,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
 
     page->inspectorController().didCreateProvisionalFrame(provisionalFrame);
 
-    auto continuation = [page = Ref { *page }, process = Ref { process }, mainFrameFirstPartySite, weakProvisionalFrame = WeakPtr { m_provisionalFrame }, pageID = page->webPageIDInProcess(process), completionHandler = WTF::move(completionHandler)] () mutable {
+    auto continuation = [page = Ref { *page }, process = Ref { process }, mainFrameSite, mainFrameFirstPartySite, weakProvisionalFrame = WeakPtr { m_provisionalFrame }, pageID = page->webPageIDInProcess(process), completionHandler = WTF::move(completionHandler)] mutable {
         RefPtr provisionalFrame = weakProvisionalFrame.get();
         bool cancelled = !provisionalFrame || !protect(provisionalFrame->frame())->isConnected();
         if (cancelled) {
@@ -706,15 +706,21 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
             return;
         }
 
-        page->addAllowedFirstPartyForCookies(process, mainFrameFirstPartySite, LoadedWebArchive::No, [weakProvisionalFrame = WTF::move(weakProvisionalFrame), pageID, completionHandler = WTF::move(completionHandler)] mutable {
-            RefPtr provisionalFrame = weakProvisionalFrame.get();
-            bool cancelled = !provisionalFrame || !protect(provisionalFrame->frame())->isConnected();
-            if (cancelled) {
-                completionHandler(std::nullopt);
-                return;
-            }
+        // FIXME: Ideally we'd only add one first party here, but sometimes we use Document::topOrigin and sometimes we use mainFrameURL, and they differ in edge cases.
+        // Covered by imported/w3c/web-platform-tests/content-security-policy/inheritance/about-blank-from-javascript-url-inherits-csp-from-initiator.sub.html
+        // and imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/about-blank-popup-insecure-opener.tentative.sub.html
+        // with site isolation on, and SiteIsolation.CrossSiteIframeOfOpaqueOriginCustomSchemeMainFrame
+        page->addAllowedFirstPartyForCookies(process, mainFrameSite, LoadedWebArchive::No, [weakProvisionalFrame = WTF::move(weakProvisionalFrame), mainFrameFirstPartySite, page, process, pageID, completionHandler = WTF::move(completionHandler)] mutable {
+            page->addAllowedFirstPartyForCookies(process, mainFrameFirstPartySite, LoadedWebArchive::No, [weakProvisionalFrame = WTF::move(weakProvisionalFrame), mainFrameFirstPartySite, pageID, completionHandler = WTF::move(completionHandler)] mutable {
+                RefPtr provisionalFrame = weakProvisionalFrame;
+                bool cancelled = !provisionalFrame || !protect(provisionalFrame->frame())->isConnected();
+                if (cancelled) {
+                    completionHandler(std::nullopt);
+                    return;
+                }
 
-            completionHandler(pageID);
+                completionHandler(pageID);
+            });
         });
     };
 
