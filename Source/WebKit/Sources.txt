@@ -22,6 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 GPUProcess/GPUProcess.cpp @cost:7
+GPUProcess/GPUConnectionToModelProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp @cost:8
 GPUProcess/GPUProcessPreferences.cpp
 GPUProcess/RemoteSharedResourceCache.cpp

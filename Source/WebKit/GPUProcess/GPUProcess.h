@@ -92,6 +92,9 @@ enum class VideoFrameRotation : uint16_t;
 namespace WebKit {
 
 class CapturePreviewManager;
+#if ENABLE(MODEL_PROCESS)
+class GPUConnectionToModelProcess;
+#endif
 class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
 class RemoteSnapshot;
@@ -115,6 +118,9 @@ public:
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);
+#if ENABLE(MODEL_PROCESS)
+    void removeGPUConnectionToModelProcess(GPUConnectionToModelProcess&);
+#endif
 
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume();
@@ -262,6 +268,9 @@ private:
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
+#if ENABLE(MODEL_PROCESS)
+    void createGPUConnectionToModelProcess(WebCore::ProcessIdentifier, IPC::Connection::Handle&&, CompletionHandler<void()>&&);
+#endif
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void securityFlagsDidChange(SecurityFlags::Storage&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
@@ -338,6 +347,9 @@ private:
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+#if ENABLE(MODEL_PROCESS)
+    HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToModelProcess>> m_modelProcessConnections;
+#endif
     MonotonicTime m_creationTime { MonotonicTime::now() };
 
     GPUProcessPreferences m_preferences;

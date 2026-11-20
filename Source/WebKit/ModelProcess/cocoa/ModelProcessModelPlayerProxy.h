@@ -80,9 +80,13 @@ public:
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/StageModeOperations.h>
 #include <WebCore/TransformationMatrix.h>
+#if ENABLE(SPATIAL_PORTAL)
+#include "ImageBufferSetIdentifier.h"
+#include "RemoteRenderingBackendIdentifier.h"
+#include <wtf/UUID.h>
+#endif
 #include <simd/simd.h>
 #include <wtf/HashMap.h>
-#include <wtf/MachSendRight.h>
 #include <wtf/Markable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -184,7 +188,7 @@ public:
     void setPortalAction(WebCore::PortalActionKind) final;
     void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
     void setPortalHostedLayers(Vector<WebCore::PortalHostedLayer>&&);
-    void setPortalHostedLayerContents(WebCore::NodeIdentifier, MachSendRight&&);
+    void updatePortalHostedLayerContents(WebCore::NodeIdentifier, RemoteRenderingBackendIdentifier, ImageBufferSetIdentifier, WTF::UUID externalReadToken, CompletionHandler<void(bool)>&&);
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -369,6 +373,8 @@ private:
         RetainPtr<CALayer> layer;
         // The front buffer the layer shows, kept in use so that the GPU process paints later frames into another one.
         std::unique_ptr<WebCore::IOSurface, PortalSceneLayerContentsDeleter> contents;
+        Markable<ImageBufferSetIdentifier> bufferSetID;
+        uint64_t bufferIdentifier { 0 };
     };
     Vector<PortalSceneLayer> m_portalSceneLayers;
     RetainPtr<CALayer> m_portalSceneLayerContainer;

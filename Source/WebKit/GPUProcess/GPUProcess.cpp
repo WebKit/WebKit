@@ -32,6 +32,9 @@
 #include "Attachment.h"
 #include "AuxiliaryProcessMessages.h"
 #include "DisplayListDataTester.h"
+#if ENABLE(MODEL_PROCESS)
+#include "GPUConnectionToModelProcess.h"
+#endif
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
@@ -150,6 +153,33 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
     m_webProcessConnections.add(identifier, WTF::move(newConnection));
 }
 
+#if ENABLE(MODEL_PROCESS)
+void GPUProcess::createGPUConnectionToModelProcess(WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Handle&& connectionHandle, CompletionHandler<void()>&& completionHandler)
+{
+    RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToModelProcess: processIdentifier=%" PRIu64, this, webProcessIdentifier.toUInt64());
+
+    auto reply = makeScopeExit(WTF::move(completionHandler));
+    if (!connectionHandle)
+        return;
+
+    Ref newConnection = GPUConnectionToModelProcess::create(*this, webProcessIdentifier, WTF::move(connectionHandle));
+#if ENABLE(IPC_TESTING_API)
+    if (parentProcessConnection()->ignoreInvalidMessageForTesting())
+        newConnection->connection().setIgnoreInvalidMessageForTesting();
+#endif
+    m_modelProcessConnections.set(webProcessIdentifier, WTF::move(newConnection));
+}
+
+void GPUProcess::removeGPUConnectionToModelProcess(GPUConnectionToModelProcess& connection)
+{
+    RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToModelProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
+    auto it = m_modelProcessConnections.find(connection.webProcessIdentifier());
+    if (it != m_modelProcessConnections.end() && it->value.ptr() == &connection)
+        m_modelProcessConnections.remove(it);
+    tryExitIfUnusedAndUnderMemoryPressure();
+}
+#endif
+
 void GPUProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr connection = m_webProcessConnections.get(identifier))
@@ -167,6 +197,9 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
     RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
+#if ENABLE(MODEL_PROCESS)
+    m_modelProcessConnections.remove(connection.webProcessIdentifier());
+#endif
 
     removeTransferredImageBuffersForProcess(connection.webProcessIdentifier());
     abandonSnapshotFramesOwnedBy(connection.webProcessIdentifier());

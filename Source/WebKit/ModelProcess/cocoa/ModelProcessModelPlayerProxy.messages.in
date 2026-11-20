@@ -56,7 +56,7 @@ messages -> ModelProcessModelPlayerProxy {
     [EnabledBy=SpatialPortalEnabled] SetPortalAction(enum:bool WebCore::PortalActionKind kind)
     [EnabledBy=SpatialPortalEnabled] SetAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, String placement)
     [EnabledBy=SpatialPortalEnabled] SetPortalHostedLayers(Vector<WebCore::PortalHostedLayer> layers)
-    [EnabledBy=SpatialPortalEnabled] SetPortalHostedLayerContents(WebCore::NodeIdentifier nodeID, MachSendRight surface)
+    [EnabledBy=SpatialPortalEnabled] UpdatePortalHostedLayerContents(WebCore::NodeIdentifier nodeID, WebKit::RemoteRenderingBackendIdentifier renderingBackendID, WebKit::ImageBufferSetIdentifier bufferSetID, WTF::UUID externalReadToken) -> (bool didUpdate) Async
 #endif
     SetStageMode(enum:bool WebCore::StageModeOperation stagemodeOp)
     BeginStageModeTransform(WebCore::TransformationMatrix transform)

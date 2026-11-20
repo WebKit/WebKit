@@ -37,6 +37,9 @@ messages -> ModelProcessProxy {
 
     ProcessIsReadyToExit()
 
+#if ENABLE(GPU_PROCESS)
+    CreateGPUProcessConnectionForWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, IPC::ConnectionHandle connectionIdentifier) AllowedWhenWaitingForSyncReply
+#endif
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS) && HAVE(CORE_RE)
     RequestSharedSimulationConnection(WebCore::ProcessIdentifier webProcessIdentifier) -> (std::optional<IPC::SharedFileHandle> sharedSimulationConnection)
 #endif

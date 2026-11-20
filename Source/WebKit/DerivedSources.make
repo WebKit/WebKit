@@ -289,6 +289,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebPage/Cocoa/TextCheckingControllerProxy \
 	WebProcess/WebPage/ViewUpdateDispatcher \
 	WebProcess/XR/PlatformXRSystemProxy \
+	GPUProcess/GPUConnectionToModelProcess \
 	GPUProcess/GPUConnectionToWebProcess \
 	GPUProcess/RemoteSharedResourceCache \
 	GPUProcess/ShapeDetection/RemoteBarcodeDetector \

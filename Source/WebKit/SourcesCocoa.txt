@@ -938,6 +938,7 @@ DrawingAreaMessageReceiver.cpp
 DrawingAreaProxyMessageReceiver.cpp @cost:10
 DigitalCredentialsCoordinatorMessageReceiver.cpp
 EventDispatcherMessageReceiver.cpp
+GPUConnectionToModelProcessMessageReceiver.cpp
 GPUConnectionToWebProcessMessageReceiver.cpp @cost:6
 GPUProcessConnectionMessageReceiver.cpp
 GPUProcessMessageReceiver.cpp @cost:7

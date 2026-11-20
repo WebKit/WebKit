@@ -296,6 +296,12 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
         m_context.emplace(FloatRect { { }, m_configuration.logicalSize }, transform, m_configuration.colorSpace, m_configuration.contentsFormat, m_configuration.renderingMode, m_contextIdentifier, *renderingBackend);
     }
     m_remoteNeedsConfigurationUpdate = false;
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+    if (m_remoteNeedsExternalReadTokenUpdate && m_externalReadToken) {
+        send(Messages::RemoteImageBufferSet::SetExternalReadToken(m_externalReadToken));
+        m_remoteNeedsExternalReadTokenUpdate = false;
+    }
+#endif
 
     Locker locker { m_lock };
 
@@ -325,6 +331,9 @@ void RemoteImageBufferSetProxy::disconnect()
     m_remoteFrontBufferIsMissing = true;
     m_generation++;
     m_remoteNeedsConfigurationUpdate = true;
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+    m_remoteNeedsExternalReadTokenUpdate = m_externalReadToken.has_value();
+#endif
     m_context = std::nullopt;
 }
 
@@ -349,21 +358,45 @@ std::optional<WebCore::DynamicContentScalingDisplayList> RemoteImageBufferSetPro
 }
 #endif
 
-#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
-void RemoteImageBufferSetProxy::frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&& completionHandler)
+std::optional<RemoteRenderingBackendIdentifier> RemoteImageBufferSetProxy::renderingBackendIdentifier() const
 {
-    RefPtr connection = this->connection();
-    if (!connection) [[unlikely]] {
-        completionHandler(std::nullopt);
-        return;
+    if (RefPtr renderingBackend = m_remoteRenderingBackendProxy)
+        return renderingBackend->renderingBackendIdentifier();
+    return std::nullopt;
+}
+
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+void RemoteImageBufferSetProxy::retainExternalReadToken()
+{
+    if (!m_externalReadUseCount++) {
+        m_externalReadToken = WTF::UUID::createVersion4();
+        m_remoteNeedsExternalReadTokenUpdate = true;
     }
+    if (m_remoteNeedsExternalReadTokenUpdate && connection()) {
+        send(Messages::RemoteImageBufferSet::SetExternalReadToken(m_externalReadToken));
+        m_remoteNeedsExternalReadTokenUpdate = false;
+    }
+}
 
-    // Unlike sendWithAsyncReply(), this replies on the connection's dispatcher, the main run loop.
-    auto replyID = connection->sendWithAsyncReply(Messages::RemoteImageBufferSet::FrontBufferForExternalRead(), WTF::move(completionHandler), identifier());
+void RemoteImageBufferSetProxy::releaseExternalReadToken()
+{
+    ASSERT(m_externalReadUseCount);
+    if (--m_externalReadUseCount)
+        return;
 
-    // A send that fails early leaves the completion handler with the caller.
-    if (!replyID && completionHandler)
-        completionHandler(std::nullopt);
+    m_externalReadToken = std::nullopt;
+    m_remoteNeedsExternalReadTokenUpdate = false;
+    if (connection())
+        send(Messages::RemoteImageBufferSet::SetExternalReadToken(std::nullopt));
+}
+
+std::optional<WTF::UUID> RemoteImageBufferSetProxy::externalReadToken()
+{
+    if (m_remoteNeedsExternalReadTokenUpdate && m_externalReadToken && connection()) {
+        send(Messages::RemoteImageBufferSet::SetExternalReadToken(m_externalReadToken));
+        m_remoteNeedsExternalReadTokenUpdate = false;
+    }
+    return m_externalReadToken;
 }
 #endif
 
