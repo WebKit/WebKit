@@ -15608,10 +15608,8 @@ IGNORE_CLANG_WARNINGS_END
                 break;
             }
             m_out.store32(lengthIncludingThis, lowWordFor(data->machineCount));
-            if (data->mandatoryMinimum) {
-                LValue machineStart = m_out.lShr(m_out.sub(addressFor(data->machineStart).value(), m_callFrame), m_out.constIntPtr(3));
-                vmCall(Void, operationLoadVarargs, weakPointer(globalObject), m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
-            }
+            if (data->mandatoryMinimum)
+                fillMissingVarargsWithUndefined(addressFor(data->machineStart).value(), m_out.intPtrZero);
             break;
         }
         default:

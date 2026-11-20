@@ -8404,15 +8404,17 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
             break;
         }
 
+        store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
         if (data->mandatoryMinimum) {
-            flushRegisters();
-            store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
-            callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsGPR, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
-            noResult(node);
-        } else {
-            store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
-            noResult(node);
+            GPRTemporary length(this);
+            GPRTemporary temp(this);
+            GPRReg lengthGPR = length.gpr();
+            GPRReg tempGPR = temp.gpr();
+
+            move(TrustedImm32(0), lengthGPR);
+            emitFillMissingVarargsWithUndefined(data, lengthGPR, tempGPR);
         }
+        noResult(node);
         break;
     }
     default:
