@@ -531,13 +531,15 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         return;
 
     using ImageReadingInfo = std::tuple<String, ASCIILiteral>;
-    const std::array<ImageReadingInfo, 6> imageTypesToRead { {
+    const std::array<ImageReadingInfo, 8> imageTypesToRead { {
         { String(legacyTIFFPasteboardTypeSingleton()), "image/tiff"_s },
         { String(NSPasteboardTypeTIFF), "image/tiff"_s },
         { String(legacyPDFPasteboardTypeSingleton()), "application/pdf"_s },
         { String(NSPasteboardTypePDF), "application/pdf"_s },
         { String(UTTypePNG.identifier), "image/png"_s },
-        { String(UTTypeJPEG.identifier), "image/jpeg"_s }
+        { String(UTTypeJPEG.identifier), "image/jpeg"_s },
+        { String(UTTypeHEIC.identifier), "image/heic"_s },
+        { String(UTTypeHEIF.identifier), "image/heif"_s },
     } };
 
     auto tryToReadImage = [&] (const String& pasteboardType, ASCIILiteral mimeType) {
@@ -554,7 +556,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         return reader.readImage(buffer.releaseNonNull(), mimeType);
     };
 
-    Vector<ImageReadingInfo, 6> transcodedImageTypesToRead;
+    Vector<ImageReadingInfo, 8> transcodedImageTypesToRead;
     for (auto& [pasteboardType, mimeType] : imageTypesToRead) {
         if (!nonTranscodedTypes.contains(pasteboardType)) {
             transcodedImageTypesToRead.append({ pasteboardType, mimeType });
