@@ -112,7 +112,7 @@ public:
     OptionSet<WebGPU::BufferUsage> usage() const { return m_usage; }
     State state() const { return m_state; }
 
-    Device& device() const { return m_device; }
+    Device& device() const final { return m_device; }
     bool isDestroyed() const { return state() == State::Destroyed; }
 
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;

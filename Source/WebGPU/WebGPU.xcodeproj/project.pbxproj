@@ -54,6 +54,8 @@
 		1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA92273A41C20095F8D5 /* Instance.mm */; };
 		1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA98273A426D0095F8D5 /* RenderPipeline.mm */; };
 		1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA9D273A426D0095F8D5 /* Buffer.mm */; };
+		9631C2E08EE42B357F026BD4 /* CAPIInstance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4981AA452848933B71195C30 /* CAPIInstance.mm */; };
+		446DD94F74026613F0967D13 /* CAPIObjectState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 416B2C93ED01434965D9B06E /* CAPIObjectState.mm */; };
 		1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA9F273A426D0095F8D5 /* QuerySet.mm */; };
 		1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA2273A426D0095F8D5 /* ComputePipeline.mm */; };
 		1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA3273A426D0095F8D5 /* Device.mm */; };
@@ -168,6 +170,8 @@
 		94200C522CADBE5200484401 /* CommandsMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C582FF827E04131009B40F0 /* CommandsMixin.h */; };
 		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
 		94E02AFC2CF03B580052068F /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAA5273A426D0095F8D5 /* Buffer.h */; };
+		EA7593870D1E9A06230E8F19 /* CAPIInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 843017CB2EC7721BA7060A0D /* CAPIInstance.h */; };
+		285C3B95622CDD057088582D /* CAPIObjectState.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3EE9861FDBA79440D454B7 /* CAPIObjectState.h */; };
 		97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */; };
 		97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */; };
 		97099AC32AA60D58003B41F8 /* ASTArrayTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */; };
@@ -385,6 +389,10 @@
 		1C5ACAA3273A426D0095F8D5 /* Device.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Device.mm; sourceTree = "<group>"; };
 		1C5ACAA4273A426D0095F8D5 /* RenderPassEncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderPassEncoder.mm; sourceTree = "<group>"; };
 		1C5ACAA5273A426D0095F8D5 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
+		843017CB2EC7721BA7060A0D /* CAPIInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPIInstance.h; sourceTree = "<group>"; };
+		4981AA452848933B71195C30 /* CAPIInstance.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIInstance.mm; sourceTree = "<group>"; };
+		FE3EE9861FDBA79440D454B7 /* CAPIObjectState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPIObjectState.h; sourceTree = "<group>"; };
+		416B2C93ED01434965D9B06E /* CAPIObjectState.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIObjectState.mm; sourceTree = "<group>"; };
 		1C5ACAA6273A426D0095F8D5 /* RenderBundleEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBundleEncoder.h; sourceTree = "<group>"; };
 		1C5ACAA7273A426D0095F8D5 /* ComputePipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputePipeline.h; sourceTree = "<group>"; };
 		1C5ACAA8273A426D0095F8D5 /* ComputePassEncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComputePassEncoder.mm; sourceTree = "<group>"; };
@@ -699,6 +707,10 @@
 				1C5ACAA5273A426D0095F8D5 /* Buffer.h */,
 				1C5ACA9D273A426D0095F8D5 /* Buffer.mm */,
 				947871492C98CEC6003DB695 /* Buffer.swift */,
+				843017CB2EC7721BA7060A0D /* CAPIInstance.h */,
+				4981AA452848933B71195C30 /* CAPIInstance.mm */,
+				FE3EE9861FDBA79440D454B7 /* CAPIObjectState.h */,
+				416B2C93ED01434965D9B06E /* CAPIObjectState.mm */,
 				1C5ACAD9273A4DE90095F8D5 /* CommandBuffer.h */,
 				1C5ACAE2273A55CD0095F8D5 /* CommandBuffer.mm */,
 				1C5ACA9E273A426D0095F8D5 /* CommandEncoder.h */,
@@ -1034,6 +1046,8 @@
 				07D291722EC9CECC00A32120 /* BindGroup.h in Headers */,
 				07D291732EC9CECF00A32120 /* BindGroupLayout.h in Headers */,
 				94E02AFC2CF03B580052068F /* Buffer.h in Headers */,
+				EA7593870D1E9A06230E8F19 /* CAPIInstance.h in Headers */,
+				285C3B95622CDD057088582D /* CAPIObjectState.h in Headers */,
 				07D291742EC9CED600A32120 /* CommandBuffer.h in Headers */,
 				94200C4F2CADBCAD00484401 /* CommandEncoder.h in Headers */,
 				94200C522CADBE5200484401 /* CommandsMixin.h in Headers */,
@@ -1418,6 +1432,8 @@
 				1C5ACAE1273A55C10095F8D5 /* BindGroupLayout.mm in Sources */,
 				1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */,
 				9478714A2C98CECB003DB695 /* Buffer.swift in Sources */,
+				9631C2E08EE42B357F026BD4 /* CAPIInstance.mm in Sources */,
+				446DD94F74026613F0967D13 /* CAPIObjectState.mm in Sources */,
 				1C5ACAE3273A55CD0095F8D5 /* CommandBuffer.mm in Sources */,
 				1C5ACAC9273A426E0095F8D5 /* CommandEncoder.mm in Sources */,
 				94200C512CADBD7200484401 /* CommandEncoder.swift in Sources */,

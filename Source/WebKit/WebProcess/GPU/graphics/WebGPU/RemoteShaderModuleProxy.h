@@ -47,6 +47,7 @@ public:
     virtual ~RemoteShaderModuleProxy();
 
     RemoteDeviceProxy& parent() { return m_parent; }
+    RemoteDeviceProxy& device() const final { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
     void compilationInfo(CompletionHandler<void(::WebGPU::CompilationInfo&&)>&&) final;

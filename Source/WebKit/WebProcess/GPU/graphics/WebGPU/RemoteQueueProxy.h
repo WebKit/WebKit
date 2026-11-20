@@ -55,6 +55,9 @@ public:
     RefPtr<WebCore::NativeImage> getNativeImage(WebCore::VideoFrame&);
 
     RemoteAdapterProxy& parent() const { return m_parent; }
+    RefPtr<::WebGPU::Device> device() const final { return m_device.get(); }
+    // Set by the device that owns the queue, once.
+    void setDevice(::WebGPU::Device& device) { m_device = device; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
     void submit(Vector<Ref<::WebGPU::CommandBuffer>>&&) final;
@@ -105,6 +108,7 @@ private:
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteAdapterProxy> m_parent;
+    ThreadSafeWeakPtr<::WebGPU::Device> m_device;
 #if ENABLE(VIDEO)
     const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
