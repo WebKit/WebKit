@@ -5269,4 +5269,34 @@ TEST(SiteIsolation, ClosePageFromIframeProcessIsCheckedAgainstClosePolicy)
 
 #endif // ENABLE(IPC_TESTING_API)
 
+TEST(SiteIsolation, ViewportSegmentsReachCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body>iframe</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"ViewportSegmentsAPIEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    auto isSplitIntoTwoColumns = [&](WKFrameInfo *frame) {
+        return [[webView objectByEvaluatingJavaScript:@"matchMedia('(horizontal-viewport-segments: 2)').matches" inFrame:frame] boolValue];
+    };
+    EXPECT_FALSE(isSplitIntoTwoColumns(nil));
+    EXPECT_FALSE(isSplitIntoTwoColumns(childFrame.get()));
+
+    [webView _setEvenlySplitViewportSegmentsForTestingWithColumns:2 rows:1];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return isSplitIntoTwoColumns(nil);
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return isSplitIntoTwoColumns(childFrame.get());
+    }));
+}
+
 } // namespace TestWebKitAPI

@@ -68,6 +68,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/ViewportSegments.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Box.h>
 #import <wtf/HexNumber.h>
@@ -651,6 +652,17 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
 #else
     UNUSED_PARAM(visible);
 #endif
+}
+
+- (void)_setEvenlySplitViewportSegmentsForTestingWithColumns:(NSUInteger)columns rows:(NSUInteger)rows
+{
+    CGSize size = self.bounds.size;
+    WebCore::ViewportSegments segments { static_cast<unsigned>(columns), static_cast<unsigned>(rows), { } };
+    for (NSUInteger row = 0; row < rows; ++row) {
+        for (NSUInteger column = 0; column < columns; ++column)
+            segments.segmentRects.append(WebCore::FloatRect { CGRectMake(column * size.width / columns, row * size.height / rows, size.width / columns, size.height / rows) });
+    }
+    _page->setViewportSegments(segments);
 }
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem

@@ -142,6 +142,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (void)_setGrammarCheckingEnabledForTesting:(BOOL)enabled;
 - (void)_setUseDarkAppearanceForTesting:(BOOL)useDarkAppearance;
 - (void)_setAppHighlightsVisibleForTesting:(BOOL)visible;
+- (void)_setEvenlySplitViewportSegmentsForTestingWithColumns:(NSUInteger)columns rows:(NSUInteger)rows;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
 - (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger, NSUInteger))callback;
