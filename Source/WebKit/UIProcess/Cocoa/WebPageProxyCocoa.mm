@@ -1811,6 +1811,7 @@ void WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Conn
     }
 
     internals().textIndicatorForAnimationID.add(uuid, textIndicator);
+    internals().processForTextAnimationID.add(uuid, WebProcessProxy::fromConnection(connection));
 
     if (completionHandler)
         internals().completionHandlerForAnimationID.add(uuid, WTF::move(completionHandler));
@@ -1877,6 +1878,11 @@ void WebPageProxy::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::U
 {
     if (!hasRunningProcess()) {
         completionHandler();
+        return;
+    }
+
+    if (RefPtr process = internals().processForTextAnimationID.get(uuid)) {
+        protect(process)->sendWithAsyncReply(Messages::WebPage::UpdateUnderlyingTextVisibilityForTextAnimationID(uuid, visible), WTF::move(completionHandler), webPageIDInProcess(*process));
         return;
     }
 
@@ -1952,12 +1958,17 @@ void WebPageProxy::intelligenceTextAnimationsDidComplete()
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::IntelligenceTextAnimationsDidComplete(), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::IntelligenceTextAnimationsDidComplete());
 }
 
 void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid)
 {
     MESSAGE_CHECK(uuid.isValid(), connection);
+
+    internals().processForTextAnimationID.remove(uuid);
 
     if (RefPtr pageClient = this->pageClient())
         pageClient->removeTextAnimationForAnimationID(uuid);

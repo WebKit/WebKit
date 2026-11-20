@@ -464,6 +464,7 @@ public:
 
 #if ENABLE(WRITING_TOOLS)
     HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> textIndicatorForAnimationID;
+    HashMap<WTF::UUID, WeakPtr<WebProcessProxy>> processForTextAnimationID;
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
     HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> decorationIndicatorForAnimationID;
 #endif

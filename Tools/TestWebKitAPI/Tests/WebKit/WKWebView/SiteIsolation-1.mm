@@ -3969,6 +3969,50 @@ TEST(SiteIsolation, WritingToolsTextEffectsInCrossOriginIframe)
     [writingToolsDelegate didEndWritingToolsSession:session.get() accepted:YES];
 }
 
+TEST(SiteIsolation, TextAnimationTransparencyMarkersInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body contenteditable>AAAA BBBB CCCC</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = writingToolsWebViewWithEditableCrossOriginIframe(server);
+    auto writingToolsDelegate = writingToolsDelegateForWebView(webView.get());
+
+    auto transparentMarkerCount = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"internals.markerCountForNode(document.body.childNodes[0], 'transparentcontent')" inFrame:childFrame.get()] unsignedIntegerValue];
+    };
+
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    __block RetainPtr<WTContext> context;
+    __block bool didReceiveContexts = false;
+    [writingToolsDelegate willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        context = contexts.firstObject;
+        didReceiveContexts = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&didReceiveContexts, 5_s));
+
+    ASSERT_NOT_NULL(context.get());
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [context attributedText].string);
+
+    [writingToolsDelegate didBeginWritingToolsSession:session.get() contexts:@[ context.get() ]];
+
+    [writingToolsDelegate writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return transparentMarkerCount() == 1U;
+    }));
+
+    RetainPtr rewrittenText = adoptNS([[NSAttributedString alloc] initWithString:@"ZZZZ BBBB YYYY"]);
+    [writingToolsDelegate compositionSession:session.get() didReceiveText:rewrittenText.get() replacementRange:NSMakeRange(0, 14) inContext:context.get() finished:NO];
+    [writingToolsDelegate compositionSession:session.get() didReceiveText:rewrittenText.get() replacementRange:NSMakeRange(0, 14) inContext:context.get() finished:YES];
+
+    [writingToolsDelegate didEndWritingToolsSession:session.get() accepted:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return transparentMarkerCount() == 0U;
+    }));
+}
+
 #endif // ENABLE(WRITING_TOOLS)
 
 TEST(SiteIsolation, HitTestResultAPI)
