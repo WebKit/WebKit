@@ -31,6 +31,7 @@
 
 #include <JavaScriptCore/RegisterAtOffset.h>
 #include <JavaScriptCore/RegisterSet.h>
+#include <initializer_list>
 #include <wtf/FixedVector.h>
 
 namespace JSC {
@@ -43,6 +44,7 @@ public:
 
     RegisterAtOffsetList();
     explicit RegisterAtOffsetList(RegisterSet, OffsetBaseType = FramePointerBased);
+    RegisterAtOffsetList(std::initializer_list<RegisterAtOffset>, size_t sizeOfAreaInBytes);
 
     void dump(PrintStream&) const;
 
