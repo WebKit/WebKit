@@ -499,44 +499,19 @@ IntSize CoordinatedBackingStoreProxy::computeTileSize(const IntSize& viewportSiz
 
 void CoordinatedBackingStoreProxy::adjustForContentsRect(IntRect& rect) const
 {
-    IntRect bounds = m_contentsRect;
-    IntSize candidateSize = rect.size();
+    if (m_visibleRect.intersects(m_contentsRect)) {
+        if (rect.x() < m_contentsRect.x())
+            rect.setX(m_contentsRect.x());
+        else if (rect.maxX() > m_contentsRect.maxX())
+            rect.setX(m_contentsRect.maxX() - rect.width());
 
-    rect.intersect(bounds);
+        if (rect.y() < m_contentsRect.y())
+            rect.setY(m_contentsRect.y());
+        else if (rect.maxY() > m_contentsRect.maxY())
+            rect.setY(m_contentsRect.maxY() - rect.height());
+    }
 
-    if (rect.size() == candidateSize)
-        return;
-
-    /*
-     * In the following case, there is no intersection of the contents rect and the cover rect.
-     * Thus the latter should not be inflated.
-     *
-     *  +----------------+
-     *  | m_contentsRect |
-     *  +----------------+
-     *
-     *          +-------------------------------+
-     *          |          cover rect           |
-     *          |         +---------+           |
-     *          |         | visible |           |
-     *          |         |  rect   |           |
-     *          |         +---------+           |
-     *          +-------------------------------+
-     */
-    if (rect.isEmpty())
-        return;
-
-    // Try to create a cover rect of the same size as the candidate, but within content bounds.
-    int pixelsCovered = 0;
-    if (!WTF::safeMultiply(candidateSize.width(), candidateSize.height(), pixelsCovered))
-        pixelsCovered = std::numeric_limits<int>::max();
-
-    if (rect.width() < candidateSize.width())
-        rect.inflateY(((pixelsCovered / rect.width()) - rect.height()) / 2);
-    if (rect.height() < candidateSize.height())
-        rect.inflateX(((pixelsCovered / rect.height()) - rect.width()) / 2);
-
-    rect.intersect(bounds);
+    rect.intersect(m_contentsRect);
 }
 
 std::pair<IntRect, IntRect> CoordinatedBackingStoreProxy::computeCoverAndKeepRect() const
