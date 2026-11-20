@@ -274,7 +274,7 @@ private:
 
     void transitionToHashSet()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isBitVector());
+        RELEASE_ASSERT(isBitVector());
 
         Set newSet;
         newSet.reserveInitialCapacity(m_size + 1);
@@ -289,7 +289,7 @@ private:
 
     void transitionToBitVector()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(!isBitVector());
+        RELEASE_ASSERT(!isBitVector());
 
         BitVector newBitVector;
         newBitVector.ensureSize(m_max - m_min + 1);

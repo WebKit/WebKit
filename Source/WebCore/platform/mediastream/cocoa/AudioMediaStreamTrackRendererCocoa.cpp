@@ -127,7 +127,7 @@ void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& devi
 
 void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSampleDataSource>&& source)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (RefPtr registeredDataSource = m_registeredDataSource)
         rendererUnit().removeSource(m_deviceID, *registeredDataSource);

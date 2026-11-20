@@ -327,7 +327,7 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList(bool filterT
 
 void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged notify)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     auto audioDevices = computeAudioDeviceList(m_filterTapEnabledDevices);
     bool haveDeviceChanges = audioDevices.size() != m_coreAudioCaptureDevices.size();

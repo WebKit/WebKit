@@ -2682,7 +2682,7 @@ void HTMLMediaElement::speakCueText(TextTrackCue& cue)
 
     m_cueBeingSpoken = cue;
     protect(m_cueBeingSpoken)->prepareToSpeak(protect(speechSynthesis()), m_reportedPlaybackRate ? m_reportedPlaybackRate : m_requestedPlaybackRate, volume(), [weakThis = WeakPtr { *this }](const TextTrackCue&) {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        RELEASE_ASSERT(isMainThread());
         RefPtr<HTMLMediaElement> protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -6753,7 +6753,7 @@ void HTMLMediaElement::mediaPlayerEngineUpdated()
 // supported by analysis.
 void HTMLMediaElement::mediaPlayerWillInitializeMediaEngine() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 #if ENABLE(WEB_AUDIO)
     // Make sure the MediaElementAudioSourceNode's process function does not try and access the media player while its engine is getting updated.
     if (RefPtr audioSourceNode = m_audioSourceNode.get())
@@ -6765,7 +6765,7 @@ void HTMLMediaElement::mediaPlayerWillInitializeMediaEngine() WTF_IGNORES_THREAD
 // supported by analysis.
 void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 #if ENABLE(WEB_AUDIO)
     if (RefPtr audioSourceNode = m_audioSourceNode.get()) {
         if (auto* provider = audioSourceProvider())
@@ -9857,7 +9857,7 @@ bool HTMLMediaElement::canProduceAudio() const
 
 bool HTMLMediaElement::computeCanProduceAudio() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     // Because the remote target could unmute playback without notifying us, we must assume

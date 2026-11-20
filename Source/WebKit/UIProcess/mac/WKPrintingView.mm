@@ -229,7 +229,7 @@ struct IPCCallbackContext {
 
 static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle, IPCCallbackContext* context)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     RetainPtr view = context->view.get();
 
@@ -255,7 +255,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
 
 - (void)_preparePDFDataForPrintingOnSecondaryThread
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     Ref webFrame = *_webFrame;
     RefPtr page = webFrame->page();
@@ -306,7 +306,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
 
 static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, IPCCallbackContext* context)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     RetainPtr view = context->view.get();
     if (!view->_printOperation)
@@ -355,7 +355,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
 
 - (BOOL)_askPageToComputePageRects
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     Ref webFrame = *_webFrame;
     if (!webFrame->page() || !_printOperation)
@@ -377,7 +377,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
 
 static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     Locker locker { view->_printingCallbackMutex };
 
@@ -518,7 +518,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
 
 - (void)_drawPreview:(NSRect)nsRect
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     RefPtr webFrame = _webFrame;
     if (!webFrame || !webFrame->page())

@@ -68,7 +68,7 @@ public:
 
     ~ProcessThrottlerActivity()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+        RELEASE_ASSERT(isMainRunLoop());
         if (isValid())
             invalidate(ForceEnableActivityLogging::No);
     }

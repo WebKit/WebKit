@@ -1254,7 +1254,7 @@ void CompositorCoordinator::terminateSession(WebPageProxy& page, PlatformXRSessi
 
 void CompositorCoordinator::currentSessionHasEnded()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(m_headsetIdentifier);
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

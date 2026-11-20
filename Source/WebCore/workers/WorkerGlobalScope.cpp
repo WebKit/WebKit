@@ -98,7 +98,7 @@ static Lock allWorkerGlobalScopeIdentifiersLock;
 NODELETE static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers() WTF_REQUIRES_LOCK(allWorkerGlobalScopeIdentifiersLock)
 {
     static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;
-    ASSERT_WITH_SECURITY_IMPLICATION(allWorkerGlobalScopeIdentifiersLock.isLocked());
+    RELEASE_ASSERT(allWorkerGlobalScopeIdentifiersLock.isLocked());
     return identifiers;
 }
 
@@ -153,7 +153,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
 
 WorkerGlobalScope::~WorkerGlobalScope()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(thread()->thread() == &Thread::currentSingleton());
+    RELEASE_ASSERT(thread()->thread() == &Thread::currentSingleton());
 
     {
         Locker locker { allWorkerGlobalScopeIdentifiersLock };
@@ -669,7 +669,7 @@ Ref<WorkerThread> WorkerGlobalScope::thread() const
 
 void WorkerGlobalScope::releaseMemory(Synchronous synchronous)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
+    RELEASE_ASSERT(isContextThread());
     deleteJSCodeAndGC(synchronous);
     clearDecodedScriptData();
 }
@@ -738,7 +738,7 @@ void WorkerGlobalScope::reportErrorToWorkerObject(const String& errorMessage)
 
 void WorkerGlobalScope::clearDecodedScriptData()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
+    RELEASE_ASSERT(isContextThread());
 
     if (RefPtr provider = m_mainScriptSourceProvider.get())
         provider->clearDecodedData();
@@ -758,7 +758,7 @@ bool WorkerGlobalScope::crossOriginIsolated() const
 
 void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
+    RELEASE_ASSERT(isContextThread());
 
     if (mainScript) {
         if (RefPtr provider = m_mainScriptSourceProvider.get())

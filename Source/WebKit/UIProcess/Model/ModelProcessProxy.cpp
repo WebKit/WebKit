@@ -67,7 +67,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessProxy);
 
 Ref<ModelProcessProxy> ModelProcessProxy::getOrCreate()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (auto& existingModelProcess = singleton()) {
         ASSERT(existingModelProcess->state() != State::Terminated);
         return *existingModelProcess;

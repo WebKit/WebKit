@@ -2805,7 +2805,7 @@ void Node::dispatchSubtreeModifiedEvent()
 
 void Node::dispatchDOMActivateEvent(Event& underlyingClickEvent)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    RELEASE_ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     auto* uiEvent = dynamicDowncast<UIEvent>(underlyingClickEvent);
     int detail = uiEvent ? uiEvent->detail() : 0;
     Ref event = UIEvent::create(eventNames().DOMActivateEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes, document().windowProxy(), detail);

@@ -55,12 +55,12 @@ class TransactionOperation : public ThreadSafeRefCounted<TransactionOperation> {
 public:
     virtual ~TransactionOperation()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
+        RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     }
 
     void perform()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
+        RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
         ASSERT(m_performFunction);
         m_performFunction();
         m_performFunction = { };
@@ -68,7 +68,7 @@ public:
 
     void transitionToCompleteOnThisThread(const IDBResultData& data)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
+        RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
         m_transaction->operationCompletedOnServer(data, *this);
     }
 
@@ -76,7 +76,7 @@ public:
 
     void doComplete(const IDBResultData& data)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
+        RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
         if (m_performFunction)
             m_performFunction = { };

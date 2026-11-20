@@ -123,7 +123,7 @@ void WebSWRegistrationStore::scheduleUpdateIfNecessary()
 
 void WebSWRegistrationStore::updateToStorage(CompletionHandler<void()>&& callback)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     Vector<WebCore::ServiceWorkerRegistrationKey> registrationsToDelete;
     Vector<WebCore::ServiceWorkerContextData> registrationsToUpdate;

@@ -206,7 +206,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegions() const
 
 void ScrollingCoordinator::frameViewFixedObjectsDidChange(LocalFrameView& frameView)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(m_page);
 
     if (!coordinatesScrollingForFrameView(frameView))
@@ -293,7 +293,7 @@ GraphicsLayer* ScrollingCoordinator::rootContentsLayerForFrameView(LocalFrameVie
 
 void ScrollingCoordinator::frameViewRootLayerDidChange(LocalFrameView& frameView)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(m_page);
 
     if (!coordinatesScrollingForFrameView(frameView))

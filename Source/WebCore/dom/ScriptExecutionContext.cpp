@@ -303,14 +303,14 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
 
 void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
+    RELEASE_ASSERT(isContextThread());
 
     m_messagePorts.add(messagePort);
 }
 
 void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
+    RELEASE_ASSERT(isContextThread());
 
     m_messagePorts.remove(messagePort);
 }

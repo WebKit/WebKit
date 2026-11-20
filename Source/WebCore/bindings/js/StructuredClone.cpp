@@ -47,7 +47,7 @@ static EncodedJSValue cloneArrayBufferImpl(JSGlobalObject* lexicalGlobalObject, 
     VM& vm = lexicalGlobalObject->vm();
 
     ASSERT(lexicalGlobalObject);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount());
+    RELEASE_ASSERT(callFrame->argumentCount());
     ASSERT(callFrame->lexicalGlobalObject(vm) == lexicalGlobalObject);
 
     RefPtr buffer = toUnsharedArrayBuffer(vm, callFrame->uncheckedArgument(0));
@@ -57,7 +57,7 @@ static EncodedJSValue cloneArrayBufferImpl(JSGlobalObject* lexicalGlobalObject, 
         return { };
     }
     if (mode == CloneMode::Partial) {
-        ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 3);
+        RELEASE_ASSERT(callFrame->argumentCount() == 3);
         int srcByteOffset = static_cast<int>(callFrame->uncheckedArgument(1).toNumber(lexicalGlobalObject));
         int srcLength = static_cast<int>(callFrame->uncheckedArgument(2).toNumber(lexicalGlobalObject));
         return JSValue::encode(JSArrayBuffer::create(lexicalGlobalObject->vm(), lexicalGlobalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), buffer->slice(srcByteOffset, srcByteOffset + srcLength)));
@@ -73,7 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(cloneArrayBuffer, (JSGlobalObject* globalObject, CallFr
 JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount());
+    RELEASE_ASSERT(callFrame->argumentCount());
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

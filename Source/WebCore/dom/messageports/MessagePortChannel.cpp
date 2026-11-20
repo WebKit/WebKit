@@ -43,7 +43,7 @@ MessagePortChannel::MessagePortChannel(MessagePortChannelRegistry& registry, con
     : m_ports { port1, port2 }
     , m_registry(registry)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     m_processes[0] = port1.processIdentifier;
     m_entangledToProcessProtectors[0] = this;
@@ -75,7 +75,7 @@ bool MessagePortChannel::includesPort(const MessagePortIdentifier& port)
 
 void MessagePortChannel::entanglePortWithProcess(const MessagePortIdentifier& port, ProcessIdentifier process)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     ASSERT(port == m_ports[0] || port == m_ports[1]);
     size_t i = port == m_ports[0] ? 0 : 1;
@@ -94,7 +94,7 @@ void MessagePortChannel::entanglePortWithProcess(const MessagePortIdentifier& po
 
 void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     LOG_WITH_STREAM(MessagePorts, stream << "MessagePortChannel "_s << logString() << " ("_s << this << ") disentangling port "_s << port.logString());
 
@@ -112,7 +112,7 @@ void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
 
 void MessagePortChannel::closePort(const MessagePortIdentifier& port, MessagePortStatus status)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(status != MessagePortStatus::Open);
 
     ASSERT(port == m_ports[0] || port == m_ports[1]);

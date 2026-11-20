@@ -57,7 +57,7 @@ WebMouseEvent::WebMouseEvent(WebEventData&& eventData, WebMouseEventData&& mouse
     : WebEvent(WTF::move(eventData))
     , m_data(WTF::move(mouseData))
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMouseEventType(type()));
+    RELEASE_ASSERT(isMouseEventType(type()));
 }
 
 bool WebMouseEvent::isMouseEventType(WebEventType type)

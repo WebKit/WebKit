@@ -58,13 +58,13 @@ ServiceWorkerInspectorProxy::~ServiceWorkerInspectorProxy()
 
 void ServiceWorkerInspectorProxy::serviceWorkerTerminated()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     m_channel = nullptr;
 }
 
 void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     m_channel = &channel;
 
     RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get();
@@ -76,7 +76,7 @@ void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel, bool
 
 void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT_UNUSED(channel, &channel == m_channel);
     m_channel = nullptr;
 
@@ -101,7 +101,7 @@ void ServiceWorkerInspectorProxy::sendMessageToWorker(String&& message)
 
 void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (!m_channel)
         return;
 

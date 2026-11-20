@@ -254,7 +254,7 @@ void WebProcessProxy::didStopRunningProcess()
     --s_runningProcessCount;
 }
 
-static bool isMainThreadOrCheckDisabled()
+NODELETE static bool isMainThreadOrCheckDisabled()
 {
     if (RunLoop::isMain()) [[likely]]
         return true;
@@ -271,7 +271,7 @@ static bool isMainThreadOrCheckDisabled()
 
 WebProcessProxy::WebProcessProxyMap& WebProcessProxy::allProcessMap()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<WebProcessProxy::WebProcessProxyMap> map;
     return map;
 }
@@ -306,7 +306,7 @@ Ref<WebProcessProxy> WebProcessProxy::fromConnection(const IPC::Connection& conn
 
 auto WebProcessProxy::globalPageMap() -> WebPageProxyMap&
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<WebPageProxyMap> pageMap;
     return pageMap;
 }
@@ -4137,7 +4137,7 @@ static void releasePendingFrames(const Vector<UniqueRef<OffscreenCanvasPlacehold
 // any process the canvas was transferred to.
 static HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<OffscreenCanvasPlaceholder>>& offscreenCanvasPlaceholders()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<OffscreenCanvasPlaceholder>>> placeholders;
     return placeholders;
 }
@@ -4255,7 +4255,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CommittedOffscreenCanvasPlaceholderFrame);
 
 static HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<CommittedOffscreenCanvasPlaceholderFrame>>& offscreenCanvasPlaceholderFramesAwaitingOwner()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<CommittedOffscreenCanvasPlaceholderFrame>>> frames;
     return frames;
 }

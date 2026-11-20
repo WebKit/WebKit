@@ -213,7 +213,7 @@ static std::expected<Trigger, std::error_code> loadTrigger(const JSON::Object& r
 
 bool isValidCSSSelector(const String& selector)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ProcessWarming::initializeNames();
 
     // This explicitly does not use the CSSParserContext created in contentExtensionCSSParserContext because

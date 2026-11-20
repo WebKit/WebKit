@@ -52,7 +52,7 @@ ContentType::ContentType(const String& contentType, bool typeWasInferredFromExte
 
 ContentType ContentType::fromURL(const URL& url)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     auto lastPathComponent = url.lastPathComponent();
     size_t pos = lastPathComponent.reverseFind('.');

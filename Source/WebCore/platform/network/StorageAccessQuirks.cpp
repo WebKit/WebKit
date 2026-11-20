@@ -35,7 +35,7 @@ namespace WebCore {
 
 NODELETE static HashSet<OrganizationStorageAccessPromptQuirk>& updatableStorageAccessPromptQuirks()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     // FIXME: Move this isn't an instance of a class, probably as a member of NetworkStorageSession.
     static MainThreadNeverDestroyed<HashSet<OrganizationStorageAccessPromptQuirk>> set;
     return set.get();
@@ -73,7 +73,7 @@ bool loginDomainMatchesRequestingDomain(const RegistrableDomain& topFrameDomain,
 
 bool canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     return loginDomainMatchesRequestingDomain(topFrameDomain, resourceDomain);
 }
 

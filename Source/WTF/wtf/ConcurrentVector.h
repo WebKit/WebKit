@@ -250,7 +250,7 @@ private:
 
     void ensureSegment(size_t segmentIndex)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(segmentIndex <= m_numSegments);
+        RELEASE_ASSERT(segmentIndex <= m_numSegments);
         if (segmentIndex == m_numSegments)
             allocateSegment();
     }

@@ -57,7 +57,7 @@ AudioNodeInput::AudioNodeInput(AudioNode* node)
 void AudioNodeInput::connect(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
     
     ASSERT(output && node());
     if (!output || !node())
@@ -76,7 +76,7 @@ void AudioNodeInput::connect(AudioNodeOutput* output)
 void AudioNodeInput::disconnect(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     ASSERT(output && node());
     if (!output || !node())
@@ -103,7 +103,7 @@ void AudioNodeInput::disconnect(AudioNodeOutput* output)
 void AudioNodeInput::disable(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     ASSERT(output && node());
     if (!output || !node())
@@ -125,7 +125,7 @@ void AudioNodeInput::disable(AudioNodeOutput* output)
 void AudioNodeInput::enable(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     ASSERT(output && node());
     if (!output || !node())
@@ -154,7 +154,7 @@ void AudioNodeInput::didUpdate()
 void AudioNodeInput::updateInternalBus()
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isAudioThread() && context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isAudioThread() && protect(context())->isGraphOwner());
 
     unsigned numberOfInputChannels = numberOfChannels();
 

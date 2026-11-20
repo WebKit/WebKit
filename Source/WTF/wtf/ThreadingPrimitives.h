@@ -137,7 +137,7 @@ inline void threadSpecificSet(ThreadSpecificKey key, void* value)
     pthread_setspecific(key, value);
 }
 
-inline void* threadSpecificGet(ThreadSpecificKey key)
+NODELETE SUPPRESS_NODELETE inline void* threadSpecificGet(ThreadSpecificKey key)
 {
     return pthread_getspecific(key);
 }

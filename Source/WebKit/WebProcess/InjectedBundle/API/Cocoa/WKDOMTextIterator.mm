@@ -84,7 +84,7 @@
         auto characters = text.span8();
         _upconvertedText.appendRange(characters.begin(), characters.end());
     }
-    ASSERT_WITH_SECURITY_IMPLICATION(_upconvertedText.size() == text.length());
+    RELEASE_ASSERT(_upconvertedText.size() == text.length());
     return _upconvertedText.span().data();
 }
 

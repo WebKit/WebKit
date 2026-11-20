@@ -105,7 +105,7 @@ void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
 
     newSizeInBytes = allocator.roundUp(newSizeInBytes);
     
-    ASSERT_WITH_SECURITY_IMPLICATION(newSizeInBytes <= sizeInBytes);
+    RELEASE_ASSERT(newSizeInBytes <= sizeInBytes);
 
     if (newSizeInBytes == sizeInBytes)
         return;
@@ -179,7 +179,7 @@ RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(const Locker<Lock>&, size_t 
         
         size_t roundedUpSize = numberOfPages << m_logPageSize;
         
-        ASSERT_WITH_SECURITY_IMPLICATION(roundedUpSize >= sizeInBytes);
+        RELEASE_ASSERT(roundedUpSize >= sizeInBytes);
         
         m_bytesReserved += roundedUpSize;
         

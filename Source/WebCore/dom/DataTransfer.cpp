@@ -491,7 +491,7 @@ struct PasteboardFileTypeReader final : PasteboardFileReader {
 
 bool DataTransfer::hasFileOfType(const String& type)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
+    RELEASE_ASSERT(canReadTypes());
     PasteboardFileTypeReader reader;
     m_pasteboard->read(reader);
     return reader.types.contains(type);
@@ -499,7 +499,7 @@ bool DataTransfer::hasFileOfType(const String& type)
 
 bool DataTransfer::hasStringOfType(Document& document, const String& type)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
+    RELEASE_ASSERT(canReadTypes());
 
     return !type.isNull() && types(document).contains(type);
 }

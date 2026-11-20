@@ -227,7 +227,7 @@ void AsyncPDFRenderer::removePreviewForPage(PDFDocumentLayout::PageIndex pageInd
 
 void AsyncPDFRenderer::didCompletePagePreviewRender(RefPtr<NativeImage>&& image, const PDFPagePreviewRenderRequest& request)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
     RefPtr presentationController = m_presentationController.get();
     if (!presentationController)
         return;

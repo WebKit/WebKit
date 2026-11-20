@@ -113,7 +113,7 @@ void GainNode::processOnlyAudioParams(size_t framesToProcess)
 // uninitialize and then re-initialize with the new channel count.
 void GainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isAudioThread() && protect(context())->isGraphOwner());
 
     ASSERT(input && input == this->input(0));
     if (input != this->input(0))

@@ -207,45 +207,45 @@ CBORValue CBORValue::clone() const
 
 const int64_t& CBORValue::getInteger() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isInteger());
+    RELEASE_ASSERT(isInteger());
     return m_integerValue;
 }
 
 const int64_t& CBORValue::getUnsigned() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isUnsigned());
+    RELEASE_ASSERT(isUnsigned());
     ASSERT(m_integerValue >= 0);
     return m_integerValue;
 }
 
 const int64_t& CBORValue::getNegative() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isNegative());
+    RELEASE_ASSERT(isNegative());
     ASSERT(m_integerValue < 0);
     return m_integerValue;
 }
 
 const String& CBORValue::getString() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isString());
+    RELEASE_ASSERT(isString());
     return m_stringValue;
 }
 
 const CBORValue::BinaryValue& CBORValue::getByteString() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isByteString());
+    RELEASE_ASSERT(isByteString());
     return m_byteStringValue;
 }
 
 const CBORValue::ArrayValue& CBORValue::getArray() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isArray());
+    RELEASE_ASSERT(isArray());
     return m_arrayValue;
 }
 
 const CBORValue::MapValue& CBORValue::getMap() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMap());
+    RELEASE_ASSERT(isMap());
     return m_mapValue;
 }
 

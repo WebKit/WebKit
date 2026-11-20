@@ -519,7 +519,7 @@ void ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent(BackgroundFet
 
 void ServiceWorkerThread::finishedEvaluatingScript()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(globalScope()->isContextThread());
+    RELEASE_ASSERT(protect(globalScope())->isContextThread());
 
     Ref scope = *dynamicDowncast<ServiceWorkerGlobalScope>(globalScope());
 

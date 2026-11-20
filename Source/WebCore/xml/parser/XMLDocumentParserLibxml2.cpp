@@ -501,7 +501,7 @@ static bool shouldAllowExternalLoad(const URL& url)
 static void* openFunc(const char* uri)
 {
     ASSERT(XMLDocumentParserScope::currentCachedResourceLoader());
-    ASSERT_WITH_SECURITY_IMPLICATION(libxmlLoaderThread == &Thread::currentSingleton());
+    RELEASE_ASSERT(libxmlLoaderThread == &Thread::currentSingleton());
 
     RefPtr cachedResourceLoader = XMLDocumentParserScope::currentCachedResourceLoader().get();
     if (!cachedResourceLoader)

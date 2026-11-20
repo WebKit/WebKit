@@ -71,7 +71,7 @@ NODELETE static void disableAdditionalSDKAlignedBehaviors(SDKAlignedBehaviors&)
 }
 #endif
 
-static SDKAlignedBehaviors computeSDKAlignedBehaviors()
+NODELETE SUPPRESS_NODELETE static SDKAlignedBehaviors computeSDKAlignedBehaviors()
 {
     ASSERT(!isInAuxiliaryProcess());
 
@@ -382,7 +382,7 @@ String applicationBundleIdentifier()
     // The override only gets set in WebKitTestRunner. If unset, we use the bundle identifier set
     // in WebKit2's WebProcess and NetworkProcess. If that is also unset, we use the main bundle identifier.
     auto identifier = bundleIdentifierOverride();
-    ASSERT_WITH_SECURITY_IMPLICATION(identifier.isNull() || RunLoop::isMain());
+    RELEASE_ASSERT(identifier.isNull() || RunLoop::isMain());
     if (identifier.isNull())
         identifier = bundleIdentifier();
     ASSERT_WITH_MESSAGE(!isInAuxiliaryProcess() || !!identifier, "applicationBundleIsEqualTo() and applicationBundleStartsWith() must not be called before setApplicationBundleIdentifier() in auxiliary processes");
@@ -391,20 +391,20 @@ String applicationBundleIdentifier()
 
 void setApplicationBundleIdentifier(const String& identifier)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     bundleIdentifier() = identifier;
 }
 
 void setApplicationBundleIdentifierOverride(const String& identifier)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() and applicationBundleStartsWith() must not be called before setApplicationBundleIdentifierOverride()");
     bundleIdentifierOverride() = identifier;
 }
 
 void clearApplicationBundleIdentifierTestingOverride()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     bundleIdentifierOverride() = String();
 #if !ASSERT_MSG_DISABLED
     applicationBundleIdentifierOverrideWasQueried = false;

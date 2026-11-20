@@ -96,7 +96,7 @@ public:
     WTF_EXPORT_PRIVATE static void initializeWeb();
 #endif
 
-    WTF_EXPORT_PRIVATE static RunLoop& currentSingleton();
+    NODELETE WTF_EXPORT_PRIVATE static RunLoop& currentSingleton();
     NODELETE WTF_EXPORT_PRIVATE static RunLoop& mainSingleton();
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static RunLoop& webSingleton();
@@ -104,8 +104,8 @@ public:
 #endif
     WTF_EXPORT_PRIVATE static Ref<RunLoop> create(ASCIILiteral threadName, ThreadType = ThreadType::Unknown, ThreadQOS = ThreadQOS::UserInitiated);
 
-    static bool isMain() { return mainSingleton().isCurrent(); }
-    WTF_EXPORT_PRIVATE bool isCurrent() const final;
+    NODELETE static bool isMain() { return mainSingleton().isCurrent(); }
+    NODELETE WTF_EXPORT_PRIVATE bool isCurrent() const final;
     WTF_EXPORT_PRIVATE ~RunLoop() final;
 
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;

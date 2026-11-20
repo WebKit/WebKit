@@ -391,7 +391,7 @@ void LocalAuthenticator::makeCredential()
 
     if (RefPtr observer = this->observer()) {
         auto callback = [weakThis = WeakPtr { *this }] (LAContext *context) {
-            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+            RELEASE_ASSERT(RunLoop::isMain());
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->continueMakeCredentialAfterReceivingLAContext(context);
         };
@@ -416,7 +416,7 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
     }
 
     auto callback = [accessControl, context = retainPtr(context), weakThis = WeakPtr { *this }] (LocalConnection::UserVerification verification) {
-        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+        RELEASE_ASSERT(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context.get());
     };
@@ -664,7 +664,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
 
     if (creationOptions.attestation == AttestationConveyancePreference::Enterprise) {
         auto callback = [credentialId = WTF::move(credentialId), weakThis = WeakPtr { *this }] (Vector<uint8_t>&& attestationObject, std::optional<ExceptionData> exception) mutable {
-            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+            RELEASE_ASSERT(RunLoop::isMain());
             if (RefPtr protectedThis = weakThis)
                 protectedThis->finishMakeCredential(WTF::move(credentialId), WTF::move(attestationObject), std::nullopt);
         };
@@ -765,7 +765,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
     RetainPtr accessControlRef = response->accessControl();
     RetainPtr context = response->laContext();
     auto callback = [weakThis = WeakPtr { *this }, response = WTF::move(response)] (LocalConnection::UserVerification verification) mutable {
-        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+        RELEASE_ASSERT(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->continueGetAssertionAfterUserVerification(WTF::move(response), verification, protect(response->laContext()).get());
     };

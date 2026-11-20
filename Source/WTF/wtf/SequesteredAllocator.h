@@ -221,7 +221,7 @@ private:
                 return granule->payload();
             uintptr_t allocation = m_allocHead;
             m_allocHead = headIncrementedBy(bytes);
-            ASSERT_WITH_SECURITY_IMPLICATION(m_allocHead <= m_allocBound);
+            RELEASE_ASSERT(m_allocHead <= m_allocBound);
             return reinterpret_cast<void*>(allocation);
         }
 
@@ -237,7 +237,7 @@ private:
                 return granule->payload();
             uintptr_t allocation = headAlignedUpTo(alignment);
             m_allocHead = headIncrementedBy((allocation - m_allocHead) + bytes);
-            ASSERT_WITH_SECURITY_IMPLICATION(m_allocHead <= m_allocBound);
+            RELEASE_ASSERT(m_allocHead <= m_allocBound);
             return reinterpret_cast<void*>(allocation);
         }
 

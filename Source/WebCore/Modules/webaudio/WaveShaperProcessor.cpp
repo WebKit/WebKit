@@ -54,7 +54,7 @@ std::unique_ptr<AudioDSPKernel> WaveShaperProcessor::createKernel()
 
 void WaveShaperProcessor::setCurveForBindings(Vector<float>&& curve)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     // This synchronizes with process().
     Locker locker { m_processLock };
 

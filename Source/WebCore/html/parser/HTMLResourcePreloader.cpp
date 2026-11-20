@@ -50,7 +50,7 @@ URL PreloadRequest::completeURL(Document& document)
 
 CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     bool skipContentSecurityPolicyCheck = false;
     if (!m_nonceAttribute.isEmpty()) {

@@ -60,7 +60,7 @@ static NSMapTable *screenToDisplayIDMap()
 
 PlatformDisplayID displayID(UIScreen *screen)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (!screen) {
         screen = [PAL::getUIScreenClassSingleton() mainScreen];
@@ -82,7 +82,7 @@ PlatformDisplayID displayID(UIScreen *screen)
 
 void invalidateDisplayID(UIScreen *screen)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (!screen)
         return;

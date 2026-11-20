@@ -940,7 +940,7 @@ bool MediaPlayerPrivateAVFoundation::shouldEnableInheritURIQueryComponent() cons
 
 void MediaPlayerPrivateAVFoundation::queueTaskOnEventLoop(Function<void()>&& task)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (RefPtr player = m_player.get())
         player->queueTaskOnEventLoop(WTF::move(task));
 }

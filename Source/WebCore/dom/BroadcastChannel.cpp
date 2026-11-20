@@ -59,7 +59,7 @@ NODELETE static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastC
 
 NODELETE static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& channelToContextIdentifier()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     static NeverDestroyed<HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>> map;
     return map;
 }
@@ -109,7 +109,7 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
     RefPtr context = m_broadcastChannel->scriptExecutionContext();
     if (!context)
         return;
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
+    RELEASE_ASSERT(context->isContextThread());
 
     if (RefPtr document = dynamicDowncast<Document>(*context)) {
         task(protect(document->page()).get());

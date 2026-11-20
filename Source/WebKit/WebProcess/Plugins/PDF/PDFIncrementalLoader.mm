@@ -444,7 +444,7 @@ size_t PDFIncrementalLoader::getResourceBytesAtPositionAfterLoadingComplete(std:
 
 void PDFIncrementalLoader::getResourceBytesAtPosition(size_t count, off_t position, DataRequestCompletionHandler&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
     ASSERT(position >= 0);
 
     RefPtr plugin = m_plugin.get();

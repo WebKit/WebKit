@@ -547,7 +547,7 @@ void Thread::detach()
         didBecomeDetached();
 }
 
-Thread& Thread::initializeCurrentTLS()
+SUPPRESS_NODELETE Thread& Thread::initializeCurrentTLS()
 {
     // Not a WTF-created thread, Thread is not established yet.
     WTF::initialize();

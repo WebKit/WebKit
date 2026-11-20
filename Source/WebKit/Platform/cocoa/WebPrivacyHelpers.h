@@ -190,7 +190,7 @@ public:
 
     void prepare(PrepareCompletionHandler&& completionHandler)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+        RELEASE_ASSERT(RunLoop::isMain());
         if (!canRequestContentRuleList()) {
             completionHandler(nullptr, Arguments { }...);
             return;

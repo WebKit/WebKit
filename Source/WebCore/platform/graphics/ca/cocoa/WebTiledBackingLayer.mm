@@ -137,7 +137,7 @@
 
 - (void)invalidate
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(_tileController);
     _tileController = nullptr;
 }

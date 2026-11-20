@@ -198,7 +198,7 @@ CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request, 
 
 CachedResource* MemoryCache::resourceForRequestImpl(const ResourceRequest& request, CachedResourceMap& resources)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     URL url = removeFragmentIdentifierIfNeeded(request.url());
 
     auto key = std::make_pair(WTF::move(url), request.cachePartition());

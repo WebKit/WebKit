@@ -619,14 +619,14 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
 #if ENABLE(APP_BOUND_DOMAINS)
 static HashSet<WebCore::RegistrableDomain>& appBoundDomains()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashSet<WebCore::RegistrableDomain>> appBoundDomains;
     return appBoundDomains;
 }
 
 static HashSet<String>& appBoundSchemes()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashSet<String>> appBoundSchemes;
     return appBoundSchemes;
 }
@@ -781,7 +781,7 @@ void WebsiteDataStore::reinitializeAppBoundDomains()
 #if ENABLE(MANAGED_DOMAINS)
 NODELETE static HashSet<WebCore::RegistrableDomain>& managedDomains()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashSet<WebCore::RegistrableDomain>> managedDomains;
     return managedDomains;
 }

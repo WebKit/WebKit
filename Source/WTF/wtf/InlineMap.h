@@ -675,8 +675,8 @@ private:
 
     void transitionToInline()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(!isInline());
-        ASSERT_WITH_SECURITY_IMPLICATION(m_size <= InlineCapacity);
+        RELEASE_ASSERT(!isInline());
+        RELEASE_ASSERT(m_size <= InlineCapacity);
 
         Entry* oldEntries = m_storage.hashedData.entries;
         unsigned oldCapacity = m_capacity;

@@ -85,13 +85,13 @@ public:
 
     ~WorkerUserGestureForwarder()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        RELEASE_ASSERT(isMainThread());
         m_token = nullptr;
     }
 
     RefPtr<UserGestureToken> userGestureToForward() const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        RELEASE_ASSERT(isMainThread());
         RefPtr token = m_token;
         if (!token || token->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwarding))
             return nullptr;
@@ -102,7 +102,7 @@ private:
     explicit WorkerUserGestureForwarder(RefPtr<UserGestureToken>&& token)
         : m_token(WTF::move(token))
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        RELEASE_ASSERT(isMainThread());
     }
 
     RefPtr<UserGestureToken> m_token;
@@ -127,8 +127,8 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
     , m_inspectorProxy(WorkerInspectorProxy::create(workerObject.identifier()))
     , m_workerObject(&workerObject)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION((is<Document>(*m_scriptExecutionContext) && isMainThread())
-        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread()->thread() == &Thread::currentSingleton()));
+    RELEASE_ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
+        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && protect(downcast<WorkerGlobalScope>(*m_scriptExecutionContext))->thread()->thread() == &Thread::currentSingleton()));
 
     // Nobody outside this class ref counts this object. The original ref
     // is balanced by the deref in workerGlobalScopeDestroyedInternal.
@@ -137,9 +137,9 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
 WorkerMessagingProxy::~WorkerMessagingProxy()
 {
     ASSERT(!m_workerObject);
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_scriptExecutionContext
+    RELEASE_ASSERT(!m_scriptExecutionContext
         || (is<Document>(*m_scriptExecutionContext) && isMainThread())
-        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread()->thread() == &Thread::currentSingleton()));
+        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && protect(downcast<WorkerGlobalScope>(*m_scriptExecutionContext))->thread()->thread() == &Thread::currentSingleton()));
 
     if (RefPtr workerThread = m_workerThread)
         workerThread->clearProxies();
@@ -330,7 +330,7 @@ void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 
 RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnection()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (!m_scriptExecutionContext)
         return nullptr;
 
@@ -346,7 +346,7 @@ RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnectio
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDataChannelRemoteHandlerConnection()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     RefPtr document = dynamicDowncast<Document>(*m_scriptExecutionContext);
     if (!document)
         document = Document::allDocumentsMap().get(m_loaderContextIdentifier);
@@ -359,7 +359,7 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDat
 
 RefPtr<IDBClient::IDBConnectionProxy> WorkerMessagingProxy::createIDBConnectionProxy()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     RefPtr document = dynamicDowncast<Document>(*m_scriptExecutionContext);
     if (!document)
         document = Document::allDocumentsMap().get(m_loaderContextIdentifier);
@@ -567,7 +567,7 @@ void WorkerMessagingProxy::setAppBadge(std::optional<uint64_t> badge)
 
 RefPtr<FileSystemStorageConnection> WorkerMessagingProxy::createFileSystemStorageConnection()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (!m_scriptExecutionContext)
         return nullptr;
 

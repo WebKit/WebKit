@@ -154,7 +154,7 @@ AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name
 
 AudioWorkletNode::~AudioWorkletNode()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     protect(context().audioWorklet())->removeNode(*this);
     {
         Locker locker { m_processLock };
@@ -301,7 +301,7 @@ void AudioWorkletNode::didFinishProcessingOnRenderingThread(std::optional<Except
 
 void AudioWorkletNode::updatePullStatus()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     bool hasConnectedOutput = false;
     for (unsigned i = 0; i < numberOfOutputs(); ++i) {
@@ -321,7 +321,7 @@ void AudioWorkletNode::updatePullStatus()
 
 void AudioWorkletNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isAudioThread() && protect(context())->isGraphOwner());
 
     // Dynamic channel count only works when the node has 1 input, 1 output and |outputChannelCount|
     // is not given. Otherwise the channel count(s) should not be dynamically changed.

@@ -53,7 +53,7 @@ WebWheelEvent::WebWheelEvent(WebEventData&& eventData, WebWheelEventData&& wheel
     : WebEvent(WTF::move(eventData))
     , m_data(WTF::move(wheelData))
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isWheelEventType(type()));
+    RELEASE_ASSERT(isWheelEventType(type()));
 }
 
 bool WebWheelEvent::isWheelEventType(WebEventType type)

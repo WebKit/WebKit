@@ -46,13 +46,13 @@ MainThreadPermissionObserver::MainThreadPermissionObserver(ThreadSafeWeakPtr<Per
     , m_page(WTF::move(page))
     , m_origin(WTF::move(origin))
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     PermissionController::singleton().addObserver(*this);
 }
 
 MainThreadPermissionObserver::~MainThreadPermissionObserver()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     PermissionController::singleton().removeObserver(*this);
 }
 
@@ -68,13 +68,13 @@ void MainThreadPermissionObserver::stateChanged(PermissionState newPermissionSta
 
 void MainThreadPermissionObserver::addChangeListener(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     PermissionController::singleton().addChangeListener(m_descriptor.name, topFrameDomain, subFrameDomain);
 }
 
 void MainThreadPermissionObserver::removeChangeListener(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     PermissionController::singleton().removeChangeListener(m_descriptor.name, topFrameDomain, subFrameDomain);
 }
 

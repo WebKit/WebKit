@@ -115,7 +115,7 @@ void ThreadedScrollingCoordinator::didScheduleRenderingUpdate()
 
 void ThreadedScrollingCoordinator::willStartRenderingUpdate()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (RefPtr page = this->page())
         page->layoutIfNeeded(LayoutOptions::UpdateCompositingLayers);
     RefPtr threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());

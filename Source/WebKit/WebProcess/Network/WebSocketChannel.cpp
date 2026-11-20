@@ -154,7 +154,7 @@ IPC::Connection* WebSocketChannel::messageSenderConnection() const
     if (m_connection)
         return m_connection.get();
 
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
     return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
@@ -175,7 +175,7 @@ String WebSocketChannel::extensions()
 
 auto WebSocketChannel::createConnectParameters(Document& document, const URL& url, WebSocketChannelIdentifier progressIdentifier) -> std::optional<ConnectParameters>
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
 
     auto request = webSocketConnectRequest(document, url);
     if (!request)

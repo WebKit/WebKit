@@ -151,7 +151,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
 
 void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6, bool forceSignaling)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
 
     Vector<RTCNetwork> filteredNetworks;
     if (m_enableEnumeratingAllNetworkInterfaces)
@@ -210,7 +210,7 @@ const String& LibWebRTCNetworkManager::interfaceNameForTesting() const
 
 void LibWebRTCNetworkManager::signalUsedInterface(String&& name)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
     if (!m_allowedInterfaces.add(WTF::move(name)).isNewEntry || m_useMDNSCandidates || !m_enableEnumeratingVisibleNetworkInterfaces)
         return;
 

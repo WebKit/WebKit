@@ -286,7 +286,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
             return;
 
         auto remoteAddress = socketAddressFromIncomingConnection(nwConnection);
-        ASSERT_WITH_SECURITY_IMPLICATION(remoteAddress != HashTraits<webrtc::SocketAddress>::emptyValue() && !HashTraits<webrtc::SocketAddress>::isDeletedValue(remoteAddress));
+        RELEASE_ASSERT(remoteAddress != HashTraits<webrtc::SocketAddress>::emptyValue() && !HashTraits<webrtc::SocketAddress>::isDeletedValue(remoteAddress));
 
         Ref connectionStateTracker = ConnectionStateTracker::create();
         protectedThis->setupNWConnection(nwConnection, connectionStateTracker.get(), remoteAddress);

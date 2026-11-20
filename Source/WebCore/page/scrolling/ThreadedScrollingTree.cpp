@@ -166,7 +166,7 @@ void ThreadedScrollingTree::didCommitTree()
 
 void ThreadedScrollingTree::didCommitTreeOnScrollingThread()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(ScrollingThread::isCurrentThread());
+    RELEASE_ASSERT(ScrollingThread::isCurrentThread());
 
     auto nodesWithPendingScrollAnimations = std::exchange(m_nodesWithPendingScrollAnimations, { });
     for (const auto& it : nodesWithPendingScrollAnimations) {
@@ -478,7 +478,7 @@ void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAni
 void ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout()
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    ASSERT_WITH_SECURITY_IMPLICATION(m_treeLock.isLocked());
+    RELEASE_ASSERT(m_treeLock.isLocked());
 
     if (m_delayedRenderingUpdateDetectionTimer)
         m_delayedRenderingUpdateDetectionTimer->stop();

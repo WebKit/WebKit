@@ -636,7 +636,7 @@ void HTMLPreloadScanner::appendToEnd(const SegmentedString& source)
 
 void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& document)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
+    RELEASE_ASSERT(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
 
     const URL& startingBaseElementURL = document.baseElementURL();
 

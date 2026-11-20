@@ -289,7 +289,7 @@ void NetworkConnectionToWebProcess::transferKeptAliveLoad(NetworkResourceLoader&
 
 bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
     MESSAGE_CHECK_WITH_RETURN_VALUE(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName(), false);

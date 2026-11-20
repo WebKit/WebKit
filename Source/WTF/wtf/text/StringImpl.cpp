@@ -194,8 +194,8 @@ Ref<StringImpl> StringImpl::createUninitialized(size_t length, std::span<char16_
 
 template<typename CharacterType> inline std::expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::reallocateInternal(Ref<StringImpl>&& originalString, unsigned length, CharacterType*& data)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(originalString->hasOneRef());
-    ASSERT_WITH_SECURITY_IMPLICATION(originalString->bufferOwnership() == BufferInternal);
+    RELEASE_ASSERT(originalString->hasOneRef());
+    RELEASE_ASSERT(originalString->bufferOwnership() == BufferInternal);
 
     if (!length) {
         data = nullptr;

@@ -121,7 +121,7 @@ void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()
     if (!serviceWorkerPage)
         return;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     serviceWorkerPage->setServiceWorkerGlobalScope(*this);
 
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(serviceWorkerPage->mainFrame())) {
@@ -189,7 +189,7 @@ void ServiceWorkerGlobalScope::prepareForDestruction()
 // https://w3c.github.io/ServiceWorker/#update-service-worker-extended-events-set-algorithm
 void ServiceWorkerGlobalScope::updateExtendedEventsSet(ExtendableEvent* newEvent)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
+    RELEASE_ASSERT(isContextThread());
     ASSERT(!newEvent || !newEvent->isBeingDispatched());
     bool hadPendingEvents = hasPendingEvents();
     m_extendedEvents.removeAllMatching([](auto& event) {

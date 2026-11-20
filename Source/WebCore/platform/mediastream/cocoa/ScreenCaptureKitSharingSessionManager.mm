@@ -228,7 +228,7 @@ void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t wind
 
 void ScreenCaptureKitSharingSessionManager::cancelPicking()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     m_watchdogTimer = nullptr;
     ++m_requestCount;
@@ -296,7 +296,7 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
 
 void ScreenCaptureKitSharingSessionManager::contentSharingPickerSelectedFilterForStream(SCContentFilter* contentFilter, SCStream*)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::contentSharingPickerSelectedFilterForStream");
 
     completeDeviceSelection(contentFilter);
@@ -304,7 +304,7 @@ void ScreenCaptureKitSharingSessionManager::contentSharingPickerSelectedFilterFo
 
 void ScreenCaptureKitSharingSessionManager::contentSharingPickerUpdatedFilterForStream(SCContentFilter* contentFilter, SCStream* stream)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::contentSharingPickerUpdatedFilterForStream");
 
     auto index = m_activeSources.findIf([stream](auto activeSource) {
@@ -465,7 +465,7 @@ static bool operator==(const SCContentFilter* filter, const CaptureDevice& devic
 
 void ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice(const CaptureDevice& device)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (m_pendingContentFilter.get() != device) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice - unknown capture device.");
@@ -478,7 +478,7 @@ void ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice(const 
 
 RetainPtr<SCContentFilter> ScreenCaptureKitSharingSessionManager::contentFilter(const CaptureDevice& device)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (m_pendingContentFilter.get() != device) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::contentFilterFromCaptureDevice - unknown capture device.");
@@ -490,7 +490,7 @@ RetainPtr<SCContentFilter> ScreenCaptureKitSharingSessionManager::contentFilter(
 
 RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSourceObserver> observer, SCContentFilter* contentFilter, SCStreamConfiguration* configuration, SCStreamDelegate* delegate)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     RetainPtr<SCStream> stream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:contentFilter configuration:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
 

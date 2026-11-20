@@ -138,7 +138,7 @@ void Storage::ReadOperation::updateForDispatch(bool synchronizationInProgress, b
 
 void Storage::ReadOperation::cancel()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     if (m_isCanceled)
         return;
@@ -153,7 +153,7 @@ void Storage::ReadOperation::cancel()
 
 bool Storage::ReadOperation::finish()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(canFinish());
 
     if (!m_completionHandler)
@@ -177,7 +177,7 @@ bool Storage::ReadOperation::finish()
 
 void Storage::ReadOperation::finishReadRecord(Record&& record, MonotonicTime recordIOStartTime, MonotonicTime recordIOEndTime)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     m_waitsForRecord = false;
     // Body is already read from blob storage, and it is not null.
@@ -193,7 +193,7 @@ void Storage::ReadOperation::finishReadRecord(Record&& record, MonotonicTime rec
 
 void Storage::ReadOperation::finishReadBlob(BlobStorage::Blob&& blob, MonotonicTime blobIOStartTime, MonotonicTime blobIOEndTime)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     m_waitsForBlob = false;
     if (blob.data.isNull())
@@ -219,7 +219,7 @@ public:
 
     ~WriteOperation()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+        RELEASE_ASSERT(isMainRunLoop());
     }
 
     NODELETE Storage::WriteOperationIdentifier identifier() const { return m_identifier; }
@@ -252,7 +252,7 @@ public:
 
     void invokeHandler(const Storage::Record* record, const Storage::RecordInfo& info)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+        RELEASE_ASSERT(isMainRunLoop());
         m_handler(record, info);
     }
 
@@ -289,7 +289,7 @@ public:
     };
     HashMap<String, PartitionEntry>& ensurePartitionMap()
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(!isMainRunLoop());
+        RELEASE_ASSERT(!isMainRunLoop());
         return m_partitionMap;
     }
 
@@ -564,7 +564,7 @@ void Storage::synchronize()
 
 void Storage::addToRecordFilter(const Key& key)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     if (m_recordFilter)
         m_recordFilter->add(key.hash());
@@ -576,13 +576,13 @@ void Storage::addToRecordFilter(const Key& key)
 
 bool Storage::mayContain(const Key& key) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     return !m_recordFilter || m_recordFilter->mayContain(key.hash());
 }
 
 bool Storage::mayContainBlob(const Key& key) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     return !m_blobFilter || m_blobFilter->mayContain(key.hash());
 }
 
@@ -842,7 +842,7 @@ Vector<Key> Storage::pendingWriteKeys(const String& type, const std::optional<St
 
 void Storage::remove(const Key& key)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     if (!mayContain(key))
         return;
@@ -862,7 +862,7 @@ void Storage::remove(const Key& key)
 
 void Storage::remove(const Vector<Key>& keys, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     auto keysToRemove = WTF::compactMap(keys, [&](auto& key) -> std::optional<Key> {
         if (!mayContain(key))
@@ -896,7 +896,7 @@ void Storage::updateFileModificationTime(String&& path)
 
 void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperationPtr)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     auto& readOperation = *readOperationPtr;
     auto identifier = readOperation.identifier();
@@ -961,7 +961,7 @@ void Storage::readBlobIfNecessary(Storage::ReadOperationIdentifier identifier, c
 
 void Storage::finishReadOperation(Storage::ReadOperationIdentifier identifier)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     auto readOperation = m_activeReadOperations.take(identifier);
     RELEASE_ASSERT(readOperation);
@@ -982,7 +982,7 @@ void Storage::finishReadOperation(Storage::ReadOperationIdentifier identifier)
 
 void Storage::cancelAllReadOperations()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     for (auto& readOperation : m_activeReadOperations.values())
         readOperation->cancel();
@@ -998,7 +998,7 @@ void Storage::cancelAllReadOperations()
 
 void Storage::dispatchPendingReadOperations()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     const int maximumActiveReadOperationCount = 5;
 
@@ -1029,7 +1029,7 @@ template <class T> bool retrieveFromMemory(const T& operations, const Key& key, 
 
 void Storage::dispatchPendingWriteOperations()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     const int maximumActiveWriteOperationCount { 1 };
 
@@ -1096,7 +1096,7 @@ bool Storage::removeWriteOperationActivity(WriteOperationIdentifier identifier)
 
 void Storage::finishWriteOperationActivity(WriteOperationIdentifier identifier)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (!removeWriteOperationActivity(identifier))
         return;
 
@@ -1110,7 +1110,7 @@ void Storage::finishWriteOperationActivity(WriteOperationIdentifier identifier)
 
 void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHandler&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!key.isNull());
 
     if (!m_capacity) {
@@ -1138,7 +1138,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
 
 void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler, bool storeBlobInMemoryCache)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!record.key.isNull());
 
     if (!m_capacity)
@@ -1282,7 +1282,7 @@ void Storage::setCapacity(size_t capacity)
 
 void Storage::clear(String&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
 
     if (m_recordFilter)

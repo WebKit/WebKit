@@ -703,7 +703,7 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
 
 void NetworkResourceLoader::cleanup(LoadResult result)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     LOADER_RELEASE_LOG("cleanup: (result=%u)", static_cast<unsigned>(result));
 
     m_isDone = true;

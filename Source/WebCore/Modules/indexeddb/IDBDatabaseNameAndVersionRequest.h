@@ -80,7 +80,7 @@ inline const IDBResourceIdentifier& IDBDatabaseNameAndVersionRequest::resourceId
 
 inline IDBDatabaseNameAndVersionRequest::~IDBDatabaseNameAndVersionRequest()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 }
 
 } // namespace WebCore

@@ -227,7 +227,7 @@ MediaStreamTrackPrivateSourceObserver::MediaStreamTrackPrivateSourceObserver(Ref
     : m_source(WTF::move(source))
     , m_postTask(WTF::move(postTask))
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(m_postTask || isMainThread());
+    RELEASE_ASSERT(m_postTask || isMainThread());
     if (!m_postTask)
         m_postTask = [](Function<void()>&& function) { function(); };
 }

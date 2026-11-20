@@ -60,7 +60,7 @@ Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessP
 
 WebNotificationManagerProxy& WebNotificationManagerProxy::serviceWorkerManagerSingleton()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
     static NeverDestroyed<Ref<WebNotificationManagerProxy>> sharedManager = adoptRef(*new WebNotificationManagerProxy(nullptr));
     return sharedManager->get();
 }

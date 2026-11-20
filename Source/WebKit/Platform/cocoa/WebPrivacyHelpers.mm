@@ -99,7 +99,7 @@ namespace WebKit {
 
 Ref<ListDataObserver> ListDataControllerBase::observeUpdates(Function<void()>&& callback)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (!m_notificationListener) {
         lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(resourceTypeValue()) callback:^{
             updateList([weakThis = WeakPtr { *this }] {
@@ -142,7 +142,7 @@ unsigned LinkDecorationFilteringController::resourceTypeValue() const
 
 void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable()) {
         completionHandler();
         return;
@@ -260,7 +260,7 @@ static Vector<URL> quirkPagesArrayToVector(NSArray<NSString *> *triggerPages)
 
 void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
         return;
@@ -302,7 +302,7 @@ unsigned StorageAccessUserAgentStringQuirkController::resourceTypeValue() const
 
 void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
         return;
@@ -411,7 +411,7 @@ bool HighValueFraudTargetDomainsController::contains(const WebCore::RegistrableD
 
 void HighValueFraudTargetDomainsController::setDomainsForTesting(HashSet<WebCore::RegistrableDomain>&& domains)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     m_domains = WTF::move(domains);
     m_didReceiveInitialData = true;
     // Keep update() from replacing the injected list with real data from WebPrivacy.
@@ -448,7 +448,7 @@ void ResourceMonitorURLsController::requestContentRuleList(PrepareCompletionHand
 
 void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestResourceMonitorRulesSource:completionHandler:)]) {
         completionHandler({ });
         return;
@@ -891,7 +891,7 @@ static WebCore::ScriptTrackingPrivacyFlags allowedScriptTrackingCategories(WPScr
 
 void ScriptTrackingPrivacyController::updateList(CompletionHandler<void()>&& completion)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 #if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestFingerprintingScripts:completionHandler:)]) {
         RunLoop::mainSingleton().dispatch(WTF::move(completion));
@@ -955,7 +955,7 @@ void ScriptTrackingPrivacyController::didUpdateCachedListData()
 
 void ConsistentPrivacyQuirkController::updateList(CompletionHandler<void()>&& completion)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 #if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestFingerprintingScripts:completionHandler:)]) {
         RunLoop::mainSingleton().dispatch(WTF::move(completion));

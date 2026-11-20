@@ -438,7 +438,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const String& label, Vector<R
         for (auto& entry : descriptorEntries) {
             if (hasDynamicOffset(entry)) {
                 auto it = bindGroupLayoutEntries.find(entry.binding);
-                ASSERT_WITH_SECURITY_IMPLICATION(it != bindGroupLayoutEntries.end());
+                RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
                 it->value.dynamicOffsetsIndex = nextDynamicOffsetIndex++;
             }
         }

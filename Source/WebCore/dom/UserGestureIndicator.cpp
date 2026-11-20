@@ -288,7 +288,7 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
 // When a user interaction causes firing of an activation triggering input event in a Document...
 void UserGestureIndicator::notifyActivation(Document& document)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     // NOTE: Only activate the relevent DOMWindow when the gestureType is an ActivationTriggering one
     RefPtr token = currentToken(commonVM());

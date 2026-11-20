@@ -178,11 +178,11 @@ JSVMClientData::~JSVMClientData()
         Ref { client }->willDestroyVM();
     });
 
-    ASSERT_WITH_SECURITY_IMPLICATION(m_worldSet.contains(m_normalWorld.get()));
-    ASSERT_WITH_SECURITY_IMPLICATION(m_worldSet.size() == 1);
-    ASSERT_WITH_SECURITY_IMPLICATION(m_normalWorld->hasOneRef());
+    RELEASE_ASSERT(m_worldSet.contains(m_normalWorld.get()));
+    RELEASE_ASSERT(m_worldSet.size() == 1);
+    RELEASE_ASSERT(m_normalWorld->hasOneRef());
     m_normalWorld = nullptr;
-    ASSERT_WITH_SECURITY_IMPLICATION(m_worldSet.isEmpty());
+    RELEASE_ASSERT(m_worldSet.isEmpty());
 }
 
 void JSVMClientData::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)

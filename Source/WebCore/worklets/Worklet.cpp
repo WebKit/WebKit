@@ -102,7 +102,7 @@ void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options,
 
 void Worklet::finishPendingTasks(WorkletPendingTasks& tasks)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(m_pendingTasksSet.contains(tasks));
 
     m_pendingTasksSet.remove(tasks);

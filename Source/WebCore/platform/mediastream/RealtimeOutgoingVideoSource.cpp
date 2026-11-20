@@ -92,7 +92,7 @@ void RealtimeOutgoingVideoSource::startObservingVideoFrames()
 
 void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(!m_videoSource->hasObserver(*this));
 
     m_isScreencast = CaptureDevice::isScreenShareType(newSource->deviceType());
@@ -120,7 +120,7 @@ void RealtimeOutgoingVideoSource::applyRotation()
 
 void RealtimeOutgoingVideoSource::stop()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     unobserveSource();
     m_blackFrameTimer.stop();
 }

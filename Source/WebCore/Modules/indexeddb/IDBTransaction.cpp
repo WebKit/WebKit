@@ -92,7 +92,7 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
 
 {
     LOG_WITH_STREAM(IndexedDB, stream << "IDBTransaction::IDBTransaction - "_s << m_info.loggingString());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     ++numberOfIDBTransactions;
 
@@ -117,7 +117,7 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
 IDBTransaction::~IDBTransaction()
 {
     --numberOfIDBTransactions;
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 }
 
 IDBClient::IDBConnectionProxy& IDBTransaction::connectionProxy()
@@ -127,7 +127,7 @@ IDBClient::IDBConnectionProxy& IDBTransaction::connectionProxy()
 
 Ref<DOMStringList> IDBTransaction::objectStoreNames() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto names = isVersionChange() ? m_database->info().objectStoreNames() : m_info.objectStores();
     auto objectStoreNames = DOMStringList::create(WTF::move(names));
@@ -150,7 +150,7 @@ DOMException* IDBTransaction::error() const
 ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objectStoreName)
 {
     LOG(IndexedDB, "IDBTransaction::objectStore");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (!scriptExecutionContext())
         return Exception { ExceptionCode::InvalidStateError };
@@ -183,7 +183,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
 void IDBTransaction::abortDueToFailedRequest(DOMException& error)
 {
     LOG(IndexedDB, "IDBTransaction::abortDueToFailedRequest");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (isFinishedOrFinishing())
         return;
@@ -194,7 +194,7 @@ void IDBTransaction::abortDueToFailedRequest(DOMException& error)
 
 void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     // Transaction might be transitioned from commiting to aborting due to connection failure.
     bool wasFinishedOrFinishing = isFinishedOrFinishing();
     m_state = state;
@@ -209,7 +209,7 @@ void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
 ExceptionOr<void> IDBTransaction::abort()
 {
     LOG(IndexedDB, "IDBTransaction::abort");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (isFinishedOrFinishing())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished."_s };
@@ -222,7 +222,7 @@ ExceptionOr<void> IDBTransaction::abort()
 void IDBTransaction::abortInternal()
 {
     LOG(IndexedDB, "IDBTransaction::abortInternal");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(!isFinishedOrFinishing());
     if (isVersionChange())
         RELEASE_LOG(IndexedDB, "IDBTransaction::abortInternal: version change transaction %" PUBLIC_LOG_STRING, info().identifier().loggingString().utf8());
@@ -288,7 +288,7 @@ void IDBTransaction::abortInProgressOperations(const IDBError& error)
 void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperation& operation)
 {
     LOG(IndexedDB, "IDBTransaction::abortOnServerAndCancelRequests");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(m_pendingTransactionOperationQueue.isEmpty());
 
     m_database->connectionProxy().abortTransaction(*this);
@@ -325,7 +325,7 @@ bool IDBTransaction::virtualHasPendingActivity() const
 void IDBTransaction::stop()
 {
     LOG_WITH_STREAM(IndexedDB, stream << "IDBTransaction::stop - "_s << m_info.loggingString());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     // IDBDatabase::stop() calls IDBTransaction::stop() for each of its active transactions.
     // Since the order of calling ActiveDOMObject::stop() is random, we might already have been stopped.
@@ -357,19 +357,19 @@ void IDBTransaction::stop()
 
 void IDBTransaction::addRequest(IDBRequest& request)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     m_openRequests.add(request);
 }
 
 void IDBTransaction::addCursorRequest(IDBRequest& request)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     m_cursorRequests.add(request);
 }
 
 void IDBTransaction::removeRequest(IDBRequest& request)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     if (m_currentlyCompletingRequest == &request)
         return;
 
@@ -381,7 +381,7 @@ void IDBTransaction::removeRequest(IDBRequest& request)
 void IDBTransaction::scheduleOperation(Ref<IDBClient::TransactionOperation>&& operation, IsWriteOperation isWriteOperation)
 {
     ASSERT(!m_transactionOperationMap.contains(operation->identifier()));
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (isWriteOperation == IsWriteOperation::Yes)
         m_lastWriteOperationID = operation->operationID();
@@ -395,8 +395,8 @@ void IDBTransaction::scheduleOperation(Ref<IDBClient::TransactionOperation>&& op
 
 void IDBTransaction::operationCompletedOnServer(const IDBResultData& data, IDBClient::TransactionOperation& operation)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(operation.originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(operation.originThread()));
 
     if (!m_transactionOperationMap.contains(operation.identifier()))
         return;
@@ -410,7 +410,7 @@ void IDBTransaction::operationCompletedOnServer(const IDBResultData& data, IDBCl
 void IDBTransaction::handleOperationsCompletedOnServer()
 {
     LOG(IndexedDB, "IDBTransaction::handleOperationsCompletedOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     while (!m_transactionOperationsInProgressQueue.isEmpty() && !m_currentlyCompletingRequest) {
         RefPtr currentOperation = m_transactionOperationsInProgressQueue.first().ptr();
@@ -464,7 +464,7 @@ void IDBTransaction::finishedDispatchEventForRequest(IDBRequest& request)
 ExceptionOr<void> IDBTransaction::commit()
 {
     LOG(IndexedDB, "IDBTransaction::commit");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (!isActive())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'commit' on 'IDBTransaction': The transaction is inactive."_s };
@@ -480,7 +480,7 @@ ExceptionOr<void> IDBTransaction::commit()
 void IDBTransaction::commitInternal()
 {
     LOG(IndexedDB, "IDBTransaction::commitInternal");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(!isFinishedOrFinishing());
     if (isVersionChange())
         RELEASE_LOG(IndexedDB, "IDBTransaction::commitInternal: version change transaction %" PUBLIC_LOG_STRING, info().identifier().loggingString().utf8());
@@ -501,7 +501,7 @@ void IDBTransaction::commitInternal()
 void IDBTransaction::commitOnServer(IDBClient::TransactionOperation& operation, uint64_t handledRequestResultsCount)
 {
     LOG(IndexedDB, "IDBTransaction::commitOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     m_database->connectionProxy().commitTransaction(*this, handledRequestResultsCount);
 
@@ -526,7 +526,7 @@ void IDBTransaction::finishAbortOrCommit()
 void IDBTransaction::didStart(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::didStart");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     m_database->didStartTransaction(*this);
 
@@ -549,7 +549,7 @@ void IDBTransaction::didStart(const IDBError& error)
 
 void IDBTransaction::notifyDidAbort(const IDBError& error)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     m_database->didAbortTransaction(*this);
     m_idbError = error;
@@ -564,7 +564,7 @@ void IDBTransaction::notifyDidAbort(const IDBError& error)
 void IDBTransaction::didAbort(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::didAbort");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (m_state == IndexedDB::TransactionState::Finished)
         return;
@@ -577,7 +577,7 @@ void IDBTransaction::didAbort(const IDBError& error)
 void IDBTransaction::didCommit(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::didCommit");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(m_state == IndexedDB::TransactionState::Committing);
 
     // Delay commit until last request is completed.
@@ -600,21 +600,21 @@ void IDBTransaction::didCommit(const IDBError& error)
 void IDBTransaction::fireOnComplete()
 {
     LOG(IndexedDB, "IDBTransaction::fireOnComplete");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     enqueueEvent(Event::create(eventNames().completeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void IDBTransaction::fireOnAbort()
 {
     LOG(IndexedDB, "IDBTransaction::fireOnAbort");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     enqueueEvent(Event::create(eventNames().abortEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 void IDBTransaction::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(m_state != IndexedDB::TransactionState::Finished);
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (!scriptExecutionContext() || isContextStopped())
         return;
@@ -631,7 +631,7 @@ void IDBTransaction::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBTransaction::dispatchEvent");
 
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(scriptExecutionContext());
     ASSERT(!isContextStopped());
     
@@ -671,7 +671,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
     LOG(IndexedDB, "IDBTransaction::createObjectStore");
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     Locker locker { m_objectStoresLock };
 
@@ -713,7 +713,7 @@ void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String
 
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     ASSERT(m_referencedObjectStores.contains(objectStore.info().name()));
     ASSERT(!m_referencedObjectStores.contains(newName));
@@ -751,7 +751,7 @@ std::unique_ptr<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStor
 {
     LOG(IndexedDB, "IDBTransaction::createIndex");
     ASSERT(isVersionChange());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (!scriptExecutionContext())
         return nullptr;
@@ -779,7 +779,7 @@ void IDBTransaction::createIndexOnServer(IDBClient::TransactionOperation& operat
 void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didCreateIndexOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (resultData.type() == IDBResultType::CreateIndexSuccess)
         return;
@@ -801,7 +801,7 @@ void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
 
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     ASSERT(m_referencedObjectStores.contains(index.objectStore().info().name()));
     ASSERT(m_referencedObjectStores.get(index.objectStore().info().name()) == &index.objectStore());
@@ -838,7 +838,7 @@ void IDBTransaction::didRenameIndexOnServer(const IDBResultData& resultData)
 Ref<IDBRequest> IDBTransaction::requestOpenCursor(IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::requestOpenCursor");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (info.cursorType() == IndexedDB::CursorType::KeyOnly)
         return doRequestOpenCursor(IDBCursor::create(objectStore, info));
@@ -849,7 +849,7 @@ Ref<IDBRequest> IDBTransaction::requestOpenCursor(IDBObjectStore& objectStore, c
 Ref<IDBRequest> IDBTransaction::requestOpenCursor(IDBIndex& index, const IDBCursorInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::requestOpenCursor");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (info.cursorType() == IndexedDB::CursorType::KeyOnly)
         return doRequestOpenCursor(IDBCursor::create(index, info));
@@ -860,7 +860,7 @@ Ref<IDBRequest> IDBTransaction::requestOpenCursor(IDBIndex& index, const IDBCurs
 Ref<IDBRequest> IDBTransaction::doRequestOpenCursor(Ref<IDBCursor>&& cursor)
 {
     ASSERT(isActive());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), cursor.get(), *this);
     addRequest(request.get());
@@ -887,7 +887,7 @@ void IDBTransaction::openCursorOnServer(IDBClient::TransactionOperation& operati
 void IDBTransaction::didOpenCursorOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didOpenCursorOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     completeCursorRequest(request, resultData);
 }
@@ -898,7 +898,7 @@ void IDBTransaction::iterateCursor(IDBCursor& cursor, const IDBIterateCursorData
     ASSERT(isActive());
     RefPtr request = cursor.request();
     ASSERT(request);
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     addRequest(*request);
 
@@ -914,7 +914,7 @@ void IDBTransaction::iterateCursor(IDBCursor& cursor, const IDBIterateCursorData
 void IDBTransaction::iterateCursorOnServer(IDBClient::TransactionOperation& operation, const IDBIterateCursorData& data)
 {
     LOG(IndexedDB, "IDBTransaction::iterateCursorOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(operation.idbRequest());
 
     RefPtr cursor = operation.idbRequest()->pendingCursor();
@@ -938,7 +938,7 @@ void IDBTransaction::iterateCursorOnServer(IDBClient::TransactionOperation& oper
 void IDBTransaction::didIterateCursorOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didIterateCursorOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     completeCursorRequest(request, resultData);
 }
@@ -947,7 +947,7 @@ Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(IDBObjectStore& 
 {
     LOG(IndexedDB, "IDBTransaction::requestGetAllObjectStoreRecords");
     ASSERT(isActive());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), objectStore, *this);
     addRequest(request.get());
@@ -968,7 +968,7 @@ Ref<IDBRequest> IDBTransaction::requestGetAllIndexRecords(IDBIndex& index, const
 {
     LOG(IndexedDB, "IDBTransaction::requestGetAllIndexRecords");
     ASSERT(isActive());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), index, *this);
     addRequest(request.get());
@@ -996,7 +996,7 @@ void IDBTransaction::getAllRecordsOnServer(IDBClient::TransactionOperation& oper
 void IDBTransaction::didGetAllRecordsOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didGetAllRecordsOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (resultData.type() == IDBResultType::Error) {
         completeNoncursorRequest(request, resultData);
@@ -1026,7 +1026,7 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(IDBObjectStore& objectStore, co
     LOG(IndexedDB, "IDBTransaction::requestGetRecord");
     ASSERT(isActive());
     ASSERT(!getRecordData.keyRangeData.isNull());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     IndexedDB::ObjectStoreRecordType type = getRecordData.type == IDBGetRecordDataType::KeyAndValue ? IndexedDB::ObjectStoreRecordType::ValueOnly : IndexedDB::ObjectStoreRecordType::KeyOnly;
 
@@ -1064,7 +1064,7 @@ Ref<IDBRequest> IDBTransaction::requestIndexRecord(IDBIndex& index, IndexedDB::I
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(isActive());
     ASSERT(!range.isNull());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::createIndexGet(*protect(scriptExecutionContext()), index, type, *this);
     addRequest(request.get());
@@ -1092,7 +1092,7 @@ void IDBTransaction::getRecordOnServer(IDBClient::TransactionOperation& operatio
 void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didGetRecordOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (resultData.type() == IDBResultType::Error) {
         completeNoncursorRequest(request, resultData);
@@ -1127,7 +1127,7 @@ Ref<IDBRequest> IDBTransaction::requestCount(IDBObjectStore& objectStore, const 
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBObjectStore)");
     ASSERT(isActive());
     ASSERT(!range.isNull());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), objectStore, *this);
     addRequest(request.get());
@@ -1147,7 +1147,7 @@ Ref<IDBRequest> IDBTransaction::requestCount(IDBIndex& index, const IDBKeyRangeD
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBIndex)");
     ASSERT(isActive());
     ASSERT(!range.isNull());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), index, *this);
     addRequest(request.get());
@@ -1173,7 +1173,7 @@ void IDBTransaction::getCountOnServer(IDBClient::TransactionOperation& operation
 void IDBTransaction::didGetCountOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didGetCountOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     request.setResult(resultData.resultInteger());
     completeNoncursorRequest(request, resultData);
@@ -1184,7 +1184,7 @@ Ref<IDBRequest> IDBTransaction::requestDeleteRecord(IDBObjectStore& objectStore,
     LOG(IndexedDB, "IDBTransaction::requestDeleteRecord");
     ASSERT(isActive());
     ASSERT(!range.isNull());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), objectStore, *this);
     addRequest(request.get());
@@ -1209,7 +1209,7 @@ void IDBTransaction::deleteRecordOnServer(IDBClient::TransactionOperation& opera
 void IDBTransaction::didDeleteRecordOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didDeleteRecordOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     request.setResultToUndefined();
     completeNoncursorRequest(request, resultData);
@@ -1219,7 +1219,7 @@ Ref<IDBRequest> IDBTransaction::requestClearObjectStore(IDBObjectStore& objectSt
 {
     LOG(IndexedDB, "IDBTransaction::requestClearObjectStore");
     ASSERT(isActive());
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), objectStore, *this);
     addRequest(request.get());
@@ -1247,7 +1247,7 @@ void IDBTransaction::clearObjectStoreOnServer(IDBClient::TransactionOperation& o
 void IDBTransaction::didClearObjectStoreOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didClearObjectStoreOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     request.setResultToUndefined();
     completeNoncursorRequest(request, resultData);
@@ -1259,7 +1259,7 @@ Ref<IDBRequest> IDBTransaction::requestPutOrAdd(IDBObjectStore& objectStore, Ref
     ASSERT(isActive());
     ASSERT(!isReadOnly());
     ASSERT(objectStore.info().autoIncrement() || key);
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), objectStore, *this);
     addRequest(request.get());
@@ -1277,7 +1277,7 @@ Ref<IDBRequest> IDBTransaction::requestPutOrAdd(IDBObjectStore& objectStore, Ref
 void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation, const IDBObjectStoreInfo& objectStoreInfo, RefPtr<IDBKey>&& key, Ref<SerializedScriptValue>&& value, const IndexedDB::ObjectStoreOverwriteMode& overwriteMode)
 {
     LOG(IndexedDB, "IDBTransaction::putOrAddOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(!isReadOnly());
 
     RefPtr context = scriptExecutionContext();
@@ -1325,8 +1325,8 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     operation.setNextRequestCanGoToServer(false);
 
     value->writeBlobsToDiskForIndexedDB(isEphemeral, [protectedThis = Ref { *this }, this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), objectStoreInfo = crossThreadCopy(objectStoreInfo), keyData = crossThreadCopy(WTF::move(keyData)), overwriteMode](IDBValue&& idbValue) mutable {
-        ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+        RELEASE_ASSERT(isMainThread());
 
         RefPtr context = scriptExecutionContext();
         auto* globalObject = context ? context->globalObject() : nullptr;
@@ -1348,7 +1348,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
 void IDBTransaction::didPutOrAddOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didPutOrAddOnServer");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (auto* result = resultData.resultKey())
         request.setResult(*result);
@@ -1360,7 +1360,7 @@ void IDBTransaction::didPutOrAddOnServer(IDBRequest& request, const IDBResultDat
 void IDBTransaction::deleteObjectStore(const String& objectStoreName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteObjectStore");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(isVersionChange());
 
     Locker locker { m_objectStoresLock };
@@ -1398,7 +1398,7 @@ void IDBTransaction::didDeleteObjectStoreOnServer(const IDBResultData& resultDat
 void IDBTransaction::deleteIndex(IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteIndex");
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(isVersionChange());
 
     LOG_WITH_STREAM(IndexedDBOperations, stream << "IDB delete index operation: "_s << indexName << " ("_s << objectStoreIdentifier.toUInt64() << ")"_s);
@@ -1429,8 +1429,8 @@ void IDBTransaction::operationCompletedOnClient(IDBClient::TransactionOperation&
 {
     LOG(IndexedDB, "IDBTransaction::operationCompletedOnClient");
 
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(operation.originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(operation.originThread()));
     ASSERT(m_transactionOperationMap.get(operation.identifier()) == &operation);
     ASSERT(m_transactionOperationsInProgressQueue.first().ptr() == &operation);
 
@@ -1470,7 +1470,7 @@ void IDBTransaction::activate()
 
 void IDBTransaction::deactivate()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (m_state == IndexedDB::TransactionState::Active)
         m_state = IndexedDB::TransactionState::Inactive;
@@ -1530,7 +1530,7 @@ template void IDBTransaction::visitReferencedObjectStoresInGCThread(JSC::SlotVis
 
 void IDBTransaction::handlePendingOperations()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (!m_startedOnServer)
         return;

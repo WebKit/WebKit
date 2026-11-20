@@ -190,7 +190,7 @@ ExceptionOr<void> History::go(Document& document, int distance)
     if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
 
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (document.canNavigate(frame.get()) != CanNavigateState::Able)
         return { };

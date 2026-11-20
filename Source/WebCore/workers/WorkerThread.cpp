@@ -226,7 +226,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
 
 WorkerGlobalScope* WorkerThread::globalScope()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!thread() || thread() == &Thread::currentSingleton());
+    RELEASE_ASSERT(!thread() || thread() == &Thread::currentSingleton());
     return downcast<WorkerGlobalScope>(WorkerOrWorkletThread::globalScope());
 }
 

@@ -226,7 +226,7 @@ Ref<CoreAudioCaptureUnit> CoreAudioCaptureUnit::createNonVPIOUnit()
 
 NODELETE static WeakHashSet<CoreAudioCaptureUnit>& allCoreAudioCaptureUnits()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     static NeverDestroyed<WeakHashSet<CoreAudioCaptureUnit>> units;
     return units;
@@ -251,7 +251,7 @@ void CoreAudioCaptureUnit::forEach(NOESCAPE const Function<void(CoreAudioCapture
 
 NODELETE static Function<void(CoreAudioCaptureUnit&)>& coreAudioCaptureNewUnitCallback()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     static NeverDestroyed<Function<void(CoreAudioCaptureUnit&)>> callback;
     return callback.get();

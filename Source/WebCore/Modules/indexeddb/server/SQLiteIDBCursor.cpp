@@ -111,7 +111,7 @@ SQLiteIDBTransaction* SQLiteIDBCursor::transaction() const
 
 void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBKeyPath>& keyPath, ShouldIncludePrefetchedRecords shouldIncludePrefetchedRecords)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
 
     auto& currentRecord = m_fetchedRecords.first();
     if (currentRecord.completed) {
@@ -214,7 +214,7 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
     if (m_statementNeedsReset)
         return;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
 
     m_currentKeyForUniqueness = m_fetchedRecords.first().record.key;
     if (m_indexID)
@@ -418,7 +418,7 @@ bool SQLiteIDBCursor::advance(uint64_t count)
         if (!fetch())
             return false;
 
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+        RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
         ASSERT(!m_fetchedRecords.first().errored);
         if (m_fetchedRecords.first().completed)
             break;
@@ -609,7 +609,7 @@ bool SQLiteIDBCursor::iterate(const IDBKeyData& targetKey, const IDBKeyData& tar
     ASSERT(m_statement);
 
     bool result = advance(1);
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
 
     // Iterating with no key is equivalent to advancing 1 step.
     if (targetKey.isNull() || !result)
@@ -650,37 +650,37 @@ bool SQLiteIDBCursor::iterate(const IDBKeyData& targetKey, const IDBKeyData& tar
 
 const IDBKeyData& SQLiteIDBCursor::currentKey() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
     return m_fetchedRecords.first().record.key;
 }
 
 const IDBKeyData& SQLiteIDBCursor::currentPrimaryKey() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
     return m_fetchedRecords.first().record.primaryKey;
 }
 
 const IDBValue& SQLiteIDBCursor::currentValue() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
     return m_fetchedRecords.first().record.value;
 }
 
 bool SQLiteIDBCursor::didComplete() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
     return m_fetchedRecords.first().completed;
 }
 
 bool SQLiteIDBCursor::didError() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
     return m_fetchedRecords.first().errored;
 }
 
 int64_t SQLiteIDBCursor::currentRecordRowID() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_fetchedRecords.isEmpty());
+    RELEASE_ASSERT(!m_fetchedRecords.isEmpty());
     return m_fetchedRecords.first().rowID;
 }
 

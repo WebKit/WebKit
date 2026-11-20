@@ -150,7 +150,7 @@ ExceptionOr<void> AudioParamTimeline::insertEvent(ParamEvent&& event)
     if (!isValid)
         return { };
         
-    ASSERT_WITH_SECURITY_IMPLICATION(m_eventsLock.isLocked());
+    RELEASE_ASSERT(m_eventsLock.isLocked());
 
     unsigned i = 0;
     auto insertTime = event.time();

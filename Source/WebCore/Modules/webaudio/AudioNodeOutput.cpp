@@ -53,7 +53,7 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
 void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
 {
     ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels);
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     m_desiredNumberOfChannels = numberOfChannels;
 
@@ -87,7 +87,7 @@ void AudioNodeOutput::updateRenderingState()
 
 void AudioNodeOutput::updateNumberOfChannels()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isAudioThread() && protect(context())->isGraphOwner());
 
     if (m_numberOfChannels != m_desiredNumberOfChannels) {
         m_numberOfChannels = m_desiredNumberOfChannels;
@@ -98,7 +98,7 @@ void AudioNodeOutput::updateNumberOfChannels()
 
 void AudioNodeOutput::propagateChannelCount()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isAudioThread() && protect(context())->isGraphOwner());
     
     if (isChannelCountKnown()) {
         // Announce to any nodes we're connected to that we changed our channel count for its input.
@@ -146,7 +146,7 @@ unsigned AudioNodeOutput::paramFanOutCount()
 
 void AudioNodeOutput::addInput(AudioNodeInput* input)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     ASSERT(input);
     if (!input)
@@ -157,7 +157,7 @@ void AudioNodeOutput::addInput(AudioNodeInput* input)
 
 void AudioNodeOutput::removeInput(AudioNodeInput* input)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     ASSERT(input);
     if (!input)
@@ -176,7 +176,7 @@ void AudioNodeOutput::forEachInputNode(NOESCAPE const Function<void(AudioNode&)>
 
 void AudioNodeOutput::disconnectAllInputs()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
     
     // AudioNodeInput::disconnect() changes m_inputs by calling removeInput().
     while (!m_inputs.isEmpty()) {
@@ -187,7 +187,7 @@ void AudioNodeOutput::disconnectAllInputs()
 
 void AudioNodeOutput::addParam(AudioParam* param)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     ASSERT(param);
     if (param)
@@ -196,7 +196,7 @@ void AudioNodeOutput::addParam(AudioParam* param)
 
 void AudioNodeOutput::removeParam(AudioParam* param)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     ASSERT(param);
     if (param)
@@ -205,7 +205,7 @@ void AudioNodeOutput::removeParam(AudioParam* param)
 
 void AudioNodeOutput::disconnectAllParams()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     // AudioParam::disconnect() changes m_params by calling removeParam().
     while (!m_params.isEmpty()) {
@@ -222,7 +222,7 @@ void AudioNodeOutput::disconnectAll()
 
 void AudioNodeOutput::disable()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     if (m_isEnabled) {
         m_isEnabled = false;
@@ -233,7 +233,7 @@ void AudioNodeOutput::disable()
 
 void AudioNodeOutput::enable()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     if (!m_isEnabled) {
         m_isEnabled = true;

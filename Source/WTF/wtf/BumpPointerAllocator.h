@@ -94,7 +94,7 @@ private:
     // Placement operator new, returns the last 'size' bytes of allocation for use as this.
     void* operator new(size_t size, const PageAllocation& allocation)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(size < allocation.size());
+        RELEASE_ASSERT(size < allocation.size());
         return reinterpret_cast<char*>(reinterpret_cast<intptr_t>(allocation.base()) + allocation.size()) - size;
     }
 
@@ -171,7 +171,7 @@ private:
             // 
             void* current = pool->m_current;
             void* allocationEnd = static_cast<char*>(current) + size;
-            ASSERT_WITH_SECURITY_IMPLICATION(allocationEnd > current); // check for overflow
+            RELEASE_ASSERT(allocationEnd > current); // check for overflow
             if (allocationEnd <= static_cast<void*>(pool))
                 return pool;
 

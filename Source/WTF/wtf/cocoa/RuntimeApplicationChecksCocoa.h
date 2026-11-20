@@ -162,13 +162,13 @@ enum class SDKAlignedBehavior {
 
 using SDKAlignedBehaviors = WTF::BitSet<static_cast<size_t>(SDKAlignedBehavior::NumberOfBehaviors), uint32_t>;
 
-WTF_EXPORT_PRIVATE const SDKAlignedBehaviors& sdkAlignedBehaviors();
+NODELETE WTF_EXPORT_PRIVATE const SDKAlignedBehaviors& sdkAlignedBehaviors();
 NODELETE WTF_EXPORT_PRIVATE void setSDKAlignedBehaviors(SDKAlignedBehaviors);
 
 WTF_EXPORT_PRIVATE void enableAllSDKAlignedBehaviors();
 NODELETE WTF_EXPORT_PRIVATE void disableAllSDKAlignedBehaviors();
 
-WTF_EXPORT_PRIVATE bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior);
+NODELETE WTF_EXPORT_PRIVATE bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior);
 
 NODELETE WTF_EXPORT_PRIVATE bool processIsExtension();
 NODELETE WTF_EXPORT_PRIVATE void setProcessIsExtension(bool);

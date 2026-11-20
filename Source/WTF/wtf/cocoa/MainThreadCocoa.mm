@@ -93,7 +93,7 @@ void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)())
 
 #if USE(WEB_THREAD)
 
-static bool webThreadIsUninitializedOrLockedOrDisabled()
+NODELETE SUPPRESS_NODELETE static bool webThreadIsUninitializedOrLockedOrDisabled()
 {
     return !WebCoreWebThreadIsLockedOrDisabled || WebCoreWebThreadIsLockedOrDisabled();
 }

@@ -301,7 +301,7 @@ private:
 
 SQLiteStatementAutoResetScope PushDatabase::Storage::cachedStatement(ASCIILiteral query)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
+    RELEASE_ASSERT(!RunLoop::isMain());
 
     auto it = m_statements.find(query);
     if (it != m_statements.end())

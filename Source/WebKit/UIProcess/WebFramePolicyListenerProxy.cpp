@@ -54,7 +54,7 @@ WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
 
 void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     if (m_policyResult && m_doneWaitingForSafeBrowsing && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
         if (m_reply)
@@ -65,7 +65,7 @@ void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(std::optional<N
 
 void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
     if (m_policyResult && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, protect(m_policyResult->first), m_policyResult->second, *m_isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
@@ -76,7 +76,7 @@ void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults()
 
 void WebFramePolicyListenerProxy::didReceiveInitialLinkDecorationFilteringData()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_doneWaitingForLinkDecorationFilteringData);
 
     if (m_policyResult && m_isNavigatingToAppBoundDomain && m_doneWaitingForSafeBrowsing && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
@@ -90,7 +90,7 @@ void WebFramePolicyListenerProxy::didReceiveInitialLinkDecorationFilteringData()
 
 void WebFramePolicyListenerProxy::didReceiveSiteHasStorageResults()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_doneWaitingForSiteHasStorage);
 
     if (m_policyResult && m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForEnhancedSecurityLink) {
@@ -104,7 +104,7 @@ void WebFramePolicyListenerProxy::didReceiveSiteHasStorageResults()
 
 void WebFramePolicyListenerProxy::didReceiveEnhancedSecurityLinkResults()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_doneWaitingForEnhancedSecurityLink);
 
     if (m_policyResult && m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage) {

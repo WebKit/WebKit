@@ -423,7 +423,7 @@ private:
     
     NEVER_INLINE void copyFromOutOfLine(const TinyPtrSet& other)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(!other.isThin() && other.m_pointer != reservedValue);
+        RELEASE_ASSERT(!other.isThin() && other.m_pointer != reservedValue);
         OutOfLineList* otherList = other.list();
         OutOfLineList* myList = OutOfLineList::create(otherList->m_length);
         myList->m_length = otherList->m_length;

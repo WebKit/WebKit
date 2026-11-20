@@ -111,7 +111,7 @@ static bool isSampleBufferVideoRenderer(id object)
 
 - (void)beginObservingVideoRenderer:(WebSampleBufferVideoRendering *)renderer
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(!_videoRenderers.contains(renderer));
 
     _videoRenderers.append(renderer);
@@ -126,7 +126,7 @@ static bool isSampleBufferVideoRenderer(id object)
 
 - (void)stopObservingVideoRenderer:(WebSampleBufferVideoRendering *)renderer
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(_videoRenderers.contains(renderer));
 
     [renderer removeObserver:self forKeyPath:errorKeyPath];
@@ -142,7 +142,7 @@ static bool isSampleBufferVideoRenderer(id object)
 
 - (void)beginObservingAudioRenderer:(AVSampleBufferAudioRenderer *)renderer
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(!_audioRenderers.contains(renderer));
 
     _audioRenderers.append(renderer);
@@ -152,7 +152,7 @@ static bool isSampleBufferVideoRenderer(id object)
 
 - (void)stopObservingAudioRenderer:(AVSampleBufferAudioRenderer *)renderer
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     ASSERT(_audioRenderers.contains(renderer));
 
     [renderer removeObserver:self forKeyPath:errorKeyPath];

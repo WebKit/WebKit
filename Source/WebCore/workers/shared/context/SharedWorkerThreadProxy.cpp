@@ -159,7 +159,7 @@ void SharedWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
 
 void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!isMainThread());
+    RELEASE_ASSERT(!isMainThread());
     if (!m_workerThread->isInStaticScriptEvaluation())
         return;
 
@@ -186,7 +186,7 @@ void SharedWorkerThreadProxy::reportErrorToWorkerObject(const String& errorMessa
 
 RefPtr<CacheStorageConnection> SharedWorkerThreadProxy::createCacheStorageConnection()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (!m_cacheStorageConnection)
         lazyInitialize(m_cacheStorageConnection, Ref { m_cacheStorageProvider.get() }->createCacheStorageConnection());
     return m_cacheStorageConnection;
@@ -267,7 +267,7 @@ void SharedWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
 
 RefPtr<FileSystemStorageConnection> SharedWorkerThreadProxy::createFileSystemStorageConnection()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (RefPtr storageConnection = m_document->storageConnection())
         return storageConnection->fileSystemStorageConnection();
     return nullptr;

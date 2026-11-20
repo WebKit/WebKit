@@ -127,7 +127,7 @@ void JSDOMGlobalObject::destroy(JSCell* cell)
 JSC_DEFINE_HOST_FUNCTION(makeThisTypeErrorForBuiltins, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 2);
+    RELEASE_ASSERT(callFrame->argumentCount() == 2);
     VM& vm = globalObject->vm();
     DeferTermination deferScope(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -142,7 +142,7 @@ JSC_DEFINE_HOST_FUNCTION(makeThisTypeErrorForBuiltins, (JSGlobalObject* globalOb
 JSC_DEFINE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 2);
+    RELEASE_ASSERT(callFrame->argumentCount() == 2);
     VM& vm = globalObject->vm();
     DeferTermination deferScope(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -160,7 +160,7 @@ JSC_DEFINE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins, (JSGlobalObject* global
 JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 2);
+    RELEASE_ASSERT(callFrame->argumentCount() == 2);
 
     auto& vm = globalObject->vm();
     DeferTermination deferScope(vm);
@@ -185,7 +185,7 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
 JSC_DEFINE_HOST_FUNCTION(getInternalWritableStream, (JSGlobalObject*, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 1);
+    RELEASE_ASSERT(callFrame->argumentCount() == 1);
 
     auto* writableStream = dynamicDowncast<JSWritableStream>(callFrame->uncheckedArgument(0));
     if (!writableStream) [[unlikely]]
@@ -201,7 +201,7 @@ JSC_DEFINE_HOST_FUNCTION(getGlobalObject, (JSGlobalObject* globalObject, CallFra
 JSC_DEFINE_HOST_FUNCTION(getInternalReadableStream, (JSGlobalObject*, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 1);
+    RELEASE_ASSERT(callFrame->argumentCount() == 1);
 
     auto* readableStream = dynamicDowncast<JSReadableStream>(callFrame->uncheckedArgument(0));
     if (!readableStream) [[unlikely]]
@@ -215,7 +215,7 @@ JSC_DEFINE_HOST_FUNCTION(getInternalReadableStream, (JSGlobalObject*, CallFrame*
 JSC_DEFINE_HOST_FUNCTION(createWritableStreamFromInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 1);
+    RELEASE_ASSERT(callFrame->argumentCount() == 1);
     ASSERT(callFrame->uncheckedArgument(0).isObject());
 
     auto* jsDOMGlobalObject = downcast<JSDOMGlobalObject>(globalObject);
@@ -226,7 +226,7 @@ JSC_DEFINE_HOST_FUNCTION(createWritableStreamFromInternal, (JSGlobalObject* glob
 JSC_DEFINE_HOST_FUNCTION(addAbortAlgorithmToSignal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 2);
+    RELEASE_ASSERT(callFrame->argumentCount() == 2);
 
     auto* abortSignal = dynamicDowncast<JSAbortSignal>(callFrame->uncheckedArgument(0));
     if (!abortSignal) [[unlikely]]
@@ -242,7 +242,7 @@ JSC_DEFINE_HOST_FUNCTION(addAbortAlgorithmToSignal, (JSGlobalObject* globalObjec
 JSC_DEFINE_HOST_FUNCTION(removeAbortAlgorithmFromSignal, (JSGlobalObject*, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 2);
+    RELEASE_ASSERT(callFrame->argumentCount() == 2);
 
     auto* abortSignal = dynamicDowncast<JSAbortSignal>(callFrame->uncheckedArgument(0));
     if (!abortSignal) [[unlikely]]
@@ -254,7 +254,7 @@ JSC_DEFINE_HOST_FUNCTION(removeAbortAlgorithmFromSignal, (JSGlobalObject*, CallF
 
 JSC_DEFINE_HOST_FUNCTION(isAbortSignal, (JSGlobalObject*, CallFrame* callFrame))
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 1);
+    RELEASE_ASSERT(callFrame->argumentCount() == 1);
     return JSValue::encode(jsBoolean(callFrame->uncheckedArgument(0).inherits<JSAbortSignal>()));
 }
 
@@ -267,7 +267,7 @@ JSC_DEFINE_HOST_FUNCTION(createAbortSignal, (JSGlobalObject* globalObject, CallF
 JSC_DEFINE_HOST_FUNCTION(signalAbort, (JSGlobalObject*, CallFrame* callFrame))
 {
     ASSERT(callFrame);
-    ASSERT_WITH_SECURITY_IMPLICATION(callFrame->argumentCount() == 2);
+    RELEASE_ASSERT(callFrame->argumentCount() == 2);
 
     auto* abortSignal = dynamicDowncast<JSAbortSignal>(callFrame->uncheckedArgument(0));
     if (abortSignal) [[unlikely]]

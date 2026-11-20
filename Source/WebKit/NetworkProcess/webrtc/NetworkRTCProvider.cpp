@@ -232,7 +232,7 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
     }
 
     WebCore::DNSCompletionHandler completionHandler = [connection = m_connection, identifier](auto&& result) {
-        ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+        RELEASE_ASSERT(isMainRunLoop());
         if (!connection)
             return;
         RefPtr protectedConnection = connection.get();

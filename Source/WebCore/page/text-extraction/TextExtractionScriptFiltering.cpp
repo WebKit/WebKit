@@ -56,7 +56,7 @@ using namespace JSC;
 
 Ref<Page> createScriptFilteringPage()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     auto configuration = pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
     configuration.allowedNetworkHosts = MemoryCompactLookupOnlyRobinHoodHashSet<String> { };
@@ -71,7 +71,7 @@ Ref<Page> createScriptFilteringPage()
 
 void applyScriptFilteringRules(const String& input, const URL& documentURL, const Vector<FilterRule>& rules, Page& filterPage, CompletionHandler<void(const String&)>&& completion)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (rules.isEmpty())
         return completion(input);

@@ -54,7 +54,7 @@ AudioSummingJunction::~AudioSummingJunction()
 void AudioSummingJunction::markRenderingStateAsDirty()
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
     if (!m_renderingStateNeedUpdating && canUpdateState()) {
         protect(context())->markSummingJunctionDirty(this);
         m_renderingStateNeedUpdating = true;
@@ -64,7 +64,7 @@ void AudioSummingJunction::markRenderingStateAsDirty()
 bool AudioSummingJunction::addOutput(AudioNodeOutput& output)
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
     if (!m_outputs.add(&output).isNewEntry)
         return false;
 
@@ -80,7 +80,7 @@ bool AudioSummingJunction::addOutput(AudioNodeOutput& output)
 bool AudioSummingJunction::removeOutput(AudioNodeOutput& output)
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isGraphOwner());
 
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
@@ -101,7 +101,7 @@ bool AudioSummingJunction::removeOutput(AudioNodeOutput& output)
 void AudioSummingJunction::updateRenderingState()
 {
     ASSERT(context());
-    ASSERT_WITH_SECURITY_IMPLICATION(context()->isAudioThread() && context()->isGraphOwner());
+    RELEASE_ASSERT(protect(context())->isAudioThread() && protect(context())->isGraphOwner());
 
     if (m_renderingStateNeedUpdating && canUpdateState()) {
         // Copy from m_outputs to m_renderingOutputs.

@@ -510,7 +510,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
 #if HAVE(SAFE_BROWSING)
 void WebPageProxy::completeSafeBrowsingCheckForModals(bool userProceeded)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
 
     m_isSafeBrowsingCheckInProgress = false;
 
@@ -522,7 +522,7 @@ void WebPageProxy::completeSafeBrowsingCheckForModals(bool userProceeded)
 
 void WebPageProxy::drainDeferredModalsForNewNavigation()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
     purgeQueuedModalDialogs();
 
     if (m_isSafeBrowsingCheckInProgress) {

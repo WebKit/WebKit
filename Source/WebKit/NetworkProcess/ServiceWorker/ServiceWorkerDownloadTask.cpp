@@ -76,7 +76,7 @@ void ServiceWorkerDownloadTask::startListeningForIPC()
 
 void ServiceWorkerDownloadTask::close()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
+    RELEASE_ASSERT(isMainRunLoop());
 
     if (RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get()) {
         protect(serviceWorkerConnection->ipcConnection())->removeMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());

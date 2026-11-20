@@ -5175,7 +5175,7 @@ SocketProvider* Document::socketProvider()
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemoteHandlerConnection()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     RefPtr page = this->page();
     if (!page)
         return nullptr;
@@ -7376,7 +7376,7 @@ void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 
 void Document::dispatchWindowLoadEvent()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    RELEASE_ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     if (!m_domWindow)
         return;
     protect(window())->dispatchLoadEvent();
@@ -8290,7 +8290,7 @@ void Document::applyPendingXSLTransformsTimerFired()
         return;
 
     m_hasPendingXSLTransforms = false;
-    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    RELEASE_ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     for (auto& processingInstruction : styleScope().collectXSLTransforms()) {
         ASSERT(processingInstruction->isXSL());
 

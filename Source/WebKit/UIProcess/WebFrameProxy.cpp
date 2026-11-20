@@ -148,7 +148,7 @@ private:
 
 NODELETE static HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& allFrames()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>> map;
     return map.get();
 }

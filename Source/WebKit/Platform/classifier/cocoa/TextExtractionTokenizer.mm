@@ -68,7 +68,7 @@ void TextExtractionTokenizer::prewarm()
 
 void TextExtractionTokenizer::loadEmbeddingsIfNeeded()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     if (m_loadAttempted)
         return;
     m_loadAttempted = true;

@@ -77,7 +77,7 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
 
 static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecutionContext& context, DOMFileSystem& fileSystem, ExceptionOr<Vector<ListedChild>>&& listedChildren, const String& parentVirtualPath)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (listedChildren.hasException())
         return listedChildren.releaseException();
 

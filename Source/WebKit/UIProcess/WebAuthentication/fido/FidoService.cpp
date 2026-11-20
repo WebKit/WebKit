@@ -56,7 +56,7 @@ void FidoService::getInfo(Ref<CtapDriver>&& driver)
 {
     // Get authenticator info from the device.
     driver->transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetInfo), [weakThis = WeakPtr { *this }, weakDriver = WeakPtr { driver.get() }] (Vector<uint8_t>&& response) mutable {
-        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+        RELEASE_ASSERT(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         RefPtr driver = weakDriver.get();
         if (protectedThis && driver)

@@ -47,7 +47,7 @@ namespace WebCore {
 
 void prefetchDNS(const String& hostname)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (hostname.isEmpty())
         return;
 
@@ -56,7 +56,7 @@ void prefetchDNS(const String& hostname)
 
 void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     if (hostname.isEmpty())
         return completionHandler(makeUnexpected(DNSError::CannotResolve));
 

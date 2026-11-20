@@ -459,7 +459,7 @@ bool HTMLCanvasElement::is2dType(const String& type)
 CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
 {
     ASSERT_UNUSED(HTMLCanvasElement::is2dType(type), type);
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_context);
+    RELEASE_ASSERT(!m_context);
 
     m_context = CanvasRenderingContext2D::create(*this, WTF::move(settings), document().inQuirksMode());
     if (!m_context)
@@ -512,7 +512,7 @@ WebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
 
 WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion type, WebGLContextAttributes&& attrs)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_context);
+    RELEASE_ASSERT(!m_context);
     if (!document().settings().webGLEnabled())
         return nullptr;
 
@@ -569,7 +569,7 @@ bool HTMLCanvasElement::isBitmapRendererType(const String& type)
 ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(const String& type, ImageBitmapRenderingContextSettings&& settings)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isBitmapRendererType(type));
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_context);
+    RELEASE_ASSERT(!m_context);
 
     auto context = ImageBitmapRenderingContext::create(*this, WTF::move(settings));
     WeakPtr weakContext = *context;
@@ -601,7 +601,7 @@ bool HTMLCanvasElement::isWebGPUType(const String& type)
 GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type, GPU* gpu)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_context);
+    RELEASE_ASSERT(!m_context);
 
     if (!document().settings().webGPUEnabled() || !gpu)
         return nullptr;

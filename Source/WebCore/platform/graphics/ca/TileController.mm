@@ -80,7 +80,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer, AllowScrollPe
 
 TileController::~TileController()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
 #if PLATFORM(IOS_FAMILY)
     tileControllerMemoryHandler().removeTileController(this);

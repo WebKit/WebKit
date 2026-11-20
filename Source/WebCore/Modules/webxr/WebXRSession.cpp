@@ -683,7 +683,7 @@ bool WebXRSession::frameShouldBeRendered() const
 
 void WebXRSession::requestFrameIfNeeded()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (m_ended)
         return;
@@ -795,7 +795,7 @@ void WebXRSession::initiateRoomCapture(DOMPromiseDeferred<void>&& promise)
 
 void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    RELEASE_ASSERT(isMainThread());
 
     if (m_ended)
         return;
