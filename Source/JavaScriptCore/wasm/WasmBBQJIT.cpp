@@ -42,8 +42,11 @@
 #include "JSWebAssemblyArrayInlines.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyStruct.h"
-#include "MacroAssembler.h"
+#include "LinkBuffer.h"
+#include "Options.h"
 #include "RegisterSet.h"
+#include "VM.h"
+#include "VMTraps.h"
 #include "WasmAddressType.h"
 #include "WasmBBQDisassembler.h"
 #include "WasmBaselineData.h"
@@ -3643,6 +3646,56 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, std::span<const TypedExpr
     return stackMap;
 }
 
+void BBQJIT::emitLoopStopCheck()
+{
+    static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
+    LoopTrapSite site;
+    site.bindings = copyBindings();
+    site.polling = Options::usePollingTraps();
+    if (site.polling) {
+        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), wasmScratchGPR);
+        m_jit.load32(CCallHelpers::Address(wasmScratchGPR, VM::offsetOfTrapsBits()), wasmScratchGPR);
+        site.taken.append(m_jit.branchTest32(CCallHelpers::NonZero, wasmScratchGPR, CCallHelpers::TrustedImm32(VMTraps::AsyncEvents)));
+    } else
+        site.patchPoint = m_jit.watchpointLabel();
+    site.resume = m_jit.label();
+    m_loopTrapSites.append(WTF::move(site));
+}
+
+void BBQJIT::emitLoopTrapHandlers()
+{
+    for (auto& site : m_loopTrapSites) {
+        if (site.polling)
+            site.taken.link(&m_jit);
+        auto stub = m_jit.label();
+        slowPathSpillBindings(site.bindings);
+        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), wasmScratchGPR);
+        m_jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(wasmScratchGPR);
+
+        m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+        m_jit.setupArguments<decltype(operationWasmLoopStopCheck)>(GPRInfo::wasmContextInstancePointer);
+        m_jit.callOperation<OperationPtrTag>(operationWasmLoopStopCheck);
+        auto keepGoing = m_jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR);
+        m_jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+        keepGoing.link(&m_jit);
+
+        if (!site.polling) {
+            Ref callee = m_callee;
+            auto patchPoint = site.patchPoint;
+            m_jit.move(TrustedImmPtr(callee.ptr()), wasmScratchGPR);
+            m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+            m_jit.setupArguments<decltype(operationWasmRestoreTrapPatchPoint)>(wasmScratchGPR);
+            m_jit.callOperation<OperationPtrTag>(operationWasmRestoreTrapPatchPoint);
+            m_jit.addLinkTask([patchPoint, stub, callee](LinkBuffer& linkBuffer) {
+                callee->addTrapPatchPoint(linkBuffer.locationOf<JSInternalPtrTag>(patchPoint), linkBuffer.locationOf<JSInternalPtrTag>(stub));
+            });
+        }
+
+        slowPathRestoreBindings(site.bindings);
+        m_jit.jump(site.resume);
+    }
+}
+
 void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, std::span<const TypedExpression> enclosingStack, unsigned loopIndex)
 {
     auto& tierUpCounter = m_callee.tierUpCounter();
@@ -3699,6 +3752,7 @@ void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, std::sp
     LOG_INDENT();
     result.startBlock(*this, args);
     result.setLoopLabel(m_jit.label());
+    emitLoopStopCheck();
 
     RELEASE_ASSERT(m_compilation->bbqLoopEntrypoints.size() == loopIndex);
     m_compilation->bbqLoopEntrypoints.append(result.loopLabel());
@@ -4251,6 +4305,8 @@ void BBQJIT::prepareForExceptions()
         JIT_COMMENT(m_jit, "Slow path end");
         m_jit.jump(returnLabel);
     }
+
+    emitLoopTrapHandlers();
 
     for (unsigned i = 0; i < numberOfExceptionTypes; ++i) {
         auto& jumps = m_exceptions[i];

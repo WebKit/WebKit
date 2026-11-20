@@ -41,6 +41,7 @@
 #include "VMManager.h"
 #include "VMTrapsInlines.h"
 #include "WaiterListManager.h"
+#include "WasmCallee.h"
 #include "Watchdog.h"
 #include <wtf/Condition.h>
 #include <wtf/ProcessID.h>
@@ -104,6 +105,11 @@ void VMTraps::tryInstallTrapBreakpoints(VMTraps::SignalContext& context, StackBo
     // to be able to do that without risking a deadlock.
     if (!isJITPC(trapPC) && !LLInt::isLLIntPC(trapPC))
         return;
+
+#if ENABLE(WEBASSEMBLY) && (ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT))
+    if (isJITPC(trapPC) && Wasm::OptimizingJITCallee::tryInstallTrapPatchPoints(context.framePointer, trapPC, stackBounds))
+        return;
+#endif
 
     CallFrame* callFrame = reinterpret_cast<CallFrame*>(context.framePointer);
 
