@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<p>request counter</p>
+<script src="/site-isolation/resources/tap-redispatch.js"></script>
+<script>
+// Counts the requests named by `?message=` that this frame's process receives, reports this frame's identifier to the
+// top frame, and answers questions about the count.
+const messageName = new URLSearchParams(location.search).get('message');
+const requestCount = window.IPC ? countRequestsAndForgeRedispatch(messageName) : () => 0;
+
+addEventListener('message', event => {
+    if (event.data?.type === 'get-request-count')
+        event.source.postMessage({ type: 'request-count', count: requestCount() }, '*');
+});
+
+window.top.postMessage({ type: 'counter-ready', frameID: window.IPC ? thisFrameIdentifier() : null }, '*');
+</script>
+</body>
+</html>

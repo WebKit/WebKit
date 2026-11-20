@@ -22327,15 +22327,8 @@ RefPtr<WebFrameProxy> WebPageProxy::frameForRemoteUserInputEventRedispatch(IPC::
     if (&sourceFrame->process() != replyingProcess.ptr())
         return nullptr;
 
-    Ref sourceLocalRoot = sourceFrame->rootFrame();
-    bool targetIsBelowSourceLocalRoot = false;
-    for (RefPtr ancestor = targetFrame->parentFrame(); ancestor; ancestor = ancestor->parentFrame()) {
-        if (ancestor == sourceLocalRoot.ptr()) {
-            targetIsBelowSourceLocalRoot = true;
-            break;
-        }
-    }
-    MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(targetIsBelowSourceLocalRoot, *replyingConnection, nullptr);
+    RefPtr targetParent = targetFrame->parentFrame();
+    MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(targetParent && targetParent->rootFrame().ptr() == sourceFrame->rootFrame().ptr(), *replyingConnection, nullptr);
 
     if (&targetFrame->process() == replyingProcess.ptr())
         return nullptr;
@@ -22512,9 +22505,9 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATIO
     template std::optional<IPC::AsyncReplyID> WebPageProxy::sendWithAsyncReplyToProcessContainingFrame<Messages::message, ReplyWithConnection<Messages::message>>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, ReplyWithConnection<Messages::message>&&, OptionSet<IPC::SendOption>)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::NavigateServiceWorkerClient);
 #if ENABLE(TWO_PHASE_CLICKS)
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::CommitPotentialTap);
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::PotentialTapAtPosition);
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::HandleDoubleTapForDoubleClickAtPoint);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::CommitPotentialTap);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::PotentialTapAtPosition);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::HandleDoubleTapForDoubleClickAtPoint);
 #endif
 #if PLATFORM(COCOA)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::PerformDictionaryLookupAtLocation);
@@ -22523,10 +22516,10 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(We
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectTextWithGranularityAtPoint);
 #endif
 #if PLATFORM(IOS_FAMILY)
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::AttemptSyntheticClick);
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::HandleTwoFingerTapAtPoint);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::AttemptSyntheticClick);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::HandleTwoFingerTapAtPoint);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::RequestEvasionRectsAboveSelection);
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::TapHighlightAtPosition);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::TapHighlightAtPosition);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::ShouldDismissKeyboardAfterTapAtPoint);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::UpdateSelectionWithTouches);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectWithTwoTouches);

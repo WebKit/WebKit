@@ -1,0 +1,4 @@
+main frame link
+
+Tests that the UI process rejects a tap highlight request's redispatch to the frame it was sent to.
+PASS

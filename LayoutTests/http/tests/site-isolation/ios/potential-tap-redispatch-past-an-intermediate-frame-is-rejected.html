@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true SiteIsolationSharedProcessEnabled=false ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/site-isolation/resources/tap-redispatch.js"></script>
+<script>
+// The IPC testing API exists only in debug and ASan builds; this test passes either way.
+const summary = "Tests that the UI process rejects a potential tap's redispatch to a frame two processes away, which would skip the process hosting the frame in between.";
+// The main frame's process answers as if the tap were over the innermost frame. Only the process hosting the middle
+// frame can say where its child frame is, and whether the tap reaches it at all.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+const counterReady = window.IPC ? counterFrameIdentifier() : null;
+
+async function runTest()
+{
+    if (!window.IPC || !window.testRunner) {
+        finishRedispatchTest(summary, "PASS");
+        return;
+    }
+
+    const forgedTargetFrameID = await counterReady;
+    const otherProcessRequestCount = () => requestCountIn(frames[0].frames[0]);
+    await UIHelper.ensurePresentationUpdate();
+    finishRedispatchTest(summary, await expectRedispatchIsRejected({
+        messageName: 'WebPage_PotentialTapAtPosition',
+        forgedTargetFrameID,
+        gesture: () => UIHelper.activateAt(50, 30),
+        otherProcessRequestCount,
+    }));
+}
+
+addEventListener('load', runTest);
+</script>
+<body style="margin: 0">
+<p style="margin: 0; height: 60px">main frame text</p>
+<iframe style="position: absolute; left: 0; top: 300px; width: 320px; height: 220px; border: none" src="http://localhost:8000/site-isolation/resources/redispatch-request-counter-middle-frame.html?message=WebPage_PotentialTapAtPosition"></iframe>
+<pre id="result"></pre>
+</body>
+</html>
