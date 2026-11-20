@@ -1889,3 +1889,35 @@ TEST(URLSchemeHandler, ModuleDescendantFetchDoesNotSendReferrer)
     // an HTTP(S) fetch gets a Referer header, and only those have the referrer policy applied to them.
     EXPECT_NULL(dependencyReferrer.get());
 }
+
+TEST(URLSchemeHandler, SubresourcesFromSecurePageAreNotMixedContent)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<link rel='stylesheet' href='secure-subresource://host/style.css'>"
+            "<script src='secure-subresource://host/script.js'></script>"
+            "<body onload='alert(window.scriptLoaded + \" \" + getComputedStyle(document.body).color)'>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        bool isStylesheet = [task.request.URL.path isEqualToString:@"/style.css"];
+        NSData *data = [isStylesheet ? @"body { color: rgb(0, 128, 0); }" : @"window.scriptLoaded = true;" dataUsingEncoding:NSUTF8StringEncoding];
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:isStylesheet ? @"text/css" : @"text/javascript" expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"secure-subresource"];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+
+    EXPECT_WK_STREQ("true rgb(0, 128, 0)", [webView _test_waitForAlert]);
+}
