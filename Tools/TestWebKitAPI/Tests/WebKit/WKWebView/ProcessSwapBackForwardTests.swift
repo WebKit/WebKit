@@ -239,6 +239,84 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    // Two tabs share a process pool and end up with suspended pages in the same process. Restoring one tab's suspended
+    // page must not drop the other tab's.
+    @Test
+    func crossTabSuspendedPagesInSameProcess() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/1.html") {
+                "<script>addEventListener('pageshow', event => { if (event.persisted) window.wasPersisted = true })</script>"
+            }
+
+            Route("/x.html") {
+                "plain"
+            }
+
+            Route("/b.html") {
+                "plain"
+            }
+
+            // The back/forward cache holds only two pages. A client redirect doesn't suspend c.com, so only the two
+            // suspended pages below take entries, and neither is evicted.
+            Route("/c.html") {
+                "<script>location.replace('https://www.a.com/x.html')</script>"
+            }
+
+            Route("/d.html") {
+                "plain"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.processPool = .processSwapping(webProcessCacheEnabled: false)
+            let frame = CGRect(x: 0, y: 0, width: 800, height: 600)
+            let (webViewA, navigationDelegateA) = webViewAndDelegate(
+                configuration: configuration,
+                frame: frame,
+                siteIsolationEnabled: false
+            )
+            let (webViewB, navigationDelegateB) = webViewAndDelegate(
+                configuration: configuration,
+                frame: frame,
+                siteIsolationEnabled: false
+            )
+
+            // Tab A: a.com/1 -> b.com. a.com/1 is suspended in its process.
+            webViewA.load(URLRequest(url: try #require(URL(string: "https://www.a.com/1.html"))))
+            try await navigationDelegateA.waitForDidFinishNavigation()
+            let suspendedProcessIdentifier = webViewA._webProcessIdentifier
+
+            webViewA.load(URLRequest(url: try #require(URL(string: "https://www.b.com/b.html"))))
+            try await navigationDelegateA.waitForDidFinishNavigation()
+            #expect(webViewA._webProcessIdentifier != suspendedProcessIdentifier)
+
+            // Tab B: c.com redirects to a.com/x, which reuses the suspended page's process.
+            webViewB.load(URLRequest(url: try #require(URL(string: "https://www.c.com/c.html"))))
+            try await navigationDelegateB.waitForDidFinishNavigation()
+            try await navigationDelegateB.waitForDidFinishNavigation()
+            #expect(webViewB.url?.absoluteString == "https://www.a.com/x.html")
+            #expect(webViewB._webProcessIdentifier == suspendedProcessIdentifier)
+
+            // Tab B: -> d.com suspends a.com/x in the same process.
+            webViewB.load(URLRequest(url: try #require(URL(string: "https://www.d.com/d.html"))))
+            try await navigationDelegateB.waitForDidFinishNavigation()
+            #expect(webViewB._webProcessIdentifier != suspendedProcessIdentifier)
+
+            // Tab B: going back restores a.com/x from its suspended page.
+            webViewB.goBack()
+            try await navigationDelegateB.waitForDidFinishNavigation()
+            #expect(webViewB._webProcessIdentifier == suspendedProcessIdentifier)
+            #expect(webViewB.url?.absoluteString == "https://www.a.com/x.html")
+
+            // Tab A: going back must still restore a.com/1 from its own suspended page.
+            webViewA.goBack()
+            try await navigationDelegateA.waitForDidFinishNavigation()
+            #expect(webViewA.url?.absoluteString == "https://www.a.com/1.html")
+            #expect(try await webViewA.callJavaScript(returning: Bool.self) { "return !!window.wasPersisted" })
+        }
+    }
+
     private static let crossOriginIsolation = [
         "Content-Type": "text/html",
         "Cross-Origin-Opener-Policy": "same-origin",
