@@ -400,7 +400,7 @@ static inline bool addTCCDSandboxExtension(Vector<SandboxExtension::Handle>& ext
 }
 #endif
 
-void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture)
+void GPUProcessProxy::updateSandboxAccess(OptionSet<CaptureSandboxAccess> access)
 {
     if (m_useMockCaptureDevices)
         return;
@@ -408,19 +408,19 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
 #if PLATFORM(COCOA)
     Vector<SandboxExtension::Handle> extensions;
 
-    if (allowVideoCapture && !m_hasSentCameraSandboxExtension && addCameraSandboxExtensions(extensions))
+    if (access.contains(CaptureSandboxAccess::Video) && !m_hasSentCameraSandboxExtension && addCameraSandboxExtensions(extensions))
         m_hasSentCameraSandboxExtension = true;
 
-    if (allowAudioCapture && !m_hasSentMicrophoneSandboxExtension && addMicrophoneSandboxExtension(extensions))
+    if (access.contains(CaptureSandboxAccess::Audio) && !m_hasSentMicrophoneSandboxExtension && addMicrophoneSandboxExtension(extensions))
         m_hasSentMicrophoneSandboxExtension = true;
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(protect(connection())->getAuditToken(), extensions))
+    if (access.contains(CaptureSandboxAccess::Display) && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(protect(connection())->getAuditToken(), extensions))
         m_hasSentDisplayCaptureSandboxExtension = true;
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    if ((allowAudioCapture || allowVideoCapture) && !m_hasSentTCCDSandboxExtension && addTCCDSandboxExtension(extensions))
+    if (access.containsAny({ CaptureSandboxAccess::Audio, CaptureSandboxAccess::Video }) && !m_hasSentTCCDSandboxExtension && addTCCDSandboxExtension(extensions))
         m_hasSentTCCDSandboxExtension = true;
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
 
@@ -434,7 +434,14 @@ void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVide
     if (allowAudioCapture)
         m_lastPageUsingMicrophone = pageIdentifier;
 
-    updateSandboxAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
+    OptionSet<CaptureSandboxAccess> access;
+    if (allowAudioCapture)
+        access.add(CaptureSandboxAccess::Audio);
+    if (allowVideoCapture)
+        access.add(CaptureSandboxAccess::Video);
+    if (allowDisplayCapture)
+        access.add(CaptureSandboxAccess::Display);
+    updateSandboxAccess(access);
     sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, willUseEchoCancellation, processID }, WTF::move(completionHandler));
 }
 

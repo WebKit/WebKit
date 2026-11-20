@@ -144,7 +144,7 @@ void DisplayCaptureSessionManager::showWindowOrScreenPicker(WebPageProxy& reques
     }
 
     Ref gpuProcess = protect(requestingPage.configuration().processPool())->ensureGPUProcess();
-    gpuProcess->updateSandboxAccess(false, false, true);
+    gpuProcess->updateSandboxAccess(CaptureSandboxAccess::Display);
     gpuProcess->promptForGetDisplayMedia(WebCore::DisplayCapturePromptType::UserChoose, WTF::move(completionHandler));
 }
 #endif // HAVE(SCREEN_CAPTURE_KIT)
@@ -264,7 +264,7 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
         }
 
         Ref gpuProcess = protect(page.configuration().processPool())->ensureGPUProcess();
-        gpuProcess->updateSandboxAccess(false, false, true);
+        gpuProcess->updateSandboxAccess(CaptureSandboxAccess::Display);
         gpuProcess->promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTF::move(completionHandler));
         return;
     }
