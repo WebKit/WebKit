@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Anchor Positioning Module Level 1: anchor-name from a higher tree can be referenced from a nested shadow tree</title>
+  <link rel="help" href="https://drafts.csswg.org/css-shadow-1/#tree-scoped-name">
+  <meta name="assert" content="A positioned element nested two shadow trees deep can reference an anchor-name defined in the document tree.">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+
+  <style>
+    #host {
+      anchor-name: --higher-anchor;
+      background: lightgray;
+      block-size: 100px;
+      inline-size: 200px;
+      margin: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div id="host">
+    <template shadowrootmode="open">
+      <div id="middle">
+        <template shadowrootmode="open">
+          <style>
+            #anchored {
+              background: green;
+              block-size: 50px;
+              inline-size: 50px;
+              inset-block-start: anchor(--higher-anchor end, 37px);
+              inset-inline-start: anchor(--higher-anchor end, 37px);
+              position: absolute;
+            }
+          </style>
+          <div id="anchored"></div>
+        </template>
+      </div>
+    </template>
+  </div>
+
+  <script>
+    test(() => {
+      const host = document.getElementById("host");
+      const middle = host.shadowRoot.getElementById("middle");
+      const anchored = middle.shadowRoot.getElementById("anchored");
+
+      const hostRect = host.getBoundingClientRect();
+      const anchoredRect = anchored.getBoundingClientRect();
+
+      // A loosely matched tree-scoped name is visible to references in descendant
+      // trees, however deeply nested, so this resolves against #host rather than
+      // using the 37px fallback.
+      assert_equals(anchoredRect.top, hostRect.bottom,
+        "positioned element two shadow trees deep should resolve anchor-name from the document tree");
+      assert_equals(anchoredRect.left, hostRect.right,
+        "positioned element two shadow trees deep should resolve anchor-name from the document tree");
+    }, "anchor() nested two shadow trees deep can reference an anchor-name defined in a higher tree");
+  </script>
+</body>
+</html>
