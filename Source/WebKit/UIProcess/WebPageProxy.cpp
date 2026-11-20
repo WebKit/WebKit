@@ -21489,7 +21489,9 @@ void WebPageProxy::completeTextManipulation(const Vector<TextManipulationItem>& 
 void WebPageProxy::setCORSDisablingPatterns(Vector<String>&& patterns)
 {
     m_corsDisablingPatterns = WTF::move(patterns);
-    send(Messages::WebPage::UpdateCORSDisablingPatterns(m_corsDisablingPatterns));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::UpdateCORSDisablingPatterns(m_corsDisablingPatterns), pageID);
+    });
     sendCORSDisablingPatternsToNetworkProcessIfNecessary();
 }
 
