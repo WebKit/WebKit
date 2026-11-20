@@ -83,11 +83,11 @@ private:
 
     GridLanesResult placeGridLanesItems(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
     void setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
-    StackingAxisPlacement insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
+    void layoutGridItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
     LayoutUnit calculateGridLanesIntrinsicLogicalWidth(RenderBox&, Phase);
 
     LayoutUnit stackingAxisMarginBoxForItem(const RenderBox& gridItem);
-    StackingAxisPlacement updateRunningPositions(const RenderBox& gridItem, const GridArea&);
+    StackingAxisPlacement updateRunningPositions(const GridArea&, LayoutUnit marginBoxSize);
     NODELETE LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
     bool tracksAcceptAutoPlacedItem(unsigned startLine, unsigned trackCount) const;
     NODELETE inline Style::GridTrackSizingDirection gridAxisDirection() const;
