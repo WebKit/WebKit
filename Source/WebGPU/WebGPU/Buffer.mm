@@ -654,6 +654,8 @@ void Buffer::takeSlowIndexValidationPath(CommandBuffer& commandBuffer, uint32_t 
     Ref queue = m_device->getQueue();
     queue->waitForAllCommitedWorkToComplete();
     queue->synchronizeResourceAndWait(m_buffer);
+    if (vertexCount == RenderBundleEncoder::invalidVertexInstanceCount)
+        vertexCount -= primitiveOffset;
     bool verified = false;
     if (indexType == MTLIndexTypeUInt16)
         verified = verifyIndexBufferData<uint16_t>(m_buffer, firstIndex, indexCount, vertexCount, primitiveOffset);

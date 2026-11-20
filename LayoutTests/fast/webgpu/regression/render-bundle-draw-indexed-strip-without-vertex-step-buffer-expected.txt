@@ -1,0 +1,11 @@
+A render bundle's strip drawIndexed() with no vertex-step buffer must render its in-range indices.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS instanceStepPixels is "20,255,0,255 20,255,0,255 20,255,0,255 20,255,0,255"
+PASS noBuffersPixels is "20,255,0,255 20,255,0,255 20,255,0,255 20,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

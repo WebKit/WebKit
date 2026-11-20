@@ -1528,7 +1528,10 @@ void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>
                     id<MTLRenderPipelineState> renderPipelineState = protect(m_device)->icbCommandClampPipeline(data.indexType, m_rasterSampleCount);
                     id<MTLBuffer> indirectCommandBufferContainer = icb.indirectCommandBufferContainer;
                     CHECKED_SET_PSO(commandEncoder, m_device, renderPipelineState);
-                    setVertexBytes(commandEncoder, asByteSpan(data.indexData), 0);
+                    auto clampIndexData = data.indexData;
+                    if (minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount)
+                        clampIndexData.minVertexCount -= primitiveOffset;
+                    setVertexBytes(commandEncoder, asByteSpan(clampIndexData), 0);
                     m_parentEncoder->addBuffer(indirectCommandBufferContainer);
                     setVertexBuffer(commandEncoder, indirectCommandBufferContainer, 0, 1);
                     m_parentEncoder->addBuffer(indexBuffer->buffer());

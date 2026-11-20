@@ -1,0 +1,11 @@
+A finished but unsubmitted strip drawIndexed() with no vertex-step buffer must render the indices written to its index buffer before submit().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS primedPixels is "4,255,0,255 4,255,0,255 4,255,0,255 4,255,0,255"
+PASS pendingPixels is "20,255,0,255 20,255,0,255 20,255,0,255 20,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
