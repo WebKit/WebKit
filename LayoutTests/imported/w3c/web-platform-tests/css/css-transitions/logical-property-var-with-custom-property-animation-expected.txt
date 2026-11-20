@@ -1,0 +1,5 @@
+
+PASS max-inline-size: var() transitions while an animation sets a custom property
+PASS max-width: var() transitions while an animation sets a custom property
+PASS max-inline-size: var() transitions while an animation sets a non-custom property
+

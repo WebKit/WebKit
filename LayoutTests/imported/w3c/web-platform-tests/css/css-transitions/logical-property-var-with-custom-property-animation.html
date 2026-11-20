@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A transition on a direction-aware property whose value uses var() is not overridden by an animation of a custom property</title>
+<link rel="help" href="https://drafts.csswg.org/css-transitions-1/#starting">
+<link rel="help" href="https://drafts.csswg.org/css-writing-modes-4/#logical-to-physical">
+<meta name="assert" content="An animation that sets a custom property must not cause a direction-aware declaration using var() to be re-applied over a running transition for the corresponding physical property.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<style>
+  .box {
+    --cap: 120px;
+    transition: max-inline-size 1s linear, max-width 1s linear;
+  }
+  .box.go { --cap: 480px; }
+
+  .logical-var { max-inline-size: var(--cap); }
+  .logical-var.go { animation: set-custom-property 1s forwards; }
+
+  .physical-var { max-width: var(--cap); }
+  .physical-var.go { animation: set-custom-property 1s forwards; }
+
+  .logical-var-no-custom { max-inline-size: var(--cap); }
+  .logical-var-no-custom.go { animation: set-opacity 1s forwards; }
+
+  @keyframes set-custom-property { to { --anything: 1; } }
+  @keyframes set-opacity { to { opacity: 1; } }
+</style>
+
+<div class="box logical-var" id="logicalVar"></div>
+<div class="box physical-var" id="physicalVar"></div>
+<div class="box logical-var-no-custom" id="logicalVarNoCustom"></div>
+
+<script>
+function maxWidthAtHalfway(element) {
+  getComputedStyle(element).maxWidth;
+  element.classList.add("go");
+  getComputedStyle(element).maxWidth;
+
+  const transition = element.getAnimations().find(animation => animation instanceof CSSTransition
+    && animation.transitionProperty === "max-width");
+  assert_true(!!transition, "a transition for max-width should be running");
+
+  // Pause before seeking: seeking alone leaves the transition playing, so a slow frame
+  // could let it finish before the value is read.
+  transition.pause();
+  transition.currentTime = 500;
+  return getComputedStyle(element).maxWidth;
+}
+
+test(() => {
+  assert_equals(maxWidthAtHalfway(logicalVar), "300px");
+}, "max-inline-size: var() transitions while an animation sets a custom property");
+
+test(() => {
+  assert_equals(maxWidthAtHalfway(physicalVar), "300px");
+}, "max-width: var() transitions while an animation sets a custom property");
+
+test(() => {
+  assert_equals(maxWidthAtHalfway(logicalVarNoCustom), "300px");
+}, "max-inline-size: var() transitions while an animation sets a non-custom property");
+</script>
