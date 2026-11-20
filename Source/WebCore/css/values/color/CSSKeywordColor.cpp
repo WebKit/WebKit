@@ -132,6 +132,8 @@ WebCore::Color createColor(const KeywordColor& unresolved, PlatformColorResoluti
         return state.webkitFocusRingColor();
     case CSSValueID::Currentcolor:
         return state.currentColor();
+    case CSSValueID::Accentcolor:
+        return state.accentColor();
     default:
         return colorFromKeyword(unresolved.valueID, state.keywordOptions);
     }

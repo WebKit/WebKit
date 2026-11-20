@@ -262,6 +262,7 @@
                 "color-property": true,
                 "color-property-traits-color-custom": true,
                 "color-property-traits-visited-link-color-custom": true,
+                "medium-priority": true,
                 "parser-grammar": "auto | <color>"
             },
             "specification": {

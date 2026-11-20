@@ -25,5 +25,6 @@ PASS Invalid color: PILE OF POO (U+1F4A9)
 PASS Valid color: hsl(150deg 100 53.5)
 PASS Valid color: color(display-p3 .5 0 0)
 PASS Valid color: color(display-p3 1 0 0)
+PASS Valid color: AccentColor
 PASS System colors are parsed
 

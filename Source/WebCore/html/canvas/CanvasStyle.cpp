@@ -65,10 +65,21 @@ public:
     {
     }
 
+    Color accentColor() const final;
     Color currentColor() const final;
 
     const Ref<HTMLCanvasElement> m_canvasElement;
 };
+
+Color CanvasStyleColorResolutionDelegate::accentColor() const
+{
+    protect(m_canvasElement->document())->updateStyleIfNeeded();
+
+    if (CheckedPtr computedStyle = m_canvasElement->computedStyle())
+        return computedStyle->accentColorResolvingCurrentColor();
+
+    return { };
+}
 
 Color CanvasStyleColorResolutionDelegate::currentColor() const
 {

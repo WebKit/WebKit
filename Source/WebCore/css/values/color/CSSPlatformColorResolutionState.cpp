@@ -31,6 +31,11 @@ namespace CSS {
 
 PlatformColorResolutionDelegate::~PlatformColorResolutionDelegate() = default;
 
+WebCore::Color PlatformColorResolutionDelegate::accentColor() const
+{
+    return { };
+}
+
 WebCore::Color PlatformColorResolutionDelegate::currentColor() const
 {
     return { };

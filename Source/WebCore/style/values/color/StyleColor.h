@@ -37,7 +37,6 @@
 #include <WebCore/CSSColorType.h>
 #include <WebCore/CSSValueKeywords.h>
 #include <WebCore/StyleColorOptions.h>
-#include <WebCore/StyleCurrentAccentColor.h>
 #include <WebCore/StyleCurrentColor.h>
 #include <WebCore/StyleResolvedColor.h>
 #include <wtf/Markable.h>
@@ -75,7 +74,6 @@ private:
     using ColorKind = Variant<
         EmptyToken,
         ResolvedColor,
-        CurrentAccentColor,
         CurrentColor,
         UniqueRef<ColorLayers>,
         UniqueRef<ColorMix>,
@@ -117,7 +115,6 @@ public:
     Color(CSS::Keyword::White);
 
     WEBCORE_EXPORT Color(ResolvedColor&&);
-    Color(CurrentAccentColor&&);
     WEBCORE_EXPORT Color(CurrentColor&&);
     Color(ColorLayers&&);
     Color(ColorMix&&);
@@ -240,9 +237,6 @@ template<typename... F> decltype(auto) Color::switchOn(NOESCAPE F&&... f) const
         },
         [&](const ResolvedColor& resolvedColor) -> ResultType {
             return visitor(resolvedColor);
-        },
-        [&](const CurrentAccentColor& currentColor) -> ResultType {
-            return visitor(currentColor);
         },
         [&](const CurrentColor& currentColor) -> ResultType {
             return visitor(currentColor);
