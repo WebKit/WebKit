@@ -45,6 +45,11 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
+#endif
+
 namespace WebCore {
 
 class Document;
@@ -115,6 +120,24 @@ private:
 #endif
 };
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+struct ControlTrackingTarget {
+    NodeIdentifier nodeIdentifier;
+    FrameIdentifier frameIdentifier;
+    // Node identifiers are only unique within a process.
+    ProcessIdentifier processIdentifier;
+
+    bool operator==(const ControlTrackingTarget&) const = default;
+};
+
+struct ControlTrackingRegion {
+    Region region;
+    ControlTrackingTarget target;
+
+    bool operator==(const ControlTrackingRegion&) const = default;
+};
+#endif
+
 #if ENABLE(TOUCH_EVENT_REGIONS)
 struct TouchEventListenerRegion {
     bool operator==(const TouchEventListenerRegion&) const = default;
@@ -146,6 +169,9 @@ public:
 #endif
 #if ENABLE(EDITABLE_REGION)
     , std::optional<WebCore::Region>
+#endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    , Vector<WebCore::ControlTrackingRegion>
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion>
@@ -188,6 +214,10 @@ public:
     NODELETE const Region& eventListenerRegionForType(EventListenerRegionType) const LIFETIME_BOUND;
 #endif
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    WEBCORE_EXPORT std::optional<ControlTrackingTarget> controlTrackingTargetForPoint(const IntPoint&) const;
+#endif
+
 #if ENABLE(EDITABLE_REGION)
     void ensureEditableRegion();
     bool hasEditableRegion() const { return m_editableRegion.has_value(); }
@@ -210,6 +240,9 @@ private:
     void subtractAutoFromTouchActions(const Region&);
 #endif
     void uniteEventListeners(const Region&, OptionSet<EventListenerRegionType>);
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    void uniteControlTrackingRegion(const Region&, const RenderObject&);
+#endif
 
     Region m_region;
 #if ENABLE(TOUCH_ACTION_REGIONS)
@@ -224,6 +257,9 @@ private:
 #endif
 #if ENABLE(EDITABLE_REGION)
     std::optional<Region> m_editableRegion;
+#endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    Vector<ControlTrackingRegion> m_controlTrackingRegions;
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;

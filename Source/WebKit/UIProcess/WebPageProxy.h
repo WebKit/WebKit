@@ -330,6 +330,7 @@ struct ContactInfo;
 struct ContactsRequestData;
 struct ContentRuleListMatchedRule;
 struct ContentRuleListResults;
+struct ControlTrackingTarget;
 struct CryptoKeyData;
 struct DataDetectorElementInfo;
 struct DataListSuggestionInformation;
@@ -1455,6 +1456,13 @@ public:
     void didConcludeDrop();
 #endif
 #endif // PLATFORM(IOS_FAMILY)
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    void controlTrackingDidTap(const WebCore::ControlTrackingTarget&);
+    void controlTrackingDidBegin(const WebCore::ControlTrackingTarget&, WebCore::IntPoint);
+    void controlTrackingDidUpdate(const WebCore::ControlTrackingTarget&, WebCore::IntPoint);
+    void controlTrackingDidEnd(const WebCore::ControlTrackingTarget&, WebCore::IntPoint, bool committed);
+#endif
 
 #if ENABLE(MODEL_PROCESS)
     void requestInteractiveModelElementAtPoint(WebCore::IntPoint);

@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="resources/switch-touch.js"></script>
+<p id=container><input type=checkbox id=becomesSwitch></p>
+<p><input type=checkbox switch disabled id=disabledSwitch></p>
+<p><input type=checkbox switch id=unstyled style="appearance: none; display: inline-block; width: 60px; height: 30px; background: silver"></p>
+<p><input type=checkbox switch id=checkedByScript></p>
+<p><input type=checkbox switch id=removed></p>
+<p><button id=button style="width: 200px; height: 60px">Button</button></p>
+<div id="console"></div>
+<div style="height: 300vh"></div>
+<script>
+description("Switches that are added, changed, or removed after the page loaded handle touches as expected.");
+jsTestIsAsync = true;
+
+let input;
+let clicks = 0;
+let buttonClicks = 0;
+let activeOnClick = false;
+document.getElementById("button").addEventListener("click", () => ++buttonClicks);
+
+async function reset(element)
+{
+    if (input !== element)
+        element.addEventListener("click", () => ++clicks);
+    input = element;
+    scrollTo(0, 0);
+    input.checked = false;
+    await settle();
+    clicks = 0;
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    debug("A drag sideways on a switch added after the page loaded:");
+    const added = document.createElement("input");
+    added.type = "checkbox";
+    added.switch = true;
+    document.getElementById("container").append(added);
+    added.addEventListener("click", () => activeOnClick = navigator.userActivation.isActive, { once: true });
+    await reset(added);
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBeTrue("activeOnClick");
+
+    debug("A drag sideways on a checkbox that became a switch:");
+    document.getElementById("becomesSwitch").switch = true;
+    await reset(document.getElementById("becomesSwitch"));
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    debug("A tap on a disabled switch:");
+    await reset(document.getElementById("disabledSwitch"));
+    await touch(input, [{ wait: 0.05 }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("A drag sideways on a disabled switch:");
+    await reset(input);
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("A drag sideways on the same switch once it is enabled:");
+    input.disabled = false;
+    await reset(input);
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    debug("A tap on a switch with appearance: none:");
+    await reset(document.getElementById("unstyled"));
+    await touch(input, [{ wait: 0.05 }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    debug("A hold and a release on a switch whose checkedness script changed during the hold:");
+    await reset(document.getElementById("checkedByScript"));
+    setTimeout(() => input.checked = true, 400);
+    await touch(input, [{ wait: 0.8 }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "1");
+
+    debug("A tap on a button after a switch was removed during a hold:");
+    await reset(document.getElementById("removed"));
+    setTimeout(() => input.remove(), 400);
+    await touch(input, [{ wait: 0.8 }]);
+    await UIHelper.activateElement(document.getElementById("button"));
+    await UIHelper.delayFor(500);
+    shouldBe("buttonClicks", "1");
+    shouldBe("clicks", "0");
+
+    finishJSTest();
+})();
+</script>
+</html>

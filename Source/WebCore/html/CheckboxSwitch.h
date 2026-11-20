@@ -60,6 +60,12 @@ public:
     // Returns whether the element should get a click.
     bool handleTouchEvent(TouchEvent&);
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    void controlTrackingDidBegin(LayoutPoint absoluteLocation);
+    void controlTrackingDidUpdate(LayoutPoint absoluteLocation);
+    // Returns whether the element should get a click.
+    bool controlTrackingDidEnd(LayoutPoint absoluteLocation, bool committed);
+#endif
     bool willSkipToggleForClick(bool checked);
     void didToggleForClick(bool wasChecked);
     bool takeDidSkipSwitchToggle();

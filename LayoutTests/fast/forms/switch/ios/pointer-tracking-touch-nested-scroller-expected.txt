@@ -1,0 +1,28 @@
+
+
+
+A switch inside an overflow scroller: a drag the scroller can scroll scrolls it, and once the switch has the touch the scroller doesn't scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A drag up, which the scroller can scroll:
+PASS input.checked is false
+PASS clicks is 0
+PASS scroller.scrollTop > 0 is true
+PASS Math.round(scrollY) is 0
+A drag sideways, which the scroller cannot scroll:
+PASS input.checked is true
+PASS clicks is 1
+PASS scroller.scrollTop is 0
+A drag down on a vertical switch after a hold:
+PASS input.checked is true
+PASS clicks is 1
+PASS scroller.scrollTop is 0
+A hold, then a release, on a switch the scroller scrolled to:
+PASS input.checked is true
+PASS clicks is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

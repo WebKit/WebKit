@@ -40,6 +40,7 @@ class HTMLImageLoader;
 class HTMLOptionElement;
 class Icon;
 class InputType;
+class LayoutPoint;
 class ListAttributeTargetObserver;
 class RadioButtonGroups;
 class StepRange;
@@ -361,6 +362,14 @@ public:
     NODELETE bool isSwitchVisuallyOn() const;
     float switchAnimationHeldProgress() const;
     NODELETE bool isSwitchHeld() const;
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    NODELETE bool contributesControlTrackingRegion() const;
+    WEBCORE_EXPORT void controlTrackingDidTap();
+    WEBCORE_EXPORT void controlTrackingDidBegin(LayoutPoint absoluteLocation);
+    WEBCORE_EXPORT void controlTrackingDidUpdate(LayoutPoint absoluteLocation);
+    WEBCORE_EXPORT void controlTrackingDidEnd(LayoutPoint absoluteLocation, bool committed);
+#endif
 
     void initializeInputTypeAfterParsingOrCloning();
 

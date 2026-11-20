@@ -9,6 +9,18 @@
       (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=1600 height=2094)
+      (control tracking region
+        (rect (0,0) width=51 height=31)
+      )
+      (control tracking region
+        (rect (0,62) width=153 height=93)
+      )
+      (control tracking region
+        (rect (0,31) width=51 height=31)
+      )
+      (control tracking region
+        (rect (0,155) width=153 height=93)
+      )
 
       (interaction regions [
         (interaction (0,0) width=51 height=31)

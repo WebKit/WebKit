@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="resources/switch-touch.js"></script>
+<style>
+.container { position: relative; width: fit-content; margin: 30px; }
+.cover { position: absolute; inset: -10px; background: rgba(0, 0, 255, 0.2); }
+#composited { will-change: transform; }
+#transparent { pointer-events: none; }
+</style>
+<div class=container><input type=checkbox switch id=underCover><div class=cover id=cover></div></div>
+<div class=container><input type=checkbox switch id=underComposited><div class=cover id=composited></div></div>
+<div class=container><input type=checkbox switch id=underTransparent><div class=cover id=transparent></div></div>
+<div id="console"></div>
+<div style="height: 300vh"></div>
+<script>
+description("A touch that starts on an element over a switch goes to that element, unless it has pointer-events: none.");
+jsTestIsAsync = true;
+
+let input;
+let cover;
+let clicks = 0;
+let coverClicks = 0;
+for (const element of document.querySelectorAll("input"))
+    element.addEventListener("click", () => ++clicks);
+for (const element of document.querySelectorAll(".cover"))
+    element.addEventListener("click", () => ++coverClicks);
+
+async function reset(inputID, coverID)
+{
+    input = document.getElementById(inputID);
+    cover = document.getElementById(coverID);
+    scrollTo(0, 0);
+    input.checked = false;
+    await settle();
+    clicks = 0;
+    coverClicks = 0;
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    for (const [inputID, coverID] of [["underCover", "cover"], ["underComposited", "composited"]]) {
+        debug(`A drag sideways on #${coverID}:`);
+        await reset(inputID, coverID);
+        await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+        shouldBeFalse("input.checked");
+        shouldBe("clicks", "0");
+
+        debug(`A tap on #${coverID}:`);
+        await reset(inputID, coverID);
+        await touch(input, [{ wait: 0.05 }]);
+        shouldBeFalse("input.checked");
+        shouldBe("clicks", "0");
+        shouldBe("coverClicks", "1");
+    }
+
+    debug("A drag sideways on #transparent:");
+    await reset("underTransparent", "transparent");
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    finishJSTest();
+})();
+</script>
+</html>

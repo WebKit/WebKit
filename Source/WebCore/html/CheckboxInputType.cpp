@@ -54,6 +54,11 @@
 #include "TouchEvent.h"
 #endif
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+#include "RenderElementInlines.h"
+#include "Settings.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CheckboxInputType);
@@ -141,8 +146,48 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
     if (!isSwitch())
         return;
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    if (protect(element())->document().settings().controlTouchTrackingEnabled())
+        return;
+#endif
+
     if (protect(ensureSwitch())->handleTouchEvent(event))
         protect(element())->dispatchSimulatedClick(&event, SendNoEvents);
+}
+#endif
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+bool CheckboxInputType::contributesControlTrackingRegion() const
+{
+    ASSERT(element());
+    if (!isSwitch() || element()->isDisabledFormControl())
+        return false;
+    auto* renderer = element()->renderer();
+    return renderer && renderer->style().hasUsedAppearance();
+}
+
+void CheckboxInputType::controlTrackingDidTap()
+{
+    if (isSwitch())
+        protect(element())->dispatchSimulatedClick(nullptr, SendNoEvents);
+}
+
+void CheckboxInputType::controlTrackingDidBegin(LayoutPoint absoluteLocation)
+{
+    if (isSwitch())
+        protect(ensureSwitch())->controlTrackingDidBegin(absoluteLocation);
+}
+
+void CheckboxInputType::controlTrackingDidUpdate(LayoutPoint absoluteLocation)
+{
+    if (m_switch)
+        protect(m_switch)->controlTrackingDidUpdate(absoluteLocation);
+}
+
+void CheckboxInputType::controlTrackingDidEnd(LayoutPoint absoluteLocation, bool committed)
+{
+    if (m_switch && protect(m_switch)->controlTrackingDidEnd(absoluteLocation, committed))
+        protect(element())->dispatchSimulatedClick(nullptr, SendNoEvents);
 }
 #endif
 
@@ -221,6 +266,14 @@ void CheckboxInputType::attributeChanged(const QualifiedName& name)
 
     BaseCheckableInputType::attributeChanged(name);
 }
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+void CheckboxInputType::detach()
+{
+    // controlTrackingDidEnd() is not called for a removed switch. Destroying CheckboxSwitch stops pointer tracking and releases the mouse capture.
+    m_switch = nullptr;
+}
+#endif
 
 CheckboxSwitch& CheckboxInputType::ensureSwitch()
 {

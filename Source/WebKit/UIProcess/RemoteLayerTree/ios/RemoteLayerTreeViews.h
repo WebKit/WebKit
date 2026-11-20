@@ -31,6 +31,11 @@
 #import "WKMaterialHostingSupport.h"
 #endif
 #import <wtf/OptionSet.h>
+#import <wtf/RetainPtr.h>
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+#import <WebCore/EventRegion.h>
+#endif
 
 OBJC_CLASS UIScrollView;
 
@@ -96,6 +101,14 @@ namespace WebKit {
 
 OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint&);
 UIScrollView *findActingScrollParent(UIScrollView *, const RemoteLayerTreeHost&);
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+struct ControlTrackingHit {
+    WebCore::ControlTrackingTarget target;
+    RetainPtr<UIView> targetRootView;
+};
+std::optional<ControlTrackingHit> controlTrackingHitForPoint(UIView *rootView, const WebCore::IntPoint&);
+#endif
 
 OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *rootView, const WebCore::IntPoint&);
 

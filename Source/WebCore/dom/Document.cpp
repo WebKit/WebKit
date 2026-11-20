@@ -9875,6 +9875,15 @@ void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval rem
 #endif
 }
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+void Document::setMayHaveControlTrackingRegions()
+{
+    // A frame that isn't composited is painted into its ancestors' event regions.
+    for (RefPtr document = this; document && !document->m_mayHaveControlTrackingRegions; document = document->parentDocument())
+        document->m_mayHaveControlTrackingRegions = true;
+}
+#endif
+
 void Document::didRemoveEventTargetNode(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
