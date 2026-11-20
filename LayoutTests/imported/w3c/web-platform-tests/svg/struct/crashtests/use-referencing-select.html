@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<link rel="help" href="https://svgwg.org/svg2-draft/struct.html#UseElement">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/form-elements.html#the-selectedcontent-element">
+<svg>
+  <use href="#target"/>
+  <g id="target">
+    <foreignObject>
+      <select multiple size="0">
+        <button><selectedcontent></selectedcontent></button>
+        <option selected>option</option>
+      </select>
+    </foreignObject>
+  </g>
+</svg>
+<script>
+// Building the <use> shadow tree clones the <select>.
+document.documentElement.offsetTop;
+</script>

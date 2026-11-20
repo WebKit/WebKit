@@ -1808,7 +1808,7 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, Variant<bool, Im
     case NodeType::ProcessingInstruction:
     case NodeType::Comment:
     case NodeType::DocumentType:
-        return nodeToImport.cloneNodeInternal(*this, subtree ? Node::CloningOperation::Everything : Node::CloningOperation::SelfOnly, registry.get());
+        return nodeToImport.cloneNodeInternal(*this, subtree ? Node::CloningOperation::Everything : Node::CloningOperation::SelfWithShadowTree, registry.get());
 
     case NodeType::Attribute: {
         auto& attribute = uncheckedDowncast<Attr>(nodeToImport);
@@ -6016,7 +6016,7 @@ Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type, CustomEl
 {
     Ref clone = createCloned(clonedDocumentType(), url(), baseURL(), m_aboutBaseURL, m_documentURI, m_compatibilityMode, m_parserContentPolicy, protect(contextDocument()), protect(securityOriginPolicy()), contentType(), protect(decoder()));
     switch (type) {
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
@@ -6030,7 +6030,7 @@ SerializedNode Document::serializeNode(CloningOperation type) const
 {
     Vector<SerializedNode> children;
     switch (type) {
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:

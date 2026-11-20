@@ -669,29 +669,9 @@ bool HTMLOptionElement::isActuallyDisabled() const
     return select && select->isDisabledFormControl();
 }
 
-static bool isRemovedFromSelectedContent(Node& node)
+static bool shouldCloneIntoSelectedContent(const Node& node)
 {
-    return isScriptElement(node) || isAnyOf<HTMLEmbedElement, HTMLFrameElement, HTMLIFrameElement, HTMLObjectElement>(node);
-}
-
-static void pruneSelectedContentClone(ContainerNode& root)
-{
-    auto pruneShadowRoot = [](Element& host) {
-        if (RefPtr shadowRoot = host.shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
-            pruneSelectedContentClone(*shadowRoot);
-    };
-    if (RefPtr host = dynamicDowncast<Element>(root))
-        pruneShadowRoot(*host);
-    for (RefPtr element = ElementTraversal::firstWithin(root); element;) {
-        if (isRemovedFromSelectedContent(*element)) {
-            RefPtr next = ElementTraversal::nextSkippingChildren(*element, &root);
-            element->remove();
-            element = WTF::move(next);
-            continue;
-        }
-        pruneShadowRoot(*element);
-        element = ElementTraversal::next(*element, &root);
-    }
+    return !isScriptElement(node) && !isAnyOf<HTMLEmbedElement, HTMLFrameElement, HTMLIFrameElement, HTMLObjectElement>(node);
 }
 
 void HTMLOptionElement::cloneIntoSelectedContent(HTMLSelectedContentElement& selectedContent)
@@ -701,12 +681,8 @@ void HTMLOptionElement::cloneIntoSelectedContent(HTMLSelectedContentElement& sel
 
     NodeVector newChildren;
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
-        Ref clone = child->cloneNode(CloneSubtree::Yes);
-        if (isRemovedFromSelectedContent(clone))
-            continue;
-        if (RefPtr container = dynamicDowncast<ContainerNode>(clone))
-            pruneSelectedContentClone(*container);
-        newChildren.append(WTF::move(clone));
+        if (shouldCloneIntoSelectedContent(*child))
+            newChildren.append(child->cloneNodeWithSubtree(shouldCloneIntoSelectedContent));
     }
     selectedContent.replaceChildrenWithoutValidityCheck(WTF::move(newChildren));
 }
@@ -715,8 +691,7 @@ Ref<HTMLOptionElement> HTMLOptionElement::cloneForSelectedContent()
 {
     ASSERT(document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
 
-    Ref clone = downcast<HTMLOptionElement>(cloneNode(CloneSubtree::Yes));
-    pruneSelectedContentClone(clone);
+    Ref clone = downcast<HTMLOptionElement>(cloneNodeWithSubtree(shouldCloneIntoSelectedContent));
     clone->m_selectedContentSource = *this;
     clone->m_isSelected = selected();
     return clone;

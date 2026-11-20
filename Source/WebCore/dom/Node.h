@@ -175,13 +175,15 @@ public:
     inline bool hasChildNodes() const;
 
     enum class CloningOperation {
-        SelfOnly,
+        SelfWithShadowTree,
         SelfWithTemplateContent,
         Everything,
     };
     virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const = 0;
     virtual SerializedNode serializeNode(CloningOperation) const = 0;
     Ref<Node> cloneNode(CloneSubtree) const;
+    using ShouldCloneChild = bool (*)(const Node&);
+    Ref<Node> cloneNodeWithSubtree(ShouldCloneChild) const;
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> cloneNodeForBindings(bool subtree) const;
 
     NODELETE virtual const AtomString& localName() const;

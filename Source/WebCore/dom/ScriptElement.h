@@ -173,7 +173,7 @@ private:
 };
 
 // FIXME: replace with is/downcast<ScriptElement>.
-NODELETE bool isScriptElement(Node&);
+NODELETE bool isScriptElement(const Node&);
 NODELETE ScriptElement* dynamicDowncastScriptElement(Element&);
 
 }

@@ -178,7 +178,7 @@ static FragmentReuseResult cloneCachedPrefixAndParseSuffix(std::span<const Chara
     ASSERT(cachedContainer->hasChildNodes());
 
     for (RefPtr nodeToClone = cachedContainer->firstChild(); nodeToClone; nodeToClone = nodeToClone->nextSibling()) {
-        Ref<Node> clonedChild = nodeToClone->cloneNodeInternal(protect(destinationParent.document()), Node::CloningOperation::SelfOnly, nullptr);
+        Ref<Node> clonedChild = nodeToClone->cloneNodeInternal(protect(destinationParent.document()), Node::CloningOperation::SelfWithShadowTree, nullptr);
         if (RefPtr nodeToCloneAsContainer = dynamicDowncast<ContainerNode>(*nodeToClone))
             nodeToCloneAsContainer->cloneSubtreeForFastParser(protect(destinationParent.document()), nullptr, downcast<ContainerNode>(clonedChild.get()), 0);
         destinationParent.parserAppendChildIntoIsolatedTree(clonedChild.get());

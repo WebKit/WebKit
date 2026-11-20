@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>selectedcontent does not clone the contents of the elements it omits</title>
+<link rel=help href="https://html.spec.whatwg.org/#clone-an-option-into-a-selectedcontent">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const constructed = [];
+customElements.define("x-tracked", class extends HTMLElement {
+  constructor() {
+    super();
+    constructed.push(this);
+  }
+});
+</script>
+<select>
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>
+    <object><x-tracked id="in-object"></x-tracked></object>
+    <div>
+      <template shadowrootmode="open" shadowrootclonable>
+        <object><x-tracked id="in-shadow-tree"></x-tracked></object>
+      </template>
+    </div>
+  </option>
+  <option>two</option>
+</select>
+<script>
+function constructedWithId(id) {
+  return constructed.filter(element => element.id === id);
+}
+
+promise_test(async () => {
+  await new Promise(resolve => step_timeout(resolve, 0));
+  const option = document.querySelector("option");
+  assert_array_equals(constructedWithId("in-object"), [option.querySelector("#in-object")],
+                      "Only the original should be constructed");
+}, "Cloning an option into selectedcontent does not clone the contents of omitted elements");
+
+promise_test(async () => {
+  await new Promise(resolve => step_timeout(resolve, 0));
+  const option = document.querySelector("option");
+  assert_array_equals(constructedWithId("in-shadow-tree"), [option.querySelector("div").shadowRoot.querySelector("#in-shadow-tree")],
+                      "Only the original should be constructed");
+}, "Cloning an option into selectedcontent does not clone the contents of omitted elements in a shadow tree");
+
+promise_test(async () => {
+  const select = document.querySelector("select");
+  const tracked = document.createElement("x-tracked");
+  tracked.id = "dynamic";
+  const object = document.createElement("object");
+  object.append(tracked);
+  select.options[1].append(object);
+  select.selectedIndex = 1;
+  await new Promise(resolve => step_timeout(resolve, 0));
+  assert_array_equals(constructedWithId("dynamic"), [tracked], "Only the original should be constructed");
+}, "Selecting an option does not clone the contents of its omitted elements into selectedcontent");
+</script>
