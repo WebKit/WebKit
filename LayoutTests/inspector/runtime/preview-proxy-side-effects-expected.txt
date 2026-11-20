@@ -1,0 +1,77 @@
+Tests that previews do not run the traps of Proxies nested in or inherited by the previewed object, or array index getters.
+
+
+== Running test suite: Runtime.PreviewSideEffects.Proxy
+-- Running test case: Runtime.PreviewSideEffects.Proxy.NestedProxy
+Preview: Object {proxy: Proxy {a: 1} (lossy)} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: proxy, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.NestedProxyInArray
+Preview: Object {list: Array {0: Proxy {b: 2} (lossy)} (lossy)} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: list, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.ArrayOfProxies
+Preview: Array {0: Proxy {c: 3} (lossy)} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: 0, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.NestedRevokedProxy
+Preview: Object {revoked: Proxy {} (lossy), after: 1} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: revoked, after, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.ProxyPrototype
+Preview: Object {own: 1} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: own, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.NestedProxyPrototype
+Preview: Object {child: Object} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: child, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.NestedArrayWithIndexGetter
+Preview: Object {array: Array} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: array, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.ArrayWithProxyPrototype
+Preview: Array {0: 1, 2: 3} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: 0, 2, length, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.OwnProxyConstructor
+Preview: Object {constructor: , x: 1} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: constructor, x, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.NestedProxyInMap
+Preview: Map {key => Proxy {d: 4} (lossy)} (lossy)
+PASS: Preview should not run traps or getters.
+Displayable properties: size, __proto__
+PASS: Displayable properties should not run traps or getters.
+PASS: All properties should not run traps or getters.
+
+-- Running test case: Runtime.PreviewSideEffects.Proxy.NestedThrowingRead
+Preview: Object {throwing: Object, after: 1} (lossy)
+

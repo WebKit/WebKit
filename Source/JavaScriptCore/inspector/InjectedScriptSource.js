@@ -118,6 +118,16 @@ function isPrimitiveValue(value)
         return false;
     }
 }
+
+// A property lookup on a Proxy, or on an object that inherits from one, can run its traps.
+function isOrInheritsFromProxy(value)
+{
+    for (let o = value; isDefined(o); o = @Object.@getPrototypeOf(o)) {
+        if (InjectedScriptHost.subtype(o) === "proxy")
+            return true;
+    }
+    return false;
+}
     
 function createIterableWithoutPrototypeFromArguments(argumentsObject) {
     let iteratorFunction = argumentsObject.@@iterator;
@@ -730,7 +740,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         let shouldInvokeNativeGetters = nativeGettersAsValues && typeof object !== "function";
         if (shouldInvokeNativeGetters) {
             let constructorDescriptor = @Object.@getOwnPropertyDescriptor(object, "constructor");
-            if (typeof constructorDescriptor?.value === "function") {
+            if (typeof constructorDescriptor?.value === "function" && InjectedScriptHost.subtype(constructorDescriptor.value) !== "proxy") {
                 let prototypeDescriptor = @Object.@getOwnPropertyDescriptor(constructorDescriptor.value, "prototype");
                 if (prototypeDescriptor?.value === object)
                     shouldInvokeNativeGetters = false;
@@ -841,10 +851,15 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
         let isArrayLike = false;
         try {
-            isArrayLike = subtype === "array" && @isFinite(object.length) && object.length > 0;
+            // Checking for holes with `in` would run the `has` trap of a Proxy prototype.
+            isArrayLike = subtype === "array" && @isFinite(object.length) && object.length > 0 && !isOrInheritsFromProxy(object);
         } catch { }
 
         for (let o = object; isDefined(o); o = @Object.@getPrototypeOf(o)) {
+            // The properties of a Proxy are only known by running its traps.
+            if (InjectedScriptHost.subtype(o) === "proxy")
+                break;
+
             let isOwnProperty = o === object;
             let shouldBreak = false;
 
@@ -924,10 +939,11 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
         if (includeProto) {
             try {
-                if (object.__proto__)
+                let prototype = isOrInheritsFromProxy(object) ? @Object.@getPrototypeOf(object) : object.__proto__;
+                if (prototype)
                     callback(@createObjectWithoutPrototype(
                         "name", "__proto__",
-                        "value", object.__proto__,
+                        "value", prototype,
                         "writable", true,
                         "configurable", true,
                         "isOwn", true,
@@ -1152,7 +1168,7 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
 
         // FireBug's array detection.
         try {
-            if (typeof value.splice === "function" && @isFinite(value.length))
+            if (!isOrInheritsFromProxy(value) && typeof value.splice === "function" && @isFinite(value.length))
                 return "array";
         } catch { }
 
@@ -1202,8 +1218,9 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
             return hint ?? value.toString();
 
         // If Object, try for a better name from the constructor.
-        if (className === "Object") {
-            let constructorName = value?.constructor?.name;
+        if (className === "Object" && !isOrInheritsFromProxy(value)) {
+            let constructor = value?.constructor;
+            let constructorName = !isOrInheritsFromProxy(constructor) && constructor?.name;
             if (constructorName)
                 return constructorName;
         }
@@ -1337,7 +1354,9 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
         let name = descriptor.name;
         if (name === "__proto__") {
             // Non basic __proto__ objects may have interesting, non-enumerable, methods to show.
-            if (descriptor.value && descriptor.value.constructor
+            if (isOrInheritsFromProxy(descriptor.value))
+                preview.lossless = false;
+            else if (descriptor.value && descriptor.value.constructor
                 && descriptor.value.constructor !== @Object
                 && descriptor.value.constructor !== @Array
                 && descriptor.value.constructor !== @RegExp)
@@ -1509,7 +1528,12 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
         let set = new @Set;
         set.@add(object);
 
-        return this._isPreviewableObjectInternal(value, set, 1);
+        // A read that throws should not end the whole preview.
+        try {
+            return this._isPreviewableObjectInternal(value, set, 1);
+        } catch {
+            return false;
+        }
     }
 
     _isPreviewableObjectInternal(object, knownObjects, depth)
@@ -1530,24 +1554,32 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
         if (knownObjects.@has(object))
             return false;
 
+        let subtype = RemoteObject.subtype(object);
+
+        // A Proxy is previewed through its target, so check the target instead of running traps.
+        if (subtype === "proxy")
+            return this._isPreviewableObjectInternal(InjectedScriptHost.proxyTargetValue(object), knownObjects, depth);
+
         ++depth;
         knownObjects.@add(object);
 
         // Arrays are simple if they have 5 or less simple objects.
-        let subtype = RemoteObject.subtype(object);
         if (subtype === "array") {
             let length = object.length;
             if (length > 5)
                 return false;
             for (let i = 0; i < length; ++i) {
-                if (!this._isPreviewableObjectInternal(object[i], knownObjects, depth))
+                let descriptor = @Object.@getOwnPropertyDescriptor(object, i);
+                if (descriptor && !("value" in descriptor))
+                    return false;
+                if (!this._isPreviewableObjectInternal(descriptor?.value, knownObjects, depth))
                     return false;
             }
             return true;
         }
 
         // Not a basic object.
-        if (object.__proto__ && object.__proto__.__proto__)
+        if (isOrInheritsFromProxy(object) || (object.__proto__ && object.__proto__.__proto__))
             return false;
 
         // Objects are simple if they have 3 or less simple value properties.
