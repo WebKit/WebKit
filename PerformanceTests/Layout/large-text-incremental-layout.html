@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Incremental layout of a large plain-text document</title>
+<script src="../resources/runner.js"></script>
+<style>
+pre {
+    width: 800px;
+    font: 10px/12px monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+</style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+// A build-log-like document arrives in 64K-character text nodes, the way the parser splits a text document, with a layout after every few nodes.
+function makeChunk(seed) {
+    let text = "";
+    for (let i = seed; text.length < 65536; ++i)
+        text += `[${String(i).padStart(6, "0")}] LayoutTests/fast/category-${i % 97}/test-name-${i % 1013}.html ${["passed", "failed (text diff)", "timed out after 30 seconds"][i % 3]}\n`;
+    return text;
+}
+
+const chunkCount = 48;
+const chunksPerLayout = 8;
+const chunks = [];
+for (let i = 0; i < chunkCount; ++i)
+    chunks.push(makeChunk(i * 1000));
+
+const container = document.getElementById("container");
+let target;
+
+PerfTestRunner.measureTime({
+    description: "Measures appending " + chunkCount + " 64K-character text nodes to a pre-wrap element, laying out after every " + chunksPerLayout + ".",
+    setup() {
+        container.textContent = "";
+        target = document.createElement("pre");
+        container.appendChild(target);
+        container.offsetHeight;
+    },
+    run() {
+        for (let i = 0; i < chunkCount; ++i) {
+            target.appendChild(document.createTextNode(chunks[i]));
+            if (!((i + 1) % chunksPerLayout))
+                target.offsetHeight;
+        }
+    },
+    done() {
+        container.textContent = "";
+    }
+});
+</script>
+</body>
+</html>

@@ -304,6 +304,25 @@ NODELETE static inline void handleAfterSideMargin(BlockLayoutState::MarginState&
         marginState.canCollapseMarginAfterWithChildren = false;
 }
 
+// A partial layout from the damaged line to the end of the content builds its lines and boxes from empty. Expect the rest of
+// the content to have as many lines per item, and boxes per line, as the lines before the damage.
+static void reserveCapacityForDisplayContentAfterDamage(InlineDisplay::Content& displayContent, const InlineDamage& lineDamage, InlineItemRange needsLayoutRange)
+{
+    if (lineDamage.hasTrailingDisplayBoxes())
+        return;
+    auto precedingLineCount = lineDamage.layoutStartPosition()->lineIndex;
+    auto precedingItemCount = needsLayoutRange.start.index;
+    // Items that wrap across several lines make the rate unsafe to extrapolate.
+    if (!precedingLineCount || precedingItemCount < precedingLineCount)
+        return;
+    auto linesPerItem = static_cast<double>(precedingLineCount) / precedingItemCount;
+    auto boxesPerLine = static_cast<double>(lineDamage.precedingDisplayBoxCount()) / precedingLineCount;
+    auto estimatedLineCount = (needsLayoutRange.end.index - precedingItemCount) * linesPerItem * InlineFormattingUtils::estimatedSizeMargin;
+    // Leave room for the lines and boxes before the damage too, so integration can put them in front of the result instead of copying both.
+    InlineFormattingUtils::reserveCapacityForEstimatedSize(displayContent.lines, precedingLineCount + static_cast<size_t>(estimatedLineCount));
+    InlineFormattingUtils::reserveCapacityForEstimatedSize(displayContent.boxes, lineDamage.precedingDisplayBoxCount() + static_cast<size_t>(estimatedLineCount * boxesPerLine));
+}
+
 UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage, bool mayUseSimplifiedDisplayContentBuild)
 {
     ASSERT(!needsLayoutRange.isEmpty());
@@ -319,6 +338,9 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
         handleAfterSideMargin(marginState, layoutResult->displayContent);
         return layoutResult;
     }
+
+    if (isPartialLayout)
+        reserveCapacityForDisplayContentAfterDamage(layoutResult->displayContent, *lineDamage, needsLayoutRange);
 
     auto floatingContext = this->floatingContext();
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
