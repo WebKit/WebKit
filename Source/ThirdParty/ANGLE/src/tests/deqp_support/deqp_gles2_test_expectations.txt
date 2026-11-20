@@ -475,3 +475,9 @@
 42267100 IR WGPU : dEQP-GLES2.functional.texture.units.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.shaders.texture_functions.fragment.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.shaders.random.texture.fragment.* = FAIL
+
+// Fail on the iOS simulator and on iOS devices.
+0 IOS : dEQP-GLES2.functional.shaders.indexing.tmp_array.float_const_write_dynamic_loop_read_fragment = SKIP
+0 IOS : dEQP-GLES2.functional.shaders.indexing.tmp_array.float_const_write_dynamic_loop_read_vertex = SKIP
+0 IOS : dEQP-GLES2.functional.shaders.indexing.tmp_array.float_const_write_dynamic_read_fragment = SKIP
+0 IOS : dEQP-GLES2.functional.shaders.indexing.tmp_array.float_const_write_dynamic_read_vertex = SKIP

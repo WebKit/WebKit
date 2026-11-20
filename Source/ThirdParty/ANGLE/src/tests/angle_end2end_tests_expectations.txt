@@ -1646,6 +1646,87 @@
 575549236 IOS METAL : FramebufferTest_RecreateFboOnAttachmentRespecification.RespecifyCollidingAttachments/* = SKIP
 550607402 IOS METAL : ASTCCompressedWithBaseLevelRobustInitTest.MutableToImmutableASTC8x5WithNonZeroBaseLevel/* = SKIP
 
+// Fail on the iOS simulator with the Metal debug layers on and pass with them off.
+// Uniform buffer offset is not a multiple of 256.
+0 IOSSIMULATOR METAL DEBUGLAYERS : BufferDataTestES3.CopyBufferSubDataSelfDependency/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : BufferSubDataTest.MapInvalidateThenBufferSubData/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : StateChangeTestES3.UniformBlockBinding/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsFloat/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMatrix/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMatrixAndRowMajorQualifier/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMixStructFloatAndVec3/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMixStructFloatAndVec4/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMixStructVec2AndVec3/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMixStructVec3AndFloat/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsStruct/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsStructAndInstanced/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsVec2/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsVec3/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsVec4/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBlockWithOneLargeArrayMemberTest.TwoUniformBlocksInDiffProgram/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.BindLargerThanSize/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.BlockBindChangeAfterOffsetChange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.BufferBindingRangeChange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.BufferBlockBindingChange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.BufferDataInLoop/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.DependentBufferChange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.DifferentRangeSizesSameOffsetAndStride/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.DrawThenUpdateThenDraw/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.ManyBlocks/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.ManyUniformBufferRange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.OversizedBindBufferRangeDoesNotExposePreviousBuffer/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.SimpleBindingChange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.SimpleBufferChange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.SizeOverMaxBlockSize/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.UniformBufferBindings/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.UniformBufferManyUpdates/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.UniformBufferRange/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : UniformBufferTest.UninitializedStructuredBufferRangeCacheAndUpdate/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : WebGL2ValidationStateChangeTest.TransformFeedbackNegativeAPI/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : WebGL2ValidationStateChangeTest.UniformBlockNegativeAPI/* = SKIP
+
+// Texture view validation with an sRGB destination.
+0 IOSSIMULATOR METAL DEBUGLAYERS : CopyTexImageTestES3.CopySubTexturePreservesStorageDataSRGB/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : CopyTextureTestES3.ES3UnormFormats/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : CopyTextureTestES3.PBOSynchronization/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : CopyTextureTestES3.SRGBWithPackParameters/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : CopyTextureVariationsTest.CopySubTexture/*ToSRGBA* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : CopyTextureVariationsTest.CopyTexture/*ToSRGBA* = SKIP
+
+// Fail on the iOS simulator with or without the debug layers.
+0 IOSSIMULATOR METAL : DepthStencilFormatsTestES3.DepthStencilSubImageNonZeroOffset/* = SKIP
+0 IOSSIMULATOR METAL : GLSLMaxVaryingDerivativesTest_ES3.MaxVaryingVec4WithFwidth/ES3_Metal_NoUseBarycentricCoordinatesForHelperInvocations = SKIP
+0 IOSSIMULATOR METAL : GLSLMaxVaryingDerivativesTest_ES3.MaxVaryingVec4WithTexture/ES3_Metal_NoUseBarycentricCoordinatesForHelperInvocations = SKIP
+
+// Depth clip mode is not supported.
+0 IOSSIMULATOR METAL DEBUGLAYERS : DepthWriteTest.Test/*_Clamped_V* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : StateChangeTestES3.DepthClamp/* = SKIP
+
+// Fail on the iOS simulator and on iOS devices.
+0 IOS METAL : GLSLMaxVaryingDerivativesTest_ES3.MaxVaryingVec4WithFwidth/ES3_Metal = SKIP
+0 IOS METAL : GLSLMaxVaryingDerivativesTest_ES3.MaxVaryingVec4WithTexture/ES3_Metal = SKIP
+0 IOS METAL : WebGL2CompatibilityTest.DrawLargeIndex/* = SKIP
+
+// Sampler descriptor validation.
+0 IOSSIMULATOR METAL DEBUGLAYERS : TextureMirrorClampToEdgeIntegerTestES3.SamplerParameterSigned/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : TextureMirrorClampToEdgeIntegerTestES3.SamplerParameterUnsigned/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : TextureMirrorClampToEdgeIntegerTestES3.TexParameterSigned/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : TextureMirrorClampToEdgeIntegerTestES3.TexParameterUnsigned/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : TextureMirrorClampToEdgeTest.TexParameter/* = SKIP
+0 IOSSIMULATOR METAL DEBUGLAYERS : TextureMirrorClampToEdgeTestES3.SamplerParameter/* = SKIP
+
+// Fail on iOS devices only and are skipped on the simulator too since there is no device-only tag.
+0 IOS METAL : TextureMultisampleTest.MaxColorTextureSamples/* = SKIP
+0 IOS METAL : TextureMultisampleTest.MaxColorTextureSamplesValid/* = SKIP
+0 IOS METAL : TextureMultisampleTest.MaxIntegerSamples/* = SKIP
+0 IOS METAL : TextureMultisampleTest.MaxIntegerSamplesValid/* = SKIP
+0 IOS METAL : VertexAttributeTestES3.MaxSizeBufferWithByteConversionDoesNotCrash/* = SKIP
+0 IOS METAL : WebGL2CompatibilityTest.BufferSubDataPast4GiBInvalidatesIndexRange/* = SKIP
+
+// Fail on an iPhone 17 and are skipped on the simulator and iPad too since there is no device-only tag.
+0 IOS METAL : DrawBuffersTestES3.DrawBuffersAnyFormatMSAASampleLimitIsEnough/* = SKIP
+0 IOS METAL : VertexAttributeTest.VertexBufferConversionOverflow/* = SKIP
+
 // Simulator does not support compare functions in the sampler state
 365066518 IOS METAL : ShadowSamplerFunctionTexture2DTest.Test/* = SKIP
 365066518 IOS METAL : ShadowSamplerFunctionTexture2DArrayTest.Test/* = SKIP
