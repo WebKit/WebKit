@@ -62,6 +62,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <JavaScriptCore/MathCommon.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/PointerEventTypeNames.h>
@@ -118,6 +119,17 @@ String AutomationCommandError::toProtocolString()
 // §8. Sessions
 // https://www.w3.org/TR/webdriver/#dfn-session-page-load-timeout
 static const Seconds defaultPageLoadTimeout = 300_s;
+
+// JSON can't represent an infinite timeout, so WebDriver sends the maximum safe integer for a null page load timeout.
+static Seconds pageLoadTimeoutFromProtocol(std::optional<double> optionalPageLoadTimeout)
+{
+    if (!optionalPageLoadTimeout)
+        return defaultPageLoadTimeout;
+    if (*optionalPageLoadTimeout >= JSC::maxSafeInteger())
+        return Seconds::infinity();
+    return Seconds::fromMilliseconds(*optionalPageLoadTimeout);
+}
+
 // How long Close Window waits for the client to close the page before completing anyway.
 static constexpr Seconds closeBrowsingContextTimeout = 5_s;
 // https://www.w3.org/TR/webdriver/#dfn-page-loading-strategy
@@ -783,7 +795,7 @@ void WebAutomationSession::waitForNavigationToComplete(const Inspector::Protocol
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
-    auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
+    auto pageLoadTimeout = pageLoadTimeoutFromProtocol(optionalPageLoadTimeout);
 
     // If page is loading and there's an active JavaScript dialog is probably because the
     // dialog was started in an onload handler, so in case of normal page load strategy the
@@ -838,7 +850,7 @@ void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page,
         return;
     }
 
-    m_loadTimer.startOneShot(timeout);
+    startLoadTimer(timeout);
     switch (loadStrategy) {
     case Inspector::Protocol::Automation::PageLoadStrategy::Normal:
         addPendingNavigationCallback(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage, page.identifier(), PendingPageNavigationCallback { WTF::move(navigation), sameDocumentNavigation == SameDocumentNavigation::Yes, false, WTF::move(callback) });
@@ -859,7 +871,7 @@ void WebAutomationSession::waitForNavigationToCompleteOnFrame(WebFrameProxy& fra
         return;
     }
 
-    m_loadTimer.startOneShot(timeout);
+    startLoadTimer(timeout);
     switch (loadStrategy) {
     case Inspector::Protocol::Automation::PageLoadStrategy::Normal:
         addPendingNavigationCallback(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame, frame.frameID(), WTF::move(callback));
@@ -907,6 +919,18 @@ void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(H
                 callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout)));
         }
     }
+}
+
+void WebAutomationSession::startLoadTimer(Seconds timeout)
+{
+    // The timer is shared by every pending wait, classic and BiDi, so the latest wait's timeout applies to all of them.
+    // An infinite timeout (a null page load timeout) stops the timer, so no pending wait times out.
+    // FIXME https://webkit.org/b/323980 Support separate timers, one for each callback
+    if (timeout.isInfinity()) {
+        m_loadTimer.stop();
+        return;
+    }
+    m_loadTimer.startOneShot(timeout);
 }
 
 void WebAutomationSession::loadTimerFired()
@@ -1091,7 +1115,7 @@ void WebAutomationSession::navigateBrowsingContext(const Inspector::Protocol::Au
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
-    auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
+    auto pageLoadTimeout = pageLoadTimeoutFromProtocol(optionalPageLoadTimeout);
 
     // A fragment navigation stays in the current document, and WebCore reports it with that document's
     // navigation rather than the new one, so only navigations to another document are awaited. WebCore tells
@@ -1124,7 +1148,7 @@ void WebAutomationSession::goBackInBrowsingContext(const Inspector::Protocol::Au
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
-    auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
+    auto pageLoadTimeout = pageLoadTimeoutFromProtocol(optionalPageLoadTimeout);
 
     waitForHistoryTraversalToComplete(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->goBack());
 }
@@ -1135,7 +1159,7 @@ void WebAutomationSession::goForwardInBrowsingContext(const Inspector::Protocol:
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
-    auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
+    auto pageLoadTimeout = pageLoadTimeoutFromProtocol(optionalPageLoadTimeout);
 
     waitForHistoryTraversalToComplete(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->goForward());
 }
@@ -1165,7 +1189,7 @@ void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Auto
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
-    auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
+    auto pageLoadTimeout = pageLoadTimeoutFromProtocol(optionalPageLoadTimeout);
 
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->reload({ }));
 }
@@ -1338,7 +1362,7 @@ void WebAutomationSession::waitForBidiNavigationToCommit(BidiPendingNavigation& 
     }
 
     pending.commitCallback = WTF::move(callback);
-    m_loadTimer.startOneShot(timeout);
+    startLoadTimer(timeout);
 }
 
 void WebAutomationSession::completeBidiCommitWaits(NOESCAPE const Function<bool(const BidiPendingNavigation&)>& shouldComplete, const Inspector::CommandResult<void>& result)

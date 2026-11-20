@@ -431,6 +431,7 @@ private:
     void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&);
     void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>>&);
     void respondToPendingNavigationCallbacksWithSuccess(Vector<Inspector::CommandCallback<void>>&&);
+    void startLoadTimer(Seconds);
     void loadTimerFired();
 
     void exitFullscreenWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);

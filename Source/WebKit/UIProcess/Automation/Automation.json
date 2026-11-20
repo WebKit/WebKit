@@ -554,7 +554,7 @@
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
                 { "name": "url", "type": "string", "description": "The URL to load in the browsing context." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned. A value of 2^53 - 1 (the maximum safe integer) or more means there is no timeout." }
             ],
             "async": true
         },
@@ -564,7 +564,7 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned. A value of 2^53 - 1 (the maximum safe integer) or more means there is no timeout." }
             ],
             "async": true
         },
@@ -574,7 +574,7 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned. A value of 2^53 - 1 (the maximum safe integer) or more means there is no timeout." }
             ],
             "async": true
         },
@@ -584,7 +584,7 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned. A value of 2^53 - 1 (the maximum safe integer) or more means there is no timeout." }
             ],
             "async": true
         },
@@ -595,7 +595,7 @@
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context in which wait for pending navigation to complete." },
                 { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame in which wait for pending navigation to complete. The main frame is used if this parameter empty string or excluded." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned. A value of 2^53 - 1 (the maximum safe integer) or more means there is no timeout." }
             ],
             "async": true
         },

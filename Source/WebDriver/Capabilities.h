@@ -33,6 +33,10 @@
 
 namespace WebDriver {
 
+// https://w3c.github.io/webdriver/#dfn-maximum-safe-integer
+// Also the value Session sends to the browser for a null (infinite) page load timeout.
+inline constexpr double maxSafeInteger = 9007199254740991.0; // 2 ^ 53 - 1
+
 struct Timeouts {
     std::optional<double> script;
     std::optional<double> pageLoad;

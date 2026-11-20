@@ -130,7 +130,8 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
     }
 
     const pollInterval = 50;
-    let pollUntil = performance.now() + timeoutDuration;
+    // A null timeout means the implicit wait timeout is null, so keep polling until a node is found.
+    let pollUntil = timeoutDuration === null ? Infinity : performance.now() + timeoutDuration;
 
     function pollForNode() {
         let result = tryToFindNode();

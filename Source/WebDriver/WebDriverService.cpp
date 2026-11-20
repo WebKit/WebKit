@@ -61,9 +61,6 @@ namespace WebDriver {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDriverService);
 
-// https://w3c.github.io/webdriver/webdriver-spec.html#dfn-maximum-safe-integer
-static const double maxSafeInteger = 9007199254740991.0; // 2 ^ 53 - 1
-
 WebDriverService::WebDriverService()
     : m_server(*this)
 #if ENABLE(WEBDRIVER_BIDI)
@@ -721,15 +718,28 @@ enum class IgnoreUnknownTimeout : bool { No, Yes };
 static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject, IgnoreUnknownTimeout ignoreUnknownTimeout)
 {
     // §8.5 Set Timeouts.
-    // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-deserialize-as-a-timeout
+    // https://w3c.github.io/webdriver/#dfn-deserialize-as-timeouts-configuration
     Timeouts timeouts;
     auto end = timeoutsObject.end();
     for (auto it = timeoutsObject.begin(); it != end; ++it) {
         if (it->key == "sessionId"_s)
             continue;
 
-        if (it->key == "script"_s && it->value->isNull()) {
-            timeouts.script = std::numeric_limits<double>::infinity();
+        std::optional<double>* timeout = nullptr;
+        if (it->key == "script"_s)
+            timeout = &timeouts.script;
+        else if (it->key == "pageLoad"_s)
+            timeout = &timeouts.pageLoad;
+        else if (it->key == "implicit"_s)
+            timeout = &timeouts.implicit;
+        else if (ignoreUnknownTimeout == IgnoreUnknownTimeout::No)
+            return std::nullopt;
+        else
+            continue;
+
+        // If value is null, there is no timeout.
+        if (it->value->isNull()) {
+            *timeout = std::numeric_limits<double>::infinity();
             continue;
         }
 
@@ -738,14 +748,7 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject,
         if (!timeoutMS)
             return std::nullopt;
 
-        if (it->key == "script"_s)
-            timeouts.script = timeoutMS.value();
-        else if (it->key == "pageLoad"_s)
-            timeouts.pageLoad = timeoutMS.value();
-        else if (it->key == "implicit"_s)
-            timeouts.implicit = timeoutMS.value();
-        else if (ignoreUnknownTimeout == IgnoreUnknownTimeout::No)
-            return std::nullopt;
+        *timeout = timeoutMS.value();
     }
     return timeouts;
 }
@@ -1372,14 +1375,7 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Re
             }
             if (!capabilities.proxy)
                 capabilitiesObject->setObject("proxy"_s, JSON::Object::create());
-            auto timeoutsObject = JSON::Object::create();
-            if (m_session->scriptTimeout() == std::numeric_limits<double>::infinity())
-                timeoutsObject->setValue("script"_s, JSON::Value::null());
-            else
-                timeoutsObject->setDouble("script"_s, m_session->scriptTimeout());
-            timeoutsObject->setDouble("pageLoad"_s, m_session->pageLoadTimeout());
-            timeoutsObject->setDouble("implicit"_s, m_session->implicitWaitTimeout());
-            capabilitiesObject->setObject("timeouts"_s, WTF::move(timeoutsObject));
+            capabilitiesObject->setObject("timeouts"_s, m_session->timeoutsObject());
 
 #if ENABLE(WEBDRIVER_BIDI)
             // Extension steps defined by BiDi spec: https://w3c.github.io/webdriver-bidi/#establishing

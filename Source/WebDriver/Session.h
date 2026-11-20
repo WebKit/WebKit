@@ -77,9 +77,7 @@ public:
     bool hasBiDiEnabled() const { return m_hasBiDiEnabled; };
     void setHasBiDiEnabled(bool flag) { m_hasBiDiEnabled = flag; }
 #endif
-    double scriptTimeout() const { return m_scriptTimeout; }
-    double pageLoadTimeout() const { return m_pageLoadTimeout; }
-    double implicitWaitTimeout() const { return m_implicitWaitTimeout; }
+    Ref<JSON::Object> timeoutsObject() const;
     static const String& webElementIdentifier();
     static const String& shadowRootIdentifier();
 
@@ -172,6 +170,7 @@ private:
 #endif
 
     String uncheckedTopLevelBrowsingContext() const;
+    void setPageLoadTimeoutParameter(JSON::Object&) const;
     void switchToTopLevelBrowsingContext(const String&);
     void switchToBrowsingContext(const String&, Function<void(CommandResult&&)>&&);
     void switchToBrowsingContext(const String& toplevelBrowsingContext, const String& browsingContext, Function<void(CommandResult&&)>&&);

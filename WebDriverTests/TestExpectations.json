@@ -716,9 +716,6 @@
             },
             "test_null_response_value": {
                 "expected": {"wpe": {"status": ["PASS"], "bug": "webkit.org/b/330712"}}
-            },
-            "test_timeout_page_load_null": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -736,9 +733,6 @@
             },
             "test_dismissed_beforeunload": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/330712"}}
-            },
-            "test_timeout_page_load_null": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -1520,9 +1514,6 @@
             },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
-            "test_implicit_wait[None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -1536,9 +1527,6 @@
             },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
-            "test_implicit_wait[None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -1641,9 +1629,6 @@
             },
             "test_same_url_replaces_current_history_entry": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
-            },
-            "test_timeout_page_load_null": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -2132,9 +2117,6 @@
             },
             "test_no_such_shadow_root_with_unknown_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
-            "test_implicit_wait_shadow_root[None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -2191,9 +2173,6 @@
             },
             "test_no_such_shadow_root_with_unknown_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
-            "test_implicit_wait_shadow_root[None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -5768,9 +5747,6 @@
         "subtests": {
             "test_no_browsing_context": {
                 "expected": {"mac@Debug": {"status": ["FAIL", "PASS"], "note": "Fails on Mac, not investigated yet"}}
-            },
-            "test_implicit_wait[None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -6583,14 +6559,6 @@
         }
     },
 
-    "imported/w3c/webdriver/tests/classic/find_elements/find.py": {
-        "subtests": {
-            "test_implicit_wait[None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
-            }
-        }
-    },
-
     "imported/w3c/webdriver/tests/classic/get_all_cookies/get.py": {
         "subtests": {
             "test_get_cookies_only_from_active_document": {
@@ -6618,25 +6586,6 @@
             },
             "test_dismiss[prompt-None]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
-            }
-        }
-    },
-
-    "imported/w3c/webdriver/tests/classic/get_timeouts/get.py": {
-        "subtests": {
-            "test_types_null": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
-            }
-        }
-    },
-
-    "imported/w3c/webdriver/tests/classic/new_session/timeouts.py": {
-        "subtests": {
-            "test_timeouts[implicit-None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
-            },
-            "test_timeouts[pageLoad-None]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },
@@ -6714,14 +6663,6 @@
         }
     },
 
-    "imported/w3c/webdriver/tests/classic/refresh/refresh.py": {
-        "subtests": {
-            "test_timeout_page_load_null": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
-            }
-        }
-    },
-
     "imported/w3c/webdriver/tests/classic/release_actions/iframe.py": {
         "subtests": {
             "test_release_actions_in_frame[cross_origin]": {
@@ -6729,17 +6670,6 @@
             },
             "test_release_actions_in_frame[same_origin]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Release Actions doesn't dispatch pointerup in a frame"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
-            }
-        }
-    },
-
-    "imported/w3c/webdriver/tests/classic/set_timeouts/set.py": {
-        "subtests": {
-            "test_value_null[implicit]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
-            },
-            "test_value_null[pageLoad]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/330709"}}
             }
         }
     },

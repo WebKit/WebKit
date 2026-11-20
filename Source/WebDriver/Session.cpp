@@ -176,16 +176,27 @@ void Session::close(Function<void(CommandResult&&)>&& completionHandler)
     });
 }
 
+static void setTimeoutValue(JSON::Object& object, const String& key, double timeout)
+{
+    // A null timeout is stored as infinity, and serialized back as null.
+    if (std::isinf(timeout))
+        object.setValue(key, JSON::Value::null());
+    else
+        object.setDouble(key, timeout);
+}
+
+Ref<JSON::Object> Session::timeoutsObject() const
+{
+    auto timeouts = JSON::Object::create();
+    setTimeoutValue(timeouts.get(), "script"_s, m_scriptTimeout);
+    setTimeoutValue(timeouts.get(), "pageLoad"_s, m_pageLoadTimeout);
+    setTimeoutValue(timeouts.get(), "implicit"_s, m_implicitWaitTimeout);
+    return timeouts;
+}
+
 void Session::getTimeouts(Function<void(CommandResult&&)>&& completionHandler)
 {
-    auto parameters = JSON::Object::create();
-    if (m_scriptTimeout == std::numeric_limits<double>::infinity())
-        parameters->setValue("script"_s, JSON::Value::null());
-    else
-        parameters->setDouble("script"_s, m_scriptTimeout);
-    parameters->setDouble("pageLoad"_s, m_pageLoadTimeout);
-    parameters->setDouble("implicit"_s, m_implicitWaitTimeout);
-    completionHandler(CommandResult::success(WTF::move(parameters)));
+    completionHandler(CommandResult::success(timeoutsObject()));
 }
 
 void Session::setTimeouts(const Timeouts& timeouts, Function<void(CommandResult&&)>&& completionHandler)
@@ -197,6 +208,13 @@ void Session::setTimeouts(const Timeouts& timeouts, Function<void(CommandResult&
     if (timeouts.implicit)
         m_implicitWaitTimeout = timeouts.implicit.value();
     completionHandler(CommandResult::success());
+}
+
+void Session::setPageLoadTimeoutParameter(JSON::Object& parameters) const
+{
+    // JSON can't represent infinity, so a null (infinite) page load timeout is sent to the
+    // browser as the maximum safe integer, which the browser treats as no timeout.
+    parameters.setDouble("pageLoadTimeout"_s, std::isinf(m_pageLoadTimeout) ? maxSafeInteger : m_pageLoadTimeout);
 }
 
 String Session::uncheckedTopLevelBrowsingContext() const
@@ -444,7 +462,7 @@ void Session::go(const String& url, Function<void(CommandResult&&)>&& completion
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, uncheckedTopLevelBrowsingContext());
         parameters->setString("url"_s, url);
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        setPageLoadTimeoutParameter(parameters.get());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("navigateBrowsingContext"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -509,7 +527,7 @@ void Session::back(Function<void(CommandResult&&)>&& completionHandler)
         }
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, uncheckedTopLevelBrowsingContext());
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        setPageLoadTimeoutParameter(parameters.get());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("goBackInBrowsingContext"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -536,7 +554,7 @@ void Session::forward(Function<void(CommandResult&&)>&& completionHandler)
         }
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, uncheckedTopLevelBrowsingContext());
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        setPageLoadTimeoutParameter(parameters.get());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("goForwardInBrowsingContext"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -563,7 +581,7 @@ void Session::refresh(Function<void(CommandResult&&)>&& completionHandler)
         }
         auto parameters = JSON::Object::create();
         parameters->setString("handle"_s, uncheckedTopLevelBrowsingContext());
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        setPageLoadTimeoutParameter(parameters.get());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("reloadBrowsingContext"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -1303,8 +1321,9 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         parameters->setString("function"_s, StringImpl::createWithoutCopying(FindNodesJavaScript));
         parameters->setArray("arguments"_s, WTF::move(arguments));
         parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
-        // If there's an implicit wait, use one second more as callback timeout.
-        if (m_implicitWaitTimeout)
+        // If there's a finite implicit wait, use one second more as callback timeout.
+        // A null (infinite) implicit wait is passed to FindNodes as null and keeps polling.
+        if (m_implicitWaitTimeout && std::isfinite(m_implicitWaitTimeout))
             parameters->setDouble("callbackTimeout"_s, m_implicitWaitTimeout + 1000);
 
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTF::move(parameters), [this, protectedThis, mode, isShadowRoot, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -1992,7 +2011,7 @@ void Session::waitForNavigationToComplete(Function<void(CommandResult&&)>&& comp
         parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
+        setPageLoadTimeoutParameter(parameters.get());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("waitForNavigationToComplete"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) {
