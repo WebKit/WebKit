@@ -42,7 +42,9 @@
 #include <wtf/Borrow.h>
 #include <wtf/Deque.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -382,8 +384,88 @@ void BidiStorageAgent::getCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<
     });
 }
 
-// FIXME: setCookie is being reworked in https://bugs.webkit.org/show_bug.cgi?id=288111.
-void BidiStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::Object>&& optionalPartition, Inspector::CommandCallback<Ref<PartitionKey>>&& callback)
+static String cookieValueFromBytes(std::span<const uint8_t> bytes)
+{
+    // WebCore::Cookie keeps the value as a String. Keep bytes that are not valid UTF-8 as Latin-1.
+    if (auto value = String::fromUTF8(bytes); !value.isNull())
+        return value;
+    return String(byteCast<Latin1Character>(bytes));
+}
+
+static WebCore::Cookie::SameSitePolicy webCoreSameSitePolicy(CookieSameSitePolicy sameSite)
+{
+    switch (sameSite) {
+    case CookieSameSitePolicy::Strict:
+        return WebCore::Cookie::SameSitePolicy::Strict;
+    case CookieSameSitePolicy::Lax:
+        return WebCore::Cookie::SameSitePolicy::Lax;
+    case CookieSameSitePolicy::None:
+    case CookieSameSitePolicy::Default:
+        // FIXME: WebCore::Cookie has no way to leave the same-site policy unset, so "default" is stored as None.
+        return WebCore::Cookie::SameSitePolicy::None;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::Cookie::SameSitePolicy::None;
+}
+
+// The cookie is created with a Domain attribute, which makes it a domain cookie
+// (https://httpwg.org/specs/rfc6265.html#storage-model, step 6). WebKit stores those with a
+// leading dot. An IP address can only be the domain of a host-only cookie.
+static String storedDomainForCookieDomain(const String& domain)
+{
+    if (domain.startsWith('.') || URL::hostIsIPAddress(domain))
+        return domain;
+    return makeString('.', domain);
+}
+
+// https://w3c.github.io/webdriver-bidi/#type-storage-PartialCookie
+static Inspector::Protocol::ErrorStringOr<WebCore::Cookie> cookieFromPartialCookie(const JSON::Object& partialCookie)
+{
+    bool isInvalid = false;
+    auto name = stringMember(partialCookie, "name"_s, isInvalid);
+    auto domain = stringMember(partialCookie, "domain"_s, isInvalid);
+    auto path = stringMember(partialCookie, "path"_s, isInvalid);
+    auto httpOnly = booleanMember(partialCookie, "httpOnly"_s, isInvalid);
+    auto secure = booleanMember(partialCookie, "secure"_s, isInvalid);
+    auto expiry = unsignedIntegerMember(partialCookie, "expiry"_s, isInvalid);
+    auto sameSite = stringMember(partialCookie, "sameSite"_s, isInvalid);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isInvalid, InvalidParameter);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!name, InvalidParameter, "cookie.name is required"_s);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!domain || domain->isEmpty(), InvalidParameter, "cookie.domain is required"_s);
+
+    RefPtr protocolValue = partialCookie.getValue("value"_s);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!protocolValue, InvalidParameter, "cookie.value is required"_s);
+    auto valueBytes = deserializeProtocolBytes(*protocolValue);
+    if (!valueBytes)
+        return makeUnexpected(valueBytes.error());
+
+    WebCore::Cookie cookie;
+    cookie.name = WTF::move(*name);
+    auto borrowedValueBytes = borrow(*valueBytes);
+    cookie.value = cookieValueFromBytes(borrowedValueBytes->span());
+    cookie.domain = storedDomainForCookieDomain(*domain);
+    cookie.path = path ? WTF::move(*path) : String("/"_s);
+    cookie.httpOnly = httpOnly.value_or(false);
+    cookie.secure = secure.value_or(false);
+
+    if (sameSite) {
+        auto sameSitePolicy = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<CookieSameSitePolicy>(*sameSite);
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!sameSitePolicy, InvalidParameter, "cookie.sameSite must be \"strict\", \"lax\", \"none\" or \"default\""_s);
+        cookie.sameSite = webCoreSameSitePolicy(*sameSitePolicy);
+    }
+
+    // Without an expiry the cookie is a session cookie. WebCore::Cookie::expires is in milliseconds.
+    if (expiry)
+        cookie.expires = static_cast<double>(*expiry) * 1000.0;
+    else
+        cookie.session = true;
+
+    cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
+    return cookie;
+}
+
+// https://w3c.github.io/webdriver-bidi/#command-storage-setCookie
+void BidiStorageAgent::setCookie(Ref<JSON::Object>&& protocolCookie, RefPtr<JSON::Object>&& optionalPartition, Inspector::CommandCallback<Ref<PartitionKey>>&& callback)
 {
     auto partition = resolveStoragePartition(optionalPartition);
     if (!partition) {
@@ -391,34 +473,22 @@ void BidiStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::Object
         return;
     }
 
-    String name = cookie->getString("name"_s);
-    String value = cookie->getString("value"_s);
-    String domain = cookie->getString("domain"_s);
+    auto cookie = cookieFromPartialCookie(protocolCookie.get());
+    if (!cookie) {
+        callback(makeUnexpected(cookie.error()));
+        return;
+    }
 
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(name.isEmpty(), InternalError);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(value.isEmpty(), InternalError);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(domain.isEmpty(), InternalError);
-
-    WebCore::Cookie webCoreCookie;
-    webCoreCookie.name = name;
-    webCoreCookie.value = value;
-    webCoreCookie.domain = domain;
-    webCoreCookie.path = cookie->getString("path"_s);
-
-    auto secureOptional = cookie->getBoolean("secure"_s);
-    webCoreCookie.secure = secureOptional.value_or(false);
-
-    auto httpOnlyOptional = cookie->getBoolean("httpOnly"_s);
-    webCoreCookie.httpOnly = httpOnlyOptional.value_or(false);
-
+    // FIXME: report "unable to set cookie" when the cookie store rejects the cookie. API::HTTPCookieStore::setCookies
+    // does not say whether it stored it.
     Vector<WebCore::Cookie> cookiesToSet;
-    cookiesToSet.append(WTF::move(webCoreCookie));
+    cookiesToSet.append(WTF::move(*cookie));
 
     Ref cookieStore = partition->cookieStore();
     cookieStore->setCookies(WTF::move(cookiesToSet), [callback = WTF::move(callback), partitionKey = WTF::move(partition->partitionKey)] mutable {
         callback({ WTF::move(partitionKey) });
     });
-};
+}
 
 static void deleteCookiesSequentially(RefPtr<API::HTTPCookieStore> store, Deque<WebCore::Cookie> cookies, Ref<PartitionKey> partitionKey, Inspector::CommandCallback<Ref<PartitionKey>> callback)
 {

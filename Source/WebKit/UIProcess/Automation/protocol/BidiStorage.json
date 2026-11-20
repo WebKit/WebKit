@@ -117,16 +117,16 @@
             "id": "PartialCookie",
             "type": "object",
             "description": "Represents a cookie to be set.",
-            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-storage-PartialCookie",
             "properties": [
                 { "name": "name", "type": "string", "description": "The name of the cookie." },
-                { "name": "value", "type": "string", "description": "The value of the cookie (as a string)." },
+                { "name": "value", "$ref": "BytesValue", "description": "The value of the cookie." },
                 { "name": "domain", "type": "string", "description": "The domain of the cookie." },
                 { "name": "path", "type": "string", "optional": true, "description": "The path of the cookie." },
                 { "name": "httpOnly", "type": "boolean", "optional": true, "description": "Whether the cookie is HTTP only." },
                 { "name": "secure", "type": "boolean", "optional": true, "description": "Whether the cookie is secure." },
                 { "name": "sameSite", "$ref": "CookieSameSitePolicy", "optional": true, "description": "The <code>SameSite</code> attribute of the cookie." },
-                { "name": "expiry", "type": "integer", "optional": true, "description": "The expiry timestamp of the cookie." }
+                { "name": "expiry", "type": "integer", "optional": true, "description": "The expiry time of the cookie, in seconds since the Unix epoch." }
             ]
         }
     ],
