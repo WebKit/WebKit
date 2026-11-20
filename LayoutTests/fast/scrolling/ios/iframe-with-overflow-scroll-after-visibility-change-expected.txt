@@ -1,0 +1,16 @@
+This test verifies that an iframe whose document has an overflow scroller, inside a container that starts out with visibility: hidden, can be scrolled both inside and outside the overflow scroller after the container becomes visible. To manually run the test, load the page and scroll the box, both in its top part and in its bottom part.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hasFrameHostingNode() is false
+PASS hasFrameHostingNode() is true
+PASS scroller.scrollTop is 100
+PASS iframe.contentWindow.scrollY is 0
+PASS window.scrollY is 0
+PASS iframe.contentWindow.scrollY is 200
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
