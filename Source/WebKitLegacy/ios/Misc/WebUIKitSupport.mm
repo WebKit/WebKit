@@ -41,6 +41,7 @@
 #import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/cocoa/ASRCapability.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
@@ -67,6 +68,8 @@ void WebKitInitialize(void)
     static bool webkitInitialized;
     if (webkitInitialized)
         return;
+
+    requireASRCapability(asrCapabilityInProcessWebKit);
 
     ASSERT(pthread_main_np());
     webkitInitialized = true;

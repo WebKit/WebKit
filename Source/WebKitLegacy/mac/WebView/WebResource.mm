@@ -47,6 +47,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/cocoa/ASRCapability.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 
@@ -115,6 +116,8 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (instancetype)initWithCoder:(NSCoder *)decoder
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     WebCoreThreadViolationCheckRoundTwo();
 
     self = [super init];
@@ -286,6 +289,8 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
            response:(NSURLResponse *)response
            copyData:(BOOL)copyData
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     WebCoreThreadViolationCheckRoundTwo();
 
     self = [super init];

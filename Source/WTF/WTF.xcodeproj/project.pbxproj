@@ -189,6 +189,7 @@
 		5CFF32572925A2EC001050F2 /* ThreadSafeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFF32562925A2EB001050F2 /* ThreadSafeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EBED866547A9D46A767D47B /* ListFormatterICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A379B17A085B661F9584D0 /* ListFormatterICU.cpp */; };
 		5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */; };
+		62DD127A43BA7638EB6B22D1 /* ASRCapability.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D2FD937085BC3669D381595 /* ASRCapability.mm */; };
 		6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = 6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */; };
 		63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63F9BED32898D96400371416 /* CFPrivSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -301,6 +302,7 @@
 		BCE0DFA92D1865C4003F0349 /* CompactVariantOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0DFA82D1865C4003F0349 /* CompactVariantOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE0DFAB2D18670B003F0349 /* VariantExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0DFAA2D18670B003F0349 /* VariantExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA08042CCFDB33000AC148 /* VariantList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA08032CCFDB33000AC148 /* VariantList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BFA6B640972328435433740C /* ASRCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = AE13187A93312CDDD437EB6F /* ASRCapability.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2BCFC401F61D13000C9222C /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC3E1F61D13000C9222C /* Language.cpp */; };
 		C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC411F61D61600C9222C /* LanguageCF.cpp */; };
 		C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC531F621F3F00C9222C /* LineEnding.cpp */; };
@@ -1158,6 +1160,7 @@
 		07B588162F74607A00E8AF32 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		07C913F22F820E86003A09D8 /* OptionCountedSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptionCountedSet.h; sourceTree = "<group>"; };
 		07D49BE72F41B5DC00263E9A /* wtf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wtf.swift; sourceTree = "<group>"; };
+		0D2FD937085BC3669D381595 /* ASRCapability.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ASRCapability.mm; sourceTree = "<group>"; };
 		0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedFixedVector.cpp; sourceTree = "<group>"; };
 		0F0C03D7299820EB0064230A /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		0F0C03E6299828E50064230A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
@@ -1760,6 +1763,7 @@
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
+		AE13187A93312CDDD437EB6F /* ASRCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASRCapability.h; sourceTree = "<group>"; };
 		B6397A84DB2844D9A8644961 /* OrderedHashSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderedHashSet.h; sourceTree = "<group>"; };
 		BB0000000000000000000001 /* EscapableByteSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EscapableByteSpan.h; sourceTree = "<group>"; };
 		BBEA08032CCFDB33000AC148 /* MallocCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MallocCommon.h; sourceTree = "<group>"; };
@@ -3481,6 +3485,8 @@
 		E4A0AD3B1A96251900536DF6 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				AE13187A93312CDDD437EB6F /* ASRCapability.h */,
+				0D2FD937085BC3669D381595 /* ASRCapability.mm */,
 				E382C9DF2E9089E600843CA6 /* AuditToken.h */,
 				E382C9E02E9089E600843CA6 /* AuditToken.mm */,
 				1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */,
@@ -3540,6 +3546,7 @@
 				DD3DC8CA27A4BF8E007E5B61 /* ASCIICType.h in Headers */,
 				DDF307E927C086DF006A526F /* ASCIIFastPath.h in Headers */,
 				DDF307EB27C086DF006A526F /* ASCIILiteral.h in Headers */,
+				BFA6B640972328435433740C /* ASRCapability.h in Headers */,
 				DD3DC8DB27A4BF8E007E5B61 /* Assertions.h in Headers */,
 				DD3DC90C27A4BF8E007E5B61 /* Atomics.h in Headers */,
 				DDF307CE27C086DF006A526F /* AtomString.h in Headers */,
@@ -4556,6 +4563,7 @@
 				4427C5AA21F6D6C300A612A4 /* ASCIICType.cpp in Sources */,
 				C805EF39E5F14481A96D39FC /* ASCIILiteral.cpp in Sources */,
 				4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */,
+				62DD127A43BA7638EB6B22D1 /* ASRCapability.mm in Sources */,
 				A8A47386151A825B004123FF /* Assertions.cpp in Sources */,
 				A8A47435151A825B004123FF /* AtomString.cpp in Sources */,
 				70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */,
