@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		52FFC86FB9FD70E37E9950AD /* ANGLE Tests (Platform filters) */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D4674269734421E596ACC1AE /* Build configuration list for PBXAggregateTarget "ANGLE Tests (Platform filters)" */;
+			buildPhases = (
+			);
+			dependencies = (
+				9A738851E26C66D27CB1BB41 /* PBXTargetDependency */,
+				6C5BA4CF19D092B189AE4465 /* PBXTargetDependency */,
+				D901C969AFF2F2AD99A95C62 /* PBXTargetDependency */,
+				E4FCAB684F98AFBFD3823531 /* PBXTargetDependency */,
+				BF2C3A876511F4237A43ABB3 /* PBXTargetDependency */,
+				E0815AEFAEC2563C6DEAC936 /* PBXTargetDependency */,
+				609997916969DFEF28BA7EA8 /* PBXTargetDependency */,
+			);
+			name = "ANGLE Tests (Platform filters)";
+			productName = "ANGLE Tests (Platform filters)";
+		};
 		31DB794F2491C33300982878 /* ANGLE */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 31DB79532491C33300982878 /* Build configuration list for PBXAggregateTarget "ANGLE" */;
@@ -130,14 +147,11 @@
 		0E8442DF9435628A0113EC18 /* tcuFloatFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 541C4FCEB3396AFDBF7C9834 /* tcuFloatFormat.cpp */; };
 		0EAE4D38B92EAF008202D9DC /* xsDefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8DC64CDB8DDA520B1188FC0D /* xsDefs.cpp */; };
 		0EF0484AAC8ADD920DF23C73 /* es2fBlendTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C81E43C8992E5E0374405793 /* es2fBlendTests.cpp */; };
-		0EFF4E748C9993EF3815125B /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5240798C8A5CBFB962118E /* TestSuite.cpp */; };
-		BA543ABA6BAF7851610C1F81 /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
 		0F894D41962A62E4736D4334 /* es2fImplementationLimitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EB5487D907573765AE58BA3 /* es2fImplementationLimitTests.cpp */; };
 		0FBE433C85C17CAF6C2C581D /* glsShaderPerformanceMeasurer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C60340C19D07316573ED3D8B /* glsShaderPerformanceMeasurer.cpp */; };
 		0FC941B2954C97C8F4B9EE29 /* es2fNegativeStateApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 561A4587803378E5DDFCA56E /* es2fNegativeStateApiTests.cpp */; };
 		0FF649BAA45449B079EF3388 /* rsgBuiltinFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D4C4667AA39B8A64232E27C /* rsgBuiltinFunctions.cpp */; };
 		100F4D0DBC62940CCB88E6F8 /* deSingleton.c in Sources */ = {isa = PBXBuildFile; fileRef = C7C24A13812C3F299C5D4956 /* deSingleton.c */; };
-		10184856B23A653DA1C43A30 /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513B46858B5A1DEE1271613F /* RenderDoc.cpp */; };
 		10514F9EBB93995937AD6DCA /* tcuTestPackage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24C044139B99AD3F95883A99 /* tcuTestPackage.cpp */; };
 		107F4AD3A500F2893BFFC89D /* es3fFragDepthTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898747D1AB6E82CCB91C61E9 /* es3fFragDepthTests.cpp */; };
 		108B4131A755674659C8AB7E /* rrRasterizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB98400F841453C329CC62D8 /* rrRasterizer.cpp */; };
@@ -609,7 +623,6 @@
 		3B4E4C3FA073E9E05201E65B /* es2fColorClearTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313541E7A6A7B31C6CBF9E80 /* es2fColorClearTest.cpp */; };
 		3B704EC6A834ECC71C7A5233 /* tes3TestPackageEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA04FFC8EFB079952C09650 /* tes3TestPackageEntry.cpp */; };
 		3BAB446EB74A580B85BBE9B7 /* es3fStencilTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B2747788C360814DFA8DE3A /* es3fStencilTests.cpp */; };
-		3BED4475811294BD5C9701FE /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23104C3B95E503685137DF0D /* RenderDoc.cpp */; };
 		3C394BEDBA21F52225FB67F6 /* rsgPrettyPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89354392BBB68D9A921C8B78 /* rsgPrettyPrinter.cpp */; };
 		3C8444E88B2850784A00B0F6 /* tes2TestPackageEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 58424FEEBB13917C00E67E39 /* tes2TestPackageEntry.cpp */; };
 		3CBA4742830F8661429D1029 /* angle_deqp_tests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CC420BA4FB843F9411D424 /* angle_deqp_tests_main.cpp */; };
@@ -622,7 +635,6 @@
 		3F4E4448B19A1E5A78DF2081 /* es2fDrawTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42CA4F8FA1A2784DE8CD8D13 /* es2fDrawTests.cpp */; };
 		3FA54A5B96B98BD1599751F6 /* glwInitES31Direct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3330440BB7B122F559B96ED9 /* glwInitES31Direct.cpp */; };
 		3FB242F49E27A0072E09D648 /* es3fReadPixelsTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4CA4A38AA00DB92683BA00D /* es3fReadPixelsTests.cpp */; };
-		40404EE4AEFA26C4F3BF38AE /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4146466EB88042B0E99D807F /* GPUTestExpectationsParser.cpp */; };
 		405C41C1953685BA4AC2F2C1 /* es3fDepthTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8B74812A4AE8FDF942921DD /* es3fDepthTests.cpp */; };
 		40A54218858858615F1D73E8 /* es3fImplementationLimitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5D2420B8B90B104115F5C56 /* es3fImplementationLimitTests.cpp */; };
 		40A84710B5B02520093BAE2D /* es2fShaderReturnTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71F043FBB35545BEC4F3C19E /* es2fShaderReturnTests.cpp */; };
@@ -663,7 +675,6 @@
 		49CE4C3EB6767B4C4F562090 /* libutils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFAF8232DE6EADC00327F7F /* libutils.a */; };
 		49F2443DABB1D001EB76B2E7 /* deSharedPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F04241A797DC07D18FA2FF00 /* deSharedPtr.cpp */; };
 		4A614AEE85188AAB4D4EB72C /* es3fShaderConstExprTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D5C4D378EED0879463570E1 /* es3fShaderConstExprTests.cpp */; };
-		4A894FD3B0C10084520E2B3F /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57224F8BA6CC77B974453578 /* GPUTestExpectationsParser.cpp */; };
 		4A9843488F47EB71466DE282 /* es2fTextureSpecificationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7EC4D5189AFEFB762CF5207 /* es2fTextureSpecificationTests.cpp */; };
 		4AF140E6904018FDEA291729 /* glsRandomUniformBlockCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38524907BB8D722152A698FD /* glsRandomUniformBlockCase.cpp */; };
 		4B8848D2833434F3671844E5 /* es2fFboRenderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A134160B3A8819C381A27B2 /* es2fFboRenderTest.cpp */; };
@@ -693,16 +704,12 @@
 		525E4EF392D528DB7DCE9976 /* es3sVertexArrayTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD804B17B352E32461A88C68 /* es3sVertexArrayTests.cpp */; };
 		527E4673B8E0F714336E1291 /* gluRenderContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D13424995942F2CB08541B1 /* gluRenderContext.cpp */; };
 		528F4472AD46A66801C98848 /* glwInitES32Direct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D524F0AAE6A53E593002A0D /* glwInitES32Direct.cpp */; };
-		52DB46A6B3C2C21531F67C97 /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B5B48159D1C354362CC6BFB /* TestSuite.cpp */; };
-		EB18F2078A4A1FB28300DEA3 /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
 		53204D5B972459554A373732 /* es3fInteger64StateQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8DD240729516E60BF7B3C997 /* es3fInteger64StateQueryTests.cpp */; };
 		539E43DFB93D2FE85399934D /* es3fFboStateQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 283B4305A8DDDDA6D60A6613 /* es3fFboStateQueryTests.cpp */; };
 		53A140789D21A92EA2BBD5D6 /* deThreadLocal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B214160BE06D900599A0872 /* deThreadLocal.cpp */; };
 		53B04DED95C4A16C3F71DBA0 /* es3fNegativeTextureApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 35994148B088DC6A0EAE40BC /* es3fNegativeTextureApiTests.cpp */; };
-		53DE4FA79DA447DBECA55891 /* angle_deqp_libtester_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BF4D48861E4D2AF54233A4 /* angle_deqp_libtester_main.cpp */; };
 		5407408CBF9395DD5E86DBFE /* es2fNegativeVertexArrayApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74B54F2AAB604C418DF0862E /* es2fNegativeVertexArrayApiTests.cpp */; };
 		543D4538B00EC3A43E611526 /* es3fApiCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DA04066B12410E98180590F /* es3fApiCase.cpp */; };
-		54EB49D4B1D4F480265B67F2 /* angle_deqp_libtester_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40D04DD18692D0C4DAD4F004 /* angle_deqp_libtester_main.cpp */; };
 		551340609EAD72E7E8E2FCB9 /* gluStateReset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D28433091DA813665E01DBC /* gluStateReset.cpp */; };
 		55184E0ABB62937445205C08 /* glsScissorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F244BE90CE3EA835521EF9 /* glsScissorTests.cpp */; };
 		558E41E891372C1FFF058FAC /* es2pStateChangeCallTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE747C088A7C69BD56CBE7C /* es2pStateChangeCallTests.cpp */; };
@@ -771,7 +778,6 @@
 		698D4624B22C20EEA08D5849 /* es3fShaderPrecisionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B66464783F2AFAF8C0EBC55 /* es3fShaderPrecisionTests.cpp */; };
 		69FD4BB3BD035AA05FA80D01 /* tcuFuzzyImageCompare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 052341C58F8F9D2425C4DD16 /* tcuFuzzyImageCompare.cpp */; };
 		6A684B148B60B8F6683EC9E5 /* deUniquePtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36264C578D2FB07B7EEB7909 /* deUniquePtr.cpp */; };
-		6B7247DB8974DCD0CDD00248 /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4EC6456A88A49E1DA77EF193 /* RenderDoc.cpp */; };
 		6C094037863D6FAA89D71649 /* rrVertexPacket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7DD145DE91C3684832DAADB6 /* rrVertexPacket.cpp */; };
 		6C3349B48A901D0B03F39110 /* libANGLE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB972002DE47B8A00455D13 /* libANGLE.a */; };
 		6C494FB8984DF0C41A99772D /* es3fTextureStateQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33C4F4C99242E1376AA56A6 /* es3fTextureStateQueryTests.cpp */; };
@@ -797,7 +803,6 @@
 		72CB43378D3F73021924B84D /* eglwLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 503F49BD88AE986B22ABEF5E /* eglwLibrary.cpp */; };
 		72D749BBB9DAA5F909508B96 /* es2aAccuracyTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28424150B82D3A497C946946 /* es2aAccuracyTests.cpp */; };
 		72FE4742BC497C95E280BFF8 /* es2fShaderLoopTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B14F6AACC69B25356C1A3B /* es2fShaderLoopTests.cpp */; };
-		73194955BABEBDEF9B2A6987 /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AAC4ECCA32E1B0E69088C70 /* RenderDoc.cpp */; };
 		73334611844437B8D99868D0 /* tcuTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BAC43D2896F8C56A3F87453 /* tcuTexture.cpp */; };
 		735047BE8713479CA28A21CA /* es2fBufferWriteTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0C455EB4F6B1B31BD2C2D2 /* es2fBufferWriteTests.cpp */; };
 		737E4302BA55DC0045D1B81F /* gluDummyRenderContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE449C88DBEA39856EE8D99 /* gluDummyRenderContext.cpp */; };
@@ -812,8 +817,6 @@
 		77B949D794E2B68693B4265F /* es2fDepthStencilClearTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D5FF41A892BAB4FF022342FC /* es2fDepthStencilClearTests.cpp */; };
 		77D04930B302B6EB0C384FC0 /* es3fMultiviewTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E67C4919A33A93D413A30E59 /* es3fMultiviewTests.cpp */; };
 		781449D3B145E4CE83E2A661 /* es3sSpecialFloatTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45DE4E258609976D2067B1DE /* es3sSpecialFloatTests.cpp */; };
-		783F446F994B9615B45D64DA /* tcuANGLEPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7449A0BE279B6ED3018E90 /* tcuANGLEPlatform.cpp */; };
-		787D4BC789C5F2533B3A1463 /* tcuANGLEPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D25B459FB1130B1C340AA8F3 /* tcuANGLEPlatform.cpp */; };
 		790A4814AF07CAFFB7B218B0 /* deSemaphoreMach.c in Sources */ = {isa = PBXBuildFile; fileRef = 79974D7DB88731E16F4196B0 /* deSemaphoreMach.c */; };
 		79B845D18589D203FF750A10 /* egluGLUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53CE44CA80C42CE470AF92A3 /* egluGLUtil.cpp */; };
 		79C341268E1C340A51F6D55F /* es3sMemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EED94A99957A956E695399F1 /* es3sMemoryTests.cpp */; };
@@ -939,12 +942,6 @@
 		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
 		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
 		7B820C562DE992CD00DAC5E4 /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
-		7B8C09092F7E843B007E37DE /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
-		2A2C23D1699375D3405404A4 /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
-		7B8C09152F84EAB1007E37DE /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
-		D3409E0773ED14C68BD2F5A4 /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
-		7B8C091A2F84EC49007E37DE /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D72DE49CE200327F7F /* GPUTestConfig.cpp */; };
-		7B8C091B2F84EC83007E37DE /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4DD2DE49CE200327F7F /* GPUTestExpectationsParser.cpp */; };
 		7B8EC8402DF1BC9100105EB6 /* ImageTestMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83F2DF1BC9100105EB6 /* ImageTestMetal.mm */; };
 		7B8EC8412DF1BC9100105EB6 /* GLSLUBTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83E2DF1BC9100105EB6 /* GLSLUBTest.cpp */; };
 		7B8EC8462DF2E5FC00105EB6 /* EnsureLoopForwardProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC8452DF2E5FC00105EB6 /* EnsureLoopForwardProgress.cpp */; };
@@ -1240,8 +1237,6 @@
 		7BA08843020EA035DFDDED84 /* GLSLPrecedenceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA01AAA85B323479EF8883B /* GLSLPrecedenceTest.cpp */; };
 		7BD3D26D2FCDB8A300C386DC /* GLSLUBTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83E2DF1BC9100105EB6 /* GLSLUBTest.cpp */; };
 		7BD3D26E2FCDB8A300C386DC /* GLSLValidationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */; };
-		7BD3D26F2FCDB8A300C386DC /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D72DE49CE200327F7F /* GPUTestConfig.cpp */; };
-		7BD3D2702FCDB8A300C386DC /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4DD2DE49CE200327F7F /* GPUTestExpectationsParser.cpp */; };
 		7BD3D2712FCDB8A300C386DC /* GPUTestExpectationsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EC2DE59D5700327F7F /* GPUTestExpectationsTest.cpp */; };
 		7BD3D2722FCDB8A300C386DC /* ImageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5642DE59E0900327F7F /* ImageTest.cpp */; };
 		7BD3D2732FCDB8A300C386DC /* ImageTestMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83F2DF1BC9100105EB6 /* ImageTestMetal.mm */; };
@@ -1288,7 +1283,6 @@
 		7BD3D29C2FCDB8A300C386DC /* ReadOnlyFeedbackLoopTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58C2DE59E0900327F7F /* ReadOnlyFeedbackLoopTest.cpp */; };
 		7BD3D29D2FCDB8A300C386DC /* ReadPixelsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58D2DE59E0900327F7F /* ReadPixelsTest.cpp */; };
 		7BD3D29E2FCDB8A300C386DC /* RenderbufferMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58E2DE59E0900327F7F /* RenderbufferMultisampleTest.cpp */; };
-		7BD3D29F2FCDB8A300C386DC /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D32DE49C3B00327F7F /* RenderDoc.cpp */; };
 		7BD3D2A02FCDB8A300C386DC /* RendererTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58F2DE59E0900327F7F /* RendererTest.cpp */; };
 		7BD3D2A12FCDB8A300C386DC /* RequestExtensionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5902DE59E0900327F7F /* RequestExtensionTest.cpp */; };
 		7BD3D2A22FCDB8A300C386DC /* RobustBufferAccessBehaviorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5912DE59E0900327F7F /* RobustBufferAccessBehaviorTest.cpp */; };
@@ -1315,8 +1309,6 @@
 		7BD3D2B92FCDB8A300C386DC /* StateChangeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A62DE59E0900327F7F /* StateChangeTest.cpp */; };
 		7BD3D2BA2FCDB8A300C386DC /* SwizzleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */; };
 		7BD3D2BB2FCDB8A300C386DC /* system_info_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6662DE5A7A200327F7F /* system_info_util.cpp */; };
-		7BD3D2BC2FCDB8A300C386DC /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
-		7FA1885D1F62B20C46151D1D /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
 		7BD3D2BE2FCDB8A300C386DC /* TextureFixedRateCompressionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */; };
 		7BD3D2BF2FCDB8A300C386DC /* TextureMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */; };
 		7BD3D2C02FCDB8A300C386DC /* TextureRectangleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */; };
@@ -1535,9 +1527,6 @@
 		7BFAF4B82DE494CF00327F7F /* angle_test_instantiate_apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B32DE494CF00327F7F /* angle_test_instantiate_apple.mm */; };
 		7BFAF4B92DE494CF00327F7F /* angle_test_instantiate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B22DE494CF00327F7F /* angle_test_instantiate.cpp */; };
 		7BFAF4BA2DE494CF00327F7F /* ANGLETest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B52DE494CF00327F7F /* ANGLETest.cpp */; };
-		7BFAF4D42DE49C3B00327F7F /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D32DE49C3B00327F7F /* RenderDoc.cpp */; };
-		7BFAF4E02DE49CE200327F7F /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D72DE49CE200327F7F /* GPUTestConfig.cpp */; };
-		7BFAF4E12DE49CE200327F7F /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4DD2DE49CE200327F7F /* GPUTestExpectationsParser.cpp */; };
 		7BFAF4EB2DE59CFF00327F7F /* ActiveTextureCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EA2DE59CFF00327F7F /* ActiveTextureCacheTest.cpp */; };
 		7BFAF4ED2DE59D5700327F7F /* GPUTestExpectationsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EC2DE59D5700327F7F /* GPUTestExpectationsTest.cpp */; };
 		7BFAF4FC2DE59D8D00327F7F /* BlobCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F82DE59D8D00327F7F /* BlobCacheTest.cpp */; };
@@ -1784,13 +1773,11 @@
 		7BFF6EDF29E9908A009E1A57 /* SourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */; };
 		7BFF6EE229E9908A009E1A57 /* SourcesPlatform-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */; };
 		7C10447197ABE4D36D35E577 /* dePoolSet.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BD401F840F5D5BCDC5AD4B /* dePoolSet.c */; };
-		7C6440EFA6F09C64FDDCAE05 /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41984C36A5181B46CEFC7838 /* GPUTestConfig.cpp */; };
 		7D224B87809E7F9280345C6B /* rrPrimitivePacket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB614A9F8FC176D7A22C6512 /* rrPrimitivePacket.cpp */; };
 		7D924AB5A6A1054BC46217B7 /* libutils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFAF8232DE6EADC00327F7F /* libutils.a */; };
 		7DD04A759CAC0A36B0240CC8 /* es3fTextureStateQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D92C48BD949C6A7D6B789EF1 /* es3fTextureStateQueryTests.cpp */; };
 		7E844714A225654EA2B9C43C /* es3fTextureMipmapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085F45D9944F0349C699F983 /* es3fTextureMipmapTests.cpp */; };
 		7E9B4D698BFE4E3BB22802CC /* es3fShaderCommonFunctionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36AB4AFDB0886592A68359E4 /* es3fShaderCommonFunctionTests.cpp */; };
-		7EA346DFABC21EC79BA4F37A /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC1849D496789C6D1FDC41C7 /* GPUTestConfig.cpp */; };
 		7EE548B8871D16B5D6F033F5 /* es3fASTCDecompressionCases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D74316AAF3F4C9F23CFC5C /* es3fASTCDecompressionCases.cpp */; };
 		7F5E4171936DA84F2CF287D0 /* es3fStringQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60DB484A807F81C132F180E2 /* es3fStringQueryTests.cpp */; };
 		7FDE40D1966B102A4AED849C /* dePoolHash.c in Sources */ = {isa = PBXBuildFile; fileRef = 07634024B8911A7C3CE856B0 /* dePoolHash.c */; };
@@ -1800,8 +1787,6 @@
 		823042DD89952539D557CE8B /* tcuImageCompare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B5F4C8E89CB34527462E231 /* tcuImageCompare.cpp */; };
 		82A6478283103471BEC32585 /* es2fBufferObjectQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8BA423FA47BE2C3D3AABA4A /* es2fBufferObjectQueryTests.cpp */; };
 		83974857A19D384BE515C05F /* xeTcpIpLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9854D16BC5363BF747BB2A7 /* xeTcpIpLink.cpp */; };
-		83F34798A4421DB68BB8D8DA /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85A840AEA20FCFB17F61AAF0 /* TestSuite.cpp */; };
-		54D165A10F326C5CE9CA3DAF /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
 		84054612A7076A52CFDD4D46 /* eglwDefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0287410EA7D5C1830F5D825F /* eglwDefs.cpp */; };
 		846F45D5A3568F6F0ED617EB /* es3fNegativeFragmentApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA754C0190D3DADD12D66BBE /* es3fNegativeFragmentApiTests.cpp */; };
 		849349469C346D0B5F845427 /* deDirectoryIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9542AC8367BB16B6A8B94C /* deDirectoryIterator.cpp */; };
@@ -1817,11 +1802,9 @@
 		8798482DB489A532A4C32AB1 /* es3fDitheringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDF4C81A9203727044DEBFD /* es3fDitheringTests.cpp */; };
 		87C74F55A8D016E406B386AF /* es3aVaryingInterpolationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D004F22AAE6A51BF1FB08E5 /* es3aVaryingInterpolationTests.cpp */; };
 		87CB4093AB58FD54D2D040F9 /* es2pTextureFilteringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 298F421E89308701AA135566 /* es2pTextureFilteringTests.cpp */; };
-		884A4952BEA6BC658D62CC4A /* tcuANGLEPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11F744648AF471FB93A50B23 /* tcuANGLEPlatform.cpp */; };
 		88614A1C834DE02B5B43160F /* deTimerTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 097740FA9D9797B1709F6CEA /* deTimerTest.c */; };
 		89394C84ABBE0C0A8289AC40 /* es3fTextureUnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6AC343D39800E1732A799ED2 /* es3fTextureUnitTests.cpp */; };
 		89464895A8F3DA69673F5424 /* es3fBlendTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 243E46E88FE52B8F97ECEBE3 /* es3fBlendTests.cpp */; };
-		897A40F88E5A0EAB75A54516 /* tcuANGLEPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D044C569BC3F94B1E557F80 /* tcuANGLEPlatform.cpp */; };
 		8A36440EA17E2D51E4198A79 /* deMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33A149918F01807382F04034 /* deMutex.cpp */; };
 		8A44454AAFAE0AB9DC57670A /* eglwWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD24E08ADBC3361F0740FF3 /* eglwWrapper.cpp */; };
 		8A4D4D2D9E62EDDAFFE2F596 /* es2fShaderDiscardTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABE14F55997389B942A08646 /* es2fShaderDiscardTests.cpp */; };
@@ -1964,7 +1947,6 @@
 		B4A94874AEC5551F3D068E20 /* qpDebugOut.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FED48D5A52C3E2BAAD652BB /* qpDebugOut.c */; };
 		B4E34FF5BA25BA9A89054CAE /* es2fRboStateQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B0241E3A9882D9088C5D996 /* es2fRboStateQueryTests.cpp */; };
 		B4FD46A49B7313C58ECD527C /* gluTextureUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EF74AB9A22322124C02D97B /* gluTextureUtil.cpp */; };
-		B5004F0E8BEA4DF97DAFF663 /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AD040C5B86C36A168052773 /* GPUTestConfig.cpp */; };
 		B5AA4EE3A49504B505A9CB53 /* es2fTextureFilteringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A93400A88B9F54310D62243 /* es2fTextureFilteringTests.cpp */; };
 		B5C44583951FE0390FE4207F /* es2fShaderDiscardTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BB24923ADC35EA8A7AACA4A /* es2fShaderDiscardTests.cpp */; };
 		B6B448B597D78F28C3389698 /* gluPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2C140749D1D7AF33E962D45 /* gluPlatform.cpp */; };
@@ -2000,7 +1982,6 @@
 		C2454407BABA3094B9B5DED1 /* es2fClippingTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0627454C8B642060A2C6BCC9 /* es2fClippingTests.cpp */; };
 		C2474D58AF1EF3044C943E3E /* glsTextureTestUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56C2426A92FCDCD0D638A18B /* glsTextureTestUtil.cpp */; };
 		C2894E2FAB9AFE25B745B580 /* es2fShaderFragDataTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B06248C4BD861148E148D5F7 /* es2fShaderFragDataTests.cpp */; };
-		C2D0446FA482128D6ACE4202 /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3364D5BB9B9AD3843196BC6 /* GPUTestExpectationsParser.cpp */; };
 		C3074D329A671B3913F16517 /* xeContainerFormatParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07BF43E6ADCADC2FF2F38A85 /* xeContainerFormatParser.cpp */; };
 		C30E4D80A30E5CDBBA632800 /* es2fShaderStructTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA5B4E5D8280B0244C6E97CC /* es2fShaderStructTests.cpp */; };
 		C32843428794EFB44A7D2FC2 /* es3pShaderControlStatementTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC9044E88E634ACAE43D8EE9 /* es3pShaderControlStatementTests.cpp */; };
@@ -2037,7 +2018,6 @@
 		CDAE46B88E44934C36C45F15 /* tcuRenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49424B399AEA9ECC9A79C91B /* tcuRenderTarget.cpp */; };
 		CE1C4B8692E179F38A604E7E /* es3fFragDepthTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739444CA4EEB3958DF74040 /* es3fFragDepthTests.cpp */; };
 		CE684F26AB7E87E43B801968 /* es2fNegativeFragmentApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4554EAF8C9766B788182D34 /* es2fNegativeFragmentApiTests.cpp */; };
-		CEDE40DCB99D74B2EC31E295 /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFC645C2950954EA9EC9C0CD /* GPUTestConfig.cpp */; };
 		CF0D46A0B19FF554A9416EF4 /* es2fTextureCompletenessTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFA8438CB995AB7CCC7B7F84 /* es2fTextureCompletenessTests.cpp */; };
 		CF954710B8DAD58B051B718F /* deFloat16.c in Sources */ = {isa = PBXBuildFile; fileRef = C73E468AA02086F3F5A5FE34 /* deFloat16.c */; };
 		CFCF4C8EAF553D2C2BCEF11D /* tgl45es3TestPackage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67E74D7C8EA93B100D4FB3F8 /* tgl45es3TestPackage.cpp */; };
@@ -2086,7 +2066,6 @@
 		DC444D87B50AE6CC9313EDF7 /* es3fFunctionalTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B78F42E78DB3601E52621A4E /* es3fFunctionalTests.cpp */; };
 		DC6ACE37ED674930CF7302D9 /* FoldConstantSwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 423BDDF1136B036DA440557C /* FoldConstantSwitch.cpp */; };
 		DC6C4931BEE4F51965ACCF97 /* es3sLongShaderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD7A4A77909AB767A9C641E9 /* es3sLongShaderTests.cpp */; };
-		DCB743ACA077C38C6BBE5EA9 /* angle_deqp_libtester_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD4F40329004F4EBCBC04C84 /* angle_deqp_libtester_main.cpp */; };
 		DD7C4D76BE88B6571A82B6C7 /* es3fOcclusionQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDA04B7CB519EDE2913AE44C /* es3fOcclusionQueryTests.cpp */; };
 		DDD34E619C2C78AD77F28056 /* tcuPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E75248729BD2BB53909862B4 /* tcuPlatform.cpp */; };
 		DDDA4861876B35A864550F2E /* es3pBufferDataUploadTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E88E42928DA448FD6B3848A6 /* es3pBufferDataUploadTests.cpp */; };
@@ -2353,7 +2332,6 @@
 		EA5D4EEF93049FC332EB0E18 /* glsUniformBlockCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45A743169381B27478632DE1 /* glsUniformBlockCase.cpp */; };
 		EA754B2AA555D66D3C5E7621 /* es3fTextureFilteringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E4C028715D404136C9F6E /* es3fTextureFilteringTests.cpp */; };
 		EC1547B6804D7E151E44C6D7 /* es3fTextureShadowTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71FD4F0B8940AF4EC863F637 /* es3fTextureShadowTests.cpp */; };
-		EDFC4FB68AFA487C59452D37 /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA9B428F81FDFC99C69B6EE5 /* GPUTestExpectationsParser.cpp */; };
 		EE374BEBA17825D65024F44B /* rsgFunctionGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7042EB9DDD9CEE0139003D /* rsgFunctionGenerator.cpp */; };
 		EE3F426AB357E43AB3ECF90D /* es3fNegativeShaderApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55864FACB0B83F22E908B484 /* es3fNegativeShaderApiTests.cpp */; };
 		EF244D199EE99B2C90640135 /* es2pPerformanceTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC4D40B0928D7ECF82B72210 /* es2pPerformanceTests.cpp */; };
@@ -2368,12 +2346,9 @@
 		F2724AFEAFD6445C2F34DCC0 /* es2fDebugMarkerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C34CE78EAA4384D4B213AF /* es2fDebugMarkerTests.cpp */; };
 		F2754DF5A9858A94FC4E31E8 /* egluConfigInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03DC4962A549BD22FE9DF4EA /* egluConfigInfo.cpp */; };
 		F3324AE1A2946074CA1B252A /* glsFboUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79F427AB8FC6F39625A7254 /* glsFboUtil.cpp */; };
-		F397485382F90CCCD84075F2 /* angle_deqp_libtester_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B934BE3B89E5408D47E23A1 /* angle_deqp_libtester_main.cpp */; };
 		F40445258A4A21D4CA98DEB9 /* es3fCompressedTextureTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844D430F80A14685574A1EF9 /* es3fCompressedTextureTests.cpp */; };
 		F49043A493388A01AFFDA576 /* es3fSamplerObjectTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 891C43E88909B2E52F435226 /* es3fSamplerObjectTests.cpp */; };
 		F4F94CA283812EC1A68659A4 /* deAppendList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FF24BDE86227D931F729B6F /* deAppendList.cpp */; };
-		F5394C54ADFC12514ABA1C08 /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C3043C1B9DD97F3568DED1D /* TestSuite.cpp */; };
-		3B69969401696A8C85A49141 /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
 		F5E24FEAA45E51A035134A3B /* es2fFboApiTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E420C8896C3146FBC8E34 /* es2fFboApiTest.cpp */; };
 		F67D478CBB60973F058BB64C /* tcuTexCompareVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668E4FC48BC1273FE60302D5 /* tcuTexCompareVerifier.cpp */; };
 		F684498A9041BDA174F3793C /* es2fPrerequisiteTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5804C708CF0849FD5176176 /* es2fPrerequisiteTests.cpp */; };
@@ -2540,6 +2515,22 @@
 		FD9A61ECF6AEA5207BB74AD8 /* wgpu_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42EF3DD99319840974427CDA /* wgpu_utils.cpp */; };
 		49B9E56180AC47F808A600B6 /* wgpu_wgsl_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9960AF0C0B69617E59791473 /* wgpu_wgsl_util.cpp */; };
 		4E80C274F0A21B34D0FD9948 /* wgpu_wgsl_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9960AF0C0B69617E59791473 /* wgpu_wgsl_util.cpp */; };
+		2469F646211377F3A42BA2D5 /* angle_deqp_libtester_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BF4D48861E4D2AF54233A4 /* angle_deqp_libtester_main.cpp */; };
+		978F3564C572F9E9AA27E1D9 /* tcuANGLEPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7449A0BE279B6ED3018E90 /* tcuANGLEPlatform.cpp */; };
+		BBBA0308AAAE31B679DFBE74 /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D72DE49CE200327F7F /* GPUTestConfig.cpp */; };
+		C438505FA82246842CE61D97 /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4DD2DE49CE200327F7F /* GPUTestExpectationsParser.cpp */; };
+		5DA926FAB8BD54F11556DBCE /* PartitionAllocSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 392BDE8911217993E291E377 /* PartitionAllocSupport.cpp */; };
+		679426899E7E709CDEB4E9B3 /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D32DE49C3B00327F7F /* RenderDoc.cpp */; };
+		FDDA3C82FAC9572FF55A05F0 /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
+		79181D7448B2A54B81B62BC5 /* gtest.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 7BDE1EF22DED90B6007E43DC /* gtest.framework */; };
+		5F674CC653E19761FEFE9C68 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 7BE34ADA2E019371001AD21A /* libWebKitAdditions.a */; };
+		F6F5862CD9700B4D444BF403 /* libANGLETestHarness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */; };
+		A09261A5D4A590FF92204B6C /* libANGLETestHarness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */; };
+		9F8A856468D10957297839EC /* libANGLETestHarness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */; };
+		9522BE7C09A11D702C113C48 /* libANGLETestHarness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */; };
+		B0D1EEBD70901636CC56A33F /* libANGLETestHarness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */; };
+		08EDF6F0637A8DF3EFCCF9FB /* libANGLETestHarness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */; };
+		D70E1D810F0E7FBC88D09E02 /* libANGLETestHarness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -2572,6 +2563,55 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		C1C2DA1A59E3655C4C4BDEDF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BFAF6882DE6E9D900327F7F;
+			remoteInfo = ANGLEUnitTests;
+		};
+		34C3CFCFB0D6700ECBD1DAA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BE4AA532DE4544900A16F7E;
+			remoteInfo = ANGLEEnd2EndTests;
+		};
+		3661A22D0B29B694682AB475 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3E045FAB988D2834BEDCF23;
+			remoteInfo = ANGLEDeqpGLES2Tests;
+		};
+		8F2D471C6104353E8824A198 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FDB44EAA70594111A0ED0EA;
+			remoteInfo = ANGLEDeqpGLES3Tests;
+		};
+		CBC887AE6A4B797804B21547 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BD3D2002FCDB8A300C386DC;
+			remoteInfo = ANGLEEnd2EndTestsApp;
+		};
+		6B05A4E436CD36573E3B1791 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C78A46E3ACBA17BCCFD16A00;
+			remoteInfo = ANGLEDeqpGLES2TestsApp;
+		};
+		34BC8F5FB63AF2719FD9E06D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 624048FDA141D33D5E37C671;
+			remoteInfo = ANGLEDeqpGLES3TestsApp;
+		};
 		016E47F08BE45B242DDD9C33 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -2873,6 +2913,62 @@
 			remoteGlobalIDString = FFDA50C4269F845100AE11E2;
 			remoteInfo = ANGLEMetalLib;
 		};
+		1AC4B8043C78980B2C44D58B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD70112FF59CB70054DF83;
+			remoteInfo = Setup;
+		};
+		2A7EC4A67B4282D2D5538D0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FD9ABB9C0FEAA3F6F2D0A27;
+			remoteInfo = ANGLETestHarness;
+		};
+		2BB43A56DF5DB83130B13A5F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FD9ABB9C0FEAA3F6F2D0A27;
+			remoteInfo = ANGLETestHarness;
+		};
+		D79CD9B7C62A951D0690567D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FD9ABB9C0FEAA3F6F2D0A27;
+			remoteInfo = ANGLETestHarness;
+		};
+		5BC7221B244277F8890E4571 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FD9ABB9C0FEAA3F6F2D0A27;
+			remoteInfo = ANGLETestHarness;
+		};
+		52FAC0BB82DEA78A35480A95 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FD9ABB9C0FEAA3F6F2D0A27;
+			remoteInfo = ANGLETestHarness;
+		};
+		D060A3455C73EEBB14804D76 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FD9ABB9C0FEAA3F6F2D0A27;
+			remoteInfo = ANGLETestHarness;
+		};
+		E74F1D367FA5D8666BAB4B08 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FD9ABB9C0FEAA3F6F2D0A27;
+			remoteInfo = ANGLETestHarness;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2960,6 +3056,18 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		33756C813EAE236BC3304D45 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				79181D7448B2A54B81B62BC5 /* gtest.framework in Product Dependencies */,
+				5F674CC653E19761FEFE9C68 /* libWebKitAdditions.a in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -5034,6 +5142,8 @@
 		E7F9DD07B93265375D536F8F /* wgpu_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_utils.h; path = src/libANGLE/renderer/wgpu/wgpu_utils.h; sourceTree = "<group>"; };
 		9960AF0C0B69617E59791473 /* wgpu_wgsl_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_wgsl_util.cpp; path = src/libANGLE/renderer/wgpu/wgpu_wgsl_util.cpp; sourceTree = "<group>"; };
 		7216F9B11C12BEAEAF228CC0 /* wgpu_wgsl_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_wgsl_util.h; path = src/libANGLE/renderer/wgpu/wgpu_wgsl_util.h; sourceTree = "<group>"; };
+		758F657E7F1295D050688A9B /* libANGLETestHarness.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libANGLETestHarness.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8F0DC6653149BBA598CCF68 /* ANGLETestHarness.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ANGLETestHarness.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5050,6 +5160,7 @@
 			files = (
 				E999452D8FCA3314B520B2EE /* libANGLE.a in Frameworks */,
 				04284D87A294AD673D056F54 /* libANGLEDeqpSupport.a in Frameworks */,
+				D70E1D810F0E7FBC88D09E02 /* libANGLETestHarness.a in Frameworks */,
 				A61748F5B95369D462C44249 /* libgtest.a in Frameworks */,
 				49CE4C3EB6767B4C4F562090 /* libutils.a in Frameworks */,
 			);
@@ -5076,6 +5187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BD3D2D32FCDB8A300C386DC /* libANGLE.a in Frameworks */,
+				9F8A856468D10957297839EC /* libANGLETestHarness.a in Frameworks */,
 				7BD3D2D42FCDB8A300C386DC /* libgtest.a in Frameworks */,
 				7BD3D2D52FCDB8A300C386DC /* libutils.a in Frameworks */,
 			);
@@ -5086,6 +5198,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BB972FE2DE4866A00455D13 /* libANGLE.a in Frameworks */,
+				A09261A5D4A590FF92204B6C /* libANGLETestHarness.a in Frameworks */,
 				7BDE1EFB2DED923F007E43DC /* libgtest.a in Frameworks */,
 				7BFAF8FF2DE6F67600327F7F /* libutils.a in Frameworks */,
 			);
@@ -5135,6 +5248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BFAF7622DE6E9D900327F7F /* libANGLE.a in Frameworks */,
+				F6F5862CD9700B4D444BF403 /* libANGLETestHarness.a in Frameworks */,
 				7BDE1EE82DED8DD6007E43DC /* libgmock.a in Frameworks */,
 				7BDE1EFC2DED9248007E43DC /* libgtest.a in Frameworks */,
 				7BFAF9282DE6F95400327F7F /* libutils.a in Frameworks */,
@@ -5161,6 +5275,7 @@
 			files = (
 				6C3349B48A901D0B03F39110 /* libANGLE.a in Frameworks */,
 				97D446DC9C1D9BD879C23E48 /* libANGLEDeqpSupport.a in Frameworks */,
+				9522BE7C09A11D702C113C48 /* libANGLETestHarness.a in Frameworks */,
 				9DDF45738EB8F2D0D1211A9D /* libgtest.a in Frameworks */,
 				7D924AB5A6A1054BC46217B7 /* libutils.a in Frameworks */,
 			);
@@ -5172,6 +5287,7 @@
 			files = (
 				0DD2486DA50ED5A9412A50F0 /* libANGLE.a in Frameworks */,
 				7A46430CA1DB669F659294BD /* libANGLEDeqpSupport.a in Frameworks */,
+				B0D1EEBD70901636CC56A33F /* libANGLETestHarness.a in Frameworks */,
 				3D004695B5EC699A8CE2985D /* libgtest.a in Frameworks */,
 				33184746A94FD4C1279C2E51 /* libutils.a in Frameworks */,
 			);
@@ -5183,8 +5299,16 @@
 			files = (
 				91824547A32DD064353CA2FA /* libANGLE.a in Frameworks */,
 				859A4E68AB5E19770D666266 /* libANGLEDeqpSupport.a in Frameworks */,
+				08EDF6F0637A8DF3EFCCF9FB /* libANGLETestHarness.a in Frameworks */,
 				47C24D74ACB1F59FBCF07613 /* libgtest.a in Frameworks */,
 				D7054B7EBFA6C82F215F1E9C /* libutils.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		97EDBB040B303F11AFD611D2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6241,6 +6365,7 @@
 				7BD3D1E62FCDB43E00C386DC /* ANGLEEnd2EndTestsApp-iOS.entitlements */,
 				7BD3D1E42FCDB2E800C386DC /* ANGLEEnd2EndTestsApp.xcconfig */,
 				FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */,
+				A8F0DC6653149BBA598CCF68 /* ANGLETestHarness.xcconfig */,
 				7B9829372E0EB05200F1E9FB /* ANGLETranslator.xcconfig */,
 				7BF554C62C81EFF9002B101E /* ANGLETranslatorFuzzer.xcconfig */,
 				7BF554C72C81EFF9002B101E /* ANGLETranslatorFuzzerCoverage.xcconfig */,
@@ -7730,6 +7855,7 @@
 				E1CC4EC08D33F0C64F0EC4DD /* ANGLEDeqpGLES2TestsApp.app */,
 				0D3D459A8F7FBD7BF2AC6D49 /* ANGLEDeqpGLES3Tests */,
 				3E0045AB9A8F0B740C9FF1BA /* ANGLEDeqpGLES3TestsApp.app */,
+				758F657E7F1295D050688A9B /* libANGLETestHarness.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8565,6 +8691,7 @@
 				45444B02A652A32027AB29F1 /* PBXTargetDependency */,
 				081D43A790938AA82E4AA206 /* PBXTargetDependency */,
 				EAD24D89B44DD2F46EE9F6BB /* PBXTargetDependency */,
+				1311CC3287671E8EFE631921 /* PBXTargetDependency */,
 			);
 			name = ANGLEDeqpGLES3TestsApp;
 			productName = ANGLEDeqpGLES3TestsApp;
@@ -8624,6 +8751,7 @@
 			dependencies = (
 				7BD3D2012FCDB8A300C386DC /* PBXTargetDependency */,
 				7BD3D2032FCDB8A300C386DC /* PBXTargetDependency */,
+				22EC0C49DE5453804F4834BE /* PBXTargetDependency */,
 			);
 			name = ANGLEEnd2EndTestsApp;
 			packageProductDependencies = (
@@ -8645,6 +8773,7 @@
 			dependencies = (
 				7B820C552DE9929E00DAC5E4 /* PBXTargetDependency */,
 				7BB973002DE4866A00455D13 /* PBXTargetDependency */,
+				C3B8D562165BD059A85608AA /* PBXTargetDependency */,
 			);
 			name = ANGLEEnd2EndTests;
 			packageProductDependencies = (
@@ -8752,6 +8881,7 @@
 			dependencies = (
 				7B820C532DE9929300DAC5E4 /* PBXTargetDependency */,
 				7BFAF68D2DE6E9D900327F7F /* PBXTargetDependency */,
+				2F2B8835ACB1EF4AEA163844 /* PBXTargetDependency */,
 			);
 			name = ANGLEUnitTests;
 			packageProductDependencies = (
@@ -8794,6 +8924,7 @@
 				E26F4E349E4A9C3AAE23C8B4 /* PBXTargetDependency */,
 				9326494288351B82D61929A9 /* PBXTargetDependency */,
 				5E25427BA744AADC58EFB655 /* PBXTargetDependency */,
+				79BDA59D8AB84D67030259E0 /* PBXTargetDependency */,
 			);
 			name = ANGLEDeqpGLES3Tests;
 			productName = ANGLEDeqpGLES3Tests;
@@ -8814,6 +8945,7 @@
 				79204152BF7D6696596B7B9D /* PBXTargetDependency */,
 				69A1401EA5E1A8F2DC0125C4 /* PBXTargetDependency */,
 				4C6245B190772F12ECAF5310 /* PBXTargetDependency */,
+				2E7FDE95A03880BE8468582F /* PBXTargetDependency */,
 			);
 			name = ANGLEDeqpGLES2Tests;
 			productName = ANGLEDeqpGLES2Tests;
@@ -8835,6 +8967,7 @@
 				5163454CAEEBF7B5A426F420 /* PBXTargetDependency */,
 				94914F50A6172EFAC33BD97E /* PBXTargetDependency */,
 				5B6C4A01908A2DB7CD575ACA /* PBXTargetDependency */,
+				DADB30FBC94F87DE7BAAA2F3 /* PBXTargetDependency */,
 			);
 			name = ANGLEDeqpGLES2TestsApp;
 			productName = ANGLEDeqpGLES2TestsApp;
@@ -8874,6 +9007,25 @@
 			productName = ANGLEMetalLib;
 			productType = "com.apple.product-type.metal-library";
 		};
+		0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 270A45A21CA18F9E2C3E94FB /* Build configuration list for PBXNativeTarget "ANGLETestHarness" */;
+			buildPhases = (
+				33756C813EAE236BC3304D45 /* Product Dependencies */,
+				0100BDAE8FD8861E5E349B62 /* Use WTF's derived Public SDK Headers */,
+				BE4134D7830390C64C8DEB4A /* Sources */,
+				97EDBB040B303F11AFD611D2 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				460C53AD1012D537377A7D20 /* PBXTargetDependency */,
+			);
+			name = ANGLETestHarness;
+			productName = ANGLETestHarness;
+			productReference = 758F657E7F1295D050688A9B /* libANGLETestHarness.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -8901,6 +9053,9 @@
 					};
 					7BF554922C81ED9B002B101E = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					52FFC86FB9FD70E37E9950AD = {
+						CreatedOnToolsVersion = 27.0;
 					};
 					7BF5549A2C81EDE0002B101E = {
 						CreatedOnToolsVersion = 16.0;
@@ -8942,6 +9097,7 @@
 				7BF5548D2C81ED90002B101E /* Fuzzers (ANGLE) */,
 				7BF554B52C81EEDB002B101E /* ANGLETranslatorFuzzer */,
 				7BF554922C81ED9B002B101E /* Tools (ANGLE) */,
+				52FFC86FB9FD70E37E9950AD /* ANGLE Tests (Platform filters) */,
 				7BF554A92C81EEB1002B101E /* ANGLETranslatorFuzzerCoverage */,
 				7BF554CB2C81F028002B101E /* ANGLETranslatorFuzzerStats */,
 				7BF554D52C81F02B002B101E /* ANGLETranslatorFuzzerDumpTestCase */,
@@ -8954,6 +9110,7 @@
 				C78A46E3ACBA17BCCFD16A00 /* ANGLEDeqpGLES2TestsApp */,
 				9FDB44EAA70594111A0ED0EA /* ANGLEDeqpGLES3Tests */,
 				624048FDA141D33D5E37C671 /* ANGLEDeqpGLES3TestsApp */,
+				0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */,
 			);
 		};
 /* End PBXProject section */
@@ -8999,9 +9156,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles2",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/vk_gl_cts_data/data/gles2",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9014,9 +9177,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles2",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/vk_gl_cts_data/data/gles2",
+				"$(BUILT_PRODUCTS_DIR)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(BUILT_PRODUCTS_DIR)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9029,9 +9198,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles3",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/vk_gl_cts_data/data/gles3",
+				"$(BUILT_PRODUCTS_DIR)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(BUILT_PRODUCTS_DIR)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9126,9 +9301,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles3",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/vk_gl_cts_data/data/gles3",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9156,6 +9337,26 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"analyze\" ] || [ \"${ACTION}\" = \"build\" ] || [ \"${ACTION}\" = \"install\" ]; then\n  python3 \"${SRCROOT}/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py\" \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
 		};
+		0100BDAE8FD8861E5E349B62 /* Use WTF's derived Public SDK Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+			);
+			name = "Use WTF's derived Public SDK Headers";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/use-derived-public-sdk-headers.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ -z \"${WK_DERIVED_SDK_HEADERS_DIR}\" -o -d \"${WK_DERIVED_SDK_HEADERS_DIR}\" ] && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -9164,7 +9365,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				278249DF9EAE939800E1497C /* angle_deqp_gtest.cpp in Sources */,
-				54EB49D4B1D4F480265B67F2 /* angle_deqp_libtester_main.cpp in Sources */,
 				D94443118F39F2306B01E4F0 /* angle_deqp_tests_main.cpp in Sources */,
 				6FB4421B9D46B518339F2DBE /* es3aAccuracyTests.cpp in Sources */,
 				0524486AB0D66971F428DAF1 /* es3aTextureFilteringTests.cpp in Sources */,
@@ -9304,17 +9504,11 @@
 				98D64ACE8E71F1FB3D399D54 /* es3sStressTests.cpp in Sources */,
 				0E6E4694B070D910197A6465 /* es3sSyncTests.cpp in Sources */,
 				FC7F4DD098784BC26F8F076D /* es3sVertexArrayTests.cpp in Sources */,
-				7EA346DFABC21EC79BA4F37A /* GPUTestConfig.cpp in Sources */,
-				EDFC4FB68AFA487C59452D37 /* GPUTestExpectationsParser.cpp in Sources */,
-				3B69969401696A8C85A49141 /* PartitionAllocSupport.cpp in Sources */,
-				3BED4475811294BD5C9701FE /* RenderDoc.cpp in Sources */,
-				787D4BC789C5F2533B3A1463 /* tcuANGLEPlatform.cpp in Sources */,
 				FD4044C88DF5ACCEDD410D7C /* tes3Context.cpp in Sources */,
 				282341A88EA53A03C9AB4E1C /* tes3InfoTests.cpp in Sources */,
 				64BF4E0099E35F50303BE210 /* tes3TestCase.cpp in Sources */,
 				16DA4D2F9A4D087B836C39D5 /* tes3TestPackage.cpp in Sources */,
 				3B704EC6A834ECC71C7A5233 /* tes3TestPackageEntry.cpp in Sources */,
-				F5394C54ADFC12514ABA1C08 /* TestSuite.cpp in Sources */,
 				CFCF4C8EAF553D2C2BCEF11D /* tgl45es3TestPackage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9703,7 +9897,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				818F47C481A6C41BCB7039F4 /* angle_deqp_gtest.cpp in Sources */,
-				F397485382F90CCCD84075F2 /* angle_deqp_libtester_main.cpp in Sources */,
 				411F45B08A4C5462E012CECC /* angle_deqp_tests_main.cpp in Sources */,
 				2DD0470F82917208783ACCED /* es2aAccuracyTests.cpp in Sources */,
 				23AA4E8DAE62CDF0DE64C8AA /* es2aTextureFilteringTests.cpp in Sources */,
@@ -9808,18 +10001,12 @@
 				00E14C4A823C63A4AA82CDA3 /* es2sSpecialFloatTests.cpp in Sources */,
 				2577422A81A0B0EC53041955 /* es2sStressTests.cpp in Sources */,
 				41604BDFAC6AA1C0BEC20092 /* es2sVertexArrayTests.cpp in Sources */,
-				B5004F0E8BEA4DF97DAFF663 /* GPUTestConfig.cpp in Sources */,
-				C2D0446FA482128D6ACE4202 /* GPUTestExpectationsParser.cpp in Sources */,
-				54D165A10F326C5CE9CA3DAF /* PartitionAllocSupport.cpp in Sources */,
-				73194955BABEBDEF9B2A6987 /* RenderDoc.cpp in Sources */,
-				884A4952BEA6BC658D62CC4A /* tcuANGLEPlatform.cpp in Sources */,
 				AB8C47BB8A5BA7E74988EEB3 /* tes2CapabilityTests.cpp in Sources */,
 				704940BFA6AEB9FA13A46A22 /* tes2Context.cpp in Sources */,
 				B3114D558546E46900592654 /* tes2InfoTests.cpp in Sources */,
 				92234F5089729B9C1981D90F /* tes2TestCase.cpp in Sources */,
 				063B431097DDDB67F38437E8 /* tes2TestPackage.cpp in Sources */,
 				3C8444E88B2850784A00B0F6 /* tes2TestPackageEntry.cpp in Sources */,
-				83F34798A4421DB68BB8D8DA /* TestSuite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9827,6 +10014,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2469F646211377F3A42BA2D5 /* angle_deqp_libtester_main.cpp in Sources */,
 				F4F94CA283812EC1A68659A4 /* deAppendList.cpp in Sources */,
 				BD14406FB33A8F1AC3064D6D /* deArrayBuffer.cpp in Sources */,
 				9F9D4DA8A1048B9B32145098 /* deArrayUtil.cpp in Sources */,
@@ -10030,6 +10218,7 @@
 				2FF144DEB83F9AD538269420 /* sglrReferenceUtils.cpp in Sources */,
 				8D1B4957810731E5B94B4237 /* sglrShaderProgram.cpp in Sources */,
 				C78940A0AC47CB11E886922F /* tcuANGLENativeDisplayFactory.cpp in Sources */,
+				978F3564C572F9E9AA27E1D9 /* tcuANGLEPlatform.cpp in Sources */,
 				085B4B469B3DBB23F868EE58 /* tcuApp.cpp in Sources */,
 				B2FE453ABD4E2F0DC147071F /* tcuArray.cpp in Sources */,
 				03794EB482D8BA2CDD37E365 /* tcuAstcUtil.cpp in Sources */,
@@ -10112,7 +10301,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6CE490886850C64480759BE /* angle_deqp_gtest.cpp in Sources */,
-				DCB743ACA077C38C6BBE5EA9 /* angle_deqp_libtester_main.cpp in Sources */,
 				3CBA4742830F8661429D1029 /* angle_deqp_tests_main.cpp in Sources */,
 				2167465283AA4858E5F33320 /* es3aAccuracyTests.cpp in Sources */,
 				F7F44DC79F2665219316A2CF /* es3aTextureFilteringTests.cpp in Sources */,
@@ -10252,17 +10440,11 @@
 				57D44980B851726D18A85405 /* es3sStressTests.cpp in Sources */,
 				B14D48EE9B2F8B3E1CC0B4EE /* es3sSyncTests.cpp in Sources */,
 				525E4EF392D528DB7DCE9976 /* es3sVertexArrayTests.cpp in Sources */,
-				7C6440EFA6F09C64FDDCAE05 /* GPUTestConfig.cpp in Sources */,
-				4A894FD3B0C10084520E2B3F /* GPUTestExpectationsParser.cpp in Sources */,
-				BA543ABA6BAF7851610C1F81 /* PartitionAllocSupport.cpp in Sources */,
-				6B7247DB8974DCD0CDD00248 /* RenderDoc.cpp in Sources */,
-				897A40F88E5A0EAB75A54516 /* tcuANGLEPlatform.cpp in Sources */,
 				A4D845FF85F3E2F53DBF86B7 /* tes3Context.cpp in Sources */,
 				2A524C298E1282881DD3A63B /* tes3InfoTests.cpp in Sources */,
 				E02347E4AD9CEBD5E697868F /* tes3TestCase.cpp in Sources */,
 				37084D7AA6ECB2D956A4123B /* tes3TestPackage.cpp in Sources */,
 				9EC247EE80EEA6D3309FA0CA /* tes3TestPackageEntry.cpp in Sources */,
-				0EFF4E748C9993EF3815125B /* TestSuite.cpp in Sources */,
 				9FDE4E9A9502BA00E2577FE8 /* tgl45es3TestPackage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10272,7 +10454,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				63144A4A873034213B5A3833 /* angle_deqp_gtest.cpp in Sources */,
-				53DE4FA79DA447DBECA55891 /* angle_deqp_libtester_main.cpp in Sources */,
 				3DEB4161AA598325EE9B7CE9 /* angle_deqp_tests_main.cpp in Sources */,
 				72D749BBB9DAA5F909508B96 /* es2aAccuracyTests.cpp in Sources */,
 				036E4287869815B092E167B0 /* es2aTextureFilteringTests.cpp in Sources */,
@@ -10377,18 +10558,12 @@
 				07B741ED9C231BBC88CF79E5 /* es2sSpecialFloatTests.cpp in Sources */,
 				42894551AE8871150A8EDAB7 /* es2sStressTests.cpp in Sources */,
 				2F1C433E9FE89529074AC695 /* es2sVertexArrayTests.cpp in Sources */,
-				CEDE40DCB99D74B2EC31E295 /* GPUTestConfig.cpp in Sources */,
-				40404EE4AEFA26C4F3BF38AE /* GPUTestExpectationsParser.cpp in Sources */,
-				EB18F2078A4A1FB28300DEA3 /* PartitionAllocSupport.cpp in Sources */,
-				10184856B23A653DA1C43A30 /* RenderDoc.cpp in Sources */,
-				783F446F994B9615B45D64DA /* tcuANGLEPlatform.cpp in Sources */,
 				33994E71945532CC35CCEB36 /* tes2CapabilityTests.cpp in Sources */,
 				8EC344849161A96F0CBB7231 /* tes2Context.cpp in Sources */,
 				058E486D9E0694222930D1AD /* tes2InfoTests.cpp in Sources */,
 				4E33474CBD2DCB295DFA0D2F /* tes2TestCase.cpp in Sources */,
 				5FBC4D188F2962DD4E57F107 /* tes2TestPackage.cpp in Sources */,
 				38E94CBCAEE92F542826F159 /* tes2TestPackageEntry.cpp in Sources */,
-				52DB46A6B3C2C21531F67C97 /* TestSuite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10705,8 +10880,6 @@
 				7BD3D26C2FCDB8A300C386DC /* GLSLTest.cpp in Sources */,
 				7BD3D26D2FCDB8A300C386DC /* GLSLUBTest.cpp in Sources */,
 				7BD3D26E2FCDB8A300C386DC /* GLSLValidationTest.cpp in Sources */,
-				7BD3D26F2FCDB8A300C386DC /* GPUTestConfig.cpp in Sources */,
-				7BD3D2702FCDB8A300C386DC /* GPUTestExpectationsParser.cpp in Sources */,
 				7BD3D2712FCDB8A300C386DC /* GPUTestExpectationsTest.cpp in Sources */,
 				7BD3D2722FCDB8A300C386DC /* ImageTest.cpp in Sources */,
 				7BD3D2732FCDB8A300C386DC /* ImageTestMetal.mm in Sources */,
@@ -10736,7 +10909,6 @@
 				7BD3D28B2FCDB8A300C386DC /* OcclusionQueriesTest.cpp in Sources */,
 				7BD3D28D2FCDB8A300C386DC /* PackUnpackTest.cpp in Sources */,
 				7BD3D28E2FCDB8A300C386DC /* ParallelShaderCompileTest.cpp in Sources */,
-				7FA1885D1F62B20C46151D1D /* PartitionAllocSupport.cpp in Sources */,
 				7BD3D28F2FCDB8A300C386DC /* PBOExtensionTest.cpp in Sources */,
 				7BD3D2902FCDB8A300C386DC /* PbufferTest.cpp in Sources */,
 				7BD3D2912FCDB8A300C386DC /* PixelLocalStorageTest.cpp in Sources */,
@@ -10753,7 +10925,6 @@
 				7BD3D29C2FCDB8A300C386DC /* ReadOnlyFeedbackLoopTest.cpp in Sources */,
 				7BD3D29D2FCDB8A300C386DC /* ReadPixelsTest.cpp in Sources */,
 				7BD3D29E2FCDB8A300C386DC /* RenderbufferMultisampleTest.cpp in Sources */,
-				7BD3D29F2FCDB8A300C386DC /* RenderDoc.cpp in Sources */,
 				7BD3D2A02FCDB8A300C386DC /* RendererTest.cpp in Sources */,
 				7BD3D2A12FCDB8A300C386DC /* RequestExtensionTest.cpp in Sources */,
 				7BD3D2A22FCDB8A300C386DC /* RobustBufferAccessBehaviorTest.cpp in Sources */,
@@ -10780,7 +10951,6 @@
 				7BD3D2B92FCDB8A300C386DC /* StateChangeTest.cpp in Sources */,
 				7BD3D2BA2FCDB8A300C386DC /* SwizzleTest.cpp in Sources */,
 				7BD3D2BB2FCDB8A300C386DC /* system_info_util.cpp in Sources */,
-				7BD3D2BC2FCDB8A300C386DC /* TestSuite.cpp in Sources */,
 				7BD3D2BE2FCDB8A300C386DC /* TextureFixedRateCompressionTest.cpp in Sources */,
 				7BD3D2BF2FCDB8A300C386DC /* TextureMultisampleTest.cpp in Sources */,
 				7BD3D2C02FCDB8A300C386DC /* TextureRectangleTest.cpp in Sources */,
@@ -10914,8 +11084,6 @@
 				7BFAF5BA2DE59E0900327F7F /* GLSLTest.cpp in Sources */,
 				7B8EC8412DF1BC9100105EB6 /* GLSLUBTest.cpp in Sources */,
 				7BED4E072F98E33B00A240A7 /* GLSLValidationTest.cpp in Sources */,
-				7BFAF4E02DE49CE200327F7F /* GPUTestConfig.cpp in Sources */,
-				7BFAF4E12DE49CE200327F7F /* GPUTestExpectationsParser.cpp in Sources */,
 				7BFAF4ED2DE59D5700327F7F /* GPUTestExpectationsTest.cpp in Sources */,
 				7BFAF5DA2DE59E0900327F7F /* ImageTest.cpp in Sources */,
 				7B8EC8402DF1BC9100105EB6 /* ImageTestMetal.mm in Sources */,
@@ -10946,7 +11114,6 @@
 				7BFAF5D92DE59E0900327F7F /* OcclusionQueriesTest.cpp in Sources */,
 				7BFAF5C22DE59E0900327F7F /* PackUnpackTest.cpp in Sources */,
 				7BFAF5EA2DE59E0900327F7F /* ParallelShaderCompileTest.cpp in Sources */,
-				2A2C23D1699375D3405404A4 /* PartitionAllocSupport.cpp in Sources */,
 				7BFAF5DD2DE59E0900327F7F /* PBOExtensionTest.cpp in Sources */,
 				7BFAF5EB2DE59E0900327F7F /* PbufferTest.cpp in Sources */,
 				7BFAF5F52DE59E0900327F7F /* PixelLocalStorageTest.cpp in Sources */,
@@ -10963,7 +11130,6 @@
 				7BFAF5C42DE59E0900327F7F /* ReadOnlyFeedbackLoopTest.cpp in Sources */,
 				7BFAF5F02DE59E0900327F7F /* ReadPixelsTest.cpp in Sources */,
 				7BFAF5D62DE59E0900327F7F /* RenderbufferMultisampleTest.cpp in Sources */,
-				7BFAF4D42DE49C3B00327F7F /* RenderDoc.cpp in Sources */,
 				7BFAF60D2DE59E0900327F7F /* RendererTest.cpp in Sources */,
 				7BFAF5E92DE59E0900327F7F /* RequestExtensionTest.cpp in Sources */,
 				7BFAF5DE2DE59E0900327F7F /* RobustBufferAccessBehaviorTest.cpp in Sources */,
@@ -10990,7 +11156,6 @@
 				7BFAF5E22DE59E0900327F7F /* StateChangeTest.cpp in Sources */,
 				7BFAF5BD2DE59E0900327F7F /* SwizzleTest.cpp in Sources */,
 				7BFAF6672DE5A7A200327F7F /* system_info_util.cpp in Sources */,
-				7B8C09092F7E843B007E37DE /* TestSuite.cpp in Sources */,
 				7BFAF6042DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp in Sources */,
 				7BFAF5CC2DE59E0900327F7F /* TextureMultisampleTest.cpp in Sources */,
 				7BFAF6092DE59E0900327F7F /* TextureRectangleTest.cpp in Sources */,
@@ -11254,8 +11419,6 @@
 				7BFAF8ED2DE6EDE400327F7F /* FixedQueue_unittest.cpp in Sources */,
 				7BFAF8E02DE6EDE400327F7F /* FixedVector_unittest.cpp in Sources */,
 				7BFAF8812DE6ECA700327F7F /* FloatLex_test.cpp in Sources */,
-				7B8C091A2F84EC49007E37DE /* GPUTestConfig.cpp in Sources */,
-				7B8C091B2F84EC83007E37DE /* GPUTestExpectationsParser.cpp in Sources */,
 				7BFAF8E52DE6EDE400327F7F /* hash_utils_unittest.cpp in Sources */,
 				7BFAF8B12DE6ECA700327F7F /* ImmutableString_test.cpp in Sources */,
 				7BFAF8B62DE6ECA700327F7F /* ImmutableString_test_autogen.cpp in Sources */,
@@ -11267,7 +11430,6 @@
 				7BFAF8A72DE6ECA700327F7F /* MSLOutput_test.cpp in Sources */,
 				7BFAF9022DE6ECA700327F7F /* MSLSymbolEnv_test.cpp in Sources */,
 				7BFAF8E62DE6EDE400327F7F /* Optional_unittest.cpp in Sources */,
-				D3409E0773ED14C68BD2F5A4 /* PartitionAllocSupport.cpp in Sources */,
 				7BFAF8F02DE6EDE400327F7F /* PoolAlloc_unittest.cpp in Sources */,
 				7BED5BEA2F99F81200A240A7 /* ResourceMap_unittest.cpp in Sources */,
 				7BFAF8F12DE6EDE400327F7F /* SimpleMutex_unittest.cpp in Sources */,
@@ -11276,7 +11438,6 @@
 				7BFAF8E32DE6EDE400327F7F /* system_utils_unittest.cpp in Sources */,
 				7BFAF8F32DE6EE4500327F7F /* SystemInfo_unittest.cpp in Sources */,
 				7BA050E8963876D6810CC19C /* test_blob_cache_unittest.cpp in Sources */,
-				7B8C09152F84EAB1007E37DE /* TestSuite.cpp in Sources */,
 				7BED5BE82F99F81200A240A7 /* TransformFeedback_unittest.cpp in Sources */,
 				7BFAF8C12DE6ECA700327F7F /* Type_test.cpp in Sources */,
 				7BF0DF592F71612100F99E69 /* utilities_unittest.cpp in Sources */,
@@ -11318,9 +11479,78 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE4134D7830390C64C8DEB4A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BBBA0308AAAE31B679DFBE74 /* GPUTestConfig.cpp in Sources */,
+				C438505FA82246842CE61D97 /* GPUTestExpectationsParser.cpp in Sources */,
+				5DA926FAB8BD54F11556DBCE /* PartitionAllocSupport.cpp in Sources */,
+				679426899E7E709CDEB4E9B3 /* RenderDoc.cpp in Sources */,
+				FDDA3C82FAC9572FF55A05F0 /* TestSuite.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9A738851E26C66D27CB1BB41 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+			);
+			target = 7BFAF6882DE6E9D900327F7F /* ANGLEUnitTests */;
+			targetProxy = C1C2DA1A59E3655C4C4BDEDF /* PBXContainerItemProxy */;
+		};
+		6C5BA4CF19D092B189AE4465 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = 7BE4AA532DE4544900A16F7E /* ANGLEEnd2EndTests */;
+			targetProxy = 34C3CFCFB0D6700ECBD1DAA2 /* PBXContainerItemProxy */;
+		};
+		D901C969AFF2F2AD99A95C62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = A3E045FAB988D2834BEDCF23 /* ANGLEDeqpGLES2Tests */;
+			targetProxy = 3661A22D0B29B694682AB475 /* PBXContainerItemProxy */;
+		};
+		E4FCAB684F98AFBFD3823531 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = 9FDB44EAA70594111A0ED0EA /* ANGLEDeqpGLES3Tests */;
+			targetProxy = 8F2D471C6104353E8824A198 /* PBXContainerItemProxy */;
+		};
+		BF2C3A876511F4237A43ABB3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+			);
+			target = 7BD3D2002FCDB8A300C386DC /* ANGLEEnd2EndTestsApp */;
+			targetProxy = CBC887AE6A4B797804B21547 /* PBXContainerItemProxy */;
+		};
+		E0815AEFAEC2563C6DEAC936 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+			);
+			target = C78A46E3ACBA17BCCFD16A00 /* ANGLEDeqpGLES2TestsApp */;
+			targetProxy = 6B05A4E436CD36573E3B1791 /* PBXContainerItemProxy */;
+		};
+		609997916969DFEF28BA7EA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+			);
+			target = 624048FDA141D33D5E37C671 /* ANGLEDeqpGLES3TestsApp */;
+			targetProxy = 34BC8F5FB63AF2719FD9E06D /* PBXContainerItemProxy */;
+		};
 		081D43A790938AA82E4AA206 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7BB971FF2DE47B8A00455D13 /* ANGLE (static) */;
@@ -11555,9 +11785,70 @@
 			target = FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */;
 			targetProxy = FF194FF52744331A006A97A3 /* PBXContainerItemProxy */;
 		};
+		460C53AD1012D537377A7D20 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD70112FF59CB70054DF83 /* Setup */;
+			targetProxy = 1AC4B8043C78980B2C44D58B /* PBXContainerItemProxy */;
+		};
+		2F2B8835ACB1EF4AEA163844 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */;
+			targetProxy = 2A7EC4A67B4282D2D5538D0F /* PBXContainerItemProxy */;
+		};
+		C3B8D562165BD059A85608AA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */;
+			targetProxy = 2BB43A56DF5DB83130B13A5F /* PBXContainerItemProxy */;
+		};
+		22EC0C49DE5453804F4834BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */;
+			targetProxy = D79CD9B7C62A951D0690567D /* PBXContainerItemProxy */;
+		};
+		2E7FDE95A03880BE8468582F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */;
+			targetProxy = 5BC7221B244277F8890E4571 /* PBXContainerItemProxy */;
+		};
+		DADB30FBC94F87DE7BAAA2F3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */;
+			targetProxy = 52FAC0BB82DEA78A35480A95 /* PBXContainerItemProxy */;
+		};
+		79BDA59D8AB84D67030259E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */;
+			targetProxy = D060A3455C73EEBB14804D76 /* PBXContainerItemProxy */;
+		};
+		1311CC3287671E8EFE631921 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FD9ABB9C0FEAA3F6F2D0A27 /* ANGLETestHarness */;
+			targetProxy = E74F1D367FA5D8666BAB4B08 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		95208A372615E568F0CA433A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Debug;
+		};
+		93F9CE64BF260B6D10D046FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Release;
+		};
+		71CF6AA96C45F11CB4C92184 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Production;
+		};
 		115742A5839458ABBD9E7566 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93274302A2932A3C776E787C /* ANGLEDeqpSupport.xcconfig */;
@@ -12076,9 +12367,40 @@
 			};
 			name = Production;
 		};
+		9FECC46AB19AA131CF7AC44B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A8F0DC6653149BBA598CCF68 /* ANGLETestHarness.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		34B18B98214BED5B7B6EB089 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A8F0DC6653149BBA598CCF68 /* ANGLETestHarness.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1175256FF885BF006B509534 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A8F0DC6653149BBA598CCF68 /* ANGLETestHarness.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D4674269734421E596ACC1AE /* Build configuration list for PBXAggregateTarget "ANGLE Tests (Platform filters)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				95208A372615E568F0CA433A /* Debug */,
+				93F9CE64BF260B6D10D046FD /* Release */,
+				71CF6AA96C45F11CB4C92184 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		31CDFDF52491819E00486F27 /* Build configuration list for PBXNativeTarget "ANGLE (dynamic)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -12305,6 +12627,16 @@
 				FFDA50C8269F845100AE11E2 /* Debug */,
 				FFDA50C9269F845100AE11E2 /* Release */,
 				FFDA50CA269F845100AE11E2 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		270A45A21CA18F9E2C3E94FB /* Build configuration list for PBXNativeTarget "ANGLETestHarness" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FECC46AB19AA131CF7AC44B /* Debug */,
+				34B18B98214BED5B7B6EB089 /* Release */,
+				1175256FF885BF006B509534 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

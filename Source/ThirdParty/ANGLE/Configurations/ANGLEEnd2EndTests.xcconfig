@@ -29,6 +29,11 @@ ALTERNATE_HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS_$(SDK_VARIANT));
 ALTERNATE_HEADER_SEARCH_PATHS_iosmac = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAMEWORKS_DIR)/usr/local/include
 
 HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS) ${BUILT_PRODUCTS_DIR}/usr/local/include $(ANGLE_HEADER_PATH_PREFIX)/src/tests/ $(inherited);
+
+// In XBS builds, gtest and gmock are separate projects that install libgtest.a and libgmock.a into the SDK,
+// not into BUILT_PRODUCTS_DIR (as TestWebKitAPI's Base.xcconfig also accounts for).
+LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
+
 GCC_PREPROCESSOR_DEFINITIONS = EGL_EGLEXT_PROTOTYPES=1 GL_GLES_PROTOTYPES=1 GL_GLEXT_PROTOTYPES=1 ANGLE_EGL_LIBRARY_NAME=\"\" ANGLE_GLESV2_LIBRARY_NAME=\"\" ANGLE_MESA_EGL_LIBRARY_NAME=\"mesa-libEGL\" ANGLE_MESA_GLESV2_LIBRARY_NAME=\"mesa-libGLESv2\" ANGLE_VULKAN_SECONDARIES_EGL_LIBRARY_NAME=\"vk-libEGL\" ANGLE_VULKAN_SECONDARIES_GLESV2_LIBRARY_NAME=\"vk-libGLESv2\" $(inherited);
 
 ANGLE_OTHER_LDFLAGS = -framework AppKit -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal -framework Cocoa -framework IOKit -lz;
