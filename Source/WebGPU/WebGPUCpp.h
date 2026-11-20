@@ -1504,6 +1504,10 @@ public:
 #endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
+    // Called on the thread that the instance calls back on, before its owner releases it. Waits for
+    // the work in flight that holds the instance on other threads, so that the instance, and the
+    // objects that it keeps alive, are released on this thread.
+    virtual void destroy() = 0;
 
 protected:
     Instance() = default;

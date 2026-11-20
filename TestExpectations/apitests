@@ -90,6 +90,7 @@ webkit.org/b/328304 [ ios ] TestWebKitAPI.WebKit.SystemPreviewCanonicalWebPageUR
 [ mac release arm64 Tahoe ] TestWebKitAPI.WKWebView.LocalStorageFetchDataRecords [ Pass Failure ]
 [ mac release arm64 Tahoe ] TestWebKitAPI.WKWebView.LocalStorageNoRecordAfterGetItem [ Pass Failure ]
 
+webkit.org/b/330966 [ ios ] TestWGSL.WebGPUInstanceDestroy.* [ Failure ]
 webkit.org/b/246336 TestIPC.ConnectionTest/ConnectionRunLoopTest.RunLoopSendAsyncOnAnotherRunLoopDispatchesOnConnectionRunLoop/ClientIsA [ Skip ]
 webkit.org/b/246336 TestIPC.ConnectionTest/ConnectionRunLoopTest.RunLoopSendAsyncOnAnotherRunLoopDispatchesOnConnectionRunLoop/ServerIsA [ Skip ]
 rdar://159131152 [ ios ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendAndInvalidate/ClientIsA [ Skip ]

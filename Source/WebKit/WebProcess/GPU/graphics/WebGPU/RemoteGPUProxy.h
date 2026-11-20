@@ -127,6 +127,9 @@ private:
         return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
     }
 
+    // The GPU process destroys the instance when the GPU is released.
+    void destroy() final { }
+
     void requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) final;
 
     RefPtr<::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPUPresentationContextDescriptor&) final;

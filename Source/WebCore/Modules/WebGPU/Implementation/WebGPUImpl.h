@@ -76,6 +76,8 @@ private:
 
     bool isWebGPUIntegrationImpl() const final { return true; }
 
+    void destroy() final;
+
     void requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) final;
 
     RefPtr<::WebGPU::PresentationContext> createPresentationContext(const WebGPUPresentationContextDescriptor&) final;

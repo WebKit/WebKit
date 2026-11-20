@@ -56,6 +56,9 @@ class WebGPUIntegration : public AbstractRefCounted {
 public:
     WEBCORE_EXPORT virtual ~WebGPUIntegration() = default;
 
+    // See ::WebGPU::Instance::destroy().
+    virtual void destroy() = 0;
+
     virtual void requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) = 0;
 
     virtual RefPtr<::WebGPU::PresentationContext> createPresentationContext(const WebGPUPresentationContextDescriptor&) = 0;

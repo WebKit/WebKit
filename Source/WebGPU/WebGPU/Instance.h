@@ -31,6 +31,7 @@
 
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
+#import <wtf/Box.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Condition.h>
 #import <wtf/Deque.h>
@@ -43,6 +44,7 @@
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/ThreadSafetyAnalysis.h>
+#import <wtf/WTFSemaphore.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
@@ -77,6 +79,7 @@ public:
 
     void setLabel(String&&) final { }
     bool isValid() const final { return m_isValid; }
+    void destroy() final;
     void retainDevice(Device&, id<MTLCommandBuffer>);
     void retainCommandBuffer(CommandBuffer&, id<MTLCommandBuffer>);
     void releaseCompletedCommandBuffers();
@@ -95,6 +98,14 @@ public:
     // the index of each completed one, which is then forgotten. False when the timeout passes
     // first. This can be called on a background thread.
     bool waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete);
+
+    // Every asynchronous compile signals the semaphore once its Metal completion handler no longer
+    // holds the instance. See callOnWebGPUThread().
+    Box<Semaphore> didStartAsyncCompile()
+    {
+        ++m_startedAsyncCompileCount;
+        return m_asyncCompileCompletions;
+    }
 
 private:
     Instance(Function<void(WorkItem&&)>&& scheduleWork, const WTF::MachSendRight* webProcessResourceOwner);
@@ -116,6 +127,9 @@ private:
     const std::optional<const MachSendRight> m_webProcessID;
     // Null when the work waits in m_pendingWork for processEvents().
     const Function<void(WorkItem&&)> m_scheduleWork;
+    const Box<Semaphore> m_asyncCompileCompletions { Box<Semaphore>::create(0) };
+    // The asynchronous compiles started since destroy() last waited for them.
+    uint64_t m_startedAsyncCompileCount { 0 };
     Lock m_lock;
     bool m_isValid { true };
 };

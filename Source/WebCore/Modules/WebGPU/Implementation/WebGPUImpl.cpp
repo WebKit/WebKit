@@ -54,6 +54,11 @@ WebGPUIntegrationImpl::WebGPUIntegrationImpl(Ref<::WebGPU::Instance>&& instance)
 
 WebGPUIntegrationImpl::~WebGPUIntegrationImpl() = default;
 
+void WebGPUIntegrationImpl::destroy()
+{
+    m_backing->destroy();
+}
+
 void WebGPUIntegrationImpl::requestAdapter(const WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&& callback)
 {
     auto backingOptions = options;

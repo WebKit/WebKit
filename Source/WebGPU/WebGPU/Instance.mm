@@ -74,6 +74,16 @@ Instance::Instance()
 
 Instance::~Instance() = default;
 
+void Instance::destroy()
+{
+    // The Metal completion handlers of the asynchronous compiles hold the instance until they have
+    // scheduled their work, and the Metal command buffers in flight run handlers that use it. Once
+    // these are done, nothing on Metal's threads can release the last reference to the instance.
+    for (; m_startedAsyncCompileCount; --m_startedAsyncCompileCount)
+        m_asyncCompileCompletions->wait();
+    waitForCommandBufferCompletions();
+}
+
 void Instance::waitForCommandBufferCompletions()
 {
     auto retainedCommandBuffers { std::exchange(m_retainedCommandBufferInstances, { }) };
