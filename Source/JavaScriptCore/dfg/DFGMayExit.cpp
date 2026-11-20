@@ -139,6 +139,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         switch (data->kind) {
         case SwitchImm:
         case SwitchCell:
+        case SwitchStructure:
             break;
         case SwitchChar:
         case SwitchString:

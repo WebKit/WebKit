@@ -584,6 +584,7 @@ private:
                 node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeNeedsNaNOrInfinity);
                 break;
             case SwitchCell:
+            case SwitchStructure:
                 // There is currently no point to being clever here since this is used for switching
                 // on objects.
                 mergeDefaultFlags(node);

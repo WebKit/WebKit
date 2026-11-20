@@ -234,7 +234,13 @@ struct SwitchCase {
         , target(target)
     {
     }
-    
+
+    SwitchCase(RegisteredStructure structure, BasicBlock* target)
+        : structure(structure)
+        , target(target)
+    {
+    }
+
     static SwitchCase withBytecodeIndex(LazyJSValue value, unsigned bytecodeIndex)
     {
         SwitchCase result;
@@ -242,8 +248,10 @@ struct SwitchCase {
         result.target.setBytecodeIndex(bytecodeIndex);
         return result;
     }
-    
+
     LazyJSValue value;
+    // A SwitchStructure case matches on this instead of value.
+    RegisteredStructure structure;
     BranchTarget target;
 };
 

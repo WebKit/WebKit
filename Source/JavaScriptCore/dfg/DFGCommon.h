@@ -70,7 +70,8 @@ enum SwitchKind {
     SwitchImm,
     SwitchChar,
     SwitchString,
-    SwitchCell
+    SwitchCell,
+    SwitchStructure
 };
 
 inline bool verboseCompilationEnabled(JITCompilationMode mode = JITCompilationMode::DFG)
