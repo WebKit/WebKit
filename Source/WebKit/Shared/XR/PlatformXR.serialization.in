@@ -306,6 +306,8 @@ enum class PlatformXR::AnchorTrackingState : uint8_t {
     PlatformXR::Pose pose;
     PlatformXR::AnchorTrackingState trackingState;
 };
+
+using PlatformXR::AnchorIdentifier = WebCore::XRAnchorIdentifier;
 #endif
 
 header: <WebCore/PlatformXR.h>
