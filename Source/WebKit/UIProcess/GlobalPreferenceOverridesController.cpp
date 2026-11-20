@@ -28,7 +28,9 @@
 
 #include "Logging.h"
 #include "WebPreferences.h"
+#include "WebPreferencesKeys.h"
 #include <cmath>
+#include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -40,14 +42,43 @@ GlobalPreferenceOverridesController& GlobalPreferenceOverridesController::single
     return controller.get();
 }
 
+static const HashMap<String, Vector<WebPreferencesStore::Value>>& securityOverridableValues()
+{
+    static NeverDestroyed<HashMap<String, Vector<WebPreferencesStore::Value>>> allowed = [] {
+        HashMap<String, Vector<WebPreferencesStore::Value>> map;
+#define ADD_SECURITY_OVERRIDABLE_PREFERENCE(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription, ...) \
+        map.add(WebPreferencesKey::KeyLower##Key(), Vector<WebPreferencesStore::Value> { __VA_ARGS__ });
+        FOR_EACH_SECURITY_OVERRIDABLE_WEBKIT_PREFERENCE(ADD_SECURITY_OVERRIDABLE_PREFERENCE)
+#undef ADD_SECURITY_OVERRIDABLE_PREFERENCE
+        return map;
+    }();
+    return allowed.get();
+}
+
+bool GlobalPreferenceOverridesController::isOverridable(const String& key)
+{
+    return securityOverridableValues().contains(key);
+}
+
+bool GlobalPreferenceOverridesController::isOverridableTo(const String& key, const WebPreferencesStore::Value& value)
+{
+    auto it = securityOverridableValues().find(key);
+    return it != securityOverridableValues().end() && it->value.contains(value);
+}
+
 std::optional<WebPreferencesStore::Value> GlobalPreferenceOverridesController::parseOverride(const String& key, const String& value)
 {
+    if (!isOverridable(key)) {
+        RELEASE_LOG_ERROR(Process, "GlobalPreferenceOverridesController: refusing to override %" PUBLIC_LOG_STRING "; it has no securityOverridableValues", key.utf8());
+        return std::nullopt;
+    }
+
     auto& defaultValues = WebPreferencesStore::defaults();
     auto it = defaultValues.find(key);
     if (it == defaultValues.end())
         return std::nullopt;
 
-    return WTF::switchOn(it->value,
+    auto parsed = WTF::switchOn(it->value,
         [&](bool) -> std::optional<WebPreferencesStore::Value> {
             if (value == "true"_s)
                 return WebPreferencesStore::Value(true);
@@ -70,6 +101,13 @@ std::optional<WebPreferencesStore::Value> GlobalPreferenceOverridesController::p
         [&](const String&) -> std::optional<WebPreferencesStore::Value> {
             return WebPreferencesStore::Value(value);
         });
+
+    if (parsed && !isOverridableTo(key, *parsed)) {
+        RELEASE_LOG_ERROR(Process, "GlobalPreferenceOverridesController: refusing to override %" PUBLIC_LOG_STRING " to \"%" PUBLIC_LOG_STRING "\"; that is not one of its securityOverridableValues", key.utf8(), value.utf8());
+        return std::nullopt;
+    }
+
+    return parsed;
 }
 
 void GlobalPreferenceOverridesController::setOverrides(const HashMap<String, String>& delivered)
@@ -81,7 +119,7 @@ void GlobalPreferenceOverridesController::setOverrides(const HashMap<String, Str
     for (auto& [key, value] : delivered) {
         auto parsed = parseOverride(key, value);
         if (!parsed) {
-            RELEASE_LOG_ERROR(Process, "GlobalPreferenceOverridesController: ignoring %" PUBLIC_LOG_STRING "=\"%" PUBLIC_LOG_STRING "\"; this build has no such preference, or the value is not of its type", key.utf8(), value.utf8());
+            RELEASE_LOG_ERROR(Process, "GlobalPreferenceOverridesController: ignoring %" PUBLIC_LOG_STRING "=\"%" PUBLIC_LOG_STRING "\"; this build has no such preference, it is not securityOverridable to that value, or the value is not of its type", key.utf8(), value.utf8());
             continue;
         }
         overrides.set(key, WTF::move(*parsed));

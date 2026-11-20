@@ -46,6 +46,8 @@ public:
     const WebPreferencesStore::ValueMap& overrides() const LIFETIME_BOUND { return m_overrides; }
 
 private:
+    static bool isOverridable(const String& key);
+    static bool isOverridableTo(const String& key, const WebPreferencesStore::Value&);
     static std::optional<WebPreferencesStore::Value> parseOverride(const String& key, const String& value);
     friend class WTF::NeverDestroyed<GlobalPreferenceOverridesController>;
     GlobalPreferenceOverridesController() = default;

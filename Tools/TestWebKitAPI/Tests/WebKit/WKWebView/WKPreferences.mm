@@ -34,6 +34,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/Scope.h>
 
@@ -369,12 +370,84 @@ static auto withdrawGlobalPreferenceOverridesOnExit()
     });
 }
 
-TEST(WKPreferencesPrivate, GlobalPreferenceOverridesOfEachType)
+static _WKFeature *featureNamed(NSString *key)
+{
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:key])
+            return feature;
+    }
+    return nil;
+}
+
+static BOOL isForceEnhancedSecurityEnabled(WKPreferences *preferences)
+{
+    return [preferences _isEnabledForFeature:featureNamed(@"ForceEnhancedSecurity")];
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesOfAnOverridablePreference)
 {
     auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
 
     RetainPtr existing = adoptNS([[WKPreferences alloc] init]);
-    BOOL canOpenWindowsByDefault = [existing javaScriptCanOpenWindowsAutomatically];
+    EXPECT_FALSE(isForceEnhancedSecurityEnabled(existing.get()));
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"ForceEnhancedSecurity": @"true" }];
+
+    RetainPtr created = adoptNS([[WKPreferences alloc] init]);
+    for (WKPreferences *preferences in @[ existing.get(), created.get() ])
+        EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences));
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    EXPECT_FALSE(isForceEnhancedSecurityEnabled(existing.get()));
+    EXPECT_FALSE(isForceEnhancedSecurityEnabled(created.get()));
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesOutrankTheClient)
+{
+    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
+
+    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
+    _WKFeature *feature = featureNamed(@"ForceEnhancedSecurity");
+    [preferences _setEnabled:NO forFeature:feature];
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"ForceEnhancedSecurity": @"true" }];
+    EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences.get()));
+
+    [preferences _setEnabled:NO forFeature:feature];
+    EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences.get()));
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    EXPECT_FALSE(isForceEnhancedSecurityEnabled(preferences.get()));
+
+    [preferences _setEnabled:YES forFeature:feature];
+    // Only "true" is among its securityOverridableValues, so an override to "false" is refused.
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"ForceEnhancedSecurity": @"false" }];
+    EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences.get()));
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences.get()));
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesRefuseWhatDoesNotParse)
+{
+    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
+
+    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
+
+    for (NSString *value in @[ @"1", @"YES", @"TRUE", @" true", @"true ", @"" ]) {
+        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"ForceEnhancedSecurity": value }];
+        EXPECT_FALSE(isForceEnhancedSecurityEnabled(preferences.get())) << value.UTF8String;
+    }
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"NoSuchPreference": @"true", @"ForceEnhancedSecurity": @"true" }];
+    EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences.get()));
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesRefusePreferencesThatAreNotSecurityOverridable)
+{
+    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
+
+    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
+    BOOL canOpenWindowsByDefault = [preferences javaScriptCanOpenWindowsAutomatically];
 
     [WKPreferences _setGlobalPreferenceOverridesForTesting:@{
         @"JavaScriptCanOpenWindowsAutomatically": canOpenWindowsByDefault ? @"false" : @"true",
@@ -384,91 +457,33 @@ TEST(WKPreferencesPrivate, GlobalPreferenceOverridesOfEachType)
     }];
 
     RetainPtr created = adoptNS([[WKPreferences alloc] init]);
-    for (WKPreferences *preferences in @[ existing.get(), created.get() ]) {
-        EXPECT_EQ(!canOpenWindowsByDefault, [preferences javaScriptCanOpenWindowsAutomatically]);
-        EXPECT_EQ(_WKEditableLinkBehaviorAlwaysLive, [preferences _editableLinkBehavior]);
-        EXPECT_EQ(21.5, [preferences minimumFontSize]);
-        EXPECT_WK_STREQ(@"Courier", [preferences _standardFontFamily]);
+    for (WKPreferences *candidate in @[ preferences.get(), created.get() ]) {
+        EXPECT_EQ(canOpenWindowsByDefault, [candidate javaScriptCanOpenWindowsAutomatically]);
+        EXPECT_EQ(_WKEditableLinkBehaviorNeverLive, [candidate _editableLinkBehavior]);
+        EXPECT_EQ(0., [candidate minimumFontSize]);
+        EXPECT_WK_STREQ(@"Times", [candidate _standardFontFamily]);
     }
 
-    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
-    EXPECT_EQ(canOpenWindowsByDefault, [existing javaScriptCanOpenWindowsAutomatically]);
-    EXPECT_EQ(_WKEditableLinkBehaviorNeverLive, [existing _editableLinkBehavior]);
-    EXPECT_EQ(0., [existing minimumFontSize]);
-    EXPECT_WK_STREQ(@"Times", [existing _standardFontFamily]);
+    // A refused override does not stop an overridable one in the same delivery.
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"MinimumFontSize": @"21", @"ForceEnhancedSecurity": @"true" }];
+    EXPECT_EQ(0., [preferences minimumFontSize]);
+    EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences.get()));
 }
 
-TEST(WKPreferencesPrivate, GlobalPreferenceOverridesOutrankTheClient)
-{
-    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
-
-    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
-    [preferences setMinimumFontSize:9];
-
-    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"MinimumFontSize": @"21" }];
-    EXPECT_EQ(21., [preferences minimumFontSize]);
-
-    [preferences setMinimumFontSize:12];
-    EXPECT_EQ(21., [preferences minimumFontSize]);
-
-    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
-    EXPECT_EQ(12., [preferences minimumFontSize]);
-
-    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"MinimumFontSize": @"21", @"StandardFontFamily": @"Courier" }];
-    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"StandardFontFamily": @"Courier" }];
-    EXPECT_EQ(12., [preferences minimumFontSize]);
-    EXPECT_WK_STREQ(@"Courier", [preferences _standardFontFamily]);
-}
-
-TEST(WKPreferencesPrivate, GlobalPreferenceOverridesRefuseWhatDoesNotParse)
-{
-    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
-
-    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
-    BOOL canOpenWindowsByDefault = [preferences javaScriptCanOpenWindowsAutomatically];
-    NSString *inverted = canOpenWindowsByDefault ? @"false" : @"true";
-
-    for (NSString *value in @[ canOpenWindowsByDefault ? @"0" : @"1", canOpenWindowsByDefault ? @"NO" : @"YES", [inverted uppercaseString], [NSString stringWithFormat:@" %@", inverted], @"" ]) {
-        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"JavaScriptCanOpenWindowsAutomatically": value }];
-        EXPECT_EQ(canOpenWindowsByDefault, [preferences javaScriptCanOpenWindowsAutomatically]) << value.UTF8String;
-    }
-
-    for (NSString *value in @[ @"-1", @" 1", @"1 ", @"1.0", @"0x1", @"4294967296", @"" ]) {
-        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"EditableLinkBehavior": value }];
-        EXPECT_EQ(_WKEditableLinkBehaviorNeverLive, [preferences _editableLinkBehavior]) << value.UTF8String;
-    }
-
-    for (NSString *value in @[ @"abc", @"inf", @"nan", @"" ]) {
-        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"MinimumFontSize": value }];
-        EXPECT_EQ(0., [preferences minimumFontSize]) << value.UTF8String;
-    }
-
-    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"NoSuchPreference": @"true", @"MinimumFontSize": @"21" }];
-    EXPECT_EQ(21., [preferences minimumFontSize]);
-}
-
-TEST(WKPreferencesPrivate, GlobalPreferenceOverridesReachThePage)
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesThatAreNotSecurityOverridableDoNotReachThePage)
 {
     auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     NSString *html = @"<title>static</title><script>document.title = 'ran';</script>";
-    auto loadAndWaitForTitle = [&](NSString *expected) {
-        [webView synchronouslyLoadHTMLString:html];
-        TestWebKitAPI::Util::waitFor([&] {
-            return [[webView title] isEqualToString:expected];
-        });
-        TestWebKitAPI::Util::runFor(0.2_s);
-        EXPECT_WK_STREQ(expected, [webView title]);
-    };
 
-    loadAndWaitForTitle(@"ran");
-
+    // JavaScriptEnabled is not securityOverridable, so the page keeps running scripts.
     [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"JavaScriptEnabled": @"false" }];
-    loadAndWaitForTitle(@"static");
-
-    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
-    loadAndWaitForTitle(@"ran");
+    [webView synchronouslyLoadHTMLString:html];
+    TestWebKitAPI::Util::waitFor([&] {
+        return [[webView title] isEqualToString:@"ran"];
+    });
+    EXPECT_WK_STREQ(@"ran", [webView title]);
 }
 
 #if HAVE(SECURITY_OVERRIDES)
@@ -490,34 +505,35 @@ TEST(WKPreferencesPrivate, SecurityOverridesFromTheNetworkProcessReachWebPrefere
         [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
     });
 
-    // The network process, and so the observer, only exists once something needs it.
+    // Spin up the Network process.
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:dataStore.get()];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"<body>network process</body>"];
 
     RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
-    EXPECT_EQ(0., [preferences minimumFontSize]);
+    EXPECT_FALSE(isForceEnhancedSecurityEnabled(preferences.get()));
 
-    setSecurityOverridesInNetworkProcess(dataStore.get(), @{ @"MinimumFontSize": @"21.5", @"NoSuchPreference": @"1" });
+    setSecurityOverridesInNetworkProcess(dataStore.get(), @{ @"ForceEnhancedSecurity": @"true", @"MinimumFontSize": @"21.5", @"NoSuchPreference": @"1" });
     TestWebKitAPI::Util::waitFor([&] {
-        return [preferences minimumFontSize] == 21.5;
+        return isForceEnhancedSecurityEnabled(preferences.get());
     });
-    EXPECT_EQ(21.5, [preferences minimumFontSize]);
+
+    // Only the securityOverridable preference gets through, and it still does
+    // even though an invalid and non-overridable preference was specified.
+    EXPECT_TRUE(isForceEnhancedSecurityEnabled(preferences.get()));
+    EXPECT_EQ(0., [preferences minimumFontSize]);
 
     // A later answer replaces the earlier one rather than adding to it.
     setSecurityOverridesInNetworkProcess(dataStore.get(), @{ @"StandardFontFamily": @"Courier" });
     TestWebKitAPI::Util::waitFor([&] {
-        return ![preferences minimumFontSize];
+        return !isForceEnhancedSecurityEnabled(preferences.get());
     });
-    EXPECT_EQ(0., [preferences minimumFontSize]);
-    EXPECT_WK_STREQ(@"Courier", [preferences _standardFontFamily]);
+    EXPECT_FALSE(isForceEnhancedSecurityEnabled(preferences.get()));
+    EXPECT_WK_STREQ(@"Times", [preferences _standardFontFamily]);
 
     setSecurityOverridesInNetworkProcess(dataStore.get(), @{ });
-    TestWebKitAPI::Util::waitFor([&] {
-        return [[preferences _standardFontFamily] isEqualToString:@"Times"];
-    });
-    EXPECT_WK_STREQ(@"Times", [preferences _standardFontFamily]);
+    EXPECT_FALSE(isForceEnhancedSecurityEnabled(preferences.get()));
 }
 
 #endif // HAVE(SECURITY_OVERRIDES)
