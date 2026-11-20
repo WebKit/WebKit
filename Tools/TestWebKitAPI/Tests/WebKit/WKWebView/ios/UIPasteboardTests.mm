@@ -107,6 +107,13 @@ RetainPtr<TestWKWebView> setUpWebViewForPasteboardTests(NSString *pageName)
     return webView;
 }
 
+void waitForPastedImageToLoad(TestWKWebView *webView)
+{
+    NSError *error = nil;
+    [webView objectByCallingAsyncFunction:@"await document.querySelector('img').decode()" withArguments:nil error:&error];
+    EXPECT_FALSE(error);
+}
+
 TEST(UIPasteboardTests, CopyPlainTextWritesConcreteTypes)
 {
     auto webView = setUpWebViewForPasteboardTests(@"rich-and-plain-text");
@@ -399,8 +406,9 @@ TEST(UIPasteboardTests, InvalidPreferredPresentationSizeForImage)
     }];
     [UIPasteboard generalPasteboard].itemProviders = @[ itemProvider.get() ];
     [webView paste:nil];
+    waitForPastedImageToLoad(webView);
 
-    EXPECT_WK_STREQ("0", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').width"]);
+    EXPECT_WK_STREQ("215", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').width"]);
     EXPECT_WK_STREQ("174", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').height"]);
 }
 
@@ -414,8 +422,9 @@ TEST(UIPasteboardTests, MissingPreferredPresentationSizeForImage)
     }];
     [UIPasteboard generalPasteboard].itemProviders = @[ itemProvider.get() ];
     [webView paste:nil];
+    waitForPastedImageToLoad(webView);
 
-    EXPECT_WK_STREQ("0", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').width"]);
+    EXPECT_WK_STREQ("215", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').width"]);
     EXPECT_WK_STREQ("174", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').height"]);
 }
 
