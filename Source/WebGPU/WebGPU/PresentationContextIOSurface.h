@@ -25,6 +25,10 @@
 
 #pragma once
 
+#if !__has_feature(objc_arc)
+#error This header requires ARC. Include it only from files compiled with -fobjc-arc.
+#endif
+
 #import "PresentationContext.h"
 #import <wtf/Deque.h>
 #import <wtf/MachSendRight.h>
