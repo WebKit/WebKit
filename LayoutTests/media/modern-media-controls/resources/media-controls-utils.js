@@ -103,6 +103,21 @@ function getTracksContextMenu()
     });
 }
 
+function waitForMediaControlsLayout(isReady)
+{
+    // Layout and DOM updates are committed by the scheduler over one or more animation frames,
+    // and icon loads can schedule further layouts, so wait for the scheduler to go idle rather
+    // than for a fixed amount of time.
+    return new Promise(resolve => {
+        (function check() {
+            if (!scheduler.hasScheduledLayoutCallbacks && isReady())
+                resolve();
+            else
+                requestAnimationFrame(check);
+        })();
+    });
+}
+
 function finishMediaControlsTest()
 {
     if (scheduler)

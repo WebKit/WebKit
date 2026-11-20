@@ -2673,8 +2673,6 @@ webkit.org/b/322505 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Sk
 
 webkit.org/b/326746 [ Sequoia x86_64 Debug ] media/modern-media-controls/icon-service/icon-service-bundle-load.html [ Pass Timeout ]
 
-webkit.org/b/326748 [ Debug ] media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-rtl-volume-button-no-overlap.html [ Pass Timeout ]
-
 webkit.org/b/326895 [ Debug ] http/tests/security/registerBlobURL.html [ Skip ] 
 
 webkit.org/b/326899 [ Sequoia+ ] http/tests/cache/cancel-multiple-post-xhrs.html [ Pass Failure ]

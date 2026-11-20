@@ -26,7 +26,7 @@ function step()
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.usesLTRUserInterfaceLayoutDirection = false;
     
-    setTimeout(() => {
+    waitForMediaControlsLayout(() => mediaControls.muteButton.width).then(() => {
         const container = mediaControls.element.querySelector('.buttons-container.left');
         const muteButton = container.querySelector('.mute.bar');
         
@@ -83,7 +83,7 @@ function step()
         }
         
         done();
-    }, 100);
+    });
 }
 
 function done()

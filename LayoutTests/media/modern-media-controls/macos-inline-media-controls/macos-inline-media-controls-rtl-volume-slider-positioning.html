@@ -24,7 +24,7 @@ function step2()
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.usesLTRUserInterfaceLayoutDirection = false;
     
-    setTimeout(() => {
+    waitForMediaControlsLayout(() => mediaControls.element.querySelector('.volume-slider-container')).then(() => {
         window.volumeSliderContainer = mediaControls.element.querySelector('.volume-slider-container');
         
         // In RTL mode with left positioning, the right value should be significantly 
@@ -41,7 +41,7 @@ function step2()
         }
 
         done();
-    }, 100);
+    });
 }
 
 function done()
