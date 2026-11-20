@@ -4265,6 +4265,14 @@ std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateI
         scaleFromUIProcess = currentScale;
     }
 
+#if PLATFORM(MAC)
+    // The UI process repeats the scale it's showing in every update, scrolls included, and that can be one a client set
+    // outside the range scales from the UI process are clamped to, like a link preview shrinking the page to fit it.
+    // Clamping it would undo that, so only a scale the UI process is changing to gets clamped.
+    if (m_page->delegatesScaling() && scaleFromUIProcess == currentScale)
+        return std::nullopt;
+#endif
+
     scaleFromUIProcess = std::min<float>(maximumPageScaleFactorForUIProcessScale(), std::max<float>(minimumPageScaleFactorForUIProcessScale(), scaleFromUIProcess));
     if (scalesAreEssentiallyEqual(currentScale, scaleFromUIProcess)) {
         // The epsilon filter is what we want mid-gesture, but not at the hand-off, where dropping the final

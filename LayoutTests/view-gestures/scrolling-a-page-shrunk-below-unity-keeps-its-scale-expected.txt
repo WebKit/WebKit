@@ -1,0 +1,6 @@
+Shrunk to half size with the view scale:
+  Before scrolling: PASS (the page is at half its size)
+  After a two finger scroll: PASS (the page is at half its size)
+Shrunk to half size with the page scale:
+  Before scrolling: PASS (the page is at half its size)
+  After a two finger scroll: PASS (the page is at half its size)

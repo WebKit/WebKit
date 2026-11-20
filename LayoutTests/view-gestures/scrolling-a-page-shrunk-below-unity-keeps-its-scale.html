@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrolling a page that a client shrank below a scale of 1, like a link preview fitting the page, keeps its scale</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        body {
+            width: 1600px;
+            height: 6000px;
+            background-image: linear-gradient(white, silver);
+        }
+
+        #marker {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 400px;
+            height: 100px;
+            background-color: rgb(0, 128, 0);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // With delegated scaling, a scroll at any scale other than 1 sends the web process the scale the UI process is
+        // showing. The web process clamps scales from the UI process to the range a zoom gesture settles in, so a scale
+        // a client set below that used to snap back to 1 at the first scroll.
+        const expectedMarkerWidth = 200;
+
+        async function markerWidthOnScreen()
+        {
+            const dataURL = await new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
+            const image = new Image;
+            await new Promise((resolve, reject) => {
+                image.onload = resolve;
+                image.onerror = reject;
+                image.src = dataURL;
+            });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0);
+            const { width, data } = context.getImageData(0, 0, canvas.width, canvas.height);
+
+            // Count the marker's pixels along a row through it, near the top of the view.
+            const row = Math.round(10 * window.devicePixelRatio);
+            let count = 0;
+            for (let x = 0; x < width; ++x) {
+                const index = (row * width + x) * 4;
+                if (data[index] < 40 && data[index + 1] > 100 && data[index + 2] < 40)
+                    ++count;
+            }
+            return count / window.devicePixelRatio;
+        }
+
+        async function settle()
+        {
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+        }
+
+        async function scrollWithTwoFingers()
+        {
+            await UIHelper.mouseWheelScrollAt(400, 300, 0, -1, 0, -10);
+            await settle();
+        }
+
+        function setViewScale(scale)
+        {
+            return new Promise(resolve => testRunner.runUIScript(`uiController.setViewScale(${scale}); uiController.uiScriptComplete()`, resolve));
+        }
+
+        function result(description, width)
+        {
+            if (Math.abs(width - expectedMarkerWidth) <= 2)
+                return `  ${description}: PASS (the page is at half its size)`;
+            return `  ${description}: FAIL (the fixed marker is ${width.toFixed(0)}px wide instead of ${expectedMarkerWidth}px)`;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            output.push('Shrunk to half size with the view scale:');
+            await setViewScale(0.5);
+            await settle();
+            output.push(result('Before scrolling', await markerWidthOnScreen()));
+            await scrollWithTwoFingers();
+            output.push(result('After a two finger scroll', await markerWidthOnScreen()));
+
+            await setViewScale(1);
+            window.scrollTo(0, 0);
+            await settle();
+
+            output.push('Shrunk to half size with the page scale:');
+            await UIHelper.zoomToScale(0.5);
+            await settle();
+            output.push(result('Before scrolling', await markerWidthOnScreen()));
+            await scrollWithTwoFingers();
+            output.push(result('After a two finger scroll', await markerWidthOnScreen()));
+
+            document.body.insertAdjacentHTML('beforeend', '<pre id="output" style="position: fixed; left: 0; top: 200px;"></pre>');
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="marker"></div>
+</body>
+</html>
