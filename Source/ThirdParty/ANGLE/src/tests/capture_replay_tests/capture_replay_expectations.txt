@@ -110,6 +110,7 @@
 
 # Uses multiple contexts, don't want to run
 40096804 : OcclusionQueriesNoSurfaceTestES3.SwitchingContextsWithQuery/* = SKIP_FOR_CAPTURE
+582926167 : TransformFeedbackTest.LinkSharedProgramAcrossContextsWhileActive/* = SKIP_FOR_CAPTURE
 
 # ES3_1
 42264706 : ProgramPipelineTest31.VerifyPpoLinkErrorSignalledCorrectly/* = FAIL

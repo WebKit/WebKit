@@ -4,12 +4,9 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <array>
 
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -156,16 +153,15 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     // Ensure that triangles were actually captured.
-    void *mappedBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 24, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
+    auto mappedFloats = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    sizeof(float) * 24, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedFloats.empty());
 
     static constexpr std::array<GLfloat, 24> expect = {
         -1.0f, 1.0f, 0.5f, 1.0f, -1.0f, -1.0f, 0.5f, 1.0f, 1.0f, -1.0f, 0.5f, 1.0f,
         -1.0f, 1.0f, 0.5f, 1.0f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f, 1.0f,  0.5f, 1.0f,
     };
 
-    float *mappedFloats = static_cast<float *>(mappedBuffer);
     for (uint32_t i = 0; i < 24; ++i)
     {
         EXPECT_EQ(mappedFloats[i], expect[i]);
@@ -389,10 +385,10 @@ void main() {
     for (int i = 0; i < 4; ++i)
     {
         glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
-        const float *bufferData = reinterpret_cast<float *>(
-            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
-        ASSERT_NE(nullptr, bufferData);
-        EXPECT_EQ(*bufferData, 1.0f + static_cast<float>(i));
+        auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                      sizeof(GLfloat), GL_MAP_READ_BIT);
+        ASSERT_FALSE(bufferData.empty());
+        EXPECT_EQ(bufferData[0], 1.0f + static_cast<float>(i));
         glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
     }
 
@@ -427,10 +423,10 @@ void main() {
     for (int i = 0; i < 2; ++i)
     {
         glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
-        const float *bufferData = reinterpret_cast<float *>(
-            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
-        ASSERT_NE(nullptr, bufferData);
-        EXPECT_EQ(*bufferData, -(1.0f + static_cast<float>(i)));
+        auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                      sizeof(GLfloat), GL_MAP_READ_BIT);
+        ASSERT_FALSE(bufferData.empty());
+        EXPECT_EQ(bufferData[0], -(1.0f + static_cast<float>(i)));
         glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
     }
 
@@ -501,10 +497,10 @@ void main() {
     for (int i = 0; i < 4; ++i)
     {
         glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
-        const float *bufferData = reinterpret_cast<float *>(
-            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
-        ASSERT_NE(nullptr, bufferData);
-        EXPECT_EQ(*bufferData, 1.0f + static_cast<float>(i));
+        auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                      sizeof(GLfloat), GL_MAP_READ_BIT);
+        ASSERT_FALSE(bufferData.empty());
+        EXPECT_EQ(bufferData[0], 1.0f + static_cast<float>(i));
         glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
     }
 
@@ -545,10 +541,10 @@ void main() {
     for (int i = 0; i < 2; ++i)
     {
         glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
-        const float *bufferData = reinterpret_cast<float *>(
-            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
-        ASSERT_NE(nullptr, bufferData);
-        EXPECT_EQ(*bufferData, -(1.0f + static_cast<float>(i)));
+        auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                      sizeof(GLfloat), GL_MAP_READ_BIT);
+        ASSERT_FALSE(bufferData.empty());
+        EXPECT_EQ(bufferData[0], -(1.0f + static_cast<float>(i)));
         glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
     }
 
@@ -563,10 +559,10 @@ void main() {
     for (int i = 0; i < 4; ++i)
     {
         glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
-        const float *bufferData = reinterpret_cast<float *>(
-            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
-        ASSERT_NE(nullptr, bufferData);
-        EXPECT_EQ(*bufferData, 1.0f + static_cast<float>(i));
+        auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                      sizeof(GLfloat), GL_MAP_READ_BIT);
+        ASSERT_FALSE(bufferData.empty());
+        EXPECT_EQ(bufferData[0], 1.0f + static_cast<float>(i));
         glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
     }
 
@@ -628,8 +624,9 @@ TEST_P(TransformFeedbackTest, BufferRebinding)
     EXPECT_EQ(loopCount * 2, primitivesWritten);
 
     // Check the buffer data
-    const float *bufferData = static_cast<float *>(glMapBufferRange(
-        GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBufferSize, GL_MAP_READ_BIT));
+    auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(bufferData.empty());
 
     for (size_t vertexIdx = 0; vertexIdx < 6; vertexIdx++)
     {
@@ -739,12 +736,12 @@ TEST_P(TransformFeedbackTest, SpanMultipleRenderPasses)
 
     GLint positionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
 
-    const GLfloat vertices[] = {
-        -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f, 0.5f,  -0.5f, 0.5f, 0.5f, 0.5f,  0.5f,
-    };
+    const std::array<std::array<GLfloat, 9>, 2> vertices = {{
+        {-0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f},
+        {-0.5f, 0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f},
+    }};
 
-    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices[0].data());
     glEnableVertexAttribArray(positionLocation);
 
     // Bind the buffer for transform feedback output and start transform feedback
@@ -762,7 +759,7 @@ TEST_P(TransformFeedbackTest, SpanMultipleRenderPasses)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 
     // Draw the second set of three points
-    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices + 9);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices[1].data());
     glDrawArrays(GL_POINTS, 0, 3);
 
     glDisableVertexAttribArray(positionLocation);
@@ -915,12 +912,12 @@ void TransformFeedbackTest::midRecordOpDoesNotContributeTest(std::function<void(
 
     GLint positionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
 
-    const GLfloat vertices[] = {
-        -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f, 0.5f,  -0.5f, 0.5f, 0.5f, 0.5f,  0.5f,
-    };
+    const std::array<std::array<GLfloat, 9>, 2> vertices = {{
+        {-0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f},
+        {-0.5f, 0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f},
+    }};
 
-    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices[0].data());
     glEnableVertexAttribArray(positionLocation);
 
     // Bind the buffer for transform feedback output and start transform feedback
@@ -938,7 +935,7 @@ void TransformFeedbackTest::midRecordOpDoesNotContributeTest(std::function<void(
     op();
 
     // Draw the second set of three points
-    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices + 9);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices[1].data());
     glDrawArrays(GL_POINTS, 0, 3);
 
     glDisableVertexAttribArray(positionLocation);
@@ -1285,11 +1282,10 @@ TEST_P(TransformFeedbackTest, VertexOnly)
 
     glUseProgram(0);
 
-    void *mappedBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
+    auto mappedFloats = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    sizeof(float) * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedFloats.empty());
 
-    float *mappedFloats = static_cast<float *>(mappedBuffer);
     for (unsigned int cnt = 0; cnt < 6; ++cnt)
     {
         EXPECT_EQ(attribData[cnt], mappedFloats[cnt]);
@@ -1358,11 +1354,10 @@ TEST_P(TransformFeedbackTest, InactiveStructureVarying)
 
     glUseProgram(0);
 
-    void *mappedBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
+    auto mappedFloats = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    sizeof(float) * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedFloats.empty());
 
-    float *mappedFloats = static_cast<float *>(mappedBuffer);
     for (unsigned int cnt = 0; cnt < 6; ++cnt)
     {
         EXPECT_EQ(attribData[cnt], mappedFloats[cnt]);
@@ -1603,8 +1598,9 @@ void main(void)
         }
         EXPECT_EQ(static_cast<GLuint>(totalPrimCount), result);
 
-        const float *bufferData = reinterpret_cast<float *>(glMapBufferRange(
-            GL_TRANSFORM_FEEDBACK_BUFFER, 0, bufferSize * sizeof(GLfloat), GL_MAP_READ_BIT));
+        auto bufferData = MapBufferRange<const float>(
+            GL_TRANSFORM_FEEDBACK_BUFFER, 0, bufferSize * sizeof(GLfloat), GL_MAP_READ_BIT);
+        ASSERT_FALSE(bufferData.empty());
 
         size_t curBufferIndex = 0;
         unsigned int failures = 0;
@@ -1704,17 +1700,16 @@ TEST_P(TransformFeedbackTest, PackingBug)
     glUseProgram(0);
     ASSERT_GL_NO_ERROR();
 
-    const void *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector2) * 2 * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
+    auto xfbData = MapBufferRange<const Vector2>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector2) * 2 * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
 
-    const Vector2 *vecPointer = static_cast<const Vector2 *>(mapPointer);
     for (unsigned int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
     {
         unsigned int stream1Index = vectorIndex * 2;
         unsigned int stream2Index = vectorIndex * 2 + 1;
-        EXPECT_EQ(attrib1Data[vectorIndex], vecPointer[stream1Index]);
-        EXPECT_EQ(attrib2Data[vectorIndex], vecPointer[stream2Index]);
+        EXPECT_EQ(attrib1Data[vectorIndex], xfbData[stream1Index]);
+        EXPECT_EQ(attrib2Data[vectorIndex], xfbData[stream2Index]);
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
@@ -1817,19 +1812,18 @@ TEST_P(TransformFeedbackTest, TwoUnreferencedInFragShader)
     glUseProgram(0);
     ASSERT_GL_NO_ERROR();
 
-    const void *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
+    auto xfbData = MapBufferRange<const Vector3>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
 
     const auto &quadVertices = GetQuadVertices();
 
-    const Vector3 *vecPointer = static_cast<const Vector3 *>(mapPointer);
     for (unsigned int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
     {
         unsigned int stream1Index = vectorIndex * 2;
         unsigned int stream2Index = vectorIndex * 2 + 1;
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream1Index]);
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream2Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream1Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream2Index]);
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
@@ -1904,13 +1898,12 @@ TEST_P(TransformFeedbackTest, OffsetResetOnBeginTransformFeedback)
 
     glEndTransformFeedback();
 
-    const void *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector4) * 2, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
+    auto xfbData = MapBufferRange<const Vector4>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector4) * 2, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
 
-    const Vector4 *vecPointer = static_cast<const Vector4 *>(mapPointer);
-    ASSERT_EQ(drawVertex2, vecPointer[0]);
-    ASSERT_EQ(drawVertex1, vecPointer[1]);
+    ASSERT_EQ(drawVertex2, xfbData[0]);
+    ASSERT_EQ(drawVertex1, xfbData[1]);
 
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
@@ -2247,19 +2240,18 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
     glUseProgram(0);
     ASSERT_GL_NO_ERROR();
 
-    const GLvoid *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
+    auto xfbData = MapBufferRange<const Vector3>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
 
     const auto &quadVertices = GetQuadVertices();
 
-    const Vector3 *vecPointer = static_cast<const Vector3 *>(mapPointer);
     for (unsigned int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
     {
         unsigned int stream1Index = vectorIndex * 2;
         unsigned int stream2Index = vectorIndex * 2 + 1;
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream1Index]);
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream2Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream1Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream2Index]);
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
@@ -2314,19 +2306,18 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryingsNonZeroIndex)
     glUseProgram(0);
     ASSERT_GL_NO_ERROR();
 
-    const GLvoid *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
+    auto xfbData = MapBufferRange<const Vector3>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
 
     const auto &quadVertices = GetQuadVertices();
 
-    const Vector3 *vecPointer = static_cast<const Vector3 *>(mapPointer);
     for (unsigned int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
     {
         unsigned int stream1Index = vectorIndex * 2;
         unsigned int stream2Index = vectorIndex * 2 + 1;
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream1Index]);
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream2Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream1Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream2Index]);
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
@@ -2389,19 +2380,18 @@ void main() {
     glUseProgram(0);
     ASSERT_GL_NO_ERROR();
 
-    const GLvoid *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
+    auto xfbData = MapBufferRange<const Vector3>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
 
     const auto &quadVertices = GetQuadVertices();
 
-    const Vector3 *vecPointer = static_cast<const Vector3 *>(mapPointer);
     for (unsigned int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
     {
         unsigned int stream1Index = vectorIndex * 2;
         unsigned int stream2Index = vectorIndex * 2 + 1;
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream1Index]);
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream2Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream1Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[stream2Index]);
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
@@ -2516,11 +2506,10 @@ TEST_P(TransformFeedbackTestES31, CaptureArray)
     glUseProgram(0);
     ASSERT_GL_NO_ERROR();
 
-    void *mappedBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 3 * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
+    auto mappedFloats = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    sizeof(float) * 3 * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedFloats.empty());
 
-    float *mappedFloats = static_cast<float *>(mappedBuffer);
     for (int i = 0; i < 6; i++)
     {
         EXPECT_NEAR(data1[i], mappedFloats[i * 3], 0.001f);
@@ -2600,16 +2589,15 @@ TEST_P(TransformFeedbackTest, VaryingReservedOpenGLName)
     glUseProgram(0);
     ASSERT_GL_NO_ERROR();
 
-    const GLvoid *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector3) * 6, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
+    auto xfbData = MapBufferRange<const Vector3>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector3) * 6, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
 
     const auto &quadVertices = GetQuadVertices();
 
-    const Vector3 *vecPointer = static_cast<const Vector3 *>(mapPointer);
     for (unsigned int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
     {
-        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[vectorIndex]);
+        EXPECT_EQ(quadVertices[vectorIndex], xfbData[vectorIndex]);
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
@@ -2719,11 +2707,10 @@ TEST_P(TransformFeedbackTest, EndWithDifferentProgram)
 
     // Make sure that transform feedback did not happen. We always paused transform feedback before
     // rendering, but a buggy driver will fail to pause.
-    const void *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector4) * 4, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
-    const Vector4 *vecPointer = static_cast<const Vector4 *>(mapPointer);
-    ASSERT_EQ(vecPointer[0], Vector4(0, 0, 0, 0));
+    auto xfbData = MapBufferRange<const Vector4>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector4) * 4, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
+    ASSERT_EQ(xfbData[0], Vector4(0, 0, 0, 0));
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
     ASSERT_GL_NO_ERROR();
 }
@@ -2791,11 +2778,10 @@ TEST_P(TransformFeedbackTest, EndWithDifferentProgramContextSwitch)
 
     // Make sure that transform feedback did not happen. We always paused transform feedback before
     // rendering, but a buggy driver will fail to pause.
-    const void *mapPointer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector4) * 4, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
-    const Vector4 *vecPointer = static_cast<const Vector4 *>(mapPointer);
-    ASSERT_EQ(vecPointer[0], Vector4(0, 0, 0, 0));
+    auto xfbData = MapBufferRange<const Vector4>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(Vector4) * 4, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbData.empty());
+    ASSERT_EQ(xfbData[0], Vector4(0, 0, 0, 0));
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
     eglDestroyContext(display, context2);
     ASSERT_GL_NO_ERROR();
@@ -2870,21 +2856,20 @@ void TransformFeedbackTest::setupOverrunTest(const std::vector<GLfloat> &vertice
     glDrawArrays(GL_POINTS, 0, 6);
 }
 
-void VerifyVertexFloats(const GLfloat *mapPtrFloat,
+void VerifyVertexFloats(Span<const GLfloat> xfbFloats,
                         const std::vector<GLfloat> &vertices,
-                        size_t copies,
-                        size_t numFloats)
+                        size_t copies)
 {
     for (size_t floatIndex = 0; floatIndex < vertices.size() * copies; ++floatIndex)
     {
         size_t vertIndex = floatIndex % vertices.size();
-        ASSERT_EQ(mapPtrFloat[floatIndex], vertices[vertIndex]) << "at float index " << floatIndex;
+        ASSERT_EQ(xfbFloats[floatIndex], vertices[vertIndex]) << "at float index " << floatIndex;
     }
 
     // The rest should be zero.
-    for (size_t floatIndex = vertices.size() * copies; floatIndex < numFloats; ++floatIndex)
+    for (size_t floatIndex = vertices.size() * copies; floatIndex < xfbFloats.size(); ++floatIndex)
     {
-        ASSERT_EQ(mapPtrFloat[floatIndex], 0) << "at float index " << floatIndex;
+        ASSERT_EQ(xfbFloats[floatIndex], 0) << "at float index " << floatIndex;
     }
 }
 
@@ -2909,12 +2894,11 @@ TEST_P(TransformFeedbackTest, Overrun)
     ASSERT_GL_NO_ERROR();
 
     // Verify only the first data was output.
-    const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
-    const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
+    auto xfbFloats = MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                   mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbFloats.empty());
 
-    size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
-    VerifyVertexFloats(mapPtrFloat, vertices, 1, numFloats);
+    VerifyVertexFloats(xfbFloats, vertices, 1);
 }
 
 // Similar to the overrun test but with Pause instead of End.
@@ -2940,12 +2924,11 @@ TEST_P(TransformFeedbackTest, OverrunWithPause)
     ASSERT_GL_NO_ERROR();
 
     // Verify only the first data was output.
-    const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
-    const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
+    auto xfbFloats = MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                   mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbFloats.empty());
 
-    size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
-    VerifyVertexFloats(mapPtrFloat, vertices, 1, numFloats);
+    VerifyVertexFloats(xfbFloats, vertices, 1);
 }
 
 // Similar to the overrun test but with Pause instead of End.
@@ -2981,12 +2964,11 @@ TEST_P(TransformFeedbackTest, OverrunWithPauseAndResume)
     ASSERT_GL_NO_ERROR();
 
     // Verify only the first and third data was output.
-    const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
-    const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
+    auto xfbFloats = MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                   mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbFloats.empty());
 
-    size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
-    VerifyVertexFloats(mapPtrFloat, vertices, 2, numFloats);
+    VerifyVertexFloats(xfbFloats, vertices, 2);
 }
 
 // Similar to the overrun Pause/Resume test but with more than one Pause and Resume.
@@ -3024,12 +3006,11 @@ TEST_P(TransformFeedbackTest, OverrunWithMultiplePauseAndResume)
     ASSERT_GL_NO_ERROR();
 
     // Verify only the first and third data was output.
-    const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
-    const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
+    auto xfbFloats = MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                   mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbFloats.empty());
 
-    size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
-    VerifyVertexFloats(mapPtrFloat, vertices, 3, numFloats);
+    VerifyVertexFloats(xfbFloats, vertices, 3);
 }
 
 // Tests begin/draw/end/*bindBuffer*/begin/draw/end.
@@ -3091,22 +3072,18 @@ TEST_P(TransformFeedbackTest, EndThenBindNewBufferAndRestart)
 
     // Read back buffer datas.
     glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, mTransformFeedbackBuffer);
-    void *posMap1 = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBytes, GL_MAP_READ_BIT);
-    ASSERT_NE(posMap1, nullptr);
+    auto posMap1 =
+        MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBytes, GL_MAP_READ_BIT);
+    ASSERT_FALSE(posMap1.empty());
 
-    std::vector<GLfloat> actualData1(posData1.size());
-    memcpy(actualData1.data(), posMap1, posBytes);
-
-    EXPECT_EQ(posData1, actualData1);
+    EXPECT_EQ(Span(posData1), posMap1);
 
     glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, secondBuffer);
-    void *posMap2 = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBytes, GL_MAP_READ_BIT);
-    ASSERT_NE(posMap2, nullptr);
+    auto posMap2 =
+        MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBytes, GL_MAP_READ_BIT);
+    ASSERT_FALSE(posMap2.empty());
 
-    std::vector<GLfloat> actualData2(posData2.size());
-    memcpy(actualData2.data(), posMap2, posBytes);
-
-    EXPECT_EQ(posData2, actualData2);
+    EXPECT_EQ(Span(posData2), posMap2);
 }
 
 // Draw without transform feedback, then with it.  In this test, there are no uniforms.  Regression
@@ -3152,14 +3129,12 @@ void main() {
 
     // Initialize buffers.
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, kAttribInitData.size() * sizeof(kAttribInitData[0]),
-                 kAttribInitData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kAttribInitData), kAttribInitData.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kIndexInitData.size() * sizeof(kIndexInitData[0]),
-                 kIndexInitData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndexInitData), kIndexInitData.data(),
+                 GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, xfbBuffer);
-    glBufferData(GL_ARRAY_BUFFER, kXfbInitData.size() * sizeof(kXfbInitData[0]),
-                 kXfbInitData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kXfbInitData), kXfbInitData.data(), GL_STATIC_DRAW);
 
     // This tests that having a transform feedback buffer bound in an unbound VAO
     // does not affect anything.
@@ -3190,11 +3165,10 @@ void main() {
     glEndTransformFeedback();
 
     // Verify transform feedback buffer.
-    void *mappedBuffer = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                          kXfbInitData.size() * sizeof(float), GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
+    auto xfbOutput = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                 sizeof(kXfbInitData), GL_MAP_READ_BIT);
+    ASSERT_FALSE(xfbOutput.empty());
 
-    float *xfbOutput = static_cast<float *>(mappedBuffer);
     for (size_t index = 0; index < kXfbInitData.size(); ++index)
     {
         EXPECT_EQ(xfbOutput[index], kAttribInitData[index] * 2);
@@ -3418,9 +3392,10 @@ void main()
         glDrawArrays(GL_POINTS, 0, 1);
         glEndTransformFeedback();
 
-        const float *bufferData = static_cast<float *>(glMapBufferRange(
-            GL_TRANSFORM_FEEDBACK_BUFFER, 0, kBufferSize * sizeof(float), GL_MAP_READ_BIT));
+        auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                      kBufferSize * sizeof(float), GL_MAP_READ_BIT);
         EXPECT_GL_NO_ERROR();
+        ASSERT_FALSE(bufferData.empty());
 
         for (uint32_t index = 0; index < kBufferSize; ++index)
         {
@@ -4131,8 +4106,9 @@ void main()
     glDrawArrays(GL_POINTS, 0, 1);
     glEndTransformFeedback();
 
-    const float *bufferData = static_cast<float *>(glMapBufferRange(
-        GL_TRANSFORM_FEEDBACK_BUFFER, 0, totalSize * sizeof(float), GL_MAP_READ_BIT));
+    auto bufferData = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                  totalSize * sizeof(float), GL_MAP_READ_BIT);
+    ASSERT_FALSE(bufferData.empty());
 
     size_t currentOffset = 0;
     for (size_t index = 0; index < kCapturedVaryingsCount; ++index)
@@ -4232,9 +4208,9 @@ void main()
     {
         glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[index]);
 
-        const float *bufferData = static_cast<float *>(
-            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, kCaptureSizes[index] * sizeof(float),
-                             GL_MAP_READ_BIT));
+        auto bufferData = MapBufferRange<const float>(
+            GL_TRANSFORM_FEEDBACK_BUFFER, 0, kCaptureSizes[index] * sizeof(float), GL_MAP_READ_BIT);
+        ASSERT_FALSE(bufferData.empty());
 
         for (size_t component = 0; component < kCaptureSizes[index]; ++component)
         {
@@ -4377,11 +4353,10 @@ void main()
 
     EXPECT_EQ(primitivesWritten, 6u);
 
-    void *mappedBuffer = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                          sizeof(float) * 4 * 3 * 2, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
+    auto mappedFloats = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    sizeof(float) * 4 * 3 * 2, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedFloats.empty());
 
-    float *mappedFloats = static_cast<float *>(mappedBuffer);
     for (unsigned int cnt = 0; cnt < 6; ++cnt)
     {
         EXPECT_NEAR(mappedFloats[4 * cnt + 0], 0.25f, 0.01f) << cnt;
@@ -4423,9 +4398,10 @@ void main (void)
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tf);
     glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuf);
 
-    constexpr size_t maxResults = 10;
-    std::vector<float> clearData(10, 100.0);
-    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, maxResults * 4, clearData.data(), GL_DYNAMIC_READ);
+    constexpr std::array clearData = {100.0f, 100.0f, 100.0f, 100.0f, 100.0f,
+                                      100.0f, 100.0f, 100.0f, 100.0f, 100.0f};
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, sizeof(clearData), clearData.data(),
+                 GL_DYNAMIC_READ);
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, xfbBuf);
 
     GLBuffer srcBuffer;
@@ -4452,9 +4428,9 @@ void main (void)
     EXPECT_GL_NO_ERROR();
     EXPECT_EQ(primitivesWritten, 3u);
 
-    void *resultBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, maxResults * 4, GL_MAP_READ_BIT);
-    const float *actual        = reinterpret_cast<const float *>(resultBuffer);
+    auto actual = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(clearData),
+                                              GL_MAP_READ_BIT);
+    ASSERT_FALSE(actual.empty());
     static constexpr std::array<float, 10> expected = {
         22,  24, 26, 28, 30, 32,  // from first draw, 2 triangles
         36,  38, 40,              // from second draw, 1 triangle
@@ -4556,11 +4532,10 @@ void main() {
 
     glUseProgram(0);
 
-    void *mappedBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 10, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
+    auto mappedFloats = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    sizeof(float) * 10, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedFloats.empty());
 
-    float *mappedFloats = static_cast<float *>(mappedBuffer);
     for (unsigned int cnt = 0; cnt < 10; ++cnt)
     {
         EXPECT_EQ(attribData[cnt] * 2, mappedFloats[cnt]);
@@ -4834,8 +4809,9 @@ TEST_P(TransformFeedbackTestES31, ModeMismatchButSameClass)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glEndTransformFeedback();
 
-    const GLfloat *mapped = (const GLfloat *)glMapBufferRange(
-        GL_TRANSFORM_FEEDBACK_BUFFER, 0, 6 * 4 * sizeof(float), GL_MAP_READ_BIT);
+    auto mapped = MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                6 * 4 * sizeof(float), GL_MAP_READ_BIT);
+    ASSERT_FALSE(mapped.empty());
 
     // First triangle
     EXPECT_EQ(mapped[0], -1.0);
@@ -4921,8 +4897,9 @@ TEST_P(TransformFeedbackTestES31, ModeMismatchClassMismatch)
     glDrawArraysIndirect(GL_TRIANGLE_STRIP, nullptr);
     glEndTransformFeedback();
 
-    const GLfloat *mapped = (const GLfloat *)glMapBufferRange(
-        GL_TRANSFORM_FEEDBACK_BUFFER, 0, 6 * 4 * sizeof(float), GL_MAP_READ_BIT);
+    auto mapped = MapBufferRange<const GLfloat>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                6 * 4 * sizeof(float), GL_MAP_READ_BIT);
+    ASSERT_FALSE(mapped.empty());
 
     // First triangle
     EXPECT_EQ(mapped[0], -1.0);
@@ -5485,11 +5462,9 @@ TEST_P(TransformFeedbackTest, InstancedOverflowIncompletePrimitive)
     ASSERT_GL_NO_ERROR();
 
     // Map buffer and check results.
-    void *mappedBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedBuffer);
-
-    float *mappedFloats = static_cast<float *>(mappedBuffer);
+    auto mappedFloats =
+        MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedFloats.empty());
 
     // Instance 0 should fill the first 9 floats with values 0 to 8.
     for (unsigned int i = 0; i < 9; ++i)
@@ -5565,9 +5540,9 @@ void main() {
     glFinish();
     ASSERT_GL_NO_ERROR();
 
-    const float *captured = static_cast<const float *>(glMapBufferRange(
-        GL_TRANSFORM_FEEDBACK_BUFFER, 0, kCount * sizeof(kMarker), GL_MAP_READ_BIT));
-    ASSERT_NE(nullptr, captured);
+    auto captured = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                kCount * sizeof(kMarker), GL_MAP_READ_BIT);
+    ASSERT_FALSE(captured.empty());
     for (GLsizei vertex = 0; vertex < kCount; ++vertex)
     {
         EXPECT_EQ(kMarker[0], captured[vertex * 4 + 0]) << "vertex " << vertex;
@@ -5576,6 +5551,431 @@ void main() {
         EXPECT_EQ(kMarker[3], captured[vertex * 4 + 3]) << "vertex " << vertex;
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+}
+
+struct ScopedTransformFeedbackEnd
+{
+    bool *active;
+    ~ScopedTransformFeedbackEnd()
+    {
+        if (*active)
+        {
+            glEndTransformFeedback();
+        }
+        glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+        glUseProgram(0);
+    }
+};
+
+// On some GL drivers, drawing while transform feedback is paused corrupts driver state so draws
+// after glResumeTransformFeedback() fail to write to the transform feedback buffer even after
+// glEndTransformFeedback() (see OverrunWithPauseAndResume).  Tests that draw while paused still
+// verify the pre-pause draw's captured data (indices 0..2) on all configurations, and skip only
+// the post-resume draw's captured data (indices 3..5) on affected drivers.
+bool CanCaptureAfterResumeFollowingPausedDraw()
+{
+    // Fails on Adreno GL drivers.
+    if (IsOpenGL() && IsAdreno() && IsAndroid())
+    {
+        return false;
+    }
+
+    // Fails on Windows Intel GL drivers.  http://anglebug.com/42263296
+    if (IsOpenGL() && IsIntel() && IsWindows())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+// Test that linking an unrelated program while transform feedback is active and unpaused keeps
+// program state synchronized when pausing transform feedback, switching programs, resuming, or
+// starting a subsequent transform feedback pass.
+//
+// Note: the shaders in the LinkOtherProgramWhileActive* tests are intentionally distinct from the
+// ones used elsewhere.  If an identical program was linked before (e.g. by another test on the
+// same display), the link may be served from the program cache.  That goes through
+// ProgramGL::load() instead of ProgramGL::postLinkJobImpl(), and would not exercise the bug.
+TEST_P(TransformFeedbackTest, LinkOtherProgramWhileActiveThenPauseAndDraw)
+{
+    constexpr char kXfbVS[] = R"(#version 300 es
+out float v_tf;
+void main()
+{
+    vec2 pos = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+    v_tf = float(gl_VertexID + 1);
+})";
+
+    constexpr char kRedFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    color = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kPlainVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+})";
+
+    constexpr char kGreenFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    const float kGreenValue = 1.0;
+    color = vec4(0.0, kGreenValue, 0.0, 1.0);
+})";
+
+    std::vector<std::string> tfVaryings = {"v_tf"};
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(xfbProgram, kXfbVS, kRedFS, tfVaryings,
+                                        GL_INTERLEAVED_ATTRIBS);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+
+    bool xfbActive = false;
+    ScopedTransformFeedbackEnd xfbCleanup{&xfbActive};
+
+    glUseProgram(xfbProgram);
+    glBeginTransformFeedback(GL_TRIANGLES);
+    xfbActive = true;
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Link an unrelated program while transform feedback is active and unpaused.
+    ANGLE_GL_PROGRAM(otherProgram, kPlainVS, kGreenFS);
+
+    glPauseTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(otherProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Resume transform feedback on the original program and capture a second primitive.
+    glUseProgram(xfbProgram);
+    glResumeTransformFeedback();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glEndTransformFeedback();
+    xfbActive = false;
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    {
+        const size_t expectedCount = CanCaptureAfterResumeFollowingPausedDraw() ? 6 : 3;
+        auto captured = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    expectedCount * sizeof(float), GL_MAP_READ_BIT);
+        ASSERT_FALSE(captured.empty());
+        for (size_t i = 0; i < captured.size(); ++i)
+        {
+            EXPECT_EQ(static_cast<float>((i % 3) + 1), captured[i]) << "index " << i;
+        }
+        glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    }
+
+    // Start a second transform feedback session on the same object after drawing with otherProgram.
+    glUseProgram(otherProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    const std::array<float, 3> kZeroData = {0.0f, 0.0f, 0.0f};
+    glBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(kZeroData), kZeroData.data());
+    glUseProgram(xfbProgram);
+    glBeginTransformFeedback(GL_TRIANGLES);
+    xfbActive = true;
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glEndTransformFeedback();
+    xfbActive = false;
+    ASSERT_GL_NO_ERROR();
+
+    {
+        auto captured = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                    3 * sizeof(float), GL_MAP_READ_BIT);
+        ASSERT_FALSE(captured.empty());
+        for (size_t i = 0; i < captured.size(); ++i)
+        {
+            EXPECT_EQ(static_cast<float>(i + 1), captured[i]) << "index " << i;
+        }
+        glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    }
+}
+
+// Test that linking unrelated programs while transform feedback is active and unpaused preserves
+// transform feedback capture on subsequent draws and clean termination without explicit pause.
+TEST_P(TransformFeedbackTest, LinkOtherProgramWhileActiveAndContinueCapture)
+{
+    constexpr char kXfbVS[] = R"(#version 300 es
+out float v_tf;
+void main()
+{
+    vec2 pos = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+    v_tf = float(gl_VertexID + 10);
+})";
+
+    constexpr char kRedFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    color = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kPlainVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+})";
+
+    constexpr char kBlueFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    const float kBlueValue = 1.0;
+    color = vec4(0.0, 0.0, kBlueValue, 1.0);
+})";
+
+    constexpr char kYellowFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    const float kYellowValue = 1.0;
+    color = vec4(kYellowValue, kYellowValue, 0.0, 1.0);
+})";
+
+    std::vector<std::string> tfVaryings = {"v_tf"};
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(xfbProgram, kXfbVS, kRedFS, tfVaryings,
+                                        GL_INTERLEAVED_ATTRIBS);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+
+    bool xfbActive = false;
+    ScopedTransformFeedbackEnd xfbCleanup{&xfbActive};
+
+    glUseProgram(xfbProgram);
+    glBeginTransformFeedback(GL_TRIANGLES);
+    xfbActive = true;
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Link an unrelated program and continue drawing with active transform feedback on xfbProgram.
+    ANGLE_GL_PROGRAM(blueProgram, kPlainVS, kBlueFS);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Link and delete a temporary program before ending transform feedback.
+    {
+        ANGLE_GL_PROGRAM(tempProgram, kPlainVS, kYellowFS);
+    }
+    glEndTransformFeedback();
+    xfbActive = false;
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Create a new program (which may recycle the deleted native ID and hit the program cache) and
+    // verify its draw executes with synchronized program state.
+    ANGLE_GL_PROGRAM(cachedBlueProgram, kPlainVS, kBlueFS);
+    glUseProgram(cachedBlueProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    auto captured = MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 6 * sizeof(float),
+                                                GL_MAP_READ_BIT);
+    ASSERT_FALSE(captured.empty());
+    for (size_t i = 0; i < captured.size(); ++i)
+    {
+        EXPECT_EQ(static_cast<float>((i % 3) + 10), captured[i]) << "index " << i;
+    }
+    glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+}
+
+// Test that creating a program on one context and linking it on a shared context in another
+// virtualization group while transform feedback is active keeps both contexts' program state
+// synchronized, including after the linking context is destroyed.
+TEST_P(TransformFeedbackTest, LinkSharedProgramAcrossContextsWhileActive)
+{
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+    EGLSurface surface = window->getSurface();
+
+    EGLint extraAttributes1[] = {EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE, 1, EGL_NONE};
+    EGLint extraAttributes2[] = {EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE, 2, EGL_NONE};
+    if (!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_context_virtualization"))
+    {
+        extraAttributes1[0] = EGL_NONE;
+        extraAttributes2[0] = EGL_NONE;
+    }
+
+    EGLContext baseContext = eglGetCurrentContext();
+    EGLContext context1    = EGL_NO_CONTEXT;
+    EGLContext context2    = EGL_NO_CONTEXT;
+
+    struct ScopedContextCleanup
+    {
+        EGLDisplay display;
+        EGLSurface surface;
+        EGLContext baseContext;
+        EGLContext *context1;
+        EGLContext *context2;
+        ~ScopedContextCleanup()
+        {
+            eglMakeCurrent(display, surface, surface, baseContext);
+            if (*context2 != EGL_NO_CONTEXT)
+            {
+                eglDestroyContext(display, *context2);
+            }
+            if (*context1 != EGL_NO_CONTEXT)
+            {
+                eglDestroyContext(display, *context1);
+            }
+        }
+    } cleanup{display, surface, baseContext, &context1, &context2};
+
+    context1 = window->createContext(EGL_NO_CONTEXT, extraAttributes1);
+    ASSERT_NE(context1, EGL_NO_CONTEXT);
+    context2 = window->createContext(context1, extraAttributes2);
+    ASSERT_NE(context2, EGL_NO_CONTEXT);
+
+    constexpr char kXfbVS[] = R"(#version 300 es
+out float v_tf;
+void main()
+{
+    vec2 pos = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+    v_tf = float(gl_VertexID + 1);
+})";
+
+    constexpr char kPlainVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+})";
+
+    constexpr char kRedFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    color = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kSharedUniformFS[] = R"(#version 300 es
+precision mediump float;
+uniform vec4 u_colorOffset;
+out vec4 color;
+void main()
+{
+    color = vec4(0.0, 1.0, 0.0, 1.0) + u_colorOffset;
+})";
+
+    ASSERT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context1));
+    {
+        ANGLE_GL_PROGRAM(redProgram, kPlainVS, kRedFS);
+        glUseProgram(redProgram);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+        // Create and attach shaders for sharedProgram on context1 without linking yet.
+        GLShader sharedVS(GL_VERTEX_SHADER);
+        GLShader sharedFS(GL_FRAGMENT_SHADER);
+        const char *vsSrc = kPlainVS;
+        const char *fsSrc = kSharedUniformFS;
+        glShaderSource(sharedVS, 1, &vsSrc, nullptr);
+        glCompileShader(sharedVS);
+        glShaderSource(sharedFS, 1, &fsSrc, nullptr);
+        glCompileShader(sharedFS);
+
+        GLProgram sharedProgram;
+        glAttachShader(sharedProgram, sharedVS);
+        glAttachShader(sharedProgram, sharedFS);
+
+        // Switch to context2, start transform feedback, and link sharedProgram while active.
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context2));
+        {
+            std::vector<std::string> tfVaryings = {"v_tf"};
+            ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(xfbProgram, kXfbVS, kRedFS, tfVaryings,
+                                                GL_INTERLEAVED_ATTRIBS);
+            GLTransformFeedback tf;
+            GLBuffer tfBuffer;
+            glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tf);
+            glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, tfBuffer);
+            glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 1024, nullptr, GL_DYNAMIC_COPY);
+            glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, tfBuffer);
+
+            bool xfbActive = false;
+            ScopedTransformFeedbackEnd xfbCleanup{&xfbActive};
+
+            glUseProgram(xfbProgram);
+            glBeginTransformFeedback(GL_TRIANGLES);
+            xfbActive = true;
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            glLinkProgram(sharedProgram);
+            GLint linkStatus = 0;
+            glGetProgramiv(sharedProgram, GL_LINK_STATUS, &linkStatus);
+            ASSERT_EQ(GL_TRUE, linkStatus);
+
+            glPauseTransformFeedback();
+            ASSERT_GL_NO_ERROR();
+
+            // Draw with sharedProgram using its zero-initialized uniform value (green).
+            glUseProgram(sharedProgram);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            ASSERT_GL_NO_ERROR();
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+            glUseProgram(xfbProgram);
+            glResumeTransformFeedback();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glEndTransformFeedback();
+            xfbActive = false;
+            ASSERT_GL_NO_ERROR();
+
+            {
+                const size_t expectedCount = CanCaptureAfterResumeFollowingPausedDraw() ? 6 : 3;
+                auto captured =
+                    MapBufferRange<const float>(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                expectedCount * sizeof(float), GL_MAP_READ_BIT);
+                ASSERT_FALSE(captured.empty());
+                for (size_t i = 0; i < captured.size(); ++i)
+                {
+                    EXPECT_EQ(static_cast<float>((i % 3) + 1), captured[i]) << "index " << i;
+                }
+                glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+            }
+        }
+
+        // Switch back to context1, destroy context2, and verify binding sharedProgram and updating
+        // its uniform on context1 still works properly.
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context1));
+        ASSERT_EGL_TRUE(eglDestroyContext(display, context2));
+        context2 = EGL_NO_CONTEXT;
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glUseProgram(sharedProgram);
+        GLint offsetLoc = glGetUniformLocation(sharedProgram, "u_colorOffset");
+        ASSERT_NE(-1, offsetLoc);
+        glUniform4f(offsetLoc, 0.0f, -1.0f, 1.0f, 0.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+        glUseProgram(0);
+    }
 }
 
 // Test that UseProgram generates INVALID_OPERATION when transform feedback is active and not paused.

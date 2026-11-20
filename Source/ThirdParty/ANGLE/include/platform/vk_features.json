@@ -1117,6 +1117,22 @@
             "issue": "http://anglebug.com/575891833"
         },
         {
+            "name": "supports_color_blend_enable_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the colorBlendEnable feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
+            "name": "supports_color_write_mask_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the colorWriteMask feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
             "name": "supports_depth_clamp_enable_dynamic_state",
             "category": "Features",
             "description": [
@@ -1133,6 +1149,15 @@
             "issue": "http://anglebug.com/575891833"
         },
         {
+            "name": "supports_line_rasterization_mode_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the lineRasterizationMode feature of VK_EXT_extended_dynamic_state3 extension, and ",
+                "if stippled lines are supported, also the lineStippleEnable feature of the same extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
             "name": "supports_logic_op_enable_dynamic_state",
             "category": "Features",
             "description": [
@@ -1145,6 +1170,14 @@
             "category": "Features",
             "description": [
                 "VkDevice supports the polygonMode feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
+            "name": "supports_rasterization_samples_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the rasterizationSamples feature of VK_EXT_extended_dynamic_state3 extension"
             ],
             "issue": "http://anglebug.com/575891833"
         },
@@ -2137,14 +2170,6 @@
                 "VkDevice supports VK_KHR_swapchain_mutable_format extension"
             ],
             "issue": "http://anglebug.com/386688871"
-        },
-        {
-            "name": "supports_clip_cull_distance_in_GS_and_TS",
-            "category": "Features",
-            "description": [
-                "Supports using clip/cull distance features in geometry and tessellation shaders"
-            ],
-            "issue": "http://anglebug.com/42264006"
         },
         {
             "name": "supports_maintenance9",

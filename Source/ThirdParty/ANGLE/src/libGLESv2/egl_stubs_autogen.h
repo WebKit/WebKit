@@ -57,11 +57,11 @@ EGLBoolean CopyBuffers(Thread *thread,
 EGLContext CreateContext(Thread *thread,
                          egl::Display *dpyPacked,
                          egl::Config *configPacked,
-                         gl::ContextID share_contextPacked,
+                         gl::Context *share_contextPacked,
                          const AttributeMap &attrib_listPacked);
 EGLImage CreateImage(Thread *thread,
                      egl::Display *dpyPacked,
-                     gl::ContextID ctxPacked,
+                     gl::Context *ctxPacked,
                      EGLenum target,
                      EGLClientBuffer buffer,
                      const AttributeMap &attrib_listPacked);
@@ -99,7 +99,7 @@ EGLSurface CreateWindowSurface(Thread *thread,
                                egl::Config *configPacked,
                                EGLNativeWindowType win,
                                const AttributeMap &attrib_listPacked);
-EGLBoolean DestroyContext(Thread *thread, egl::Display *dpyPacked, gl::ContextID ctxPacked);
+EGLBoolean DestroyContext(Thread *thread, egl::Display *dpyPacked, gl::Context *ctxPacked);
 EGLBoolean DestroyImage(Thread *thread, egl::Display *dpyPacked, ImageID imagePacked);
 EGLBoolean DestroySurface(Thread *thread,
                           egl::ThreadSafeDisplay *dpyPacked,
@@ -135,11 +135,11 @@ EGLBoolean MakeCurrent(Thread *thread,
                        egl::ThreadSafeDisplay *dpyPacked,
                        egl::Surface *drawPacked,
                        egl::Surface *readPacked,
-                       gl::ContextID ctxPacked);
+                       gl::Context *ctxPacked);
 EGLenum QueryAPI(Thread *thread);
 EGLBoolean QueryContext(Thread *thread,
                         egl::Display *dpyPacked,
-                        gl::ContextID ctxPacked,
+                        gl::Context *ctxPacked,
                         EGLint attribute,
                         EGLint *value);
 const char *QueryString(Thread *thread, egl::Display *dpyPacked, EGLint name);

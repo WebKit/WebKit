@@ -18,6 +18,7 @@
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libGLESv2/global_state.h"
 #include "tests/angle_unittests_utils.h"
+#include "tests/test_utils/angle_test_instantiate.h"
 
 namespace rx
 {
@@ -28,6 +29,8 @@ struct MockDriverState
 {
     GLboolean blendEnabled             = GL_FALSE;
     std::array<GLboolean, 4> colorMask = {GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE};
+    GLuint readFramebuffer             = 0;
+    GLuint drawFramebuffer             = 0;
     int enableBlendCallCount           = 0;
     int disableBlendCallCount          = 0;
     int colorMaskCallCount             = 0;
@@ -67,6 +70,15 @@ void GL_APIENTRY StubGetIntegerv(GLenum pname, GLint *data)
             data[3] = gDriverState->colorMask[3];
         });
     }
+    else if (pname == GL_READ_FRAMEBUFFER_BINDING && gDriverState != nullptr)
+    {
+        *data = gDriverState->readFramebuffer;
+    }
+    else if ((pname == GL_DRAW_FRAMEBUFFER_BINDING || pname == GL_FRAMEBUFFER_BINDING) &&
+             gDriverState != nullptr)
+    {
+        *data = gDriverState->drawFramebuffer;
+    }
 }
 void GL_APIENTRY StubGetFloatv(GLenum, GLfloat *) {}
 void GL_APIENTRY StubGetBooleanv(GLenum, GLboolean *) {}
@@ -103,7 +115,21 @@ void GL_APIENTRY StubGenFramebuffers(GLsizei, GLuint *framebuffers)
 {
     *framebuffers = 1;
 }
-void GL_APIENTRY StubBindFramebuffer(GLenum, GLuint) {}
+void GL_APIENTRY StubBindFramebuffer(GLenum target, GLuint framebuffer)
+{
+    if (gDriverState == nullptr)
+    {
+        return;
+    }
+    if (target == GL_READ_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+    {
+        gDriverState->readFramebuffer = framebuffer;
+    }
+    if (target == GL_DRAW_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+    {
+        gDriverState->drawFramebuffer = framebuffer;
+    }
+}
 void GL_APIENTRY StubDeleteFramebuffers(GLsizei, const GLuint *) {}
 void GL_APIENTRY StubGenRenderbuffers(GLsizei, GLuint *renderbuffers)
 {
@@ -339,7 +365,10 @@ class ScopedTestContext
         displayAttribs.insert(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE);
         mDisplay = egl::Display::GetDisplayFromNativeDisplay(EGL_PLATFORM_ANGLE_ANGLE,
                                                              EGL_DEFAULT_DISPLAY, displayAttribs);
-        EXPECT_NE(nullptr, mDisplay);
+        if (!mDisplay)
+        {
+            return;
+        }
         egl::ScopedDisplayMutexLock lock(*mDisplay);
         EXPECT_EQ(EGL_SUCCESS, mDisplay->initialize().getCode());
 
@@ -355,12 +384,18 @@ class ScopedTestContext
 
     ~ScopedTestContext()
     {
+        if (!mDisplay)
+        {
+            return;
+        }
         egl::ScopedDisplayMutexLock lock(*mDisplay);
         const_cast<gl::State &>(mContext->getState()).setDrawFramebufferBinding(nullptr);
         mDefaultFbo->onDestroy(mContext);
         delete mDefaultFbo;
-        EXPECT_EQ(EGL_SUCCESS,
-                  mDisplay->destroyContext(egl::GetCurrentThread(), mContext).getCode());
+        // Mimic how the EGL entry point API does, which always holds reference count before calling
+        // into Display::destroyContext.
+        mContext->addRef();
+        EXPECT_EQ(EGL_SUCCESS, mDisplay->destroyContext(mContext).getCode());
         EXPECT_EQ(EGL_SUCCESS,
                   mDisplay->terminate(egl::GetCurrentThread(), egl::Display::TerminateReason::Api)
                       .getCode());
@@ -382,6 +417,7 @@ class ScopedTestContext
 TEST_F(StateManagerGLTest, SyncFromNativeContextBlendEnabled)
 {
     ScopedTestContext testContext(&functions(), &stateManager());
+    ANGLE_SKIP_TEST_IF(!testContext.context());  // Skip if GL not available.
     gl::Context *context = testContext.context();
 
     // Native driver has GL_BLEND enabled while frontend context has blend disabled.
@@ -412,6 +448,7 @@ TEST_F(StateManagerGLTest, SyncFromNativeContextBlendEnabled)
 TEST_F(StateManagerGLTest, SyncFromNativeContextColorMask)
 {
     ScopedTestContext testContext(&functions(), &stateManager());
+    ANGLE_SKIP_TEST_IF(!testContext.context());  // Skip if GL not available.
     gl::Context *context = testContext.context();
 
     // Native driver has red write disabled while frontend context has RGBA all enabled.
@@ -433,6 +470,28 @@ TEST_F(StateManagerGLTest, SyncFromNativeContextColorMask)
     EXPECT_EQ(1, driverState().colorMaskCallCount);
     EXPECT_EQ(0, driverState().enableBlendCallCount);
     EXPECT_EQ(0, driverState().disableBlendCallCount);
+}
+
+// Verify that when a non-default framebuffer is bound in the native driver on
+// the first call to syncFromNativeContext, lazy creation of the placeholder
+// framebuffer does not clobber the native draw framebuffer binding before it
+// is queried.
+TEST_F(StateManagerGLTest, SyncFromNativeContextNonDefaultFramebuffer)
+{
+    constexpr GLuint kNativeFbo   = 42;
+    driverState().readFramebuffer = kNativeFbo;
+    driverState().drawFramebuffer = kNativeFbo;
+
+    std::unique_ptr<ContextStateGL> nativeState = stateManager().createContextStateGL();
+    EXPECT_EQ(angle::Result::Continue,
+              stateManager().syncFromNativeContext(nullptr, nativeState.get()));
+
+    EXPECT_EQ(kNativeFbo, nativeState->framebuffers[angle::FramebufferBindingRead]);
+    EXPECT_EQ(kNativeFbo, nativeState->framebuffers[angle::FramebufferBindingDraw]);
+    EXPECT_EQ(kNativeFbo, stateManager().getFramebufferID(angle::FramebufferBindingRead));
+    EXPECT_EQ(kNativeFbo, stateManager().getFramebufferID(angle::FramebufferBindingDraw));
+    EXPECT_EQ(kNativeFbo, driverState().readFramebuffer);
+    EXPECT_EQ(kNativeFbo, driverState().drawFramebuffer);
 }
 
 }  // namespace

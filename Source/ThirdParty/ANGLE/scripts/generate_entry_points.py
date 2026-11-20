@@ -1457,7 +1457,7 @@ TEMPLATE_VALIDATION_PROTO = "%s Validate%s(%s);"
 
 TEMPLATE_CONTEXT_PRIVATE_CALL_PROTO = "%s ContextPrivate%s(%s);"
 
-TEMPLATE_CONTEXT_LOCK_PROTO = "ScopedContextMutexLock GetContextLock_%s(%s);"
+TEMPLATE_CONTEXT_LOCK_PROTO = "%s GetContextLock_%s(%s);"
 
 TEMPLATE_WINDOWS_DEF_FILE = """\
 ; GENERATED FILE - DO NOT EDIT.
@@ -1772,14 +1772,11 @@ EGL_PACKED_TYPES = {
 
 EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER = ["Thread *", "gl::ContextID"]
 EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER = ["attribute", "flags"]
-EGL_CONTEXT_LOCK_USES_DPY = [
-    "CreateContext",
-    "QueryContext",
-    "CreateImage",
-    "ReleaseHighPowerGPUANGLE",
-    "ReacquireHighPowerGPUANGLE",
-    "CreateImageKHR",
-]
+
+# EGL entry points take the contexts that they reference (see ScopedContextRef) instead of their
+# handles.  The validation of these entry points tells EGL_NO_CONTEXT apart from an invalid context
+# handle, so it takes the handle as well.
+EGL_VALIDATION_WITH_CONTEXT_HANDLE = ["eglCreateContext", "eglMakeCurrent"]
 
 CAPTURE_BLOCKLIST = ['eglGetProcAddress']
 
@@ -2299,6 +2296,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     sync_raw_param_name = None
     surface_params = []
     surface_raw_param_names = []
+    context_params = []
+    context_raw_param_names = []
     if api == apis.EGL:
         for param in params:
             param_type = just_the_type_packed(param, packed_enums)
@@ -2311,6 +2310,20 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             elif param_type == "SurfaceID":
                 surface_params.append(just_the_name_packed(param, packed_enums))
                 surface_raw_param_names.append(just_the_name(param))
+            elif param_type == "gl::ContextID":
+                context_params.append(just_the_name_packed(param, packed_enums))
+                context_raw_param_names.append(just_the_name(param))
+
+    # The display that ScopedContextRefs are created with.  It must not be const, as dropping the
+    # last reference to a destroyed context frees it.
+    egl_context_ref_display = None
+    if api == apis.EGL and dpy_param:
+        if is_egl_threadsafe_display_entry_point(cmd_name):
+            egl_context_ref_display = "validDisplay"
+        elif is_lockless_egl_entry_point(cmd_name):
+            egl_context_ref_display = f"{dpy_param}Ref.get()"
+        else:
+            egl_context_ref_display = f"{dpy_param}Lock.get()"
 
     for param in params:
         param_name = just_the_name(param)
@@ -2377,6 +2390,18 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                         f"        egl::Surface *{first_surface}Object = surfacesPackedRef.get(0);\n"
                         f"        egl::Surface *{internal_name}Object = surfacesPackedRef.get(1);"
                     ]
+            elif api == apis.EGL and param_name in context_raw_param_names:
+                # A thread that has a destroyed context current frees it in eglMakeCurrent(), which
+                # does not lock the display.  Reference the context until the entry point returns,
+                # which keeps it alive, and in the display's context map.  The context lock,
+                # validation and the stub take the referenced context instead of its handle.
+                # eglDestroyContext() hands the reference over to its stub, which drops it in
+                # Display::destroyContext().
+                packed_gl_enum_conversions += [
+                    f"\n        gl::ContextID {internal_name} = PackParam<gl::ContextID>({param_name});\n"
+                    f"        egl::ScopedContextRef {internal_name}Ref = GetContextRefIfValid({egl_context_ref_display}, {internal_name});\n"
+                    f"        gl::Context *{internal_name}Object = {internal_name}Ref.get();"
+                ]
             else:
                 packed_gl_enum_conversions += [
                     "\n        " + internal_type + " " + internal_name + " = PackParam<" +
@@ -2398,7 +2423,11 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                 "\n        egl::ScopedSurfaceLockAndRef surfaceObjectRef =\n"
                 "            (objectTypePacked == ObjectType::Surface)\n"
                 "                ? GetSurfaceIfValid(validDisplay, PackParam<SurfaceID>(object))\n"
-                "                : egl::ScopedSurfaceLockAndRef();"
+                "                : egl::ScopedSurfaceLockAndRef();\n"
+                "        egl::ScopedContextRef contextObjectRef =\n"
+                "            (objectTypePacked == ObjectType::Context)\n"
+                f"                ? GetContextRefIfValid({egl_context_ref_display}, PackParam<gl::ContextID>(object))\n"
+                "                : egl::ScopedContextRef();"
             ]
         elif cmd_name == "eglDestroyContext":
             packed_gl_enum_conversions += [
@@ -2429,9 +2458,18 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     name_lower_no_suffix = name_no_suffix[0:1].lower() + name_no_suffix[1:]
     entry_point_name = "angle::EntryPoint::GL" + strip_api_prefix(cmd_name)
 
+    # The context lock takes the referenced contexts instead of their handles.
+    internal_context_lock_params = [
+        f"{p}Object" if p in context_params else p for p in internal_context_lock_params
+    ]
     extra_lock_params = (
         ", " + ", ".join(internal_context_lock_params)) if internal_context_lock_params else ""
     context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{extra_lock_params});"
+    if cmd_name == "eglMakeCurrent":
+        # eglMakeCurrent() relies on its context lock for its own thread safety, so it is taken
+        # even if ANGLE_ENABLE_CONTEXT_MUTEX is not defined.  It locks the referenced context along
+        # with the context current on the thread.
+        context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK_ALWAYS({name}, thread{extra_lock_params});"
     val_prefix = ""
 
     packed_display_conversions = ""
@@ -2451,8 +2489,6 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                 f"egl::Display *{dpy_param} = PackParam<egl::Display *>({dpy_raw_param_name});\n"
                 f"        egl::ScopedDisplayLockAndRef {dpy_param}Lock = GetDisplayAndLockIfValid({dpy_param});\n"
                 f"        const egl::Display *validDisplay = {dpy_param}Lock.get();\n\n        ")
-        if name in EGL_CONTEXT_LOCK_USES_DPY:
-            context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY({name}, thread, validDisplay{extra_lock_params});"
         if labeled_object == f"GetDisplayIfValid({dpy_param})":
             labeled_object = "validDisplay"
 
@@ -2488,6 +2524,16 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                 internal_val_params = [
                     f"{p}Object" if p in surface_params else p for p in internal_val_params
                 ]
+        if context_params:
+            new_val_params = []
+            for p in internal_val_params:
+                if p in context_params:
+                    if cmd_name in EGL_VALIDATION_WITH_CONTEXT_HANDLE:
+                        new_val_params.append(p)
+                    new_val_params.append(f"{p}Object")
+                else:
+                    new_val_params.append(p)
+            internal_val_params = new_val_params
         if cmd_name == "eglSwapInterval":
             internal_val_params = [internal_val_params[0], "drawSurface"] + internal_val_params[1:]
 
@@ -2510,6 +2556,13 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         if surface_params:
             internal_stub_params = [
                 f"{p}Object" if p in surface_params else p for p in internal_stub_params
+            ]
+        if context_params:
+            # eglDestroyContext() hands its reference to the context over to the stub.
+            context_stub_suffix = "Ref.release()" if cmd_name == "eglDestroyContext" else "Object"
+            internal_stub_params = [
+                f"{p}{context_stub_suffix}" if p in context_params else p
+                for p in internal_stub_params
             ]
         if cmd_name == "eglSwapInterval":
             internal_stub_params = [internal_stub_params[0], "drawSurface"
@@ -2801,6 +2854,10 @@ def get_validation_params(api, cmd_name, params, cmd_packed_gl_enums, packed_par
                                                                  packed_gl_enums) == "SurfaceID":
             result.append(make_param("SurfaceID", param_name))
             result.append(make_param(param_type, f"{param_name}Object"))
+        elif api == apis.EGL and just_the_type_packed(param, packed_gl_enums) == "gl::ContextID":
+            if cmd_name in EGL_VALIDATION_WITH_CONTEXT_HANDLE:
+                result.append(make_param(param_type, param_name))
+            result.append(make_param("const gl::Context *", f"{param_name}Object"))
         else:
             result.append(make_param(param_type, param_name))
             if cmd_name == "eglSwapInterval" and param_name == "dpyPacked":
@@ -2822,19 +2879,16 @@ def get_context_private_call_params(api, cmd_name, params, cmd_packed_gl_enums,
 def get_context_lock_params(api, cmd_name, params, cmd_packed_gl_enums, packed_param_types):
     packed_gl_enums = get_packed_enums(api, cmd_packed_gl_enums, cmd_name, packed_param_types,
                                        params)
-    filter_types = EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER[:]
-    name = strip_api_prefix(cmd_name)
-    is_uses_dpy = api == apis.EGL and name in EGL_CONTEXT_LOCK_USES_DPY
-    if is_uses_dpy:
-        filter_types.append("egl::Display *")
     result = []
     for param in params:
         param_type = just_the_type_packed(param, packed_gl_enums)
         param_name = just_the_name_packed(param, packed_gl_enums)
-        if param_type in filter_types or param_name in EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER:
-            if is_uses_dpy and param_type == "egl::Display *":
-                param_type = "const egl::Display *"
-                param_name = "validDisplay"
+        if (param_type in EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER or
+                param_name in EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER):
+            if api == apis.EGL and param_type == "gl::ContextID":
+                # The entry points pass the contexts, which they reference, instead of their IDs.
+                param_type = "const gl::Context *"
+                param_name += "Object"
             result.append(make_param(param_type, param_name))
     return ", ".join(result)
 
@@ -2924,7 +2978,10 @@ def format_context_lock_proto(api, cmd_name, params, cmd_packed_gl_enums, packed
     with_extra_params = ["Thread *thread"] + params
     internal_params = get_context_lock_params(api, cmd_name, with_extra_params,
                                               cmd_packed_gl_enums, packed_param_types)
-    return TEMPLATE_CONTEXT_LOCK_PROTO % (strip_api_prefix(cmd_name), internal_params)
+    # eglMakeCurrent() locks the ContextMutexes of both the previous and the new context.
+    return_type = ("ScopedContextMutexesLock" if api == apis.EGL and cmd_name == "eglMakeCurrent"
+                   else "ScopedContextMutexLock")
+    return TEMPLATE_CONTEXT_LOCK_PROTO % (return_type, strip_api_prefix(cmd_name), internal_params)
 
 
 def format_capture_proto(api, cmd_name, proto, params, cmd_packed_gl_enums, packed_param_types):
@@ -3813,8 +3870,6 @@ def get_egl_entry_point_labeled_object(ep_to_object, cmd_stripped, params, packe
     if category == "Thread":
         return "GetThreadIfValid(thread)"
     found_param = find_param(params, category, packed_enums)
-    if category == "Context" and not found_param:
-        return "GetContextIfValid(thread->getDisplay(), thread->getContext())"
     assert found_param, "Did not find %s for %s: %s" % (category, cmd_stripped, str(params))
     if category == "Device":
         return "GetDeviceIfValid(%s)" % found_param
@@ -3998,6 +4053,8 @@ def get_stub_params(api, cmd_name, params, cmd_packed_egl_enums, packed_param_ty
             param_type = "egl::Sync *"
         if api == apis.EGL and param_type == "SurfaceID":
             param_type = "egl::Surface *"
+        if api == apis.EGL and param_type == "gl::ContextID":
+            param_type = "gl::Context *"
         stub_params.append(make_param(param_type, param_name))
         if cmd_name == "eglSwapInterval" and param_name == "dpyPacked":
             stub_params.append(make_param("egl::Surface *", "drawSurface"))

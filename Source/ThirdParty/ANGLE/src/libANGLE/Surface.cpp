@@ -97,7 +97,7 @@ Surface::Surface(EGLint surfaceType,
       mTexture(nullptr),
       mColorFormat(config->renderTargetFormat),
       mDSFormat(config->depthStencilFormat),
-      mCurrentRefCount(0),
+      mIsCurrentOnAnyThread(false),
       mLockBufferPtr(nullptr),
       mLockBufferPitch(0),
       mBufferAgeQueriedSinceLastSwap(false),
@@ -164,7 +164,7 @@ Surface::Surface(EGLint surfaceType,
 Surface::~Surface()
 {
     ASSERT(mRefCount == 0);
-    ASSERT(mCurrentRefCount == 0);
+    ASSERT(!mIsCurrentOnAnyThread);
 }
 
 rx::FramebufferAttachmentObjectImpl *Surface::getAttachmentImpl() const
@@ -285,7 +285,7 @@ Error Surface::makeCurrent(const gl::Context *context)
 {
     mMutex.assertLocked();
     ANGLE_TRY(mImplementation->makeCurrent(context));
-    mCurrentRefCount++;
+    mIsCurrentOnAnyThread = true;
     addRef();
     return NoError();
 }
@@ -294,8 +294,7 @@ Error Surface::unMakeCurrent(const gl::Context *context)
 {
     mMutex.assertLocked();
     ANGLE_TRY(mImplementation->unMakeCurrent(context));
-    ASSERT(mCurrentRefCount > 0);
-    mCurrentRefCount--;
+    mIsCurrentOnAnyThread = false;
     return releaseRef(context->getDisplay());
 }
 

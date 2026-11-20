@@ -346,6 +346,10 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         draw framebuffer is in an interrupted state. (See section 2.X.2
         "Interrupting Pixel Local Storage")
 
+      * INVALID_FRAMEBUFFER_OPERATION is generated if the draw framebuffer has
+        any attachment, and CheckFramebufferStatus(DRAW_FRAMEBUFFER) is not
+        FRAMEBUFFER_COMPLETE.
+
       * INVALID_OPERATION is generated if
         PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is nonzero.
 

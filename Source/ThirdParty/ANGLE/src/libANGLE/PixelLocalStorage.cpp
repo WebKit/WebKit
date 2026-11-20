@@ -526,7 +526,7 @@ bool AllPlanesDeinitialized(
 
 void PixelLocalStorage::onFramebufferDestroyed(const Context *context)
 {
-    if (!context->isReferenced())
+    if (context->getRefCount() == 0)
     {
         // If the Context's refcount is zero, we know it's in a teardown state and we can just let
         // go of our GL objects -- they get cleaned up as part of context teardown. Otherwise, the

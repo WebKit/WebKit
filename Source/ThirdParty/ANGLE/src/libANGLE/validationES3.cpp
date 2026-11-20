@@ -348,6 +348,17 @@ bool ValidateTexImageFormatCombination(const Context *context,
         return false;
     }
 
+    // Every non-YUV (format, type) pair accepted by ValidES3FormatCombination() or
+    // ValidES3ExtensionFormatCombination() must have a matching entry in formatutils.cpp.
+    // Assert on table mismatches in debug builds while still failing closed in release builds.
+    if (ANGLE_UNLIKELY(!gl::IsYuvFormat(format) &&
+                       GetInternalFormatInfo(format, type).internalFormat == GL_NONE))
+    {
+        UNREACHABLE();
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalErrorFormatNotFound);
+        return false;
+    }
+
     return true;
 }
 

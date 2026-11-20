@@ -14,6 +14,7 @@
 
 #include "common/PackedEnums.h"
 #include "common/angleutils.h"
+#include "common/span.h"
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
@@ -53,13 +54,26 @@ namespace
 std::map<std::vector<uint8_t>, std::vector<uint8_t>> gApplicationCache;
 CacheOpResult gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
+// The EGL_ANDROID_blob_cache callbacks receive each buffer as a raw pointer and a size.
+std::vector<uint8_t> BlobToVector(const void *data, EGLsizeiANDROID size)
+{
+    std::vector<uint8_t> vec(size);
+    // SAFETY: the blob cache callback passes `data` pointing to `size` bytes.
+    Span(vec).copy_from(
+        ANGLE_UNSAFE_BUFFERS(Span(static_cast<const uint8_t *>(data), static_cast<size_t>(size))));
+    return vec;
+}
+
+Span<uint8_t> WritableBlobBytes(void *data, EGLsizeiANDROID size)
+{
+    // SAFETY: the blob cache get callback passes a writable buffer of `size` bytes.
+    return ANGLE_UNSAFE_BUFFERS(Span(static_cast<uint8_t *>(data), static_cast<size_t>(size)));
+}
+
 void SetBlob(const void *key, EGLsizeiANDROID keySize, const void *value, EGLsizeiANDROID valueSize)
 {
-    std::vector<uint8_t> keyVec(keySize);
-    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
-
-    std::vector<uint8_t> valueVec(valueSize);
-    ANGLE_UNSAFE_TODO(memcpy(valueVec.data(), value, valueSize));
+    std::vector<uint8_t> keyVec   = BlobToVector(key, keySize);
+    std::vector<uint8_t> valueVec = BlobToVector(value, valueSize);
 
     gApplicationCache[keyVec] = valueVec;
 
@@ -71,11 +85,8 @@ void SetCorruptedBlob(const void *key,
                       const void *value,
                       EGLsizeiANDROID valueSize)
 {
-    std::vector<uint8_t> keyVec(keySize);
-    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
-
-    std::vector<uint8_t> valueVec(valueSize);
-    ANGLE_UNSAFE_TODO(memcpy(valueVec.data(), value, valueSize));
+    std::vector<uint8_t> keyVec   = BlobToVector(key, keySize);
+    std::vector<uint8_t> valueVec = BlobToVector(value, valueSize);
 
     // Corrupt the data
     ++valueVec[valueVec.size() / 2];
@@ -94,8 +105,7 @@ EGLsizeiANDROID GetBlob(const void *key,
                         void *value,
                         EGLsizeiANDROID valueSize)
 {
-    std::vector<uint8_t> keyVec(keySize);
-    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
+    std::vector<uint8_t> keyVec = BlobToVector(key, keySize);
 
     auto entry = gApplicationCache.find(keyVec);
     if (entry == gApplicationCache.end())
@@ -113,7 +123,7 @@ EGLsizeiANDROID GetBlob(const void *key,
 
     if (entry->second.size() <= static_cast<size_t>(valueSize))
     {
-        ANGLE_UNSAFE_TODO(memcpy(value, entry->second.data(), entry->second.size()));
+        WritableBlobBytes(value, valueSize).copy_prefix_from(Span(entry->second));
         gLastCacheOpResult = CacheOpResult::GetSuccess;
     }
     else

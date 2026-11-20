@@ -31,11 +31,10 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_CopyBuffers(Thread *thread)
     return {};
 }
 
-ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateContext(Thread *thread,
-                                                                 const egl::Display *validDisplay,
-                                                                 gl::ContextID share_contextPacked)
+ANGLE_INLINE ScopedContextMutexLock
+GetContextLock_CreateContext(Thread *thread, const gl::Context *share_contextPackedObject)
 {
-    return TryLockContext(validDisplay, share_contextPacked);
+    return TryLockContext(share_contextPackedObject);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreatePbufferSurface(Thread *thread)
@@ -53,8 +52,8 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateWindowSurface(Thread *t
     return {};
 }
 
-ANGLE_INLINE ScopedContextMutexLock GetContextLock_DestroyContext(Thread *thread,
-                                                                  gl::ContextID ctxPacked)
+ANGLE_INLINE ScopedContextMutexLock
+GetContextLock_DestroyContext(Thread *thread, const gl::Context *ctxPackedObject)
 {
     // Explicit lock in egl::Display::destroyContext()/makeCurrent()
     return {};
@@ -108,19 +107,20 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_Initialize(Thread *thread)
     return {};
 }
 
-ANGLE_INLINE ScopedContextMutexLock GetContextLock_MakeCurrent(Thread *thread,
-                                                               gl::ContextID ctxPacked)
+ANGLE_INLINE ScopedContextMutexesLock GetContextLock_MakeCurrent(Thread *thread,
+                                                                 const gl::Context *ctxPackedObject)
 {
-    // Explicit lock in egl::Display::makeCurrent()
-    return {};
+    // Locks the ContextMutexes of both the previous and the new context, so that validation is
+    // atomic with making the new context current.  Unlike other context locks, it is taken even if
+    // ANGLE_ENABLE_CONTEXT_MUTEX is not defined (see ANGLE_EGL_SCOPED_CONTEXT_LOCK_ALWAYS).
+    return ScopedContextMutexesLock(thread->getContext(), ctxPackedObject);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_QueryContext(Thread *thread,
-                                                                const egl::Display *validDisplay,
-                                                                gl::ContextID ctxPacked,
+                                                                const gl::Context *ctxPackedObject,
                                                                 EGLint attribute)
 {
-    return TryLockContext(validDisplay, ctxPacked);
+    return TryLockContext(ctxPackedObject);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_QueryString(Thread *thread)
@@ -233,10 +233,9 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_ClientWaitSync(Thread *thread
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateImage(Thread *thread,
-                                                               const egl::Display *validDisplay,
-                                                               gl::ContextID ctxPacked)
+                                                               const gl::Context *ctxPackedObject)
 {
-    return TryLockContext(validDisplay, ctxPacked);
+    return TryLockContext(ctxPackedObject);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreatePlatformPixmapSurface(Thread *thread)
@@ -394,19 +393,15 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_CopyMetalSharedEventANGLE(Thr
 
 // EGL_ANGLE_power_preference
 ANGLE_INLINE ScopedContextMutexLock
-GetContextLock_ReleaseHighPowerGPUANGLE(Thread *thread,
-                                        const egl::Display *validDisplay,
-                                        gl::ContextID ctxPacked)
+GetContextLock_ReleaseHighPowerGPUANGLE(Thread *thread, const gl::Context *ctxPackedObject)
 {
-    return TryLockContext(validDisplay, ctxPacked);
+    return TryLockContext(ctxPackedObject);
 }
 
 ANGLE_INLINE ScopedContextMutexLock
-GetContextLock_ReacquireHighPowerGPUANGLE(Thread *thread,
-                                          const egl::Display *validDisplay,
-                                          gl::ContextID ctxPacked)
+GetContextLock_ReacquireHighPowerGPUANGLE(Thread *thread, const gl::Context *ctxPackedObject)
 {
-    return TryLockContext(validDisplay, ctxPacked);
+    return TryLockContext(ctxPackedObject);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_HandleGPUSwitchANGLE(Thread *thread)
@@ -589,11 +584,10 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_GetSyncAttribKHR(Thread *thre
 }
 
 // EGL_KHR_image
-ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateImageKHR(Thread *thread,
-                                                                  const egl::Display *validDisplay,
-                                                                  gl::ContextID ctxPacked)
+ANGLE_INLINE ScopedContextMutexLock
+GetContextLock_CreateImageKHR(Thread *thread, const gl::Context *ctxPackedObject)
 {
-    return TryLockContext(validDisplay, ctxPacked);
+    return TryLockContext(ctxPackedObject);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_DestroyImageKHR(Thread *thread)

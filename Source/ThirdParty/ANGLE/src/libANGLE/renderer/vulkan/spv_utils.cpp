@@ -1301,13 +1301,21 @@ void SpirvPerVertexTrimmer::visitMemberDecorate(spirv::IdRef id,
             UNREACHABLE();
     }
 
-    if (id == ID::OutputPerVertexBlock && perVertexMember == mOutputPerVertexMaxActiveMember)
+    // The block does not necessarily include every member up to the max active one; for example
+    // gl_ClipDistance is not declared when unused, and the input block of a stage may not include
+    // every member written by the previous stage. Keep the largest member whose built-in is at or
+    // before the max active member. The members of gl_PerVertex are always declared in the order
+    // of gl::PerVertexMember, so the member indices are monotonic in that order.
+    const uint32_t memberIndex = member;
+    if (id == ID::OutputPerVertexBlock && perVertexMember <= mOutputPerVertexMaxActiveMember)
     {
-        mOutputPerVertexMaxActiveMemberIndex = member;
+        mOutputPerVertexMaxActiveMemberIndex =
+            std::max(mOutputPerVertexMaxActiveMemberIndex, memberIndex);
     }
-    else if (id == ID::InputPerVertexBlock && perVertexMember == mInputPerVertexMaxActiveMember)
+    else if (id == ID::InputPerVertexBlock && perVertexMember <= mInputPerVertexMaxActiveMember)
     {
-        mInputPerVertexMaxActiveMemberIndex = member;
+        mInputPerVertexMaxActiveMemberIndex =
+            std::max(mInputPerVertexMaxActiveMemberIndex, memberIndex);
     }
 }
 

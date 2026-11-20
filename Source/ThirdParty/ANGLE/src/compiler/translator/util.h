@@ -12,6 +12,7 @@
 #include <GLSLANG/ShaderLang.h>
 #include "angle_gl.h"
 
+#include "common/bitset_utils.h"
 #include "compiler/translator/HashNames.h"
 #include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/Operator_autogen.h"
@@ -109,6 +110,24 @@ Declaration ViewDeclaration(TIntermDeclaration &declNode, uint32_t index = 0);
 
 // Returns true if op indexes an array, struct, or interface block.
 bool IsIndexOp(TOperator op);
+
+// The number of gl_PerVertex members (gl_Position, gl_PointSize, gl_ClipDistance and
+// gl_CullDistance), in the order they are declared in the block.
+constexpr size_t kPerVertexMemberCount = 4;
+
+// Set of gl_PerVertex members, indexed by GetPerVertexMemberIndex().
+using PerVertexMemberSet = angle::BitSet<kPerVertexMemberCount>;
+
+// The gl_PerVertex members a shader accesses through gl_in (input) and gl_out (output).
+struct PerVertexMembersAccessed
+{
+    PerVertexMemberSet input;
+    PerVertexMemberSet output;
+};
+
+// Returns the index of the given gl_PerVertex member, or -1 if name is not
+// the name of a gl_PerVertex member.
+int GetPerVertexMemberIndex(const ImmutableString &name);
 
 }  // namespace sh
 

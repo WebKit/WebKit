@@ -13,8 +13,10 @@ pub fn calculate_function_decl_order(
     ir_meta: &IRMeta,
     function_entries: &[Option<Block>],
 ) -> Vec<FunctionId> {
-    // Build the function call graph first.
-    let mut call_graph = vec![HashSet::new(); function_entries.len()];
+    // Build the function call graph first.  The call graph is a map of functions to the ones they
+    // call (callees).  To make the translation output stable, the set of callees is a vector (as
+    // opposed to an unstable data structure such as hash set).
+    let mut call_graph: Vec<Vec<FunctionId>> = vec![Vec::new(); function_entries.len()];
 
     traverser::visitor::for_each_function(
         &mut (FunctionId { id: 0 }, &mut call_graph),
@@ -26,7 +28,10 @@ pub fn calculate_function_decl_order(
             for instruction in &block.instructions {
                 let (opcode, _) = instruction.get_op_and_result(ir_meta);
                 if let &OpCode::Call(callee, _) = opcode {
-                    call_graph[current_function.id as usize].insert(callee);
+                    let callees = &mut call_graph[current_function.id as usize];
+                    if !callees.contains(&callee) {
+                        callees.push(callee);
+                    }
                 }
             }
 

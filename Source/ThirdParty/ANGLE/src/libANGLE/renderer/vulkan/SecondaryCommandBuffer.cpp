@@ -171,6 +171,10 @@ const char *GetCommandString(CommandID id)
             return "SetFragmentShadingRate";
         case CommandID::SetFrontFace:
             return "SetFrontFace";
+        case CommandID::SetLineRasterizationMode:
+            return "SetLineRasterizationMode";
+        case CommandID::SetLineStippleEnable:
+            return "SetLineStippleEnable";
         case CommandID::SetLineWidth:
             return "SetLineWidth";
         case CommandID::SetLogicOp:
@@ -822,9 +826,9 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                 {
                     const SetColorBlendEnableParams *params =
                         getParamPtr<SetColorBlendEnableParams>(currentCommand);
-                    const VkBool32 *colorBlendEnable = GetFirstArrayParameter<VkBool32>(params);
-                    vkCmdSetColorBlendEnableEXT(cmdBuffer, params->firstAttachment,
-                                                params->attachmentCount, colorBlendEnable);
+                    const VkBool32 colorBlendEnable = params->colorBlendEnable;
+                    vkCmdSetColorBlendEnableEXT(cmdBuffer, params->attachment, 1,
+                                                &colorBlendEnable);
                     break;
                 }
                 case CommandID::SetColorBlendEquation:
@@ -841,10 +845,9 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                 {
                     const SetColorWriteMaskParams *params =
                         getParamPtr<SetColorWriteMaskParams>(currentCommand);
-                    const VkColorComponentFlags *colorWriteMask =
-                        GetFirstArrayParameter<VkColorComponentFlags>(params);
-                    vkCmdSetColorWriteMaskEXT(cmdBuffer, params->firstAttachment,
-                                              params->attachmentCount, colorWriteMask);
+                    const VkColorComponentFlags colorWriteMask =
+                        static_cast<VkColorComponentFlags>(params->colorWriteMask);
+                    vkCmdSetColorWriteMaskEXT(cmdBuffer, params->attachment, 1, &colorWriteMask);
                     break;
                 }
                 case CommandID::SetCullMode:
@@ -928,6 +931,18 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                     const SetFrontFaceParams *params =
                         getParamPtr<SetFrontFaceParams>(currentCommand);
                     vkCmdSetFrontFaceEXT(cmdBuffer, params->frontFace);
+                    break;
+                }
+                case CommandID::SetLineRasterizationMode:
+                {
+                    const SetLineRasterizationModeParams *params =
+                        getParamPtr<SetLineRasterizationModeParams>(currentCommand);
+                    vkCmdSetLineRasterizationModeEXT(cmdBuffer, params->lineRasterizationMode);
+                    break;
+                }
+                case CommandID::SetLineStippleEnable:
+                {
+                    vkCmdSetLineStippleEnableEXT(cmdBuffer, VK_FALSE);
                     break;
                 }
                 case CommandID::SetLineWidth:

@@ -642,6 +642,7 @@ precision highp int;
 uniform int a;
 uniform uint b;
 int f() { return 0; }
+int[2] f(out int x) { x = 0; return int[2](0, 0); }
 void main() {
 
 )";
@@ -650,6 +651,8 @@ void main() {
         "for (;;) { }",
         "for (bool b = true; b; b = false) { }",
         "for (int i = 0; i < 10;) { }",
+        "int j = 0; for (int i = 0; i < 10; j++) { }",
+        "int j = 0; for (int i = 0; i < 10; j += 1) { }",
         "int i = 101; for (; i < 10; i+=2) { }",
         "int i = 101; for (; i < 10; i-=2) { }",
         "int z = 7; for (int i = 0; i < z; i++) { }",
@@ -666,6 +669,8 @@ void main() {
         "for (int i = 0; i < 10; i++) { for (int j = 0; j < 10; i--, j++) { } }",
         "for (int i = 0; i < 10; f()) { }",
         "for (int i = 0; i < 10; a == 0 ? i++ : i = 0) { }",
+        "for (int i = 0; i < (i = 0, 1, 100); i++) { }",
+        "for (int i = 0; i < f(i).length(); i++) { }",
         "for (ivec2 i = ivec2(0); i != ivec2(10, 20); i++) { }",
         "for (ivec2 i = ivec2(0); i != ivec2(10, 10); i += ivec2(1, 2)) { }",
         // Infinite loop because the condition is always true

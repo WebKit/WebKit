@@ -172,10 +172,10 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     egl::Error unlockSurfaceKHR(const egl::ThreadSafeDisplay *display);
 
     bool isLocked() const;
-    bool isCurrentOnAnyContext() const
+    bool isCurrentOnAnyThread() const
     {
         mMutex.assertLocked();
-        return mCurrentRefCount > 0;
+        return mIsCurrentOnAnyThread;
     }
 
     gl::Texture *getBoundTexture() const { return mTexture; }
@@ -333,8 +333,8 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
 
     gl::Offset mTextureOffset;
 
-    uint32_t mCurrentRefCount;  // The surface is current to a context/client API
-    uint8_t *mLockBufferPtr;    // Memory owned by backend.
+    bool mIsCurrentOnAnyThread;  // The surface is current to a context/client API
+    uint8_t *mLockBufferPtr;     // Memory owned by backend.
     EGLint mLockBufferPitch;
 
     bool mBufferAgeQueriedSinceLastSwap;

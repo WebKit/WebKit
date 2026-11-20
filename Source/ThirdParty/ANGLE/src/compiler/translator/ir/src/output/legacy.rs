@@ -1949,6 +1949,16 @@ impl<'options> Generator<'options> {
         }
     }
 
+    fn field_built_in_str(built_in: BuiltIn) -> &'static str {
+        match built_in {
+            BuiltIn::Position => "gl_Position",
+            BuiltIn::PointSize => "gl_PointSize",
+            BuiltIn::ClipDistance => "gl_ClipDistance",
+            BuiltIn::CullDistance => "gl_CullDistance",
+            _ => panic!("Internal error: Invalid built-in field"),
+        }
+    }
+
     fn declare_variable(
         &self,
         variable: *mut TIntermTyped,
@@ -2028,7 +2038,11 @@ impl ast::Target for Generator<'_> {
                 let fields = fields
                     .iter()
                     .map(|field| ffi::ASTFieldInfo {
-                        name: field.name.name,
+                        name: if let Some(built_in) = field.built_in {
+                            Self::field_built_in_str(built_in)
+                        } else {
+                            field.name.name
+                        },
                         base_type: self.types[&field.type_id],
                         ast_type: Self::get_ast_type(
                             ir_meta.get_shader_type(),
@@ -2036,7 +2050,7 @@ impl ast::Target for Generator<'_> {
                             field.precision,
                             field.precise,
                             &field.decorations,
-                            None,
+                            field.built_in,
                             // AST marks fields as EvqGlobal
                             true,
                         ),
@@ -2243,7 +2257,11 @@ impl ast::Target for Generator<'_> {
             && symbol_type == ffi::ASTSymbolType::Empty
         {
             for (index, field) in fields.iter().enumerate() {
-                let field_name = field.name.name;
+                let field_name = if let Some(built_in) = field.built_in {
+                    Self::field_built_in_str(built_in)
+                } else {
+                    field.name.name
+                };
                 let field_symbol_type =
                     field_symbol_type.unwrap_or_else(|| Self::legacy_symbol_type(&field.name));
 

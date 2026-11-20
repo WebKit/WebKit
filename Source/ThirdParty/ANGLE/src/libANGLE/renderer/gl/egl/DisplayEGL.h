@@ -35,6 +35,8 @@ class ThreadSafeDisplayEGL : public ThreadSafeDisplayGL
     egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
+    egl::Error beforeDestroyContext(const gl::Context *context) override;
+    egl::Error afterDestroyContext() override;
 
     EGLSyncImpl *createSync() override;
 
@@ -43,14 +45,17 @@ class ThreadSafeDisplayEGL : public ThreadSafeDisplayGL
     {
         EGLSurface surface = EGL_NO_SURFACE;
         EGLContext context = EGL_NO_CONTEXT;
-        // True if the current context is an external context. and both surface and context will be
-        // unset when an external context is current.
+        // True if the current context is an external context.  In that case, |context| is the
+        // application's native context, which ANGLE never makes current itself, and |surface| is
+        // unset, since ANGLE does not know the application's native surfaces.
         bool isExternalContext = false;
+        bool needsRestore      = false;
     };
     angle::SimpleMutex mCurrentNativeContextsMutex;
     angle::HashMap<uint64_t, CurrentNativeContext> mCurrentNativeContexts;
 
-    FunctionsEGLDL *mEGL = nullptr;
+    FunctionsEGLDL *mEGL    = nullptr;
+    EGLSurface mMockPbuffer = EGL_NO_SURFACE;
 
   private:
     egl::Error makeCurrentSurfaceless(gl::Context *context) override;
@@ -184,8 +189,6 @@ class DisplayEGL : public DisplayGL, public ThreadSafeDisplayEGL
 
     bool mSupportsSurfaceless      = false;
     bool mSupportsNoConfigContexts = false;
-
-    EGLSurface mMockPbuffer = EGL_NO_SURFACE;
 
     // Supported DRM formats
     bool mSupportsDmaBufImportModifiers = false;

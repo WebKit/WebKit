@@ -104,6 +104,12 @@
 //   - Whatever else is in the AST validation currently.
 //   - Validate built-ins that accept an out or inout parameter, that the corresponding parameter is
 //     passed a Pointer at the call site.  For that matter, do the same for user function calls too.
+//   - Variables with PerVertexIn and PerVertexOut must be unique and applicable to shader (i.e. no
+//     two variables with PerVertexOut, or no PerVertexIn in a vertex shader).
+//   - Variables decorated with PerVertexIn and PerVertexOut can only be of a struct type, whose
+//     members are all one (and at most one) of the following built-ins: Position, PointSize,
+//     ClipDistance, CullDistance.  No other variable should have built-in fields.
+//   - Field names must not be empty, unless for built-ins for which it they must be empty.
 
 use crate::ir::*;
 use crate::traverser::BlockKind;

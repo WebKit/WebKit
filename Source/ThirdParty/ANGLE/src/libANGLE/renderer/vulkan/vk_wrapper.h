@@ -394,6 +394,8 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     void setFragmentShadingRate(const VkExtent2D *fragmentSize,
                                 VkFragmentShadingRateCombinerOpKHR ops[2]);
     void setFrontFace(VkFrontFace frontFace);
+    void setLineRasterizationMode(VkLineRasterizationMode lineRasterizationMode);
+    void setLineStippleEnable(VkBool32 stippledLineEnable);
     void setLineWidth(float lineWidth);
     void setLogicOp(VkLogicOp logicOp);
     void setLogicOpEnable(VkBool32 logicOpEnable);
@@ -403,8 +405,6 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     void setPrimitiveTopology(VkPrimitiveTopology primitiveTopology);
     void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
     void setRasterizationSamples(VkSampleCountFlagBits rasterizationSamples);
-    void setRenderingAttachmentLocations(const VkRenderingAttachmentLocationInfoKHR *info);
-    void setRenderingInputAttachmentIndicates(const VkRenderingInputAttachmentIndexInfoKHR *info);
     void setSampleMask(VkSampleCountFlagBits samples, const VkSampleMask *sampleMask);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
     void setStencilCompareMask(uint32_t compareFrontMask, uint32_t compareBackMask);
@@ -1191,6 +1191,7 @@ ANGLE_INLINE void CommandBuffer::setColorBlendEnable(uint32_t firstAttachment,
                                                      const VkBool32 *colorBlendEnables)
 {
     ASSERT(valid());
+    ASSERT(attachmentCount == 1);
     VK_SECONDARY_CMD_CALL(
         vkCmdSetColorBlendEnableEXT(mHandle, firstAttachment, attachmentCount, colorBlendEnables));
 }
@@ -1210,6 +1211,7 @@ ANGLE_INLINE void CommandBuffer::setColorWriteMask(uint32_t firstAttachment,
                                                    const VkColorComponentFlags *colorWriteMasks)
 {
     ASSERT(valid());
+    ASSERT(attachmentCount == 1);
     VK_SECONDARY_CMD_CALL(
         vkCmdSetColorWriteMaskEXT(mHandle, firstAttachment, attachmentCount, colorWriteMasks));
 }
@@ -1284,6 +1286,20 @@ ANGLE_INLINE void CommandBuffer::setFrontFace(VkFrontFace frontFace)
     VK_SECONDARY_CMD_CALL(vkCmdSetFrontFaceEXT(mHandle, frontFace));
 }
 
+ANGLE_INLINE void CommandBuffer::setLineRasterizationMode(
+    VkLineRasterizationMode lineRasterizationMode)
+{
+    ASSERT(valid());
+    VK_SECONDARY_CMD_CALL(vkCmdSetLineRasterizationModeEXT(mHandle, lineRasterizationMode));
+}
+
+ANGLE_INLINE void CommandBuffer::setLineStippleEnable(VkBool32 stippledLineEnable)
+{
+    ASSERT(valid());
+    ASSERT(stippledLineEnable == VK_FALSE);
+    VK_SECONDARY_CMD_CALL(vkCmdSetLineStippleEnableEXT(mHandle, VK_FALSE));
+}
+
 ANGLE_INLINE void CommandBuffer::setLineWidth(float lineWidth)
 {
     ASSERT(valid());
@@ -1336,20 +1352,6 @@ ANGLE_INLINE void CommandBuffer::setRasterizationSamples(VkSampleCountFlagBits r
 {
     ASSERT(valid());
     VK_SECONDARY_CMD_CALL(vkCmdSetRasterizationSamplesEXT(mHandle, rasterizationSamples));
-}
-
-ANGLE_INLINE void CommandBuffer::setRenderingAttachmentLocations(
-    const VkRenderingAttachmentLocationInfoKHR *info)
-{
-    ASSERT(valid());
-    VK_CALL(vkCmdSetRenderingAttachmentLocationsKHR, mHandle, info);
-}
-
-ANGLE_INLINE void CommandBuffer::setRenderingInputAttachmentIndicates(
-    const VkRenderingInputAttachmentIndexInfoKHR *info)
-{
-    ASSERT(valid());
-    VK_CALL(vkCmdSetRenderingInputAttachmentIndicesKHR, mHandle, info);
 }
 
 ANGLE_INLINE void CommandBuffer::setSampleMask(VkSampleCountFlagBits samples,

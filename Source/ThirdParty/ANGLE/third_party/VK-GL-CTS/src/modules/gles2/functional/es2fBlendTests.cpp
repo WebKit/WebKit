@@ -142,13 +142,16 @@ void BlendCase::init(void)
     static const Vec4 baseGradientColors[4] = {Vec4(0.0f, 0.5f, 1.0f, 0.5f), Vec4(0.5f, 0.0f, 0.5f, 1.0f),
                                                Vec4(0.5f, 1.0f, 0.5f, 0.0f), Vec4(1.0f, 0.5f, 0.0f, 0.5f)};
 
+    /* Add small bias to deal with rounding mismatches with center of the image. */
+    float bias = 0.001f;
+
     DE_STATIC_ASSERT(DE_LENGTH_OF_ARRAY(m_firstQuad.color) == DE_LENGTH_OF_ARRAY(m_firstQuadInt.color));
     for (int i = 0; i < DE_LENGTH_OF_ARRAY(m_firstQuad.color); i++)
     {
-        m_firstQuad.color[i]    = (baseGradientColors[i] - 0.5f) * 0.2f + 0.5f;
+        m_firstQuad.color[i]    = (baseGradientColors[i] - 0.5f) * 0.2f + (0.5f + bias);
         m_firstQuadInt.color[i] = m_firstQuad.color[i];
 
-        m_secondQuad.color[i]    = (Vec4(1.0f) - baseGradientColors[i] - 0.5f) * 1.0f + 0.5f;
+        m_secondQuad.color[i]    = (Vec4(1.0f) - baseGradientColors[i] - 0.5f) * 1.0f + (0.5f + bias);
         m_secondQuadInt.color[i] = m_secondQuad.color[i];
     }
 
@@ -166,8 +169,13 @@ void BlendCase::init(void)
 
     m_renderer          = new QuadRenderer(m_context.getRenderContext(), glu::GLSL_VERSION_100_ES);
     m_referenceRenderer = new ReferenceQuadRenderer;
+
+    const tcu::PixelFormat &pixelFormat = m_context.getRenderTarget().getPixelFormat();
+    bool is1010102                      = (pixelFormat.redBits == 10 && pixelFormat.alphaBits == 2);
+
     m_refColorBuffer =
-        new TextureLevel(TextureFormat(useRGB ? TextureFormat::RGB : TextureFormat::RGBA, TextureFormat::UNORM_INT8),
+        new TextureLevel(TextureFormat(useRGB ? TextureFormat::RGB : TextureFormat::RGBA,
+                                       is1010102 ? TextureFormat::UNORM_INT_1010102_REV : TextureFormat::UNORM_INT8),
                          m_viewportW, m_viewportH);
 
     m_curParamSetNdx = 0;
@@ -234,6 +242,9 @@ BlendCase::IterateResult BlendCase::iterate(void)
 
     // Render with GL.
 
+    /* Disable dithering that may cause issues with 1010102. */
+    glDisable(GL_DITHER);
+
     glDisable(GL_BLEND);
     glViewport(viewportX, viewportY, m_viewportW, m_viewportH);
     m_renderer->render(m_firstQuad);
@@ -267,9 +278,19 @@ BlendCase::IterateResult BlendCase::iterate(void)
         UVec4(
             3); // \note Non-scientific ad hoc formula. Need big threshold when few color bits; blending brings extra inaccuracy.
 
-    bool comparePass = tcu::intThresholdCompare(m_testCtx.getLog(), "CompareResult", "Image Comparison Result",
-                                                referenceImg.getAccess(), renderedImg.getAccess(), compareThreshold,
-                                                tcu::COMPARE_LOG_RESULT);
+    tcu::Vec4 compareThresholdFloat = compareThreshold.asFloat() / 255.0f;
+
+    // Setup different threshold for alpha with 1010102 visuals
+    int alphaBits = m_context.getRenderTarget().getPixelFormat().alphaBits;
+    if (alphaBits == 2)
+    {
+        compareThresholdFloat.w() = 0.35f;
+    }
+
+    // Compare images.
+    bool comparePass = tcu::floatThresholdCompare(m_testCtx.getLog(), "CompareResult", "Image Comparison Result",
+                                                  referenceImg.getAccess(), renderedImg.getAccess(),
+                                                  compareThresholdFloat, tcu::COMPARE_LOG_RESULT);
 
     // Fail now if images don't match.
 

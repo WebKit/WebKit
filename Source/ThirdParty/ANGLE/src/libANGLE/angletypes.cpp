@@ -1244,15 +1244,15 @@ bool DecompressBlob(const uint8_t *compressedData,
 
     if (uncompressedSize == 0)
     {
-        ERR() << "Decompressed data size is zero. Wrong or corrupted data? (compressed size is: "
-              << compressedSize << ")";
+        WARN() << "Decompressed data size is zero. Wrong or corrupted data? (compressed size is: "
+               << compressedSize << ")";
         return false;
     }
 
     if (uncompressedSize > maxUncompressedDataSize)
     {
-        ERR() << "Decompressed data size is larger than the maximum supported (" << uncompressedSize
-              << " vs " << maxUncompressedDataSize << ")";
+        WARN() << "Decompressed data size is larger than the maximum supported ("
+               << uncompressedSize << " vs " << maxUncompressedDataSize << ")";
         return false;
     }
 
@@ -1344,8 +1344,8 @@ bool DecompressBlobZstd(const uint8_t *compressedData,
 
     if (frameContentSize == 0 || frameContentSize > maxUncompressedDataSize)
     {
-        ERR() << "Decompressed data size is zero or larger than the maximum supported ("
-              << frameContentSize << " vs " << maxUncompressedDataSize << ")";
+        WARN() << "Decompressed data size is zero or larger than the maximum supported ("
+               << frameContentSize << " vs " << maxUncompressedDataSize << ")";
         return false;
     }
 

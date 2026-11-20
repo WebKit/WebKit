@@ -59,14 +59,6 @@
     "d3831f9c279dffbd836cadb73546d9b7",
   "src/libANGLE/renderer/vulkan/shaders/gen/BlitResolveStencilNoExport.comp.00000001.inc":
     "bb18fc2d7d39463657477fccd47c3c18",
-  "src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000000.inc":
-    "1a7a67a1bbe81dde7fa4bc65a84fcdf0",
-  "src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000001.inc":
-    "e9d9ac9da16ffe22132b076cdc0b3035",
-  "src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000002.inc":
-    "01997c841cf1d671e6fa760f2825957f",
-  "src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000003.inc":
-    "4edaddb21bc1b4366245abc2c7a63d38",
   "src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndexIndirectLineLoop.comp.00000000.inc":
     "2d0cfc7d9c005bc52963ba89fb0ec2c1",
   "src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndexIndirectLineLoop.comp.00000001.inc":
@@ -92,15 +84,17 @@
   "src/libANGLE/renderer/vulkan/shaders/gen/ConvertVertex.comp.00000007.inc":
     "b6f630b75704255cb131d4cca6850794",
   "src/libANGLE/renderer/vulkan/shaders/gen/CopyImageToBuffer.comp.00000000.inc":
-    "2d38697f1a6aa30137647319a152cc9a",
+    "4a00588d99b2d6862023933719962ca1",
   "src/libANGLE/renderer/vulkan/shaders/gen/CopyImageToBuffer.comp.00000001.inc":
-    "d63fb5b5374ba56f83c25ac19545f81b",
+    "3a4cbb0bc333825c8307eed560fd228b",
   "src/libANGLE/renderer/vulkan/shaders/gen/EtcToBc.comp.00000000.inc":
     "345737c99d44b0e79127b8da86f15dcf",
   "src/libANGLE/renderer/vulkan/shaders/gen/EtcToBc.comp.00000001.inc":
     "112137e2a5a56e8497795753fc3f37e6",
   "src/libANGLE/renderer/vulkan/shaders/gen/ExportStencil.frag.00000000.inc":
-    "f392804289360e9b9a8aaf87580c7434",
+    "e6c3547c353d936067bcbf01387db260",
+  "src/libANGLE/renderer/vulkan/shaders/gen/ExportStencil.frag.00000001.inc":
+    "c47b5f5fe9f0eb7bbb6a7df2d9f266a9",
   "src/libANGLE/renderer/vulkan/shaders/gen/FullScreenTri.vert.00000000.inc":
     "0b663c3051af98464999bbc10056a6e6",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateFragmentShadingRate.comp.00000000.inc":
@@ -293,10 +287,6 @@
     "cd7482375ea91cf109898c4a259dd886",
   "src/libANGLE/renderer/vulkan/shaders/src/BlitResolveStencilNoExport.comp.json":
     "97cc55694332931c86f81fb78281b311",
-  "src/libANGLE/renderer/vulkan/shaders/src/ConvertIndex.comp":
-    "cab30c9098ecf1e2b00c7309b67cac1f",
-  "src/libANGLE/renderer/vulkan/shaders/src/ConvertIndex.comp.json":
-    "22b04129fc4a3db7dbd62adeda18577b",
   "src/libANGLE/renderer/vulkan/shaders/src/ConvertIndexIndirectLineLoop.comp":
     "3e56b6d359f333304c3642eed4b9899b",
   "src/libANGLE/renderer/vulkan/shaders/src/ConvertIndexIndirectLineLoop.comp.json":
@@ -310,7 +300,7 @@
   "src/libANGLE/renderer/vulkan/shaders/src/ConvertVertex.comp.json":
     "5186e223d98092a54dc3ce23677039c1",
   "src/libANGLE/renderer/vulkan/shaders/src/CopyImageToBuffer.comp":
-    "4e61e3bd573864e7c7678268d771fd1f",
+    "f613a0e3024a0beba29eef883bf5dc31",
   "src/libANGLE/renderer/vulkan/shaders/src/CopyImageToBuffer.comp.json":
     "714ec17d9849105717534ff69b8dc3ad",
   "src/libANGLE/renderer/vulkan/shaders/src/EtcToBc.comp":
@@ -318,7 +308,9 @@
   "src/libANGLE/renderer/vulkan/shaders/src/EtcToBc.comp.json":
     "59e43d52460e98e6f9992ec8c93e2eb5",
   "src/libANGLE/renderer/vulkan/shaders/src/ExportStencil.frag":
-    "7f714d22a44ddfd15cebbe90af2a6122",
+    "b23ae6c7e5ad5755347d17fb3150e2dd",
+  "src/libANGLE/renderer/vulkan/shaders/src/ExportStencil.frag.json":
+    "2ec96dcdb9c8f52a23b00cbc6778e2f7",
   "src/libANGLE/renderer/vulkan/shaders/src/FullScreenTri.vert":
     "dacf19aaec8cfc9d2d0c05230a11613b",
   "src/libANGLE/renderer/vulkan/shaders/src/GenerateFragmentShadingRate.comp":
@@ -344,9 +336,9 @@
   "src/libANGLE/renderer/vulkan/shaders/src/ImageCopyFloat.frag.json":
     "648ac936936acb9f2f8714c1de15a7ca",
   "src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.cpp":
-    "362a7a98500973ec5aaec2c24fadf3df",
+    "2732bf5f3009834ec623067eda989942",
   "src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h":
-    "cbbcc9a37946ab8f70218413b21421d5",
+    "dc52877277121b919a50fc34aedffd9a",
   "tools/glslang/glslang_validator.exe.sha1":
     "9dcba3dd9bed38fe20d453e1c9e586ab",
   "tools/glslang/glslang_validator.sha1":

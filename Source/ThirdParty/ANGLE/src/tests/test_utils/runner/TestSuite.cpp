@@ -1235,6 +1235,13 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
         ++argIndex;
     }
 
+    // Like GTest, list disabled tests too.  Chromium's Android test runner lists tests this way,
+    // and leaves out the disabled ones itself unless it's asked to run them.
+    if (mGTestListTests)
+    {
+        alsoRunDisabledTests = true;
+    }
+
     if (mTestArtifactDirectory.empty())
     {
         mTestArtifactDirectory = GetEnvironmentVar("ISOLATED_OUTDIR");

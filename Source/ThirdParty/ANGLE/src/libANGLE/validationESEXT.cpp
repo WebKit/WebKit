@@ -1937,6 +1937,16 @@ bool ValidateBeginAndRestorePixelLocalStorageGlobalState(const Context *context,
         return false;
     }
 
+    // INVALID_FRAMEBUFFER_OPERATION is generated if the draw framebuffer has any attachment, and
+    // CheckFramebufferStatus(DRAW_FRAMEBUFFER) is not FRAMEBUFFER_COMPLETE.
+    const FramebufferAttachment *firstAttachment =
+        framebuffer->getState().getFirstNonNullAttachment();
+    if (firstAttachment != nullptr &&
+        !ValidateFramebufferComplete(context, entryPoint, framebuffer))
+    {
+        return false;
+    }
+
     // INVALID_OPERATION is generated if the value of SAMPLE_BUFFERS is 1 (i.e., if rendering to a
     // multisampled framebuffer).
     if (framebuffer->getSamples(context) != 0)
@@ -2112,8 +2122,6 @@ bool ValidateBeginAndRestorePixelLocalStorageGlobalState(const Context *context,
         }
     }
 
-    const FramebufferAttachment *firstAttachment =
-        framebuffer->getState().getFirstNonNullAttachment();
     if (firstAttachment)
     {
         // INVALID_OPERATION is generated if the draw framebuffer has other attachments, and its

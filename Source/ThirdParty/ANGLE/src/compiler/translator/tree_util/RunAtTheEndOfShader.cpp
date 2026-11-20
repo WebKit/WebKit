@@ -40,6 +40,7 @@ namespace
 {
 
 constexpr const ImmutableString kMainString("main");
+constexpr const ImmutableString kAngleEmitVertexString("ANGLEEmitVertex");
 
 class ContainsReturnOrDiscardTraverser : public TIntermTraverser
 {
@@ -117,6 +118,32 @@ void WrapMainAndAppend(TIntermBlock *root,
     }
 }
 
+// Traverser that replaces every call to EmitVertex() with a call to the given function, and records
+// the EmitVertex() function so that it can be called from the replacement.
+class ReplaceEmitVertexTraverser : public TIntermTraverser
+{
+  public:
+    ReplaceEmitVertexTraverser(TIntermAggregate *replacement)
+        : TIntermTraverser(true, false, false), mOldEmitVertex(nullptr), mReplacement(replacement)
+    {}
+
+    bool visitAggregate(Visit visit, TIntermAggregate *node) override
+    {
+        if (node->getOp() == EOpEmitVertex)
+        {
+            mOldEmitVertex = node->getFunction();
+            queueReplacement(mReplacement->deepCopy(), OriginalNode::IS_DROPPED);
+        }
+        return false;
+    }
+
+    const TFunction *findEmitVertex() { return mOldEmitVertex; }
+
+  private:
+    const TFunction *mOldEmitVertex;
+    TIntermAggregate *mReplacement;
+};
+
 }  // anonymous namespace
 
 bool RunAtTheEndOfShader(TCompiler *compiler,
@@ -135,6 +162,59 @@ bool RunAtTheEndOfShader(TCompiler *compiler,
     }
 
     return compiler->validateAST(root);
+}
+
+bool RunBeforeEmitVertex(TCompiler *compiler,
+                         TIntermBlock *root,
+                         TIntermNode *codeToRun,
+                         TSymbolTable *symbolTable)
+{
+    // Create new ANGLEEmitVertex() function and replace all calls to EmitVertex() with the new
+    // function calls
+    TFunction *newEmitVertexFunction =
+        new TFunction(symbolTable, kAngleEmitVertexString, SymbolType::AngleInternal,
+                      StaticType::GetBasic<EbtVoid, EbpUndefined>(), false);
+
+    TIntermSequence emptySequence;
+    TIntermAggregate *newEmitVertexFunctionCall =
+        TIntermAggregate::CreateFunctionCall(*newEmitVertexFunction, &emptySequence);
+
+    ReplaceEmitVertexTraverser traverser(newEmitVertexFunctionCall);
+    root->traverse(&traverser);
+
+    // Fill the new ANGLEEmitVertex() function as follows
+    // {
+    //     codeToRun
+    //     EmitVertex();
+    // }
+    const TFunction *oldEmitVertexFunction = traverser.findEmitVertex();
+    if (oldEmitVertexFunction == nullptr)
+    {
+        // The shader never calls EmitVertex(), so no vertex is ever emitted and there is nothing to
+        // do.
+        return true;
+    }
+
+    TIntermAggregate *oldEmitVertexFunctionCall =
+        TIntermAggregate::CreateBuiltInFunctionCall(*oldEmitVertexFunction, &emptySequence);
+    TIntermBlock *funcBody = new TIntermBlock();
+    funcBody->appendStatement(codeToRun);
+    funcBody->appendStatement(oldEmitVertexFunctionCall);
+
+    // Insert the new ANGLEEmitVertex() at the top of all other functions
+    size_t insertPosition;
+    for (insertPosition = 0; insertPosition < root->getChildCount(); ++insertPosition)
+    {
+        if (root->getChildNode(insertPosition)->getAsFunctionDefinition())
+        {
+            break;
+        }
+    }
+    TIntermFunctionDefinition *newEmitVertexDefinition =
+        CreateInternalFunctionDefinitionNode(*newEmitVertexFunction, funcBody);
+    root->insertStatement(insertPosition, newEmitVertexDefinition);
+
+    return traverser.updateTree(compiler, root);
 }
 
 }  // namespace sh

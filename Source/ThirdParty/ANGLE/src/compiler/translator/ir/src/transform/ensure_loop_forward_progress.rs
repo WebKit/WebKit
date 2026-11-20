@@ -99,7 +99,7 @@ fn mark_variable_writes(state: &mut State, instruction: &BlockInstruction) {
 //
 // * `variable` can only be a scalar integer
 // * `op` can only be one of > >= < <= == or !=
-// * `constant` can be a non-zero constant, or a read-only value such as shader inputs and uniforms.
+// * `constant` can be a constant, or a read-only value such as shader inputs and uniforms.
 // * `expression` can only be one of:
 //   * variable++
 //   * variable--

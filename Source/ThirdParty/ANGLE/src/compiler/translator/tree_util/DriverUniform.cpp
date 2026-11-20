@@ -422,6 +422,19 @@ TIntermTyped *DriverUniform::getClipDistancesEnabled() const
     return enabledMask;
 }
 
+TIntermTyped *DriverUniform::getLastPreRasterizationStage() const
+{
+    TIntermTyped *miscRef = createDriverUniformRef(kMisc);
+    TIntermTyped *lastStage =
+        new TIntermBinary(EOpBitShiftRight, miscRef,
+                          CreateUIntNode(vk::kDriverUniformsMiscLastPreRasterizationStageOffset));
+    lastStage =
+        new TIntermBinary(EOpBitwiseAnd, lastStage,
+                          CreateUIntNode(vk::kDriverUniformsMiscLastPreRasterizationStageMask));
+
+    return lastStage;
+}
+
 TIntermTyped *DriverUniform::getTransformDepth() const
 {
     TIntermTyped *miscRef        = createDriverUniformRef(kMisc);

@@ -1787,8 +1787,6 @@ angle::Result WindowSurfaceVk::createSwapchain(vk::ErrorContext *context)
     // Old swapchain is retired regardless if the below call fails or not.
     mLastSwapchain = VK_NULL_HANDLE;
 
-    // TODO: Once EGL_SWAP_BEHAVIOR_PRESERVED_BIT is supported, the contents of the old swapchain
-    // need to carry over to the new one.  http://anglebug.com/42261637
     VkSwapchainKHR newSwapchain = VK_NULL_HANDLE;
     ANGLE_VK_TRY(context,
                  VK_CALL(vkCreateSwapchainKHR, device, &swapchainInfo, nullptr, &newSwapchain));
@@ -1824,7 +1822,36 @@ angle::Result WindowSurfaceVk::createSwapchain(vk::ErrorContext *context)
 
     const bool robustInit = mState.isRobustResourceInitEnabled();
 
-    if (samples > 1 || (mPreserveOnSwap && !isSharedPresentMode()))
+    // EGL_BUFFER_PRESERVED: if the ancillary color image holding the preserved contents was kept
+    // across swapchain recreation, reuse it so that the preserved contents survive.  It can only be
+    // reused if the surface size, pre-rotation and format are unchanged; otherwise the contents are
+    // undefined anyway (e.g. resize) and a new image is created.
+    if (hasAncillaryColor())
+    {
+        const VkExtent3D ancillaryExtents = mAncillaryColorImage.getRotatedExtents();
+        const bool canReuseAncillaryColor =
+            samples == 1 && mPreserveOnSwap && !isSharedPresentMode() &&
+            mAncillaryColorImage.getSamples() == 1 &&
+            mAncillaryColorImagePreTransform ==
+                static_cast<VkSurfaceTransformFlagsKHR>(getPreTransform()) &&
+            mAncillaryColorImage.getActualFormatID() == actualFormatID &&
+            ancillaryExtents.width == vkExtents.width &&
+            ancillaryExtents.height == vkExtents.height;
+
+        if (canReuseAncillaryColor)
+        {
+            // Point the color render target to the preserved ancillary color image.
+            mColorRenderTarget.init(&mAncillaryColorImage, &mAncillaryColorImageViews, nullptr,
+                                    nullptr, gl::OwnerLevel(0), gl::OwnerLayer(0), 1,
+                                    RenderTargetTransience::Default);
+        }
+        else
+        {
+            releaseAncillaryColorImage(renderer);
+        }
+    }
+
+    if (!hasAncillaryColor() && (samples > 1 || (mPreserveOnSwap && !isSharedPresentMode())))
     {
         ANGLE_TRY(createAncillaryColorImage(context));
     }
@@ -1898,8 +1925,12 @@ angle::Result WindowSurfaceVk::createAncillaryColorImage(vk::ErrorContext *conte
 {
     vk::Renderer *renderer = context->getRenderer();
 
+    // Remember the transform the image is created with, to know if it can be reused across
+    // swapchain recreation.
+    mAncillaryColorImagePreTransform = getPreTransform();
+
     gl::Extents swapchainExtents(std::max(mWidth, 1), std::max(mHeight, 1), 1);
-    if (Is90DegreeRotation(getPreTransform()))
+    if (Is90DegreeRotation(mAncillaryColorImagePreTransform))
     {
         std::swap(swapchainExtents.width, swapchainExtents.height);
     }
@@ -1928,9 +1959,9 @@ angle::Result WindowSurfaceVk::createAncillaryColorImage(vk::ErrorContext *conte
     // If single-sampled but the EGL_SWAP_BEHAVIOR is PRESERVED, an ancillary color image is
     // used as well.
     ANGLE_TRY(mAncillaryColorImage.initAncillarySwapchain(
-        context, gl::TextureType::_2D, vkExtents, Is90DegreeRotation(getPreTransform()),
-        intendedFormatID, actualFormatID, samples, usage, gl::OwnerLevel(0), 1, 1, robustInit,
-        mState.hasProtectedContent()));
+        context, gl::TextureType::_2D, vkExtents,
+        Is90DegreeRotation(mAncillaryColorImagePreTransform), intendedFormatID, actualFormatID,
+        samples, usage, gl::OwnerLevel(0), 1, 1, robustInit, mState.hasProtectedContent()));
     ANGLE_TRY(mAncillaryColorImage.initMemoryAndNonZeroFillIfNeeded(
         context, mState.hasProtectedContent(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
         vk::MemoryAllocationType::SwapchainMSAAImage));
@@ -1950,6 +1981,18 @@ bool WindowSurfaceVk::isMultisampledSurface() const
 bool WindowSurfaceVk::hasAncillaryColor() const
 {
     return mAncillaryColorImage.valid();
+}
+
+void WindowSurfaceVk::releaseAncillaryColorImage(vk::Renderer *renderer)
+{
+    ASSERT(mAncillaryColorImage.getRenderPassUsage().empty());
+    renderer->collectGarbage(mAncillaryColorImage.getResourceUse(), &mAncillaryFramebuffer);
+    mAncillaryColorImageViews.release(renderer, mAncillaryColorImage.getResourceUse());
+    mAncillaryColorImage.releaseImage(renderer);
+    mAncillaryColorImage.releaseStagedUpdates(renderer);
+
+    // The contents of the surface are lost, so the buffer age must be 0 until the next frame.
+    mPreserveStartFrame = mFrameCount;
 }
 
 angle::Result WindowSurfaceVk::queryAndAdjustSurfaceCaps(
@@ -2196,11 +2239,21 @@ void WindowSurfaceVk::releaseSwapchainImages(vk::Renderer *renderer)
 
     if (hasAncillaryColor())
     {
-        ASSERT(mAncillaryColorImage.getRenderPassUsage().empty());
-        renderer->collectGarbage(mAncillaryColorImage.getResourceUse(), &mAncillaryFramebuffer);
-        mAncillaryColorImageViews.release(renderer, mAncillaryColorImage.getResourceUse());
-        mAncillaryColorImage.releaseImage(renderer);
-        mAncillaryColorImage.releaseStagedUpdates(renderer);
+        // With EGL_BUFFER_PRESERVED on a single-sampled surface, the ancillary color image holds
+        // the preserved contents of the surface and must not be released.
+        const bool keepAncillaryColor =
+            !isMultisampledSurface() && mPreserveOnSwap && !isSharedPresentMode();
+        if (keepAncillaryColor)
+        {
+            // Keep the image and its views holding the preserved contents; it will be reused by
+            // createSwapchain() if compatible.
+            ASSERT(mAncillaryColorImage.getRenderPassUsage().empty());
+            renderer->collectGarbage(mAncillaryColorImage.getResourceUse(), &mAncillaryFramebuffer);
+        }
+        else
+        {
+            releaseAncillaryColorImage(renderer);
+        }
     }
 
     mSwapchainImageBindings.clear();

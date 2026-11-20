@@ -45,7 +45,9 @@ constexpr uint8_t kExportStencil_frag_00000000[] = {
 //
 // void main()
 // {
+//
 //     uint stencilValue = subpassLoad(stencilIn).x;
+//
 //     if ( (stencilValue >> params.bit & 1u) == 0)
 //     {
 //         discard;

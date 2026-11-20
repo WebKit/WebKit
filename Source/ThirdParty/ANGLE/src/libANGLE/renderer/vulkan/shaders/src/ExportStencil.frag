@@ -9,7 +9,15 @@
 
 #version 450 core
 
+#if UseTexture
+#extension GL_EXT_samplerless_texture_functions : require
+#endif
+
+#if UseTexture
+layout(set = 0, binding = 0) uniform utexture2D stencilIn;
+#else
 layout(input_attachment_index = 0, set = 0, binding = 0) uniform usubpassInput stencilIn;
+#endif
 
 layout(push_constant) uniform PushConstants {
     uint bit;
@@ -17,7 +25,11 @@ layout(push_constant) uniform PushConstants {
 
 void main()
 {
+#if UseTexture
+    uint stencilValue = texelFetch(stencilIn, ivec2(gl_FragCoord.xy), 0).x;
+#else
     uint stencilValue = subpassLoad(stencilIn).x;
+#endif
     if ((stencilValue >> params.bit & 1u) == 0)
     {
         discard;

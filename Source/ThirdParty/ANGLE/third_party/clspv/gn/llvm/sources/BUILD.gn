@@ -516,6 +516,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_scalar") {
     "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/WarnMissedTransforms.cpp",
   ]
 }
+
 clspv_llvm_static_lib("clspv_llvm_lib_transforms_objcarc") {
   deps = [
     ":clspv_llvm_lib_analysis",
@@ -2157,6 +2158,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_tblgen") {
     "//$clspv_llvm_dir/llvm/lib/TableGen/TableGenBackendSkeleton.cpp",
   ]
 }
+
 clspv_llvm_static_lib("clspv_llvm_lib_support") {
   deps = [
     ":clspv_llvm_lib_demangle",
@@ -2177,7 +2179,6 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "//$clspv_llvm_dir/llvm/lib/Support/ARMWinEH.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Allocator.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/AutoConvert.cpp",
-    "//$clspv_llvm_dir/llvm/lib/Support/BalancedPartitioning.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Base64.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/BinaryStreamError.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/BinaryStreamReader.cpp",

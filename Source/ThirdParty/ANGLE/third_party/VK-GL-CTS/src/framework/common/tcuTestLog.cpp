@@ -27,6 +27,7 @@
 #include "tcuSurface.hpp"
 #include "deMath.h"
 
+#include <cstring>
 #include <limits>
 
 namespace tcu
@@ -505,7 +506,8 @@ void TestLog::writeInteger(const char *name, const char *description, const char
 {
     if (m_logSupressed)
         return;
-    if (m_skipAdditionalDataInLog)
+    // Compact logs keep the duration of each case, for per-test timing
+    if (m_skipAdditionalDataInLog && strcmp(name, "TestDuration") != 0)
         return;
     if (qpTestLog_writeInteger(m_log, name, description, unit, tag, value) == false)
         throw LogWriteFailedError();

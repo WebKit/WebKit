@@ -86,11 +86,6 @@ VkAttachmentStoreOp ConvertRenderPassStoreOpToVkStoreOp(RenderPassStoreOp storeO
                                               : static_cast<VkAttachmentStoreOp>(storeOp);
 }
 
-constexpr gl::DrawBuffersArray<uint32_t> kUnusedInputIndices = {
-    VK_ATTACHMENT_UNUSED, VK_ATTACHMENT_UNUSED, VK_ATTACHMENT_UNUSED, VK_ATTACHMENT_UNUSED,
-    VK_ATTACHMENT_UNUSED, VK_ATTACHMENT_UNUSED, VK_ATTACHMENT_UNUSED, VK_ATTACHMENT_UNUSED};
-static_assert(gl::IMPLEMENTATION_MAX_DRAW_BUFFERS == 8);
-
 constexpr size_t TransitionBits(size_t size)
 {
     return size / kGraphicsPipelineDirtyBitBytes;
@@ -266,10 +261,6 @@ struct DynamicRenderingInfo : angle::NonCopyable
     VkFormat depthAttachmentFormat;
     VkFormat stencilAttachmentFormat;
 
-    // Attachment and input location mapping for VkRenderingAttachmentLocationInfoKHR and
-    // VkRenderingInputAttachmentIndexInfoKHR respectively.
-    gl::DrawBuffersArray<uint32_t> colorAttachmentLocations;
-
     // Support for VK_EXT_multisampled_render_to_single_sampled
     VkMultisampledRenderToSingleSampledInfoEXT msrtss;
 
@@ -366,11 +357,11 @@ void DeriveRenderingInfo(Renderer *renderer,
 #endif
 
     // Pack color attachments
-    vk::PackedAttachmentIndex attachmentCount(0);
+    vk::PackedAttachmentIndex packedColorIndex(0);
     for (uint32_t colorIndexGL = 0; colorIndexGL < desc.colorAttachmentRange(); ++colorIndexGL)
     {
-        // For dynamic rendering, the mapping of attachments to shader output locations is given in
-        // VkRenderingAttachmentLocationInfoKHR.
+        // For dynamic rendering, the mapping of attachments to shader output locations is 1-to-1
+        // and is implemented by inserting VK_NULL_HANDLE for non-existing locations.
         //
         // For render pass objects, the mapping is specified by
         // VkSubpassDescription2::pColorAttachments.
@@ -378,10 +369,16 @@ void DeriveRenderingInfo(Renderer *renderer,
         if (!desc.isColorAttachmentEnabled(colorIndexGL))
         {
             ASSERT(!desc.hasColorResolveAttachment(colorIndexGL));
+            infoOut->colorAttachmentFormats[colorIndexGL] = VK_FORMAT_UNDEFINED;
+            if (subset == DynamicRenderingInfoSubset::Full)
+            {
+                infoOut->colorAttachmentInfo[colorIndexGL] = {};
+                infoOut->colorAttachmentInfo[colorIndexGL].sType =
+                    VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+                infoOut->colorAttachmentInfo[colorIndexGL].imageView = VK_NULL_HANDLE;
+            }
             continue;
         }
-
-        infoOut->colorAttachmentLocations[attachmentCount.get()] = colorIndexGL;
 
         angle::FormatID attachmentFormatID = desc[colorIndexGL];
         ASSERT(attachmentFormatID != angle::FormatID::NONE);
@@ -405,24 +402,24 @@ void DeriveRenderingInfo(Renderer *renderer,
 
         ASSERT((isYUVExternalFormat && renderer->nullColorAttachmentWithExternalFormatResolve()) ||
                attachmentFormat != VK_FORMAT_UNDEFINED);
-        infoOut->colorAttachmentFormats[attachmentCount.get()] = attachmentFormat;
+        infoOut->colorAttachmentFormats[colorIndexGL] = attachmentFormat;
 
         if (subset == DynamicRenderingInfoSubset::Full)
         {
-            ASSERT(static_cast<vk::ImageAccess>(ops[attachmentCount].initialLayout) !=
+            ASSERT(static_cast<vk::ImageAccess>(ops[packedColorIndex].initialLayout) !=
                        vk::ImageAccess::SharedPresent ||
-                   static_cast<vk::ImageAccess>(ops[attachmentCount].finalLayout) ==
+                   static_cast<vk::ImageAccess>(ops[packedColorIndex].finalLayout) ==
                        vk::ImageAccess::SharedPresent);
             const VkImageLayout layout = renderer->getVkImageLayout(
-                static_cast<vk::ImageAccess>(ops[attachmentCount].initialLayout));
+                static_cast<vk::ImageAccess>(ops[packedColorIndex].initialLayout));
             const VkImageLayout resolveImageLayout = renderer->getVkImageLayout(
-                static_cast<vk::ImageAccess>(ops[attachmentCount].finalResolveLayout));
+                static_cast<vk::ImageAccess>(ops[packedColorIndex].finalResolveLayout));
             const bool hasColorResolveAttachment = desc.hasColorResolveAttachment(colorIndexGL);
             // When MultisampledRenderToTexture is used, we can drop the resolve operation if the
             // corresponding color attachment is invalidated.
             const bool hasInvalidatedColorResolveAttachment = hasColorResolveAttachment &&
                                                               desc.isRenderToTexture() &&
-                                                              ops[attachmentCount].isInvalidated;
+                                                              ops[packedColorIndex].isInvalidated;
 
             const bool isIntegerFormat           = angle::Format::Get(attachmentFormatID).isInt();
             const VkResolveModeFlagBits resolveMode =
@@ -433,12 +430,12 @@ void DeriveRenderingInfo(Renderer *renderer,
                                       : VK_RESOLVE_MODE_AVERAGE_BIT
                     : VK_RESOLVE_MODE_NONE;
             const RenderPassLoadOp loadOp =
-                static_cast<RenderPassLoadOp>(ops[attachmentCount].loadOp);
+                static_cast<RenderPassLoadOp>(ops[packedColorIndex].loadOp);
             const RenderPassStoreOp storeOp =
-                static_cast<RenderPassStoreOp>(ops[attachmentCount].storeOp);
+                static_cast<RenderPassStoreOp>(ops[packedColorIndex].storeOp);
 
             UnpackAttachmentInfo(layout, loadOp, storeOp, resolveImageLayout, resolveMode,
-                                 &infoOut->colorAttachmentInfo[attachmentCount.get()]);
+                                 &infoOut->colorAttachmentInfo[colorIndexGL]);
 
             // See description of RenderPassFramebuffer::mImageViews regarding the layout of the
             // attachmentViews.  In short, the draw attachments are packed, while the resolve
@@ -447,31 +444,28 @@ void DeriveRenderingInfo(Renderer *renderer,
             {
                 // If nullColorAttachmentWithExternalFormatResolve is VK_TRUE, attachmentViews has
                 // no color attachment imageView and only has resolveImageView.
-                infoOut->colorAttachmentInfo[attachmentCount.get()].imageView = VK_NULL_HANDLE;
-                infoOut->colorAttachmentInfo[attachmentCount.get()].resolveImageView =
-                    attachmentViews[attachmentCount.get()];
-                infoOut->colorAttachmentInfo[attachmentCount.get()].clearValue =
-                    clearValues[attachmentCount];
-
-                ++attachmentCount;
+                infoOut->colorAttachmentInfo[colorIndexGL].imageView = VK_NULL_HANDLE;
+                infoOut->colorAttachmentInfo[colorIndexGL].resolveImageView =
+                    attachmentViews[packedColorIndex.get()];
+                infoOut->colorAttachmentInfo[colorIndexGL].clearValue =
+                    clearValues[packedColorIndex];
+                ++packedColorIndex;
                 continue;
             }
-            infoOut->colorAttachmentInfo[attachmentCount.get()].imageView =
-                attachmentViews[attachmentCount.get()];
+            infoOut->colorAttachmentInfo[colorIndexGL].imageView =
+                attachmentViews[packedColorIndex.get()];
             if (resolveMode != VK_RESOLVE_MODE_NONE && !isRenderToTextureThroughExtension)
             {
-                infoOut->colorAttachmentInfo[attachmentCount.get()].resolveImageView =
+                infoOut->colorAttachmentInfo[colorIndexGL].resolveImageView =
                     attachmentViews[RenderPassFramebuffer::kColorResolveAttachmentBegin +
                                     colorIndexGL];
             }
-            infoOut->colorAttachmentInfo[attachmentCount.get()].clearValue =
-                clearValues[attachmentCount];
+            infoOut->colorAttachmentInfo[colorIndexGL].clearValue = clearValues[packedColorIndex];
+            ++packedColorIndex;
         }
-
-        ++attachmentCount;
     }
 
-    infoOut->renderingInfo.colorAttachmentCount = attachmentCount.get();
+    infoOut->renderingInfo.colorAttachmentCount = desc.colorAttachmentRange();
     infoOut->renderingInfo.pColorAttachments    = infoOut->colorAttachmentInfo.data();
 
     infoOut->depthAttachmentFormat   = VK_FORMAT_UNDEFINED;
@@ -500,14 +494,14 @@ void DeriveRenderingInfo(Renderer *renderer,
             const bool resolveDepth =
                 angleFormat.depthBits != 0 &&
                 (desc.hasDepthResolveAttachment() || isRenderToTextureThroughExtension) &&
-                !(desc.isRenderToTexture() && ops[attachmentCount].isInvalidated);
+                !(desc.isRenderToTexture() && ops[packedColorIndex].isInvalidated);
             const bool resolveStencil =
                 angleFormat.stencilBits != 0 &&
                 (desc.hasStencilResolveAttachment() || isRenderToTextureThroughExtension) &&
-                !(desc.isRenderToTexture() && ops[attachmentCount].isStencilInvalidated);
+                !(desc.isRenderToTexture() && ops[packedColorIndex].isStencilInvalidated);
 
             const ImageAccess imageAccess =
-                static_cast<ImageAccess>(ops[attachmentCount].initialLayout);
+                static_cast<ImageAccess>(ops[packedColorIndex].initialLayout);
             const VkImageLayout layout = renderer->getVkImageLayout(imageAccess);
             const VkImageLayout resolveImageLayout =
                 renderer->getVkImageLayout(ImageAccess::DepthWriteStencilWrite);
@@ -530,34 +524,34 @@ void DeriveRenderingInfo(Renderer *renderer,
                 resolveStencil || hasStencilAndResolvesDepth ? VK_RESOLVE_MODE_SAMPLE_ZERO_BIT
                                                              : VK_RESOLVE_MODE_NONE;
             const RenderPassLoadOp loadOp =
-                static_cast<RenderPassLoadOp>(ops[attachmentCount].loadOp);
+                static_cast<RenderPassLoadOp>(ops[packedColorIndex].loadOp);
             const RenderPassStoreOp storeOp =
-                static_cast<RenderPassStoreOp>(ops[attachmentCount].storeOp);
+                static_cast<RenderPassStoreOp>(ops[packedColorIndex].storeOp);
             const RenderPassLoadOp stencilLoadOp =
-                static_cast<RenderPassLoadOp>(ops[attachmentCount].stencilLoadOp);
+                static_cast<RenderPassLoadOp>(ops[packedColorIndex].stencilLoadOp);
             const RenderPassStoreOp stencilStoreOp =
-                static_cast<RenderPassStoreOp>(ops[attachmentCount].stencilStoreOp);
+                static_cast<RenderPassStoreOp>(ops[packedColorIndex].stencilStoreOp);
 
             UnpackAttachmentInfo(layout, loadOp, storeOp, resolveImageLayout, depthResolveMode,
                                  &infoOut->depthAttachmentInfo);
             UnpackAttachmentInfo(layout, stencilLoadOp, stencilStoreOp, resolveImageLayout,
                                  stencilResolveMode, &infoOut->stencilAttachmentInfo);
 
-            infoOut->depthAttachmentInfo.imageView = attachmentViews[attachmentCount.get()];
+            infoOut->depthAttachmentInfo.imageView = attachmentViews[packedColorIndex.get()];
             if (resolveDepth && desc.hasDepthResolveAttachment())
             {
                 infoOut->depthAttachmentInfo.resolveImageView =
                     attachmentViews[RenderPassFramebuffer::kDepthStencilResolveAttachment];
             }
-            infoOut->depthAttachmentInfo.clearValue = clearValues[attachmentCount];
+            infoOut->depthAttachmentInfo.clearValue = clearValues[packedColorIndex];
 
-            infoOut->stencilAttachmentInfo.imageView = attachmentViews[attachmentCount.get()];
+            infoOut->stencilAttachmentInfo.imageView = attachmentViews[packedColorIndex.get()];
             if (resolveStencil && desc.hasStencilResolveAttachment())
             {
                 infoOut->stencilAttachmentInfo.resolveImageView =
                     attachmentViews[RenderPassFramebuffer::kDepthStencilResolveAttachment];
             }
-            infoOut->stencilAttachmentInfo.clearValue = clearValues[attachmentCount];
+            infoOut->stencilAttachmentInfo.clearValue = clearValues[packedColorIndex];
 
             infoOut->renderingInfo.pDepthAttachment =
                 angleFormat.depthBits == 0 ? nullptr : &infoOut->depthAttachmentInfo;
@@ -570,7 +564,7 @@ void DeriveRenderingInfo(Renderer *renderer,
             }
         }
 
-        ++attachmentCount;
+        ++packedColorIndex;
     }
 
     if (subset == DynamicRenderingInfoSubset::Full)
@@ -600,7 +594,7 @@ void DeriveRenderingInfo(Renderer *renderer,
             infoOut->fragmentShadingRateInfo = {};
             infoOut->fragmentShadingRateInfo.sType =
                 VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR;
-            infoOut->fragmentShadingRateInfo.imageView = attachmentViews[attachmentCount.get()];
+            infoOut->fragmentShadingRateInfo.imageView = attachmentViews[packedColorIndex.get()];
             infoOut->fragmentShadingRateInfo.imageLayout =
                 renderer->getVkImageLayout(vk::ImageAccess::FragmentShadingRateAttachmentReadOnly);
             infoOut->fragmentShadingRateInfo.shadingRateAttachmentTexelSize =
@@ -611,20 +605,11 @@ void DeriveRenderingInfo(Renderer *renderer,
     }
 }
 
-enum class ShadersStateSource
-{
-    ThisPipeline,
-    PipelineLibrary,
-};
-
 void AttachPipelineRenderingInfo(ErrorContext *context,
                                  const RenderPassDesc &desc,
                                  DynamicRenderingInfo &renderingInfo,
                                  GraphicsPipelineSubset subset,
-                                 ShadersStateSource shadersSource,
                                  VkPipelineRenderingCreateInfoKHR *pipelineRenderingInfoOut,
-                                 VkRenderingAttachmentLocationInfoKHR *attachmentLocationsOut,
-                                 VkRenderingInputAttachmentIndexInfoKHR *inputLocationsOut,
                                  VkPipelineCreateFlags2CreateInfoKHR *createFlags2,
                                  VkGraphicsPipelineCreateInfo *createInfoOut)
 {
@@ -642,44 +627,6 @@ void AttachPipelineRenderingInfo(ErrorContext *context,
         pipelineRenderingInfoOut->stencilAttachmentFormat = renderingInfo.stencilAttachmentFormat;
     }
     AddToPNextChain(createInfoOut, pipelineRenderingInfoOut);
-
-    *attachmentLocationsOut       = {};
-    attachmentLocationsOut->sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR;
-    attachmentLocationsOut->colorAttachmentCount = renderingInfo.renderingInfo.colorAttachmentCount;
-    attachmentLocationsOut->pColorAttachmentLocations =
-        renderingInfo.colorAttachmentLocations.data();
-    AddToPNextChain(createInfoOut, attachmentLocationsOut);
-
-    // Note: VkRenderingInputAttachmentIndexInfoKHR only affects the fragment stage subset, and is
-    // needed only when the shaders stage is not coming from a pipeline library (where this mapping
-    // is already specified).
-    if ((desc.hasColorFramebufferFetch() || desc.isDynamicMSRTTUnresolve()) &&
-        shadersSource == ShadersStateSource::ThisPipeline && GraphicsPipelineHasShaders(subset))
-    {
-        *inputLocationsOut       = {};
-        inputLocationsOut->sType = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR;
-        if (desc.hasColorFramebufferFetch())
-        {
-            inputLocationsOut->colorAttachmentCount =
-                renderingInfo.renderingInfo.colorAttachmentCount;
-            inputLocationsOut->pColorAttachmentInputIndices =
-                renderingInfo.colorAttachmentLocations.data();
-            // Note: for depth/stencil, there is no need to explicitly set
-            // |pDepthInputAttachmentIndex|, |pStencilInputAttachmentIndex|.  When NULL, they
-            // automatically map to input attachments without a |InputAttachmentIndex| decoration,
-            // which is exactly how ANGLE produces its SPIR-V.
-        }
-        else if (desc.isDynamicMSRTTUnresolve())
-        {
-            inputLocationsOut->colorAttachmentCount =
-                renderingInfo.renderingInfo.colorAttachmentCount;
-            inputLocationsOut->pColorAttachmentInputIndices = kUnusedInputIndices.data();
-            inputLocationsOut->pDepthInputAttachmentIndex   = kUnusedInputIndices.data();
-            inputLocationsOut->pStencilInputAttachmentIndex = kUnusedInputIndices.data();
-        }
-
-        AddToPNextChain(createInfoOut, inputLocationsOut);
-    }
 
     if (desc.hasFragmentShadingAttachment())
     {
@@ -3027,34 +2974,6 @@ void RenderPassDesc::beginRendering(
                         nullptr);
 
     primary->beginRendering(info.renderingInfo);
-
-    VkRenderingAttachmentLocationInfoKHR attachmentLocations = {};
-    attachmentLocations.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR;
-    attachmentLocations.colorAttachmentCount      = info.renderingInfo.colorAttachmentCount;
-    attachmentLocations.pColorAttachmentLocations = info.colorAttachmentLocations.data();
-
-    primary->setRenderingAttachmentLocations(&attachmentLocations);
-
-    if (hasColorFramebufferFetch())
-    {
-        VkRenderingInputAttachmentIndexInfoKHR inputLocations = {};
-        inputLocations.sType = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR;
-        inputLocations.colorAttachmentCount         = info.renderingInfo.colorAttachmentCount;
-        inputLocations.pColorAttachmentInputIndices = info.colorAttachmentLocations.data();
-
-        primary->setRenderingInputAttachmentIndicates(&inputLocations);
-    }
-    else if (isDynamicMSRTTUnresolve())
-    {
-        VkRenderingInputAttachmentIndexInfoKHR inputLocations = {};
-        inputLocations.sType = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR;
-        inputLocations.colorAttachmentCount         = info.renderingInfo.colorAttachmentCount;
-        inputLocations.pColorAttachmentInputIndices = kUnusedInputIndices.data();
-        inputLocations.pDepthInputAttachmentIndex   = kUnusedInputIndices.data();
-        inputLocations.pStencilInputAttachmentIndex = kUnusedInputIndices.data();
-
-        primary->setRenderingInputAttachmentIndicates(&inputLocations);
-    }
 }
 
 void RenderPassDesc::populateRenderingInheritanceInfo(
@@ -3105,7 +3024,10 @@ void RenderPassDesc::updatePerfCounters(
     for (uint32_t index = 0; index < info.renderingInfo.colorAttachmentCount; ++index)
     {
         const VkRenderingAttachmentInfo &colorInfo = info.renderingInfo.pColorAttachments[index];
-        ASSERT(colorInfo.imageView != VK_NULL_HANDLE);
+        if (colorInfo.imageView == VK_NULL_HANDLE && colorInfo.resolveImageView == VK_NULL_HANDLE)
+        {
+            continue;
+        }
 
         countersOut->colorLoadOpClears += colorInfo.loadOp == VK_ATTACHMENT_LOAD_OP_CLEAR ? 1 : 0;
         countersOut->colorLoadOpLoads += colorInfo.loadOp == VK_ATTACHMENT_LOAD_OP_LOAD ? 1 : 0;
@@ -3450,14 +3372,17 @@ void GraphicsPipelineDesc::initDefaults(const ErrorContext *context,
 
     if (GraphicsPipelineHasFragmentOutput(subset))
     {
-        constexpr VkFlags kAllColorBits = (VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-                                           VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
+        const VkFlags defaultColorWriteMask =
+            context->getRenderer()->getFeatures().supportsColorWriteMaskDynamicState.enabled
+                ? 0
+                : VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
+                      VK_COLOR_COMPONENT_A_BIT;
 
         for (uint32_t colorIndexGL = 0; colorIndexGL < gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
              ++colorIndexGL)
         {
             Int4Array_Set(mFragmentOutput.blend.colorWriteMaskBits.data(), colorIndexGL,
-                          kAllColorBits);
+                          defaultColorWriteMask);
         }
 
         PackedColorBlendAttachmentState blendAttachmentState;
@@ -3662,8 +3587,6 @@ VkResult GraphicsPipelineDesc::initializePipeline(ErrorContext *context,
     // other flag is set.
     DynamicRenderingInfo renderingInfo;
     VkPipelineRenderingCreateInfoKHR pipelineRenderingInfo;
-    VkRenderingAttachmentLocationInfoKHR attachmentLocations;
-    VkRenderingInputAttachmentIndexInfoKHR inputLocations;
     VkPipelineCreateFlags2CreateInfoKHR createFlags2;
     if (hasShadersOrFragmentOutput && context->getFeatures().preferDynamicRendering.enabled)
     {
@@ -3671,11 +3594,7 @@ VkResult GraphicsPipelineDesc::initializePipeline(ErrorContext *context,
                             DynamicRenderingInfoSubset::Pipeline, {}, VK_SUBPASS_CONTENTS_INLINE,
                             {}, {}, {}, 0, &renderingInfo, nullptr);
         AttachPipelineRenderingInfo(context, getRenderPassDesc(), renderingInfo, subset,
-                                    shaders.usePipelineLibrary()
-                                        ? ShadersStateSource::PipelineLibrary
-                                        : ShadersStateSource::ThisPipeline,
-                                    &pipelineRenderingInfo, &attachmentLocations, &inputLocations,
-                                    &createFlags2, &createInfo);
+                                    &pipelineRenderingInfo, &createFlags2, &createInfo);
     }
 
     VkResult result = pipelineCache->createGraphicsPipeline(context, createInfo, pipelineOut);
@@ -4016,10 +3935,11 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
     // VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_EXT and if rasterization is enabled, then the
     // alphaToCoverageEnable, alphaToOneEnable, and sampleShadingEnable members of pMultisampleState
     // must all be VK_FALSE.
-    if (multisample.bits.rasterizationSamplesMinusOne == 0 &&
+    if (!context->getFeatures().supportsLineRasterizationModeDynamicState.enabled &&
+        context->getFeatures().bresenhamLineRasterization.enabled &&
+        multisample.bits.rasterizationSamplesMinusOne == 0 &&
         !mShaders.shaders.bits.rasterizerDiscardEnable && !multisample.bits.alphaToCoverageEnable &&
-        !multisample.bits.alphaToOneEnable && !multisample.bits.sampleShadingEnable &&
-        context->getFeatures().bresenhamLineRasterization.enabled)
+        !multisample.bits.alphaToOneEnable && !multisample.bits.sampleShadingEnable)
     {
         stateOut->rasterLineState.lineRasterizationMode = VK_LINE_RASTERIZATION_MODE_BRESENHAM_EXT;
         *pNextPtr                                       = &stateOut->rasterLineState;
@@ -4150,6 +4070,14 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_DEPTH_CLIP_NEGATIVE_ONE_TO_ONE_EXT);
     }
+    if (context->getFeatures().supportsLineRasterizationModeDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_LINE_RASTERIZATION_MODE_EXT);
+        if (context->getRenderer()->supportsStippledLines())
+        {
+            dynamicStateListOut->push_back(VK_DYNAMIC_STATE_LINE_STIPPLE_ENABLE_EXT);
+        }
+    }
     if (context->getFeatures().supportsPolygonModeDynamicState.enabled)
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_POLYGON_MODE_EXT);
@@ -4188,6 +4116,10 @@ void GraphicsPipelineDesc::initializePipelineSharedNonVertexInputState(
     if (context->getFeatures().supportsAlphaToOneEnableDynamicState.enabled)
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_ALPHA_TO_ONE_ENABLE_EXT);
+    }
+    if (context->getFeatures().supportsRasterizationSamplesDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_RASTERIZATION_SAMPLES_EXT);
     }
     if (context->getFeatures().supportsSampleMaskDynamicState.enabled)
     {
@@ -4229,8 +4161,16 @@ void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
             VK_PIPELINE_COLOR_BLEND_STATE_CREATE_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_BIT_EXT;
     }
 
-    const gl::DrawBufferMask blendEnableMask(
-        mFragmentOutput.blendMaskAndLogic.bits.blendEnableMask);
+    // If blend-enable is dynamic state, we cannot tell which attachments might need blending later
+    // so static state for blend equation/function must be set for all attachments of the render
+    // pass.
+    // TODO(http://anglebug.com/575891833): When blend equation/function is also dynamic state,
+    // there is no need to set any static blend state (unless advanced blend is not dynamic), in
+    // which case this mask could be zero instead.
+    const gl::DrawBufferMask staticBlendMask =
+        context->getFeatures().supportsColorBlendEnableDynamicState.enabled
+            ? gl::DrawBufferMask().set()
+            : gl::DrawBufferMask(mFragmentOutput.blendMaskAndLogic.bits.blendEnableMask);
 
     // Zero-init all states.
     stateOut->blendAttachmentState = {};
@@ -4238,21 +4178,14 @@ void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
     const PackedColorBlendState &colorBlend = mFragmentOutput.blend;
 
     // With render pass objects, the blend state is indexed by the subpass-mapped locations.
-    // With dynamic rendering, it is indexed by the actual attachment index.
-    uint32_t colorAttachmentIndex = 0;
+    // With dynamic rendering, it is indexed by the actual attachment index which maps 1-to-1 with
+    // locations as well.
     for (uint32_t colorIndexGL = 0; colorIndexGL < stateOut->blendState.attachmentCount;
          ++colorIndexGL)
     {
-        if (context->getFeatures().preferDynamicRendering.enabled &&
-            !mSharedNonVertexInput.renderPass.isColorAttachmentEnabled(colorIndexGL))
-        {
-            continue;
-        }
+        VkPipelineColorBlendAttachmentState &state = stateOut->blendAttachmentState[colorIndexGL];
 
-        VkPipelineColorBlendAttachmentState &state =
-            stateOut->blendAttachmentState[colorAttachmentIndex++];
-
-        if (blendEnableMask[colorIndexGL])
+        if (staticBlendMask[colorIndexGL])
         {
             // To avoid triggering valid usage error, blending must be disabled for formats that do
             // not have VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT feature bit set.
@@ -4272,7 +4205,10 @@ void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
                 if (packedBlendState.colorBlendOp <= static_cast<uint8_t>(VK_BLEND_OP_MAX) ||
                     context->getFeatures().supportsBlendOperationAdvanced.enabled)
                 {
-                    state.blendEnable = VK_TRUE;
+                    if (!context->getFeatures().supportsColorBlendEnableDynamicState.enabled)
+                    {
+                        state.blendEnable = VK_TRUE;
+                    }
                     UnpackBlendAttachmentState(packedBlendState, &state);
                 }
             }
@@ -4290,13 +4226,16 @@ void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
         }
     }
 
-    if (context->getFeatures().preferDynamicRendering.enabled)
-    {
-        stateOut->blendState.attachmentCount = colorAttachmentIndex;
-    }
-
     // Dynamic state
     dynamicStateListOut->push_back(VK_DYNAMIC_STATE_BLEND_CONSTANTS);
+    if (context->getFeatures().supportsColorBlendEnableDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_COLOR_BLEND_ENABLE_EXT);
+    }
+    if (context->getFeatures().supportsColorWriteMaskDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_COLOR_WRITE_MASK_EXT);
+    }
     if (context->getFeatures().supportsLogicOpDynamicState.enabled)
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_LOGIC_OP_EXT);
@@ -4500,27 +4439,6 @@ void GraphicsPipelineDesc::updateSampleShading(GraphicsPipelineTransitionBits *t
     }
 
     transition->set(ANGLE_GET_TRANSITION_BIT(mSharedNonVertexInput.multisample.bits));
-}
-
-void GraphicsPipelineDesc::setSingleBlend(uint32_t colorIndexGL,
-                                          bool enabled,
-                                          VkBlendOp op,
-                                          VkBlendFactor srcFactor,
-                                          VkBlendFactor dstFactor)
-{
-    mFragmentOutput.blendMaskAndLogic.bits.blendEnableMask |=
-        static_cast<uint8_t>(1 << colorIndexGL);
-
-    PackedColorBlendAttachmentState &blendAttachmentState =
-        mFragmentOutput.blend.attachments[colorIndexGL];
-
-    SetBitField(blendAttachmentState.colorBlendOp, op);
-    SetBitField(blendAttachmentState.alphaBlendOp, op);
-
-    SetBitField(blendAttachmentState.srcColorBlendFactor, srcFactor);
-    SetBitField(blendAttachmentState.dstColorBlendFactor, dstFactor);
-    SetBitField(blendAttachmentState.srcAlphaBlendFactor, VK_BLEND_FACTOR_ZERO);
-    SetBitField(blendAttachmentState.dstAlphaBlendFactor, VK_BLEND_FACTOR_ONE);
 }
 
 void GraphicsPipelineDesc::updateBlendEnabled(GraphicsPipelineTransitionBits *transition,

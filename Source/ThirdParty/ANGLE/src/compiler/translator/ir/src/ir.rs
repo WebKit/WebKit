@@ -2113,6 +2113,7 @@ pub struct Field {
     pub precision: Precision,
     pub precise: bool,
     pub decorations: Decorations,
+    pub built_in: Option<BuiltIn>,
     // Reflection info.  Tracking is only needed for fields of nameless interface blocks.
     pub is_static_use: bool,
 }
@@ -2124,8 +2125,9 @@ impl Field {
         precision: Precision,
         precise: bool,
         decorations: Decorations,
+        built_in: Option<BuiltIn>,
     ) -> Field {
-        Field { name, type_id, precision, precise, decorations, is_static_use: false }
+        Field { name, type_id, precision, precise, decorations, built_in, is_static_use: false }
     }
 }
 

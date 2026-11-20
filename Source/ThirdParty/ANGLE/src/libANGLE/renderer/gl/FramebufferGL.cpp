@@ -838,7 +838,6 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
-    gl::PixelPackState packState      = pack;
 
     // Clip read area to framebuffer.
     const auto *readAttachment = mState.getReadPixelsAttachment(format);
@@ -866,15 +865,58 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
                     GL_INVALID_OPERATION);
     }
 
-    GLenum framebufferTarget =
-        stateManager->getHasSeparateFramebufferBindings() ? GL_READ_FRAMEBUFFER : GL_FRAMEBUFFER;
-    stateManager->bindFramebuffer(framebufferTarget, mFramebufferID);
+    GLuint scratchFramebuffer = 0;
+    angle::Result result      = angle::Result::Continue;
+    if (features.readPixelsViaSingleAttachmentFramebuffer.enabled &&
+        readAttachment == mState.getReadAttachment() &&
+        (mState.getColorAttachmentsMask().count() > 1 || mState.getReadIndex() != 0))
+    {
+        // Read through a temporary framebuffer that has only the read attachment bound.
+        functions->genFramebuffers(1, &scratchFramebuffer);
+        stateManager->bindFramebuffer(GL_FRAMEBUFFER, scratchFramebuffer);
+        result = BindFramebufferAttachment(context, functions, GL_COLOR_ATTACHMENT0, readAttachment,
+                                           features);
+    }
+    else
+    {
+        GLenum framebufferTarget = stateManager->getHasSeparateFramebufferBindings()
+                                       ? GL_READ_FRAMEBUFFER
+                                       : GL_FRAMEBUFFER;
+        stateManager->bindFramebuffer(framebufferTarget, mFramebufferID);
+    }
 
-    const gl::InternalFormat &glFormat = gl::GetInternalFormatInfo(readFormat, readType);
+    if (result == angle::Result::Continue)
+    {
+        result = readPixelsImpl(context, area, clippedArea, format, readFormat, readType, pack,
+                                packBuffer, pixels);
+    }
+
+    if (scratchFramebuffer != 0)
+    {
+        stateManager->deleteFramebuffer(scratchFramebuffer);
+    }
+
+    return result;
+}
+
+angle::Result FramebufferGL::readPixelsImpl(const gl::Context *context,
+                                            const gl::Rectangle &area,
+                                            const gl::Rectangle &clippedArea,
+                                            GLenum originalReadFormat,
+                                            GLenum format,
+                                            GLenum type,
+                                            const gl::PixelPackState &pack,
+                                            gl::Buffer *packBuffer,
+                                            void *pixels) const
+{
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+    gl::PixelPackState packState      = pack;
+
+    const gl::InternalFormat &glFormat = gl::GetInternalFormatInfo(format, type);
     GLuint rowBytes                    = 0;
-    ANGLE_CHECK_GL_MATH(contextGL,
-                        glFormat.computeRowPitch(readType, area.width, packState.alignment,
-                                                 packState.rowLength, &rowBytes));
+    ANGLE_CHECK_GL_MATH(contextGL, glFormat.computeRowPitch(type, area.width, packState.alignment,
+                                                            packState.rowLength, &rowBytes));
 
     bool useOverlappingRowsWorkaround = features.packOverlappingRowsSeparatelyPackBuffer.enabled &&
                                         packBuffer && packState.rowLength != 0 &&
@@ -902,7 +944,7 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
 
     // We want to use rowLength, but that might not be supported.
     bool cannotSetDesiredRowLength =
-        packState.rowLength && !GetImplAs<ContextGL>(context)->getNativeExtensions().packSubimageNV;
+        packState.rowLength && !contextGL->getNativeExtensions().packSubimageNV;
 
     bool usePackSkipWorkaround = features.emulatePackSkipRowsAndPackSkipPixels.enabled &&
                                  (packState.skipRows != 0 || packState.skipPixels != 0);
@@ -910,7 +952,7 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
     if (cannotSetDesiredRowLength || useOverlappingRowsWorkaround || useLargeRowLengthWorkaround ||
         usePackSkipWorkaround)
     {
-        return readPixelsRowByRow(context, clippedArea, format, readFormat, readType, packState,
+        return readPixelsRowByRow(context, clippedArea, originalReadFormat, format, type, packState,
                                   outPtr);
     }
 
@@ -919,10 +961,10 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
     {
         ANGLE_TRY(ShouldApplyLastRowPaddingWorkaround(
             contextGL, gl::Extents(clippedArea.width, clippedArea.height, 1), packState, packBuffer,
-            readFormat, readType, false, outPtr, &useLastRowPaddingWorkaround));
+            format, type, false, outPtr, &useLastRowPaddingWorkaround));
     }
 
-    return readPixelsAllAtOnce(context, clippedArea, format, readFormat, readType, packState,
+    return readPixelsAllAtOnce(context, clippedArea, originalReadFormat, format, type, packState,
                                outPtr, useLastRowPaddingWorkaround);
 }
 
@@ -1488,9 +1530,20 @@ angle::Result FramebufferGL::ensureAttachmentsInitialized(
 angle::Result FramebufferGL::onAttachmentLayerCountChange(gl::FramebufferAttachment *attachment)
 {
     ASSERT(!isDefault() && attachment && attachment->isAttached() &&
-           attachment->type() == GL_TEXTURE && mFunctions->framebufferTextureLayer);
+           attachment->type() == GL_TEXTURE);
     mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
-    mFunctions->framebufferTextureLayer(GL_FRAMEBUFFER, attachment->getBinding(), 0, 0, 0);
+    // Detaching with a texture of 0 ignores the remaining parameters.  glFramebufferTextureLayer
+    // is not available on ES 2.0 drivers, while cube map textures are, so fall back to
+    // glFramebufferTexture2D in that case.
+    if (mFunctions->framebufferTextureLayer)
+    {
+        mFunctions->framebufferTextureLayer(GL_FRAMEBUFFER, attachment->getBinding(), 0, 0, 0);
+    }
+    else
+    {
+        mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, attachment->getBinding(), GL_TEXTURE_2D, 0,
+                                         0);
+    }
     return angle::Result::Continue;
 }
 

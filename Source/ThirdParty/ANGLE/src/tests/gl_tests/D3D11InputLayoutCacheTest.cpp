@@ -69,7 +69,8 @@ TEST_P(D3D11InputLayoutCacheTest, StressTest)
     egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
     gl::ContextID contextID = {
         static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
-    gl::Context *context                   = display->getContext(contextID);
+    egl::ScopedContextRef contextRef       = display->getContextRef(contextID);
+    gl::Context *context                   = contextRef.get();
     rx::Context11 *context11               = rx::GetImplAs<rx::Context11>(context);
     rx::Renderer11 *renderer11             = context11->getRenderer();
     rx::InputLayoutCache *inputLayoutCache = renderer11->getStateManager()->getInputLayoutCache();

@@ -20,12 +20,12 @@ namespace egl
 ScopedContextMutexLock GetContextLock_ChooseConfig(Thread *thread);
 ScopedContextMutexLock GetContextLock_CopyBuffers(Thread *thread);
 ScopedContextMutexLock GetContextLock_CreateContext(Thread *thread,
-                                                    const egl::Display *validDisplay,
-                                                    gl::ContextID share_contextPacked);
+                                                    const gl::Context *share_contextPackedObject);
 ScopedContextMutexLock GetContextLock_CreatePbufferSurface(Thread *thread);
 ScopedContextMutexLock GetContextLock_CreatePixmapSurface(Thread *thread);
 ScopedContextMutexLock GetContextLock_CreateWindowSurface(Thread *thread);
-ScopedContextMutexLock GetContextLock_DestroyContext(Thread *thread, gl::ContextID ctxPacked);
+ScopedContextMutexLock GetContextLock_DestroyContext(Thread *thread,
+                                                     const gl::Context *ctxPackedObject);
 ScopedContextMutexLock GetContextLock_DestroySurface(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetConfigAttrib(Thread *thread, EGLint attribute);
 ScopedContextMutexLock GetContextLock_GetConfigs(Thread *thread);
@@ -35,10 +35,10 @@ ScopedContextMutexLock GetContextLock_GetDisplay(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetError(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetProcAddress(Thread *thread);
 ScopedContextMutexLock GetContextLock_Initialize(Thread *thread);
-ScopedContextMutexLock GetContextLock_MakeCurrent(Thread *thread, gl::ContextID ctxPacked);
+ScopedContextMutexesLock GetContextLock_MakeCurrent(Thread *thread,
+                                                    const gl::Context *ctxPackedObject);
 ScopedContextMutexLock GetContextLock_QueryContext(Thread *thread,
-                                                   const egl::Display *validDisplay,
-                                                   gl::ContextID ctxPacked,
+                                                   const gl::Context *ctxPackedObject,
                                                    EGLint attribute);
 ScopedContextMutexLock GetContextLock_QueryString(Thread *thread);
 ScopedContextMutexLock GetContextLock_QuerySurface(Thread *thread, EGLint attribute);
@@ -66,8 +66,7 @@ ScopedContextMutexLock GetContextLock_GetCurrentContext(Thread *thread);
 // EGL 1.5
 ScopedContextMutexLock GetContextLock_ClientWaitSync(Thread *thread, EGLint flags);
 ScopedContextMutexLock GetContextLock_CreateImage(Thread *thread,
-                                                  const egl::Display *validDisplay,
-                                                  gl::ContextID ctxPacked);
+                                                  const gl::Context *ctxPackedObject);
 ScopedContextMutexLock GetContextLock_CreatePlatformPixmapSurface(Thread *thread);
 ScopedContextMutexLock GetContextLock_CreatePlatformWindowSurface(Thread *thread);
 ScopedContextMutexLock GetContextLock_CreateSync(Thread *thread);
@@ -123,11 +122,10 @@ ScopedContextMutexLock GetContextLock_SetValidationEnabledANGLE(Thread *thread);
 
 // EGL_ANGLE_power_preference
 ScopedContextMutexLock GetContextLock_ReleaseHighPowerGPUANGLE(Thread *thread,
-                                                               const egl::Display *validDisplay,
-                                                               gl::ContextID ctxPacked);
-ScopedContextMutexLock GetContextLock_ReacquireHighPowerGPUANGLE(Thread *thread,
-                                                                 const egl::Display *validDisplay,
-                                                                 gl::ContextID ctxPacked);
+                                                               const gl::Context *ctxPackedObject);
+ScopedContextMutexLock GetContextLock_ReacquireHighPowerGPUANGLE(
+    Thread *thread,
+    const gl::Context *ctxPackedObject);
 ScopedContextMutexLock GetContextLock_HandleGPUSwitchANGLE(Thread *thread);
 ScopedContextMutexLock GetContextLock_ForceGPUSwitchANGLE(Thread *thread);
 
@@ -189,8 +187,7 @@ ScopedContextMutexLock GetContextLock_GetSyncAttribKHR(Thread *thread, EGLint at
 
 // EGL_KHR_image
 ScopedContextMutexLock GetContextLock_CreateImageKHR(Thread *thread,
-                                                     const egl::Display *validDisplay,
-                                                     gl::ContextID ctxPacked);
+                                                     const gl::Context *ctxPackedObject);
 ScopedContextMutexLock GetContextLock_DestroyImageKHR(Thread *thread);
 
 // EGL_KHR_lock_surface3

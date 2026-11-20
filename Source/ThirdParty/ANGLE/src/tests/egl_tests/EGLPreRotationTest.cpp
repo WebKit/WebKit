@@ -594,6 +594,112 @@ TEST_P(EGLPreRotationSurfaceTest, ChangeRotationWithDraw)
     }
 }
 
+// Android-specific test that changes a window's rotation with EGL_BUFFER_PRESERVED.  The contents
+// are undefined after the rotation, but drawing with the new rotation must work and the new
+// contents must be preserved over the following swaps.
+TEST_P(EGLPreRotationSurfaceTest, ChangeRotationWithDrawPreserved)
+{
+    // This test uses functionality that is only available on Android
+    ANGLE_SKIP_TEST_IF(isVulkanRenderer() && !IsAndroid());
+
+    // To aid in debugging, we want this window visible
+    setWindowVisible(mOSWindow, true);
+
+    initializeDisplay();
+
+    const EGLint configAttributes[] = {EGL_RED_SIZE,
+                                       8,
+                                       EGL_GREEN_SIZE,
+                                       8,
+                                       EGL_BLUE_SIZE,
+                                       8,
+                                       EGL_ALPHA_SIZE,
+                                       8,
+                                       EGL_DEPTH_SIZE,
+                                       0,
+                                       EGL_STENCIL_SIZE,
+                                       0,
+                                       EGL_SAMPLE_BUFFERS,
+                                       0,
+                                       EGL_SURFACE_TYPE,
+                                       EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+                                       EGL_NONE};
+    EGLint configCount              = 0;
+    ANGLE_SKIP_TEST_IF(!eglChooseConfig(mDisplay, configAttributes, &mConfig, 1, &configCount));
+    ANGLE_SKIP_TEST_IF(configCount == 0);
+
+    mWindowSurface =
+        eglCreateWindowSurface(mDisplay, mConfig, mOSWindow->getNativeWindow(), nullptr);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+    initializeContext();
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    EXPECT_EGL_TRUE(
+        eglSurfaceAttrib(mDisplay, mWindowSurface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED));
+    ASSERT_EGL_SUCCESS();
+
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+
+    // Checks the four corners of the full-surface gradient, which must be oriented consistently
+    // with the current rotation.
+    auto checkCorners = [](EGLint width, EGLint height) {
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::black, 2);
+        EXPECT_PIXEL_COLOR_NEAR(width - 1, 0, GLColor::red, 2);
+        EXPECT_PIXEL_COLOR_NEAR(0, height - 1, GLColor::green, 2);
+        EXPECT_PIXEL_COLOR_NEAR(width - 1, height - 1, GLColor::yellow, 2);
+    };
+
+    // Change the rotation back and forth between landscape and portrait.  After each rotation,
+    // draw once and verify the contents are preserved over the following swaps without drawing.
+    // Last rotation needs to be portrait, since other tests expect it to be the default.
+    for (int i = 0; i < 4; i++)
+    {
+        const bool landscape       = (i % 2) == 0;
+        const EGLint desiredWidth  = landscape ? 300 : 200;
+        const EGLint desiredHeight = landscape ? 200 : 300;
+
+        mOSWindow->resize(desiredWidth, desiredHeight);
+        // setOrientation() is asynchronous; allow multiple swaps to eventually see the rotation.
+        mOSWindow->setOrientation(desiredWidth, desiredHeight);
+        angle::Sleep(1000);
+
+        EGLint actualWidth  = 0;
+        EGLint actualHeight = 0;
+        for (int attempt = 0;
+             attempt < 10 && (actualWidth != desiredWidth || actualHeight != desiredHeight);
+             ++attempt)
+        {
+            eglSwapBuffers(mDisplay, mWindowSurface);
+            ASSERT_EGL_SUCCESS();
+            eglQuerySurface(mDisplay, mWindowSurface, EGL_WIDTH, &actualWidth);
+            eglQuerySurface(mDisplay, mWindowSurface, EGL_HEIGHT, &actualHeight);
+        }
+
+        ASSERT_EQ(actualWidth, desiredWidth);
+        ASSERT_EQ(actualHeight, desiredHeight);
+
+        // Draw once with the new rotation.  The viewport is not updated automatically when the
+        // surface is resized.
+        glViewport(0, 0, actualWidth, actualHeight);
+        drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        checkCorners(actualWidth, actualHeight);
+        ASSERT_GL_NO_ERROR();
+
+        // Without drawing, the contents must be preserved on the following frames.
+        for (int frame = 0; frame < 2; ++frame)
+        {
+            eglSwapBuffers(mDisplay, mWindowSurface);
+            ASSERT_EGL_SUCCESS();
+            checkCorners(actualWidth, actualHeight);
+            ASSERT_GL_NO_ERROR();
+        }
+    }
+}
+
 // A slight variation of EGLPreRotationSurfaceTest, where the initial window size is 400x300, yet
 // the drawing is still 256x256.  In addition, gl_FragCoord is used in a "clever" way, as the color
 // of the 256x256 drawing area, which reproduces an interesting pre-rotation case from the

@@ -61,13 +61,11 @@ EGLint ClientWaitSyncKHR(Thread *thread,
 
 EGLImageKHR CreateImageKHR(Thread *thread,
                            Display *display,
-                           gl::ContextID contextID,
+                           gl::Context *context,
                            EGLenum target,
                            EGLClientBuffer buffer,
                            const AttributeMap &attributes)
 {
-    gl::Context *context = display->getContext(contextID);
-
     Image *image = nullptr;
     ANGLE_EGL_TRY_RETURN(thread, display->createImage(context, target, buffer, attributes, &image),
                          "", display, EGL_NO_IMAGE);
@@ -715,17 +713,15 @@ const char *QueryStringiANGLE(Thread *thread, Display *display, EGLint name, EGL
     return display->queryStringi(name, index);
 }
 
-void ReleaseHighPowerGPUANGLE(Thread *thread, Display *display, gl::ContextID contextID)
+void ReleaseHighPowerGPUANGLE(Thread *thread, Display *display, gl::Context *context)
 {
-    gl::Context *context = display->getContext(contextID);
     ANGLE_EGL_TRY(thread, context->releaseHighPowerGPU(), "eglReleaseHighPowerGPUANGLE", display);
 
     thread->setSuccess();
 }
 
-void ReacquireHighPowerGPUANGLE(Thread *thread, Display *display, gl::ContextID contextID)
+void ReacquireHighPowerGPUANGLE(Thread *thread, Display *display, gl::Context *context)
 {
-    gl::Context *context = display->getContext(contextID);
     ANGLE_EGL_TRY(thread, context->reacquireHighPowerGPU(), "eglReacquireHighPowerGPUANGLE",
                   display);
 

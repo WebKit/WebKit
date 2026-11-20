@@ -26,6 +26,20 @@
 
 namespace rx
 {
+namespace
+{
+[[maybe_unused]] bool BoxFits(const gl::Box &box, const Image11 *image)
+{
+    if (!image)
+    {
+        return false;
+    }
+    return (box.x >= 0) && (box.y >= 0) && (box.z >= 0) && (box.width >= 0) && (box.height >= 0) &&
+           (box.depth >= 0) && (box.x <= image->getWidth()) && (box.y <= image->getHeight()) &&
+           (box.z <= image->getDepth()) && (box.width <= image->getWidth() - box.x) &&
+           (box.height <= image->getHeight() - box.y) && (box.depth <= image->getDepth() - box.z);
+}
+}  // anonymous namespace
 
 Image11::Image11(Renderer11 *renderer)
     : mRenderer(renderer),
@@ -87,6 +101,10 @@ angle::Result Image11::CopyImage(const gl::Context *context,
                                  bool unpackUnmultiplyAlpha,
                                  const Renderer11DeviceCaps &rendererCaps)
 {
+    const gl::Box destBox(destOffset.x, destOffset.y, destOffset.z, sourceBox.width,
+                          sourceBox.height, sourceBox.depth);
+    ASSERT(BoxFits(sourceBox, source) && BoxFits(destBox, dest));
+
     D3D11_MAPPED_SUBRESOURCE destMapped;
     ANGLE_TRY(dest->map(context, D3D11_MAP_WRITE, &destMapped));
     d3d11::ScopedUnmapper<Image11> destRAII(dest);
@@ -280,6 +298,7 @@ angle::Result Image11::loadData(const gl::Context *context,
                                 const void *input,
                                 bool applySkipImages)
 {
+    ASSERT(BoxFits(area, this));
     Context11 *context11 = GetImplAs<Context11>(context);
 
     const gl::InternalFormat &formatInfo = gl::GetSizedInternalFormatInfo(mInternalFormat);
@@ -321,6 +340,7 @@ angle::Result Image11::loadCompressedData(const gl::Context *context,
                                           const gl::Box &area,
                                           const void *input)
 {
+    ASSERT(BoxFits(area, this));
     Context11 *context11 = GetImplAs<Context11>(context);
 
     const gl::InternalFormat &formatInfo = gl::GetSizedInternalFormatInfo(mInternalFormat);
@@ -434,6 +454,10 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
                                            const gl::Rectangle &sourceArea,
                                            const gl::Framebuffer *sourceFBO)
 {
+    const gl::Box destBox(destOffset.x, destOffset.y, destOffset.z, sourceArea.width,
+                          sourceArea.height, 1);
+    ASSERT(BoxFits(destBox, this));
+
     Context11 *context11 = GetImplAs<Context11>(context);
 
     const gl::FramebufferAttachment *srcAttachment = sourceFBO->getReadColorAttachment();
@@ -467,6 +491,7 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
     D3D11_MAPPED_SUBRESOURCE mappedImage;
     // Map as read-write to preserve zero-initialization on unwritten pixels.
     ANGLE_TRY(map(context, D3D11_MAP_READ_WRITE, &mappedImage));
+    d3d11::ScopedUnmapper<Image11> unmapper(this);
 
     // determine the offset coordinate into the destination buffer
     const auto &dxgiFormatInfo = d3d11::GetDXGIFormatSizeInfo(mDXGIFormat);
@@ -480,45 +505,38 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
     const auto &destD3D11Format =
         d3d11::Format::Get(mInternalFormat, mRenderer->getRenderer11DeviceCaps());
 
-    auto loadFunction    = destD3D11Format.getLoadFunctions()(destFormatInfo.type);
-    angle::Result result = angle::Result::Continue;
+    auto loadFunction = destD3D11Format.getLoadFunctions()(destFormatInfo.type);
     if (loadFunction.requiresConversion)
     {
-        size_t bufferSize = destFormatInfo.pixelBytes * sourceArea.width * sourceArea.height;
+        size_t bufferSize =
+            static_cast<size_t>(destFormatInfo.pixelBytes) * sourceArea.width * sourceArea.height;
         angle::MemoryBuffer *memoryBuffer = nullptr;
-        if (context->getScratchBuffer(bufferSize, &memoryBuffer))
-        {
-            // Initialize the buffer to 0. readFromAttachment will not write to any out-of-bounds
-            // pixels from the source framebuffer.
-            memoryBuffer->fill(0);
+        ANGLE_CHECK_GL_ALLOC(context11, context->getScratchBuffer(bufferSize, &memoryBuffer));
 
-            GLuint memoryBufferRowPitch = destFormatInfo.pixelBytes * sourceArea.width;
+        // Initialize the buffer to 0. readFromAttachment will not write to any out-of-bounds
+        // pixels from the source framebuffer.
+        memoryBuffer->fill(0);
 
-            result = mRenderer->readFromAttachment(
-                context, *srcAttachment, sourceArea, destFormatInfo.format, destFormatInfo.type,
-                memoryBufferRowPitch, gl::PixelPackState(), memoryBuffer->data());
+        GLuint memoryBufferRowPitch = destFormatInfo.pixelBytes * sourceArea.width;
 
-            loadFunction.loadFunction(context11->getImageLoadContext(), sourceArea.width,
-                                      sourceArea.height, 1, memoryBuffer->data(),
-                                      memoryBufferRowPitch, 0, dataOffset, mappedImage.RowPitch,
-                                      mappedImage.DepthPitch);
-        }
-        else
-        {
-            result = angle::Result::Stop;
-        }
+        ANGLE_TRY(mRenderer->readFromAttachment(
+            context, *srcAttachment, sourceArea, destFormatInfo.format, destFormatInfo.type,
+            memoryBufferRowPitch, gl::PixelPackState(), memoryBuffer->data()));
+
+        loadFunction.loadFunction(context11->getImageLoadContext(), sourceArea.width,
+                                  sourceArea.height, 1, memoryBuffer->data(), memoryBufferRowPitch,
+                                  0, dataOffset, mappedImage.RowPitch, mappedImage.DepthPitch);
     }
     else
     {
-        result = mRenderer->readFromAttachment(
+        ANGLE_TRY(mRenderer->readFromAttachment(
             context, *srcAttachment, sourceArea, destFormatInfo.format, destFormatInfo.type,
-            mappedImage.RowPitch, gl::PixelPackState(), dataOffset);
+            mappedImage.RowPitch, gl::PixelPackState(), dataOffset));
     }
 
-    unmap();
     mDirty = true;
 
-    return result;
+    return angle::Result::Continue;
 }
 
 angle::Result Image11::copyWithoutConversion(const gl::Context *context,

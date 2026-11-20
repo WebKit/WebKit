@@ -730,6 +730,45 @@ egl::Error DisplayWGL::makeCurrent(egl::Surface *drawSurface,
     return ThreadSafeDisplayGL::makeCurrent(drawSurface, readSurface, context);
 }
 
+egl::Error DisplayWGL::beforeDestroyContext(const gl::Context *context)
+{
+    ASSERT(context != nullptr);
+    ContextWGL *contextWGL = GetImplAs<ContextWGL>(context);
+    HGLRC nativeContext    = contextWGL->getContext();
+
+    std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+    CurrentNativeContext &currentContext =
+        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+    if (currentContext.glrc != nativeContext)
+    {
+        if (!mFunctionsWGL->makeCurrent(mDeviceContext, nativeContext))
+        {
+            return egl::Error(EGL_CONTEXT_LOST, "Failed to make the WGL context current.");
+        }
+        currentContext.needsRestore = true;
+    }
+
+    return egl::NoError();
+}
+
+egl::Error DisplayWGL::afterDestroyContext()
+{
+    std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+    CurrentNativeContext &currentContext =
+        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+    if (currentContext.needsRestore)
+    {
+        currentContext.needsRestore = false;
+        HDC dc = currentContext.dc != nullptr ? currentContext.dc : mDeviceContext;
+        if (!mFunctionsWGL->makeCurrent(dc, currentContext.glrc))
+        {
+            return egl::Error(EGL_CONTEXT_LOST, "Failed to make the WGL context current.");
+        }
+    }
+
+    return egl::NoError();
+}
+
 egl::Error DisplayWGL::registerD3DDevice(IUnknown *device, HANDLE *outHandle)
 {
     ASSERT(device != nullptr);
@@ -785,6 +824,26 @@ gl::Version DisplayWGL::getMaxSupportedESVersion() const
 
 void DisplayWGL::destroyNativeContext(HGLRC context)
 {
+    // If this context is current, remove it from the tracking of current contexts to make sure we
+    // don't try to make it current again.  If it is current on this thread, also have
+    // afterDestroyContext() release it; that only runs for the calling thread's entry.
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        const uint64_t currentThreadId = angle::GetCurrentThreadUniqueId();
+        for (auto &currentContext : mCurrentNativeContexts)
+        {
+            if (currentContext.second.glrc == context)
+            {
+                currentContext.second.dc   = nullptr;
+                currentContext.second.glrc = nullptr;
+                if (currentContext.first == currentThreadId)
+                {
+                    currentContext.second.needsRestore = true;
+                }
+            }
+        }
+    }
+
     mFunctionsWGL->deleteContext(context);
 }
 

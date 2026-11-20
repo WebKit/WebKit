@@ -554,6 +554,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
       sources += angle_white_box_tests_win_sources
     }
 
+    if (angle_enable_gl) {
+      sources += angle_white_box_tests_gl_sources
+    }
+
     configs += [ "${angle_root}:libANGLE_config" ]
 
     deps = [

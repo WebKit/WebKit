@@ -32,7 +32,8 @@ using ClipCullDistanceIdxSet = angle::BitSet<32>;
 typedef TIntermNode *AssignFunc(const unsigned int index,
                                 TIntermSymbol *left,
                                 TIntermSymbol *right,
-                                const TIntermTyped *enableFlags);
+                                const TIntermTyped *enableFlags,
+                                const TIntermTyped *isLastPreRasterizationStage);
 
 // Traverse the tree and collect the redeclaration and all constant index references of
 // gl_ClipDistance/gl_CullDistance
@@ -41,28 +42,24 @@ class GLClipCullDistanceReferenceTraverser : public TIntermTraverser
   public:
     GLClipCullDistanceReferenceTraverser(const TIntermSymbol **redeclaredSymOut,
                                          const TVariable **variableOut,
-                                         bool *nonConstIdxUsedOut,
-                                         unsigned int *maxConstIdxOut,
                                          ClipCullDistanceIdxSet *constIndicesOut,
                                          TQualifier targetQualifier)
         : TIntermTraverser(true, false, false),
           mRedeclaredSym(redeclaredSymOut),
           mVariable(variableOut),
-          mUseNonConstClipCullDistanceIndex(nonConstIdxUsedOut),
-          mMaxConstClipCullDistanceIndex(maxConstIdxOut),
           mConstClipCullDistanceIndices(constIndicesOut),
           mTargetQualifier(targetQualifier)
     {
-        *mRedeclaredSym                    = nullptr;
-        *mVariable                         = nullptr;
-        *mUseNonConstClipCullDistanceIndex = false;
-        *mMaxConstClipCullDistanceIndex    = 0;
+        *mRedeclaredSym = nullptr;
+        *mVariable      = nullptr;
         mConstClipCullDistanceIndices->reset();
     }
 
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override
     {
-        // If gl_ClipDistance/gl_CullDistance is redeclared, we need to collect its information
+        // If gl_ClipDistance/gl_CullDistance is redeclared, we need to collect its information.
+        // The built-in may be redeclared either as a plain array, or as a member of the output
+        // gl_PerVertex block.
         const TIntermSequence &sequence = *(node->getSequence());
 
         if (sequence.size() != 1)
@@ -71,7 +68,28 @@ class GLClipCullDistanceReferenceTraverser : public TIntermTraverser
         }
 
         TIntermSymbol *variable = sequence.front()->getAsSymbolNode();
-        if (variable == nullptr || variable->getType().getQualifier() != mTargetQualifier)
+        if (variable == nullptr)
+        {
+            return true;
+        }
+
+        if (variable->isInterfaceBlock() && variable->getType().getQualifier() == EvqPerVertexOut)
+        {
+            bool found = false;
+            for (const TField *field : variable->getType().getInterfaceBlock()->fields())
+            {
+                if (field->type()->getQualifier() == mTargetQualifier)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                return true;
+            }
+        }
+        else if (variable->getType().getQualifier() != mTargetQualifier)
         {
             return true;
         }
@@ -109,11 +127,7 @@ class GLClipCullDistanceReferenceTraverser : public TIntermTraverser
         }
 
         const TConstantUnion *constIdx = node->getRight()->getConstantValue();
-        if (!constIdx)
-        {
-            *mUseNonConstClipCullDistanceIndex = true;
-        }
-        else
+        if (constIdx)
         {
             unsigned int idx = 0;
             switch (constIdx->getType())
@@ -136,22 +150,22 @@ class GLClipCullDistanceReferenceTraverser : public TIntermTraverser
             }
             ASSERT(idx < mConstClipCullDistanceIndices->size());
             mConstClipCullDistanceIndices->set(idx);
-
-            *mMaxConstClipCullDistanceIndex = std::max(*mMaxConstClipCullDistanceIndex, idx);
-            *mVariable                      = &clipCullDistance->variable();
         }
 
         return true;
     }
 
+    void visitSymbol(TIntermSymbol *node) override
+    {
+        if (node->getType().getQualifier() == mTargetQualifier)
+        {
+            *mVariable = &node->variable();
+        }
+    }
+
   private:
     const TIntermSymbol **mRedeclaredSym;
     const TVariable **mVariable;
-    // Flag indicating whether there is at least one reference of gl_ClipDistance with non-constant
-    // index
-    bool *mUseNonConstClipCullDistanceIndex;
-    // Max constant index that is used to reference gl_ClipDistance
-    unsigned int *mMaxConstClipCullDistanceIndex;
     // List of constant index reference of gl_ClipDistance
     ClipCullDistanceIdxSet *mConstClipCullDistanceIndices;
     // Qualifier for gl_ClipDistance/gl_CullDistance
@@ -188,7 +202,8 @@ class ReplaceVariableExceptOneTraverser : public TIntermTraverser
 TIntermNode *simpleAssignFunc(const unsigned int index,
                               TIntermSymbol *leftSymbol,
                               TIntermSymbol *rightSymbol,
-                              const TIntermTyped * /*enableFlags*/)
+                              const TIntermTyped * /*enableFlags*/,
+                              const TIntermTyped * /*isLastPreRasterizationStage*/)
 {
     if (!rightSymbol)
         return nullptr;
@@ -207,15 +222,26 @@ TIntermNode *simpleAssignFunc(const unsigned int index,
 TIntermNode *assignFuncWithEnableFlags(const unsigned int index,
                                        TIntermSymbol *leftSymbol,
                                        TIntermSymbol *rightSymbol,
-                                       const TIntermTyped *enableFlags)
+                                       const TIntermTyped *enableFlags,
+                                       const TIntermTyped *isLastPreRasterizationStage)
 {
-    //  if (ANGLEUniforms.clipDistancesEnabled & (0x1 << index))
+    //  if (!isLastPreRasterizationStage ||
+    //      (ANGLEUniforms.clipDistancesEnabled & (0x1 << index)) != 0)
     //      gl_ClipDistance[index] = ANGLEClipDistance[index];
     //  else
     //      gl_ClipDistance[index] = 0;
+    //
+    // The isLastPreRasterizationStage condition is only present if provided; the disabled clip
+    // distances are zeroed out only by the last pre-rasterization stage.
     TIntermConstantUnion *bitMask = CreateUIntNode(0x1 << index);
     TIntermBinary *bitwiseAnd = new TIntermBinary(EOpBitwiseAnd, enableFlags->deepCopy(), bitMask);
-    TIntermBinary *nonZero    = new TIntermBinary(EOpNotEqual, bitwiseAnd, CreateUIntNode(0));
+    TIntermTyped *nonZero         = new TIntermBinary(EOpNotEqual, bitwiseAnd, CreateUIntNode(0));
+    if (isLastPreRasterizationStage != nullptr)
+    {
+        TIntermTyped *notLastStage =
+            new TIntermUnary(EOpLogicalNot, isLastPreRasterizationStage->deepCopy(), nullptr);
+        nonZero = new TIntermBinary(EOpLogicalOr, notLastStage, nonZero);
+    }
 
     TIntermBinary *left =
         new TIntermBinary(EOpIndexDirect, leftSymbol->deepCopy(), CreateIndexNode(index));
@@ -236,6 +262,41 @@ TIntermNode *assignFuncWithEnableFlags(const unsigned int index,
     return new TIntermIfElse(nonZero, trueBlock, falseBlock);
 }
 
+// This is only used for gl_ClipDistance, in shader stages that write gl_ClipDistance directly
+// (i.e. without going through ANGLEClipDistance).
+TIntermNode *assignFuncZeroDisabledBits(const unsigned int index,
+                                        TIntermSymbol *leftSymbol,
+                                        TIntermSymbol * /*rightSymbol*/,
+                                        const TIntermTyped *enableFlags,
+                                        const TIntermTyped *isLastPreRasterizationStage)
+{
+    //  if (isLastPreRasterizationStage &&
+    //      (ANGLEUniforms.clipDistancesEnabled & (0x1 << index)) == 0)
+    //  {
+    //      gl_ClipDistance[index] = 0;
+    //  }
+    //
+    // The isLastPreRasterizationStage condition is only present if provided; the disabled clip
+    // distances are zeroed out only by the last pre-rasterization stage.
+    TIntermConstantUnion *bitMask = CreateUIntNode(0x1 << index);
+    TIntermBinary *bitwiseAnd = new TIntermBinary(EOpBitwiseAnd, enableFlags->deepCopy(), bitMask);
+    TIntermTyped *zero        = new TIntermBinary(EOpEqual, bitwiseAnd, CreateUIntNode(0));
+    if (isLastPreRasterizationStage != nullptr)
+    {
+        zero = new TIntermBinary(EOpLogicalAnd, isLastPreRasterizationStage->deepCopy(), zero);
+    }
+
+    TIntermBinary *left =
+        new TIntermBinary(EOpIndexDirect, leftSymbol->deepCopy(), CreateIndexNode(index));
+
+    TIntermBinary *zeroAssignment =
+        new TIntermBinary(EOpAssign, left, CreateFloatNode(0, EbpMedium));
+    TIntermBlock *trueBlock = new TIntermBlock();
+    trueBlock->appendStatement(zeroAssignment);
+
+    return new TIntermIfElse(zero, trueBlock, nullptr);
+}
+
 class ReplaceClipCullDistanceAssignments : angle::NonCopyable
 {
   public:
@@ -243,33 +304,32 @@ class ReplaceClipCullDistanceAssignments : angle::NonCopyable
                                        TIntermBlock *root,
                                        TSymbolTable *symbolTable,
                                        const TVariable *glClipCullDistanceVar,
-                                       const TIntermSymbol *redeclaredGlClipDistance,
-                                       const ImmutableString &angleVarName)
+                                       const ImmutableString &angleVarName,
+                                       unsigned int enabledDistances)
         : mCompiler(compiler),
           mRoot(root),
           mSymbolTable(symbolTable),
           mGlVar(glClipCullDistanceVar),
-          mRedeclaredGLVar(redeclaredGlClipDistance),
-          mANGLEVarName(angleVarName)
-    {
-        mEnabledDistances = 0;
-    }
+          mANGLEVarName(angleVarName),
+          mEnabledDistances(enabledDistances)
+    {}
 
-    unsigned int getEnabledClipCullDistance(const bool useNonConstIndex,
-                                            const unsigned int maxConstIndex);
     const TVariable *declareANGLEVariable(const TVariable *originalVariable);
     bool assignOriginalValueToANGLEVariable(const GLenum shaderType);
     bool assignValueToOriginalVariable(const GLenum shaderType,
                                        const bool isRedeclared,
                                        const TIntermTyped *enableFlags,
+                                       const TIntermTyped *isLastPreRasterizationStage,
                                        const ClipCullDistanceIdxSet *constIndices);
 
   private:
     bool assignOriginalValueToANGLEVariableImpl();
-    bool assignValueToOriginalVariableImpl(const bool isRedeclared,
+    bool assignValueToOriginalVariableImpl(const bool assignAllDistances,
                                            const TIntermTyped *enableFlags,
+                                           const TIntermTyped *isLastPreRasterizationStage,
                                            const ClipCullDistanceIdxSet *constIndices,
-                                           AssignFunc assignFunc);
+                                           AssignFunc assignFunc,
+                                           const GLenum shaderType);
 
     // Common variables for replacing gl_Clip/CullDistances with ANGLEClip/CullDistances
     TCompiler *mCompiler;
@@ -277,40 +337,22 @@ class ReplaceClipCullDistanceAssignments : angle::NonCopyable
     TSymbolTable *mSymbolTable;
 
     const TVariable *mGlVar;
-    const TIntermSymbol *mRedeclaredGLVar;
     const ImmutableString mANGLEVarName;
 
-    unsigned int mEnabledDistances;
+    const unsigned int mEnabledDistances;
     const TVariable *mANGLEVar = nullptr;
 };
-
-unsigned int ReplaceClipCullDistanceAssignments::getEnabledClipCullDistance(
-    const bool useNonConstIndex,
-    const unsigned int maxConstIndex)
-{
-    if (mRedeclaredGLVar)
-    {
-        // If array is redeclared by user, use that redeclared size.
-        mEnabledDistances = mRedeclaredGLVar->getType().getOutermostArraySize();
-    }
-    else if (!useNonConstIndex)
-    {
-        ASSERT(maxConstIndex < mGlVar->getType().getOutermostArraySize());
-        // Only use constant index, then use max array index used.
-        mEnabledDistances = maxConstIndex + 1;
-    }
-
-    return mEnabledDistances;
-}
 
 const TVariable *ReplaceClipCullDistanceAssignments::declareANGLEVariable(
     const TVariable *originalVariable)
 {
     ASSERT(mEnabledDistances > 0);
 
-    TType *clipCullDistanceType = new TType(originalVariable->getType());
-    clipCullDistanceType->setQualifier(EvqGlobal);
-    clipCullDistanceType->toArrayBaseType();
+    // Note that the type is created from scratch rather than copied from the original variable,
+    // because the original variable may be a member of a redeclared gl_PerVertex block.
+    const TType &originalType = originalVariable->getType();
+    TType *clipCullDistanceType =
+        new TType(originalType.getBasicType(), originalType.getPrecision(), EvqGlobal, 1, 1);
     clipCullDistanceType->makeArray(mEnabledDistances);
 
     mANGLEVar =
@@ -337,18 +379,20 @@ bool ReplaceClipCullDistanceAssignments::assignOriginalValueToANGLEVariableImpl(
 
     for (unsigned int i = 0; i < mEnabledDistances; i++)
     {
-        readBlock->appendStatement(
-            simpleAssignFunc(i, clipCullDistanceSymbol, glClipCullDistanceSymbol, nullptr));
+        readBlock->appendStatement(simpleAssignFunc(i, clipCullDistanceSymbol,
+                                                    glClipCullDistanceSymbol, nullptr, nullptr));
     }
 
     return RunAtTheBeginningOfShader(mCompiler, mRoot, readBlock);
 }
 
 bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
-    const bool isRedeclared,
+    const bool assignAllDistances,
     const TIntermTyped *enableFlags,
+    const TIntermTyped *isLastPreRasterizationStage,
     const ClipCullDistanceIdxSet *constIndices,
-    AssignFunc assignFunc)
+    AssignFunc assignFunc,
+    const GLenum shaderType)
 {
     ASSERT(mEnabledDistances > 0);
 
@@ -360,12 +404,13 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
     // integral constant index. And this size is the count of the enabled value. So, if the index
     // which is greater than the array size, is used to access the variable, this access will be
     // ignored.
-    if (isRedeclared || !constIndices)
+    if (assignAllDistances || !constIndices)
     {
         for (unsigned int i = 0; i < mEnabledDistances; ++i)
         {
-            assignBlock->appendStatement(
-                assignFunc(i, glClipCullDistanceSymbol, clipCullDistanceSymbol, enableFlags));
+            assignBlock->appendStatement(assignFunc(i, glClipCullDistanceSymbol,
+                                                    clipCullDistanceSymbol, enableFlags,
+                                                    isLastPreRasterizationStage));
         }
     }
     else
@@ -377,8 +422,9 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
         {
             if (constIndices->test(i))
             {
-                assignBlock->appendStatement(
-                    assignFunc(i, glClipCullDistanceSymbol, clipCullDistanceSymbol, enableFlags));
+                assignBlock->appendStatement(assignFunc(i, glClipCullDistanceSymbol,
+                                                        clipCullDistanceSymbol, enableFlags,
+                                                        isLastPreRasterizationStage));
             }
             else
             {
@@ -390,6 +436,12 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
                 assignBlock->appendStatement(zeroAssignment);
             }
         }
+    }
+
+    if (shaderType == GL_GEOMETRY_SHADER)
+    {
+        // In geometry shaders, the built-ins take effect when EmitVertex() is called.
+        return RunBeforeEmitVertex(mCompiler, mRoot, assignBlock, mSymbolTable);
     }
 
     return RunAtTheEndOfShader(mCompiler, mRoot, assignBlock, mSymbolTable);
@@ -426,6 +478,7 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
     const GLenum shaderType,
     const bool isRedeclared,
     const TIntermTyped *enableFlags,
+    const TIntermTyped *isLastPreRasterizationStage,
     const ClipCullDistanceIdxSet *constIndices)
 {
     switch (shaderType)
@@ -442,13 +495,35 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
             // Shaders writing gl_CullDistance must write all enabled distances, or culling results
             // are undefined.
             if (!assignValueToOriginalVariableImpl(
-                    isRedeclared, enableFlags, constIndices,
-                    enableFlags ? assignFuncWithEnableFlags : simpleAssignFunc))
+                    isRedeclared, enableFlags, isLastPreRasterizationStage, constIndices,
+                    enableFlags ? assignFuncWithEnableFlags : simpleAssignFunc, shaderType))
             {
                 return false;
             }
             break;
         }
+        case GL_TESS_EVALUATION_SHADER:
+        case GL_GEOMETRY_SHADER:
+        {
+            // These shader stages write gl_Clip/CullDistance directly; there is no
+            // ANGLEClip/CullDistance replacement. The only thing to do is to zero the disabled
+            // gl_ClipDistance elements so that they don't clip. gl_CullDistance has no enable
+            // state, so there is nothing to do for it.
+            if (enableFlags == nullptr)
+            {
+                break;
+            }
+            if (!assignValueToOriginalVariableImpl(true, enableFlags, isLastPreRasterizationStage,
+                                                   constIndices, assignFuncZeroDisabledBits,
+                                                   shaderType))
+            {
+                return false;
+            }
+            break;
+        }
+        case GL_TESS_CONTROL_SHADER:
+            // Tessellation control shader only does a passthrough of gl_Clip/CullDistances
+            break;
         case GL_FRAGMENT_SHADER:
             // Fragment shader can use gl_Clip/CullDistance as input only
             break;
@@ -470,51 +545,53 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
     TSymbolTable *symbolTable,
     const GLenum shaderType,
     const TIntermTyped *clipDistanceEnableFlags,
+    const TIntermTyped *isLastPreRasterizationStage,
     const char *builtInName,
     const char *replacementName,
     TQualifier builtInQualifier)
 {
-    // Collect all constant index references of gl_ClipDistance
-    ImmutableString name(builtInName);
-    ClipCullDistanceIdxSet constIndices;
-    bool useNonConstIndex                  = false;
-    const TIntermSymbol *redeclaredBuiltIn = nullptr;
-    const TVariable *builtInVariable       = nullptr;
-    unsigned int maxConstIndex             = 0;
-    GLClipCullDistanceReferenceTraverser indexTraverser(&redeclaredBuiltIn, &builtInVariable,
-                                                        &useNonConstIndex, &maxConstIndex,
-                                                        &constIndices, builtInQualifier);
-    root->traverse(&indexTraverser);
-    if (!useNonConstIndex && constIndices.none() && redeclaredBuiltIn == nullptr)
+    // gl_ClipDistance is not available in compute shaders.
+    if (shaderType == GL_COMPUTE_SHADER)
     {
-        // No references of gl_ClipDistance
         return true;
     }
 
-    // Retrieve gl_ClipDistance variable reference
-    // Search user redeclared gl_ClipDistance first
-    const TVariable *builtInVar = nullptr;
-    if (redeclaredBuiltIn)
+    // Collect all constant index references of gl_ClipDistance
+    ImmutableString name(builtInName);
+    ClipCullDistanceIdxSet constIndices;
+    const TIntermSymbol *redeclaredBuiltIn = nullptr;
+    const TVariable *builtInVariable       = nullptr;
+    GLClipCullDistanceReferenceTraverser indexTraverser(&redeclaredBuiltIn, &builtInVariable,
+                                                        &constIndices, builtInQualifier);
+    root->traverse(&indexTraverser);
+
+    // gl_ClipDistance may be redeclared as a plain array (`out float gl_ClipDistance[N];`) or as a
+    // member of the output gl_PerVertex block.  In the latter case, the redeclaration itself does
+    // not reference gl_ClipDistance; the references are found by the traverser when the array is
+    // indexed.
+    const bool isRedeclared = redeclaredBuiltIn != nullptr;
+    const bool isRedeclaredAsPlainArray =
+        isRedeclared && !redeclaredBuiltIn->getType().isInterfaceBlock();
+
+    if (builtInVariable == nullptr && !isRedeclaredAsPlainArray)
     {
-        builtInVar = &redeclaredBuiltIn->variable();
-    }
-    else
-    {
-        // User defined not found, use implicitly defined. The symbol table cannot be used here as
-        // the variable type could have been adjusted after validation
-        builtInVar = builtInVariable;
-    }
-    if (!builtInVar)
-    {
-        return false;
+        // gl_ClipDistance is not referenced directly in this shader. It may be declared as a
+        // member of gl_PerVertex without being written, or only accessed through gl_in/gl_out
+        // (which are passed through as is). There is nothing to do.
+        return true;
     }
 
-    ReplaceClipCullDistanceAssignments replacementUtils(compiler, root, symbolTable, builtInVar,
-                                                        redeclaredBuiltIn,
-                                                        ImmutableString(replacementName));
+    // If redeclared as a plain array, use the redeclaration. Otherwise use the variable found
+    // when indexing gl_ClipDistance.
+    const TVariable *builtInVar =
+        isRedeclaredAsPlainArray ? &redeclaredBuiltIn->variable() : builtInVariable;
 
-    unsigned int enabledClipDistances =
-        replacementUtils.getEnabledClipCullDistance(useNonConstIndex, maxConstIndex);
+    // The array size is determined by the compiler, either from the redeclaration or from the
+    // indices used to access the array (including through gl_in in geometry and tessellation
+    // shaders).
+    const unsigned int enabledClipDistances = builtInQualifier == EvqClipDistance
+                                                  ? compiler->getClipDistanceArraySize()
+                                                  : compiler->getCullDistanceArraySize();
     if (!enabledClipDistances)
     {
         // Spec :
@@ -524,9 +601,14 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
         return false;
     }
 
-    if (replacementName)
-    {
+    ReplaceClipCullDistanceAssignments replacementUtils(compiler, root, symbolTable, builtInVar,
+                                                        ImmutableString(replacementName),
+                                                        enabledClipDistances);
 
+    // In vertex and fragment shaders, gl_ClipDistance is replaced with ANGLEClipDistance. Other
+    // stages write gl_ClipDistance directly.
+    if (replacementName && (shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER))
+    {
         // Declare a global variable substituting gl_ClipDistance
         const TVariable *replacementVar = replacementUtils.declareANGLEVariable(builtInVar);
 
@@ -548,9 +630,9 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
     }
 
     // Reassign ANGLEClipDistance to gl_ClipDistance but ignore those that are disabled
-    const bool isRedeclared = redeclaredBuiltIn != nullptr;
     if (!replacementUtils.assignValueToOriginalVariable(shaderType, isRedeclared,
-                                                        clipDistanceEnableFlags, &constIndices))
+                                                        clipDistanceEnableFlags,
+                                                        isLastPreRasterizationStage, &constIndices))
     {
         return false;
     }
@@ -581,11 +663,12 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
                                                   TIntermBlock *root,
                                                   TSymbolTable *symbolTable,
                                                   const GLenum shaderType,
-                                                  const TIntermTyped *clipDistanceEnableFlags)
+                                                  const TIntermTyped *clipDistanceEnableFlags,
+                                                  const TIntermTyped *isLastPreRasterizationStage)
 {
-    return ReplaceClipCullDistanceAssignmentsImpl(compiler, root, symbolTable, shaderType,
-                                                  clipDistanceEnableFlags, "gl_ClipDistance",
-                                                  "ANGLEClipDistance", EvqClipDistance);
+    return ReplaceClipCullDistanceAssignmentsImpl(
+        compiler, root, symbolTable, shaderType, clipDistanceEnableFlags,
+        isLastPreRasterizationStage, "gl_ClipDistance", "ANGLEClipDistance", EvqClipDistance);
 }
 
 [[nodiscard]] bool ReplaceCullDistanceAssignments(TCompiler *compiler,
@@ -594,7 +677,7 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
                                                   const GLenum shaderType)
 {
     return ReplaceClipCullDistanceAssignmentsImpl(compiler, root, symbolTable, shaderType, nullptr,
-                                                  "gl_CullDistance", "ANGLECullDistance",
+                                                  nullptr, "gl_CullDistance", "ANGLECullDistance",
                                                   EvqCullDistance);
 }
 
@@ -605,8 +688,8 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
                                                        const TIntermTyped *clipDistanceEnableFlags)
 {
     return ReplaceClipCullDistanceAssignmentsImpl(compiler, root, symbolTable, shaderType,
-                                                  clipDistanceEnableFlags, "gl_ClipDistance",
-                                                  nullptr, EvqClipDistance);
+                                                  clipDistanceEnableFlags, nullptr,
+                                                  "gl_ClipDistance", nullptr, EvqClipDistance);
 }
 
 }  // namespace sh

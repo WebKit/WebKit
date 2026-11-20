@@ -923,9 +923,30 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
                                 GLuint framebufferStencilSize) const;
     bool noopClearBuffer(GLenum buffer, GLint drawbuffer) const;
 
+    // References that keep the Context alive, see egl::ContextMap.  A thread that has the Context
+    // current holds one, and so does an EGL entry point that looks the Context up by its handle
+    // while it uses it (see egl::ScopedContextRef).
     void addRef() const { mRefCount.fetch_add(1, std::memory_order_relaxed); }
-    void release() const { mRefCount.fetch_sub(1, std::memory_order_acq_rel); }
-    bool isReferenced() const { return mRefCount.load(std::memory_order_acquire) > 0; }
+    void release() const
+    {
+        size_t prev = mRefCount.fetch_sub(1, std::memory_order_acq_rel);
+        ASSERT(prev > 0);
+    }
+    size_t getRefCount() const { return mRefCount.load(std::memory_order_acquire); }
+
+    // Whether the Context is current on a thread.  A Context is current on one thread at most.
+    // This changes in egl::ThreadSafeDisplay::makeCurrent(), under the ContextMutex.
+    bool isCurrentOnAnyThread() const
+    {
+        return mIsCurrentOnAnyThread.load(std::memory_order_acquire);
+    }
+    void setIsCurrentOnAnyThread(bool isCurrentOnAnyThread)
+    {
+        // A Context can be current on at most one thread, and this is only called under
+        // ContextMutex when the thread's current Context changes, so the state must always toggle.
+        ASSERT(this->isCurrentOnAnyThread() != isCurrentOnAnyThread);
+        mIsCurrentOnAnyThread.store(isCurrentOnAnyThread, std::memory_order_release);
+    }
 
     egl::ShareGroup *getShareGroup() const { return mState.getShareGroup(); }
 
@@ -1174,34 +1195,15 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     // Cache representation of the serialized context string.
     mutable std::string mCachedSerializedStateString;
 
+    // Standard life time management reference counting for Context object. See addRef() for detail.
     mutable std::atomic<size_t> mRefCount;
+    // See isCurrentOnAnyThread().
+    std::atomic<bool> mIsCurrentOnAnyThread;
 
     std::atomic<bool> mIsDestroyed;
     bool mDestroyedManagers;
 
     std::unique_ptr<Framebuffer> mDefaultFramebuffer;
-};
-
-class [[nodiscard]] ScopedContextRef
-{
-  public:
-    ScopedContextRef(Context *context) : mContext(context)
-    {
-        if (mContext)
-        {
-            mContext->addRef();
-        }
-    }
-    ~ScopedContextRef()
-    {
-        if (mContext)
-        {
-            mContext->release();
-        }
-    }
-
-  private:
-    Context *const mContext;
 };
 
 // Thread-local current valid context bound to the thread.

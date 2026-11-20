@@ -264,6 +264,17 @@ class GraphicsDriverUniforms
         mDirtyBits.set(DIRTY_BIT_MISC);
     }
 
+    bool updateLastPreRasterizationStage(uint32_t lastPreRasterizationStage)
+    {
+        if (mUniformData.misc.lastPreRasterizationStage == lastPreRasterizationStage)
+        {
+            return false;
+        }
+        SetBitField(mUniformData.misc.lastPreRasterizationStage, lastPreRasterizationStage);
+        mDirtyBits.set(DIRTY_BIT_MISC);
+        return true;
+    }
+
     void updateTransformDepth(uint32_t transformDepth)
     {
         SetBitField(mUniformData.misc.transformDepth, transformDepth);
@@ -381,8 +392,14 @@ class GraphicsDriverUniforms
                 static_assert((0x00400000 >> sh::vk::kDriverUniformsMiscLayeredFramebufferOffset) ==
                               sh::vk::kDriverUniformsMiscLayeredFramebufferMask);
 
-                // - 9 bits unused
-                uint32_t unused : 9;
+                // - 2 bits for the last pre-rasterization shader stage
+                uint32_t lastPreRasterizationStage : 2;
+                static_assert((0x01800000 >>
+                               sh::vk::kDriverUniformsMiscLastPreRasterizationStageOffset) ==
+                              sh::vk::kDriverUniformsMiscLastPreRasterizationStageMask);
+
+                // - 7 bits unused
+                uint32_t unused : 7;
             } misc;
             uint32_t uint32Misc;
         };

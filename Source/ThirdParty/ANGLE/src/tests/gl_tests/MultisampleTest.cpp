@@ -1348,6 +1348,71 @@ TEST_P(MultisampleResolveTest, SwitchAttachmentsBeforeResolve)
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
 }
 
+// Test that draw with glColorMask set to false on the multisampled FBO and then resolve. The
+// content in multisampled FBO before the masked draw should be applied to the resolve target
+TEST_P(MultisampleResolveTest, ColorMaskedDrawThenResolve)
+{
+    constexpr GLsizei kWidth  = 16;
+    constexpr GLsizei kHeight = 24;
+
+    // Multisampled framebuffer.
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Single-sampled framebuffer, the resolve target.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glViewport(0, 0, kWidth, kHeight);
+
+    // Store red content to the multisampled color attachment.
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Store blue content to the resolved color attachment.
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Flush the commands so far
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+
+    // Issue a masked draw to multisampled framebuffer, which should not change the framebuffer
+    // content because color mask is GL_FALSE
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+    // Resolve into the single-sampled framebuffer
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, msaaFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Reading the resolve target. The result must be the stored content
+    // of the multisampled attachment, which is the red quad drawn earlier
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND(
     MultisampleTest,
     ES3_VULKAN().enable(Feature::EmulatedPrerotation90),

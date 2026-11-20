@@ -6730,6 +6730,71 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test framebuffer fetch in combination with gaps in framebuffer attachments.
+TEST_P(FramebufferFetchES31, GapsInLocation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    // gl_VertexID    x    y
+    //      0        -1   -1
+    //      1         1   -1
+    //      2        -1    1
+    //      3         1    1
+    int bit0 = gl_VertexID & 1;
+    int bit1 = gl_VertexID >> 1;
+    gl_Position = vec4(bit0 * 2 - 1, bit1 * 2 - 1, 0, 1);
+})";
+
+    // Program with framebuffer fetch
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+layout(location = 0) inout highp vec4 o_color0;
+layout(location = 3) inout highp vec4 o_color3;
+uniform highp vec4 u_color;
+
+void main (void)
+{
+    o_color0 += u_color;
+    o_color3 += u_color;
+})";
+    ANGLE_GL_PROGRAM(drawColor, kVS, kFS);
+    glUseProgram(drawColor);
+    const GLint colorLocation = glGetUniformLocation(drawColor, "u_color");
+    ASSERT_NE(colorLocation, -1);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    const std::vector<GLColor> kColor0(kViewportWidth * kViewportHeight, GLColor::blue);
+    const std::vector<GLColor> kColor3(kViewportWidth * kViewportHeight, GLColor::green);
+    GLTexture color0, color3;
+    glBindTexture(GL_TEXTURE_2D, color0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kViewportWidth, kViewportHeight, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, kColor0.data());
+    glBindTexture(GL_TEXTURE_2D, color3);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kViewportWidth, kViewportHeight, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, kColor3.data());
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, color3, 0);
+
+    constexpr std::array<GLenum, kMaxColorBuffer> colorAttachments = {
+        GL_COLOR_ATTACHMENT0, GL_NONE, GL_NONE, GL_COLOR_ATTACHMENT3};
+    glDrawBuffers(kMaxColorBuffer, colorAttachments.data());
+
+    ASSERT_GL_NO_ERROR();
+
+    glUniform4f(colorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kViewportWidth, kViewportHeight, GLColor::magenta);
+    glReadBuffer(GL_COLOR_ATTACHMENT3);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kViewportWidth, kViewportHeight, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test switching between framebuffer fetch and non framebuffer fetch draw calls, with multiple
 // calls in each mode in between.  Tests Vulkan backend's emulation of coherent framebuffer fetch
 // over non-coherent hardware.  While this is untestable without adding counters, the test should

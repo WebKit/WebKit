@@ -31,6 +31,7 @@ bool ValidateCreateContext(const ValidationContext *val,
                            const egl::Display *dpyPacked,
                            const egl::Config *configPacked,
                            gl::ContextID share_contextPacked,
+                           const gl::Context *share_contextPackedObject,
                            const AttributeMap &attrib_listPacked);
 bool ValidateCreatePbufferSurface(const ValidationContext *val,
                                   const egl::Display *dpyPacked,
@@ -48,7 +49,7 @@ bool ValidateCreateWindowSurface(const ValidationContext *val,
                                  const AttributeMap &attrib_listPacked);
 bool ValidateDestroyContext(const ValidationContext *val,
                             const egl::Display *dpyPacked,
-                            gl::ContextID ctxPacked);
+                            const gl::Context *ctxPackedObject);
 bool ValidateDestroySurface(const ValidationContext *val,
                             const egl::ThreadSafeDisplay *dpyPacked,
                             const egl::Surface *surfacePacked);
@@ -77,10 +78,11 @@ bool ValidateMakeCurrent(const ValidationContext *val,
                          const egl::Surface *drawPackedObject,
                          SurfaceID readPacked,
                          const egl::Surface *readPackedObject,
-                         gl::ContextID ctxPacked);
+                         gl::ContextID ctxPacked,
+                         const gl::Context *ctxPackedObject);
 bool ValidateQueryContext(const ValidationContext *val,
                           const egl::Display *dpyPacked,
-                          gl::ContextID ctxPacked,
+                          const gl::Context *ctxPackedObject,
                           EGLint attribute,
                           const EGLint *value);
 bool ValidateQueryString(const ValidationContext *val, const egl::Display *dpyPacked, EGLint name);
@@ -138,7 +140,7 @@ bool ValidateClientWaitSync(const ValidationContext *val,
                             EGLTime timeout);
 bool ValidateCreateImage(const ValidationContext *val,
                          const egl::Display *dpyPacked,
-                         gl::ContextID ctxPacked,
+                         const gl::Context *ctxPackedObject,
                          EGLenum target,
                          EGLClientBuffer buffer,
                          const AttributeMap &attrib_listPacked);
@@ -267,10 +269,10 @@ bool ValidateSetValidationEnabledANGLE(const ValidationContext *val, EGLBoolean 
 // EGL_ANGLE_power_preference
 bool ValidateReleaseHighPowerGPUANGLE(const ValidationContext *val,
                                       const egl::Display *dpyPacked,
-                                      gl::ContextID ctxPacked);
+                                      const gl::Context *ctxPackedObject);
 bool ValidateReacquireHighPowerGPUANGLE(const ValidationContext *val,
                                         const egl::Display *dpyPacked,
-                                        gl::ContextID ctxPacked);
+                                        const gl::Context *ctxPackedObject);
 bool ValidateHandleGPUSwitchANGLE(const ValidationContext *val, const egl::Display *dpyPacked);
 bool ValidateForceGPUSwitchANGLE(const ValidationContext *val,
                                  const egl::Display *dpyPacked,
@@ -433,7 +435,7 @@ bool ValidateGetSyncAttribKHR(const ValidationContext *val,
 // EGL_KHR_image
 bool ValidateCreateImageKHR(const ValidationContext *val,
                             const egl::Display *dpyPacked,
-                            gl::ContextID ctxPacked,
+                            const gl::Context *ctxPackedObject,
                             EGLenum target,
                             EGLClientBuffer buffer,
                             const AttributeMap &attrib_listPacked);

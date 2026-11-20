@@ -8,8 +8,10 @@
 //
 
 #include <array>
+#include <string_view>
+#include <vector>
 
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -169,14 +171,12 @@ TEST_P(AtomicCounterBufferTest31, TessellationControlShaderMaxAtomicCounterTests
     // Create and Bind Atomic Counter Buffer Object
     GLuint atomicBufferID;
     glGenBuffers(1, &atomicBufferID);
-    GLuint *atomicBufferData = new GLuint[maxTessellationControlAtomicCounters];
-    ANGLE_UNSAFE_TODO(
-        memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationControlAtomicCounters));
+    std::vector<GLuint> atomicBufferData(maxTessellationControlAtomicCounters, 0u);
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicBufferID);
     glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * maxTessellationControlAtomicCounters,
                  NULL, GL_DYNAMIC_COPY);
     glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0,
-                    sizeof(GLuint) * maxTessellationControlAtomicCounters, atomicBufferData);
+                    sizeof(GLuint) * maxTessellationControlAtomicCounters, atomicBufferData.data());
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicBufferID);
 
     // Bind nLoopIterationsUniformLocation uniform
@@ -195,7 +195,7 @@ TEST_P(AtomicCounterBufferTest31, TessellationControlShaderMaxAtomicCounterTests
     ASSERT_GL_NO_ERROR();
 
     // Check the value of atomic counter buffer
-    GLuint *atomicBufferResult = (GLuint *)glMapBufferRange(
+    auto atomicBufferResult = MapBufferRange<const GLuint>(
         GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * maxTessellationControlAtomicCounters,
         GL_MAP_READ_BIT);
 
@@ -210,7 +210,7 @@ TEST_P(AtomicCounterBufferTest31, TessellationControlShaderMaxAtomicCounterTests
                 expected_value++;
             }
         }
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(atomicBufferResult[n_ac - 1], expected_value));
+        EXPECT_EQ(atomicBufferResult[n_ac - 1], expected_value);
     }
 
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
@@ -316,14 +316,13 @@ TEST_P(AtomicCounterBufferTest31, TessellationEvaluationShaderMaxAtomicCounterTe
     // Create and Bind Atomic Counter Buffer Object
     GLuint atomicBufferID;
     glGenBuffers(1, &atomicBufferID);
-    GLuint *atomicBufferData = new GLuint[maxTessellationEvaluationAtomicCounters];
-    ANGLE_UNSAFE_TODO(
-        memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters));
+    std::vector<GLuint> atomicBufferData(maxTessellationEvaluationAtomicCounters, 0u);
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicBufferID);
     glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters,
                  NULL, GL_DYNAMIC_COPY);
     glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0,
-                    sizeof(GLuint) * maxTessellationEvaluationAtomicCounters, atomicBufferData);
+                    sizeof(GLuint) * maxTessellationEvaluationAtomicCounters,
+                    atomicBufferData.data());
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicBufferID);
 
     // Bind nLoopIterationsUniformLocation uniform
@@ -342,13 +341,13 @@ TEST_P(AtomicCounterBufferTest31, TessellationEvaluationShaderMaxAtomicCounterTe
     ASSERT_GL_NO_ERROR();
 
     // Check the value of atomic counter buffer
-    GLuint *atomicBufferResult = (GLuint *)glMapBufferRange(
+    auto atomicBufferResult = MapBufferRange<const GLuint>(
         GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters,
         GL_MAP_READ_BIT);
     unsigned int expected_value = tessellationControlPointsCount;
     for (GLint n_ac = 0; n_ac < maxTessellationEvaluationAtomicCounters; ++n_ac)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(atomicBufferResult[n_ac], expected_value));
+        EXPECT_EQ(atomicBufferResult[n_ac], expected_value);
     }
 
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
@@ -691,9 +690,9 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterIncrementAndDecrement)
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
-    void *mappedBuffer =
-        glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 3, GL_MAP_READ_BIT);
-    ANGLE_UNSAFE_TODO(memcpy(bufferData, mappedBuffer, sizeof(bufferData)));
+    auto mappedBuffer = MapBufferRange<const GLuint>(GL_ATOMIC_COUNTER_BUFFER, 0,
+                                                     sizeof(GLuint) * 3, GL_MAP_READ_BIT);
+    Span(bufferData).copy_from(mappedBuffer);
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     EXPECT_EQ(11u, bufferData[0]);
@@ -875,9 +874,9 @@ void main()
 
     std::array<unsigned int, kAtomicCounterCount> result = {};
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
-    void *mappedBuffer =
-        glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(bufferData), GL_MAP_READ_BIT);
-    ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedBuffer, sizeof(bufferData)));
+    auto mappedBuffer = MapBufferRange<const GLuint>(GL_ATOMIC_COUNTER_BUFFER, 0,
+                                                     sizeof(bufferData), GL_MAP_READ_BIT);
+    Span(result).copy_from(mappedBuffer);
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     for (uint32_t index = 0; index < kAtomicCounterCount; ++index)
@@ -994,9 +993,9 @@ void main()
 
     // Array containing the names of all active atomic counters in the shader */
     GLenum activeVariablesProperty = GL_ACTIVE_VARIABLES;
-    constexpr std::array<const char *, 4> activeACNames = {"ac", "acArray[0]", "acArrayArray[0][0]",
-                                                           "acArrayArray[1][0]"};
-    constexpr int numACs                                = static_cast<int>(activeACNames.size());
+    constexpr std::array<std::string_view, 4> activeACNames = {
+        "ac", "acArray[0]", "acArrayArray[0][0]", "acArrayArray[1][0]"};
+    constexpr int numACs = static_cast<int>(activeACNames.size());
     std::array<GLuint, numACs> uniformsIndices;
 
     // Getting the uniform indices for the later queries.
@@ -1017,23 +1016,25 @@ void main()
     {
         GLint size;
         GLenum type;
+        GLsizei nameLength = 0;
 
-        glGetActiveUniform(program, uniformsIndices[index], maxLength, nullptr, &size, &type,
+        glGetActiveUniform(program, uniformsIndices[index], maxLength, &nameLength, &size, &type,
                            queryNames.data());
+        const Span<const char> queryName = Span(queryNames).first(nameLength);
 
-        if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[0])))
+        if (queryName == Span(activeACNames[0]))
         {
             EXPECT_EQ(queryOffsets[index], 0);
         }
-        else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[1])))
+        else if (queryName == Span(activeACNames[1]))
         {
             EXPECT_EQ(queryOffsets[index], 4);
         }
-        else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[2])))
+        else if (queryName == Span(activeACNames[2]))
         {
             EXPECT_EQ(queryOffsets[index], 12);
         }
-        else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[3])))
+        else if (queryName == Span(activeACNames[3]))
         {
             EXPECT_EQ(queryOffsets[index], 24);
         }
@@ -1063,9 +1064,10 @@ void main()
 
     // Read back buffer data
     std::array<GLuint, kAtomicCounterCount> results = {};
-    void *ptr = glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(results), GL_MAP_READ_BIT);
-    ASSERT_NE(ptr, nullptr);
-    ANGLE_UNSAFE_TODO(memcpy(results.data(), ptr, sizeof(results)));
+    auto mapped =
+        MapBufferRange<const GLuint>(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(results), GL_MAP_READ_BIT);
+    ASSERT_FALSE(mapped.empty());
+    Span(results).copy_from(mapped);
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     // Validate values:

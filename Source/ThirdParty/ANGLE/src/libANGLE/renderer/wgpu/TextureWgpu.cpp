@@ -764,10 +764,12 @@ angle::Result TextureWgpu::setSubImageImpl(const gl::Context *context,
     uint32_t outputDepthPitch         = outputRowPitch * glExtents.height;
     uint32_t allocationSize           = outputDepthPitch * glExtents.depth;
 
-    // TODO(anglebug.com/389145696): ignores area.x|y|z
-    ANGLE_TRY(mImage->stageTextureUpload(contextWgpu, webgpuFormat, type, glExtents, inputRowPitch,
-                                         inputDepthPitch, outputRowPitch, outputDepthPitch,
-                                         allocationSize, index, pixels));
+    // Stage the texture upload on ImageHelper, passing the sub-region offset (area.x, area.y,
+    // area.z) so that partial uploads (e.g. glTexSubImage2D) place data at the requested
+    // coordinates rather than overwriting the whole subresource from (0, 0).
+    ANGLE_TRY(mImage->stageTextureUpload(
+        contextWgpu, webgpuFormat, type, glExtents, inputRowPitch, inputDepthPitch, outputRowPitch,
+        outputDepthPitch, allocationSize, index, pixels, gl::Offset(area.x, area.y, area.z)));
     return angle::Result::Continue;
 }
 

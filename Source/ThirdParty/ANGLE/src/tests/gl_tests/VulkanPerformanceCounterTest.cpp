@@ -1444,7 +1444,6 @@ TEST_P(VulkanPerformanceCounterTest, MutableTexture3DCompatibleMipLevelsNonCubeI
 
     std::vector<GLColor> mip0Color(4 * 2 * 2, GLColor::red);
     std::vector<GLColor> mip1Color(2 * 1 * 1, GLColor::red);
-    std::vector<GLColor> mip2Color(1 * 1 * 1, GLColor::red);
 
     GLTexture texture1;
     glBindTexture(GL_TEXTURE_3D, texture1);
@@ -2746,6 +2745,80 @@ TEST_P(VulkanPerformanceCounterTest, ColorMaskedDraw)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     EXPECT_COLOR_OP_COUNTERS(getPerfCounters(), expected);
+}
+
+TEST_P(VulkanPerformanceCounterTest, ColorMaskedDrawThenSubpassResolve)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    constexpr GLsizei kSize = 16;
+
+    // Multisampled framebuffer.
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kSize, kSize);
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Single-sampled framebuffer, the resolve target.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glViewport(0, 0, kSize, kSize);
+
+    // Store red content to the multisampled color attachment.
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Store blue content to the resolved color attachment.
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Flush the commands so far
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+
+    // In the following renderpass, the masked draw doesn't access the attachment, but the
+    // attachment is resolved in the same render pass, so the renderpass LoadOp must still be Load.
+    // The multisampled color attachment: LoadOp:Load, StoreOp:None
+    // The resolved color attachment: LoadOp:DontCare, StoreOp:Store
+    // Expect rpCount+1, color(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+1)
+    angle::VulkanPerfCounters expected;
+    setExpectedCountersForColorOps(getPerfCounters(), 1, 0, 1, 0, 1, 1, &expected);
+    expected.colorAttachmentResolves = getPerfCounters().colorAttachmentResolves + 1;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+    // Resolve into the single-sampled framebuffer while the render pass is still open.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, msaaFBO);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Reading the resolve target ends the render pass.  The result must be the stored content
+    // of the multisampled attachment.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+    EXPECT_EQ(expected.colorAttachmentResolves, getPerfCounters().colorAttachmentResolves);
+    EXPECT_COLOR_OP_COUNTERS(getPerfCounters(), expected);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Tests that discarded draws results in no load and store.

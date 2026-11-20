@@ -1094,6 +1094,16 @@
                 "Disable ANGLE_shader_pixel_local_storage; kill-switch for known broken GPUs."
             ],
             "issue": "http://anglebug.com/40096838"
+        },
+        {
+            "name": "read_pixels_via_single_attachment_framebuffer",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers return incorrect data when reading pixels back from a framebuffer ",
+                "that has multiple color attachments. Read through a temporary framebuffer with ",
+                "only the read attachment bound."
+            ],
+            "issue": "https://crbug.com/549347571"
         }
     ]
 }

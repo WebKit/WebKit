@@ -7,6 +7,8 @@
 
 #include "libANGLE/ContextMutex.h"
 
+#include <functional>
+
 #include "common/system_utils.h"
 #include "libANGLE/Context.h"
 
@@ -46,6 +48,102 @@ void ScopedContextMutexAddRefLock::lock(ContextMutex *mutex)
     mMutex = mutex->getRoot();
     ASSERT(mMutex->isReferenced());
     mMutex->addRef();
+}
+
+// ScopedContextMutexesLock
+ScopedContextMutexesLock::ScopedContextMutexesLock(ContextMutex *first, ContextMutex *second)
+{
+    if (first == nullptr || first == second)
+    {
+        first  = second;
+        second = nullptr;
+    }
+
+    if (second != nullptr)
+    {
+        lockAndAddRef(first, second);
+    }
+    else if (first != nullptr)
+    {
+        lockAndAddRef(first);
+    }
+}
+
+ScopedContextMutexesLock::ScopedContextMutexesLock(const gl::Context *first,
+                                                   const gl::Context *second)
+    : ScopedContextMutexesLock(first != nullptr ? &first->getContextMutex() : nullptr,
+                               second != nullptr ? &second->getContextMutex() : nullptr)
+{}
+
+ScopedContextMutexesLock::~ScopedContextMutexesLock()
+{
+    for (ContextMutex *root : mRoots)
+    {
+        if (root != nullptr)
+        {
+            root->releaseAndUnlock();
+        }
+    }
+}
+
+void ScopedContextMutexesLock::lockAndAddRef(ContextMutex *mutex)
+{
+    // Same as ScopedContextMutexAddRefLock.
+    mutex->lock();
+    mRoots[0] = mutex->getRoot();
+    ASSERT(mRoots[0]->isReferenced());
+    mRoots[0]->addRef();
+}
+
+void ScopedContextMutexesLock::lockAndAddRef(ContextMutex *first, ContextMutex *second)
+{
+    for (;;)
+    {
+        // Neither "root" is stable until it is locked, see ContextMutex::getRoot().
+        ContextMutex *firstRoot  = first->getRoot();
+        ContextMutex *secondRoot = second->getRoot();
+
+        if (firstRoot == secondRoot)
+        {
+            // Merging moves all the "leaves" of a "root" to another "root" together, so mutexes
+            // that share a "root" keep sharing one, which lock() locks.
+            lockAndAddRef(first);
+            ASSERT(second->getRoot() == mRoots[0]);
+            return;
+        }
+
+        // This is the only place that blocks on a ContextMutex while holding another one.
+        // ContextMutex::lockImpl() locks one "root" at a time, and Merge() only tries to lock the
+        // second one, so locking the two "root"s in a fixed order is enough to avoid deadlocks.
+        ContextMutex *lowRoot  = firstRoot;
+        ContextMutex *highRoot = secondRoot;
+        if (std::less<ContextMutex *>()(highRoot, lowRoot))
+        {
+            std::swap(lowRoot, highRoot);
+        }
+
+        // A "root" stops being one when it is merged into another "root", which needs it locked.
+        // So if both are still "root"s once locked, they are still those of |first| and |second|.
+        // Otherwise, start over with the new "root"s.  Note that the old ones are still valid
+        // pointers, since the "leaves" keep their old "root"s alive (see mOldRoots).
+        if (lowRoot->lockIfRootImpl())
+        {
+            if (highRoot->lockIfRootImpl())
+            {
+                ASSERT(first->getRoot() == firstRoot && second->getRoot() == secondRoot);
+                ASSERT(lowRoot->isReferenced() && highRoot->isReferenced());
+                lowRoot->addRef();
+                highRoot->addRef();
+                mRoots = {lowRoot, highRoot};
+                return;
+            }
+            else
+            {
+                // Roll back if highRoot lock failed.
+                lowRoot->unlock();
+            }
+        }
+    }
 }
 
 // ContextMutex
@@ -309,6 +407,32 @@ void ContextMutex::unlockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
         mMutex.unlock();
     }
 }
+
+bool ContextMutex::lockIfRootImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
+{
+    const angle::ThreadId threadId = angle::GetCurrentThreadId();
+    if (ANGLE_UNLIKELY(!mMutex.try_lock()))
+    {
+        if (ANGLE_UNLIKELY(mOwnerThreadId.load(std::memory_order_relaxed) == threadId))
+        {
+            ASSERT(this == getRoot());
+            ASSERT(mLockLevel > 0);
+            ++mLockLevel;
+            return true;
+        }
+        mMutex.lock();
+    }
+    ASSERT(mOwnerThreadId.load(std::memory_order_relaxed) == angle::InvalidThreadId());
+    ASSERT(mLockLevel == 0);
+    if (ANGLE_UNLIKELY(this != getRoot()))
+    {
+        mMutex.unlock();
+        return false;
+    }
+    mOwnerThreadId.store(threadId, std::memory_order_relaxed);
+    mLockLevel = 1;
+    return true;
+}
 #else
 bool ContextMutex::tryLockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
@@ -352,6 +476,20 @@ void ContextMutex::unlockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
     ASSERT(
         TryUpdateThreadId(&mOwnerThreadId, angle::GetCurrentThreadId(), angle::InvalidThreadId()));
     mMutex.unlock();
+}
+
+bool ContextMutex::lockIfRootImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
+{
+    angle::ThreadId currentThreadId;
+    ASSERT(!CheckThreadIdCurrent(mOwnerThreadId, &currentThreadId));
+    mMutex.lock();
+    if (ANGLE_UNLIKELY(this != getRoot()))
+    {
+        mMutex.unlock();
+        return false;
+    }
+    ASSERT(TryUpdateThreadId(&mOwnerThreadId, angle::InvalidThreadId(), currentThreadId));
+    return true;
 }
 #endif
 

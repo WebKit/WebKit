@@ -330,7 +330,6 @@
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.shared_colorbuffer.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.resize.*_stencil_index8 = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.recreate_*_stencil_index8 = FAIL
-356399840 WGPU : dEQP-GLES2.functional.fbo.render.texsubimage.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.stencil_clear.tex2d_rgb_stencil_index8 = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.stencil_clear.rbo_rgb565_stencil_index8 = FAIL
 370690274 WGPU : dEQP-GLES2.functional.fragment_ops.depth_stencil.* = FAIL
@@ -347,7 +346,6 @@
 356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.depth_range* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.fragcoord_xyz = FAIL
 356399840 AST WGPU : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
-356399840 WGPU : dEQP-GLES2.functional.shaders.conditionals.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.constant_expressions.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.constants.bool_* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.conversions.* = FAIL
@@ -357,7 +355,6 @@
 356399840 WGPU : dEQP-GLES2.functional.shaders.functions.array_arguments.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.functions.control_flow.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.functions.datatypes.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.shaders.functions.declarations.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.functions.misc.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.functions.overloading.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.functions.qualifiers.* = FAIL
@@ -374,7 +371,7 @@
 356399840 WGPU : dEQP-GLES2.functional.shaders.random.conditionals.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.random.texture.vertex.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.random.all_features.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.shaders.scoping.valid.* = FAIL
+356399840 AST WGPU : dEQP-GLES2.functional.shaders.scoping.valid.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.struct.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.swizzles.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.texture_functions.vertex.* = FAIL
@@ -396,7 +393,10 @@
 389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.2d.generate.la88* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.format.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.size.* = SKIP
-389145696 WGPU : dEQP-GLES2.functional.texture.specification.* = SKIP
+389145696 WGPU : dEQP-GLES2.functional.texture.specification.basic_copytex* = FAIL
+389145696 WGPU : dEQP-GLES2.functional.texture.specification.random_teximage2d.* = FAIL
+389145696 WGPU : dEQP-GLES2.functional.texture.specification.*.*a8* = FAIL
+389145696 WGPU : dEQP-GLES2.functional.texture.specification.*.*l8* = FAIL
 389145696 WGPU : dEQP-GLES2.functional.texture.completeness.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.vertex.* = SKIP
 356399840 WGPU : dEQP-GLES2.functional.uniform_api.* = FAIL
@@ -413,40 +413,11 @@
 349994211 IR PIXEL10 GLES : dEQP-GLES2.functional.shaders.random.* = SKIP
 
 // IR WGSL translator failures (not yet implemented)
-// Default uniforms not yet implemented
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.default = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.third_to_0_8 = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.zero_to_half = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.half_to_one = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.zero_to_zero = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.half_to_half = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.one_to_one = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.0_8_to_0_8 = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.third_to_third = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.compare.clamp_* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.default = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.third_to_0_8 = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.zero_to_half = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.half_to_one = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.zero_to_zero = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.half_to_half = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.one_to_one = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.0_8_to_0_8 = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.third_to_third = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.depth_range.write.clamp_* = FAIL
+// Depth/stencil clear and depth test operations not yet implemented
 42267100 IR WGPU : dEQP-GLES2.functional.depth_stencil_clear.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.depth.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.stencil.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.depth_stencil.stencil_depth_funcs.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.depth_stencil.stencil_ops.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.depth_stencil.write_mask.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.depth_stencil.random.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.fragment_ops.blend.rgb_func_alpha_func.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.shaders.constants.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.shaders.preprocessor.* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.shaders.return.return_in_dynamic_loop_* = FAIL
-42267100 IR WGPU : dEQP-GLES2.functional.vertex_arrays.single_attribute.* = FAIL
+// gl_DepthRange driver uniforms not yet implemented
+42267100 IR WGPU : dEQP-GLES2.functional.depth_range.* = FAIL
 // Uniform bools and mixed-type math not yet implemented
 42267100 IR WGPU : dEQP-GLES2.functional.shaders.random.basic_expression.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.shaders.random.exponential.* = FAIL
@@ -464,6 +435,7 @@
 42267100 IR WGPU : dEQP-GLES2.functional.fbo.render.shared_colorbuffer_clear.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.fbo.render.shared_depthbuffer.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.fbo.render.stencil_clear.* = FAIL
+42267100 IR WGPU : dEQP-GLES2.functional.fbo.render.texsubimage.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.texture.filtering.2d.linear_* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.texture.filtering.2d.nearest_* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.texture.mipmap.2d.affine.* = FAIL
@@ -471,6 +443,10 @@
 42267100 IR WGPU : dEQP-GLES2.functional.texture.mipmap.2d.bias.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.texture.mipmap.2d.generate.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.* = FAIL
+42267100 IR WGPU : dEQP-GLES2.functional.texture.specification.*.*rgb565* = FAIL
+42267100 IR WGPU : dEQP-GLES2.functional.texture.specification.*.*rgb888* = FAIL
+42267100 IR WGPU : dEQP-GLES2.functional.texture.specification.*.*rgba4444* = FAIL
+42267100 IR WGPU : dEQP-GLES2.functional.texture.specification.*.*rgba5551* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.texture.wrap.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.texture.units.* = FAIL
 42267100 IR WGPU : dEQP-GLES2.functional.shaders.texture_functions.fragment.* = FAIL

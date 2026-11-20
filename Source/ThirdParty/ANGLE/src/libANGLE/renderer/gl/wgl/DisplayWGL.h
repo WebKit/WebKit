@@ -65,6 +65,8 @@ class DisplayWGL : public DisplayGL, public ThreadSafeDisplayGL
     egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
+    egl::Error beforeDestroyContext(const gl::Context *context) override;
+    egl::Error afterDestroyContext() override;
 
     egl::Error registerD3DDevice(IUnknown *device, HANDLE *outHandle);
     void releaseD3DDevice(HANDLE handle);
@@ -101,8 +103,9 @@ class DisplayWGL : public DisplayGL, public ThreadSafeDisplayGL
 
     struct CurrentNativeContext
     {
-        HDC dc     = nullptr;
-        HGLRC glrc = nullptr;
+        HDC dc            = nullptr;
+        HGLRC glrc        = nullptr;
+        bool needsRestore = false;
     };
     angle::SimpleMutex mCurrentNativeContextsMutex;
     angle::HashMap<uint64_t, CurrentNativeContext> mCurrentNativeContexts;

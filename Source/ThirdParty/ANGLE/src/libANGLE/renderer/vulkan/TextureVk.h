@@ -602,7 +602,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                                     : VK_IMAGE_TILING_OPTIMAL;
     }
 
-    angle::Result refreshImageViews(ContextVk *contextVk);
+    angle::Result refreshReadImageViews(ContextVk *contextVk);
     void initImageUsageFlags(ContextVk *contextVk,
                              const angle::Format &intendedFormat,
                              angle::FormatID actualFormatID);

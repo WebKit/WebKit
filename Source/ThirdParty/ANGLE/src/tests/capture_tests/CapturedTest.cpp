@@ -936,7 +936,8 @@ TEST_P(CapturedTest, NonFrameBoundarySwaps)
     ASSERT_GL_NO_ERROR();
 }
 
-// This test's trace output is intentionally excluded from the output comparison
+// Test that MEC releases the window surface after making share-group side contexts current to
+// capture their state, so the app can still make the surface current afterwards
 TEST_P(CapturedTest, MECSurfaceRelease)
 {
     EGLWindow *window      = getEGLWindow();

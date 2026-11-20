@@ -8,11 +8,6 @@
 
 42264508 LINUX VULKAN NVIDIA : KHR-GLES3.shaders.indexing.tmp_array.vertexid = FAIL
 
-341780527 LINUX VULKAN NVIDIA : KHR-GLES3.clip_distance.coverage = FAIL
-341780527 LINUX VULKAN AMD : KHR-GLES3.clip_distance.coverage = FAIL
-341780527 WIN VULKAN NVIDIA : KHR-GLES3.clip_distance.coverage = FAIL
-341780527 WIN VULKAN AMD : KHR-GLES3.clip_distance.coverage = FAIL
-
 // Fails only with SwiftShader:
 
 // These only fail on Android
@@ -63,10 +58,6 @@
 40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
 40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
 
-// Failures related to clip/cull distance in geometry/tessellation shaders
-42264006 VULKAN : KHR-GLES3.cull_distance.functional_test_item_5_* = SKIP
-42264006 VULKAN : KHR-GLES3.cull_distance.functional_test_item_6_* = SKIP
-
 // New failures with latest dEQP roll (2020-04-28)
 42263198 SWIFTSHADER : KHR-GLES3.core.nearest_edge.offset_left = FAIL
 
@@ -88,13 +79,9 @@
 341780527 GALAXYS23 VULKAN : KHR-GLES3.clip_distance.coverage = FAIL
 
 // Samsung Galaxy S24 (Xclipse)
-410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.clip_distance.coverage = SKIP
 410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_1 = SKIP
 410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_2 = SKIP
 410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_3 = SKIP
-410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_5 = SKIP
-410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_6 = SKIP
-410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_7 = SKIP
 
 // Snapdragon 8 Gen3 Mobile Reference Device
 328156792 PINEAPPLE VULKAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP

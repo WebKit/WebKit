@@ -23,19 +23,9 @@ namespace sh
 namespace
 {
 
-const TVariable *ViewSymbolVariable(TIntermTyped &node)
+bool IsReadOnlyVariable(TIntermSymbol *variable)
 {
-    TIntermSymbol *symbol = node.getAsSymbolNode();
-    if (symbol == nullptr)
-    {
-        return nullptr;
-    }
-    return &symbol->variable();
-}
-
-bool IsReadOnlyExpr(TIntermTyped &node)
-{
-    switch (node.getQualifier())
+    switch (variable->getQualifier())
     {
         case EvqConst:
         case EvqAttribute:
@@ -57,43 +47,56 @@ bool IsReadOnlyExpr(TIntermTyped &node)
 
 const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
 {
-    // Currently matches only to loop of form:
-    // for (**; cond ; expr)
-    // where
-    //   cond is `variable` `relation` `readonly symbol` and `variable`is of type int or uint
-    //   expr increments or decrements the variable by one.
-    // Assumes ints wrap around in a defined way.
+    // Currently, only match loops in the following form:
+    //
+    //     for (...; variable op constant; expression)
+    //
+    // Where:
+    //
+    // * `variable` can only be a scalar integer
+    // * `op` can only be one of > >= < <= == or !=
+    // * `constant` can be a constant, or a read-only value such as shader inputs and
+    // uniforms.
+    // * `expression` can only be one of:
+    //   * variable++
+    //   * variable--
+    //   * variable += constant
+    //   * variable -= constant
     TIntermTyped *cond = loop->getCondition();
-    if (cond == nullptr)
-    {
-        return nullptr;
-    }
     TIntermTyped *expr = loop->getExpression();
-    if (expr == nullptr)
+    if (cond == nullptr || expr == nullptr)
     {
         return nullptr;
     }
-    TIntermBinary *binCond = cond->getAsBinaryNode();
-    if (binCond == nullptr)
+
+    TIntermBinary *condBinary = cond->getAsBinaryNode();
+    if (condBinary == nullptr)
     {
         return nullptr;
     }
-    const TVariable *variable = ViewSymbolVariable(*binCond->getLeft());
-    if (variable == nullptr)
+
+    TIntermSymbol *loopVariable              = condBinary->getLeft()->getAsSymbolNode();
+    TIntermSymbol *comparatorSymbol          = condBinary->getRight()->getAsSymbolNode();
+    TIntermConstantUnion *comparatorConstant = condBinary->getRight()->getAsConstantUnion();
+    if (loopVariable == nullptr || (comparatorSymbol == nullptr && comparatorConstant == nullptr))
     {
         return nullptr;
     }
-    if (!IsInteger(variable->getType().getBasicType()) || !variable->getType().isScalar() ||
-        variable->getType().getQualifier() != EvqTemporary)
+
+    // Limit to local scalar integer types
+    if (!IsInteger(loopVariable->getType().getBasicType()) || !loopVariable->getType().isScalar() ||
+        loopVariable->getType().getQualifier() != EvqTemporary)
     {
         return nullptr;
     }
-    // Loop index must be compared with a constant or uniform or similar read-only variable.
-    if (!IsReadOnlyExpr(*binCond->getRight()))
+
+    // If the loop comparator is a symbol, it must be read-only.
+    if (comparatorSymbol != nullptr && !IsReadOnlyVariable(comparatorSymbol))
     {
         return nullptr;
     }
-    switch (binCond->getOp())
+
+    switch (condBinary->getOp())
     {
         case EOpEqual:
         case EOpNotEqual:
@@ -107,7 +110,7 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
             // as infinite loop unnecessarily.  For simplicity, if a variable is used or any
             // unrealistically large constant, consider it a potential infinite loop.
             constexpr int32_t kLoopLimit     = 1'000'000;
-            const TConstantUnion *comparator = binCond->getRight()->getConstantValue();
+            const TConstantUnion *comparator = condBinary->getRight()->getConstantValue();
             if (comparator == nullptr)
             {
                 return nullptr;
@@ -145,26 +148,35 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
         default:
             return nullptr;
     }
-    if (TIntermUnary *unary = expr->getAsUnaryNode())
+
+    TIntermUnary *unary   = expr->getAsUnaryNode();
+    TIntermBinary *binary = expr->getAsBinaryNode();
+    if (unary == nullptr && binary == nullptr)
+    {
+        return nullptr;
+    }
+
+    if (unary != nullptr)
     {
         switch (unary->getOp())
         {
             case EOpPostIncrement:
+            case EOpPostDecrement:
             case EOpPreIncrement:
             case EOpPreDecrement:
-            case EOpPostDecrement:
                 break;
             default:
                 return nullptr;
         }
-        if (variable != ViewSymbolVariable(*unary->getOperand()))
+        TIntermSymbol *exprVariable = unary->getOperand()->getAsSymbolNode();
+        if (exprVariable == nullptr || loopVariable->uniqueId() != exprVariable->uniqueId())
         {
             return nullptr;
         }
     }
-    else if (TIntermBinary *binExpr = expr->getAsBinaryNode())
+    else
     {
-        switch (binExpr->getOp())
+        switch (binary->getOp())
         {
             case EOpAddAssign:
             case EOpSubAssign:
@@ -172,12 +184,10 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
             default:
                 return nullptr;
         }
-        if (variable != ViewSymbolVariable(*binExpr->getLeft()))
-        {
-            return nullptr;
-        }
-        const TConstantUnion *value = binExpr->getRight()->getConstantValue();
-        if (value == nullptr)
+        TIntermSymbol *exprVariable = binary->getLeft()->getAsSymbolNode();
+        const TConstantUnion *value = binary->getRight()->getConstantValue();
+        if (exprVariable == nullptr || value == nullptr ||
+            loopVariable->uniqueId() != exprVariable->uniqueId())
         {
             return nullptr;
         }
@@ -200,11 +210,7 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
                 return nullptr;
         }
     }
-    else
-    {
-        return nullptr;
-    }
-    return variable;
+    return &loopVariable->variable();
 }
 
 class LoopInfoStack

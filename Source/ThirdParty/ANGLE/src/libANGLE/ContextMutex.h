@@ -8,6 +8,7 @@
 #ifndef LIBANGLE_CONTEXT_MUTEX_H_
 #define LIBANGLE_CONTEXT_MUTEX_H_
 
+#include <array>
 #include <atomic>
 
 #include "common/debug.h"
@@ -60,6 +61,11 @@ class ContextMutex final : angle::NonCopyable
     void lock();
     void unlock();
     void assertLocked() const;
+
+    // Locks this mutex only if it is still a "root", and returns whether it did.
+    // Intended for locking two "root" mutexes in a fixed address order (e.g. in
+    // ScopedContextMutexesLock) when the "root"s may be concurrently merged before being locked.
+    bool lockIfRootImpl();
 
   private:
     enum class UnlockBehaviour
@@ -208,6 +214,34 @@ class [[nodiscard]] ScopedContextMutexLock final
 
   private:
     ContextMutex *mMutex = nullptr;
+};
+
+// Locks the ContextMutexes of two Contexts at once, i.e. of the previous and the new current
+// Context in eglMakeCurrent().
+//
+// Contexts in the same share group, or that use the same EGLImages, share a "root" mutex, which is
+// locked once.  Otherwise, the two "root" mutexes are locked in address order, so that two threads
+// that lock the same two cannot deadlock.  Note that ordering by Context address would not do, as
+// it does not order the "root" mutexes: with Contexts A and D sharing one "root", and B and C
+// sharing the other, locking (A, B) and (C, D) would lock the two "root"s in opposite orders.
+//
+// Like ScopedContextMutexAddRefLock, this references the locked "root" mutexes, so that a Context,
+// and its "leaf" mutex, may be destroyed while they are locked.
+class [[nodiscard]] ScopedContextMutexesLock final : angle::NonCopyable
+{
+  public:
+    ScopedContextMutexesLock() = default;
+    // Either mutex, or Context, may be nullptr.
+    ScopedContextMutexesLock(ContextMutex *first, ContextMutex *second);
+    ScopedContextMutexesLock(const gl::Context *first, const gl::Context *second);
+    ~ScopedContextMutexesLock();
+
+  private:
+    void lockAndAddRef(ContextMutex *mutex);
+    void lockAndAddRef(ContextMutex *first, ContextMutex *second);
+
+    // The locked "root" mutexes.
+    std::array<ContextMutex *, 2> mRoots = {};
 };
 
 }  // namespace egl

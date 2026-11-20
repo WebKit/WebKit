@@ -4486,8 +4486,11 @@ impl BuilderWrapper {
             .fields
             .iter()
             .map(|field| {
+                let built_in = Self::ast_type_built_in(&field.ast_type);
                 Field::new(
-                    if is_internal {
+                    if built_in.is_some() {
+                        Name::new_exact("")
+                    } else if is_internal {
                         Name::new_exact_struct_field(field.name)
                     } else if is_part_of_interface {
                         Name::new_interface(field.name)
@@ -4498,6 +4501,7 @@ impl BuilderWrapper {
                     field.ast_type.precision.into(),
                     field.ast_type.precise,
                     Self::ast_type_decorations(&field.ast_type),
+                    built_in,
                 )
             })
             .collect::<Vec<_>>();

@@ -96,11 +96,6 @@ def run_test(args, test_name, overwrite_expected):
         logging.warning('OpenCL capturing is not included in the comparison.')
         files = sorted(fn for fn in os.listdir(temp_dir))
 
-        # MECSurfaceRelease output is not is not included in the output comparison. Its trace
-        # output depends on prior tests context ids and any regression will instead result in
-        # a capture failure
-        files = [fn for fn in files if 'MECSurfaceRelease' not in fn]
-
         expected_dir = os.path.join(SCRIPT_DIR, 'expected')
         expected_files = sorted(fn for fn in os.listdir(expected_dir) if not fn.startswith('.'))
 

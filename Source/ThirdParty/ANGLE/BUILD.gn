@@ -1728,7 +1728,7 @@ if (angle_standalone || build_with_chromium ||
       "src",
     ]
     defines = [ "LIBFEATURE_SUPPORT_IMPLEMENTATION" ]
-    if (is_debug) {
+    if (is_debug && is_android) {
       defines += [ "ANGLE_FEATURE_UTIL_LOG_VERBOSE" ]
     }
   }

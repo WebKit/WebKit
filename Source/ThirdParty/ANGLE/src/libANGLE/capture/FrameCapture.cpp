@@ -779,7 +779,8 @@ void MaybeResetResources(egl::Display *display,
     // Track the initial output position so we can detect if it has moved
     std::streampos initialOutPos = out.tellp();
 
-    gl::Context *context               = display->getContext(contextID);
+    egl::ScopedContextRef contextRef   = display->getContextRef(contextID);
+    gl::Context *context               = contextRef.get();
     StateResetHelper &stateResetHelper = context->getFrameCapture()->getStateResetHelper();
     auto emitResetCall                 = [&](CallCapture &call) {
         out << "    ";
@@ -1316,6 +1317,17 @@ void EarlyResetUnpackAlignment(ReplayWriter &replayWriter,
             out << ";\n";
         }
     }
+}
+
+// Share group contexts are stored in a hash map where order is OS-dependent, so return them
+// ordered by ID to keep the trace output deterministic
+std::vector<gl::Context *> GetOrderedShareGroupContexts(const egl::ShareGroup *shareGroup)
+{
+    std::vector<gl::Context *> contexts;
+    shareGroup->getContexts().forEach([&](gl::Context *context) { contexts.push_back(context); });
+    std::sort(contexts.begin(), contexts.end(),
+              [](const gl::Context *a, const gl::Context *b) { return a->id() < b->id(); });
+    return contexts;
 }
 
 bool ProgramNeedsReset(const gl::Context *context,
@@ -2072,7 +2084,6 @@ void CaptureUpdateUniformBlockIndexes(const gl::Program *program,
     {
         ParamBuffer params;
 
-        std::string name;
         params.addValueParam("program", ParamType::TShaderProgramID, program->id());
 
         const std::string fullName = uniformBlocks[index].nameWithArrayIndex();
@@ -9164,7 +9175,8 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
     egl::Surface *draw    = mainContext->getCurrentDrawSurface();
     egl::Surface *read    = mainContext->getCurrentReadSurface();
 
-    shareGroup->getContexts().forEach([&](gl::Context *shareContext) {
+    for (gl::Context *shareContext : GetOrderedShareGroupContexts(shareGroup))
+    {
         FrameCapture *frameCapture = shareContext->getFrameCapture();
         ASSERT(frameCapture->getSetupCalls().empty());
 
@@ -9219,7 +9231,7 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
                 &mResourceIDBufferSize);
 
             // Release the previously-bound window surface so the side context does not keep a
-            // reference. Otherwise surface's isCurrentOnAnyContext() stays true and the app's other
+            // reference. Otherwise surface's isCurrentOnAnyThread() stays true and the app's other
             // thread gets EGL_BAD_ACCESS "Surface can only be current on one thread" when trying to
             // get the surface on capture start, leading to lost context/bad glBindFramebuffer calls
             egl::Error unmakeError = shareContext->unMakeCurrent();
@@ -9231,7 +9243,7 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
         }
         // Track that this context was created before MEC started
         mActiveContexts.insert(shareContext->id().value);
-    });
+    }
 
     egl::Error error = mainContext->makeCurrent(display, draw, read);
     if (error.isError())
@@ -9936,9 +9948,10 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
             }
 
             // Setup each of the auxiliary contexts.
-            egl::ShareGroup *shareGroup                  = context->getShareGroup();
-            const egl::SharedContextMap &shareContextMap = shareGroup->getContexts();
-            shareContextMap.forEach([&](gl::Context *shareContext) {
+            const std::vector<gl::Context *> shareContexts =
+                GetOrderedShareGroupContexts(context->getShareGroup());
+            for (gl::Context *shareContext : shareContexts)
+            {
                 if (shareContext->id() == context->id())
                 {
                     if (usesMidExecutionCapture())
@@ -9950,7 +9963,7 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
                         outMainContextSetupCall << "\n";
                     }
 
-                    return;
+                    continue;
                 }
 
                 // The SetupReplayContextXX() calls only exist if this is a mid-execution capture
@@ -9972,12 +9985,12 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
                             << ";\n";
                     }
                 }
-            });
+            }
             out << outMainContextSetupCall.str();
 
             // If there are other contexts that were initialized, we need to make the main context
             // current again.
-            if (shareContextMap.size() > 1)
+            if (shareContexts.size() > 1)
             {
                 out << "\n";
                 out << "    eglMakeCurrent(NULL, NULL, NULL, gContextMap2[" << context->id()
@@ -10021,8 +10034,8 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
         stateResetHelper.setCurrentResetActiveTexture(context->getState().getActiveSampler());
         for (const gl::ContextID &contextID : contextIDs)
         {
-            gl::Context *shareContext = context->getDisplay()->getContext(contextID);
-            if (shareContext)
+            egl::ScopedContextRef shareContextRef = context->getDisplay()->getContextRef(contextID);
+            if (gl::Context *shareContext = shareContextRef.get())
             {
                 shareContext->getFrameCapture()->getStateResetHelper().setCurrentResetActiveTexture(
                     shareContext->getState().getActiveSampler());

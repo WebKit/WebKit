@@ -67,11 +67,11 @@ ANGLE_INLINE ScopedContextMutexLock TryLockCurrentContext(Thread *thread)
                               : ScopedContextMutexLock();
 }
 
-// Tries to lock "ContextMutex" of the Context with "contextID" if it is valid.
-ANGLE_INLINE ScopedContextMutexLock TryLockContext(const Display *display, gl::ContextID contextID)
+// Locks "ContextMutex" of "context" if it is not nullptr.  The entry point references the Context
+// (see ScopedContextRef), which keeps it alive until it is unlocked.
+ANGLE_INLINE ScopedContextMutexLock TryLockContext(const gl::Context *context)
 {
     ASSERT(kIsContextMutexEnabled);
-    const gl::Context *context = GetContextIfValid(display, contextID);
     return context != nullptr ? ScopedContextMutexLock(context->getContextMutex())
                               : ScopedContextMutexLock();
 }
@@ -98,14 +98,16 @@ ANGLE_INLINE ScopedContextMutexLock LockAndTryMergeContextMutexes(gl::Context *c
 
 #if !defined(ANGLE_ENABLE_CONTEXT_MUTEX)
 #    define ANGLE_EGL_SCOPED_CONTEXT_LOCK(EP, THREAD, ...)
-#    define ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(EP, THREAD, DPY, ...)
 #else
 #    define ANGLE_EGL_SCOPED_CONTEXT_LOCK(EP, THREAD, ...) \
         egl::ScopedContextMutexLock shareContextLock = GetContextLock_##EP(THREAD, ##__VA_ARGS__)
-#    define ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(EP, THREAD, DPY, ...) \
-        egl::ScopedContextMutexLock shareContextLock =              \
-            GetContextLock_##EP(THREAD, DPY, ##__VA_ARGS__)
 #endif
+
+// Unlike the above, taken even if ANGLE_ENABLE_CONTEXT_MUTEX is not defined, by the entry points
+// that rely on their context lock for their own thread safety, i.e. eglMakeCurrent().  The lock is
+// of the type that GetContextLock_##EP() returns.
+#define ANGLE_EGL_SCOPED_CONTEXT_LOCK_ALWAYS(EP, THREAD, ...) \
+    auto shareContextLock = GetContextLock_##EP(THREAD, ##__VA_ARGS__)
 
 }  // namespace egl
 
@@ -146,7 +148,7 @@ ANGLE_INLINE Context *GetContext(GLeglDisplayANGLE dpy, GLeglContextANGLE ctx)
     egl::Display *dpyPacked = egl::PackParam<egl::Display *>(static_cast<EGLDisplay>(dpy));
     ASSERT(dpyPacked);
     ContextID ctxPacked = egl::PackParam<ContextID>(static_cast<EGLContext>(ctx));
-    return dpyPacked->getContext(ctxPacked);
+    return dpyPacked->getContextRef(ctxPacked).get();
 }
 
 ANGLE_INLINE Context *GetValidContext(GLeglDisplayANGLE dpy, GLeglContextANGLE ctx)

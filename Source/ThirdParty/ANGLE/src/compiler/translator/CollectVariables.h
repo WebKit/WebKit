@@ -20,6 +20,7 @@ class TIntermBlock;
 class TSymbolTable;
 class TVariable;
 class NameMap;
+struct PerVertexMembersAccessed;
 
 struct SelectedFields
 {
@@ -39,6 +40,7 @@ void CollectVariables(
     std::vector<ShaderVariable> *sharedVariables,
     std::vector<InterfaceBlock> *uniformBlocks,
     std::vector<InterfaceBlock> *shaderStorageBlocks,
+    PerVertexMembersAccessed *perVertexMembersAccessedOut,
     ShHashFunction64 hashFunction,
     NameMap *nameMap,
     TSymbolTable *symbolTable,

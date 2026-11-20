@@ -396,9 +396,6 @@ TEST_P(MultithreadingTest, MultiContextDrawWithSwapBuffers)
 {
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
 
-    // http://anglebug.com/42263666
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
-
     EGLWindow *window = getEGLWindow();
     EGLDisplay dpy    = window->getDisplay();
 
@@ -435,10 +432,10 @@ TEST_P(MultithreadingTest, MultiContextDrawWithSwapBuffers)
                 glDrawArrays(GL_TRIANGLES, 0, 6);
             }
 
+            EXPECT_PIXEL_COLOR_EQ(0, 0, color);
+
             EXPECT_EGL_TRUE(eglSwapBuffers(dpy, surface));
             EXPECT_EGL_SUCCESS();
-
-            EXPECT_PIXEL_COLOR_EQ(0, 0, color);
         }
     };
     runMultithreadedGLTest(testBody, 32);

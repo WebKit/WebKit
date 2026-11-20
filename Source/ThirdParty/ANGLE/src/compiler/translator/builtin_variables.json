@@ -1291,6 +1291,23 @@
                         "precision":"High",
                         "qualifier":"Position",
                         "primarySize":4
+                    },
+                    "gl_PointSize":{
+                        "basic":"Float",
+                        "precision":"Medium",
+                        "qualifier":"PointSize"
+                    },
+                    "gl_ClipDistance":{
+                        "basic":"Float",
+                        "precision":"High",
+                        "qualifier":"ClipDistance",
+                        "arraySize":"resources.MaxClipDistances"
+                    },
+                    "gl_CullDistance":{
+                        "basic":"Float",
+                        "precision":"High",
+                        "qualifier":"CullDistance",
+                        "arraySize":"resources.MaxCullDistances"
                     }
                 }
             },
@@ -1375,6 +1392,23 @@
                         "precision":"High",
                         "qualifier":"Position",
                         "primarySize":4
+                    },
+                    "gl_PointSize":{
+                        "basic":"Float",
+                        "precision":"Medium",
+                        "qualifier":"PointSize"
+                    },
+                    "gl_ClipDistance":{
+                        "basic":"Float",
+                        "precision":"High",
+                        "qualifier":"ClipDistance",
+                        "arraySize":"resources.MaxClipDistances"
+                    },
+                    "gl_CullDistance":{
+                        "basic":"Float",
+                        "precision":"High",
+                        "qualifier":"CullDistance",
+                        "arraySize":"resources.MaxCullDistances"
                     }
                 }
             },
@@ -1383,14 +1417,14 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
-                "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
+                "initDynamicType":"TType *{type_name} = new TType(gl_PerVertexTCS, EvqPerVertexIn, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
             },
             "gl_out":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
                 "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
-                "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
+                "initDynamicType":"TType *{type_name} = new TType(gl_PerVertexTCS, EvqPerVertexOut, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
             },
             "gl_BoundingBox":{
                 "suffix":"TCS",
@@ -1497,6 +1531,23 @@
                         "precision":"High",
                         "qualifier":"Position",
                         "primarySize":4
+                    },
+                    "gl_PointSize":{
+                        "basic":"Float",
+                        "precision":"Medium",
+                        "qualifier":"PointSize"
+                    },
+                    "gl_ClipDistance":{
+                        "basic":"Float",
+                        "precision":"High",
+                        "qualifier":"ClipDistance",
+                        "arraySize":"resources.MaxClipDistances"
+                    },
+                    "gl_CullDistance":{
+                        "basic":"Float",
+                        "precision":"High",
+                        "qualifier":"CullDistance",
+                        "arraySize":"resources.MaxCullDistances"
                     }
                 }
             },
@@ -1505,7 +1556,7 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
-                "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
+                "initDynamicType":"TType *{type_name} = new TType(gl_PerVertexTES, EvqPerVertexIn, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
             }
         }
     },

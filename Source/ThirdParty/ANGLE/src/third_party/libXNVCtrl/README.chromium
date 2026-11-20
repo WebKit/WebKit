@@ -1,9 +1,9 @@
 Name: NVidia Control X Extension Library
 Short Name: libXNVCtrl
-URL: http://cgit.freedesktop.org/~aplattner/nvidia-settings/
-Revision: ffa5183362ed4ace5b1cfd031a272f72e7d68c1b
+URL: https://github.com/NVIDIA/nvidia-settings
+Revision: f8cb90d08f42c9c475bab5d7fa99108b0374bdae
 Version: N/A
-Date: 2012-05-19
+Date: 2012-06-16
 Update Mechanism: Manual
 License: MIT
 License File: LICENSE
@@ -15,4 +15,10 @@ This package provides access to NVidia Control X Extension. It is used to determ
 
 The current version is pulled from nvidia-settings-302.17.
 
+Update instructions:
+Update commit hashes in crowbar.txtpb, then run from this directory:
+crowbar build --no-dry-run ./
+
 Local Modifications:
+- patches/0001-const-extension-name.patch: declares
+  nvctrl_extension_name const.

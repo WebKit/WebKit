@@ -28651,6 +28651,46 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that a function returning a struct with an array member and missing a final return
+// statement compiles when AvoidComplexExpressionsInStructConstructor is enabled.
+// https://crbug.com/569158181
+TEST_P(GLSLTest_ES3, StructConstructorDefaultReturnWithArrayMember)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform int u_zero;
+struct S {
+    float a;
+    float b;
+};
+struct T {
+    S s[2];
+};
+
+T makeT()
+{
+    if (u_zero == 0)
+    {
+        T t;
+        t.s[0] = S(1.0, 0.0);
+        t.s[1] = S(0.0, 1.0);
+        return t;
+    }
+}
+
+out vec4 color;
+void main()
+{
+    T t = makeT();
+    color = vec4(t.s[0].a, t.s[0].b, t.s[1].a, t.s[1].b);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that having dynamic indexing of a vector inside the right hand side of logical or works
 // correctly.
 TEST_P(GLSLTest_ES3, DynamicIndexingOfVectorOnRightSideOfLogicalOr)

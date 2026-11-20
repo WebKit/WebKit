@@ -10,6 +10,9 @@
 #include <gtest/gtest.h>
 #include "common/unsafe_buffers.h"
 
+#include <array>
+#include <string_view>
+
 #include "common/string_utils.h"
 #include "test_utils/ANGLETest.h"
 
@@ -165,12 +168,12 @@ TEST_P(EGLPrintEGLinfoTest, PrintGLInfo)
 
 #define QUERY_ARRAY_HELPER(enumValue, enumString, size, stream)               \
     {                                                                         \
-        GLint result[size];                                                   \
-        glGetIntegerv(enumValue, result);                                     \
+        std::array<GLint, size> result;                                       \
+        glGetIntegerv(enumValue, result.data());                              \
         ASSERT_GL_NO_ERROR();                                                 \
         std::stringstream results;                                            \
-        for (int i = 0; i < size; i++)                                        \
-            results << result[i] << " ";                                      \
+        for (GLint value : result)                                            \
+            results << value << " ";                                          \
         stream << enumString + std::string(",") + results.str() << std::endl; \
     }
 
@@ -203,8 +206,7 @@ static void LogGles2Capabilities(std::ostream &stream)
     QUERY_AND_LOG_CAPABILITY(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MAX_VERTEX_UNIFORM_VECTORS, stream);
     constexpr int kMaxViewPortDimsReturnValuesSize = 2;
-    ANGLE_UNSAFE_TODO(QUERY_AND_LOG_CAPABILITY_ARRAY(GL_MAX_VIEWPORT_DIMS,
-                                                     kMaxViewPortDimsReturnValuesSize, stream));
+    QUERY_AND_LOG_CAPABILITY_ARRAY(GL_MAX_VIEWPORT_DIMS, kMaxViewPortDimsReturnValuesSize, stream);
     QUERY_AND_LOG_CAPABILITY(GL_NUM_COMPRESSED_TEXTURE_FORMATS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_NUM_SHADER_BINARY_FORMATS, stream);
 }
@@ -553,7 +555,7 @@ TEST_P(EGLPrintFeaturesVulkanExtensionsInfoTest, LogEnabledFeatures)
     {
         const char *name   = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_NAME_ANGLE, i);
         const char *status = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_STATUS_ANGLE, i);
-        if (ANGLE_UNSAFE_TODO(std::strcmp(status, kEnabled)) == 0)
+        if (std::string_view(status) == kEnabled)
         {
             std::cout << name << std::endl;
         }

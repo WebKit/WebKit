@@ -1,0 +1,12 @@
+load("//crowbar", "crowbar_workflow")
+
+crowbar_workflow(
+    origin_files = glob([
+        "src/libXNVCtrl/*.c",
+        "src/libXNVCtrl/*.h",
+    ]),
+    transformations = [
+        core.move("src/src/libXNVCtrl", "src"),
+        patch.apply(patches = ["patches/0001-const-extension-name.patch"]),
+    ],
+)

@@ -238,19 +238,19 @@ TType *make_struct_type(TCompiler *compiler,
         {
             if (fieldInfo.name == "gl_Position")
             {
-                fieldType->setQualifier(EvqPosition);
+                ASSERT(fieldType->getQualifier() == EvqPosition);
             }
             if (fieldInfo.name == "gl_PointSize")
             {
-                fieldType->setQualifier(EvqPointSize);
+                ASSERT(fieldType->getQualifier() == EvqPointSize);
             }
             if (fieldInfo.name == "gl_ClipDistance")
             {
-                fieldType->setQualifier(EvqClipDistance);
+                ASSERT(fieldType->getQualifier() == EvqClipDistance);
             }
             if (fieldInfo.name == "gl_CullDistance")
             {
-                fieldType->setQualifier(EvqCullDistance);
+                ASSERT(fieldType->getQualifier() == EvqCullDistance);
             }
         }
 

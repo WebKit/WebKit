@@ -17,6 +17,7 @@
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
 #include "compiler/translator/tree_ops/RecordConstantPrecision.h"
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
+#include "compiler/translator/tree_ops/glsl/WrapStructConstructors.h"
 #include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/ReplaceClipCullDistanceVariable.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
@@ -108,6 +109,14 @@ bool TranslatorESSL::translate(TIntermBlock *root,
         if (!sh::AddDefaultReturnStatements(this, root))
         {
             return false;
+        }
+
+        if (compileOptions.avoidComplexExpressionsInStructConstructor)
+        {
+            if (!WrapStructConstructors(this, root, &getSymbolTable()))
+            {
+                return false;
+            }
         }
 
         // anglebug.com/42265954: The ESSL spec has a bug with images as function arguments. The

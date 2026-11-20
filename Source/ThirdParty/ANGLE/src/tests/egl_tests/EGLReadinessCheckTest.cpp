@@ -8,7 +8,6 @@
 //      Tests used to check environment in which other tests are run.
 
 #include <gtest/gtest.h>
-#include "common/unsafe_buffers.h"
 
 #include "gpu_info_util/SystemInfo.h"
 #include "test_utils/ANGLETest.h"
@@ -22,9 +21,7 @@ class EGLReadinessCheckTest : public ANGLETest<>
 // Checks the tests are running against ANGLE
 TEST_P(EGLReadinessCheckTest, IsRunningOnANGLE)
 {
-    const char *extensionString =
-        static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
-    ANGLE_UNSAFE_TODO(ASSERT_NE(strstr(extensionString, "EGL_ANGLE_platform_angle"), nullptr));
+    ASSERT_TRUE(IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle"));
 }
 
 // Checks that getting function pointer works

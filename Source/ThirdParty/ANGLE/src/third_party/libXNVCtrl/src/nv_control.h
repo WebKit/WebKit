@@ -68,16 +68,16 @@
 #define NV_CONTROL_MAJOR 1
 #define NV_CONTROL_MINOR 28
 
-#define X_nvCtrlQueryExtension 0
-#define X_nvCtrlIsNv 1
-#define X_nvCtrlQueryAttribute 2
-#define X_nvCtrlSetAttribute 3
-#define X_nvCtrlQueryStringAttribute 4
-#define X_nvCtrlQueryValidAttributeValues 5
-#define X_nvCtrlSelectNotify 6
-#define X_nvCtrlSetGvoColorConversionDeprecated 7
-#define X_nvCtrlQueryGvoColorConversionDeprecated 8
-#define X_nvCtrlSetStringAttribute 9
+#define X_nvCtrlQueryExtension                      0
+#define X_nvCtrlIsNv                                1
+#define X_nvCtrlQueryAttribute                      2
+#define X_nvCtrlSetAttribute                        3
+#define X_nvCtrlQueryStringAttribute                4
+#define X_nvCtrlQueryValidAttributeValues           5
+#define X_nvCtrlSelectNotify                        6
+#define X_nvCtrlSetGvoColorConversionDeprecated     7
+#define X_nvCtrlQueryGvoColorConversionDeprecated   8
+#define X_nvCtrlSetStringAttribute                  9
 /* STUB X_nvCtrlQueryDDCCILutSize                   10 */
 /* STUB X_nvCtrlQueryDDCCISinglePointLutOperation   11 */
 /* STUB X_nvCtrlSetDDCCISinglePointLutOperation     12 */
@@ -87,40 +87,40 @@
 /* STUB X_nvCtrlQueryDDCCIDisplayControllerType     16 */
 /* STUB X_nvCtrlQueryDDCCICapabilities              17 */
 /* STUB X_nvCtrlQueryDDCCITimingReport              18 */
-#define X_nvCtrlSetAttributeAndGetStatus 19
-#define X_nvCtrlQueryBinaryData 20
-#define X_nvCtrlSetGvoColorConversion 21
-#define X_nvCtrlQueryGvoColorConversion 22
-#define X_nvCtrlSelectTargetNotify 23
-#define X_nvCtrlQueryTargetCount 24
-#define X_nvCtrlStringOperation 25
-#define X_nvCtrlQueryValidAttributeValues64 26
-#define X_nvCtrlQueryAttribute64 27
-#define X_nvCtrlQueryValidStringAttributeValues 28
-#define X_nvCtrlQueryAttributePermissions 29
-#define X_nvCtrlQueryStringAttributePermissions 30
-#define X_nvCtrlQueryBinaryDataAttributePermissions 31
+#define X_nvCtrlSetAttributeAndGetStatus            19
+#define X_nvCtrlQueryBinaryData                     20
+#define X_nvCtrlSetGvoColorConversion               21
+#define X_nvCtrlQueryGvoColorConversion             22
+#define X_nvCtrlSelectTargetNotify                  23
+#define X_nvCtrlQueryTargetCount                    24
+#define X_nvCtrlStringOperation                     25
+#define X_nvCtrlQueryValidAttributeValues64         26
+#define X_nvCtrlQueryAttribute64                    27
+#define X_nvCtrlQueryValidStringAttributeValues     28
+#define X_nvCtrlQueryAttributePermissions                29
+#define X_nvCtrlQueryStringAttributePermissions          30
+#define X_nvCtrlQueryBinaryDataAttributePermissions      31
 #define X_nvCtrlQueryStringOperationAttributePermissions 32
 
 #define X_nvCtrlLastRequest (X_nvCtrlQueryStringOperationAttributePermissions + 1)
 
+
 /* Define 32 bit floats */
 typedef float FLOAT32;
 #ifndef F32
-#    define F32
+#define F32
 #endif
 
-typedef struct
-{
+
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
 } xnvCtrlQueryExtensionReq;
 #define sz_xnvCtrlQueryExtensionReq 4
 
-typedef struct
-{
-    BYTE type; /* X_Reply */
+typedef struct {
+    BYTE type;   /* X_Reply */
     CARD8 padb1;
     CARD16 sequenceNumber B16;
     CARD32 length B32;
@@ -134,8 +134,7 @@ typedef struct
 } xnvCtrlQueryExtensionReply;
 #define sz_xnvCtrlQueryExtensionReply 32
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -143,9 +142,8 @@ typedef struct
 } xnvCtrlIsNvReq;
 #define sz_xnvCtrlIsNvReq 8
 
-typedef struct
-{
-    BYTE type; /* X_Reply */
+typedef struct {
+    BYTE type;   /* X_Reply */
     CARD8 padb1;
     CARD16 sequenceNumber B16;
     CARD32 length B32;
@@ -158,8 +156,7 @@ typedef struct
 } xnvCtrlIsNvReply;
 #define sz_xnvCtrlIsNvReply 32
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -167,9 +164,8 @@ typedef struct
 } xnvCtrlQueryTargetCountReq;
 #define sz_xnvCtrlQueryTargetCountReq 8
 
-typedef struct
-{
-    BYTE type; /* X_Reply */
+typedef struct {
+    BYTE type;   /* X_Reply */
     CARD8 padb1;
     CARD16 sequenceNumber B16;
     CARD32 length B32;
@@ -182,20 +178,18 @@ typedef struct
 } xnvCtrlQueryTargetCountReply;
 #define sz_xnvCtrlQueryTargetCountReply 32
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
-    CARD16 target_id B16;   /* X screen number or GPU number */
-    CARD16 target_type B16; /* X screen or GPU */
+    CARD16 target_id B16;    /* X screen number or GPU number */
+    CARD16 target_type B16;  /* X screen or GPU */
     CARD32 display_mask B32;
     CARD32 attribute B32;
 } xnvCtrlQueryAttributeReq;
 #define sz_xnvCtrlQueryAttributeReq 16
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -209,8 +203,7 @@ typedef struct
 } xnvCtrlQueryAttributeReply;
 #define sz_xnvCtrlQueryAttributeReply 32
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -223,8 +216,7 @@ typedef struct
 } xnvCtrlQueryAttribute64Reply;
 #define sz_xnvCtrlQueryAttribute64Reply 32
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -236,8 +228,7 @@ typedef struct
 } xnvCtrlSetAttributeReq;
 #define sz_xnvCtrlSetAttributeReq 20
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -249,8 +240,7 @@ typedef struct
 } xnvCtrlSetAttributeAndGetStatusReq;
 #define sz_xnvCtrlSetAttributeAndGetStatusReq 20
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -264,26 +254,24 @@ typedef struct
 } xnvCtrlSetAttributeAndGetStatusReply;
 #define sz_xnvCtrlSetAttributeAndGetStatusReply 32
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
-    CARD16 target_id B16;   /* X screen number or GPU number */
-    CARD16 target_type B16; /* X screen or GPU */
+    CARD16 target_id B16;    /* X screen number or GPU number */
+    CARD16 target_type B16;  /* X screen or GPU */
     CARD32 display_mask B32;
     CARD32 attribute B32;
 } xnvCtrlQueryStringAttributeReq;
 #define sz_xnvCtrlQueryStringAttributeReq 16
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
     CARD32 length B32;
     CARD32 flags B32;
-    CARD32 n B32; /* Length of string */
+    CARD32 n B32;    /* Length of string */
     CARD32 pad4 B32;
     CARD32 pad5 B32;
     CARD32 pad6 B32;
@@ -291,8 +279,8 @@ typedef struct
 } xnvCtrlQueryStringAttributeReply;
 #define sz_xnvCtrlQueryStringAttributeReply 32
 
-typedef struct
-{
+
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -304,8 +292,7 @@ typedef struct
 } xnvCtrlSetStringAttributeReq;
 #define sz_xnvCtrlSetStringAttributeReq 20
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -319,20 +306,18 @@ typedef struct
 } xnvCtrlSetStringAttributeReply;
 #define sz_xnvCtrlSetStringAttributeReply 32
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
-    CARD16 target_id B16;   /* X screen number or GPU number */
-    CARD16 target_type B16; /* X screen or GPU */
+    CARD16 target_id B16;    /* X screen number or GPU number */
+    CARD16 target_type B16;  /* X screen or GPU */
     CARD32 display_mask B32;
     CARD32 attribute B32;
 } xnvCtrlQueryValidAttributeValuesReq;
 #define sz_xnvCtrlQueryValidAttributeValuesReq 16
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -346,8 +331,7 @@ typedef struct
 } xnvCtrlQueryValidAttributeValuesReply;
 #define sz_xnvCtrlQueryValidAttributeValuesReply 32
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -363,8 +347,7 @@ typedef struct
 #define sz_xnvCtrlQueryValidAttributeValues64Reply 48
 #define sz_xnvCtrlQueryValidAttributeValues64Reply_extra ((48 - 32) >> 2)
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -372,8 +355,7 @@ typedef struct
 } xnvCtrlQueryAttributePermissionsReq;
 #define sz_xnvCtrlQueryAttributePermissionsReq 8
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -389,8 +371,7 @@ typedef struct
 #define sz_xnvCtrlQueryAttributePermissionsReply 32
 
 /* Set GVO Color Conversion request (deprecated) */
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -411,8 +392,7 @@ typedef struct
 #define sz_xnvCtrlSetGvoColorConversionDeprecatedReq 56
 
 /* Query GVO Color Conversion request (deprecated) */
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -421,9 +401,8 @@ typedef struct
 #define sz_xnvCtrlQueryGvoColorConversionDeprecatedReq 8
 
 /* Query GVO Color Conversion reply (deprecated) */
-typedef struct
-{
-    BYTE type; /* X_Reply */
+typedef struct {
+    BYTE type;   /* X_Reply */
     BYTE pad0;
     CARD16 sequenceNumber B16;
     CARD32 length B32;
@@ -436,9 +415,9 @@ typedef struct
 } xnvCtrlQueryGvoColorConversionDeprecatedReply;
 #define sz_xnvCtrlQueryGvoColorConversionDeprecatedReply 32
 
+
 /* Set GVO Color Conversion request */
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -455,21 +434,20 @@ typedef struct
     FLOAT32 cscMatrix_cb_r F32;
     FLOAT32 cscMatrix_cb_g F32;
     FLOAT32 cscMatrix_cb_b F32;
-
-    FLOAT32 cscOffset_y F32;
+    
+    FLOAT32 cscOffset_y  F32;
     FLOAT32 cscOffset_cr F32;
     FLOAT32 cscOffset_cb F32;
-
-    FLOAT32 cscScale_y F32;
+    
+    FLOAT32 cscScale_y  F32;
     FLOAT32 cscScale_cr F32;
     FLOAT32 cscScale_cb F32;
-
+    
 } xnvCtrlSetGvoColorConversionReq;
 #define sz_xnvCtrlSetGvoColorConversionReq 68
 
 /* Query GVO Color Conversion request */
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -478,9 +456,8 @@ typedef struct
 #define sz_xnvCtrlQueryGvoColorConversionReq 8
 
 /* Query GVO Color Conversion reply */
-typedef struct
-{
-    BYTE type; /* X_Reply */
+typedef struct {
+    BYTE type;   /* X_Reply */
     BYTE pad0;
     CARD16 sequenceNumber B16;
     CARD32 length B32;
@@ -493,20 +470,18 @@ typedef struct
 } xnvCtrlQueryGvoColorConversionReply;
 #define sz_xnvCtrlQueryGvoColorConversionReply 32
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
-    CARD16 target_id B16;   /* X screen number or GPU number */
-    CARD16 target_type B16; /* X screen or GPU */
+    CARD16 target_id B16;    /* X screen number or GPU number */
+    CARD16 target_type B16;  /* X screen or GPU */
     CARD32 display_mask B32;
     CARD32 attribute B32;
 } xnvCtrlQueryBinaryDataReq;
 #define sz_xnvCtrlQueryBinaryDataReq 16
 
-typedef struct
-{
+typedef struct {
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -520,8 +495,8 @@ typedef struct
 } xnvCtrlQueryBinaryDataReply;
 #define sz_xnvCtrlQueryBinaryDataReply 32
 
-typedef struct
-{
+
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -531,22 +506,20 @@ typedef struct
 } xnvCtrlSelectNotifyReq;
 #define sz_xnvCtrlSelectNotifyReq 12
 
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
-    CARD16 target_id B16;   /* X screen number or GPU number */
-    CARD16 target_type B16; /* X screen or GPU */
+    CARD16 target_id B16;    /* X screen number or GPU number */
+    CARD16 target_type B16;  /* X screen or GPU */
     CARD32 display_mask B32;
     CARD32 attribute B32;
     CARD32 num_bytes B32; /* Length of string */
 } xnvCtrlStringOperationReq;
 #define sz_xnvCtrlStringOperationReq 20
 
-typedef struct
-{
-    BYTE type; /* X_Reply */
+typedef struct {
+    BYTE type;   /* X_Reply */
     CARD8 padb1;
     CARD16 sequenceNumber B16;
     CARD32 length B32;
@@ -559,18 +532,14 @@ typedef struct
 } xnvCtrlStringOperationReply;
 #define sz_xnvCtrlStringOperationReply 32
 
-typedef struct
-{
-    union
-    {
-        struct
-        {
+typedef struct {
+    union {
+        struct {
             BYTE type;
             BYTE detail;
             CARD16 sequenceNumber B16;
         } u;
-        struct
-        {
+        struct {
             BYTE type;
             BYTE detail;
             CARD16 sequenceNumber B16;
@@ -585,6 +554,7 @@ typedef struct
     } u;
 } xnvctrlEvent;
 
+
 /*
  * Leave target_type before target_id for the
  * xnvCtrlSelectTargetNotifyReq and xnvctrlEventTarget
@@ -594,8 +564,7 @@ typedef struct
  * 1.8, and so there is no prior version with which to maintain
  * compatibility.
  */
-typedef struct
-{
+typedef struct {
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -606,18 +575,14 @@ typedef struct
 } xnvCtrlSelectTargetNotifyReq;
 #define sz_xnvCtrlSelectTargetNotifyReq 12
 
-typedef struct
-{
-    union
-    {
-        struct
-        {
+typedef struct {
+    union {
+        struct {
             BYTE type;
             BYTE detail;
             CARD16 sequenceNumber B16;
         } u;
-        struct
-        {
+        struct {
             BYTE type;
             BYTE detail;
             CARD16 sequenceNumber B16;
@@ -630,8 +595,7 @@ typedef struct
             CARD32 pad0 B32;
             CARD32 pad1 B32;
         } attribute_changed;
-        struct
-        {
+        struct {
             BYTE type;
             BYTE detail;
             CARD16 sequenceNumber B16;
@@ -648,5 +612,6 @@ typedef struct
         } availability_changed;
     } u;
 } xnvctrlEventTarget;
+
 
 #endif /* __NVCONTROL_H */

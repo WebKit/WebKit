@@ -74,6 +74,7 @@ class DriverUniform
     TIntermTyped *getAdvancedBlendEquation() const;
     TIntermTyped *getNumSamples() const;
     TIntermTyped *getClipDistancesEnabled() const;
+    TIntermTyped *getLastPreRasterizationStage() const;
     TIntermTyped *getTransformDepth() const;
     TIntermTyped *getAlphaToCoverage() const;
     TIntermTyped *getLayeredFramebuffer() const;

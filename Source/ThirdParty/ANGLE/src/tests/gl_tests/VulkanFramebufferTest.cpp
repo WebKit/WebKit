@@ -37,7 +37,7 @@ class VulkanFramebufferTest : public ANGLETest<>
         egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
         gl::ContextID contextID = {
             static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
-        return display->getContext(contextID);
+        return display->getContextRef(contextID).get();
     }
 
     rx::ContextVk *hackANGLE() const

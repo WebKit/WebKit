@@ -71,7 +71,18 @@ void AddZeroInitSequence(const TIntermTyped *initializedNode,
         const TFieldList &fieldList           = interfaceBlock.fields();
         for (size_t fieldIndex = 0; fieldIndex < fieldList.size(); ++fieldIndex)
         {
-            const TField &field         = *fieldList[fieldIndex];
+            const TField &field = *fieldList[fieldIndex];
+
+            // Only gl_Position is initialized. The other gl_PerVertex members may require an
+            // extension the shader hasn't enabled, and writing them would mark them as
+            // active/used.
+            if (field.type()->getQualifier() == EvqPointSize ||
+                field.type()->getQualifier() == EvqClipDistance ||
+                field.type()->getQualifier() == EvqCullDistance)
+            {
+                continue;
+            }
+
             TIntermTyped *fieldIndexRef = CreateIndexNode(static_cast<int>(fieldIndex));
             TIntermTyped *fieldReference =
                 new TIntermBinary(TOperator::EOpIndexDirectInterfaceBlock,

@@ -6,7 +6,6 @@
 .idea/
 .vs
 .vscode
-.reproxy_cache
 .sw*
 .*.sw*
 *.Makefile

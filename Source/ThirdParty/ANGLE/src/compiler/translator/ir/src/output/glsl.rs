@@ -340,6 +340,17 @@ impl Generator {
         .to_string()
     }
 
+    fn field_built_in_str(built_in: BuiltIn) -> String {
+        (match built_in {
+            BuiltIn::Position => "gl_Position",
+            BuiltIn::PointSize => "gl_PointSize",
+            BuiltIn::ClipDistance => "gl_ClipDistance",
+            BuiltIn::CullDistance => "gl_CullDistance",
+            _ => panic!("Internal error: Invalid built-in field"),
+        })
+        .to_string()
+    }
+
     fn name_str(
         name: &Name,
         temp_prefix: &'static str,
@@ -927,8 +938,11 @@ impl ast::Target for Generator {
         field: &Field,
     ) {
         let lhs = self.get_expression(id);
-        let field_name =
-            Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, USER_VARIABLE_PREFIX, index);
+        let field_name = if let Some(built_in) = field.built_in {
+            Self::field_built_in_str(built_in)
+        } else {
+            Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, USER_VARIABLE_PREFIX, index)
+        };
         // Note: if selecting the field of a nameless interface block, just use the field.
         let expr = if lhs.is_empty() { field_name } else { format!("{}.{}", lhs, field_name) };
         self.expressions.insert(result, expr);

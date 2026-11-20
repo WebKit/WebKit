@@ -1687,11 +1687,16 @@ angle::Result Texture::copyImage(Context *context,
 
     InitState initState = DetermineInitState(context, nullptr, nullptr);
 
-    // If we need to initialize the destination texture we split the call into a create call,
-    // an initializeContents call, and then a copySubImage call. This ensures the destination
-    // texture exists before we try to clear it.
+    // If we need to initialize the destination texture we split the call into a create call
+    // (setImage), an initializeContents call (ensureSubImageInitialized), and then a copySubImage
+    // call. This ensures the destination texture exists before we try to clear it.
+    // Only take this `if` branch when `forceCopySubImage` is true (which already checks whether the
+    // copy is out-of-bounds and safe to split). Checking `doesSubImageNeedInit` in the `if`
+    // condition would inspect the destination level's old ImageDesc before it is redefined to
+    // `size`, causing same-texture copies to enter the `if` branch and call `setImage` before
+    // `copySubImage`, which destroys the source texture before it is read.
     Extents size(sourceArea.width, sourceArea.height, 1);
-    if (forceCopySubImage || doesSubImageNeedInit(context, index, destBox))
+    if (forceCopySubImage)
     {
         ANGLE_TRY(mTexture->setImage(context, index, internalFormat, size,
                                      internalFormatInfo.format, internalFormatInfo.type,

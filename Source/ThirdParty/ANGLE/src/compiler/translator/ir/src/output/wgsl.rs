@@ -4,9 +4,24 @@
 
 use super::utils::{self, BinaryOpInfo, Precedence};
 use crate::ir::*;
+use crate::transform::add_driver_uniforms::DRIVER_UNIFORMS_VAR_NAME;
 use crate::*;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt::Write;
+
+// Names and bindings of the default uniform block synthesized by
+// `transform::gather_default_uniforms`.
+const DEFAULT_UNIFORM_BLOCK_STRUCT_NAME: &str = "ANGLE_DefaultUniformBlock";
+const DEFAULT_UNIFORM_BLOCK_INSTANCE_NAME: &str = "ANGLE_defaultUniformBlock";
+const DEFAULT_UNIFORM_BLOCK_BIND_GROUP: u32 = 0;
+const DEFAULT_VERTEX_UNIFORM_BLOCK_BINDING: u32 = 0;
+const DEFAULT_FRAGMENT_UNIFORM_BLOCK_BINDING: u32 = 1;
+
+// Bind group of the driver uniforms block declared by `transform::add_driver_uniforms`.  The
+// WebGPU backend binds it separately from the default uniform block and the textures/samplers; see
+// `setBindGroup(sh::kDriverUniformBindGroup, ...)` in `src/libANGLE/renderer/wgpu/ContextWgpu.cpp`
+// and the pipeline layout in `src/libANGLE/renderer/wgpu/ProgramExecutableWgpu.cpp`.
+const DRIVER_UNIFORMS_BIND_GROUP: u32 = 2;
 
 #[cfg_attr(debug_assertions, derive(Debug))]
 /// Formatted WGSL literal or composite constructor for an IR `ConstantId`.
@@ -80,6 +95,10 @@ pub struct WgslOutputGenerator {
 
     expressions: HashMap<RegisterId, ExprInfo>,
 
+    /// Set of struct `TypeId`s that appear in uniform interface blocks and therefore require
+    /// `std140` uniform layout adjustments.
+    uniform_structs: HashSet<TypeId>,
+
     pipeline_inputs: Vec<PipelineVar>,
     pipeline_outputs: Vec<PipelineVar>,
     shader_type: ShaderType,
@@ -98,6 +117,7 @@ impl WgslOutputGenerator {
             global_variables: String::new(),
             function_declarations: String::new(),
             expressions: HashMap::new(),
+            uniform_structs: HashSet::new(),
             pipeline_inputs: Vec::new(),
             pipeline_outputs: Vec::new(),
             shader_type: ShaderType::Vertex,
@@ -191,10 +211,13 @@ impl WgslOutputGenerator {
     }
 
     fn name_str(name: &Name, temp_prefix: &'static str, id: u32) -> String {
+        if name.name.is_empty() {
+            return format!("{temp_prefix}_{id}");
+        }
         format!(
             "{}{}{}",
             match name.source {
-                NameSource::ShaderInterface if !name.name.is_empty() => USER_VARIABLE_PREFIX,
+                NameSource::ShaderInterface => USER_VARIABLE_PREFIX,
                 NameSource::Temporary => temp_prefix,
                 _ => "",
             },
@@ -220,6 +243,24 @@ impl WgslOutputGenerator {
             _ => unreachable!(),
         }
         .to_string()
+    }
+
+    /// Recursively records any `Type::Struct` reachable from `type_id` (peeling pointer and
+    /// array wrappers and descending into struct fields) in `self.uniform_structs`.
+    fn mark_uniform_struct(&mut self, ir_meta: &IRMeta, type_id: TypeId) {
+        let type_info = ir_meta.get_type(type_id);
+        debug_assert!(!matches!(*type_info, Type::UnsizedArray(_)));
+        match *type_info {
+            Type::Pointer(pointee) | Type::Array(pointee, _) => {
+                self.mark_uniform_struct(ir_meta, pointee);
+            }
+            Type::Struct(_, ref fields, _) if self.uniform_structs.insert(type_id) => {
+                for field in fields {
+                    self.mark_uniform_struct(ir_meta, field.type_id);
+                }
+            }
+            _ => {}
+        }
     }
 
     /// Resolves an IR operand (`TypedId`) to its formatted WGSL expression.
@@ -426,28 +467,16 @@ impl ast::Target for WgslOutputGenerator {
                 format!("array<{base_type}>")
             }
             Type::Image(basic_type, image_type) => Self::image_type_str(*basic_type, *image_type),
-            Type::Struct(name, fields, _specialization) => {
-                let struct_name = Self::name_str(name, TEMP_STRUCT_PREFIX, id.id);
-
-                let mut struct_def = format!(
-                    "struct {struct_name}
-{{
-"
-                );
-                for (index, field) in fields.iter().enumerate() {
-                    let field_type_str = &self.types[&field.type_id];
-                    let field_name =
-                        Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, index as u32);
-
-                    writeln!(struct_def, "  {field_name} : {field_type_str},").unwrap();
+            Type::Struct(name, ..) => {
+                // Internal structs (such as `ANGLE_DefaultUniformBlock` and driver uniform blocks)
+                // use their exact internal name, whereas user-defined structs receive the `_u` or
+                // temporary struct prefix. The `struct` declaration itself is emitted in
+                // `global_scope` after `self.uniform_structs` has been populated.
+                if name.source == NameSource::Internal {
+                    name.name.to_string()
+                } else {
+                    Self::name_str(name, TEMP_STRUCT_PREFIX, id.id)
                 }
-                struct_def.push_str(
-                    "};
-
-",
-                );
-                self.type_declarations.push_str(&struct_def);
-                struct_name
             }
             Type::Pointer(pointee_type_id) => self.types[pointee_type_id].clone(),
             Type::DeadCodeEliminated => return,
@@ -514,110 +543,140 @@ impl ast::Target for WgslOutputGenerator {
         let type_info = &self.types[&variable.type_id];
         let mut decl_text = String::new();
 
-        let mut binding = None;
+        let mut is_uniform = false;
 
         for &dec in &variable.decorations.decorations {
             match dec {
-                Decoration::Binding(b) => binding = Some(b),
+                Decoration::Uniform => is_uniform = true,
                 Decoration::Buffer | Decoration::Shared => unimplemented!(),
                 _ => {}
             }
         }
+        // Loose uniforms not gathered into a block (such as opaque sampler/texture uniforms before
+        // binding layout assignment) keep a private declaration; only block-backed uniforms
+        // (including `ANGLE_defaultUniformBlock` and `ANGLE_driverUniforms`) are emitted in the
+        // `uniform` address space.
+        is_uniform &= has_decoration!(variable.decorations, Decoration::Block);
 
-        let is_global = variable.is_interface_variable() || variable.scope == VariableScope::Global;
+        let is_global = variable.is_interface_variable()
+            || is_uniform
+            || variable.scope == VariableScope::Global;
+
         if is_global {
-            if let Some(binding_val) = binding {
-                write!(decl_text, "@group(1) @binding({binding_val}) ").unwrap();
+            if is_uniform {
+                // The driver uniforms block (`DRIVER_UNIFORMS_VAR_NAME`) is bound in its own
+                // group (`DRIVER_UNIFORMS_BIND_GROUP` = 2). The default uniform block uses
+                // bind group 0 at binding 0 (vertex) or 1 (fragment), matching the WebGPU
+                // backend's default uniform bind group layout.
+                let (bind_group, binding_val) = if name == DRIVER_UNIFORMS_VAR_NAME {
+                    (DRIVER_UNIFORMS_BIND_GROUP, 0)
+                } else if name == DEFAULT_UNIFORM_BLOCK_INSTANCE_NAME {
+                    let default_uniform_binding = if self.shader_type == ShaderType::Vertex {
+                        DEFAULT_VERTEX_UNIFORM_BLOCK_BINDING
+                    } else {
+                        DEFAULT_FRAGMENT_UNIFORM_BLOCK_BINDING
+                    };
+                    (DEFAULT_UNIFORM_BLOCK_BIND_GROUP, default_uniform_binding)
+                } else {
+                    unimplemented!()
+                };
+                write!(decl_text, "@group({bind_group}) @binding({binding_val}) ").unwrap();
             }
 
-            if let Some(init) = variable.initializer {
+            let address_space = if is_uniform { "var<uniform>" } else { "var<private>" };
+            if let Some(init) = variable.initializer
+                && address_space == "var<private>"
+            {
                 let init_expr = &self.constants[&init].text;
-                write!(decl_text, "var<private> {name} : {type_info} = {init_expr};").unwrap();
+                write!(decl_text, "{address_space} {name} : {type_info} = {init_expr};").unwrap();
             } else {
-                write!(decl_text, "var<private> {name} : {type_info};").unwrap();
+                write!(decl_text, "{address_space} {name} : {type_info};").unwrap();
             }
             self.global_variables.push_str(&decl_text);
             self.global_variables.push('\n');
+
             // Record pipeline inputs and outputs
-            if let Some(built_in) = variable.built_in {
-                match (built_in, self.shader_type) {
-                    (BuiltIn::Position, ShaderType::Vertex) => {
-                        // WGSL only allows @invariant on the vertex position output.
-                        let annotation = if variable.decorations.has(Decoration::Invariant) {
-                            "@builtin(position) @invariant".to_string()
-                        } else {
-                            Self::builtin_annotation_str(built_in)
-                        };
-                        self.pipeline_outputs.push(PipelineVar {
-                            name: name.clone(),
-                            type_str: type_info.clone(),
-                            annotation,
-                            built_in: Some(built_in),
-                        });
+            if !is_uniform {
+                if let Some(built_in) = variable.built_in {
+                    match (built_in, self.shader_type) {
+                        (BuiltIn::Position, ShaderType::Vertex) => {
+                            // WGSL only allows @invariant on the vertex position output.
+                            let annotation = if variable.decorations.has(Decoration::Invariant) {
+                                "@builtin(position) @invariant".to_string()
+                            } else {
+                                Self::builtin_annotation_str(built_in)
+                            };
+                            self.pipeline_outputs.push(PipelineVar {
+                                name: name.clone(),
+                                type_str: type_info.clone(),
+                                annotation,
+                                built_in: Some(built_in),
+                            });
+                        }
+                        (BuiltIn::FragDepth, ShaderType::Fragment) => {
+                            self.pipeline_outputs.push(PipelineVar {
+                                name: name.clone(),
+                                type_str: type_info.clone(),
+                                annotation: Self::builtin_annotation_str(built_in),
+                                built_in: Some(built_in),
+                            });
+                        }
+                        (BuiltIn::FragColor, ShaderType::Fragment) => {
+                            self.pipeline_outputs.push(PipelineVar {
+                                name: name.clone(),
+                                type_str: type_info.clone(),
+                                annotation: "@location(0)".to_string(),
+                                built_in: Some(built_in),
+                            });
+                        }
+                        (BuiltIn::FragCoord | BuiltIn::FrontFacing, ShaderType::Fragment) => {
+                            self.pipeline_inputs.push(PipelineVar {
+                                name: name.clone(),
+                                type_str: type_info.clone(),
+                                annotation: Self::builtin_annotation_str(built_in),
+                                built_in: Some(built_in),
+                            });
+                        }
+                        (
+                            BuiltIn::VertexIndex
+                            | BuiltIn::VertexID
+                            | BuiltIn::InstanceIndex
+                            | BuiltIn::InstanceID,
+                            ShaderType::Vertex,
+                        ) => {
+                            self.pipeline_inputs.push(PipelineVar {
+                                name: name.clone(),
+                                type_str: "u32".to_string(),
+                                annotation: Self::builtin_annotation_str(built_in),
+                                built_in: Some(built_in),
+                            });
+                        }
+                        _ => {}
                     }
-                    (BuiltIn::FragDepth, ShaderType::Fragment) => {
-                        self.pipeline_outputs.push(PipelineVar {
-                            name: name.clone(),
-                            type_str: type_info.clone(),
-                            annotation: Self::builtin_annotation_str(built_in),
-                            built_in: Some(built_in),
-                        });
-                    }
-                    (BuiltIn::FragColor, ShaderType::Fragment) => {
-                        self.pipeline_outputs.push(PipelineVar {
-                            name: name.clone(),
-                            type_str: type_info.clone(),
-                            annotation: "@location(0)".to_string(),
-                            built_in: Some(built_in),
-                        });
-                    }
-                    (BuiltIn::FragCoord | BuiltIn::FrontFacing, ShaderType::Fragment) => {
+                } else if variable.is_interface_variable()
+                    && !variable.decorations.has(Decoration::Uniform)
+                {
+                    let is_in = variable.decorations.has(Decoration::Input)
+                        || (self.shader_type == ShaderType::Vertex
+                            && !variable.decorations.has(Decoration::Output));
+                    let is_out = variable.decorations.has(Decoration::Output)
+                        || (self.shader_type == ShaderType::Fragment
+                            && !variable.decorations.has(Decoration::Input));
+                    if is_in {
                         self.pipeline_inputs.push(PipelineVar {
                             name: name.clone(),
                             type_str: type_info.clone(),
-                            annotation: Self::builtin_annotation_str(built_in),
-                            built_in: Some(built_in),
+                            annotation: "@location(@@@@@@)".to_string(),
+                            built_in: None,
                         });
-                    }
-                    (
-                        BuiltIn::VertexIndex
-                        | BuiltIn::VertexID
-                        | BuiltIn::InstanceIndex
-                        | BuiltIn::InstanceID,
-                        ShaderType::Vertex,
-                    ) => {
-                        self.pipeline_inputs.push(PipelineVar {
+                    } else if is_out {
+                        self.pipeline_outputs.push(PipelineVar {
                             name: name.clone(),
-                            type_str: "u32".to_string(),
-                            annotation: Self::builtin_annotation_str(built_in),
-                            built_in: Some(built_in),
+                            type_str: type_info.clone(),
+                            annotation: "@location(@@@@@@)".to_string(),
+                            built_in: None,
                         });
                     }
-                    _ => {}
-                }
-            } else if variable.is_interface_variable()
-                && !variable.decorations.has(Decoration::Uniform)
-            {
-                let is_in = variable.decorations.has(Decoration::Input)
-                    || (self.shader_type == ShaderType::Vertex
-                        && !variable.decorations.has(Decoration::Output));
-                let is_out = variable.decorations.has(Decoration::Output)
-                    || (self.shader_type == ShaderType::Fragment
-                        && !variable.decorations.has(Decoration::Input));
-                if is_in {
-                    self.pipeline_inputs.push(PipelineVar {
-                        name: name.clone(),
-                        type_str: type_info.clone(),
-                        annotation: "@location(@@@@@@)".to_string(),
-                        built_in: None,
-                    });
-                } else if is_out {
-                    self.pipeline_outputs.push(PipelineVar {
-                        name: name.clone(),
-                        type_str: type_info.clone(),
-                        annotation: "@location(@@@@@@)".to_string(),
-                        built_in: None,
-                    });
                 }
             }
         } else if let Some(init) = variable.initializer {
@@ -662,7 +721,97 @@ impl ast::Target for WgslOutputGenerator {
         self.functions.insert(id, WgslFunction { declaration_text, name });
     }
 
-    fn global_scope(&mut self, _ir_meta: &IRMeta) {}
+    fn global_scope(&mut self, ir_meta: &IRMeta) {
+        // Scan global variables once to identify all struct types (including nested structs)
+        // used by uniform interface blocks.
+        for &var_id in ir_meta.all_global_variables() {
+            let var = ir_meta.get_variable(var_id);
+            if var.decorations.has(Decoration::Uniform) {
+                if has_decoration!(var.decorations, Decoration::Block) {
+                    self.mark_uniform_struct(ir_meta, var.type_id);
+                } else {
+                    // All gatherable default uniforms have been moved into
+                    // `ANGLE_defaultUniformBlock` by `gather_default_uniforms`. Any remaining
+                    // non-block `Uniform` global must be an inactive variable, a built-in
+                    // (`gl_DepthRange`), an opaque uniform, or a uniform excluded by
+                    // `uniform_needs_lowering`.
+                    debug_assert!(
+                        var.is_dead_code_eliminated
+                            || ir_meta.get_type(var.type_id).is_dead_code_eliminated()
+                            || var.built_in.is_some()
+                            || ir_meta
+                                .get_type(
+                                    ir_meta.get_base_element_type(
+                                        ir_meta.get_pointee_type(var.type_id),
+                                    ),
+                                )
+                                .is_opaque()
+                            || uniform_needs_lowering(ir_meta, var.type_id)
+                    );
+                }
+            }
+        }
+
+        // Emit WGSL `struct` declarations now that `self.uniform_structs` and `self.types` are
+        // populated.
+        for (id, type_info) in ir_meta.all_types().iter().enumerate() {
+            if type_info.is_dead_code_eliminated() {
+                continue;
+            }
+            let id = TypeId { id: id as u32 };
+            if let Type::Struct(_name, fields, specialization) = type_info {
+                let is_uniform = self.uniform_structs.contains(&id)
+                    || *specialization == StructSpecialization::InterfaceBlock;
+                let struct_name = &self.types[&id];
+
+                let mut struct_def = format!(
+                    "struct {struct_name}
+{{
+"
+                );
+                let mut prev_was_struct = false;
+                for (i, field) in fields.iter().enumerate() {
+                    let field_info = ir_meta.get_type(field.type_id);
+                    let is_struct_field = field_info.is_struct()
+                        || (field_info.is_array()
+                            && ir_meta
+                                .get_type(field_info.get_element_type_id().unwrap())
+                                .is_struct());
+                    let is_array_field = field_info.is_array();
+
+                    let field_type_str = &self.types[&field.type_id];
+
+                    // In GLSL `std140` layout (used for default uniform blocks and uniform
+                    // interface blocks), struct types and array types are aligned to 16 bytes, and
+                    // a struct's size is rounded up to a multiple of 16 bytes so the member
+                    // immediately following a struct also starts on a 16-byte boundary. WGSL's
+                    // `uniform` address space requires explicit `@align(16)` annotations to match
+                    // these `std140` alignment rules (as well as on the first field).
+                    let align_attr = if is_uniform {
+                        if i == 0 || is_struct_field || is_array_field || prev_was_struct {
+                            "@align(16) "
+                        } else {
+                            ""
+                        }
+                    } else {
+                        ""
+                    };
+
+                    let field_name =
+                        Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, i as u32);
+
+                    writeln!(struct_def, "  {align_attr}{field_name} : {field_type_str},").unwrap();
+                    prev_was_struct = is_struct_field;
+                }
+                struct_def.push_str(
+                    "};
+
+",
+                );
+                self.type_declarations.push_str(&struct_def);
+            }
+        }
+    }
 
     fn begin_block(
         &mut self,
@@ -738,7 +887,11 @@ impl ast::Target for WgslOutputGenerator {
         field: &Field,
     ) {
         let base = self.get_expr(id);
-        let field_name = Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, index);
+        let field_name = if field.built_in.is_some() {
+            panic!("Internal error: Unsupported gl_PerVertex")
+        } else {
+            Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, index)
+        };
 
         let text = format!(
             "{}.{field_name}",
@@ -1389,6 +1542,27 @@ impl ast::Target for WgslOutputGenerator {
     }
 }
 
+// Whether the type cannot be placed in a WGSL uniform buffer as-is: bools and
+// samplers/images are not host-shareable, and matCx2 or arrays of scalars and
+// 2-component vectors have a different layout than std140.  Such uniforms are
+// left individual for now.
+fn uniform_needs_lowering(ir_meta: &IRMeta, type_id: TypeId) -> bool {
+    match *ir_meta.get_type(type_id) {
+        Type::Pointer(pointee) => uniform_needs_lowering(ir_meta, pointee),
+        Type::Scalar(BasicType::Bool) | Type::Image(..) => true,
+        Type::Vector(elem, _) => elem == TYPE_ID_BOOL,
+        Type::Matrix(column, _) => column == TYPE_ID_VEC2,
+        Type::Array(elem, _) | Type::UnsizedArray(elem) => {
+            matches!(*ir_meta.get_type(elem), Type::Scalar(_) | Type::Vector(_, 2))
+                || uniform_needs_lowering(ir_meta, elem)
+        }
+        Type::Struct(_, ref fields, _) => {
+            fields.iter().any(|field| uniform_needs_lowering(ir_meta, field.type_id))
+        }
+        _ => false,
+    }
+}
+
 pub fn generate(ir: &mut IR, _options: &compile::Options) {
     {
         let transform_options = transform::add_driver_uniforms::Options {
@@ -1412,4 +1586,16 @@ pub fn generate(ir: &mut IR, _options: &compile::Options) {
         };
         transform::run!(monomorphize_unsupported_functions, ir, &transform_options);
     }
+
+    // WGSL does not allow non-opaque variables in the `uniform` address space to be individual
+    // globals; gather all non-opaque default uniforms into a single interface block.
+    transform::run!(
+        gather_default_uniforms,
+        ir,
+        &transform::gather_default_uniforms::Options {
+            struct_name: DEFAULT_UNIFORM_BLOCK_STRUCT_NAME,
+            instance_name: DEFAULT_UNIFORM_BLOCK_INSTANCE_NAME,
+            exclude: Some(uniform_needs_lowering),
+        }
+    );
 }

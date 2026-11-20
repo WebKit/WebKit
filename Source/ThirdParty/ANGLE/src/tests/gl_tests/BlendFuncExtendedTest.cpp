@@ -7,7 +7,7 @@
 //   Test EXT_blend_func_extended
 //
 
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -25,20 +25,20 @@ namespace
 // Partial implementation of weight function for GLES 2 blend equation that
 // is dual-source aware.
 template <int factor, int index>
-float Weight(const float /*dst*/[4], const float src[4], const float src1[4])
+float Weight(Span<const float, 4> /*dst*/, Span<const float, 4> src, Span<const float, 4> src1)
 {
     if (factor == GL_SRC_COLOR)
-        return ANGLE_UNSAFE_TODO(src[index]);
+        return src[index];
     if (factor == GL_SRC_ALPHA)
-        return ANGLE_UNSAFE_TODO(src[3]);
+        return src[3];
     if (factor == GL_SRC1_COLOR_EXT)
-        return ANGLE_UNSAFE_TODO(src1[index]);
+        return src1[index];
     if (factor == GL_SRC1_ALPHA_EXT)
-        return ANGLE_UNSAFE_TODO(src1[3]);
+        return src1[3];
     if (factor == GL_ONE_MINUS_SRC1_COLOR_EXT)
-        return 1.0f - ANGLE_UNSAFE_TODO(src1[index]);
+        return 1.0f - src1[index];
     if (factor == GL_ONE_MINUS_SRC1_ALPHA_EXT)
-        return 1.0f - ANGLE_UNSAFE_TODO(src1[3]);
+        return 1.0f - src1[3];
     return 0.0f;
 }
 
@@ -49,19 +49,16 @@ GLubyte ScaleChannel(float weight)
 
 // Implementation of GLES 2 blend equation that is dual-source aware.
 template <int RGBs, int RGBd, int As, int Ad>
-void BlendEquationFuncAdd(const float dst[4],
-                          const float src[4],
-                          const float src1[4],
+void BlendEquationFuncAdd(Span<const float, 4> dst,
+                          Span<const float, 4> src,
+                          Span<const float, 4> src1,
                           angle::GLColor *result)
 {
     float r[4];
     r[0] = src[0] * Weight<RGBs, 0>(dst, src, src1) + dst[0] * Weight<RGBd, 0>(dst, src, src1);
-    r[1] = ANGLE_UNSAFE_TODO(src[1]) * Weight<RGBs, 1>(dst, src, src1) +
-           ANGLE_UNSAFE_TODO(dst[1]) * Weight<RGBd, 1>(dst, src, src1);
-    r[2] = ANGLE_UNSAFE_TODO(src[2]) * Weight<RGBs, 2>(dst, src, src1) +
-           ANGLE_UNSAFE_TODO(dst[2]) * Weight<RGBd, 2>(dst, src, src1);
-    r[3] = ANGLE_UNSAFE_TODO(src[3]) * Weight<As, 3>(dst, src, src1) +
-           ANGLE_UNSAFE_TODO(dst[3]) * Weight<Ad, 3>(dst, src, src1);
+    r[1] = src[1] * Weight<RGBs, 1>(dst, src, src1) + dst[1] * Weight<RGBd, 1>(dst, src, src1);
+    r[2] = src[2] * Weight<RGBs, 2>(dst, src, src1) + dst[2] * Weight<RGBd, 2>(dst, src, src1);
+    r[3] = src[3] * Weight<As, 3>(dst, src, src1) + dst[3] * Weight<Ad, 3>(dst, src, src1);
 
     result->R = ScaleChannel(r[0]);
     result->G = ScaleChannel(r[1]);

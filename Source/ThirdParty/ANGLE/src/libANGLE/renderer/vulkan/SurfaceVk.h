@@ -441,6 +441,8 @@ class WindowSurfaceVk : public SurfaceVk
     void releaseSwapchainImages(vk::Renderer *renderer);
     void destroySwapchainImages(ThreadSafeDisplayVk *displayVk);
     angle::Result createAncillaryColorImage(vk::ErrorContext *context);
+    // Releases the ancillary color image.  Its contents are lost, so the buffer age is reset.
+    void releaseAncillaryColorImage(vk::Renderer *renderer);
     // Called when a swapchain image whose acquisition was deferred must be acquired or unlocked
     // ANI result processed.  This method will recreate the swapchain (if needed due to surface size
     // changing etc, by calling prepareSwapchainForAcquireNextImage()) and call the
@@ -560,6 +562,11 @@ class WindowSurfaceVk : public SurfaceVk
     vk::ImageViewHelper mAncillaryColorImageViews;
     angle::ObserverBinding mAncillaryColorImageBinding;
     vk::Framebuffer mAncillaryFramebuffer;
+    // Pre-transform the ancillary color image was created with.
+    // The image (and its preserved contents) can only be reused across swapchain recreation if this
+    // is unchanged.
+    VkSurfaceTransformFlagsKHR mAncillaryColorImagePreTransform =
+        VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 
     impl::ImageAcquireOperation mAcquireOperation;
 

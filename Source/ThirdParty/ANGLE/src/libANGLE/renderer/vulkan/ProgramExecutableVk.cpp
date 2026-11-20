@@ -169,11 +169,15 @@ void SetupDefaultPipelineState(const vk::ErrorContext *context,
             glExecutable.getNonBuiltinAttribLocationsMask(), glExecutable.getAttributesTypeMask());
 
         // Include fragment output state
-        gl::BlendStateExt::ColorMaskStorage::Type colorMask =
-            gl::BlendStateExt::ColorMaskStorage::GetReplicatedValue(
-                gl::BlendStateExt::PackColorMask(true, true, true, true),
-                gl::BlendStateExt::ColorMaskStorage::GetMask(gl::IMPLEMENTATION_MAX_DRAW_BUFFERS));
-        graphicsPipelineDescOut->setColorWriteMasks(colorMask, {}, drawBuffers);
+        if (!context->getFeatures().supportsColorWriteMaskDynamicState.enabled)
+        {
+            gl::BlendStateExt::ColorMaskStorage::Type colorMask =
+                gl::BlendStateExt::ColorMaskStorage::GetReplicatedValue(
+                    gl::BlendStateExt::PackColorMask(true, true, true, true),
+                    gl::BlendStateExt::ColorMaskStorage::GetMask(
+                        gl::IMPLEMENTATION_MAX_DRAW_BUFFERS));
+            graphicsPipelineDescOut->setColorWriteMasks(colorMask, {}, drawBuffers);
+        }
     }
 }
 

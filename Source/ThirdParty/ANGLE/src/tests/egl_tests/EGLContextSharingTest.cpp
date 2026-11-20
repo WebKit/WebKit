@@ -10,6 +10,11 @@
 #include "common/unsafe_buffers.h"
 
 #include <array>
+#include <chrono>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+#include <vector>
 
 #include "common/tls.h"
 #include "test_utils/ANGLETest.h"
@@ -35,6 +40,129 @@ EGLBoolean SafeDestroyContext(EGLDisplay display, EGLContext &context)
     }
     return result;
 }
+
+// Creates a context with the attributes of the window's context.  With
+// EGL_ANGLE_context_virtualization, the context is put in |virtualizationGroup|, so that it can be
+// current on a different thread than the contexts of the other groups.
+EGLContext CreateContextInGroup(EGLWindow *window,
+                                EGLContext shareContext,
+                                EGLint virtualizationGroup)
+{
+    EGLint attribs[] = {EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE, virtualizationGroup, EGL_NONE};
+    if (!IsEGLDisplayExtensionEnabled(window->getDisplay(), "EGL_ANGLE_context_virtualization"))
+    {
+        attribs[0] = EGL_NONE;
+    }
+    return window->createContext(shareContext, attribs);
+}
+
+// How long to wait for other threads to block on the ContextMutex that a ContextMutexHolder holds.
+// They only have to get through EGL validation and a few lookups first.
+constexpr unsigned int kTimeToBlockOnContextMutexMs = 200;
+
+// Keeps the ContextMutex of a share group locked from a thread of its own, until release() is
+// called.  This stalls other threads at the point where they lock the ContextMutex of any context
+// in the share group.
+//
+// GL entry points lock the ContextMutex of the current context for the whole call, and
+// glDebugMessageInsertKHR() calls the debug callback synchronously.  The thread makes a context of
+// the share group current, and inserts a debug message whose callback blocks until release().
+class ContextMutexHolder final
+{
+  public:
+    ContextMutexHolder(EGLDisplay display, EGLContext context)
+    {
+        mThread = std::thread([this, display, context]() { threadMain(display, context); });
+
+        std::unique_lock<std::mutex> lock(mMutex);
+        mCondVar.wait(lock, [this]() { return mHolding || mThreadDone; });
+    }
+
+    ~ContextMutexHolder()
+    {
+        release();
+        mThread.join();
+    }
+
+    ContextMutexHolder(const ContextMutexHolder &)            = delete;
+    ContextMutexHolder &operator=(const ContextMutexHolder &) = delete;
+
+    // Whether the thread managed to lock the ContextMutex.
+    bool isHolding()
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        return mHolding;
+    }
+
+    void release()
+    {
+        {
+            std::lock_guard<std::mutex> lock(mMutex);
+            mReleased = true;
+        }
+        mCondVar.notify_all();
+    }
+
+  private:
+    static constexpr GLuint kHoldMessageId = 0x4D55;
+
+    static void GL_APIENTRY OnDebugMessage(GLenum source,
+                                           GLenum type,
+                                           GLuint id,
+                                           GLenum severity,
+                                           GLsizei length,
+                                           const GLchar *message,
+                                           const void *userParam)
+    {
+        // Let through the messages that ANGLE generates itself, such as performance warnings.
+        if (source != GL_DEBUG_SOURCE_APPLICATION_KHR || id != kHoldMessageId)
+        {
+            return;
+        }
+
+        ContextMutexHolder *holder =
+            static_cast<ContextMutexHolder *>(const_cast<void *>(userParam));
+        std::unique_lock<std::mutex> lock(holder->mMutex);
+        holder->mHolding = true;
+        holder->mCondVar.notify_all();
+        holder->mCondVar.wait(lock, [holder]() { return holder->mReleased; });
+    }
+
+    void threadMain(EGLDisplay display, EGLContext context)
+    {
+        if (eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context) == EGL_TRUE)
+        {
+            glDebugMessageCallbackKHR(OnDebugMessage, this);
+            glEnable(GL_DEBUG_OUTPUT_KHR);
+
+            // Returns once release() is called.
+            glDebugMessageInsertKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, GL_DEBUG_TYPE_MARKER_KHR,
+                                    kHoldMessageId, GL_DEBUG_SEVERITY_NOTIFICATION_KHR, -1,
+                                    "Hold the ContextMutex");
+
+            glDisable(GL_DEBUG_OUTPUT_KHR);
+            glDebugMessageCallbackKHR(nullptr, nullptr);
+            EXPECT_GL_NO_ERROR();
+            EXPECT_EGL_TRUE(
+                eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(mMutex);
+            mThreadDone = true;
+        }
+        mCondVar.notify_all();
+    }
+
+    std::mutex mMutex;
+    std::condition_variable mCondVar;
+    // Protected by |mMutex|.
+    bool mHolding    = false;
+    bool mReleased   = false;
+    bool mThreadDone = false;
+
+    std::thread mThread;
+};
 
 class EGLContextSharingTest : public ANGLETest<>
 {
@@ -1281,6 +1409,361 @@ TEST_P(EGLContextSharingTest, MakeCurrentNoContextAndNoSurface)
 
     EXPECT_TRUE(window->makeCurrent());
     EXPECT_EGL_SUCCESS();
+}
+
+// Test that when several threads make the same context current concurrently, only one of them
+// succeeds, and the others fail with EGL_BAD_ACCESS.
+//
+// eglMakeCurrent() does not lock the display, so checking that the context is not current on
+// another thread must be atomic with making it current, i.e. done under the ContextMutex of the
+// context.  A ContextMutexHolder holds that ContextMutex while the threads make the context
+// current, so that they all race for it at once when it is released.  If the check was done before
+// locking the ContextMutex, they would all pass it.
+TEST_P(EGLContextSharingTest, MakeCurrentRacesMakeCurrentOfSameContext)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+    // The threads make the context current without surfaces, since eglMakeCurrent() locks the
+    // surfaces for the whole call, which would serialize the threads.
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_KHR_surfaceless_context"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_debug"));
+
+    // mContexts[1] shares the ContextMutex of mContexts[0], the context that the threads make
+    // current.
+    mContexts[0] = CreateContextInGroup(window, EGL_NO_CONTEXT, 1);
+    ASSERT_NE(mContexts[0], EGL_NO_CONTEXT);
+    mContexts[1] = CreateContextInGroup(window, mContexts[0], 2);
+    ASSERT_NE(mContexts[1], EGL_NO_CONTEXT);
+    const EGLContext context = mContexts[0];
+
+    constexpr size_t kThreadCount = 4;
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+    // Protected by |mutex|.
+    size_t readyCount                            = 0;
+    bool go                                      = false;
+    size_t doneCount                             = 0;
+    std::array<EGLBoolean, kThreadCount> results = {};
+    std::array<EGLint, kThreadCount> errors      = {};
+
+    std::vector<std::thread> threads;
+    {
+        ContextMutexHolder holder(display, mContexts[1]);
+        ASSERT_TRUE(holder.isHolding());
+
+        for (size_t index = 0; index < kThreadCount; ++index)
+        {
+            threads.emplace_back([&, index]() {
+                std::unique_lock<std::mutex> lock(mutex);
+                ++readyCount;
+                condVar.notify_all();
+                condVar.wait(lock, [&]() { return go; });
+                lock.unlock();
+
+                const EGLBoolean result =
+                    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context);
+                const EGLint error = eglGetError();
+
+                // Keep the context current until every thread is done trying to make it current, so
+                // that no thread can make it current after another thread released it.
+                lock.lock();
+                results[index] = result;
+                errors[index]  = error;
+                ++doneCount;
+                condVar.notify_all();
+                condVar.wait(lock, [&]() { return doneCount == kThreadCount; });
+                lock.unlock();
+
+                if (result == EGL_TRUE)
+                {
+                    EXPECT_EGL_TRUE(
+                        eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+                }
+            });
+        }
+
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            condVar.wait(lock, [&]() { return readyCount == kThreadCount; });
+            go = true;
+        }
+        condVar.notify_all();
+
+        // Give the threads time to block on the ContextMutex.
+        angle::Sleep(kTimeToBlockOnContextMutexMs);
+    }  // ~ContextMutexHolder() unlocks the ContextMutex.
+
+    for (std::thread &thread : threads)
+    {
+        thread.join();
+    }
+
+    size_t currentCount = 0;
+    for (size_t index = 0; index < kThreadCount; ++index)
+    {
+        if (results[index] == EGL_TRUE)
+        {
+            ++currentCount;
+        }
+        else
+        {
+            EXPECT_EQ(EGL_BAD_ACCESS, errors[index]) << "Thread " << index;
+        }
+    }
+    EXPECT_EQ(1u, currentCount) << "The context was current on " << currentCount
+                                << " threads at once";
+}
+
+// Test that eglDestroyContext() does not free a context that another thread is making current.
+//
+// eglMakeCurrent() does not lock the display.  After it looks up the context, it locks the
+// ContextMutex of the context that is current on the thread, to release it.  A ContextMutexHolder
+// holds that ContextMutex, which stalls the thread after it looked up the context, while another
+// thread destroys the context.  eglMakeCurrent() must hold a reference to the context it looked up,
+// so that eglDestroyContext() does not free the context under it.
+TEST_P(EGLContextSharingTest, MakeCurrentRacesDestroyContext)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_KHR_surfaceless_context"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_debug"));
+
+    // mContexts[0] is current on the thread before it makes |context| current, and mContexts[1]
+    // shares its ContextMutex.  |context| is in a share group of its own, so that destroying it
+    // does not need that ContextMutex.
+    mContexts[0] = CreateContextInGroup(window, EGL_NO_CONTEXT, 1);
+    ASSERT_NE(mContexts[0], EGL_NO_CONTEXT);
+    mContexts[1] = CreateContextInGroup(window, mContexts[0], 2);
+    ASSERT_NE(mContexts[1], EGL_NO_CONTEXT);
+    const EGLContext context = CreateContextInGroup(window, EGL_NO_CONTEXT, 3);
+    ASSERT_NE(context, EGL_NO_CONTEXT);
+
+    // eglDestroyContext() and eglMakeCurrent() are expected to return right away, although
+    // eglDestroyContext() may take this long if it waits for the stalled eglMakeCurrent().
+    constexpr std::chrono::seconds kTimeout(10);
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+    // Protected by |mutex|.
+    bool previousContextCurrent = false;
+    bool startMakeCurrent       = false;
+    bool makeCurrentReturned    = false;
+    bool destroyReturned        = false;
+
+    std::thread makeCurrentThread([&]() {
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, mContexts[0]));
+
+        std::unique_lock<std::mutex> lock(mutex);
+        previousContextCurrent = true;
+        condVar.notify_all();
+        condVar.wait(lock, [&]() { return startMakeCurrent; });
+        lock.unlock();
+
+        const EGLBoolean result = eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context);
+        const EGLint error      = eglGetError();
+
+        lock.lock();
+        makeCurrentReturned = true;
+        condVar.notify_all();
+        lock.unlock();
+
+        if (result == EGL_TRUE)
+        {
+            // eglMakeCurrent() won the race, so eglDestroyContext() must have deferred destroying
+            // |context| until it is no longer current.  Check that it is still usable.
+            EXPECT_EQ(context, eglGetCurrentContext());
+
+            GLTexture texture;
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+            GLFramebuffer framebuffer;
+            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+            glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+            EXPECT_GL_NO_ERROR();
+        }
+        else
+        {
+            // eglDestroyContext() won the race.
+            EXPECT_EQ(EGL_BAD_CONTEXT, error);
+        }
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    });
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        condVar.wait(lock, [&]() { return previousContextCurrent; });
+    }
+
+    std::thread destroyThread;
+    {
+        ContextMutexHolder holder(display, mContexts[1]);
+        EXPECT_TRUE(holder.isHolding());
+
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            startMakeCurrent = true;
+        }
+        condVar.notify_all();
+
+        // Give the thread time to look up |context| and block on the ContextMutex of mContexts[0].
+        angle::Sleep(kTimeToBlockOnContextMutexMs);
+
+        // Destroy |context| on yet another thread, and wait for eglDestroyContext() to return
+        // before letting eglMakeCurrent() continue.  The timeout is there in case
+        // eglDestroyContext() waits for the stalled eglMakeCurrent().
+        destroyThread = std::thread([&]() {
+            EXPECT_EGL_TRUE(eglDestroyContext(display, context));
+
+            std::lock_guard<std::mutex> lock(mutex);
+            destroyReturned = true;
+            condVar.notify_all();
+        });
+
+        std::unique_lock<std::mutex> lock(mutex);
+        condVar.wait_for(lock, kTimeout, [&]() { return destroyReturned; });
+    }  // ~ContextMutexHolder() unlocks the ContextMutex.
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        if (!condVar.wait_for(lock, kTimeout, [&]() { return makeCurrentReturned; }))
+        {
+            // The stuck thread cannot be unwound, so there is no way to carry on.
+            FATAL() << "Timed out waiting for eglMakeCurrent() to return.  It is likely stuck on "
+                       "the ContextMutex of the context that eglDestroyContext() freed under it.";
+        }
+    }
+    makeCurrentThread.join();
+    destroyThread.join();
+
+    // Whichever thread won the race, |context| must be gone now.
+    EGLint configID = 0;
+    EXPECT_EGL_FALSE(eglQueryContext(display, context, EGL_CONFIG_ID, &configID));
+    EXPECT_EGL_ERROR(EGL_BAD_CONTEXT);
+}
+
+// Test that eglQueryContext() can query a destroyed context while the thread that has it current
+// releases it, which frees it unless eglQueryContext() references it.
+//
+// The thread that has the context current frees it in eglMakeCurrent(), which does not lock the
+// display.  eglQueryContext() locks the display, looks up the context, and locks its ContextMutex.
+// A ContextMutexHolder holds that ContextMutex while the thread blocks on it to release the
+// context, and then eglQueryContext() blocks on it too, after looking up the context.  The thread
+// that blocked first usually gets the ContextMutex first once the ContextMutexHolder releases it,
+// so the context is usually released before eglQueryContext() uses it.
+TEST_P(EGLContextSharingTest, QueryContextRacesReleaseOfDestroyedContext)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_KHR_surfaceless_context"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_debug"));
+
+    // |context| is current on a thread when it is destroyed.  mContexts[1] shares its ContextMutex.
+    mContexts[0] = CreateContextInGroup(window, EGL_NO_CONTEXT, 1);
+    ASSERT_NE(mContexts[0], EGL_NO_CONTEXT);
+    mContexts[1] = CreateContextInGroup(window, mContexts[0], 2);
+    ASSERT_NE(mContexts[1], EGL_NO_CONTEXT);
+    const EGLContext context = mContexts[0];
+
+    EGLint expectedConfigID = 0;
+    ASSERT_EGL_TRUE(eglQueryContext(display, context, EGL_CONFIG_ID, &expectedConfigID));
+
+    // eglMakeCurrent() and eglQueryContext() are expected to return right away once the
+    // ContextMutexHolder releases the ContextMutex.
+    constexpr std::chrono::seconds kTimeout(10);
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+    // Protected by |mutex|.
+    bool contextCurrent  = false;
+    bool startRelease    = false;
+    bool releaseReturned = false;
+    bool queryReturned   = false;
+
+    std::thread releaseThread([&]() {
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+
+        std::unique_lock<std::mutex> lock(mutex);
+        contextCurrent = true;
+        condVar.notify_all();
+        condVar.wait(lock, [&]() { return startRelease; });
+        lock.unlock();
+
+        // |context| is destroyed, so releasing it frees it, unless another thread references it.
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
+        lock.lock();
+        releaseReturned = true;
+        condVar.notify_all();
+    });
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        condVar.wait(lock, [&]() { return contextCurrent; });
+    }
+
+    // |context| is current on |releaseThread|, so this defers freeing it.
+    EXPECT_EGL_TRUE(SafeDestroyContext(display, mContexts[0]));
+
+    EGLBoolean queryResult = EGL_FALSE;
+    EGLint queryError      = EGL_SUCCESS;
+    EGLint configID        = 0;
+    std::thread queryThread;
+    {
+        ContextMutexHolder holder(display, mContexts[1]);
+        EXPECT_TRUE(holder.isHolding());
+
+        // Let |releaseThread| block on the ContextMutex to release |context| first.
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            startRelease = true;
+        }
+        condVar.notify_all();
+        angle::Sleep(kTimeToBlockOnContextMutexMs);
+
+        // Then look up |context| and block on the ContextMutex too.
+        queryThread = std::thread([&]() {
+            const EGLBoolean result = eglQueryContext(display, context, EGL_CONFIG_ID, &configID);
+            const EGLint error      = eglGetError();
+
+            std::lock_guard<std::mutex> lock(mutex);
+            queryResult   = result;
+            queryError    = error;
+            queryReturned = true;
+            condVar.notify_all();
+        });
+        angle::Sleep(kTimeToBlockOnContextMutexMs);
+    }  // ~ContextMutexHolder() unlocks the ContextMutex.
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        if (!condVar.wait_for(lock, kTimeout, [&]() { return releaseReturned && queryReturned; }))
+        {
+            // The stuck threads cannot be unwound, so there is no way to carry on.
+            FATAL() << "Timed out waiting for eglMakeCurrent() and eglQueryContext() to return.";
+        }
+    }
+    releaseThread.join();
+    queryThread.join();
+
+    // eglQueryContext() references |context|, so it can query it, however the race turned out.
+    EXPECT_EGL_TRUE(queryResult);
+    EXPECT_EQ(EGL_SUCCESS, queryError);
+    EXPECT_EQ(expectedConfigID, configID);
+
+    // |context| must be gone now.
+    EXPECT_EGL_FALSE(eglQueryContext(display, context, EGL_CONFIG_ID, &configID));
+    EXPECT_EGL_ERROR(EGL_BAD_CONTEXT);
 }
 
 // Test that an inactive but alive thread doesn't prevent memory cleanup.

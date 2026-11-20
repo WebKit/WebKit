@@ -329,7 +329,6 @@ TEST_P(GLES1ConformanceTest, MultiTex)
 
 TEST_P(GLES1ConformanceTest, MustPass)
 {
-    ANGLE_SKIP_TEST_IF(true);
     ASSERT_NE(CONFORMANCE_TEST_ERROR, MustPassExec());
 }
 

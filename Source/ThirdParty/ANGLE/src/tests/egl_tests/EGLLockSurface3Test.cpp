@@ -10,9 +10,12 @@
 #include <gtest/gtest.h>
 #include "common/unsafe_buffers.h"
 
+#include <algorithm>
+#include <array>
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -76,15 +79,20 @@ class EGLLockSurface3Test : public ANGLETest<>
         return color;
     }
 
+    // EGL_KHR_lock_surface3 only exposes the locked bitmap as a pointer and a pitch in bytes.
+    Span<uint32_t> bitMapSpan(uint32_t *bitMapPtr, EGLint stride)
+    {
+        // SAFETY: the locked bitmap is EGL_BITMAP_PITCH_KHR bytes per row for kHeight rows.
+        return ANGLE_UNSAFE_BUFFERS(Span(bitMapPtr, static_cast<size_t>((stride / 4) * kHeight)));
+    }
+
     void fillBitMapRGBA32(GLColor colorIn, uint32_t *bitMapPtr, EGLint stride)
     {
+        Span<uint32_t> bitMap = bitMapSpan(bitMapPtr, stride);
+        const uint32_t color  = ChannelOrder(colorIn).asUint();
         for (uint32_t y = 0; y < kHeight; y++)
         {
-            uint32_t *pixelPtr = ANGLE_UNSAFE_TODO(bitMapPtr + (y * (stride / 4)));
-            for (uint32_t x = 0; x < kWidth; x++)
-            {
-                ANGLE_UNSAFE_TODO(pixelPtr[x]) = ChannelOrder(colorIn).asUint();
-            }
+            std::ranges::fill(bitMap.subspan(y * (stride / 4), kWidth), color);
         }
     }
 
@@ -94,10 +102,7 @@ class EGLLockSurface3Test : public ANGLETest<>
         std::fill_n(checkmap.begin(), (kWidth * kHeight), ChannelOrder(colorIn).asUint());
 
         std::array<uint32_t, (kWidth * kHeight)> bitmap;
-        for (uint32_t i = 0; i < (kWidth * kHeight); i++)
-        {
-            bitmap[i] = ANGLE_UNSAFE_TODO(bitMapPtr[i]);
-        }
+        Span(bitmap).copy_from(bitMapSpan(bitMapPtr, stride).first(kWidth * kHeight));
 
         if (bitmap != checkmap)
         {

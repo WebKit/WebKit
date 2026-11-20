@@ -351,6 +351,7 @@ class EGLSurfaceTest : public ANGLETest<>
 
     void runWaitSemaphoreTest(bool useSecondContext);
     void runDestroyNotCurrentSurfaceTest(bool testWindowsSurface);
+    void runPreserveWithSwapIntervalTest(EGLint swapInterval);
 
     void drawQuadThenTearDown();
 
@@ -4726,6 +4727,194 @@ TEST_P(EGLSurfaceTest, ClearThenPreserve)
 
     // Verify that the clear color is visible after swap.
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Creates a window surface, sets |swapInterval|, enables EGL_BUFFER_PRESERVED, draws a single
+// frame and then swaps several times without drawing, alternating the swap interval between 0
+// and 1 on every frame.  Each change may recreate the swapchain.  The drawn contents must be
+// preserved on every frame.
+void EGLSurfaceTest::runPreserveWithSwapIntervalTest(EGLint swapInterval)
+{
+    // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
+    setWindowVisible(mOSWindow, true);
+
+    initializeDisplay();
+
+    constexpr EGLint kSurfaceAttributes[] = {
+        EGL_RED_SIZE,  8, EGL_GREEN_SIZE,   8,
+        EGL_BLUE_SIZE, 8, EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+        EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ANGLE_SKIP_TEST_IF(
+        !eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ANGLE_SKIP_TEST_IF(configCount == 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    // Skip unless both swap intervals 0 and 1 are supported by the config.
+    EGLint minSwapInterval = 0;
+    EGLint maxSwapInterval = 0;
+    eglGetConfigAttrib(mDisplay, surfaceConfig, EGL_MIN_SWAP_INTERVAL, &minSwapInterval);
+    eglGetConfigAttrib(mDisplay, surfaceConfig, EGL_MAX_SWAP_INTERVAL, &maxSwapInterval);
+    ASSERT_EGL_SUCCESS();
+    ANGLE_SKIP_TEST_IF(minSwapInterval > 0 || maxSwapInterval < 1);
+
+    initializeSurface(surfaceConfig);
+    initializeMainContext();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    // Set the swap interval
+    EXPECT_EGL_TRUE(eglSwapInterval(mDisplay, swapInterval));
+    ASSERT_EGL_SUCCESS();
+
+    // Enable preserve behavior.
+    EXPECT_EGL_TRUE(
+        eglSurfaceAttrib(mDisplay, mWindowSurface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED));
+    ASSERT_EGL_SUCCESS();
+
+    // Draw a single frame.
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, mWindowSurface));
+    ASSERT_EGL_SUCCESS();
+
+    // Without drawing anything, the contents must be preserved on every following frame while the
+    // swap interval alternates between 0 and 1.
+    for (int frame = 1; frame <= 6; ++frame)
+    {
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue) << "frame " << frame;
+        EXPECT_EGL_TRUE(eglSwapInterval(mDisplay, (swapInterval + frame) % 2));
+        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, mWindowSurface));
+        ASSERT_EGL_SUCCESS();
+    }
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue) << "last frame";
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that EGL_BUFFER_PRESERVED contents are kept across swap interval changes, starting with
+// swap interval 0.  The swapchain is created in FIFO, so the first FIFO -> MAILBOX recreation
+// happens on the same swap where preserve is enabled.
+TEST_P(EGLSurfaceTest, PreserveWithSwapInterval0)
+{
+    runPreserveWithSwapIntervalTest(0);
+}
+
+// Test that EGL_BUFFER_PRESERVED contents are kept across swap interval changes, starting with
+// swap interval 1.  The swapchain stays in FIFO for the first swap, so the first recreation happens
+// after the preserved contents are already in use.
+TEST_P(EGLSurfaceTest, PreserveWithSwapInterval1)
+{
+    runPreserveWithSwapIntervalTest(1);
+}
+
+// Test that an EGL_BUFFER_PRESERVED surface can be resized.  The contents are undefined after the
+// resize, but drawing at the new size must work and the new contents must be preserved on the
+// following swap.
+TEST_P(EGLSurfaceTest, PreserveThenResize)
+{
+    // http://anglebug.com/42263074
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsARM());
+
+    constexpr size_t kSizeCount = 3;
+    constexpr std::array<int, kSizeCount> kWidths{64, 199, 500};
+    constexpr std::array<int, kSizeCount> kHeights{64, 499, 200};
+
+    // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
+    setWindowVisible(mOSWindow, true);
+
+    initializeDisplay();
+
+    constexpr EGLint kSurfaceAttributes[] = {
+        EGL_RED_SIZE,  8, EGL_GREEN_SIZE,   8,
+        EGL_BLUE_SIZE, 8, EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+        EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ANGLE_SKIP_TEST_IF(
+        !eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ANGLE_SKIP_TEST_IF(configCount == 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    initializeSurface(surfaceConfig);
+    initializeMainContext();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    EXPECT_EGL_TRUE(
+        eglSurfaceAttrib(mDisplay, mWindowSurface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED));
+    ASSERT_EGL_SUCCESS();
+
+    // The buffer age reported for a preserved surface after a resize is only defined for the
+    // Vulkan backend here.
+    const bool checkBufferAge =
+        isVulkanRenderer() && IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_buffer_age");
+
+    for (size_t i = 1; i < kSizeCount; ++i)
+    {
+        // Resize after create/swap (before draw).
+        mOSWindow->resize(kWidths[i], kHeights[i]);
+
+        // The contents are undefined after the resize, so the buffer age must be 0.
+        if (checkBufferAge)
+        {
+            EGLint age = -1;
+            EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, mWindowSurface, EGL_BUFFER_AGE_EXT, &age));
+            EXPECT_EQ(age, 0);
+        }
+
+        EGLint surfaceWidth  = 0;
+        EGLint surfaceHeight = 0;
+
+        // Some platforms may resize the surface before draw, while others may wait until swap.
+        eglQuerySurface(mDisplay, mWindowSurface, EGL_WIDTH, &surfaceWidth);
+        eglQuerySurface(mDisplay, mWindowSurface, EGL_HEIGHT, &surfaceHeight);
+        ASSERT_EGL_SUCCESS();
+        if (surfaceWidth == kWidths[i])
+        {
+            EXPECT_EQ(surfaceHeight, kHeights[i]);
+        }
+        else
+        {
+            EXPECT_EQ(surfaceWidth, kWidths[i - 1]);
+            EXPECT_EQ(surfaceHeight, kHeights[i - 1]);
+        }
+
+        // Actual buffer size must match the reported size.
+        EXPECT_EQ(drawSizeCheckRect(mWindowSurface, surfaceWidth, surfaceHeight), 0);
+        glDisable(GL_SCISSOR_TEST);
+
+        // Start a new frame.
+        eglSwapBuffers(mDisplay, mWindowSurface);
+        ASSERT_EGL_SUCCESS();
+
+        // The new contents must be preserved.
+        if (checkBufferAge)
+        {
+            EGLint age = -1;
+            EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, mWindowSurface, EGL_BUFFER_AGE_EXT, &age));
+            EXPECT_EQ(age, 1);
+        }
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 2, surfaceHeight - 2, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, surfaceHeight - 1, GLColor::green);
+
+        // End the frame started by the checks above, so the next resize is seen at the start of
+        // the next frame.
+        eglSwapBuffers(mDisplay, mWindowSurface);
+        ASSERT_EGL_SUCCESS();
+    }
+
+    ASSERT_GL_NO_ERROR();
 }
 
 // Test that a window surface can be created with the core EGL 1.5 eglCreatePlatformWindowSurface.

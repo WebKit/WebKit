@@ -183,7 +183,6 @@ TIntermFunctionDefinition *GetIndexFunctionDefinition(const TType &type,
         numCases = type.getNominalSize();
     }
 
-    std::string functionName                = GetIndexFunctionName(type, write);
     TIntermFunctionPrototype *prototypeNode = CreateInternalFunctionPrototypeNode(func);
 
     TIntermSymbol *baseParam  = new TIntermSymbol(func.getParam(0));

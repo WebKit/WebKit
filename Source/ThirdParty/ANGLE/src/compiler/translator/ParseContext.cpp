@@ -361,6 +361,28 @@ bool IsPerVertexInMember(TIntermTyped *node)
     return block->getQualifier() == EvqPerVertexIn;
 }
 
+// Returns true if the type of a redeclared gl_PerVertex member matches the built-in's type.
+bool IsValidPerVertexMemberType(const ImmutableString &name, const TType &type)
+{
+    if (type.getBasicType() != EbtFloat || type.getSecondarySize() != 1)
+    {
+        return false;
+    }
+    if (name == "gl_Position")
+    {
+        return type.getNominalSize() == 4 && !type.isArray();
+    }
+    if (name == "gl_PointSize")
+    {
+        return type.getNominalSize() == 1 && !type.isArray();
+    }
+    if (name == "gl_ClipDistance" || name == "gl_CullDistance")
+    {
+        return type.getNominalSize() == 1 && type.isArray() && !type.isArrayOfArrays();
+    }
+    return false;
+}
+
 void ValidateFragColorAndFragData(GLenum shaderType,
                                   int shaderVersion,
                                   const TSymbolTable &symbolTable,
@@ -7277,6 +7299,11 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
                       "gl_ClipDistance and gl_CullDistance may be redeclared",
                       field->name());
             }
+            else if (!IsValidPerVertexMemberType(field->name(), *field->type()))
+            {
+                error(field->line(), "redeclaration of built-in with a different type",
+                      field->name());
+            }
             if (field->name() == "gl_Position")
             {
                 fieldType->setQualifier(EvqPosition);
@@ -7288,32 +7315,38 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
             if (field->name() == "gl_ClipDistance")
             {
                 fieldType->setQualifier(EvqClipDistance);
-                if (static_cast<int>(field->type()->getOutermostArraySize()) >
-                    mResources.MaxClipDistances)
+                if (field->type()->isArray())
                 {
-                    error(field->line(),
-                          "array index out of range, redeclaration of gl_ClipDistance with size > "
-                          "gl_MaxClipDistances",
-                          field->name());
+                    if (static_cast<int>(field->type()->getOutermostArraySize()) >
+                        mResources.MaxClipDistances)
+                    {
+                        error(field->line(),
+                              "array index out of range, redeclaration of gl_ClipDistance with "
+                              "size > gl_MaxClipDistances",
+                              field->name());
+                    }
+                    MarkClipCullRedeclaredSize(
+                        field->line(), field->type()->getOutermostArraySize(),
+                        isPerVertexIn ? &mInputClipDistanceInfo : &mClipDistanceInfo);
                 }
-                MarkClipCullRedeclaredSize(
-                    field->line(), field->type()->getOutermostArraySize(),
-                    isPerVertexIn ? &mInputClipDistanceInfo : &mClipDistanceInfo);
             }
             if (field->name() == "gl_CullDistance")
             {
                 fieldType->setQualifier(EvqCullDistance);
-                if (static_cast<int>(field->type()->getOutermostArraySize()) >
-                    mResources.MaxCullDistances)
+                if (field->type()->isArray())
                 {
-                    error(field->line(),
-                          "array index out of range, redeclaration of gl_CullDistance with size > "
-                          "gl_MaxCullDistances",
-                          field->name());
+                    if (static_cast<int>(field->type()->getOutermostArraySize()) >
+                        mResources.MaxCullDistances)
+                    {
+                        error(field->line(),
+                              "array index out of range, redeclaration of gl_CullDistance with "
+                              "size > gl_MaxCullDistances",
+                              field->name());
+                    }
+                    MarkClipCullRedeclaredSize(
+                        field->line(), field->type()->getOutermostArraySize(),
+                        isPerVertexIn ? &mInputCullDistanceInfo : &mCullDistanceInfo);
                 }
-                MarkClipCullRedeclaredSize(
-                    field->line(), field->type()->getOutermostArraySize(),
-                    isPerVertexIn ? &mInputCullDistanceInfo : &mCullDistanceInfo);
             }
         }
     }
@@ -7847,9 +7880,6 @@ int TParseContext::checkIndexLessThan(bool outOfRangeIndexIsError,
     ASSERT(index >= 0);
     if (static_cast<unsigned int>(index) >= arraySize)
     {
-        std::stringstream reasonStream = sh::InitializeStream<std::stringstream>();
-        reasonStream << reason << " '" << index << "'";
-        std::string token = reasonStream.str();
         outOfRangeError(outOfRangeIndexIsError, location, reason, "[]");
         return arraySize - 1;
     }

@@ -28,7 +28,7 @@
 
 #if defined __cplusplus
 extern "C" {
-#endif
+#endif 
 
 /*
  *  XNVCTRLQueryExtension -
@@ -39,7 +39,12 @@ extern "C" {
  *  defined.
  */
 
-Bool XNVCTRLQueryExtension(Display *dpy, int *event_basep, int *error_basep);
+Bool XNVCTRLQueryExtension (
+    Display *dpy,
+    int *event_basep,
+    int *error_basep
+);
+
 
 /*
  *  XNVCTRLQueryVersion -
@@ -49,7 +54,12 @@ Bool XNVCTRLQueryExtension(Display *dpy, int *event_basep, int *error_basep);
  *  numbers.
  */
 
-Bool XNVCTRLQueryVersion(Display *dpy, int *major, int *minor);
+Bool XNVCTRLQueryVersion (
+    Display *dpy,
+    int *major,
+    int *minor
+);
+
 
 /*
  *  XNVCTRLIsNvScreen
@@ -58,7 +68,11 @@ Bool XNVCTRLQueryVersion(Display *dpy, int *major, int *minor);
  *  driver.  Returns False otherwise.
  */
 
-Bool XNVCTRLIsNvScreen(Display *dpy, int screen);
+Bool XNVCTRLIsNvScreen (
+    Display *dpy,
+    int screen
+);
+
 
 /*
  *  XNVCTRLQueryTargetCount -
@@ -75,7 +89,12 @@ Bool XNVCTRLIsNvScreen(Display *dpy, int screen);
  *     BadValue - The target doesn't exist.
  */
 
-Bool XNVCTRLQueryTargetCount(Display *dpy, int target_type, int *value);
+Bool XNVCTRLQueryTargetCount (
+    Display *dpy,
+    int target_type,
+    int *value
+);
+
 
 /*
  *  XNVCTRLSetAttribute -
@@ -95,11 +114,14 @@ Bool XNVCTRLQueryTargetCount(Display *dpy, int target_type, int *value);
  *     BadMatch - The NVIDIA driver is not present on that screen.
  */
 
-void XNVCTRLSetAttribute(Display *dpy,
-                         int screen,
-                         unsigned int display_mask,
-                         unsigned int attribute,
-                         int value);
+void XNVCTRLSetAttribute (
+    Display *dpy,
+    int screen,
+    unsigned int display_mask,
+    unsigned int attribute,
+    int value
+);
+
 
 /*
  *  XNVCTRLSetTargetAttribute -
@@ -115,43 +137,52 @@ void XNVCTRLSetAttribute(Display *dpy,
  *     BadMatch - The NVIDIA driver is not present on that target.
  */
 
-void XNVCTRLSetTargetAttribute(Display *dpy,
-                               int target_type,
-                               int target_id,
-                               unsigned int display_mask,
-                               unsigned int attribute,
-                               int value);
+void XNVCTRLSetTargetAttribute (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    int value
+);
+
 
 /*
  *  XNVCTRLSetAttributeAndGetStatus -
  *
  * Same as XNVCTRLSetAttribute().
- * In addition, XNVCTRLSetAttributeAndGetStatus() returns
+ * In addition, XNVCTRLSetAttributeAndGetStatus() returns 
  * True if the operation succeeds, False otherwise.
  *
  */
 
-Bool XNVCTRLSetAttributeAndGetStatus(Display *dpy,
-                                     int screen,
-                                     unsigned int display_mask,
-                                     unsigned int attribute,
-                                     int value);
+Bool XNVCTRLSetAttributeAndGetStatus (
+    Display *dpy,
+    int screen,
+    unsigned int display_mask,
+    unsigned int attribute,
+    int value
+);
+
 
 /*
  *  XNVCTRLSetTargetAttributeAndGetStatus -
  *
  * Same as XNVCTRLSetTargetAttribute().
- * In addition, XNVCTRLSetTargetAttributeAndGetStatus() returns
+ * In addition, XNVCTRLSetTargetAttributeAndGetStatus() returns 
  * True if the operation succeeds, False otherwise.
  *
  */
 
-Bool XNVCTRLSetTargetAttributeAndGetStatus(Display *dpy,
-                                           int target_type,
-                                           int target_id,
-                                           unsigned int display_mask,
-                                           unsigned int attribute,
-                                           int value);
+Bool XNVCTRLSetTargetAttributeAndGetStatus (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    int value
+);
+
 
 /*
  *  XNVCTRLQueryAttribute -
@@ -172,11 +203,14 @@ Bool XNVCTRLSetTargetAttributeAndGetStatus(Display *dpy,
  *     BadMatch - The NVIDIA driver is not present on that screen.
  */
 
-Bool XNVCTRLQueryAttribute(Display *dpy,
-                           int screen,
-                           unsigned int display_mask,
-                           unsigned int attribute,
-                           int *value);
+Bool XNVCTRLQueryAttribute (
+    Display *dpy,
+    int screen,
+    unsigned int display_mask,
+    unsigned int attribute,
+    int *value
+);
+
 
 /*
  * XNVCTRLQueryTargetAttribute -
@@ -193,12 +227,15 @@ Bool XNVCTRLQueryAttribute(Display *dpy,
  *     BadMatch - The NVIDIA driver does not control the target.
  */
 
-Bool XNVCTRLQueryTargetAttribute(Display *dpy,
-                                 int target_Type,
-                                 int target_id,
-                                 unsigned int display_mask,
-                                 unsigned int attribute,
-                                 int *value);
+Bool XNVCTRLQueryTargetAttribute (
+    Display *dpy,
+    int target_Type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    int *value
+);
+
 
 /*
  * XNVCTRLQueryTargetAttribute64 -
@@ -218,12 +255,15 @@ Bool XNVCTRLQueryTargetAttribute(Display *dpy,
  *     BadMatch - The NVIDIA driver does not control the target.
  */
 
-Bool XNVCTRLQueryTargetAttribute64(Display *dpy,
-                                   int target_Type,
-                                   int target_id,
-                                   unsigned int display_mask,
-                                   unsigned int attribute,
-                                   int64_t *value);
+Bool XNVCTRLQueryTargetAttribute64 (
+    Display *dpy,
+    int target_Type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    int64_t *value
+);
+
 
 /*
  *  XNVCTRLQueryStringAttribute -
@@ -243,11 +283,14 @@ Bool XNVCTRLQueryTargetAttribute64(Display *dpy,
  *     BadAlloc - Insufficient resources to fulfill the request.
  */
 
-Bool XNVCTRLQueryStringAttribute(Display *dpy,
-                                 int screen,
-                                 unsigned int display_mask,
-                                 unsigned int attribute,
-                                 char **ptr);
+Bool XNVCTRLQueryStringAttribute (
+    Display *dpy,
+    int screen,
+    unsigned int display_mask,
+    unsigned int attribute,
+    char **ptr
+);
+
 
 /*
  *  XNVCTRLQueryTargetStringAttribute -
@@ -263,12 +306,15 @@ Bool XNVCTRLQueryStringAttribute(Display *dpy,
  *     BadAlloc - Insufficient resources to fulfill the request.
  */
 
-Bool XNVCTRLQueryTargetStringAttribute(Display *dpy,
-                                       int target_type,
-                                       int target_id,
-                                       unsigned int display_mask,
-                                       unsigned int attribute,
-                                       char **ptr);
+Bool XNVCTRLQueryTargetStringAttribute (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    char **ptr
+);
+
 
 /*
  *  XNVCTRLSetStringAttribute -
@@ -280,12 +326,15 @@ Bool XNVCTRLQueryTargetStringAttribute(Display *dpy,
  *     BadMatch - The NVIDIA driver is not present on that screen.
  *     BadAlloc - Insufficient resources to fulfill the request.
  */
+ 
+Bool XNVCTRLSetStringAttribute (
+    Display *dpy,
+    int screen,
+    unsigned int display_mask,
+    unsigned int attribute,
+    char *ptr
+);
 
-Bool XNVCTRLSetStringAttribute(Display *dpy,
-                               int screen,
-                               unsigned int display_mask,
-                               unsigned int attribute,
-                               char *ptr);
 
 /*
  *  XNVCTRLSetTargetStringAttribute -
@@ -297,13 +346,16 @@ Bool XNVCTRLSetStringAttribute(Display *dpy,
  *     BadMatch - The NVIDIA driver is not present on that screen.
  *     BadAlloc - Insufficient resources to fulfill the request.
  */
+ 
+Bool XNVCTRLSetTargetStringAttribute (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    char *ptr
+);
 
-Bool XNVCTRLSetTargetStringAttribute(Display *dpy,
-                                     int target_type,
-                                     int target_id,
-                                     unsigned int display_mask,
-                                     unsigned int attribute,
-                                     char *ptr);
 
 /*
  * XNVCTRLQueryValidAttributeValues -
@@ -318,11 +370,15 @@ Bool XNVCTRLSetTargetStringAttribute(Display *dpy,
  *  NV_CTRL_TARGET_TYPE_X_SCREEN and target_id set to 'screen'.
  */
 
-Bool XNVCTRLQueryValidAttributeValues(Display *dpy,
-                                      int screen,
-                                      unsigned int display_mask,
-                                      unsigned int attribute,
-                                      NVCTRLAttributeValidValuesRec *values);
+Bool XNVCTRLQueryValidAttributeValues (
+    Display *dpy,
+    int screen,
+    unsigned int display_mask,
+    unsigned int attribute,                                 
+    NVCTRLAttributeValidValuesRec *values
+);
+
+
 
 /*
  * XNVCTRLQueryValidTargetAttributeValues -
@@ -332,12 +388,15 @@ Bool XNVCTRLQueryValidAttributeValues(Display *dpy,
  * the valid values for the specified attribute.
  */
 
-Bool XNVCTRLQueryValidTargetAttributeValues(Display *dpy,
-                                            int target_type,
-                                            int target_id,
-                                            unsigned int display_mask,
-                                            unsigned int attribute,
-                                            NVCTRLAttributeValidValuesRec *values);
+Bool XNVCTRLQueryValidTargetAttributeValues (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,                                 
+    NVCTRLAttributeValidValuesRec *values
+);
+
 
 /*
  * XNVCTRLQueryValidTargetStringAttributeValues -
@@ -347,12 +406,15 @@ Bool XNVCTRLQueryValidTargetAttributeValues(Display *dpy,
  * indicate the valid values for the specified attribute.
  */
 
-Bool XNVCTRLQueryValidTargetStringAttributeValues(Display *dpy,
-                                                  int target_type,
-                                                  int target_id,
-                                                  unsigned int display_mask,
-                                                  unsigned int attribute,
-                                                  NVCTRLAttributeValidValuesRec *values);
+ Bool XNVCTRLQueryValidTargetStringAttributeValues (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    NVCTRLAttributeValidValuesRec *values
+);
+
 
 /*
  * XNVCTRLQueryAttributePermissions -
@@ -362,9 +424,12 @@ Bool XNVCTRLQueryValidTargetStringAttributeValues(Display *dpy,
  * indicate the permission flags for the attribute.
  */
 
-Bool XNVCTRLQueryAttributePermissions(Display *dpy,
-                                      unsigned int attribute,
-                                      NVCTRLAttributePermissionsRec *permissions);
+Bool XNVCTRLQueryAttributePermissions (
+    Display *dpy,
+    unsigned int attribute,
+    NVCTRLAttributePermissionsRec *permissions
+);
+
 
 /*
  * XNVCTRLQueryStringAttributePermissions -
@@ -374,9 +439,12 @@ Bool XNVCTRLQueryAttributePermissions(Display *dpy,
  * indicate the permission flags for the attribute.
  */
 
-Bool XNVCTRLQueryStringAttributePermissions(Display *dpy,
-                                            unsigned int attribute,
-                                            NVCTRLAttributePermissionsRec *permissions);
+ Bool XNVCTRLQueryStringAttributePermissions (
+    Display *dpy,
+    unsigned int attribute,
+    NVCTRLAttributePermissionsRec *permissions
+);
+
 
 /*
  * XNVCTRLQueryBinaryDataAttributePermissions -
@@ -386,9 +454,12 @@ Bool XNVCTRLQueryStringAttributePermissions(Display *dpy,
  * will indicate the permission flags for the attribute.
  */
 
-Bool XNVCTRLQueryBinaryDataAttributePermissions(Display *dpy,
-                                                unsigned int attribute,
-                                                NVCTRLAttributePermissionsRec *permissions);
+ Bool XNVCTRLQueryBinaryDataAttributePermissions (
+    Display *dpy,
+    unsigned int attribute,
+    NVCTRLAttributePermissionsRec *permissions
+);
+
 
 /*
  * XNVCTRLQueryStringOperationAttributePermissions -
@@ -398,9 +469,12 @@ Bool XNVCTRLQueryBinaryDataAttributePermissions(Display *dpy,
  * permissions will indicate the permission flags for the attribute.
  */
 
-Bool XNVCTRLQueryStringOperationAttributePermissions(Display *dpy,
-                                                     unsigned int attribute,
-                                                     NVCTRLAttributePermissionsRec *permissions);
+ Bool XNVCTRLQueryStringOperationAttributePermissions (
+    Display *dpy,
+    unsigned int attribute,
+    NVCTRLAttributePermissionsRec *permissions
+);
+
 
 /*
  *  XNVCTRLSetGvoColorConversion -
@@ -452,11 +526,15 @@ Bool XNVCTRLQueryStringOperationAttributePermissions(Display *dpy,
  *     BadImplementation - GVO is not available on that screen.
  */
 
-void XNVCTRLSetGvoColorConversion(Display *dpy,
-                                  int screen,
-                                  float colorMatrix[3][3],
-                                  float colorOffset[3],
-                                  float colorScale[3]);
+void XNVCTRLSetGvoColorConversion (
+    Display *dpy,
+    int screen,
+    float colorMatrix[3][3],
+    float colorOffset[3],
+    float colorScale[3]
+);
+
+
 
 /*
  *  XNVCTRLQueryGvoColorConversion -
@@ -472,11 +550,14 @@ void XNVCTRLSetGvoColorConversion(Display *dpy,
  *     BadImplementation - GVO is not available on that screen.
  */
 
-Bool XNVCTRLQueryGvoColorConversion(Display *dpy,
-                                    int screen,
-                                    float colorMatrix[3][3],
-                                    float colorOffset[3],
-                                    float colorScale[3]);
+Bool XNVCTRLQueryGvoColorConversion (
+    Display *dpy,
+    int screen,
+    float colorMatrix[3][3],
+    float colorOffset[3],
+    float colorScale[3]
+);
+
 
 /*
  *  XNVCTRLQueryBinaryData -
@@ -497,12 +578,15 @@ Bool XNVCTRLQueryGvoColorConversion(Display *dpy,
  *     BadAlloc - Insufficient resources to fulfill the request.
  */
 
-Bool XNVCTRLQueryBinaryData(Display *dpy,
-                            int screen,
-                            unsigned int display_mask,
-                            unsigned int attribute,
-                            unsigned char **ptr,
-                            int *len);
+Bool XNVCTRLQueryBinaryData (
+    Display *dpy,
+    int screen,
+    unsigned int display_mask,
+    unsigned int attribute,
+    unsigned char **ptr,
+    int *len
+);
+
 
 /*
  * XNVCTRLQueryTargetBinaryData -
@@ -519,13 +603,16 @@ Bool XNVCTRLQueryBinaryData(Display *dpy,
  *     BadAlloc - Insufficient resources to fulfill the request.
  */
 
-Bool XNVCTRLQueryTargetBinaryData(Display *dpy,
-                                  int target_type,
-                                  int target_id,
-                                  unsigned int display_mask,
-                                  unsigned int attribute,
-                                  unsigned char **ptr,
-                                  int *len);
+Bool XNVCTRLQueryTargetBinaryData (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    unsigned char **ptr,
+    int *len
+);
+
 
 /*
  * XNVCTRLStringOperation -
@@ -534,13 +621,17 @@ Bool XNVCTRLQueryTargetBinaryData(Display *dpy,
  * Returns True on success and False on failure.
  */
 
-Bool XNVCTRLStringOperation(Display *dpy,
-                            int target_type,
-                            int target_id,
-                            unsigned int display_mask,
-                            unsigned int attribute,
-                            char *pIn,
-                            char **ppOut);
+Bool XNVCTRLStringOperation (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    unsigned int display_mask,
+    unsigned int attribute,
+    char *pIn,
+    char **ppOut
+);
+
+
 
 /*
  * XNVCtrlSelectNotify -
@@ -555,7 +646,13 @@ Bool XNVCTRLStringOperation(Display *dpy,
  * controlled by the NVIDIA driver.
  */
 
-Bool XNVCtrlSelectNotify(Display *dpy, int screen, int type, Bool onoff);
+Bool XNVCtrlSelectNotify (
+    Display *dpy,
+    int screen,
+    int type,
+    Bool onoff
+);
+
 
 /*
  * XNVCtrlSelectTargetNotify -
@@ -571,21 +668,23 @@ Bool XNVCtrlSelectNotify(Display *dpy, int screen, int type, Bool onoff);
  * controlled by the NVIDIA driver.
  */
 
-Bool XNVCtrlSelectTargetNotify(Display *dpy,
-                               int target_type,
-                               int target_id,
-                               int notify_type,
-                               Bool onoff);
+Bool XNVCtrlSelectTargetNotify (
+    Display *dpy,
+    int target_type,
+    int target_id,
+    int notify_type,
+    Bool onoff
+);
+
 
 /*
  * XNVCtrlEvent structure
  */
 
-typedef struct
-{
+typedef struct {
     int type;
     unsigned long serial;
-    Bool send_event; /* always FALSE, we don't allow send_events */
+    Bool send_event;  /* always FALSE, we don't allow send_events */
     Display *display;
     Time time;
     int screen;
@@ -594,22 +693,21 @@ typedef struct
     int value;
 } XNVCtrlAttributeChangedEvent;
 
-typedef union
-{
+typedef union {
     int type;
     XNVCtrlAttributeChangedEvent attribute_changed;
     long pad[24];
 } XNVCtrlEvent;
 
+
 /*
  * XNVCtrlEventTarget structure
  */
 
-typedef struct
-{
+typedef struct {
     int type;
     unsigned long serial;
-    Bool send_event; /* always FALSE, we don't allow send_events */
+    Bool send_event;  /* always FALSE, we don't allow send_events */
     Display *display;
     Time time;
     int target_type;
@@ -619,22 +717,21 @@ typedef struct
     int value;
 } XNVCtrlAttributeChangedEventTarget;
 
-typedef union
-{
+typedef union {
     int type;
     XNVCtrlAttributeChangedEventTarget attribute_changed;
     long pad[24];
 } XNVCtrlEventTarget;
 
+
 /*
  * XNVCtrlEventTargetAvailability structure
  */
 
-typedef struct
-{
+typedef struct {
     int type;
     unsigned long serial;
-    Bool send_event; /* always FALSE, we don't allow send_events */
+    Bool send_event;  /* always FALSE, we don't allow send_events */
     Display *display;
     Time time;
     int target_type;
@@ -645,22 +742,21 @@ typedef struct
     Bool availability;
 } XNVCtrlAttributeChangedEventTargetAvailability;
 
-typedef union
-{
+typedef union {
     int type;
     XNVCtrlAttributeChangedEventTargetAvailability attribute_changed;
     long pad[24];
 } XNVCtrlEventTargetAvailability;
 
+
 /*
  * XNVCtrlStringEventTarget structure
  */
 
-typedef struct
-{
+typedef struct {
     int type;
     unsigned long serial;
-    Bool send_event; /* always FALSE, we don't allow send_events */
+    Bool send_event;  /* always FALSE, we don't allow send_events */
     Display *display;
     Time time;
     int target_type;
@@ -669,22 +765,22 @@ typedef struct
     unsigned int attribute;
 } XNVCtrlStringAttributeChangedEventTarget;
 
-typedef union
-{
+typedef union {
     int type;
     XNVCtrlStringAttributeChangedEventTarget attribute_changed;
     long pad[24];
 } XNVCtrlStringEventTarget;
 
+
+
 /*
  * XNVCtrlBinaryEventTarget structure
  */
 
-typedef struct
-{
+typedef struct {
     int type;
     unsigned long serial;
-    Bool send_event; /* always FALSE, we don't allow send_events */
+    Bool send_event;  /* always FALSE, we don't allow send_events */
     Display *display;
     Time time;
     int target_type;
@@ -693,8 +789,7 @@ typedef struct
     unsigned int attribute;
 } XNVCtrlBinaryAttributeChangedEventTarget;
 
-typedef union
-{
+typedef union {
     int type;
     XNVCtrlBinaryAttributeChangedEventTarget attribute_changed;
     long pad[24];
@@ -702,6 +797,6 @@ typedef union
 
 #if defined __cplusplus
 } /* extern "C" */
-#endif
+#endif 
 
 #endif /* __NVCTRLLIB_H */

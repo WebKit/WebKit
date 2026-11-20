@@ -720,8 +720,6 @@ TEST_P(IndexBufferOffsetTestES3, StaticUInt8PrimitiveRestartToggle)
     EXPECT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(IndexBufferOffsetTest,
-                                       ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(IndexBufferOffsetTest);
 
-ANGLE_INSTANTIATE_TEST_ES3_AND(IndexBufferOffsetTestES3,
-                               ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8));
+ANGLE_INSTANTIATE_TEST_ES3(IndexBufferOffsetTestES3);

@@ -3212,9 +3212,6 @@ TEST_P(WebGLCompatibilityTest, CubeTextureCopyingFeedbackLoops)
 // framebuffer to mip 0, it is being redefined.
 TEST_P(WebGL2CompatibilityTest, CopyMip1ToMip0)
 {
-    // http://anglebug.com/42263391
-    ANGLE_SKIP_TEST_IF(IsD3D11());
-
     // http://anglebug.com/42263392
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 

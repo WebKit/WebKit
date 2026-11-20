@@ -7,6 +7,10 @@
 // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance extensions.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/CompilerTest.h"
 #include "test_utils/gl_raii.h"
@@ -1070,6 +1074,213 @@ void main()
     }
 }
 
+// Check that gl_ClipDistance and gl_CullDistance sizes cannot be undefined in Tessellation shaders,
+// and that redeclaring them with a size allows dynamic indexing.
+TEST_P(ClipCullDistanceTest, UndefinedArraySizeWithTessellationShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_tessellation_shader"));
+
+    // Simple (valid) vertex shader that sets every clip/cull distance
+    std::stringstream vertexSource;
+    auto buildVS = [this, &vertexSource](std::string name, int size) {
+        vertexSource.str(std::string());
+        vertexSource.clear();
+        vertexSource << R"(#version 310 es
+#extension )" << kExtensionName
+                     << R"( : require
+#extension GL_EXT_tessellation_shader : require
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+)";
+        for (int i = 0; i < size; ++i)
+        {
+            vertexSource << "    " << name << "[" << i << "] = 1.0;\n";
+        }
+        vertexSource << "}";
+    };
+
+    std::stringstream tessControlSource;
+    auto buildTCS = [this, &tessControlSource](std::string name, std::string maxDistances,
+                                               std::string redeclaration) {
+        tessControlSource.str(std::string());
+        tessControlSource.clear();
+        tessControlSource << R"(#version 310 es
+#extension )" << kExtensionName
+                          << R"( : require
+#extension GL_EXT_tessellation_shader : require
+layout (vertices = 3) out;
+)" << redeclaration << R"(void main()
+{
+    for (int i = 0; i < )" << maxDistances
+                          << R"(; ++i)
+    {
+        gl_out[gl_InvocationID].)"
+                          << name << "[i] = gl_in[gl_InvocationID]." << name << R"([i];
+    }
+    gl_out[gl_InvocationID].gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    if (gl_InvocationID == 0)
+    {
+        gl_TessLevelOuter[0] = 2.0;
+        gl_TessLevelOuter[1] = 2.0;
+        gl_TessLevelOuter[2] = 2.0;
+        gl_TessLevelInner[0] = 2.0;
+    }
+}
+)";
+    };
+
+    std::stringstream tessEvalSource;
+    auto buildTES = [this, &tessEvalSource](std::string name, std::string maxDistances,
+                                            std::string redeclaration) {
+        tessEvalSource.str(std::string());
+        tessEvalSource.clear();
+        tessEvalSource << R"(#version 310 es
+#extension )" << kExtensionName
+                       << R"( : require
+#extension GL_EXT_tessellation_shader : require
+layout(triangles, equal_spacing, ccw) in;
+)" << redeclaration << R"(void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    for (int i = 0; i < )"
+                       << maxDistances << R"(; ++i)
+    {
+        )" << name << "[i] = gl_in[0]."
+                       << name << R"([i];
+    }
+}
+)";
+    };
+
+    // If expectedMsg != nullptr, the program link is expected to fail with a matching info log.
+    // Otherwise, the program is expected to link successfully.
+    auto checkProgram = [=, &vertexSource, &tessControlSource, &tessEvalSource](
+                            std::string name, std::string maxDistances, int sizeVertex,
+                            bool redeclare, const char *expectedMsg) {
+        SCOPED_TRACE(::testing::Message()
+                     << "name=" << name << " maxDistances=" << maxDistances
+                     << " sizeVertex=" << sizeVertex << " redeclare=" << redeclare);
+        // Optionally redeclare gl_PerVertex with a sized array, which allows dynamic indexing
+        const std::string block = "gl_PerVertex { highp vec4 gl_Position; highp float " + name +
+                                  "[" + std::to_string(sizeVertex) + "]; }";
+        buildVS(name, sizeVertex);
+        buildTCS(name, maxDistances,
+                 redeclare ? "in " + block + " gl_in[];\nout " + block + " gl_out[];\n" : "");
+        buildTES(name, maxDistances,
+                 redeclare ? "in " + block + " gl_in[];\nout " + block + ";\n" : "");
+        CheckProgram({{GL_VERTEX_SHADER, vertexSource.str().c_str()},
+                      {GL_TESS_CONTROL_SHADER, tessControlSource.str().c_str()},
+                      {GL_TESS_EVALUATION_SHADER, tessEvalSource.str().c_str()},
+                      {GL_FRAGMENT_SHADER, essl31_shaders::fs::Red()}},
+                     expectedMsg);
+    };
+
+    GLint maxClipDistances = 0;
+    GLint maxCullDistances = 0;
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
+
+    checkProgram("gl_ClipDistance", "gl_MaxClipDistances", maxClipDistances, false, kUnsizedMsg);
+    checkProgram("gl_CullDistance", "gl_MaxCullDistances", maxCullDistances, false, kUnsizedMsg);
+
+    checkProgram("gl_ClipDistance", "gl_MaxClipDistances", maxClipDistances, true, nullptr);
+    if (maxCullDistances > 0)
+    {
+        checkProgram("gl_CullDistance", "gl_MaxCullDistances", maxCullDistances, true, nullptr);
+    }
+}
+
+// Check that gl_ClipDistance and gl_CullDistance sizes cannot be undefined in geometry shaders, and
+// that redeclaring them with a size allows dynamic indexing.
+TEST_P(ClipCullDistanceTest, UndefinedArraySizeWithGeometryShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    // Simple (valid) vertex shader that sets every clip/cull distance
+    std::stringstream vertexSource;
+    auto buildVS = [this, &vertexSource](std::string name, int size) {
+        vertexSource.str(std::string());
+        vertexSource.clear();
+        vertexSource << R"(#version 310 es
+#extension )" << kExtensionName
+                     << R"( : require
+#extension GL_EXT_geometry_shader : require
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+)";
+        for (int i = 0; i < size; ++i)
+        {
+            vertexSource << "    " << name << "[" << i << "] = 1.0;\n";
+        }
+        vertexSource << "}";
+    };
+
+    std::stringstream geometrySource;
+    auto buildGS = [this, &geometrySource](std::string name, std::string maxDistances,
+                                           std::string redeclaration) {
+        geometrySource.str(std::string());
+        geometrySource.clear();
+        geometrySource << R"(#version 310 es
+#extension )" << kExtensionName
+                       << R"( : require
+#extension GL_EXT_geometry_shader : require
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+)" << redeclaration << R"(void main()
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        gl_Position = gl_in[i].gl_Position;
+        for (int j = 0; j < )"
+                       << maxDistances << R"(; ++j)
+        {
+            )" << name << "[j] = gl_in[i]."
+                       << name << R"([j];
+        }
+        EmitVertex();
+    }
+    EndPrimitive();
+}
+)";
+    };
+
+    // If expectedMsg != nullptr, the program link is expected to fail with a matching info log.
+    // Otherwise, the program is expected to link successfully.
+    auto checkProgram = [=, &vertexSource, &geometrySource](
+                            std::string name, std::string maxDistances, int sizeVertex,
+                            bool redeclare, const char *expectedMsg) {
+        SCOPED_TRACE(::testing::Message()
+                     << "name=" << name << " maxDistances=" << maxDistances
+                     << " sizeVertex=" << sizeVertex << " redeclare=" << redeclare);
+        // Optionally redeclare gl_PerVertex with a sized array, which allows dynamic indexing
+        const std::string block = "gl_PerVertex { highp vec4 gl_Position; highp float " + name +
+                                  "[" + std::to_string(sizeVertex) + "]; }";
+        buildVS(name, sizeVertex);
+        buildGS(name, maxDistances,
+                redeclare ? "in " + block + " gl_in[];\nout " + block + ";\n" : "");
+        CheckProgram({{GL_VERTEX_SHADER, vertexSource.str().c_str()},
+                      {GL_GEOMETRY_SHADER, geometrySource.str().c_str()},
+                      {GL_FRAGMENT_SHADER, essl31_shaders::fs::Red()}},
+                     expectedMsg);
+    };
+
+    GLint maxClipDistances = 0;
+    GLint maxCullDistances = 0;
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
+
+    checkProgram("gl_ClipDistance", "gl_MaxClipDistances", maxClipDistances, false, kUnsizedMsg);
+    checkProgram("gl_CullDistance", "gl_MaxCullDistances", maxCullDistances, false, kUnsizedMsg);
+
+    checkProgram("gl_ClipDistance", "gl_MaxClipDistances", maxClipDistances, true, nullptr);
+    if (maxCullDistances > 0)
+    {
+        checkProgram("gl_CullDistance", "gl_MaxCullDistances", maxCullDistances, true, nullptr);
+    }
+}
+
 // Check that shaders with invalid or missing storage qualifiers are rejected
 TEST_P(ClipCullDistanceTest, StorageQualifiers)
 {
@@ -1346,6 +1557,1040 @@ TEST_P(ClipCullDistanceTest, SizeCheck)
             checkProgram(name, true, maxSize + 1, true, maxSize + 1, kIndexOutOfRangeMsg);
         }
     }
+}
+
+// Check that shader validation enforces matching array sizes between shader stages with
+// tessellation shaders
+TEST_P(ClipCullDistanceTest, SizeCheckWithTessellationShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_tessellation_shader"));
+
+    // Simple vertex shader that sets every clip/cull distance
+    std::stringstream vertexSource;
+    auto buildVS = [this, &vertexSource](std::string name, int size) {
+        vertexSource.str(std::string());
+        vertexSource.clear();
+        vertexSource << R"(#version 310 es
+#extension )" << kExtensionName
+                     << R"( : require
+#extension GL_EXT_tessellation_shader : require
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+)";
+        for (int i = 0; i < size; ++i)
+        {
+            vertexSource << "    " << name << "[" << i << "] = 1.0;\n";
+        }
+        vertexSource << "}";
+    };
+
+    std::stringstream tessControlSource;
+    auto buildTCS = [this, &tessControlSource](std::string name, bool declare, int size) {
+        tessControlSource.str(std::string());
+        tessControlSource.clear();
+        tessControlSource << R"(#version 310 es
+#extension )" << kExtensionName
+                          << R"( : require
+#extension GL_EXT_tessellation_shader : require
+layout (vertices = 3) out;
+)";
+        if (declare)
+        {
+            tessControlSource << R"(in gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float )" << name << "["
+                              << size << R"(];
+} gl_in[];
+out gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float )" << name << "["
+                              << size << R"(];
+} gl_out[];
+)";
+        }
+        tessControlSource << R"(void main()
+{
+)";
+        // clang-format off
+        for (int i = 0; i < size; ++i)
+        {
+            tessControlSource << "    gl_out[gl_InvocationID]." << name << "[" << i << "] = gl_in[gl_InvocationID]." << name << "[" << i << "];\n";
+        }
+        // clang-format on
+        tessControlSource << R"(    gl_out[gl_InvocationID].gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    if (gl_InvocationID == 0)
+    {
+        gl_TessLevelOuter[0] = 2.0;
+        gl_TessLevelOuter[1] = 2.0;
+        gl_TessLevelOuter[2] = 2.0;
+        gl_TessLevelInner[0] = 2.0;
+    }
+}
+)";
+    };
+
+    std::stringstream tessEvalSource;
+    auto buildTES = [this, &tessEvalSource](std::string name, bool declare, int size) {
+        tessEvalSource.str(std::string());
+        tessEvalSource.clear();
+        tessEvalSource << R"(#version 310 es
+#extension )" << kExtensionName
+                       << R"( : require
+#extension GL_EXT_tessellation_shader : require
+layout(triangles, equal_spacing, ccw) in;
+)";
+        if (declare)
+        {
+            tessEvalSource << R"(in gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float )" << name << "["
+                           << size << R"(];
+} gl_in[];
+out gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float )" << name << "["
+                           << size << R"(];
+};
+)";
+        }
+        tessEvalSource << R"(void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+)";
+        // clang-format off
+        for (int i = 0; i < size; ++i)
+        {
+            tessEvalSource << "    " << name << "[" << i << "] = gl_in[0]." << name << "[" << i << "];\n";
+        }
+        // clang-format on
+        tessEvalSource << "}\n";
+    };
+
+    // If expectedMsg != nullptr, the program link is expected to fail with a matching info log.
+    // Otherwise, the program is expected to link successfully.
+    auto checkProgram = [=, &vertexSource, &tessControlSource, &tessEvalSource](
+                            std::string name, int sizeVertex, bool declareControl, int sizeControl,
+                            bool declareEval, int sizeEval, const char *expectedMsg) {
+        SCOPED_TRACE(::testing::Message()
+                     << "name=" << name << " sizeVertex=" << sizeVertex
+                     << " declareControl=" << declareControl << " sizeControl=" << sizeControl
+                     << " declareEval=" << declareEval << " sizeEval=" << sizeEval);
+        buildVS(name, sizeVertex);
+        buildTCS(name, declareControl, sizeControl);
+        buildTES(name, declareEval, sizeEval);
+        CheckProgram({{GL_VERTEX_SHADER, vertexSource.str().c_str()},
+                      {GL_TESS_CONTROL_SHADER, tessControlSource.str().c_str()},
+                      {GL_TESS_EVALUATION_SHADER, tessEvalSource.str().c_str()},
+                      {GL_FRAGMENT_SHADER, essl31_shaders::fs::Red()}},
+                     expectedMsg);
+    };
+
+    GLint maxClipDistances = 0;
+    GLint maxCullDistances = 0;
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
+
+    std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
+                                              {"gl_CullDistance", maxCullDistances}};
+    for (auto entry : entries)
+    {
+        const std::string name = entry.first;
+        const int maxSize      = entry.second;
+        if (maxSize == 0)
+        {
+            continue;
+        }
+
+        // The array size can be explicitly or implicitly declared, in both the TCS and TES stages.
+        // Iterate through all combinations (00, 01, 10, and 11).
+        for (int i = 0; i < 4; ++i)
+        {
+            bool declareTCS = i / 2;
+            bool declareTES = i % 2;
+
+            // Valid - matching sizes with implicit & explicit declaration
+            for (int j = 1; j <= maxSize; j++)
+            {
+                checkProgram(name, j, declareTCS, j, declareTES, j, nullptr);
+            }
+
+            // Invalid - non-matching sizes with implicit & explicit declaration
+            for (int j = 2; j <= maxSize; ++j)
+            {
+                checkProgram(name, j - 1, declareTCS, j, declareTES, j, kArraySizeMismatchMsg);
+                checkProgram(name, j, declareTCS, j - 1, declareTES, j, kArraySizeMismatchMsg);
+                checkProgram(name, j, declareTCS, j, declareTES, j - 1, kArraySizeMismatchMsg);
+            }
+
+            // Invalid - out-of-range array sizes
+            {
+                checkProgram(name, 1, declareTCS, maxSize + 1, declareTES, 1, kIndexOutOfRangeMsg);
+                checkProgram(name, 1, declareTCS, 1, declareTES, maxSize + 1, kIndexOutOfRangeMsg);
+                checkProgram(name, 1, declareTCS, maxSize + 1, declareTES, maxSize + 1,
+                             kIndexOutOfRangeMsg);
+                checkProgram(name, maxSize + 1, declareTCS, maxSize + 1, declareTES, maxSize + 1,
+                             kIndexOutOfRangeMsg);
+            }
+        }
+    }
+}
+
+// Check that shader validation enforces matching array sizes between shader stages with geometry
+// shader
+TEST_P(ClipCullDistanceTest, SizeCheckWithGeometryShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    std::stringstream vertexSource;
+    auto buildVS = [this, &vertexSource](std::string name, int size) {
+        vertexSource.str(std::string());
+        vertexSource.clear();
+        vertexSource << R"(#version 310 es
+#extension )" << kExtensionName
+                     << R"( : require
+#extension GL_EXT_geometry_shader : require
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+)";
+        for (int i = 0; i < size; ++i)
+        {
+            vertexSource << "    " << name << "[" << i << "] = 1.0;\n";
+        }
+        vertexSource << "}";
+    };
+
+    std::stringstream geometrySource;
+    auto buildGS = [this, &geometrySource](std::string name, bool declare, int size) {
+        geometrySource.str(std::string());
+        geometrySource.clear();
+        geometrySource << R"(#version 310 es
+#extension )" << kExtensionName
+                       << R"( : require
+#extension GL_EXT_geometry_shader : require
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+)";
+        if (declare)
+        {
+            geometrySource << R"(in gl_PerVertex {
+    highp vec4 gl_Position;
+    highp float )" << name << "["
+                           << size << R"(];
+} gl_in[];
+out gl_PerVertex {
+    highp vec4 gl_Position;
+    highp float )" << name << "["
+                           << size << R"(];
+};
+)";
+        }
+        geometrySource << R"(void main()
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        gl_Position = gl_in[i].gl_Position;
+)";
+        // clang-format off
+        for (int j = 0; j < size; ++j)
+        {
+            geometrySource << "        " << name << "[" << j << "] = gl_in[i]." << name << "[" << j << "];\n";
+        }
+        // clang-format on
+        geometrySource << R"(        EmitVertex();
+    }
+    EndPrimitive();
+}
+)";
+    };
+
+    // If expectedMsg != nullptr, the program link is expected to fail with a matching info log.
+    // Otherwise, the program is expected to link successfully.
+    auto checkProgram = [=, &vertexSource, &geometrySource](std::string name, int sizeVertex,
+                                                            bool declareGeometry, int sizeGeometry,
+                                                            const char *expectedMsg) {
+        SCOPED_TRACE(::testing::Message()
+                     << "name=" << name << " sizeVertex=" << sizeVertex
+                     << " declareGeometry=" << declareGeometry << " sizeGeometry=" << sizeGeometry);
+        buildVS(name, sizeVertex);
+        buildGS(name, declareGeometry, sizeGeometry);
+        CheckProgram({{GL_VERTEX_SHADER, vertexSource.str().c_str()},
+                      {GL_GEOMETRY_SHADER, geometrySource.str().c_str()},
+                      {GL_FRAGMENT_SHADER, essl31_shaders::fs::Red()}},
+                     expectedMsg);
+    };
+
+    GLint maxClipDistances = 0;
+    GLint maxCullDistances = 0;
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
+
+    std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
+                                              {"gl_CullDistance", maxCullDistances}};
+    for (auto entry : entries)
+    {
+        const std::string name = entry.first;
+        const int maxSize      = entry.second;
+        if (maxSize == 0)
+        {
+            continue;
+        }
+
+        // Valid - matching sizes with implicit & explicit declaration
+        for (int j = 1; j <= maxSize; j++)
+        {
+            checkProgram(name, j, true, j, nullptr);
+            checkProgram(name, j, false, j, nullptr);
+        }
+
+        // Invalid - non-matching sizes with implicit & explicit declaration
+        for (int j = 2; j <= maxSize; ++j)
+        {
+            checkProgram(name, j - 1, true, j, kArraySizeMismatchMsg);
+            checkProgram(name, j, true, j - 1, kArraySizeMismatchMsg);
+            checkProgram(name, j - 1, false, j, kArraySizeMismatchMsg);
+            checkProgram(name, j, false, j - 1, kArraySizeMismatchMsg);
+        }
+
+        // Invalid - out-of-range array sizes
+        {
+            checkProgram(name, 1, true, maxSize + 1, kIndexOutOfRangeMsg);
+            checkProgram(name, 1, false, maxSize + 1, kIndexOutOfRangeMsg);
+        }
+    }
+}
+
+// Test per-vertex I/O with tessellation shader - various combinations of gl_PerVertex members
+TEST_P(ClipCullDistanceTest, PerVertexIOWithTessellationShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    // PointSize support is optional
+    const bool kTessPointSizeSupported = IsGLExtensionEnabled("GL_EXT_tessellation_point_size");
+
+    std::stringstream vertexSource;
+    auto buildVS = [this, &vertexSource](bool writePosition, bool writePointSize, bool writeClip,
+                                         bool writeCull) {
+        vertexSource.str(std::string());
+        vertexSource.clear();
+        vertexSource << R"(#version 310 es
+#extension )" << kExtensionName
+                     << R"( : require
+#extension GL_EXT_tessellation_shader : require
+)";
+        if (writePointSize)
+        {
+            vertexSource << "#extension GL_EXT_tessellation_point_size : require\n";
+        }
+
+        // Build gl_PerVertex output block
+        vertexSource << "out gl_PerVertex {\n";
+        if (writePosition)
+        {
+            vertexSource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            vertexSource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            vertexSource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            vertexSource << "    highp float gl_CullDistance[1];\n";
+        }
+        vertexSource << "};\n";
+
+        // Pass through position if VS doesn't write gl_Position
+        if (!writePosition)
+        {
+            vertexSource << "out highp vec2 v_position;\n";
+        }
+
+        vertexSource << R"(in vec2 a_position;
+void main()
+{
+)";
+        if (writePosition)
+        {
+            vertexSource << "    gl_Position = vec4(a_position, 0.0, 1.0);\n";
+        }
+        else
+        {
+            vertexSource << "    v_position = a_position;\n";
+        }
+
+        if (writePointSize)
+        {
+            vertexSource << "    gl_PointSize = 1.0;\n";
+        }
+        if (writeClip)
+        {
+            vertexSource << "    gl_ClipDistance[0] = 1.0;\n";
+        }
+        if (writeCull)
+        {
+            vertexSource << "    gl_CullDistance[0] = 1.0;\n";
+        }
+        vertexSource << "}\n";
+    };
+
+    std::stringstream tessControlSource;
+    auto buildTCS = [this, &tessControlSource](bool writePosition, bool writePointSize,
+                                               bool writeClip, bool writeCull) {
+        tessControlSource.str(std::string());
+        tessControlSource.clear();
+        tessControlSource << R"(#version 310 es
+#extension )" << kExtensionName
+                          << R"( : require
+#extension GL_EXT_tessellation_shader : require
+)";
+        if (writePointSize)
+        {
+            tessControlSource << "#extension GL_EXT_tessellation_point_size : require\n";
+        }
+        tessControlSource << "layout(vertices = 3) out;\n";
+
+        // Build gl_in block
+        tessControlSource << "in gl_PerVertex {\n";
+        if (writePosition)
+        {
+            tessControlSource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            tessControlSource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            tessControlSource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            tessControlSource << "    highp float gl_CullDistance[1];\n";
+        }
+        tessControlSource << "} gl_in[];\n";
+
+        // Build gl_out block
+        tessControlSource << "out gl_PerVertex {\n";
+        if (writePosition)
+        {
+            tessControlSource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            tessControlSource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            tessControlSource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            tessControlSource << "    highp float gl_CullDistance[1];\n";
+        }
+        tessControlSource << "} gl_out[];\n";
+
+        // Add v_position input if VS didn't write gl_Position
+        if (!writePosition)
+        {
+            tessControlSource << "in highp vec2 v_position[];\n";
+        }
+
+        tessControlSource << R"(void main()
+{
+)";
+        if (writePosition)
+        {
+            tessControlSource << "    gl_out[gl_InvocationID].gl_Position = "
+                                 "gl_in[gl_InvocationID].gl_Position;\n";
+        }
+        else
+        {
+            tessControlSource << "    gl_out[gl_InvocationID].gl_Position = "
+                                 "vec4(v_position[gl_InvocationID], 0.0, 1.0);\n";
+        }
+
+        if (writePointSize)
+        {
+            tessControlSource << "    gl_out[gl_InvocationID].gl_PointSize = "
+                                 "gl_in[gl_InvocationID].gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            tessControlSource << "    gl_out[gl_InvocationID].gl_ClipDistance[0] = "
+                                 "gl_in[gl_InvocationID].gl_ClipDistance[0];\n";
+        }
+        if (writeCull)
+        {
+            tessControlSource << "    gl_out[gl_InvocationID].gl_CullDistance[0] = "
+                                 "gl_in[gl_InvocationID].gl_CullDistance[0];\n";
+        }
+        tessControlSource << R"(    if (gl_InvocationID == 0)
+    {
+        gl_TessLevelOuter[0] = 1.0;
+        gl_TessLevelOuter[1] = 1.0;
+        gl_TessLevelOuter[2] = 1.0;
+        gl_TessLevelInner[0] = 1.0;
+    }
+}
+)";
+    };
+
+    std::stringstream tessEvalSource;
+    auto buildTES = [this, &tessEvalSource](bool writePosition, bool writePointSize, bool writeClip,
+                                            bool writeCull) {
+        tessEvalSource.str(std::string());
+        tessEvalSource.clear();
+        tessEvalSource << R"(#version 310 es
+#extension )" << kExtensionName
+                       << R"( : require
+#extension GL_EXT_tessellation_shader : require
+)";
+        if (writePointSize)
+        {
+            tessEvalSource << "#extension GL_EXT_tessellation_point_size : require\n";
+        }
+        tessEvalSource << "layout(triangles, equal_spacing, ccw) in;\n";
+
+        // Build gl_in block
+        tessEvalSource << "in gl_PerVertex {\n";
+        if (writePosition)
+        {
+            tessEvalSource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            tessEvalSource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            tessEvalSource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            tessEvalSource << "    highp float gl_CullDistance[1];\n";
+        }
+        tessEvalSource << "} gl_in[];\n";
+
+        // Build gl_PerVertex output block
+        tessEvalSource << "out gl_PerVertex {\n";
+        if (writePosition)
+        {
+            tessEvalSource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            tessEvalSource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            tessEvalSource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            tessEvalSource << "    highp float gl_CullDistance[1];\n";
+        }
+        tessEvalSource << "};\n";
+
+        tessEvalSource << R"(void main()
+{
+    // Simple position interpolation across the patch
+    vec3 b = gl_TessCoord;
+    gl_Position =
+        b.x * gl_in[0].gl_Position
+        + b.y * gl_in[1].gl_Position
+        + b.z * gl_in[2].gl_Position;
+)";
+        if (writePointSize)
+        {
+            tessEvalSource << "    gl_PointSize = gl_in[0].gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            tessEvalSource << "    gl_ClipDistance[0] = gl_in[0].gl_ClipDistance[0];\n";
+        }
+        if (writeCull)
+        {
+            tessEvalSource << "    gl_CullDistance[0] = gl_in[0].gl_CullDistance[0];\n";
+        }
+        tessEvalSource << "}\n";
+    };
+
+    auto checkProgram = [=, this, &vertexSource, &tessControlSource, &tessEvalSource](
+                            bool writePosition, bool writePointSize, bool writeClip,
+                            bool writeCull) {
+        // GL_EXT_tessellation_point_size required for gl_PointSize in TCS/TES
+        if (writePointSize && !kTessPointSizeSupported)
+        {
+            return;
+        }
+        buildVS(writePosition, writePointSize, writeClip, writeCull);
+        buildTCS(writePosition, writePointSize, writeClip, writeCull);
+        buildTES(writePosition, writePointSize, writeClip, writeCull);
+        GLProgram program;
+        program.makeRaster(vertexSource.str().c_str(), tessControlSource.str().c_str(),
+                           tessEvalSource.str().c_str(), essl31_shaders::fs::Red());
+        EXPECT_TRUE(program.valid())
+            << "Failed for writePosition=" << writePosition << ", writePointSize=" << writePointSize
+            << ", writeClip=" << writeClip << ", writeCull=" << writeCull;
+
+        // Do a draw to ensure that position & distance values are set correctly
+        glUseProgram(program);
+        glPatchParameteriEXT(GL_PATCH_VERTICES, 3);
+        EXPECT_GL_NO_ERROR();
+
+        if (writeClip)
+        {
+            glEnable(GL_CLIP_DISTANCE0_EXT);
+        }
+        else
+        {
+            glDisable(GL_CLIP_DISTANCE0_EXT);
+        }
+
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        drawPatches(program, "a_position", 0, 1.0, false);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    };
+
+    // Subtest 1: All members
+    checkProgram(true, true, true, true);
+    // Subtest 2: Without gl_PointSize
+    checkProgram(true, false, true, true);
+    // Subtest 3: Without gl_PointSize and gl_ClipDistance
+    checkProgram(true, false, false, true);
+    // Subtest 4: Without gl_PointSize and gl_CullDistance
+    checkProgram(true, false, true, false);
+    // Subtest 5: Without gl_Position and gl_ClipDistance (uses v_position passthrough)
+    checkProgram(false, true, false, true);
+    // Subtest 6: Without gl_Position and gl_CullDistance (uses v_position passthrough)
+    checkProgram(false, true, true, false);
+}
+
+// Test per-vertex I/O with geometry shader - various combinations of gl_PerVertex members
+TEST_P(ClipCullDistanceTest, PerVertexIOWithGeometryShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_geometry_shader"));
+    // PointSize support is optional
+    const bool kGeomPointSizeSupported = IsGLExtensionEnabled("GL_EXT_geometry_point_size");
+
+    std::stringstream vertexSource;
+    auto buildVS = [this, &vertexSource](bool writePosition, bool writePointSize, bool writeClip,
+                                         bool writeCull) {
+        vertexSource.str(std::string());
+        vertexSource.clear();
+        vertexSource << R"(#version 310 es
+#extension )" << kExtensionName
+                     << R"( : require
+#extension GL_EXT_geometry_shader : require
+)";
+        if (writePointSize)
+        {
+            vertexSource << "#extension GL_EXT_geometry_point_size : require\n";
+        }
+
+        // Build gl_PerVertex output block
+        vertexSource << "out gl_PerVertex {\n";
+        if (writePosition)
+        {
+            vertexSource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            vertexSource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            vertexSource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            vertexSource << "    highp float gl_CullDistance[1];\n";
+        }
+        vertexSource << "};\n";
+
+        // Pass through position if VS doesn't write gl_Position
+        if (!writePosition)
+        {
+            vertexSource << "out highp vec2 v_position;\n";
+        }
+
+        vertexSource << R"(in vec2 a_position;
+void main()
+{
+)";
+        if (writePosition)
+        {
+            vertexSource << "    gl_Position = vec4(a_position, 0.0, 1.0);\n";
+        }
+        else
+        {
+            vertexSource << "    v_position = a_position;\n";
+        }
+
+        if (writePointSize)
+        {
+            vertexSource << "    gl_PointSize = 1.0;\n";
+        }
+        if (writeClip)
+        {
+            vertexSource << "    gl_ClipDistance[0] = 1.0;\n";
+        }
+        if (writeCull)
+        {
+            vertexSource << "    gl_CullDistance[0] = 1.0;\n";
+        }
+        vertexSource << "}\n";
+    };
+
+    std::stringstream geometrySource;
+    auto buildGS = [this, &geometrySource](bool writePosition, bool writePointSize, bool writeClip,
+                                           bool writeCull) {
+        geometrySource.str(std::string());
+        geometrySource.clear();
+        geometrySource << R"(#version 310 es
+#extension )" << kExtensionName
+                       << R"( : require
+#extension GL_EXT_geometry_shader : require
+)";
+        if (writePointSize)
+        {
+            geometrySource << "#extension GL_EXT_geometry_point_size : require\n";
+        }
+        geometrySource << R"(layout(triangles) in;
+layout(triangle_strip, max_vertices = 3) out;
+)";
+
+        // Build gl_PerVertex input block
+        geometrySource << "in gl_PerVertex {\n";
+        if (writePosition)
+        {
+            geometrySource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            geometrySource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            geometrySource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            geometrySource << "    highp float gl_CullDistance[1];\n";
+        }
+        geometrySource << "} gl_in[];\n";
+
+        // Build gl_PerVertex output block
+        geometrySource << "out gl_PerVertex {\n";
+        if (writePosition)
+        {
+            geometrySource << "    highp vec4 gl_Position;\n";
+        }
+        if (writePointSize)
+        {
+            geometrySource << "    highp float gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            geometrySource << "    highp float gl_ClipDistance[1];\n";
+        }
+        if (writeCull)
+        {
+            geometrySource << "    highp float gl_CullDistance[1];\n";
+        }
+        geometrySource << "};\n";
+
+        // Add v_position input if VS didn't write gl_Position
+        if (!writePosition)
+        {
+            geometrySource << "in highp vec2 v_position[];\n";
+        }
+
+        geometrySource << R"(void main()
+{
+    for (int i = 0; i < 3; i++)
+    {
+)";
+        if (writePosition)
+        {
+            geometrySource << "        gl_Position = gl_in[i].gl_Position;\n";
+        }
+        else
+        {
+            geometrySource << "        gl_Position = vec4(v_position[i], 0.0, 1.0);\n";
+        }
+
+        if (writePointSize)
+        {
+            geometrySource << "        gl_PointSize = gl_in[i].gl_PointSize;\n";
+        }
+        if (writeClip)
+        {
+            geometrySource << "        gl_ClipDistance[0] = gl_in[i].gl_ClipDistance[0];\n";
+        }
+        if (writeCull)
+        {
+            geometrySource << "        gl_CullDistance[0] = gl_in[i].gl_CullDistance[0];\n";
+        }
+        geometrySource << R"(        EmitVertex();
+    }
+    EndPrimitive();
+}
+)";
+    };
+
+    auto checkProgram = [=, this, &vertexSource, &geometrySource](bool writePosition,
+                                                                  bool writePointSize,
+                                                                  bool writeClip, bool writeCull) {
+        // GL_EXT_geometry_point_size required for gl_PointSize in GS
+        if (writePointSize && !kGeomPointSizeSupported)
+        {
+            return;
+        }
+        buildVS(writePosition, writePointSize, writeClip, writeCull);
+        buildGS(writePosition, writePointSize, writeClip, writeCull);
+        GLProgram program;
+        program.makeRaster(vertexSource.str().c_str(), geometrySource.str().c_str(),
+                           essl31_shaders::fs::Red());
+        EXPECT_TRUE(program.valid())
+            << "Failed for writePosition=" << writePosition << ", writePointSize=" << writePointSize
+            << ", writeClip=" << writeClip << ", writeCull=" << writeCull;
+
+        // Do a draw to ensure that position & distance values are set correctly
+        glUseProgram(program);
+
+        if (writeClip)
+        {
+            glEnable(GL_CLIP_DISTANCE0_EXT);
+        }
+        else
+        {
+            glDisable(GL_CLIP_DISTANCE0_EXT);
+        }
+
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        drawQuad(program, "a_position", 0);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    };
+
+    // Subtest 1: All members
+    checkProgram(true, true, true, true);
+    // Subtest 2: Without gl_PointSize
+    checkProgram(true, false, true, true);
+    // Subtest 3: Without gl_PointSize and gl_ClipDistance
+    checkProgram(true, false, false, true);
+    // Subtest 4: Without gl_PointSize and gl_CullDistance
+    checkProgram(true, false, true, false);
+    // Subtest 5: Without gl_Position and gl_ClipDistance (uses v_position passthrough)
+    checkProgram(false, true, false, true);
+    // Subtest 6: Without gl_Position and gl_CullDistance (uses v_position passthrough)
+    checkProgram(false, true, true, false);
+}
+
+// Write to gl_ClipDistance and gl_CullDistance using a VS+GS pipeline that never writes or
+// declares gl_Position.
+TEST_P(ClipCullDistanceTest, NoPositionWithGeometryShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    constexpr float kClipValue = 0.25f;
+    constexpr float kCullValue = 0.75f;
+
+    std::stringstream vs;
+    vs << R"(#version 310 es
+#extension )"
+       << kExtensionName << R"( : require
+#extension GL_EXT_geometry_shader : require
+out gl_PerVertex {
+    highp float gl_ClipDistance[1];
+    highp float gl_CullDistance[1];
+};
+void main()
+{
+    gl_ClipDistance[0] = )"
+       << kClipValue << R"(;
+    gl_CullDistance[0] = )"
+       << kCullValue << R"(;
+}
+)";
+
+    std::stringstream gs;
+    gs << R"(#version 310 es
+#extension )"
+       << kExtensionName << R"( : require
+#extension GL_EXT_geometry_shader : require
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 3) out;
+in gl_PerVertex {
+    highp float gl_ClipDistance[1];
+    highp float gl_CullDistance[1];
+} gl_in[];
+out gl_PerVertex {
+    highp float gl_ClipDistance[1];
+    highp float gl_CullDistance[1];
+};
+layout(std430, binding = 0) buffer Out {
+    float clipVals[3];
+    float cullVals[3];
+} outBuf;
+void main()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        gl_ClipDistance[0] = gl_in[i].gl_ClipDistance[0];
+        gl_CullDistance[0] = gl_in[i].gl_CullDistance[0];
+        outBuf.clipVals[i] = gl_in[i].gl_ClipDistance[0];
+        outBuf.cullVals[i] = gl_in[i].gl_CullDistance[0];
+        EmitVertex();
+    }
+    EndPrimitive();
+}
+)";
+
+    GLProgram program;
+    program.makeRaster(vs.str().c_str(), gs.str().c_str(), essl31_shaders::fs::Red());
+    ASSERT_TRUE(program.valid());
+
+    // Bypass rendering with GL_RASTERIZER_DISCARD and capture the written clip/cull distances
+    // with an SSBO.
+    constexpr GLsizeiptr kSize = 6 * sizeof(float);
+    const std::array<float, 6> zeros{};
+    GLBuffer ssbo;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSize, zeros.data(), GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+
+    glUseProgram(program);
+    glEnable(GL_RASTERIZER_DISCARD);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisable(GL_RASTERIZER_DISCARD);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    // Read the clip/cull values from the SSBO
+    const float *mappedClipCullData = static_cast<const float *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize, GL_MAP_READ_BIT));
+    ASSERT_NE(mappedClipCullData, nullptr);
+    for (int i = 0; i < 3; ++i)
+    {
+        EXPECT_FLOAT_EQ(mappedClipCullData[i], kClipValue) << "clipVals[" << i << "]";
+        EXPECT_FLOAT_EQ(mappedClipCullData[i + 3], kCullValue) << "cullVals[" << i << "]";
+    }
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
+// Read gl_in[].gl_ClipDistance and gl_in[].gl_CullDistance in a geometry shader that doesn't write
+// gl_ClipDistance or gl_CullDistance.
+TEST_P(ClipCullDistanceTest, InputOnlyClipCullDistanceWithGeometryShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    // The minimum value of MAX_GEOMETRY_SHADER_STORAGE_BLOCKS_EXT can be 0.
+    GLint maxGeometryShaderStorageBlocks = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS_EXT, &maxGeometryShaderStorageBlocks);
+    ANGLE_SKIP_TEST_IF(maxGeometryShaderStorageBlocks == 0);
+
+    GLint maxClipDistances = 0;
+    GLint maxCullDistances = 0;
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
+
+    constexpr float kClipValue = 0.25f;
+    constexpr float kCullValue = 0.75f;
+
+    std::stringstream vs;
+    vs << R"(#version 310 es
+#extension )"
+       << kExtensionName << R"( : require
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_ClipDistance[0] = )"
+       << kClipValue << ";\n";
+    if (maxCullDistances > 0)
+    {
+        vs << "    gl_CullDistance[0] = " << kCullValue << ";\n";
+    }
+    vs << "}\n";
+
+    std::stringstream gs;
+    gs << R"(#version 310 es
+#extension )"
+       << kExtensionName << R"( : require
+#extension GL_EXT_geometry_shader : require
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 3) out;
+layout(std430, binding = 0) buffer Out {
+    float clipVals[3];
+    float cullVals[3];
+} outBuf;
+void main()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        gl_Position = gl_in[i].gl_Position;
+        outBuf.clipVals[i] = gl_in[i].gl_ClipDistance[0];
+)";
+    if (maxCullDistances > 0)
+    {
+        gs << "        outBuf.cullVals[i] = gl_in[i].gl_CullDistance[0];\n";
+    }
+    gs << R"(        EmitVertex();
+    }
+    EndPrimitive();
+}
+)";
+
+    GLProgram program;
+    program.makeRaster(vs.str().c_str(), gs.str().c_str(), essl31_shaders::fs::Red());
+    ASSERT_TRUE(program.valid());
+
+    // Bypass rendering with GL_RASTERIZER_DISCARD and capture the read clip/cull distances with
+    // an SSBO.
+    constexpr GLsizeiptr kSize = 6 * sizeof(float);
+    const std::array<float, 6> zeros{};
+    GLBuffer ssbo;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSize, zeros.data(), GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+
+    glUseProgram(program);
+    glEnable(GL_RASTERIZER_DISCARD);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisable(GL_RASTERIZER_DISCARD);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    // Read the clip/cull values from the SSBO
+    const float *mappedClipCullData = static_cast<const float *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize, GL_MAP_READ_BIT));
+    ASSERT_NE(mappedClipCullData, nullptr);
+    for (int i = 0; i < 3; ++i)
+    {
+        EXPECT_FLOAT_EQ(mappedClipCullData[i], kClipValue) << "clipVals[" << i << "]";
+        if (maxCullDistances > 0)
+        {
+            EXPECT_FLOAT_EQ(mappedClipCullData[i + 3], kCullValue) << "cullVals[" << i << "]";
+        }
+    }
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }
 
 // Check that the sum of clip and cull distance array sizes is valid
@@ -1820,6 +3065,164 @@ void main()
         height = getWindowHeight();
         EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
     }
+}
+
+// Write to one gl_ClipDistance element, passing the value through tessellation stages
+TEST_P(ClipCullDistanceTest, OneClipDistanceWithTessellationShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_tessellation_shader"));
+
+    std::string kVS = R"(#version 310 es
+#extension )" + kExtensionName +
+                      R"( : require
+#extension GL_EXT_tessellation_shader : require
+
+uniform vec4 u_plane;
+
+in vec2 a_position;
+
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    gl_ClipDistance[0] = dot(gl_Position, u_plane);
+})";
+
+    std::string kTCS = R"(#version 310 es
+#extension )" + kExtensionName +
+                       R"( : require
+#extension GL_EXT_tessellation_shader : require
+
+layout (vertices = 3) out;
+
+in gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_ClipDistance[1];
+} gl_in[];
+
+out gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_ClipDistance[1];
+} gl_out[];
+
+// Simple tessellation controlled by invocation 0, passthrough all per-vertex values
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_out[gl_InvocationID].gl_ClipDistance[0] = gl_in[gl_InvocationID].gl_ClipDistance[0];
+
+    if (gl_InvocationID == 0)
+    {
+        gl_TessLevelOuter[0] = 2.0;
+        gl_TessLevelOuter[1] = 2.0;
+        gl_TessLevelOuter[2] = 2.0;
+        gl_TessLevelInner[0] = 2.0;
+    }
+})";
+
+    std::string kTES = R"(#version 310 es
+#extension )" + kExtensionName +
+                       R"( : require
+#extension GL_EXT_tessellation_shader : require
+
+layout(triangles, equal_spacing, ccw) in;
+
+in gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_ClipDistance[1];
+} gl_in[];
+
+out gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_ClipDistance[1];
+};
+
+void main()
+{
+    // Simple interpolation across the patch
+    vec3 b = gl_TessCoord;
+
+    gl_Position =
+        b.x * gl_in[0].gl_Position
+        + b.y * gl_in[1].gl_Position
+        + b.z * gl_in[2].gl_Position;
+
+    gl_ClipDistance[0] =
+        b.x * gl_in[0].gl_ClipDistance[0]
+        + b.y * gl_in[1].gl_ClipDistance[0]
+        + b.z * gl_in[2].gl_ClipDistance[0];
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(programRed, kVS.c_str(), kTCS.c_str(), kTES.c_str(),
+                               essl31_shaders::fs::Red());
+    glUseProgram(programRed);
+    glPatchParameteriEXT(GL_PATCH_VERTICES, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glEnable(GL_CLIP_DISTANCE0_EXT);
+
+    // Clear to blue
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw full screen quad with color red, using clipping plane x > -0.5
+    glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 0, 0, 0.5);
+    EXPECT_GL_NO_ERROR();
+    drawPatches(programRed, "a_position", 0, 1.0, false);
+    EXPECT_GL_NO_ERROR();
+
+    // All pixels on the left of the plane x = -0.5 must be blue
+    GLuint x      = 0;
+    GLuint y      = 0;
+    GLuint width  = getWindowWidth() / 4 - 1;
+    GLuint height = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::blue);
+
+    // All pixels on the right of the plane x = -0.5 must be red
+    x      = getWindowWidth() / 4 + 2;
+    y      = 0;
+    width  = getWindowWidth() - x;
+    height = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+
+    // Clear to green
+    glClearColor(0, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw full screen quad with color red, using clipping plane x < -0.5
+    glUniform4f(glGetUniformLocation(programRed, "u_plane"), -1, 0, 0, -0.5);
+    EXPECT_GL_NO_ERROR();
+    drawPatches(programRed, "a_position", 0, 1.0, false);
+    EXPECT_GL_NO_ERROR();
+
+    // All pixels on the left of the plane x = -0.5 must be red
+    x      = 0;
+    y      = 0;
+    width  = getWindowWidth() / 4 - 1;
+    height = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+
+    // All pixels on the right of the plane x = -0.5 must be green
+    x      = getWindowWidth() / 4 + 2;
+    y      = 0;
+    width  = getWindowWidth() - x;
+    height = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::green);
+
+    // Disable GL_CLIP_DISTANCE
+    glDisable(GL_CLIP_DISTANCE0_EXT);
+    drawPatches(programRed, "a_position", 0, 1.0, false);
+
+    // All pixels must be red
+    x      = 0;
+    y      = 0;
+    width  = getWindowWidth();
+    height = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
 }
 
 // Write to each gl_ClipDistance element
@@ -2421,6 +3824,169 @@ void main()
     }
 }
 
+// Write to one gl_CullDistance element, passing the value through tessellation stages
+TEST_P(ClipCullDistanceTest, OneCullDistanceWithTessellationShader)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
+                       !EnsureGLExtensionEnabled("GL_EXT_tessellation_shader"));
+
+    std::string kVS = R"(#version 310 es
+#extension )" + kExtensionName +
+                      R"( : require
+#extension GL_EXT_tessellation_shader : require
+
+uniform vec4 u_plane;
+
+in vec2 a_position;
+
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    gl_CullDistance[0] = dot(gl_Position, u_plane);
+})";
+
+    std::string kTCS = R"(#version 310 es
+#extension )" + kExtensionName +
+                       R"( : require
+#extension GL_EXT_tessellation_shader : require
+
+layout (vertices = 3) out;
+
+in gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_CullDistance[1];
+} gl_in[];
+
+out gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_CullDistance[1];
+} gl_out[];
+
+// Simple tessellation controlled by invocation 0, passthrough all per-vertex values
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_out[gl_InvocationID].gl_CullDistance[0] = gl_in[gl_InvocationID].gl_CullDistance[0];
+
+    if (gl_InvocationID == 0)
+    {
+        gl_TessLevelOuter[0] = 2.0;
+        gl_TessLevelOuter[1] = 2.0;
+        gl_TessLevelOuter[2] = 2.0;
+        gl_TessLevelInner[0] = 2.0;
+    }
+})";
+
+    std::string kTES = R"(#version 310 es
+#extension )" + kExtensionName +
+                       R"( : require
+#extension GL_EXT_tessellation_shader : require
+
+layout(triangles, equal_spacing, ccw) in;
+
+in gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_CullDistance[1];
+} gl_in[];
+
+out gl_PerVertex
+{
+    highp vec4 gl_Position;
+    highp float gl_CullDistance[1];
+};
+
+void main()
+{
+    // Simple interpolation across the patch
+    vec3 b = gl_TessCoord;
+
+    gl_Position =
+        b.x * gl_in[0].gl_Position
+        + b.y * gl_in[1].gl_Position
+        + b.z * gl_in[2].gl_Position;
+
+    gl_CullDistance[0] =
+        b.x * gl_in[0].gl_CullDistance[0]
+        + b.y * gl_in[1].gl_CullDistance[0]
+        + b.z * gl_in[2].gl_CullDistance[0];
+})";
+
+    GLProgram programRed;
+    programRed.makeRaster(kVS.c_str(), kTCS.c_str(), kTES.c_str(), essl31_shaders::fs::Red());
+    if (!mCullDistanceSupportRequired)
+    {
+        GLint maxCullDistances;
+        glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
+        if (maxCullDistances == 0)
+        {
+            ASSERT_FALSE(programRed.valid());
+            return;
+        }
+    }
+    glUseProgram(programRed);
+    glPatchParameteriEXT(GL_PATCH_VERTICES, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Clear to blue
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw full screen quad with color red (no triangles should be culled).
+    glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 0, 0, 0.5);
+    EXPECT_GL_NO_ERROR();
+    drawPatches(programRed, "a_position", 0, 1.0, false);
+    EXPECT_GL_NO_ERROR();
+
+    {
+        // All pixels must be red
+        GLuint x      = 0;
+        GLuint y      = 0;
+        GLuint width  = getWindowWidth();
+        GLuint height = getWindowHeight();
+        EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+    }
+
+    // Clear to green
+    glClearColor(0, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw full screen red, culled by the plane y >= -x. Add a small epsilon to the cull plane
+    // so that the bottom-left triangle will have negative cull distance on all vertices
+    glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 1, 0, -0.001);
+    EXPECT_GL_NO_ERROR();
+    drawPatches(programRed, "a_position", 0, 1.0, false);
+    EXPECT_GL_NO_ERROR();
+
+    // All pixels on the plane y >= -x must be red
+    std::vector<GLColor> actualColors(getWindowWidth() * getWindowHeight());
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 actualColors.data());
+    for (int x = 0; x < getWindowWidth(); ++x)
+    {
+        for (int y = 0; y < getWindowHeight(); ++y)
+        {
+            const int currentPosition = y * getWindowWidth() + x;
+
+            // Convert [0, windowWidth - 1] image coordinates to [-1.0, 1.0] cartesian coordinates
+            const float cartesianX = (x - getWindowWidth() / 2 + 0.5) / (getWindowWidth() / 2);
+            const float cartesianY = (y - getWindowHeight() / 2 + 0.5) / (getWindowHeight() / 2);
+
+            // All pixels above the plane y >= -x should be red
+            if (cartesianY >= -1.0 * cartesianX)
+            {
+                EXPECT_EQ(GLColor::red, actualColors[currentPosition]);
+            }
+            else
+            {
+                EXPECT_EQ(GLColor::green, actualColors[currentPosition]);
+            }
+        }
+    }
+}
+
 // Read cull distance varyings in fragment shaders
 TEST_P(ClipCullDistanceTest, CullInterpolation)
 {
@@ -2796,8 +4362,9 @@ void main()
     }
 }
 
-// Verify that EXT_clip_cull_distance works with EXT_geometry_shader
-TEST_P(ClipCullDistanceTest, ClipDistanceInteractWithGeometryShader)
+// Write to 4 clip distances, using a simple geometry shader to verify interaction with
+// GL_EXT_geometry_shader
+TEST_P(ClipCullDistanceTest, FourClipDistancesWithGeometryShader)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
                        !EnsureGLExtensionEnabled("GL_EXT_geometry_shader"));
@@ -2808,16 +4375,15 @@ TEST_P(ClipCullDistanceTest, ClipDistanceInteractWithGeometryShader)
 #extension GL_EXT_geometry_shader : require
 
 in vec2 a_position;
-uniform vec4 u_plane[4];
 
 void main()
 {
     gl_Position = vec4(a_position, 0.0, 1.0);
 
-    gl_ClipDistance[0] = dot(gl_Position, u_plane[0]);
-    gl_ClipDistance[1] = dot(gl_Position, u_plane[1]);
-    gl_ClipDistance[2] = dot(gl_Position, u_plane[2]);
-    gl_ClipDistance[3] = dot(gl_Position, u_plane[3]);
+    gl_ClipDistance[0] = 1.0;
+    gl_ClipDistance[1] = 1.0;
+    gl_ClipDistance[2] = 1.0;
+    gl_ClipDistance[3] = 1.0;
 })";
 
     std::string kGS = R"(#version 310 es
@@ -2830,26 +4396,23 @@ layout (triangle_strip, max_vertices = 3) out;
 
 in gl_PerVertex {
     highp vec4 gl_Position;
-    highp float gl_ClipDistance[];
+    highp float gl_ClipDistance[4];
 } gl_in[];
 
 out gl_PerVertex {
     highp vec4 gl_Position;
-    highp float gl_ClipDistance[];
+    highp float gl_ClipDistance[4];
 };
 
 uniform vec4 u_plane[4];
 
 void GetNewPosition(int i)
 {
-    gl_Position = 2.0f * gl_in[i].gl_Position;
+    gl_Position = vec4(2.0 * gl_in[i].gl_Position.xyz, 1.0);
 
     for (int index = 0 ; index < 4 ; index++)
     {
-        if (gl_in[i].gl_ClipDistance[index] < 0.0f)
-        {
-            gl_ClipDistance[index] = dot(gl_Position, u_plane[index]);
-        }
+        gl_ClipDistance[index] = dot(gl_Position, u_plane[index]);
     }
     EmitVertex();
 }
@@ -2948,8 +4511,9 @@ void main()
     }
 }
 
-// Verify that EXT_clip_cull_distance works with EXT_geometry_shader
-TEST_P(ClipCullDistanceTest, CullDistanceInteractWithGeometryShader)
+// Write to 4 cull distances, using a simple geometry shader to verify interaction with
+// GL_EXT_geometry_shader
+TEST_P(ClipCullDistanceTest, FourCullDistancesWithGeometryShader)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName) ||
                        !EnsureGLExtensionEnabled("GL_EXT_geometry_shader"));
@@ -2960,16 +4524,15 @@ TEST_P(ClipCullDistanceTest, CullDistanceInteractWithGeometryShader)
 #extension GL_EXT_geometry_shader : require
 
 in vec2 a_position;
-uniform vec4 u_plane[4];
 
 void main()
 {
     gl_Position = vec4(a_position, 0.0, 1.0);
 
-    gl_CullDistance[0] = dot(gl_Position, u_plane[0]);
-    gl_CullDistance[1] = dot(gl_Position, u_plane[1]);
-    gl_CullDistance[2] = dot(gl_Position, u_plane[2]);
-    gl_CullDistance[3] = dot(gl_Position, u_plane[3]);
+    gl_CullDistance[0] = 1.0;
+    gl_CullDistance[1] = 1.0;
+    gl_CullDistance[2] = 1.0;
+    gl_CullDistance[3] = 1.0;
 })";
 
     std::string kGS = R"(#version 310 es
@@ -2982,26 +4545,23 @@ layout (triangle_strip, max_vertices = 3) out;
 
 in gl_PerVertex {
     highp vec4 gl_Position;
-    highp float gl_CullDistance[];
+    highp float gl_CullDistance[4];
 } gl_in[];
 
 out gl_PerVertex {
     highp vec4 gl_Position;
-    highp float gl_CullDistance[];
+    highp float gl_CullDistance[4];
 };
 
 uniform vec4 u_plane[4];
 
 void GetNewPosition(int i)
 {
-    gl_Position = 2.0f * gl_in[i].gl_Position;
+    gl_Position = vec4(2.0 * gl_in[i].gl_Position.xyz, 1.0);
 
     for (int index = 0 ; index < 4 ; index++)
     {
-        if (gl_in[i].gl_CullDistance[index] < 0.0f)
-        {
-            gl_CullDistance[index] = dot(gl_Position, u_plane[index]);
-        }
+        gl_CullDistance[index] = dot(gl_Position, u_plane[index]);
     }
     EmitVertex();
 }
@@ -3016,7 +4576,7 @@ void main()
 })";
 
     GLProgram programRed;
-    programRed.makeRaster(kVS.c_str(), kGS.c_str(), essl3_shaders::fs::Red());
+    programRed.makeRaster(kVS.c_str(), kGS.c_str(), essl31_shaders::fs::Red());
     if (!mCullDistanceSupportRequired)
     {
         GLint maxCullDistances;
@@ -3068,7 +4628,7 @@ void main()
     glDrawArrays(GL_TRIANGLES, 0, kNumVertices);
     EXPECT_GL_NO_ERROR();
 
-    // Only pixels in the triangle must be red
+    // Only the bottom triangle must be culled
     std::vector<GLColor> actualColors(getWindowWidth() * getWindowHeight());
     glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
                  actualColors.data());

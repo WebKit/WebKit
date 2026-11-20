@@ -134,24 +134,27 @@ EGLContext EGLAPIENTRY EGL_CreateContext(EGLDisplay dpy,
                   (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)share_context,
                   (uintptr_t)attrib_list);
 
-        egl::Config *configPacked             = PackParam<egl::Config *>(config);
-        gl::ContextID share_contextPacked     = PackParam<gl::ContextID>(share_context);
-        const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
+        egl::Config *configPacked         = PackParam<egl::Config *>(config);
+        gl::ContextID share_contextPacked = PackParam<gl::ContextID>(share_context);
+        egl::ScopedContextRef share_contextPackedRef =
+            GetContextRefIfValid(dpyPackedLock.get(), share_contextPacked);
+        gl::Context *share_contextPackedObject = share_contextPackedRef.get();
+        const AttributeMap &attrib_listPacked  = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(CreateContext, thread, validDisplay,
-                                              share_contextPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateContext, thread, share_contextPackedObject);
             if (IsEGLValidationEnabled())
             {
                 ANGLE_EGL_VALIDATE(thread, CreateContext, validDisplay, EGLContext, validDisplay,
-                                   configPacked, share_contextPacked, attrib_listPacked);
+                                   configPacked, share_contextPacked, share_contextPackedObject,
+                                   attrib_listPacked);
             }
             else
             {
                 attrib_listPacked.initializeWithoutValidation();
             }
 
-            returnValue = CreateContext(thread, dpyPacked, configPacked, share_contextPacked,
+            returnValue = CreateContext(thread, dpyPacked, configPacked, share_contextPackedObject,
                                         attrib_listPacked);
         }
 
@@ -309,24 +312,26 @@ EGLBoolean EGLAPIENTRY EGL_DestroyContext(EGLDisplay dpy, EGLContext ctx)
         EGL_EVENT(DestroyContext, "dpy = 0x%016" PRIxPTR ", ctx = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)ctx);
 
-        gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
+        gl::ContextID ctxPacked            = PackParam<gl::ContextID>(ctx);
+        egl::ScopedContextRef ctxPackedRef = GetContextRefIfValid(dpyPackedLock.get(), ctxPacked);
+        gl::Context *ctxPackedObject       = ctxPackedRef.get();
         egl::ScopedSurfacesLockAndRef<2> prevSurfaceLocks({
             egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentDrawSurface()),
             egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentReadSurface()),
         });
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyContext, thread, ctxPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyContext, thread, ctxPackedObject);
             if (IsEGLValidationEnabled())
             {
                 ANGLE_EGL_VALIDATE(thread, DestroyContext, validDisplay, EGLBoolean, validDisplay,
-                                   ctxPacked);
+                                   ctxPackedObject);
             }
             else
             {
             }
 
-            returnValue = DestroyContext(thread, dpyPacked, ctxPacked);
+            returnValue = DestroyContext(thread, dpyPacked, ctxPackedRef.release());
         }
 
         ANGLE_CAPTURE_EGL(DestroyContext, true, thread, dpyPacked, ctxPacked, returnValue);
@@ -655,24 +660,26 @@ EGLBoolean EGLAPIENTRY EGL_MakeCurrent(EGLDisplay dpy,
             egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentDrawSurface()),
             egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentReadSurface()),
         });
-        egl::Surface *drawPackedObject = surfacesPackedRef.get(0);
-        egl::Surface *readPackedObject = surfacesPackedRef.get(1);
-        gl::ContextID ctxPacked        = PackParam<gl::ContextID>(ctx);
+        egl::Surface *drawPackedObject     = surfacesPackedRef.get(0);
+        egl::Surface *readPackedObject     = surfacesPackedRef.get(1);
+        gl::ContextID ctxPacked            = PackParam<gl::ContextID>(ctx);
+        egl::ScopedContextRef ctxPackedRef = GetContextRefIfValid(validDisplay, ctxPacked);
+        gl::Context *ctxPackedObject       = ctxPackedRef.get();
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(MakeCurrent, thread, ctxPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK_ALWAYS(MakeCurrent, thread, ctxPackedObject);
             if (IsEGLValidationEnabled())
             {
                 ANGLE_EGL_VALIDATE(thread, MakeCurrent, validDisplay, EGLBoolean, validDisplay,
                                    drawPacked, drawPackedObject, readPacked, readPackedObject,
-                                   ctxPacked);
+                                   ctxPacked, ctxPackedObject);
             }
             else
             {
             }
 
-            returnValue =
-                MakeCurrent(thread, validDisplay, drawPackedObject, readPackedObject, ctxPacked);
+            returnValue = MakeCurrent(thread, validDisplay, drawPackedObject, readPackedObject,
+                                      ctxPackedObject);
         }
 
         ANGLE_CAPTURE_EGL(MakeCurrent, true, thread, dpyPacked, drawPacked, readPacked, ctxPacked,
@@ -701,21 +708,22 @@ EGLBoolean EGLAPIENTRY EGL_QueryContext(EGLDisplay dpy,
                   ", attribute = %d, value = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)ctx, attribute, (uintptr_t)value);
 
-        gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
+        gl::ContextID ctxPacked            = PackParam<gl::ContextID>(ctx);
+        egl::ScopedContextRef ctxPackedRef = GetContextRefIfValid(dpyPackedLock.get(), ctxPacked);
+        gl::Context *ctxPackedObject       = ctxPackedRef.get();
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(QueryContext, thread, validDisplay, ctxPacked,
-                                              attribute);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryContext, thread, ctxPackedObject, attribute);
             if (IsEGLValidationEnabled())
             {
                 ANGLE_EGL_VALIDATE(thread, QueryContext, validDisplay, EGLBoolean, validDisplay,
-                                   ctxPacked, attribute, value);
+                                   ctxPackedObject, attribute, value);
             }
             else
             {
             }
 
-            returnValue = QueryContext(thread, dpyPacked, ctxPacked, attribute, value);
+            returnValue = QueryContext(thread, dpyPacked, ctxPackedObject, attribute, value);
         }
 
         ANGLE_CAPTURE_EGL(QueryContext, true, thread, dpyPacked, ctxPacked, attribute, value,
@@ -1358,15 +1366,17 @@ EGLImage EGLAPIENTRY EGL_CreateImage(EGLDisplay dpy,
                   (uintptr_t)dpy, (uintptr_t)ctx, target, (uintptr_t)buffer,
                   (uintptr_t)attrib_list);
 
-        gl::ContextID ctxPacked               = PackParam<gl::ContextID>(ctx);
+        gl::ContextID ctxPacked            = PackParam<gl::ContextID>(ctx);
+        egl::ScopedContextRef ctxPackedRef = GetContextRefIfValid(dpyPackedLock.get(), ctxPacked);
+        gl::Context *ctxPackedObject       = ctxPackedRef.get();
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(CreateImage, thread, validDisplay, ctxPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateImage, thread, ctxPackedObject);
             if (IsEGLValidationEnabled())
             {
                 ANGLE_EGL_VALIDATE(thread, CreateImage, validDisplay, EGLImage, validDisplay,
-                                   ctxPacked, target, buffer, attrib_listPacked);
+                                   ctxPackedObject, target, buffer, attrib_listPacked);
             }
             else
             {
@@ -1374,7 +1384,7 @@ EGLImage EGLAPIENTRY EGL_CreateImage(EGLDisplay dpy,
             }
 
             returnValue =
-                CreateImage(thread, dpyPacked, ctxPacked, target, buffer, attrib_listPacked);
+                CreateImage(thread, dpyPacked, ctxPackedObject, target, buffer, attrib_listPacked);
         }
 
         ANGLE_CAPTURE_EGL(CreateImage, true, thread, dpyPacked, ctxPacked, target, buffer,

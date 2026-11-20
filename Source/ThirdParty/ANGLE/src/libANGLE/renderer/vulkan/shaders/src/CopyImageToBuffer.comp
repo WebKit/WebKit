@@ -90,7 +90,7 @@ uint convertToDestValue(SrcType srcValue)
     }
     else
     {
-        normalized = uvec4(clamp(srcValue, 0.0, 1.0) * 255.0);
+        normalized = uvec4(round(clamp(srcValue, 0.0, 1.0) * 255.0));
     }
 
     normalized &= 0xFF;

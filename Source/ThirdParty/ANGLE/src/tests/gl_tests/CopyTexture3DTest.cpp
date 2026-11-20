@@ -1133,7 +1133,6 @@ TEST_P(Texture2DArrayCopy, CopyFromMipmap)
 
     std::vector<GLColor> texDataGreen4(4u * 4u * 4u, GLColor::green);
     std::vector<GLColor> texDataGreen2(2u * 2u * 2u, GLColor::green);
-    std::vector<GLColor> texDataRed2(2u * 2u * 2u, GLColor::red);
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 4, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,

@@ -1210,6 +1210,12 @@ class CopyTexImageTestES3 : public CopyTexImageTest
 class CopyTexImageLumaWorkaroundTestES3 : public CopyTexImageTestES3
 {};
 
+class CopyTexImageTestD3D11 : public CopyTexImageTestES3
+{
+  protected:
+    CopyTexImageTestD3D11() { setHardenedContextEnabled(true); }
+};
+
 //  The test verifies that glCopyTexSubImage2D generates a GL_INVALID_OPERATION error
 //  when the read buffer is GL_NONE.
 //  Reference: GLES 3.0.4, Section 3.8.5 Alternate Texture Image Specification Commands
@@ -2779,6 +2785,74 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that when redefining a texture level to a smaller size fails in the backend after the
+// backend image was already shrunk, the backend error loses the hardened context so subsequent
+// glCopyTexSubImage2D and glTexSubImage2D calls fail with GL_CONTEXT_LOST instead of reaching the
+// shrunk backend image.
+TEST_P(CopyTexImageTestD3D11, RedefineSmallerFailureDoesNotWriteOutOfBounds)
+{
+    if (sizeof(GLsizeiptr) < 8)
+    {
+        GTEST_SKIP() << "Test requires 64-bit GLsizeiptr to specify a >2 GiB PBO size.";
+    }
+
+    constexpr GLsizei kOldSize = 64;
+    constexpr GLsizei kNewSize = 4;
+
+    GLTexture srcTex;
+    glBindTexture(GL_TEXTURE_2D, srcTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kOldSize, kOldSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLFramebuffer readFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // With no PBO bound, pixels == nullptr defines level 0 (both frontend ImageDesc and backend
+    // Image11) as kOldSize x kOldSize without uploading pixel data.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, kOldSize, kOldSize, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // A PBO larger than D3D11's 2048 MiB buffer limit
+    // (D3D11_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_C_TERM) succeeds in glBufferData(...,
+    // nullptr, ...) without allocating any memory because Buffer11::setSubData only records mSize
+    // when data == nullptr.
+    const GLsizeiptr oversizedPboBytes =
+        static_cast<GLsizeiptr>((static_cast<uint64_t>(1) << 31) + 16);
+
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, oversizedPboBytes, nullptr, GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // With pbo bound to GL_PIXEL_UNPACK_BUFFER, pixels == nullptr is byte offset 0 into pbo.
+    // TextureD3D_2D::setImage shrinks the backend Image11 to kNewSize x kNewSize in redefineImage,
+    // and then fails in fastUnpackPixels when Buffer11::getSRV lazily calls
+    // ID3D11Device::CreateBuffer for the >2048 MiB PBO. On a hardened context, this backend error
+    // immediately loses the context.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, kNewSize, kNewSize, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_GL_ERROR(GL_OUT_OF_MEMORY);
+
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
+
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kOldSize, kOldSize);
+    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
+
+    std::vector<uint8_t> subData(kOldSize * kOldSize, 0xAB);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kOldSize, kOldSize, GL_RED, GL_UNSIGNED_BYTE,
+                    subData.data());
+    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     CopyTexImageTest,
     ES2_D3D11_PRESENT_PATH_FAST(),
@@ -2808,6 +2882,9 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
     ES3_OPENGL().enable(Feature::ForceLumaWorkaroundForSameTextureCopyTexImage2D),
     ES3_OPENGLES().enable(Feature::ForceLumaWorkaroundForSameTextureCopyTexImage2D),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImageTestD3D11);
+ANGLE_INSTANTIATE_TEST(CopyTexImageTestD3D11, ES3_D3D11());
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     CopyTexImageTestRobustResourceInit,

@@ -2071,7 +2071,7 @@ angle::Result FramebufferVk::updateFoveationState(ContextVk *contextVk,
                                                       foveatedAttachmentSize));
         ASSERT(mFragmentShadingRateImage.valid());
 
-        serial = mFragmentShadingRateImageView.getSubresourceSerial(
+        serial = mFragmentShadingRateImageView.getSubresourceWriteSerial(
             gl::OwnerLevel(0), 1, gl::OwnerLayer(0), vk::LayerMode::All);
     }
 
@@ -2770,7 +2770,7 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
     {
         contextVk->updateColorMasks();
         contextVk->updateBlendEnabled();
-        contextVk->updateBlendFuncsAndEquations();
+        contextVk->updateBlendFuncsAndEquationsOnFramebufferChange();
     }
 
     if (shouldUpdateLayerCount)
@@ -3584,16 +3584,9 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
                 }
                 else
                 {
-                    // With render pass objects, the clears are indexed by the subpass-mapped
-                    // locations. With dynamic rendering, they are indexed by the actual attachment
-                    // index.
-                    const uint32_t clearAttachmentIndex =
-                        contextVk->getFeatures().preferDynamicRendering.enabled
-                            ? colorIndexVk.get()
-                            : static_cast<uint32_t>(colorIndexGL);
-
-                    attachments.emplace_back(VkClearAttachment{
-                        VK_IMAGE_ASPECT_COLOR_BIT, clearAttachmentIndex, (*clears)[colorIndexGL]});
+                    attachments.emplace_back(VkClearAttachment{VK_IMAGE_ASPECT_COLOR_BIT,
+                                                               static_cast<uint32_t>(colorIndexGL),
+                                                               (*clears)[colorIndexGL]});
 
                     renderPassCommands->onColorAccess(colorIndexVk, vk::ResourceAccess::ReadWrite);
                     if (!scissoredClear)
@@ -4020,7 +4013,6 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
             params.unresolveColorMask  = mRenderPassDesc.getColorUnresolveAttachmentMask();
             params.unresolveDepth      = mRenderPassDesc.hasDepthUnresolveAttachment();
             params.unresolveStencil    = mRenderPassDesc.hasStencilUnresolveAttachment();
-            params.useDynamicRendering = true;
             ANGLE_TRY(contextVk->getUtils().unresolve(contextVk, this, params));
 
             // Update unresolve counters
@@ -4098,7 +4090,6 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
         params.unresolveColorMask = unresolveColorMask;
         params.unresolveDepth     = unresolveDepth;
         params.unresolveStencil   = unresolveStencil;
-        params.useDynamicRendering = false;
 
         ANGLE_TRY(contextVk->getUtils().unresolve(contextVk, this, params));
 

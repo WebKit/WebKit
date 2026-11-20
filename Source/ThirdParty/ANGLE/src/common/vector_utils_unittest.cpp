@@ -7,7 +7,7 @@
 //
 
 #include "vector_utils.h"
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 
 #include <gtest/gtest.h>
 
@@ -80,11 +80,12 @@ TEST(VectorUtilsTest, DataAccess)
     Vector2 vec(1.0, 2.0);
     ASSERT_EQ(2u, vec.size());
 
-    ASSERT_EQ(1.0, vec.data()[0]);
-    ANGLE_UNSAFE_TODO(ASSERT_EQ(2.0, vec.data()[1]));
+    Span vecData(vec);
+    ASSERT_EQ(1.0, vecData[0]);
+    ASSERT_EQ(2.0, vecData[1]);
 
-    vec.data()[0] = 3.0;
-    ANGLE_UNSAFE_TODO(vec.data()[1]) = 4.0;
+    vecData[0] = 3.0;
+    vecData[1] = 4.0;
 
     ASSERT_EQ(Vector2(3.0, 4.0), vec);
 }
@@ -96,8 +97,9 @@ TEST(VectorUtilsTest, LoadStore)
 
     Vector2 vec = Vector2::Load(data);
 
-    ASSERT_EQ(1.0, vec.data()[0]);
-    ANGLE_UNSAFE_TODO(ASSERT_EQ(2.0, vec.data()[1]));
+    Span vecData(vec);
+    ASSERT_EQ(1.0, vecData[0]);
+    ASSERT_EQ(2.0, vecData[1]);
 
     vec = Vector2(3.0, 4.0);
     Vector2::Store(vec, data);
@@ -204,8 +206,8 @@ TEST(VectorUtilsTest, IntVector)
 {
     Vector2I vec(0);
 
-    int *data = vec.data();
-    ANGLE_UNSAFE_TODO(data[1]) = 1;
+    Span vecData(vec);
+    vecData[1] = 1;
 
     ASSERT_EQ(0, vec[0]);
     ASSERT_EQ(1, vec[1]);
@@ -216,8 +218,8 @@ TEST(VectorUtilsTest, UIntVector)
 {
     Vector2U vec(0);
 
-    unsigned int *data = vec.data();
-    ANGLE_UNSAFE_TODO(data[1]) = 1;
+    Span vecData(vec);
+    vecData[1] = 1;
 
     ASSERT_EQ(0u, vec[0]);
     ASSERT_EQ(1u, vec[1]);

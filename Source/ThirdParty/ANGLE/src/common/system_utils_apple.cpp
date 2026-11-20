@@ -24,8 +24,6 @@ namespace angle
 {
 std::string GetExecutablePath()
 {
-    std::string result;
-
     uint32_t size = 0;
     _NSGetExecutablePath(nullptr, &size);
 

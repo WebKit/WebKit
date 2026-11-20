@@ -24,6 +24,11 @@ class TSymbolTable;
                                        TIntermNode *codeToRun,
                                        TSymbolTable *symbolTable);
 
+[[nodiscard]] bool RunBeforeEmitVertex(TCompiler *compiler,
+                                       TIntermBlock *root,
+                                       TIntermNode *codeToRun,
+                                       TSymbolTable *symbolTable);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEUTIL_RUNATTHEENDOFSHADER_H_

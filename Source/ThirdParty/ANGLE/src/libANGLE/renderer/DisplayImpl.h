@@ -70,6 +70,9 @@ class ThreadSafeDisplayImpl : angle::NonCopyable
                                    egl::Surface *readSurface,
                                    gl::Context *context) = 0;
 
+    virtual egl::Error beforeDestroyContext(const gl::Context *context) { return egl::NoError(); }
+    virtual egl::Error afterDestroyContext() { return egl::NoError(); }
+
     virtual EGLSyncImpl *createSync();
 };
 

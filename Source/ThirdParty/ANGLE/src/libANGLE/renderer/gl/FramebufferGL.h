@@ -123,6 +123,16 @@ class FramebufferGL : public FramebufferImpl
         const GLenum *attachments,
         std::vector<GLenum> *modifiedAttachments) const;
 
+    angle::Result readPixelsImpl(const gl::Context *context,
+                                 const gl::Rectangle &area,
+                                 const gl::Rectangle &clippedArea,
+                                 GLenum originalReadFormat,
+                                 GLenum format,
+                                 GLenum type,
+                                 const gl::PixelPackState &pack,
+                                 gl::Buffer *packBuffer,
+                                 void *pixels) const;
+
     angle::Result readPixelsRowByRow(const gl::Context *context,
                                      const gl::Rectangle &area,
                                      GLenum originalReadFormat,

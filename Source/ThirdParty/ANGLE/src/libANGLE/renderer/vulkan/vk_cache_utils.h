@@ -227,8 +227,8 @@ class alignas(4) RenderPassDesc final
     size_t hash() const;
 
     // Color attachments are in [0, colorAttachmentRange()), with possible gaps.
-    size_t colorAttachmentRange() const { return mColorAttachmentRange; }
-    size_t depthStencilAttachmentIndex() const { return colorAttachmentRange(); }
+    uint32_t colorAttachmentRange() const { return mColorAttachmentRange; }
+    uint32_t depthStencilAttachmentIndex() const { return colorAttachmentRange(); }
 
     bool isColorAttachmentEnabled(size_t colorIndexGL) const;
     bool hasYUVResolveAttachment() const { return mIsYUVResolve; }
@@ -294,12 +294,6 @@ class alignas(4) RenderPassDesc final
     void updateRenderToTexture(bool isRenderToTexture) { mIsRenderToTexture = isRenderToTexture; }
     bool isRenderToTexture() const { return mIsRenderToTexture; }
 
-    void setDynamicMSRTTUnresolve(bool isDynamicMSRTTUnresolve)
-    {
-        mIsDynamicMSRTTUnresolve = isDynamicMSRTTUnresolve;
-    }
-    bool isDynamicMSRTTUnresolve() const { return mIsDynamicMSRTTUnresolve; }
-
     void setFragmentShadingAttachment(bool value) { mHasFragmentShadingAttachment = value; }
     bool hasFragmentShadingAttachment() const { return mHasFragmentShadingAttachment; }
 
@@ -363,7 +357,6 @@ class alignas(4) RenderPassDesc final
     uint8_t mIsRenderToTexture : 1;
     uint8_t mUnresolveDepth : 1;
     uint8_t mUnresolveStencil : 1;
-    uint8_t mIsDynamicMSRTTUnresolve : 1;
 
     // Dithering state when using VK_EXT_legacy_dithering
     uint8_t mLegacyDitherEnabled : 1;
@@ -375,7 +368,7 @@ class alignas(4) RenderPassDesc final
     uint8_t mHasFragmentShadingAttachment : 1;
 
     // Available space for expansion.
-    uint8_t mPadding2 : 4;
+    uint8_t mPadding2 : 5;
 
     // Whether each color attachment has a corresponding resolve attachment.  Color resolve
     // attachments can be used to optimize resolve through glBlitFramebuffer() as well as support
@@ -805,7 +798,7 @@ struct GraphicsPipelineFragmentOutputVulkanStructs
 
 ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 
-using GraphicsPipelineDynamicStateList = angle::FixedVector<VkDynamicState, 32>;
+using GraphicsPipelineDynamicStateList = angle::FixedVector<VkDynamicState, 37>;
 
 enum class PipelineRobustness
 {
@@ -1021,11 +1014,6 @@ class GraphicsPipelineDesc final
     void setRenderPassColorAttachmentFormat(size_t colorIndexGL, angle::FormatID formatID);
 
     // Blend states
-    void setSingleBlend(uint32_t colorIndexGL,
-                        bool enabled,
-                        VkBlendOp op,
-                        VkBlendFactor srcFactor,
-                        VkBlendFactor dstFactor);
     void updateBlendEnabled(GraphicsPipelineTransitionBits *transition,
                             gl::DrawBufferMask blendEnabledMask);
     void updateBlendFuncs(GraphicsPipelineTransitionBits *transition,

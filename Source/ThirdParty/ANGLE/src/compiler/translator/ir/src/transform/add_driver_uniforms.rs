@@ -19,6 +19,11 @@ pub struct Options {
     pub add_coverage_mask: bool,
 }
 
+// Names must match kDriverUniformsBlockName and kDriverUniformsVarName in
+// src/compiler/translator/tree_util/DriverUniform.h until the IR port is complete.
+pub const DRIVER_UNIFORMS_BLOCK_NAME: &str = "ANGLEUniformBlock";
+pub const DRIVER_UNIFORMS_VAR_NAME: &str = "ANGLEUniforms";
+
 // The `misc` field is packed with various bits.  The following must match
 // `kDriverUniformsMisc*Offset/Mask` values in ShaderLang.h:
 const MISC_SWAP_XY_OFFSET: u32 = 0;
@@ -77,7 +82,7 @@ pub fn run(ir: &mut IR, options: &Options) -> DriverUniforms {
         ("ANGLE_angleUniforms", Decorations::new(vec![Decoration::Uniform]))
     } else {
         (
-            "ANGLEUniforms",
+            DRIVER_UNIFORMS_VAR_NAME,
             Decorations::new(vec![
                 Decoration::Uniform,
                 Decoration::PushConstant,
@@ -110,6 +115,7 @@ fn uniform_field(name: &'static str, type_id: TypeId) -> Field {
         precision: Precision::High,
         precise: false,
         decorations: Decorations::new_none(),
+        built_in: None,
         is_static_use: true,
     }
 }
@@ -143,8 +149,7 @@ fn make_graphics_driver_uniforms_type(
         coverage_mask: None,
     };
 
-    // Name must match kDriverUniformsBlockName in cpp until IR port is complete.
-    let name = Name::new_exact("ANGLEUniformBlock");
+    let name = Name::new_exact(DRIVER_UNIFORMS_BLOCK_NAME);
 
     // The names must match those in DriverUniform.cpp until IR port is complete.
     // depthRange: Near and far depth
@@ -212,8 +217,7 @@ fn make_compute_driver_uniforms_type(
         coverage_mask: None,
     };
 
-    // Name must match kDriverUniformsBlockName in cpp until IR port is complete.
-    let name = Name::new_exact("ANGLEUniformBlock");
+    let name = Name::new_exact(DRIVER_UNIFORMS_BLOCK_NAME);
 
     // The names must match those in DriverUniform.cpp until IR port is complete.
     let fields = vec![

@@ -1,0 +1,15 @@
+upstream {
+  commit: "f8cb90d08f42c9c475bab5d7fa99108b0374bdae"
+  artifacts {
+    git {
+      repository: "https://github.com/NVIDIA/nvidia-settings"
+      commit: "f8cb90d08f42c9c475bab5d7fa99108b0374bdae"
+    }
+  }
+}
+stages {
+  input {
+    patch { copybara {} }
+  }
+  publish { git {} }
+}

@@ -25,8 +25,6 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             {
                 case GL_FLOAT:
                     return GL_ALPHA32F_EXT;
-                case GL_HALF_FLOAT:
-                    return GL_ALPHA16F_EXT;
                 case GL_HALF_FLOAT_OES:
                     return GL_ALPHA16F_EXT;
                 case GL_UNSIGNED_BYTE:
@@ -327,8 +325,6 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             {
                 case GL_FLOAT:
                     return GL_LUMINANCE32F_EXT;
-                case GL_HALF_FLOAT:
-                    return GL_LUMINANCE16F_EXT;
                 case GL_HALF_FLOAT_OES:
                     return GL_LUMINANCE16F_EXT;
                 case GL_UNSIGNED_BYTE:
@@ -343,8 +339,6 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             {
                 case GL_FLOAT:
                     return GL_LUMINANCE_ALPHA32F_EXT;
-                case GL_HALF_FLOAT:
-                    return GL_LUMINANCE_ALPHA16F_EXT;
                 case GL_HALF_FLOAT_OES:
                     return GL_LUMINANCE_ALPHA16F_EXT;
                 case GL_UNSIGNED_BYTE:
@@ -659,18 +653,6 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
                     }
                     break;
                 }
-                case GL_HALF_FLOAT:
-                {
-                    switch (internalFormat)
-                    {
-                        case GL_ALPHA:
-                        case GL_ALPHA16F_EXT:
-                            return true;
-                        default:
-                            break;
-                    }
-                    break;
-                }
                 case GL_HALF_FLOAT_OES:
                 {
                     switch (internalFormat)
@@ -873,18 +855,6 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
                     }
                     break;
                 }
-                case GL_HALF_FLOAT:
-                {
-                    switch (internalFormat)
-                    {
-                        case GL_LUMINANCE:
-                        case GL_LUMINANCE16F_EXT:
-                            return true;
-                        default:
-                            break;
-                    }
-                    break;
-                }
                 case GL_HALF_FLOAT_OES:
                 {
                     switch (internalFormat)
@@ -923,18 +893,6 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
                     {
                         case GL_LUMINANCE_ALPHA:
                         case GL_LUMINANCE_ALPHA32F_EXT:
-                            return true;
-                        default:
-                            break;
-                    }
-                    break;
-                }
-                case GL_HALF_FLOAT:
-                {
-                    switch (internalFormat)
-                    {
-                        case GL_LUMINANCE_ALPHA:
-                        case GL_LUMINANCE_ALPHA16F_EXT:
                             return true;
                         default:
                             break;

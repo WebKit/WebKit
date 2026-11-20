@@ -28,11 +28,17 @@ class TIntermTyped;
 // to a function.
 // Furthermore, at the end shader, some disabled gl_ClipDistance[i] can be skipped from the
 // assignment.
+//
+// isLastPreRasterizationStage is an optional boolean expression that is true if the shader stage
+// is the last pre-rasterization stage of the pipeline. If provided, the disabled gl_ClipDistance
+// values are zeroed only in that case. Otherwise, the values are passed through to the next stage
+// as written by the shader. Applies only for vertex and tessellation evaluation shaders.
 [[nodiscard]] bool ReplaceClipDistanceAssignments(TCompiler *compiler,
                                                   TIntermBlock *root,
                                                   TSymbolTable *symbolTable,
                                                   const GLenum shaderType,
-                                                  const TIntermTyped *clipDistanceEnableFlags);
+                                                  const TIntermTyped *clipDistanceEnableFlags,
+                                                  const TIntermTyped *isLastPreRasterizationStage);
 
 [[nodiscard]] bool ReplaceCullDistanceAssignments(TCompiler *compiler,
                                                   TIntermBlock *root,

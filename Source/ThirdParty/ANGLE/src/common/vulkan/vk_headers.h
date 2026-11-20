@@ -147,6 +147,9 @@ extern PFN_vkCmdSetLogicOpEnableEXT vkCmdSetLogicOpEnableEXT;
 extern PFN_vkCmdSetDepthClipNegativeOneToOneEXT vkCmdSetDepthClipNegativeOneToOneEXT;
 // + VK_EXT_blend_operation_advanced
 extern PFN_vkCmdSetColorBlendAdvancedEXT vkCmdSetColorBlendAdvancedEXT;
+// + VK_EXT_line_rasterization
+extern PFN_vkCmdSetLineRasterizationModeEXT vkCmdSetLineRasterizationModeEXT;
+extern PFN_vkCmdSetLineStippleEnableEXT vkCmdSetLineStippleEnableEXT;
 
 // VK_EXT_vertex_input_dynamic_state
 extern PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT;
@@ -168,10 +171,6 @@ extern PFN_vkGetImageSubresourceLayout2EXT vkGetImageSubresourceLayout2EXT;
 // VK_KHR_dynamic_rendering
 extern PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR;
 extern PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR;
-
-// VK_KHR_dynamic_rendering_local_read
-extern PFN_vkCmdSetRenderingAttachmentLocationsKHR vkCmdSetRenderingAttachmentLocationsKHR;
-extern PFN_vkCmdSetRenderingInputAttachmentIndicesKHR vkCmdSetRenderingInputAttachmentIndicesKHR;
 
 // VK_KHR_synchronization2
 extern PFN_vkCmdPipelineBarrier2KHR vkCmdPipelineBarrier2KHR;

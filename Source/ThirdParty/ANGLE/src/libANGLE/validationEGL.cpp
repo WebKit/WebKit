@@ -1240,10 +1240,12 @@ bool ValidateLabeledObject(const ValidationContext *val,
     {
         case ObjectType::Context:
         {
-            EGLContext context      = static_cast<EGLContext>(object);
-            gl::ContextID contextID = PackParam<gl::ContextID>(context);
-            ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
-            *outLabeledObject = display->getContext(contextID);
+            ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
+            EGLContext context = static_cast<EGLContext>(object);
+            // The entry point references the context, if valid.
+            ScopedContextRef contextRef = display->getContextRef(PackParam<gl::ContextID>(context));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextRef.get()));
+            *outLabeledObject = contextRef.get();
             break;
         }
 
@@ -1284,6 +1286,7 @@ bool ValidateLabeledObject(const ValidationContext *val,
 
         case ObjectType::Surface:
         {
+            ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
             EGLSurface surface          = static_cast<EGLSurface>(object);
             SurfaceID surfaceID         = PackParam<SurfaceID>(surface);
             ScopedSurfaceRef surfaceRef = display->getSurfaceRef(surfaceID);
@@ -1294,6 +1297,7 @@ bool ValidateLabeledObject(const ValidationContext *val,
 
         case ObjectType::Sync:
         {
+            ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
             Sync *sync            = static_cast<Sync *>(object);
             SyncID syncID         = PackParam<SyncID>(sync);
             ScopedSyncRef syncRef = display->getSync(syncID);
@@ -1486,7 +1490,7 @@ bool ValidateSurfaceBadAccess(const ValidationContext *val,
                               const gl::Context *previousContext,
                               const Surface *surface)
 {
-    if (surface->isCurrentOnAnyContext() &&
+    if (surface->isCurrentOnAnyThread() &&
         (previousContext == nullptr || (surface != previousContext->getCurrentDrawSurface() &&
                                         surface != previousContext->getCurrentReadSurface())))
     {
@@ -1582,7 +1586,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
                 return false;
             }
 
-            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext->id()));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext));
 
             if (!currentContext->getExtensions().EGLSyncOES)
             {
@@ -1614,7 +1618,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
                 return false;
             }
 
-            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext->id()));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext));
 
             if (!currentContext->getExtensions().EGLSyncOES)
             {
@@ -1675,7 +1679,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
                 return false;
             }
 
-            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext->id()));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext));
 
             // This should be implied by exposing EGL_KHR_fence_sync
             ASSERT(currentContext->getExtensions().EGLSyncOES);
@@ -1739,7 +1743,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
                               "CreateSync can only be called on the current display");
                 return false;
             }
-            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext->id()));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext));
             break;
 
         default:
@@ -2588,11 +2592,11 @@ bool ValidateThreadContext(const ValidationContext *val,
 
 bool ValidateContext(const ValidationContext *val,
                      const ThreadSafeDisplay *display,
-                     gl::ContextID contextID)
+                     const gl::Context *context)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
 
-    if (!display->isValidContext(contextID))
+    if (context == nullptr)
     {
         if (val)
         {
@@ -2895,6 +2899,13 @@ ScopedSurfaceLockAndRef GetSurfaceIfValid(const ThreadSafeDisplay *display, Surf
                                              : ScopedSurfaceLockAndRef();
 }
 
+ScopedContextRef GetContextRefIfValid(const ThreadSafeDisplay *display, gl::ContextID contextID)
+{
+    // display->getContextRef() - validates contextID
+    return ValidateDisplay(nullptr, display) ? display->getContextRef(contextID)
+                                             : ScopedContextRef();
+}
+
 const Image *GetImageIfValid(const Display *display, ImageID imageID)
 {
     // display->getImage() - validates imageID
@@ -2904,17 +2915,6 @@ const Image *GetImageIfValid(const Display *display, ImageID imageID)
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream)
 {
     return ValidateStream(nullptr, display, stream) ? stream : nullptr;
-}
-
-const gl::Context *GetContextIfValid(const ThreadSafeDisplay *display, gl::ContextID contextID)
-{
-    // display->getContext() - validates contextID
-    return ValidateDisplay(nullptr, display) ? display->getContext(contextID) : nullptr;
-}
-
-gl::Context *GetContextIfValid(ThreadSafeDisplay *display, gl::ContextID contextID)
-{
-    return ValidateDisplay(nullptr, display) ? display->getContext(contextID) : nullptr;
 }
 
 const Device *GetDeviceIfValid(const Device *device)
@@ -2991,6 +2991,7 @@ bool ValidateCreateContext(const ValidationContext *val,
                            const Display *display,
                            const Config *configuration,
                            gl::ContextID shareContextID,
+                           const gl::Context *shareContext,
                            const AttributeMap &attributes)
 {
     if (configuration)
@@ -3011,15 +3012,13 @@ bool ValidateCreateContext(const ValidationContext *val,
     if (shareContextID.value != 0)
     {
         // Shared context is invalid or is owned by another display
-        if (!display->isValidContext(shareContextID))
+        if (shareContext == nullptr)
         {
             val->setError(EGL_BAD_MATCH,
                           "Shared context is invalid or is owned by another display");
             return false;
         }
     }
-
-    const gl::Context *shareContext = display->getContext(shareContextID);
 
     ANGLE_VALIDATION_TRY(attributes.validate(val, display, ValidateCreateContextAttribute));
 
@@ -3722,7 +3721,8 @@ bool ValidateMakeCurrent(const ValidationContext *val,
                          const Surface *drawSurface,
                          SurfaceID readSurfaceID,
                          const Surface *readSurface,
-                         gl::ContextID contextID)
+                         gl::ContextID contextID,
+                         const gl::Context *context)
 {
     bool noDraw    = drawSurfaceID.value == 0;
     bool noRead    = readSurfaceID.value == 0;
@@ -3780,7 +3780,7 @@ bool ValidateMakeCurrent(const ValidationContext *val,
 
     if (!noContext)
     {
-        ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+        ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
     }
 
     // Allow "un-make" the lost context:
@@ -3792,13 +3792,26 @@ bool ValidateMakeCurrent(const ValidationContext *val,
         return false;
     }
 
-    const gl::Context *context = GetContextIfValid(display, contextID);
-
+    // eglMakeCurrent() does not lock the display.  Instead, the entry point references the context,
+    // and locks its ContextMutex, along with the one of the context current on this thread.  That
+    // makes these checks atomic with making the context current, and with another thread making it
+    // current, releasing it, or destroying it.
     const gl::Context *previousContext = val->eglThread->getContext();
-    if (!noContext && context->isReferenced() && context != previousContext)
+    if (context != nullptr && context != previousContext)
     {
-        val->setError(EGL_BAD_ACCESS, "Context can only be current on one thread");
-        return false;
+        if (context->isCurrentOnAnyThread())
+        {
+            val->setError(EGL_BAD_ACCESS, "Context can only be current on one thread");
+            return false;
+        }
+
+        if (context->isDestroyed())
+        {
+            // eglDestroyContext() was called while another thread had the context current, or used
+            // it.
+            val->setError(EGL_BAD_CONTEXT, "Context is destroyed");
+            return false;
+        }
     }
 
     if (!noRead)
@@ -3821,17 +3834,16 @@ bool ValidateMakeCurrent(const ValidationContext *val,
 
 bool ValidateCreateImage(const ValidationContext *val,
                          const Display *display,
-                         gl::ContextID contextID,
+                         const gl::Context *context,
                          EGLenum target,
                          EGLClientBuffer buffer,
                          const AttributeMap &attributes)
 {
-    const gl::Context *context = GetContextIfValid(display, contextID);
-
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
 
     // context can not be current on other thread.
-    if (context != nullptr && context->isReferenced() && context != val->eglThread->getContext())
+    if (context != nullptr && context->isCurrentOnAnyThread() &&
+        context != val->eglThread->getContext())
     {
         val->setError(EGL_BAD_ACCESS, "Context can only be current on one thread");
         return false;
@@ -4126,7 +4138,7 @@ bool ValidateCreateImage(const ValidationContext *val,
                 return false;
             }
 
-            ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
             const gl::Texture *texture =
                 context->getTexture({egl_gl::EGLClientBufferToGLObjectHandle(buffer)});
             if (texture == nullptr || texture->getType() != gl::TextureType::_2D)
@@ -4199,7 +4211,7 @@ bool ValidateCreateImage(const ValidationContext *val,
                 return false;
             }
 
-            ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
             const gl::Texture *texture =
                 context->getTexture({egl_gl::EGLClientBufferToGLObjectHandle(buffer)});
             if (texture == nullptr || texture->getType() != gl::TextureType::CubeMap)
@@ -4281,7 +4293,7 @@ bool ValidateCreateImage(const ValidationContext *val,
                 return false;
             }
 
-            ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
             const gl::Texture *texture =
                 context->getTexture({egl_gl::EGLClientBufferToGLObjectHandle(buffer)});
             if (texture == nullptr || texture->getType() != gl::TextureType::_3D)
@@ -4369,7 +4381,7 @@ bool ValidateCreateImage(const ValidationContext *val,
                 return false;
             }
 
-            ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+            ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
             const gl::Renderbuffer *renderbuffer =
                 context->getRenderbuffer({egl_gl::EGLClientBufferToGLObjectHandle(buffer)});
             if (renderbuffer == nullptr)
@@ -4616,7 +4628,7 @@ bool ValidateDestroyImage(const ValidationContext *val, const Display *display, 
 
 bool ValidateCreateImageKHR(const ValidationContext *val,
                             const Display *display,
-                            gl::ContextID contextID,
+                            const gl::Context *context,
                             EGLenum target,
                             EGLClientBuffer buffer,
                             const AttributeMap &attributes)
@@ -4632,7 +4644,7 @@ bool ValidateCreateImageKHR(const ValidationContext *val,
         return false;
     }
 
-    return ValidateCreateImage(val, display, contextID, target, buffer, attributes);
+    return ValidateCreateImage(val, display, context, target, buffer, attributes);
 }
 
 bool ValidateDestroyImageKHR(const ValidationContext *val, const Display *display, ImageID imageID)
@@ -5464,9 +5476,9 @@ bool ValidateDestroySurface(const ValidationContext *val,
 
 bool ValidateDestroyContext(const ValidationContext *val,
                             const Display *display,
-                            gl::ContextID contextID)
+                            const gl::Context *context)
 {
-    ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+    ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
     return true;
 }
 
@@ -6334,11 +6346,11 @@ bool ValidateQuerySurface(const ValidationContext *val,
 
 bool ValidateQueryContext(const ValidationContext *val,
                           const Display *display,
-                          gl::ContextID contextID,
+                          const gl::Context *context,
                           EGLint attribute,
                           const EGLint *value)
 {
-    ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+    ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
 
     switch (attribute)
     {
@@ -7036,17 +7048,17 @@ bool ValidateQueryDeviceStringEXT(const ValidationContext *val, const Device *de
 
 bool ValidateReleaseHighPowerGPUANGLE(const ValidationContext *val,
                                       const Display *display,
-                                      gl::ContextID contextID)
+                                      const gl::Context *context)
 {
-    ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+    ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
     return true;
 }
 
 bool ValidateReacquireHighPowerGPUANGLE(const ValidationContext *val,
                                         const Display *display,
-                                        gl::ContextID contextID)
+                                        const gl::Context *context)
 {
-    ANGLE_VALIDATION_TRY(ValidateContext(val, display, contextID));
+    ANGLE_VALIDATION_TRY(ValidateContext(val, display, context));
     return true;
 }
 
@@ -7236,7 +7248,7 @@ bool ValidateLockSurfaceKHR(const ValidationContext *val,
         return false;
     }
 
-    if (surface->isCurrentOnAnyContext())
+    if (surface->isCurrentOnAnyThread())
     {
         val->setError(EGL_BAD_ACCESS,
                       "Surface cannot be current to a context for eglLockSurface()");

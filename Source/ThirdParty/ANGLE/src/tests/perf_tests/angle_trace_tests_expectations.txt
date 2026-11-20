@@ -7,6 +7,7 @@
 // The trace disables GL_MULTISAMPLED_EXT, but EXT_multisample_compatibility is
 // not supported (no alphaToOne feature)
 42266123 SWIFTSHADER : puzzle_and_dragons = SKIP
+42266123 ANDROID PIXEL6 VULKAN : puzzle_and_dragons = SKIP
 42266123 SWIFTSHADER : raid_shadow_legends = SKIP
 42266123 SWIFTSHADER : return_to_monkey_island = SKIP
 42266123 SWIFTSHADER : run_goddess = SKIP
@@ -378,3 +379,4 @@
 547997746 WIN QUALCOMM VULKAN : simcity_buildit = SKIP
 553149477 WIN QUALCOMM VULKAN : black_desert_mobile = SKIP
 573754432 WIN QUALCOMM VULKAN : isekai_slow_life = SKIP
+583987431 WIN QUALCOMM VULKAN : last_fortress_underground = SKIP

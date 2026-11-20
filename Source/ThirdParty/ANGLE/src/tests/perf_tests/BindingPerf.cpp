@@ -8,7 +8,7 @@
 //
 
 #include "ANGLEPerfTest.h"
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 
 #include <iostream>
 #include <random>
@@ -186,20 +186,18 @@ void BindingsBenchmark::drawBenchmark()
         // Fetch a few variables from the underlying data structure to keep them in registers.
         // Otherwise each loop iteration they'll be fetched again because the compiler cannot
         // guarantee that those are unchanged when calling glBindBuffer.
-        const GLuint *buffers       = mBuffers.data();
-        const GLenum *bindingPoints = mBindingPoints.data();
-        size_t bindingPointsSize    = mBindingPoints.size();
-        size_t buffersSize          = mBuffers.size();
-        size_t bindingIndex         = it % bindingPointsSize;
-        for (GLuint bufferIdx = 0; bufferIdx < buffersSize; bufferIdx++)
+        Span<const GLuint> buffers(mBuffers);
+        Span<const GLenum> bindingPoints(mBindingPoints);
+        size_t bindingIndex = it % bindingPoints.size();
+        for (GLuint bufferIdx = 0; bufferIdx < buffers.size(); bufferIdx++)
         {
-            GLenum binding = ANGLE_UNSAFE_TODO(bindingPoints[bindingIndex]);
-            glBindBuffer(binding, ANGLE_UNSAFE_TODO(buffers[bufferIdx]));
+            GLenum binding = bindingPoints[bindingIndex];
+            glBindBuffer(binding, buffers[bufferIdx]);
 
-            // Instead of doing a costly division to get an index in the range [0,bindingPointsSize)
-            // do a bounds-check and reset the index.
+            // Instead of doing a costly division to get an index in the range
+            // [0, bindingPoints.size()) do a bounds-check and reset the index.
             ++bindingIndex;
-            bindingIndex = (bindingIndex >= bindingPointsSize) ? 0 : bindingIndex;
+            bindingIndex = (bindingIndex >= bindingPoints.size()) ? 0 : bindingIndex;
 
             if (params.testMode == TestMode::VertexArray)
             {

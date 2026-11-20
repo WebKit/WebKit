@@ -1016,4 +1016,25 @@ bool IsIndexOp(TOperator op)
     }
 }
 
+int GetPerVertexMemberIndex(const ImmutableString &name)
+{
+    if (name == "gl_Position")
+    {
+        return 0;
+    }
+    if (name == "gl_PointSize")
+    {
+        return 1;
+    }
+    if (name == "gl_ClipDistance")
+    {
+        return 2;
+    }
+    if (name == "gl_CullDistance")
+    {
+        return 3;
+    }
+    return -1;
+}
+
 }  // namespace sh

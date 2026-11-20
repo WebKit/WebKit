@@ -1930,7 +1930,17 @@ void TIntermBinary::promote()
             const TFieldList &fields = mLeft->getType().getInterfaceBlock()->fields();
             const int fieldIndex     = mRight->getAsConstantUnion()->getIConst(0);
             setType(*fields[fieldIndex]->type());
-            getTypePointer()->setQualifier(resultQualifier);
+            // Preserve clip/cull distance qualifiers so .length() isn't folded before the array
+            // size is final.
+            TQualifier fieldQualifier = fields[fieldIndex]->type()->getQualifier();
+            if (fieldQualifier == EvqClipDistance || fieldQualifier == EvqCullDistance)
+            {
+                getTypePointer()->setQualifier(fieldQualifier);
+            }
+            else
+            {
+                getTypePointer()->setQualifier(resultQualifier);
+            }
             return;
         }
         default:

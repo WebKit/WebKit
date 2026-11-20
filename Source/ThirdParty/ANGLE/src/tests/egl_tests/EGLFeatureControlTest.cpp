@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 #include <optional>
-#include "common/unsafe_buffers.h"
+#include <string_view>
 
 #include "common/string_utils.h"
 #include "libANGLE/Display.h"
@@ -236,8 +236,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesWildcard)
             std::transform(featureName.begin(), featureName.end(), featureName.begin(),
                            [](unsigned char c) { return std::tolower(c); });
 
-            const bool featureMatch =
-                ANGLE_UNSAFE_TODO(strncmp(featureName.c_str(), "allowhostimage", 14)) == 0;
+            const bool featureMatch = BeginsWith(featureName, "allowhostimage");
 
             std::optional<bool> overrideState;
             if (featureMatch)
@@ -340,7 +339,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
         bool featureMatch = false;
         for (auto *ptr : featuresExpectDisabled)
         {
-            if (ANGLE_UNSAFE_TODO(strcmp(ptr, feature->name)) == 0)
+            if (std::string_view(ptr) == feature->name)
             {
                 featureMatch = true;
                 break;

@@ -6,7 +6,6 @@
 
 // SamplerTest.cpp : Tests for samplers.
 
-#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 #include "test_utils/ANGLETest.h"
 
@@ -145,19 +144,13 @@ void main()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        std::vector<GLubyte> gradientPixels(getTextureWidth() * getTextureHeight() * 4);
+        std::vector<GLColor> gradientPixels(getTextureWidth() * getTextureHeight());
         for (GLubyte y = 0; y < getTextureHeight(); y++)
         {
             for (GLubyte x = 0; x < getTextureWidth(); x++)
             {
-                GLubyte *pixel =
-                    ANGLE_UNSAFE_TODO(&gradientPixels[0] + ((y * getTextureWidth() + x) * 4));
-
                 // Draw a gradient, red in x direction, green in y direction
-                pixel[0] = x;
-                ANGLE_UNSAFE_TODO(pixel[1]) = y;
-                ANGLE_UNSAFE_TODO(pixel[2]) = 0u;
-                ANGLE_UNSAFE_TODO(pixel[3]) = 255u;
+                gradientPixels[y * getTextureWidth() + x] = GLColor(x, y, 0u, 255u);
             }
         }
 
@@ -236,7 +229,7 @@ void main()
         drawQuad(mProgram, "a_position", 0.5f);
         ASSERT_GL_NO_ERROR();
 
-        std::vector<GLubyte> pixels(getTextureWidth() * getTextureHeight() * 4);
+        std::vector<GLColor> pixels(getTextureWidth() * getTextureHeight());
         glReadPixels(getViewportOriginX(), getViewportOriginY(), getTextureWidth(),
                      getTextureHeight(), GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
         ASSERT_GL_NO_ERROR();
@@ -254,26 +247,23 @@ void main()
         {
             for (size_t x = 1; x < checkWidth; x++)
             {
-                const GLubyte *prevPixel = ANGLE_UNSAFE_TODO(
-                    pixels.data() + (((y - 1) * getTextureWidth() + (x - 1)) * 4));
-                const GLubyte *curPixel =
-                    ANGLE_UNSAFE_TODO(pixels.data() + ((y * getTextureWidth() + x) * 4));
+                const GLColor &prevPixel = pixels[(y - 1) * getTextureWidth() + (x - 1)];
+                const GLColor &curPixel  = pixels[y * getTextureWidth() + x];
 
                 if (strict)
                 {
-                    EXPECT_EQ(curPixel[0], prevPixel[0] + 1)
+                    EXPECT_EQ(curPixel.R, prevPixel.R + 1)
                         << " failed at (" << x << ", " << y << ")";
-                    ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[1], prevPixel[1] + 1))
+                    EXPECT_EQ(curPixel.G, prevPixel.G + 1)
                         << " failed at (" << x << ", " << y << ")";
                 }
                 else
                 {
-                    EXPECT_GE(curPixel[0], prevPixel[0]) << " failed at (" << x << ", " << y << ")";
-                    ANGLE_UNSAFE_TODO(EXPECT_GE(curPixel[1], prevPixel[1]))
-                        << " failed at (" << x << ", " << y << ")";
+                    EXPECT_GE(curPixel.R, prevPixel.R) << " failed at (" << x << ", " << y << ")";
+                    EXPECT_GE(curPixel.G, prevPixel.G) << " failed at (" << x << ", " << y << ")";
                 }
-                ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[2], prevPixel[2]));
-                ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[3], prevPixel[3]));
+                EXPECT_EQ(curPixel.B, prevPixel.B);
+                EXPECT_EQ(curPixel.A, prevPixel.A);
             }
         }
     }

@@ -6654,6 +6654,49 @@ TEST_P(ClearTextureEXTTestES31Renderable, ClearMultisample)
     testMS();
 }
 
+TEST_P(ClearTest, ClearThenSubImageUploadBeforeDraw)
+{
+    constexpr GLsizei kSize = 64;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kSize, kSize);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Upload green into a sub-region in the top half so that it partially overlaps with the
+    // subsequent draw in the top-right quadrant.
+    constexpr GLint kSubX        = kSize / 4;
+    constexpr GLint kSubY        = kSize / 2;
+    constexpr GLsizei kSubWidth  = kSize / 2;
+    constexpr GLsizei kSubHeight = kSize / 2;
+    std::vector<GLColor> greenSubRegion(kSubWidth * kSubHeight, GLColor::green);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, kSubX, kSubY, kSubWidth, kSubHeight, GL_RGBA,
+                    GL_UNSIGNED_BYTE, greenSubRegion.data());
+
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glViewport(kSize / 2, kSize / 2, kSize / 2, kSize / 2);
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Bottom half and top-left strip outside both the sub-image and the draw remain red.
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSubY, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(0, kSubY, kSubX, kSubHeight, GLColor::red);
+    // Non-overlapping left half of the sub-image upload remains green.
+    EXPECT_PIXEL_RECT_EQ(kSubX, kSubY, kSize / 2 - kSubX, kSubHeight, GLColor::green);
+    // Top-right quadrant (including the right half of the sub-image upload) is overwritten by blue.
+    EXPECT_PIXEL_RECT_EQ(kSize / 2, kSubY, kSize / 2, kSubHeight, GLColor::blue);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ClearTest,
     ES3_VULKAN().enable(Feature::ForceFallbackFormat),

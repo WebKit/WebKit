@@ -19,6 +19,7 @@ RendererGLX::RendererGLX(std::unique_ptr<FunctionsGL> functionsGL,
                          glx::Pbuffer pbuffer)
     : RendererGL(std::move(functionsGL), attribMap, display),
       mGLX(glx),
+      mDisplay(display),
       mContext(context),
       mPbuffer(pbuffer)
 {}
@@ -32,7 +33,7 @@ RendererGLX::~RendererGLX()
 
     if (mContext)
     {
-        mGLX.destroyContext(mContext);
+        mDisplay->destroyNativeContext(mContext);
     }
 }
 

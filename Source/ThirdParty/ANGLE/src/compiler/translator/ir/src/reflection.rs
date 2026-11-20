@@ -703,7 +703,7 @@ fn new_field(
     inherit: Inherit,
     fields_used_with_texel_fetch: Option<&FieldsUsedWithTexelFetch>,
 ) -> ShaderVariable {
-    new_common_shader_variable(
+    let mut shader_variable = new_common_shader_variable(
         ir_meta,
         options,
         &field.name,
@@ -713,7 +713,21 @@ fn new_field(
         field.is_static_use || inherit.active,
         inherit,
         fields_used_with_texel_fetch,
-    )
+    );
+    // If a member of gl_PerVertex, adjust the name
+    if let Some(built_in) = field.built_in {
+        let name = match built_in {
+            BuiltIn::Position => "gl_Position",
+            BuiltIn::PointSize => "gl_PointSize",
+            BuiltIn::ClipDistance => "gl_ClipDistance",
+            BuiltIn::CullDistance => "gl_CullDistance",
+            _ => panic!("Internal error: Invalid built-in field"),
+        };
+        shader_variable.name = name.to_string();
+        shader_variable.mapped_name = shader_variable.name.clone();
+    }
+
+    shader_variable
 }
 
 fn new_common_shader_variable(

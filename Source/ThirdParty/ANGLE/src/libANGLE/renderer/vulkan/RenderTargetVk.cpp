@@ -88,7 +88,7 @@ vk::ImageOrBufferViewSubresourceSerial RenderTargetVk::getSubresourceSerialImpl(
 
     vk::LayerMode layerMode = vk::GetLayerMode(*mImage, mLayerCount);
     vk::ImageOrBufferViewSubresourceSerial imageViewSerial =
-        imageViews->getSubresourceSerial(mLevelIndexGL, 1, mLayerIndex, layerMode);
+        imageViews->getSubresourceWriteSerial(mLevelIndexGL, 1, mLayerIndex, layerMode);
     return imageViewSerial;
 }
 

@@ -1254,6 +1254,8 @@ PFN_vkCmdSetDepthClampEnableEXT vkCmdSetDepthClampEnableEXT                   = 
 PFN_vkCmdSetPolygonModeEXT vkCmdSetPolygonModeEXT                             = nullptr;
 PFN_vkCmdSetLogicOpEnableEXT vkCmdSetLogicOpEnableEXT                         = nullptr;
 PFN_vkCmdSetColorBlendAdvancedEXT vkCmdSetColorBlendAdvancedEXT               = nullptr;
+PFN_vkCmdSetLineRasterizationModeEXT vkCmdSetLineRasterizationModeEXT         = nullptr;
+PFN_vkCmdSetLineStippleEnableEXT vkCmdSetLineStippleEnableEXT                 = nullptr;
 
 // VK_EXT_vertex_input_dynamic_state
 PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = nullptr;
@@ -1261,10 +1263,6 @@ PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = nullptr;
 // VK_KHR_dynamic_rendering
 PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR = nullptr;
 PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR     = nullptr;
-
-// VK_KHR_dynamic_rendering_local_read
-PFN_vkCmdSetRenderingAttachmentLocationsKHR vkCmdSetRenderingAttachmentLocationsKHR       = nullptr;
-PFN_vkCmdSetRenderingInputAttachmentIndicesKHR vkCmdSetRenderingInputAttachmentIndicesKHR = nullptr;
 
 // VK_KHR_fragment_shading_rate
 PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR = nullptr;
@@ -1417,6 +1415,13 @@ void InitExtendedDynamicState3EXTWithBlendOperationAdvancedEXTFunctions(VkDevice
     GET_DEVICE_FUNC(vkCmdSetColorBlendAdvancedEXT);
 }
 
+// VK_EXT_extended_dynamic_state3 + VK_EXT_line_rasterization
+void InitExtendedDynamicState3EXTWithLineRasterizationEXTFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdSetLineRasterizationModeEXT);
+    GET_DEVICE_FUNC(vkCmdSetLineStippleEnableEXT);
+}
+
 // VK_EXT_vertex_input_dynamic_state
 void InitVertexInputDynamicStateEXTFunctions(VkDevice device)
 {
@@ -1428,13 +1433,6 @@ void InitDynamicRenderingFunctions(VkDevice device)
 {
     GET_DEVICE_FUNC(vkCmdBeginRenderingKHR);
     GET_DEVICE_FUNC(vkCmdEndRenderingKHR);
-}
-
-// VK_KHR_dynamic_rendering_local_read
-void InitDynamicRenderingLocalReadFunctions(VkDevice device)
-{
-    GET_DEVICE_FUNC(vkCmdSetRenderingAttachmentLocationsKHR);
-    GET_DEVICE_FUNC(vkCmdSetRenderingInputAttachmentIndicesKHR);
 }
 
 // VK_KHR_fragment_shading_rate

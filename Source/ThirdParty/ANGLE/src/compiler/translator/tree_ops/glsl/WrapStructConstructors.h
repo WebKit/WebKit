@@ -24,9 +24,9 @@ class TSymbolTable;
                                           TIntermBlock *root,
                                           TSymbolTable *symbolTable);
 #else
-[[nodiscard]] bool WrapStructConstructors(TCompiler *compiler,
-                                          TIntermBlock *root,
-                                          TSymbolTable *symbolTable)
+[[nodiscard]] ANGLE_INLINE bool WrapStructConstructors(TCompiler *compiler,
+                                                       TIntermBlock *root,
+                                                       TSymbolTable *symbolTable)
 {
     UNREACHABLE();
     return false;

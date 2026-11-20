@@ -82,27 +82,27 @@ TEST(SpanTest, Comparison)
 // Test indexing
 TEST(SpanTest, Indexing)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData);
 
-    for (size_t i = 0; i < kSpanDataSize; ++i)
+    for (size_t i = 0; i < sp.size(); ++i)
     {
         ASSERT_EQ(sp[i], i);
     }
 
-    unsigned int storage[kSpanDataSize] = {};
-    auto writableSpan = ANGLE_UNSAFE_TODO(angle::Span<unsigned int>(storage, kSpanDataSize));
+    std::array<unsigned int, kSpanDataSize> storage = {};
+    Span<unsigned int> writableSpan(storage);
 
-    for (size_t i = 0; i < kSpanDataSize; ++i)
+    for (size_t i = 0; i < writableSpan.size(); ++i)
     {
         writableSpan[i] = i;
     }
-    for (size_t i = 0; i < kSpanDataSize; ++i)
+    for (size_t i = 0; i < writableSpan.size(); ++i)
     {
         ASSERT_EQ(writableSpan[i], i);
     }
-    for (size_t i = 0; i < kSpanDataSize; ++i)
+    for (size_t i = 0; i < storage.size(); ++i)
     {
-        ANGLE_UNSAFE_TODO(ASSERT_EQ(storage[i], i));
+        ASSERT_EQ(storage[i], i);
     }
 }
 
@@ -252,22 +252,18 @@ TEST(SpanTest, Constructors)
     }
 }
 
-// Test accessing the data directly
+// Test that data() points to the viewed array.
 TEST(SpanTest, DataAccess)
 {
-    constexpr auto sp        = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
-    const unsigned int *data = sp.data();
-
-    for (size_t i = 0; i < kSpanDataSize; ++i)
-    {
-        ANGLE_UNSAFE_TODO(ASSERT_EQ(data[i], i));
-    }
+    constexpr Span sp(kSpanData);
+    ASSERT_EQ(sp.data(), kSpanData);
+    ASSERT_EQ(sp.size(), kSpanDataSize);
 }
 
 // Test front and back
 TEST(SpanTest, FrontAndBack)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData);
     ASSERT_TRUE(sp.front() == 0);
     ASSERT_EQ(sp.back(), kSpanDataSize - 1);
 }
@@ -275,7 +271,7 @@ TEST(SpanTest, FrontAndBack)
 // Test begin and end
 TEST(SpanTest, BeginAndEnd)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData);
 
     size_t currentIndex = 0;
     for (unsigned int value : sp)
@@ -288,7 +284,7 @@ TEST(SpanTest, BeginAndEnd)
 // Test reverse begin and end
 TEST(SpanTest, RbeginAndRend)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData);
 
     size_t currentIndex = 0;
     for (unsigned int value : Reversed(sp))
@@ -301,7 +297,7 @@ TEST(SpanTest, RbeginAndRend)
 // Test first and last
 TEST(SpanTest, FirstAndLast)
 {
-    constexpr auto sp           = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData);
     constexpr size_t kSplitSize = kSpanDataSize / 4;
     {
         constexpr Span first = sp.first(kSplitSize);
@@ -343,7 +339,7 @@ TEST(SpanTest, FirstAndLast)
 // Test subspan
 TEST(SpanTest, Subspan)
 {
-    constexpr auto sp             = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData);
     constexpr size_t kSplitOffset = kSpanDataSize / 4;
     constexpr size_t kSplitSize   = kSpanDataSize / 2;
 
@@ -523,17 +519,14 @@ TEST(SpanTest, Helpers)
 
     // Test copy_from.
     {
-        unsigned int data1[4] = {1, 2, 3, 4};
-        unsigned int data2[4] = {0, 0, 0, 0};
+        std::array<unsigned int, 4> data1 = {1, 2, 3, 4};
+        std::array<unsigned int, 4> data2 = {5, 6, 7, 8};
 
         Span<unsigned int> sp1(data1);
         Span<unsigned int> sp2(data2);
 
         sp2.copy_from(sp1);
-        for (size_t i = 0; i < 4; ++i)
-        {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(data2[i], data1[i]));
-        }
+        EXPECT_EQ(data2, data1);
     }
 
     // Test copy_from with container.
@@ -642,18 +635,15 @@ TEST(SpanTest, Helpers)
 
     // Test copy_from on a const Span handle.
     {
-        unsigned int data1[4] = {1, 2, 3, 4};
-        unsigned int data2[4] = {0, 0, 0, 0};
+        std::array<unsigned int, 4> data1 = {1, 2, 3, 4};
+        std::array<unsigned int, 4> data2 = {5, 6, 7, 8};
 
         const Span<unsigned int> sp1(data1);
         const Span<unsigned int> sp2(data2);
 
         sp2.copy_from(sp1);
 
-        for (size_t i = 0; i < 4; ++i)
-        {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(data2[i], data1[i]));
-        }
+        EXPECT_EQ(data2, data1);
     }
 
     // Test copy_prefix_from with a smaller fixed-extent source: the rest is left

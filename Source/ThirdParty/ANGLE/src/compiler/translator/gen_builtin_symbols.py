@@ -1,11 +1,11 @@
 #!/usr/bin/env vpython3
 #
-# [VPYTHON:BEGIN]
-# wheel: <
-#   name: "infra/python/wheels/perfect-hash-py2_py3"
-#   version: "version:0.2.1"
-# >
-# [VPYTHON:END]
+# /// script
+# requires-python = '>=3.11,<3.12'
+# dependencies = [
+#   'perfect-hash==0.2.1'
+# ]
+# ///
 #
 # Copyright 2018 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -959,10 +959,7 @@ class TType:
         return template_type.format(**self.data)
 
     def get_dynamic_type_string(self):
-        template_type = 'new TType(Ebt{basic}, Ebp{precision}, Evq{qualifier}, {primarySize}, {secondarySize}'
-        if self.has_array_size():
-            template_type += ', TVector<unsigned int>{{{arraySize}}}'
-        template_type += ')'
+        template_type = 'new TType(Ebt{basic}, Ebp{precision}, Evq{qualifier}, {primarySize}, {secondarySize})'
         return template_type.format(**self.data)
 
     def get_mangled_name(self):
@@ -1757,10 +1754,18 @@ def process_single_variable(shader_type, variable_name, props, symbols, variable
             '    TFieldList *{fields} = new TFieldList();'.format(**template_args))
         for field_name, field_type in props['fields'].items():
             template_args['field_name'] = field_name
+            template_args['field_type_name'] = '{field_name}_{name_with_suffix}'.format(
+                **template_args)
             template_args['field_type'] = TType(field_type).get_dynamic_type_string()
             template_name_declaration = 'constexpr const ImmutableString {field_name}("{field_name}");'
             symbols.name_declarations.add(template_name_declaration.format(**template_args))
-            template_add_field = '    {fields}->push_back(new TField({field_type}, BuiltInName::{field_name}, zeroSourceLoc, SymbolType::BuiltIn));'
+            template_declare_field = '    TType *{field_type_name} = {field_type};'
+            variables.init_member_variables.append(template_declare_field.format(**template_args))
+            if 'arraySize' in field_type:
+                template_args['array_size'] = field_type['arraySize']
+                template_init_array = '    {field_type_name}->makeArray({array_size});'
+                variables.init_member_variables.append(template_init_array.format(**template_args))
+            template_add_field = '    {fields}->push_back(new TField({field_type_name}, BuiltInName::{field_name}, zeroSourceLoc, SymbolType::BuiltIn));'
             variables.init_member_variables.append(template_add_field.format(**template_args))
         template_args['extension'] = extension_string
         template_init_temp_variable = '    {class} *{name_with_suffix} = new {class}(BuiltInId::{name_with_suffix}, BuiltInName::{name}, {extension}, {fields});'

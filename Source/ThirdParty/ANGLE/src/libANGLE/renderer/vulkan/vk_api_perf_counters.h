@@ -54,8 +54,6 @@ enum class VulkanApiFunction : uint8_t
     vkCmdResetEvent,
     vkCmdResetQueryPool,
     vkCmdSetEvent,
-    vkCmdSetRenderingAttachmentLocationsKHR,
-    vkCmdSetRenderingInputAttachmentIndicesKHR,
     vkCmdWaitEvents,
     vkCmdWriteTimestamp,
     vkCopyMemoryToImageEXT,
@@ -223,8 +221,6 @@ constexpr angle::VulkanApiPerfCounterGroup GetPerfCounterGroup(VulkanApiFunction
         case VulkanApiFunction::vkCmdResetEvent:
         case VulkanApiFunction::vkCmdResetQueryPool:
         case VulkanApiFunction::vkCmdSetEvent:
-        case VulkanApiFunction::vkCmdSetRenderingAttachmentLocationsKHR:
-        case VulkanApiFunction::vkCmdSetRenderingInputAttachmentIndicesKHR:
         case VulkanApiFunction::vkCmdWaitEvents:
         case VulkanApiFunction::vkCmdWriteTimestamp:
         case VulkanApiFunction::vkCreateCommandPool:

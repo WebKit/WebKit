@@ -45,8 +45,7 @@ class BufferPoolTest : public ANGLETest<>
         egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
         gl::ContextID contextID = {
             static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
-        gl::Context *context = display->getContext(contextID);
-        return mtl::GetImpl(context);
+        return mtl::GetImpl(display->getContextRef(contextID).get());
     }
 };
 

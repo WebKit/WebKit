@@ -117,6 +117,31 @@ WGPUTextureFormat GetStencilOnlyFormat(WGPUTextureFormat format)
     return format;
 }
 
+struct SubresourceCopyRegion
+{
+    uint32_t layerIndex;
+    uint32_t layerCount;
+    gl::Box copyBox;
+};
+
+SubresourceCopyRegion GetSubresourceCopyRegion(const gl::ImageIndex &index,
+                                               const gl::Offset &destOffset,
+                                               const gl::Extents &glExtents)
+{
+    // In OpenGL, glTex[Sub]Image3D passes the starting layer in destOffset.z and layer count in
+    // glExtents.depth for 2D array textures, whereas for 3D textures they represent the 3D texel Z
+    // offset and depth. For cube maps, the face index is in index.getLayerIndex().
+    const bool is3D = index.getType() == gl::TextureType::_3D;
+    uint32_t layerIndex =
+        is3D ? 0 : static_cast<uint32_t>(index.hasLayer() ? index.getLayerIndex() : destOffset.z);
+    uint32_t layerCount =
+        is3D ? 1
+             : static_cast<uint32_t>(index.hasLayer() ? index.getLayerCount() : glExtents.depth);
+    gl::Box copyBox(destOffset.x, destOffset.y, is3D ? destOffset.z : 0, glExtents.width,
+                    glExtents.height, is3D ? glExtents.depth : 1);
+    return {layerIndex, layerCount, copyBox};
+}
+
 }  // namespace
 
 ImageHelper::ImageHelper() {}
@@ -213,14 +238,20 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
         {
             case UpdateSource::Texture:
             {
-                LevelIndex wgpuLevel    = toWgpuLevel(srcUpdate.targetLevel);
-                dst.mipLevel            = wgpuLevel.get();
-                WGPUExtent3D copyExtent = getLevelSize(wgpuLevel);
+                LevelIndex wgpuLevel = toWgpuLevel(srcUpdate.targetLevel);
+                dst.mipLevel         = wgpuLevel.get();
 
-                // TODO(anglebug.com/389145696): copyExtent just always copies to the whole level.
-                // Should support smaller regions.
-                dst.origin = WGPUOrigin3D{0, 0, srcUpdate.layerIndex};
-                copyExtent.depthOrArrayLayers = srcUpdate.layerCount;
+                const bool is3D = mTextureDescriptor.dimension == WGPUTextureDimension_3D;
+                // WebGPU's WGPUOrigin3D.z and WGPUExtent3D.depthOrArrayLayers represent the 3D
+                // texel Z offset and depth for 3D textures, and the starting array layer and
+                // layer count for 2D array / cube map textures.
+                dst.origin = WGPUOrigin3D{
+                    static_cast<uint32_t>(srcUpdate.box.x), static_cast<uint32_t>(srcUpdate.box.y),
+                    is3D ? static_cast<uint32_t>(srcUpdate.box.z) : srcUpdate.layerIndex};
+                WGPUExtent3D copyExtent = WGPUExtent3D{
+                    static_cast<uint32_t>(srcUpdate.box.width),
+                    static_cast<uint32_t>(srcUpdate.box.height),
+                    is3D ? static_cast<uint32_t>(srcUpdate.box.depth) : srcUpdate.layerCount};
 
                 if (!encoder.has_value())
                 {
@@ -316,9 +347,10 @@ angle::Result ImageHelper::stageTextureUpload(ContextWgpu *contextWgpu,
                                               uint32_t outputDepthPitch,
                                               uint32_t allocationSize,
                                               const gl::ImageIndex &index,
-                                              const uint8_t *pixels)
+                                              const uint8_t *pixels,
+                                              const gl::Offset &destOffset)
 {
-    if (pixels == nullptr)
+    if (pixels == nullptr || glExtents.empty())
     {
         return angle::Result::Continue;
     }
@@ -340,12 +372,12 @@ angle::Result ImageHelper::stageTextureUpload(ContextWgpu *contextWgpu,
     textureDataLayout.bytesPerRow               = outputRowPitch;
     textureDataLayout.rowsPerImage              = glExtents.height;
 
-    GLint layerIndex = index.hasLayer() ? index.getLayerIndex() : 0;
+    const SubresourceCopyRegion copyRegion = GetSubresourceCopyRegion(index, destOffset, glExtents);
 
-    appendSubresourceUpdate(
-        levelGL,
-        SubresourceUpdate(UpdateSource::Texture, levelGL, layerIndex, index.getLayerCount(),
-                          bufferHelper.getBuffer(), textureDataLayout));
+    appendSubresourceUpdate(levelGL,
+                            SubresourceUpdate(UpdateSource::Texture, levelGL, copyRegion.layerIndex,
+                                              copyRegion.layerCount, copyRegion.copyBox,
+                                              bufferHelper.getBuffer(), textureDataLayout));
     return angle::Result::Continue;
 }
 
@@ -447,6 +479,11 @@ angle::Result ImageHelper::copyImageCpuReadback(const gl::Context *context,
                                                 ImageHelper *srcImage,
                                                 const gl::Extents &srcExtents)
 {
+    if (sourceArea.width == 0 || sourceArea.height == 0 || dstExtent.empty())
+    {
+        return angle::Result::Continue;
+    }
+
     ContextWgpu *contextWgpu = GetImpl(context);
     mProcTable               = webgpu::GetProcs(contextWgpu);
 
@@ -506,16 +543,14 @@ angle::Result ImageHelper::copyImageCpuReadback(const gl::Context *context,
     WGPUTexelCopyBufferLayout textureDataLayout = WGPU_TEXEL_COPY_BUFFER_LAYOUT_INIT;
     textureDataLayout.bytesPerRow               = outputRowPitch;
     textureDataLayout.rowsPerImage              = sourceArea.height;
-    textureDataLayout.offset =
-        dstOffset.x * storageFormat.pixelBytes + dstOffset.y * outputRowPitch;
 
     gl::LevelIndex levelGL(index.getLevelIndex());
-    GLint layerIndex = index.hasLayer() ? index.getLayerIndex() : 0;
+    const SubresourceCopyRegion copyRegion = GetSubresourceCopyRegion(index, dstOffset, dstExtent);
 
-    appendSubresourceUpdate(
-        levelGL,
-        SubresourceUpdate(UpdateSource::Texture, levelGL, layerIndex, index.getLayerCount(),
-                          stagingBuffer.getBuffer(), textureDataLayout));
+    appendSubresourceUpdate(levelGL,
+                            SubresourceUpdate(UpdateSource::Texture, levelGL, copyRegion.layerIndex,
+                                              copyRegion.layerCount, copyRegion.copyBox,
+                                              stagingBuffer.getBuffer(), textureDataLayout));
 
     return angle::Result::Continue;
 }

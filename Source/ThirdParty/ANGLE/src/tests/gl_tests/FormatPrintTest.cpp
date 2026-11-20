@@ -34,7 +34,8 @@ TEST_P(FormatPrintTest, PrintAllSupportedFormats)
     egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
     gl::ContextID contextID = {
         static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
-    gl::Context *context                                 = display->getContext(contextID);
+    egl::ScopedContextRef contextRef                     = display->getContextRef(contextID);
+    gl::Context *context                                 = contextRef.get();
     const gl::InternalFormatInfoMap &allSupportedFormats = gl::GetInternalFormatMap();
 
     std::cout << std::endl

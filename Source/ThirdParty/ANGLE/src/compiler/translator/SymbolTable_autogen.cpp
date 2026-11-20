@@ -22954,15 +22954,15 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
 {
     const TSourceLoc zeroSourceLoc             = {0, 0, 0, 0};
     TFieldList *fields_gl_DepthRangeParameters = new TFieldList();
-    fields_gl_DepthRangeParameters->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1), BuiltInName::near, zeroSourceLoc,
-                   SymbolType::BuiltIn));
-    fields_gl_DepthRangeParameters->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1), BuiltInName::far, zeroSourceLoc,
-                   SymbolType::BuiltIn));
-    fields_gl_DepthRangeParameters->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1), BuiltInName::diff, zeroSourceLoc,
-                   SymbolType::BuiltIn));
+    TType *near_gl_DepthRangeParameters        = new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1);
+    fields_gl_DepthRangeParameters->push_back(new TField(
+        near_gl_DepthRangeParameters, BuiltInName::near, zeroSourceLoc, SymbolType::BuiltIn));
+    TType *far_gl_DepthRangeParameters = new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1);
+    fields_gl_DepthRangeParameters->push_back(new TField(
+        far_gl_DepthRangeParameters, BuiltInName::far, zeroSourceLoc, SymbolType::BuiltIn));
+    TType *diff_gl_DepthRangeParameters = new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1);
+    fields_gl_DepthRangeParameters->push_back(new TField(
+        diff_gl_DepthRangeParameters, BuiltInName::diff, zeroSourceLoc, SymbolType::BuiltIn));
     TStructure *gl_DepthRangeParameters = new TStructure(
         BuiltInId::gl_DepthRangeParameters, BuiltInName::gl_DepthRangeParameters,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, fields_gl_DepthRangeParameters);
@@ -24042,8 +24042,21 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         BuiltInId::gl_ClipDistanceAPPLE, BuiltInName::gl_ClipDistance, SymbolType::BuiltIn,
         std::array<TExtension, 1u>{{TExtension::APPLE_clip_distance}}, type_gl_ClipDistanceAPPLE);
     TFieldList *fields_gl_PerVertex = new TFieldList();
-    fields_gl_PerVertex->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1),
-                                              BuiltInName::gl_Position, zeroSourceLoc,
+    TType *gl_Position_gl_PerVertex = new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1);
+    fields_gl_PerVertex->push_back(new TField(gl_Position_gl_PerVertex, BuiltInName::gl_Position,
+                                              zeroSourceLoc, SymbolType::BuiltIn));
+    TType *gl_PointSize_gl_PerVertex = new TType(EbtFloat, EbpMedium, EvqPointSize, 1, 1);
+    fields_gl_PerVertex->push_back(new TField(gl_PointSize_gl_PerVertex, BuiltInName::gl_PointSize,
+                                              zeroSourceLoc, SymbolType::BuiltIn));
+    TType *gl_ClipDistance_gl_PerVertex = new TType(EbtFloat, EbpHigh, EvqClipDistance, 1, 1);
+    gl_ClipDistance_gl_PerVertex->makeArray(resources.MaxClipDistances);
+    fields_gl_PerVertex->push_back(new TField(gl_ClipDistance_gl_PerVertex,
+                                              BuiltInName::gl_ClipDistance, zeroSourceLoc,
+                                              SymbolType::BuiltIn));
+    TType *gl_CullDistance_gl_PerVertex = new TType(EbtFloat, EbpHigh, EvqCullDistance, 1, 1);
+    gl_CullDistance_gl_PerVertex->makeArray(resources.MaxCullDistances);
+    fields_gl_PerVertex->push_back(new TField(gl_CullDistance_gl_PerVertex,
+                                              BuiltInName::gl_CullDistance, zeroSourceLoc,
                                               SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertex =
         new TInterfaceBlock(BuiltInId::gl_PerVertex, BuiltInName::gl_PerVertex,
@@ -24052,8 +24065,23 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
                             fields_gl_PerVertex);
     m_gl_PerVertex                       = gl_PerVertex;
     TFieldList *fields_gl_PerVertexES3_2 = new TFieldList();
-    fields_gl_PerVertexES3_2->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1),
+    TType *gl_Position_gl_PerVertexES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1);
+    fields_gl_PerVertexES3_2->push_back(new TField(gl_Position_gl_PerVertexES3_2,
                                                    BuiltInName::gl_Position, zeroSourceLoc,
+                                                   SymbolType::BuiltIn));
+    TType *gl_PointSize_gl_PerVertexES3_2 = new TType(EbtFloat, EbpMedium, EvqPointSize, 1, 1);
+    fields_gl_PerVertexES3_2->push_back(new TField(gl_PointSize_gl_PerVertexES3_2,
+                                                   BuiltInName::gl_PointSize, zeroSourceLoc,
+                                                   SymbolType::BuiltIn));
+    TType *gl_ClipDistance_gl_PerVertexES3_2 = new TType(EbtFloat, EbpHigh, EvqClipDistance, 1, 1);
+    gl_ClipDistance_gl_PerVertexES3_2->makeArray(resources.MaxClipDistances);
+    fields_gl_PerVertexES3_2->push_back(new TField(gl_ClipDistance_gl_PerVertexES3_2,
+                                                   BuiltInName::gl_ClipDistance, zeroSourceLoc,
+                                                   SymbolType::BuiltIn));
+    TType *gl_CullDistance_gl_PerVertexES3_2 = new TType(EbtFloat, EbpHigh, EvqCullDistance, 1, 1);
+    gl_CullDistance_gl_PerVertexES3_2->makeArray(resources.MaxCullDistances);
+    fields_gl_PerVertexES3_2->push_back(new TField(gl_CullDistance_gl_PerVertexES3_2,
+                                                   BuiltInName::gl_CullDistance, zeroSourceLoc,
                                                    SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertexES3_2 = new TInterfaceBlock(
         BuiltInId::gl_PerVertexES3_2, BuiltInName::gl_PerVertex,
@@ -24101,8 +24129,22 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         BuiltInId::gl_TessLevelInnerTCSES3_2, BuiltInName::gl_TessLevelInner, SymbolType::BuiltIn,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_TessLevelInnerTCSES3_2);
     TFieldList *fields_gl_PerVertexTCS = new TFieldList();
-    fields_gl_PerVertexTCS->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1),
-                                                 BuiltInName::gl_Position, zeroSourceLoc,
+    TType *gl_Position_gl_PerVertexTCS = new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1);
+    fields_gl_PerVertexTCS->push_back(new TField(
+        gl_Position_gl_PerVertexTCS, BuiltInName::gl_Position, zeroSourceLoc, SymbolType::BuiltIn));
+    TType *gl_PointSize_gl_PerVertexTCS = new TType(EbtFloat, EbpMedium, EvqPointSize, 1, 1);
+    fields_gl_PerVertexTCS->push_back(new TField(gl_PointSize_gl_PerVertexTCS,
+                                                 BuiltInName::gl_PointSize, zeroSourceLoc,
+                                                 SymbolType::BuiltIn));
+    TType *gl_ClipDistance_gl_PerVertexTCS = new TType(EbtFloat, EbpHigh, EvqClipDistance, 1, 1);
+    gl_ClipDistance_gl_PerVertexTCS->makeArray(resources.MaxClipDistances);
+    fields_gl_PerVertexTCS->push_back(new TField(gl_ClipDistance_gl_PerVertexTCS,
+                                                 BuiltInName::gl_ClipDistance, zeroSourceLoc,
+                                                 SymbolType::BuiltIn));
+    TType *gl_CullDistance_gl_PerVertexTCS = new TType(EbtFloat, EbpHigh, EvqCullDistance, 1, 1);
+    gl_CullDistance_gl_PerVertexTCS->makeArray(resources.MaxCullDistances);
+    fields_gl_PerVertexTCS->push_back(new TField(gl_CullDistance_gl_PerVertexTCS,
+                                                 BuiltInName::gl_CullDistance, zeroSourceLoc,
                                                  SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertexTCS =
         new TInterfaceBlock(BuiltInId::gl_PerVertexTCS, BuiltInName::gl_PerVertex,
@@ -24111,27 +24153,45 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
                             fields_gl_PerVertexTCS);
     m_gl_PerVertexTCS                       = gl_PerVertexTCS;
     TFieldList *fields_gl_PerVertexTCSES3_2 = new TFieldList();
-    fields_gl_PerVertexTCSES3_2->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
+    TType *gl_Position_gl_PerVertexTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1);
+    fields_gl_PerVertexTCSES3_2->push_back(new TField(gl_Position_gl_PerVertexTCSES3_2,
+                                                      BuiltInName::gl_Position, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
+    TType *gl_PointSize_gl_PerVertexTCSES3_2 = new TType(EbtFloat, EbpMedium, EvqPointSize, 1, 1);
+    fields_gl_PerVertexTCSES3_2->push_back(new TField(gl_PointSize_gl_PerVertexTCSES3_2,
+                                                      BuiltInName::gl_PointSize, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
+    TType *gl_ClipDistance_gl_PerVertexTCSES3_2 =
+        new TType(EbtFloat, EbpHigh, EvqClipDistance, 1, 1);
+    gl_ClipDistance_gl_PerVertexTCSES3_2->makeArray(resources.MaxClipDistances);
+    fields_gl_PerVertexTCSES3_2->push_back(new TField(gl_ClipDistance_gl_PerVertexTCSES3_2,
+                                                      BuiltInName::gl_ClipDistance, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
+    TType *gl_CullDistance_gl_PerVertexTCSES3_2 =
+        new TType(EbtFloat, EbpHigh, EvqCullDistance, 1, 1);
+    gl_CullDistance_gl_PerVertexTCSES3_2->makeArray(resources.MaxCullDistances);
+    fields_gl_PerVertexTCSES3_2->push_back(new TField(gl_CullDistance_gl_PerVertexTCSES3_2,
+                                                      BuiltInName::gl_CullDistance, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertexTCSES3_2 = new TInterfaceBlock(
         BuiltInId::gl_PerVertexTCSES3_2, BuiltInName::gl_PerVertex,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, fields_gl_PerVertexTCSES3_2);
     m_gl_PerVertexTCSES3_2 = gl_PerVertexTCSES3_2;
-    TType *type_gl_inTCS   = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
+    TType *type_gl_inTCS   = new TType(gl_PerVertexTCS, EvqPerVertexIn, TLayoutQualifier::Create());
     type_gl_inTCS->makeArray(resources.MaxPatchVertices);
     type_gl_inTCS->realize();
     m_gl_inTCS = new TVariable(BuiltInId::gl_inTCS, BuiltInName::gl_in, SymbolType::BuiltIn,
                                std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
                                                            TExtension::OES_tessellation_shader}},
                                type_gl_inTCS);
-    TType *type_gl_inTCSES3_2 = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
+    TType *type_gl_inTCSES3_2 =
+        new TType(gl_PerVertexTCS, EvqPerVertexIn, TLayoutQualifier::Create());
     type_gl_inTCSES3_2->makeArray(resources.MaxPatchVertices);
     type_gl_inTCSES3_2->realize();
     m_gl_inTCSES3_2 =
         new TVariable(BuiltInId::gl_inTCSES3_2, BuiltInName::gl_in, SymbolType::BuiltIn,
                       std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_inTCSES3_2);
-    TType *type_gl_outTCS = new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create());
+    TType *type_gl_outTCS = new TType(gl_PerVertexTCS, EvqPerVertexOut, TLayoutQualifier::Create());
     type_gl_outTCS->makeArray(resources.MaxPatchVertices);
     type_gl_outTCS->realize();
     m_gl_outTCS = new TVariable(BuiltInId::gl_outTCS, BuiltInName::gl_out, SymbolType::BuiltIn,
@@ -24139,7 +24199,7 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
                                                             TExtension::OES_tessellation_shader}},
                                 type_gl_outTCS);
     TType *type_gl_outTCSES3_2 =
-        new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create());
+        new TType(gl_PerVertexTCS, EvqPerVertexOut, TLayoutQualifier::Create());
     type_gl_outTCSES3_2->makeArray(resources.MaxPatchVertices);
     type_gl_outTCSES3_2->realize();
     m_gl_outTCSES3_2 =
@@ -24216,8 +24276,22 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         BuiltInId::gl_TessLevelInnerTESES3_2, BuiltInName::gl_TessLevelInner, SymbolType::BuiltIn,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_TessLevelInnerTESES3_2);
     TFieldList *fields_gl_PerVertexTES = new TFieldList();
-    fields_gl_PerVertexTES->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1),
-                                                 BuiltInName::gl_Position, zeroSourceLoc,
+    TType *gl_Position_gl_PerVertexTES = new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1);
+    fields_gl_PerVertexTES->push_back(new TField(
+        gl_Position_gl_PerVertexTES, BuiltInName::gl_Position, zeroSourceLoc, SymbolType::BuiltIn));
+    TType *gl_PointSize_gl_PerVertexTES = new TType(EbtFloat, EbpMedium, EvqPointSize, 1, 1);
+    fields_gl_PerVertexTES->push_back(new TField(gl_PointSize_gl_PerVertexTES,
+                                                 BuiltInName::gl_PointSize, zeroSourceLoc,
+                                                 SymbolType::BuiltIn));
+    TType *gl_ClipDistance_gl_PerVertexTES = new TType(EbtFloat, EbpHigh, EvqClipDistance, 1, 1);
+    gl_ClipDistance_gl_PerVertexTES->makeArray(resources.MaxClipDistances);
+    fields_gl_PerVertexTES->push_back(new TField(gl_ClipDistance_gl_PerVertexTES,
+                                                 BuiltInName::gl_ClipDistance, zeroSourceLoc,
+                                                 SymbolType::BuiltIn));
+    TType *gl_CullDistance_gl_PerVertexTES = new TType(EbtFloat, EbpHigh, EvqCullDistance, 1, 1);
+    gl_CullDistance_gl_PerVertexTES->makeArray(resources.MaxCullDistances);
+    fields_gl_PerVertexTES->push_back(new TField(gl_CullDistance_gl_PerVertexTES,
+                                                 BuiltInName::gl_CullDistance, zeroSourceLoc,
                                                  SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertexTES =
         new TInterfaceBlock(BuiltInId::gl_PerVertexTES, BuiltInName::gl_PerVertex,
@@ -24226,21 +24300,39 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
                             fields_gl_PerVertexTES);
     m_gl_PerVertexTES                       = gl_PerVertexTES;
     TFieldList *fields_gl_PerVertexTESES3_2 = new TFieldList();
-    fields_gl_PerVertexTESES3_2->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
+    TType *gl_Position_gl_PerVertexTESES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1);
+    fields_gl_PerVertexTESES3_2->push_back(new TField(gl_Position_gl_PerVertexTESES3_2,
+                                                      BuiltInName::gl_Position, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
+    TType *gl_PointSize_gl_PerVertexTESES3_2 = new TType(EbtFloat, EbpMedium, EvqPointSize, 1, 1);
+    fields_gl_PerVertexTESES3_2->push_back(new TField(gl_PointSize_gl_PerVertexTESES3_2,
+                                                      BuiltInName::gl_PointSize, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
+    TType *gl_ClipDistance_gl_PerVertexTESES3_2 =
+        new TType(EbtFloat, EbpHigh, EvqClipDistance, 1, 1);
+    gl_ClipDistance_gl_PerVertexTESES3_2->makeArray(resources.MaxClipDistances);
+    fields_gl_PerVertexTESES3_2->push_back(new TField(gl_ClipDistance_gl_PerVertexTESES3_2,
+                                                      BuiltInName::gl_ClipDistance, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
+    TType *gl_CullDistance_gl_PerVertexTESES3_2 =
+        new TType(EbtFloat, EbpHigh, EvqCullDistance, 1, 1);
+    gl_CullDistance_gl_PerVertexTESES3_2->makeArray(resources.MaxCullDistances);
+    fields_gl_PerVertexTESES3_2->push_back(new TField(gl_CullDistance_gl_PerVertexTESES3_2,
+                                                      BuiltInName::gl_CullDistance, zeroSourceLoc,
+                                                      SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertexTESES3_2 = new TInterfaceBlock(
         BuiltInId::gl_PerVertexTESES3_2, BuiltInName::gl_PerVertex,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, fields_gl_PerVertexTESES3_2);
     m_gl_PerVertexTESES3_2 = gl_PerVertexTESES3_2;
-    TType *type_gl_inTES   = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
+    TType *type_gl_inTES   = new TType(gl_PerVertexTES, EvqPerVertexIn, TLayoutQualifier::Create());
     type_gl_inTES->makeArray(resources.MaxPatchVertices);
     type_gl_inTES->realize();
     m_gl_inTES = new TVariable(BuiltInId::gl_inTES, BuiltInName::gl_in, SymbolType::BuiltIn,
                                std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
                                                            TExtension::OES_tessellation_shader}},
                                type_gl_inTES);
-    TType *type_gl_inTESES3_2 = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
+    TType *type_gl_inTESES3_2 =
+        new TType(gl_PerVertexTES, EvqPerVertexIn, TLayoutQualifier::Create());
     type_gl_inTESES3_2->makeArray(resources.MaxPatchVertices);
     type_gl_inTESES3_2->realize();
     m_gl_inTESES3_2 =

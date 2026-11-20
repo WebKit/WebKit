@@ -33,6 +33,7 @@ angle_translator_ir_sources = [
   "src/transform/emulate_multi_draw.rs",
   "src/transform/ensure_loop_forward_progress.rs",
   "src/transform/expand_fragment_outputs_to_vec4.rs",
+  "src/transform/gather_default_uniforms.rs",
   "src/transform/initialize_uninitialized_variables.rs",
   "src/transform/localized_workarounds.rs",
   "src/transform/monomorphize_unsupported_functions.rs",

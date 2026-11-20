@@ -35,6 +35,7 @@ class RendererGLX : public RendererGL
 
   private:
     const FunctionsGLX &mGLX;
+    DisplayGLX *mDisplay;
     glx::Context mContext;
     glx::Pbuffer mPbuffer;
 };

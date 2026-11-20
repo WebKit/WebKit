@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 427
+#define ANGLE_SH_VERSION 428
 
 enum ShShaderSpec
 {
@@ -1154,7 +1154,8 @@ enum ReservedIds
 // - 1 bit for whether depth should be transformed to Vulkan clip space
 // - 1 bit for whether alpha to coverage is enabled
 // - 1 bit for whether the framebuffer is layered
-// - 9 bits unused
+// - 2 bits for the last pre-rasterization shader stage
+// - 7 bits unused
 constexpr uint32_t kDriverUniformsMiscSwapXYMask                  = 0x1;
 constexpr uint32_t kDriverUniformsMiscAdvancedBlendEquationOffset = 1;
 constexpr uint32_t kDriverUniformsMiscAdvancedBlendEquationMask   = 0x1F;
@@ -1168,6 +1169,20 @@ constexpr uint32_t kDriverUniformsMiscAlphaToCoverageOffset       = 21;
 constexpr uint32_t kDriverUniformsMiscAlphaToCoverageMask         = 0x1;
 constexpr uint32_t kDriverUniformsMiscLayeredFramebufferOffset    = 22;
 constexpr uint32_t kDriverUniformsMiscLayeredFramebufferMask      = 0x1;
+constexpr uint32_t kDriverUniformsMiscLastPreRasterizationStageOffset = 23;
+constexpr uint32_t kDriverUniformsMiscLastPreRasterizationStageMask   = 0x3;
+
+// Values of the last pre-rasterization stage field of the driver uniform's misc field.  Only the
+// gl_ClipDistance output of the last pre-rasterization stage is clipped against; the values written
+// by the earlier stages are only observable by the following stages (through gl_in).  The vertex
+// and tessellation evaluation shaders use this to zero out the disabled clip distances only when
+// they are the last stage.
+enum class LastPreRasterizationStage : uint32_t
+{
+    Vertex                 = 0,
+    TessellationEvaluation = 1,
+    Geometry               = 2,
+};
 }  // namespace vk
 
 namespace mtl

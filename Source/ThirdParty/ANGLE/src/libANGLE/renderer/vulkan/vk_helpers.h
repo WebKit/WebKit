@@ -1183,9 +1183,6 @@ class BufferPool : angle::NonCopyable
     // Tracks the number of new buffers needed for suballocation since last pruneEmptyBuffers call.
     // We will use this heuristic information to decide how many empty buffers to keep around.
     size_t mNumberOfNewBuffersNeededSinceLastPrune;
-    // max size to go down the suballocation code path. Any allocation greater or equal this size
-    // will call into vulkan directly to allocate a dedicated VkDeviceMemory.
-    static constexpr size_t kMaxBufferSizeForSuballocation = 8 * 1024 * 1024;
 };
 using BufferPoolPointerArray = std::array<std::unique_ptr<BufferPool>, VK_MAX_MEMORY_TYPES>;
 
@@ -3804,14 +3801,15 @@ class ImageViewHelper final : angle::NonCopyable
     // Creates a fragment shading rate view.
     angle::Result initFragmentShadingRateView(ContextVk *contextVk, ImageHelper *image);
 
-    // Return unique Serial for an imageView.
-    ImageOrBufferViewSubresourceSerial getSubresourceSerial(gl::OwnerLevel levelGL,
-                                                            uint32_t levelCount,
-                                                            gl::OwnerLayer layer,
-                                                            LayerMode layerMode) const;
+    // Return unique Serial for a write imageView. Used for framebuffer draw attachments,
+    // storage image views, and fragment shading rate attachments.
+    ImageOrBufferViewSubresourceSerial getSubresourceWriteSerial(gl::OwnerLevel levelGL,
+                                                                 uint32_t levelCount,
+                                                                 gl::OwnerLayer layer,
+                                                                 LayerMode layerMode) const;
 
-    // Return unique Serial for an imageView for a specific colorspace.
-    ImageOrBufferViewSubresourceSerial getSubresourceSerialForColorspace(
+    // Return unique Serial for a read imageView for a specific colorspace.
+    ImageOrBufferViewSubresourceSerial getSubresourceReadSerialForColorspace(
         gl::OwnerLevel levelGL,
         uint32_t levelCount,
         gl::OwnerLayer layer,
@@ -3825,6 +3823,7 @@ class ImageViewHelper final : angle::NonCopyable
     bool isImageViewGarbageEmpty() const;
 
     void release(Renderer *renderer, const ResourceUse &use);
+    void releaseReadImageViews(Renderer *renderer, const ResourceUse &use);
 
     // Helpers for colorspace state
     ImageViewColorspace getColorspaceForRead() const { return mReadColorspace; }
@@ -4022,8 +4021,13 @@ class ImageViewHelper final : angle::NonCopyable
     // Fragment shading rate view
     ImageView mFragmentShadingRateImageView;
 
-    // Serial for the image view set. getSubresourceSerial combines it with subresource info.
-    ImageOrBufferViewSerial mImageViewSerial;
+    // Serial for write image views (used for framebuffer attachments, storage images, and FSR).
+    // It remains stable as long as the underlying VkImage does not change.
+    ImageOrBufferViewSerial mWriteImageViewSerial;
+
+    // Serial for the read (sampled) image views (used by TextureVk for descriptor set caching).
+    // It is updated whenever read image views are released/recreated (e.g., on swizzle changes).
+    ImageOrBufferViewSerial mReadImageViewSerial;
 };
 
 class BufferViewHelper final : public Resource

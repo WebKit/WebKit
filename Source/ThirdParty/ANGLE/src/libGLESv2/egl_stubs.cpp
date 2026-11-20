@@ -132,11 +132,10 @@ EGLBoolean CopyBuffers(Thread *thread,
 EGLContext CreateContext(Thread *thread,
                          Display *display,
                          Config *configuration,
-                         gl::ContextID sharedContextID,
+                         gl::Context *sharedGLContext,
                          const AttributeMap &attributes)
 {
-    gl::Context *sharedGLContext = display->getContext(sharedContextID);
-    gl::Context *context         = nullptr;
+    gl::Context *context = nullptr;
     ANGLE_EGL_TRY_RETURN(
         thread, display->createContext(configuration, sharedGLContext, attributes, &context),
         "eglCreateContext", display, EGL_NO_CONTEXT);
@@ -147,13 +146,11 @@ EGLContext CreateContext(Thread *thread,
 
 EGLImage CreateImage(Thread *thread,
                      Display *display,
-                     gl::ContextID contextID,
+                     gl::Context *context,
                      EGLenum target,
                      EGLClientBuffer buffer,
                      const AttributeMap &attributes)
 {
-    gl::Context *context = display->getContext(contextID);
-
     Image *image = nullptr;
     Error error  = display->createImage(context, target, buffer, attributes, &image);
     if (error.isError())
@@ -271,14 +268,16 @@ EGLSurface CreateWindowSurface(Thread *thread,
     return reinterpret_cast<EGLSurface>(static_cast<uintptr_t>(surface->id().value));
 }
 
-EGLBoolean DestroyContext(Thread *thread, Display *display, gl::ContextID contextID)
+EGLBoolean DestroyContext(Thread *thread, Display *display, gl::Context *context)
 {
-    gl::Context *context = display->getContext(contextID);
-
     ScopedSyncCurrentContextFromThread scopedSyncCurrent(thread);
 
-    ANGLE_EGL_TRY_RETURN(thread, display->destroyContext(thread, context), "eglDestroyContext",
-                         GetContextIfValid(display, contextID), EGL_FALSE);
+    // eglMakeCurrent() does not lock the display, so another thread that has the context current
+    // may free it as it releases it, if it is destroyed already.  The entry point hands over its
+    // reference to the context, which destroyContext() drops.  On error, the context is invalid,
+    // or freed already.
+    ANGLE_EGL_TRY_RETURN(thread, display->destroyContext(context), "eglDestroyContext", nullptr,
+                         EGL_FALSE);
     thread->setSuccess();
     return EGL_TRUE;
 }
@@ -299,26 +298,19 @@ EGLBoolean DestroySurface(Thread *thread, ThreadSafeDisplay *display, Surface *e
     // is still bound by the context of the current rendering
     // thread, release the surface by passing EGL_NO_SURFACE to eglMakeCurrent().
     if (display->getFrontendFeatures().uncurrentEglSurfaceUponSurfaceDestroy.enabled &&
-        eglSurface->isCurrentOnAnyContext() &&
+        eglSurface->isCurrentOnAnyThread() &&
         (thread->getCurrentDrawSurface() == eglSurface ||
          thread->getCurrentReadSurface() == eglSurface))
     {
-        const gl::Context *currentContext = thread->getContext();
-        const gl::ContextID contextID     = currentContext == nullptr
-                                                ? PackParam<gl::ContextID>(EGL_NO_CONTEXT)
-                                                : currentContext->id();
+        // if surfaceless context is supported, only release the surface.  Otherwise, release the
+        // context, too.
+        gl::Context *currentContext = thread->getContext();
+        gl::Context *context =
+            display->getExtensions().surfacelessContext ? currentContext : nullptr;
 
-        // if surfaceless context is supported, only release the surface.
-        if (display->getExtensions().surfacelessContext)
-        {
-            MakeCurrent(thread, display, nullptr, nullptr, contextID);
-        }
-        else
-        {
-            // if surfaceless context is not supported, release the context, too.
-            MakeCurrent(thread, display, nullptr, nullptr,
-                        PackParam<gl::ContextID>(EGL_NO_CONTEXT));
-        }
+        // Like the eglMakeCurrent() entry point.  |context| is current, so it stays alive.
+        ScopedContextMutexesLock contextLocks(currentContext, context);
+        MakeCurrent(thread, display, nullptr, nullptr, context);
     }
 
     ANGLE_EGL_TRY_RETURN(thread, display->destroySurface(eglSurface), "eglDestroySurface",
@@ -470,10 +462,8 @@ EGLBoolean MakeCurrent(Thread *thread,
                        ThreadSafeDisplay *display,
                        Surface *drawSurface,
                        Surface *readSurface,
-                       gl::ContextID contextID)
+                       gl::Context *context)
 {
-    gl::Context *context = display->getContext(contextID);
-
     ScopedSyncCurrentContextFromThread scopedSyncCurrent(thread);
 
     Surface *previousDraw        = thread->getCurrentDrawSurface();
@@ -483,10 +473,12 @@ EGLBoolean MakeCurrent(Thread *thread,
     // Only call makeCurrent if the context or surfaces have changed.
     if (previousDraw != drawSurface || previousRead != readSurface || previousContext != context)
     {
+        // The entry point references |context|, and locks the ContextMutexes of |previousContext|
+        // and |context|.
         ANGLE_EGL_TRY_RETURN(
             thread,
-            display->makeCurrent(thread, previousContext, drawSurface, readSurface, context),
-            "eglMakeCurrent", GetContextIfValid(display, contextID), EGL_FALSE);
+            display->makeCurrentLocked(thread, previousContext, drawSurface, readSurface, context),
+            "eglMakeCurrent", context, EGL_FALSE);
 
         // After eglTerminate(), changing the current context schedules an internal cleanup of the
         // display: it invalidates the contexts that are no longer current, and fully terminates the
@@ -514,12 +506,10 @@ EGLenum QueryAPI(Thread *thread)
 
 EGLBoolean QueryContext(Thread *thread,
                         Display *display,
-                        gl::ContextID contextID,
+                        gl::Context *context,
                         EGLint attribute,
                         EGLint *value)
 {
-    gl::Context *context = display->getContext(contextID);
-
     QueryContextAttrib(context, attribute, value);
 
     thread->setSuccess();
@@ -708,8 +698,7 @@ EGLBoolean WaitClient(Thread *thread)
 
     gl::Context *context = thread->getContext();
 
-    ANGLE_EGL_TRY_RETURN(thread, display->waitClient(context), "eglWaitClient",
-                         GetContextIfValid(display, context->id()), EGL_FALSE);
+    ANGLE_EGL_TRY_RETURN(thread, display->waitClient(context), "eglWaitClient", context, EGL_FALSE);
 
     thread->setSuccess();
     return EGL_TRUE;

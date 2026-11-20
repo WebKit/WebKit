@@ -1256,7 +1256,14 @@ void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
         egl::Display *display = GetEGLDisplayArg(captureParams...);
         if (display)
         {
-            context = display->getState().contextMap.first();
+            // Capture needs deterministic output so use the lowest context ID to avoid
+            // platform-dependent map ordering
+            display->getState().contextMap.forEach([&](gl::Context *displayContext) {
+                if (context == nullptr || displayContext->id() < context->id())
+                {
+                    context = displayContext;
+                }
+            });
         }
         if (!context)
         {

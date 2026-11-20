@@ -49,19 +49,9 @@ struct SubresourceUpdate
 
     SubresourceUpdate(UpdateSource targetUpdateSource,
                       gl::LevelIndex newTargetLevel,
-                      BufferHandle targetBuffer,
-                      const WGPUTexelCopyBufferLayout &targetBufferLayout)
-    {
-        updateSource      = targetUpdateSource;
-        textureData       = targetBuffer;
-        textureDataLayout = targetBufferLayout;
-        targetLevel       = newTargetLevel;
-    }
-
-    SubresourceUpdate(UpdateSource targetUpdateSource,
-                      gl::LevelIndex newTargetLevel,
                       uint32_t newLayerIndex,
                       uint32_t newLayerCount,
+                      const gl::Box &newBox,
                       BufferHandle targetBuffer,
                       const WGPUTexelCopyBufferLayout &targetBufferLayout)
     {
@@ -71,6 +61,7 @@ struct SubresourceUpdate
         targetLevel       = newTargetLevel;
         layerIndex        = newLayerIndex;
         layerCount        = newLayerCount;
+        box               = newBox;
     }
 
     SubresourceUpdate(UpdateSource targetUpdateSource,
@@ -92,6 +83,9 @@ struct SubresourceUpdate
     WGPUTexelCopyBufferLayout textureDataLayout;
 
     gl::LevelIndex targetLevel;
+    // The texel region within a layer. `z` and `depth` are only used for 3D textures; 2D array and
+    // cube map layers are tracked in `layerIndex` and `layerCount`.
+    gl::Box box         = gl::Box(0, 0, 0, 0, 0, 1);
     uint32_t layerIndex = 0;
     uint32_t layerCount = 1;
 };
@@ -138,7 +132,8 @@ class ImageHelper : public angle::Subject
                                      uint32_t outputDepthPitch,
                                      uint32_t allocationSize,
                                      const gl::ImageIndex &index,
-                                     const uint8_t *pixels);
+                                     const uint8_t *pixels,
+                                     const gl::Offset &destOffset = gl::kOffsetZero);
 
     void stageClear(gl::LevelIndex targetLevel,
                     ClearValues clearValues,

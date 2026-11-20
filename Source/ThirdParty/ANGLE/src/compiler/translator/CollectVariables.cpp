@@ -139,6 +139,15 @@ class CollectVariablesTraverser : public TIntermTraverser
     bool visitDeclaration(Visit, TIntermDeclaration *node) override;
     bool visitBinary(Visit visit, TIntermBinary *binaryNode) override;
 
+    const PerVertexMemberSet &getPerVertexInFieldsAccessed() const
+    {
+        return mPerVertexInFieldsAccessed;
+    }
+    const PerVertexMemberSet &getPerVertexOutFieldsAccessed() const
+    {
+        return mPerVertexOutFieldsAccessed;
+    }
+
   private:
     std::string getMappedName(const TSymbol *symbol) const;
     std::string getMappedBlockName(const TSymbol *symbol) const;
@@ -237,6 +246,11 @@ class CollectVariablesTraverser : public TIntermTraverser
     // Geometry and Tessellation Shader builtins
     bool mPerVertexInAdded;
     bool mPerVertexOutAdded;
+
+    // Track gl_PerVertex field access separately from varying collection, and separately for the
+    // input (gl_in) and output (gl_out) blocks.
+    PerVertexMemberSet mPerVertexInFieldsAccessed;
+    PerVertexMemberSet mPerVertexOutFieldsAccessed;
 
     // Geometry Shader builtins
     bool mPrimitiveIDInAdded;
@@ -1381,6 +1395,27 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
             ASSERT(interfaceIndexingNode);
             interfaceIndexingNode->getRight()->traverse(this);
         }
+
+        // Track which specific gl_PerVertex fields are accessed, separately for gl_in and gl_out.
+        if (interfaceBlock && interfaceBlock->name() == "gl_PerVertex" &&
+            (qualifier == EvqPerVertexIn || qualifier == EvqPerVertexOut))
+        {
+            PerVertexMemberSet &accessedFields = qualifier == EvqPerVertexIn
+                                                     ? mPerVertexInFieldsAccessed
+                                                     : mPerVertexOutFieldsAccessed;
+
+            // The right operand of EOpIndexDirectInterfaceBlock is the field index constant.
+            TIntermConstantUnion *constantUnion = binaryNode->getRight()->getAsConstantUnion();
+            const int fieldIndex                = constantUnion->getIConst(0);
+            const TFieldList &fields            = interfaceBlock->fields();
+            ASSERT(fieldIndex >= 0 && static_cast<unsigned int>(fieldIndex) < fields.size());
+            const int perVertexMemberIndex = GetPerVertexMemberIndex(fields[fieldIndex]->name());
+            if (perVertexMemberIndex >= 0)
+            {
+                accessedFields.set(perVertexMemberIndex);
+            }
+        }
+
         return false;
     }
 
@@ -1399,6 +1434,7 @@ void CollectVariables(
     std::vector<ShaderVariable> *sharedVariables,
     std::vector<InterfaceBlock> *uniformBlocks,
     std::vector<InterfaceBlock> *shaderStorageBlocks,
+    PerVertexMembersAccessed *perVertexMembersAccessedOut,
     ShHashFunction64 hashFunction,
     NameMap *nameMap,
     TSymbolTable *symbolTable,
@@ -1412,6 +1448,9 @@ void CollectVariables(
         uniformBlocks, shaderStorageBlocks, hashFunction, nameMap, symbolTable, shaderType,
         extensionBehavior, transformFloatUniformToFP16, samplersStaticallyUsedWithTexelFetch);
     root->traverse(&collect);
+
+    perVertexMembersAccessedOut->input  = collect.getPerVertexInFieldsAccessed();
+    perVertexMembersAccessedOut->output = collect.getPerVertexOutFieldsAccessed();
 
     // Attributes are simply vertex shader inputs (and compute shader attributes),
     // and are exclusive with input varyings.

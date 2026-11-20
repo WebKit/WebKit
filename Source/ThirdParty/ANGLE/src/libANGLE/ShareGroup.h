@@ -32,49 +32,118 @@ class ShareGroupImpl;
 
 namespace egl
 {
+class ThreadSafeDisplay;
+
+// References a Context, so that it stays alive while this does.  When this drops the last reference
+// to a destroyed Context, it frees it (see ContextMap).
+class [[nodiscard]] ScopedContextRef final : angle::NonCopyable
+{
+  public:
+    ScopedContextRef() = default;
+    // |display| is the one of |context|.  The caller must make sure that |context| is alive, e.g.
+    // because it is current, or because it is found in the context map, which is locked.
+    ScopedContextRef(ThreadSafeDisplay *display, gl::Context *context)
+        : mDisplay(display), mContext(context)
+    {
+        if (mContext != nullptr)
+        {
+            ASSERT(mDisplay != nullptr);
+            mContext->addRef();
+        }
+    }
+    ~ScopedContextRef();
+
+    gl::Context *get() const { return mContext; }
+
+    // Gives up the reference, without dropping it.
+    gl::Context *release()
+    {
+        gl::Context *context = mContext;
+        mDisplay             = nullptr;
+        mContext             = nullptr;
+        return context;
+    }
+
+  private:
+    ThreadSafeDisplay *mDisplay = nullptr;
+    gl::Context *mContext       = nullptr;
+};
+
+// A Context is freed once eglDestroyContext() was called on it, and the last reference to it is
+// dropped (see gl::Context::addRef()).  Until then, it stays in the map, so its handle remains
+// valid, e.g. while it is still current on a thread.  The map's mutex makes looking up and
+// referencing a Context, marking it destroyed, and dropping the last reference to it, atomic with
+// respect to each other.
 class ContextMap final : public priv::ObjectMap<gl::Context, angle::SimpleMutex>
 {
   public:
-    void pruneUnreferenced(ContextMap *invalidContextMap)
+    ScopedContextRef getContextRef(ThreadSafeDisplay *display, gl::ContextID handle) const
     {
         std::lock_guard<angle::SimpleMutex> lock(mMutex);
-        std::lock_guard<angle::SimpleMutex> invalidLock(invalidContextMap->mMutex);
-
-        // Cache total number of contexts before invalidation. This is used as a check to verify
-        // that no context is "lost" while being moved between the various sets.
-        size_t contextSetSizeBeforeInvalidation =
-            this->mObjects.size() + invalidContextMap->mObjects.size();
-
-        // If app called eglTerminate and no active threads remain,
-        // force release any context that is still current.
-        angle::HashMap<GLuint, gl::Context *> contextsStillCurrent = {};
-        for (auto context : this->mObjects)
-        {
-            if (context.second->isReferenced())
-            {
-                contextsStillCurrent.emplace(context);
-                continue;
-            }
-
-            // Add context that is not current to mInvalidContextSet for cleanup.
-            invalidContextMap->mObjects.emplace(context);
-        }
-
-        // There are many methods that require contexts that are still current to be present in
-        // display's contextSet like during context release or to notify of state changes in a
-        // subject. So as to not interrupt this flow, do not remove contexts that are still
-        // current on some thread from display's contextSet even though eglTerminate marks such
-        // contexts as invalid.
-        //
-        // "mState.contextSet" will now contain only those contexts that are still current on
-        // some thread.
-        this->mObjects = std::move(contextsStillCurrent);
-
-        // Assert that the total number of contexts is the same before and after context
-        // invalidation.
-        ASSERT(contextSetSizeBeforeInvalidation ==
-               this->mObjects.size() + invalidContextMap->mObjects.size());
+        auto iter = mObjects.find(handle.value);
+        return ScopedContextRef(display, iter != mObjects.end() ? iter->second : nullptr);
     }
+
+    // The caller must hold a reference to |context|, which it then drops with releaseRef().
+    void markDestroyed(gl::Context *context)
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        ASSERT(context->getRefCount() > 0);
+        context->setIsDestroyed();
+    }
+
+    // Drops a reference to |context|.  If that was the last one, and |context| is destroyed, this
+    // removes |context| from the map, so that it can no longer be looked up, and returns true: the
+    // caller must then free it.
+    [[nodiscard]] bool releaseRef(gl::Context *context)
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        context->release();
+        if (context->getRefCount() > 0 || !context->isDestroyed())
+        {
+            return false;
+        }
+        mObjects.erase(context->id().value);
+        return true;
+    }
+
+    void invalidateContext(gl::Context *context)
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        // Another thread may have referenced the context (e.g. via getContextRef()) since the
+        // caller dropped its reference.  In that case, leave it in the map; it will be
+        // invalidated by invalidateUnreferenced() once it is no longer referenced.
+        if (!context->isDestroyed() && context->getRefCount() == 0)
+        {
+            auto iter = mObjects.find(context->id().value);
+            if (iter != mObjects.end())
+            {
+                mInvalidContexts.push_back(iter->second);
+                mObjects.erase(iter);
+            }
+        }
+    }
+
+    void invalidateUnreferenced()
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        for (auto iter = mObjects.begin(); iter != mObjects.end();)
+        {
+            // Besides the threads that have the context current, a thread that is releasing it may
+            // still reference it.
+            if (iter->second->getRefCount() == 0)
+            {
+                mInvalidContexts.push_back(iter->second);
+                mObjects.erase(iter++);
+            }
+            else
+            {
+                ++iter;
+            }
+        }
+    }
+
+    Error destroyAllInvalidContexts(ThreadSafeDisplay *display);
 
     template <typename ConditionType>
     void notifyDeviceLost(ConditionType *deviceLost) const
@@ -90,6 +159,41 @@ class ContextMap final : public priv::ObjectMap<gl::Context, angle::SimpleMutex>
         }
         *deviceLost = true;
     }
+
+    bool isResetNotificationEnabled() const
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        for (const auto &pair : this->mObjects)
+        {
+            if (pair.second->isResetNotificationEnabled())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void onGPUSwitch() const
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        for (const auto &pair : this->mObjects)
+        {
+            pair.second->onGPUSwitch();
+        }
+    }
+
+    template <typename Callback>
+    void forEach(Callback &&callback) const
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        for (const auto &pair : this->mObjects)
+        {
+            callback(pair.second);
+        }
+    }
+
+  private:
+    std::vector<gl::Context *> mInvalidContexts;
 };
 
 class UnlockedContextMap final : public priv::ObjectMap<gl::Context, angle::NoOpMutex>

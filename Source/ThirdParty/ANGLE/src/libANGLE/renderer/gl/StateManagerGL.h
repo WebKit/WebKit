@@ -464,7 +464,7 @@ class StateManagerGL final : angle::NonCopyable
     void setDefaultVAOState(const VertexArrayStateGL &state, bool isHardenedContext);
     angle::Result setState(const gl::Context *context, const ContextStateGL &state);
 
-    void ensurePlaceholderFramebuffer();
+    GLuint ensurePlaceholderFramebuffer();
     void maybeDrainDeferredBuffers();
 
     const FunctionsGL *mFunctions;

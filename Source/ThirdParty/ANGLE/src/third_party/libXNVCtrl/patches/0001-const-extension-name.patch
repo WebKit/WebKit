@@ -1,0 +1,20 @@
+Declare nvctrl_extension_name const
+
+Carried from the import of libXNVCtrl into ANGLE (cc068e9385,
+crbug.com/590870). The commit does not say why; upstream keeps the
+const commented out. Pristine upstream also builds in Chromium today,
+so this patch may be dropped in a later roll.
+
+diff --git a/src/NVCtrl.c b/src/NVCtrl.c
+index 6eacc95426..e984373947 100644
+--- a/src/NVCtrl.c
++++ b/src/NVCtrl.c
+@@ -49,7 +49,7 @@
+ 
+ static XExtensionInfo _nvctrl_ext_info_data;
+ static XExtensionInfo *nvctrl_ext_info = &_nvctrl_ext_info_data;
+-static /* const */ char *nvctrl_extension_name = NV_CONTROL_NAME;
++static const char *nvctrl_extension_name = NV_CONTROL_NAME;
+ 
+ #define XNVCTRLCheckExtension(dpy,i,val) \
+   XextCheckExtension (dpy, i, nvctrl_extension_name, val)

@@ -129,38 +129,40 @@ void TransformFeedbackGL::syncActiveState(const gl::Context *context,
 {
     if (mIsActive != active)
     {
-        mIsActive = active;
-        mIsPaused = false;
-
         mStateManager->bindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedbackID);
-        if (mIsActive)
+
+        // Bind the program associated with this transform feedback for both BeginTransformFeedback
+        // and EndTransformFeedback (implementations disagree about what should happen if a
+        // different program is bound when calling EndTransformFeedback).  The previously bound
+        // program is not restored, as it may have been deleted since; useProgram() marks the
+        // program binding dirty so the current program is re-applied on the next draw.
+        mStateManager->useProgram(mActiveProgram);
+
+        if (active)
         {
+            ASSERT(!mIsPaused);
             ASSERT(primitiveMode != gl::PrimitiveMode::InvalidEnum);
-            mStateManager->useProgram(mActiveProgram);
             mFunctions->beginTransformFeedback(gl::ToGLenum(primitiveMode));
         }
         else
         {
-            // Implementations disagree about what should happen if a different program is bound
-            // when calling EndTransformFeedback. We avoid the ambiguity by always re-binding the
-            // program associated with this transform feedback.
-            GLuint previousProgram = mStateManager->getProgramID();
-            mStateManager->useProgram(mActiveProgram);
             mFunctions->endTransformFeedback();
-            // Restore the current program if we changed it.
-            mStateManager->useProgram(previousProgram);
         }
+
+        // mIsActive and mIsPaused are only updated after the native calls: useProgram() may call
+        // back into StateManagerGL::pauseTransformFeedback(), which must observe the state of the
+        // native transform feedback from before this transition.
+        mIsActive = active;
+        mIsPaused = false;
     }
 }
 
-void TransformFeedbackGL::syncPausedState(bool paused) const
+bool TransformFeedbackGL::syncPausedState(bool paused) const
 {
     if (mIsActive && mIsPaused != paused)
     {
-        mIsPaused = paused;
-
         mStateManager->bindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedbackID);
-        if (mIsPaused)
+        if (paused)
         {
             // If we're transitioning from active to paused, the currently bound program must be the
             // one associated with this transform feedback.
@@ -174,6 +176,12 @@ void TransformFeedbackGL::syncPausedState(bool paused) const
             mStateManager->useProgram(mActiveProgram);
             mFunctions->resumeTransformFeedback();
         }
+
+        // As in syncActiveState(), mIsPaused is only updated after the native call because
+        // useProgram() may call back into StateManagerGL::pauseTransformFeedback().
+        mIsPaused = paused;
+        return true;
     }
+    return false;
 }
 }  // namespace rx

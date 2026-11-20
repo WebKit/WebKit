@@ -12,6 +12,7 @@ pub mod emulate_instanced_multiview;
 pub mod emulate_multi_draw;
 pub mod ensure_loop_forward_progress;
 pub mod expand_fragment_outputs_to_vec4;
+pub mod gather_default_uniforms;
 pub mod initialize_uninitialized_variables;
 pub mod localized_workarounds;
 pub mod monomorphize_unsupported_functions;

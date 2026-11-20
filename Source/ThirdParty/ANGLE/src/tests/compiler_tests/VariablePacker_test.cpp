@@ -224,7 +224,6 @@ TEST(VariablePacking, ReuseRows)
 // Check the packer supports and flattens structures.
 TEST(VariablePacking, Struct)
 {
-    std::vector<sh::ShaderVariable> fields;
     const int kMaxRows = 16;
 
     // Test example from GLSL ES 3.0 spec chapter 11, but with structs

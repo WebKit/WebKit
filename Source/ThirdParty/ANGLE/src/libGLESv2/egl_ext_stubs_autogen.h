@@ -41,7 +41,7 @@ EGLint ClientWaitSyncKHR(Thread *thread,
                          EGLTimeKHR timeout);
 EGLImageKHR CreateImageKHR(Thread *thread,
                            egl::Display *dpyPacked,
-                           gl::ContextID ctxPacked,
+                           gl::Context *ctxPacked,
                            EGLenum target,
                            EGLClientBuffer buffer,
                            const AttributeMap &attrib_listPacked);
@@ -270,8 +270,8 @@ void UnlockVulkanQueueANGLE(Thread *thread, egl::Display *dpyPacked);
 EGLBoolean PrepareSwapBuffersANGLE(Thread *thread,
                                    egl::ThreadSafeDisplay *dpyPacked,
                                    egl::Surface *surfacePacked);
-void ReleaseHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::ContextID ctxPacked);
-void ReacquireHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::ContextID ctxPacked);
+void ReleaseHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::Context *ctxPacked);
+void ReacquireHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::Context *ctxPacked);
 void HandleGPUSwitchANGLE(Thread *thread, egl::Display *dpyPacked);
 void ForceGPUSwitchANGLE(Thread *thread,
                          egl::Display *dpyPacked,

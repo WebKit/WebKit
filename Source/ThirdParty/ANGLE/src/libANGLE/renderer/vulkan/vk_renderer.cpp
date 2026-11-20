@@ -175,10 +175,6 @@ constexpr uint32_t kPreferredDefaultUniformBufferSize = 64 * 1024u;
 // buffers will be larger.
 constexpr size_t kAllocationCountThresholdForDynamicVertexDataSize = 4096;
 
-// Maximum size to use VMA image suballocation. Any allocation greater than or equal to this
-// value will use a dedicated VkDeviceMemory.
-constexpr size_t kImageSizeThresholdForDedicatedMemoryAllocation = 8 * 1024 * 1024;
-
 // Maximum size for an allocated memory for a single object.
 constexpr VkDeviceSize kMemoryAllocationSizeLimit = 1 * 1024 * 1024 * 1024;
 
@@ -3123,15 +3119,24 @@ angle::Result Renderer::initializeMemoryAllocator(vk::ErrorContext *context)
 //                                                                                       (property)
 // - VK_EXT_primitive_topology_list_restart:          primitiveTopologyListRestart (feature)
 // - VK_EXT_extended_dynamic_state3:                  extendedDynamicState3AlphaToCoverageEnable
-//                                                                                       (feature)
+//                                                                                        (feature)
 //                                                    extendedDynamicState3AlphaToOneEnable
-//                                                                                       (feature)
+//                                                                                        (feature)
+//                                                    extendedDynamicState3ColorBlendEnable
+//                                                                                        (feature)
+//                                                    extendedDynamicState3ColorWriteMask (feature)
 //                                                    extendedDynamicState3DepthClampEnable
-//                                                                                       (feature)
+//                                                                                        (feature)
 //                                                    extendedDynamicState3DepthClipNegativeOneToOne
-//                                                                                       (feature)
+//                                                                                        (feature)
+//                                                    extendedDynamicState3LineRasterizationMode
+//                                                                                        (feature)
+//                                                    extendedDynamicState3LineStippleEnable
+//                                                                                        (feature)
 //                                                    extendedDynamicState3LogicOpEnable (feature)
 //                                                    extendedDynamicState3PolygonMode (feature)
+//                                                    extendedDynamicState3RasterizationSamples
+//                                                                                        (feature)
 //                                                    extendedDynamicState3SampleMask (feature)
 //                                                    dynamicPrimitiveTopologyUnrestricted
 //                                                                                       (property)
@@ -4791,6 +4796,10 @@ void Renderer::initDeviceExtensionEntryPoints()
         {
             InitExtendedDynamicState3EXTWithBlendOperationAdvancedEXTFunctions(mDevice);
         }
+        if (getFeatures().bresenhamLineRasterization.enabled)
+        {
+            InitExtendedDynamicState3EXTWithLineRasterizationEXTFunctions(mDevice);
+        }
     }
     if (mFeatures.supportsFragmentShadingRate.enabled)
     {
@@ -4811,10 +4820,6 @@ void Renderer::initDeviceExtensionEntryPoints()
     if (mFeatures.supportsVertexInputDynamicState.enabled)
     {
         InitVertexInputDynamicStateEXTFunctions(mDevice);
-    }
-    if (mFeatures.supportsDynamicRenderingLocalRead.enabled)
-    {
-        InitDynamicRenderingLocalReadFunctions(mDevice);
     }
     if (mFeatures.supportsExternalSemaphoreFd.enabled ||
         mFeatures.supportsExternalSemaphoreFuchsia.enabled)
@@ -5551,11 +5556,19 @@ gl::Version Renderer::getMaxSupportedESVersion() const
     // Verify minimum requirements of ANGLE:
     //
     // - VK_KHR_image_format_list
+    // - VK_KHR_index_type_uint8 or VK_EXT_index_type_uint8
     //
-    if (!mFeatures.supportsImageFormatList.enabled)
+    if (!mFeatures.supportsImageFormatList.enabled || !mFeatures.supportsIndexTypeUint8.enabled)
     {
         WARN() << "Vulkan device does not meet ANGLE's minimum requirements";
-        WARN() << "  Missing VK_KHR_image_format_list";
+        if (!mFeatures.supportsImageFormatList.enabled)
+        {
+            WARN() << "  Missing VK_KHR_image_format_list";
+        }
+        if (!mFeatures.supportsIndexTypeUint8.enabled)
+        {
+            WARN() << "  Missing VK_EXT_index_type_uint8 or VK_KHR_index_type_uint8";
+        }
         maxVersion = LimitVersionTo(maxVersion, {0, 0});
     }
 
@@ -6072,12 +6085,12 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, supportsPrimitiveTopologyListRestart,
         mPrimitiveTopologyListRestartFeatures.primitiveTopologyListRestart == VK_TRUE);
 
-    // Adreno 702 applies advanced blend twice to some samples of multisampled pixels covered by two
-    // primitives sharing an edge; the framebuffer fetch emulation renders them correctly.
+    // Adreno 622 and 702 misrender pixels along shared primitive edges with
+    // VK_EXT_blend_operation_advanced; framebuffer fetch emulation renders them correctly.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsBlendOperationAdvanced,
         ExtensionFound(VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME, deviceExtensionNames) &&
-            !(isQualcommProprietary && isAdreno702));
+            !(isQualcommProprietary && (isAdreno622 || isAdreno702)));
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsFormatFeatureFlags2,
@@ -6733,6 +6746,34 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     const bool isRasterizerDiscardDynamicState =
         mFeatures.useRasterizerDiscardEnableDynamicState.enabled;
 
+    // Line rasterization can be made dynamic if Bresenham lines are supported at all and can be
+    // made dynamic.  However, Vulkan also requires that if stippled lines are supported in any
+    // form, that stipple-line-enable is also set.  ANGLE always disable stippled lines, so only the
+    // lineStippleEnable dynamic state is needed (and not lineStipple, which would set the stipple
+    // pattern).
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsLineRasterizationModeDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mFeatures.bresenhamLineRasterization.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3LineRasterizationMode == VK_TRUE &&
+            (!supportsStippledLines() ||
+             mExtendedDynamicState3Features.extendedDynamicState3LineStippleEnable) &&
+            isRasterizerDiscardDynamicState);
+
+    // Bresenham lines should **not** be enabled if:
+    //
+    // * multisampling (http://anglebug.com/42262723), or
+    // * (according to VUID-vkCmdDraw-None-10608), any of the following is enabled:
+    //   * alphaToCoverageEnable,
+    //   * alphaToOneEnable
+    //   * sampleShadingEnable
+    //
+    // We cannot support these state being dynamic if bresenham line state is static as pipeline
+    // creation decides to use bresenham lines based on the other state's static value.
+    const bool hasStaticBresenhamLineState =
+        mFeatures.bresenhamLineRasterization.enabled &&
+        !mFeatures.supportsLineRasterizationModeDynamicState.enabled;
+
     // Disabled on Intel/windows drivers, failing
     // FramebufferFetchES31.DrawNonFetchDrawFetchInStorageBuffer*,
     // SimpleStateChangeTestES31.FragWriteSSBOThenChangeDrawbuffersThenWriteSSBO*,
@@ -6744,15 +6785,27 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, supportsAlphaToCoverageEnableDynamicState,
         mFeatures.supportsExtendedDynamicState3.enabled &&
             mExtendedDynamicState3Features.extendedDynamicState3AlphaToCoverageEnable == VK_TRUE &&
-            isRasterizerDiscardDynamicState && !(isIntel && IsWindows()) &&
-            !(isIntel && IsLinux()));
+            isRasterizerDiscardDynamicState && !hasStaticBresenhamLineState &&
+            !(isIntel && IsWindows()) && !(isIntel && IsLinux()));
 
     // Disabled on Imagination drivers due to test failures and device loss.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsAlphaToOneEnableDynamicState,
         mFeatures.supportsExtendedDynamicState3.enabled &&
             mExtendedDynamicState3Features.extendedDynamicState3AlphaToOneEnable == VK_TRUE &&
-            isRasterizerDiscardDynamicState && !isPowerVR);
+            isRasterizerDiscardDynamicState && !hasStaticBresenhamLineState && !isPowerVR);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsColorBlendEnableDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3ColorBlendEnable == VK_TRUE &&
+            isRasterizerDiscardDynamicState);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsColorWriteMaskDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3ColorWriteMask == VK_TRUE &&
+            isRasterizerDiscardDynamicState);
 
     // Disabled on Imagination drivers due to failure of a few dEQP tests.
     ANGLE_FEATURE_CONDITION(
@@ -6782,6 +6835,16 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         mFeatures.supportsExtendedDynamicState3.enabled &&
             mExtendedDynamicState3Features.extendedDynamicState3PolygonMode == VK_TRUE &&
             !isPowerVR);
+
+    // Disabled on old Nvidia drivers due to multisample test failures in dEQP as well as
+    // TextureSampleShadingTest.Basic.  Failures were observed on the 535 driver, but not on 610.
+    // Unknown at which version the driver is fixed.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsRasterizationSamplesDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3RasterizationSamples == VK_TRUE &&
+            isRasterizerDiscardDynamicState && !hasStaticBresenhamLineState &&
+            !(isNvidia && driverVersion < angle::VersionTriple(610, 0, 0)));
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsSampleMaskDynamicState,
@@ -7172,13 +7235,10 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // VkEvent instead of GPU overhead associated with vkCmdResetEvent.
     ANGLE_FEATURE_CONDITION(&mFeatures, recycleVkEvent, isSwiftShader);
 
-    // Disabled on older Nvidia drivers due to a bug with attachment location mapping, resulting in
-    // incorrect rendering in the presence of gaps in locations.  http://anglebug.com/372883691.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsDynamicRenderingLocalRead,
         mFeatures.supportsDynamicRendering.enabled &&
-            mDynamicRenderingLocalReadFeatures.dynamicRenderingLocalRead == VK_TRUE &&
-            !(isNvidia && driverVersion < angle::VersionTriple(596, 8, 0)));
+            mDynamicRenderingLocalReadFeatures.dynamicRenderingLocalRead == VK_TRUE);
 
     // Using dynamic rendering when VK_KHR_dynamic_rendering_local_read is available, because that's
     // needed for framebuffer fetch, MSRTT and advanced blend emulation.
@@ -7187,12 +7247,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // dynamic rendering.  If only version 1 is exposed, it's not sacrificied for dynamic rendering
     // and render pass objects are continued to be used.
     //
-    // Using dynamic rendering when emulating GL_EXT_multisampled_render_to_texture is
-    // supported. Except for SwiftShader, which crashes when binding non-attachment textures as
-    // input attachments.
-    //
     // Use of dynamic rendering is disabled on ARM due to driver bugs
-    // (http://issuetracker.google.com/356051947, http://issuetracker.google.com/575550012).
+    // (http://issuetracker.google.com/356051947).
     //
     // Use of dynamic rendering is disabled on older Qualcomm drivers due to driver bugs
     // (http://crbug.com/415738891).
@@ -7206,7 +7262,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, preferDynamicRendering,
         mFeatures.supportsDynamicRendering.enabled &&
             mFeatures.supportsDynamicRenderingLocalRead.enabled && !hasLegacyDitheringV1 &&
-            !isSwiftShader && !isARM &&
+            !(isARMProprietary && driverVersion < angle::VersionTriple(52, 0, 0)) &&
             !(isQualcommProprietary && driverVersion < angle::VersionTriple(512, 801, 0)) &&
             !isPowerVR);
 
@@ -7258,11 +7314,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsAstcHdr3dTextures,
         mFeatures.supportsTextureCompressionAstcHdr.enabled && CanSupportAstcHdr3D(this));
-
-    // http://anglebug.com/42264006
-    // GL_EXT_clip_cull_distance also adds features to geometry and tessellation shaders, which are
-    // currently disabled.
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsClipCullDistanceInGSAndTS, false);
 
     // http://anglebug.com/442950569
     // feature is currently experimental (i.e. dont default enable even if device supports it)
@@ -8682,9 +8733,10 @@ VkResult ImageMemorySuballocator::getDefaultMemoryPool(Renderer *renderer,
                              getDefaultPoolBlockSize(renderer), poolMemoryTypeIndex, poolOut);
 }
 
-bool ImageMemorySuballocator::needsDedicatedMemory(VkDeviceSize size) const
+bool ImageMemorySuballocator::needsDedicatedMemory(Renderer *renderer, VkDeviceSize size) const
 {
-    return size >= kImageSizeThresholdForDedicatedMemoryAllocation;
+    // Like VMA's default pools, images over half a block get dedicated memory to avoid waste.
+    return size > getDefaultPoolBlockSize(renderer) / 2;
 }
 
 VkDeviceSize ImageMemorySuballocator::getInitialPoolBlockSize(Renderer *renderer,
@@ -8693,7 +8745,7 @@ VkDeviceSize ImageMemorySuballocator::getInitialPoolBlockSize(Renderer *renderer
     return renderer->getPreferredInitialImageBlockSize(poolMemoryTypeIndex);
 }
 
-VkDeviceSize ImageMemorySuballocator::getDefaultPoolBlockSize(Renderer *renderer)
+VkDeviceSize ImageMemorySuballocator::getDefaultPoolBlockSize(Renderer *renderer) const
 {
     return renderer->getPreferredLargeHeapBlockSize();
 }

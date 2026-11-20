@@ -39,7 +39,8 @@ class TransformFeedbackGL : public TransformFeedbackImpl
     void syncActiveState(const gl::Context *context,
                          bool active,
                          gl::PrimitiveMode primitiveMode) const;
-    void syncPausedState(bool paused) const;
+    // Returns true if the native paused state changed.
+    bool syncPausedState(bool paused) const;
 
   private:
     const FunctionsGL *mFunctions;

@@ -31,7 +31,7 @@ DMA_BUF_TARGET = "//src/libANGLE/renderer/vulkan:angle_android_vulkan_dma_buf"
 BLUEPRINT_COMMENT_PROPERTY = '__android_bp_comment'
 
 CURRENT_SDK_VERSION = 'current'
-MIN_SDK_VERSION = '28'
+MIN_SDK_VERSION = '35'
 TARGET_SDK_VERSION = '37'
 STL = 'libc++_static'
 
@@ -585,6 +585,7 @@ def library_target_to_blueprint(target, build_info) -> list[tuple[str, dict]]:
             bp['defaults'].append('angle_vendor_cc_defaults')
             bp['defaults'].append('angle_dma_buf_cc_defaults')
             bp['afdo'] = True
+            bp['required'] = ['angle_feature_config']
         bps_for_abis[abi] = bp
 
     common_bp = merge_bps(bps_for_abis)

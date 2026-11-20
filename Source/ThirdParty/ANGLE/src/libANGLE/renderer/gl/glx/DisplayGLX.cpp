@@ -92,7 +92,12 @@ DisplayGLX::DisplayGLX(const egl::DisplayState &state)
       mEGLDisplay(nullptr)
 {}
 
-DisplayGLX::~DisplayGLX() {}
+DisplayGLX::~DisplayGLX()
+{
+    // Make sure mRenderer is released before the rest of DisplayGLX is destroyed.  Its destructor
+    // calls into this object.
+    mRenderer.reset();
+}
 
 egl::Error DisplayGLX::initialize(egl::Display *display)
 {
@@ -451,6 +456,68 @@ egl::Error DisplayGLX::makeCurrent(egl::Surface *drawSurface,
     }
 
     return ThreadSafeDisplayGL::makeCurrent(drawSurface, readSurface, context);
+}
+
+egl::Error DisplayGLX::beforeDestroyContext(const gl::Context *context)
+{
+    ASSERT(context != nullptr);
+    ContextGLX *contextGLX       = GetImplAs<ContextGLX>(context);
+    glx::Context nativeContext   = contextGLX->getContext();
+    glx::Drawable nativeDrawable = contextGLX->getPbuffer();
+
+    std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+    NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+    if (currentContext.context != nativeContext)
+    {
+        if (mGLX.makeCurrent(nativeDrawable, nativeContext) != True)
+        {
+            return egl::Error(EGL_CONTEXT_LOST, "Failed to make the GLX context current");
+        }
+        currentContext.needsRestore = true;
+    }
+
+    return egl::NoError();
+}
+
+egl::Error DisplayGLX::afterDestroyContext()
+{
+    std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+    NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+    if (currentContext.needsRestore)
+    {
+        currentContext.needsRestore = false;
+        if (mGLX.makeCurrent(currentContext.drawable, currentContext.context) != True)
+        {
+            return egl::Error(EGL_CONTEXT_LOST, "Failed to make the previous GLX context current");
+        }
+    }
+
+    return egl::NoError();
+}
+
+void DisplayGLX::destroyNativeContext(glx::Context context)
+{
+    // If this context is current, remove it from the tracking of current contexts to make sure we
+    // don't try to make it current again.  If it is current on this thread, also have
+    // afterDestroyContext() release it; that only runs for the calling thread's entry.
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        const uint64_t currentThreadId = angle::GetCurrentThreadUniqueId();
+        for (auto &currentContext : mCurrentNativeContexts)
+        {
+            if (currentContext.second.context == context)
+            {
+                currentContext.second.context  = nullptr;
+                currentContext.second.drawable = 0;
+                if (currentContext.first == currentThreadId)
+                {
+                    currentContext.second.needsRestore = true;
+                }
+            }
+        }
+    }
+
+    mGLX.destroyContext(context);
 }
 
 SurfaceImpl *DisplayGLX::createWindowSurface(const egl::SurfaceState &state,

@@ -35,8 +35,7 @@ rx::Context11 *HackANGLE(EGLDisplay dpy, EGLContext ctx)
 {
     egl::Display *display   = static_cast<egl::Display *>(dpy);
     gl::ContextID contextID = {static_cast<GLuint>(reinterpret_cast<uintptr_t>(ctx))};
-    gl::Context *context    = display->getContext(contextID);
-    return rx::GetImplAs<rx::Context11>(context);
+    return rx::GetImplAs<rx::Context11>(display->getContextRef(contextID).get());
 }
 
 // This test enumerates all GL formats - for each, it queries the D3D support for

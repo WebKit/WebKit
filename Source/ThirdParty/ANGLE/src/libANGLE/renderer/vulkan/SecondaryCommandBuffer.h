@@ -115,6 +115,8 @@ enum class CommandID : uint16_t
     SetEvent,
     SetFragmentShadingRate,
     SetFrontFace,
+    SetLineRasterizationMode,
+    SetLineStippleEnable,
     SetLineWidth,
     SetLogicOp,
     SetLogicOpEnable,
@@ -664,8 +666,8 @@ struct SetColorBlendEnableParams
 {
     CommandHeader header;
 
-    uint32_t firstAttachment : 16;
-    uint32_t attachmentCount : 16;
+    uint32_t attachment : 16;
+    uint32_t colorBlendEnable : 16;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetColorBlendEnableParams)
 
@@ -682,8 +684,8 @@ struct SetColorWriteMaskParams
 {
     CommandHeader header;
 
-    uint32_t firstAttachment : 16;
-    uint32_t attachmentCount : 16;
+    uint32_t attachment : 16;
+    uint32_t colorWriteMask : 16;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetColorWriteMaskParams)
 
@@ -780,6 +782,22 @@ struct SetFrontFaceParams
     VkFrontFace frontFace;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetFrontFaceParams)
+
+struct SetLineRasterizationModeParams
+{
+    CommandHeader header;
+
+    VkLineRasterizationMode lineRasterizationMode;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetLineRasterizationModeParams)
+
+struct SetLineStippleEnableParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetLineStippleEnableParams)
 
 struct SetLineWidthParams
 {
@@ -1258,6 +1276,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void setFragmentShadingRate(const VkExtent2D *fragmentSize,
                                 VkFragmentShadingRateCombinerOpKHR ops[2]);
     void setFrontFace(VkFrontFace frontFace);
+    void setLineRasterizationMode(VkLineRasterizationMode lineRasterizationMode);
+    void setLineStippleEnable(VkBool32 stippledLineEnable);
     void setLineWidth(float lineWidth);
     void setLogicOp(VkLogicOp logicOp);
     void setLogicOpEnable(VkBool32 logicOpEnable);
@@ -2346,13 +2366,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::setColorBlendEnable(uint32_t firstAtta
                                                               uint32_t attachmentCount,
                                                               const VkBool32 *colorBlendEnables)
 {
-    uint8_t *writePtr;
-    const ArrayParamSize blendEnableSize   = calculateArrayParameterSize<VkBool32>(attachmentCount);
-    SetColorBlendEnableParams *paramStruct = initCommand<SetColorBlendEnableParams>(
-        CommandID::SetColorBlendEnable, blendEnableSize.allocateBytes, &writePtr);
-    SetBitField(paramStruct->firstAttachment, firstAttachment);
-    SetBitField(paramStruct->attachmentCount, attachmentCount);
-    storeArrayParameter(writePtr, colorBlendEnables, blendEnableSize);
+    // Blend is enabled one attachment at a time.
+    ASSERT(attachmentCount == 1);
+
+    SetColorBlendEnableParams *paramStruct =
+        initCommand<SetColorBlendEnableParams>(CommandID::SetColorBlendEnable);
+    SetBitField(paramStruct->attachment, firstAttachment);
+    SetBitField(paramStruct->colorBlendEnable, colorBlendEnables[0]);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setColorBlendEquation(
@@ -2375,14 +2395,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::setColorWriteMask(
     uint32_t attachmentCount,
     const VkColorComponentFlags *colorWriteMask)
 {
-    uint8_t *writePtr;
-    const ArrayParamSize writeMaskSize =
-        calculateArrayParameterSize<VkColorComponentFlags>(attachmentCount);
-    SetColorWriteMaskParams *paramStruct = initCommand<SetColorWriteMaskParams>(
-        CommandID::SetColorWriteMask, writeMaskSize.allocateBytes, &writePtr);
-    SetBitField(paramStruct->firstAttachment, firstAttachment);
-    SetBitField(paramStruct->attachmentCount, attachmentCount);
-    storeArrayParameter(writePtr, colorWriteMask, writeMaskSize);
+    // Masks are set one attachment at a time.
+    ASSERT(attachmentCount == 1);
+
+    SetColorWriteMaskParams *paramStruct =
+        initCommand<SetColorWriteMaskParams>(CommandID::SetColorWriteMask);
+    SetBitField(paramStruct->attachment, firstAttachment);
+    SetBitField(paramStruct->colorWriteMask, colorWriteMask[0]);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setCullMode(VkCullModeFlags cullMode)
@@ -2473,6 +2492,20 @@ ANGLE_INLINE void SecondaryCommandBuffer::setFrontFace(VkFrontFace frontFace)
 {
     SetFrontFaceParams *paramStruct = initCommand<SetFrontFaceParams>(CommandID::SetFrontFace);
     paramStruct->frontFace          = frontFace;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setLineRasterizationMode(
+    VkLineRasterizationMode lineRasterizationMode)
+{
+    SetLineRasterizationModeParams *paramStruct =
+        initCommand<SetLineRasterizationModeParams>(CommandID::SetLineRasterizationMode);
+    paramStruct->lineRasterizationMode = lineRasterizationMode;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setLineStippleEnable(VkBool32 stippledLineEnable)
+{
+    ASSERT(stippledLineEnable == VK_FALSE);
+    initCommand<SetLineStippleEnableParams>(CommandID::SetLineStippleEnable);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setLineWidth(float lineWidth)

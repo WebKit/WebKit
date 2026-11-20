@@ -42,9 +42,9 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
     egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
     gl::ContextID contextID = {
         static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
-    gl::Context *context       = display->getContext(contextID);
-    auto *contextVk            = rx::GetImplAs<rx::ContextVk>(context);
-    rx::vk::Renderer *renderer = contextVk->getRenderer();
+    egl::ScopedContextRef contextRef = display->getContextRef(contextID);
+    auto *contextVk                  = rx::GetImplAs<rx::ContextVk>(contextRef.get());
+    rx::vk::Renderer *renderer       = contextVk->getRenderer();
 
     // We need to test normal 2D images as well as Cube images.
     const std::vector<ParametersToTest> parametersToTest = {

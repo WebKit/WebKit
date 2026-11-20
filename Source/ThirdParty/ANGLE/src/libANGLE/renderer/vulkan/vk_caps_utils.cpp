@@ -671,8 +671,9 @@ void Renderer::ensureCapsInitialized() const
     mNativeCaps.maxMultisampleLineWidth = mNativeCaps.maxAliasedLineWidth;
     mNativeCaps.lineWidthGranularity    = limitsVk.lineWidthGranularity;
 
-    mNativeCaps.maxDrawBuffers =
-        std::min(limitsVk.maxColorAttachments, limitsVk.maxFragmentOutputAttachments);
+    mNativeCaps.maxDrawBuffers = std::min<uint32_t>(
+        std::min(limitsVk.maxColorAttachments, limitsVk.maxFragmentOutputAttachments),
+        gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
     mNativeCaps.maxFramebufferWidth  = rx::LimitToInt(limitsVk.maxFramebufferWidth);
     mNativeCaps.maxFramebufferHeight = rx::LimitToInt(limitsVk.maxFramebufferHeight);
     mNativeCaps.maxColorAttachments  = rx::LimitToInt(limitsVk.maxColorAttachments);
@@ -1286,13 +1287,7 @@ void Renderer::ensureCapsInitialized() const
     constexpr uint32_t kMaxCullDistancePerSpec                = 8;
     constexpr uint32_t kMaxCombinedClipAndCullDistancePerSpec = 8;
 
-    // TODO: http://anglebug.com/42264006
-    // After implementing EXT_geometry_shader, EXT_clip_cull_distance should be additionally
-    // implemented to support the geometry shader. Until then, EXT_clip_cull_distance is enabled
-    // only in the experimental cases.
-    if ((mFeatures.supportsClipCullDistanceInGSAndTS.enabled ||
-         (!mNativeExtensions.geometryShaderAny() && !mNativeExtensions.tessellationShaderAny())) &&
-        mPhysicalDeviceFeatures.shaderClipDistance &&
+    if (mPhysicalDeviceFeatures.shaderClipDistance &&
         limitsVk.maxClipDistances >= kMaxClipDistancePerSpec)
     {
         // Do not enable GL_APPLE_clip_distance for Samsung devices.
@@ -1519,6 +1514,12 @@ void Renderer::ensureCapsInitialized() const
 
     // Log any missing extensions required for GLES 3.2.
     LogMissingExtensionsForGLES32(mNativeExtensions);
+
+    // Create a mask of valid attachments based on |maxDrawBuffers|.  That is a combination of
+    // limitsVk.maxColorAttachments, limitsVk.maxFragmentOutputAttachments, various additional
+    // reasons to cap the limit and finally gl::IMPLEMENTATION_MAX_DRAW_BUFFERS (also enforced by
+    // the front-end) to make sure it has at most as many bits as this mask.
+    mValidDrawBuffers = gl::DrawBufferMask::Mask(mNativeCaps.maxDrawBuffers);
 }
 
 bool CanSupportGLES32(const gl::Extensions &nativeExtensions)

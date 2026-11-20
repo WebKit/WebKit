@@ -553,7 +553,6 @@ void GenerateTransformFeedbackEmulationOutputs(
 
     for (uint32_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
     {
-        const std::string xfbBinding = Str(0);
         xfbIndices[bufferIndex]      = Str(bufferIndex);
 
         std::string bufferName = GetXfbBufferNameMtl(bufferIndex);

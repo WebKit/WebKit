@@ -127,11 +127,8 @@
     [
         [ "GL_RGBA",               "GL_RGBA",            "GL_HALF_FLOAT_OES" ],
         [ "GL_RGB",                "GL_RGB",             "GL_HALF_FLOAT_OES" ],
-        [ "GL_LUMINANCE_ALPHA",    "GL_LUMINANCE_ALPHA", "GL_HALF_FLOAT" ],
         [ "GL_LUMINANCE_ALPHA",    "GL_LUMINANCE_ALPHA", "GL_HALF_FLOAT_OES" ],
-        [ "GL_LUMINANCE",          "GL_LUMINANCE",       "GL_HALF_FLOAT" ],
         [ "GL_LUMINANCE",          "GL_LUMINANCE",       "GL_HALF_FLOAT_OES" ],
-        [ "GL_ALPHA",              "GL_ALPHA",           "GL_HALF_FLOAT" ],
         [ "GL_ALPHA",              "GL_ALPHA",           "GL_HALF_FLOAT_OES" ]
     ],
     "From GL_EXT_texture_format_BGRA8888":
@@ -146,11 +143,8 @@
         [ "GL_ALPHA32F_EXT",           "GL_ALPHA",           "GL_FLOAT" ],
         [ "GL_LUMINANCE32F_EXT",       "GL_LUMINANCE",       "GL_FLOAT" ],
         [ "GL_LUMINANCE_ALPHA32F_EXT", "GL_LUMINANCE_ALPHA", "GL_FLOAT" ],
-        [ "GL_ALPHA16F_EXT",           "GL_ALPHA",           "GL_HALF_FLOAT" ],
         [ "GL_ALPHA16F_EXT",           "GL_ALPHA",           "GL_HALF_FLOAT_OES" ],
-        [ "GL_LUMINANCE16F_EXT",       "GL_LUMINANCE",       "GL_HALF_FLOAT" ],
         [ "GL_LUMINANCE16F_EXT",       "GL_LUMINANCE",       "GL_HALF_FLOAT_OES" ],
-        [ "GL_LUMINANCE_ALPHA16F_EXT", "GL_LUMINANCE_ALPHA", "GL_HALF_FLOAT" ],
         [ "GL_LUMINANCE_ALPHA16F_EXT", "GL_LUMINANCE_ALPHA", "GL_HALF_FLOAT_OES" ]
     ],
     "From GL_EXT_texture_storage and GL_EXT_texture_format_BGRA8888":

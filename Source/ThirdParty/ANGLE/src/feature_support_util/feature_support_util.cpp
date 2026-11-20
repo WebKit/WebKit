@@ -48,9 +48,11 @@ namespace angle
 #    define WARN(...) printf(__VA_ARGS__)
 #    define INFO(...) printf(__VA_ARGS__)
 #    define DEBUG(...) printf(__VA_ARGS__)
-// Uncomment for debugging.
-// #    define VERBOSE(...) printf(__VA_ARGS__)
-#    define VERBOSE(...)
+#    ifdef ANGLE_FEATURE_UTIL_LOG_VERBOSE
+#        define VERBOSE(...) printf(__VA_ARGS__)
+#    else
+#        define VERBOSE(...)
+#    endif
 #endif  // defined(ANDROID)
 
 // JSON values are generally composed of either:
@@ -193,7 +195,13 @@ template <class T>
 class ListOf
 {
   public:
-    explicit ListOf(const std::string listType) : mWildcard(true), mListType(listType) {}
+    explicit ListOf(const std::string listType)
+        : mWildcard(true)
+#ifdef ANGLE_FEATURE_UTIL_LOG_VERBOSE
+          ,
+          mListType(listType)
+#endif
+    {}
     ~ListOf() { mList.clear(); }
     void addItem(T &&toAdd)
     {
@@ -259,7 +267,10 @@ class ListOf
     bool mWildcard;
 
   private:
+#ifdef ANGLE_FEATURE_UTIL_LOG_VERBOSE
     std::string mListType;
+#endif
+
     std::vector<T> mList;
 };
 

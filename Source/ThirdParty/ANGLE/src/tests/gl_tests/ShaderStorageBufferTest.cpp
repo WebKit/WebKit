@@ -7,12 +7,10 @@
 //   Various tests related for shader storage buffers.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <array>
+#include <cstddef>
 
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -25,29 +23,25 @@ struct MatrixCase
 {
     MatrixCase(unsigned cols,
                unsigned rows,
-               unsigned matrixStride,
                const char *computeShaderSource,
-               const float *inputData)
+               Span<const float> inputData)
         : mColumns(cols),
           mRows(rows),
-          mMatrixStride(matrixStride),
           mComputeShaderSource(computeShaderSource),
           mInputdata(inputData)
     {}
     unsigned int mColumns;
     unsigned int mRows;
-    unsigned int mMatrixStride;
     const char *mComputeShaderSource;
-    const float *mInputdata;
-    const unsigned int kBytesPerComponent = sizeof(float);
+    Span<const float> mInputdata;
 };
 
 struct VectorCase
 {
     VectorCase(unsigned components,
                const char *computeShaderSource,
-               const GLuint *inputData,
-               const GLuint *expectedData)
+               Span<const GLuint> inputData,
+               Span<const GLuint> expectedData)
         : mComponents(components),
           mComputeShaderSource(computeShaderSource),
           mInputdata(inputData),
@@ -55,8 +49,8 @@ struct VectorCase
     {}
     unsigned int mComponents;
     const char *mComputeShaderSource;
-    const GLuint *mInputdata;
-    const GLuint *mExpectedData;
+    Span<const GLuint> mInputdata;
+    Span<const GLuint> mExpectedData;
     const unsigned int kBytesPerComponent = sizeof(GLuint);
 };
 
@@ -78,16 +72,21 @@ class ShaderStorageBufferTest31 : public ANGLETest<>
 
     void runMatrixTest(const MatrixCase &matrixCase)
     {
+        // The input holds mRows padded rows (std140/std430), so the stride follows from its size.
+        ASSERT_EQ(matrixCase.mInputdata.size() % matrixCase.mRows, 0u);
+        const size_t floatsPerRow = matrixCase.mInputdata.size() / matrixCase.mRows;
+        ASSERT_GE(floatsPerRow, matrixCase.mColumns);
+
         ANGLE_GL_COMPUTE_PROGRAM(program, matrixCase.mComputeShaderSource);
         glUseProgram(program);
 
         // Create shader storage buffer
         GLBuffer shaderStorageBuffer[2];
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
-        glBufferData(GL_SHADER_STORAGE_BUFFER, matrixCase.mRows * matrixCase.mMatrixStride,
-                     matrixCase.mInputdata, GL_STATIC_DRAW);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, matrixCase.mInputdata.size_bytes(),
+                     matrixCase.mInputdata.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-        glBufferData(GL_SHADER_STORAGE_BUFFER, matrixCase.mRows * matrixCase.mMatrixStride, nullptr,
+        glBufferData(GL_SHADER_STORAGE_BUFFER, matrixCase.mInputdata.size_bytes(), nullptr,
                      GL_STATIC_DRAW);
 
         // Bind shader storage buffer
@@ -99,19 +98,16 @@ class ShaderStorageBufferTest31 : public ANGLETest<>
 
         // Read back shader storage buffer
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-        const GLfloat *ptr = reinterpret_cast<const GLfloat *>(
-            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0,
-                             matrixCase.mRows * matrixCase.mMatrixStride, GL_MAP_READ_BIT));
+        auto results = MapBufferRange<const GLfloat>(
+            GL_SHADER_STORAGE_BUFFER, 0, matrixCase.mInputdata.size_bytes(), GL_MAP_READ_BIT);
+        ASSERT_FALSE(results.empty());
 
         for (unsigned int row = 0; row < matrixCase.mRows; row++)
         {
             for (unsigned int col = 0; col < matrixCase.mColumns; col++)
             {
-                GLfloat expected = matrixCase.mInputdata[row * (matrixCase.mMatrixStride /
-                                                                matrixCase.kBytesPerComponent) +
-                                                         col];
-                GLfloat actual =
-                    *(ptr + row * (matrixCase.mMatrixStride / matrixCase.kBytesPerComponent) + col);
+                GLfloat expected = matrixCase.mInputdata[row * floatsPerRow + col];
+                GLfloat actual   = results[row * floatsPerRow + col];
 
                 EXPECT_EQ(expected, actual) << " at row " << row << " and column " << col;
             }
@@ -129,8 +125,8 @@ class ShaderStorageBufferTest31 : public ANGLETest<>
         GLBuffer shaderStorageBuffer[2];
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
         glBufferData(GL_SHADER_STORAGE_BUFFER,
-                     vectorCase.mComponents * vectorCase.kBytesPerComponent, vectorCase.mInputdata,
-                     GL_STATIC_DRAW);
+                     vectorCase.mComponents * vectorCase.kBytesPerComponent,
+                     vectorCase.mInputdata.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
         glBufferData(GL_SHADER_STORAGE_BUFFER,
                      vectorCase.mComponents * vectorCase.kBytesPerComponent, nullptr,
@@ -145,12 +141,13 @@ class ShaderStorageBufferTest31 : public ANGLETest<>
 
         // Read back shader storage buffer
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-        const GLuint *ptr = reinterpret_cast<const GLuint *>(glMapBufferRange(
+        auto results = MapBufferRange<const GLuint>(
             GL_SHADER_STORAGE_BUFFER, 0, vectorCase.mComponents * vectorCase.kBytesPerComponent,
-            GL_MAP_READ_BIT));
+            GL_MAP_READ_BIT);
+        ASSERT_FALSE(results.empty());
         for (unsigned int idx = 0; idx < vectorCase.mComponents; idx++)
         {
-            EXPECT_EQ(vectorCase.mExpectedData[idx], *(ptr + idx));
+            EXPECT_EQ(vectorCase.mExpectedData[idx], results[idx]);
         }
 
         EXPECT_GL_NO_ERROR();
@@ -365,13 +362,12 @@ TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWrite)
     // Read back shader storage buffer
     static constexpr std::array<unsigned int, 2> kExpectedValues = {3u, 4u};
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kElementCount * kArrayStride,
-                                 GL_MAP_READ_BIT);
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0,
+                                                kElementCount * kArrayStride, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int idx = 0; idx < kElementCount; idx++)
     {
-        EXPECT_EQ(kExpectedValues[idx],
-                  *(reinterpret_cast<const GLuint *>(reinterpret_cast<const GLbyte *>(ptr) +
-                                                     idx * kArrayStride)));
+        EXPECT_EQ(kExpectedValues[idx], results[idx * kArrayStride / sizeof(GLuint)]);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -475,25 +471,26 @@ TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWriteAndBufferSubData)
 
         // Read back shader storage buffer
         static constexpr std::array<unsigned int, 2> kExpectedValues = {3u, 4u};
-        const GLbyte *ptr0                        = reinterpret_cast<const GLbyte *>(
-            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+        auto results =
+            MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+        ASSERT_FALSE(results.empty());
         for (unsigned int idx = 0; idx < kElementCount; idx++)
         {
-            EXPECT_EQ(kExpectedValues[idx],
-                      *(reinterpret_cast<const GLuint *>(ptr0 + idx * kArrayStride)));
+            EXPECT_EQ(kExpectedValues[idx], results[idx * kArrayStride / sizeof(GLuint)]);
         }
 
-        const GLbyte *ptr1 = reinterpret_cast<const GLbyte *>(ptr0 + kOffset1);
-        for (unsigned int idx = 0; idx < kMiddlePaddingSize / sizeof(unsigned int); idx++)
+        auto padding =
+            results.subspan(kOffset1 / sizeof(GLuint), kMiddlePaddingSize / sizeof(GLuint));
+        for (GLuint value : padding)
         {
-            EXPECT_EQ(kMiddlePaddingValue, reinterpret_cast<const GLuint *>(ptr1)[idx]);
+            EXPECT_EQ(kMiddlePaddingValue, value);
         }
 
-        const GLbyte *ptr2 = ptr1 + kMiddlePaddingSize;
+        auto secondBlock =
+            results.subspan(kOffset2 / sizeof(GLuint), kShaderUsedSize / sizeof(GLuint));
         for (unsigned int idx = 0; idx < kElementCount; idx++)
         {
-            EXPECT_EQ(kExpectedValues[idx],
-                      *(reinterpret_cast<const GLuint *>(ptr2 + idx * kArrayStride)));
+            EXPECT_EQ(kExpectedValues[idx], secondBlock[idx * kArrayStride / sizeof(GLuint)]);
         }
 
         glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
@@ -540,11 +537,12 @@ void main()
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    const void *bufferData =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT);
+    auto mappedData = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent,
+                                                   GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
 
     constexpr unsigned int kExpectedData = 124u;
-    EXPECT_EQ(kExpectedData, *static_cast<const GLuint *>(bufferData));
+    EXPECT_EQ(kExpectedData, mappedData[0]);
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     // Running shader twice to make sure that the buffer gets updated correctly 123->124->125
@@ -552,10 +550,12 @@ void main()
 
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_PIXEL_BUFFER_BARRIER_BIT);
 
-    bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT);
+    mappedData = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent,
+                                              GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
 
     constexpr unsigned int kExpectedData2 = 125u;
-    EXPECT_EQ(kExpectedData2, *static_cast<const GLuint *>(bufferData));
+    EXPECT_EQ(kExpectedData2, mappedData[0]);
 
     // Verify re-using the SSBO buffer with a PBO contains expected data.
     // This will read-back from FBO using a PBO into the same SSBO buffer.
@@ -577,10 +577,10 @@ void main()
     glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     EXPECT_GL_NO_ERROR();
 
-    void *mappedPtr =
-        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor =
+        MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
+    ASSERT_FALSE(dataColor.empty());
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
@@ -591,9 +591,10 @@ void main()
     glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    const GLColor *ptr = reinterpret_cast<GLColor *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT));
-    EXPECT_EQ(GLColor::red, *ptr);
+    auto ssboColor = MapBufferRange<const GLColor>(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent,
+                                                   GL_MAP_READ_BIT);
+    ASSERT_FALSE(ssboColor.empty());
+    EXPECT_EQ(GLColor::red, ssboColor[0]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -655,21 +656,21 @@ void main()
     // Read back shader storage buffer
     static constexpr std::array<unsigned int, 2> kExpectedValues = {3u, 4u};
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int idx = 0; idx < kElementCount; idx++)
     {
-        EXPECT_EQ(kExpectedValues[idx],
-                  *(reinterpret_cast<const GLuint *>(reinterpret_cast<const GLbyte *>(ptr) +
-                                                     idx * kArrayStride)));
+        EXPECT_EQ(kExpectedValues[idx], results[idx * kArrayStride / sizeof(GLuint)]);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-    ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, kBufferOffset, kBufferSize, GL_MAP_READ_BIT);
+    results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, kBufferOffset, kBufferSize,
+                                           GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int idx = 0; idx < kElementCount; idx++)
     {
-        EXPECT_EQ(kExpectedValues[idx],
-                  *(reinterpret_cast<const GLuint *>(reinterpret_cast<const GLbyte *>(ptr) +
-                                                     idx * kArrayStride)));
+        EXPECT_EQ(kExpectedValues[idx], results[idx * kArrayStride / sizeof(GLuint)]);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -817,7 +818,7 @@ TEST_P(ShaderStorageBufferTest31, VectorSwizzleInColumnMajorMatrixTest)
     constexpr unsigned int kMatrixStride                                        = 16;
     constexpr float kInputDada[kColumns * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.3, 0.0, 0.4, 0.5, 0.6, 0.0};
-    MatrixCase matrixCase(kRows, kColumns, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kRows, kColumns, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -850,7 +851,7 @@ TEST_P(ShaderStorageBufferTest31, VectorSwizzleInRowMajorMatrixTest)
     constexpr unsigned int kMatrixStride                                     = 16;
     constexpr float kInputDada[kRows * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.0, 0.0, 0.3, 0.4, 0.0, 0.0, 0.5, 0.6, 0.0, 0.0};
-    MatrixCase matrixCase(kColumns, kRows, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kColumns, kRows, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -890,7 +891,7 @@ void main()
     constexpr unsigned int kMatrixStride                                     = 16;
     constexpr float kInputDada[kRows * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.0, 0.0, 0.3, 0.4, 0.0, 0.0, 0.5, 0.6, 0.0, 0.0};
-    MatrixCase matrixCase(kColumns, kRows, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kColumns, kRows, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -922,7 +923,7 @@ void main()
     constexpr unsigned int kMatrixStride                                     = 16;
     constexpr float kInputDada[kRows * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.0, 0.0, 0.3, 0.4, 0.0, 0.0, 0.5, 0.6, 0.0, 0.0};
-    MatrixCase matrixCase(kColumns, kRows, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kColumns, kRows, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -953,7 +954,7 @@ void main()
     constexpr unsigned int kMatrixStride                                     = 16;
     constexpr float kInputDada[kRows * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.0, 0.0, 0.3, 0.4, 0.0, 0.0, 0.5, 0.6, 0.0, 0.0};
-    MatrixCase matrixCase(kColumns, kRows, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kColumns, kRows, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -997,7 +998,7 @@ void main()
     constexpr unsigned int kMatrixStride                                     = 16;
     constexpr float kInputDada[kRows * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.0, 0.0, 0.3, 0.4, 0.0, 0.0, 0.5, 0.6, 0.0, 0.0};
-    MatrixCase matrixCase(kColumns, kRows, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kColumns, kRows, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -1030,7 +1031,7 @@ void main()
     constexpr unsigned int kMatrixStride                                        = 16;
     constexpr float kInputDada[kColumns * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.3, 0.0, 0.4, 0.5, 0.6, 0.0};
-    MatrixCase matrixCase(kRows, kColumns, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kRows, kColumns, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -1058,7 +1059,7 @@ void main()
     constexpr unsigned int kMatrixStride                                        = 16;
     constexpr float kInputDada[kColumns * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.3, 0.0, 0.4, 0.5, 0.6, 0.0};
-    MatrixCase matrixCase(kRows, kColumns, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kRows, kColumns, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -1085,7 +1086,7 @@ void main()
     constexpr unsigned int kMatrixStride                                        = 16;
     constexpr float kInputDada[kColumns * (kMatrixStride / kBytesPerComponent)] = {
         0.1, 0.2, 0.3, 0.0, 0.4, 0.5, 0.6, 0.0};
-    MatrixCase matrixCase(kRows, kColumns, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kRows, kColumns, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -1181,22 +1182,23 @@ void main()
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
     constexpr float kExpectedValues[5] = {1u, 2u, 3u, 4u, 5u};
-    const GLuint *ptr                  = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, totalSize, GL_MAP_READ_BIT));
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, totalSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     // instanceOut.s[0]
-    EXPECT_EQ(kExpectedValues[0], *ptr);
-    EXPECT_EQ(kExpectedValues[1], *(ptr + 1));
-    EXPECT_EQ(kExpectedValues[2], *(ptr + 4));
-    EXPECT_EQ(kExpectedValues[3], *(ptr + 8));
+    EXPECT_EQ(kExpectedValues[0], results[0]);
+    EXPECT_EQ(kExpectedValues[1], results[1]);
+    EXPECT_EQ(kExpectedValues[2], results[4]);
+    EXPECT_EQ(kExpectedValues[3], results[8]);
     // instanceOut.s[1]
-    ptr += kStructureStride / kBytesPerComponent;
-    EXPECT_EQ(kExpectedValues[0], *ptr);
-    EXPECT_EQ(kExpectedValues[1], *(ptr + 1));
-    EXPECT_EQ(kExpectedValues[2], *(ptr + 4));
-    EXPECT_EQ(kExpectedValues[3], *(ptr + 8));
+    results = results.subspan(kStructureStride / kBytesPerComponent);
+    EXPECT_EQ(kExpectedValues[0], results[0]);
+    EXPECT_EQ(kExpectedValues[1], results[1]);
+    EXPECT_EQ(kExpectedValues[2], results[4]);
+    EXPECT_EQ(kExpectedValues[3], results[8]);
     // instanceOut.lastData
-    ptr += kStructureStride / kBytesPerComponent;
-    EXPECT_EQ(kExpectedValues[4], *(ptr));
+    results = results.subspan(kStructureStride / kBytesPerComponent);
+    EXPECT_EQ(kExpectedValues[4], results[0]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -1296,23 +1298,24 @@ void main()
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
     constexpr float kExpectedValues[5] = {1u, 2u, 3u, 4u, 5u};
-    const GLuint *ptr                  = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, totalSize, GL_MAP_READ_BIT));
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, totalSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
 
     // instanceOut.s[0][0]
-    EXPECT_EQ(kExpectedValues[0], *(ptr + uintOffset));
-    EXPECT_EQ(kExpectedValues[1], *(ptr + uintOffset + 1));
-    EXPECT_EQ(kExpectedValues[2], *(ptr + uintOffset + 4));
-    EXPECT_EQ(kExpectedValues[3], *(ptr + uintOffset + 8));
+    EXPECT_EQ(kExpectedValues[0], results[uintOffset]);
+    EXPECT_EQ(kExpectedValues[1], results[uintOffset + 1]);
+    EXPECT_EQ(kExpectedValues[2], results[uintOffset + 4]);
+    EXPECT_EQ(kExpectedValues[3], results[uintOffset + 8]);
 
     // instanceOut.s[0][1]
-    EXPECT_EQ(kExpectedValues[0], *(ptr + uintOffset + 12));
-    EXPECT_EQ(kExpectedValues[1], *(ptr + uintOffset + 13));
-    EXPECT_EQ(kExpectedValues[2], *(ptr + uintOffset + 16));
-    EXPECT_EQ(kExpectedValues[3], *(ptr + uintOffset + 20));
+    EXPECT_EQ(kExpectedValues[0], results[uintOffset + 12]);
+    EXPECT_EQ(kExpectedValues[1], results[uintOffset + 13]);
+    EXPECT_EQ(kExpectedValues[2], results[uintOffset + 16]);
+    EXPECT_EQ(kExpectedValues[3], results[uintOffset + 20]);
 
     // instanceOut.lastData
-    EXPECT_EQ(kExpectedValues[4], *(ptr + (kLastDataOffset / kBytesPerComponent)));
+    EXPECT_EQ(kExpectedValues[4], results[kLastDataOffset / kBytesPerComponent]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -1363,13 +1366,14 @@ void main()
 
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(glMapBufferRange(
-        GL_SHADER_STORAGE_BUFFER, 0, kElementCount * kArrayStride, GL_MAP_READ_BIT));
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0,
+                                                kElementCount * kArrayStride, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int idx = 0; idx < kElementCount; idx++)
     {
         for (unsigned int idy = 0; idy < kComponentCount; idy++)
         {
-            EXPECT_EQ(kExpectedValues[idx][idy], *(ptr + idx * kComponentCount + idy));
+            EXPECT_EQ(kExpectedValues[idx][idy], results[idx * kComponentCount + idy]);
         }
     }
 
@@ -1399,10 +1403,8 @@ void main()
 
     constexpr unsigned int kColumns              = 2;
     constexpr unsigned int kRows                 = 2;
-    constexpr unsigned int kBytesPerComponent    = sizeof(float);
-    constexpr unsigned int kMatrixStride         = kRows * kBytesPerComponent;
     constexpr float kInputDada[kColumns * kRows] = {0.1, 0.2, 0.4, 0.5};
-    MatrixCase matrixCase(kRows, kColumns, kMatrixStride, kComputeShaderSource, kInputDada);
+    MatrixCase matrixCase(kRows, kColumns, kComputeShaderSource, kInputDada);
     runMatrixTest(matrixCase);
 }
 
@@ -1473,14 +1475,15 @@ void main()
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
     GLuint kExpectedValues[4] = {1u, 2u, 3u, 4u};
-    const GLuint *ptr         = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kTotalSize, GL_MAP_READ_BIT));
-    EXPECT_EQ(kExpectedValues[0], *ptr);
-    ptr += (kStructureStartOffset / kBytesPerComponent);
-    EXPECT_EQ(kExpectedValues[1], *ptr);
-    EXPECT_EQ(kExpectedValues[2], *(ptr + 1));
-    ptr += (kStructureSize / kBytesPerComponent);
-    EXPECT_EQ(kExpectedValues[3], *ptr);
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kTotalSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kExpectedValues[0], results[0]);
+    results = results.subspan(kStructureStartOffset / kBytesPerComponent);
+    EXPECT_EQ(kExpectedValues[1], results[0]);
+    EXPECT_EQ(kExpectedValues[2], results[1]);
+    results = results.subspan(kStructureSize / kBytesPerComponent);
+    EXPECT_EQ(kExpectedValues[3], results[0]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -1562,18 +1565,20 @@ void main()
     // Read back shader storage buffer
     GLuint kExpectedValues[7] = {1u, 2u, 3u, 4u, 5u, 6u, 7u};
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kTotalSize, GL_MAP_READ_BIT));
-    EXPECT_EQ(kExpectedValues[0], *ptr);
-    ptr += (kStructureS1StartOffset / kBytesPerComponent);
-    EXPECT_EQ(kExpectedValues[1], *ptr);
-    EXPECT_EQ(kExpectedValues[2], *(ptr + 1));
-    ptr += ((kStructureS2StartOffset - kStructureS1StartOffset) / kBytesPerComponent);
-    EXPECT_EQ(kExpectedValues[3], *ptr);
-    EXPECT_EQ(kExpectedValues[4], *(ptr + 1));
-    EXPECT_EQ(kExpectedValues[5], *(ptr + 2));
-    ptr += ((kStructureS1Size - kStructureS2StartOffset) / kBytesPerComponent);
-    EXPECT_EQ(kExpectedValues[6], *(ptr + 4));
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kTotalSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kExpectedValues[0], results[0]);
+    results = results.subspan(kStructureS1StartOffset / kBytesPerComponent);
+    EXPECT_EQ(kExpectedValues[1], results[0]);
+    EXPECT_EQ(kExpectedValues[2], results[1]);
+    results =
+        results.subspan((kStructureS2StartOffset - kStructureS1StartOffset) / kBytesPerComponent);
+    EXPECT_EQ(kExpectedValues[3], results[0]);
+    EXPECT_EQ(kExpectedValues[4], results[1]);
+    EXPECT_EQ(kExpectedValues[5], results[2]);
+    results = results.subspan((kStructureS1Size - kStructureS2StartOffset) / kBytesPerComponent);
+    EXPECT_EQ(kExpectedValues[6], results[4]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -1618,13 +1623,12 @@ void main()
     // Read back shader storage buffer
     static constexpr std::array<unsigned int, 2> kExpectedValues = {5u, 7u};
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kElementCount * kArrayStride,
-                                 GL_MAP_READ_BIT);
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0,
+                                                kElementCount * kArrayStride, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int idx = 0; idx < kElementCount; idx++)
     {
-        EXPECT_EQ(kExpectedValues[idx],
-                  *(reinterpret_cast<const GLuint *>(reinterpret_cast<const GLbyte *>(ptr) +
-                                                     idx * kArrayStride)));
+        EXPECT_EQ(kExpectedValues[idx], results[idx * kArrayStride / sizeof(GLuint)]);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -1694,22 +1698,24 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer1);
-    const void *ptr1 =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 3 * arrayStride1, GL_MAP_READ_BIT);
+    auto results1 = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, 3 * arrayStride1,
+                                                 GL_MAP_READ_BIT);
+    ASSERT_FALSE(results1.empty());
     for (unsigned int idx = 0; idx < numInvocations; idx++)
     {
-        EXPECT_EQ(idx + 1, *((const GLuint *)((const GLbyte *)ptr1 + idx * arrayStride1)));
+        EXPECT_EQ(idx + 1, results1[idx * arrayStride1 / sizeof(GLuint)]);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     EXPECT_GL_NO_ERROR();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer2);
-    const void *ptr2 =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 3 * arrayStride2, GL_MAP_READ_BIT);
+    auto results2 = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, 3 * arrayStride2,
+                                                 GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
+    ASSERT_FALSE(results2.empty());
     for (unsigned int idx = 0; idx < numInvocations; idx++)
     {
-        EXPECT_EQ(idx + 2, *((const GLuint *)((const GLbyte *)ptr2 + idx * arrayStride2)));
+        EXPECT_EQ(idx + 2, results2[idx * arrayStride2 / sizeof(GLuint)]);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -1848,11 +1854,12 @@ void main()
 
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 3 * kBytesPerComponent, GL_MAP_READ_BIT));
-    EXPECT_EQ(kB1Value, ptr[0]);
-    EXPECT_EQ(kB2Value[0], ptr[1]);
-    EXPECT_EQ(kB2Value[1], ptr[2]);
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, 3 * kBytesPerComponent,
+                                                GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kB1Value, results[0]);
+    EXPECT_EQ(kB2Value[0], results[1]);
+    EXPECT_EQ(kB2Value[1], results[2]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -1911,11 +1918,12 @@ void main()
 
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 3 * kBytesPerComponent, GL_MAP_READ_BIT));
-    EXPECT_EQ(kBValues[0], ptr[0]);
-    EXPECT_EQ(kBValues[1], ptr[1]);
-    EXPECT_EQ(kBValues[2], ptr[2]);
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, 3 * kBytesPerComponent,
+                                                GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kBValues[0], results[0]);
+    EXPECT_EQ(kBValues[1], results[1]);
+    EXPECT_EQ(kBValues[2], results[2]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -1997,12 +2005,13 @@ void main()
 
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSsbSize, GL_MAP_READ_BIT));
-    EXPECT_EQ(kBValues[0], ptr[0]);
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kSsbSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kBValues[0], results[0]);
     // Index 1 is padding.
-    EXPECT_EQ(kBValues[2], ptr[2]);
-    EXPECT_EQ(kBValues[3], ptr[3]);
+    EXPECT_EQ(kBValues[2], results[2]);
+    EXPECT_EQ(kBValues[3], results[3]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2079,8 +2088,9 @@ void main()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
     static constexpr std::array<GLuint, kAElementCount> kExpectedADatas = {1u, 2u, 3u, 4u,
                                                                            5u, 6u, 7u, 8u};
-    const GLuint *ptr                                = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kTotalSize, GL_MAP_READ_BIT));
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kTotalSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned i = 0u; i < kDimension0; i++)
     {
         for (unsigned j = 0u; j < kDimension1; j++)
@@ -2089,13 +2099,13 @@ void main()
             {
                 unsigned index = i * (kDimension1 * kDimension2) + j * kDimension2 + k;
                 EXPECT_EQ(kExpectedADatas[index],
-                          *(ptr + index * (kArrayStride / kBytesPerComponent)));
+                          results[index * (kArrayStride / kBytesPerComponent)]);
             }
         }
     }
 
-    ptr += (kAElementCount * (kArrayStride / kBytesPerComponent));
-    EXPECT_EQ(kInputBData, *ptr);
+    results = results.subspan(kAElementCount * (kArrayStride / kBytesPerComponent));
+    EXPECT_EQ(kInputBData, results[0]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2152,12 +2162,12 @@ void main()
     glFinish();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kStoreBlockElementCount * kBytesPerComponent,
-                         GL_MAP_READ_BIT));
+    auto results = MapBufferRange<const GLuint>(
+        GL_SHADER_STORAGE_BUFFER, 0, kStoreBlockElementCount * kBytesPerComponent, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int i = 0; i < kStoreBlockElementCount; i++)
     {
-        EXPECT_EQ(kExpectedValues[i], *(ptr + i));
+        EXPECT_EQ(kExpectedValues[i], results[i]);
     }
 
     EXPECT_GL_NO_ERROR();
@@ -2219,12 +2229,12 @@ void main()
     glFinish();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kStoreBlockElementCount * kBytesPerComponent,
-                         GL_MAP_READ_BIT));
+    auto results = MapBufferRange<const GLuint>(
+        GL_SHADER_STORAGE_BUFFER, 0, kStoreBlockElementCount * kBytesPerComponent, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int i = 0; i < kStoreBlockElementCount; i++)
     {
-        EXPECT_EQ(kExpectedValues[i], *(ptr + i));
+        EXPECT_EQ(kExpectedValues[i], results[i]);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -2251,12 +2261,13 @@ void main()
     glFinish();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr2 = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0,
-                         kSmallerStoreBlockElementCount * kBytesPerComponent, GL_MAP_READ_BIT));
+    auto smallerResults = MapBufferRange<const GLuint>(
+        GL_SHADER_STORAGE_BUFFER, 0, kSmallerStoreBlockElementCount * kBytesPerComponent,
+        GL_MAP_READ_BIT);
+    ASSERT_FALSE(smallerResults.empty());
     for (unsigned int i = 0; i < kSmallerStoreBlockElementCount; i++)
     {
-        EXPECT_EQ(kSmallerExpectedValues[i], *(ptr2 + i));
+        EXPECT_EQ(kSmallerExpectedValues[i], smallerResults[i]);
     }
 
     EXPECT_GL_NO_ERROR();
@@ -2304,9 +2315,10 @@ void main()
     glFinish();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT));
-    EXPECT_EQ(kExpectedValue, *ptr);
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent,
+                                                GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kExpectedValue, results[0]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2361,10 +2373,11 @@ void main()
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+    auto results =
+        MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     constexpr unsigned int kExpectedValue = 5 + 7 + 11;
-    EXPECT_EQ(kExpectedValue, *ptr);
+    EXPECT_EQ(kExpectedValue, results[0]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2428,11 +2441,12 @@ TEST_P(ShaderStorageBufferTest31, ReadonlyBinaryOperator)
     // Read back shader storage buffer
     static constexpr std::array<unsigned int, kComponentCount> kExpectedValues = {9u, 12u};
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[3]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(glMapBufferRange(
-        GL_SHADER_STORAGE_BUFFER, 0, kComponentCount * kBytesPerComponent, GL_MAP_READ_BIT));
+    auto results = MapBufferRange<const GLuint>(
+        GL_SHADER_STORAGE_BUFFER, 0, kComponentCount * kBytesPerComponent, GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
     for (unsigned int idx = 0; idx < kComponentCount; idx++)
     {
-        EXPECT_EQ(kExpectedValues[idx], *(ptr + idx));
+        EXPECT_EQ(kExpectedValues[idx], results[idx]);
     }
 
     EXPECT_GL_NO_ERROR();
@@ -2488,10 +2502,11 @@ void main(void)
     glFinish();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 2 * kBytesPerComponent, GL_MAP_READ_BIT));
-    EXPECT_EQ(kExpectedValues[0], *ptr);
-    EXPECT_EQ(kExpectedValues[1], *(ptr + 1));
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, 2 * kBytesPerComponent,
+                                                GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kExpectedValues[0], results[0]);
+    EXPECT_EQ(kExpectedValues[1], results[1]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2536,9 +2551,10 @@ void main()
     glFinish();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLuint *ptr = reinterpret_cast<const GLuint *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT));
-    EXPECT_EQ(kExpectedValue, *ptr);
+    auto results = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent,
+                                                GL_MAP_READ_BIT);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(kExpectedValue, results[0]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2791,9 +2807,10 @@ void main()
     // Verify the contents of the buffer.  It should have blue as the first index and green as the
     // second.
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
-    GLColor *bufferContents = static_cast<GLColor *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+    auto bufferContents =
+        MapBufferRange<const GLColor>(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
+    ASSERT_FALSE(bufferContents.empty());
 
     EXPECT_EQ(GLColor::blue, bufferContents[0]);
     EXPECT_EQ(GLColor::green, bufferContents[1]);
@@ -2900,9 +2917,10 @@ void main()
 
     // Verify the contents of the buffer.
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
-    uint32_t *bufferContents = static_cast<uint32_t *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+    auto bufferContents =
+        MapBufferRange<const uint32_t>(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
+    ASSERT_FALSE(bufferContents.empty());
 
     EXPECT_EQ(bufferContents[0], 0x11223344u);
     EXPECT_EQ(bufferContents[1], 0x55667788u);
@@ -3013,11 +3031,12 @@ void main() {
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    const void *bufferData =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT);
+    auto mappedData = MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent,
+                                                   GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
 
     constexpr unsigned int kExpectedData = 124u;
-    EXPECT_EQ(kExpectedData, *static_cast<const GLuint *>(bufferData));
+    EXPECT_EQ(kExpectedData, mappedData[0]);
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     EXPECT_GL_NO_ERROR();
@@ -3059,12 +3078,13 @@ void main() {
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    const void *bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0,
-                                              kElementCount * kBytesPerComponent, GL_MAP_READ_BIT);
+    auto mappedData = MapBufferRange<const GLuint>(
+        GL_SHADER_STORAGE_BUFFER, 0, kElementCount * kBytesPerComponent, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
 
     for (unsigned int idx = 0; idx < kElementCount; idx++)
     {
-        EXPECT_EQ(static_cast<const GLuint *>(bufferData)[idx], idx);
+        EXPECT_EQ(mappedData[idx], idx);
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -3095,13 +3115,19 @@ void main() {
 
     glUseProgram(program);
 
-    constexpr size_t kSize = sizeof(GLfloat) + sizeof(GLint);
+    // Matches the std430 layout of StructValues in the shader.
+    struct StructValues
+    {
+        GLfloat f;
+        GLint i;
+    };
+    static_assert(sizeof(StructValues) == 8 && offsetof(StructValues, i) == 4);
 
     // Create shader storage buffer
     GLBuffer shaderStorageBuffer;
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, kSize, nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(StructValues), nullptr, GL_STATIC_DRAW);
 
     // Bind shader storage buffer
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer);
@@ -3111,10 +3137,12 @@ void main() {
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    const void *bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize, GL_MAP_READ_BIT);
+    auto mappedData = MapBufferRange<const StructValues>(GL_SHADER_STORAGE_BUFFER, 0,
+                                                         sizeof(StructValues), GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
 
-    EXPECT_EQ(static_cast<const GLfloat *>(bufferData)[0], 123.0f);
-    EXPECT_EQ(static_cast<const GLint *>(bufferData)[1], 321);
+    EXPECT_EQ(mappedData[0].f, 123.0f);
+    EXPECT_EQ(mappedData[0].i, 321);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -3155,9 +3183,11 @@ void main() {
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
-    const void *bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize, GL_MAP_READ_BIT);
+    auto mappedData =
+        MapBufferRange<const int32_t>(GL_SHADER_STORAGE_BUFFER, 0, kSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
 
-    int32_t result = static_cast<const int32_t *>(bufferData)[0];
+    int32_t result = mappedData[0];
 
     // Compare against the int32_t representation of the float passed to
     // intBitsToFloat() in the shader.
@@ -3208,16 +3238,18 @@ void main() {
     ASSERT_GL_NO_ERROR();
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
-    const void *buffer0Data =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize[0], GL_MAP_READ_BIT);
-    EXPECT_EQ(static_cast<const GLfloat *>(buffer0Data)[0], 0.5f);
+    auto buffer0Data =
+        MapBufferRange<const GLfloat>(GL_SHADER_STORAGE_BUFFER, 0, kSize[0], GL_MAP_READ_BIT);
+    ASSERT_FALSE(buffer0Data.empty());
+    EXPECT_EQ(buffer0Data[0], 0.5f);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const void *buffer1Data =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize[1], GL_MAP_READ_BIT);
-    EXPECT_EQ(static_cast<const GLfloat *>(buffer1Data)[0], 42.0f);
+    auto buffer1Data =
+        MapBufferRange<const GLfloat>(GL_SHADER_STORAGE_BUFFER, 0, kSize[1], GL_MAP_READ_BIT);
+    ASSERT_FALSE(buffer1Data.empty());
+    EXPECT_EQ(buffer1Data[0], 42.0f);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -3268,16 +3300,18 @@ void main() {
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
-    const void *buffer0Data =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize[0], GL_MAP_READ_BIT);
-    EXPECT_EQ(static_cast<const GLfloat *>(buffer0Data)[0], 0.5f);
+    auto buffer0Data =
+        MapBufferRange<const GLfloat>(GL_SHADER_STORAGE_BUFFER, 0, kSize[0], GL_MAP_READ_BIT);
+    ASSERT_FALSE(buffer0Data.empty());
+    EXPECT_EQ(buffer0Data[0], 0.5f);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const void *buffer1Data =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize[1], GL_MAP_READ_BIT);
-    EXPECT_EQ(static_cast<const GLfloat *>(buffer1Data)[0], 42.0f);
+    auto buffer1Data =
+        MapBufferRange<const GLfloat>(GL_SHADER_STORAGE_BUFFER, 0, kSize[1], GL_MAP_READ_BIT);
+    ASSERT_FALSE(buffer1Data.empty());
+    EXPECT_EQ(buffer1Data[0], 42.0f);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -3362,9 +3396,10 @@ void main()
     // Validate results.  Barrier needed for glMapBufferRange
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
     std::vector<uint32_t> result(kSSBOSize / 2);
-    const void *bufferData =
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSSBOSize * 2, GL_MAP_READ_BIT);
-    memcpy(result.data(), bufferData, kSSBOSize * 2);
+    auto mappedData =
+        MapBufferRange<const uint32_t>(GL_SHADER_STORAGE_BUFFER, 0, kSSBOSize * 2, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
+    Span(result).copy_from(mappedData);
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     for (size_t index = 0; index < kSSBOSize * 2 / kUVec4Size; ++index)
@@ -3409,8 +3444,10 @@ void main()
 
     // Validate results.  Barrier needed for glMapBufferRange
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
-    bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSSBOSize * 2, GL_MAP_READ_BIT);
-    memcpy(result.data(), bufferData, kSSBOSize * 2);
+    mappedData =
+        MapBufferRange<const uint32_t>(GL_SHADER_STORAGE_BUFFER, 0, kSSBOSize * 2, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mappedData.empty());
+    Span(result).copy_from(mappedData);
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     for (size_t index = 0; index < kSSBOSize * 2 / kUVec4Size; ++index)
@@ -3532,13 +3569,13 @@ void main() {
     for (int i = 0; i < 10; i++)
     {
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[i]);
-        const GLuint *ptr = reinterpret_cast<const GLuint *>(
-            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
-        ASSERT(ptr != nullptr);
-        EXPECT_EQ(kGraphicsUniformValue + i, *(ptr));
-        EXPECT_EQ(0u, *(ptr + 1));
-        EXPECT_EQ(0u, *(ptr + 2));
-        EXPECT_EQ(0u, *(ptr + 3));
+        auto results =
+            MapBufferRange<const GLuint>(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+        ASSERT_FALSE(results.empty());
+        EXPECT_EQ(kGraphicsUniformValue + i, results[0]);
+        EXPECT_EQ(0u, results[1]);
+        EXPECT_EQ(0u, results[2]);
+        EXPECT_EQ(0u, results[3]);
         glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     }
     EXPECT_GL_NO_ERROR();

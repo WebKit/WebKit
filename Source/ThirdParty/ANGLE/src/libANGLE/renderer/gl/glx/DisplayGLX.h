@@ -38,6 +38,8 @@ class DisplayGLX : public DisplayGL, public ThreadSafeDisplayGL
     egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
+    egl::Error beforeDestroyContext(const gl::Context *context) override;
+    egl::Error afterDestroyContext() override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
                                      EGLNativeWindowType window,
@@ -96,6 +98,7 @@ class DisplayGLX : public DisplayGL, public ThreadSafeDisplayGL
                               bool makeNewContextCurrent,
                               std::shared_ptr<RendererGLX> *outRenderer);
     RendererGL *getRenderer() const override;
+    void destroyNativeContext(glx::Context context);
 
     angle::NativeWindowSystem getWindowSystem() const override;
 
@@ -127,8 +130,9 @@ class DisplayGLX : public DisplayGL, public ThreadSafeDisplayGL
     glx::FBConfig mContextConfig;
     struct NativeContext
     {
-        glx::Context context;
-        glx::Drawable drawable;
+        glx::Context context   = nullptr;
+        glx::Drawable drawable = 0;
+        bool needsRestore      = false;
     };
     angle::SimpleMutex mCurrentNativeContextsMutex;
     angle::HashMap<uint64_t, NativeContext> mCurrentNativeContexts;

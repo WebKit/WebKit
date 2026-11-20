@@ -15,6 +15,7 @@
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "util/linux/x11/X11Window.h"
 
@@ -56,11 +57,14 @@ class EGLX11VisualHintTest : public ANGLETest<>
             XGetVisualInfo(mDisplay, VisualScreenMask, &visualTemplate, &numVisuals);
         EXPECT_TRUE(numVisuals >= 2);
 
-        for (int i = 0; i < numVisuals; ++i)
+        // SAFETY: XGetVisualInfo returns an array of numVisuals entries.
+        Span<const XVisualInfo> visualList =
+            ANGLE_UNSAFE_BUFFERS(Span(visuals, static_cast<size_t>(numVisuals)));
+        for (const XVisualInfo &visual : visualList)
         {
-            if (ANGLE_UNSAFE_TODO(visuals[i]).visualid != visualId)
+            if (visual.visualid != visualId)
             {
-                int result = ANGLE_UNSAFE_TODO(visuals[i]).visualid;
+                int result = visual.visualid;
                 XFree(visuals);
                 return result;
             }
