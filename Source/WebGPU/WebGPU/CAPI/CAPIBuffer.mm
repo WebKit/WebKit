@@ -30,20 +30,20 @@
 
 NODELETE void wgpuBufferAddRef(WGPUBuffer buffer)
 {
-    WebGPU::CAPI::metalFromAPI(buffer).ref();
+    WebGPU::CAPI::fromAPI(buffer).ref();
 }
 
 void wgpuBufferRelease(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(buffer).deref();
+        WebGPU::CAPI::fromAPI(buffer).deref();
     }
 }
 
 void wgpuBufferDestroy(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(buffer))->destroy();
+        protect(WebGPU::CAPI::fromAPI(buffer))->destroy();
     }
 }
 
@@ -105,14 +105,14 @@ WGPUFuture wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset
 void wgpuBufferUnmap(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(buffer))->unmap();
+        protect(WebGPU::CAPI::fromAPI(buffer))->unmap();
     }
 }
 
 void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(buffer))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(buffer))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }
 

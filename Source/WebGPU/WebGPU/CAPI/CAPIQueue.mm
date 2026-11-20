@@ -30,13 +30,13 @@
 
 NODELETE void wgpuQueueAddRef(WGPUQueue queue)
 {
-    WebGPU::CAPI::metalFromAPI(queue).ref();
+    WebGPU::CAPI::fromAPI(queue).ref();
 }
 
 void wgpuQueueRelease(WGPUQueue queue)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(queue).deref();
+        WebGPU::CAPI::fromAPI(queue).deref();
     }
 }
 
@@ -60,10 +60,10 @@ WGPUFuture wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallba
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
     @autoreleasepool {
-        Vector<Ref<WebGPU::Metal::CommandBuffer>> commandsToForward;
+        Vector<Ref<WebGPU::CommandBuffer>> commandsToForward;
         for (auto& command : unsafeMakeSpan(commands, commandCount))
-            commandsToForward.append(protect(WebGPU::CAPI::metalFromAPI(command)));
-        protect(WebGPU::CAPI::metalFromAPI(queue))->submit(WTF::move(commandsToForward));
+            commandsToForward.append(protect(WebGPU::CAPI::fromAPI(command)));
+        protect(WebGPU::CAPI::fromAPI(queue))->submit(WTF::move(commandsToForward));
     }
 }
 
@@ -71,7 +71,7 @@ void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOff
 {
     @autoreleasepool {
         auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), size);
-        protect(WebGPU::CAPI::metalFromAPI(queue))->writeBuffer(protect(WebGPU::CAPI::metalFromAPI(buffer)), bufferOffset, spanConstCast<uint8_t>(bytes));
+        protect(WebGPU::CAPI::fromAPI(queue))->writeBuffer(protect(WebGPU::CAPI::fromAPI(buffer)), bufferOffset, spanConstCast<uint8_t>(bytes));
     }
 }
 
@@ -92,6 +92,6 @@ void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUTexelCopyTextureInfo* dest
 void wgpuQueueSetLabel(WGPUQueue queue, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(queue))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(queue))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }
