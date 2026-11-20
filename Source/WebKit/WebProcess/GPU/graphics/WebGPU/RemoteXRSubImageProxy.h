@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCppAPI.h>
@@ -40,9 +41,10 @@ class RemoteTextureProxy;
 class RemoteXRSubImageProxy final : public ::WebGPU::XRSubImage {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImageProxy);
 public:
-    static Ref<RemoteXRSubImageProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    // The device is the one of the XR binding, which creates the textures of the sub-image.
+    static Ref<RemoteXRSubImageProxy> create(RemoteDeviceProxy& device, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRSubImageProxy(WTF::move(parent), convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRSubImageProxy(device, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteXRSubImageProxy();
@@ -58,7 +60,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteXRSubImageProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteXRSubImageProxy(const RemoteXRSubImageProxy&) = delete;
     RemoteXRSubImageProxy(RemoteXRSubImageProxy&&) = delete;
@@ -81,6 +83,7 @@ private:
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
+    const Ref<RemoteDeviceProxy> m_device;
 
     const RefPtr<RemoteTextureProxy> m_currentTexture;
     const RefPtr<RemoteTextureProxy> m_currentDepthTexture;

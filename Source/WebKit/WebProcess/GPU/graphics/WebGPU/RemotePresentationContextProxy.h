@@ -95,6 +95,8 @@ private:
     // The properties of the textures of the current configuration, as configured: the GPU Process
     // may clamp the size or replace an unsupported format.
     RemoteTextureProxy::Properties m_textureProperties;
+    // The device of the current configuration, which the textures belong to.
+    RefPtr<RemoteDeviceProxy> m_configuredDevice;
 };
 
 } // namespace WebKit::WebGPU

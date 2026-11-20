@@ -30,6 +30,7 @@
 #endif
 
 #import "BindableResource.h"
+#import "Device.h"
 #import <Metal/Metal.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
@@ -51,7 +52,6 @@ namespace WebGPU::Metal {
 
 class BindGroup;
 class CommandEncoder;
-class Device;
 class RenderBundle;
 class TextureView;
 struct ResolvedTextureViewDescriptor;
@@ -138,7 +138,7 @@ public:
     std::optional<WebGPU::TextureFormat> optionalFormat() const final { return m_format; }
     NODELETE OptionSet<WebGPU::TextureUsage> usage() const final { return m_usage; }
 
-    Device& device() const { return m_device; }
+    Device& device() const final { return m_device; }
 
     NODELETE bool previouslyCleared() const;
     void setPreviouslyCleared();

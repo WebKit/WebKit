@@ -53,15 +53,16 @@ class RemoteTextureProxy final : public ::WebGPU::Texture {
 public:
     using Properties = RemoteTextureProxyProperties;
 
-    static Ref<RemoteTextureProxy> create(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, const Properties& properties = { }, bool isCanvasBacking = false)
+    static Ref<RemoteTextureProxy> create(RemoteDeviceProxy& device, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, const Properties& properties = { }, bool isCanvasBacking = false)
     {
-        return adoptRef(*new RemoteTextureProxy(WTF::move(root), convertToBackingContext, identifier, properties, isCanvasBacking));
+        return adoptRef(*new RemoteTextureProxy(device, convertToBackingContext, identifier, properties, isCanvasBacking));
     }
 
     virtual ~RemoteTextureProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
 
+    RemoteDeviceProxy& device() const final { return m_device; }
     RefPtr<::WebGPU::TextureView> createView(const std::optional<::WebGPU::TextureViewDescriptor>&) final;
 
     void destroy() final;
@@ -81,7 +82,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteTextureProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier, const Properties&, bool isCanvasBacking);
+    RemoteTextureProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier, const Properties&, bool isCanvasBacking);
 
     RemoteTextureProxy(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy(RemoteTextureProxy&&) = delete;
@@ -99,6 +100,7 @@ private:
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
+    const Ref<RemoteDeviceProxy> m_device;
 
     RefPtr<::WebGPU::TextureView> m_lastCreatedView;
     std::optional<::WebGPU::TextureViewDescriptor> m_lastCreatedViewDescriptor;
