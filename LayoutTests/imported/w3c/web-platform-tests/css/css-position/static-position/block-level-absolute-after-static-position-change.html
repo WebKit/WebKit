@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>CSS Position Test: block-level absolutely positioned box in inline content follows its static position when it changes</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#staticpos-rect">
+<link rel="match" href="block-level-absolute-after-static-position-change-ref.html">
+<meta name="assert" content="A block-level absolutely positioned box with auto insets, placed after an inline box in the same inline content, moves down to its new static position when the inline box, which contains a block, stops being display: none.">
+<style>
+body {
+  margin: 0;
+}
+.hidden {
+  display: none;
+}
+#container {
+  overflow: hidden;
+  width: 300px;
+  height: 300px;
+}
+#block {
+  height: 200px;
+  background: green;
+}
+#abspos {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: black;
+}
+</style>
+<div id="container"><span id="inlineBox" class="hidden"><div id="block"></div></span><div id="abspos"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("inlineBox").classList.remove("hidden");
+</script>

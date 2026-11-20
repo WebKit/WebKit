@@ -875,17 +875,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             ASSERT(renderer->layer());
             CheckedRef layer = *renderer->layer();
             auto borderBoxLogicalTopLeft = Layout::BoxGeometry::borderBoxTopLeft(logicalGeometry);
-
-            if (layoutBox->style().originalDisplay().isInlineType()) {
-                auto previousStaticPosition = LayoutPoint { layer->staticInlinePosition(), layer->staticBlockPosition() };
-                auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
-                auto isHorizontalWritingMode = blockFlow->writingMode().isHorizontal();
-                auto inlineDelta = layoutBox->style().hasStaticInlinePosition(isHorizontalWritingMode) ? delta.width() : 0_lu;
-                auto blockDelta = layoutBox->style().hasStaticBlockPosition(isHorizontalWritingMode) ? delta.height() : 0_lu;
-
-                blockFlow->setStaticInlinePositionForChild(renderer, borderBoxLogicalTopLeft.x());
-                renderer->move(isHorizontalWritingMode ? inlineDelta : blockDelta, isHorizontalWritingMode ? blockDelta : inlineDelta);
-            }
+            auto previousStaticPosition = LayoutPoint { layer->staticInlinePosition(), layer->staticBlockPosition() };
+            auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
+            auto isHorizontalWritingMode = blockFlow->writingMode().isHorizontal();
+            auto inlineDelta = layoutBox->style().hasStaticInlinePosition(isHorizontalWritingMode) ? delta.width() : 0_lu;
+            auto blockDelta = layoutBox->style().hasStaticBlockPosition(isHorizontalWritingMode) ? delta.height() : 0_lu;
+            renderer->move(isHorizontalWritingMode ? inlineDelta : blockDelta, isHorizontalWritingMode ? blockDelta : inlineDelta);
 
             layer->setStaticBlockPosition(borderBoxLogicalTopLeft.y());
             layer->setStaticInlinePosition(borderBoxLogicalTopLeft.x());
