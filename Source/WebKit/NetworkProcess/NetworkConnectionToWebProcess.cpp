@@ -1044,7 +1044,7 @@ bool NetworkConnectionToWebProcess::consumeDownloadAuthorization(DownloadID down
 
 void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
 {
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (!consumeDownloadAuthorization(downloadID))
         return;
@@ -1062,7 +1062,7 @@ void NetworkConnectionToWebProcess::loadCancelledDownloadRedirectRequestInFrame(
 
 void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, const ResourceResponse& response, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -1480,7 +1480,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vect
 void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& srcURL, PolicyContainer&& policyContainer, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
     MESSAGE_CHECK(!url.isEmpty());
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     CheckedPtr session = networkSession();
     if (!session)
@@ -1523,7 +1523,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& u
 void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
     MESSAGE_CHECK(!url.isEmpty());
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     CheckedPtr session = networkSession();
     if (!session)
@@ -1536,7 +1536,8 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, IPC::Untru
 void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
     MESSAGE_CHECK(!url.isEmpty());
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    // Names the partition of a blob this process was handed, such as by the page that opened it, which need not be one of its first parties.
+    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
 
     CheckedPtr session = networkSession();
     if (!session)
@@ -1549,7 +1550,8 @@ void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, IPC::U
 void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
     MESSAGE_CHECK(!url.isEmpty());
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    // Names the partition of a blob this process was handed, such as by the page that opened it, which need not be one of its first parties.
+    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
 
     CheckedPtr session = networkSession();
     if (!session)
@@ -1770,7 +1772,7 @@ void NetworkConnectionToWebProcess::queryStorageAccessPermission(IPC::Untrusted<
 
 void NetworkConnectionToWebProcess::setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
 {
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (isLoginStatusAPIRequiresWebAuthnEnabled() && !lastAuthentication) {
         auto umanagedAuthentication = LoginStatus::create(domain, emptyString(), WebCore::LoginStatus::CredentialTokenType::HTTPStateToken, WebCore::LoginStatus::AuthenticationType::Unmanaged, WebCore::LoginStatus::TimeToLiveAuthentication);
@@ -1790,7 +1792,7 @@ void NetworkConnectionToWebProcess::setLoginStatus(IPC::Untrusted<WebCore::Regis
 
 void NetworkConnectionToWebProcess::isLoggedIn(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
