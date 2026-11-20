@@ -1527,8 +1527,10 @@ void Quirks::determineRelevantQuirks()
     // whatever its embedder did. Note a subframe's viewport-fit has no effect on the insets the
     // platform actually reports, so for a subframe this is a declaration of intent rather than a
     // description of the platform state.
-    if (document->settings().fullscreenSafeAreaQuirkEnabled())
-        m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk, document->safeAreaInsetOptIn() == Document::SafeAreaInsetOptIn::NotOptedIn);
+    if (document->settings().fullscreenSafeAreaQuirkEnabled()
+        && !m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk)
+        && document->safeAreaInsetOptIn() == Document::SafeAreaInsetOptIn::NotOptedIn)
+        m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk, true);
 #endif
 }
 
