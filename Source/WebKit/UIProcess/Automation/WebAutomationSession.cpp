@@ -412,26 +412,46 @@ void WebAutomationSession::didDestroyFrame(FrameIdentifier frameID)
     if (!handle.isEmpty())
         m_handleWebFrameMap.remove(handle);
 
-    for (auto& callback : m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frameID))
-        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
-    for (auto& callback : m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frameID))
-        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
-
     // The spec's navigable seen nodes map is weak between a navigable and its set, so
     // the set dies with the navigable. Note this runs after a process swap has already
     // moved the set onto the replacement frame's identifier, so it drops nothing that
     // is still reachable.
     m_knownNodeReferences.remove(frameID);
+
+    failPendingNavigationWaitsForFrame(frameID);
+}
+
+void WebAutomationSession::didDetachFramesForBackForwardCache(const Vector<Ref<WebFrameProxy>>& detachedFrames)
+{
+    // The child frames of a document that goes into the back/forward cache leave the frame tree without being
+    // destroyed, and they keep their handles for when the document is restored. Nothing will complete a command that
+    // is waiting for one of them to navigate while they are cached, so those waits end as they do for a destroyed frame.
+    Vector<FrameIdentifier> frameIDs;
+    for (Ref detachedFrame : detachedFrames) {
+        for (RefPtr frame = detachedFrame.ptr(); frame; frame = frame->traverseNext(detachedFrame.ptr()))
+            frameIDs.append(frame->frameID());
+    }
+    for (auto frameID : frameIDs)
+        failPendingNavigationWaitsForFrame(frameID);
+}
+
+void WebAutomationSession::failPendingNavigationWaitsForFrame(FrameIdentifier frameID)
+{
+    for (auto& callback : m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frameID))
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
+    for (auto& callback : m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frameID))
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
+
 #if ENABLE(WEBDRIVER_BIDI)
     // A main frame's command outlives the frame when a cross-site navigation replaces it.
-    auto isForDestroyedFrame = [&](const BidiPendingNavigation& pending) {
+    auto isForFrame = [&](const BidiPendingNavigation& pending) {
         return !pending.pageID && pending.frameID == frameID;
     };
     completeBidiCommitWaits([&](auto& pending) {
-        return isForDestroyedFrame(pending);
+        return isForFrame(pending);
     }, makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
     m_bidiPendingNavigations.removeAllMatching([&](auto& pending) {
-        return isForDestroyedFrame(pending.get());
+        return isForFrame(pending.get());
     });
 #endif
 }

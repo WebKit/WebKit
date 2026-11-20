@@ -1689,7 +1689,10 @@ std::optional<BackForwardItemIdentifiers> WebPageProxy::cacheOutgoingDocumentInP
             iframeProcesses.append(WTF::move(frameProcess));
     }
 
-    entry->setCachedChildren(mainFrame.takeChildFrames());
+    auto cachedChildren = mainFrame.takeChildFrames();
+    if (RefPtr automationSession = m_configuration->processPool().automationSession())
+        automationSession->didDetachFramesForBackForwardCache(cachedChildren);
+    entry->setCachedChildren(WTF::move(cachedChildren));
     suspendIframeProcessesForBackForwardCache(*fromItem, WTF::move(iframeProcesses), [](bool) { });
 
     return BackForwardItemIdentifiers { fromItem->identifier(), fromItem->mainFrameItem().identifier() };
@@ -23333,7 +23336,10 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
     // WebCore detaches the cached page's subframes from the main frame's FrameTree, so do the same here.
     // They are stored in the cache entry, reattached in didCommitLoadForFrame when the page is restored,
     // and released when the entry is discarded.
-    entry->setCachedChildren(mainFrame->takeChildFrames());
+    auto cachedChildren = mainFrame->takeChildFrames();
+    if (RefPtr automationSession = m_configuration->processPool().automationSession())
+        automationSession->didDetachFramesForBackForwardCache(cachedChildren);
+    entry->setCachedChildren(WTF::move(cachedChildren));
 
     suspendIframeProcessesForBackForwardCache(*item, WTF::move(iframeProcesses), WTF::move(completionHandler));
 }

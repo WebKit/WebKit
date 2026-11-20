@@ -373,6 +373,7 @@ public:
 #endif
 
     void didDestroyFrame(WebCore::FrameIdentifier);
+    void didDetachFramesForBackForwardCache(const Vector<Ref<WebFrameProxy>>&);
 
     // A process swap replaces the main frame's proxy, and the replacement is given a
     // freshly generated identifier, so references issued under the old one have to be
@@ -418,6 +419,7 @@ private:
     enum class UnboundWaits : bool { Keep, Complete };
     void forgetFrameHandles(NOESCAPE const Function<bool(const WebFrameProxy*)>&);
     void forgetDestroyedFrames();
+    void failPendingNavigationWaitsForFrame(WebCore::FrameIdentifier);
     Vector<Inspector::CommandCallback<void>> takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&, const WebPageProxy&, API::Navigation* finishedNavigation, UnboundWaits, NavigationNotification = NavigationNotification::LoadEnded);
     enum class SameDocumentNavigation : bool { No, Yes };
     enum class UserPromptEndsEvaluation : bool { No, Yes };
