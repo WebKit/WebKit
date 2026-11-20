@@ -13,6 +13,8 @@ const mimeTypeTests = [
     ['video/mp4', true],
     ['audio/MP4;codecs=" avc1.4d002a   ,mp4a.40.1"', true],
     ['video/mp4;codecs="AVC1.4d002a,   mp4a.40.1"', true],
+    ['video/mp4;codecs="hvc1.1.6.L93.B0, opus"', true],
+    ['video/mp4;codecs="hev1.1.6.L93.B0, opus"', false],
     ['video/mp4;codecs="mP4a.40.1"', true],
     ['audio/mp4;codecs="avc1.4d002a, opus"', true],
     ['audio/mp4;codecs="opus"', true],
