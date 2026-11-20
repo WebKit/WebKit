@@ -1553,7 +1553,9 @@ void DocumentLoader::checkLoadComplete()
     if (!m_frame || isLoading())
         return;
 
-    ASSERT(this == frameLoader()->activeDocumentLoader());
+    if (this != frameLoader()->activeDocumentLoader())
+        return;
+
     protect(protect(*m_frame)->document()->window())->runPrintWhenLoadedSteps();
 }
 
