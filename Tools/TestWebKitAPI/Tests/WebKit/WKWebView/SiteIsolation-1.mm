@@ -2172,6 +2172,74 @@ TEST(SiteIsolation, AppHighlightsVisibilityInCrossOriginIframe)
     }));
 }
 
+#if ENABLE(SPEECH_SYNTHESIS)
+
+TEST(SiteIsolation, SpeechSynthesisBoundaryEventInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+#if PLATFORM(IOS_FAMILY)
+    // Update configuration so that speech can be triggered by Javascript on iOS platforms
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+#endif
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScript:@"window.sawBoundaryEvent = false; window.sawEndEvent = false;"
+        "var utterance = new SpeechSynthesisUtterance('hello world');"
+        "utterance.onboundary = () => { window.sawBoundaryEvent = true; };"
+        "utterance.onend = () => { window.sawEndEvent = true; };"
+        "speechSynthesis.speak(utterance); true" inFrame:childFrame.get()];
+
+    auto sawEvent = [&](const char *flag) {
+        return [[webView objectByEvaluatingJavaScript:[NSString stringWithUTF8String:flag] inFrame:childFrame.get()] boolValue];
+    };
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return sawEvent("window.sawEndEvent");
+    }));
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return sawEvent("window.sawBoundaryEvent");
+    }));
+
+    [webView objectByEvaluatingJavaScript:@"speechSynthesis.cancel(); true" inFrame:childFrame.get()];
+}
+
+TEST(SiteIsolation, SpeechSynthesisVoicesChangedInCrossOriginIframe)
+{
+    // getVoices() only triggers voiceschanged via the asynchronous voice-list API (26.3+)
+    if (![NSClassFromString(@"AVSpeechSynthesisVoice") respondsToSelector:NSSelectorFromString(@"speechVoicesIncludingSuperCompactWithCompletionHandler:")])
+        return;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScript:@"window.sawVoicesChanged = false;"
+        "speechSynthesis.onvoiceschanged = () => { window.sawVoicesChanged = true; };"
+        "speechSynthesis.getVoices(); true" inFrame:childFrame.get()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.sawVoicesChanged" inFrame:childFrame.get()] boolValue];
+    }));
+}
+
+#endif // ENABLE(SPEECH_SYNTHESIS)
+
 #if PLATFORM(MAC)
 TEST(SiteIsolation, ContextMenuQuickNoteInCrossOriginIframe)
 {
