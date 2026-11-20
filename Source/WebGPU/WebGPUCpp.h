@@ -1497,6 +1497,9 @@ public:
     virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
     // An empty callback clears the current one. Setting a callback completes the current one.
     virtual void resolveDeviceLostPromise(CompletionHandler<void(DeviceLostReason, String&&)>&&) = 0;
+    // Whether the device is lost, as it is once destroyed. A proxy of a device in another process may
+    // learn that the device is lost later than the device does.
+    virtual bool isLost() const = 0;
     // Stops generating errors, for the objects that are created invalid on purpose.
     virtual void pauseAllErrorReporting(bool pause) = 0;
 

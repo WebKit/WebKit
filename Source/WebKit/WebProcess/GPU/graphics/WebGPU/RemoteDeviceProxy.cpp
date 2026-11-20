@@ -84,6 +84,8 @@ Ref<::WebGPU::Queue> RemoteDeviceProxy::queue()
 
 void RemoteDeviceProxy::destroy()
 {
+    // Destroying the device loses it.
+    m_isLost = true;
     auto sendResult = send(Messages::RemoteDevice::Destroy());
     UNUSED_PARAM(sendResult);
 }
@@ -457,15 +459,28 @@ bool RemoteDeviceProxy::isValid() const
 void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&& callback)
 {
     if (protect(root())->isLost()) {
+        m_isLost = true;
         callback(::WebGPU::DeviceLostReason::Unknown, { });
         return;
     }
 
-    // The GPU process does not send the message, so the device is lost with an empty one.
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::ResolveDeviceLostPromise(), [callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason) mutable {
+    // The GPU process does not send the message, so the device is lost with an empty one. Setting
+    // another callback completes this one without losing the device.
+    auto deviceLostPromiseCount = ++m_deviceLostPromiseCount;
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::ResolveDeviceLostPromise(), [weakThis = ThreadSafeWeakPtr { *this }, deviceLostPromiseCount, callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason) mutable {
+        if (RefPtr protectedThis = weakThis; protectedThis && protectedThis->m_deviceLostPromiseCount == deviceLostPromiseCount)
+            protectedThis->m_isLost = true;
         callback(reason, { });
     });
     UNUSED_PARAM(sendResult);
+}
+
+bool RemoteDeviceProxy::isLost() const
+{
+    // The proxy learns that the GPU Process lost the device from the reply of
+    // ResolveDeviceLostPromise, so asynchronously, and only while there is a callback, as GPUDevice
+    // always sets. It knows synchronously when it is destroyed and when the GPU Process is gone.
+    return m_isLost || protect(m_parent->root())->isLost();
 }
 
 void RemoteDeviceProxy::pauseAllErrorReporting(bool pause)

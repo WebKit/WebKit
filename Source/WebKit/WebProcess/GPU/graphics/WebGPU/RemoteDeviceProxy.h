@@ -95,6 +95,7 @@ public:
     void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&&) final;
+    bool isLost() const final;
     void pauseAllErrorReporting(bool pause) final;
 
     RefPtr<::WebGPU::BindGroup> createInvalidBindGroup() final;
@@ -142,6 +143,10 @@ private:
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteAdapterProxy> m_parent;
     const Ref<RemoteQueueProxy> m_queue;
+    bool m_isLost { false };
+    // Counts the calls of resolveDeviceLostPromise(), so that only the reply of the last one says
+    // that the device is lost.
+    uint64_t m_deviceLostPromiseCount { 0 };
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
