@@ -1,0 +1,63 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<textarea id="main-textarea">Hello from the main frame</textarea>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/iframe-with-textarea-focused-on-message.html" onload="runTest();"></iframe>
+
+<script>
+var output = "This test verifies the AXShowWritingTools custom action is exposed on a focused textarea in a cross-site iframe.\n\n";
+
+window.jsTestIsAsync = true;
+
+var iframeResult = null;
+window.addEventListener("message", function(event) {
+    if (event.data && event.data.type === "writing-tools-result")
+        iframeResult = event.data;
+});
+
+var axMainTextarea, mainTextareaHasShowWritingTools, iframeTextareaFocused, iframeTextareaFoundAccessibleElement, iframeTextareaHasShowWritingTools;
+
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    if (!window.internals || typeof internals.hasWritingToolsTextSuggestionMarker === "undefined") {
+        debug("SKIP: requires ENABLE(WRITING_TOOLS)");
+        finishJSTest();
+        return;
+    }
+
+    document.getElementById("main-textarea").focus();
+    axMainTextarea = accessibilityController.accessibleElementById("main-textarea");
+    mainTextareaHasShowWritingTools = await waitFor(() => axMainTextarea.supportedActions.includes("AXShowWritingTools"));
+    output += expect("mainTextareaHasShowWritingTools", "true");
+
+    eventSender.keyDown("\t");
+    document.getElementById("frame").contentWindow.postMessage("report-writing-tools", "*");
+    await new Promise(resolve => {
+        const start = Date.now();
+        const intervalID = setInterval(() => {
+            if (iframeResult || Date.now() - start > 10000) {
+                clearInterval(intervalID);
+                resolve();
+            }
+        }, 50);
+    });
+    iframeTextareaFocused = iframeResult ? iframeResult.focused : false;
+    iframeTextareaFoundAccessibleElement = iframeResult ? iframeResult.foundAccessibleElement : false;
+    iframeTextareaHasShowWritingTools = iframeResult ? iframeResult.hasShowWritingTools : false;
+    output += expect("iframeTextareaFocused", "true");
+    output += expect("iframeTextareaFoundAccessibleElement", "true");
+    output += expect("iframeTextareaHasShowWritingTools", "true");
+
+    debug(output);
+    document.getElementById("frame").hidden = true;
+    finishJSTest();
+}
+</script>
+</body>
+</html>

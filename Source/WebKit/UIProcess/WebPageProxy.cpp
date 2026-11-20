@@ -16228,7 +16228,10 @@ void WebPageProxy::editorStateChanged(IPC::Connection& connection, EditorState&&
 
 void WebPageProxy::updateWritingToolsAvailability()
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetWritingToolsAvailable(writingToolsBehavior() != WritingTools::Behavior::None), webPageIDInMainFrameProcess());
+    bool writingToolsAvailable = writingToolsBehavior() != WritingTools::Behavior::None;
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetWritingToolsAvailable(writingToolsAvailable), pageID);
+    });
 }
 
 #endif // ENABLE(WRITING_TOOLS)

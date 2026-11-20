@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Site isolation iframe that reports whether its textarea exposes AXShowWritingTools</title>
+</head>
+<body>
+<textarea id="iframe-textarea">Hello from the cross-site iframe</textarea>
+<script>
+function textareaAccessibleElement() {
+    return window.accessibilityController ? accessibilityController.accessibleElementById("iframe-textarea") : null;
+}
+
+function hasShowWritingTools() {
+    const element = textareaAccessibleElement();
+    return !!element && element.supportedActions.includes("AXShowWritingTools");
+}
+
+window.addEventListener("message", function(event) {
+    if (event.data !== "report-writing-tools")
+        return;
+
+    const start = Date.now();
+    const intervalID = setInterval(function() {
+        const focused = !!document.activeElement && document.activeElement.id === "iframe-textarea";
+        const hasAction = focused && hasShowWritingTools();
+        if (hasAction || Date.now() - start > 3000) {
+            clearInterval(intervalID);
+            window.parent.postMessage({
+                type: "writing-tools-result",
+                focused: focused,
+                foundAccessibleElement: !!textareaAccessibleElement(),
+                hasShowWritingTools: hasAction,
+            }, "*");
+        }
+    }, 50);
+});
+</script>
+</body>
+</html>
