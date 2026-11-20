@@ -115,7 +115,9 @@ void RemoteMediaResourceLoaderProxy::dataSent(RemoteMediaResourceIdentifier id, 
 
 void RemoteMediaResourceLoaderProxy::dataReceived(RemoteMediaResourceIdentifier id, const WebCore::SharedBuffer& buffer)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceLoader::DataReceived(id, IPC::SharedBufferReference { buffer }), [] (auto&& bufferHandle) {
+    IPC::SharedBufferReference data { buffer };
+    data.setMemoryLedger(WebCore::MemoryLedger::Media);
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceLoader::DataReceived(id, WTF::move(data)), [](auto&& bufferHandle) {
         // Take ownership of shared memory and mark it as media-related memory.
         if (bufferHandle)
             bufferHandle->takeOwnershipOfMemory(WebCore::MemoryLedger::Media);

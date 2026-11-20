@@ -83,10 +83,10 @@ std::optional<Ref<FragmentedSharedBuffer>> FragmentedSharedBuffer::fromIPCData(I
         if (useUnixDomainSockets || !handle.has_value() || handle->size() < minimumPageSize)
             return std::nullopt;
 
-        RefPtr sharedMemoryBuffer = SharedMemory::map(WTF::move(handle.value()), SharedMemory::Protection::ReadOnly);
+        RefPtr sharedMemoryBuffer = SharedMemory::mapTransfer(WTF::move(handle.value()));
         if (!sharedMemoryBuffer)
             return std::nullopt;
-        return SharedBuffer::create(sharedMemoryBuffer->span());
+        return sharedMemoryBuffer->createIsolatedSharedBuffer(sharedMemoryBuffer->size());
     });
 }
 

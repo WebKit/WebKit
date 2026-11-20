@@ -423,11 +423,13 @@
     (allow syscall-mig
         (kernel-mig-routine-in-use-watchos))
 #endif
+#if ASAN_ENABLED || HAVE(SAFE_MEMORY_TRANSFER)
+    (allow syscall-mig
+        (kernel-mig-routine mach_vm_region_recurse))
+#endif
 #if ASAN_ENABLED
     (allow syscall-mig
-        (kernel-mig-routine
-            mach_vm_region_recurse
-            task_set_exc_guard_behavior))
+        (kernel-mig-routine task_set_exc_guard_behavior))
 #endif
     (allow syscall-mig (kernel-mig-routine-allowed)))
 

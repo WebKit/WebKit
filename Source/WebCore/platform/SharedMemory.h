@@ -121,6 +121,8 @@ public:
     WEBCORE_EXPORT static RefPtr<SharedMemory> allocate(size_t);
     WEBCORE_EXPORT static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
     WEBCORE_EXPORT static RefPtr<SharedMemory> map(Handle&&, Protection, CopyOnWrite = CopyOnWrite::No);
+    // Maps read-only and destroys the handle. Ownership of the memory can no longer be taken afterwards.
+    WEBCORE_EXPORT static RefPtr<SharedMemory> mapTransfer(Handle&&);
 #if USE(UNIX_DOMAIN_SOCKETS)
     WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)
@@ -147,6 +149,11 @@ public:
 
     WEBCORE_EXPORT Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
 
+    // True when a mapping from mapTransfer() is the only reference to the memory, so no other process can modify it.
+    WEBCORE_EXPORT bool isExclusive() const;
+    // Wraps the memory when isExclusive(), copies it otherwise.
+    WEBCORE_EXPORT Ref<WebCore::SharedBuffer> createIsolatedSharedBuffer(size_t) const;
+
 private:
 #if OS(DARWIN)
     MachSendRight createSendRight(Protection) const;
@@ -157,6 +164,7 @@ private:
 #if PLATFORM(COCOA)
     Protection m_protection;
 #endif
+    bool m_isTransferred { false };
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor m_fileDescriptor;

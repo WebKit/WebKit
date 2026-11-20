@@ -51,7 +51,7 @@ SharedBufferReference::SharedBufferReference(std::optional<SerializableBuffer>&&
     if (auto ledger = serializableBuffer->ledger)
         serializableBuffer->handle->takeOwnershipOfMemory(*ledger);
 
-    auto sharedMemoryBuffer = SharedMemory::map(WTF::move(*serializableBuffer->handle), SharedMemory::Protection::ReadOnly);
+    RefPtr sharedMemoryBuffer = SharedMemory::mapTransfer(WTF::move(*serializableBuffer->handle));
     if (!sharedMemoryBuffer || sharedMemoryBuffer->size() < serializableBuffer->size)
         return;
 
@@ -68,7 +68,10 @@ auto SharedBufferReference::serializableBuffer() const -> std::optional<Serializ
     auto sharedMemoryBuffer = m_memory ? m_memory : SharedMemory::copyBuffer(protect(*m_buffer));
     if (!sharedMemoryBuffer)
         return std::nullopt;
-    return SerializableBuffer { m_size, sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly), m_ledger };
+    auto handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+    if (handle && m_memoryLedger)
+        handle->takeOwnershipOfMemory(*m_memoryLedger);
+    return SerializableBuffer { m_size, WTF::move(handle), m_ledger };
 }
 #endif
 
@@ -107,6 +110,23 @@ RefPtr<WebCore::SharedMemory> SharedBufferReference::sharedCopy() const
     if (!m_size)
         return nullptr;
     return SharedMemory::copyBuffer(*unsafeBuffer());
+}
+
+RefPtr<WebCore::SharedBuffer> SharedBufferReference::exclusiveBuffer() const
+{
+    RefPtr memory = m_memory;
+    if (!memory || !memory->isExclusive())
+        return nullptr;
+    return memory->createSharedBuffer(m_size);
+}
+
+Ref<WebCore::SharedBuffer> SharedBufferReference::isolatedBuffer() const
+{
+    if (RefPtr memory = m_memory)
+        return memory->createIsolatedSharedBuffer(m_size);
+    if (RefPtr buffer = m_buffer)
+        return buffer->makeContiguous();
+    return SharedBuffer::create();
 }
 
 } // namespace IPC
