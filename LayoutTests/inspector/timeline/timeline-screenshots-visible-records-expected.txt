@@ -1,0 +1,42 @@
+Test that the Screenshots views show only the screenshots in the selected range.
+
+
+== Running test suite: Timeline.ScreenshotsVisibleRecords
+-- Running test case: Timeline.ScreenshotsVisibleRecords.TimelineView
+PASS: The view should show only the screenshots in the selected range, and the one just before it.
+PASS: The view should have an image element only for each visible screenshot.
+PASS: The view should have a spacer after the screenshots.
+PASS: A layout with an unchanged range should not re-insert any element.
+PASS: The view should remove the image elements of the screenshots that left the range.
+PASS: Removing the image elements that left the range should not re-insert any element either.
+PASS: An element of a record that stays visible should be reused, not recreated.
+
+-- Running test case: Timeline.ScreenshotsVisibleRecords.SelectionRevealedOnce
+PASS: The selected screenshot should be revealed once, not on every layout.
+PASS: The selected screenshot should keep the selected style.
+
+-- Running test case: Timeline.ScreenshotsVisibleRecords.OverviewGraph
+PASS: The overview graph should show only the screenshots in the selected range, and the one just before it.
+PASS: The overview graph should have an image element only for each visible screenshot.
+PASS: The first image should be positioned by the start time of its record.
+PASS: The overview graph should remove the image elements of the screenshots that left the range.
+
+-- Running test case: Timeline.ScreenshotsVisibleRecords.ZeroCurrentTime
+PASS: The view should show the screenshots in the range when currentTime is 0.
+PASS: The view should have an image element for each visible screenshot when currentTime is 0.
+PASS: The view should not show the no-screenshots message when currentTime is 0.
+PASS: The overview graph should show the screenshots in the range when currentTime is 0.
+
+-- Running test case: Timeline.ScreenshotsVisibleRecords.EmptyRange
+PASS: The view should have no image elements for an empty range.
+PASS: The view should have no spacer for an empty range.
+PASS: The view should show the no-screenshots message for an empty range.
+PASS: The view should show the screenshots again when the range returns.
+PASS: The view should have one spacer again.
+PASS: The view should not show the message when there are screenshots.
+
+-- Running test case: Timeline.ScreenshotsVisibleRecords.RemovedRecord
+PASS: The view should show the remaining screenshots after one is removed.
+PASS: The view should have one image element less after a screenshot is removed.
+PASS: The view should keep one spacer after a screenshot is removed.
+
