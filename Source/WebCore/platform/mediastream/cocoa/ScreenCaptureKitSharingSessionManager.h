@@ -32,6 +32,7 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSError;
 OBJC_CLASS SCContentFilter;
@@ -81,6 +82,30 @@ private:
     CleanupFunction m_cleanupFunction;
 };
 
+// Content filter selected for a capture device.
+class ScreenCaptureKitContentFilter {
+    WTF_MAKE_NONCOPYABLE(ScreenCaptureKitContentFilter);
+public:
+    ScreenCaptureKitContentFilter() = default;
+    ScreenCaptureKitContentFilter(RetainPtr<SCContentFilter>&& filter, String&& deviceID)
+        : m_filter(WTF::move(filter))
+        , m_deviceID(WTF::move(deviceID))
+    {
+    }
+    ScreenCaptureKitContentFilter(ScreenCaptureKitContentFilter&&) = default;
+    ScreenCaptureKitContentFilter& operator=(ScreenCaptureKitContentFilter&&) = default;
+
+    SCContentFilter* get() const { return m_filter.get(); }
+    explicit operator bool() const { return !!m_filter; }
+    const String& deviceID() const { return m_deviceID; }
+
+    void setFilter(RetainPtr<SCContentFilter>&& filter) { m_filter = WTF::move(filter); }
+
+private:
+    RetainPtr<SCContentFilter> m_filter;
+    String m_deviceID;
+};
+
 class ScreenCaptureKitSharingSessionManager : public RefCountedAndCanMakeWeakPtr<ScreenCaptureKitSharingSessionManager> {
 public:
     WEBCORE_EXPORT static ScreenCaptureKitSharingSessionManager& singleton();
@@ -94,9 +119,9 @@ public:
 
     void cancelPicking();
 
-    RetainPtr<SCContentFilter> contentFilter(const CaptureDevice&);
+    ScreenCaptureKitContentFilter takeContentFilter(const CaptureDevice&);
     RefPtr<ScreenCaptureSessionSource> createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSourceObserver>, SCContentFilter*, SCStreamConfiguration*, SCStreamDelegate*);
-    void cancelPendingSessionForDevice(const CaptureDevice&);
+    void captureSourceWasDestroyedWithoutSession();
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
     WEBCORE_EXPORT void selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
@@ -107,6 +132,7 @@ private:
 
     void cleanupAllSessions();
     void completeDeviceSelection(SCContentFilter*);
+    String makeDeviceID(uint32_t contentID);
 
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 
@@ -116,12 +142,13 @@ private:
 
     Vector<WeakPtr<ScreenCaptureSessionSource>> m_activeSources;
 
-    RetainPtr<SCContentFilter> m_pendingContentFilter;
+    ScreenCaptureKitContentFilter m_pendingContentFilter;
 
     RetainPtr<WebDisplayMediaPromptHelper> m_promptHelper;
     CompletionHandler<void(std::optional<CaptureDevice>)> m_completionHandler;
     std::unique_ptr<RunLoop::Timer> m_watchdogTimer;
     size_t m_requestCount { 0 };
+    uint64_t m_deviceIDCounter { 0 };
 };
 
 } // namespace WebCore
