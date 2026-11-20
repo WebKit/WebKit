@@ -2676,8 +2676,6 @@
 42266907 WGPU : SimpleStateChangeTest.DrawElementsUBYTEX2ThenDrawElementsUSHORT/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DrawRepeatUnalignedVboChange/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DrawWithTextureTexSubImageThenDrawAgain/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCCWState/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCWState/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.RebindTranslatedAttribute/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.RedefineTextureInUse/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBoundElementArrayBuffer/* = SKIP

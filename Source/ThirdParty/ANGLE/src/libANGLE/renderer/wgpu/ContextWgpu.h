@@ -327,6 +327,7 @@ class ContextWgpu : public ContextImpl
     void invalidateDriverUniforms();
 
     void updatePipelineColorMasks();
+    void updateFrontFace(const gl::State &glState);
 
     void ensureCommandEncoderCreated();
     angle::Result getCurrentCommandEncoder(webgpu::RenderPassClosureReason closureReason,

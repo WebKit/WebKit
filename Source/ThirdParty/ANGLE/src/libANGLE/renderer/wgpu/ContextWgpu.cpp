@@ -655,6 +655,7 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                 // framebuffer size.
                 invalidateDriverUniforms();
                 updatePipelineColorMasks();
+                updateFrontFace(glState);
                 ANGLE_TRY(endRenderPass(webgpu::RenderPassClosureReason::FramebufferBindingChange));
             }
             break;
@@ -853,8 +854,7 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                 invalidateCurrentRenderPipeline();
                 break;
             case gl::state::DIRTY_BIT_FRONT_FACE:
-                mRenderPipelineDesc.setFrontFace(glState.getRasterizerState().frontFace);
-                invalidateCurrentRenderPipeline();
+                updateFrontFace(glState);
                 break;
             case gl::state::DIRTY_BIT_POLYGON_OFFSET_FILL_ENABLED:
                 break;
@@ -931,6 +931,7 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_CLIP_CONTROL:
                 // Driver uniforms are calculated using the clip control state.
                 invalidateDriverUniforms();
+                updateFrontFace(glState);
                 break;
             case gl::state::DIRTY_BIT_EXTENDED:
             {
@@ -1014,6 +1015,21 @@ void ContextWgpu::updatePipelineColorMasks()
     {
         invalidateCurrentRenderPipeline();
     }
+}
+
+void ContextWgpu::updateFrontFace(const gl::State &glState)
+{
+    // Inverts when the vertex shader negates gl_Position.y, which reverses the triangle winding.
+    FramebufferWgpu *framebufferWgpu = webgpu::GetImpl(glState.getDrawFramebuffer());
+    const bool upperLeftOrigin       = glState.getClipOrigin() == gl::ClipOrigin::UpperLeft;
+    const bool invert                = framebufferWgpu->flipY() == upperLeftOrigin;
+    GLenum frontFace                 = glState.getRasterizerState().frontFace;
+    if (invert)
+    {
+        frontFace = frontFace == GL_CCW ? GL_CW : GL_CCW;
+    }
+    mRenderPipelineDesc.setFrontFace(frontFace);
+    invalidateCurrentRenderPipeline();
 }
 
 GLint ContextWgpu::getGPUDisjoint()
