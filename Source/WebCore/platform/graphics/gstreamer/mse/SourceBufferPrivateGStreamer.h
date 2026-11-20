@@ -56,7 +56,7 @@ typedef MediaSourcePrivateGStreamer::RegisteredTrack RegisteredTrack;
 class AppendPipeline;
 class MediaSourcePrivateGStreamer;
 
-class SourceBufferPrivateGStreamer final : public SourceBufferPrivate, public CanMakeWeakPtr<SourceBufferPrivateGStreamer>
+class SourceBufferPrivateGStreamer final : public SourceBufferPrivate
 {
 public:
     static bool isContentTypeSupported(const ContentType&);
