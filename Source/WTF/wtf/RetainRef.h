@@ -58,13 +58,6 @@
 #define NS_RETURNS_RETAINED
 #endif
 
-// Because ARC enablement is a compile-time choice, and we compile this header
-// both ways, we need a separate copy of our code when ARC is enabled.
-#if __has_feature(objc_arc)
-#define RetainPtr RetainPtrArc
-#define RetainRef RetainRefArc
-#endif
-
 namespace WTF {
 
 template<typename T> class RetainPtr;
@@ -123,10 +116,7 @@ public:
         requires std::convertible_to<typename RetainRef<RetainPtrType<U>>::PtrType, PtrType>
     constexpr RetainRef(RetainRef<U>&& o) : m_ptr(o.leakRef()) { ASSERT(m_ptr); }
 
-    // Hash table deleted/empty values, which are only constructed and never copied or destroyed.
-    constexpr RetainRef(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
-    constexpr bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
-
+    // Hash table empty values, which are only constructed and never copied or destroyed.
     constexpr RetainRef(HashTableEmptyValueType) : m_ptr(nullptr) { }
     constexpr bool isHashTableEmptyValue() const { return !m_ptr; }
     static constexpr StorageType hashTableEmptyValue() { return nullptr; }
@@ -135,14 +125,14 @@ public:
 
     template<typename U = StorageType>
         requires (std::same_as<U, StorageType> && NSType<U>)
-    [[nodiscard]] StorageType leakRef() NS_RETURNS_RETAINED RETURNS_NONNULL {
+    [[nodiscard]] U leakRef() NS_RETURNS_RETAINED RETURNS_NONNULL {
         ASSERT(m_ptr);
         return std::exchange(m_ptr, nullptr);
     }
 
     template<typename U = StorageType>
         requires (std::same_as<U, StorageType> && !NSType<U>)
-    [[nodiscard]] StorageType leakRef() CF_RETURNS_RETAINED RETURNS_NONNULL {
+    [[nodiscard]] U leakRef() CF_RETURNS_RETAINED RETURNS_NONNULL {
         ASSERT(m_ptr);
         return std::exchange(m_ptr, nullptr);
     }
@@ -178,35 +168,23 @@ private:
     template<typename U> friend class RetainPtr;
 
     enum AdoptTag { Adopt };
-    constexpr RetainRef(PtrType ptr, AdoptTag) : m_ptr(ptr) { ASSERT(m_ptr); }
-
-#if __has_feature(objc_arc)
-    // ARC will try to retain/release this value, but it looks like a tagged immediate, so retain/release ends up being a no-op -- see _objc_isTaggedPointer() in <objc-internal.h>.
     template<typename U = PtrType>
         requires (std::same_as<U, PtrType> && NSType<U>)
-    static constexpr PtrType hashTableDeletedValue() { return (__bridge PtrType)(void*)-1; }
-
+    constexpr RetainRef(U NS_RELEASES_ARGUMENT ptr, AdoptTag) : m_ptr(WTF::move(ptr)) { ASSERT(m_ptr); }
     template<typename U = PtrType>
         requires (std::same_as<U, PtrType> && !NSType<U>)
-    static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
-#else
-    static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
-#endif
+    constexpr RetainRef(U CF_RELEASES_ARGUMENT ptr, AdoptTag) : m_ptr(ptr) { ASSERT(m_ptr); }
 
     static inline void retainFoundationPtr(CFTypeRef ptr) { CFRetain(ptr); }
     static inline void releaseFoundationPtr(CFTypeRef ptr) { CFRelease(ptr); }
     static inline void autoreleaseFoundationPtr(CFTypeRef ptr) { CFAutorelease(ptr); }
 
-#ifdef __OBJC__
-#if __has_feature(objc_arc)
-    static inline void retainFoundationPtr(id) { }
-    static inline void releaseFoundationPtr(id) { }
-    static inline void autoreleaseFoundationPtr(id) { }
-#else
+    static constexpr bool storageIsManagedByARC = __has_feature(objc_arc) && IsNSType<PtrType>;
+
+#if defined(__OBJC__) && !__has_feature(objc_arc)
     static inline void retainFoundationPtr(id ptr) { [ptr retain]; }
     static inline void releaseFoundationPtr(id ptr) { [ptr release]; }
     static inline void autoreleaseFoundationPtr(id ptr) { [ptr autorelease]; }
-#endif
 #endif
 
     StorageType m_ptr;
@@ -219,22 +197,26 @@ template<typename T> [[nodiscard]] RetainRef<RetainPtrType<T>> retainRef(T);
 
 template<typename T> inline RetainRef<T>::~RetainRef()
 {
-    SUPPRESS_UNRETAINED_LOCAL if (auto ptr = std::exchange(m_ptr, nullptr))
-        releaseFoundationPtr(ptr);
+    SUPPRESS_UNRETAINED_LOCAL if (auto ptr = std::exchange(m_ptr, nullptr)) {
+        if constexpr (!storageIsManagedByARC)
+            releaseFoundationPtr(ptr);
+    }
 }
 
 template<typename T> inline RetainRef<T>::RetainRef(PtrType ptr)
     : m_ptr(ptr)
 {
     ASSERT(m_ptr);
-    SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+    if constexpr (!storageIsManagedByARC)
+        SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
 }
 
 template<typename T> inline RetainRef<T>::RetainRef(const RetainRef& o)
     : m_ptr(o.m_ptr)
 {
     ASSERT(m_ptr);
-    SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+    if constexpr (!storageIsManagedByARC)
+        SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
 }
 
 template<typename T> template<typename U> inline RetainRef<T>::RetainRef(const RetainRef<U>& o)
@@ -246,7 +228,8 @@ template<typename T> inline auto RetainRef<T>::autorelease() -> PtrType
 {
     ASSERT(m_ptr);
     auto ptr = std::exchange(m_ptr, nullptr);
-    autoreleaseFoundationPtr(ptr);
+    if constexpr (!storageIsManagedByARC)
+        autoreleaseFoundationPtr(ptr);
     return ptr;
 }
 
@@ -354,7 +337,7 @@ template<typename T> struct IsSmartPtr<RetainRef<T>> {
 template<typename T> inline constexpr bool IsRetainRef = false;
 template<typename T> inline constexpr bool IsRetainRef<RetainRef<T>> = true;
 
-template<typename P> struct HashTraits<RetainRef<P>> : SimpleClassHashTraits<RetainRef<P>> {
+template<typename P> struct HashTraits<RetainRef<P>> : GenericHashTraits<RetainRef<P>> {
     static constexpr bool emptyValueIsZero = true;
     static RetainRef<P> emptyValue() { return HashTableEmptyValue; }
 

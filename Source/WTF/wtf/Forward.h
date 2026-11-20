@@ -25,14 +25,6 @@
 #include <wtf/Platform.h>
 #include <wtf/text/Latin1Character.h>
 
-#if defined(__has_feature)
-#if __has_feature(objc_arc)
-#define OSObjectPtr OSObjectPtrArc
-#define RetainPtr RetainPtrArc
-#define RetainRef RetainRefArc
-#endif
-#endif
-
 #ifndef __OBJC__
 WTF_EXTERN_C_BEGIN
 typedef struct objc_object* id;

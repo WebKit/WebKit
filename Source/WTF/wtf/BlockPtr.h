@@ -70,13 +70,6 @@
 
 #endif
 
-// Because ARC enablement is a compile-time choice, and we compile this header
-// both ways, we need a separate copy of our code when ARC is enabled.
-#if __has_feature(objc_arc)
-#define BlockPtr BlockPtrArc
-#define makeBlockPtr makeBlockPtrArc
-#endif
-
 namespace WTF {
 
 extern "C" void* _NSConcreteMallocBlock[32];

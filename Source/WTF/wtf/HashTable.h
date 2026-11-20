@@ -660,7 +660,11 @@ static_assert(std::is_trivial_v<StatusBytes>);
                 return true;
             else {
                 // Any key can be stored, but some hash functions cannot hash their traits' empty or deleted value (StringHash on a null String).
-                return !KeyTraits::isDeletedValue(key) && !isHashTraitsEmptyValue<KeyTraits>(key);
+                if constexpr (requires { KeyTraits::isDeletedValue(key); }) {
+                    if (KeyTraits::isDeletedValue(key))
+                        return false;
+                }
+                return !isHashTraitsEmptyValue<KeyTraits>(key);
             }
         }
 

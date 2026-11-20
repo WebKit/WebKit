@@ -27,13 +27,6 @@
 #include <wtf/RetainRef.h>
 #include <wtf/SwiftBridging.h>
 
-// Because ARC enablement is a compile-time choice, and we compile this header
-// both ways, we need a separate copy of our code when ARC is enabled.
-#if __has_feature(objc_arc)
-#define adoptNS adoptNSArc
-#define RetainPtr RetainPtrArc
-#endif
-
 namespace WTF {
 
 template<typename T> [[nodiscard]] constexpr RetainPtr<RetainPtrType<T>> adoptCF(T CF_RELEASES_ARGUMENT);
@@ -101,15 +94,10 @@ public:
         requires std::convertible_to<typename RetainRef<RetainPtrType<U>>::PtrType, PtrType>
     constexpr RetainPtr(RetainRef<U>&& o) : m_ptr(o.leakRef()) { }
 
-    // Hash table deleted values, which are only constructed and never copied or destroyed.
-    constexpr RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
-    constexpr bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
-
     ~RetainPtr();
 
     void clear();
 
-    // Return U, not StorageType: a dependent return type keeps ARC from checking the other overload's attribute.
     template<typename U = StorageType>
         requires (std::same_as<U, StorageType> && NSType<U>)
     [[nodiscard]] U leakRef() NS_RETURNS_RETAINED {
@@ -162,35 +150,23 @@ public:
 
 private:
     enum AdoptTag { Adopt };
-    constexpr RetainPtr(PtrType ptr, AdoptTag) : m_ptr(ptr) { }
-
-#if __has_feature(objc_arc)
-    // ARC will try to retain/release this value, but it looks like a tagged immediate, so retain/release ends up being a no-op -- see _objc_isTaggedPointer() in <objc-internal.h>.
     template<typename U = PtrType>
         requires (std::same_as<U, PtrType> && NSType<U>)
-    static constexpr PtrType hashTableDeletedValue() { return (__bridge PtrType)(void*)-1; }
-
+    constexpr RetainPtr(U NS_RELEASES_ARGUMENT ptr, AdoptTag) : m_ptr(WTF::move(ptr)) { }
     template<typename U = PtrType>
         requires (std::same_as<U, PtrType> && !NSType<U>)
-    static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
-#else
-    static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
-#endif
+    constexpr RetainPtr(U CF_RELEASES_ARGUMENT ptr, AdoptTag) : m_ptr(ptr) { }
 
     static inline void retainFoundationPtr(CFTypeRef ptr) { CFRetain(ptr); }
     static inline void releaseFoundationPtr(CFTypeRef ptr) { CFRelease(ptr); }
     static inline void autoreleaseFoundationPtr(CFTypeRef ptr) { CFAutorelease(ptr); }
 
-#ifdef __OBJC__
-#if __has_feature(objc_arc)
-    static inline void retainFoundationPtr(id) { }
-    static inline void releaseFoundationPtr(id) { }
-    static inline void autoreleaseFoundationPtr(id) { }
-#else
+    static constexpr bool storageIsManagedByARC = __has_feature(objc_arc) && IsNSType<PtrType>;
+
+#if defined(__OBJC__) && !__has_feature(objc_arc)
     static inline void retainFoundationPtr(id ptr) { [ptr retain]; }
     static inline void releaseFoundationPtr(id ptr) { [ptr release]; }
     static inline void autoreleaseFoundationPtr(id ptr) { [ptr autorelease]; }
-#endif
 #endif
 
     StorageType m_ptr { nullptr };
@@ -204,22 +180,28 @@ template<typename T> [[nodiscard]] RetainPtr<RetainPtrType<T>> retainPtr(T);
 
 template<typename T> inline RetainPtr<T>::~RetainPtr()
 {
-    SUPPRESS_UNRETAINED_LOCAL if (auto ptr = std::exchange(m_ptr, nullptr))
-        releaseFoundationPtr(ptr);
+    SUPPRESS_UNRETAINED_LOCAL if (auto ptr = std::exchange(m_ptr, nullptr)) {
+        if constexpr (!storageIsManagedByARC)
+            releaseFoundationPtr(ptr);
+    }
 }
 
 template<typename T> inline RetainPtr<T>::RetainPtr(PtrType ptr)
     : m_ptr(ptr)
 {
-    if (m_ptr)
-        SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+    if constexpr (!storageIsManagedByARC) {
+        if (m_ptr)
+            SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+    }
 }
 
 template<typename T> inline RetainPtr<T>::RetainPtr(const RetainPtr& o)
     : m_ptr(o.m_ptr)
 {
-    if (m_ptr)
-        SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+    if constexpr (!storageIsManagedByARC) {
+        if (m_ptr)
+            SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+    }
 }
 
 template<typename T> template<typename U> inline RetainPtr<T>::RetainPtr(const RetainPtr<U>& o)
@@ -229,15 +211,19 @@ template<typename T> template<typename U> inline RetainPtr<T>::RetainPtr(const R
 
 template<typename T> inline void RetainPtr<T>::clear()
 {
-    if (auto ptr = std::exchange(m_ptr, nullptr))
-        releaseFoundationPtr(ptr);
+    if (auto ptr = std::exchange(m_ptr, nullptr)) {
+        if constexpr (!storageIsManagedByARC)
+            releaseFoundationPtr(ptr);
+    }
 }
 
 template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 {
     auto ptr = std::exchange(m_ptr, nullptr);
-    if (ptr)
-        autoreleaseFoundationPtr(ptr);
+    if constexpr (!storageIsManagedByARC) {
+        if (ptr)
+            autoreleaseFoundationPtr(ptr);
+    }
     return ptr;
 }
 
@@ -378,7 +364,8 @@ template<typename T> struct IsSmartPtr<RetainPtr<T>> {
 template<typename T> inline constexpr bool IsRetainPtr = false;
 template<typename T> inline constexpr bool IsRetainPtr<RetainPtr<T>> = true;
 
-template<typename P> struct HashTraits<RetainPtr<P>> : SimpleClassHashTraits<RetainPtr<P>> {
+template<typename P> struct HashTraits<RetainPtr<P>> : GenericHashTraits<RetainPtr<P>> {
+    static constexpr bool emptyValueIsZero = true;
     static RetainPtr<P>::PtrType emptyValue() { return nullptr; }
     static bool isEmptyValue(const RetainPtr<P>& value) { return !value; }
 
@@ -389,7 +376,8 @@ template<typename P> struct HashTraits<RetainPtr<P>> : SimpleClassHashTraits<Ret
 
 template<typename P> struct DefaultHash<RetainPtr<P>> : PtrHash<RetainPtr<P>> { };
 
-template<typename P> struct RetainPtrObjectHashTraits : SimpleClassHashTraits<RetainPtr<P>> {
+template<typename P> struct RetainPtrObjectHashTraits : GenericHashTraits<RetainPtr<P>> {
+    static constexpr bool emptyValueIsZero = true;
     static const RetainPtr<P>& emptyValue()
     {
         static NeverDestroyed<RetainPtr<P>> null;

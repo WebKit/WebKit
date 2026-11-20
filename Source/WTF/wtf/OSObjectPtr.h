@@ -32,12 +32,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TypeTraits.h>
 
-// Because ARC enablement is a compile-time choice, and we compile this header
-// both ways, we need a separate copy of our code when ARC is enabled.
-#if __has_feature(objc_arc)
-#define adoptOSObject adoptOSObjectArc
-#endif
-
 namespace WTF {
 
 template<typename T, typename arcEnabled = ARCEnabled> struct DefaultOSObjectRetainTraits {
@@ -105,10 +99,6 @@ public:
         if (m_ptr)
             SUPPRESS_FORWARD_DECL_ARG RetainTraits::release(m_ptr);
     }
-
-    // Hash table deleted values, which are only constructed and never copied or destroyed.
-    constexpr OSObjectPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
-    constexpr bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
     constexpr operator PtrType() const LIFETIME_BOUND { return m_ptr; }
     T get() const LIFETIME_BOUND { return m_ptr; }
@@ -186,8 +176,6 @@ private:
     {
     }
 
-    static constexpr T hashTableDeletedValue() { return reinterpret_cast<T>(-1); }
-
     T m_ptr;
 };
 
@@ -225,7 +213,9 @@ template<typename T, typename RetainTraits> struct IsSmartPtr<OSObjectPtr<T, Ret
     static constexpr bool isNullable = true;
 };
 
-template<typename T, typename RetainTraits> struct HashTraits<OSObjectPtr<T, RetainTraits>> : SimpleClassHashTraits<OSObjectPtr<T, RetainTraits>> { };
+template<typename T, typename RetainTraits> struct HashTraits<OSObjectPtr<T, RetainTraits>> : GenericHashTraits<OSObjectPtr<T, RetainTraits>> {
+    static constexpr bool emptyValueIsZero = true;
+};
 template<typename T, typename RetainTraits> struct DefaultHash<OSObjectPtr<T, RetainTraits>> : PtrHash<OSObjectPtr<T, RetainTraits>> { };
 
 } // namespace WTF
