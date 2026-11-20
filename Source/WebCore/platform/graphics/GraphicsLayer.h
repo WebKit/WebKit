@@ -421,6 +421,7 @@ public:
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
     virtual std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const { return std::nullopt; }
 #endif
+    virtual std::optional<PlatformLayerIdentifier> contentsLayerIDForCanvas() const { return std::nullopt; }
     virtual bool usesContentsLayer() const { return false; }
     virtual bool hasContentsDisplayDelegate() const { return false; }
 

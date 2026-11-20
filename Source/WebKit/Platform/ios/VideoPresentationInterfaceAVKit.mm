@@ -126,7 +126,7 @@ void VideoPresentationInterfaceAVKit::didToggleCaptionStylePreviewID(const Strin
         model->requestShowCaptionDisplaySettingsPreview(captionStylePreviewID);
 }
 
-WebAVPlayerLayer *VideoPresentationInterfaceAVKit::fullscreenPlayerLayer()
+WebAVPlayerLayer *VideoPresentationInterfaceAVKit::fullscreenPlayerLayer() const
 {
     return checked_objc_cast<WebAVPlayerLayer>([m_fullscreenPlayerLayerView playerLayer]);
 }

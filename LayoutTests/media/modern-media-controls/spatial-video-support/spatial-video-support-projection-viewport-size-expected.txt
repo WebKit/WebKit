@@ -1,0 +1,28 @@
+Testing that SpatialVideoSupport sizes its canvas from the presentation's reported viewport when one is available, and falls back to the canvas's own box otherwise. In native fullscreen the page's layout is unchanged, so the canvas box stays inline-sized while the layer presenting it fills the screen.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+With no viewport reported, the canvas follows its own box:
+PASS canvas.clientWidth > 0 is true
+PASS support._desiredCanvasSize() is expectedInline
+
+A reported viewport takes precedence over the inline box:
+PASS support._desiredCanvasSize() is expectedPresented
+PASS support._canvasSizeChanged() is true
+PASS [canvas.width, canvas.height] is expectedPresented
+PASS support._canvasSizeChanged() is false
+
+The presented viewport is portrait, so the renderer's aspect ratio follows it rather than the square inline box:
+PASS canvas.width / canvas.height < 1 is true
+
+Clearing the reported viewport falls back to the inline box:
+PASS support._desiredCanvasSize() is expectedInline
+PASS support._canvasSizeChanged() is true
+
+A partially reported viewport is ignored rather than producing a degenerate size:
+PASS support._desiredCanvasSize() is expectedInline
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

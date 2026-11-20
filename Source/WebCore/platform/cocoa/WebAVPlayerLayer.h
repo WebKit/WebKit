@@ -52,6 +52,10 @@ WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property CGSize videoDimensions;
 @property (nonatomic) NSEdgeInsets legibleContentInsets;
 @property (nonatomic, readonly) BOOL showingCaptionPreview;
+
+// Opts out of the deferred -resolveBounds that -layoutSublayers uses to animate a resize. A
+// sublayer laid out from its own bounds renders anisotropically scaled until the resolve lands.
+@property (nonatomic) BOOL resolvesVideoSublayerBoundsSynchronously;
 - (WebCore::FloatRect)calculateTargetVideoFrame;
 
 - (void)setCaptionPreviewProfileID:(NSString * _Nonnull)profileID position:(CGPoint)position text:(nullable NSString *)text;

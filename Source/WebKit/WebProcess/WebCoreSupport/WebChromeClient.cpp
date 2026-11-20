@@ -1699,6 +1699,12 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
         protect(page->videoPresentationManager())->enterVideoFullscreenForVideoElement(videoElement, mode, standby);
 }
 
+void WebChromeClient::videoProjectionLayerChanged(HTMLVideoElement& videoElement, std::optional<WebCore::PlatformLayerIdentifier> layerID)
+{
+    if (RefPtr page = m_page)
+        protect(page->videoPresentationManager())->videoProjectionLayerChanged(videoElement, layerID);
+}
+
 void WebChromeClient::setPlayerIdentifierForVideoElement(HTMLVideoElement& videoElement)
 {
     if (RefPtr page = m_page.get())

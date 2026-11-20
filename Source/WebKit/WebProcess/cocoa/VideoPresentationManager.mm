@@ -389,6 +389,16 @@ void VideoPresentationManager::setPlayerIdentifierForVideoElement(HTMLVideoEleme
     setPlayerIdentifier(contextId, identifier);
 }
 
+void VideoPresentationManager::videoProjectionLayerChanged(WebCore::HTMLVideoElement& videoElement, std::optional<WebCore::PlatformLayerIdentifier> layerID)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    auto contextId = m_playbackSessionManager->contextIdForMediaElement(videoElement);
+    page->send(Messages::VideoPresentationManagerProxy::SetProjectionLayerID(contextId, layerID));
+}
+
 void VideoPresentationManager::swapFullscreenModes(WebCore::HTMLVideoElement& firstElement, WebCore::HTMLVideoElement& secondElement)
 {
     auto firstContextId = m_playbackSessionManager->contextIdForMediaElement(firstElement);
@@ -497,7 +507,7 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
         // (and hence its renderer's hasObjectViewBoxSet()) can change.
         CheckedPtr videoRenderer = videoElement->renderer();
         bool hasObjectViewBox = videoRenderer && videoRenderer->hasObjectViewBoxSet();
-        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, protect(videoElement->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), hasObjectViewBox));
+        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, protect(videoElement->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), hasObjectViewBox, videoElement->projectionLayerID()));
 
         if (RefPtr player = videoElement->player()) {
             if (auto identifier = player->identifier())
@@ -974,6 +984,15 @@ void VideoPresentationManager::setVideoFullscreenFrame(WebCore::MediaPlayerClien
 {
     INFO_LOG(LOGIDENTIFIER, contextId.toUInt64());
     ensureModel(contextId)->setVideoFullscreenFrame(frame);
+}
+
+void VideoPresentationManager::setProjectionViewportSize(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatSize size)
+{
+    RefPtr videoElement = ensureModel(contextId)->videoElement();
+    if (!videoElement)
+        return;
+
+    videoElement->setProjectionViewportSize(size);
 }
 
 void VideoPresentationManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, ShareableBitmap::Handle&& textTrack)

@@ -45,6 +45,8 @@ public:
     WebAVPlayerLayer *playerLayer() const LIFETIME_BOUND { return m_playerLayer.get(); }
     virtual void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& layer) { m_playerLayer = WTF::move(layer); }
 
+    virtual WebAVPlayerLayer *fullscreenPlayerLayer() const { return nullptr; }
+
 #if PLATFORM(IOS_FAMILY)
     WebAVPlayerLayerView *playerLayerView() const LIFETIME_BOUND { return m_playerLayerView.get(); }
     void setPlayerLayerView(RetainPtr<WebAVPlayerLayerView>&& playerLayerView) { m_playerLayerView = WTF::move(playerLayerView); }

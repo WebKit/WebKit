@@ -1,0 +1,22 @@
+A canvas with a display delegate paints into GraphicsLayerCA's separate contents layer, not its primary layer. Code that needs the canvas's pixels must therefore use the contents layer's identifier; the primary layer is structural and never carries contents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A live context is what supplies the display delegate; a lost one supplies nothing:
+PASS gl.isContextLost() is false
+
+Both layers exist:
+PASS primary > 0 is true
+PASS contents > 0 is true
+
+They are distinct layers, which is the whole point:
+PASS primary === contents is false
+
+An element with no canvas contents layer reports zero:
+PASS internals.layerIDForElement(plain, 'canvas-contents') is 0
+PASS internals.layerIDForElement(plain, 'primary') > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

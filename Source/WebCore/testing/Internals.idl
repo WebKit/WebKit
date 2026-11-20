@@ -520,7 +520,8 @@ enum ContentsFormat {
 
 enum LayerType {
     "primary",
-    "backdrop"
+    "backdrop",
+    "canvas-contents"
 };
 
 [

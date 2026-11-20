@@ -479,12 +479,35 @@ class SpatialVideoSupport extends MediaControllerSupport
             container.style.touchAction = this._savedContainerTouchAction;
     }
 
-    _resize()
+    _desiredCanvasSize()
     {
         const canvas = this._canvas;
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.max(1, Math.floor(canvas.clientWidth * dpr));
-        canvas.height = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+        const host = this.mediaController.host;
+
+        // In native fullscreen the page's layout is unchanged, so the canvas box stays inline-sized
+        // while the layer presenting it is much larger. The presentation reports its own size.
+        let width = canvas.clientWidth;
+        let height = canvas.clientHeight;
+        if (host && host.projectionViewportWidth > 0 && host.projectionViewportHeight > 0) {
+            width = host.projectionViewportWidth;
+            height = host.projectionViewportHeight;
+        }
+
+        return [Math.max(1, Math.floor(width * dpr)), Math.max(1, Math.floor(height * dpr))];
+    }
+
+    _canvasSizeChanged()
+    {
+        const [width, height] = this._desiredCanvasSize();
+        return this._canvas.width !== width || this._canvas.height !== height;
+    }
+
+    _resize()
+    {
+        const [width, height] = this._desiredCanvasSize();
+        this._canvas.width = width;
+        this._canvas.height = height;
     }
 
     _startRenderLoops()
@@ -529,7 +552,7 @@ class SpatialVideoSupport extends MediaControllerSupport
         if (!this._useVideoFrameCallback && !this._uploadFrame())
             return;
 
-        if (canvasSizeChanged(this._canvas))
+        if (this._canvasSizeChanged())
             this._resize();
 
         gl.viewport(0, 0, this._canvas.width, this._canvas.height);
@@ -558,8 +581,17 @@ class SpatialVideoSupport extends MediaControllerSupport
         gl.drawElements(gl.TRIANGLES, mesh.count, gl.UNSIGNED_SHORT, 0);
 
         this._reportCamera();
+        this._reportRenderedFrame();
 
         this._animationFrame = requestAnimationFrame(() => this._drawLoop());
+    }
+
+    _reportRenderedFrame()
+    {
+        const host = this.mediaController.host;
+        if (!host || typeof host.projectionFrameDidRender !== "function" || !this._canvas)
+            return;
+        host.projectionFrameDidRender(this._canvas);
     }
 
     _reportCamera()
@@ -573,6 +605,9 @@ class SpatialVideoSupport extends MediaControllerSupport
     _teardown()
     {
         this._active = false;
+        const host = this.mediaController.host;
+        if (host && typeof host.projectionRendererDidStop === "function")
+            host.projectionRendererDidStop();
         if (this._animationFrame)
             cancelAnimationFrame(this._animationFrame);
         const media = this.mediaController.media;
@@ -657,12 +692,6 @@ function rotateUnitSquare(u, v, rotation)
         return [1 - v, u];
     }
     return [u, v];
-}
-
-function canvasSizeChanged(canvas)
-{
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    return canvas.width !== Math.floor(canvas.clientWidth * dpr) || canvas.height !== Math.floor(canvas.clientHeight * dpr);
 }
 
 function clampFieldOfView(degrees)

@@ -191,6 +191,7 @@ public:
     WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&, ModelInteraction) override;
     WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const override;
 #endif
+    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> contentsLayerIDForCanvas() const override;
     WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;
     WEBCORE_EXPORT void setContentsMagnificationFilter(ScalingFilter) override;
 

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/spatial-video-render-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that <code>SpatialVideoSupport</code> sizes its canvas from the presentation's reported viewport when one is available, and falls back to the canvas's own box otherwise. In native fullscreen the page's layout is unchanged, so the canvas box stays inline-sized while the layer presenting it fills the screen.");
+
+const support = SpatialRenderTest.createRenderer("equirectangular", { width: 256, height: 256 });
+
+if (!support)
+    testFailed("Could not create the renderer.");
+else {
+    window.support = support;
+    window.canvas = support._canvas;
+    window.host = support.mediaController.host;
+
+    // Matches the cap SpatialVideoSupport applies, so the test is independent of device scale.
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function scaled(value)
+    {
+        return Math.max(1, Math.floor(value * dpr));
+    }
+
+    debug("With no viewport reported, the canvas follows its own box:");
+    window.expectedInline = [scaled(canvas.clientWidth), scaled(canvas.clientHeight)];
+    shouldBeTrue("canvas.clientWidth > 0");
+    shouldBe("support._desiredCanvasSize()", "expectedInline");
+
+    debug("");
+    debug("A reported viewport takes precedence over the inline box:");
+    host.projectionViewportWidth = 402;
+    host.projectionViewportHeight = 772;
+    window.expectedPresented = [scaled(402), scaled(772)];
+    shouldBe("support._desiredCanvasSize()", "expectedPresented");
+    shouldBeTrue("support._canvasSizeChanged()");
+
+    support._resize();
+    shouldBe("[canvas.width, canvas.height]", "expectedPresented");
+    shouldBeFalse("support._canvasSizeChanged()");
+
+    debug("");
+    debug("The presented viewport is portrait, so the renderer's aspect ratio follows it rather than the square inline box:");
+    shouldBeTrue("canvas.width / canvas.height < 1");
+
+    debug("");
+    debug("Clearing the reported viewport falls back to the inline box:");
+    host.projectionViewportWidth = 0;
+    host.projectionViewportHeight = 0;
+    shouldBe("support._desiredCanvasSize()", "expectedInline");
+    shouldBeTrue("support._canvasSizeChanged()");
+
+    debug("");
+    debug("A partially reported viewport is ignored rather than producing a degenerate size:");
+    host.projectionViewportWidth = 402;
+    host.projectionViewportHeight = 0;
+    shouldBe("support._desiredCanvasSize()", "expectedInline");
+
+    SpatialRenderTest.destroy(support);
+}
+
+</script>
+</body>
