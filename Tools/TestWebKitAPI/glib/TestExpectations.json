@@ -24,9 +24,6 @@
             "/webkit/WebKitAccessibility/selection/listbox": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
             },
-            "/webkit/WebKitAccessibility/document/load-events": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
-            },
             "/webkit/WebKitAccessibility/accessible/state-changed/focus": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/279009"}}
             }
