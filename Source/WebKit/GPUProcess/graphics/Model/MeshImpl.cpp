@@ -98,6 +98,11 @@ void MeshImpl::clearPortalContentTextures()
 {
     m_backing->clearPortalContentTextures();
 }
+
+void MeshImpl::setPortalContentOrder(Vector<WebModel::TypedResourceId>&& identifiers)
+{
+    m_backing->setPortalContentOrder(WTF::move(identifiers));
+}
 #endif
 
 #if PLATFORM(COCOA)

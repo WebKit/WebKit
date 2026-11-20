@@ -1069,7 +1069,8 @@ static WKBridgeUpdateMaterial *convert(const WebModel::UpdateMaterialDescriptor&
 bool WebMesh::updatePortalContentTexture(const WebModel::TypedResourceId& identifier, IOSurfaceRef surface, bool isOpaque, uint64_t bufferIdentifier)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    RELEASE_ASSERT(m_receiver);
+    if (!m_receiver)
+        return false;
 
     auto it = m_portalContentTextures.find(bufferIdentifier);
     if (it == m_portalContentTextures.end()) {
@@ -1117,6 +1118,19 @@ void WebMesh::clearPortalContentTextures()
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     m_portalContentTextures.clear();
+#endif
+}
+
+void WebMesh::setPortalContentOrder(Vector<WebModel::TypedResourceId>&& identifiers)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    if (!m_receiver)
+        return;
+    [m_receiver setPortalContentOrder:createNSArray(identifiers, [](const WebModel::TypedResourceId& identifier) {
+        return convert(identifier);
+    }).get()];
+#else
+    UNUSED_PARAM(identifiers);
 #endif
 }
 #endif

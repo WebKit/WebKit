@@ -77,6 +77,7 @@ private:
     bool updatePortalContentTexture(const WebModel::TypedResourceId&, IOSurfaceRef, bool, uint64_t) final;
     void removePortalContentTexture(uint64_t) final;
     void clearPortalContentTextures() final;
+    void setPortalContentOrder(Vector<WebModel::TypedResourceId>&&) final;
 #endif
 #if PLATFORM(COCOA)
     std::optional<WebModel::Float4x4> entityTransform() const final;
