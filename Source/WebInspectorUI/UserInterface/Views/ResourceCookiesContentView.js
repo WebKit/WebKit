@@ -102,11 +102,16 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         case "path":
             cell.textContent = cookie.path || emDash;
             break;
-        case "expires":
-            cell.textContent = (!cookie.session && cookie.expires) ? cookie.expires.toLocaleString() : WI.UIString("Session");
+        case "expires": {
+            let expirationDate = !cookie.session ? cookie.expirationDate(this._resource.requestSentDate) : null;
+            if (expirationDate)
+                cell.textContent = expirationDate.toLocaleString();
+            else
+                cell.textContent = cookie.session ? WI.UIString("Session") : emDash;
             break;
+        }
         case "maxAge":
-            cell.textContent = cookie.maxAge || emDash;
+            cell.textContent = cookie.maxAge ?? emDash;
             break;
         case "secure":
             cell.textContent = cookie.secure ? checkmark : zeroWidthSpace;
@@ -185,15 +190,17 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
             break;
 
         case "expires":
-            // Date.
+            // Date. Sort by the same date the Expires column shows.
             comparator = (a, b) => {
-                let aExpires = a.expires;
-                if (!aExpires)
+                let aExpirationDate = a.expirationDate(this._resource.requestSentDate);
+                let bExpirationDate = b.expirationDate(this._resource.requestSentDate);
+                if (!aExpirationDate && !bExpirationDate)
+                    return 0;
+                if (!aExpirationDate)
                     return 1;
-                let bExpires = b.expires;
-                if (!bExpires)
+                if (!bExpirationDate)
                     return -1;
-                return aExpires.getTime() - bExpires.getTime();
+                return aExpirationDate.getTime() - bExpirationDate.getTime();
             };
             break;
 

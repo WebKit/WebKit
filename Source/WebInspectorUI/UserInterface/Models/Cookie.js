@@ -51,7 +51,7 @@ WI.Cookie = class Cookie
             this._header = header || "";
             this._expires = (!session && expires) || null;
             this._session = session || false;
-            this._maxAge = maxAge || null;
+            this._maxAge = maxAge ?? null;
             this._path = path || null;
             this._domain = domain || null;
             this._secure = secure || false;
@@ -189,7 +189,7 @@ WI.Cookie = class Cookie
             case "max-age":
                 console.assert(attributeValue);
                 maxAge = parseInt(attributeValue, 10);
-                if (isNaN(maxAge) || !/^\d+$/.test(attributeValue)) {
+                if (isNaN(maxAge) || !/^-?\d+$/.test(attributeValue)) {
                     console.warn("Invalid MaxAge value:", attributeValue);
                     maxAge = null;
                 }
@@ -223,7 +223,8 @@ WI.Cookie = class Cookie
             }
         }
 
-        if (!expires)
+        // A cookie is only a session cookie when it has neither an Expires nor a Max-Age attribute.
+        if (!expires && maxAge === null)
             session = true;
 
         return new WI.Cookie(WI.Cookie.Type.Response, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite, partitioned});
@@ -260,9 +261,17 @@ WI.Cookie = class Cookie
         if (this._session)
             return null;
 
-        if (this._maxAge) {
+        if (this._maxAge != null) {
             let startDate = requestSentDate || new Date;
-            return new Date(startDate.getTime() + (this._maxAge * 1000));
+            let expirationDate = new Date(startDate.getTime() + (this._maxAge * 1000));
+            if (isNaN(expirationDate.getTime()))
+                return null;
+            // HAR 1.2 dates need a 4-digit year; clamp anything past year 9999 or before 1970.
+            let maxDate = new Date(Date.UTC(9999, 11, 31, 23, 59, 59, 999));
+            if (expirationDate.getTime() > maxDate.getTime())
+                return maxDate;
+            let minDate = new Date(0);
+            return expirationDate.getTime() < minDate.getTime() ? minDate : expirationDate;
         }
 
         return this._expires;

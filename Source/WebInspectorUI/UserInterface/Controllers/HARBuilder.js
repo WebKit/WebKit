@@ -396,7 +396,7 @@ WI.HARBuilder = class HARBuilder
     static date(date)
     {
         // ISO 8601
-        if (!date)
+        if (!date || isNaN(date.getTime()))
             return "";
 
         return date.toISOString();
