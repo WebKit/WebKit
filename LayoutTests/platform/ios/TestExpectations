@@ -9106,7 +9106,6 @@ http/tests/in-app-browser-privacy/non-app-bound-iframe-under-app-bound-domain-is
 http/tests/in-app-browser-privacy/top-frame-redirect-to-non-app-bound-domain-blocked.html [ Pass Crash ] # rdar://176609458
 
 http/tests/site-isolation/window-opener-persists-after-iframe-navigation-cross-site.html [ Pass Timeout ] # rdar://176609953
-http/tests/site-isolation/focus-wrap-across-remote-frames.html [ Pass Timeout ] # rdar://176609953
 
 editing/selection/ios/selection-extends-into-overflow-area.html [ Pass Timeout ] # rdar://176610220
 editing/selection/ios/selection-after-resizing-composited-layer.html [ Pass Timeout ] # rdar://176610220
