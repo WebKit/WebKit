@@ -59,10 +59,13 @@
 #include <span>
 #include <variant> // NOLINT: See the Swift C++ interop constraints above.
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -701,6 +704,13 @@ constexpr Limits defaultLimits()
     };
 }
 
+// Blocks until the completion handler of the asynchronous call that returned it has run, or until
+// the timeout has passed. Returns false when waiting failed, for example because the connection to
+// the implementation is gone; a timeout is no failure. An empty waiter means that the handler runs
+// without help from the thread that waits: on another thread, or through
+// InstanceDescriptor::scheduleWork.
+using CompletionWaiter = Function<bool(Seconds timeout)>;
+
 class Adapter;
 class BindGroup;
 class BindGroupLayout;
@@ -873,8 +883,8 @@ struct Error {
 };
 
 struct InstanceDescriptor {
-    // Runs a work item on the thread that the instance calls back on. Empty: the work items wait
-    // for processEvents().
+    // Runs a work item on the thread that the instance calls back on. Empty: the work items run on
+    // the thread that schedules them.
     Function<void(Function<void()>&&)> scheduleWork;
 #if PLATFORM(COCOA)
     // The task that owns the resources the instance allocates.
@@ -1316,7 +1326,7 @@ public:
     virtual AdapterInfo info() = 0;
     virtual bool isXRCompatible() const = 0;
     // Completes with the device, or with why it cannot be created. An adapter creates one device.
-    virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&&) = 0;
+    virtual CompletionWaiter requestDevice(const DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1355,7 +1365,7 @@ public:
 
     // A std::nullopt size is the rest of the buffer after the offset, in the size the buffer
     // was created with.
-    virtual void mapAsync(OptionSet<MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) = 0;
+    virtual CompletionWaiter mapAsync(OptionSet<MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) = 0;
     virtual void getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>&) = 0;
     // A range of the mapped buffer that stays valid until unmap(), as the C API needs it. Ranges may
     // overlap. Empty outside the mapped range.
@@ -1485,8 +1495,8 @@ public:
     virtual RefPtr<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) = 0;
     virtual RefPtr<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) = 0;
     virtual RefPtr<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) = 0;
-    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<ComputePipeline>, PipelineError>&&)>&&) = 0;
-    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<RenderPipeline>, PipelineError>&&)>&&) = 0;
+    virtual CompletionWaiter createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<ComputePipeline>, PipelineError>&&)>&&) = 0;
+    virtual CompletionWaiter createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<RenderPipeline>, PipelineError>&&)>&&) = 0;
     // Creates the pipeline again, with the layout that pipelineToReplace generated from its shaders.
     virtual void createComputePipelineWithPipelineLayoutFromPipelineAsync(const ComputePipelineDescriptor&, const ComputePipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<ComputePipeline>, PipelineError>&&)>&&) = 0;
     virtual void createRenderPipelineWithPipelineLayoutFromPipelineAsync(const RenderPipelineDescriptor&, const RenderPipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<RenderPipeline>, PipelineError>&&)>&&) = 0;
@@ -1498,7 +1508,7 @@ public:
     virtual void pushErrorScope(ErrorFilter) = 0;
     // Completes with true and no error when the scope caught none, or when the device is lost; with
     // false and the error when it caught one; and with false and no error when there is no scope.
-    virtual void popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
+    virtual CompletionWaiter popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
     // Completes once, with true and the error, when an error is not caught by any scope; or with false
     // when the device is destroyed or the callback is replaced.
     virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
@@ -1553,12 +1563,32 @@ protected:
     ExternalTexture() = default;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUExternalTexture, derefWebGPUExternalTexture);
 
+// State that the WebGPU C API keeps with an instance, for as long as the instance lives. The C++ API
+// and its implementations never look at it.
+class InstanceClientState : public ThreadSafeRefCounted<InstanceClientState> {
+public:
+    virtual ~InstanceClientState() = default;
+
+protected:
+    InstanceClientState() = default;
+};
+
 class Instance : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Instance> {
 public:
     virtual ~Instance() = default;
 
+    // The client state of the instance, which `create` makes the first time. Only the WebGPU C API
+    // sets it, so it knows its type. This can be called on any thread.
+    Ref<InstanceClientState> ensureClientState(NOESCAPE const Function<Ref<InstanceClientState>()>& create)
+    {
+        Locker locker { m_clientStateLock };
+        if (!m_clientState)
+            m_clientState = create();
+        return *m_clientState;
+    }
+
     // Completes with nullptr when no adapter is available.
-    virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
+    virtual CompletionWaiter requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
 #if PLATFORM(COCOA)
     virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 #endif
@@ -1571,6 +1601,10 @@ public:
 
 protected:
     Instance() = default;
+
+private:
+    Lock m_clientStateLock;
+    RefPtr<InstanceClientState> m_clientState WTF_GUARDED_BY_LOCK(m_clientStateLock);
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUInstance, derefWebGPUInstance);
 
 class PipelineLayout : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PipelineLayout> {
@@ -1637,7 +1671,7 @@ public:
     virtual void submit(Vector<Ref<CommandBuffer>>&&) = 0;
     // Completes with true once the work submitted before the call has completed, and with false when
     // it cannot complete because the device is lost.
-    virtual void onSubmittedWorkDone(CompletionHandler<void(bool)>&&) = 0;
+    virtual CompletionWaiter onSubmittedWorkDone(CompletionHandler<void(bool)>&&) = 0;
     // A write of at least largeBufferSize bytes may alias `data` rather than copy it, until the work
     // submitted after it has completed. The caller keeps it alive until then, for example with
     // onSubmittedWorkDone().
@@ -1759,7 +1793,7 @@ class ShaderModule : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Shad
 public:
     virtual ~ShaderModule() = default;
 
-    virtual void compilationInfo(CompletionHandler<void(CompilationInfo&&)>&&) = 0;
+    virtual CompletionWaiter compilationInfo(CompletionHandler<void(CompilationInfo&&)>&&) = 0;
     // The device that created the shader module.
     virtual Device& device() const = 0;
     virtual void setLabel(String&&) = 0;

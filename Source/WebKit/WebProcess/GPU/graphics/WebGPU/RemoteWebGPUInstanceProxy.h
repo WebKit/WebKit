@@ -50,7 +50,7 @@ public:
     RemoteGPUProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
-    void requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) final;
+    ::WebGPU::CompletionWaiter requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) final;
 #if PLATFORM(COCOA)
     RefPtr<::WebGPU::PresentationContext> createPresentationContext(const ::WebGPU::PresentationContextDescriptor&) final;
 #endif

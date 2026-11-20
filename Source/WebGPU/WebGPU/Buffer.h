@@ -84,7 +84,7 @@ public:
     ~Buffer();
 
     void destroy() final;
-    void mapAsync(OptionSet<WebGPU::MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) final;
+    WebGPU::CompletionWaiter mapAsync(OptionSet<WebGPU::MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) final;
     void getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>&) final;
     void copyFrom(std::span<const uint8_t>, size_t offset) final;
     // The mapped range as a span, for the C API. The C++ API has getMappedRange() instead,

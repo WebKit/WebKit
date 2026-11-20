@@ -417,7 +417,7 @@ NSString *Buffer::errorValidatingMapAsync(OptionSet<WebGPU::MapMode> mode, size_
     return nil;
 }
 
-void Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
+WebGPU::CompletionWaiter Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-mapasync
 
@@ -429,7 +429,7 @@ void Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::
         device->generateAValidationError(error);
 
         callback(false);
-        return;
+        return { };
     }
 
     setState(State::MappingPending);
@@ -448,6 +448,8 @@ void Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::
 
         callback(success);
     } });
+    // The queue runs the handler on a Metal thread, or through the scheduleWork of the instance.
+    return { };
 }
 
 bool Buffer::validateUnmap() const

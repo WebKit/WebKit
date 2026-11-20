@@ -33,6 +33,7 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPU.h>
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -73,6 +74,29 @@ public:
     RemoteGPUProxy& root() { return *this; }
 
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
+    // A waiter for the reply of an asynchronous message, for the WebGPU C API: a client that blocks on
+    // the main thread doesn't return to the run loop, so it dispatches the reply itself. Waiting fails
+    // off the main thread, and when the message could not be sent, which drops its reply handler.
+    template<typename T>
+    ::WebGPU::CompletionWaiter makeCompletionWaiter(std::optional<IPC::StreamClientConnection::AsyncReplyID> replyID)
+    {
+        if (!replyID)
+            return [](Seconds) { return false; };
+        return [connection = Ref { streamClientConnection() }, replyID = *replyID](Seconds timeout) {
+            if (!RunLoop::isMain())
+                return false;
+            switch (connection->template waitForAsyncReplyAndDispatchImmediately<T>(replyID, timeout)) {
+            case IPC::Error::NoError:
+            case IPC::Error::AsyncReplyCancelled:
+            case IPC::Error::WaitingOnAlreadyDispatchedMessage:
+                // The reply handler has run.
+            case IPC::Error::Timeout:
+                return true;
+            default:
+                return false;
+            }
+        };
+    }
     // The connection of the GPU process connection that streamClientConnection() was created on.
     IPC::Connection& gpuProcessIPCConnection() const { return *m_gpuProcessIPCConnection; }
 

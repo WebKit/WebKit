@@ -293,17 +293,17 @@ RefPtr<::WebGPU::RenderPipeline> RemoteDeviceProxy::createRenderPipeline(const :
     return result;
 }
 
-void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&& callback)
+::WebGPU::CompletionWaiter RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
         callback(makeUnexpected(invalidDescriptorError("GPUDevice.createComputePipelineAsync() descriptor is invalid"_s)));
-        return;
+        return { };
     }
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto replyID = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
             return;
@@ -313,17 +313,19 @@ void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipeli
         computePipelineResult->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::ComputePipeline> { WTF::move(computePipelineResult) });
     });
-    UNUSED_PARAM(sendResult);
+    return protect(root())->makeCompletionWaiter<Messages::RemoteDevice::CreateComputePipelineAsync>(replyID);
 }
 
-void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&&)>&& callback)
+::WebGPU::CompletionWaiter RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
-    if (!convertedDescriptor)
-        return callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s)));
+    if (!convertedDescriptor) {
+        callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s)));
+        return { };
+    }
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto replyID = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
             return;
@@ -333,7 +335,7 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipeline
         renderPipelineResult->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::RenderPipeline> { WTF::move(renderPipelineResult) });
     });
-    UNUSED_PARAM(sendResult);
+    return protect(root())->makeCompletionWaiter<Messages::RemoteDevice::CreateRenderPipelineAsync>(replyID);
 }
 
 void RemoteDeviceProxy::createComputePipelineWithPipelineLayoutFromPipelineAsync(const ::WebGPU::ComputePipelineDescriptor& descriptor, const ::WebGPU::ComputePipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&& callback)
@@ -428,12 +430,12 @@ void RemoteDeviceProxy::pushErrorScope(::WebGPU::ErrorFilter errorFilter)
     UNUSED_PARAM(sendResult);
 }
 
-void RemoteDeviceProxy::popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&& callback)
+::WebGPU::CompletionWaiter RemoteDeviceProxy::popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::PopErrorScope(), [callback = WTF::move(callback)](bool success, auto error) mutable {
+    auto replyID = sendWithAsyncReply(Messages::RemoteDevice::PopErrorScope(), [callback = WTF::move(callback)](bool success, auto error) mutable {
         callback(success, WTF::move(error));
     });
-    UNUSED_PARAM(sendResult);
+    return protect(root())->makeCompletionWaiter<Messages::RemoteDevice::PopErrorScope>(replyID);
 }
 
 void RemoteDeviceProxy::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&& callback)

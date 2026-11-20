@@ -79,7 +79,7 @@ public:
 
     ~ShaderModule();
 
-    void compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&&) final;
+    WebGPU::CompletionWaiter compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&&) final;
     void setLabel(String&&) final;
 
     bool isValid() const final { return std::holds_alternative<ValidCheck>(m_checkResult); }

@@ -87,7 +87,7 @@ public:
 
     ~Queue();
 
-    void onSubmittedWorkDone(CompletionHandler<void(bool)>&&) final;
+    WebGPU::CompletionWaiter onSubmittedWorkDone(CompletionHandler<void(bool)>&&) final;
     void submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands);
     void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);

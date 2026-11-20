@@ -1876,9 +1876,11 @@ static CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)> asyn
     };
 }
 
-void Device::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
+WebGPU::CompletionWaiter Device::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     createRenderPipeline(descriptor, true, nullptr, asynchronousIfPossible(), asyncRenderPipelineCompletion(*this, WTF::move(callback)));
+    // The handler runs through the scheduleWork of the instance.
+    return { };
 }
 
 void Device::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, const WebGPU::RenderPipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)

@@ -72,13 +72,13 @@ void RemoteQueueProxy::submit(Vector<Ref<::WebGPU::CommandBuffer>>&& commandBuff
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteQueueProxy::onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback)
+::WebGPU::CompletionWaiter RemoteQueueProxy::onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback)
 {
     // A reply that does not arrive, because the GPU Process is gone, completes with false.
-    auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::OnSubmittedWorkDone(), [callback = WTF::move(callback)](bool success) mutable {
+    auto replyID = sendWithAsyncReply(Messages::RemoteQueue::OnSubmittedWorkDone(), [callback = WTF::move(callback)](bool success) mutable {
         callback(success);
     });
-    UNUSED_PARAM(sendResult);
+    return protect(root())->makeCompletionWaiter<Messages::RemoteQueue::OnSubmittedWorkDone>(replyID);
 }
 
 void RemoteQueueProxy::writeBuffer(::WebGPU::Buffer& buffer, uint64_t bufferOffset, std::span<const uint8_t> data)

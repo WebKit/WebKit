@@ -662,6 +662,7 @@ if (ENABLE_WEBGPU)
         Tests/WGSL/MetalCompilationTests.mm
         Tests/WGSL/TypeCheckingTests.mm
 
+        Tests/WebGPU/FutureTests.cpp
         Tests/WebGPU/InstanceDestroyTests.cpp
         Tests/WebGPU/UncapturedErrorCallbackTests.cpp
     )

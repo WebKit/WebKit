@@ -671,14 +671,14 @@ void Device::pauseAllErrorReporting(bool pause)
     pauseErrorReporting(pause);
 }
 
-void Device::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
+WebGPU::CompletionWaiter Device::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-poperrorscope
 
     if (auto success = validatePopErrorScope()) {
         // A lost device completes as a scope without errors.
         callback(*success, std::nullopt);
-        return;
+        return { };
     }
 
     auto scope = m_errorScopeStack.takeLast();
@@ -690,6 +690,8 @@ void Device::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Er
         });
     } else
         callback(true, std::nullopt);
+    // The handler has run, or runs through the scheduleWork of the instance.
+    return { };
 }
 
 void Device::pushErrorScope(WebGPU::ErrorFilter filter)

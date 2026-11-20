@@ -46,12 +46,12 @@ RemoteWebGPUInstanceProxy::RemoteWebGPUInstanceProxy(RemoteGPUProxy& parent, Con
 
 RemoteWebGPUInstanceProxy::~RemoteWebGPUInstanceProxy() = default;
 
-void RemoteWebGPUInstanceProxy::requestAdapter(const ::WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&& callback)
+::WebGPU::CompletionWaiter RemoteWebGPUInstanceProxy::requestAdapter(const ::WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&& callback)
 {
     Ref root = this->root();
     if (root->isLost()) {
         callback(nullptr);
-        return;
+        return { };
     }
 
     auto identifier = WebGPUIdentifier::generate();
@@ -59,12 +59,12 @@ void RemoteWebGPUInstanceProxy::requestAdapter(const ::WebGPU::RequestAdapterOpt
     if (!sendResult.succeeded()) {
         root->gpuProcessConnectionDidClose();
         callback(nullptr);
-        return;
+        return { };
     }
     auto [response] = sendResult.takeReply();
     if (!response) {
         callback(nullptr);
-        return;
+        return { };
     }
 
     ::WebGPU::AdapterInfo info {
@@ -75,6 +75,8 @@ void RemoteWebGPUInstanceProxy::requestAdapter(const ::WebGPU::RequestAdapterOpt
         .hasUnifiedMemory = response->hasUnifiedMemory,
     };
     callback(RemoteAdapterProxy::create(WTF::move(response->features), response->limits, WTF::move(info), options.xrCompatible, *this, m_convertToBackingContext, identifier));
+    // The message is synchronous: the handler has run.
+    return { };
 }
 
 #if PLATFORM(COCOA)

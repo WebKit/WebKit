@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "CAPIConversions.h"
+#import "CAPIFutures.h"
 #import "WebGPUCppConversions.h"
 
 NODELETE void wgpuQueueAddRef(WGPUQueue queue)
@@ -47,13 +48,13 @@ WGPUFuture wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallba
         Ref protectedQueue = WebGPU::CAPI::fromAPI(queue);
         RefPtr device = protectedQueue->device();
         WebGPU::CAPI::Future future { device ? device->instance() : nullptr };
-        protectedQueue->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callbackInfo, future](bool success) {
+        future.setWaiter(protectedQueue->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callbackInfo, future](bool success) {
             if (success)
                 callbackInfo.callback(WGPUQueueWorkDoneStatus_Success, WebGPU::CAPI::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
             else
                 callbackInfo.callback(WGPUQueueWorkDoneStatus_Error, WebGPU::CAPI::toAPI("The device is lost"_s), callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
-        } });
+        } }));
         return future.future();
     }
 }

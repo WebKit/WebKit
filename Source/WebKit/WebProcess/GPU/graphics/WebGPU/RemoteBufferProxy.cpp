@@ -53,7 +53,7 @@ RemoteBufferProxy::~RemoteBufferProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteBufferProxy::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
+::WebGPU::CompletionWaiter RemoteBufferProxy::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
 {
     // The GPU Process fails the call for a buffer that is not unmapped, possibly before it completes
     // the pending one, so the reply leaves such a buffer as it is.
@@ -61,7 +61,7 @@ void RemoteBufferProxy::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint
     if (startsMapping)
         m_isMapPending = true;
     auto mapGeneration = m_mapGeneration;
-    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTF::move(callback), mapModeFlags, offset, size, startsMapping, mapGeneration, protectedThis = protect(*this)](auto success) mutable {
+    auto replyID = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTF::move(callback), mapModeFlags, offset, size, startsMapping, mapGeneration, protectedThis = protect(*this)](auto success) mutable {
         if (!startsMapping || mapGeneration != protectedThis->m_mapGeneration)
             return callback(success);
         protectedThis->m_isMapPending = false;
@@ -72,8 +72,9 @@ void RemoteBufferProxy::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint
         protectedThis->m_mappedSize = size;
         callback(true);
     });
-    if (!sendResult && startsMapping)
+    if (!replyID && startsMapping)
         m_isMapPending = false;
+    return protect(root())->makeCompletionWaiter<Messages::RemoteBuffer::MapAsync>(replyID);
 }
 
 ::WebGPU::BufferMapState RemoteBufferProxy::mapState() const

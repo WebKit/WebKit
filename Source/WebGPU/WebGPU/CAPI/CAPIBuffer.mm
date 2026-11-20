@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "CAPIConversions.h"
+#import "CAPIFutures.h"
 #import "WebGPUCppConversions.h"
 
 NODELETE void wgpuBufferAddRef(WGPUBuffer buffer)
@@ -87,13 +88,13 @@ WGPUFuture wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset
     @autoreleasepool {
         Ref protectedBuffer = WebGPU::CAPI::fromAPI(buffer);
         WebGPU::CAPI::Future future { protect(protectedBuffer->device())->instance() };
-        protectedBuffer->mapAsync(mapModeFromAPIIgnoringUnknownBits(mode), offset, WebGPU::CAPI::mapSizeFromAPI(size), [callbackInfo, future](bool success) {
+        future.setWaiter(protectedBuffer->mapAsync(mapModeFromAPIIgnoringUnknownBits(mode), offset, WebGPU::CAPI::mapSizeFromAPI(size), [callbackInfo, future](bool success) {
             if (success)
                 callbackInfo.callback(WGPUMapAsyncStatus_Success, WebGPU::CAPI::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
             else
                 callbackInfo.callback(WGPUMapAsyncStatus_Error, WebGPU::CAPI::toAPI("mapAsync failed"_s), callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
-        });
+        }));
         return future.future();
     }
 }

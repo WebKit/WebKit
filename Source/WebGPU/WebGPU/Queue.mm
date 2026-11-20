@@ -309,13 +309,13 @@ void Queue::makeInvalid()
     m_temporaryBuffer = nil;
 }
 
-void Queue::onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback)
+WebGPU::CompletionWaiter Queue::onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-onsubmittedworkdone
     auto devicePtr = m_device.get();
     if (!devicePtr || !devicePtr->isValid() || devicePtr->isLost()) {
         callback(false);
-        return;
+        return { };
     }
 
     ASSERT(m_submittedCommandBufferCount >= m_completedCommandBufferCount);
@@ -326,11 +326,13 @@ void Queue::onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback)
         scheduleWork([callback = WTF::move(callback)]() mutable {
             callback(true);
         });
-        return;
+        return { };
     }
 
     auto& callbacks = m_onSubmittedWorkDoneCallbacks.add(m_submittedCommandBufferCount, OnSubmittedWorkDoneCallbacks()).iterator->value;
     callbacks.append(WTF::move(callback));
+    // The handler runs on a Metal thread, or through the scheduleWork of the instance.
+    return { };
 }
 
 void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)

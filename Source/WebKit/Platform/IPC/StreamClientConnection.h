@@ -95,6 +95,8 @@ public:
     Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, OptionSet<WaitForOption> = { });
     template<typename>
     Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID);
+    template<typename>
+    Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout);
 
     // Ensures batched messages are processed sometime in the future. FIXME: Currently distinct from flushSentMessages().
     void flushBatch() { wakeUpServer(WakeUpServer::No); }
@@ -427,6 +429,12 @@ template<typename T>
 Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID)
 {
     Timeout timeout = defaultTimeout();
+    return m_connection->waitForAsyncReplyAndDispatchImmediately<T>(replyID, timeout);
+}
+
+template<typename T>
+Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
+{
     return m_connection->waitForAsyncReplyAndDispatchImmediately<T>(replyID, timeout);
 }
 

@@ -83,8 +83,8 @@ public:
     RefPtr<::WebGPU::ShaderModule> createShaderModule(const ::WebGPU::ShaderModuleDescriptor&) final;
     RefPtr<::WebGPU::ComputePipeline> createComputePipeline(const ::WebGPU::ComputePipelineDescriptor&) final;
     RefPtr<::WebGPU::RenderPipeline> createRenderPipeline(const ::WebGPU::RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const ::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&&) final;
-    void createRenderPipelineAsync(const ::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&&)>&&) final;
+    ::WebGPU::CompletionWaiter createComputePipelineAsync(const ::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&&) final;
+    ::WebGPU::CompletionWaiter createRenderPipelineAsync(const ::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&&)>&&) final;
     void createComputePipelineWithPipelineLayoutFromPipelineAsync(const ::WebGPU::ComputePipelineDescriptor&, const ::WebGPU::ComputePipeline&, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&&) final;
     void createRenderPipelineWithPipelineLayoutFromPipelineAsync(const ::WebGPU::RenderPipelineDescriptor&, const ::WebGPU::RenderPipeline&, CompletionHandler<void(std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&&)>&&) final;
     RefPtr<::WebGPU::CommandEncoder> createCommandEncoder(const ::WebGPU::CommandEncoderDescriptor&) final;
@@ -93,7 +93,7 @@ public:
     RefPtr<::WebGPU::XRBinding> createXRBinding() final;
 
     void pushErrorScope(::WebGPU::ErrorFilter) final;
-    void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
+    ::WebGPU::CompletionWaiter popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&&) final;
     bool isLost() const final;

@@ -115,12 +115,12 @@ bool Adapter::hasFeature(WebGPU::FeatureName feature)
     return m_capabilities.features.contains(feature);
 }
 
-void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::Device>, String>&&)>&& callback)
+WebGPU::CompletionWaiter Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::Device>, String>&&)>&& callback)
 {
     if (m_deviceRequested) {
         callback(makeUnexpected("Adapter can only request one device"_s));
         makeInvalid();
-        return;
+        return { };
     }
 
     Limits limits { };
@@ -130,12 +130,12 @@ void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, Completi
 
         if (!WebGPU::Metal::isValid(limits)) {
             callback(makeUnexpected("Device does not support requested limits"_s));
-            return;
+            return { };
         }
 
         if (anyLimitIsBetterThan(limits, m_capabilities.limits)) {
             callback(makeUnexpected("Device does not support requested limits"_s));
-            return;
+            return { };
         }
     } else
         limits = defaultLimits();
@@ -143,7 +143,7 @@ void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, Completi
     Vector<WebGPU::FeatureName> features { descriptor.requiredFeatures };
     if (includesUnsupportedFeatures(features, m_capabilities.features)) {
         callback(makeUnexpected("Device does not support requested features"_s));
-        return;
+        return { };
     }
 
     HardwareCapabilities capabilities {
@@ -156,6 +156,8 @@ void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, Completi
     m_deviceRequested = true;
     // FIXME: this should be asynchronous - https://bugs.webkit.org/show_bug.cgi?id=233621
     callback(Device::create(this->m_device, WTF::move(label), WTF::move(capabilities), *this));
+    // The handler has run.
+    return { };
 }
 
 bool Adapter::isXRCompatible() const

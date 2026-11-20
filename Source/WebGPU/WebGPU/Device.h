@@ -125,7 +125,7 @@ public:
     RefPtr<WebGPU::Buffer> createBuffer(const WebGPU::BufferDescriptor&) final;
     RefPtr<WebGPU::CommandEncoder> createCommandEncoder(const WebGPU::CommandEncoderDescriptor&) final;
     RefPtr<WebGPU::ComputePipeline> createComputePipeline(const WebGPU::ComputePipelineDescriptor&) final;
-    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::ComputePipeline>, WebGPU::PipelineError>&&)>&&) final;
+    WebGPU::CompletionWaiter createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::ComputePipeline>, WebGPU::PipelineError>&&)>&&) final;
     void createComputePipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::ComputePipelineDescriptor&, const WebGPU::ComputePipeline&, CompletionHandler<void(std::expected<Ref<WebGPU::ComputePipeline>, WebGPU::PipelineError>&&)>&&) final;
     RefPtr<WebGPU::ExternalTexture> importExternalTexture(const WebGPU::ExternalTextureDescriptor&) final;
     void updateExternalTexture(ExternalTexture&) const;
@@ -135,7 +135,7 @@ public:
     RefPtr<WebGPU::RenderBundleEncoder> createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&) final;
 
     RefPtr<WebGPU::RenderPipeline> createRenderPipeline(const WebGPU::RenderPipelineDescriptor&) final;
-    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&&) final;
+    WebGPU::CompletionWaiter createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&&) final;
     void createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::RenderPipelineDescriptor&, const WebGPU::RenderPipeline&, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&&) final;
     RefPtr<WebGPU::Sampler> createSampler(const WebGPU::SamplerDescriptor&) final;
     RefPtr<WebGPU::ShaderModule> createShaderModule(const WebGPU::ShaderModuleDescriptor&) final;
@@ -146,7 +146,7 @@ public:
     Queue& getQueueReference() const { return m_defaultQueue; }
     Ref<Queue> getQueue() const { return m_defaultQueue; }
     bool hasFeature(WebGPU::FeatureName) const;
-    void popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
+    WebGPU::CompletionWaiter popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
     void pushErrorScope(WebGPU::ErrorFilter) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, String&&)>&&) final;
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;

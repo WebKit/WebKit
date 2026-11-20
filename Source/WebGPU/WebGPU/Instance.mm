@@ -107,7 +107,7 @@ RefPtr<WebGPU::PresentationContext> Instance::createPresentationContext(const We
 void Instance::scheduleWork(WorkItem&& workItem)
 {
     if (!m_scheduleWork) {
-        defaultScheduleWork(WTF::move(workItem));
+        workItem();
         return;
     }
     m_scheduleWork(WTF::move(workItem));
@@ -116,70 +116,6 @@ void Instance::scheduleWork(WorkItem&& workItem)
 const std::optional<const MachSendRight>& Instance::webProcessID() const
 {
     return m_webProcessID;
-}
-
-void Instance::defaultScheduleWork(WorkItem&& workItem)
-{
-    Locker locker(m_lock);
-    m_pendingWork.append(WTF::move(workItem));
-    m_condition.notifyAll();
-}
-
-uint64_t Instance::createFuture()
-{
-    Locker locker(m_lock);
-    return m_nextFuture++;
-}
-
-void Instance::completeFuture(uint64_t future)
-{
-    Locker locker(m_lock);
-    m_completedFutures.add(future);
-    m_condition.notifyAll();
-}
-
-bool Instance::waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete)
-{
-    auto deadline = MonotonicTime::timePointFromNow(timeout);
-    while (true) {
-        processEvents();
-        {
-            Locker locker(m_lock);
-            if (anyFutureCompleted(futures)) {
-                for (auto [index, future] : indexedRange(futures)) {
-                    if (m_completedFutures.remove(future))
-                        didComplete(index);
-                }
-                return true;
-            }
-            if (m_pendingWork.isEmpty() && !m_condition.waitUntil(m_lock, deadline, [&] WTF_REQUIRES_LOCK(m_lock) { return !m_pendingWork.isEmpty() || anyFutureCompleted(futures); }))
-                return false;
-        }
-    }
-}
-
-bool Instance::anyFutureCompleted(std::span<const uint64_t> futures) const
-{
-    for (auto future : futures) {
-        if (m_completedFutures.contains(future))
-            return true;
-    }
-    return false;
-}
-
-void Instance::processEvents()
-{
-    while (true) {
-        Deque<WorkItem> localWork;
-        {
-            Locker locker(m_lock);
-            std::swap(m_pendingWork, localWork);
-        }
-        if (localWork.isEmpty())
-            return;
-        for (auto& workItem : localWork)
-            workItem();
-    }
 }
 
 static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, std::optional<WebGPU::PowerPreference> powerPreference)
@@ -220,7 +156,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, st
     }
 }
 
-void Instance::requestAdapter(const WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&& callback)
+WebGPU::CompletionWaiter Instance::requestAdapter(const WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&& callback)
 {
     auto devices = getDevices();
 
@@ -231,7 +167,7 @@ void Instance::requestAdapter(const WebGPU::RequestAdapterOptions& options, Comp
     // There is no fallback adapter.
     if (options.forceFallbackAdapter || !sortedDevices || !sortedDevices.count || !sortedDevices[0]) {
         callback(nullptr);
-        return;
+        return { };
     }
 
     auto device = sortedDevices[0];
@@ -240,11 +176,13 @@ void Instance::requestAdapter(const WebGPU::RequestAdapterOptions& options, Comp
     auto deviceCapabilities = hardwareCapabilities(device);
     if (!deviceCapabilities) {
         callback(nullptr);
-        return;
+        return { };
     }
 
     // FIXME: this should be asynchronous
     callback(Adapter::create(sortedDevices[0], *this, options.xrCompatible, WTF::move(*deviceCapabilities)));
+    // The handler has run.
+    return { };
 }
 
 void Instance::retainDevice(Device& device, id<MTLCommandBuffer> commandBuffer)

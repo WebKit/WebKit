@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "CAPIConversions.h"
+#import "CAPIFutures.h"
 #import "WebGPUCppConversions.h"
 #import <wtf/text/MakeString.h>
 
@@ -156,7 +157,7 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
             callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::CAPI::toAPI("Device does not support requested features"_s));
             return future.future();
         }
-        protectedAdapter->requestDevice(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Device>, String>&& device) {
+        future.setWaiter(protectedAdapter->requestDevice(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Device>, String>&& device) {
             if (!device) {
                 auto message = device.error().utf8();
                 return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::CAPI::toAPI(message));
@@ -164,7 +165,7 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
             if (uncapturedErrorCallbackInfo.callback)
                 listenForUncapturedErrors(device->get(), uncapturedErrorCallbackInfo);
             callback(WGPURequestDeviceStatus_Success, WebGPU::CAPI::releaseToAPI(WTF::move(*device)), WebGPU::CAPI::toAPI(""_s));
-        });
+        }));
         return future.future();
     }
 }

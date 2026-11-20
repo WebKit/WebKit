@@ -827,7 +827,7 @@ static void appendMessages(Vector<WebGPU::CompilationMessage>& result, const Mes
     }
 }
 
-void ShaderModule::compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&& callback)
+WebGPU::CompletionWaiter ShaderModule::compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&& callback)
 {
     WebGPU::CompilationInfo compilationInfo;
     WTF::switchOn(m_checkResult, [&](const ValidCheck& validCheck) {
@@ -838,6 +838,8 @@ void ShaderModule::compilationInfo(CompletionHandler<void(WebGPU::CompilationInf
     }, [&](std::monostate) {
     });
     callback(WTF::move(compilationInfo));
+    // The handler has run.
+    return { };
 }
 
 void ShaderModule::setLabel(String&& label)

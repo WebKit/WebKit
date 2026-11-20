@@ -290,37 +290,9 @@ inline auto releaseToAPI(RefPtr<T>&& pointer) -> decltype(toAPI(*pointer))
 // The WebGPU::Metal objects of the handles, for the C API functions that use what only the Metal
 // implementation has. In WebGPU.framework every C++ API object is a WebGPU::Metal object.
 
-inline Metal::Device& metalFromAPI(WGPUDevice handle)
-{
-    return downcast<Metal::Device>(fromAPI(handle));
-}
-
 inline Metal::Instance& metalFromAPI(WGPUInstance handle)
 {
     return downcast<Metal::Instance>(fromAPI(handle));
 }
-
-// A future of the C API on an instance. complete() is called after the callback it stands for
-// has run. Without an instance, the future is WGPU_FUTURE_INIT, which nothing waits on. The futures
-// are those of the Metal instance.
-class Future {
-public:
-    explicit Future(RefPtr<WebGPU::Instance>&& instance)
-        : m_instance(downcast<Metal::Instance>(WTF::move(instance)))
-        , m_id(m_instance ? m_instance->createFuture() : 0)
-    {
-    }
-
-    WGPUFuture future() const { return { m_id }; }
-    void complete() const
-    {
-        if (m_instance)
-            m_instance->completeFuture(m_id);
-    }
-
-private:
-    const RefPtr<Metal::Instance> m_instance;
-    const uint64_t m_id { 0 };
-};
 
 } // namespace WebGPU::CAPI

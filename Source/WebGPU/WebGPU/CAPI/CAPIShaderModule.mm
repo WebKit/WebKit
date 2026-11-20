@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "CAPIConversions.h"
+#import "CAPIFutures.h"
 #import "WebGPUCppConversions.h"
 
 NODELETE void wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)
@@ -40,12 +41,12 @@ void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
     }
 }
 
-static void getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
+static WebGPU::CompletionWaiter getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
 {
     Ref protectedShaderModule = WebGPU::CAPI::fromAPI(shaderModule);
     // WGPUCompilationInfoRequestStatus has no error value: the messages of a shader module that
     // did not compile are reported with WGPUCompilationInfoRequestStatus_Success.
-    protectedShaderModule->compilationInfo([callback = WTF::move(callback)](WebGPU::CompilationInfo&& compilationInfo) mutable {
+    return protectedShaderModule->compilationInfo([callback = WTF::move(callback)](WebGPU::CompilationInfo&& compilationInfo) mutable {
         Vector<UTF8CString> messageStorage;
         auto messages = WebGPU::CAPI::toAPI(compilationInfo, messageStorage);
         callback(WGPUCompilationInfoRequestStatus_Success, WGPUCompilationInfo {
@@ -61,10 +62,10 @@ WGPUFuture wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGP
     @autoreleasepool {
         Ref protectedShaderModule = WebGPU::CAPI::fromAPI(shaderModule);
         WebGPU::CAPI::Future future { protect(protectedShaderModule->device())->instance() };
-        getCompilationInfo(shaderModule, [callbackInfo, future](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+        future.setWaiter(getCompilationInfo(shaderModule, [callbackInfo, future](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
             callbackInfo.callback(status, &compilationInfo, callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
-        });
+        }));
         return future.future();
     }
 }

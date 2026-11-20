@@ -50,13 +50,12 @@ RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(::WebGPU::CompilationInfo&&)>&& callback)
+::WebGPU::CompletionWaiter RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(::WebGPU::CompilationInfo&&)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), [callback = WTF::move(callback)](Vector<CompilationMessage>&& messages) mutable {
+    auto replyID = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), [callback = WTF::move(callback)](Vector<CompilationMessage>&& messages) mutable {
         callback({ WTF::move(messages) });
     });
-
-    UNUSED_PARAM(sendResult);
+    return protect(root())->makeCompletionWaiter<Messages::RemoteShaderModule::CompilationInfo>(replyID);
 }
 
 void RemoteShaderModuleProxy::setLabel(String&& label)
