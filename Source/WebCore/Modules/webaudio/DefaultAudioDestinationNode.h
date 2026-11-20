@@ -70,6 +70,8 @@ public:
 private:
     void createDestination();
     void clearDestination();
+    String effectiveOutputDevicePersistentId(const String&, bool isSilentSink) const;
+    bool usesEmbedderAudioOutputs() const;
     void recreateDestination();
 
     // AudioIOCallback

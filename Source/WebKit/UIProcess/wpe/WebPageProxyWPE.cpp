@@ -54,6 +54,16 @@
 #include "WebPageMessages.h"
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "APIPageConfiguration.h"
+#include "Logging.h"
+#include "VirtualAudioDeviceDataChannel.h"
+#include "VirtualAudioDeviceParameters.h"
+#include "VirtualAudioDevicesWPE.h"
+#include "WPEVirtualAudioDevicePrivate.h"
+#include "WebPageProxyInternals.h"
+#endif
+
 namespace WebKit {
 
 void WebPageProxy::platformInitialize()
@@ -248,5 +258,45 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     callback();
 #endif
 }
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+Vector<VirtualAudioDeviceParameters> WebPageProxy::virtualAudioDeviceParameters()
+{
+    // Every call creates new channels. The UI process keeps no copy of the sender sockets: they
+    // are only owned by the returned parameters and then by the web page in the web process.
+    // Receivers are kept for as long as their sender socket is open, so that pages kept alive in
+    // a web process (for instance in the back/forward cache) keep delivering audio, and they are
+    // removed when the sender socket is closed: the web page was destroyed, the web process
+    // exited, or the parameters were discarded or ignored (for instance on reinitialization).
+    auto devices = virtualAudioDevices(m_configuration.get());
+    if (devices.isEmpty())
+        return { };
+
+    Ref preferences = m_preferences;
+    if (!preferences->exposeSpeakersEnabled() || !preferences->exposeSpeakersWithoutMicrophoneEnabled())
+        RELEASE_LOG_ERROR(Media, "WebPageProxy::virtualAudioDeviceParameters: the ExposeSpeakers and ExposeSpeakersWithoutMicrophone features are needed to select virtual audio devices other than the default one");
+
+    Vector<VirtualAudioDeviceParameters> parameters;
+    for (auto& [device, configuration] : devices) {
+        RefPtr receiver = VirtualAudioDeviceDataReceiver::create(configuration, [device = device](std::span<const uint8_t> data, uint64_t timestamp) {
+            wpeVirtualAudioDeviceRenderBuffer(device.get(), data, timestamp);
+        }, [weakThis = WeakPtr { *this }](VirtualAudioDeviceDataReceiver& receiver) {
+            if (RefPtr protectedThis = weakThis) {
+                protectedThis->internals().virtualAudioDeviceReceivers.removeFirstMatching([&](auto& item) {
+                    return item.ptr() == &receiver;
+                });
+            }
+        });
+        if (!receiver)
+            continue;
+
+        auto persistentId = virtualAudioDevicePersistentId(identifier(), configuration.name);
+        parameters.append({ WTF::move(configuration), WTF::move(persistentId), receiver->takeSenderSocket() });
+        internals().virtualAudioDeviceReceivers.append(receiver.releaseNonNull());
+    }
+
+    return parameters;
+}
+#endif
 
 } // namespace WebKit

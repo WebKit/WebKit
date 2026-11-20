@@ -21,6 +21,7 @@
 #if USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include <gst/gst.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,7 +51,10 @@ GType webkit_audio_sink_get_type(void);
 
 G_END_DECLS
 
-GstElement* webkitAudioSinkNew(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+GstElement* webkitAudioSinkNew(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { }, WebCore::AudioMixerUsage = WebCore::AudioMixerUsage::Optional);
 bool webkitAudioSinkSetDevice(GstElement*, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+
+// Latency added by the audio mixer, which isn't part of the latency of the pipeline of the sink.
+GstClockTime webkitAudioSinkGetMixerLatency(GstElement*);
 
 #endif // USE(GSTREAMER)

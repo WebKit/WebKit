@@ -64,6 +64,15 @@
 #include "WebKitWebExtension.h"
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "Logging.h"
+#include "VirtualAudioDeviceDataChannel.h"
+#include "VirtualAudioDeviceParameters.h"
+#include "WebPageCreationParameters.h"
+#include "WebProcessProxyMessages.h"
+#include <WebCore/GStreamerVirtualAudioDeviceManager.h>
+#endif
+
 #if USE(GBM)
 #include <WebCore/DRMDeviceManager.h>
 #include <WebCore/GBMDevice.h>
@@ -75,8 +84,53 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize(const WebPageCreationParameters&)
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+// Registers the virtual audio output devices of the page, see GStreamerVirtualAudioDeviceManager, and
+// makes the page default to the virtual default device. They are unregistered in WebPage::close().
+// Returns the persistent IDs of the registered devices.
+static Vector<String> registerVirtualAudioDevices(Page& page, PageIdentifier owner, const Vector<VirtualAudioDeviceParameters>& devices)
 {
+    // The UI process validated the devices: their names and persistent IDs are unique and at most
+    // one of them is the default device.
+    String defaultDevicePersistentId;
+    Vector<String> registeredDevices;
+    for (auto& device : devices) {
+        auto& configuration = device.configuration;
+        RefPtr sender = VirtualAudioDeviceDataSender::create(device.socket.duplicate());
+        if (!sender) {
+            RELEASE_LOG_ERROR(Media, "registerVirtualAudioDevices: invalid socket for virtual audio device %" PUBLIC_LOG_STRING, configuration.name.utf8());
+            continue;
+        }
+
+        if (!GStreamerVirtualAudioDeviceManager::singleton().registerDevice(owner, device.persistentId, configuration, sender.releaseNonNull())) {
+            RELEASE_LOG_ERROR(Media, "registerVirtualAudioDevices: failed to register virtual audio device %" PUBLIC_LOG_STRING, configuration.name.utf8());
+            continue;
+        }
+
+        registeredDevices.append(device.persistentId);
+        if (configuration.isDefault)
+            defaultDevicePersistentId = device.persistentId;
+    }
+
+    page.setDefaultAudioOutputDeviceId(defaultDevicePersistentId);
+    page.setUsesEmbedderAudioOutputs(!registeredDevices.isEmpty());
+    return registeredDevices;
+}
+#endif
+
+void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
+{
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    if (RefPtr page = corePage(); page && !parameters.virtualAudioDevices.isEmpty()) {
+        // The UI process only exposes the devices that work in this process. This is sent before
+        // the page can enumerate devices, so it's received first.
+        auto registeredDevices = registerVirtualAudioDevices(*page, m_identifier, parameters.virtualAudioDevices);
+        protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::DidRegisterVirtualAudioDevices(m_webPageProxyIdentifier, WTF::move(registeredDevices)), 0);
+    }
+#else
+    UNUSED_PARAM(parameters);
+#endif
+
 #if USE(ATSPI)
     // Create the accessible object (the plug) that will serve as the
     // entry point to the Web process, and send a message to the UI

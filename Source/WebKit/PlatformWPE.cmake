@@ -554,6 +554,17 @@ if (ENABLE_MEDIA_STREAM)
     )
 endif ()
 
+if (ENABLE_VIRTUAL_AUDIO_DEVICES)
+    list(APPEND WebKit_SOURCES
+        Shared/glib/VirtualAudioDeviceDataChannel.cpp
+
+        UIProcess/wpe/VirtualAudioDevicesWPE.cpp
+    )
+    list(APPEND WebKit_SERIALIZATION_IN_FILES
+        Shared/glib/VirtualAudioDeviceParameters.serialization.in
+    )
+endif ()
+
 if (ENABLE_BREAKPAD)
     list(APPEND WebKit_SOURCES
         Shared/unix/BreakpadExceptionHandler.cpp

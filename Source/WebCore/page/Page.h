@@ -1106,6 +1106,17 @@ public:
     WEBCORE_EXPORT void voiceActivityDetected();
 #endif
 
+    // Persistent ID of the audio output device replacing the default one, or an empty string to
+    // use the system default output.
+    WEBCORE_EXPORT void setDefaultAudioOutputDeviceId(const String&);
+    // Resolves the persistent ID of the audio output device selected by an audio producer: no
+    // selection and the "default" device both resolve to the default audio output device of the page.
+    String effectiveAudioOutputDeviceId(const String& persistentDeviceId) const;
+    // Whether the embedder implements audio output devices for this page. The audio producers of
+    // such a page must be able to switch between system and embedder outputs at any time.
+    void setUsesEmbedderAudioOutputs(bool usesEmbedderAudioOutputs) { m_usesEmbedderAudioOutputs = usesEmbedderAudioOutputs; }
+    bool usesEmbedderAudioOutputs() const { return m_usesEmbedderAudioOutputs; }
+
 #if ENABLE(MODEL_PROCESS)
     void incrementModelElementCount();
     void decrementModelElementCount();
@@ -1864,6 +1875,8 @@ private:
 #endif
 
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
+    String m_defaultAudioOutputDeviceId;
+    bool m_usesEmbedderAudioOutputs { false };
     const HashSet<String> m_maskedURLSchemes;
     Vector<UserStyleSheet> m_userStyleSheetsPendingInjection;
     const NetworkLoadPolicy m_networkLoadPolicy;

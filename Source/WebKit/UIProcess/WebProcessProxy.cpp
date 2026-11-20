@@ -2252,6 +2252,33 @@ bool WebProcessProxy::isResponsive() const
     return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer->isResponsive();
 }
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+void WebProcessProxy::didRegisterVirtualAudioDevices(WebPageProxyIdentifier pageID, Vector<String>&& persistentIds)
+{
+    // A page has at most 32 virtual audio devices, see WebKitWebView:virtual-audio-devices.
+    static constexpr size_t maximumVirtualAudioDevices = 32;
+    MESSAGE_CHECK(persistentIds.size() <= maximumVirtualAudioDevices);
+
+    // The page may have been closed while the message was in flight.
+    if (!isAssociatedWithPage(pageID))
+        return;
+
+    auto& registeredDevices = m_registeredVirtualAudioDevices.ensure(pageID, [] {
+        return HashSet<String> { };
+    }).iterator->value;
+    for (auto& persistentId : persistentIds) {
+        MESSAGE_CHECK(!persistentId.isEmpty());
+        registeredDevices.add(WTF::move(persistentId));
+    }
+}
+
+bool WebProcessProxy::hasRegisteredVirtualAudioDevice(WebPageProxyIdentifier pageID, const String& persistentId) const
+{
+    auto it = m_registeredVirtualAudioDevices.find(pageID);
+    return it != m_registeredVirtualAudioDevices.end() && it->value.contains(persistentId);
+}
+#endif
+
 void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, UserGestureTokenIdentifier identifier)
 {
     auto authorizationTokenMapByPageIterator = m_userInitiatedActionByAuthorizationTokenMap.find(pageID);
@@ -3083,6 +3110,10 @@ void WebProcessProxy::reportProcessDisassociatedWithPageIfNecessary(WebPageProxy
 {
     if (isAssociatedWithPage(pageID))
         return;
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    m_registeredVirtualAudioDevices.remove(pageID);
+#endif
 
     if (RefPtr page = webPage(pageID))
         page->processIsNoLongerAssociatedWithPage(*this);

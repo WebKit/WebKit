@@ -132,6 +132,10 @@
 #include <wtf/glib/GWeakPtr.h>
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "VirtualAudioDeviceDataChannel.h"
+#endif
+
 namespace WebKit {
 
 struct PrivateClickMeasurementAndMetadata {
@@ -546,6 +550,12 @@ public:
 
     std::optional<WebCore::DevicePostureType> currentDevicePostureType;
     bool forceNeedsSecureInputReevaluation { false };
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    // Receivers of the audio rendered on the virtual audio devices, in any web process of the page.
+    // A receiver removes itself when its sender socket is closed.
+    Vector<Ref<VirtualAudioDeviceDataReceiver>> virtualAudioDeviceReceivers;
+#endif
 
     explicit Internals(WebPageProxy&, bool processInheritedFromOpener);
 

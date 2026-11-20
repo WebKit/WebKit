@@ -22,6 +22,8 @@
 #if USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
+#include <atomic>
+#include <wtf/Box.h>
 #include <wtf/DataMutex.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -37,8 +39,18 @@ public:
     static bool isAvailable();
     static GStreamerAudioMixer& singleton();
 
+    // Latency configured in the mixer pipeline, zero until it's configured. It's updated by the
+    // pipeline and can be read from any thread.
+    using SharedLatency = Box<std::atomic<GstClockTime>>;
+
+    struct Producer {
+        GRefPtr<GstPad> mixerPad;
+        // Latency of the mixer pipeline that renders the audio of the producer.
+        SharedLatency latency;
+    };
+
     void ensureState(GstStateChange, const String& deviceId = { });
-    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate, std::optional<GstClockTime> periodTime, const String& deviceId = { }, const GRefPtr<GstDevice>& = nullptr);
+    Producer registerProducer(GstElement*, std::optional<int> forcedSampleRate, std::optional<GstClockTime> periodTime, const String& deviceId = { }, const GRefPtr<GstDevice>& = nullptr);
     void unregisterProducer(const GRefPtr<GstPad>&);
 
 private:
@@ -48,6 +60,10 @@ private:
         GRefPtr<GstElement> pipeline;
         GRefPtr<GstElement> mixer;
         RunLoop::Timer teardownTimer;
+        SharedLatency latency { SharedLatency::create(0) };
+        gulong latencyProbeId { 0 };
+        // The device whose sink renders the mixed audio, null for the default output.
+        GRefPtr<GstDevice> device;
     };
 
     struct StreamingMembers {
@@ -57,6 +73,7 @@ private:
 
     MixerPipeline& ensureMixerPipeline(DataMutexLocker<StreamingMembers>&, const String& deviceId, const GRefPtr<GstDevice>&);
     void teardownPipeline(const String& deviceId);
+    void destroyPipeline(DataMutexLocker<StreamingMembers>&, const String& deviceId);
 
     static constexpr Seconds s_teardownTimeout = 60_s;
     DataMutex<StreamingMembers> m_streamingMembers;

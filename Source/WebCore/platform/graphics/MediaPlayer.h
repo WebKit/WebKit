@@ -333,6 +333,7 @@ public:
 
     virtual String audioOutputDeviceId() const { return { }; }
     virtual String audioOutputDeviceIdOverride() const { return { }; }
+    virtual bool mediaPlayerUsesEmbedderAudioOutputs() const;
 
     virtual void mediaPlayerQueueTaskOnEventLoop(Function<void()>&& task) { callOnMainThread(WTF::move(task)); }
 
@@ -765,6 +766,7 @@ public:
 
     String audioOutputDeviceId() const;
     String audioOutputDeviceIdOverride() const;
+    bool usesEmbedderAudioOutputs() const;
     void audioOutputDeviceChanged();
 
     std::optional<MediaPlayerIdentifier> identifier() const;
@@ -970,6 +972,12 @@ inline String MediaPlayer::audioOutputDeviceId() const
 {
     RefPtr client = m_client.get();
     return client ? client->audioOutputDeviceId() : String { };
+}
+
+inline bool MediaPlayer::usesEmbedderAudioOutputs() const
+{
+    RefPtr client = m_client;
+    return client && client->mediaPlayerUsesEmbedderAudioOutputs();
 }
 
 inline String MediaPlayer::audioOutputDeviceIdOverride() const
