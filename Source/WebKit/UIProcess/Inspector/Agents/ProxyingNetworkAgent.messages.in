@@ -53,4 +53,10 @@ messages -> Inspector::ProxyingNetworkAgent {
     WebSocketFrameError(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, String errorMessage)
 
     WebSocketClosed(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp)
+
+    # A load paused in the WebContent process for one of Web Inspector's intercept patterns. It
+    # waits in that process's NetworkInterceptionSink for a Network.intercept* command.
+    RequestIntercepted(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::ResourceRequest request)
+
+    ResponseIntercepted(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::ResourceResponse response)
 }

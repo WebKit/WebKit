@@ -10857,51 +10857,12 @@ void WebPageProxy::setNetworkInterceptPatterns(Inspector::NetworkInterceptOwner 
     updateNetworkInterception(WTF::move(completionHandler));
 }
 
-bool WebPageProxy::setInspectorNetworkInterceptionEnabled(bool enabled)
-{
-    if (internals().inspectorInterceptionEnabled == enabled)
-        return false;
-
-    internals().inspectorInterceptionEnabled = enabled;
-    updateNetworkInterception([] { });
-    return true;
-}
-
-bool WebPageProxy::addInspectorNetworkInterceptPattern(Inspector::InterceptPattern&& pattern)
-{
-    // Union-additive: re-adding a pattern that is already configured changes nothing.
-    pattern.owner = Inspector::NetworkInterceptOwner::Inspector;
-    if (internals().inspectorInterceptPatterns.contains(pattern))
-        return false;
-
-    internals().inspectorInterceptPatterns.append(WTF::move(pattern));
-    updateNetworkInterception([] { });
-    return true;
-}
-
-bool WebPageProxy::removeInspectorNetworkInterceptPattern(const Inspector::InterceptPattern& pattern)
-{
-    if (!internals().inspectorInterceptPatterns.removeFirst(pattern))
-        return false;
-
-    updateNetworkInterception([] { });
-    return true;
-}
-
-void WebPageProxy::clearInspectorNetworkInterception()
-{
-    internals().inspectorInterceptionEnabled = false;
-    internals().inspectorInterceptPatterns.clear();
-    updateNetworkInterception([] { });
-}
-
 void WebPageProxy::updateNetworkInterception(CompletionHandler<void()>&& completionHandler)
 {
-    // The configuration of a page is the union of the patterns of every consumer. Web Inspector's
-    // patterns only count while it has interception enabled; it does not gate other consumers.
+    // The configuration of a page is the union of the patterns of every consumer. A consumer that
+    // turns its interception off clears its own patterns; it does not gate other consumers.
     Inspector::NetworkInterception interception;
-    if (internals().inspectorInterceptionEnabled)
-        interception.patterns.appendVector(internals().inspectorInterceptPatterns);
+    interception.patterns.appendVector(internals().inspectorInterceptPatterns);
     interception.patterns.appendVector(internals().automationInterceptPatterns);
 
     if (interception == internals().networkInterception)
@@ -10920,6 +10881,20 @@ void WebPageProxy::updateNetworkInterception(CompletionHandler<void()>&& complet
     });
     if (RefPtr provisionalPage = m_provisionalPage)
         protect(provisionalPage->process())->sendWithAsyncReply(Messages::WebPage::SetNetworkInterception(internals().networkInterception), [aggregator] { }, provisionalPage->webPageID());
+}
+
+void WebPageProxy::resolveNetworkInterception(const WebCore::ScopedResourceLoaderIdentifier& loadID, Inspector::NetworkInterceptOwner owner, Inspector::NetworkInterceptionPhase phase, Inspector::NetworkInterceptionResolution&& resolution)
+{
+    // The load is paused in the process that started it, which may host any frame of the page.
+    RefPtr process = WebProcessProxy::processForIdentifier(loadID.processIdentifier());
+    if (!process)
+        return;
+
+    auto webPageID = webPageIDInProcess(*process);
+    if (!hasWebPageInProcess(*process, webPageID))
+        return;
+
+    process->send(Messages::WebPage::ResolveNetworkInterception(loadID.object(), owner, phase, WTF::move(resolution)), webPageID);
 }
 
 void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
