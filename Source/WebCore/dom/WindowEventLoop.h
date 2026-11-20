@@ -42,14 +42,13 @@ class HTMLSlotElement;
 class MutationObserver;
 class Page;
 class ScriptExecutionContext;
-class SecurityOrigin;
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
 class WindowEventLoop final : public EventLoop, public CanMakeCheckedPtr<WindowEventLoop> {
     WTF_MAKE_TZONE_ALLOCATED(WindowEventLoop);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WindowEventLoop);
 public:
-    static Ref<WindowEventLoop> eventLoopForSecurityOrigin(const SecurityOrigin&);
+    static Ref<WindowEventLoop> eventLoopForAgentCluster(const String& agentClusterID);
 
     virtual ~WindowEventLoop();
 

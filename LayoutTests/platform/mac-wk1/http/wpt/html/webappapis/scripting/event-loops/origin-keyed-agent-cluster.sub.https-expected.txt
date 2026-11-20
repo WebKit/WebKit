@@ -1,0 +1,5 @@
+
+
+PASS A same-site iframe shares its parent's event loop
+FAIL A same-site iframe in an origin-keyed agent cluster has its own event loop assert_true: expected true got false
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Documents in different agent clusters don't share an event loop</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+async function loadFrame(port, path) {
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://${location.hostname}:${port}/WebKit/html/webappapis/scripting/event-loops/resources/${path}`;
+    const originAgentCluster = new Promise(resolve => window.addEventListener("message", event => {
+        if (event.source === iframe.contentWindow)
+            resolve(event.data);
+    }));
+    document.body.append(iframe);
+    return { iframe, originAgentCluster: await originAgentCluster };
+}
+
+promise_test(async () => {
+    const { iframe, originAgentCluster } = await loadFrame({{ports[https-local][0]}}, "post-origin-agent-cluster.html");
+    assert_false(originAgentCluster);
+    assert_true(internals.hasSameEventLoopAs(iframe.contentWindow));
+}, "A same-site iframe shares its parent's event loop");
+
+promise_test(async () => {
+    const { iframe, originAgentCluster } = await loadFrame({{ports[https][1]}}, "post-origin-agent-cluster-origin-keyed.html");
+    assert_true(originAgentCluster);
+    assert_false(internals.hasSameEventLoopAs(iframe.contentWindow));
+}, "A same-site iframe in an origin-keyed agent cluster has its own event loop");
+</script>

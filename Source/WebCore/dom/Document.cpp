@@ -8970,6 +8970,9 @@ void Document::setAgentClusterIdentifier(std::optional<AgentClusterIdentifier> i
 
 String Document::agentClusterID() const
 {
+    if (RefPtr contextDocument = m_contextDocument)
+        return contextDocument->agentClusterID();
+
     Ref origin = securityOrigin();
     auto& data = origin->data();
     // FIXME: The UI process should know when a document ends up with an opaque origin, so its identifier can account for that.
@@ -8980,6 +8983,8 @@ String Document::agentClusterID() const
     if (m_agentClusterIdentifier)
         return makeString("agent-cluster-"_s, m_agentClusterIdentifier->toUInt64());
     // Without a UI process, as in WebKitLegacy, there is no identifier.
+    if (data.protocol() == "file"_s)
+        return "file://"_s;
     return Site(data).toString();
 }
 
@@ -9170,10 +9175,7 @@ WindowEventLoop& Document::windowEventLoop()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (!m_eventLoop) [[unlikely]] {
-        if (RefPtr contextDocument = m_contextDocument)
-            m_eventLoop = contextDocument->windowEventLoop();
-        else
-            m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(protect(securityOrigin()));
+        m_eventLoop = WindowEventLoop::eventLoopForAgentCluster(agentClusterID());
         protect(m_eventLoop)->addAssociatedContext(*this);
     }
     return *m_eventLoop;

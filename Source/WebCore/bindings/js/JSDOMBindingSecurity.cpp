@@ -98,6 +98,17 @@ static inline bool canAccessTargetOrigin(JSC::JSGlobalObject* lexicalGlobalObjec
     return false;
 }
 
+#if ASSERT_ENABLED
+// Documents that can reach each other's objects are in the same agent, so they need the same event loop.
+static bool hasSameAgentClusterAsActiveDocument(JSC::JSGlobalObject& lexicalGlobalObject, Document& targetDocument)
+{
+    RefPtr activeDocument = activeDOMWindow(lexicalGlobalObject).document();
+    if (!activeDocument || activeDocument == &targetDocument || activeDocument->securityOrigin().hasUniversalAccess())
+        return true;
+    return activeDocument->agentClusterID() == targetDocument.agentClusterID();
+}
+#endif
+
 // FIXME: With site isolation, a remote frame's document is in another process and therefore in another agent cluster.
 // Make remote frames inaccessible instead of syncing their agent cluster identifier.
 static inline bool canAccessFrame(JSC::JSGlobalObject* lexicalGlobalObject, Frame* targetFrame, SecurityReportingOption reportingOption)
@@ -105,7 +116,12 @@ static inline bool canAccessFrame(JSC::JSGlobalObject* lexicalGlobalObject, Fram
     if (!targetFrame || !targetFrame->frameDocumentSecurityOrigin())
         return false;
 
-    return canAccessTargetOrigin(lexicalGlobalObject, protect(*targetFrame->frameDocumentSecurityOrigin()), targetFrame->frameAgentClusterIdentifier(), protect(targetFrame->window()), reportingOption);
+    bool canAccess = canAccessTargetOrigin(lexicalGlobalObject, protect(*targetFrame->frameDocumentSecurityOrigin()), targetFrame->frameAgentClusterIdentifier(), protect(targetFrame->window()), reportingOption);
+#if ASSERT_ENABLED
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(targetFrame); canAccess && localFrame && localFrame->document())
+        ASSERT(hasSameAgentClusterAsActiveDocument(*lexicalGlobalObject, *protect(localFrame->document())));
+#endif
+    return canAccess;
 }
 
 static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, Document* targetDocument, SecurityReportingOption reportingOption)
@@ -116,7 +132,9 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
     if (auto* templateHost = targetDocument->templateDocumentHost())
         targetDocument = templateHost;
 
-    return canAccessTargetOrigin(lexicalGlobalObject, protect(targetDocument->securityOrigin()), targetDocument->agentClusterIdentifier(), protect(targetDocument->window()), reportingOption);
+    bool canAccess = canAccessTargetOrigin(lexicalGlobalObject, protect(targetDocument->securityOrigin()), targetDocument->agentClusterIdentifier(), protect(targetDocument->window()), reportingOption);
+    ASSERT(!canAccess || hasSameAgentClusterAsActiveDocument(*lexicalGlobalObject, *targetDocument));
+    return canAccess;
 }
 
 bool BindingSecurity::shouldAllowAccessToFrame(JSGlobalObject& lexicalGlobalObject, Frame& frame, String& message)
