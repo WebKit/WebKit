@@ -2504,7 +2504,7 @@ end)
 llintOpWithReturn(op_to_property_key_or_number, OpToPropertyKeyOrNumber, macro (size, get, dispatch, return)
     get(m_src, t2)
     loadConstantOrVariable(size, t2, t1, t0)
-    addi 1, t2
+    addi 1, t1, t2
     bib t2, LowestTag + 1, .done
     bineq t1, CellTag, .opToPropertyKeyOrNumberSlow
     bbeq JSCell::m_type[t0], SymbolType, .done
