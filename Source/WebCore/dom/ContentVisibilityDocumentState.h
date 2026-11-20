@@ -28,6 +28,7 @@
 #include "IntersectionObserver.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -46,6 +47,8 @@ class ContentVisibilityDocumentState {
 public:
     static void observe(Element&);
     static void unobserve(Element&);
+    static void rendererWillBeDestroyed(Element&);
+    void finishRenderTreeUpdate();
 
     void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 
@@ -68,6 +71,7 @@ private:
     const RefPtr<IntersectionObserver> m_observer;
 
     WeakHashMap<Element, ViewportProximity, WeakPtrImplWithEventTargetData> m_elementViewportProximities;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithRetainedRelevancy;
 };
 
 } // namespace
