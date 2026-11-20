@@ -92,7 +92,7 @@ private:
                             MultiGetByOffsetData& data = node->child1()->multiGetByOffsetData();
                             for (unsigned i = 0; i < data.cases.size(); ++i) {
                                 GetByOffsetMethod& method = data.cases[i].method();
-                                if (method.kind() == GetByOffsetMethod::Constant && !method.constant()->value().toNumberFromPrimitive()) {
+                                if (method.kind() == GetByOffsetMethod::Constant && !method.constant()->value().isNumber()) {
                                     isCandidate = false;
                                     break;
                                 }
@@ -622,11 +622,8 @@ private:
                 MultiGetByOffsetData& data = candidate->multiGetByOffsetData();
                 for (unsigned i = 0; i < data.cases.size(); ++i) {
                     GetByOffsetMethod& method = data.cases[i].method();
-                    if (method.kind() == GetByOffsetMethod::Constant) {
-                        // It's possible there are non-Number constants that still predict NumberUse, e.g. undefined.
-                        std::optional<double> doubleConstant = method.constant()->value().toNumberFromPrimitive();
-                        method.setConstantValue(m_graph.freeze(jsDoubleNumber(*doubleConstant)));
-                    }
+                    if (method.kind() == GetByOffsetMethod::Constant)
+                        method.setConstantValue(m_graph.freeze(jsDoubleNumber(method.constant()->value().asNumber())));
                 }
                 candidate->setResult(NodeResultDouble);
                 resultNode = candidate;
