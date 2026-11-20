@@ -28,30 +28,18 @@
 
 #include "CryptoKeyHMAC.h"
 #include "ExceptionOr.h"
-#include "OpenSSLCryptoUniquePtr.h"
 #include "OpenSSLUtilities.h"
 #include <openssl/evp.h>
+#include <openssl/hmac.h>
 #include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
 
 static std::optional<Vector<uint8_t>> calculateSignature(const EVP_MD* algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
 {
-    HMACCtxPtr ctx;
-    if (!(ctx = HMACCtxPtr(HMAC_CTX_new())))
-        return std::nullopt;
-
-    if (1 != HMAC_Init_ex(ctx.get(), key.span().data(), key.size(), algorithm, nullptr))
-        return std::nullopt;
-
-    // Call update with the message
-    if (1 != HMAC_Update(ctx.get(), data, dataLength))
-        return std::nullopt;
-
-    // Finalize the DigestSign operation
     Vector<uint8_t> cipherText(EVP_MAX_MD_SIZE);
     unsigned len = 0;
-    if (1 != HMAC_Final(ctx.get(), cipherText.mutableSpan().data(), &len))
+    if (!HMAC(algorithm, key.span().data(), key.size(), data, dataLength, cipherText.mutableSpan().data(), &len))
         return std::nullopt;
 
     cipherText.shrink(len);

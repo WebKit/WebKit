@@ -30,8 +30,48 @@
 #include "CryptoKeyEC.h"
 #include "ExceptionOr.h"
 #include "OpenSSLUtilities.h"
+#include <openssl/ecdsa.h>
+
+#if USE(BORINGSSL)
+#include <openssl/mem.h>
+#endif
 
 namespace WebCore {
+
+static ECDSASigPtr decodeSignature(std::span<const uint8_t> derSignature)
+{
+#if USE(BORINGSSL)
+    return ECDSASigPtr(ECDSA_SIG_from_bytes(derSignature.data(), derSignature.size()));
+#else
+    const uint8_t* ptr = derSignature.data();
+    return ECDSASigPtr(d2i_ECDSA_SIG(nullptr, &ptr, derSignature.size()));
+#endif
+}
+
+static std::optional<Vector<uint8_t>> encodeSignature(const ECDSA_SIG& sig)
+{
+#if USE(BORINGSSL)
+    uint8_t* bytes = nullptr;
+    size_t length = 0;
+    if (!ECDSA_SIG_to_bytes(&bytes, &length, &sig))
+        return std::nullopt;
+
+    Vector<uint8_t> derSignature(unsafeMakeSpan(bytes, length));
+    OPENSSL_free(bytes);
+    return derSignature;
+#else
+    int length = i2d_ECDSA_SIG(&sig, nullptr);
+    if (length <= 0)
+        return std::nullopt;
+
+    Vector<uint8_t> derSignature(length);
+    uint8_t* ptr = derSignature.mutableSpan().data();
+    if (i2d_ECDSA_SIG(&sig, &ptr) != length)
+        return std::nullopt;
+
+    return derSignature;
+#endif
+}
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
@@ -45,13 +85,24 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgo
     if (!digest)
         return Exception { ExceptionCode::OperationError };
 
-    const EC_KEY* ecKey = EVP_PKEY_get0_EC_KEY(key.platformKey().get());
-    if (!ecKey)
+    EvpPKeyCtxPtr ctx(EVP_PKEY_CTX_new(key.platformKey().get(), nullptr));
+    if (!ctx)
         return Exception { ExceptionCode::OperationError };
 
-    // We use ECDSA_do_sign rather than EVP API because the latter handles ECDSA signature in DER format
-    // while this function is supposed to return simply concatinated "r" and "s".
-    auto sig = ECDSASigPtr(ECDSA_do_sign(digest->span().data(), digest->size(), const_cast<EC_KEY*>(ecKey)));
+    if (EVP_PKEY_sign_init(ctx.get()) <= 0)
+        return Exception { ExceptionCode::OperationError };
+
+    size_t derSignatureLen;
+    if (EVP_PKEY_sign(ctx.get(), nullptr, &derSignatureLen, digest->span().data(), digest->size()) <= 0)
+        return Exception { ExceptionCode::OperationError };
+
+    Vector<uint8_t> derSignature(derSignatureLen);
+    if (EVP_PKEY_sign(ctx.get(), derSignature.mutableSpan().data(), &derSignatureLen, digest->span().data(), digest->size()) <= 0)
+        return Exception { ExceptionCode::OperationError };
+    derSignature.shrink(derSignatureLen);
+
+    // EVP_PKEY_sign() produces a DER-encoded ECDSA-Sig-Value, but WebCrypto expects "r" and "s" concatenated.
+    ECDSASigPtr sig = decodeSignature(derSignature.span());
     if (!sig)
         return Exception { ExceptionCode::OperationError };
 
@@ -89,11 +140,18 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
     if (!digest)
         return Exception { ExceptionCode::OperationError };
 
-    const EC_KEY* ecKey = EVP_PKEY_get0_EC_KEY(key.platformKey().get());
-    if (!ecKey)
+    std::optional<Vector<uint8_t>> derSignature = encodeSignature(*sig);
+    if (!derSignature)
         return Exception { ExceptionCode::OperationError };
 
-    int ret = ECDSA_do_verify(digest->span().data(), digest->size(), sig.get(), const_cast<EC_KEY*>(ecKey));
+    EvpPKeyCtxPtr ctx(EVP_PKEY_CTX_new(key.platformKey().get(), nullptr));
+    if (!ctx)
+        return Exception { ExceptionCode::OperationError };
+
+    if (EVP_PKEY_verify_init(ctx.get()) <= 0)
+        return Exception { ExceptionCode::OperationError };
+
+    int ret = EVP_PKEY_verify(ctx.get(), derSignature->span().data(), derSignature->size(), digest->span().data(), digest->size());
     return ret == 1;
 }
 
