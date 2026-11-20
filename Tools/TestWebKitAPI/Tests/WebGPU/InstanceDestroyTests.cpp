@@ -262,7 +262,7 @@ TEST_F(WebGPUInstanceDestroy, WaitsForSubmittedWork)
     commandBuffers.append(commandBuffer.releaseNonNull());
     queue->submit(WTF::move(commandBuffers));
     bool done = false;
-    queue->onSubmittedWorkDone([&] {
+    queue->onSubmittedWorkDone([&](bool) {
         done = true;
     });
 
@@ -291,7 +291,7 @@ TEST_F(WebGPUInstanceDestroy, WaitsForPendingCompilesAndSubmittedWork)
     commandBuffers.append(commandBuffer.releaseNonNull());
     queue->submit(WTF::move(commandBuffers));
     bool done = false;
-    queue->onSubmittedWorkDone([&] {
+    queue->onSubmittedWorkDone([&](bool) {
         done = true;
     });
 
@@ -384,7 +384,7 @@ TEST_F(WebGPUInstanceDestroy, ReleasesTheInstanceOnTheThreadThatDestroysIt)
     commandBuffers.append(commandBuffer.releaseNonNull());
     queue->submit(WTF::move(commandBuffers));
     bool done = false;
-    queue->onSubmittedWorkDone([&] {
+    queue->onSubmittedWorkDone([&](bool) {
         done = true;
     });
 

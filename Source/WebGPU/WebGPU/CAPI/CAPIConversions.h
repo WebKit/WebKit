@@ -310,11 +310,6 @@ inline Metal::Instance& metalFromAPI(WGPUInstance handle)
     return downcast<Metal::Instance>(fromAPI(handle));
 }
 
-inline Metal::Queue& metalFromAPI(WGPUQueue handle)
-{
-    return downcast<Metal::Queue>(fromAPI(handle));
-}
-
 inline Metal::ShaderModule& metalFromAPI(WGPUShaderModule handle)
 {
     return downcast<Metal::ShaderModule>(fromAPI(handle));

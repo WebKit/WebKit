@@ -2241,13 +2241,6 @@ void Queue::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands)
     }));
 }
 
-void Queue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
-{
-    onSubmittedWorkDone(CompletionHandler<void(bool)> { [callback = WTF::move(callback)](bool) mutable {
-        callback();
-    } });
-}
-
 // The WebGPU::Metal writes only read `data`. They take a mutable span because a large write wraps
 // it with newBufferWithBytesNoCopy.
 void Queue::writeBuffer(WebGPU::Buffer& buffer, uint64_t bufferOffset, std::span<const uint8_t> data)

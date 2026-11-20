@@ -44,7 +44,7 @@ void wgpuQueueRelease(WGPUQueue queue)
 WGPUFuture wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        Ref protectedQueue = WebGPU::CAPI::metalFromAPI(queue);
+        Ref protectedQueue = WebGPU::CAPI::fromAPI(queue);
         RefPtr device = downcast<WebGPU::Metal::Device>(protectedQueue->device());
         WebGPU::CAPI::Future future { device ? device->instance() : nullptr };
         protectedQueue->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callbackInfo, future](bool success) {

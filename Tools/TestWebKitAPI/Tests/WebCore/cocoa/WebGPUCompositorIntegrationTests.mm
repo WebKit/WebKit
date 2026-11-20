@@ -133,7 +133,7 @@ public:
     void waitForSubmittedWork()
     {
         bool done = false;
-        m_device->queue()->onSubmittedWorkDone([&] {
+        m_device->queue()->onSubmittedWorkDone([&](bool) {
             done = true;
         });
         Util::run(&done);

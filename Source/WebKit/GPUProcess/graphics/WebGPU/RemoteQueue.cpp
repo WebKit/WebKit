@@ -59,7 +59,7 @@ static void keepAliveUntilSubmittedWorkDone(::WebGPU::Queue& backing, RefPtr<Web
 {
     if (!data || data->size() < ::WebGPU::largeBufferSize)
         return;
-    backing.onSubmittedWorkDone([data = WTF::move(data)]() mutable {
+    backing.onSubmittedWorkDone([data = WTF::move(data)](bool) mutable {
         data = nullptr;
     });
 }
@@ -106,11 +106,9 @@ void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
     protect(m_backing)->submit(WTF::move(convertedCommandBuffers));
 }
 
-void RemoteQueue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
+void RemoteQueue::onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback)
 {
-    protect(m_backing)->onSubmittedWorkDone([callback = WTF::move(callback)] () mutable {
-        callback();
-    });
+    protect(m_backing)->onSubmittedWorkDone(WTF::move(callback));
 }
 
 void RemoteQueue::writeBuffer(
