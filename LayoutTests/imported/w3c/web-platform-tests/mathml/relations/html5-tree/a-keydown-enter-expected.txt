@@ -1,0 +1,4 @@
+Clickable MathML Link
+
+PASS MathMLAnchorElement should be activated via Enter key when focused
+

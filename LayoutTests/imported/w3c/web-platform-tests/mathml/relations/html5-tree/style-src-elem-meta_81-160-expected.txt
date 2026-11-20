@@ -1,0 +1,82 @@
+
+PASS style-src-elem 'none' blocks <style> element inside <mmultiscripts>
+PASS CSP absent allows <style> element inside <mmultiscripts>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mmultiscripts>
+PASS style-src-elem matching hash allows <style> element inside <mmultiscripts>
+PASS style-src-elem mismatching hash blocks <style> element inside <mmultiscripts>
+PASS style-src 'none' fallback blocks <style> element inside <mmultiscripts>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mmultiscripts>
+PASS style-src matching hash fallback allows <style> element inside <mmultiscripts>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mmultiscripts>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mmultiscripts>
+PASS style-src-elem 'none' blocks <style> element inside <mn>
+PASS CSP absent allows <style> element inside <mn>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mn>
+PASS style-src-elem matching hash allows <style> element inside <mn>
+PASS style-src-elem mismatching hash blocks <style> element inside <mn>
+PASS style-src 'none' fallback blocks <style> element inside <mn>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mn>
+PASS style-src matching hash fallback allows <style> element inside <mn>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mn>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mn>
+PASS style-src-elem 'none' blocks <style> element inside <mo>
+PASS CSP absent allows <style> element inside <mo>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mo>
+PASS style-src-elem matching hash allows <style> element inside <mo>
+PASS style-src-elem mismatching hash blocks <style> element inside <mo>
+PASS style-src 'none' fallback blocks <style> element inside <mo>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mo>
+PASS style-src matching hash fallback allows <style> element inside <mo>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mo>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mo>
+PASS style-src-elem 'none' blocks <style> element inside <mover>
+PASS CSP absent allows <style> element inside <mover>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mover>
+PASS style-src-elem matching hash allows <style> element inside <mover>
+PASS style-src-elem mismatching hash blocks <style> element inside <mover>
+PASS style-src 'none' fallback blocks <style> element inside <mover>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mover>
+PASS style-src matching hash fallback allows <style> element inside <mover>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mover>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mover>
+PASS style-src-elem 'none' blocks <style> element inside <mpadded>
+PASS CSP absent allows <style> element inside <mpadded>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mpadded>
+PASS style-src-elem matching hash allows <style> element inside <mpadded>
+PASS style-src-elem mismatching hash blocks <style> element inside <mpadded>
+PASS style-src 'none' fallback blocks <style> element inside <mpadded>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mpadded>
+PASS style-src matching hash fallback allows <style> element inside <mpadded>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mpadded>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mpadded>
+PASS style-src-elem 'none' blocks <style> element inside <mphantom>
+PASS CSP absent allows <style> element inside <mphantom>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mphantom>
+PASS style-src-elem matching hash allows <style> element inside <mphantom>
+PASS style-src-elem mismatching hash blocks <style> element inside <mphantom>
+PASS style-src 'none' fallback blocks <style> element inside <mphantom>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mphantom>
+PASS style-src matching hash fallback allows <style> element inside <mphantom>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mphantom>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mphantom>
+PASS style-src-elem 'none' blocks <style> element inside <mprescripts>
+PASS CSP absent allows <style> element inside <mprescripts>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mprescripts>
+PASS style-src-elem matching hash allows <style> element inside <mprescripts>
+PASS style-src-elem mismatching hash blocks <style> element inside <mprescripts>
+PASS style-src 'none' fallback blocks <style> element inside <mprescripts>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mprescripts>
+PASS style-src matching hash fallback allows <style> element inside <mprescripts>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mprescripts>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mprescripts>
+PASS style-src-elem 'none' blocks <style> element inside <mroot>
+PASS CSP absent allows <style> element inside <mroot>
+PASS style-src-elem 'unsafe-inline' allows <style> element inside <mroot>
+PASS style-src-elem matching hash allows <style> element inside <mroot>
+PASS style-src-elem mismatching hash blocks <style> element inside <mroot>
+PASS style-src 'none' fallback blocks <style> element inside <mroot>
+PASS style-src 'unsafe-inline' fallback allows <style> element inside <mroot>
+PASS style-src matching hash fallback allows <style> element inside <mroot>
+PASS style-src-elem 'unsafe-inline' overrides style-src 'none' on <mroot>
+PASS style-src-elem 'none' overrides style-src 'unsafe-inline' on <mroot>
+
