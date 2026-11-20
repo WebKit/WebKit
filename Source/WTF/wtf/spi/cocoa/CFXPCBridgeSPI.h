@@ -50,6 +50,7 @@ typedef void* xpc_object_t;
 WTF_EXTERN_C_BEGIN
 
 xpc_object_t _CFXPCCreateXPCMessageWithCFObject(CFTypeRef);
+xpc_object_t _CFXPCCreateXPCObjectFromCFObject(CFTypeRef);
 CFTypeRef _CFXPCCreateCFObjectFromXPCMessage(xpc_object_t);
 
 WTF_EXTERN_C_END
