@@ -49,17 +49,14 @@ RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, UniqueRef<Style::C
 
 RenderMathMLMath::~RenderMathMLMath() = default;
 
-void RenderMathMLMath::centerChildren(LayoutUnit contentWidth)
+void RenderMathMLMath::moveInFlowChildrenHorizontally(LayoutUnit offset)
 {
-    auto centerBlockOffset = (logicalWidth() - contentWidth) / 2;
-    if (!centerBlockOffset)
+    if (!offset)
         return;
 
-    if (!style().writingMode().deprecatedIsLeftToRightDirection())
-        centerBlockOffset = -centerBlockOffset;
     for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         auto repaintRect = child->checkForRepaintDuringLayout() ? std::make_optional(child->borderBoxRectInContainer()) : std::nullopt;
-        child->move(centerBlockOffset, { });
+        child->move(offset, { });
         if (repaintRect) {
             repaintRect->uniteEvenIfEmpty(child->borderBoxRectInContainer());
             repaintRectangle(*repaintRect);
@@ -91,14 +88,22 @@ void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
     LayoutUnit width, ascent, descent;
     stretchVerticalOperatorsAndLayoutChildren();
     getContentBoundingBox(width, ascent, descent);
-    layoutRowItems(logicalWidth(), ascent);
+    layoutRowItems(width, ascent);
 
-    // Display formulas must be centered horizontally if there is extra space left.
-    // Otherwise, logical width must be updated to the content width to avoid truncation.
-    if (width < logicalWidth())
-        centerChildren(width);
+    // Display formulas must be centered horizontally within the content box if there is extra space left.
+    // Otherwise, logical width must be updated to fit the content to avoid truncation.
+    auto nonContentWidth = borderAndPaddingLogicalWidth() + scrollbarLogicalWidth();
+    auto availableContentWidth = logicalWidth() - nonContentWidth;
+    LayoutUnit centerOffset;
+    if (width < availableContentWidth)
+        centerOffset = (availableContentWidth - width) / 2;
     else
-        setLogicalWidth(width);
+        setLogicalWidth(width + nonContentWidth);
+
+    auto contentLeft = borderAndPaddingLogicalLeft();
+    if (shouldPlaceVerticalScrollbarOnLeft())
+        contentLeft += scrollbarLogicalWidth();
+    moveInFlowChildrenHorizontally(contentLeft + centerOffset);
     shiftInFlowChildren(0_lu, borderAndPaddingBefore());
 
     setLogicalHeight(ascent + descent + borderAndPaddingLogicalHeight() + horizontalScrollbarHeight());

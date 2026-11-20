@@ -43,7 +43,7 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLMath"_s; }
 
-    void centerChildren(LayoutUnit contentWidth);
+    void moveInFlowChildrenHorizontally(LayoutUnit);
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 };
 
