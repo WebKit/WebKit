@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<!-- The selection gap of the body is clipped out where the absolutely positioned box of the relatively positioned document element is. -->
+<html style="position: relative; top: 20px">
+<link rel="stylesheet" href="../../imported/w3c/web-platform-tests/fonts/ahem.css">
+<style>
+body { font: 20px/1 Ahem; width: 200px; margin: 0; color: transparent; }
+body::selection, body *::selection { background-color: green; color: transparent; }
+.box { position: absolute; left: 120px; top: 0; width: 20px; height: 20px; background-color: white; }
+</style>
+<body>XX XX<div class="box"></div><br>XX
+<script>getSelection().selectAllChildren(document.body);</script>
+</body>
+</html>

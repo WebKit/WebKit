@@ -1138,13 +1138,18 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
 #endif
 }
 
-static void clipOutOutOfFlowBoxes(const PaintInfo* paintInfo, const LayoutPoint& offset, TrackedRendererListHashSet* outOfFlowBoxes)
+static void clipOutOutOfFlowBoxes(const PaintInfo& paintInfo, const RenderBlock& containingBlock, const LayoutPoint& containingBlockPhysicalPosition)
 {
+    auto* outOfFlowBoxes = containingBlock.outOfFlowBoxes();
     if (!outOfFlowBoxes)
         return;
-    
-    for (auto& renderer : *outOfFlowBoxes)
-        paintInfo->context().clipOut(snapRectToDevicePixels(LayoutRect(offset.x() + renderer.x(), offset.y() + renderer.y(), renderer.borderBoxWidth(), renderer.borderBoxHeight()), renderer.document().deviceScaleFactor()));
+
+    for (auto& outOfFlowBox : *outOfFlowBoxes) {
+        LayoutRect borderBox { outOfFlowBox.location(), outOfFlowBox.borderBoxSize() };
+        containingBlock.blockStartRelativeToPhysical(borderBox);
+        borderBox.moveBy(containingBlockPhysicalPosition);
+        paintInfo.context().clipOut(snapRectToDevicePixels(borderBox, containingBlock.document().deviceScaleFactor()));
+    }
 }
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock)
@@ -1179,10 +1184,20 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         LayoutRect physicalBlockRect(offsetFromRootBlock.width(), offsetFromRootBlock.height(), borderBoxWidth(), borderBoxHeight());
         rootBlock.blockStartRelativeToPhysical(physicalBlockRect);
         physicalBlockRect.moveBy(rootBlockPhysicalPosition);
-        clipOutOutOfFlowBoxes(paintInfo, physicalBlockRect.location(), outOfFlowBoxes());
+        clipOutOutOfFlowBoxes(*paintInfo, *this, physicalBlockRect.location());
         if (isBody() || isDocumentElementRenderer()) { // The <body> must make sure to examine its containingBlock's positioned objects.
-            for (auto* ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock())
-                clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(ancestor->x(), ancestor->y()), ancestor->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.
+            // Their boxes are mapped to the border box of this block, which paints at physicalBlockRect unless this block is scrolled.
+            auto borderBoxPosition = physicalBlockRect.location() + toLayoutSize(scrollPosition());
+            for (CheckedPtr ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock()) {
+                auto* outOfFlowBoxes = ancestor->outOfFlowBoxes();
+                if (!outOfFlowBoxes)
+                    continue;
+                for (auto& outOfFlowBox : *outOfFlowBoxes) {
+                    auto borderBox = LayoutRect { absoluteToLocalQuad(outOfFlowBox.localToAbsoluteQuad(FloatRect { outOfFlowBox.borderBoxRect() })).boundingBox() };
+                    borderBox.moveBy(borderBoxPosition);
+                    paintInfo->context().clipOut(snapRectToDevicePixels(borderBox, document().deviceScaleFactor()));
+                }
+            }
         }
         clipOutFloatingBoxes(rootBlock, paintInfo, rootBlockPhysicalPosition, offsetFromRootBlock);
     }

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<!-- The selection gap after the first line of a nested block is clipped out where the absolutely positioned box of the nested block is, in a flipped block direction. -->
+<link rel="stylesheet" href="../../imported/w3c/web-platform-tests/fonts/ahem.css">
+<style>
+.container { font: 20px/1 Ahem; height: 200px; color: transparent; writing-mode: vertical-rl; position: relative; }
+.container::selection, .container *::selection { background-color: green; color: transparent; }
+.nested { contain: layout; }
+.box { position: absolute; right: 0; top: 120px; width: 20px; height: 50px; }
+</style>
+<div class="container">XX XX<br>XX<div class="nested">XX XX<div class="box"></div><br>XX</div></div>
+<script>getSelection().selectAllChildren(document.querySelector(".container"));</script>
