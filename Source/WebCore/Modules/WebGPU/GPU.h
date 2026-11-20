@@ -39,8 +39,6 @@ class GPUAdapter;
 class GPUCompositorIntegration;
 class GPUPresentationContext;
 struct GPUPresentationContextDescriptor;
-class GraphicsContext;
-class NativeImage;
 class WGSLLanguageFeatures;
 
 enum class GPUTextureFormat : uint8_t;
@@ -69,7 +67,6 @@ public:
 
     static RefPtr<GPUCompositorIntegration> createCompositorIntegration(WebGPUIntegration&);
 
-    void paintToCanvas(NativeImage&, const IntSize&, GraphicsContext&);
     // The backing to make new objects from: the current one, or a new one in its place if it is lost.
     // Everything that makes objects from the GPU, such as adapters, canvas contexts and models, has to
     // go through here, so that none of them is made from a backing that cannot create anything.

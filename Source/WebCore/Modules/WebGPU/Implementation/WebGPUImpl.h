@@ -36,8 +36,6 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-class GraphicsContext;
-class IntSize;
 class NativeImage;
 }
 
@@ -57,7 +55,6 @@ public:
 
     virtual ~WebGPUIntegrationImpl();
 
-    void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
     void copyExternalImageToTexture(::WebGPU::Queue&, const WebGPUExternalImageSource&, const WebGPUImageCopyTextureTagged& destination, const ::WebGPU::Extent3D& copySize) final;
     RefPtr<WebCore::NativeImage> nativeImage(::WebGPU::Queue&, WebCore::VideoFrame&) final;
     RefPtr<::WebGPU::ExternalTexture> importExternalTexture(::WebGPU::Device&, const WebGPUExternalTextureDescriptor&) final;
@@ -83,33 +80,6 @@ private:
     RefPtr<::WebGPU::PresentationContext> createPresentationContext(const WebGPUPresentationContextDescriptor&) final;
 
     RefPtr<WebGPUCompositorIntegration> createCompositorIntegration() final;
-    NODELETE bool isValid(const WebGPUCompositorIntegration&) const final;
-    bool isValid(const ::WebGPU::Buffer&) const final;
-    bool isValid(const ::WebGPU::Adapter&) const final;
-    bool isValid(const ::WebGPU::BindGroup&) const final;
-    bool isValid(const ::WebGPU::BindGroupLayout&) const final;
-    bool isValid(const ::WebGPU::CommandBuffer&) const final;
-    bool isValid(const ::WebGPU::CommandEncoder&) const final;
-    bool isValid(const ::WebGPU::ComputePassEncoder&) const final;
-    bool isValid(const ::WebGPU::ComputePipeline&) const final;
-    bool isValid(const ::WebGPU::Device&) const final;
-    bool isValid(const ::WebGPU::ExternalTexture&) const final;
-    bool isValid(const ::WebGPU::PipelineLayout&) const final;
-    bool isValid(const ::WebGPU::PresentationContext&) const final;
-    bool isValid(const ::WebGPU::QuerySet&) const final;
-    bool isValid(const ::WebGPU::Queue&) const final;
-    bool isValid(const ::WebGPU::RenderBundleEncoder&) const final;
-    bool isValid(const ::WebGPU::RenderBundle&) const final;
-    bool isValid(const ::WebGPU::RenderPassEncoder&) const final;
-    bool isValid(const ::WebGPU::RenderPipeline&) const final;
-    bool isValid(const ::WebGPU::Sampler&) const final;
-    bool isValid(const ::WebGPU::ShaderModule&) const final;
-    bool isValid(const ::WebGPU::Texture&) const final;
-    bool isValid(const ::WebGPU::TextureView&) const final;
-    bool isValid(const ::WebGPU::XRBinding&) const final;
-    bool isValid(const ::WebGPU::XRSubImage&) const final;
-    bool isValid(const ::WebGPU::XRProjectionLayer&) const final;
-    bool isValid(const ::WebGPU::XRView&) const final;
 
     const Ref<::WebGPU::Instance> m_backing;
 };

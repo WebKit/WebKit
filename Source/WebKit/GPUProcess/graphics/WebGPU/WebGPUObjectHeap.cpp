@@ -472,7 +472,7 @@ RefPtr<::WebGPU::XRView> ObjectHeap::createXRViewFromBacking(WebGPUIdentifier id
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>>(iterator->value)->backing();
 }
 
-ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPUIntegration& gpu, WebGPUIdentifier identifier) const
+ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(WebGPUIdentifier identifier) const
 {
     ExistsAndValid result;
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -484,11 +484,14 @@ ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGP
     result.valid = WTF::switchOn(it->value, [&](std::monostate) -> bool {
         return false;
     },
+    [&](const IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>&) -> bool {
+        // A compositor integration has no invalid state.
+        return true;
+    },
     [&](auto& object) -> bool {
-        return gpu.isValid(protect(object->backing()));
+        return protect(object->backing())->isValid();
     });
 #else
-    UNUSED_PARAM(gpu);
     UNUSED_PARAM(identifier);
 #endif
     return result;
