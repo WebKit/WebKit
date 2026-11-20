@@ -31,6 +31,7 @@
 #include "iso_heap_config.h"
 #include "iso_test_heap_config.h"
 #include "jit_heap_config.h"
+#include "marked_block_heap_config.h"
 #include "minalign32_heap_config.h"
 #include "pagesize64k_heap_config.h"
 #include "pas_utility_heap_config.h"
