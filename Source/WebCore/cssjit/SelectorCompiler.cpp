@@ -3358,13 +3358,6 @@ static inline bool canMatchAnimatableSVGAttribute(const SelectorFragment& fragme
         const QualifiedName& candidateForLocalName = SVGElement::animatableAttributeForName(selectorAttributeName.localName());
         if (Attribute::nameMatchesFilter(candidateForLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
             return true;
-
-        const AtomString& canonicalLocalName = attributeSelector.attribute().localNameLowercase();
-        if (selectorAttributeName.localName() != canonicalLocalName) {
-            const QualifiedName& candidateForCanonicalLocalName = SVGElement::animatableAttributeForName(selectorAttributeName.localName());
-            if (Attribute::nameMatchesFilter(candidateForCanonicalLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
-                return true;
-        }
     }
     return false;
 }
