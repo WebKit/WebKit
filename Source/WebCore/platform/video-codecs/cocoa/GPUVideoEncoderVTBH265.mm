@@ -30,6 +30,7 @@
 
 #import "HEVCUtilities.h"
 #import <WebCore/HEVCUtilitiesCocoa.h>
+#import <wtf/Borrow.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
