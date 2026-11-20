@@ -35,6 +35,11 @@ messages -> RemoteAudioVideoRendererProxyManager {
     Shutdown(WebKit::RemoteAudioVideoRendererIdentifier identifier)
     Destroy(WebKit::RemoteAudioVideoRendererIdentifier identifier)
 
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    SetMediaSessionIdentifier(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::MediaSessionIdentifier mediaSessionIdentifier)
+    SetCaptionAudioLanguage(WebKit::RemoteAudioVideoRendererIdentifier identifier, String language)
+#endif
+
     SetPreferences(WebKit::RemoteAudioVideoRendererIdentifier identifier, OptionSet<WebCore::VideoRendererPreference> preferences)
     SetHasProtectedVideoContent(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool isProtected)
 

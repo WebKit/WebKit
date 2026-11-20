@@ -38,6 +38,7 @@
 #import "ContentTypeUtilities.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
+#import "InbandTextTrackPrivateGenerated.h"
 #import "Logging.h"
 #import "MediaPlayerIdentifier.h"
 #import "MediaSessionManagerCocoa.h"
@@ -124,11 +125,28 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
 #if PLATFORM(MAC)
     m_renderer->setScreenReserved(player.screenReserved());
 #endif
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (player.generatedCaptionsEnabled()) {
+        if (auto mediaSessionIdentifier = player.mediaSessionIdentifier()) {
+            ALWAYS_LOG(LOGIDENTIFIER, "giving the renderer media session ", mediaSessionIdentifier->loggingString());
+            m_renderer->setMediaSessionIdentifier(*mediaSessionIdentifier);
+        } else
+            ALWAYS_LOG(LOGIDENTIFIER, "the player's client has no media session");
+    }
+#endif
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (RefPtr track = std::exchange(m_generatedCaptionsTrack, nullptr)) {
+        if (RefPtr player = m_player)
+            player->removeTextTrack(*track);
+    }
+#endif
 
     // Prevent re-entrant callbacks during member destruction. Without this,
     // KVO notifications fired during m_mediaSourcePrivate's destruction can
@@ -292,6 +310,22 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const LoadOptions& o
                 protectedThis->effectiveRateChanged();
         });
     });
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    m_renderer->notifyNewTranscribedCuesAvailable([weakThis = WeakPtr { *this }](Vector<GenericCueData> cues) {
+        ensureOnMainThread([weakThis, cues = WTF::move(cues)] mutable {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->didReceiveGeneratedCues(WTF::move(cues));
+        });
+    });
+
+    m_renderer->notifyCaptionTranscriptionAvailabilityChanged([weakThis = WeakPtr { *this }](bool available) {
+        ensureOnMainThread([weakThis, available] {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->setCaptionTranscriptionAvailable(available);
+        });
+    });
+#endif
 
     m_renderer->notifyVideoLayerSizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
         ensureOnMainThread([weakThis, size] {
@@ -1258,12 +1292,21 @@ void MediaPlayerPrivateMediaSourceAVFObjC::mediaSourceHasRetrievedAllData()
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-void MediaPlayerPrivateMediaSourceAVFObjC::addAudioTrack(TrackIdentifier audioTrack)
+void MediaPlayerPrivateMediaSourceAVFObjC::addAudioTrack(TrackIdentifier audioTrack, const String& language)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     assertIsMainThread();
     if (!m_audioTracksMap.add(audioTrack, AudioTrackProperties()).isNewEntry)
         return;
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (!m_captionAudioTrackIdentifier) {
+        m_captionAudioTrackIdentifier = audioTrack;
+        setCaptionAudioLanguage(language);
+    }
+#else
+    UNUSED_PARAM(language);
+#endif
 
     if (RefPtr player = m_player.get())
         player->characteristicChanged();
@@ -1276,7 +1319,83 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     assertIsMainThread();
     if (auto iter = m_audioTracksMap.find(audioTrack); iter != m_audioTracksMap.end())
         m_audioTracksMap.remove(iter);
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (m_captionAudioTrackIdentifier == audioTrack) {
+        m_captionAudioTrackIdentifier = std::nullopt;
+        setCaptionAudioLanguage({ });
+    }
+#endif
 }
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+void MediaPlayerPrivateMediaSourceAVFObjC::didReceiveGeneratedCues(Vector<GenericCueData>&& cues)
+{
+    assertIsMainThread();
+
+    if (!m_generatedCaptionsTrack) {
+        ALWAYS_LOG(LOGIDENTIFIER, "dropping ", cues.size(), " generated cues, there is no generated captions track");
+        return;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER, "adding ", cues.size(), " generated cues to the generated captions track");
+    protect(m_generatedCaptionsTrack)->addCues(WTF::move(cues));
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setCaptionAudioLanguage(const String& language)
+{
+    assertIsMainThread();
+
+    RefPtr player = m_player;
+    bool enabled = player && player->generatedCaptionsEnabled();
+    String knownLanguage = !enabled || language.isEmpty() || equalLettersIgnoringASCIICase(language, "und"_s) ? String { } : language;
+    ALWAYS_LOG(LOGIDENTIFIER, "audio track language '", language, "', generated captions enabled: ", enabled, ", ", knownLanguage.isEmpty() ? "so no generated captions"_s : "known"_s);
+
+    bool unchanged = knownLanguage.isEmpty() ? m_captionAudioLanguage.isEmpty() : knownLanguage == m_captionAudioLanguage;
+    if (unchanged)
+        return;
+
+    m_captionAudioLanguage = knownLanguage;
+    m_renderer->setCaptionAudioLanguage(m_captionAudioLanguage);
+    updateGeneratedCaptionsTrack();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setCaptionTranscriptionAvailable(bool available)
+{
+    assertIsMainThread();
+
+    ALWAYS_LOG(LOGIDENTIFIER, "caption transcription available: ", available);
+    m_captionTranscriptionAvailable = available;
+    updateGeneratedCaptionsTrack();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::updateGeneratedCaptionsTrack()
+{
+    assertIsMainThread();
+
+    if (!m_captionTranscriptionAvailable || m_captionAudioLanguage.isEmpty()) {
+        if (RefPtr track = std::exchange(m_generatedCaptionsTrack, nullptr)) {
+            ALWAYS_LOG(LOGIDENTIFIER, "removing the generated captions track");
+            if (RefPtr player = m_player)
+                player->removeTextTrack(*track);
+        }
+        return;
+    }
+
+    if (m_generatedCaptionsTrack) {
+        ALWAYS_LOG(LOGIDENTIFIER, "updating the generated captions track language to '", m_captionAudioLanguage, "'");
+        protect(m_generatedCaptionsTrack)->setLanguage(m_captionAudioLanguage);
+        return;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER, "adding a generated captions track, language '", m_captionAudioLanguage, "'");
+    Ref track = InbandTextTrackPrivateGenerated::create();
+    track->setLanguage(m_captionAudioLanguage);
+    m_generatedCaptionsTrack = track.copyRef();
+    if (RefPtr player = m_player)
+        player->addTextTrack(track);
+}
+#endif
 
 void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioTrack(AudioTrackPrivate& track)
 {

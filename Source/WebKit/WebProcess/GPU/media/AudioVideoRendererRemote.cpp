@@ -271,6 +271,40 @@ void AudioVideoRendererRemote::notifyWhenHasAvailableVideoFrame(Function<void(co
     });
 }
 
+#if HAVE(AVCAPTIONTRANSCRIBER)
+void AudioVideoRendererRemote::notifyNewTranscribedCuesAvailable(Function<void(Vector<GenericCueData>)>&& callback)
+{
+    ensureOnDispatcherWithConnection([callback = WTF::move(callback)](auto& renderer, auto&) mutable {
+        assertIsCurrent(queueSingleton());
+        renderer.m_notifyNewTranscribedCuesAvailableCallback = WTF::move(callback);
+    });
+}
+
+void AudioVideoRendererRemote::notifyCaptionTranscriptionAvailabilityChanged(Function<void(bool)>&& callback)
+{
+    ensureOnDispatcherWithConnection([callback = WTF::move(callback)](auto& renderer, auto&) mutable {
+        assertIsCurrent(queueSingleton());
+        renderer.m_captionTranscriptionAvailabilityCallback = WTF::move(callback);
+    });
+}
+
+void AudioVideoRendererRemote::setMediaSessionIdentifier(WebCore::MediaSessionIdentifier mediaSessionIdentifier)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, "sending media session ", mediaSessionIdentifier.loggingString());
+    ensureOnDispatcherWithConnection([mediaSessionIdentifier](auto& renderer, auto& connection) {
+        connection.send(Messages::RemoteAudioVideoRendererProxyManager::SetMediaSessionIdentifier(renderer.m_identifier, mediaSessionIdentifier), 0);
+    });
+}
+
+void AudioVideoRendererRemote::setCaptionAudioLanguage(const String& language)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, "sending caption audio language '", language, "'");
+    ensureOnDispatcherWithConnection([language = language.isolatedCopy()](auto& renderer, auto& connection) {
+        connection.send(Messages::RemoteAudioVideoRendererProxyManager::SetCaptionAudioLanguage(renderer.m_identifier, language), 0);
+    });
+}
+#endif
+
 void AudioVideoRendererRemote::notifyWhenRequiresFlushToResume(Function<void()>&& callback)
 {
     ensureOnDispatcherWithConnection([callback = WTF::move(callback)](auto& renderer, auto&) mutable {
@@ -1772,6 +1806,28 @@ void AudioVideoRendererRemote::MessageReceiver::firstFrameAvailable(RemoteAudioV
             parent->m_firstFrameAvailableCallback();
     }
 }
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+void AudioVideoRendererRemote::MessageReceiver::newTranscribedCuesAvailable(Vector<WebCore::GenericCueData> cues)
+{
+    if (RefPtr parent = m_parent) {
+        assertIsCurrent(queueSingleton());
+        ALWAYS_LOG_WITH_THIS(parent, LOGIDENTIFIER_WITH_THIS(parent), "received ", cues.size(), " generated cues");
+        if (parent->m_notifyNewTranscribedCuesAvailableCallback)
+            parent->m_notifyNewTranscribedCuesAvailableCallback(WTF::move(cues));
+    }
+}
+
+void AudioVideoRendererRemote::MessageReceiver::captionTranscriptionAvailabilityChanged(bool available)
+{
+    if (RefPtr parent = m_parent) {
+        assertIsCurrent(queueSingleton());
+        ALWAYS_LOG_WITH_THIS(parent, LOGIDENTIFIER_WITH_THIS(parent), "caption transcription available: ", available);
+        if (parent->m_captionTranscriptionAvailabilityCallback)
+            parent->m_captionTranscriptionAvailabilityCallback(available);
+    }
+}
+#endif
 
 void AudioVideoRendererRemote::MessageReceiver::hasAvailableVideoFrame(MediaTime time, double clockTime, RemoteAudioVideoRendererState state, std::optional<VideoPlaybackQualityMetrics> metrics)
 {

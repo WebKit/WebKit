@@ -68,6 +68,11 @@ void MediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(MediaSess
     completion(false);
 }
 
+void MediaStrategy::setMockCaptionTranscriptionEnabledInGPUProcessForTesting(bool, CompletionHandler<void()>&& completion)
+{
+    completion();
+}
+
 void MediaStrategy::resetMediaEngines()
 {
 #if ENABLE(VIDEO)

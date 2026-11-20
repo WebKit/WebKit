@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "AudioVideoRendererRemoteMessageReceiverMessages.h"
+#include "CaptionTranscriberManager.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "LayerHostingContext.h"
@@ -120,6 +121,9 @@ void RemoteAudioVideoRendererProxyManager::connectionToWebProcessClosed()
         if (RefPtr renderer = keyValuePair.value.renderer)
             renderer->shutdown();
     }
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    captionRendererSessionsDidChange();
+#endif
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteAudioVideoRendererProxyManager::sharedPreferencesForWebProcess() const
@@ -213,6 +217,12 @@ void RemoteAudioVideoRendererProxyManager::shutdown(RemoteAudioVideoRendererIden
 
     if (RefPtr renderer = rendererFor(identifier))
         renderer->shutdown();
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (auto iterator = m_renderers.find(identifier); iterator != m_renderers.end())
+        iterator->value.mediaSessionIdentifier.reset();
+    captionRendererSessionsDidChange();
+#endif
 }
 
 void RemoteAudioVideoRendererProxyManager::destroy(RemoteAudioVideoRendererIdentifier identifier)
@@ -225,7 +235,64 @@ void RemoteAudioVideoRendererProxyManager::destroy(RemoteAudioVideoRendererIdent
             renderer->shutdown();
         m_renderers.remove(iterator);
     }
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    captionRendererSessionsDidChange();
+#endif
 }
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+void RemoteAudioVideoRendererProxyManager::setMediaSessionIdentifier(RemoteAudioVideoRendererIdentifier identifier, WebCore::MediaSessionIdentifier mediaSessionIdentifier)
+{
+    MESSAGE_CHECK(m_renderers.contains(identifier));
+    ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString(), " media session: ", mediaSessionIdentifier.loggingString());
+
+    contextFor(identifier).mediaSessionIdentifier = mediaSessionIdentifier;
+    captionRendererSessionsDidChange(true);
+}
+
+void RemoteAudioVideoRendererProxyManager::setCaptionAudioLanguage(RemoteAudioVideoRendererIdentifier identifier, const String& language)
+{
+    MESSAGE_CHECK(m_renderers.contains(identifier));
+    ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString(), " caption audio language: '", language, "'");
+
+    contextFor(identifier).captionAudioLanguage = language;
+    captionRendererSessionsDidChange(true);
+}
+
+std::optional<RemoteAudioVideoRendererProxyManager::RendererForMediaSession> RemoteAudioVideoRendererProxyManager::rendererForMediaSession(WebCore::MediaSessionIdentifier mediaSessionIdentifier) const
+{
+    for (auto& [identifier, context] : m_renderers) {
+        if (context.mediaSessionIdentifier == std::optional { mediaSessionIdentifier } && context.renderer)
+            return RendererForMediaSession { identifier, Ref { *context.renderer }, context.captionAudioLanguage };
+    }
+    return std::nullopt;
+}
+
+void RemoteAudioVideoRendererProxyManager::sendTranscribedCues(RemoteAudioVideoRendererIdentifier identifier, Vector<WebCore::GenericCueData>&& cues)
+{
+    if (!m_renderers.contains(identifier))
+        return;
+    ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString(), " sending ", cues.size(), " generated cues to the web process");
+    publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::NewTranscribedCuesAvailable(WTF::move(cues)));
+}
+
+void RemoteAudioVideoRendererProxyManager::sendCaptionTranscriptionAvailability(RemoteAudioVideoRendererIdentifier identifier, bool available)
+{
+    if (!m_renderers.contains(identifier))
+        return;
+    ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString(), " caption transcription available: ", available);
+    publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::CaptionTranscriptionAvailabilityChanged(available));
+}
+
+void RemoteAudioVideoRendererProxyManager::captionRendererSessionsDidChange(bool createManagerIfNeeded)
+{
+    Ref gpuProcess = m_gpuConnectionToWebProcess.get()->gpuProcess();
+    CaptionTranscriberManager* manager = createManagerIfNeeded ? &gpuProcess->captionTranscriberManager() : gpuProcess->captionTranscriberManagerIfExists();
+    if (manager)
+        manager->rendererSessionsDidChange();
+}
+#endif
 
 RefPtr<WebCore::AudioVideoRenderer> RemoteAudioVideoRendererProxyManager::rendererFor(RemoteAudioVideoRendererIdentifier identifier) const
 {
@@ -296,6 +363,7 @@ void RemoteAudioVideoRendererProxyManager::removeTrack(RemoteAudioVideoRendererI
 {
     if (RefPtr renderer = rendererFor(identifier))
         renderer->removeTrack(trackIdentifier);
+
 }
 
 void RemoteAudioVideoRendererProxyManager::requestMediaDataWhenReady(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier)

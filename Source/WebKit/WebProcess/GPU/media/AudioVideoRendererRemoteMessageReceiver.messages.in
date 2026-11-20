@@ -42,6 +42,10 @@ messages -> AudioVideoRendererRemoteMessageReceiver {
     ErrorOccurred(WebCore::PlatformMediaError error)
     StateUpdate(struct WebKit::RemoteAudioVideoRendererState state)
     UpdatePlaybackQualityMetrics(struct WebCore::VideoPlaybackQualityMetrics metrics)
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    NewTranscribedCuesAvailable(Vector<WebCore::GenericCueData> cues)
+    CaptionTranscriptionAvailabilityChanged(bool available)
+#endif
 
 #if PLATFORM(COCOA)
     LayerHostingContextChanged(struct WebKit::RemoteAudioVideoRendererState state, struct WebCore::HostingContext hostingContext, WebCore::FloatSize presentationSize);

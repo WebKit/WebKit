@@ -9447,6 +9447,13 @@ const Vector<ContentType>& HTMLMediaElement::mediaContentTypesRequiringHardwareS
     return document().settings().mediaContentTypesRequiringHardwareSupport();
 }
 
+#if HAVE(AVCAPTIONTRANSCRIBER)
+bool HTMLMediaElement::mediaPlayerGeneratedCaptionsEnabled() const
+{
+    return document().settings().mediaGeneratedCaptionsEnabled();
+}
+#endif
+
 bool HTMLMediaElement::mediaPlayerShouldCheckHardwareSupport() const
 {
     if (!document().settings().allowMediaContentTypesRequiringHardwareSupportAsFallback())

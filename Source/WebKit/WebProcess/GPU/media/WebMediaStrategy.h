@@ -54,6 +54,7 @@ private:
     std::unique_ptr<WebCore::NowPlayingManager> createNowPlayingManager() const final;
     void isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&) final;
     void isRemoteCommandTargetSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&) final;
+    void setMockCaptionTranscriptionEnabledInGPUProcessForTesting(bool, CompletionHandler<void()>&&) final;
     bool postNowPlayingRemoteControlCommandToGPUProcessForTesting(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
 #if ENABLE(VIDEO)
     void hostedVideoLayerBoundsInGPUProcessForTesting(WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&) final;

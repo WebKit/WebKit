@@ -187,6 +187,11 @@ void AudioVideoRendererAVFObjC::shutdown()
     m_audioRenderers.clear();
     m_audioTracksMap.clear();
 
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    m_captionAudioObserver = { };
+    m_captionAudioTrackId = std::nullopt;
+#endif
+
     destroyVideoTrack();
 }
 
@@ -331,6 +336,10 @@ void AudioVideoRendererAVFObjC::enqueueSample(TrackIdentifier trackId, Ref<Media
             [audioRenderer enqueueSampleBuffer:cmSampleBuffer.get()];
             if (!allRenderersHaveAvailableSamples() && !sample->isNonDisplaying())
                 setHasAvailableAudioSample(trackId, true);
+#if HAVE(AVCAPTIONTRANSCRIBER)
+            if (trackId == m_captionAudioTrackId && m_captionAudioObserver.sampleEnqueued)
+                m_captionAudioObserver.sampleEnqueued(sample.get());
+#endif
         }
         break;
     default:
@@ -1096,6 +1105,18 @@ void AudioVideoRendererAVFObjC::notifyWhenHasAvailableVideoFrame(Function<void(c
     configureHasAvailableVideoFrameCallbackIfNeeded();
 }
 
+#if HAVE(AVCAPTIONTRANSCRIBER)
+void AudioVideoRendererAVFObjC::setCaptionAudioObserver(CaptionAudioObserver&& observer)
+{
+    m_captionAudioObserver = WTF::move(observer);
+}
+
+CMTimebaseRef AudioVideoRendererAVFObjC::captionTimebase() const
+{
+    return [m_synchronizer timebase];
+}
+#endif
+
 void AudioVideoRendererAVFObjC::notifyWhenRequiresFlushToResume(Function<void()>&& callback)
 {
     if (m_isShutdown)
@@ -1327,6 +1348,11 @@ void AudioVideoRendererAVFObjC::addAudioRenderer(TrackIdentifier trackId)
 
     m_audioRenderers.set(trackId, renderer);
     m_listener->beginObservingAudioRenderer(renderer.get());
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (!m_captionAudioTrackId)
+        m_captionAudioTrackId = trackId;
+#endif
 }
 
 void AudioVideoRendererAVFObjC::removeAudioRenderer(TrackIdentifier trackId)
@@ -1337,6 +1363,10 @@ void AudioVideoRendererAVFObjC::removeAudioRenderer(TrackIdentifier trackId)
         ASSERT(m_audioTracksMap.contains(trackId));
         m_audioTracksMap.remove(trackId);
         updateAllRenderersHaveAvailableSamples();
+#if HAVE(AVCAPTIONTRANSCRIBER)
+        if (m_captionAudioTrackId == trackId)
+            m_captionAudioTrackId = std::nullopt;
+#endif
     }
 }
 
@@ -2316,6 +2346,10 @@ void AudioVideoRendererAVFObjC::flushAudio()
     applyOnAudioRenderers([&](auto *renderer) {
         [renderer flush];
     });
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (m_captionAudioObserver.flushed)
+        m_captionAudioObserver.flushed();
+#endif
     removeBlockedSamples([&](auto trackId) {
         return typeOf(trackId) == TrackType::Audio;
     });
@@ -2329,6 +2363,10 @@ void AudioVideoRendererAVFObjC::flushAudioTrack(TrackIdentifier trackId)
         return;
     setReadyToRequestAudioData(trackId);
     [audioRenderer flush];
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    if (trackId == m_captionAudioTrackId && m_captionAudioObserver.flushed)
+        m_captionAudioObserver.flushed();
+#endif
     removeBlockedSamples([&](auto blockedTrackId) {
         return blockedTrackId == trackId;
     });

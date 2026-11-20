@@ -28,6 +28,7 @@
 #include <WebCore/HostingContext.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaPromiseTypes.h>
+#include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/TrackInfo.h>
@@ -40,11 +41,17 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/NativePromise.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/Vector.h>
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+typedef struct OpaqueCMTimebase *CMTimebaseRef;
+#endif
 
 namespace WebCore {
 
 class CDMInstance;
 class FloatRect;
+struct GenericCueData;
 class GraphicsContext;
 class LegacyCDMSession;
 class LayoutRect;
@@ -65,6 +72,19 @@ public:
     virtual void setPreservesPitchAndCorrectionAlgorithm(bool, std::optional<PitchCorrectionAlgorithm>) { }
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
     virtual void setOutputDeviceId(const String&) { }
+#endif
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    virtual void notifyNewTranscribedCuesAvailable(Function<void(Vector<GenericCueData>)>&&) { }
+    virtual void notifyCaptionTranscriptionAvailabilityChanged(Function<void(bool)>&&) { }
+    virtual void setMediaSessionIdentifier(MediaSessionIdentifier) { }
+    virtual void setCaptionAudioLanguage(const String&) { }
+
+    struct CaptionAudioObserver {
+        Function<void(const MediaSample&)> sampleEnqueued;
+        Function<void()> flushed;
+    };
+    virtual void setCaptionAudioObserver(CaptionAudioObserver&&) { }
+    virtual CMTimebaseRef captionTimebase() const { return nullptr; }
 #endif
 };
 

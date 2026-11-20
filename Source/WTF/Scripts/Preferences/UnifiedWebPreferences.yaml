@@ -4207,6 +4207,15 @@ MediaEnabled:
   condition: ENABLE(VIDEO)
   defaultValue: true
 
+MediaGeneratedCaptionsEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "Media generated captions"
+  humanReadableDescription: "Generate captions from the audio of the now-playing media, and show them as a text track"
+  condition: HAVE(AVCAPTIONTRANSCRIBER)
+  defaultValue: false
+
 MediaPlaybackEnabled:
   type: bool
   status: embedder
