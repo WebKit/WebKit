@@ -2904,24 +2904,6 @@
             "test_locate_in_iframe[accessibility-cross_origin]": { "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/331770"}}}
         }
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/locate_nodes/invalid.py": {
-        "subtests": {
-            "test_params_locator_context_value_invalid_context[]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_params_locator_context_value_invalid_context[non_existing_context]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}}
-        }
-    },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/locate_nodes/locator.py": {
-        "subtests": {
-            "test_locate_by_context[same_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_locate_by_context[cross_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_locate_by_context_in_iframe[same_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_locate_by_context_in_iframe[cross_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_locate_by_context_in_shadow_dom[open-same_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_locate_by_context_in_shadow_dom[open-cross_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_locate_by_context_in_shadow_dom[closed-same_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}},
-            "test_locate_by_context_in_shadow_dom[closed-cross_origin]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332540"}}}
-        }
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/about_blank.py": {
         "subtests": {
             "test_navigate_from_single_page": {
