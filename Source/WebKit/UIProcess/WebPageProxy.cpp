@@ -22303,14 +22303,14 @@ Ref<WebProcessProxy> WebPageProxy::processContainingFrame(std::optional<WebCore:
     return siteIsolatedProcess();
 }
 
-RefPtr<WebFrameProxy> WebPageProxy::frameForRemoteUserInputEventRedispatch(IPC::Connection* replyingConnection, WebCore::FrameIdentifier sourceFrameID, WebCore::FrameIdentifier targetFrameID)
+RefPtr<WebFrameProxy> WebPageProxy::frameForRemoteUserInputEventRedispatch(IPC::Connection* replyingConnection, std::optional<WebCore::FrameIdentifier> sourceFrameID, WebCore::FrameIdentifier targetFrameID)
 {
     if (!replyingConnection)
         return nullptr;
 
     MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(protect(preferences())->siteIsolationEnabled(), *replyingConnection, nullptr);
 
-    RefPtr sourceFrame = WebFrameProxy::webFrame(sourceFrameID);
+    RefPtr sourceFrame = sourceFrameID ? WebFrameProxy::webFrame(*sourceFrameID) : m_mainFrame.get();
     RefPtr targetFrame = WebFrameProxy::webFrame(targetFrameID);
     if (!sourceFrame || !targetFrame)
         return nullptr;

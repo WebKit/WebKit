@@ -375,15 +375,11 @@ void WebPageProxy::selectPositionAtBoundaryWithDirection(std::optional<WebCore::
         return;
     }
 
-    std::optional<WebCore::FrameIdentifier> sourceFrameID = frameID;
-    if (!sourceFrameID && m_mainFrame)
-        sourceFrameID = m_mainFrame->frameID();
-
     Ref process = processContainingFrame(frameID);
     auto backgroundActivity = protect(process->throttler())->backgroundActivity("WebPageProxy::selectPositionAtBoundaryWithDirection"_s);
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectPositionAtBoundaryWithDirection(frameID, point, granularity, direction, isInteractingWithFocusedElement), ReplyWithConnection<Messages::WebPage::SelectPositionAtBoundaryWithDirection> { [weakThis = WeakPtr { *this }, sourceFrameID, granularity, direction, isInteractingWithFocusedElement, callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectPositionAtBoundaryWithDirection(frameID, point, granularity, direction, isInteractingWithFocusedElement), ReplyWithConnection<Messages::WebPage::SelectPositionAtBoundaryWithDirection> { [weakThis = WeakPtr { *this }, frameID, granularity, direction, isInteractingWithFocusedElement, callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (RefPtr targetFrame = protectedThis && sourceFrameID && remoteUserInputEventData ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, *sourceFrameID, remoteUserInputEventData->targetFrameID) : nullptr) {
+        if (RefPtr targetFrame = protectedThis && remoteUserInputEventData ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID) : nullptr) {
             // The gesture landed on a cross-origin frame; re-dispatch it into that frame's process.
             protectedThis->selectPositionAtBoundaryWithDirection(targetFrame->frameID(), roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), granularity, direction, isInteractingWithFocusedElement, WTF::move(callbackFunction));
             return;
@@ -433,16 +429,12 @@ void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(std::optiona
             return;
         }
 
-        std::optional<WebCore::FrameIdentifier> sourceFrameID = frameID;
-        if (!sourceFrameID && protectedThis->m_mainFrame)
-            sourceFrameID = protectedThis->m_mainFrame->frameID();
-
-        protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView(frameID, point), ReplyWithConnection<Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView> { [weakThis = WTF::move(weakThis), sourceFrameID, callbackFunction = WTF::move(callbackFunction)](IPC::Connection* connection, auto&& reply) mutable {
+        protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView(frameID, point), ReplyWithConnection<Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView> { [weakThis = WTF::move(weakThis), frameID, callbackFunction = WTF::move(callbackFunction)](IPC::Connection* connection, auto&& reply) mutable {
             WTF::switchOn(WTF::move(reply), [&](PrepareSelectionForContextMenuResult&& result) {
                 callbackFunction(result.shouldShowMenu, result.item);
             }, [&](WebCore::RemoteUserInputEventData&& remoteUserInputEventData) {
                 RefPtr protectedThis = weakThis.get();
-                RefPtr targetFrame = protectedThis && sourceFrameID ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, *sourceFrameID, remoteUserInputEventData.targetFrameID) : nullptr;
+                RefPtr targetFrame = protectedThis ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData.targetFrameID) : nullptr;
                 if (!targetFrame)
                     return callbackFunction(false, RevealItem());
                 protectedThis->prepareSelectionForContextMenuWithLocationInView(targetFrame->frameID(), roundedIntPoint(FloatPoint { remoteUserInputEventData.transformedPoint }), WTF::move(callbackFunction));
@@ -523,13 +515,9 @@ void WebPageProxy::selectWithTwoTouches(std::optional<WebCore::FrameIdentifier> 
     if (!hasRunningProcess())
         return callback({ }, GestureType::Loupe, GestureRecognizerState::Possible, { });
 
-    std::optional<WebCore::FrameIdentifier> sourceFrameID = frameID;
-    if (!sourceFrameID && m_mainFrame)
-        sourceFrameID = m_mainFrame->frameID();
-
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectWithTwoTouches(frameID, from, to, gestureType, gestureState), ReplyWithConnection<Messages::WebPage::SelectWithTwoTouches> { [weakThis = WeakPtr { *this }, sourceFrameID, from, to, gestureType, gestureState, callback = WTF::move(callback)](IPC::Connection* connection, const WebCore::IntPoint& point, GestureType innerGestureType, GestureRecognizerState innerGestureState, OptionSet<SelectionFlags> flags, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectWithTwoTouches(frameID, from, to, gestureType, gestureState), ReplyWithConnection<Messages::WebPage::SelectWithTwoTouches> { [weakThis = WeakPtr { *this }, frameID, from, to, gestureType, gestureState, callback = WTF::move(callback)](IPC::Connection* connection, const WebCore::IntPoint& point, GestureType innerGestureType, GestureRecognizerState innerGestureState, OptionSet<SelectionFlags> flags, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (RefPtr targetFrame = protectedThis && sourceFrameID && remoteUserInputEventData ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, *sourceFrameID, remoteUserInputEventData->targetFrameID) : nullptr) {
+        if (RefPtr targetFrame = protectedThis && remoteUserInputEventData ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID) : nullptr) {
             // The gesture landed on a cross-origin frame; re-dispatch it into that frame's process.
             auto transformedFrom = roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint });
             protectedThis->selectWithTwoTouches(targetFrame->frameID(), transformedFrom, to + (transformedFrom - from), gestureType, gestureState,
