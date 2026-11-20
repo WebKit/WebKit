@@ -1019,6 +1019,9 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'retrieve-pr-data-from-label'
         ],
     }
+    # Swift experiments queues are copies of the mac-cmake-debug and mac-cmake-debug-wk2 queues
+    expected_steps['macOS-Golden-Gate-Debug-SwiftExperiments-Build-EWS'] = expected_steps['macOS-Golden-Gate-Debug-Build-EWS']
+    expected_steps['macOS-Golden-Gate-Debug-SwiftExperiments-WK2-Tests-EWS'] = expected_steps['macOS-Golden-Gate-Debug-WK2-Tests-EWS']
 
     def setUp(self):
         cwd = os.path.dirname(os.path.abspath(__file__))

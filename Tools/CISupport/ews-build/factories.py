@@ -331,6 +331,14 @@ class macOSWK2Factory(TestFactory):
     willTriggerCrashLogSubmission = True
 
 
+class macOSSwiftExperimentsBuildFactory(macOSBuildOnlyFactory):
+    branches = [r'^swift-adoption-experiments$']
+
+
+class macOSSwiftExperimentsWK2Factory(macOSWK2Factory):
+    branches = [r'^swift-adoption-experiments$']
+
+
 class macOSSiteIsolationFactory(TestFactory):
     findModifiedLayoutTests = True
     willTriggerCrashLogSubmission = True

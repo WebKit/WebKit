@@ -362,8 +362,7 @@ workers:
       - {name: ews2010, template: tahoe-m4pro}
       - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
       - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 5}
-      - {template: mac-golden-gate-aws, prefix: ews, first: 3005, count: 37}
-      - {template: mac-golden-gate-aws, prefix: ews, first: 3042, count: 2, tag: webdriver}
+      - {template: mac-golden-gate-aws, prefix: ews, first: 3005, count: 41}
     each(w):
       $if: "'template' in w"
       then:
@@ -505,6 +504,26 @@ builders:
     triggered_by: [macos-golden-gate-debug-build-ews]
     additionalArguments: ['-2', '-1']
     workernames: {$map: {$eval: "range(0, 19)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m4pro'\").name"}}
+  - name: macOS-Golden-Gate-Debug-SwiftExperiments-Build-EWS
+    shortname: mac-swift-experiments
+    icon: buildOnly
+    factory: macOSSwiftExperimentsBuildFactory
+    platform: mac-golden-gate
+    configuration: debug
+    architectures: [arm64]
+    additionalArguments: [--cmake]
+    rebuild_without_change_on_builder: true
+    triggers: [macos-golden-gate-debug-swiftexperiments-wk2-tests-ews]
+    workernames: {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: macOS-Golden-Gate-Debug-SwiftExperiments-WK2-Tests-EWS
+    shortname: mac-swift-experiments-wk2
+    icon: testOnly
+    factory: macOSSwiftExperimentsWK2Factory
+    platform: mac-golden-gate
+    configuration: debug
+    triggered_by: [macos-golden-gate-debug-swiftexperiments-build-ews]
+    additionalArguments: ['-2', '-1']
+    workernames: {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
   - name: macOS-Golden-Gate-Debug-WebDriver-Tests-EWS
     shortname: mac-webdriver
     icon: testOnly
@@ -513,7 +532,7 @@ builders:
     configuration: debug
     triggered_by: [macos-golden-gate-debug-build-ews]
     additionalArguments: [--site-isolation]
-    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webdriver'", then: {$eval: w.name}}}
+    workernames: {$map: {$eval: "range(0, 2)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
   - name: macOS-Sequoia-Release-Build-EWS
     shortname: mac
     icon: buildOnly
@@ -526,8 +545,8 @@ builders:
     triggers: [api-tests-mac-ews, macos-sequoia-release-wk2-tests-ews, macos-sequoia-release-wk2-intel-tests-ews, macos-release-wk2-stress-tests-ews, macos-sequoia-release-site-isolation-tests-ews, jsc-tests-x86-64-ews]
     workernames:
       $flatten:
-        - {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
-        - {$map: {$eval: "range(0, 6)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
   - name: macOS-Sequoia-Release-WK2-Tests-EWS
     shortname: mac-wk2
     icon: testOnly
@@ -789,7 +808,7 @@ unusedWorkers:
 schedulers:
   - type: AnyBranchScheduler
     name: pull_request
-    builderNames: [Bindings-Tests-EWS, GTK-Build-EWS, iOS-26-Build-EWS, iOS-27-Simulator-Build-EWS, JSC-Tests-O3-Debug-arm64-EWS, macOS-Golden-Gate-Debug-Build-EWS, macOS-Sequoia-Release-Build-EWS, macOS-Safer-CPP-Checks-EWS, Apple-iOS-26-Safer-CPP-Checks-EWS, Services-EWS, Style-EWS, Style-EWS, tvOS-27-Build-EWS, tvOS-27-Simulator-Build-EWS, visionOS-27-Build-EWS, visionOS-27-Simulator-Build-EWS, watchOS-27-Build-EWS, watchOS-27-Simulator-Build-EWS, WPE-Build-EWS, WebKitPerl-Tests-EWS, WebKitPy-Tests-EWS, PlayStation-Build-EWS, Win-Build-EWS, GTK-GTK3-GCC-Build-EWS]
+    builderNames: [Bindings-Tests-EWS, GTK-Build-EWS, iOS-26-Build-EWS, iOS-27-Simulator-Build-EWS, JSC-Tests-O3-Debug-arm64-EWS, macOS-Golden-Gate-Debug-Build-EWS, macOS-Golden-Gate-Debug-SwiftExperiments-Build-EWS, macOS-Sequoia-Release-Build-EWS, macOS-Safer-CPP-Checks-EWS, Apple-iOS-26-Safer-CPP-Checks-EWS, Services-EWS, Style-EWS, Style-EWS, tvOS-27-Build-EWS, tvOS-27-Simulator-Build-EWS, visionOS-27-Build-EWS, visionOS-27-Simulator-Build-EWS, watchOS-27-Build-EWS, watchOS-27-Simulator-Build-EWS, WPE-Build-EWS, WebKitPerl-Tests-EWS, WebKitPy-Tests-EWS, PlayStation-Build-EWS, Win-Build-EWS, GTK-GTK3-GCC-Build-EWS]
   - type: AnyBranchScheduler
     name: merge_queue
     builderNames: [Merge-Queue]
@@ -824,6 +843,12 @@ schedulers:
   - type: Triggerable
     name: macos-golden-gate-debug-wk2-tests-ews
     builderNames: [macOS-Golden-Gate-Debug-WK2-Tests-EWS]
+  - type: Triggerable
+    name: macos-golden-gate-debug-swiftexperiments-build-ews
+    builderNames: [macOS-Golden-Gate-Debug-SwiftExperiments-Build-EWS]
+  - type: Triggerable
+    name: macos-golden-gate-debug-swiftexperiments-wk2-tests-ews
+    builderNames: [macOS-Golden-Gate-Debug-SwiftExperiments-WK2-Tests-EWS]
   - type: Triggerable
     name: macos-golden-gate-debug-webdriver-tests-ews
     builderNames: [macOS-Golden-Gate-Debug-WebDriver-Tests-EWS]
