@@ -32,6 +32,7 @@
 #include "WebCookieManager.h"
 #include "WebSocketTaskSoup.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
@@ -122,7 +123,8 @@ RefPtr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdenti
         }), this);
     }
 
-    bool shouldBlockCookies = protect(networkStorageSession())->shouldBlockCookies(request, frameID, webPageProxyID, protect(NetworkProcess::singleton())->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
+    bool shouldBlockCookies = RegistrableDomain(request.firstPartyForCookies()).isEmpty()
+        || protect(networkStorageSession())->shouldBlockCookies(request, frameID, webPageProxyID, protect(NetworkProcess::singleton())->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
     if (shouldBlockCookies)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
 

@@ -45,6 +45,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/PublicSuffixStore.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
@@ -175,6 +176,9 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
     }
 
     restrictRequestReferrerToOriginIfNeeded(m_currentRequest);
+
+    if (RegistrableDomain(m_currentRequest.firstPartyForCookies()).isEmpty())
+        m_currentRequest.setAllowCookies(false);
 
     m_soupMessage = m_currentRequest.createSoupMessage(m_session->blobRegistry());
     if (!m_soupMessage) {
