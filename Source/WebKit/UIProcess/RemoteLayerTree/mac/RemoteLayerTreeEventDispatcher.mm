@@ -897,6 +897,14 @@ void RemoteLayerTreeEventDispatcher::endMomentumSignpostInterval()
     }
 }
 
+void RemoteLayerTreeEventDispatcher::endMomentumSignpostIntervalBecauseMomentumIsIgnored()
+{
+    if (m_momentumIntervalIsActive) {
+        WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; reason=momentumIgnored;");
+        m_momentumIntervalIsActive = false;
+    }
+}
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
 void RemoteLayerTreeEventDispatcher::handleSyntheticWheelEvent(PageIdentifier pageID, const WebWheelEvent& event, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
@@ -921,7 +929,13 @@ void RemoteLayerTreeEventDispatcher::handleSyntheticWheelEvent(PageIdentifier pa
     if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling))
         return;
 
+    if (scrollingTree && scrollingTree->scrollingPerformanceTestingEnabled())
+        scrollingTree->setIsIgnoringMomentumScrollsDuringRubberBand(false);
+
     internalHandleWheelEvent(platformWheelEvent, processingSteps);
+
+    if (scrollingTree && scrollingTree->scrollingPerformanceTestingEnabled() && scrollingTree->isIgnoringMomentumScrollsDuringRubberBand())
+        endMomentumSignpostIntervalBecauseMomentumIsIgnored();
 }
 
 void RemoteLayerTreeEventDispatcher::didStartRubberbanding()

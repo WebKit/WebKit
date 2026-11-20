@@ -103,6 +103,7 @@ private:
     const Ref<ScrollerPairMac> m_scrollerPair;
 
     bool m_inMomentumPhase { false };
+    bool m_momentumBeganDuringCurrentRubberBand { false };
 
 #if HAVE(RUBBER_BANDING)
     std::optional<RubberbandingState> m_pendingRubberbandingState;

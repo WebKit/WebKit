@@ -97,6 +97,9 @@ public:
     bool scrollingPerformanceTestingEnabled() const { return m_scrollingPerformanceTestingEnabled; }
     void setScrollingPerformanceTestingEnabled(bool value) { m_scrollingPerformanceTestingEnabled = value; }
 
+    bool isIgnoringMomentumScrollsDuringRubberBand() const { return m_isIgnoringMomentumScrollsDuringRubberBand; }
+    void setIsIgnoringMomentumScrollsDuringRubberBand(bool isIgnoringMomentumScrollsDuringRubberBand) { m_isIgnoringMomentumScrollsDuringRubberBand = isIgnoringMomentumScrollsDuringRubberBand; }
+
     WEBCORE_EXPORT bool isUserScrollInProgressAtEventLocation(const PlatformWheelEvent&);
     WEBCORE_EXPORT OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const PlatformWheelEvent&);
     WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
@@ -442,6 +445,7 @@ private:
     std::atomic<bool> m_isHandlingProgrammaticScroll { false };
     std::atomic<bool> m_isApplyingDeltaScroll { false };
     std::atomic<bool> m_needsApplyLayerPositions { false };
+    std::atomic<bool> m_isIgnoringMomentumScrollsDuringRubberBand { false };
     bool m_isMonitoringWheelEvents { false };
     bool m_scrollingPerformanceTestingEnabled { false };
     bool m_overlayScrollbarsEnabled { false };

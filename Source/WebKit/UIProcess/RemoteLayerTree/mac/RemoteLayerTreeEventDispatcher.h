@@ -162,6 +162,7 @@ private:
     void endFingerDownSignpostInterval();
     void startMomentumSignpostInterval();
     void endMomentumSignpostInterval();
+    void endMomentumSignpostIntervalBecauseMomentumIsIgnored();
 
     void didStartRubberbanding();
 

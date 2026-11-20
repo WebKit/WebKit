@@ -213,6 +213,7 @@ public:
     void startRubberBandSnapBack();
     void rubberBandTargetOffsetDidChange();
     NODELETE bool isRubberBandInProgress() const;
+    bool isIgnoringMomentumScrolls() const { return m_ignoreMomentumScrolls; }
     RectEdges<bool> rubberBandingEdges() const { return m_rubberBandingEdges; }
 
     std::optional<RubberbandingState> captureRubberbandingState() const;
