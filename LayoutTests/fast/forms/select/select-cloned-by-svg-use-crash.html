@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<svg>
+    <use id="use"></use>
+    <g id="target"></g>
+</svg>
+<div id="holder"><select id="select" multiple size="0"></select></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Move the HTML <select> into the subtree that <use> references, so that SVGUseElement's
+// shadow tree update clones it from inside style resolution, while script is disallowed.
+document.getElementById("target").appendChild(document.getElementById("holder"));
+document.getElementById("use").setAttribute("href", "#target");
+document.body.offsetTop;
+</script>
+</body>
+</html>
