@@ -1963,6 +1963,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/IntersectionObserverMarginBox.h
     page/IsLoggedIn.h
     page/LayoutMilestone.h
+    page/LinkComponentFilteringData.h
     page/LinkDecorationFilteringData.h
     page/LocalDOMWindow.h
     page/LocalDOMWindowProperty.h

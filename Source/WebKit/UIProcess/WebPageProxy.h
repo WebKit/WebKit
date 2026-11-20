@@ -3935,6 +3935,7 @@ private:
 
     void waitForInitialLinkDecorationFilteringData(WebFramePolicyListenerProxy&);
     void sendCachedLinkDecorationFilteringData();
+    void sendCachedLinkComponentFilteringData();
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     static Vector<WebCore::LinkDecorationFilteringData>& cachedAllowedQueryParametersForAdvancedPrivacyProtections();
     void updateAllowedQueryParametersForAdvancedPrivacyProtectionsIfNeeded();
@@ -4689,6 +4690,7 @@ private:
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     const RefPtr<ListDataObserver> m_linkDecorationFilteringDataUpdateObserver;
+    const RefPtr<ListDataObserver> m_linkComponentFilteringDataUpdateObserver;
     bool m_needsInitialLinkDecorationFilteringData { true };
     bool m_shouldUpdateAllowedQueryParametersForAdvancedPrivacyProtections { false };
     OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtectionsPolicies;

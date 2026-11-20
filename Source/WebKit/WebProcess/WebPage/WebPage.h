@@ -130,6 +130,7 @@
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+#include <WebCore/LinkComponentFilteringData.h>
 #include <WebCore/LinkDecorationFilteringData.h>
 #endif
 
@@ -2413,6 +2414,7 @@ private:
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     void setLinkDecorationFilteringData(Vector<WebCore::LinkDecorationFilteringData>&&);
     void setAllowedQueryParametersForAdvancedPrivacyProtections(Vector<WebCore::LinkDecorationFilteringData>&&);
+    void setLinkComponentFilteringData(Vector<WebCore::LinkComponentFilteringData>&&);
 #endif
 
 #if ENABLE(META_VIEWPORT)

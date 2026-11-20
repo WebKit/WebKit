@@ -1340,27 +1340,164 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
 #endif
 }
 
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+enum class LinkComponentPatternMatch : bool { WholeValue, AnyPart };
+
+static bool matchesLinkComponentPattern(const String& pattern, StringView value, LinkComponentPatternMatch match = LinkComponentPatternMatch::WholeValue)
+{
+    if (pattern.isEmpty())
+        return true;
+
+    // Whole-value patterns are anchored when compiled.
+    bool isWholeValue = match == LinkComponentPatternMatch::WholeValue;
+    static MainRunLoopNeverDestroyed<HashMap<String, RetainPtr<NSRegularExpression>>> compiledPatterns;
+    auto cacheKey = makeString(isWholeValue ? "W:"_s : "P:"_s, pattern);
+    auto it = compiledPatterns->find(cacheKey);
+    if (it == compiledPatterns->end()) {
+        auto source = isWholeValue ? makeString("\\A(?:"_s, pattern, ")\\z"_s) : pattern;
+        RetainPtr expression = [NSRegularExpression regularExpressionWithPattern:source.createNSString().get() options:0 error:nil];
+        it = compiledPatterns->add(cacheKey, WTF::move(expression)).iterator;
+    }
+
+    RetainPtr expression = it->value;
+    if (!expression)
+        return false;
+
+    RetainPtr string = value.createNSString();
+    return [expression firstMatchInString:string.get() options:0 range:NSMakeRange(0, [string length])];
+}
+
+// The labels left of the registrable domain. For "login.abc.x.com" on x.com this is "login.abc".
+static StringView linkComponentSubdomains(StringView host, const RegistrableDomain& domain)
+{
+    StringView registrableDomain = domain.string();
+    if (host.length() <= registrableDomain.length() + 1 || !host.endsWithIgnoringASCIICase(registrableDomain) || host[host.length() - registrableDomain.length() - 1] != '.')
+        return { };
+    return host.left(host.length() - registrableDomain.length() - 1);
+}
+
+// `index` is 1-based, counting from the leftmost label.
+static StringView linkComponentSubdomainLabel(StringView subdomains, unsigned index)
+{
+    unsigned current = 0;
+    for (auto label : subdomains.splitAllowingEmptyEntries('.')) {
+        if (++current == index)
+            return label;
+    }
+    return { };
+}
+
+// `index` is 1-based.
+static StringView linkComponentPathSegment(StringView path, unsigned index)
+{
+    if (path.startsWith('/'))
+        path = path.substring(1);
+
+    unsigned current = 0;
+    for (auto segment : path.splitAllowingEmptyEntries('/')) {
+        if (++current == index)
+            return segment;
+    }
+    return { };
+}
+
+static bool linkComponentRuleAppliesToURL(const LinkComponentFilteringData& rule, const URL& url, const RegistrableDomain& domain)
+{
+    if (rule.domain && *rule.domain != domain)
+        return false;
+
+    if (rule.subdomain.isEmpty() && rule.path.isEmpty())
+        return true;
+
+    // When both a subdomain and a path are given, seeing either one is enough.
+    if (!rule.subdomain.isEmpty()) {
+        for (auto label : linkComponentSubdomains(url.host(), domain).splitAllowingEmptyEntries('.')) {
+            if (equalIgnoringASCIICase(label, rule.subdomain))
+                return true;
+        }
+    }
+    return !rule.path.isEmpty() && url.path().contains(StringView { rule.path });
+}
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
 URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    if (m_internals->allowedQueryParametersForAdvancedPrivacyProtections.isEmpty()) {
+    bool hasAllowedQueryParameters = !m_internals->allowedQueryParametersForAdvancedPrivacyProtections.isEmpty();
+    if (!hasAllowedQueryParameters)
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to hide query parameters from script (missing data)");
-        return url;
-    }
 
-    if (!url.hasQuery() && !url.hasFragmentIdentifier())
+    const auto& linkComponentRules = m_internals->linkComponentFilteringData;
+    if (!hasAllowedQueryParameters && linkComponentRules.isEmpty())
+        return url;
+
+    if (!url.hasQuery() && !url.hasFragmentIdentifier() && linkComponentRules.isEmpty())
         return url;
 
     auto sanitizedURL = url;
+    auto domain = RegistrableDomain { url };
 
-    auto allowedParameters = m_internals->allowedQueryParametersForAdvancedPrivacyProtections.get(RegistrableDomain { sanitizedURL });
+    // Rules are evaluated against the original URL, so that hiding one component can't affect the matching of another.
+    bool shouldHidePath = false;
+    bool shouldHideSubdomains = false;
+    bool shouldHideFragment = false;
+    if (!domain.isEmpty()) {
+        for (const auto& rule : linkComponentRules) {
+            if (!linkComponentRuleAppliesToURL(rule, url, domain))
+                continue;
 
-    if (!allowedParameters.contains("#"_s))
+            switch (rule.component) {
+            case LinkComponent::Query:
+                break;
+            case LinkComponent::Path:
+                if (auto segment = linkComponentPathSegment(url.path(), rule.index); !segment.isEmpty() && matchesLinkComponentPattern(rule.pattern, segment))
+                    shouldHidePath = true;
+                break;
+            case LinkComponent::Subdomain:
+                if (auto label = linkComponentSubdomainLabel(linkComponentSubdomains(url.host(), domain), rule.index); !label.isEmpty() && matchesLinkComponentPattern(rule.pattern, label))
+                    shouldHideSubdomains = true;
+                break;
+            case LinkComponent::Fragment:
+                if (auto fragment = url.fragmentIdentifier(); !fragment.isEmpty() && matchesLinkComponentPattern(rule.pattern, fragment, LinkComponentPatternMatch::AnyPart))
+                    shouldHideFragment = true;
+                break;
+            }
+        }
+    }
+
+    HashSet<String> allowedParameters;
+    if (hasAllowedQueryParameters) {
+        allowedParameters = m_internals->allowedQueryParametersForAdvancedPrivacyProtections.get(domain);
+        if (!allowedParameters.contains("#"_s))
+            sanitizedURL.removeFragmentIdentifier();
+    }
+
+    if (url.hasQuery()) {
+        // A parameter is hidden if it isn't allowed, or if a query rule names it.
+        WTF::removeQueryParameters(sanitizedURL, [&](auto& key, auto& value) {
+            if (hasAllowedQueryParameters && !allowedParameters.contains(key))
+                return true;
+
+            return linkComponentRules.containsIf([&](auto& rule) {
+                return rule.component == LinkComponent::Query
+                    && rule.queryParameter == key
+                    && linkComponentRuleAppliesToURL(rule, url, domain)
+                    && matchesLinkComponentPattern(rule.pattern, value);
+            });
+        });
+    }
+
+    if (shouldHidePath || shouldHideSubdomains || shouldHideFragment)
+        WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "Hiding link components from script (path: %d, subdomains: %d, fragment: %d)", shouldHidePath, shouldHideSubdomains, shouldHideFragment);
+
+    if (shouldHidePath)
+        sanitizedURL.setPath("/"_s);
+    if (shouldHideSubdomains)
+        sanitizedURL.setHost(domain.string());
+    if (shouldHideFragment)
         sanitizedURL.removeFragmentIdentifier();
-
-    WTF::removeQueryParameters(sanitizedURL, [&](auto& key, auto&) {
-        return !allowedParameters.contains(key);
-    });
 
     return sanitizedURL;
 #else

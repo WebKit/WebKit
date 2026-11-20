@@ -5685,6 +5685,24 @@ struct WebCore::LinkDecorationFilteringData {
     String linkDecoration;
 };
 
+header: <WebCore/LinkComponentFilteringData.h>
+enum class WebCore::LinkComponent : uint8_t {
+    Query,
+    Path,
+    Subdomain,
+    Fragment
+};
+
+struct WebCore::LinkComponentFilteringData {
+    WebCore::LinkComponent component;
+    String queryParameter;
+    unsigned index;
+    std::optional<WebCore::RegistrableDomain> domain;
+    String subdomain;
+    String path;
+    String pattern;
+};
+
 header: <WebCore/InspectorFrontendClient.h>
 [CustomHeader] enum class WebCore::InspectorFrontendClientAppearance : uint8_t {
     System,

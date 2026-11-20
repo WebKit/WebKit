@@ -40,6 +40,7 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+#import <WebCore/LinkComponentFilteringData.h>
 #import <WebCore/LinkDecorationFilteringData.h>
 #import <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #endif
@@ -61,6 +62,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *);
 bool isKnownTrackerAddressOrDomain(StringView host);
 WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&);
 void requestLinkDecorationFilteringData(CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>&&);
+Vector<WebCore::LinkComponentFilteringData> parseLinkComponentFilteringData(StringView json);
 
 class ListDataObserver : public RefCountedAndCanMakeWeakPtr<ListDataObserver> {
 public:
@@ -133,6 +135,15 @@ protected:
 };
 
 class LinkDecorationFilteringController : public ListDataController<LinkDecorationFilteringController, Vector<WebCore::LinkDecorationFilteringData>> {
+public:
+    void updateList(CompletionHandler<void()>&&) final;
+
+private:
+    void didUpdateCachedListData() final { m_cachedListData.shrinkToFit(); }
+    unsigned resourceTypeValue() const final;
+};
+
+class LinkComponentFilteringController : public ListDataController<LinkComponentFilteringController, Vector<WebCore::LinkComponentFilteringData>> {
 public:
     void updateList(CompletionHandler<void()>&&) final;
 

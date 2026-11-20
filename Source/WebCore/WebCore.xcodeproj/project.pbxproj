@@ -94,6 +94,7 @@
 		0223E06D2AAECC2200AF30FB /* HandleUserInputEventResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 0223E06C2AAEBBCF00AF30FB /* HandleUserInputEventResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0223E0742AAED62200AF30FB /* RemoteUserInputEventData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0223E0732AAED62200AF30FB /* RemoteUserInputEventData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0245150C297CAFA300DFD845 /* LinkDecorationFilteringData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0245150B297CAF7700DFD845 /* LinkDecorationFilteringData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		02A1C0DF2B8E000100C0FFEE /* LinkComponentFilteringData.h in Headers */ = {isa = PBXBuildFile; fileRef = 02A1C0DE2B8E000100C0FFEE /* LinkComponentFilteringData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		025F62AA2DD69A9800573F15 /* AutoplayPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 025F62A92DD69A8700573F15 /* AutoplayPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		029D57AA2C506F5900AD086B /* UserGestureTokenIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 029D57A92C506F5900AD086B /* UserGestureTokenIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		02E536BD2984EA6800417C02 /* ScrollerPairMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 024E5F7429844DBD009CC5FC /* ScrollerPairMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7854,6 +7855,7 @@
 		0223E0732AAED62200AF30FB /* RemoteUserInputEventData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteUserInputEventData.h; sourceTree = "<group>"; };
 		02357438619C3D1E3719E438 /* NetworkLoadPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkLoadPolicy.h; sourceTree = "<group>"; };
 		0245150B297CAF7700DFD845 /* LinkDecorationFilteringData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinkDecorationFilteringData.h; sourceTree = "<group>"; };
+		02A1C0DE2B8E000100C0FFEE /* LinkComponentFilteringData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinkComponentFilteringData.h; sourceTree = "<group>"; };
 		024E5F7129844DBC009CC5FC /* ScrollerMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollerMac.h; sourceTree = "<group>"; };
 		024E5F7229844DBD009CC5FC /* ScrollerMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerMac.mm; sourceTree = "<group>"; };
 		024E5F7329844DBD009CC5FC /* ScrollerPairMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerPairMac.mm; sourceTree = "<group>"; };
@@ -31428,6 +31430,7 @@
 				0F953D3C2E8230FE005AD41D /* LargestContentfulPaintData.h */,
 				931D72F515FE695300C4C07E /* LayoutMilestone.h */,
 				F45EAC862A8C1972009B986E /* LayoutMilestones.serialization.in */,
+				02A1C0DE2B8E000100C0FFEE /* LinkComponentFilteringData.h */,
 				0245150B297CAF7700DFD845 /* LinkDecorationFilteringData.h */,
 				46C43D7729C0375E005739B5 /* LocalDOMWindow.cpp */,
 				46C43D7629C0375E005739B5 /* LocalDOMWindow.h */,
@@ -47808,6 +47811,7 @@
 				DD4B9CF72C80E8E8001A6830 /* LineClampUpdater.h in Headers */,
 				DDD517EC2A9FC5440069AF81 /* LineLayoutResult.h in Headers */,
 				6F1B101427E2D524007178E6 /* LineSelection.h in Headers */,
+				02A1C0DF2B8E000100C0FFEE /* LinkComponentFilteringData.h in Headers */,
 				0245150C297CAFA300DFD845 /* LinkDecorationFilteringData.h in Headers */,
 				CBA9DC0B1DF44DF40005675C /* LinkHeader.h in Headers */,
 				5143B2631DDD15200014FAC6 /* LinkIcon.h in Headers */,

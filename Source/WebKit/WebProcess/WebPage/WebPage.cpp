@@ -1293,6 +1293,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     setLinkDecorationFilteringData(WTF::move(parameters.linkDecorationFilteringData));
     setAllowedQueryParametersForAdvancedPrivacyProtections(WTF::move(parameters.allowedQueryParametersForAdvancedPrivacyProtections));
+    setLinkComponentFilteringData(WTF::move(parameters.linkComponentFilteringData));
 #endif
     if (parameters.windowFeatures) {
 #if ENABLE(DOCUMENT_PIP)
@@ -11184,6 +11185,12 @@ void WebPage::setAllowedQueryParametersForAdvancedPrivacyProtections(Vector<Link
             return HashSet<String> { };
         }).iterator->value.add(data.linkDecoration);
     }
+}
+
+void WebPage::setLinkComponentFilteringData(Vector<WebCore::LinkComponentFilteringData>&& rules)
+{
+    m_internals->linkComponentFilteringData = WTF::move(rules);
+    WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "setLinkComponentFilteringData: %zu rules", m_internals->linkComponentFilteringData.size());
 }
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
