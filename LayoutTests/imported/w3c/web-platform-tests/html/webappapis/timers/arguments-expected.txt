@@ -1,0 +1,4 @@
+
+PASS setTimeout
+PASS setInterval
+

@@ -10,15 +10,23 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/clearinterval-from-callback.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/cleartimeout-clearinterval.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/errors.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/evil-spec-example.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/missing-timeout-setinterval.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/negative-setinterval.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/setinterval-cross-realm-callback-report-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/setinterval-settimeout-clamping.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/settimeout-cross-realm-callback-report-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/settimeout-detached-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/settimeout-setinterval-handles.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/timer-nesting-not-inherited-in-microtask.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/type-long-settimeout.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/zero-settimeout.any.js

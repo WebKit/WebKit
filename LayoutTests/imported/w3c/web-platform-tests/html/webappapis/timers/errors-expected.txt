@@ -1,0 +1,6 @@
+
+PASS setTimeout, string argument
+PASS setTimeout, function argument
+PASS setInterval, string argument
+PASS setInterval, function argument
+

@@ -1,0 +1,4 @@
+
+PASS setInterval(0) before setTimeout(0)
+PASS setTimeout(0) before setInterval(0)
+

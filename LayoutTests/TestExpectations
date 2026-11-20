@@ -620,6 +620,9 @@ imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-idle-ca
 imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-timers.any.html [ Skip ]
 imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-timers.any.worker.html [ Skip ]
 
+# Test expectation is a failure, but output is unreliable due timing:
+webkit.org/b/301008 imported/w3c/web-platform-tests/html/webappapis/timers/timer-nesting-not-inherited-in-microtask.html [ Pass Failure ]
+
 # Requires additional test infrastructure.
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 

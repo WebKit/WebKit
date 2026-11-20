@@ -1,0 +1,4 @@
+
+PASS setTimeout and setInterval should return numeric handles integer that is greater than zero
+PASS Timeouts and intervals share a set of unique active handles
+

@@ -1,0 +1,4 @@
+
+PASS Test requires performance.now() to measure approximate timing of callbacks.
+FAIL Test that a timer scheduled during a microtask checkpoint does not inherit the timer nesting level of the task that just ran. assert_less_than: Timer should not be clamped to 4ms expected a number less than 4 but got 5
+
