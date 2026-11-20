@@ -19,14 +19,14 @@
 
 #include "config.h"
 #include "VideoDecoderGStreamer.h"
-#include "VideoFrameContentHint.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
-#include "PlatformDisplay.h"
+#include "PlatformVideoColorSpace.h"
+#include "VideoFrameContentHint.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
@@ -89,7 +89,10 @@ private:
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
     GRefPtr<GstCaps> m_inputCaps;
+    GRefPtr<GstCaps> m_outputCaps;
     std::optional<VideoFrameGStreamer::Info> m_videoInfo;
+    std::optional<PlatformVideoColorSpace> m_colorSpaceFromConfig;
+    PlatformVideoColorSpace m_colorSpaceOverride;
 
     // Each chunk's own timestamp and duration, carried by a meta on its buffer to the frame it decodes to: a decoder
     // rewrites a PTS it judges out of order, as it does when chunks share a timestamp.
@@ -231,6 +234,8 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     if (config.width && config.height)
         gst_caps_set_simple(m_inputCaps.get(), "width", G_TYPE_INT, config.width, "height", G_TYPE_INT, config.height, nullptr);
 
+    m_colorSpaceFromConfig = config.colorSpace;
+
     GRefPtr<GstElement> harnessedElement;
     if (!parser.isEmpty()) {
         // The decoder won't accept the input caps, so put a parser in front.
@@ -259,7 +264,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 #endif // USE(GSTREAMER_GL)
     gst_caps_append(allowedSinkCaps.get(), gst_caps_from_string("video/x-raw"));
 
-    m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
+    m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -270,9 +275,6 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         std::call_once(onceFlag, [this] {
             m_harness->dumpGraph("video-decoder"_s);
         });
-
-        if (m_presentationSize.isEmpty())
-            m_presentationSize = getVideoResolutionFromCaps(stream.outputCaps().get()).value_or(FloatSize { 0, 0 });
 
         auto outputBuffer = gst_sample_get_buffer(outputSample.get());
         auto duration = m_duration.value_or(GST_BUFFER_DURATION(outputBuffer));
@@ -285,14 +287,34 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
                 duration = meta->duration;
         }
 
-        if (!m_videoInfo)
-            m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(gst_sample_get_caps(outputSample.get())));
+        GRefPtr caps = gst_sample_get_caps(outputSample.get());
+        if (!m_outputCaps || !gst_caps_is_equal(caps.get(), m_outputCaps.get())) {
+            m_videoInfo = VideoFrameGStreamer::infoFromCaps(caps);
+            if (m_videoInfo) [[likely]] {
+                m_colorSpaceOverride = videoColorSpaceFromInfo(m_videoInfo->info);
+                overrideVideoColorSpaceAsNeeded(m_colorSpaceOverride, m_colorSpaceFromConfig);
+                fillVideoInfoColorimetryFromColorSpace(&m_videoInfo->info, m_colorSpaceOverride);
+            }
+
+            m_presentationSize = getVideoResolutionFromCaps(caps.get()).value_or(FloatSize { 0, 0 });
+            m_outputCaps = caps;
+        }
+
+        auto currentColorSpace = videoColorSpaceFromCaps(caps.get());
+        GRefPtr<GstSample> sample;
+        if (m_colorSpaceFromConfig && currentColorSpace != m_colorSpaceOverride) {
+            GRefPtr newCaps = adoptGRef(gst_video_info_to_caps(&m_videoInfo->info));
+            sample = adoptGRef(gst_sample_make_writable(outputSample.leakRef()));
+            gst_sample_set_caps(sample.get(), newCaps.get());
+        } else
+            sample = WTF::move(outputSample);
 
         GST_TRACE_OBJECT(m_harness->element(), "Handling decoded frame with PTS: %" GST_TIME_FORMAT " and duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(timestamp), GST_TIME_ARGS(duration));
         VideoFrameGStreamer::CreateOptions options(IntSize(m_presentationSize), { *m_videoInfo });
         options.presentationTime = fromGstClockTime(timestamp);
         options.contentHint = VideoFrameContentHint::WebCodecs;
-        auto videoFrame = VideoFrameGStreamer::create(WTF::move(outputSample), options);
+        PlatformVideoColorSpace colorSpace = m_colorSpaceOverride;
+        auto videoFrame = VideoFrameGStreamer::create(WTF::move(sample), options, WTF::move(colorSpace));
         m_outputCallback(VideoDecoder::DecodedFrame { WTF::move(videoFrame), timestamp, duration });
     }, std::nullopt, WTF::move(allowedSinkCaps));
 
