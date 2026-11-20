@@ -85,6 +85,10 @@
 #include "RendererBufferFormat.h"
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "VirtualAudioDeviceParameters.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "HardwareKeyboardState.h"
 #endif
@@ -367,6 +371,10 @@ struct WebPageCreationParameters {
 #if USE(GBM) || OS(ANDROID)
     Vector<RendererBufferFormat> preferredBufferFormats { };
 #endif
+#endif
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    Vector<VirtualAudioDeviceParameters> virtualAudioDevices { };
 #endif
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)

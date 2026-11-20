@@ -451,6 +451,10 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include <WebCore/GStreamerVirtualAudioDeviceManager.h>
+#endif
+
 #if ENABLE(WEB_AUTHN)
 #include "DigitalCredentialsCoordinator.h"
 #include "WebAuthenticatorCoordinator.h"
@@ -2584,6 +2588,11 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
 #endif
 
     protect(corePage())->destroyRenderTrees();
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    if (corePage()->doesEmbedderUseAudioOutputs())
+        GStreamerVirtualAudioDeviceManager::singleton().unregisterDevices(m_identifier);
+#endif
 
     m_drawingArea = nullptr;
     m_webPageTesting = nullptr;

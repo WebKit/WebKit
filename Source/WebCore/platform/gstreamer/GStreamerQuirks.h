@@ -74,6 +74,9 @@ public:
     virtual bool isPlatformSupported() const = 0;
     virtual GstElement* createAudioSink() { return nullptr; }
     virtual GstElement* createWebAudioSink() { return nullptr; }
+    // Whether the audio can be rendered through the GStreamerAudioMixer, with webkitaudiosink, which
+    // only accepts raw audio.
+    virtual bool doesSupportAudioMixer() const { return true; }
     virtual void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) { }
     virtual std::optional<bool> isHardwareAccelerated(GstElementFactory*) { return std::nullopt; }
     virtual std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const { return std::nullopt; }
@@ -131,6 +134,7 @@ public:
 
     GstElement* createAudioSink();
     GstElement* createWebAudioSink(const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+    bool doesSupportAudioMixer() const;
     void configureElement(GstElement*, OptionSet<ElementRuntimeCharacteristics>&&);
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) const;
     GstElementFactoryListType audioVideoDecoderFactoryListType() const;

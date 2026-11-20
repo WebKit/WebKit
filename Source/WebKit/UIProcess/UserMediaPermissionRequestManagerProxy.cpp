@@ -71,6 +71,10 @@
 #include "TabCaptureWindow.h"
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "VirtualAudioDevicesGLib.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1191,6 +1195,31 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
                 break;
             }
         }
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+        // Audio outputs implemented by the embedder don't require microphone access, the embedder
+        // providing them counts as the user's consent. Only the devices registered in the process
+        // of the frame work there. The first speaker is the one exposed as the default device: a
+        // virtual default device is moved before the system speakers, the other virtual devices come
+        // after them, since "default" is the system default output when there's no virtual default.
+        RefPtr page = protectedThis->m_page;
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        if (page && frame) {
+            Ref process = frame->process();
+            auto embedderDevices = virtualAudioOutputCaptureDevices(page->identifier(), page->configuration());
+            embedderDevices.removeAllMatching([&](auto& device) {
+                return !process->hasRegisteredVirtualAudioDevice(page->identifier(), device.persistentId());
+            });
+            String defaultPersistentId;
+            for (auto& device : embedderDevices) {
+                if (device.isDefault())
+                    defaultPersistentId = device.persistentId();
+                speakerCount++;
+                filteredDevices.append({ WTF::move(device), { } });
+            }
+            moveDeviceWithCapabilitiesToFrontOfKind(filteredDevices, defaultPersistentId, WebCore::CaptureDevice::DeviceType::Speaker);
+        }
+#endif
 
         ALWAYS_LOG_WITH_THIS(protectedThis, logIdentifier, "exposing ", cameraCount, " camera(s) filtering = ", shouldRestrictCamera, ", ", microphoneCount, " microphone(s) filtering = ", shouldRestrictMicrophone, ", ", speakerCount, " speaker(s) filtering = ", shouldRestrictSpeaker);
 

@@ -200,6 +200,7 @@ UIProcess/API/glib/WebKitUserContentFilterStore.cpp @no-unify
 UIProcess/API/glib/WebKitUserContentManager.cpp @no-unify
 UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitVersion.cpp @no-unify
+UIProcess/API/glib/WebKitVirtualAudioDevice.cpp @no-unify
 UIProcess/API/glib/WebKitWebContext.cpp @no-unify
 UIProcess/API/glib/WebKitWebExtension.cpp @no-unify
 UIProcess/API/glib/WebKitWebExtensionContext.cpp @no-unify

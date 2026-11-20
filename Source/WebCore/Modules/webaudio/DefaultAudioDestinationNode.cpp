@@ -35,10 +35,12 @@
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "Exception.h"
 #include "ExceptionOr.h"
 #include "Logging.h"
 #include "MediaStrategy.h"
+#include "Page.h"
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerRunLoop.h"
@@ -116,6 +118,24 @@ void DefaultAudioDestinationNode::clearDestination()
     m_destination = nullptr;
 }
 
+String DefaultAudioDestinationNode::effectiveOutputDevicePersistentId(const String& persistentDeviceId) const
+{
+    // Silent sinks too: they render silence on their device, which must not open the system
+    // output when the page replaces it.
+    if (RefPtr document = protect(context())->document()) {
+        if (RefPtr page = document->page())
+            return page->effectiveAudioOutputDeviceId(persistentDeviceId);
+    }
+    return persistentDeviceId;
+}
+
+bool DefaultAudioDestinationNode::doesEmbedderUseAudioOutputs() const
+{
+    RefPtr document = protect(context())->document();
+    RefPtr page = document ? document->page() : nullptr;
+    return page && page->doesEmbedderUseAudioOutputs();
+}
+
 void DefaultAudioDestinationNode::createDestination()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", sampleRate(), ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
@@ -124,7 +144,7 @@ void DefaultAudioDestinationNode::createDestination()
 #if PLATFORM(IOS_FAMILY)
         , protect(context())->sceneIdentifier()
 #endif
-        , m_outputDevicePersistentId, m_outputSinkIsSilent
+        , effectiveOutputDevicePersistentId(m_outputDevicePersistentId), m_outputSinkIsSilent, doesEmbedderUseAudioOutputs()
         });
 }
 
@@ -141,7 +161,7 @@ void DefaultAudioDestinationNode::setSinkId(const String& persistentDeviceId, bo
 
     // Only commit the stored values on success so a later recreateDestination() keeps the routing
     // that is actually in effect.
-    protect(m_destination)->setSinkId(persistentDeviceId, isSilentSink, [weakThis = WeakPtr { *this }, persistentDeviceId, isSilentSink, completionHandler = WTF::move(completionHandler)](bool success) mutable {
+    protect(m_destination)->setSinkId(effectiveOutputDevicePersistentId(persistentDeviceId), isSilentSink, [weakThis = WeakPtr { *this }, persistentDeviceId, isSilentSink, completionHandler = WTF::move(completionHandler)](bool success) mutable {
         if (success) {
             if (RefPtr protectedThis = weakThis) {
                 protectedThis->m_outputDevicePersistentId = persistentDeviceId;

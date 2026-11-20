@@ -732,6 +732,11 @@ public:
     FirstPartyAccessResult allowsFirstPartyAccess(const WebCore::RegistrableDomain&) const;
     FirstPartyAccessResult participatesInPageWithFirstPartySite(const WebCore::Site&) const;
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    // Whether the virtual audio device was successfully registered in this process for the page.
+    bool hasRegisteredVirtualAudioDevice(WebPageProxyIdentifier, const String& persistentId) const;
+#endif
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -789,6 +794,9 @@ private:
 
     // IPC message handlers.
     void didDestroyUserGestureToken(WebCore::PageIdentifier, WebCore::UserGestureTokenIdentifier);
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    void didRegisterVirtualAudioDevices(WebPageProxyIdentifier, Vector<String>&& persistentIds);
+#endif
 
     bool canBeAddedToWebProcessCache() const;
     void shouldTerminate(CompletionHandler<void(bool)>&&);
@@ -898,6 +906,11 @@ private:
     HashCountedSet<WebPageProxyIdentifier> m_pagesPendingClose;
     UserInitiatedActionMap m_userInitiatedActionMap;
     HashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    // Kept while the process is associated with the page, including when the page is kept in the
+    // back/forward cache of this process while it's displayed by another process.
+    HashMap<WebPageProxyIdentifier, HashSet<String>> m_registeredVirtualAudioDevices;
+#endif
     uint64_t m_frameProcessCount { 0 };
 
     HashSet<WebCore::ClientOrigin> m_committedClientOrigins; // Only grows because WebProcess can navigate back to an old origin in a history item.

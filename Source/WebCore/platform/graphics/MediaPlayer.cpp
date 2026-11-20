@@ -256,6 +256,11 @@ private:
     RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) final { return nullptr; }
 };
 
+bool MediaPlayerClient::doesMediaPlayerUseEmbedderAudioOutputs() const
+{
+    return false;
+}
+
 Ref<PlatformMediaResourceLoader> MediaPlayerClient::mediaPlayerCreateResourceLoader()
 {
     return *new NullMediaResourceLoader;

@@ -227,6 +227,7 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserContentManager.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMediaPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMessage.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitVirtualAudioDevice.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebContext.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionContext.h.in
@@ -553,6 +554,17 @@ if (ENABLE_MEDIA_STREAM)
     )
     list(APPEND WebKit_MESSAGES_IN_FILES
         WebProcess/glib/UserMediaCaptureManager
+    )
+endif ()
+
+if (ENABLE_VIRTUAL_AUDIO_DEVICES)
+    list(APPEND WebKit_SOURCES
+        Shared/glib/VirtualAudioDeviceDataChannel.cpp
+
+        UIProcess/glib/VirtualAudioDevicesGLib.cpp
+    )
+    list(APPEND WebKit_SERIALIZATION_IN_FILES
+        Shared/glib/VirtualAudioDeviceParameters.serialization.in
     )
 endif ()
 

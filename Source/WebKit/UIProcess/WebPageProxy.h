@@ -723,6 +723,7 @@ struct TransactionIDType;
 struct URLSchemeTaskParameters;
 struct UserMessage;
 struct ViewWindowCoordinates;
+struct VirtualAudioDeviceParameters;
 struct WebAutocorrectionContext;
 struct WebAutocorrectionData;
 struct WebExtensionContentRuleListBlockedLoadInfo;
@@ -3307,6 +3308,10 @@ public:
 
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
     Vector<RendererBufferFormat> preferredBufferFormats() const;
+#endif
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    Vector<VirtualAudioDeviceParameters> createVirtualAudioDeviceParameters(WebProcessProxy&);
 #endif
 
 #if ENABLE(VIDEO)

@@ -185,6 +185,13 @@ GstElement* GStreamerQuirksManager::createAudioSink()
     return nullptr;
 }
 
+bool GStreamerQuirksManager::doesSupportAudioMixer() const
+{
+    return !m_quirks.containsIf([](auto& quirk) {
+        return !quirk->doesSupportAudioMixer();
+    });
+}
+
 GstElement* GStreamerQuirksManager::createWebAudioSink(const String& deviceId, const GRefPtr<GstDevice>& device)
 {
     for (const auto& quirk : m_quirks) {

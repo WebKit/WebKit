@@ -33,6 +33,7 @@
 #include "ArchiveResource.h"
 #include "AsyncNodeDeletionQueueInlines.h"
 #include "AttachmentElementClient.h"
+#include "AudioMediaStreamTrackRenderer.h"
 #include "AuthenticatorCoordinator.h"
 #include "AuthenticatorCoordinatorClient.h"
 #include "BackForwardCache.h"
@@ -3606,6 +3607,20 @@ void Page::voiceActivityDetected()
         controller->voiceActivityDetected();
 }
 #endif
+
+void Page::setDefaultAudioOutputDeviceId(const String& persistentDeviceId)
+{
+    m_defaultAudioOutputDeviceId = persistentDeviceId;
+}
+
+String Page::effectiveAudioOutputDeviceId(const String& persistentDeviceId) const
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!m_defaultAudioOutputDeviceId.isEmpty() && (persistentDeviceId.isEmpty() || persistentDeviceId == AudioMediaStreamTrackRenderer::defaultDeviceID()))
+        return m_defaultAudioOutputDeviceId;
+#endif
+    return persistentDeviceId;
+}
 
 void Page::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {

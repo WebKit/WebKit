@@ -44,6 +44,10 @@ public:
     MediaTime outputLatency() const final;
 
     bool handleMessage(GstMessage*, bool handleLatencyMessage);
+
+    // Latency added after the sink of the pipeline, called from the streaming thread.
+    GstClockTime downstreamLatency() const;
+
     void notifyIsPlaying(bool);
 
     const RefPtr<AudioBus>& renderBus() const { return m_renderBus; }

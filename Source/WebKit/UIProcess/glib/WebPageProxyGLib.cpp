@@ -35,6 +35,15 @@
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/UserAgent.h>
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "APIPageConfiguration.h"
+#include "Logging.h"
+#include "VirtualAudioDeviceDataChannel.h"
+#include "VirtualAudioDeviceParameters.h"
+#include "VirtualAudioDevicesGLib.h"
+#include "WebKitVirtualAudioDevicePrivate.h"
+#endif
+
 namespace WebKit {
 
 String WebPageProxy::userAgentForURL(const URL& url)
@@ -103,5 +112,55 @@ void WebPageProxy::setPlatformView(WebKitWebView *view)
 {
     internals().platformView = GWeakPtr(view);
 }
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+Vector<VirtualAudioDeviceParameters> WebPageProxy::createVirtualAudioDeviceParameters(WebProcessProxy& process)
+{
+    // Every call creates new channels, for the web page created in @process. The UI process keeps
+    // no copy of the sender sockets: they are only owned by the returned parameters and then by the
+    // web page in the web process. Receivers are kept for as long as their sender socket is open,
+    // and they are removed when the sender socket is closed: the web page was destroyed, the web
+    // process exited, or the parameters were discarded or ignored (for instance on reinitialization).
+    //
+    // A page can have web pages in several processes at once: the provisional page of a process
+    // swap, a page kept in the back/forward cache, the remote pages of site isolation. Each of them
+    // renders its own stream on the device, with its own mixer and timestamps, and the application
+    // expects a single stream per device: only the audio of the process of the main frame is
+    // delivered, the audio of the other processes is dropped. When site isolation is enabled for
+    // the GLib ports, the audio of the cross-site frames rendered in other processes will be lost:
+    // the streams of all the processes of the page will need to be mixed here instead.
+    auto devices = virtualAudioDevices(m_configuration.get());
+    if (devices.isEmpty())
+        return { };
+
+    Ref preferences = m_preferences;
+    if (!preferences->exposeSpeakersEnabled() || !preferences->exposeSpeakersWithoutMicrophoneEnabled())
+        RELEASE_LOG_ERROR(Media, "WebPageProxy::createVirtualAudioDeviceParameters: the ExposeSpeakers and ExposeSpeakersWithoutMicrophone features are needed to select virtual audio devices other than the default one");
+
+    Vector<VirtualAudioDeviceParameters> parameters;
+    for (auto& [device, configuration] : devices) {
+        RefPtr receiver = VirtualAudioDeviceDataReceiver::create(configuration, [weakThis = WeakPtr { *this }, processIdentifier = process.coreProcessIdentifier(), device = device](std::span<const uint8_t> data, uint64_t timestamp) {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis || protectedThis->legacyMainFrameProcess().coreProcessIdentifier() != processIdentifier)
+                return;
+            webkitVirtualAudioDeviceRenderBuffer(device.get(), data, timestamp);
+        }, [weakThis = WeakPtr { *this }](VirtualAudioDeviceDataReceiver& receiver) {
+            if (RefPtr protectedThis = weakThis) {
+                protectedThis->internals().virtualAudioDeviceReceivers.removeFirstMatching([&](auto& item) {
+                    return item.ptr() == &receiver;
+                });
+            }
+        });
+        if (!receiver)
+            continue;
+
+        auto persistentId = virtualAudioDevicePersistentId(identifier(), configuration.name);
+        parameters.append({ WTF::move(configuration), WTF::move(persistentId), receiver->takeSenderSocket() });
+        internals().virtualAudioDeviceReceivers.append(receiver.releaseNonNull());
+    }
+
+    return parameters;
+}
+#endif
 
 } // namespace WebKit

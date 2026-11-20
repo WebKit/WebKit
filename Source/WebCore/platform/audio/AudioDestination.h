@@ -59,6 +59,9 @@ struct AudioDestinationCreationOptions {
     // the GStreamer port. See AudioContext.setSinkId().
     String outputDeviceId { };
     bool isSilent { false };
+    // Whether the page uses audio output devices implemented by the embedder, see
+    // Page::doesEmbedderUseAudioOutputs().
+    bool doesEmbedderUseAudioOutputs { false };
 };
 
 class AudioDestination : public AbstractRefCounted {
@@ -110,6 +113,7 @@ public:
     // Output device id in effect (empty means the default device) and silent-sink selection.
     const String& outputDeviceId() const LIFETIME_BOUND { return m_outputDeviceId; }
     bool isSilent() const { return m_isSilent; }
+    bool doesEmbedderUseAudioOutputs() const { return m_doesEmbedderUseAudioOutputs; }
 
 #if PLATFORM(IOS_FAMILY)
     const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
@@ -138,6 +142,7 @@ private:
 #endif
     String m_outputDeviceId;
     bool m_isSilent { false };
+    bool m_doesEmbedderUseAudioOutputs { false };
 };
 
 inline AudioDestination::AudioDestination(const CreationOptions& options)
@@ -150,6 +155,7 @@ inline AudioDestination::AudioDestination(const CreationOptions& options)
 #endif
     , m_outputDeviceId { options.outputDeviceId }
     , m_isSilent { options.isSilent }
+    , m_doesEmbedderUseAudioOutputs { options.doesEmbedderUseAudioOutputs }
 {
     Locker locker { m_callbackLock };
     m_callback = &options.callback;

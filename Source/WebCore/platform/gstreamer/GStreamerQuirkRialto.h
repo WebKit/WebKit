@@ -40,6 +40,9 @@ public:
     void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     GstElement* createAudioSink() final;
     GstElement* createWebAudioSink() final;
+    // The decoders are plugged in the Rialto sinks: the uridecodebin3 stop caps include the
+    // compressed audio formats, which webkitaudiosink doesn't accept.
+    bool doesSupportAudioMixer() const final { return false; }
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;
     Vector<String> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
     unsigned getAdditionalPlaybinFlags() const { return getGstPlayFlag("text") | getGstPlayFlag("native-audio") | getGstPlayFlag("native-video"); }

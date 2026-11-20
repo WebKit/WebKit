@@ -179,6 +179,10 @@
 #include "RemoteMediaSessionManagerProxyMessages.h"
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "VirtualAudioDeviceParameters.h"
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
@@ -1276,6 +1280,8 @@ void WebProcessProxy::addPagePendingClose(WebPageProxyIdentifier pageID)
 void WebProcessProxy::removePagePendingClose(WebPageProxyIdentifier pageID)
 {
     m_pagesPendingClose.remove(pageID);
+    // The page was kept associated with the process until it's closed there.
+    reportProcessDisassociatedWithPageIfNecessary(pageID);
 }
 
 bool WebProcessProxy::hasCommittedClientOrigin(const WebCore::ClientOrigin& clientOrigin) const
@@ -2253,6 +2259,29 @@ bool WebProcessProxy::isResponsive() const
     return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer->isResponsive();
 }
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+void WebProcessProxy::didRegisterVirtualAudioDevices(WebPageProxyIdentifier pageID, Vector<String>&& persistentIds)
+{
+    MESSAGE_CHECK(persistentIds.size() <= maximumVirtualAudioDevicesPerPage);
+
+    // The page may have been closed while the message was in flight.
+    if (!isAssociatedWithPage(pageID))
+        return;
+
+    auto& registeredDevices = m_registeredVirtualAudioDevices.add(pageID, HashSet<String> { }).iterator->value;
+    for (auto& persistentId : persistentIds) {
+        MESSAGE_CHECK(!persistentId.isEmpty());
+        registeredDevices.add(WTF::move(persistentId));
+    }
+}
+
+bool WebProcessProxy::hasRegisteredVirtualAudioDevice(WebPageProxyIdentifier pageID, const String& persistentId) const
+{
+    auto it = m_registeredVirtualAudioDevices.find(pageID);
+    return it != m_registeredVirtualAudioDevices.end() && it->value.contains(persistentId);
+}
+#endif
+
 void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, UserGestureTokenIdentifier identifier)
 {
     auto authorizationTokenMapByPageIterator = m_userInitiatedActionByAuthorizationTokenMap.find(pageID);
@@ -3084,6 +3113,10 @@ void WebProcessProxy::reportProcessDisassociatedWithPageIfNecessary(WebPageProxy
 {
     if (isAssociatedWithPage(pageID))
         return;
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    m_registeredVirtualAudioDevices.remove(pageID);
+#endif
 
     if (RefPtr page = webPage(pageID))
         page->processIsNoLongerAssociatedWithPage(*this);

@@ -277,6 +277,10 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    Vector<WebKit::VirtualAudioDeviceParameters> virtualAudioDevices;
+#endif
+
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)
     WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent;
 #endif
