@@ -8209,12 +8209,12 @@ TEST(SiteIsolation, CrossSiteIframeReplaceKeepsItemURLBeforeCommit)
     };
     [webView setUIDelegate:uiDelegate.get()];
 
-    // Hiding the view makes both processes save state to the frame's history item. Hold the webkit.org process in
-    // an alert so it does so after the example.com process, which still has the frame's document.
+    // Removing the view from its window makes both processes save state to the frame's history item. Hold the
+    // webkit.org process in an alert so it does so after the example.com process, which still has the frame's document.
     [webView evaluateJavaScript:@"alert()" inFrame:webKitFrame.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
     while (!dismissAlert)
         Util::spinRunLoop();
-    [webView setHidden:YES];
+    [webView removeFromSuperview];
     EXPECT_TRUE(Util::waitFor([&] {
         return [[webView objectByEvaluatingJavaScript:@"document.visibilityState"] isEqualToString:@"hidden"];
     }));
