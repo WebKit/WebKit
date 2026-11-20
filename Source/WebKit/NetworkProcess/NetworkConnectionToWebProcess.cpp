@@ -1951,7 +1951,8 @@ size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(WebCore::Resour
 
 void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPageProxyIdentifier, IPC::Untrusted<WebCore::Site>&& untrustedSite, WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy, CompletionHandler<void()>&& completionHandler)
 {
-    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    // Checked below by allowsFirstPartyForCookies() before the context connection is made.
+    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
 
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerContextConnection:");
     if (CheckedPtr session = networkSession()) {
@@ -2034,7 +2035,8 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
 
 void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIdentifier webPageProxyID, IPC::Untrusted<WebCore::Site>&& untrustedSite, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy, CompletionHandler<void()>&& completionHandler)
 {
-    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    // Checked below by allowsFirstPartyForCookies() before the context connection is made.
+    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
 
     CheckedPtr session = networkSession();
 
