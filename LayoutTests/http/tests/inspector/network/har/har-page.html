@@ -97,6 +97,13 @@ function test()
 
             let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
             let har = await WI.HARBuilder.buildArchive(resources);
+
+            // HAR 1.2: PageTimings are milliseconds since the page started (the main resource's request).
+            let {onContentLoad, onLoad} = har.log.pages[0].pageTimings;
+            InspectorTest.expectThat(onContentLoad >= 0, "PageTimings.onContentLoad should be milliseconds since the page started (non-negative).");
+            InspectorTest.expectThat(onLoad >= onContentLoad, "PageTimings.onLoad should not come before onContentLoad.");
+            InspectorTest.expectThat(onLoad < 60 * 1000, "PageTimings.onLoad should be less than 60 seconds after the page started.");
+
             InspectorTest.json(har, HARJSONFilter);
 
             await Promise.all([

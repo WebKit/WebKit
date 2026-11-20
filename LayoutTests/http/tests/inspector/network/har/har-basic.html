@@ -160,6 +160,25 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "HAR.Basic.PageTimings",
+        description: "Test for HAR pageTimings being milliseconds since page start.",
+        async test() {
+            let frame = WI.networkManager.mainFrame;
+            let mainResource = frame.mainResource;
+
+            // Fake the frame's event timestamps, relative to the main resource's request.
+            Object.defineProperty(mainResource, "requestSentTimestamp", {get: () => 1});
+            Object.defineProperty(frame, "domContentReadyEventTimestamp", {get: () => 1.25});
+            Object.defineProperty(frame, "loadEventTimestamp", {get: () => 1.5});
+
+            let har = await WI.HARBuilder.buildArchive([]);
+            let {onContentLoad, onLoad} = har.log.pages[0].pageTimings;
+            InspectorTest.expectEqualWithAccuracy(onContentLoad, 250, 1, "PageTimings.onContentLoad should be milliseconds since page start (250ms).");
+            InspectorTest.expectEqualWithAccuracy(onLoad, 500, 1, "PageTimings.onLoad should be milliseconds since page start (500ms).");
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

@@ -219,3 +219,7 @@ PASS: HAR Timings for entry3 should add up to ~500ms before wait.
   }
 }
 
+-- Running test case: HAR.Basic.PageTimings
+PASS: PageTimings.onContentLoad should be milliseconds since page start (250ms).
+PASS: PageTimings.onLoad should be milliseconds since page start (500ms).
+
