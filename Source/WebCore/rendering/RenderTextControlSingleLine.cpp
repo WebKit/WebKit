@@ -79,8 +79,8 @@ static void resetOverriddenHeight(RenderBox* box, const RenderObject* ancestor)
     ASSERT(box != ancestor);
     if (!box || box->style().logicalHeight().isAuto())
         return; // Null box or its height was not overridden.
-    box->mutableStyle().setLogicalHeight(CSS::Keyword::Auto { });
-    for (RenderObject* renderer = box; renderer != ancestor; renderer = renderer->parent()) {
+    protect(box->mutableStyle())->setLogicalHeight(CSS::Keyword::Auto { });
+    for (CheckedPtr<RenderObject> renderer = box; renderer != ancestor; renderer = renderer->parent()) {
         ASSERT(renderer);
         renderer->setNeedsLayout(MarkingBehavior::OnlyThis);
     }
@@ -107,9 +107,9 @@ void RenderTextControlSingleLine::layout()
     // because of compability.
 
     CheckedPtr innerTextRenderer = this->innerTextRenderer();
-    RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
+    CheckedPtr innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
     RefPtr container = containerElement();
-    RenderBox* containerRenderer = container ? container->renderBox() : nullptr;
+    CheckedPtr containerRenderer = container ? container->renderBox() : nullptr;
 
     // To ensure consistency between layouts, we need to reset any conditionally overridden height.
     resetOverriddenHeight(innerTextRenderer.get(), this);
@@ -145,10 +145,10 @@ void RenderTextControlSingleLine::layout()
         if (inputContentBoxLogicalHeight != innerTextLogicalHeight)
             setNeedsLayout(MarkingBehavior::OnlyThis);
 
-        innerTextRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { inputContentBoxLogicalHeight });
+        protect(innerTextRenderer->mutableStyle())->setLogicalHeight(Style::PreferredSize::Fixed { inputContentBoxLogicalHeight });
         innerTextRenderer->setNeedsLayout(MarkingBehavior::OnlyThis);
         if (innerBlockRenderer) {
-            innerBlockRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { inputContentBoxLogicalHeight });
+            protect(innerBlockRenderer->mutableStyle())->setLogicalHeight(Style::PreferredSize::Fixed { inputContentBoxLogicalHeight });
             innerBlockRenderer->setNeedsLayout(MarkingBehavior::OnlyThis);
         }
         innerTextLogicalHeight = inputContentBoxLogicalHeight;
@@ -173,7 +173,8 @@ void RenderTextControlSingleLine::layout()
             return autoFillButtonElement->renderBox();
         }();
 
-        auto usedZoomForLength = containerRenderer->style().usedZoomForLength().value;
+        CheckedRef containerStyle = containerRenderer->mutableStyle();
+        auto usedZoomForLength = containerStyle->usedZoomForLength().value;
         if (autoFillStrongPasswordButtonRenderer && innerTextRenderer && innerBlockRenderer) {
             auto newContainerHeight = innerTextLogicalHeight;
 
@@ -181,16 +182,16 @@ void RenderTextControlSingleLine::layout()
             if (autoFillStrongPasswordButtonRenderer->logicalTop() < innerBlockRenderer->logicalBottom())
                 newContainerHeight = std::max<LayoutUnit>(newContainerHeight, autoFillStrongPasswordButtonRenderer->logicalHeight());
 
-            containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { newContainerHeight / usedZoomForLength });
+            containerStyle->setLogicalHeight(Style::PreferredSize::Fixed { newContainerHeight / usedZoomForLength });
             setNeedsLayout(MarkingBehavior::OnlyThis);
         } else if (containerLogicalHeight > logicalHeightLimit) {
-            containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { logicalHeightLimit / usedZoomForLength });
+            containerStyle->setLogicalHeight(Style::PreferredSize::Fixed { logicalHeightLimit / usedZoomForLength });
             setNeedsLayout(MarkingBehavior::OnlyThis);
         } else if (containerRenderer->logicalHeight() < contentBoxLogicalHeight()) {
-            containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { contentBoxLogicalHeight() / usedZoomForLength });
+            containerStyle->setLogicalHeight(Style::PreferredSize::Fixed { contentBoxLogicalHeight() / usedZoomForLength });
             setNeedsLayout(MarkingBehavior::OnlyThis);
         } else
-            containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { containerLogicalHeight / usedZoomForLength });
+            containerStyle->setLogicalHeight(Style::PreferredSize::Fixed { containerLogicalHeight / usedZoomForLength });
     }
 
     // If we need another layout pass, we have changed one of children's height so we need to relayout them.
@@ -226,12 +227,12 @@ void RenderTextControlSingleLine::layout()
     bool innerTextSizeChanged = innerTextRenderer && innerTextRenderer->borderBoxSize() != oldInnerTextSize;
 
     RefPtr placeholderElement = protect(inputElement())->placeholderElement();
-    if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
+    if (CheckedPtr placeholderBox = placeholderElement ? placeholderElement->renderBox() : nullptr) {
         auto innerTextWidth = LayoutUnit { };
         auto usedZoomForLength = placeholderBox->style().usedZoomForLength().value;
         if (innerTextRenderer)
             innerTextWidth = innerTextRenderer->logicalWidth();
-        placeholderBox->mutableStyle().setWidth(Style::PreferredSize::Fixed { (innerTextWidth - placeholderBox->horizontalBorderAndPaddingExtent()) / usedZoomForLength });
+        protect(placeholderBox->mutableStyle())->setWidth(Style::PreferredSize::Fixed { (innerTextWidth - placeholderBox->horizontalBorderAndPaddingExtent()) / usedZoomForLength });
         bool neededLayout = placeholderBox->needsLayout();
         bool placeholderBoxEverHadLayout = placeholderBox->everHadLayout();
         if (innerTextSizeChanged) {
@@ -240,7 +241,7 @@ void RenderTextControlSingleLine::layout()
         }
         placeholderBox->layoutIfNeeded();
         auto placeholderTopLeft = containerRenderer ? containerRenderer->location() : LayoutPoint { };
-        auto* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
+        CheckedPtr innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
         if (innerBlockRenderer)
             placeholderTopLeft += toLayoutSize(innerBlockRenderer->location());
         if (innerTextRenderer)
@@ -248,10 +249,10 @@ void RenderTextControlSingleLine::layout()
         auto oldPlaceholderLocation = placeholderBox->location();
         placeholderBox->setLogicalLeft(placeholderTopLeft.x());
         // Here the container box indicates the renderer that the placeholder content is aligned with (no parent and/or containing block relationship).
-        auto* containerBox = innerTextRenderer ? innerTextRenderer.get() : innerBlockRenderer ? innerBlockRenderer : containerRenderer;
+        CheckedPtr<RenderBox> containerBox = innerTextRenderer ? innerTextRenderer.get() : innerBlockRenderer ? innerBlockRenderer.get() : containerRenderer.get();
         if (containerBox) {
             auto placeholderHeight = [&] {
-                if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*placeholderBox)) {
+                if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*placeholderBox)) {
                     if (auto placeholderLineBox = InlineIterator::firstLineBoxFor(*blockFlow))
                         return LayoutUnit { std::max(placeholderLineBox->logicalHeight(), placeholderLineBox->contentLogicalHeight()) };
                 }
@@ -277,13 +278,13 @@ void RenderTextControlSingleLine::layout()
 #if PLATFORM(IOS_FAMILY)
     // FIXME: We should not be adjusting styles during layout. <rdar://problem/7675493>
     if (inputElement().isSearchField())
-        RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
+        RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
 #endif
     if (innerTextSizeChanged && frame().selection().isFocusedAndActive() && document().focusedElement() == &inputElement()) {
         // The caps lock indicator was hidden or shown. If it is now visible then it may be occluding
         // the current selection (say, the caret was after the last character in the text field).
         // Schedule an update and reveal of the current selection.
-        frame().selection().setNeedsSelectionUpdate(FrameSelection::RevealSelectionAfterUpdate::Forced);
+        protect(frame().selection())->setNeedsSelectionUpdate(FrameSelection::RevealSelectionAfterUpdate::Forced);
     }
 }
 
@@ -317,21 +318,23 @@ void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const S
     // We may have set the width and the height in the old style in layout().
     // Reset them now to avoid getting a spurious layout hint.
     RefPtr innerBlock = innerBlockElement();
-    if (auto* innerBlockRenderer = innerBlock ? innerBlock->renderer() : nullptr) {
-        innerBlockRenderer->mutableStyle().setHeight(CSS::Keyword::Auto { });
-        innerBlockRenderer->mutableStyle().setWidth(CSS::Keyword::Auto { });
+    if (CheckedPtr innerBlockRenderer = innerBlock ? innerBlock->renderer() : nullptr) {
+        CheckedRef innerBlockStyle = innerBlockRenderer->mutableStyle();
+        innerBlockStyle->setHeight(CSS::Keyword::Auto { });
+        innerBlockStyle->setWidth(CSS::Keyword::Auto { });
     }
     RefPtr container = containerElement();
-    if (auto* containerRenderer = container ? container->renderer() : nullptr) {
-        containerRenderer->mutableStyle().setHeight(CSS::Keyword::Auto { });
-        containerRenderer->mutableStyle().setWidth(CSS::Keyword::Auto { });
+    if (CheckedPtr containerRenderer = container ? container->renderer() : nullptr) {
+        CheckedRef containerStyle = containerRenderer->mutableStyle();
+        containerStyle->setHeight(CSS::Keyword::Auto { });
+        containerStyle->setWidth(CSS::Keyword::Auto { });
     }
     if (diff == Style::DifferenceResult::Layout) {
         if (CheckedPtr innerTextRenderer = this->innerTextRenderer())
             innerTextRenderer->setNeedsLayout(MarkingBehavior::ContainingBlockChain);
         if (RefPtr placeholder = protect(inputElement())->placeholderElement()) {
-            if (placeholder->renderer())
-                placeholder->renderer()->setNeedsLayout(MarkingBehavior::ContainingBlockChain);
+            if (CheckedPtr placeholderRenderer = placeholder->renderer())
+                placeholderRenderer->setNeedsLayout(MarkingBehavior::ContainingBlockChain);
         }
     }
     setHasNonVisibleOverflow(false);
@@ -341,7 +344,7 @@ bool RenderTextControlSingleLine::hasControlClip() const
 {
     auto shouldClipInnerContent = [&] {
         // Apply control clip for text fields with decorations.
-        RenderBox* innerRenderBox = nullptr;
+        CheckedPtr<RenderBox> innerRenderBox;
         if (auto* containerElement = protect(inputElement())->containerElement())
             innerRenderBox = containerElement->renderBox();
 
@@ -360,7 +363,7 @@ LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& addit
 {
     ASSERT(hasControlClip());
     auto clipRect = paddingBoxRect();
-    if (auto* containerElementRenderer = containerElement() ? containerElement()->renderBox() : nullptr)
+    if (CheckedPtr containerElementRenderer = containerElement() ? containerElement()->renderBox() : nullptr)
         clipRect = unionRect(clipRect, containerElementRenderer->borderBoxRectInContainer());
     clipRect.moveBy(additionalOffset);
     return clipRect;
@@ -399,15 +402,16 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     float maxCharWidth = 0.f;
 
 #if !PLATFORM(IOS_FAMILY)
-    const auto& family = style().fontCascade().firstFamily().name;
+    CheckedRef fontCascade = style().fontCascade();
+    const auto& family = fontCascade->firstFamily().name;
     // Since Lucida Grande is the default font, we want this to match the width
     // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
     // IE for some encodings (in IE, the default font is encoding specific).
     // 4027 is the (xMax - xMin) value in the "head" font table for MS Shell Dlg.
     if (family == "Lucida Grande"_s)
         maxCharWidth = scaleEmToUnits(4027);
-    else if (style().fontCascade().hasValidAverageCharWidth())
-        maxCharWidth = roundf(style().fontCascade().primaryFont().maxCharWidth());
+    else if (fontCascade->hasValidAverageCharWidth())
+        maxCharWidth = roundf(fontCascade->primaryFont().maxCharWidth());
 #endif
 
     // For text inputs, IE adds some extra width.

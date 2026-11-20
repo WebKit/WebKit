@@ -259,7 +259,7 @@ bool HitTestResult::isSelected() const
     if (!frame)
         return false;
 
-    return frame->selection().contains(m_hitTestLocation.point());
+    return protect(frame->selection())->contains(m_hitTestLocation.point());
 }
 
 bool HitTestResult::allowsFollowingLink() const
@@ -382,7 +382,7 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
         if (!element)
             continue;
 
-        if (auto* block = dynamicDowncast<RenderBlockFlow>(element->renderer())) {
+        if (CheckedPtr block = dynamicDowncast<RenderBlockFlow>(element->renderer())) {
             if (block->style().textOverflow().isEllipsis()) {
                 if (std::ranges::any_of(InlineIterator::lineBoxesFor(*block), &InlineIterator::LineBox::hasEllipsis)) {
                     dir = block->writingMode().computedTextDirection();
@@ -466,7 +466,7 @@ IntRect HitTestResult::imageRect() const
     if (!imageNode)
         return { };
 
-    return imageNode->renderBox()->absoluteContentQuad().enclosingBoundingBox();
+    return protect(imageNode->renderBox())->absoluteContentQuad().enclosingBoundingBox();
 }
 
 bool HitTestResult::hasEntireImage() const
@@ -491,7 +491,7 @@ URL HitTestResult::absoluteImageURL() const
     if (!imageNode)
         return { };
 
-    auto renderer = imageNode->renderer();
+    CheckedPtr renderer = imageNode->renderer();
     if (!renderer || !renderer->isImage())
         return { };
 
@@ -1016,7 +1016,7 @@ void HitTestResult::setAnimationOverride(ImageAnimationOverride animationOverrid
 {
     if (RefPtr imageElement = this->imageElement()) {
         imageElement->setAnimationOverride(animationOverride);
-        if (auto* renderer = m_innerNonSharedNode->renderer())
+        if (CheckedPtr renderer = m_innerNonSharedNode->renderer())
             renderer->repaint();
     }
 }

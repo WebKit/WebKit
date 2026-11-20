@@ -35,6 +35,7 @@
 #include "RenderElementInlines.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
+#include "RenderView.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -71,13 +72,15 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
 {
     ASSERT(!m_inner.get());
     m_inner = innerRenderer;
-    updateAnonymousChildStyle(m_inner->mutableStyle());
+    updateAnonymousChildStyle(protect(innerRenderer.mutableStyle()));
 
-    if (m_inner && LayoutIntegration::BoxTreeUpdater::isLaidOutByIntegration(*m_inner)) {
-        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->inlineLayout())
-            inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
-            lineLayout->styleWillChange(*m_inner, m_inner->style(), Style::DifferenceResult::Layout);
+    if (LayoutIntegration::BoxTreeUpdater::isLaidOutByIntegration(innerRenderer)) {
+        if (CheckedPtr inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(innerRenderer)) {
+            if (CheckedPtr inlineLayout = inlineFormattingContextRoot->inlineLayout())
+                inlineLayout->rootStyleWillChange(*inlineFormattingContextRoot, protect(inlineFormattingContextRoot->style()));
+        }
+        if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(innerRenderer))
+            lineLayout->styleWillChange(innerRenderer, protect(innerRenderer.style()), Style::DifferenceResult::Layout);
     }
 }
 
@@ -120,12 +123,12 @@ void RenderButton::setText(const String& str)
         if (RenderTreeBuilder::current())
             RenderTreeBuilder::current()->attach(*this, WTF::move(newButtonText));
         else
-            RenderTreeBuilder(*document().renderView()).attach(*this, WTF::move(newButtonText));
+            RenderTreeBuilder(*protect(document().renderView())).attach(*this, WTF::move(newButtonText));
         return;
     }
 
     if (!str.isEmpty()) {
-        m_buttonText->setText(str.impl());
+        protect(m_buttonText.get())->setText(str.impl());
         return;
     }
     if (RenderTreeBuilder::current())
@@ -163,7 +166,7 @@ void RenderButton::layout()
     RenderFlexibleBox::layout();
 
     // FIXME: We should not be adjusting styles during layout. See <rdar://problem/7675493>.
-    RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
+    RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
 }
 #endif
 

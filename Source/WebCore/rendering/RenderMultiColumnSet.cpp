@@ -72,9 +72,10 @@ void RenderMultiColumnSet::expandToEncompassFragmentedFlowContentsIfNeeded()
     // to encompass that remaining height and overflow. The idea is that we will generate
     // additional columns and pages to hold that overflow, since people do write bad
     // content like <body style="height:0px"> in multi-column layouts.
-    bool isHorizontal = fragmentedFlow()->isHorizontalWritingMode();
+    CheckedPtr fragmentedFlow = this->fragmentedFlow();
+    bool isHorizontal = fragmentedFlow->isHorizontalWritingMode();
     auto logicalTopOffset = isHorizontal ? rect.y() : rect.x();
-    auto overflowHeight = isHorizontal ? fragmentedFlow()->layoutOverflowRect().maxY() : fragmentedFlow()->layoutOverflowRect().maxX();
+    auto overflowHeight = isHorizontal ? fragmentedFlow->layoutOverflowRect().maxY() : fragmentedFlow->layoutOverflowRect().maxX();
     auto logicalHeightWithOverflow = logicalTopOffset == RenderFragmentedFlow::maxLogicalHeight() ? overflowHeight : overflowHeight - logicalTopOffset;
     setFragmentedFlowPortionRect({ rect.x(), rect.y(), isHorizontal ? rect.width() : logicalHeightWithOverflow, isHorizontal ? logicalHeightWithOverflow : rect.height() });
 }
@@ -112,21 +113,21 @@ RenderObject* RenderMultiColumnSet::firstRendererInFragmentedFlow() const
 
 RenderObject* RenderMultiColumnSet::lastRendererInFragmentedFlow() const
 {
-    if (auto* sibling = RenderMultiColumnFlow::nextColumnSetOrSpannerSiblingOf(this)) {
+    if (CheckedPtr sibling = RenderMultiColumnFlow::nextColumnSetOrSpannerSiblingOf(this)) {
         // Adjacent sets should not occur. Currently we would have no way of figuring out what each
         // of them contains then.
         ASSERT(!sibling->isRenderMultiColumnSet());
-        if (RenderMultiColumnSpannerPlaceholder* placeholder = multiColumnFlow()->findColumnSpannerPlaceholder(*sibling))
+        if (CheckedPtr placeholder = multiColumnFlow()->findColumnSpannerPlaceholder(*sibling))
             return placeholder->previousInPreOrder();
         ASSERT_NOT_REACHED();
     }
-    return fragmentedFlow()->lastLeafChild();
+    return protect(fragmentedFlow())->lastLeafChild();
 }
 
 static bool precedesRenderer(const RenderObject* renderer, const RenderObject* boundary)
 {
-    for (; renderer; renderer = renderer->nextInPreOrder()) {
-        if (renderer == boundary)
+    for (CheckedPtr current = renderer; current; current = current->nextInPreOrder()) {
+        if (current == boundary)
             return true;
     }
     return false;
@@ -139,8 +140,8 @@ bool RenderMultiColumnSet::containsRendererInFragmentedFlow(const RenderObject& 
         return renderer.isDescendantOf(m_fragmentedFlow.get());
     }
 
-    RenderObject* firstRenderer = firstRendererInFragmentedFlow();
-    RenderObject* lastRenderer = lastRendererInFragmentedFlow();
+    CheckedPtr firstRenderer = firstRendererInFragmentedFlow();
+    CheckedPtr lastRenderer = lastRendererInFragmentedFlow();
     ASSERT(firstRenderer);
     ASSERT(lastRenderer);
 
@@ -170,8 +171,8 @@ void RenderMultiColumnSet::setLogicalBottomInFragmentedFlow(LayoutUnit logicalBo
 
 LayoutUnit RenderMultiColumnSet::heightAdjustedForSetOffset(LayoutUnit height) const
 {
-    RenderBlockFlow& multicolBlock = downcast<RenderBlockFlow>(*parent());
-    LayoutUnit contentLogicalTop = logicalTop() - multicolBlock.borderAndPaddingBefore();
+    CheckedRef multicolBlock = downcast<RenderBlockFlow>(*parent());
+    LayoutUnit contentLogicalTop = logicalTop() - multicolBlock->borderAndPaddingBefore();
 
     height -= contentLogicalTop;
     return std::max(height, 1_lu); // Let's avoid zero height, as that would probably cause an infinite amount of columns to be created.
@@ -351,7 +352,7 @@ void RenderMultiColumnSet::updateLogicalWidth()
     
     // FIXME: When we add fragments support, we'll start it off at the width of the multi-column
     // block in that particular fragment.
-    setLogicalWidth(multiColumnBlockFlow()->contentBoxLogicalWidth());
+    setLogicalWidth(protect(multiColumnBlockFlow())->contentBoxLogicalWidth());
 }
 
 bool RenderMultiColumnSet::requiresBalancing() const
@@ -375,10 +376,10 @@ bool RenderMultiColumnSet::requiresBalancing() const
 void RenderMultiColumnSet::prepareForLayout(bool initial)
 {
     // Guess box logical top. This might eliminate the need for another layout pass.
-    if (RenderBox* previous = RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(this))
+    if (CheckedPtr previous = RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(this))
         setLogicalTop(previous->logicalBottom() + previous->marginAfter(previous->writingMode()));
     else
-        setLogicalTop(multiColumnBlockFlow()->borderAndPaddingBefore());
+        setLogicalTop(protect(multiColumnBlockFlow())->borderAndPaddingBefore());
 
     if (initial)
         m_maxColumnHeight = calculateMaxColumnHeight();
@@ -410,7 +411,7 @@ void RenderMultiColumnSet::prepareForLayout(bool initial)
 
 void RenderMultiColumnSet::beginFlow(RenderBox* container)
 {
-    RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow();
+    CheckedPtr fragmentedFlow = multiColumnFlow();
 
     // At this point layout is exactly at the beginning of this set. Store block offset from flow
     // thread start.
@@ -420,7 +421,7 @@ void RenderMultiColumnSet::beginFlow(RenderBox* container)
 
 void RenderMultiColumnSet::endFlow(RenderBox* container, LayoutUnit bottomInContainer)
 {
-    RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow();
+    CheckedPtr fragmentedFlow = multiColumnFlow();
 
     // At this point layout is exactly at the end of this set. Store block offset from flow thread
     // start. Also note that a new column height may have affected the height used in the flow
@@ -441,7 +442,7 @@ void RenderMultiColumnSet::layout()
 
     if (!nextSiblingMultiColumnSet()) {
         // This is the last set, i.e. the last fragment. Seize the opportunity to validate them.
-        multiColumnFlow()->validateFragments();
+        protect(multiColumnFlow())->validateFragments();
     }
 }
 
@@ -452,14 +453,14 @@ RenderBox::LogicalExtentComputedValues RenderMultiColumnSet::computeLogicalHeigh
 
 LayoutUnit RenderMultiColumnSet::calculateMaxColumnHeight() const
 {
-    RenderBlockFlow* multicolBlock = multiColumnBlockFlow();
-    const Style::ComputedStyle& multicolStyle = multicolBlock->style();
+    CheckedPtr multicolBlock = multiColumnBlockFlow();
+    CheckedRef multicolStyle = multicolBlock->style();
     LayoutUnit availableHeight = multiColumnFlow()->columnHeightAvailable();
     if (availableHeight)
         return heightAdjustedForSetOffset(availableHeight);
     LayoutUnit maxColumnHeight = RenderFragmentedFlow::maxLogicalHeight();
-    if (!multicolStyle.logicalMaxHeight().isNone())
-        maxColumnHeight = std::min(maxColumnHeight, multicolBlock->computeContentLogicalHeight(multicolStyle.logicalMaxHeight(), std::nullopt).value_or(maxColumnHeight));
+    if (!multicolStyle->logicalMaxHeight().isNone())
+        maxColumnHeight = std::min(maxColumnHeight, multicolBlock->computeContentLogicalHeight(multicolStyle->logicalMaxHeight(), std::nullopt).value_or(maxColumnHeight));
     return heightAdjustedForSetOffset(maxColumnHeight);
 }
 
@@ -467,11 +468,11 @@ LayoutUnit RenderMultiColumnSet::columnGap() const
 {
     // FIXME: Eventually we will cache the column gap when the widths of columns start varying, but for now we just
     // go to the parent block to get the gap.
-    auto& parentBlock = downcast<RenderBlockFlow>(*parent());
-    auto& parentBlockGap = parentBlock.style().columnGap();
+    CheckedRef parentBlock = downcast<RenderBlockFlow>(*parent());
+    auto& parentBlockGap = parentBlock->style().columnGap();
     if (parentBlockGap.isNormal())
-        return LayoutUnit(parentBlock.style().fontDescription().usedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
-    return Style::evaluate<LayoutUnit>(parentBlockGap, parentBlock.contentBoxLogicalWidth(), parentBlock.style().usedZoomForLength());
+        return LayoutUnit(parentBlock->style().fontDescription().usedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+    return Style::evaluate<LayoutUnit>(parentBlockGap, parentBlock->contentBoxLogicalWidth(), parentBlock->style().usedZoomForLength());
 }
 
 unsigned RenderMultiColumnSet::columnCount() const
@@ -781,18 +782,18 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     if (paintInfo.context().paintingDisabled())
         return;
 
-    auto* fragmentedFlow = multiColumnFlow();
-    auto& blockStyle = parent()->style();
+    CheckedPtr fragmentedFlow = multiColumnFlow();
+    CheckedRef blockStyle = parent()->style();
 
-    auto ruleStyle = collapsedBorderStyle(blockStyle.columnRuleStyle());
-    if (!isVisibleBorderStyle(ruleStyle) || blockStyle.columnRuleColor().isKnownTransparent())
+    auto ruleStyle = collapsedBorderStyle(blockStyle->columnRuleStyle());
+    if (!isVisibleBorderStyle(ruleStyle) || blockStyle->columnRuleColor().isKnownTransparent())
         return;
 
     auto colCount = columnCount();
     if (colCount <= 1)
         return;
 
-    auto ruleColor = blockStyle.visitedDependentColumnRuleColorApplyingColorFilter();
+    auto ruleColor = blockStyle->visitedDependentColumnRuleColorApplyingColorFilter();
     auto ruleThickness = parent()->usedStyle().columnRuleWidth();
     auto colGap = columnGap();
 
@@ -1132,7 +1133,7 @@ void RenderMultiColumnSet::addOverflowFromInFlowChildren(OptionSet<ComputeOverfl
 
 PositionWithAffinity RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, HitTestSource source, const RenderFragmentContainer*)
 {
-    return multiColumnFlow()->positionForPoint(translateFragmentPointToFragmentedFlow(logicalPoint, ClampHitTestTranslationToColumns), source, this);
+    return protect(multiColumnFlow())->positionForPoint(translateFragmentPointToFragmentedFlow(logicalPoint, ClampHitTestTranslationToColumns), source, this);
 }
 
 LayoutPoint RenderMultiColumnSet::translateFragmentPointToFragmentedFlow(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode clampMode) const
@@ -1228,7 +1229,7 @@ void RenderMultiColumnSet::updateHitTestResult(HitTestResult& result, const Layo
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node.get());
         LayoutPoint adjustedPoint = translateFragmentPointToFragmentedFlow(point);
-        view().offsetForContents(adjustedPoint);
+        protect(view())->offsetForContents(adjustedPoint);
         result.setLocalPoint(adjustedPoint);
     }
 }

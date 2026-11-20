@@ -95,7 +95,7 @@ public:
     RegionContext* context() const { return const_cast<RegionContext*>(m_context.get()); }
 
 private:
-    CheckedPtr<RegionContext> m_context;
+    const CheckedPtr<RegionContext> m_context;
     bool m_pushedClip { false };
 }; // class RegionContextStateSaver
 

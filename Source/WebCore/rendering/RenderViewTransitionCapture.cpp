@@ -67,7 +67,7 @@ void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
 {
     m_oldImage = oldImage;
     if (hasLayer())
-        layer()->contentChanged(ContentChangeType::Image);
+        protect(layer())->contentChanged(ContentChangeType::Image);
     if (parent())
         repaint();
 }
@@ -88,7 +88,7 @@ void RenderViewTransitionCapture::setDisplayOnlyImage(RefPtr<NativeImage>&& oldI
 
     m_oldDisplayOnlyImage = WTF::move(oldImage);
     if (hasLayer())
-        layer()->contentChanged(ContentChangeType::Image);
+        protect(layer())->contentChanged(ContentChangeType::Image);
     if (parent())
         repaint();
 }

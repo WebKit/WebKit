@@ -95,7 +95,7 @@ void ImageQualityController::highQualityRepaintTimerFired()
     }
 
     for (auto it = m_objectLayerSizeMap.begin(), end = m_objectLayerSizeMap.end(); it != end; ++it)
-        it->key->repaint();
+        protect(it->key)->repaint();
 
     m_liveResizeOptimizationIsActive = false;
 }
@@ -124,7 +124,7 @@ std::optional<InterpolationQuality> ImageQualityController::interpolationQuality
 InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, const RenderElement& renderer, const IntSize& imageSize, const void* layer, const LayoutSize& size)
 {
     if (CheckedPtr boxModelObject = dynamicDowncast<RenderBoxModelObject>(renderer)) {
-        return boxModelObject->view().imageQualityController().chooseInterpolationQuality(context, const_cast<RenderBoxModelObject&>(*boxModelObject), imageSize, layer, size);
+        return protect(boxModelObject->view())->imageQualityController().chooseInterpolationQuality(context, const_cast<RenderBoxModelObject&>(*boxModelObject), imageSize, layer, size);
     }
 
     if (context.paintingDisabled())

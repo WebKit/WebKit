@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityRegionContext);
 
 AccessibilityRegionContext::~AccessibilityRegionContext()
 {
-    WeakPtr<AXObjectCache> cache;
+    CheckedPtr<AXObjectCache> cache;
     // Release all accumulated RenderText frames to the cache.
     for (auto renderTextToFrame : m_accumulatedRenderTextRects) {
         if (!cache) {
@@ -55,7 +55,7 @@ AccessibilityRegionContext::~AccessibilityRegionContext()
         if (cache) {
             // Every RenderText should reference the same AXObjectCache (the canonical one).
             ASSERT(cache.get() == renderTextToFrame.key.document().axObjectCache());
-            cache->onPaint(renderTextToFrame.key, enclosingIntRect(renderTextToFrame.value));
+            cache->onPaint(protect(renderTextToFrame.key), enclosingIntRect(renderTextToFrame.value));
         }
     }
 }

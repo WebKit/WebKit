@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -80,10 +81,8 @@ private:
 class ShapeOutsideInfo final {
     WTF_MAKE_TZONE_ALLOCATED(ShapeOutsideInfo);
 public:
-    ShapeOutsideInfo(const RenderBox& renderer)
-        : m_renderer(renderer)
-    {
-    }
+    explicit ShapeOutsideInfo(const RenderBox&);
+    ~ShapeOutsideInfo();
 
     static bool isEnabledFor(const RenderBox&);
 
@@ -91,7 +90,7 @@ public:
 
     void invalidateForSizeChangeIfNeeded();
 
-    LayoutUnit shapeLogicalBottom() const { return computedShape().shapeMarginLogicalBoundingBox().maxY(); }
+    LayoutUnit shapeLogicalBottom() const { return protect(computedShape())->shapeMarginLogicalBoundingBox().maxY(); }
 
     void markShapeAsDirty() { m_shape = nullptr; }
     bool isShapeDirty() { return !m_shape; }
@@ -105,7 +104,8 @@ private:
     LayoutUnit logicalTopOffset() const;
     LayoutUnit logicalLeftOffset() const;
 
-    const RenderBox& m_renderer;
+    // The info is kept in a weak map and can outlive the renderer.
+    const SingleThreadWeakRef<const RenderBox> m_renderer;
 
     mutable RefPtr<const LayoutShape> m_shape;
     LayoutSize m_cachedShapeLogicalSize;

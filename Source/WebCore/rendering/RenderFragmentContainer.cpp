@@ -104,14 +104,14 @@ bool RenderFragmentContainer::isFirstFragment() const
 {
     ASSERT(isValid());
 
-    return m_fragmentedFlow->firstFragment() == this;
+    return protect(m_fragmentedFlow)->firstFragment() == this;
 }
 
 bool RenderFragmentContainer::isLastFragment() const
 {
     ASSERT(isValid());
 
-    return m_fragmentedFlow->lastFragment() == this;
+    return protect(m_fragmentedFlow)->lastFragment() == this;
 }
 
 void RenderFragmentContainer::repaintFragmentedFlowContentRectangle(const LayoutRect& repaintRect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect) const
@@ -175,14 +175,14 @@ void RenderFragmentContainer::attachFragment()
     if (!m_fragmentedFlow)
         return;
 
-    m_fragmentedFlow->addFragmentToThread(this);
+    protect(m_fragmentedFlow)->addFragmentToThread(this);
     m_isValid = true;
 }
 
 void RenderFragmentContainer::detachFragment()
 {
     if (m_fragmentedFlow)
-        m_fragmentedFlow->removeFragmentFromThread(*this);
+        protect(m_fragmentedFlow)->removeFragmentFromThread(*this);
     m_fragmentedFlow = nullptr;
 }
 
@@ -306,12 +306,13 @@ RenderOverflow* RenderFragmentContainer::overflowForBox(const RenderBox& box) co
 
 LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox& box, const LayoutRect& rect) const
 {
-    LayoutRect mappedRect = m_fragmentedFlow->mapFromLocalToFragmentedFlow(&box, rect);
+    CheckedPtr fragmentedFlow = m_fragmentedFlow;
+    LayoutRect mappedRect = fragmentedFlow->mapFromLocalToFragmentedFlow(&box, rect);
 
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    if (m_fragmentedFlow->getFragmentRangeForBox(box, startFragment, endFragment)) {
-        if (fragmentedFlow()->isHorizontalWritingMode()) {
+    if (fragmentedFlow->getFragmentRangeForBox(box, startFragment, endFragment)) {
+        if (fragmentedFlow->isHorizontalWritingMode()) {
             if (this != startFragment)
                 mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFragmentedFlowContent(), mappedRect.y()));
             if (this != endFragment)
@@ -324,7 +325,7 @@ LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox& box, 
         }
     }
 
-    return m_fragmentedFlow->mapFromFragmentedFlowToLocal(&box, mappedRect);
+    return fragmentedFlow->mapFromFragmentedFlowToLocal(&box, mappedRect);
 }
 
 void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox& box, const LayoutRect& rect)
@@ -373,7 +374,7 @@ LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const
     bool hasTransform = box.isTransformed();
     if (box.isInFlowPositioned() || hasTransform) {
         if (hasTransform)
-            rect = box.layer()->currentTransform().mapRect(rect);
+            rect = protect(box.layer())->currentTransform().mapRect(rect);
 
         if (box.isInFlowPositioned())
             rect.move(box.offsetForInFlowPosition());

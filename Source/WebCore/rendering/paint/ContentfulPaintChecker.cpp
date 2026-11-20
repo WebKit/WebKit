@@ -41,7 +41,7 @@ bool ContentfulPaintChecker::qualifiesForContentfulPaint(LocalFrameView& frameVi
     frameView.setPaintsEntireContents(true);
 
     NullGraphicsContext checkerContext(NullGraphicsContext::PaintInvalidationReasons::DetectingContentfulPaint);
-    IntRect documentRect = frameView.renderView()->documentRect();
+    IntRect documentRect = protect(frameView.renderView())->documentRect();
     documentRect.moveBy(frameView.locationOfContents());
     frameView.paint(checkerContext, documentRect);
 

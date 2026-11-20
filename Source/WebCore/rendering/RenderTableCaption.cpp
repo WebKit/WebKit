@@ -40,13 +40,13 @@ RenderTableCaption::~RenderTableCaption() = default;
 void RenderTableCaption::insertedIntoTree()
 {
     RenderBlockFlow::insertedIntoTree();
-    table()->addCaption(*this);
+    protect(table())->addCaption(*this);
 }
 
 void RenderTableCaption::willBeRemovedFromTree()
 {
     RenderBlockFlow::willBeRemovedFromTree();
-    table()->removeCaption(*this);
+    protect(table())->removeCaption(*this);
 }
 
 NODELETE RenderTable* RenderTableCaption::table() const

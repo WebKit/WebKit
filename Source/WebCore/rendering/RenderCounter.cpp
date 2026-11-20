@@ -137,13 +137,13 @@ NODELETE static inline bool areRenderersElementsSiblings(const RenderElement& fi
     return first.firstNonAnonymousAncestor() == second.firstNonAnonymousAncestor();
 }
 
-static RenderElement* nextInPreOrder(const RenderElement& renderer, const RenderElement* stayWithin, bool skipDescendants = false)
+static CheckedPtr<RenderElement> nextInPreOrder(const RenderElement& renderer, const RenderElement* stayWithin, bool skipDescendants = false)
 {
-    auto* next = skipDescendants
+    CheckedPtr next = skipDescendants
         ? renderer.nextInPreOrderAfterChildren(stayWithin)
         : renderer.nextInPreOrder(stayWithin);
     for (; next; next = next->nextInPreOrder(stayWithin)) {
-        if (auto* nextElement = dynamicDowncast<RenderElement>(next))
+        if (CheckedPtr nextElement = dynamicDowncast<RenderElement>(next))
             return nextElement;
     }
     return nullptr;
@@ -189,15 +189,15 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
     if (!generatingElement)
         return std::nullopt;
 
-    auto& style = renderer.style();
-    if (!style.pseudoElementType()) {
+    CheckedRef style = renderer.style();
+    if (!style->pseudoElementType()) {
         // Sometimes elements have more than one renderer. Only the first one gets the counter
         // LayoutTests/http/tests/css/counter-crash.html
         if (generatingElement->renderer() != &renderer)
             return std::nullopt;
     }
 
-    auto directives = style.usedCounterDirectives().map.get(identifier);
+    auto directives = style->usedCounterDirectives().map.get(identifier);
 
     if (identifier == "list-item"_s) {
         auto itemDirectives = listItemCounterDirectives(renderer);
@@ -252,25 +252,25 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
 {
     // We cannot stop searching for counters with the same identifier before we also
     // check this renderer, because it may affect the positioning in the tree of our counter.
-    auto* searchEndRenderer = previousSiblingOrParent(counterOwner);
+    CheckedPtr searchEndRenderer = previousSiblingOrParent(counterOwner);
     // We check renderers in preOrder from the renderer that our counter is attached to
     // towards the beginning of the document for counters with the same identifier as the one
     // we are trying to find a place for. This is the next renderer to be checked.
-    auto* currentRenderer = previousInPreOrderRespectingContainment(counterOwner);
+    CheckedPtr currentRenderer = previousInPreOrderRespectingContainment(counterOwner);
     RefPtr<CounterNode> previousSibling;
 
     // Establish counter nodes previous to currentRenderer in order that calling
     // makeCounterNode on currentRenderer does not recurse into this function.
     if (currentRenderer && !currentRenderer->hasCounterNodeMap()) {
-        Vector<RenderElement*> previousRenderers;
-        RenderElement* current = currentRenderer;
+        Vector<CheckedRef<RenderElement>> previousRenderers;
+        CheckedPtr current = currentRenderer;
         while (current && !current->hasCounterNodeMap()) {
             if (!current->style().usedCounterDirectives().map.isEmpty())
-                previousRenderers.append(current);
+                previousRenderers.append(*current);
             current = previousInPreOrderRespectingContainment(*current);
         }
         while (!previousRenderers.isEmpty())
-            makeCounterNode(*previousRenderers.takeLast(), identifier, false);
+            makeCounterNode(previousRenderers.takeLast(), identifier, false);
     }
 
     bool isReset = type.contains(CounterNode::Type::Reset);
@@ -288,7 +288,7 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
                             // We are also a reset counter and the previous reset was on a sibling renderer
                             // hence we are the next sibling of that counter if that reset is not a root or
                             // we are a root node if that reset is a root.
-                            auto* parent = currentCounter->parent();
+                            RefPtr parent = currentCounter->parent();
                             return { parent, parent ? currentCounter : nullptr };
                         }
                         // We are not a reset node or the previous reset must be on an ancestor of our owner renderer
@@ -389,8 +389,8 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
         return newNode.unsafePtr();
 
     // Check if some nodes that were previously root nodes should become children of this node now.
-    auto* currentRenderer = &renderer;
-    auto* stayWithin = renderer.firstNonAnonymousAncestor();
+    CheckedPtr currentRenderer = &renderer;
+    CheckedPtr stayWithin = renderer.firstNonAnonymousAncestor();
     bool skipDescendants = false;
     while ((currentRenderer = nextInPreOrder(*currentRenderer, stayWithin, skipDescendants))) {
         skipDescendants = currentRenderer->shouldApplyStyleContainment();
@@ -415,7 +415,7 @@ RenderCounter::RenderCounter(Document& document, const Style::Content::Counter& 
     , m_counter(counter)
 {
     ASSERT(isRenderCounter());
-    view().addCounterNeedingUpdate(*this);
+    protect(view())->addCounterNeedingUpdate(*this);
 }
 
 // Do not add any code in below destructor. Add it to willBeDestroyed() instead.
@@ -463,7 +463,7 @@ String RenderCounter::originalText() const
 void RenderCounter::updateCounter()
 {
     if (!m_counterNode) {
-        auto* container = parent();
+        CheckedPtr container = parent();
         while (true) {
             if (!container)
                 return;

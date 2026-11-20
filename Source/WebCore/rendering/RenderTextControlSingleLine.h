@@ -79,12 +79,12 @@ private:
 
 inline HTMLElement* RenderTextControlSingleLine::containerElement() const
 {
-    return inputElement().containerElement();
+    return protect(inputElement())->containerElement();
 }
 
 inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 {
-    return inputElement().innerBlockElement();
+    return protect(inputElement())->innerBlockElement();
 }
 
 // ----------------------------

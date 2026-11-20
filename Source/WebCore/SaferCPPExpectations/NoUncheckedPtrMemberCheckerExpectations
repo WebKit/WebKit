@@ -5,7 +5,6 @@ rendering/LayoutRepainter.h
 rendering/LogicalSelectionOffsetCaches.h
 rendering/PositionedLayoutConstraints.h
 rendering/RenderAncestorIterator.h
-rendering/RenderDeprecatedFlexibleBox.cpp
 rendering/RenderDescendantIterator.h
 rendering/RenderGeometryMap.h
 rendering/RenderIterator.h
@@ -15,16 +14,13 @@ rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerScrollableArea.h
 rendering/RenderLayoutState.h
-rendering/RenderSelectionGeometry.h
 rendering/RenderTableSection.h
 rendering/RenderText.cpp
 rendering/paint/BackgroundPainter.h
 rendering/paint/InlineBoxPainter.h
 rendering/paint/PaintInfo.h
 rendering/paint/TextDecorationPainter.h
-[ iOS ] rendering/cocoa/RenderThemeCocoa.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
-rendering/shapes/ShapeOutsideInfo.h
 style/PseudoClassChangeInvalidation.h
 style/StyleAdjuster.h
 style/StyleBuilderState.h

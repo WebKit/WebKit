@@ -81,7 +81,7 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         CheckedPtr rootPaintingLayer = layer()->transform() ? layer()->parent() : layer()->enclosingTransformedAncestor();
         RenderLayer::LayerPaintingInfo paintingInfo(rootPaintingLayer.get(), paintInfo.rect, PaintBehavior::Normal, LayoutSize(), 0);
         OptionSet<RenderLayer::PaintLayerFlag> flags { RenderLayer::PaintLayerFlag::HaveTransparency, RenderLayer::PaintLayerFlag::AppliedTransform, RenderLayer::PaintLayerFlag::TemporaryClipRects, RenderLayer::PaintLayerFlag::PaintingReflection };
-        layer()->parent()->paintLayer(paintInfo.context(), paintingInfo, flags);
+        protect(layer()->parent())->paintLayer(paintInfo.context(), paintingInfo, flags);
     } else if (paintInfo.phase == PaintPhase::Mask)
         Paint::MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
 }

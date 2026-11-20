@@ -1,4 +1,3 @@
-rendering/RenderCounter.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
 style/ElementRuleCollector.cpp

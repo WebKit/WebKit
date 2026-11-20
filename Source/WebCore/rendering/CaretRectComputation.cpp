@@ -209,7 +209,7 @@ static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset
         LayoutRect selectionRect;
         // Get logical x coordinate relative to text run.
         auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
-        textBox->fontCascade().adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, startOffset, endOffset);
+        protect(textBox->fontCascade())->adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, startOffset, endOffset);
         selectionRect.shiftXEdgeTo(selectionRect.maxX());
 
         // Convert to box coordinates.
@@ -290,7 +290,7 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
     // <rdar://problem/3777804> Deleting all content in a document can result in giant tall-as-window insertion point
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
-    auto fontHeight = renderer.style().metricsOfPrimaryFont().height();
+    auto fontHeight = protect(renderer.style())->metricsOfPrimaryFont().height();
     if (fontHeight > rect.height() || (!renderer.isBlockLevelReplacedOrAtomicInline() && !renderer.isRenderTable()))
         rect.setHeight(fontHeight);
 

@@ -121,7 +121,7 @@ unsigned TextAutoSizingHashTranslator::hash(const Style::ComputedStyle& style)
     hash ^= std::to_underlying(style.lineBreak());
     hash ^= std::to_underlying(style.textSecurity());
     hash ^= style.lineHeight().valueForHash();
-    hash ^= computeFontHash(style.fontCascade());
+    hash ^= computeFontHash(protect(style.fontCascade()));
     hash ^= WTF::FloatHash<float>::hash(style.borderHorizontalSpacing().unresolvedValue());
     hash ^= WTF::FloatHash<float>::hash(style.borderVerticalSpacing().unresolvedValue());
     hash ^= std::to_underlying(style.boxDirection());
@@ -151,7 +151,7 @@ bool TextAutoSizingHashTranslator::equal(const Style::ComputedStyle& styleA, con
         && styleA.lineBreak() == styleB.lineBreak()
         && styleA.textSecurity() == styleB.textSecurity()
         && styleA.lineHeight() == styleB.lineHeight()
-        && styleA.fontCascade().equalForTextAutoSizing(styleB.fontCascade())
+        && protect(styleA.fontCascade())->equalForTextAutoSizing(protect(styleB.fontCascade()))
         && styleA.borderHorizontalSpacing() == styleB.borderHorizontalSpacing()
         && styleA.borderVerticalSpacing() == styleB.borderVerticalSpacing()
         && styleA.boxDirection() == styleB.boxDirection()
@@ -173,7 +173,7 @@ static UniqueRef<Style::ComputedStyle> cloneRenderStyleWithState(const Style::Co
     auto newStyle = Style::ComputedStyle::clone(currentStyle);
 
     // FIXME: This should probably handle at least ::first-line too.
-    if (auto* firstLetterStyle = currentStyle.pseudoElementStyle({ PseudoElementType::FirstLetter }))
+    if (CheckedPtr firstLetterStyle = currentStyle.pseudoElementStyle({ PseudoElementType::FirstLetter }))
         newStyle->addPseudoElementStyle(Style::ComputedStyle::clonePtr(*firstLetterStyle));
 
     if (currentStyle.lastChildState())
@@ -212,17 +212,17 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     float averageSize = std::round(cumulativeSize / m_autoSizedNodes.size());
 
     // FIXME: Figure out how to make this code use RenderTreeUpdater/Builder properly.
-    RenderTreeBuilder builder((*m_autoSizedNodes.begin())->renderer()->view());
+    RenderTreeBuilder builder(protect((*m_autoSizedNodes.begin())->renderer()->view()));
 
     // Adjust sizes.
     bool firstPass = true;
     for (auto& node : m_autoSizedNodes) {
-        auto& renderer = *node->renderer();
-        if (renderer.style().fontDescription().usedSize() == averageSize)
+        CheckedPtr renderer = node->renderer();
+        if (renderer->style().fontDescription().usedSize() == averageSize)
             continue;
 
-        float computedSize = renderer.style().fontDescription().computedSize();
-        float maxScaleIncrease = renderer.settings().maxTextAutosizingScaleIncrease();
+        float computedSize = renderer->style().fontDescription().computedSize();
+        float maxScaleIncrease = renderer->settings().maxTextAutosizingScaleIncrease();
         float scaleChange = averageSize / computedSize;
         if (scaleChange > maxScaleIncrease && firstPass) {
             firstPass = false;
@@ -232,9 +232,11 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 
         LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", node.ptr(), firstPass, averageSize, scaleChange);
 
-        auto* parentRenderer = renderer.parent();
+        CheckedPtr parentRenderer = renderer->parent();
+        // updateAfterDescendants() below may destroy the text renderer.
+        renderer = nullptr;
 
-        auto style = cloneRenderStyleWithState(parentRenderer->style());
+        auto style = cloneRenderStyleWithState(protect(parentRenderer->style()));
         auto fontDescription = style->fontDescription();
         fontDescription.setUsedSize(averageSize);
         style->setFontDescription(FontCascadeDescription { fontDescription });
@@ -245,14 +247,14 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 
         // If we have a list we should resize ListMarkers separately.
         if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderElement>(parentRenderer->firstChild()); listMarkerRenderer && listMarkerRenderer->isOutsideListMarker()) {
-            auto style = cloneRenderStyleWithState(listMarkerRenderer->style());
+            auto style = cloneRenderStyleWithState(protect(listMarkerRenderer->style()));
             style->setFontDescription(FontCascadeDescription { fontDescription });
             listMarkerRenderer->setStyle(WTF::move(style));
         }
 
         // Resize the line height of the parent.
-        auto& parentStyle = parentRenderer->style();
-        auto& parentLineHeight = parentStyle.lineHeight();
+        CheckedRef parentStyle = parentRenderer->style();
+        auto& parentLineHeight = parentStyle->lineHeight();
 
         int parentEvaluatedLineHeight = WTF::switchOn(parentLineHeight,
             [&](const CSS::Keyword::Normal&) {
@@ -284,21 +286,19 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     }
 
     for (auto& node : m_autoSizedNodes) {
-        auto* textRenderer = dynamicDowncast<RenderTextFragment>(*node->renderer());
-        if (!textRenderer)
-            continue;
-        CheckedPtr block = textRenderer->blockForAccompanyingFirstLetter();
+        CheckedPtr<RenderBlock> block;
+        if (CheckedPtr textRenderer = dynamicDowncast<RenderTextFragment>(*node->renderer()))
+            block = textRenderer->blockForAccompanyingFirstLetter();
         if (!block)
             continue;
 
-        auto [firstLetter, firstLetterContainer] = block->firstLetterAndContainer();
-        if (firstLetter && firstLetter->parent() && firstLetter->parent()->parent()) {
-            auto& parentStyle = firstLetter->parent()->parent()->style();
-            auto* firstLetterStyle = parentStyle.pseudoElementStyle({ PseudoElementType::FirstLetter });
+        if (CheckedPtr firstLetter = block->firstLetterAndContainer().first; firstLetter && firstLetter->parent() && firstLetter->parent()->parent()) {
+            CheckedRef parentStyle = firstLetter->parent()->parent()->style();
+            CheckedPtr firstLetterStyle = parentStyle->pseudoElementStyle({ PseudoElementType::FirstLetter });
             if (!firstLetterStyle)
                 continue;
             auto fontDescription = firstLetterStyle->fontDescription();
-            fontDescription.setUsedSize(averageSize * fontDescription.computedSize() / parentStyle.fontDescription().computedSize());
+            fontDescription.setUsedSize(averageSize * fontDescription.computedSize() / parentStyle->fontDescription().computedSize());
             firstLetterStyle->setFontDescription(FontCascadeDescription { fontDescription });
         }
 
@@ -316,11 +316,11 @@ TextAutoSizingValue::~TextAutoSizingValue()
 void TextAutoSizingValue::reset()
 {
     for (auto& node : m_autoSizedNodes) {
-        auto* renderer = node->renderer();
+        CheckedPtr renderer = node->renderer();
         if (!renderer)
             continue;
 
-        auto* parentRenderer = renderer->parent();
+        CheckedPtr parentRenderer = renderer->parent();
         if (!parentRenderer)
             continue;
 
@@ -329,7 +329,7 @@ void TextAutoSizingValue::reset()
         float originalSize = fontDescription.computedSize();
         if (fontDescription.usedSize() != originalSize) {
             fontDescription.setUsedSize(originalSize);
-            auto style = cloneRenderStyleWithState(parentRenderer->style());
+            auto style = cloneRenderStyleWithState(protect(parentRenderer->style()));
             style->setFontDescription(FontCascadeDescription { fontDescription });
             parentRenderer->setStyle(WTF::move(style));
         }
@@ -338,9 +338,9 @@ void TextAutoSizingValue::reset()
         if (parentRenderer->isAnonymousBlock())
             parentRenderer = parentRenderer->parent();
 
-        auto& parentStyle = parentRenderer->style();
-        auto& originalLineHeight = parentStyle.lineHeight();
-        if (originalLineHeight == parentStyle.textAutosizingAdjustedLineHeight())
+        CheckedRef parentStyle = parentRenderer->style();
+        auto& originalLineHeight = parentStyle->lineHeight();
+        if (originalLineHeight == parentStyle->textAutosizingAdjustedLineHeight())
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
@@ -358,7 +358,8 @@ TextAutoSizing::~TextAutoSizing() = default;
 void TextAutoSizing::addTextNode(Text& node, float candidateSize)
 {
     LOG(TextAutosizing, " addAutoSizedNode %p candidateSize=%f", &node, candidateSize);
-    auto addResult = m_textNodes.add<TextAutoSizingHashTranslator>(node.renderer()->parent()->style(), nullptr);
+    CheckedRef style = node.renderer()->parent()->style();
+    auto addResult = m_textNodes.add<TextAutoSizingHashTranslator>(style.get(), nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = makeUnique<TextAutoSizingValue>();
     addResult.iterator->value->addTextNode(node, candidateSize);

@@ -330,17 +330,18 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
         paintRect.move(-widgetPaintOffset.width(), -widgetPaintOffset.height());
     }
 
-    if (paintInfo.regionContext) {
+    CheckedPtr regionContext = paintInfo.regionContext;
+    if (regionContext) {
         AffineTransform transform;
         transform.translate(snappedPaintOffset);
-        paintInfo.regionContext->pushTransform(transform);
+        regionContext->pushTransform(transform);
     }
 
     // FIXME: Remove repaintrect enclosing/integral snapping when RenderWidget becomes device pixel snapped.
-    protect(m_widget)->paint(paintInfo.context(), enclosingIntRect(paintRect), paintInfo.requireSecurityOriginAccessForWidgets ? Widget::SecurityOriginPaintPolicy::AccessibleOriginOnly : Widget::SecurityOriginPaintPolicy::AnyOrigin, paintInfo.regionContext);
+    protect(m_widget)->paint(paintInfo.context(), enclosingIntRect(paintRect), paintInfo.requireSecurityOriginAccessForWidgets ? Widget::SecurityOriginPaintPolicy::AccessibleOriginOnly : Widget::SecurityOriginPaintPolicy::AnyOrigin, regionContext);
 
-    if (paintInfo.regionContext)
-        paintInfo.regionContext->popTransform();
+    if (regionContext)
+        regionContext->popTransform();
 
     if (!widgetPaintOffset.isZero())
         paintInfo.context().translate(-widgetPaintOffset);
@@ -413,9 +414,10 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if (hasLayer() && layer()->canResize()) {
-        ASSERT(layer()->scrollableArea());
-        auto controlsRects = layer()->scrollableArea()->overflowControlsRects();
-        layer()->scrollableArea()->paintResizer(paintInfo.context(), roundedIntPoint(adjustedPaintOffset), controlsRects.resizer, paintInfo.rect);
+        CheckedPtr scrollableArea = layer()->scrollableArea();
+        ASSERT(scrollableArea);
+        auto controlsRects = scrollableArea->overflowControlsRects();
+        scrollableArea->paintResizer(paintInfo.context(), roundedIntPoint(adjustedPaintOffset), controlsRects.resizer, paintInfo.rect);
     }
 }
 

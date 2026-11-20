@@ -55,12 +55,19 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ShapeOutsideInfo);
 static LayoutUnit logicalLeftOffset(const RenderBox&);
 static LayoutUnit logicalTopOffset(const RenderBox&);
 
+ShapeOutsideInfo::ShapeOutsideInfo(const RenderBox& renderer)
+    : m_renderer(renderer)
+{
+}
+
+ShapeOutsideInfo::~ShapeOutsideInfo() = default;
+
 LayoutRect ShapeOutsideInfo::computedShapePhysicalBoundingBox() const
 {
     LayoutRect physicalBoundingBox = protect(computedShape())->shapeMarginLogicalBoundingBox();
-    if (m_renderer.writingMode().isBlockFlipped())
-        physicalBoundingBox.setY(m_renderer.logicalHeight() - physicalBoundingBox.maxY());
-    if (!m_renderer.isHorizontalWritingMode())
+    if (m_renderer->writingMode().isBlockFlipped())
+        physicalBoundingBox.setY(m_renderer->logicalHeight() - physicalBoundingBox.maxY());
+    if (!m_renderer->isHorizontalWritingMode())
         physicalBoundingBox = physicalBoundingBox.transposedRect();
     return physicalBoundingBox;
 }
@@ -68,9 +75,9 @@ LayoutRect ShapeOutsideInfo::computedShapePhysicalBoundingBox() const
 FloatPoint ShapeOutsideInfo::shapeToRendererPoint(const FloatPoint& point) const
 {
     FloatPoint result = point;
-    if (m_renderer.writingMode().isBlockFlipped())
-        result.setY(m_renderer.logicalHeight() - result.y());
-    if (!m_renderer.isHorizontalWritingMode())
+    if (m_renderer->writingMode().isBlockFlipped())
+        result.setY(m_renderer->logicalHeight() - result.y());
+    if (!m_renderer->isHorizontalWritingMode())
         result = result.transposedPoint();
     return result;
 }
@@ -226,7 +233,8 @@ static LayoutUnit logicalLeftOffset(const RenderBox& renderer)
 
 void ShapeOutsideInfo::invalidateForSizeChangeIfNeeded()
 {
-    auto newSize = computeLogicalBoxSize(m_renderer, m_renderer.containingBlock()->isHorizontalWritingMode());
+    CheckedRef renderer = m_renderer;
+    auto newSize = computeLogicalBoxSize(renderer, protect(renderer->containingBlock())->isHorizontalWritingMode());
     if (m_cachedShapeLogicalSize == newSize)
         return;
 
@@ -247,20 +255,20 @@ static LayoutRect shapeImageMarginRect(const RenderBox& renderBox, const LayoutS
 
 Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
 {
-    auto& style = renderer.style();
-    auto& containingBlock = *renderer.containingBlock();
-    auto writingMode = containingBlock.style().writingMode();
-    bool isHorizontalWritingMode = containingBlock.isHorizontalWritingMode();
-    auto shapeImageThreshold = style.shapeImageThreshold();
-    auto& shapeOutside = style.shapeOutside();
-    auto zoom = style.usedZoomForLength();
-    auto deviceScaleFactor = style.deviceScaleFactor();
+    CheckedRef style = renderer.style();
+    CheckedRef containingBlock = *renderer.containingBlock();
+    auto writingMode = containingBlock->style().writingMode();
+    bool isHorizontalWritingMode = containingBlock->isHorizontalWritingMode();
+    auto shapeImageThreshold = style->shapeImageThreshold();
+    auto& shapeOutside = style->shapeOutside();
+    auto zoom = style->usedZoomForLength();
+    auto deviceScaleFactor = style->deviceScaleFactor();
 
     auto boxSize = computeLogicalBoxSize(renderer, isHorizontalWritingMode);
     auto borderBoxLogicalWidth = isHorizontalWritingMode ? renderer.borderBoxWidth() : renderer.borderBoxHeight();
 
     auto logicalMargin = [&] {
-        auto shapeMargin = Style::evaluate<LayoutUnit>(style.shapeMargin(), containingBlock.contentBoxLogicalWidth(), zoom).toFloat();
+        auto shapeMargin = Style::evaluate<LayoutUnit>(style->shapeMargin(), containingBlock->contentBoxLogicalWidth(), zoom).toFloat();
         return isnan(shapeMargin) ? 0.0f : shapeMargin;
     }();
 
@@ -280,7 +288,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             auto logicalImageSize = renderer.calculateImageIntrinsicDimensions(styleImage.get(), Style::ShapeOutsideSizing { boxSize }, RenderImage::ScaleByUsedZoom::Yes);
 
             auto logicalMarginRect = shapeImageMarginRect(renderer, boxSize);
-            auto* renderImage = dynamicDowncast<RenderImage>(renderer);
+            CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
             auto logicalImageRect = renderImage ? renderImage->replacedContentRect() : LayoutRect { { }, logicalImageSize };
 
             ASSERT(!styleImage->isPending());
@@ -359,7 +367,7 @@ static inline bool checkShapeImageOrigin(Document& document, const Style::Image&
 const LayoutShape& ShapeOutsideInfo::computedShape() const
 {
     if (!m_shape)
-        m_shape = makeShapeForShapeOutside(m_renderer);
+        m_shape = makeShapeForShapeOutside(protect(m_renderer.get()));
 
     return *m_shape;
 }
@@ -385,7 +393,8 @@ ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const R
         return { };
 
     ASSERT(lineHeight >= 0);
-    LayoutUnit borderBoxTop = containingBlock.logicalTopForFloat(floatingObject) + containingBlock.marginBeforeForChild(m_renderer);
+    CheckedRef renderer = m_renderer;
+    LayoutUnit borderBoxTop = containingBlock.logicalTopForFloat(floatingObject) + containingBlock.marginBeforeForChild(renderer);
     LayoutUnit borderBoxLineTop = lineTop - borderBoxTop;
 
     if (isShapeDirty() || !m_shapeOutsideDeltas.isForLine(borderBoxLineTop, lineHeight)) {
@@ -394,12 +403,12 @@ ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const R
         if (protect(computedShape())->lineOverlapsShapeMarginBounds(borderBoxLineTop, lineHeight)) {
             LineSegment segment = protect(computedShape())->getExcludedInterval(borderBoxLineTop, std::min(lineHeight, shapeLogicalBottom() - borderBoxLineTop));
             if (segment.isValid) {
-                LayoutUnit logicalLeftMargin = containingBlock.writingMode().isLogicalLeftInlineStart() ? containingBlock.marginStartForChild(m_renderer) : containingBlock.marginEndForChild(m_renderer);
+                LayoutUnit logicalLeftMargin = containingBlock.writingMode().isLogicalLeftInlineStart() ? containingBlock.marginStartForChild(renderer) : containingBlock.marginEndForChild(renderer);
                 LayoutUnit rawLeftMarginBoxDelta { segment.logicalLeft + logicalLeftMargin };
                 LayoutUnit leftMarginBoxDelta = clampTo<LayoutUnit>(rawLeftMarginBoxDelta, 0_lu, floatMarginBoxWidth);
 
-                LayoutUnit logicalRightMargin = containingBlock.writingMode().isLogicalLeftInlineStart() ? containingBlock.marginEndForChild(m_renderer) : containingBlock.marginStartForChild(m_renderer);
-                LayoutUnit rawRightMarginBoxDelta { segment.logicalRight - containingBlock.logicalWidthForChild(m_renderer) - logicalRightMargin };
+                LayoutUnit logicalRightMargin = containingBlock.writingMode().isLogicalLeftInlineStart() ? containingBlock.marginEndForChild(renderer) : containingBlock.marginStartForChild(renderer);
+                LayoutUnit rawRightMarginBoxDelta { segment.logicalRight - containingBlock.logicalWidthForChild(renderer) - logicalRightMargin };
                 LayoutUnit rightMarginBoxDelta = clampTo<LayoutUnit>(rawRightMarginBoxDelta, -floatMarginBoxWidth, 0_lu);
 
                 m_shapeOutsideDeltas = ShapeOutsideDeltas(leftMarginBoxDelta, rightMarginBoxDelta, true, borderBoxLineTop, lineHeight);

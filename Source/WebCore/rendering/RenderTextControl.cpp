@@ -74,11 +74,11 @@ void RenderTextControl::styleDidChange(Style::Difference diff, const Style::Comp
     if (!innerText)
         return;
     Ref formControlElement = textFormControlElement();
-    RenderTextControlInnerBlock* innerTextRenderer = innerText->renderer();
+    CheckedPtr innerTextRenderer = innerText->renderer();
     if (innerTextRenderer && oldStyle) {
         // FIXME: The height property of the inner text block style may be mutated by RenderTextControlSingleLine::layout.
         // See if the original has changed before setting it and triggering a layout.
-        auto newInnerTextStyle = formControlElement->createInnerTextStyle(style());
+        auto newInnerTextStyle = formControlElement->createInnerTextStyle(protect(style()));
         auto oldInnerTextStyle = formControlElement->createInnerTextStyle(*oldStyle);
         if (newInnerTextStyle.get() != oldInnerTextStyle.get())
             innerTextRenderer->setStyle(WTF::move(newInnerTextStyle));
@@ -121,7 +121,7 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
         return logicalHeightExtent;
     }
 
-    if (RenderBox* innerTextBox = innerText->renderBox()) {
+    if (CheckedPtr innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingLogicalHeight() + innerTextBox->marginLogicalHeight();
         logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(), nonContentHeight);
 
@@ -160,15 +160,16 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
 
 float RenderTextControl::getAverageCharWidth()
 {
+    CheckedRef style = this->style();
+    CheckedRef font = style->fontCascade();
     float width;
-    if (style().fontCascade().fastAverageCharWidthIfAvailable(width))
+    if (font->fastAverageCharWidthIfAvailable(width))
         return width;
 
     const char16_t ch = '0';
     const String str = span(ch);
-    const FontCascade& font = style().fontCascade();
-    TextRun textRun = constructTextRun(str, style(), ExpansionBehavior::allowRightOnly());
-    return font.width(textRun);
+    TextRun textRun = constructTextRun(str, style, ExpansionBehavior::allowRightOnly());
+    return font->width(textRun);
 }
 
 float RenderTextControl::scaleEmToUnits(int x) const
@@ -182,9 +183,10 @@ std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidt
 {
     if (style().fieldSizing() == FieldSizing::Content) {
         auto [minLogicalWidth, maxLogicalWidth] = RenderBlockFlow::computeIntrinsicLogicalWidths();
-        RefPtr placeholder = textFormControlElement().placeholderElement();
+        Ref formControlElement = textFormControlElement();
+        RefPtr placeholder = formControlElement->placeholderElement();
         CheckedPtr placeholderBox = placeholder ? placeholder->renderBox() : nullptr;
-        if (RefPtr input = placeholderBox ? dynamicDowncast<HTMLInputElement>(textFormControlElement()) : nullptr) {
+        if (RefPtr input = placeholderBox ? dynamicDowncast<HTMLInputElement>(formControlElement) : nullptr) {
             auto decoration = LayoutUnit::fromFloatCeil(input->decorationWidth(maxLogicalWidth));
             minLogicalWidth = std::max(minLogicalWidth, placeholderBox->minContentLogicalWidthContribution() + decoration);
             maxLogicalWidth = std::max(maxLogicalWidth, placeholderBox->maxContentLogicalWidthContribution() + decoration);
@@ -200,7 +202,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidt
     // Use average character width. Matches IE.
     auto minLogicalWidth = LayoutUnit { };
     auto maxLogicalWidth = preferredContentLogicalWidth(const_cast<RenderTextControl*>(this)->getAverageCharWidth());
-    maxLogicalWidth = RenderTheme::singleton().adjustedMaximumLogicalWidthForControl(style(), protect(textFormControlElement()), maxLogicalWidth);
+    maxLogicalWidth = RenderTheme::singleton().adjustedMaximumLogicalWidthForControl(protect(style()), protect(textFormControlElement()), maxLogicalWidth);
 
     auto& logicalWidth = style().logicalWidth();
     if (logicalWidth.isCalculated())
@@ -263,8 +265,8 @@ bool RenderTextControl::canScroll() const
 int RenderTextControl::innerLineHeight() const
 {
     if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
-        return innerTextElement->renderer()->style().usedLineHeight();
-    return style().usedLineHeight();
+        return protect(innerTextElement->renderer()->style())->usedLineHeight();
+    return protect(style())->usedLineHeight();
 }
 #endif
 

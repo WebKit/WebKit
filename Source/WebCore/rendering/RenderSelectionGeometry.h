@@ -44,8 +44,8 @@ public:
 protected:
     void repaintRectangle(const LayoutRect& repaintRect);
 
-    RenderObject& m_renderer;
-    const RenderLayerModelObject* m_repaintContainer;
+    const CheckedRef<RenderObject> m_renderer;
+    const CheckedPtr<const RenderLayerModelObject> m_repaintContainer;
 
 private:
     RenderObject::HighlightState m_state;

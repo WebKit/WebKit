@@ -3,7 +3,6 @@ rendering/MarkedText.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBox.cpp
 rendering/RenderElement.cpp
-rendering/RenderFragmentContainer.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderImage.cpp
 rendering/RenderLayer.cpp
@@ -14,14 +13,8 @@ rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
 rendering/RenderObject.cpp
-rendering/RenderReplica.cpp
-rendering/RenderTextControl.cpp
-rendering/RenderTextControlSingleLine.h
 rendering/RenderView.cpp
-rendering/RenderViewTransitionCapture.cpp
 rendering/paint/BackgroundPainter.cpp
-[ macOS ] rendering/cocoa/RenderThemeCocoa.mm
-rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
 style/ElementRuleCollector.cpp
 style/RuleData.h

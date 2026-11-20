@@ -145,7 +145,7 @@ static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, 
     // macOS controls have never honored outline offset.
 #if PLATFORM(IOS_FAMILY)
     auto deviceScaleFactor = box.style().deviceScaleFactor();
-    auto outlineOffset = Style::evaluate<float>(Style::effectiveOutlineOffset(box.style()), box.style().usedZoomForLength(), deviceScaleFactor);
+    auto outlineOffset = Style::evaluate<float>(Style::effectiveOutlineOffset(protect(box.style())), box.style().usedZoomForLength(), deviceScaleFactor);
 
     if (outlineOffset > 0) {
         const auto center = rect.center();
@@ -257,7 +257,7 @@ static const FloatRoundedRect switchTrackRoundedRect(const FloatRect& trackRect,
 
 static Color switchTrackColor(const RenderObject& renderer)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    CheckedRef style = renderer.style();
     auto styleColorOptions = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering) | StyleColorOptions::UseSystemAppearance;
     Ref element = switchElement(renderer);
 
@@ -312,7 +312,7 @@ static Color switchTrackColor(const RenderObject& renderer)
     auto useAccentColor = true;
     UNUSED_VARIABLE(style);
 #else
-    auto useAccentColor = !style.accentColor().isAuto();
+    auto useAccentColor = !style->accentColor().isAuto();
 #endif
 
 #if ENABLE(FORM_CONTROL_REFRESH) && (!PLATFORM(VISION) || ENABLE(AX_ZOOM_ADJUSTMENTS))
@@ -328,7 +328,7 @@ static Color switchTrackColor(const RenderObject& renderer)
     }
 #endif
     if (useAccentColor && isWindowActive)
-        on = RenderThemeCocoa::singleton().controlTintColorWithContrast(renderer.style(), styleColorOptions);
+        on = RenderThemeCocoa::singleton().controlTintColorWithContrast(style, styleColorOptions);
 #else
     auto on = useAccentColor ? RenderThemeCocoa::singleton().controlTintColor(renderer.style(), styleColorOptions) : systemColor;
 #endif
@@ -1462,7 +1462,7 @@ bool RenderThemeCocoa::controlSupportsTints(const RenderElement& box) const
 #if PLATFORM(MAC)
     switch (box.style().usedAppearance()) {
     case StyleAppearance::Button:
-        return isSubmitStyleButton(box.element());
+        return isSubmitStyleButton(protect(box.element()));
     case StyleAppearance::Checkbox:
     case StyleAppearance::Radio:
         return isChecked(box) || isIndeterminate(box);
@@ -1998,7 +1998,7 @@ bool RenderThemeCocoa::paintCheckboxForVectorBasedControls(const RenderElement& 
     const auto isEnabled = controlStates.contains(ControlStyle::State::Enabled);
     const auto isPressed = controlStates.contains(ControlStyle::State::Pressed);
 
-    auto backgroundColor = checkboxRadioBackgroundColorForVectorBasedControls(box.style(), controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColorForVectorBasedControls(protect(box.style()), controlStates, styleColorOptions);
     const auto indicatorColor = checkboxRadioIndicatorColorForVectorBasedControls(backgroundColor, controlStates, styleColorOptions);
 
     if (!isEnabled)
@@ -2116,7 +2116,7 @@ bool RenderThemeCocoa::paintRadioForVectorBasedControls(const RenderElement& box
     const auto isEnabled = controlStates.contains(ControlStyle::State::Enabled);
     const auto isPressed = controlStates.contains(ControlStyle::State::Pressed);
 
-    auto backgroundColor = checkboxRadioBackgroundColorForVectorBasedControls(box.style(), controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColorForVectorBasedControls(protect(box.style()), controlStates, styleColorOptions);
     const auto indicatorColor = checkboxRadioIndicatorColorForVectorBasedControls(backgroundColor, controlStates, styleColorOptions);
 
     if (!isEnabled)
@@ -2183,14 +2183,14 @@ bool RenderThemeCocoa::paintButtonForVectorBasedControls(const RenderElement& bo
     Color backgroundColor;
 
     if (box.theme().isDefault(box))
-        backgroundColor = controlTintColorWithContrast(box.style(), styleColorOptions);
+        backgroundColor = controlTintColorWithContrast(protect(box.style()), styleColorOptions);
     else {
         auto isWindowActive = true;
 #if PLATFORM(MAC)
         isWindowActive = states.contains(ControlStyle::State::WindowActive);
 #endif
         if (isSubmitStyleButton(protect(box.element())) && isWindowActive)
-            backgroundColor = controlTintColorWithContrast(box.style(), styleColorOptions);
+            backgroundColor = controlTintColorWithContrast(protect(box.style()), styleColorOptions);
         else
             backgroundColor = colorCompositedOverCanvasColor(CSSValueID::AppleSystemOpaqueSecondaryFill, styleColorOptions);
     }
@@ -2295,7 +2295,7 @@ bool RenderThemeCocoa::paintColorWellSwatchForVectorBasedControls(const RenderEl
     GraphicsContextStateSaver stateSaver(context);
 
     auto inputValueIsOpaque = true;
-    auto primarySwatchColor = box.style().usedBackgroundColorResolvingCurrentColor();
+    auto primarySwatchColor = protect(box.style())->usedBackgroundColorResolvingCurrentColor();
     auto secondarySwatchColor = primarySwatchColor;
 
     const auto borderWidth = box.style().usedZoom() * 0.5f;
@@ -3164,11 +3164,11 @@ public:
     float measureText(const String& string) const override
     {
         TextRun run = RenderBlock::constructTextRun(string, m_style);
-        return m_font.width(run);
+        return m_font->width(run);
     }
 private:
-    const FontCascade& m_font;
-    const Style::ComputedStyle& m_style;
+    const CheckedRef<const FontCascade> m_font;
+    const CheckedRef<const Style::ComputedStyle> m_style;
 };
 
 static void adjustInputElementButtonStyleForVectorBasedControls(Style::ComputedStyle& style, const HTMLInputElement& inputElement)
@@ -3192,7 +3192,7 @@ static void adjustInputElementButtonStyleForVectorBasedControls(Style::ComputedS
 #endif
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    FontCascade font = style.fontCascade();
+    FontCascade font { CheckedRef { style.fontCascade() } };
 
     float estimatedMaximumWidth = localizedDateCache().estimatedMaximumWidthForDateType(dateType, font, RenderThemeMeasureTextClientForVectorBasedControls(font, style));
 
@@ -3858,7 +3858,7 @@ bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElemen
 #if PLATFORM(MAC)
     isWindowActive = extractControlStyleStatesForRenderer(renderer).contains(ControlStyle::State::WindowActive);
 #endif
-    const auto fillColor = isWindowActive ? controlTintColorWithContrast(renderer.style(), styleColorOptions) : systemColor(cssValueForInactiveBarFill, styleColorOptions);
+    const auto fillColor = isWindowActive ? controlTintColorWithContrast(protect(renderer.style()), styleColorOptions) : systemColor(cssValueForInactiveBarFill, styleColorOptions);
 
     FloatRect barRect(barInlineStart, barBlockStart, barInlineSize, barBlockSize);
     context.fillRoundedRect(FloatRoundedRect(isHorizontalWritingMode ? barRect : barRect.transposedRect(), barCornerRadii), fillColor.colorWithAlphaMultipliedBy(alpha));
@@ -4048,9 +4048,9 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
 
 #if PLATFORM(MAC)
     const auto isWindowActive = states.contains(ControlStyle::State::WindowActive);
-    auto fillColor = isWindowActive ? controlTintColorWithContrast(box.style(), styleColorOptions) : systemColor(cssValueForInactiveBarFill, styleColorOptions);
+    auto fillColor = isWindowActive ? controlTintColorWithContrast(protect(box.style()), styleColorOptions) : systemColor(cssValueForInactiveBarFill, styleColorOptions);
 #else
-    auto fillColor = controlTintColorWithContrast(box.style(), styleColorOptions);
+    auto fillColor = controlTintColorWithContrast(protect(box.style()), styleColorOptions);
 #endif
     auto unadjustedFillColor = fillColor;
 
@@ -4240,9 +4240,9 @@ bool RenderThemeCocoa::paintSearchFieldForVectorBasedControls(const RenderElemen
 
     const auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
-    const auto& style = box.style();
-    const auto borderThickness = style.usedZoom();
-    auto backgroundColor = style.usedBackgroundColorResolvingCurrentColor(StyleColorOptionsPurpose::Rendering);
+    CheckedRef style = box.style();
+    const auto borderThickness = style->usedZoom();
+    auto backgroundColor = style->usedBackgroundColorResolvingCurrentColor(StyleColorOptionsPurpose::Rendering);
 
     const auto states = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
     const auto isEnabled = states.contains(ControlStyle::State::Enabled);
@@ -4678,7 +4678,7 @@ Color RenderThemeCocoa::submitButtonTextColor(const RenderText& textRenderer) co
         }
     }
 
-    const auto tintColor = controlTintColorWithContrast(textRenderer.style(), textRenderer.styleColorOptions(StyleColorOptionsPurpose::Rendering));
+    const auto tintColor = controlTintColorWithContrast(protect(textRenderer.style()), textRenderer.styleColorOptions(StyleColorOptionsPurpose::Rendering));
     auto textColor = foregroundColorForBackgroundColor(tintColor);
     if (!isEnabled)
         textColor = textColor.colorWithAlphaMultipliedBy(textColor != Color::white ? 0.3f : 0.6f);

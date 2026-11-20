@@ -89,7 +89,7 @@ float FixedTableLayout::calcWidthArray()
     m_columnBorderPadding.fill(0, nEffCols);
 
     unsigned currentEffectiveColumn = 0;
-    for (RenderTableCol* col = m_table->firstColumn(); col; col = col->nextColumn()) {
+    for (CheckedPtr col = m_table->firstColumn(); col; col = col->nextColumn()) {
         // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
         // so that if we call setContentWidthsDirty(true) on a col or one of its descendants, we'll mark it's
         // ancestors as dirty.
@@ -138,14 +138,13 @@ float FixedTableLayout::calcWidthArray()
     }
 
     // Iterate over the first row in case some are unspecified.
-    RenderTableSection* section = m_table->topNonEmptySection();
+    CheckedPtr section = m_table->topNonEmptySection();
     if (!section)
         return usedWidth;
 
     unsigned currentColumn = 0;
 
-    RenderTableRow* firstRow = section->firstRow();
-    for (RenderTableCell* cell = firstRow->firstCell(); cell; cell = cell->nextCell()) {
+    for (CheckedPtr cell = protect(section->firstRow())->firstCell(); cell; cell = cell->nextCell()) {
         auto [ logicalWidth, usedZoom ] = cell->styleOrColLogicalWidth();
         unsigned span = cell->colSpan();
         float fixedBorderBoxLogicalWidth = 0;

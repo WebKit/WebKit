@@ -106,7 +106,7 @@ void RenderTextControlMultiLine::layoutExcludedChildren(RelayoutChildren relayou
         return;
     if (CheckedPtr placeholderBox = dynamicDowncast<RenderBox>(placeholderRenderer.get())) {
         auto usedZoomForLength = placeholderBox->style().usedZoomForLength().value;
-        placeholderBox->mutableStyle().setLogicalWidth(Style::PreferredSize::Fixed { (contentBoxLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth()) / usedZoomForLength });
+        protect(placeholderBox->mutableStyle())->setLogicalWidth(Style::PreferredSize::Fixed { (contentBoxLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth()) / usedZoomForLength });
         placeholderBox->layoutIfNeeded();
         placeholderBox->setX(borderLeft() + paddingLeft());
         placeholderBox->setY(borderTop() + paddingTop());

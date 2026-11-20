@@ -191,13 +191,13 @@ void CounterNode::resetRenderers()
 {
     if (!m_rootRenderer)
         return;
-    auto* current = m_rootRenderer.get();
+    CheckedPtr current = m_rootRenderer;
     while (current) {
-        auto* next = current->m_nextForSameCounter.get();
+        CheckedPtr next = current->m_nextForSameCounter.get();
         current->m_nextForSameCounter = nullptr;
         current->m_counterNode = nullptr;
-        current->view().addCounterNeedingUpdate(*current);
-        current = next;
+        protect(current->view())->addCounterNeedingUpdate(*current);
+        current = WTF::move(next);
     }
     m_rootRenderer = nullptr;
 }
@@ -235,7 +235,7 @@ void CounterNode::insertAfter(CounterNode& newChild, CounterNode* beforeChild, c
 
     if (newChild.hasResetType()) {
         while (m_lastChild != beforeChild)
-            RenderCounter::destroyCounterNode(m_lastChild->owner(), identifier);
+            RenderCounter::destroyCounterNode(protect(m_lastChild->owner()), identifier);
     }
 
     RefPtr<CounterNode> next;

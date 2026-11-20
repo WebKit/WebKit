@@ -65,10 +65,10 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
         return;
     }
 
-    RenderTableCell* fixedContributor = nullptr;
+    CheckedPtr<RenderTableCell> fixedContributor;
     RenderTableCell* maxContributor = nullptr;
 
-    for (auto& child : childrenOfType<RenderObject>(*m_table)) {
+    for (CheckedRef child : childrenOfType<RenderObject>(*m_table)) {
         if (CheckedPtr column = dynamicDowncast<RenderTableCol>(child)) {
             // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
             // so that if we call setContentWidthsDirty(true) on a col or one of its descendants, we'll mark its
@@ -78,7 +78,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
             unsigned numRows = section->numRows();
             for (unsigned i = 0; i < numRows; ++i) {
                 auto current = section->cellAt(i, effCol);
-                auto* cell = current.primaryCell();
+                CheckedPtr cell = current.primaryCell();
                 
                 if (current.inColSpan || !cell)
                     continue;
@@ -86,7 +86,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 bool cellHasContent = cell->firstChild()
                     || cell->style().border().hasBorder()
                     || !Style::isKnownZero(cell->style().paddingBox())
-                    || cell->style().hasBackground();
+                    || protect(cell->style())->hasBackground();
                 if (cellHasContent)
                     columnLayout.emptyCellsOnly = false;
 
@@ -180,7 +180,7 @@ void AutoTableLayout::fullRecalc()
 
     Style::PreferredSize groupLogicalWidth = CSS::Keyword::Auto { };
     unsigned currentColumn = 0;
-    for (RenderTableCol* column = m_table->firstColumn(); column; column = column->nextColumn()) {
+    for (CheckedPtr column = m_table->firstColumn(); column; column = column->nextColumn()) {
         if (column->isTableColumnGroupWithColumnChildren())
             groupLogicalWidth = column->style().logicalWidth();
         else {
@@ -224,7 +224,7 @@ void AutoTableLayout::fullRecalc()
 
 static bool shouldScaleColumnsForParent(const RenderTable& table)
 {
-    RenderBoxModelObject* containingBlock = table.containingBlock();
+    CheckedPtr<RenderBoxModelObject> containingBlock = table.containingBlock();
     while (containingBlock && !is<RenderView>(containingBlock)) {
         // It doesn't matter if our table is auto or fixed: auto means we don't
         // scale. Fixed doesn't care if we do or not because it doesn't depend
@@ -333,7 +333,7 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
     }
 
     for (size_t i = 0; i < m_spanCells.size(); ++i) {
-        RenderTableCell* cell = m_spanCells[i];
+        CheckedPtr cell = m_spanCells[i];
         if (!cell)
             break;
 
@@ -602,7 +602,7 @@ void AutoTableLayout::insertSpanCell(RenderTableCell* cell)
     // add them in sort. This is a slow algorithm, and a binary search or a fast sorting after collection would be better
     unsigned pos = 0;
     unsigned span = cell->colSpan();
-    while (pos < m_spanCells.size() && m_spanCells[pos] && span > m_spanCells[pos]->colSpan())
+    while (pos < m_spanCells.size() && m_spanCells[pos] && span > protect(m_spanCells[pos])->colSpan())
         ++pos;
     memmoveSpan(m_spanCells.mutableSpan().subspan(pos + 1), m_spanCells.subspan(pos, size - (pos + 1)));
     m_spanCells[pos] = cell;

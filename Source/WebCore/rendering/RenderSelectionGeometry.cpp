@@ -38,14 +38,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBlockSelectionGeometry);
 
 RenderSelectionGeometryBase::RenderSelectionGeometryBase(RenderObject& renderer)
     : m_renderer(renderer)
-    , m_repaintContainer(renderer.containerForRepaint().renderer.unsafeGet())
+    , m_repaintContainer(renderer.containerForRepaint().renderer)
     , m_state(renderer.selectionState())
 {
 }
 
 void RenderSelectionGeometryBase::repaintRectangle(const LayoutRect& repaintRect)
 {
-    m_renderer.repaintUsingContainer(m_repaintContainer, enclosingIntRect(repaintRect));
+    m_renderer->repaintUsingContainer(m_repaintContainer.get(), enclosingIntRect(repaintRect));
 }
 
 RenderSelectionGeometry::RenderSelectionGeometry(RenderObject& renderer, bool clipToVisibleContent)
