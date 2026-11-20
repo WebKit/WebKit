@@ -4006,8 +4006,9 @@
         if ('META_TITLE' in global_scope && META_TITLE) {
             return META_TITLE;
         }
-        if ('location' in global_scope) {
-            return location.pathname.substring(location.pathname.lastIndexOf('/') + 1, location.pathname.indexOf('.'));
+        if ('location' in global_scope && 'pathname' in location) {
+            var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+            return filename.substring(0, filename.indexOf('.'));
         }
         return "Untitled";
     }
