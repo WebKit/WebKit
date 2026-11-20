@@ -38,6 +38,7 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
@@ -277,6 +278,8 @@ void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, Shou
     }
 
     CachedResourceRequest cachedResourceRequest { ResourceRequest { request }, options };
+    if (request.requester() == ResourceRequestRequester::Ping)
+        cachedResourceRequest.setInitiatorType(cachedResourceRequestInitiatorTypes().ping);
     std::ignore = protect(protect(frame.document())->cachedResourceLoader())->requestPingResource(WTF::move(cachedResourceRequest));
 }
 
