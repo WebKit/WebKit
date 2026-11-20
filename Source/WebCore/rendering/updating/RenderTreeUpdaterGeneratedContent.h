@@ -55,7 +55,7 @@ public:
 
 private:
     void updateQuotesUpTo(RenderTextFragment*);
-    RenderElement* popExitedQuoteScopes(const RenderTextFragment&);
+    CheckedPtr<RenderElement> popExitedQuoteScopes(const RenderTextFragment&);
 
     bool needsPseudoElement(const Style::ComputedStyle*);
 

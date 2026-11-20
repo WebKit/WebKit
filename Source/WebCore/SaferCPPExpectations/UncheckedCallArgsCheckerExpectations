@@ -71,20 +71,6 @@ rendering/paint/TextDecorationPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/svg/SVGTextQuery.cpp
-rendering/updating/RenderTreeBuilder.cpp
-rendering/updating/RenderTreeBuilderBlock.cpp
-rendering/updating/RenderTreeBuilderBlockFlow.cpp
-rendering/updating/RenderTreeBuilderFirstLetter.cpp
-rendering/updating/RenderTreeBuilderFormControls.cpp
-rendering/updating/RenderTreeBuilderList.cpp
-rendering/updating/RenderTreeBuilderMathML.cpp
-rendering/updating/RenderTreeBuilderMultiColumn.cpp
-rendering/updating/RenderTreeBuilderRuby.cpp
-rendering/updating/RenderTreeBuilderSVG.cpp
-rendering/updating/RenderTreeBuilderTable.cpp
-rendering/updating/RenderTreeUpdater.cpp
-rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
-rendering/updating/RenderTreeUpdaterViewTransition.cpp
 style/AttributeChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp

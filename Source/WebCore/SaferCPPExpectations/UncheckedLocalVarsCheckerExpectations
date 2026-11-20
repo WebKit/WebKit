@@ -50,20 +50,6 @@ rendering/paint/TextBoxPainter.cpp
 rendering/paint/TextDecorationPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/shapes/ShapeOutsideInfo.cpp
-rendering/updating/RenderTreeBuilder.cpp
-rendering/updating/RenderTreeBuilderBlock.cpp
-rendering/updating/RenderTreeBuilderBlockFlow.cpp
-rendering/updating/RenderTreeBuilderFirstLetter.cpp
-rendering/updating/RenderTreeBuilderFormControls.cpp
-rendering/updating/RenderTreeBuilderInline.cpp
-rendering/updating/RenderTreeBuilderList.cpp
-rendering/updating/RenderTreeBuilderMultiColumn.cpp
-rendering/updating/RenderTreeBuilderRuby.cpp
-rendering/updating/RenderTreeBuilderSVG.cpp
-rendering/updating/RenderTreeBuilderTable.cpp
-rendering/updating/RenderTreeUpdater.cpp
-rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
-rendering/updating/RenderTreeUpdaterViewTransition.cpp
 style/ElementRuleCollector.cpp
 style/StyleBuilderStateInlines.h
 style/StyleInvalidationFunctions.h

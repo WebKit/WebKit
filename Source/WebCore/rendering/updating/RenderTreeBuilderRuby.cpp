@@ -57,7 +57,7 @@ UniqueRef<Style::ComputedStyle> createAnonymousStyleForRuby(const Style::Compute
 
 static RenderPtr<RenderElement> createAnonymousRendererForRuby(RenderElement& parent, Style::Display display)
 {
-    auto style = createAnonymousStyleForRuby(parent.style(), display);
+    auto style = createAnonymousStyleForRuby(protect(parent.style()), display);
     auto ruby = createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, protect(parent.document()), WTF::move(style));
     ruby->initializeStyle();
     return ruby;
@@ -103,7 +103,7 @@ CheckedRef<RenderElement> RenderTreeBuilder::Ruby::findOrCreateParentForStyleBas
     if (beforeChild && beforeChild->parent()->style().display() == Style::DisplayType::RubyBase)
         return *beforeChild->parent();
 
-    auto* previous = beforeChild ? beforeChild->previousSibling() : beforeChildAncestor->lastChild();
+    CheckedPtr previous = beforeChild ? beforeChild->previousSibling() : beforeChildAncestor->lastChild();
     if (previous && previous->style().display() == Style::DisplayType::RubyBase) {
         beforeChild = nullptr;
         return downcast<RenderElement>(*previous);

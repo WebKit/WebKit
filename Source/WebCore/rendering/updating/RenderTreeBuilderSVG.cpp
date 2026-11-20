@@ -55,24 +55,24 @@ RenderTreeBuilder::SVG::SVG(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::SVG::attach(LegacyRenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    auto& childToAdd = *child;
+    CheckedRef childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
 void RenderTreeBuilder::SVG::attach(LegacyRenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    auto& childToAdd = *child;
+    CheckedRef childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
 void RenderTreeBuilder::SVG::attach(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    auto& childToAdd = *child;
+    CheckedRef childToAdd = *child;
     m_builder.inlineBuilder().attach(parent, WTF::move(child), beforeChild);
 
-    if (!childToAdd.document().settings().layerBasedSVGEngineEnabled())
+    if (!childToAdd->document().settings().layerBasedSVGEngineEnabled())
         SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
@@ -83,10 +83,10 @@ void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObjec
 
 void RenderTreeBuilder::SVG::attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    auto& childToAdd = *child;
+    CheckedRef childToAdd = *child;
     m_builder.blockFlowBuilder().attach(parent, WTF::move(child), beforeChild);
 
-    if (!childToAdd.document().settings().layerBasedSVGEngineEnabled())
+    if (!childToAdd->document().settings().layerBasedSVGEngineEnabled())
         SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
@@ -118,16 +118,16 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(LegacyRenderSVGContainer&
     return m_builder.detachFromRenderElement(parent, child, willBeDestroyed);
 }
 
-RenderSVGViewportContainer& RenderTreeBuilder::SVG::findOrCreateParentForChild(RenderSVGRoot& parent)
+CheckedRef<RenderSVGViewportContainer> RenderTreeBuilder::SVG::findOrCreateParentForChild(RenderSVGRoot& parent)
 {
-    if (auto* viewportContainer = parent.viewportContainer())
-        return *viewportContainer;
+    if (CheckedPtr viewportContainer = parent.viewportContainer())
+        return viewportContainer.releaseNonNull();
     return createViewportContainer(parent);
 }
 
-RenderSVGViewportContainer& RenderTreeBuilder::SVG::createViewportContainer(RenderSVGRoot& parent)
+CheckedRef<RenderSVGViewportContainer> RenderTreeBuilder::SVG::createViewportContainer(RenderSVGRoot& parent)
 {
-    auto viewportContainerStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(parent.style(), Style::ComputedStyle::initialDisplay());
+    auto viewportContainerStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(parent.style()), Style::ComputedStyle::initialDisplay());
     viewportContainerStyle->setUsedZIndex(0); // Enforce a stacking context.
     viewportContainerStyle->setTransformOriginX(0_css_px);
     viewportContainerStyle->setTransformOriginY(0_css_px);
@@ -135,9 +135,9 @@ RenderSVGViewportContainer& RenderTreeBuilder::SVG::createViewportContainer(Rend
     auto viewportContainer = createRenderer<RenderSVGViewportContainer>(parent, WTF::move(viewportContainerStyle));
     viewportContainer->initializeStyle();
 
-    auto* viewportContainerRenderer = viewportContainer.get();
+    CheckedRef viewportContainerRenderer = *viewportContainer;
     m_builder.attachToRenderElement(parent, WTF::move(viewportContainer), nullptr);
-    return *viewportContainerRenderer;
+    return viewportContainerRenderer;
 }
 
 void RenderTreeBuilder::SVG::updateAfterDescendants(RenderSVGRoot& svgRoot)

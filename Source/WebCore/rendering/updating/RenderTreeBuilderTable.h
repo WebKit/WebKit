@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreeUpdater.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -43,9 +44,9 @@ class RenderTreeBuilder::Table {
 public:
     NODELETE Table(RenderTreeBuilder&);
 
-    RenderElement& findOrCreateParentForChild(RenderTableRow& parent, const RenderObject& child, RenderObject*& beforeChild);
-    RenderElement& findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild);
-    RenderElement& findOrCreateParentForChild(RenderTable& parent, const RenderObject& child, RenderObject*& beforeChild);
+    CheckedRef<RenderElement> findOrCreateParentForChild(RenderTableRow& parent, const RenderObject& child, RenderObject*& beforeChild);
+    CheckedRef<RenderElement> findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild);
+    CheckedRef<RenderElement> findOrCreateParentForChild(RenderTable& parent, const RenderObject& child, RenderObject*& beforeChild);
 
     void attach(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void attach(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);

@@ -43,7 +43,7 @@ RenderTreeBuilder::BlockFlow::BlockFlow(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::BlockFlow::attach(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (auto* multicolumnFlow = parent.multiColumnFlow()) {
+    if (CheckedPtr multicolumnFlow = parent.multiColumnFlow()) {
         auto legendAvoidsMulticolumn = parent.isFieldset() && child->isLegend();
         if (legendAvoidsMulticolumn)
             return m_builder.blockBuilder().attach(parent, WTF::move(child), nullptr);
@@ -60,7 +60,7 @@ void RenderTreeBuilder::BlockFlow::attach(RenderBlockFlow& parent, RenderPtr<Ren
 
         // When the before child is set to be the first child of the RenderBlockFlow, we need to readjust it to be the first
         // child of the multicol conainter.
-        return m_builder.attach(*multicolumnFlow, WTF::move(child), beforeChild == multicolumnFlow ? multicolumnFlow->firstChild() : beforeChild);
+        return m_builder.attach(*multicolumnFlow, WTF::move(child), protect(beforeChild == multicolumnFlow ? multicolumnFlow->firstChild() : beforeChild));
     }
 
     auto* beforeChildOrPlaceholder = beforeChild;

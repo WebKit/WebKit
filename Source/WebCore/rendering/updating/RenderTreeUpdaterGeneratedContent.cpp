@@ -405,17 +405,17 @@ static StringImpl* stringForQuoteCharacter(char16_t character)
     // Use linear search because there is a small number of distinct characters, thus binary search is unneeded.
     ASSERT(character);
     struct StringForCharacter {
-        char16_t character;
-        StringImpl* string;
+        char16_t character { 0 };
+        RefPtr<StringImpl> string;
     };
-    static std::array<StringForCharacter, maxDistinctQuoteCharacters> strings;
-    for (auto& string : strings) {
+    static NeverDestroyed<std::array<StringForCharacter, maxDistinctQuoteCharacters>> strings;
+    for (auto& string : strings.get()) {
         if (string.character == character)
-            return string.string;
+            return string.string.get();
         if (!string.character) {
             string.character = character;
-            string.string = &StringImpl::create8BitIfPossible(span(character)).leakRef();
-            return string.string;
+            string.string = StringImpl::create8BitIfPossible(span(character));
+            return string.string.get();
         }
     }
     ASSERT_NOT_REACHED();
@@ -492,9 +492,9 @@ static RenderElement* findQuoteScopeRoot(const RenderObject& renderer)
     return nullptr;
 }
 
-RenderElement* RenderTreeUpdater::GeneratedContent::popExitedQuoteScopes(const RenderTextFragment& quote)
+CheckedPtr<RenderElement> RenderTreeUpdater::GeneratedContent::popExitedQuoteScopes(const RenderTextFragment& quote)
 {
-    auto* scopeRoot = findQuoteScopeRoot(quote);
+    CheckedPtr scopeRoot = findQuoteScopeRoot(quote);
     auto isCurrentScopeAncestorOfQuote = [&] {
         auto* topScope = m_quoteScopeStack.last().scopeRoot.get();
         return topScope == scopeRoot || (topScope && quote.isDescendantOf(topScope));
@@ -532,13 +532,13 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderTextFragment* l
         if (!quote)
             continue;
 
-        auto* scopeRoot = popExitedQuoteScopes(*quote);
+        CheckedPtr scopeRoot = popExitedQuoteScopes(*quote);
 
         bool hasEnteredNewContainmentScope = scopeRoot != m_quoteScopeStack.last().scopeRoot.get();
         if (hasEnteredNewContainmentScope)
-            m_quoteScopeStack.append({ scopeRoot, m_quoteScopeStack.last().quoteDepth });
+            m_quoteScopeStack.append({ scopeRoot.get(), m_quoteScopeStack.last().quoteDepth });
 
-        auto newQuoteMark = quoteMarkAndAdvanceQuoteDepth(*quote->quoteType(), m_quoteScopeStack.last().quoteDepth, quote->style());
+        auto newQuoteMark = quoteMarkAndAdvanceQuoteDepth(*quote->quoteType(), m_quoteScopeStack.last().quoteDepth, protect(quote->style()));
         if (!equal(quote->contentString(), newQuoteMark.impl()))
             quote->setContentString(newQuoteMark);
 
@@ -552,17 +552,17 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderTextFragment* l
 void RenderTreeUpdater::GeneratedContent::updateCounters()
 {
     if (m_updater.renderView().hasCounterTreeNeedingUpdate()) {
-        for (auto& renderer : descendantsOfType<RenderElement>(m_updater.renderView())) {
-            if (renderer.hasCounterNodeMap())
+        for (CheckedRef renderer : descendantsOfType<RenderElement>(m_updater.renderView())) {
+            if (renderer->hasCounterNodeMap())
                 RenderCounter::destroyCounterNodes(renderer);
         }
         m_updater.renderView().setHasCounterTreeNeedingUpdate(false);
     }
 
     auto update = [&] {
-        auto counters = m_updater.renderView().takeCountersNeedingUpdate();
-        for (auto& counter : counters)
-            counter.updateCounter();
+        auto counters = protect(m_updater.renderView())->takeCountersNeedingUpdate();
+        for (CheckedRef counter : counters)
+            counter->updateCounter();
     };
     // Update twice and hope it stabilizes.
     update();
@@ -603,7 +603,8 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text&
 
 static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, Document& document, const Style::ComputedStyle& pseudoStyle)
 {
-    auto contentRenderer = createRenderer<RenderImage>(RenderObject::Type::Image, document, Style::ComputedStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.image.value.ptr());
+    auto contentStyle = Style::ComputedStyle::createStyleInheritingFromPseudoStyle(pseudoStyle);
+    auto contentRenderer = createRenderer<RenderImage>(RenderObject::Type::Image, document, WTF::move(contentStyle), value.image.value.ptr());
     contentRenderer->initializeStyle();
     return contentRenderer;
 }
@@ -629,10 +630,11 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Glyph
 void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const Style::ComputedStyle& style, PseudoElementType pseudoElementType)
 {
     if (auto* contentData = style.content().tryData()) {
+        Ref document = pseudoRenderer.document();
         for (auto& contentItem : contentData->visible) {
             WTF::switchOn(contentItem,
                 [&](const auto& item) {
-                    if (auto child = createContentRenderer(item, pseudoRenderer.document(), style); child && pseudoRenderer.isChildAllowed(*child, style))
+                    if (RenderPtr<RenderObject> child = createContentRenderer(item, document, style); child && pseudoRenderer.isChildAllowed(*child, style))
                         builder.attach(pseudoRenderer, WTF::move(child));
                 }
             );
@@ -662,11 +664,12 @@ void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuild
 
 void RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(RenderElement& pseudoRenderer, const Style::ComputedStyle& style)
 {
-    for (auto& contentRenderer : descendantsOfType<RenderElement>(pseudoRenderer)) {
+    for (CheckedRef contentRenderer : descendantsOfType<RenderElement>(pseudoRenderer)) {
         // Generated text uses the style of its parent, so only images need theirs updated.
         if (!is<RenderImage>(contentRenderer))
             continue;
-        contentRenderer.setStyle(Style::ComputedStyle::createStyleInheritingFromPseudoStyle(style));
+        auto contentStyle = Style::ComputedStyle::createStyleInheritingFromPseudoStyle(style);
+        contentRenderer->setStyle(WTF::move(contentStyle));
     }
 }
 
@@ -679,7 +682,7 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
-    auto* updateStyle = (elementUpdate.style && elementUpdate.style->hasPseudoElementStyles()) ? elementUpdate.style->pseudoElementStyle({ pseudoElementType }) : nullptr;
+    CheckedPtr updateStyle = (elementUpdate.style && elementUpdate.style->hasPseudoElementStyles()) ? protect(*elementUpdate.style)->pseudoElementStyle({ pseudoElementType }) : nullptr;
 
     // If we end up losing a previous pseudo because the style got removed we need to
     // cancel any animations that were on it so we do not end up thinking we need to keep
@@ -702,9 +705,11 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
     if (!updateStyle)
         return;
 
-    auto* existingStyle = pseudoElement ? pseudoElement->renderOrDisplayContentsStyle() : nullptr;
-
-    auto styleChanges = existingStyle ? Style::determineChanges(*updateStyle, *existingStyle) : Style::Change::Renderer;
+    // The existing style is destroyed by updateElementRenderer() below, so it must not outlive this computation.
+    auto styleChanges = [&] -> OptionSet<Style::Change> {
+        CheckedPtr existingStyle = pseudoElement ? pseudoElement->renderOrDisplayContentsStyle() : nullptr;
+        return existingStyle ? Style::determineChanges(*updateStyle, *existingStyle) : Style::Change::Renderer;
+    }();
     if (!styleChanges)
         return;
 
@@ -729,7 +734,7 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
         m_updater.updateElementRenderer(*pseudoElement, WTF::move(pseudoElementUpdate));
     }
 
-    auto* pseudoElementRenderer = pseudoElement->renderer();
+    CheckedPtr pseudoElementRenderer = pseudoElement->renderer();
     if (!pseudoElementRenderer)
         return;
 
@@ -739,7 +744,7 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
         updateStyleForContentRenderers(*pseudoElementRenderer, *updateStyle);
 
     if (m_updater.renderView().hasQuotesNeedingUpdate()) {
-        for (auto& textRenderer : descendantsOfType<RenderText>(*pseudoElementRenderer)) {
+        for (CheckedRef textRenderer : descendantsOfType<RenderText>(*pseudoElementRenderer)) {
             if (CheckedPtr quote = quoteTextRenderer(textRenderer))
                 updateQuotesUpTo(quote.get());
         }
@@ -761,20 +766,20 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
         return;
     }
 
-    auto style = renderer.style().pseudoElementStyle({ PseudoElementType::Backdrop });
+    CheckedPtr style = protect(renderer.style())->pseudoElementStyle({ PseudoElementType::Backdrop });
     if (!style || style->display() == Style::DisplayType::None) {
         destroyBackdropIfNeeded();
         return;
     }
 
     auto newStyle = Style::ComputedStyle::clone(*style);
-    if (auto backdropRenderer = renderer.pseudoElementRenderer(PseudoElementType::Backdrop))
+    if (CheckedPtr backdropRenderer = renderer.pseudoElementRenderer(PseudoElementType::Backdrop).get())
         backdropRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);
     else {
-        auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, renderer.document(), WTF::move(newStyle));
+        auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, m_updater.m_document.get(), WTF::move(newStyle));
         newBackdropRenderer->initializeStyle();
         renderer.setPseudoElementRenderer(PseudoElementType::Backdrop, *newBackdropRenderer.get());
-        m_updater.m_builder.attach(renderer.view(), WTF::move(newBackdropRenderer));
+        m_updater.m_builder.attach(protect(renderer.view()), WTF::move(newBackdropRenderer));
     }
 }
 
@@ -782,7 +787,8 @@ bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::Comput
 {
     if (!style)
         return false;
-    if (!m_updater.renderTreePosition().parent().canHaveGeneratedChildren())
+    auto& renderTreePosition = m_updater.renderTreePosition();
+    if (!renderTreePosition.parent().canHaveGeneratedChildren())
         return false;
     if (!Style::pseudoElementRendererIsNeeded(*style))
         return false;
@@ -813,7 +819,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         if (!renderer.element())
             return;
 
-        Ref editor = renderer.element()->document().editor();
+        Ref editor = m_updater.m_document->editor();
 
         if (WeakPtr writingSuggestionsRenderer = editor->writingSuggestionRenderer())
             // The renderer is destroyed by this call, so it cannot be protected.
@@ -826,7 +832,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
     if (!renderer.element())
         return;
 
-    Ref editor = renderer.element()->document().editor();
+    Ref editor = m_updater.m_document->editor();
     RefPtr nodeBeforeWritingSuggestions = editor->nodeBeforeWritingSuggestions();
     if (!nodeBeforeWritingSuggestions)
         return;
@@ -840,7 +846,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return;
     }
 
-    auto style = renderer.lazyPseudoElementStyle({ PseudoElementType::InternalWritingSuggestions });
+    CheckedPtr style = renderer.lazyPseudoElementStyle({ PseudoElementType::InternalWritingSuggestions });
     if (!style || style->display() == Style::DisplayType::None) {
         destroyWritingSuggestionsIfNeeded();
         return;
@@ -868,44 +874,49 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return { textWithoutSuggestion.substring(0, offset), textWithoutSuggestion.substring(offset) };
     }();
 
-    nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
+    protect(nodeBeforeWritingSuggestionsTextRenderer.get())->setText(prefix);
 
     auto newStyle = Style::ComputedStyle::clone(*style);
     newStyle->setDisplay(Style::DisplayType::InlineFlow);
 
-    if (auto writingSuggestionsRenderer = editor->writingSuggestionRenderer()) {
-        writingSuggestionsRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);
+    if (editor->writingSuggestionRenderer()) {
+        // These renderers must not be protected when destroyWritingSuggestionsIfNeeded() runs, since it destroys them.
+        auto updateExistingWritingSuggestionsRenderers = [&] {
+            CheckedPtr writingSuggestionsRenderer = editor->writingSuggestionRenderer();
+            writingSuggestionsRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);
 
-        auto* writingSuggestionsText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->firstChild());
-        if (!writingSuggestionsText) {
+            CheckedPtr writingSuggestionsText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->firstChild());
+            if (!writingSuggestionsText)
+                return false;
+
+            writingSuggestionsText->setText(writingSuggestionData->content());
+
+            if (!suffix.isEmpty()) {
+                CheckedPtr suffixText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->nextSibling());
+                if (!suffixText)
+                    return false;
+
+                suffixText->setText(suffix);
+            }
+            return true;
+        };
+        if (!updateExistingWritingSuggestionsRenderers()) {
             ASSERT_NOT_REACHED();
             destroyWritingSuggestionsIfNeeded();
             return;
         }
-
-        writingSuggestionsText->setText(writingSuggestionData->content());
-
-        if (!suffix.isEmpty()) {
-            auto* suffixText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->nextSibling());
-            if (!suffixText) {
-                ASSERT_NOT_REACHED();
-                destroyWritingSuggestionsIfNeeded();
-                return;
-            }
-
-            suffixText->setText(suffix);
-        }
     } else {
-        auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, renderer.document(), WTF::move(newStyle));
+        auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, m_updater.m_document.get(), WTF::move(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
 
         WeakPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
 
-        auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
+        auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, m_updater.m_document.get(), writingSuggestionData->content());
         m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTF::move(writingSuggestionsText));
 
         editor->setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
-        m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
+        // attach() may destroy the parent, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
 
         if (!parentForWritingSuggestions) {
             destroyWritingSuggestionsIfNeeded();
@@ -921,7 +932,8 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
         if (!suffix.isEmpty()) {
             auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
-            m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(suffixRenderer), rendererAfterWritingSuggestions.get());
+            // attach() may destroy the parent, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(suffixRenderer), rendererAfterWritingSuggestions.get());
         }
     }
 }

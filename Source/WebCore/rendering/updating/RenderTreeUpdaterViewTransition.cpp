@@ -73,7 +73,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
     }
 
     // Destroy pseudo element tree ::view-transition has display: none or no style.
-    auto rootStyle = documentElementRenderer->style().pseudoElementStyle({ PseudoElementType::ViewTransition });
+    CheckedPtr rootStyle = documentElementRenderer->style().pseudoElementStyle({ PseudoElementType::ViewTransition });
     if (!rootStyle || rootStyle->display() == Style::DisplayType::None) {
         destroyPseudoElementTreeIfNeeded();
         return;
@@ -86,7 +86,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 
     WeakPtr viewTransitionContainingBlock = documentElementRenderer->view().viewTransitionContainingBlock();
     if (!viewTransitionContainingBlock) {
-        auto containingBlockStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(documentElementRenderer->view().style(), Style::DisplayType::BlockFlow);
+        auto containingBlockStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(documentElementRenderer->view().style()), Style::DisplayType::BlockFlow);
         containingBlockStyle->setPosition(PositionType::Fixed);
         containingBlockStyle->setPointerEvents(PointerEvents::None);
 
@@ -100,18 +100,18 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
         newViewTransitionContainingBlock->initializeStyle();
         documentElementRenderer->view().setViewTransitionContainingBlock(*newViewTransitionContainingBlock.get());
         viewTransitionContainingBlock = newViewTransitionContainingBlock.get();
-        m_updater.m_builder.attach(*documentElementRenderer->parent(), WTF::move(newViewTransitionContainingBlock));
+        m_updater.m_builder.attach(*protect(documentElementRenderer->parent()), WTF::move(newViewTransitionContainingBlock));
     }
 
     // Create ::view-transition as needed.
     WeakPtr viewTransitionRoot = dynamicDowncast<RenderBlockFlow>(viewTransitionContainingBlock->firstChildBox());
     if (viewTransitionRoot)
-        viewTransitionRoot->setStyle(WTF::move(newRootStyle), minimalStyleDifference);
+        protect(viewTransitionRoot)->setStyle(WTF::move(newRootStyle), minimalStyleDifference);
     else {
         auto newViewTransitionRoot = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(newRootStyle));
         newViewTransitionRoot->initializeStyle();
         viewTransitionRoot = newViewTransitionRoot.get();
-        m_updater.m_builder.attach(*viewTransitionContainingBlock, WTF::move(newViewTransitionRoot));
+        m_updater.m_builder.attach(*protect(viewTransitionContainingBlock), WTF::move(newViewTransitionRoot));
     }
 
     // No groups. The map is constant during the duration of the transition, so we don't need to handle deletions.
@@ -120,19 +120,22 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 
     // Traverse named elements map to update/build all ::view-transition-group().
     Vector<SingleThreadWeakPtr<RenderElement>> descendantsToDelete;
-    auto* currentGroup = viewTransitionRoot->firstChildBox();
-    for (auto& name : activeViewTransition->namedElements().keys()) {
-        ASSERT(!currentGroup || currentGroup->style().pseudoElementType() == PseudoElementType::ViewTransitionGroup);
-        if (currentGroup && name == currentGroup->style().pseudoElementNameArgument()) {
-            auto style = documentElementRenderer->style().pseudoElementStyle({ PseudoElementType::ViewTransitionGroup, name });
-            if (!style || style->display() == Style::DisplayType::None) {
-                documentElementRenderer->view().removeViewTransitionGroup(name);
-                descendantsToDelete.append(currentGroup);
+    // Scoped so that currentGroup is released before the groups below are destroyed.
+    {
+        CheckedPtr currentGroup = viewTransitionRoot->firstChildBox();
+        for (auto& name : activeViewTransition->namedElements().keys()) {
+            ASSERT(!currentGroup || currentGroup->style().pseudoElementType() == PseudoElementType::ViewTransitionGroup);
+            if (currentGroup && name == currentGroup->style().pseudoElementNameArgument()) {
+                CheckedPtr style = documentElementRenderer->style().pseudoElementStyle({ PseudoElementType::ViewTransitionGroup, name });
+                if (!style || style->display() == Style::DisplayType::None) {
+                    protect(documentElementRenderer->view())->removeViewTransitionGroup(name);
+                    descendantsToDelete.append(currentGroup.get());
+                } else
+                    updatePseudoElementGroup(*style, *currentGroup, *documentElementRenderer, minimalStyleDifference);
+                currentGroup = currentGroup->nextSiblingBox();
             } else
-                updatePseudoElementGroup(*style, *currentGroup, *documentElementRenderer, minimalStyleDifference);
-            currentGroup = currentGroup->nextSiblingBox();
-        } else
-            buildPseudoElementGroup(*viewTransitionRoot, name, *documentElementRenderer, currentGroup);
+                buildPseudoElementGroup(*protect(viewTransitionRoot), name, *documentElementRenderer, currentGroup);
+        }
     }
 
     for (auto& descendant : descendantsToDelete) {
@@ -144,8 +147,8 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 
 static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElementRenderer, const AtomString& name, PseudoElementType pseudoElementType)
 {
-    auto& documentElementStyle = documentElementRenderer.style();
-    auto style = documentElementStyle.pseudoElementStyle({ pseudoElementType, name });
+    CheckedRef documentElementStyle = documentElementRenderer.style();
+    CheckedPtr style = documentElementStyle->pseudoElementStyle({ pseudoElementType, name });
     if (!style || style->display() == Style::DisplayType::None)
         return nullptr;
 
@@ -161,15 +164,18 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
 
         auto& state = pseudoElementType == PseudoElementType::ViewTransitionOld ? capturedElement->oldState : capturedElement->newState;
 
-        RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, Style::ComputedStyle::clone(*style), state.isRootElement);
+        auto newStyle = Style::ComputedStyle::clone(*style);
+        RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, WTF::move(newStyle), state.isRootElement);
         rendererViewTransition->setCapturedSize(state.size, state.overflowRect, state.layerToLayoutOffset);
         if (pseudoElementType == PseudoElementType::ViewTransitionOld) {
             rendererViewTransition->setImage(capturedElement->oldImage.value_or(nullptr));
             rendererViewTransition->setDisplayOnlyImage(RefPtr { capturedElement->oldDisplayOnlyImage });
         }
         renderer = WTF::move(rendererViewTransition);
-    } else
-        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, Style::ComputedStyle::clone(*style));
+    } else {
+        auto newStyle = Style::ComputedStyle::clone(*style);
+        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(newStyle));
+    }
 
     renderer->initializeStyle();
     return renderer;
@@ -193,22 +199,22 @@ void RenderTreeUpdater::ViewTransition::buildPseudoElementGroup(RenderBlockFlow&
         m_updater.m_builder.attach(*viewTransitionGroup, WTF::move(viewTransitionImagePair));
 
     if (viewTransitionGroup) {
-        documentElementRenderer.view().addViewTransitionGroup(name, *viewTransitionGroup.get());
+        protect(documentElementRenderer.view())->addViewTransitionGroup(name, *viewTransitionGroup.get());
         m_updater.m_builder.attach(viewTransitionRoot, WTF::move(viewTransitionGroup), beforeChild);
     }
 }
 
 void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::ComputedStyle& groupStyle, RenderBox& group, RenderElement& documentElementRenderer, Style::DifferenceResult minimalStyleDifference)
 {
-    auto& documentElementStyle = documentElementRenderer.style();
+    CheckedRef documentElementStyle = documentElementRenderer.style();
     auto name = groupStyle.pseudoElementNameArgument();
 
     auto newGroupStyle = Style::ComputedStyle::clone(groupStyle);
     group.setStyle(WTF::move(newGroupStyle), minimalStyleDifference);
 
     enum class ShouldDeleteRenderer : bool { No, Yes };
-    auto updateRenderer = [&](auto& renderer) -> ShouldDeleteRenderer {
-        auto style = documentElementStyle.pseudoElementStyle({ *renderer.style().pseudoElementType(), name });
+    auto updateRenderer = [&](RenderBox& renderer) -> ShouldDeleteRenderer {
+        CheckedPtr style = documentElementStyle->pseudoElementStyle({ *renderer.style().pseudoElementType(), name });
         if (!style || style->display() == Style::DisplayType::None)
             return ShouldDeleteRenderer::Yes;
 
@@ -221,7 +227,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::Co
     SingleThreadWeakPtr<RenderBox> imagePair = group.firstChildBox();
     if (imagePair) {
         ASSERT(imagePair->style().pseudoElementType() == PseudoElementType::ViewTransitionImagePair);
-        auto shouldDeleteRenderer = updateRenderer(*imagePair);
+        auto shouldDeleteRenderer = updateRenderer(protect(*imagePair));
         if (shouldDeleteRenderer == ShouldDeleteRenderer::Yes) {
             // The renderer is destroyed by this call, so it cannot be protected.
             SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*imagePair);
@@ -233,13 +239,13 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::Co
     } else
         return;
 
-    auto* imagePairFirstChild = imagePair->firstChildBox();
+    SingleThreadWeakPtr<RenderBox> imagePairFirstChild = imagePair->firstChildBox();
     // Build the ::view-transition-image-pair children if needed.
     if (!imagePairFirstChild) {
         if (auto viewTransitionOld = createRendererIfNeeded(documentElementRenderer, name, PseudoElementType::ViewTransitionOld))
-            m_updater.m_builder.attach(*imagePair, WTF::move(viewTransitionOld));
+            m_updater.m_builder.attach(*protect(imagePair), WTF::move(viewTransitionOld));
         if (auto viewTransitionNew = createRendererIfNeeded(documentElementRenderer, name, PseudoElementType::ViewTransitionNew))
-            m_updater.m_builder.attach(*imagePair, WTF::move(viewTransitionNew));
+            m_updater.m_builder.attach(*protect(imagePair), WTF::move(viewTransitionNew));
         return;
     }
 
@@ -253,7 +259,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::Co
     RenderPtr<RenderBox> newViewTransitionNew;
     if (imagePairFirstChild->style().pseudoElementType() == PseudoElementType::ViewTransitionOld) {
         viewTransitionOld = imagePairFirstChild;
-        shouldDeleteViewTransitionOld = updateRenderer(*viewTransitionOld);
+        shouldDeleteViewTransitionOld = updateRenderer(protect(*viewTransitionOld));
         viewTransitionNew = viewTransitionOld->nextSiblingBox();
         ASSERT(!viewTransitionNew || viewTransitionNew->style().pseudoElementType() == PseudoElementType::ViewTransitionNew);
     } else {
@@ -266,19 +272,19 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::Co
     if (!viewTransitionNew)
         newViewTransitionNew = createRendererIfNeeded(documentElementRenderer, name, PseudoElementType::ViewTransitionNew);
     else
-        shouldDeleteViewTransitionNew = updateRenderer(*viewTransitionNew);
+        shouldDeleteViewTransitionNew = updateRenderer(protect(*viewTransitionNew));
 
     if (shouldDeleteViewTransitionNew == ShouldDeleteRenderer::Yes)
         // The renderer is destroyed by this call, so it cannot be protected.
         SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionNew);
     else if (newViewTransitionNew)
-        m_updater.m_builder.attach(*imagePair, WTF::move(newViewTransitionNew));
+        m_updater.m_builder.attach(*protect(imagePair), WTF::move(newViewTransitionNew));
 
     if (shouldDeleteViewTransitionOld == ShouldDeleteRenderer::Yes)
         // The renderer is destroyed by this call, so it cannot be protected.
         SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionOld);
     else if (newViewTransitionOld)
-        m_updater.m_builder.attach(*imagePair, WTF::move(newViewTransitionOld), viewTransitionNew.get());
+        m_updater.m_builder.attach(*protect(imagePair), WTF::move(newViewTransitionOld), protect(viewTransitionNew));
 }
 
 

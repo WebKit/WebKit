@@ -48,7 +48,7 @@ RenderTreeBuilder::Inline::Inline(RenderTreeBuilder& builder)
 void RenderTreeBuilder::Inline::attach(RenderBoxModelObject& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     ASSERT(parent.isInlineBox());
-    auto* beforeChildOrPlaceholder = beforeChild;
+    CheckedPtr beforeChildOrPlaceholder = beforeChild;
     if (auto* fragmentedFlow = parent.enclosingFragmentedFlow())
         beforeChildOrPlaceholder = m_builder.multiColumnBuilder().resolveMovedChild(*fragmentedFlow, beforeChild);
 
@@ -59,9 +59,9 @@ void RenderTreeBuilder::Inline::attach(RenderBoxModelObject& parent, RenderPtr<R
     if (beforeChildOrPlaceholder && beforeChildOrPlaceholder->parent() != &parent)
         beforeChildOrPlaceholder = m_builder.splitAnonymousBoxesAroundChild(parent, *beforeChildOrPlaceholder);
 
-    auto& childToAdd = *child;
+    CheckedRef childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTF::move(child), beforeChildOrPlaceholder);
-    childToAdd.setNeedsLayoutAndInvalidateContentLogicalWidths();
+    childToAdd->setNeedsLayoutAndInvalidateContentLogicalWidths();
 }
 
 }

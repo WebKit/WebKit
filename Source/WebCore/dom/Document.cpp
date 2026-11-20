@@ -3574,17 +3574,20 @@ void Document::destroyRenderTree()
 
     // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
     {
-        RenderTreeBuilder builder(protect(*m_renderView));
-        // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
-        while (WeakPtr child = m_renderView->firstChild()) {
-            // destroy() deletes the renderer, so it cannot be protected.
-            SUPPRESS_UNCHECKED_ARG builder.destroy(*child);
-        }
+        {
+            // The builder refers to the RenderView, so it must go away before the RenderView is destroyed.
+            RenderTreeBuilder builder(protect(*m_renderView));
+            // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
+            while (WeakPtr child = m_renderView->firstChild()) {
+                // destroy() deletes the renderer, so it cannot be protected.
+                SUPPRESS_UNCHECKED_ARG builder.destroy(*child);
+            }
 
-        if (RefPtr view = this->view()) {
-            CheckedRef layoutContext = view->layoutContext();
-            layoutContext->deleteDetachedRenderersNow();
-            layoutContext->deleteDetachedInlineContentNow();
+            if (RefPtr view = this->view()) {
+                CheckedRef layoutContext = view->layoutContext();
+                layoutContext->deleteDetachedRenderersNow();
+                layoutContext->deleteDetachedInlineContentNow();
+            }
         }
 
         // destroy() deletes the RenderView, so it cannot be protected.

@@ -58,8 +58,8 @@ public:
     [[nodiscard]] RenderPtr<RenderObject> detach(RenderSVGText& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed);
 
 private:
-    RenderSVGViewportContainer& findOrCreateParentForChild(RenderSVGRoot&);
-    RenderSVGViewportContainer& createViewportContainer(RenderSVGRoot&);
+    CheckedRef<RenderSVGViewportContainer> findOrCreateParentForChild(RenderSVGRoot&);
+    CheckedRef<RenderSVGViewportContainer> createViewportContainer(RenderSVGRoot&);
     RenderTreeBuilder& m_builder;
 };
 

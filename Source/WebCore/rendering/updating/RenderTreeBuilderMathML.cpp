@@ -48,7 +48,8 @@ RenderTreeBuilder::MathML::MathML(RenderTreeBuilder& builder)
 RenderPtr<RenderMathMLFencedOperator> RenderTreeBuilder::MathML::createMathMLOperator(RenderMathMLFenced& parent, const String& operatorString,
     MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
-    RenderPtr<RenderMathMLFencedOperator> newOperator = createRenderer<RenderMathMLFencedOperator>(parent.document(), Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(parent.style()), Style::DisplayType::BlockFlow), operatorString, form, flag);
+    auto style = Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(parent.style()), Style::DisplayType::BlockFlow);
+    RenderPtr<RenderMathMLFencedOperator> newOperator = createRenderer<RenderMathMLFencedOperator>(protect(parent.document()), WTF::move(style), operatorString, form, flag);
     newOperator->initializeStyle();
     return newOperator;
 }
@@ -56,7 +57,7 @@ RenderPtr<RenderMathMLFencedOperator> RenderTreeBuilder::MathML::createMathMLOpe
 void RenderTreeBuilder::MathML::makeFences(RenderMathMLFenced& parent)
 {
     auto openFence = createMathMLOperator(parent, parent.openingBrace(), MathMLOperatorDictionary::Form::Prefix, MathMLOperatorDictionary::Fence);
-    m_builder.blockBuilder().attach(parent, WTF::move(openFence), parent.firstChild());
+    m_builder.blockBuilder().attach(parent, WTF::move(openFence), protect(parent.firstChild()));
 
     auto closeFence = createMathMLOperator(parent, parent.closingBrace(), MathMLOperatorDictionary::Form::Postfix, MathMLOperatorDictionary::Fence);
     parent.setCloseFenceRenderer(*closeFence);
@@ -110,8 +111,8 @@ void RenderTreeBuilder::MathML::attach(RenderMathMLFenced& parent, RenderPtr<Ren
     } else {
         // Adding |y| at the end of an existing element e.g. (x) - insert the separator first before the closing fence, then |y|, to get (x, y).
         if (separatorRenderer)
-            m_builder.blockBuilder().attach(parent, WTF::move(separatorRenderer), parent.closeFenceRenderer());
-        m_builder.blockBuilder().attach(parent, WTF::move(child), parent.closeFenceRenderer());
+            m_builder.blockBuilder().attach(parent, WTF::move(separatorRenderer), protect(parent.closeFenceRenderer()));
+        m_builder.blockBuilder().attach(parent, WTF::move(child), protect(parent.closeFenceRenderer()));
     }
 }
 

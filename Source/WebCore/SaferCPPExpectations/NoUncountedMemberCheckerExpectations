@@ -5,8 +5,6 @@ rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerScrollableArea.h
-rendering/updating/RenderTreeUpdater.h
-rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 style/ElementRuleCollector.cpp
 style/PropertyCascade.h
 style/PseudoClassChangeInvalidation.h

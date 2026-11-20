@@ -45,7 +45,7 @@ public:
     // FIXME: Remove.
     static RenderTreeBuilder* current() { return s_current; }
 
-    const RenderView& view() const { return m_view; }
+    const RenderView& view() const;
 
     NODELETE static bool isRebuildRootForChildren(const RenderElement&);
 
@@ -103,7 +103,7 @@ private:
 
     void removeFloatingObjects(RenderBlock&);
 
-    RenderObject* splitAnonymousBoxesAroundChild(RenderBoxModelObject& parent, RenderObject& originalBeforeChild);
+    CheckedPtr<RenderObject> splitAnonymousBoxesAroundChild(RenderBoxModelObject& parent, RenderObject& originalBeforeChild);
     void createAnonymousWrappersForInlineContent(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);
 
@@ -142,7 +142,7 @@ private:
 #endif
 
     WidgetHierarchyUpdatesSuspensionScope m_widgetHierarchyUpdatesSuspensionScope;
-    RenderView& m_view;
+    const CheckedRef<RenderView> m_view;
     SingleThreadWeakHashSet<RenderListItem> m_listItemsNeedingMarkerUpdate;
     RenderTreeBuilder* m_previous { nullptr };
     static RenderTreeBuilder* s_current;

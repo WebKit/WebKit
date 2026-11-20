@@ -45,7 +45,7 @@ public:
     void updateAfterDescendants(RenderElement&);
 
 private:
-    RenderBlock& findOrCreateParentForChild(RenderButton&);
+    CheckedRef<RenderBlock> findOrCreateParentForChild(RenderButton&);
 
     enum class PseudoElementPosition : bool { FirstChild, LastChild };
     void updatePseudoElement(PseudoElementType, RenderElement&, StyleAppearance, PseudoElementPosition = PseudoElementPosition::LastChild);

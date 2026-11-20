@@ -23,12 +23,6 @@ rendering/paint/BackgroundPainter.cpp
 [ macOS ] rendering/cocoa/RenderThemeCocoa.mm
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
-rendering/updating/RenderTreeBuilderList.cpp
-rendering/updating/RenderTreeBuilderMathML.cpp
-rendering/updating/RenderTreeBuilderMultiColumn.cpp
-rendering/updating/RenderTreeBuilderTable.cpp
-rendering/updating/RenderTreeUpdater.cpp
-rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 style/ElementRuleCollector.cpp
 style/RuleData.h
 style/StyleResolver.cpp

@@ -79,11 +79,11 @@ private:
     void destroyAndCancelAnimationsForSubtree(RenderElement&);
 
     struct Parent {
-        Element* element { nullptr };
+        CheckedPtr<Element> element;
         const Style::ElementUpdate* update { nullptr };
         std::optional<RenderTreePosition> renderTreePosition;
 
-        RenderObject* previousChildRenderer { nullptr };
+        SingleThreadWeakPtr<RenderObject> previousChildRenderer;
         bool didCreateOrDestroyChildRenderer { false };
         bool hasPrecedingInFlowChild { false };
 
