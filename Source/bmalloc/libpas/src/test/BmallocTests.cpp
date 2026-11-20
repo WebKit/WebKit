@@ -29,19 +29,32 @@
 #include "bmalloc_heap_innards.h"
 #include "pas_internal_config.h"
 #include "bmalloc_heap_utils.h"
+#include "bmalloc_prefault_supply.h"
+#include "pas_committed_pages_vector.h"
+#include "pas_heap.h"
 #include "pas_large_heap.h"
+#include "pas_page_malloc.h"
+#include "pas_probabilistic_guard_malloc_allocator.h"
+#include "pas_scavenger.h"
 #include "tagged_bmalloc_heap.h"
 #include "tagged_bmalloc_heap_config.h"
 #include "tagged_bmalloc_heap_utils.h"
 
 #if PAS_OS(DARWIN)
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
 #include <malloc/malloc.h>
 #include <sys/mman.h>
 #endif
 
 #include <array>
+#include <atomic>
+#include <chrono>
 #include <cstdlib>
 #include <cstring>
+#include <sched.h>
+#include <thread>
+#include <vector>
 
 using namespace std;
 
@@ -462,6 +475,303 @@ void testBmallocMallocSizeAcrossHeaps(BmallocHeapVariant variant)
     }
 }
 
+unsigned activeFaultInCount()
+{
+    return __atomic_load_n(&bmalloc_prefault_supply_num_active_fault_ins.value, __ATOMIC_ACQUIRE);
+}
+
+void waitForFaultInRequestsToBeServed()
+{
+    auto deadline = chrono::steady_clock::now() + chrono::seconds(30);
+    while (activeFaultInCount() && chrono::steady_clock::now() < deadline)
+        sched_yield();
+    CHECK_EQUAL(activeFaultInCount(), 0u);
+}
+
+void testFaultInPreservesContents()
+{
+    size_t size = 4 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+    uint8_t* memory = static_cast<uint8_t*>(bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, size));
+    CHECK(memory);
+    for (size_t index = 0; index < size; ++index)
+        memory[index] = static_cast<uint8_t>(index * 7 + 3);
+    waitForFaultInRequestsToBeServed();
+
+    for (size_t index = 0; index < size; ++index)
+        CHECK_EQUAL(memory[index], static_cast<uint8_t>(index * 7 + 3));
+    bmalloc_deallocate(memory);
+}
+
+#if PAS_PAGE_MALLOC_CAN_FAULT_IN_WITHOUT_WRITING
+// Only a Linux kernel before 5.14, which predates MADV_POPULATE_WRITE even when the headers define
+// it, has no way to fault the pages in.
+bool faultInIsSupportedByTheKernel()
+{
+    size_t page = pas_page_malloc_alignment();
+    void* probe = mmap(nullptr, page, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+    CHECK(probe != MAP_FAILED);
+    bool isSupported = pas_page_malloc_fault_in_without_writing(probe, page, pas_memory_flavor_plain);
+    munmap(probe, page);
+    return isSupported;
+}
+#endif
+
+void testFaultInFaultsInOnlyTheRequestedPages()
+{
+#if PAS_PAGE_MALLOC_CAN_FAULT_IN_WITHOUT_WRITING
+    if (!faultInIsSupportedByTheKernel())
+        return;
+
+    size_t page = pas_page_malloc_alignment();
+    size_t size = 8 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+    size_t offset = 2 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+    void* memory = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+    CHECK(memory != MAP_FAILED);
+#if PAS_OS(LINUX)
+    // A transparent huge page straddling offset would fault in pages on both sides of it.
+    madvise(memory, size, MADV_NOHUGEPAGE);
+#endif
+    CHECK_EQUAL(pas_count_committed_pages(memory, size, &allocationConfig), 0u);
+
+    bmalloc_prefault_supply_request_fault_in_for_testing(static_cast<char*>(memory) + offset, size - offset);
+    waitForFaultInRequestsToBeServed();
+
+    CHECK_EQUAL(pas_count_committed_pages(memory, offset, &allocationConfig), 0u);
+    CHECK_EQUAL(pas_count_committed_pages(static_cast<char*>(memory) + offset, size - offset, &allocationConfig), (size - offset) / page);
+    bmalloc_prefault_supply_cancel_fault_in(static_cast<char*>(memory) + offset);
+    munmap(memory, size);
+#endif
+}
+
+void testFaultInSkipsSmallAllocations()
+{
+    void* memory = bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE - 1);
+    CHECK(memory);
+    CHECK_EQUAL(activeFaultInCount(), 0u);
+    bmalloc_deallocate(memory);
+}
+
+void testFaultInCancellationOfNothingLeavesCountAlone()
+{
+    waitForFaultInRequestsToBeServed();
+    bmalloc_prefault_supply_cancel_fault_in_slow(nullptr);
+    CHECK_EQUAL(activeFaultInCount(), 0u);
+}
+
+void testFaultInIsCancelledByFree()
+{
+    for (unsigned iteration = 0; iteration < 100; ++iteration) {
+        size_t size = (1 + iteration % 4) * 4 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+        void* memory = bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, size);
+        CHECK(memory);
+        bmalloc_deallocate(memory);
+        CHECK_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 0u);
+        // The thread may have picked the slot just before the free cleared it, and skips the
+        // chunk once it notices.
+        waitForFaultInRequestsToBeServed();
+    }
+}
+
+void testFaultInIsCancelledByReallocate()
+{
+    for (unsigned iteration = 0; iteration < 32; ++iteration) {
+        size_t size = 4 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+        char* memory = static_cast<char*>(bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, size));
+        CHECK(memory);
+        memory[0] = 'x';
+        size_t newSize = iteration % 2 ? 2 * size : iteration + 1;
+        char* newMemory = static_cast<char*>(bmalloc_try_reallocate_auxiliary(memory, &bmalloc_compact_primitive_heap_ref, newSize, pas_reallocate_free_if_successful));
+        CHECK(newMemory);
+        CHECK_EQUAL(newMemory[0], 'x');
+        CHECK_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 0u);
+        waitForFaultInRequestsToBeServed();
+        bmalloc_deallocate(newMemory);
+    }
+}
+
+void testFaultInOfPGMAllocationIsCancelled()
+{
+#if PAS_PAGE_MALLOC_CAN_FAULT_IN_WITHOUT_WRITING
+    if (!faultInIsSupportedByTheKernel())
+        return;
+
+    pas_probabilistic_guard_malloc_initialize_pgm_as_enabled(1);
+
+    // Untouched memory queued after the allocation, so that the thread, serving the newest first,
+    // is likely to stay busy with it and leave the allocation's own fault-in queued until the free
+    // withdraws it.
+    size_t blockerSize = 256 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+
+    for (unsigned iteration = 0; iteration < 8; ++iteration) {
+        size_t size = 4 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+        char* memory = static_cast<char*>(bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, size));
+        CHECK(memory);
+        CHECK(pas_check_pgm_entry_exists(memory));
+        void* blocker = mmap(nullptr, blockerSize, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+        CHECK(blocker != MAP_FAILED);
+        bmalloc_prefault_supply_request_fault_in_for_testing(blocker, blockerSize);
+
+        memory[0] = 'x';
+        if (iteration % 2) {
+            // Reallocating frees the source through pas_try_deallocate_pgm_large.
+            char* newMemory = static_cast<char*>(bmalloc_try_reallocate_auxiliary(memory, &bmalloc_compact_primitive_heap_ref, 2 * size, pas_reallocate_free_if_successful));
+            CHECK(newMemory);
+            CHECK_EQUAL(newMemory[0], 'x');
+            CHECK(!bmalloc_prefault_supply_fault_in_is_queued_for_testing(memory));
+            memory = newMemory;
+        } else {
+            bmalloc_deallocate(memory);
+            CHECK(!bmalloc_prefault_supply_fault_in_is_queued_for_testing(memory));
+            memory = nullptr;
+        }
+
+        bmalloc_prefault_supply_cancel_fault_in(blocker);
+        waitForFaultInRequestsToBeServed();
+        munmap(blocker, blockerSize);
+        if (memory)
+            bmalloc_deallocate(memory);
+    }
+#endif
+}
+
+void testFaultInQueueOverflow()
+{
+    constexpr unsigned numAllocations = 40;
+    size_t size = BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+    std::array<void*, numAllocations> allocations;
+    for (auto& memory : allocations) {
+        memory = bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, size);
+        CHECK(memory);
+    }
+    CHECK_LESS_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 16u);
+    for (void* memory : allocations)
+        bmalloc_deallocate(memory);
+    CHECK_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 0u);
+    waitForFaultInRequestsToBeServed();
+}
+
+// Frees race the thread's chunks and each other's evictions, and unrelated large frees run the
+// lock-free check the whole time.
+void testFaultInConcurrentCancellation()
+{
+    constexpr unsigned numThreads = 4;
+    constexpr unsigned numIterations = 200;
+    std::atomic<bool> isDone { false };
+
+    std::thread unrelatedFreer([&] {
+        while (!isDone.load()) {
+            void* memory = bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, 2 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE);
+            CHECK(memory);
+            static_cast<char*>(memory)[0] = 'u';
+            bmalloc_deallocate(memory);
+        }
+    });
+
+    std::vector<std::thread> threads;
+    for (unsigned threadIndex = 0; threadIndex < numThreads; ++threadIndex) {
+        threads.emplace_back([threadIndex] {
+            std::vector<std::pair<char*, size_t>> held;
+            unsigned random = threadIndex * 7919 + 1;
+            for (unsigned iteration = 0; iteration < numIterations; ++iteration) {
+                random = random * 1103515245 + 12345;
+                size_t size = (1 + (random >> 16) % 6) * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+                char* memory = static_cast<char*>(bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, size));
+                CHECK(memory);
+                memory[0] = static_cast<char>(iteration);
+                memory[size - 1] = static_cast<char>(iteration + 1);
+
+                switch ((random >> 24) % 3) {
+                case 0:
+                    bmalloc_deallocate(memory);
+                    break;
+                case 1: {
+                    size_t newSize = (random >> 28) % 2 ? 2 * size : 4096;
+                    char* newMemory = static_cast<char*>(bmalloc_try_reallocate_auxiliary(memory, &bmalloc_compact_primitive_heap_ref, newSize, pas_reallocate_free_if_successful));
+                    CHECK(newMemory);
+                    CHECK_EQUAL(newMemory[0], static_cast<char>(iteration));
+                    bmalloc_deallocate(newMemory);
+                    break;
+                }
+                default:
+                    held.emplace_back(memory, size);
+                    break;
+                }
+
+                if (held.size() > 6) {
+                    for (auto& [heldMemory, heldSize] : held) {
+                        CHECK_EQUAL(static_cast<char>(heldMemory[heldSize - 1] - heldMemory[0]), static_cast<char>(1));
+                        bmalloc_deallocate(heldMemory);
+                    }
+                    held.clear();
+                }
+            }
+            for (auto& [heldMemory, heldSize] : held)
+                bmalloc_deallocate(heldMemory);
+        });
+    }
+    for (auto& thread : threads)
+        thread.join();
+    isDone.store(true);
+    unrelatedFreer.join();
+
+    CHECK_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 0u);
+    waitForFaultInRequestsToBeServed();
+}
+
+#if PAS_OS(DARWIN)
+size_t countPagesWithDisposition(void* memory, size_t size, int disposition)
+{
+    vector<int> dispositions(size / pas_page_malloc_alignment());
+    mach_vm_size_t count = dispositions.size();
+    CHECK_EQUAL(mach_vm_page_range_query(mach_task_self(), reinterpret_cast<mach_vm_address_t>(memory), size, reinterpret_cast<mach_vm_address_t>(dispositions.data()), &count), KERN_SUCCESS);
+    size_t result = 0;
+    for (mach_vm_size_t index = 0; index < count; ++index) {
+        if (dispositions[index] & disposition)
+            ++result;
+    }
+    return result;
+}
+
+// Memory the heap hands out again is usually resident, and the first write to a resident page still
+// traps if a decommit left it reusable or if the kernel has aged it, so faulting in has to undo both.
+void testFaultInTakesBackDecommittedPages()
+{
+    size_t size = 4 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+    void* memory = bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size);
+    CHECK(memory);
+    memset(memory, 0x55, size);
+    bmalloc_deallocate(memory);
+    pas_scavenger_decommit_free_memory();
+
+    void* reused = bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size);
+    CHECK(reused);
+    CHECK_GREATER(countPagesWithDisposition(reused, size, VM_PAGE_QUERY_PAGE_REUSABLE), 0ul);
+
+    bmalloc_prefault_supply_request_fault_in(reused, size);
+    waitForFaultInRequestsToBeServed();
+    CHECK_EQUAL(countPagesWithDisposition(reused, size, VM_PAGE_QUERY_PAGE_REUSABLE), 0ul);
+    bmalloc_deallocate(reused);
+}
+
+void testFaultInMarksAgedPagesInUse()
+{
+    size_t size = 4 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+    size_t numPages = size / pas_page_malloc_alignment();
+    void* memory = bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size);
+    CHECK(memory);
+    CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(memory), pas_page_malloc_alignment()));
+    memset(memory, 0x55, size);
+    // On Darwin this ages the pages, keeping their contents, as the kernel does to memory left alone.
+    madvise(memory, size, MADV_DONTNEED);
+    CHECK_LESS(countPagesWithDisposition(memory, size, VM_PAGE_QUERY_PAGE_REF), numPages);
+
+    bmalloc_prefault_supply_request_fault_in(memory, size);
+    waitForFaultInRequestsToBeServed();
+    CHECK_EQUAL(countPagesWithDisposition(memory, size, VM_PAGE_QUERY_PAGE_REF), numPages);
+    bmalloc_deallocate(memory);
+}
+#endif
+
 } // anonymous namespace
 
 void addBmallocTests()
@@ -480,4 +790,17 @@ void addBmallocTests()
         ADD_TEST(testBmallocLargeObjectDelegation(variant));
 #endif
     }
+    ADD_TEST(testFaultInPreservesContents());
+    ADD_TEST(testFaultInFaultsInOnlyTheRequestedPages());
+    ADD_TEST(testFaultInSkipsSmallAllocations());
+    ADD_TEST(testFaultInCancellationOfNothingLeavesCountAlone());
+    ADD_TEST(testFaultInIsCancelledByFree());
+    ADD_TEST(testFaultInIsCancelledByReallocate());
+    ADD_TEST(testFaultInOfPGMAllocationIsCancelled());
+    ADD_TEST(testFaultInQueueOverflow());
+    ADD_TEST(testFaultInConcurrentCancellation());
+#if PAS_OS(DARWIN)
+    ADD_TEST(testFaultInTakesBackDecommittedPages());
+    ADD_TEST(testFaultInMarksAgedPagesInUse());
+#endif
 }

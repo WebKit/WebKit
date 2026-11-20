@@ -78,6 +78,47 @@ void pas_page_malloc_populate(void* base, size_t size)
         bytes[offset] = 0;
 }
 
+bool pas_page_malloc_fault_in_without_writing(void* base, size_t size, pas_memory_flavor flavor)
+{
+    /* Memory whose permissions the client manages may trap on the advice below. */
+    PAS_ASSERT(!pas_memory_flavor_client_owns_permissions(flavor), flavor);
+
+#if PAS_OS(DARWIN)
+    size_t page_size;
+    size_t offset;
+    volatile char* bytes;
+
+    /* Each step readies a different kind of page whose first write would otherwise trap. */
+
+    /* Pages that a decommit (MADV_FREE_REUSABLE) left resident. Only this takes them back: a load
+       would leave them trapping. */
+    madvise(base, size, MADV_FREE_REUSE);
+
+    /* Pages that are not mapped at all, such as ones never touched or ones the kernel compressed,
+       faulted in writable within this one call rather than by a fault per load below. */
+    madvise(base, size, MADV_WILLNEED);
+
+    /* Pages that are still mapped and dirty but that the kernel has aged. No advice reaches them,
+       only an access, which marks them in use again. By now every other page is mapped, so these are
+       the only loads that fault. */
+    page_size = pas_page_malloc_alignment();
+    bytes = (volatile char*)base;
+    for (offset = 0; offset < size; offset += page_size)
+        (void)bytes[offset];
+    return true;
+#elif PAS_OS(LINUX) && defined(MADV_POPULATE_WRITE)
+    /* Headers can be newer than the running kernel, which rejects advice it does not know. */
+    if (!madvise(base, size, MADV_POPULATE_WRITE))
+        return true;
+    return errno != EINVAL;
+#else
+    /* A load alone faults a fresh page in for reading only, so its first write would still trap. */
+    PAS_UNUSED_PARAM(base);
+    PAS_UNUSED_PARAM(size);
+    return false;
+#endif
+}
+
 #if PAS_USE_MADV_ZERO
 #if PAS_OS(DARWIN)
 /* Prefer MADV_ZERO over the mmap fallback from this version onwards. */

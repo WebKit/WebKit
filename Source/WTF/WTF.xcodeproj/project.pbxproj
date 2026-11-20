@@ -691,6 +691,7 @@
 		DDF307C827C086DF006A526F /* ExternalStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307C927C086DF006A526F /* StringHasher.h in Headers */ = {isa = PBXBuildFile; fileRef = 933D63191FCB6AB90032ECD6 /* StringHasher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307CA27C086DF006A526F /* AtomStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47320151A825B004123FF /* AtomStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4957F69D0A984F2B81516091 /* StringImplMallocWithBackgroundPrefault.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DE3ADCE64AB44B5A01CCDD5 /* StringImplMallocWithBackgroundPrefault.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307CB27C086DF006A526F /* StringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47329151A825B004123FF /* StringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307CC27C086DF006A526F /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47325151A825B004123FF /* StringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307CD27C086DF006A526F /* StringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47327151A825B004123FF /* StringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1729,6 +1730,7 @@
 		A8A47326151A825B004123FF /* StringConcatenate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConcatenate.h; sourceTree = "<group>"; };
 		A8A47327151A825B004123FF /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHash.h; sourceTree = "<group>"; };
 		A8A47328151A825B004123FF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringImpl.cpp; sourceTree = "<group>"; };
+		3DE3ADCE64AB44B5A01CCDD5 /* StringImplMallocWithBackgroundPrefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringImplMallocWithBackgroundPrefault.h; sourceTree = "<group>"; };
 		A8A47329151A825B004123FF /* StringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringImpl.h; sourceTree = "<group>"; };
 		A8A4732C151A825B004123FF /* TextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPosition.h; sourceTree = "<group>"; };
 		A8A4732D151A825B004123FF /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFString.cpp; sourceTree = "<group>"; };
@@ -3045,6 +3047,7 @@
 				FF8CB4022A88C125004AF498 /* StringHasherInlines.h */,
 				A8A47328151A825B004123FF /* StringImpl.cpp */,
 				A8A47329151A825B004123FF /* StringImpl.h */,
+				3DE3ADCE64AB44B5A01CCDD5 /* StringImplMallocWithBackgroundPrefault.h */,
 				7C3B06E824A116E600FD26C7 /* StringParsingBuffer.h */,
 				E324FAA228C9ADBA007089DF /* StringSearch.h */,
 				CD00360D21501F7800F4ED4C /* StringToIntegerConversion.h */,
@@ -3996,6 +3999,7 @@
 				DDF307C927C086DF006A526F /* StringHasher.h in Headers */,
 				FF8CB4032A88C125004AF498 /* StringHasherInlines.h in Headers */,
 				DDF307CB27C086DF006A526F /* StringImpl.h in Headers */,
+				4957F69D0A984F2B81516091 /* StringImplMallocWithBackgroundPrefault.h in Headers */,
 				DDF307C727C086DF006A526F /* StringParsingBuffer.h in Headers */,
 				DD3DC90427A4BF8E007E5B61 /* StringPrintStream.h in Headers */,
 				E324FAA328C9ADBA007089DF /* StringSearch.h in Headers */,

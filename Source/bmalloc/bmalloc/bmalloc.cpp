@@ -32,6 +32,7 @@
 
 #if BENABLE(LIBPAS)
 #include "bmalloc_heap_config.h"
+#include "bmalloc_prefault_supply.h"
 #include "tagged_bmalloc_heap_utils.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_platform.h"
@@ -63,6 +64,24 @@ pas_primitive_heap_ref gigacageHeaps[static_cast<size_t>(Gigacage::NumberOfKinds
 void* mallocOutOfLine(size_t size, CompactAllocationMode mode, HeapKind kind)
 {
     return malloc(size, mode, kind);
+}
+
+void* tryMallocWithBackgroundPrefault(size_t size, CompactAllocationMode mode)
+{
+    void* result = tryMalloc(size, mode);
+#if BUSE(LIBPAS)
+    bmalloc_prefault_supply_request_fault_in(result, size);
+#endif
+    return result;
+}
+
+void* mallocWithBackgroundPrefault(size_t size, CompactAllocationMode mode)
+{
+    void* result = malloc(size, mode);
+#if BUSE(LIBPAS)
+    bmalloc_prefault_supply_request_fault_in(result, size);
+#endif
+    return result;
 }
 
 void freeOutOfLine(void* object, HeapKind kind)

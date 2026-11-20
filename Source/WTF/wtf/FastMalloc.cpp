@@ -581,6 +581,34 @@ PRESERVE_MOST TryMallocReturnValue tryFastCompactMalloc(size_t size)
     return result;
 }
 
+PRESERVE_MOST void* fastMallocWithBackgroundPrefault(size_t size, bmalloc::CompactAllocationMode mode)
+{
+    ASSERT_IS_WITHIN_LIMIT(size);
+    assertMallocRestrictionForCurrentThreadScope();
+    void* result = bmalloc::api::mallocWithBackgroundPrefault(size, mode);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordMalloc(result, size);
+#endif
+    if (mode == bmalloc::CompactAllocationMode::Compact)
+        BPROFILE_ALLOCATION(COMPACTIBLE, result, size);
+    else
+        BPROFILE_ALLOCATION(NON_JS_CELL, result, size);
+    return result;
+}
+
+PRESERVE_MOST TryMallocReturnValue tryFastMallocWithBackgroundPrefault(size_t size, bmalloc::CompactAllocationMode mode)
+{
+    FAIL_IF_EXCEEDS_LIMIT(size);
+    assertMallocRestrictionForCurrentThreadScope();
+    void* result = bmalloc::api::tryMallocWithBackgroundPrefault(size, mode);
+    if (mode == bmalloc::CompactAllocationMode::Compact)
+        BPROFILE_ALLOCATION(COMPACTIBLE, result, size);
+    else
+        BPROFILE_TRY_ALLOCATION(NON_JS_CELL, result, size);
+    return result;
+}
+
 TryMallocReturnValue tryFastCompactCalloc(size_t numElements, size_t elementSize)
 {
     FAIL_IF_EXCEEDS_LIMIT(numElements * elementSize);

@@ -53,6 +53,9 @@ private:
 #endif
 };
 
+// Hands libpas's prefault thread the options that govern it, so it runs once Options are final.
+void configurePrefaultSupply();
+
 // The supply of pre-warmed MarkedBlocks is a process-wide singleton with no other observer, so $vm
 // reaches its state through these rather than through any VM.
 bool warmUpMarkedBlocksAreEnabledForTesting();

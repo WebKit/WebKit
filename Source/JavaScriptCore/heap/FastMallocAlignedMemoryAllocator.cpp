@@ -51,22 +51,25 @@ static bool warmUpMarkedBlocksIsEnabled()
     return Options::useWarmUpMarkedBlocks() && Options::warmUpMarkedBlockCount() && !VM::isInMiniMode();
 }
 
-static void configureWarmUpSupply()
+#endif
+
+void configurePrefaultSupply()
 {
+#if USE(LIBPAS)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         bmalloc_prefault_supply_set_block_size(MarkedBlock::blockSize);
         bmalloc_prefault_supply_idle_timeout_in_milliseconds = Options::warmUpMarkedBlockIdleTimeout() * 1000;
         bmalloc_prefault_supply_target = warmUpMarkedBlocksIsEnabled() ? Options::warmUpMarkedBlockCount() : 0;
+        bmalloc_prefault_supply_fault_in_is_enabled = Options::useBackgroundPrefaultForLargeBuffers() && !VM::isInMiniMode();
     });
-}
-
 #endif
+}
 
 bool warmUpMarkedBlocksAreEnabledForTesting()
 {
 #if USE(LIBPAS)
-    configureWarmUpSupply();
+    configurePrefaultSupply();
     return !!bmalloc_prefault_supply_target;
 #else
     return false;
@@ -76,7 +79,7 @@ bool warmUpMarkedBlocksAreEnabledForTesting()
 unsigned warmUpMarkedBlockCountForTesting()
 {
 #if USE(LIBPAS)
-    configureWarmUpSupply();
+    configurePrefaultSupply();
     return bmalloc_prefault_supply_block_count();
 #else
     return 0;
@@ -95,6 +98,7 @@ void setWarmUpMarkedBlockAllocationShouldFailForTesting(bool shouldFail)
 
 #else // ENABLE(MALLOC_HEAP_BREAKDOWN)
 
+void configurePrefaultSupply() { }
 bool warmUpMarkedBlocksAreEnabledForTesting() { return false; }
 unsigned warmUpMarkedBlockCountForTesting() { return 0; }
 void setWarmUpMarkedBlockAllocationShouldFailForTesting(bool) { }
@@ -120,7 +124,7 @@ void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignmen
     // MarkedBlock::tryCreate is the only caller today and always asks for a block-shaped region.
     // The guard keeps a future caller of some other size from being handed a block.
     if (alignment == MarkedBlock::blockSize && size == MarkedBlock::blockSize && warmUpMarkedBlocksIsEnabled()) {
-        configureWarmUpSupply();
+        configurePrefaultSupply();
         return bmalloc_prefault_supply_try_allocate();
     }
 #endif

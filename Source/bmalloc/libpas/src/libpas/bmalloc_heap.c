@@ -32,6 +32,7 @@
 #if PAS_ENABLE_BMALLOC
 
 #include "bmalloc_heap_inlines.h"
+#include "bmalloc_prefault_supply.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -77,6 +78,16 @@ void* bmalloc_allocate_auxiliary(pas_primitive_heap_ref* heap_ref,
                                  size_t size)
 {
     return bmalloc_allocate_auxiliary_inline(heap_ref, size);
+}
+
+void* bmalloc_try_allocate_auxiliary_with_background_prefault(pas_primitive_heap_ref* heap_ref,
+                                                              size_t size)
+{
+    void* result;
+
+    result = bmalloc_try_allocate_auxiliary_inline(heap_ref, size);
+    bmalloc_prefault_supply_request_fault_in(result, size);
+    return result;
 }
 
 #if !(defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN)

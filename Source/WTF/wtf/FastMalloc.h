@@ -21,6 +21,7 @@
 #pragma once
 
 #include <bmalloc/BPlatform.h>
+#include <bmalloc/CompactAllocationMode.h>
 #include <bmalloc/Gigacage.h>
 #include <new>
 #include <stdlib.h>
@@ -175,6 +176,11 @@ WTF_EXPORT_PRIVATE PRESERVE_MOST void fastFree(void*);
 // that take a plain function pointer (GDestroyNotify, sqlite3_mem_methods, and friends). Pass this
 // instead at those call sites; taking the address of fastFree there is a compile error.
 WTF_EXPORT_PRIVATE void fastFreeCallback(void*);
+
+// Like fastMalloc and tryFastMalloc, or their compact counterparts, for memory the caller writes from
+// start to end: a helper thread faults a large result in ahead of the writes.
+WTF_EXPORT_PRIVATE PRESERVE_MOST void* fastMallocWithBackgroundPrefault(size_t, bmalloc::CompactAllocationMode) RETURNS_NONNULL;
+WTF_EXPORT_PRIVATE PRESERVE_MOST TryMallocReturnValue tryFastMallocWithBackgroundPrefault(size_t, bmalloc::CompactAllocationMode);
 
 WTF_EXPORT_PRIVATE PRESERVE_MOST void* fastAlignedMalloc(size_t alignment, size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE PRESERVE_MOST void* tryFastAlignedMalloc(size_t alignment, size_t);

@@ -28,6 +28,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/ExternalStringImpl.h>
+#include <wtf/text/StringImplMallocWithBackgroundPrefault.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -960,6 +961,36 @@ TEST(WTF, StringImplCodePointAtNUL)
     auto string = StringImpl::create(std::span<const char16_t> { data });
     ASSERT_EQ(string->codePointAt(0), 0u);
     ASSERT_EQ(string->codePointAt(1), 0xD800u);
+}
+
+TEST(WTF, StringImplAdoptWithBackgroundPrefault)
+{
+    constexpr size_t size = 4 * MB;
+    Vector<Latin1Character, 0, CrashOnOverflow, 16, StringImplMallocWithBackgroundPrefault> buffer;
+    buffer.grow(size);
+    for (size_t i = 0; i < size; ++i)
+        buffer[i] = 'a' + i % 26;
+
+    auto string = StringImpl::adopt(WTF::move(buffer));
+    ASSERT_EQ(string->length(), size);
+    ASSERT_TRUE(string->is8Bit());
+    for (size_t i = 0; i < size; ++i)
+        ASSERT_EQ(string->span8()[i], 'a' + i % 26);
+}
+
+TEST(WTF, StringImplMallocWithBackgroundPrefaultGrowAndShrink)
+{
+    for (unsigned iteration = 0; iteration < 32; ++iteration) {
+        constexpr size_t size = 4 * MB;
+        Vector<char16_t, 0, CrashOnOverflow, 16, StringImplMallocWithBackgroundPrefault> buffer;
+        buffer.grow(size / 2);
+        buffer[0] = 'x';
+        buffer.grow(size);
+        buffer.shrink(iteration + 1);
+        if (iteration % 2)
+            buffer.shrinkToFit();
+        ASSERT_EQ(buffer[0], 'x');
+    }
 }
 
 } // namespace TestWebKitAPI

@@ -499,6 +499,7 @@ set(WTF_PUBLIC_HEADERS
     text/StringHasherInlines.h
     text/SuperFastHash.h
     text/StringImpl.h
+    text/StringImplMallocWithBackgroundPrefault.h
     text/StringParsingBuffer.h
     text/StringSearch.h
     text/StringToIntegerConversion.h

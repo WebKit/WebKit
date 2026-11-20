@@ -210,6 +210,11 @@ BINLINE void* zeroedMalloc(size_t size, CompactAllocationMode mode, HeapKind kin
 
 BEXPORT void* mallocOutOfLine(size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary);
 
+// Like tryMalloc and malloc, for memory the caller writes from start to end: a helper thread faults a
+// large result in ahead of the writes (see bmalloc_prefault_supply.h).
+BEXPORT void* tryMallocWithBackgroundPrefault(size_t, CompactAllocationMode);
+BEXPORT void* mallocWithBackgroundPrefault(size_t, CompactAllocationMode);
+
 // Returns null on failure.
 BINLINE void* tryMemalign(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
 {

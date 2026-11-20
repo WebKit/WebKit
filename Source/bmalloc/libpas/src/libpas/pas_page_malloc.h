@@ -31,6 +31,18 @@
 #include "pas_memory_flavor.h"
 #include "pas_utils.h"
 
+#if PAS_OS(LINUX)
+#include <sys/mman.h>
+#endif
+
+/* A Linux kernel before 5.14 rejects MADV_POPULATE_WRITE at run time even when the headers define
+   it, so pas_page_malloc_fault_in_without_writing can still fail where this is 1. */
+#if PAS_OS(DARWIN) || (PAS_OS(LINUX) && defined(MADV_POPULATE_WRITE))
+#define PAS_PAGE_MALLOC_CAN_FAULT_IN_WITHOUT_WRITING 1
+#else
+#define PAS_PAGE_MALLOC_CAN_FAULT_IN_WITHOUT_WRITING 0
+#endif
+
 PAS_BEGIN_EXTERN_C;
 
 PAS_API extern size_t pas_page_malloc_num_allocated_bytes;
@@ -43,6 +55,13 @@ PAS_API extern bool pas_page_malloc_decommit_zero_fill;
 /* Writes one byte per page so that the physical memory is in place before anyone reads or writes
    the range for real. */
 PAS_API void pas_page_malloc_populate(void* base, size_t size);
+
+/* Faults the pages of the range in without writing to them, so it is safe on memory that someone
+   else is already using. The range must stay mapped and committed until this returns: it is read,
+   and on Darwin pages that a decommit left resident are taken back, which on a decommitted range
+   would make them count against the process again behind the heap's back. Returns false where the
+   OS has no way to do this, having done nothing. */
+PAS_API bool pas_page_malloc_fault_in_without_writing(void* base, size_t size, pas_memory_flavor flavor);
 
 PAS_API PAS_NEVER_INLINE size_t pas_page_malloc_alignment_slow(void);
 

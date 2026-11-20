@@ -32,6 +32,7 @@
 #include "AssemblyComments.h"
 #include "AssertInvariants.h"
 #include "ExecutableAllocator.h"
+#include "FastMallocAlignedMemoryAllocator.h"
 #include "IntlCache.h"
 #include "JITOperationList.h"
 #include "JSCConfig.h"
@@ -115,6 +116,7 @@ void initializeWithOptionsCustomization(NOESCAPE const ScopedLambda<void()>& opt
             StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
         }
         Options::finalize();
+        configurePrefaultSupply();
 
 #if BUSE(LIBPAS)
         if (Options::libpasScavengeContinuously())

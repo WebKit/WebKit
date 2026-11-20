@@ -49,6 +49,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringBuilderJSON.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/StringImplMallocWithBackgroundPrefault.h>
 
 // Turn this on to log information about fastStringify usage, with a focus on why it failed.
 #define FAST_STRINGIFY_LOG_USAGE 0
@@ -707,9 +708,23 @@ static uint64_t& dynamicBufferLengths(VM& vm)
         return vm.recentUTF16JSONStringifyLengths();
 }
 
-// Bounds how much address space a stale hint can reserve up front.
+// Bounds how much memory a stale hint can reserve, and have faulted in, up front.
 static constexpr unsigned maxDynamicBufferLengthHint = 32 * MB;
 static constexpr unsigned dynamicBufferLengthHintSlack = 256;
+
+// A zero length means no result was recorded, since a successful result is never empty.
+static unsigned smallerRecentDynamicBufferLength(uint64_t recentLengths)
+{
+    unsigned newer = static_cast<unsigned>(recentLengths);
+    unsigned older = static_cast<unsigned>(recentLengths >> 32);
+    if (!older)
+        return newer;
+    return std::min(newer, older);
+}
+
+// Recorded when a dynamic-buffer attempt fails. Too short to size a buffer from, and not zero, so the
+// next success is not mistaken for the first result ever recorded and trusted on its own.
+static constexpr uint64_t dynamicBufferLengthsAfterFailure = 1;
 
 template<typename CharType, BufferMode bufferMode>
 class FastStringifier {
@@ -856,7 +871,7 @@ private:
     uint16_t m_preparedPropertyScratchCount { 0 };
     std::optional<FailureReason> m_failureReason;
     std::array<StructureID, preparedStructureTableSize> m_preparedStructureIDs { };
-    Vector<CharType, dynamicBufferInlineCapacity, CrashOnOverflow, 16, WTF::StringImplMalloc> m_dynamicBuffer;
+    Vector<CharType, dynamicBufferInlineCapacity, CrashOnOverflow, 16, StringImplMallocWithBackgroundPrefault> m_dynamicBuffer;
     uint8_t* m_stackLimit { nullptr };
     std::array<PreparedStructureRange, preparedStructureTableSize> m_preparedStructureRanges;
     std::array<PreparedProperty, maxPreparedProperties> m_preparedProperties;
@@ -945,8 +960,7 @@ inline FastStringifier<CharType, bufferMode>::FastStringifier(JSGlobalObject& gl
     if constexpr (bufferMode == BufferMode::StaticBuffer)
         m_capacity = staticBufferSize;
     else {
-        uint64_t recentLengths = dynamicBufferLengths<CharType>(m_vm);
-        unsigned lengthHint = std::min({ static_cast<unsigned>(recentLengths), static_cast<unsigned>(recentLengths >> 32), maxDynamicBufferLengthHint });
+        unsigned lengthHint = std::min(smallerRecentDynamicBufferLength(dynamicBufferLengths<CharType>(m_vm)), maxDynamicBufferLengthHint);
         unsigned initialSize = lengthHint > dynamicBufferInlineCapacity ? lengthHint + dynamicBufferLengthHintSlack : dynamicBufferInlineCapacity;
         if (initialSize == dynamicBufferInlineCapacity || !m_dynamicBuffer.tryGrow(initialSize))
             m_dynamicBuffer.grow(dynamicBufferInlineCapacity);
@@ -977,7 +991,7 @@ inline String FastStringifier<CharType, bufferMode>::result()
         m_dynamicBuffer.shrink(m_length);
         uint64_t& recentLengths = dynamicBufferLengths<CharType>(m_vm);
         recentLengths = (recentLengths << 32) | m_length;
-        if (m_length > dynamicBufferInlineCapacity && m_dynamicBuffer.capacity() > 2 * static_cast<size_t>(m_length))
+        if (m_dynamicBuffer.capacity() > dynamicBufferInlineCapacity && m_dynamicBuffer.capacity() > 2 * static_cast<size_t>(m_length))
             m_dynamicBuffer.shrinkToFit();
         return StringImpl::adopt(WTF::move(m_dynamicBuffer));
     }
@@ -2302,12 +2316,10 @@ NEVER_INLINE String FastStringifier<CharType, bufferMode>::stringify(JSGlobalObj
     return stringifier.result();
 }
 
-// Whether the last two Latin-1 results needed a dynamic buffer, i.e. were longer than the static one can hold.
+// Whether the recent Latin-1 results needed a dynamic buffer, i.e. were longer than the static one can hold.
 static bool recentResultsOverflowedStaticBuffer(VM& vm)
 {
-    uint64_t lengths = dynamicBufferLengths<Latin1Character>(vm);
-    unsigned smallerLength = std::min(static_cast<unsigned>(lengths), static_cast<unsigned>(lengths >> 32));
-    return smallerLength > FastStringifier<Latin1Character, BufferMode::StaticBuffer>::staticBufferSize;
+    return smallerRecentDynamicBufferLength(dynamicBufferLengths<Latin1Character>(vm)) > FastStringifier<Latin1Character, BufferMode::StaticBuffer>::staticBufferSize;
 }
 
 static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
@@ -2321,7 +2333,7 @@ static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value
             triedLatin1DynamicBuffer = true;
             if (String result = FastStringifier<Latin1Character, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
                 return result;
-            dynamicBufferLengths<Latin1Character>(vm) = 0;
+            dynamicBufferLengths<Latin1Character>(vm) = dynamicBufferLengthsAfterFailure;
         }
         failureReason = std::nullopt;
         if (String result = FastStringifier<Latin1Character, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
@@ -2335,6 +2347,7 @@ static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value
                 failureReason = std::nullopt;
                 if (String result = FastStringifier<char16_t, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
                     return result;
+                dynamicBufferLengths<char16_t>(vm) = dynamicBufferLengthsAfterFailure;
             }
         } else if (failureReason == FailureReason::BufferFull && !triedLatin1DynamicBuffer) {
             failureReason = std::nullopt;

@@ -18,6 +18,12 @@ function allocateBlocks() {
         retained.push({ a: i, b: i, c: i });
 }
 
+const largeValue = ["x".repeat(2 * 1024 * 1024)];
+function stringifyLargeResult() {
+    if (JSON.stringify(largeValue).length !== largeValue[0].length + 4)
+        throw new Error("bad JSON.stringify result");
+}
+
 function waitFor(description, predicate, betweenAttempts = () => { }) {
     for (let attempt = 0; attempt < timeoutSeconds / pollSeconds; ++attempt) {
         if (predicate($vm.warmUpMarkedBlockCount()))
@@ -39,8 +45,16 @@ function driveTheSupply() {
     waitFor("the supply to fill", blocks => blocks > 0, allocateBlocks);
 
     // With no demand at all, the memory goes back rather than staying resident on the chance that
-    // somebody will want it. This is what keeps the supply from surviving a quiet period.
-    waitFor("the supply to be released when idle", blocks => !blocks);
+    // somebody will want it. This is what keeps the supply from surviving a quiet period. Large
+    // JSON.stringify results keep the helper thread busy faulting in their buffers, but that is not
+    // demand for blocks. Only the first few attempts make one, since the garbage and GCs they cause
+    // can take blocks themselves, and doing it on every attempt could keep any interval from
+    // going quiet.
+    let largeResultsLeft = 5;
+    waitFor("the supply to be released when idle", blocks => !blocks, () => {
+        if (largeResultsLeft-- > 0)
+            stringifyLargeResult();
+    });
 
     // Fresh demand fills it again.
     allocateBlocks();

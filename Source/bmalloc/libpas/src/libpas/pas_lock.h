@@ -163,6 +163,12 @@ static inline void pas_lock_testing_assert_held(pas_lock* lock)
         os_unfair_lock_assert_owner(&lock->lock);
 }
 
+static inline void pas_lock_testing_assert_not_held(pas_lock* lock)
+{
+    if (PAS_ENABLE_TESTING)
+        os_unfair_lock_assert_not_owner(&lock->lock);
+}
+
 PAS_END_EXTERN_C;
 
 #elif PAS_OS(LINUX) || PAS_OS(WINDOWS) || PAS_OS(FREEBSD)
@@ -246,6 +252,12 @@ static inline void pas_lock_testing_assert_held(pas_lock* lock)
         PAS_TESTING_ASSERT(__atomic_load_n(&lock->futex, __ATOMIC_RELAXED) != 0);
 }
 
+/* The futex does not record its owner, so a lock some other thread holds looks the same. */
+static inline void pas_lock_testing_assert_not_held(pas_lock* lock)
+{
+    PAS_UNUSED_PARAM(lock);
+}
+
 PAS_END_EXTERN_C;
 
 #else
@@ -285,6 +297,11 @@ PAS_BEGIN_EXTERN_C;
     PAS_UNUSED static inline void name##_lock_testing_assert_held(void) \
     { \
         pas_lock_testing_assert_held(&name##_lock); \
+    } \
+    \
+    PAS_UNUSED static inline void name##_lock_testing_assert_not_held(void) \
+    { \
+        pas_lock_testing_assert_not_held(&name##_lock); \
     } \
     \
     PAS_UNUSED static inline void name##_lock_lock_conditionally(pas_lock_hold_mode hold_mode) \

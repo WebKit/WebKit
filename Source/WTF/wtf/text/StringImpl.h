@@ -179,6 +179,15 @@ protected:
 // Right now we use a mix of both, which makes code more confusing and has no benefit.
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+
+// An allocator other than StringImplMalloc whose buffers StringImplMalloc::free frees, so that
+// StringImpl adopts them without copying.
+template<typename Malloc>
+concept FreeableByStringImplMalloc = requires
+{
+    requires Malloc::buffersAreFreeableByStringImplMalloc;
+};
+
 class StringImpl : private StringImplShape, public NoVirtualDestructorBase {
     WTF_MAKE_NONCOPYABLE(StringImpl);
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl, StringImpl);
@@ -995,6 +1004,8 @@ MallocSpan<CharacterType, StringImplMalloc> StringImpl::toStringImplMallocSpan(M
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         return characters;
+    else if constexpr (FreeableByStringImplMalloc<Malloc>)
+        return adoptMallocSpan<CharacterType, StringImplMalloc>(characters.leakSpan());
     else {
         auto buffer = MallocSpan<CharacterType, StringImplMalloc>::malloc(characters.sizeInBytes());
         copyCharacters(buffer.mutableSpan(), characters.span());
@@ -1120,7 +1131,7 @@ template<IsStringStorageCharacter CharacterType> ALWAYS_INLINE RefPtr<StringImpl
 template<IsStringStorageCharacter CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& vector)
 {
-    if constexpr (std::is_same_v<Malloc, StringImplMalloc>) {
+    if constexpr (std::is_same_v<Malloc, StringImplMalloc> || FreeableByStringImplMalloc<Malloc>) {
         if (!vector.size())
             return *empty();
         return adoptRef(*new StringImpl(vector.releaseBuffer()));

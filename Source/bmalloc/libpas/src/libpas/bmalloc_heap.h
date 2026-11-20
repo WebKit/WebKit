@@ -108,6 +108,11 @@ PAS_API void* bmalloc_try_allocate_auxiliary(pas_primitive_heap_ref* heap_ref,
 PAS_API void* bmalloc_allocate_auxiliary(pas_primitive_heap_ref* heap_ref,
                                          size_t size);
 
+/* Like bmalloc_try_allocate_auxiliary, for a client about to write the allocation from start to end:
+   a helper thread faults it in ahead of the writes if it is large. See bmalloc_prefault_supply.h. */
+PAS_API void* bmalloc_try_allocate_auxiliary_with_background_prefault(pas_primitive_heap_ref* heap_ref,
+                                                                      size_t size);
+
 PAS_API void* bmalloc_try_allocate_auxiliary_zeroed(pas_primitive_heap_ref* heap_ref,
                                                     size_t size);
 PAS_API void* bmalloc_allocate_auxiliary_zeroed(pas_primitive_heap_ref* heap_ref,

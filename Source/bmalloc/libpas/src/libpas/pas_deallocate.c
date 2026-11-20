@@ -29,6 +29,9 @@
 
 #include "pas_deallocate.h"
 
+#if PAS_ENABLE_BMALLOC
+#include "bmalloc_prefault_supply.h"
+#endif
 #include "pas_heap.h"
 #include "pas_heap_config_kind.h"
 #include "pas_large_map.h"
@@ -48,6 +51,10 @@ bool pas_try_deallocate_known_large(void* ptr,
 
     begin = (uintptr_t)ptr;
     PAS_PROFILE(TRY_DEALLOCATE_KNOWN_LARGE, config, begin);
+
+#if PAS_ENABLE_BMALLOC
+    bmalloc_prefault_supply_cancel_fault_in(ptr);
+#endif
 
     pas_heap_lock_lock();
 
@@ -89,6 +96,11 @@ bool pas_try_deallocate_pgm_large(void* ptr,
     bool result = pas_probabilistic_guard_malloc_check_exists(begin);
 
     if (result) {
+#if PAS_ENABLE_BMALLOC
+        /* PGM serves large allocations too, and freeing one here skips pas_try_deallocate_known_large.
+           PGM is rare enough to wait for a chunk with the heap lock held. */
+        bmalloc_prefault_supply_cancel_fault_in(ptr);
+#endif
         pas_msl_free_logging(ptr, config_ptr, pas_lock_is_held);
         pas_probabilistic_guard_malloc_deallocate((void *) begin);
     }
