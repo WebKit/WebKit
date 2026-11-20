@@ -4137,6 +4137,75 @@ class WaitForCrashCollection(shell.Compile):
         return super().getResultSummary()
 
 
+# `run-webkit-tests -2 -1` runs WebKitTestRunner, then DumpRenderTree, and writes the DumpRenderTree
+# results to a wk1/ subdirectory with its own full_results.json. The same test can fail under one
+# driver and pass under the other, so WK1 results are kept in their own properties (first_run_wk1_failures,
+# ...). Where both drivers' failures are compared as one set, WK1 tests carry WK1_TEST_SUFFIX, so a test
+# is only ever matched against results from the same driver.
+WK1_TEST_SUFFIX = ' (WK1)'
+
+
+def tag_wk1_tests(tests):
+    return {f'{test}{WK1_TEST_SUFFIX}' for test in tests or []}
+
+
+def strip_wk1_tag(test):
+    return test[:-len(WK1_TEST_SUFFIX)] if test.endswith(WK1_TEST_SUFFIX) else test
+
+
+def split_wk1_tagged_tests(tests):
+    wk2_tests, wk1_tests = set(), set()
+    for test in tests:
+        if test.endswith(WK1_TEST_SUFFIX):
+            wk1_tests.add(strip_wk1_tag(test))
+        else:
+            wk2_tests.add(test)
+    return wk2_tests, wk1_tests
+
+
+def layout_test_failures_for_run(step, run, use_filtered=False):
+    """
+    Both drivers' failing tests for `run` ('first_run', 'second_run' or 'clean_tree_run'), WK1 ones tagged.
+    With use_filtered, a driver's results-db filtered list replaces its raw list where there is one.
+    """
+    failures = {}
+    for driver_prefix in (f'{run}_', f'{run}_wk1_'):
+        tests = step.getProperty(f'{driver_prefix}failures', None) or []
+        if use_filtered:
+            filtered = step.getProperty(f'{driver_prefix}failures_filtered', None)
+            if filtered is not None:
+                tests = filtered
+        failures[driver_prefix] = set(tests)
+    return failures[f'{run}_'] | tag_wk1_tests(failures[f'{run}_wk1_'])
+
+
+def layout_tests_exceeded_failure_limit(step, results):
+    return step.getProperty(f'{results}_exceed_failure_limit', False) or step.getProperty(f'{results}_wk1_exceed_failure_limit', False)
+
+
+def layout_test_failures_with_change(step, use_filtered=False):
+    return layout_test_failures_for_run(step, 'first_run', use_filtered) | layout_test_failures_for_run(step, 'second_run', use_filtered)
+
+
+class LayoutTestResultsDBVerdicts(NamedTuple):
+    failing_tests_filtered: list  # The failures it could not account for.
+    pre_existing_failures: list
+    flakiness: FlakinessVerdicts
+    tests_modified_by_change: list  # Never checked: the database only knows them without the change.
+
+    @property
+    def pre_existing_flakes(self):
+        return self.flakiness.flaky
+
+    @property
+    def unsupported_flakes(self):
+        return self.flakiness.unsupported
+
+    @property
+    def unknown_flakes(self):
+        return self.flakiness.unknown
+
+
 class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
     name = 'layout-tests'
     description = ['layout-tests running']
@@ -4144,6 +4213,8 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
     resultDirectory = 'layout-test-results'
     jsonFileName = 'layout-test-results/full_results.json'
     logfiles = {'json': jsonFileName}
+    wk1JsonFileName = 'layout-test-results/wk1/full_results.json'
+    wk1_json_log_name = 'json-wk1'
     test_failures_log_name = 'test-failures'
     results_db_flavor = 'wk2'
     suite = 'layout-tests'
@@ -4170,9 +4241,24 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         self.unknown_flakes_in_results_db = []
         self.tests_modified_by_change = []
         self.layout_test_driver = None
+        self.log_observer_json_wk1 = None
+        self.wk1_results_db_verdicts = None
+        # Failures, WK1 ones tagged, that had to be left unchecked against the results database
+        # (e.g. that driver's run hit the failure limit), so they can never be excused.
+        self.failures_not_checked_in_results_db = []
 
     def doStepIf(self, step):
         return not (self.getProperty('buildername', '').lower() == 'merge-queue' and self.getProperty('passed_mac_wk2'))
+
+    def runs_wk1_in_subdirectory(self):
+        if not self.ENABLE_ADDITIONAL_ARGUMENTS:
+            return False
+        additional_arguments = self.getProperty('additionalArguments') or []
+        # Only these literal flags, as the queues pass them in config.json, are recognized. Any other
+        # way of selecting the drivers leaves the WK1 results unread.
+        runs_wk1 = '-1' in additional_arguments or '--dump-render-tree' in additional_arguments
+        runs_wk2 = '-2' in additional_arguments or '--webkit-test-runner' in additional_arguments or self.layout_test_driver == 'WebKitTestRunner'
+        return runs_wk1 and runs_wk2
 
     def setLayoutTestCommand(self):
         platform = self.getProperty('platform')
@@ -4220,6 +4306,12 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
         self.setLayoutTestCommand()
+        if self.runs_wk1_in_subdirectory():
+            # A missing file just leaves the log empty, e.g. when the WK2 pass stopped at the
+            # failure limit and run-webkit-tests never started the WK1 one.
+            self.logfiles = {**self.logfiles, self.wk1_json_log_name: self.wk1JsonFileName}
+            self.log_observer_json_wk1 = logobserver.BufferLogObserver()
+            self.addLogObserver(self.wk1_json_log_name, self.log_observer_json_wk1)
 
         # Only the step that starts a run labels the build: every queue reruns with
         # ReRunWebKitTests, so a wk1 queue would relabel itself wk2 halfway through.
@@ -4299,10 +4391,66 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 yield self.filter_failures_using_results_db(first_results.failing_tests)
                 self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_' + self.prefix + 'pre_existing', sorted(self.pre_existing_failures_in_results_db))
+            else:
+                self.failures_not_checked_in_results_db += first_results.failing_tests
 
             yield self.report_to_results_db(first_results.flaky_results, flaky_type='WithinStepDirtyTree', stage='first-run')
 
+        yield self.process_wk1_results('first_run', 'first_results', stage='first-run', flaky_type='WithinStepDirtyTree', check_results_db=is_main)
         self._parseRunWebKitTestsOutput(logText)
+
+    @defer.inlineCallbacks
+    def process_wk1_results(self, run, results, stage, flaky_type, check_results_db=False, keep_results=True):
+        """
+        The WK1 counterpart of the full_results.json handling in runCommand(): records this run's
+        DumpRenderTree results as `{run}_wk1_*` properties, and checks its failures against the
+        results database under the wk1 flavor. Returns None when this run has no WK1 results.
+        """
+        if not self.log_observer_json_wk1:
+            return None
+        yield self._addToLog(self.wk1_json_log_name, '\n')
+        wk1_results = LayoutTestFailures.results_from_string(self.log_observer_json_wk1.getStdout().rstrip())
+        if not wk1_results:
+            yield self._addToLog(self.wk1_json_log_name, f'No WK1 results for {run}: wk1/full_results.json is missing or unreadable, e.g. because the WK2 run stopped at the failure limit before DumpRenderTree started\n')
+            return None
+
+        self.setProperty(f'{results}_wk1_exceed_failure_limit', wk1_results.did_exceed_test_failure_limit)
+        self.setProperty(f'{run}_wk1_failures', sorted(wk1_results.failing_tests))
+        self.setProperty(f'{run}_wk1_flakies', sorted(wk1_results.flaky_results))
+        if keep_results:
+            self.setProperty(f'{run}_wk1_results', wk1_results.results)
+
+        if wk1_results.failing_tests:
+            yield self._addToLog(f'{self.test_failures_log_name}-wk1', '\n'.join(sorted(wk1_results.failing_tests)))
+            if check_results_db and not wk1_results.did_exceed_test_failure_limit:
+                with self.overriding_results_db_flavor('wk1'):
+                    verdicts = yield self.results_db_verdicts_for(wk1_results.failing_tests)
+                self.wk1_results_db_verdicts = verdicts
+                self.set_flaky_verdict_properties(verdicts.flakiness, f'{self.prefix}wk1_')
+                self.setProperty(f'{run}_wk1_failures_filtered', sorted(verdicts.failing_tests_filtered))
+                self.setProperty(f'results-db_{self.prefix}wk1_pre_existing', sorted(verdicts.pre_existing_failures))
+            else:
+                self.failures_not_checked_in_results_db += sorted(tag_wk1_tests(wk1_results.failing_tests))
+
+        with self.overriding_results_db_flavor('wk1'):
+            yield self.report_to_results_db(wk1_results.flaky_results, flaky_type=flaky_type, stage=stage)
+        return wk1_results
+
+    def results_db_excused_every_failure(self):
+        wk1 = self.wk1_results_db_verdicts
+        excused_any = (
+            self.pre_existing_failures_in_results_db or self.pre_existing_flakes_in_results_db
+            or (wk1 and (wk1.pre_existing_failures or wk1.pre_existing_flakes))
+        )
+        unexcused_any = self.failing_tests_filtered or (wk1 and wk1.failing_tests_filtered) or self.failures_not_checked_in_results_db
+        return bool(excused_any) and not unexcused_any
+
+    def results_db_ignored_tests(self):
+        failures, flakes = super().results_db_ignored_tests()
+        if wk1 := self.wk1_results_db_verdicts:
+            failures += sorted(tag_wk1_tests(wk1.pre_existing_failures))
+            flakes += sorted(tag_wk1_tests(wk1.pre_existing_flakes))
+        return failures, flakes
 
     def modified_test_names(self):
         """Tests this change modifies, named as run-webkit-tests reports failures."""
@@ -4315,18 +4463,35 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
 
     @defer.inlineCallbacks
     def filter_failures_using_results_db(self, failing_tests):
-        self.failing_tests_filtered = failing_tests.copy()
+        verdicts = yield self.results_db_verdicts_for(failing_tests)
+        self.failing_tests_filtered = verdicts.failing_tests_filtered
+        self.pre_existing_failures_in_results_db.extend(verdicts.pre_existing_failures)
+        self.pre_existing_flakes_in_results_db = verdicts.pre_existing_flakes
+        self.unsupported_flakes_in_results_db = verdicts.unsupported_flakes
+        self.unknown_flakes_in_results_db = verdicts.unknown_flakes
+        self.tests_modified_by_change = verdicts.tests_modified_by_change
+        self.set_flaky_verdict_properties(verdicts.flakiness, self.prefix)
+
+    @defer.inlineCallbacks
+    def results_db_verdicts_for(self, failing_tests) -> Generator[Any, Any, LayoutTestResultsDBVerdicts]:
+        """
+        Checks one driver's failing tests against the results database, and returns the verdicts
+        without recording them on the step. Queries use the build's flavor unless the caller
+        overrides it with overriding_results_db_flavor().
+        """
+        failing_tests_filtered = list(failing_tests)
+        pre_existing_failures = []
         configuration = self.results_db_query_configuration()
 
         # The database only knows the test without this change, so it cannot vouch for one it modifies.
         modified = self.modified_test_names()
-        self.tests_modified_by_change = [test for test in failing_tests if test in modified]
+        tests_modified_by_change = [test for test in failing_tests if test in modified]
         candidates = [test for test in failing_tests if test not in modified]
-        if self.tests_modified_by_change:
+        if tests_modified_by_change:
             yield self._addToLog(
                 self.results_db_log_name,
                 'Not consulting the results database for {} failing test(s) modified by this change: {}\n'.format(
-                    len(self.tests_modified_by_change), ', '.join(self.tests_modified_by_change),
+                    len(tests_modified_by_change), ', '.join(tests_modified_by_change),
                 ),
             )
 
@@ -4340,8 +4505,8 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 commit=identifier if has_commit else None,
             )
             if data['is_existing_failure']:
-                self.pre_existing_failures_in_results_db.append(test)
-                self.failing_tests_filtered.remove(test)
+                pre_existing_failures.append(test)
+                failing_tests_filtered.remove(test)
             else:
                 unexplained.add(test)
 
@@ -4352,9 +4517,16 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 f"{data['logs']}"
             )
 
-        excused = yield self.pre_existing_flakes_using_results_db(unexplained)
-        for test in excused:
-            self.failing_tests_filtered.remove(test)
+        flakiness = yield self.flaky_verdicts_using_results_db(unexplained)
+        for test in flakiness.excused:
+            failing_tests_filtered.remove(test)
+
+        defer.returnValue(LayoutTestResultsDBVerdicts(
+            failing_tests_filtered=failing_tests_filtered,
+            pre_existing_failures=pre_existing_failures,
+            flakiness=flakiness,
+            tests_modified_by_change=tests_modified_by_change,
+        ))
 
     def evaluateResult(self, cmd):
         result = SUCCESS
@@ -4407,8 +4579,8 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
             self.build.results = SUCCESS
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
-        elif ((self.pre_existing_failures_in_results_db or self.pre_existing_flakes_in_results_db) and len(self.failing_tests_filtered) == 0):
-            # All tests that failed this run were pre-existing failures or known flaky in the results database
+        elif self.results_db_excused_every_failure():
+            # All tests that failed this run, under every driver, were pre-existing failures or known flaky in the results database
             message = self.results_db_ignore_message()
             self.descriptionDone = message
             self.build.results = SUCCESS
@@ -4454,7 +4626,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         status = self.name
 
         if self.results != SUCCESS:
-            if ((self.pre_existing_failures_in_results_db or self.pre_existing_flakes_in_results_db) and len(self.failing_tests_filtered) == 0):
+            if self.results_db_excused_every_failure():
                 return {'step': self.results_db_ignore_counts_message()}
             if self.incorrectLayoutLines:
                 status = ' '.join(self.incorrectLayoutLines)
@@ -4572,10 +4744,11 @@ class ReRunWebKitTests(RunWebKitTests):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
-        first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit', False)
-        first_results_failing_tests = set(self.getProperty('first_run_failures', []))
-        second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit', False)
-        second_results_failing_tests = set(self.getProperty('second_run_failures', []))
+        # Both drivers' failures, WK1 ones tagged, so a test only flakes if it changed under the same driver.
+        first_results_did_exceed_test_failure_limit = layout_tests_exceeded_failure_limit(self, 'first_results')
+        first_results_failing_tests = layout_test_failures_for_run(self, 'first_run')
+        second_results_did_exceed_test_failure_limit = layout_tests_exceeded_failure_limit(self, 'second_results')
+        second_results_failing_tests = layout_test_failures_for_run(self, 'second_run')
         # FIXME: here it can be a good idea to also use the info from second_run_flakies and first_run_flakies
         tests_that_consistently_failed = first_results_failing_tests.intersection(second_results_failing_tests)
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
@@ -4612,8 +4785,8 @@ class ReRunWebKitTests(RunWebKitTests):
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
             self.build.addStepsAfterCurrentStep(steps_to_add)
-        elif ((self.pre_existing_failures_in_results_db or self.pre_existing_flakes_in_results_db) and len(self.failing_tests_filtered) == 0):
-            # All tests that failed this run were pre-existing failures or known flaky in the results database
+        elif self.results_db_excused_every_failure():
+            # All tests that failed this run, under every driver, were pre-existing failures or known flaky in the results database
             message = self.results_db_ignore_message()
             self.descriptionDone = message
             self.build.results = SUCCESS
@@ -4688,6 +4861,8 @@ class ReRunWebKitTests(RunWebKitTests):
                 yield self.filter_failures_using_results_db(second_results.failing_tests)
                 self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_' + self.prefix + 'pre_existing', sorted(self.pre_existing_failures_in_results_db))
+            else:
+                self.failures_not_checked_in_results_db += second_results.failing_tests
 
             yield self.report_to_results_db(second_results.flaky_results, flaky_type='WithinStepDirtyTree', stage='second-run')
 
@@ -4699,15 +4874,25 @@ class ReRunWebKitTests(RunWebKitTests):
                     unique_fails = set(first_run_failures) ^ set(second_results.failing_tests)
                     results = self.merged_results(unique_fails, {'first-run': 'first_run_results', 'second-run': 'second_run_results'})
                     yield self.report_to_results_db(results, flaky_type='BetweenStepsDirtyTree')
+
+        second_wk1_results = yield self.process_wk1_results('second_run', 'second_results', stage='second-run', flaky_type='WithinStepDirtyTree', check_results_db=is_main)
+        if second_wk1_results and (first_run_wk1_failures := self.getProperty('first_run_wk1_failures', None)) is not None:
+            if self.getProperty('first_results_wk1_exceed_failure_limit', False) or second_wk1_results.did_exceed_test_failure_limit:
+                yield self._addToLog(self.results_db_log_name, 'A WK1 run exceeded the failure limit, so the two WK1 runs are not comparable\n')
+            else:
+                unique_fails = set(first_run_wk1_failures) ^ set(second_wk1_results.failing_tests)
+                results = self.merged_results(unique_fails, {'first-run': 'first_run_wk1_results', 'second-run': 'second_run_wk1_results'})
+                with self.overriding_results_db_flavor('wk1'):
+                    yield self.report_to_results_db(results, flaky_type='BetweenStepsDirtyTree')
         self._parseRunWebKitTestsOutput(logText)
 
     def send_email_for_flaky_failure(self, test_name):
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
-            test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
+            test_url = '{}{}'.format(LAYOUT_TESTS_URL, strip_wk1_tag(test_name))
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
+            history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, strip_wk1_tag(test_name))
 
             email_subject = 'Flaky test: {}'.format(test_name)
             email_text = 'Test <a href="{}">{}</a> flaked in {}\n\nBuilder: {}'.format(test_url, test_name, build_url, builder_name)
@@ -4773,6 +4958,8 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
                 yield self._addToLog(self.test_failures_log_name, '\n'.join(clean_tree_results.failing_tests))
 
             yield self.report_to_results_db(clean_tree_results.flaky_results, flaky_type='WithinStepCleanTree', stage='clean-tree')
+
+        yield self.process_wk1_results('clean_tree_run', 'clean_tree_results', stage='clean-tree', flaky_type='WithinStepCleanTree', keep_results=False)
         self._parseRunWebKitTestsOutput(logText)
 
     def setLayoutTestCommand(self):
@@ -4795,16 +4982,12 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
         # it is passed as an argument on the command-line)
         # The flag '--skip-failing-tests' that is passed by default (in combination with '--skipped=always')
         # avoids running tests marked as failing on the Expectation files even when those are passed as arguments.
-        first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit', False)
-        second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit', False)
-        if not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit:
+        # On a queue running both drivers, a test failing under either one is passed, and runs under both.
+        if not layout_tests_exceeded_failure_limit(self, 'first_results') and not layout_tests_exceeded_failure_limit(self, 'second_results'):
             # Skip tests that results-db already flagged as pre-existing (use the filtered lists); the
             # analysis step ignores them anyways, so re-running them on the clean tree is wasted work.
-            first_run_failures_filtered = self.getProperty('first_run_failures_filtered', None)
-            first_results_failing_tests = set(first_run_failures_filtered if first_run_failures_filtered is not None else self.getProperty('first_run_failures', []))
-            second_run_failures_filtered = self.getProperty('second_run_failures_filtered', None)
-            second_results_failing_tests = set(second_run_failures_filtered if second_run_failures_filtered is not None else self.getProperty('second_run_failures', []))
-            list_failed_tests_with_change = sorted(first_results_failing_tests.union(second_results_failing_tests))
+            failed_tests_with_change = layout_test_failures_with_change(self, use_filtered=True)
+            list_failed_tests_with_change = sorted({strip_wk1_tag(test) for test in failed_tests_with_change})
             if list_failed_tests_with_change:
                 positional_test_paths = self.positional_test_paths_from_additional_arguments()
                 if positional_test_paths:
@@ -4877,13 +5060,19 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
         if not new_failures:
             message = 'Found unexpected failure with change' if not failure_message else failure_message
         else:
-            self.setProperty('new_failures_introduced_by_change', sorted(new_failures))
+            wk2_new_failures, wk1_new_failures = split_wk1_tagged_tests(new_failures)
+            self.setProperty('new_failures_introduced_by_change', sorted(wk2_new_failures))
+            if wk1_new_failures:
+                self.setProperty('new_wk1_failures_introduced_by_change', sorted(wk1_new_failures))
             runs = {
                 'first-run': 'first_run_results',
                 'second-run': 'second_run_results',
                 'redtree-with-change': 'with_change_repeat_results',
             }
-            yield self.report_to_results_db(self.merged_results(new_failures, runs))
+            yield self.report_to_results_db(self.merged_results(wk2_new_failures, runs))
+            if wk1_new_failures:
+                with self.overriding_results_db_flavor('wk1'):
+                    yield self.report_to_results_db(self.merged_results(wk1_new_failures, {'first-run': 'first_run_wk1_results', 'second-run': 'second_run_wk1_results'}))
 
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             if exceed_failure_limit:
@@ -4956,9 +5145,9 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
-            test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
+            test_url = '{}{}'.format(LAYOUT_TESTS_URL, strip_wk1_tag(test_name))
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
+            history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, strip_wk1_tag(test_name))
 
             email_subject = 'Flaky test: {}'.format(test_name)
             email_text = 'Flaky test: <a href="{}">{}</a>\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_url, test_name, build_url, builder_name, worker_name, history_url)
@@ -4972,9 +5161,9 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
-            test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
+            test_url = '{}{}'.format(LAYOUT_TESTS_URL, strip_wk1_tag(test_name))
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
+            history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, strip_wk1_tag(test_name))
 
             email_subject = 'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test <a href="{}">{}</a> failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_url, test_name, build_url, builder_name, worker_name, history_url)
@@ -5011,8 +5200,8 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             test_names_string = ''
             for test_name in sorted(test_names):
-                test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
-                history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
+                test_url = '{}{}'.format(LAYOUT_TESTS_URL, strip_wk1_tag(test_name))
+                history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, strip_wk1_tag(test_name))
                 test_names_string += '\n- <a href="{}">{}</a> (<a href="{}">test history</a>)'.format(test_url, test_name, history_url)
 
             pluralSuffix = 's' if len(test_names) > 1 else ''
@@ -5038,12 +5227,30 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
 
     @defer.inlineCallbacks
     def run(self):
-        first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit')
-        first_results_failing_tests = set(self.getProperty('first_run_failures', []))
-        second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit')
-        second_results_failing_tests = set(self.getProperty('second_run_failures', []))
-        clean_tree_results_did_exceed_test_failure_limit = self.getProperty('clean_tree_results_exceed_failure_limit')
-        clean_tree_results_failing_tests = set(self.getProperty('clean_tree_run_failures', []))
+        analyze_wk1_failures = True
+        if self.getProperty('clean_tree_run_wk1_failures', None) is None:
+            # The WK1 failures the analysis would otherwise blame: results-db already excused the rest,
+            # so the clean tree had no reason to run them.
+            wk1_failures_to_analyze = split_wk1_tagged_tests(layout_test_failures_with_change(self, use_filtered=True))[1]
+            if wk1_failures_to_analyze:
+                # Without WK1 results from the clean tree, nothing can tell a new WK1 failure from a
+                # pre-existing one, so leave them out rather than blame all of them on the change.
+                analyze_wk1_failures = False
+                message = f"The clean tree run produced no WK1 results, so these WK1 failures are left out of the analysis instead of being blamed on the change: {', '.join(sorted(wk1_failures_to_analyze))}\n"
+                if not split_wk1_tagged_tests(layout_test_failures_with_change(self))[0]:
+                    message += 'No other test failed with the change, so the runs with the change are handled as if they had reported no failing tests.\n'
+                yield self._addToLog('stdio', message)
+
+        def failures_for_run(run, use_filtered=False):
+            failures = layout_test_failures_for_run(self, run, use_filtered=use_filtered)
+            return failures if analyze_wk1_failures else split_wk1_tagged_tests(failures)[0]
+
+        first_results_did_exceed_test_failure_limit = layout_tests_exceeded_failure_limit(self, 'first_results')
+        first_results_failing_tests = failures_for_run('first_run')
+        second_results_did_exceed_test_failure_limit = layout_tests_exceeded_failure_limit(self, 'second_results')
+        second_results_failing_tests = failures_for_run('second_run')
+        clean_tree_results_did_exceed_test_failure_limit = layout_tests_exceeded_failure_limit(self, 'clean_tree_results')
+        clean_tree_results_failing_tests = layout_test_failures_for_run(self, 'clean_tree_run')
 
         if (not first_results_failing_tests) and (not second_results_failing_tests):
             # If we've made it here, then layout-tests and re-run-layout-tests failed, which means
@@ -5053,7 +5260,9 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
                 rc = yield self.report_failure(set())
                 return defer.returnValue(rc)
             self.send_email_for_infrastructure_issue('Both first and second layout-test runs with change generated no list of results but exited with error, and the clean_tree without change retry also failed.')
-            if (self.getProperty('first_run_flakies', False) or self.getProperty('second_run_flakies', False)) and self.getProperty('clean_tree_run_flakies', False):
+            flakies_with_change = any(self.getProperty(name, False) for name in ('first_run_flakies', 'second_run_flakies', 'first_run_wk1_flakies', 'second_run_wk1_flakies'))
+            flakies_on_clean_tree = self.getProperty('clean_tree_run_flakies', False) or self.getProperty('clean_tree_run_wk1_flakies', False)
+            if flakies_with_change and flakies_on_clean_tree:
                 self.build.results = SUCCESS
                 message = 'Passed layout tests with flaky tests'
                 self.descriptionDone = message
@@ -5064,12 +5273,8 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
         # Ignore failures results-db already flagged as pre-existing (use the filtered lists) so a
         # pre-existing flaky test is not blamed on the change. Done after the empty-check above, which
         # must use the raw lists to detect the infrastructure 'no results' case.
-        first_run_failures_filtered = self.getProperty('first_run_failures_filtered', None)
-        if first_run_failures_filtered is not None:
-            first_results_failing_tests = set(first_run_failures_filtered)
-        second_run_failures_filtered = self.getProperty('second_run_failures_filtered', None)
-        if second_run_failures_filtered is not None:
-            second_results_failing_tests = set(second_run_failures_filtered)
+        first_results_failing_tests = failures_for_run('first_run', use_filtered=True)
+        second_results_failing_tests = failures_for_run('second_run', use_filtered=True)
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
         num_flaky_failures = len(flaky_failures)
         flaky_failures_string = ', '.join(sorted(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY])
