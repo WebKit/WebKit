@@ -843,12 +843,22 @@ ALWAYS_INLINE size_t count(std::span<const CharacterType> span, NOESCAPE const a
     const auto* end = std::to_address(span.end());
     size_t result = 0;
 
+    // Counting does not depend on the order of elements. So we do not need to de-interleave them as load4x does,
+    // which is very slow on x86_64 since simde emulates vld4 with scalar code.
+    auto load4xUnordered = [](const UnsignedType* ptr) ALWAYS_INLINE_LAMBDA {
+#if CPU(X86_64)
+        return decltype(SIMD::load4x(ptr)) { { SIMD::load(ptr), SIMD::load(ptr + stride), SIMD::load(ptr + 2 * stride), SIMD::load(ptr + 3 * stride) } };
+#else
+        return SIMD::load4x(ptr);
+#endif
+    };
+
     // Per max * 4 * stride iteration (If CharacterType is uint8_t, it is 16320 (255 * 64)).
     // We need to limit the each iteration up to std::numeric_limits<UnsignedType>::max() because count vector's lane will overflow.
     for (; cursor + (bulkLoadCount * stride * std::numeric_limits<UnsignedType>::max()) <= end;) {
         std::array<VectorType<UnsignedType>, bulkLoadCount> counts { };
         for (size_t iteration = 0; iteration < std::numeric_limits<UnsignedType>::max(); ++iteration) {
-            auto vectorx4 = SIMD::load4x(std::bit_cast<const UnsignedType*>(cursor));
+            auto vectorx4 = load4xUnordered(std::bit_cast<const UnsignedType*>(cursor));
             for (size_t i = 0; i < bulkLoadCount; ++i)
                 counts[i] = SIMD::sub(counts[i], vectorMatch(vectorx4.val[i]));
             cursor += (bulkLoadCount * stride);
@@ -863,7 +873,7 @@ ALWAYS_INLINE size_t count(std::span<const CharacterType> span, NOESCAPE const a
     {
         std::array<VectorType<UnsignedType>, bulkLoadCount> counts { };
         for (; cursor + (bulkLoadCount * stride) <= end; cursor += (bulkLoadCount * stride)) {
-            auto vectorx4 = SIMD::load4x(std::bit_cast<const UnsignedType*>(cursor));
+            auto vectorx4 = load4xUnordered(std::bit_cast<const UnsignedType*>(cursor));
             for (size_t i = 0; i < bulkLoadCount; ++i)
                 counts[i] = SIMD::sub(counts[i], vectorMatch(vectorx4.val[i]));
         }
