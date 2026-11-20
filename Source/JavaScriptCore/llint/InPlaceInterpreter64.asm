@@ -8350,16 +8350,25 @@ ipintOp(_simd_i32x4_relaxed_trunc_f32x4_u, macro()
     if ARM64 or ARM64E
         emit "fcvtzu v16.4s, v16.4s"
     elsif X86_64
-        # cvttps2dq is signed. Lanes in [2^31, 2^32) are 0x80000000 plus trunc(x - 2^31).
-        emit "vcvttps2dq %xmm0, %xmm1"
-        emit "movl $0x4f000000, %eax"
+        # Relaxed semantics still constrain NaN and out-of-range lanes. Same as i32x4.trunc_sat_f32x4_u.
+        emit "vxorps %xmm1, %xmm1, %xmm1"                    # xmm1 = 0
+        emit "vmaxps %xmm1, %xmm0, %xmm0"                    # Clear NaN and negatives
+
+        emit "movl $0x4f000000, %eax"                        # 0x1.0p+31f
         emit "vmovd %eax, %xmm2"
-        emit "vshufps $0, %xmm2, %xmm2, %xmm2"
-        emit "vsubps %xmm2, %xmm0, %xmm0"
-        emit "vcvttps2dq %xmm0, %xmm0"
-        emit "vxorps %xmm2, %xmm2, %xmm2"
-        emit "vpmaxsd %xmm2, %xmm0, %xmm0"
-        emit "vpaddd %xmm0, %xmm1, %xmm0"
+        emit "vshufps $0, %xmm2, %xmm2, %xmm2"               # Broadcast to all 4 lanes
+
+        emit "vmovaps %xmm0, %xmm3"                          # xmm3 = src copy
+        emit "vsubps %xmm2, %xmm3, %xmm3"                    # xmm3 = src - 0x1.0p+31f
+        emit "vcmpnltps %xmm2, %xmm3, %xmm1"                 # xmm1 = mask for overflow
+        emit "vcvttps2dq %xmm3, %xmm3"                       # Convert (src - 0x1.0p+31f)
+        emit "vpxor %xmm1, %xmm3, %xmm3"                     # Saturate positive overflow to 0x7FFFFFFF
+
+        emit "vpxor %xmm4, %xmm4, %xmm4"                     # xmm4 = 0
+        emit "vpmaxsd %xmm4, %xmm3, %xmm3"                   # Clear negatives
+
+        emit "vcvttps2dq %xmm0, %xmm0"                       # Convert original src
+        emit "vpaddd %xmm3, %xmm0, %xmm0"                    # Add correction
     else
         break # Not implemented
     end
