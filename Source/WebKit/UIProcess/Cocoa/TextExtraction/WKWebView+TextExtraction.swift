@@ -40,6 +40,9 @@ import WebKit_Private
 @_spi(UIIntelligenceSupport) public import AppKit
 #endif
 
+#if hasAttribute(diagnose)
+@diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses 5-argument init for macOS 26 compatibility")
+#endif
 private func createEditable(for editable: WKTextExtractionEditable?) -> IntelligenceElement.Text.Editable? {
     guard let editable else {
         return nil

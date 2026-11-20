@@ -74,6 +74,9 @@ extension WebKit.WebPageProxy {
     }
     #endif // HAVE_NEW_CODABLE
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Uses __editorStateUnsafe() until Swift 6.5 is required")
+    #endif
     private borrowing func editorStateCopy() -> WebKit.EditorState {
         unsafe __editorStateUnsafe().pointee
     }
