@@ -109,6 +109,16 @@ static WKMediaCaptureState microphoneCaptureState;
 @end
 
 @implementation MediaCaptureObserver
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    cameraCaptureState = WKMediaCaptureStateNone;
+    microphoneCaptureState = WKMediaCaptureStateNone;
+    return self;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
 {
     EXPECT_TRUE([keyPath isEqualToString:NSStringFromSelector(@selector(cameraCaptureState))] || [keyPath isEqualToString:NSStringFromSelector(@selector(microphoneCaptureState))]);

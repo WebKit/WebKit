@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -39,19 +38,10 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/RetainPtr.h>
 
 static int delegateCounter = 0;
 static bool okToProceed = false;
-
-@interface GetUserMeidaNavigationMessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation GetUserMeidaNavigationMessageHandler
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    receivedScriptMessage = true;
-}
-@end
 
 @interface NavigationWhileGetUserMediaPromptDisplayedUIDelegate : NSObject<WKUIDelegate>
 - (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler;
@@ -121,6 +111,7 @@ TEST(WebKit, NavigateDuringDeviceEnumeration)
     RetainPtr delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
+    delegateCounter = 0;
     okToProceed = false;
     [webView loadTestPageNamed:@"enumerateMediaDevices"];
     TestWebKitAPI::Util::run(&okToProceed);
@@ -187,29 +178,30 @@ TEST(WebKit, DeviceIdHashSaltsRemoval)
 {
     RetainPtr dataTypeHashSalt = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeHashSalt]]);
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    __block bool done = false;
     @autoreleasepool {
         RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
         [configuration setWebsiteDataStore:websiteDataStore.get()];
-        RetainPtr messageHandler = adoptNS([[GetUserMeidaNavigationMessageHandler alloc] init]);
-        [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
         RetainPtr processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
         initializeMediaCaptureConfiguration(configuration.get());
         RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
         RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
         [webView setUIDelegate:delegate.get()];
 
+        bool receivedScriptMessage = false;
+        [webView performAfterReceivingMessage:@"done" action:[&] {
+            receivedScriptMessage = true;
+        }];
+
         NSString *htmlString = @"<script> \
         navigator.mediaDevices.enumerateDevices().then(() => { \
             window.webkit.messageHandlers.testHandler.postMessage('done'); \
         }); \
         </script>";
-        receivedScriptMessage = false;
         [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
         TestWebKitAPI::Util::run(&receivedScriptMessage);
-        
 
-        done = false;
         [websiteDataStore fetchDataRecordsOfTypes:dataTypeHashSalt.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
             EXPECT_GT(records.count, 0u);
             done = true;

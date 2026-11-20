@@ -27,7 +27,6 @@
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -43,23 +42,7 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-static bool didReceiveMessage;
 static bool askedClientForPermission;
-
-@interface DeviceOrientationMessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation DeviceOrientationMessageHandler
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    if ([message body])
-        [receivedMessages addObject:[message body]];
-    else
-        [receivedMessages addObject:@""];
-
-    didReceiveMessage = true;
-}
-@end
 
 @interface DeviceOrientationPermissionUIDelegate : NSObject <WKUIDelegatePrivate> {
 }
@@ -74,6 +57,7 @@ Function<bool()> _decisionHandler;
 {
     self = [super init];
     _decisionHandler = WTF::move(decisionHandler);
+    askedClientForPermission = false;
     return self;
 }
 
@@ -85,13 +69,23 @@ Function<bool()> _decisionHandler;
 
 @end
 
+static RetainPtr<TestMessageHandler> addTestMessageHandler(WKWebViewConfiguration *configuration, bool* didReceiveMessage)
+{
+    RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
+    [messageHandler setDidReceiveScriptMessage:^(NSString *) {
+        *didReceiveMessage = true;
+    }];
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    return messageHandler;
+}
+
 enum class DeviceOrientationPermission { GrantedByClient, DeniedByClient, GrantedByUser, DeniedByUser };
 static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientationPermission)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    bool didReceiveMessage = false;
+    RetainPtr messageHandler = addTestMessageHandler(configuration.get(), &didReceiveMessage);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -125,11 +119,11 @@ static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientati
     switch (deviceOrientationPermission) {
     case DeviceOrientationPermission::GrantedByClient:
     case DeviceOrientationPermission::GrantedByUser:
-        EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+        EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][0]);
         break;
     case DeviceOrientationPermission::DeniedByClient:
     case DeviceOrientationPermission::DeniedByUser:
-        EXPECT_WK_STREQ(@"denied", receivedMessages.get()[0]);
+        EXPECT_WK_STREQ(@"denied", [messageHandler receivedMessages][0]);
         break;
     }
 
@@ -145,12 +139,11 @@ static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientati
 
     if (deviceOrientationPermission == DeviceOrientationPermission::GrantedByClient || deviceOrientationPermission == DeviceOrientationPermission::GrantedByUser) {
         TestWebKitAPI::Util::run(&didReceiveMessage);
-        EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
+        EXPECT_WK_STREQ(@"received-event", [messageHandler receivedMessages][1]);
     } else {
         TestWebKitAPI::Util::runFor(0.1_s);
         EXPECT_FALSE(didReceiveMessage);
     }
-    didReceiveMessage = false;
 }
 
 TEST(DeviceOrientation, PermissionGrantedByUser)
@@ -178,8 +171,8 @@ TEST(DeviceOrientation, RememberPermissionForSession)
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
 
-    RetainPtr messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    bool didReceiveMessage = false;
+    RetainPtr messageHandler = addTestMessageHandler(configuration.get(), &didReceiveMessage);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr<DeviceOrientationPermissionUIDelegate> uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return true; }]);
@@ -196,7 +189,7 @@ TEST(DeviceOrientation, RememberPermissionForSession)
 
     EXPECT_TRUE(askedClientForPermission);
     askedClientForPermission = false;
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][0]);
 
     // Load the same origin again in a new WebView, it should not ask the client.
     webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -210,7 +203,7 @@ TEST(DeviceOrientation, RememberPermissionForSession)
     TestWebKitAPI::Util::run(&didReceiveMessage);
     didReceiveMessage = false;
 
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[1]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][1]);
     EXPECT_FALSE(askedClientForPermission);
     askedClientForPermission = false;
 
@@ -235,7 +228,7 @@ TEST(DeviceOrientation, RememberPermissionForSession)
 
     EXPECT_TRUE(askedClientForPermission);
     askedClientForPermission = false;
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[2]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][2]);
 
     // Now go to a different origin, it should ask the client again.
     NSURLRequest *request2 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
@@ -249,7 +242,7 @@ TEST(DeviceOrientation, RememberPermissionForSession)
 
     EXPECT_TRUE(askedClientForPermission);
     askedClientForPermission = false;
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[3]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][3]);
 
     // Go back to the first origin in a new WebView (same data store) and make sure it does not ask the client.
     webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -263,7 +256,7 @@ TEST(DeviceOrientation, RememberPermissionForSession)
     TestWebKitAPI::Util::run(&didReceiveMessage);
     didReceiveMessage = false;
 
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[4]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][4]);
     EXPECT_FALSE(askedClientForPermission);
     askedClientForPermission = false;
 }
@@ -273,8 +266,8 @@ TEST(DeviceOrientation, FireOrientationEventsRightAwayIfPermissionAlreadyGranted
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
 
-    RetainPtr messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    bool didReceiveMessage = false;
+    RetainPtr messageHandler = addTestMessageHandler(configuration.get(), &didReceiveMessage);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr<DeviceOrientationPermissionUIDelegate> uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return true; }]);
@@ -292,7 +285,7 @@ TEST(DeviceOrientation, FireOrientationEventsRightAwayIfPermissionAlreadyGranted
 
     EXPECT_TRUE(askedClientForPermission);
     askedClientForPermission = false;
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][0]);
 
     // Go to the same origin again in a new view.
     webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -315,7 +308,7 @@ TEST(DeviceOrientation, FireOrientationEventsRightAwayIfPermissionAlreadyGranted
     [webView _simulateDeviceOrientationChangeWithAlpha:1.0 beta:2.0 gamma:3.0];
 
     TestWebKitAPI::Util::run(&didReceiveMessage);
-    EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
+    EXPECT_WK_STREQ(@"received-event", [messageHandler receivedMessages][1]);
 }
 
 static constexpr auto mainBytes = R"TESTRESOURCE(
@@ -343,8 +336,8 @@ TEST(DeviceOrientation, PermissionSecureContextCheck)
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
     
-    RetainPtr messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    bool didReceiveMessage = false;
+    RetainPtr messageHandler = addTestMessageHandler(configuration.get(), &didReceiveMessage);
     
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr<DeviceOrientationPermissionUIDelegate> uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return true; }]);
@@ -358,7 +351,7 @@ TEST(DeviceOrientation, PermissionSecureContextCheck)
     TestWebKitAPI::Util::run(&didReceiveMessage);
     didReceiveMessage = false;
 
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][0]);
     
     bool addedEventListener = false;
     [webView evaluateJavaScript:@"addEventListener('deviceorientation', (e) => { webkit.messageHandlers.testHandler.postMessage('received-event') });" completionHandler: [&] (id result, NSError *error) {
@@ -373,7 +366,7 @@ TEST(DeviceOrientation, PermissionSecureContextCheck)
     [webView _simulateDeviceOrientationChangeWithAlpha:1.0 beta:2.0 gamma:3.0];
 
     TestWebKitAPI::Util::run(&didReceiveMessage);
-    EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
+    EXPECT_WK_STREQ(@"received-event", [messageHandler receivedMessages][1]);
 }
 
 @interface DeviceOrientationPermissionValidationDelegate : NSObject <WKUIDelegatePrivate>
@@ -383,6 +376,15 @@ TEST(DeviceOrientation, PermissionSecureContextCheck)
 @implementation DeviceOrientationPermissionValidationDelegate {
 Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
 }
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    askedClientForPermission = false;
+    return self;
+}
+
 - (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler {
     _validationHandler = WTF::move(validationHandler);
 }
@@ -480,11 +482,10 @@ TEST(DeviceOrientation, PermissionOriginDuringPendingNavigation)
     }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
 
     RetainPtr configuration = server.httpsProxyConfiguration();
-    RetainPtr messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    bool didReceiveMessage = false;
+    RetainPtr messageHandler = addTestMessageHandler(configuration.get(), &didReceiveMessage);
 
-    static RetainPtr<TestWKWebView> webView;
-    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     RetainPtr permissionDelegate = adoptNS([[DeviceOrientationPermissionValidationDelegate alloc] init]);
     [webView setUIDelegate:permissionDelegate.get()];
@@ -498,11 +499,10 @@ TEST(DeviceOrientation, PermissionOriginDuringPendingNavigation)
 
     // Start permission request on example1.com after navigation to example2.com starts
     // and active URL is changed to example2.com.
-    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
-        [webView evaluateJavaScript:@"requestPermission();" completionHandler:nil];
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *view, WKNavigation *) {
+        [view evaluateJavaScript:@"requestPermission();" completionHandler:nil];
     };
-    static bool receivedPermissionRequest = false;
-    didReceiveMessage = false;
+    bool receivedPermissionRequest = false;
     [permissionDelegate setValidationHandler:[&](WKSecurityOrigin *origin, WKFrameInfo *frame) {
         EXPECT_WK_STREQ(origin.protocol, @"https");
         EXPECT_WK_STREQ(origin.host, @"example1.com");
@@ -514,7 +514,7 @@ TEST(DeviceOrientation, PermissionOriginDuringPendingNavigation)
     TestWebKitAPI::Util::run(&receivedPermissionRequest);
 
     TestWebKitAPI::Util::run(&didReceiveMessage);
-    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+    EXPECT_WK_STREQ(@"granted", [messageHandler receivedMessages][0]);
 }
 
 #endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
