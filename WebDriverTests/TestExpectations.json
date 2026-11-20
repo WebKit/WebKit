@@ -5797,6 +5797,9 @@
             },
             "test_element_center_point_inline_block_child": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
+            },
+            "test_element_larger_than_viewport": {
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/332585"}}
             }
         }
     },
@@ -5808,6 +5811,9 @@
             },
             "test_no_browsing_context": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Screenshot sizes differ on Mac"}}
+            },
+            "test_clip_huge_element_to_viewport": {
+                "expected": {"mac": {"status": ["FAIL"], "note": "The test expects innerWidth: https://github.com/web-platform-tests/wpt/issues/65528"}}
             }
         }
     },
