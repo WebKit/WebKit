@@ -517,9 +517,9 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
     return { };
 }
 
-LineLayout::ExcludedMarkerList LineLayout::excludedMarkersForFirstFormattedLine(Layout::InlineLayoutState& layoutState)
+LineLayout::OutsideMarkerList LineLayout::outsideMarkersForFirstFormattedLine(Layout::InlineLayoutState& layoutState)
 {
-    auto listItems = RenderListItem::listItemsWithExcludedMarkerFor(protect(flow()), flow().view().frameView().layoutContext().listItemsWithExcludedMarker());
+    auto listItems = RenderListItem::listItemsWithOutsideMarkerFor(protect(flow()), flow().view().frameView().layoutContext().listItemsWithOutsideMarker());
     if (listItems.isEmpty())
         return { };
 
@@ -527,14 +527,14 @@ LineLayout::ExcludedMarkerList LineLayout::excludedMarkersForFirstFormattedLine(
     layoutBounds.reserveInitialCapacity(listItems.size());
     for (auto& listItem : listItems)
         layoutBounds.append(listItem->markerLayoutBounds());
-    layoutState.setExcludedMarkerLayoutBounds(WTF::move(layoutBounds));
+    layoutState.setOutsideMarkerLayoutBounds(WTF::move(layoutBounds));
 
     return listItems;
 }
 
-void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMarkers)
+void LineLayout::setOutsideMarkerPositions(const OutsideMarkerList& outsideMarkers)
 {
-    if (excludedMarkers.isEmpty() || !m_inlineContent || !m_inlineContent->hasContentfulInFlowBox())
+    if (outsideMarkers.isEmpty() || !m_inlineContent || !m_inlineContent->hasContentfulInFlowBox())
         return;
 
     // The first line with content on it: a line holding nothing but collapsible whitespace or empty inline boxes is
@@ -584,7 +584,7 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
 
     auto contentBoxStartEdge = isLeftToRight ? 0.f : protect(flow())->contentBoxLogicalWidth().toFloat();
     auto isLineStartConstrainedByFloat = lineStartEdge != contentBoxStartEdge;
-    for (auto& listItem : excludedMarkers) {
+    for (auto& listItem : outsideMarkers) {
         CheckedPtr marker = listItem->markerBox();
         if (!marker)
             continue;
@@ -595,10 +595,10 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
         auto listItemIsLeftToRight = listItem->writingMode().isLogicalLeftInlineStart();
         auto isOnLineStart = listItemIsLeftToRight == isLeftToRight;
         auto markerEdge = isOnLineStart ? lineStartEdge : listItemIsLeftToRight ? lineBoxLogicalRect.x() : lineBoxLogicalRect.maxX();
-        auto markerMarginStart = excludedMarkerMarginStart(*marker).toFloat();
+        auto markerMarginStart = outsideMarkerMarginStart(*marker).toFloat();
         auto markerLogicalLeft = listItemIsLeftToRight ? markerEdge + markerMarginStart : markerEdge - markerMarginStart - marker->logicalWidth().toFloat();
         auto topLeft = FloatPoint { markerLogicalLeft, markerLogicalTop };
-        listItem->setExcludedMarkerPosition({ flow(), topLeft, isOnLineStart && isLineStartConstrainedByFloat });
+        listItem->setOutsideMarkerPosition({ flow(), topLeft, isOnLineStart && isLineStartConstrainedByFloat });
     }
 }
 
@@ -654,7 +654,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
     };
     auto inlineFormattingContext = Layout::InlineFormattingContext { protect(rootLayoutBox()), protect(layoutState()), parentBlockLayoutState };
     // Temporary, integration only.
-    auto excludedMarkers = excludedMarkersForFirstFormattedLine(inlineFormattingContext.layoutState());
+    auto outsideMarkers = outsideMarkersForFirstFormattedLine(inlineFormattingContext.layoutState());
 
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
 
@@ -662,7 +662,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
     auto didDiscardContent = layoutResult ? layoutResult->lineClamp.didDiscardContent : inlineFormattingContext.formattingUtils().shouldDiscardRemainingContentInBlockDirection();
     auto repaintRect = constructContent(inlineFormattingContext.layoutState(), WTF::move(layoutResult));
 
-    setExcludedMarkerPositions(excludedMarkers);
+    setOutsideMarkerPositions(outsideMarkers);
 
     m_lineDamage = { };
 
@@ -1683,16 +1683,16 @@ void LineLayout::shiftLinesByInBlockDirection(LayoutUnit blockShift)
     for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex)
         displayContent.moveLineInBlockDirection(lineIndex, blockShift);
 
-    // An excluded marker is on one of these lines without being part of the content that moves with them, so the
-    // position it was given has to move too (see RenderListItem::placeExcludedMarker). Nested list items can have
+    // An outside marker is on one of these lines without being part of the content that moves with them, so the
+    // position it was given has to move too (see RenderListItem::placeOutsideMarker). Nested list items can have
     // their markers on the same line.
-    for (auto& listItemWithExcludedMarker : flow().view().frameView().layoutContext().listItemsWithExcludedMarker()) {
-        CheckedPtr listItem = listItemWithExcludedMarker.get();
-        auto excludedPosition = listItem->excludedMarkerPosition();
+    for (auto& listItemWithOutsideMarker : flow().view().frameView().layoutContext().listItemsWithOutsideMarker()) {
+        CheckedPtr listItem = listItemWithOutsideMarker.get();
+        auto excludedPosition = listItem->outsideMarkerPosition();
         if (!excludedPosition || excludedPosition->firstFormattedLineRoot.get() != &flow())
             continue;
         excludedPosition->topLeft.move(0, blockShift.toFloat());
-        listItem->setExcludedMarkerPosition(WTF::move(*excludedPosition));
+        listItem->setOutsideMarkerPosition(WTF::move(*excludedPosition));
     }
 
     auto deltaX = isHorizontalWritingMode ? 0_lu : blockShift;

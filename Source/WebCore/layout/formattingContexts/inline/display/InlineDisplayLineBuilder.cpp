@@ -163,7 +163,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& line
     auto hasContentfulContent = [&] {
         if (lineLayoutResult.hasContentfulInFlowContent())
             return true;
-        return lineLayoutResult.isFirstLast.isFirstFormattedLine == IsFirstFormattedLine::Yes && !formattingContext().layoutState().excludedMarkerLayoutBounds().isEmpty();
+        return lineLayoutResult.isFirstLast.isFirstFormattedLine == IsFirstFormattedLine::Yes && !formattingContext().layoutState().outsideMarkerLayoutBounds().isEmpty();
     };
     auto hasInflowContent = [&] {
         if (hasContentfulContent())
