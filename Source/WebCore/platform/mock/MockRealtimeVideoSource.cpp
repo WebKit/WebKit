@@ -101,7 +101,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::timeFont()
     auto& description = fontDescription();
     description.setComputedSize(m_baseFontSize);
     description.setUsedSize(m_baseFontSize);
-    m_timeFont = { FontCascadeDescription { description } };
+    m_timeFont = FontCascade::create(FontCascadeDescription { description }).moveToUniquePtr();
     protect(*m_timeFont)->update(nullptr);
 
     return *m_timeFont;
@@ -115,7 +115,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::bipBopFont()
     auto& description = fontDescription();
     description.setComputedSize(m_bipBopFontSize);
     description.setUsedSize(m_bipBopFontSize);
-    m_bipBopFont = { FontCascadeDescription { description } };
+    m_bipBopFont = FontCascade::create(FontCascadeDescription { description }).moveToUniquePtr();
     protect(*m_bipBopFont)->update(nullptr);
 
     return *m_bipBopFont;
@@ -129,7 +129,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
     auto& description = fontDescription();
     description.setComputedSize(m_statsFontSize);
     description.setUsedSize(m_statsFontSize);
-    m_statsFont = { FontCascadeDescription { description } };
+    m_statsFont = FontCascade::create(FontCascadeDescription { description }).moveToUniquePtr();
     protect(*m_statsFont)->update(nullptr);
 
     return *m_statsFont;
@@ -600,7 +600,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     // There is no field for days, so pad the hours on 2 digits and let it wrap around at the 100th hour.
     unsigned hours = (milliseconds / (1000 * 60 * 60)) % 100;
 
-    auto drawingState = this->drawingState();
+    DrawingState drawingState { this->drawingState().baseFontSize() };
     IntSize captureSize = this->captureSize();
     FloatPoint timeLocation(captureSize.width() * .05, captureSize.height() * .15);
     context.setFillColor(Color::white);

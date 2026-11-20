@@ -973,6 +973,8 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     };
 
     WeakPtr destroyRoot = destroyRootIncludingAnonymous();
+    // Floats and out-of-flow boxes do not affect whether the parent's children need anonymous wrappers.
+    bool destroyRootIsFloatingOrOutOfFlowPositioned = destroyRoot->isFloatingOrOutOfFlowPositioned();
 
     auto clearFloatsAndOutOfFlowPositionedObjects = [&] {
         // Remove floats and out-of-flow positioned objects from their containing block before detaching
@@ -1022,7 +1024,8 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         return;
 
     auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRootParent };
-    removeAnonymousWrappersForInlineChildrenIfNeeded(*protect(destroyRootParent.get()));
+    if (!destroyRootIsFloatingOrOutOfFlowPositioned)
+        removeAnonymousWrappersForInlineChildrenIfNeeded(*protect(destroyRootParent.get()));
 
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(*destroyRootParent) && !destroyRootParent->firstChild())

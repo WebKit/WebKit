@@ -106,9 +106,8 @@ constexpr float MaxDragLabelStringWidth = (MaxDragLabelWidth - 2 * DragLabelBord
 constexpr float DragLinkLabelFontsize = 11;
 constexpr float DragLinkURLFontSize = 10;
 
-static FontCascade dragLabelFont(int size, bool bold)
+static UniqueRef<FontCascade> dragLabelFont(int size, bool bold)
 {
-    FontCascade result;
     NONCLIENTMETRICS metrics;
     metrics.cbSize = sizeof(metrics);
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
@@ -118,15 +117,15 @@ static FontCascade dragLabelFont(int size, bool bold)
     description.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
     description.setComputedSize((float)size);
     description.setUsedSize((float)size);
-    result = FontCascade(WTF::move(description));
-    result.update();
+    UniqueRef result = FontCascade::create(WTF::move(description));
+    result->update();
     return result;
 }
 
 std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL& url, const String& inLabel, float)
 {
-    static const FontCascade labelFont = dragLabelFont(DragLinkLabelFontsize, true);
-    static const FontCascade urlFont = dragLabelFont(DragLinkURLFontSize, false);
+    static const UniqueRef<FontCascade> labelFont = dragLabelFont(DragLinkLabelFontsize, true);
+    static const UniqueRef<FontCascade> urlFont = dragLabelFont(DragLinkURLFontSize, false);
 
     bool drawURLString = true;
     bool clipURLString = false;
@@ -142,7 +141,7 @@ std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndi
     // First step in drawing the link drag image width.
     TextRun labelRun(label);
     TextRun urlRun(urlString);
-    IntSize labelSize(labelFont.width(labelRun), labelFont.metricsOfPrimaryFont().intAscent() + labelFont.metricsOfPrimaryFont().intDescent());
+    IntSize labelSize(labelFont->width(labelRun), labelFont->metricsOfPrimaryFont().intAscent() + labelFont->metricsOfPrimaryFont().intDescent());
 
     if (labelSize.width() > MaxDragLabelStringWidth) {
         labelSize.setWidth(MaxDragLabelStringWidth);
@@ -153,8 +152,8 @@ std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndi
     IntSize imageSize(labelSize.width() + DragLabelBorderX * 2, labelSize.height() + DragLabelBorderY * 2);
 
     if (drawURLString) {
-        urlStringSize.setWidth(urlFont.width(urlRun));
-        urlStringSize.setHeight(urlFont.metricsOfPrimaryFont().intAscent() + urlFont.metricsOfPrimaryFont().intDescent());
+        urlStringSize.setWidth(urlFont->width(urlRun));
+        urlStringSize.setHeight(urlFont->metricsOfPrimaryFont().intAscent() + urlFont->metricsOfPrimaryFont().intDescent());
         imageSize.setHeight(imageSize.height() + urlStringSize.height());
         if (urlStringSize.width() > MaxDragLabelStringWidth) {
             imageSize.setWidth(MaxDragLabelWidth);
@@ -190,14 +189,14 @@ std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndi
     if (drawURLString) {
         if (clipURLString)
             urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DragLabelBorderX * 2.0f), urlFont);
-        IntPoint textPos(DragLabelBorderX, imageSize.height() - (LabelBorderYOffset + urlFont.metricsOfPrimaryFont().intDescent()));
+        IntPoint textPos(DragLabelBorderX, imageSize.height() - (LabelBorderYOffset + urlFont->metricsOfPrimaryFont().intDescent()));
         WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, urlFont, topColor, bottomColor);
     }
 
     if (clipLabelString)
         label = StringTruncator::rightTruncate(label, imageSize.width() - (DragLabelBorderX * 2.0f), labelFont);
 
-    IntPoint textPos(DragLabelBorderX, DragLabelBorderY + labelFont.size());
+    IntPoint textPos(DragLabelBorderX, DragLabelBorderY + labelFont->size());
     WebCoreDrawDoubledTextAtPoint(context, label, textPos, labelFont, topColor, bottomColor);
 
     deallocContext(contextRef);

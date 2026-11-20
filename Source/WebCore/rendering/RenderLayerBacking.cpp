@@ -4914,8 +4914,8 @@ static RefPtr<const Pattern> patternForDescription(PatternDescription descriptio
         fontDescription.setComputedSize(10);
         fontDescription.setUsedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));
-        FontCascade font(WTF::move(fontDescription));
-        font.update(nullptr);
+        UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+        font->update(nullptr);
 
         TextRun textRun = TextRun(StringView { description.name });
         imageContext.setFillColor(description.fillColor);

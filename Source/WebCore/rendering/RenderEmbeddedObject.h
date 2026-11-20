@@ -88,7 +88,7 @@ private:
     void setUnavailablePluginIndicatorIsPressed(bool);
     bool isInUnavailablePluginIndicator(const MouseEvent&) const;
     bool isInUnavailablePluginIndicator(const FloatPoint&) const;
-    void getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade&, TextRun&, float& textWidth) const;
+    void getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, std::unique_ptr<FontCascade>&, TextRun&, float& textWidth) const;
     LayoutRect getReplacementTextGeometry(const LayoutPoint& accumulatedOffset) const;
 
     bool canHaveChildren() const override { return m_hasShadowContent; }

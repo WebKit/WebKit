@@ -59,7 +59,7 @@ private:
     using DateTypeMaxWidthMap = HashMap<int, float>;
     DateTypeFormatterMap m_formatterMap;
     DateTypeMaxWidthMap m_maxWidthMap;
-    FontCascade m_font;
+    const UniqueRef<FontCascade> m_font { FontCascade::create() };
 
     friend LocalizedDateCache& localizedDateCache();
     friend NeverDestroyed<LocalizedDateCache>;

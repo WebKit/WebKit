@@ -172,7 +172,7 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
     if (!firstTextBox || text().isEmpty())
         return createPositionWithAffinity(0, Affinity::Downstream);
 
-    float baseline = m_scaledFont.metricsOfPrimaryFont().ascent() / m_scalingFactor;
+    float baseline = m_scaledFont->metricsOfPrimaryFont().ascent() / m_scalingFactor;
 
     // Map local point to absolute point, as the character origins stored in the text fragments use absolute coordinates.
     FloatPoint absolutePoint(point);
@@ -217,12 +217,12 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
 void RenderSVGInlineText::updateScaledFont()
 {
     float scalingFactor = 1;
-    FontCascade scaledFont;
+    std::unique_ptr<FontCascade> scaledFont;
     computeNewScaledFontForStyle(*this, protect(style()), scalingFactor, scaledFont);
-    if (scalingFactor != m_scalingFactor || scaledFont != m_scaledFont)
+    if (scalingFactor != m_scalingFactor || *scaledFont != m_scaledFont.get())
         m_hasValidTextMetrics = false;
     m_scalingFactor = scalingFactor;
-    m_scaledFont = WTF::move(scaledFont);
+    m_scaledFont.get() = *scaledFont;
 }
 
 static float computeScalingFactorForRenderer(const RenderObject& renderer)
@@ -249,13 +249,13 @@ float RenderSVGInlineText::computeNonScalingStrokeScaleForRenderer(const RenderO
     return narrowPrecisionToFloat(std::hypot(transform.xScale(), transform.yScale()) / std::numbers::sqrt2);
 }
 
-void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, float& scalingFactor, FontCascade& scaledFont)
+void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, float& scalingFactor, std::unique_ptr<FontCascade>& scaledFont)
 {
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     scalingFactor = computeScalingFactorForRenderer(renderer);
     if (!scalingFactor) {
         scalingFactor = 1;
-        scaledFont = protect(style.fontCascade());
+        scaledFont = protect(style.fontCascade())->clone().moveToUniquePtr();
         return;
     }
 
@@ -272,8 +272,8 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     if (fontDescription.orientation() != FontOrientation::Horizontal)
         fontDescription.setOrientation(FontOrientation::Horizontal);
 
-    scaledFont = FontCascade { WTF::move(fontDescription) };
-    scaledFont.update(protect(protect(renderer.document())->fontSelector()).ptr());
+    scaledFont = FontCascade::create(WTF::move(fontDescription)).moveToUniquePtr();
+    scaledFont->update(protect(protect(renderer.document())->fontSelector()).ptr());
 }
 
 }

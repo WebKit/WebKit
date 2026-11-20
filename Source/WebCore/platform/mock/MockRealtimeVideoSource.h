@@ -142,9 +142,9 @@ private:
         float m_baseFontSize { 0 };
         float m_bipBopFontSize { 0 };
         float m_statsFontSize { 0 };
-        std::optional<FontCascade> m_timeFont;
-        std::optional<FontCascade> m_bipBopFont;
-        std::optional<FontCascade> m_statsFont;
+        std::unique_ptr<FontCascade> m_timeFont;
+        std::unique_ptr<FontCascade> m_bipBopFont;
+        std::unique_ptr<FontCascade> m_statsFont;
         std::optional<FontCascadeDescription> m_fontDescription;
     };
 

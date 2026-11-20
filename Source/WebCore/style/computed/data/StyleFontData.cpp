@@ -40,19 +40,35 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontData);
 FontData::FontData()
     : letterSpacing(ComputedStyle::initialLetterSpacing())
     , wordSpacing(ComputedStyle::initialWordSpacing())
+    , fontCascade(FontCascade::InlineStorageKey { })
 {
 }
 
 FontData::FontData(const FontData& o)
     : letterSpacing(o.letterSpacing)
     , wordSpacing(o.wordSpacing)
-    , fontCascade(protect(o.fontCascade))
+    , fontCascade(FontCascade::InlineStorageKey { }, protect(o.fontCascade))
 {
 }
 
 Ref<FontData> FontData::copy() const
 {
     return adoptRef(*new FontData(*this));
+}
+
+void FontData::operator delete(FontData* object, std::destroying_delete_t, size_t size)
+{
+    // fontCascade is stored inline for performance, so it never goes through FontCascade's
+    // WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR. Do the equivalent here: if CheckedPtrs to it are
+    // still alive, zero and leak the whole FontData instead of freeing it.
+    ASSERT_UNUSED(size, sizeof(FontData) == size);
+    object->fontCascade.setDidBeginCheckedPtrDeletion();
+    object->FontData::~FontData();
+    if (object->fontCascade.checkedPtrCountWithoutThreadCheck()) [[unlikely]] {
+        secureZeroBytes(*object);
+        return;
+    }
+    FontData::operator delete(object);
 }
 
 bool FontData::operator==(const FontData& o) const

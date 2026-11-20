@@ -697,43 +697,43 @@ Ref<CanvasRenderingContext2DBase::FontProxy> CanvasRenderingContext2DBase::FontP
 CanvasRenderingContext2DBase::FontProxy::~FontProxy()
 {
     if (realized())
-        protect(m_font.fontSelector())->unregisterForInvalidationCallbacks(*this);
+        protect(m_font->fontSelector())->unregisterForInvalidationCallbacks(*this);
 }
 
 CanvasRenderingContext2DBase::FontProxy::FontProxy(const FontProxy& other)
-    : m_font(protect(other.m_font))
+    : m_font(other.m_font->clone())
 {
     if (realized())
-        protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
+        protect(m_font->fontSelector())->registerForInvalidationCallbacks(*this);
 }
 
 auto CanvasRenderingContext2DBase::FontProxy::operator=(const FontProxy& other) -> FontProxy&
 {
     if (realized())
-        protect(m_font.fontSelector())->unregisterForInvalidationCallbacks(*this);
+        protect(m_font->fontSelector())->unregisterForInvalidationCallbacks(*this);
 
-    m_font = CheckedRef { other.m_font };
+    m_font.get() = other.m_font.get();
 
     if (realized())
-        protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
+        protect(m_font->fontSelector())->registerForInvalidationCallbacks(*this);
 
     return *this;
 }
 
 inline void CanvasRenderingContext2DBase::FontProxy::update(FontSelector& selector)
 {
-    ASSERT(&selector == m_font.fontSelector()); // This is an invariant. We should only ever be registered for callbacks on m_font.m_fonts.m_fontSelector.
+    ASSERT(&selector == m_font->fontSelector()); // This is an invariant. We should only ever be registered for callbacks on m_font.m_fonts.m_fontSelector.
     if (realized())
-        protect(m_font.fontSelector())->unregisterForInvalidationCallbacks(*this);
-    m_font.update(&selector);
+        protect(m_font->fontSelector())->unregisterForInvalidationCallbacks(*this);
+    m_font->update(&selector);
     if (realized())
-        protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
-    ASSERT(&selector == m_font.fontSelector());
+        protect(m_font->fontSelector())->registerForInvalidationCallbacks(*this);
+    ASSERT(&selector == m_font->fontSelector());
 }
 
 void CanvasRenderingContext2DBase::FontProxy::fontsNeedUpdate(FontSelector& selector)
 {
-    ASSERT_ARG(selector, &selector == m_font.fontSelector());
+    ASSERT_ARG(selector, &selector == m_font->fontSelector());
     ASSERT(realized());
 
     update(selector);
@@ -744,38 +744,38 @@ void CanvasRenderingContext2DBase::FontProxy::initialize(FontSelector& fontSelec
     // Beware! m_font.fontSelector() might not point to document.fontSelector()!
     ASSERT(fontCascade.fontSelector() == &fontSelector);
     if (realized())
-        protect(m_font.fontSelector())->unregisterForInvalidationCallbacks(*this);
-    m_font = fontCascade;
-    m_font.update(&fontSelector);
-    ASSERT(&fontSelector == m_font.fontSelector());
-    protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
+        protect(m_font->fontSelector())->unregisterForInvalidationCallbacks(*this);
+    m_font.get() = fontCascade;
+    m_font->update(&fontSelector);
+    ASSERT(&fontSelector == m_font->fontSelector());
+    protect(m_font->fontSelector())->registerForInvalidationCallbacks(*this);
 }
 
 void CanvasRenderingContext2DBase::FontProxy::update(NOESCAPE const ScopedLambda<void(FontCascadeDescription&)>& function)
 {
     ASSERT(realized());
-    RefPtr fontSelector = m_font.fontSelector();
-    FontCascadeDescription description = m_font.fontDescription();
+    RefPtr fontSelector = m_font->fontSelector();
+    FontCascadeDescription description = m_font->fontDescription();
     function(description);
 
-    FontCascade font { WTF::move(description), m_font };
-    font.update(fontSelector.get());
+    UniqueRef font = FontCascade::create(WTF::move(description), m_font);
+    font->update(fontSelector.get());
     initialize(*fontSelector, font);
 }
 
 const FontMetrics& CanvasRenderingContext2DBase::FontProxy::metricsOfPrimaryFont() const
 {
-    return m_font.metricsOfPrimaryFont();
+    return m_font->metricsOfPrimaryFont();
 }
 
 const FontCascadeDescription& CanvasRenderingContext2DBase::FontProxy::fontDescription() const
 {
-    return m_font.fontDescription();
+    return m_font->fontDescription();
 }
 
 float CanvasRenderingContext2DBase::FontProxy::width(const TextRun& textRun, GlyphOverflow* overflow) const
 {
-    return m_font.width(textRun, 0, overflow);
+    return m_font->width(textRun, 0, overflow);
 }
 
 void CanvasRenderingContext2DBase::FontProxy::drawBidiText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction action) const

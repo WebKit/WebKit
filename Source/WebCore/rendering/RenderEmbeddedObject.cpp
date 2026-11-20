@@ -282,7 +282,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     FloatRect indicatorRect;
     FloatRect replacementTextRect;
     FloatRect arrowRect;
-    FontCascade font;
+    std::unique_ptr<FontCascade> font;
     TextRun run(emptyString());
     float textWidth;
     getReplacementTextGeometry(paintOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth);
@@ -304,11 +304,11 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     context.setStrokeThickness(2);
     context.strokePath(strokePath);
 
-    const FontMetrics& fontMetrics = font.metricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = font->metricsOfPrimaryFont();
     float labelX = roundf(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
     float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.intHeight()) / 2 + fontMetrics.intAscent() + replacementTextRoundedRectTopTextMargin);
     context.setFillColor(replacementTextColor);
-    context.drawBidiText(font, run, FloatPoint(labelX, labelY));
+    context.drawBidiText(*font, run, FloatPoint(labelX, labelY));
 
     if (shouldUnavailablePluginMessageBeButton(protect(page()), m_pluginUnavailabilityReason)) {
         arrowRect.inflate(-replacementArrowCirclePadding);
@@ -329,14 +329,14 @@ LayoutRect RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& a
     FloatRect indicatorRect;
     FloatRect replacementTextRect;
     FloatRect arrowRect;
-    FontCascade font;
+    std::unique_ptr<FontCascade> font;
     TextRun run(emptyString());
     float textWidth;
     getReplacementTextGeometry(accumulatedOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth);
     return LayoutRect(indicatorRect);
 }
 
-void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade& font, TextRun& run, float& textWidth) const
+void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, std::unique_ptr<FontCascade>& font, TextRun& run, float& textWidth) const
 {
     bool includesArrow = shouldUnavailablePluginMessageBeButton(protect(page()), m_pluginUnavailabilityReason);
 
@@ -347,13 +347,12 @@ void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     fontDescription.setOneFamily(SystemFontDatabase::singleton().systemFontShorthandFamily(SystemFontDatabase::FontShorthand::WebkitSmallControl));
     fontDescription.setWeight(boldWeightValue());
     fontDescription.setUsedSize(12);
-    FontCascade newFont(WTF::move(fontDescription));
-    font = WTF::move(newFont);
-    font.update(nullptr);
+    font = FontCascade::create(WTF::move(fontDescription)).moveToUniquePtr();
+    font->update(nullptr);
 
     TextRun newRun(m_unavailablePluginReplacementText);
     run = WTF::move(newRun);
-    textWidth = font.width(run);
+    textWidth = font->width(run);
 
     replacementTextRect.setSize(FloatSize(textWidth + replacementTextRoundedRectLeftTextMargin + (includesArrow ? replacementTextRoundedRectRightTextMarginWithArrow : replacementTextRoundedRectRightTextMargin), replacementTextRoundedRectHeight));
     replacementTextRect.setLocation(contentRect.location() + (contentRect.size() / 2 - replacementTextRect.size() / 2));
