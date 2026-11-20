@@ -26,6 +26,8 @@
 #pragma once
 
 #include "AudioDestinationNode.h"
+#include <atomic>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WTF {
@@ -42,14 +44,18 @@ class OfflineAudioDestinationNode final : public AudioDestinationNode {
     WTF_MAKE_TZONE_ALLOCATED(OfflineAudioDestinationNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OfflineAudioDestinationNode);
 public:
-    OfflineAudioDestinationNode(OfflineAudioContext&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    OfflineAudioDestinationNode(OfflineAudioContext&, unsigned numberOfChannels, float sampleRate);
     ~OfflineAudioDestinationNode();
 
     OfflineAudioContext& context();
     const OfflineAudioContext& context() const;
 
     AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
-    
+
+    void prepareRender(Ref<AudioBuffer>&&);
+    void requestStop();
+    bool isRendering() const { return m_startedRendering; }
+
     // AudioNode   
     void initialize() final;
     void uninitialize() final;
@@ -59,8 +65,9 @@ public:
     void startRendering(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
 
 private:
-    enum class RenderResult { Failure, Suspended, Complete };
+    enum class RenderResult { Failure, Suspended, Complete, Stopped };
     RenderResult renderOnAudioThread();
+    void joinRenderThread();
     void notifyOfflineRenderingSuspended();
 
     bool requiresTailProcessing() const final { return false; }
@@ -70,16 +77,17 @@ private:
     unsigned m_numberOfChannels;
 
     // This AudioNode renders into this AudioBuffer.
-    const RefPtr<AudioBuffer> m_renderTarget;
-    
+    RefPtr<AudioBuffer> m_renderTarget;
+
     // Temporary AudioBus for each render quantum.
     const Ref<AudioBus> m_renderBus;
-    
+
     // Rendering thread.
     RefPtr<WTF::Thread> m_renderThread;
-    size_t m_framesToProcess;
+    size_t m_framesToProcess { 0 };
     size_t m_destinationOffset { 0 };
     bool m_startedRendering { false };
+    std::atomic<bool> m_stopRequested { false };
 };
 
 } // namespace WebCore

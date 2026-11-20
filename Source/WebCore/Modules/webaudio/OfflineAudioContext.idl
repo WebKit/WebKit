@@ -30,7 +30,8 @@
     [CallWith=CurrentScriptExecutionContext] constructor(OfflineAudioContextOptions contextOptions);
     [CallWith=CurrentScriptExecutionContext] constructor(unsigned long numberOfChannels, unsigned long length, float sampleRate);
     
-    Promise<AudioBuffer> startRendering();
+    Promise<AudioBuffer> startRendering(optional unsigned long? chunkSize = null);
+    Promise<undefined> close();
 
     [ImplementedAs=resumeRendering] Promise<undefined> resume();
     [ImplementedAs=suspendRendering] Promise<undefined> suspend(double suspendTime);

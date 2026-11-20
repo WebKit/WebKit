@@ -51,12 +51,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OfflineAudioDestinationNode);
 
-OfflineAudioDestinationNode::OfflineAudioDestinationNode(OfflineAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+OfflineAudioDestinationNode::OfflineAudioDestinationNode(OfflineAudioContext& context, unsigned numberOfChannels, float sampleRate)
     : AudioDestinationNode(context, sampleRate)
     , m_numberOfChannels(numberOfChannels)
-    , m_renderTarget(WTF::move(renderTarget))
     , m_renderBus(AudioBus::create(numberOfChannels, AudioUtilities::renderQuantumSize))
-    , m_framesToProcess(m_renderTarget ? m_renderTarget->length() : 0)
 {
     initializeDefaultNodeOptions(numberOfChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
 }
@@ -89,10 +87,7 @@ void OfflineAudioDestinationNode::uninitialize()
     if (!isInitialized())
         return;
 
-    if (RefPtr renderThread = m_renderThread) {
-        renderThread->waitForCompletion();
-        m_renderThread = nullptr;
-    }
+    joinRenderThread();
 
     if (m_startedRendering) {
         if (RefPtr workletProxy = context().audioWorklet().proxy()) {
@@ -107,6 +102,27 @@ void OfflineAudioDestinationNode::uninitialize()
     AudioNode::uninitialize();
 }
 
+void OfflineAudioDestinationNode::prepareRender(Ref<AudioBuffer>&& renderTarget)
+{
+    ASSERT(isMainThread());
+    ASSERT(!m_startedRendering);
+    m_renderTarget = WTF::move(renderTarget);
+    m_destinationOffset = 0;
+    m_framesToProcess = m_renderTarget->length();
+}
+
+void OfflineAudioDestinationNode::requestStop()
+{
+    m_stopRequested.store(true, std::memory_order_release);
+}
+
+void OfflineAudioDestinationNode::joinRenderThread()
+{
+    RefPtr renderThread = std::exchange(m_renderThread, nullptr);
+    if (renderThread)
+        renderThread->waitForCompletion();
+}
+
 void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -115,11 +131,12 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
     ASSERT(m_renderTarget.get());
     if (!m_renderTarget.get())
         return completionHandler(Exception { ExceptionCode::InvalidStateError, "OfflineAudioContextNode has no rendering buffer"_s });
-    
+
     if (m_startedRendering)
         return completionHandler(Exception { ExceptionCode::InvalidStateError, "Already started rendering"_s });
 
     m_startedRendering = true;
+    joinRenderThread();
 
     auto offThreadRendering = [this, protectedThis = Ref { *this }]() mutable {
         auto result = renderOnAudioThread();
@@ -127,15 +144,23 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
             protect(context())->postTask([this, protectedThis = Ref { *this }, result, currentSampleFrame]() mutable {
                 m_startedRendering = false;
                 Ref context = this->context();
+                context->setIsRendering(false);
+                if (context->closeRequested()) {
+                    context->didStopRender();
+                    return;
+                }
                 switch (result) {
                 case RenderResult::Failure:
-                    context->finishedRendering(false);
+                    context->didFailRender();
                     break;
                 case RenderResult::Complete:
-                    context->finishedRendering(true);
+                    context->didRenderChunk();
                     break;
                 case RenderResult::Suspended:
                     context->didSuspendRendering(currentSampleFrame);
+                    break;
+                case RenderResult::Stopped:
+                    context->didStopRender();
                     break;
                 }
             });
@@ -160,7 +185,11 @@ auto OfflineAudioDestinationNode::renderOnAudioThread() -> RenderResult
 
     RELEASE_ASSERT(context().isInitialized());
 
-    bool channelsMatch = m_renderBus->numberOfChannels() == m_renderTarget->numberOfChannels();
+    RefPtr renderTarget = m_renderTarget;
+    if (!renderTarget)
+        return RenderResult::Failure;
+
+    bool channelsMatch = m_renderBus->numberOfChannels() == renderTarget->numberOfChannels();
     ASSERT(channelsMatch);
     if (!channelsMatch)
         return RenderResult::Failure;
@@ -172,9 +201,12 @@ auto OfflineAudioDestinationNode::renderOnAudioThread() -> RenderResult
 
     // Break up the render target into smaller "render quantize" sized pieces.
     // Render until we're finished.
-    unsigned numberOfChannels = m_renderTarget->numberOfChannels();
+    unsigned numberOfChannels = renderTarget->numberOfChannels();
 
     while (m_framesToProcess > 0) {
+        if (m_stopRequested.load(std::memory_order_acquire))
+            return RenderResult::Stopped;
+
         if (protect(context())->shouldSuspend())
             return RenderResult::Suspended;
 
@@ -185,7 +217,7 @@ auto OfflineAudioDestinationNode::renderOnAudioThread() -> RenderResult
         
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
             auto source = m_renderBus->channel(channelIndex)->span().first(framesAvailableToCopy);
-            auto destination = m_renderTarget->channelData(channelIndex)->typedMutableSpan();
+            auto destination = renderTarget->rawChannelData(channelIndex);
             memcpySpan(destination.subspan(m_destinationOffset), source);
         }
         
