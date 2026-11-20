@@ -215,11 +215,11 @@ static bool isSystemUIFamilyFont(const String& family)
 }
 #endif
 
-static String getFamilyNameStringFromFamily(const String& family)
+static AtomString getFamilyNameStringFromFamily(const AtomString& family)
 {
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     if (isSystemUIFamilyFont(family))
-        return SystemSettings::singleton().defaultSystemFont();
+        return AtomString { SystemSettings::singleton().defaultSystemFont() };
 #endif
 
     // If we're creating a fallback font (e.g. "-webkit-monospace"), convert the name into
@@ -240,7 +240,7 @@ static String getFamilyNameStringFromFamily(const String& family)
     if (family == *familyNamesData->at(FamilyNamesIndex::MathFamily))
         return "math"_s;
 
-    return emptyString();
+    return emptyAtom();
 }
 
 Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
@@ -403,6 +403,13 @@ Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescr
     return features;
 }
 
+sk_sp<SkTypeface> FontCache::matchFamilyStyle(const AtomString& familyName, const SkFontStyle& style)
+{
+    return m_typefaceCache.ensure({ familyName, style }, [&] {
+        return fontManager().matchFamilyStyle(familyName.string().utf8().legacyCStringPointer(), style);
+    }).iterator->value;
+}
+
 static bool isUnsupportedFamilyFont(const AtomString& family)
 {
     return family == "-apple-system"
@@ -415,7 +422,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         return nullptr;
     auto familyName = getFamilyNameStringFromFamily(family);
     auto skFontStyle = skiaFontStyle(fontDescription);
-    auto typeface = fontManager().matchFamilyStyle(familyName.utf8().legacyCStringPointer(), skFontStyle);
+    auto typeface = matchFamilyStyle(familyName, skFontStyle);
     if (!typeface)
         return nullptr;
 
@@ -451,6 +458,7 @@ void FontCache::platformInvalidate()
 
 void FontCache::platformPurgeInactiveFontData()
 {
+    m_typefaceCache.clear();
     m_harfBuzzFontCache.clear();
 #if !OS(ANDROID) && !PLATFORM(WIN)
     m_skiaSystemFallbackFontCache.clear();

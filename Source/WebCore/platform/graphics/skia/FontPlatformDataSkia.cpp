@@ -246,7 +246,7 @@ FontPlatformData FontPlatformData::create(const Attributes& data, FontCustomPlat
         sk_sp<SkTypeface> typeface = data.m_variations.isEmpty() ? custom->m_typeface : custom->retrieveOrAddCachedTypeface(data.m_variations);
         return { WTF::move(typeface), data.m_metadata, WTF::move(features), custom };
     }
-    sk_sp<SkTypeface> typeface = FontCache::forCurrentThread().fontManager().matchFamilyStyle(data.m_familyName.c_str(), data.m_style);
+    sk_sp<SkTypeface> typeface = FontCache::forCurrentThread().matchFamilyStyle(AtomString::fromUTF8(data.m_familyName.c_str()), data.m_style);
     return { WTF::move(typeface), data.m_metadata, WTF::move(features) };
 }
 

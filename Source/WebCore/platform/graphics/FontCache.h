@@ -84,6 +84,7 @@ struct IDWriteFontCollection;
 #if USE(SKIA)
 #include "SkiaHarfBuzzFontCache.h"
 #include <skia/core/SkFontMgr.h>
+#include <skia/core/SkTypeface.h>
 #if !OS(ANDROID) && !PLATFORM(WIN)
 #include "SkiaSystemFallbackFontCache.h"
 #endif
@@ -119,6 +120,32 @@ enum class FontLookupOptions : uint8_t {
     DisallowBoldSynthesis    = 1 << 1,
     DisallowObliqueSynthesis = 1 << 2,
 };
+
+#if USE(SKIA)
+struct SkiaTypefaceCacheKey {
+    FontFamilyName family;
+    SkFontStyle style;
+
+    friend bool operator==(const SkiaTypefaceCacheKey&, const SkiaTypefaceCacheKey&) = default;
+};
+
+inline void add(Hasher& hasher, const SkiaTypefaceCacheKey& key)
+{
+    add(hasher, key.family, key.style.weight(), key.style.width(), key.style.slant());
+}
+
+struct SkiaTypefaceCacheKeyHashTraits : SimpleClassHashTraits<SkiaTypefaceCacheKey> {
+    static constexpr bool emptyValueIsZero = false;
+    static void constructDeletedValue(SkiaTypefaceCacheKey& slot)
+    {
+        new (NotNull, &slot) SkiaTypefaceCacheKey { AtomString { WTF::HashTableDeletedValue }, { } };
+    }
+    static bool isDeletedValue(const SkiaTypefaceCacheKey& key)
+    {
+        return key.family.string().isHashTableDeletedValue();
+    }
+};
+#endif
 
 class FontCache : public CanMakeCheckedPtr<FontCache> {
     WTF_MAKE_TZONE_ALLOCATED(FontCache);
@@ -218,6 +245,8 @@ public:
 
 #if USE(SKIA)
     static Vector<hb_feature_t> computeFeatures(const FontDescription&, const FontCreationContext&);
+    sk_sp<SkTypeface> matchFamilyStyle(const AtomString&, const SkFontStyle&);
+
     WEBCORE_EXPORT SkFontMgr& fontManager() const;
     SkiaHarfBuzzFontCache& harfBuzzFontCache() LIFETIME_BOUND { return m_harfBuzzFontCache; }
 #endif
@@ -290,6 +319,7 @@ private:
 
 #if USE(SKIA)
     mutable sk_sp<SkFontMgr> m_fontManager;
+    HashMap<SkiaTypefaceCacheKey, sk_sp<SkTypeface>, DefaultHash<SkiaTypefaceCacheKey>, SkiaTypefaceCacheKeyHashTraits> m_typefaceCache;
     SkiaHarfBuzzFontCache m_harfBuzzFontCache;
 #if !OS(ANDROID) && !PLATFORM(WIN)
     SkiaSystemFallbackFontCache m_skiaSystemFallbackFontCache;
