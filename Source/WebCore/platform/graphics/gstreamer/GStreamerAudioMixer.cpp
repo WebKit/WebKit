@@ -131,7 +131,7 @@ void GStreamerAudioMixer::ensureState(GstStateChange stateChange, const String& 
     }
 }
 
-GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink, std::optional<int> forcedSampleRate, const String& deviceId, const GRefPtr<GstDevice>& device)
+GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink, std::optional<int> forcedSampleRate, std::optional<GstClockTime> periodTime, const String& deviceId, const GRefPtr<GstDevice>& device)
 {
     auto resolvedDeviceId = deviceId.isEmpty() ? "default"_s : deviceId;
     DataMutexLocker locker { m_streamingMembers };
@@ -140,6 +140,8 @@ GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink
     GstElement* src = makeGStreamerElement("interaudiosrc"_s, String::fromLatin1(unsafeSpan(GST_ELEMENT_NAME(interaudioSink))));
 
     g_object_set(src, "channel", GST_ELEMENT_NAME(interaudioSink), nullptr);
+    if (periodTime)
+        g_object_set(src, "period-time", static_cast<guint64>(*periodTime), nullptr);
     g_object_set(interaudioSink, "channel", GST_ELEMENT_NAME(interaudioSink), nullptr);
 
     auto bin = gst_bin_new(nullptr);
@@ -219,19 +221,6 @@ void GStreamerAudioMixer::unregisterProducer(const GRefPtr<GstPad>& mixerPad)
         mp.teardownTimer.startOneShot(s_teardownTimeout);
         GST_DEBUG_OBJECT(mp.pipeline.get(), "No producers left for device '%s', paused pipeline; teardown in %.0f seconds.", deviceId.utf8(), s_teardownTimeout.seconds());
         dumpBinToDotFile(mp.pipeline.get(), "audio-mixer-after-producer-unregistration"_s);
-    }
-}
-
-void GStreamerAudioMixer::configureSourcePeriodTime(UTF8CStringView sourceName, uint64_t periodTime)
-{
-    DataMutexLocker locker { m_streamingMembers };
-    for (auto& [deviceId, mp] : locker->m_pipelines) {
-        GRefPtr src = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(mp->pipeline.get()), sourceName.utf8()));
-        if (!src)
-            continue;
-
-        g_object_set(src.get(), "period-time", periodTime, nullptr);
-        return;
     }
 }
 

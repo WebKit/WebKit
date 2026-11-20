@@ -28,7 +28,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/UTF8CStringView.h>
 
 namespace WebCore {
 
@@ -39,10 +38,8 @@ public:
     static GStreamerAudioMixer& singleton();
 
     void ensureState(GstStateChange, const String& deviceId = { });
-    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate, const String& deviceId = { }, const GRefPtr<GstDevice>& = nullptr);
+    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate, std::optional<GstClockTime> periodTime, const String& deviceId = { }, const GRefPtr<GstDevice>& = nullptr);
     void unregisterProducer(const GRefPtr<GstPad>&);
-
-    void configureSourcePeriodTime(UTF8CStringView sourceName, uint64_t periodTime);
 
 private:
     GStreamerAudioMixer();
