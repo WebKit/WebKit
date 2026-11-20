@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<title>textPath href: the text follows later changes to a basic shape target</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElementHrefAttribute">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#RectElement">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#CircleElement">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#EllipseElement">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#LineElement">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#PolylineElement">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#PolygonElement">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/geometry.html">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!--
+  SVG 2: "If the referenced element, or any attribute or property that determines its path,
+  changes, the text content is laid out again on the new path."
+
+  Each case is its own <svg>, so one engine failing one shape cannot hide another. Each subtest
+  reads where the first character starts, changes one thing on the referenced shape, and reads it
+  again. The first read also checks the text was laid out on the shape at all, so an engine that
+  never places text on a basic shape fails for that reason and not for a stale layout.
+
+  Start of the first character, from the equivalent path of each shape:
+    rect      (x + rx, y)
+    circle    (cx + r, cy)
+    ellipse   (cx + rx, cy)
+    line      (x1, y1)
+    polyline  the first coordinate pair
+    polygon   the first coordinate pair
+-->
+
+<svg width="500" height="300">
+  <path id="path" d="M 200 150 H 400"/>
+  <text><textPath id="on-path" href="#path">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <rect id="rect-y" x="200" y="150" width="200" height="100"/>
+  <text><textPath id="on-rect-y" href="#rect-y">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <rect id="rect-rx" x="200" y="150" width="200" height="100"/>
+  <text><textPath id="on-rect-rx" href="#rect-rx">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <rect id="rect-css-x" x="200" y="150" width="200" height="100"/>
+  <text><textPath id="on-rect-css-x" href="#rect-css-x">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <rect id="rect-transform" x="200" y="150" width="200" height="100"/>
+  <text><textPath id="on-rect-transform" href="#rect-transform">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <circle id="circle-cy" cx="250" cy="150" r="100"/>
+  <text><textPath id="on-circle-cy" href="#circle-cy">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <circle id="circle-css-r" cx="250" cy="150" r="100"/>
+  <text><textPath id="on-circle-css-r" href="#circle-css-r">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <ellipse id="ellipse-cx" cx="250" cy="150" rx="120" ry="80"/>
+  <text><textPath id="on-ellipse-cx" href="#ellipse-cx">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <line id="line-x1" x1="200" y1="150" x2="400" y2="150" stroke="black"/>
+  <text><textPath id="on-line-x1" href="#line-x1">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <polyline id="polyline-list" points="200,150 400,150 400,250"/>
+  <text><textPath id="on-polyline-list" href="#polyline-list">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <polygon id="polygon-points" points="200,150 400,150 400,250"/>
+  <text><textPath id="on-polygon-points" href="#polygon-points">ABC</textPath></text>
+</svg>
+<svg width="500" height="300">
+  <rect id="target-by-id" x="200" y="150" width="200" height="100"/>
+  <rect id="other-rect" x="200" y="200" width="200" height="50"/>
+  <text><textPath id="on-target-by-id" href="#target-by-id">ABC</textPath></text>
+</svg>
+<svg width="500" height="300" id="svg-replaced">
+  <rect id="replaced" x="200" y="150" width="200" height="100"/>
+  <text><textPath id="on-replaced" href="#replaced">ABC</textPath></text>
+</svg>
+<svg width="500" height="300" id="svg-smil">
+  <rect id="rect-smil" x="200" y="150" width="200" height="100">
+    <set id="set-y" attributeName="y" to="200" begin="indefinite" fill="freeze"/>
+  </rect>
+  <text><textPath id="on-rect-smil" href="#rect-smil">ABC</textPath></text>
+</svg>
+
+<script>
+// The first character's midpoint sits on the path, so its start is within a few units of the
+// path start, whatever font ends up being used; on the curved shapes it is off by under two.
+const TOLERANCE = 3;
+
+function assertStart(textPathId, x, y, label) {
+  const start = document.getElementById(textPathId).getStartPositionOfChar(0);
+  assert_approx_equals(start.x, x, TOLERANCE, `${label}: x of the first character`);
+  assert_approx_equals(start.y, y, TOLERANCE, `${label}: y of the first character`);
+}
+
+const CASES = [
+  {
+    textPath: 'on-path', name: 'path d attribute (control)',
+    before: [200, 150], after: [200, 200],
+    change: () => document.getElementById('path').setAttribute('d', 'M 200 200 H 400'),
+  },
+  {
+    textPath: 'on-rect-y', name: 'rect y attribute',
+    before: [200, 150], after: [200, 200],
+    change: () => document.getElementById('rect-y').setAttribute('y', '200'),
+  },
+  {
+    textPath: 'on-rect-rx', name: 'rect rx attribute',
+    before: [200, 150], after: [240, 150],
+    change: () => document.getElementById('rect-rx').setAttribute('rx', '40'),
+  },
+  {
+    textPath: 'on-rect-css-x', name: 'rect x property set from CSS',
+    before: [200, 150], after: [250, 150],
+    change: () => document.getElementById('rect-css-x').style.x = '250px',
+  },
+  {
+    textPath: 'on-rect-transform', name: 'rect transform attribute',
+    before: [200, 150], after: [200, 200],
+    change: () => document.getElementById('rect-transform').setAttribute('transform', 'translate(0 50)'),
+  },
+  {
+    textPath: 'on-circle-cy', name: 'circle cy attribute',
+    before: [350, 150], after: [350, 200],
+    change: () => document.getElementById('circle-cy').setAttribute('cy', '200'),
+  },
+  {
+    textPath: 'on-circle-css-r', name: 'circle r property set from CSS',
+    before: [350, 150], after: [300, 150],
+    change: () => document.getElementById('circle-css-r').style.r = '50px',
+  },
+  {
+    textPath: 'on-ellipse-cx', name: 'ellipse cx attribute',
+    before: [370, 150], after: [420, 150],
+    change: () => document.getElementById('ellipse-cx').setAttribute('cx', '300'),
+  },
+  {
+    textPath: 'on-line-x1', name: 'line x1 attribute',
+    before: [200, 150], after: [250, 150],
+    change: () => document.getElementById('line-x1').setAttribute('x1', '250'),
+  },
+  {
+    textPath: 'on-polyline-list', name: 'polyline points list item',
+    before: [200, 150], after: [200, 200],
+    change: () => { document.getElementById('polyline-list').points.getItem(0).y = 200; },
+  },
+  {
+    textPath: 'on-polygon-points', name: 'polygon points attribute',
+    before: [200, 150], after: [200, 200],
+    change: () => document.getElementById('polygon-points').setAttribute('points', '200,200 400,200 400,250'),
+  },
+  {
+    textPath: 'on-target-by-id', name: 'id moved from one rect to another',
+    before: [200, 150], after: [200, 200],
+    change: () => {
+      document.getElementById('target-by-id').id = 'no-longer-target';
+      document.getElementById('other-rect').id = 'target-by-id';
+    },
+  },
+  {
+    textPath: 'on-replaced', name: 'rect replaced by another rect with the same id',
+    before: [200, 150], after: [200, 200],
+    change: () => {
+      const old = document.getElementById('replaced');
+      const replacement = old.cloneNode();
+      replacement.setAttribute('y', '200');
+      old.replaceWith(replacement);
+    },
+  },
+];
+
+for (const c of CASES) {
+  test(() => {
+    assertStart(c.textPath, ...c.before, 'before the change');
+    c.change();
+    assertStart(c.textPath, ...c.after, 'after the change');
+  }, `textPath href follows a change to the ${c.name}`);
+}
+
+promise_test(async () => {
+  assertStart('on-rect-smil', 200, 150, 'before the animation');
+  const rect = document.getElementById('rect-smil');
+  document.getElementById('set-y').beginElement();
+  // Control: the animation itself has to apply before the text can be expected to move.
+  for (let frame = 0; frame < 60 && rect.y.animVal.value !== 200; ++frame)
+    await new Promise(resolve => requestAnimationFrame(resolve));
+  assert_equals(rect.y.animVal.value, 200, 'the <set> animation applied to the rect');
+  assertStart('on-rect-smil', 200, 200, 'after the animation');
+}, 'textPath href follows a SMIL animation of the rect y attribute');
+</script>

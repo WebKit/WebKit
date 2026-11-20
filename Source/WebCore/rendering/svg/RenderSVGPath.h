@@ -50,8 +50,6 @@ private:
     void strokeShape(GraphicsContext&) const override;
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle*) final;
-
     NODELETE bool shouldStrokeZeroLengthSubpath() const;
     NODELETE FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();

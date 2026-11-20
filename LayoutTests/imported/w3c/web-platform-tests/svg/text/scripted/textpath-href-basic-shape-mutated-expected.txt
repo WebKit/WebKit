@@ -1,0 +1,30 @@
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+ABC
+
+PASS textPath href follows a change to the path d attribute (control)
+PASS textPath href follows a change to the rect y attribute
+PASS textPath href follows a change to the rect rx attribute
+PASS textPath href follows a change to the rect x property set from CSS
+PASS textPath href follows a change to the rect transform attribute
+PASS textPath href follows a change to the circle cy attribute
+PASS textPath href follows a change to the circle r property set from CSS
+PASS textPath href follows a change to the ellipse cx attribute
+PASS textPath href follows a change to the line x1 attribute
+PASS textPath href follows a change to the polyline points list item
+PASS textPath href follows a change to the polygon points attribute
+PASS textPath href follows a change to the id moved from one rect to another
+PASS textPath href follows a change to the rect replaced by another rect with the same id
+PASS textPath href follows a SMIL animation of the rect y attribute
+

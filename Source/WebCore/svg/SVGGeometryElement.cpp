@@ -29,11 +29,16 @@
 #include "LegacyRenderSVGShape.h"
 #include "NodeDocument.h"
 #include "RenderSVGShape.h"
+#include "RenderObjectInlines.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGMPathElement.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include "SVGTextPathElement.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -155,11 +160,64 @@ void SVGGeometryElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         ASSERT(attrName == SVGNames::pathLengthAttr);
         InstanceInvalidationGuard guard(*this);
+        invalidatePathDependencies();
         updateSVGRendererForElementChange();
         return;
     }
 
+    if (attrName == SVGNames::transformAttr)
+        invalidatePathDependencies();
+
     SVGGraphicsElement::svgAttributeChanged(attrName);
+}
+
+void SVGGeometryElement::invalidatePathDependencies()
+{
+    // <mpath> and <textPath> dependencies are not handled in markForLayoutAndParentResourceInvalidation
+    // when this element has no renderer, so we update them manually.
+    for (auto& element : referencingElements()) {
+        if (RefPtr mpathElement = dynamicDowncast<SVGMPathElement>(element))
+            mpathElement->targetPathChanged();
+        else if (RefPtr textPathElement = dynamicDowncast<SVGTextPathElement>(element))
+            textPathElement->updateSVGRendererForElementChange();
+    }
+}
+
+void SVGGeometryElement::invalidatePathDependenciesForStyleChange()
+{
+    // updateSVGRendererForElementChange() is too late here: it only runs after the next layout.
+    for (auto& element : referencingElements()) {
+        if (RefPtr mpathElement = dynamicDowncast<SVGMPathElement>(element)) {
+            mpathElement->targetPathChanged();
+            continue;
+        }
+
+        RefPtr textPathElement = dynamicDowncast<SVGTextPathElement>(element);
+        if (!textPathElement)
+            continue;
+
+        CheckedPtr renderer = textPathElement->renderer();
+        if (!renderer)
+            continue;
+
+        if (document().settings().layerBasedSVGEngineEnabled())
+            renderer->setNeedsLayout();
+        else
+            LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+    }
+}
+
+Node::NeedsPostConnectionSteps SVGGeometryElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    auto result = SVGGraphicsElement::insertionSteps(insertionType, parentOfInsertedTree);
+    invalidatePathDependencies();
+    return result;
+}
+
+void SVGGeometryElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    SVGGraphicsElement::removingSteps(removalType, oldParentOfRemovedTree);
+    invalidatePathDependencies();
 }
 
 }

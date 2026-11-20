@@ -27,14 +27,14 @@
 #include "LegacyRenderSVGPath.h"
 #include "LegacyRenderSVGResource.h"
 #include "MutableStyleProperties.h"
+#include "NodeDocument.h"
 #include "RenderSVGPath.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGMPathElement.h"
 #include "SVGNames.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
-#include "SVGTextPathElement.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePropertiesInlines.h"
@@ -161,31 +161,6 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGeometryElement::svgAttributeChanged(attrName);
 }
 
-void SVGPathElement::invalidatePathDependencies()
-{
-    // <mpath> and <textPath> dependencies are not handled in markForLayoutAndParentResourceInvalidation
-    // when this <path> has no renderer, so we update them manually.
-    for (auto& element : referencingElements()) {
-        if (RefPtr mpathElement = dynamicDowncast<SVGMPathElement>(element.get()))
-            mpathElement->targetPathChanged();
-        else if (RefPtr textPathElement = dynamicDowncast<SVGTextPathElement>(element.get()))
-            textPathElement->updateSVGRendererForElementChange();
-    }
-}
-
-Node::NeedsPostConnectionSteps SVGPathElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
-{
-    auto result = SVGGeometryElement::insertionSteps(insertionType, parentOfInsertedTree);
-    invalidatePathDependencies();
-    return result;
-}
-
-void SVGPathElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
-{
-    SVGGeometryElement::removingSteps(removalType, oldParentOfRemovedTree);
-    invalidatePathDependencies();
-}
-
 float SVGPathElement::getTotalLength() const
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
@@ -298,11 +273,6 @@ void SVGPathElement::collectDPresentationalHint(MutableStyleProperties& style)
     // The fill rule value passed here is not relevant for the `d` property.
     auto cssPathValue = CSSPathValue::create(CSS::PathFunction { CSS::Keyword::Nonzero { }, CSS::Path::Data { Ref { m_path }->currentPathByteStream() } });
     addPropertyToPresentationalHintStyle(style, property, WTF::move(cssPathValue));
-}
-
-void SVGPathElement::pathDidChange()
-{
-    invalidatePathDependencies();
 }
 
 }

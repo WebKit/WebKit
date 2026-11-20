@@ -312,11 +312,6 @@ bool LegacyRenderSVGPath::isRenderingDisabled() const
 
 void LegacyRenderSVGPath::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
-    if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(graphicsElement())) {
-        if (!oldStyle || style().d() != oldStyle->d())
-            pathElement->pathDidChange();
-    }
-
     LegacyRenderSVGShape::styleDidChange(diff, oldStyle);
 
     if (!shouldGenerateMarkerPositions())

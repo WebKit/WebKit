@@ -29,9 +29,9 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGGeometryElement.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
-#include "SVGPathElement.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -177,8 +177,8 @@ void SVGTextPathElement::buildPendingResource()
             treeScope->addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(*target.element))
-        pathElement->addReferencingElement(*this);
+    } else if (RefPtr geometryElement = dynamicDowncast<SVGGeometryElement>(*target.element))
+        geometryElement->addReferencingElement(*this);
 
     updateSVGRendererForElementChange();
 }
