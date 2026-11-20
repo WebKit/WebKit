@@ -51,19 +51,14 @@ def upload(filename, url, content_type=None):
         sys.stderr.write(f', content-type {content_type}')
     sys.stderr.write('\n')
 
-    with open(filename, 'rb') as f:
-        try:
-            data = f.read()
-        except Exception as e:
-            sys.stderr.write(f'Exception: {e}\n')
-            return -1
-
     try:
         headers = None
         if content_type:
             headers = {'Content-Type': content_type}
-        # Applies to each socket operation, not the whole upload, so a stalled connection fails fast while a slow upload can still finish.
-        response = requests.put(url, data=data, headers=headers, timeout=UPLOAD_TIMEOUT)
+        # Stream the body from the file so the timeout applies to each chunk sent rather than to the whole body:
+        # a stalled connection fails fast while a slow but progressing upload can still finish.
+        with open(filename, 'rb') as f:
+            response = requests.put(url, data=f, headers=headers, timeout=UPLOAD_TIMEOUT)
         sys.stderr.write(f'Response: {response}, status_code: {response.status_code}, {response.reason}\n')
         if response.status_code // 100 == 2:
             return 0
