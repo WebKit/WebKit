@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 
+#import "RemoteAnimationStack.h"
 #import "RemoteLayerTreeNode.h"
 #import <QuartzCore/CALayer.h>
 
@@ -43,7 +44,18 @@ namespace WebKit {
 static constexpr CGFloat scrollViewVisibilityMarginRatio = 0.5;
 #endif
 
-bool RemoteAnimationVisibility::animatedContentMayBeVisible(const RemoteLayerTreeNode& node, CALayer *webViewLayer)
+bool RemoteAnimationVisibility::animatedContentMayBeVisible(const RemoteLayerTreeNode& node, CALayer *webViewLayer, VisibilityCache& visibilityCache, NOESCAPE const AnimationStackForNode& animationStackForNode)
+{
+    auto iterator = visibilityCache.find(node.layerID());
+    if (iterator != visibilityCache.end())
+        return iterator->value;
+
+    auto mayBeVisible = computeAnimatedContentMayBeVisible(node, webViewLayer, visibilityCache, animationStackForNode);
+    visibilityCache.set(node.layerID(), mayBeVisible);
+    return mayBeVisible;
+}
+
+bool RemoteAnimationVisibility::computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode& node, CALayer *webViewLayer, VisibilityCache& visibilityCache, NOESCAPE const AnimationStackForNode& animationStackForNode)
 {
     // Without a known extent, the animated content could be anywhere.
     auto& animationExtent = node.animationExtent();
@@ -83,6 +95,13 @@ bool RemoteAnimationVisibility::animatedContentMayBeVisible(const RemoteLayerTre
             rect = CGRectIntersection(rect, clipRect);
             if (CGRectIsEmpty(rect))
                 return false;
+        }
+
+        // Assume this layer may be visible if the ancestor's layer itself may be.
+        if (RefPtr ancestorNode = RemoteLayerTreeNode::forCALayer(ancestor.get())) {
+            RefPtr animationStack = animationStackForNode(*ancestorNode);
+            if (animationStack && animationStack->hasTimeBasedAnimations() && animationStack->affectsTransform())
+                return animatedContentMayBeVisible(*ancestorNode, webViewLayer, visibilityCache, animationStackForNode);
         }
 
         RetainPtr<CALayer> superlayer = [ancestor superlayer];

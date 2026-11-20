@@ -27,16 +27,27 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
+
 OBJC_CLASS CALayer;
 
 namespace WebKit {
 
+class RemoteAnimationStack;
 class RemoteLayerTreeNode;
 
 // Determines whether the content of animated layers may be visible within the web view.
 class RemoteAnimationVisibility {
 public:
-    static bool animatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer);
+    using AnimationStackForNode = Function<RefPtr<const RemoteAnimationStack>(const RemoteLayerTreeNode&)>;
+    using VisibilityCache = HashMap<WebCore::PlatformLayerIdentifier, bool>;
+    static bool animatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
+
+private:
+    static bool computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
 };
 
 } // namespace WebKit

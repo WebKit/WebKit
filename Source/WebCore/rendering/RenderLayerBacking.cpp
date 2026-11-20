@@ -2199,6 +2199,8 @@ void RenderLayerBacking::updateScrollOffset(ScrollOffset scrollOffset)
 
 void RenderLayerBacking::updateAfterDescendants()
 {
+    updateAnimationExtent();
+
     // FIXME: this potentially duplicates work we did in updateConfiguration().
     PaintedContentsInfo contentsInfo(*this);
     Ref graphicsLayer = *m_graphicsLayer;

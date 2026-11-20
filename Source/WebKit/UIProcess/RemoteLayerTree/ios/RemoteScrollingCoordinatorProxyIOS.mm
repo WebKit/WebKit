@@ -916,9 +916,13 @@ bool RemoteScrollingCoordinatorProxyIOS::hasHighImpactMonotonicAnimations() cons
 {
     auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
     RetainPtr<CALayer> webViewLayer = [protect(webPageProxy())->cocoaView() layer];
+    RemoteAnimationVisibility::VisibilityCache visibilityCache;
+    RemoteAnimationVisibility::AnimationStackForNode animationStackForNode = [](auto& node) -> RefPtr<const RemoteAnimationStack> {
+        return node.animationStack();
+    };
     for (auto animatedNodeLayerID : m_animatedNodeLayerIDs) {
         RefPtr animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
-        if (animatedNode->hasHighImpactMonotonicAnimations() && RemoteAnimationVisibility::animatedContentMayBeVisible(*animatedNode, webViewLayer.get()))
+        if (animatedNode->hasHighImpactMonotonicAnimations() && RemoteAnimationVisibility::animatedContentMayBeVisible(*animatedNode, webViewLayer.get(), visibilityCache, animationStackForNode))
             return true;
     }
     return false;

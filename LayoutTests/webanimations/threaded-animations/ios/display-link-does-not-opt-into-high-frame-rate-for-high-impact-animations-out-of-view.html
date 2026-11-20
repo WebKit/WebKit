@@ -100,6 +100,10 @@ promise_test(async test => {
 
     await startHighImpactAnimation(container);
     await assertHighFrameRate(true, "An animation moving a composited descendant in view yields high frame rate display link updates");
+
+    descendant.style.top = "0";
+    await presentationUpdate();
+    await assertHighFrameRate(false, "Once the composited descendant is out of view too, the animation no longer yields high frame rate display link updates");
 }, "High-impact animations account for the composited descendants of their element.");
 
 promise_test(async test => {
