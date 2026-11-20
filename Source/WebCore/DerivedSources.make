@@ -692,7 +692,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webaudio/AnalyserNode.idl \
     $(WebCore)/Modules/webaudio/AnalyserOptions.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
-    $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
     $(WebCore)/Modules/webaudio/AudioBufferOptions.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceOptions.idl \
@@ -735,6 +734,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webaudio/ConstantSourceOptions.idl \
     $(WebCore)/Modules/webaudio/ConvolverNode.idl \
     $(WebCore)/Modules/webaudio/ConvolverOptions.idl \
+    $(WebCore)/Modules/webaudio/DecodeErrorCallback.idl \
+    $(WebCore)/Modules/webaudio/DecodeSuccessCallback.idl \
     $(WebCore)/Modules/webaudio/DelayNode.idl \
     $(WebCore)/Modules/webaudio/DelayOptions.idl \
     $(WebCore)/Modules/webaudio/DistanceModelType.idl \

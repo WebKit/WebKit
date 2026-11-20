@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2026 Sergey Rubanov. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,12 +22,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: According to the latest WebAudio spec, this should be split into two
-// callbacks, DecodeSuccessCallback which takes a non-nullable AudioBuffer, and
-// DecodeErrorCallback, which takes DOMException. Currently, we pass an AudioBuffer
-// on success and null on failure.
+#pragma once
 
-[
-    Conditional=WEB_AUDIO,
-    GenerateIsReachable=ImplScriptExecutionContext
-] callback AudioBufferCallback = undefined (AudioBuffer? audioBuffer);
+#if ENABLE(WEB_AUDIO)
+
+#include "ActiveDOMCallback.h"
+#include "CallbackResult.h"
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class DOMException;
+
+class DecodeErrorCallback : public RefCounted<DecodeErrorCallback>, public ActiveDOMCallback {
+public:
+    using ActiveDOMCallback::ActiveDOMCallback;
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    virtual bool isJSDecodeErrorCallback() const { return false; }
+
+    virtual CallbackResult<void> invoke(DOMException&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(DOMException&) = 0;
+
+private:
+    virtual bool hasCallback() const = 0;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_AUDIO)

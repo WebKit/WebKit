@@ -245,8 +245,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAttr.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAttr.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBuffer.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferCallback.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferSourceNode.cpp
@@ -908,6 +906,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabaseCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabaseCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecodeErrorCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecodeErrorCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecodeSuccessCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecodeSuccessCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStream.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStreamDecoder.cpp
