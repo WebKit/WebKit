@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+async_test(t => {
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = "captions-webvtt/regions.vtt";
+    track.track.mode = "showing";
+    video.appendChild(track);
+    track.track.mode = "disabled";
+
+    // The load is already queued. It must complete (and parse the REGION block)
+    // without dereferencing the null VTTRegionList of the now-disabled track.
+    track.addEventListener("load", () => t.done());
+    track.addEventListener("error", () => t.done());
+}, "A track disabled while loading must not crash");
+</script>
+</body>
+</html>

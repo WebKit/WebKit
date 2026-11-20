@@ -135,6 +135,8 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader& loader)
 {
     ASSERT(m_loader.get() == &loader);
     RefPtr regions = this->regions();
+    if (!regions)
+        return;
     for (auto& newRegion : loader.getNewRegions())
         regions->add(WTF::move(newRegion));
 }

@@ -107,6 +107,8 @@ void InbandWebVTTTextTrack::newCuesParsed()
 void InbandWebVTTTextTrack::newRegionsParsed()
 {
     RefPtr regions = this->regions();
+    if (!regions)
+        return;
     for (auto& region : parser().takeRegions())
         regions->add(WTF::move(region));
 }
