@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/README.md
@@ -40,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nyyyn-dialog.html
 /LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/y-dialog-disconnected.html
 /LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/y-popover-disconnected.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/y-preventDefault-consume-transient-activation.html
 /LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/y.html
 /LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yn-activate.html
 /LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yn.html

@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+FAIL User activation is not carried over to an iframe that a traversal recreates assert_equals: Sticky bit after window navigated expected true but got false
+

@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+PASS User activation propagation across a forward traversal to an entry a cross-origin document navigated to
+

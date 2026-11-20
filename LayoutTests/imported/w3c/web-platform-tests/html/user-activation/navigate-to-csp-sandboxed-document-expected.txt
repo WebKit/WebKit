@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+PASS User activation propagation across a navigation to a document sandboxed by Content-Security-Policy
+

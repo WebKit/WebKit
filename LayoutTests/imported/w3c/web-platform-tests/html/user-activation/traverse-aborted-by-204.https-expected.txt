@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+PASS User activation when a traversal is aborted by a 204 response
+

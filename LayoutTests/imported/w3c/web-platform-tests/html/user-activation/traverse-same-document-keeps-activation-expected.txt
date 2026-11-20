@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+PASS User activation is kept across a traversal within one document
+

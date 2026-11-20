@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+FAIL User activation propagation across a navigation to a javascript: URL assert_equals: Sticky bit of the document the javascript: URL produced expected true but got false
+

@@ -1,0 +1,4 @@
+
+
+FAIL User activation propagation across a navigation of an iframe to a document that inherits an origin assert_equals: Sticky bit after the iframe was navigated expected true but got false
+

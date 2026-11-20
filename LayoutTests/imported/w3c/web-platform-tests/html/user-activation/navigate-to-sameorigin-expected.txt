@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+FAIL User activation propagation across a same-origin navigation assert_equals: Sticky bit after window navigated expected true but got false
+

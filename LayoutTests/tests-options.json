@@ -4442,7 +4442,7 @@
     "imported/w3c/web-platform-tests/html/tools/html5lib_test_fragment.xml": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/user-activation/activation-thru-contextmenu-event.html": [
+    "imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html": [
@@ -4451,7 +4451,10 @@
     "imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.tentative.html": [
+    "imported/w3c/web-platform-tests/html/user-activation/traverse-forward-to-entry-initiated-by-crossorigin.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/user-activation/traverse-to-entry-initiated-by-crossorigin.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/image-decodes/image-decode-iframe.html": [

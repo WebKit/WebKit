@@ -121,6 +121,15 @@ inspector/unit-tests/target-manager.html [ Failure ]
 # rdar://178066625
 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
 
+# History traversals to an entry involving a cross-site redirect time out with Site Isolation.
+webkit.org/b/332348 imported/w3c/web-platform-tests/html/user-activation/traverse-after-crossorigin-redirect.https.html?no-store [ Failure ]
+webkit.org/b/332348 imported/w3c/web-platform-tests/html/user-activation/traverse-after-crossorigin-redirect.https.html?store [ Failure ]
+webkit.org/b/332348 imported/w3c/web-platform-tests/html/user-activation/traverse-refetch-through-crossorigin-redirect.https.html [ Failure ]
+
+# A popup shares its browsing context group with its opener, so its cross-site navigation keeps the group, and
+# with Site Isolation the outgoing document is not put in the back/forward cache (unless in-place caching is on).
+imported/w3c/web-platform-tests/html/user-activation/traverse-keeps-own-activation.https.html?store [ Failure ]
+
 # Document-Isolation-Policy requires site isolation.
 imported/w3c/web-platform-tests/html/document-isolation-policy [ Pass ]
 http/tests/document-isolation-policy [ Pass ]

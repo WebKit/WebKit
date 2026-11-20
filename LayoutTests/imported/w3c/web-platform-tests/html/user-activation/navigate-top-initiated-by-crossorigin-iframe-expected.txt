@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+PASS User activation propagation across a navigation of a top-level frame initiated by a cross-origin iframe
+

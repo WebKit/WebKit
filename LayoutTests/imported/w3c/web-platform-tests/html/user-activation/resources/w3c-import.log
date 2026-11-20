@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/child-message-event-api.html
@@ -19,6 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/child-two.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/consumption-crossorigin-child.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/consumption-sameorigin-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/early-activation-recorder.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/executor-with-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/propagation-crossorigin-child.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/propagation-sameorigin-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/slow-remote-executor.py
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/utils.js

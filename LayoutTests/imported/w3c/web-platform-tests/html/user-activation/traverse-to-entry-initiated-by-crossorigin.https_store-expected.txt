@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+PASS User activation propagation across a traversal to an entry whose navigation was initiated by a cross-origin window
+

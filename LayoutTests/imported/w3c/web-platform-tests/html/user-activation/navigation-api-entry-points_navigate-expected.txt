@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+FAIL User activation propagation across the navigation API entry points and history.go(0) assert_equals: Sticky bit after the navigation the entry point asked for expected true but got false
+

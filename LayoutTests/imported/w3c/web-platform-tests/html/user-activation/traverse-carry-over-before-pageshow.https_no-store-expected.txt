@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+FAIL Sticky user activation is carried over before the document it reaches runs anything assert_true: Sticky bit in the first script of the recreated document expected true got false
+

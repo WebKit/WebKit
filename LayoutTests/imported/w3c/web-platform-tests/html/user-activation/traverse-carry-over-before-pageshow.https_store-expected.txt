@@ -1,0 +1,5 @@
+Non-zero-sized body to allow clicks.
+
+
+FAIL Sticky user activation is carried over before the document it reaches runs anything assert_array_equals: [persisted, sticky bit] in pageshow of the restored document expected property 1 to be true but got false (expected array [true, true] got [true, false])
+
