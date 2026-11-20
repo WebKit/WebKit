@@ -762,12 +762,19 @@ void TestController::beganExitFullScreen(WKPageRef, WKRect initialFrame, WKRect 
         WKCompletionListenerComplete(listener.get(), nullptr);
     };
     if (!m_waitBeforeFinishingFullscreenExit)
-        finishFullscreenExit();
+        m_finishExitFullscreenHandler();
+    else if (m_pendingFinishFullscreenExitCompletionHandler)
+        finishFullscreenExit(std::exchange(m_pendingFinishFullscreenExitCompletionHandler, nullptr));
 }
 
-void TestController::finishFullscreenExit()
+void TestController::finishFullscreenExit(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
+    if (!m_finishExitFullscreenHandler) {
+        m_pendingFinishFullscreenExitCompletionHandler = WTF::move(completionHandler);
+        return;
+    }
     m_finishExitFullscreenHandler();
+    completionHandler(nullptr);
 }
 
 void TestController::requestExitFullscreenFromUIProcess()
@@ -1799,6 +1806,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_scrollDuringEnterFullscreen = false;
     if (m_finishExitFullscreenHandler)
         m_finishExitFullscreenHandler();
+    if (m_pendingFinishFullscreenExitCompletionHandler)
+        m_pendingFinishFullscreenExitCompletionHandler(nullptr);
 
     m_tooltipCallbacks.clear();
     m_cursorCallbacks.clear();
@@ -2986,10 +2995,8 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         return completionHandler(nullptr);
     }
 
-    if (WKStringIsEqualToUTF8CString(command, "FinishFullscreenExit")) {
-        finishFullscreenExit();
-        return completionHandler(nullptr);
-    }
+    if (WKStringIsEqualToUTF8CString(command, "FinishFullscreenExit"))
+        return finishFullscreenExit(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "DumpAllHTTPRedirectedResponseHeaders")) {
         m_dumpAllHTTPRedirectedResponseHeaders = true;
