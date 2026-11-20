@@ -76,6 +76,7 @@ public:
     bool heapSnapshotBuilderIgnoreNode(const JSC::HeapSnapshotBuilder&, JSC::JSCell*) final;
 
 protected:
+    // Stops this agent from using its VM's snapshot chain, and clears the chain if no other agent uses it.
     void clearHeapSnapshots();
 
     virtual void dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime);
@@ -90,6 +91,7 @@ private:
 
     bool m_enabled { false };
     bool m_tracking { false };
+    bool m_usesSnapshots { false };
     Seconds m_gcStartTime { Seconds::nan() };
 };
 

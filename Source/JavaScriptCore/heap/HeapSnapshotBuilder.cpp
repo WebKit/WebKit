@@ -42,10 +42,6 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapSnapshotBuilder);
 
-NodeIdentifier HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
-NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
-void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
-
 HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type)
     : HeapAnalyzer()
     , m_profiler(profiler)
@@ -97,7 +93,7 @@ void HeapSnapshotBuilder::analyzeNode(JSCell* cell)
     auto addResult = m_appendedCells.add(cell);
     if (!addResult.isNewEntry)
         return;
-    m_snapshot->appendNode(HeapSnapshotNode(cell, getNextObjectIdentifier()));
+    m_snapshot->appendNode(HeapSnapshotNode(cell, m_profiler.takeNextObjectIdentifier()));
 }
 
 void HeapSnapshotBuilder::analyzeEdge(JSCell* from, JSCell* to, RootMarkReason rootMarkReason)

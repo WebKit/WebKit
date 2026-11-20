@@ -15,7 +15,6 @@ dfg/DFGPromotedHeapLocation.h
 ftl/FTLFormattedValue.h
 ftl/FTLState.h
 heap/HeapProfiler.h
-heap/HeapSnapshotBuilder.h
 inspector/InspectorBackendDispatchers.h
 jit/JIT.h
 jit/JITCode.h

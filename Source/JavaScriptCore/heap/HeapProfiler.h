@@ -34,6 +34,8 @@ class HeapSnapshot;
 class HeapAnalyzer;
 class VM;
 
+typedef unsigned NodeIdentifier;
+
 class HeapProfiler {
     WTF_MAKE_TZONE_ALLOCATED(HeapProfiler);
 public:
@@ -46,6 +48,9 @@ public:
     void appendSnapshot(std::unique_ptr<HeapSnapshot>);
     void clearSnapshots();
 
+    // Not atomic: only the active HeapAnalyzer may call this, while holding its own node lock.
+    NodeIdentifier takeNextObjectIdentifier() { return m_nextObjectIdentifier++; }
+
     HeapAnalyzer* activeHeapAnalyzer() const { return m_activeAnalyzer; }
     NODELETE void setActiveHeapAnalyzer(HeapAnalyzer*);
 
@@ -53,6 +58,11 @@ private:
     VM& m_vm;
     Vector<std::unique_ptr<HeapSnapshot>> m_snapshots;
     HeapAnalyzer* m_activeAnalyzer { nullptr };
+
+    // Never reset, not even when the snapshots are cleared, because clients may keep older snapshots
+    // and rely on an identifier never naming a different cell. (In theory it can wrap around after
+    // 2^32 identifiers; 0 is the root.)
+    NodeIdentifier m_nextObjectIdentifier { 1 };
 };
 
 } // namespace JSC
