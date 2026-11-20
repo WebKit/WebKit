@@ -9062,7 +9062,7 @@ void WebPageProxy::getSelectionAsAttributedStringForTesting(CompletionHandler<vo
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::GetSelectionAsAttributedStringForTesting(), WTF::move(completionHandler));
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::GetSelectionAsAttributedStringForTesting(), WTF::move(completionHandler));
 }
 #endif
 

@@ -612,6 +612,26 @@ TEST(SiteIsolation, SpeakSelectionInCrossOriginIframe)
 
 #endif // PLATFORM(IOS_FAMILY)
 
+TEST(SiteIsolation, SelectionAsAttributedStringInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+
+    __block RetainPtr<NSAttributedString> result;
+    __block bool done = false;
+    [webView _getSelectionAsAttributedStringForTesting:^(NSAttributedString *attributedString) {
+        result = attributedString;
+        done = true;
+    }];
+    Util::run(&done);
+    EXPECT_WK_STREQ("subframe text", [result string]);
+}
+
 // Page-wide state set on the web view after load must reach every web content process, not just the
 // main frame's. A cross-origin iframe's process that already exists never hears about the change, even
 // though a process created later would get it from the page's creation parameters.
