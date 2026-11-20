@@ -289,7 +289,7 @@ private:
 
     GstVideoFrame m_frame;
     GstVideoAlignment m_alignment;
-    std::array<size_t, GST_VIDEO_MAX_PLANES> m_planeSizes { };
+    std::array<size_t, GST_VIDEO_MAX_PLANES> m_planeHeights { };
 #if USE(GSTREAMER_GL)
     bool m_needsCPUSync { false };
 #endif
