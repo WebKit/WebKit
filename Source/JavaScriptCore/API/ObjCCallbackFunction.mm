@@ -418,22 +418,28 @@ namespace JSC {
 class ObjCCallbackFunctionImpl final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCCallbackFunctionImpl);
 public:
-    ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, std::unique_ptr<CallbackArgument> arguments, std::unique_ptr<CallbackResult> result)
+    ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, RetainPtr<id>&& target, std::unique_ptr<CallbackArgument> arguments, std::unique_ptr<CallbackResult> result)
         : m_type(type)
         , m_instanceClass(instanceClass)
+        , m_target(WTF::move(target))
         , m_invocation(invocation)
         , m_arguments(WTF::move(arguments))
         , m_result(WTF::move(result))
     {
         ASSERT((type != CallbackInstanceMethod && type != CallbackInitMethod) || instanceClass);
+        ASSERT(!!m_target == (type == CallbackBlock || type == CallbackClassMethod));
+        // m_invocation does not retain its target, since we don't call -retainArguments on it
+        // (and we don't want to). m_target keeps the target alive instead.
+        if (m_target)
+            [m_invocation setTarget:m_target.get()];
     }
 
     void destroy(Heap& heap)
     {
-        // We need to explicitly release the target since we didn't call 
-        // -retainArguments on m_invocation (and we don't want to do so).
-        if (m_type == CallbackBlock || m_type == CallbackClassMethod)
-            heap.releaseSoon(adoptNS([m_invocation.get() target]));
+        // This runs during GC finalization, so defer the release: releasing a block here
+        // could run arbitrary dealloc code in the middle of a collection.
+        if (m_target)
+            heap.releaseSoon(WTF::move(m_target));
         m_instanceClass = nil;
     }
 
@@ -441,14 +447,14 @@ public:
 
     id wrappedBlock()
     {
-        return m_type == CallbackBlock ? [m_invocation target] : nil;
+        return m_type == CallbackBlock ? m_target.get() : nil;
     }
 
     id wrappedConstructor()
     {
         switch (m_type) {
         case CallbackBlock:
-            return [m_invocation target];
+            return m_target.get();
         case CallbackInitMethod:
             return m_instanceClass.get();
         default:
@@ -468,6 +474,7 @@ public:
 private:
     CallbackType m_type;
     RetainPtr<Class> m_instanceClass;
+    RetainPtr<id> m_target;
     const RetainPtr<NSInvocation> m_invocation;
     std::unique_ptr<CallbackArgument> m_arguments;
     std::unique_ptr<CallbackResult> m_result;
@@ -672,7 +679,7 @@ static inline bool skipNumber(const char*& position)
     return true;
 }
 
-static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvocation *invocation, CallbackType type, Class instanceClass, const char* signatureWithObjcClasses)
+static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvocation *invocation, CallbackType type, Class instanceClass, RetainPtr<id>&& target, const char* signatureWithObjcClasses)
 {
     if (!signatureWithObjcClasses)
         return nullptr;
@@ -715,7 +722,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTF::move(arguments), WTF::move(result));
+    auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTF::move(target), WTF::move(arguments), WTF::move(result));
     const String& name = impl->name();
     return toRef(JSC::ObjCCallbackFunction::create(vm, globalObject, name, WTF::move(impl)));
 }
@@ -724,20 +731,18 @@ JSObjectRef objCCallbackFunctionForInit(JSContext *context, Class cls, Protocol 
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
     [invocation setSelector:sel];
-    return objCCallbackFunctionForInvocation(context, invocation, CallbackInitMethod, cls, _protocol_getMethodTypeEncoding(protocol, sel, YES, YES));
+    return objCCallbackFunctionForInvocation(context, invocation, CallbackInitMethod, cls, { }, _protocol_getMethodTypeEncoding(protocol, sel, YES, YES));
 }
 
 JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protocol *protocol, BOOL isInstanceMethod, SEL sel, const char* types)
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
     [invocation setSelector:sel];
-    if (!isInstanceMethod) {
-        [invocation setTarget:cls];
-        // We need to retain the target Class because m_invocation doesn't retain it by default (and we don't want it to).
-        // FIXME: What releases it?
-        CFRetain((__bridge CFTypeRef)cls);
-    }
-    return objCCallbackFunctionForInvocation(context, invocation, isInstanceMethod ? CallbackInstanceMethod : CallbackClassMethod, isInstanceMethod ? cls : nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, isInstanceMethod));
+    // Class methods are invoked on the class itself. Instance methods get their target at call time.
+    RetainPtr<id> target;
+    if (!isInstanceMethod)
+        target = cls;
+    return objCCallbackFunctionForInvocation(context, invocation, isInstanceMethod ? CallbackInstanceMethod : CallbackClassMethod, isInstanceMethod ? cls : nil, WTF::move(target), _protocol_getMethodTypeEncoding(protocol, sel, YES, isInstanceMethod));
 }
 
 JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
@@ -747,13 +752,11 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
     const char* signature = _Block_signature((__bridge void*)target);
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:signature]];
 
-    // We don't want to use -retainArguments because that leaks memory. Arguments 
+    // We don't want to use -retainArguments because that leaks memory. Arguments
     // would be retained indefinitely between invocations of the callback.
-    // Additionally, we copy the target because we want the block to stick around
-    // until the ObjCCallbackFunctionImpl is destroyed.
-    [invocation setTarget:[target copy]];
-
-    return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, signature);
+    // Instead, the ObjCCallbackFunctionImpl owns a copy of the block, which keeps
+    // it alive until the impl is destroyed.
+    return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, adoptNS([target copy]), signature);
 }
 
 id tryUnwrapConstructor(JSObjectRef object)
