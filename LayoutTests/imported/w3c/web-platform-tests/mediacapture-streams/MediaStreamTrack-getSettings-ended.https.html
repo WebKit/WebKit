@@ -1,0 +1,89 @@
+<!doctype html>
+<head>
+<title>MediaStreamTrack getSettings() on ended tracks</title>
+<link rel="help" href="https://w3c.github.io/mediacapture-main/#dom-mediastreamtrack-getsettings">
+<link rel="help" href="https://w3c.github.io/mediacapture-main/#list-of-inherent-constrainable-track-properties">
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/resources/testdriver.js></script>
+<script src=/resources/testdriver-vendor.js></script>
+<script src=permission-helper.js></script>
+</head>
+<body>
+<script>
+'use strict'
+
+const inherentProperties = ['deviceId', 'facingMode', 'groupId'];
+
+function checkEndedSettings(settingsBeforeEnded, settingsAfterEnded) {
+  for (const property of Object.keys(settingsAfterEnded))
+    assert_in_array(property, inherentProperties, `${property} is not exposed once the track is ended`);
+  for (const property of inherentProperties)
+    assert_equals(settingsAfterEnded[property], settingsBeforeEnded[property], `${property} keeps its value once the track is ended`);
+}
+
+async function getUserMediaTrack(t, kind) {
+  await setMediaPermission("granted", [kind == "audio" ? "microphone" : "camera"]);
+  const stream = await navigator.mediaDevices.getUserMedia({[kind]: true});
+  const [track] = stream.getTracks();
+  t.add_cleanup(() => track.stop());
+  return track;
+}
+
+function getCanvasTrack(t) {
+  const canvas = document.createElement('canvas');
+  canvas.getContext('2d').fillRect(0, 0, canvas.width, canvas.height);
+  const [track] = canvas.captureStream().getVideoTracks();
+  t.add_cleanup(() => track.stop());
+  return track;
+}
+
+function getWebAudioTrack(t) {
+  const context = new AudioContext();
+  t.add_cleanup(() => context.close());
+  const [track] = context.createMediaStreamDestination().stream.getAudioTracks();
+  t.add_cleanup(() => track.stop());
+  return track;
+}
+
+promise_test(async t => {
+  const track = await getUserMediaTrack(t, "video");
+  const settings = track.getSettings();
+  assert_equals(typeof settings.width, "number", "width is exposed on a live track");
+  assert_equals(typeof settings.deviceId, "string", "deviceId is exposed on a live track");
+
+  track.stop();
+  assert_equals(track.readyState, "ended");
+  checkEndedSettings(settings, track.getSettings());
+}, 'getSettings() of an ended camera track only exposes inherent properties');
+
+promise_test(async t => {
+  const track = await getUserMediaTrack(t, "audio");
+  const settings = track.getSettings();
+  assert_equals(typeof settings.deviceId, "string", "deviceId is exposed on a live track");
+
+  track.stop();
+  assert_equals(track.readyState, "ended");
+  checkEndedSettings(settings, track.getSettings());
+}, 'getSettings() of an ended microphone track only exposes inherent properties');
+
+promise_test(async t => {
+  const track = getCanvasTrack(t);
+  const settings = track.getSettings();
+
+  track.stop();
+  assert_equals(track.readyState, "ended");
+  checkEndedSettings(settings, track.getSettings());
+}, 'getSettings() of an ended canvas capture track only exposes inherent properties');
+
+promise_test(async t => {
+  const track = getWebAudioTrack(t);
+  const settings = track.getSettings();
+
+  track.stop();
+  assert_equals(track.readyState, "ended");
+  checkEndedSettings(settings, track.getSettings());
+}, 'getSettings() of an ended WebAudio track only exposes inherent properties');
+</script>
+</body>
+</html>
