@@ -74,6 +74,23 @@ void JIT::compileSetupFrame(const Op& bytecode)
         int firstFreeRegister = bytecode.m_firstFree.offset(); // FIXME: Why is this a virtual register if we never use it as one...
         int firstVarArgOffset = bytecode.m_firstVarArg;
 
+        if constexpr (opcodeID == op_call_varargs || opcodeID == op_tail_call_varargs) {
+            if (bytecode.m_isFunctionApply) {
+                using ThrowOperation = void(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue);
+                constexpr GPRReg globalObjectGPR = preferredArgumentGPR<ThrowOperation, 0>();
+                constexpr GPRReg calleeGPR = preferredArgumentGPR<ThrowOperation, 1>();
+                emitGetVirtualRegister(bytecode.m_callee, calleeGPR);
+                JumpList slowCases;
+                slowCases.append(branchIfNotCell(calleeGPR));
+                slowCases.append(branchIfNotFunction(calleeGPR));
+                Jump done = jump();
+                slowCases.link(this);
+                loadGlobalObject(globalObjectGPR);
+                callOperation(operationThrowIfNotFunctionApplyCallee, globalObjectGPR, calleeGPR);
+                done.link(this);
+            }
+        }
+
         JumpList slowVarargs;
         std::optional<Jump> fastVarargsDone;
         // Fast path: when 'arguments' is a small dense Int32/Contiguous JSArray or the spread butterfly of

@@ -14765,6 +14765,7 @@ IGNORE_CLANG_WARNINGS_END
         else
             inlineCallFrame = semanticNodeOrigin.inlineCallFrame();
         CallVarargsData* data = node->callVarargsData();
+        bool calleeIsJSFunction = isFunctionSpeculation(m_state.forNode(node->child1()).m_type);
         auto nodeOp = node->op();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -14894,6 +14895,19 @@ IGNORE_CLANG_WARNINGS_END
 
                     done.link(&jit);
                 } else {
+                    if (data->isFunctionApply && !calleeIsJSFunction) {
+                        CCallHelpers::JumpList slowCases;
+                        slowCases.append(jit.branchIfNotCell(calleeGPR));
+                        slowCases.append(jit.branchIfNotFunction(calleeGPR));
+                        CCallHelpers::Jump done = jit.jump();
+                        slowCases.link(&jit);
+                        jit.setupArguments<decltype(operationThrowIfNotFunctionApplyCallee)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), calleeGPR);
+                        jit.prepareCallOperation(jit.vm());
+                        callWithExceptionCheck(reinterpret_cast<void(*)()>(operationThrowIfNotFunctionApplyCallee));
+                        argumentsLateRep.emitRestore(jit, argumentsGPR);
+                        done.link(&jit);
+                    }
+
                     CCallHelpers::JumpList slowArrayFast;
                     std::optional<CCallHelpers::Jump> arrayFastDone;
                     if (useArrayVarargsFastPath) {
