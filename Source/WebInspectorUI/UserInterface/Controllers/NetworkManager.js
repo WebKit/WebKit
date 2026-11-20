@@ -1311,7 +1311,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         let isDocument = resourceOptions.type === InspectorBackend.Enum.Page.ResourceType.Document;
         if (!frame && !isDocument && frameIdentifier.startsWith("frame-")) {
             let mainResource = new WI.Resource("about:blank");
-            frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, null, mainResource);
+            frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, resourceOptions.loaderIdentifier, mainResource);
             this._frameIdentifierMap.set(frame.id, frame);
             this._associateTargetExecutionContextsWithFrame(frame);
             mainResource.markAsFinished();
