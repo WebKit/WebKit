@@ -488,6 +488,9 @@ class Git(Scm):
                 args += ['--file', os.path.join(context.metadata, context.GIT_CONFIG_EXTENSION)]
 
         command = run(args, **kwargs)
+        if command.returncode and (isinstance(context, type) or location == 'global'):
+            log.info('No global git config found, continuing')
+            return {}
         if command.returncode:
             sys.stderr.write("Failed to run '{}'{}\n".format(
                 ' '.join(args),
