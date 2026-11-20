@@ -22,12 +22,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from . import loadConfig
-from .steps import ResultsDatabase, ResultsDBReportMixin, RunAPITests, RunJavaScriptCoreTests
+from .steps import ResultsDatabase, ResultsDBReportMixin, RunAPITests, RunJavaScriptCoreTests, ValidateChange
 import os
 import unittest
 
 
 class TestExpectedBuildSteps(unittest.TestCase):
+
+    generic_branch_queues = ['Bindings-Tests-EWS', 'Style-EWS', 'Unsafe-Merge-Queue', 'WebKitPerl-Tests-EWS', 'WebKitPy-Tests-EWS']
 
     expected_steps = {
         'Style-EWS': [
@@ -1061,3 +1063,13 @@ class TestExpectedBuildSteps(unittest.TestCase):
             builders.add(builder['name'])
         for builder in self.expected_steps:
             self.assertTrue(builder in builders, "Builder %s doesn't exist, but has unnecessary expected steps" % builder)
+
+    def test_feature_branch_queues(self):
+        for builder in self.config['builders']:
+            expected = builder['name'] not in self.generic_branch_queues
+            for step in builder['factory'].steps:
+                if not issubclass(step.step_class, ValidateChange):
+                    continue
+                self.assertEqual(step.kwargs.get('excludeFeatureBranches', True), expected, msg='%s should %s feature branches' % (
+                    builder['name'], 'skip' if expected else 'test',
+                ))

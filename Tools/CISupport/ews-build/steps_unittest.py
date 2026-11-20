@@ -10425,6 +10425,58 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.run_step()
         return rc
 
+    def test_feature_branch(self):
+        self.setup_step(ValidateChange(verifyPRClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'swift-adoption-experiments')
+
+        self.expect_outcome(result=FAILURE, state_string="Skipping as PR 1234 targets the 'swift-adoption-experiments' feature branch")
+        rc = self.run_step()
+        return rc
+
+    def test_feature_branch_allowed(self):
+        self.setup_step(ValidateChange(verifyPRClosed=False, excludeFeatureBranches=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'swift-adoption-experiments')
+
+        self.expect_outcome(result=SUCCESS, state_string='Validated change')
+        rc = self.run_step()
+        return rc
+
+    def test_feature_branch_prefix(self):
+        self.setup_step(ValidateChange(verifyPRClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'feature/new-thing')
+
+        self.expect_outcome(result=FAILURE, state_string="Skipping as PR 1234 targets the 'feature/new-thing' feature branch")
+        rc = self.run_step()
+        return rc
+
+
+class TestIsFeatureBranch(unittest.TestCase):
+    def test_feature_branches(self):
+        self.assertTrue(is_feature_branch('swift-adoption-experiments'))
+        self.assertTrue(is_feature_branch('feature/new-thing'))
+        self.assertTrue(is_feature_branch('feature/nested/new-thing'))
+
+    def test_not_feature_branches(self):
+        self.assertFalse(is_feature_branch('main'))
+        self.assertFalse(is_feature_branch('swift-adoption'))
+        self.assertFalse(is_feature_branch('swift-adoption-experiments-2'))
+        self.assertFalse(is_feature_branch('feature/'))
+        self.assertFalse(is_feature_branch('eng/feature/new-thing'))
+        self.assertFalse(is_feature_branch('safari-7621-branch'))
+        self.assertFalse(is_feature_branch(None))
+
 
 class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -12183,6 +12235,26 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.number', '1234')
         self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
         return self.run_step()
+
+    def test_feature_branch(self):
+        self.setup_step(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'swift-adoption-experiments')
+        self.setProperty('github.number', '1234')
+        self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
+        rc = self.run_step()
+        self.expect_property('github.base.ref', 'swift-adoption-experiments')
+        return rc
+
+    def test_feature_branch_prefix(self):
+        self.setup_step(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'feature/new-thing')
+        self.setProperty('github.number', '1234')
+        self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
+        rc = self.run_step()
+        self.expect_property('github.base.ref', 'feature/new-thing')
+        return rc
 
     def test_prod_branch(self):
         self.setup_step(MapBranchAlias())

@@ -35,6 +35,7 @@ class Factory(factory.BuildFactory):
     skipBuildIfNoResult = True
     branches = None
     excluded_branches = [r'webkitglib/\d+\.\d+']
+    excludeFeatureBranches = True
     requiresUserValidation = False
 
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, deployment_target=None, skipIfNoBuildInputs=False, **kwargs):
@@ -43,7 +44,7 @@ class Factory(factory.BuildFactory):
         if checkRelevance:
             self.addStep(CheckChangeRelevance(skip_if_no_build_inputs=skipIfNoBuildInputs))
         excluded = [] if platform in LINUX_PLATFORMS else self.excluded_branches
-        self.addStep(ValidateChange(branches=self.branches, excluded_branches=excluded))
+        self.addStep(ValidateChange(branches=self.branches, excluded_branches=excluded, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CleanWebKitBuildIfBaseChanged())
@@ -72,7 +73,7 @@ class StyleFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(ValidateChange())
+        self.addStep(ValidateChange(excludeFeatureBranches=False))
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(SetCredentialHelper())
@@ -121,28 +122,31 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
 
 class BindingsFactory(Factory):
     excluded_branches = []
+    excludeFeatureBranches = False
 
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
-        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(ValidateChange(addURLs=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(RunBindingsTests())
 
 
 class WebKitPerlFactory(Factory):
     excluded_branches = []
+    excludeFeatureBranches = False
 
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments)
-        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(ValidateChange(addURLs=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(RunWebKitPerlTests())
 
 
 class WebKitPyFactory(Factory):
     excluded_branches = []
+    excludeFeatureBranches = False
 
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArgument=additionalArguments, checkRelevance=True)
-        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(ValidateChange(addURLs=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(RunWebKitPyTests())
         self.addStep(SetBuildSummary())
 
@@ -394,10 +398,12 @@ class ServicesFactory(Factory):
 
 
 class MergeQueueFactoryBase(factory.BuildFactory):
+    excludeFeatureBranches = True
+
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, deployment_target=None, **kwargs):
         super(MergeQueueFactoryBase, self).__init__()
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments, deployment_target=deployment_target))
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(DetermineLabelOwner())
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
@@ -440,11 +446,13 @@ class MergeQueueFactory(MergeQueueFactoryBase):
 
 
 class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
+    excludeFeatureBranches = False
+
     def __init__(self, platform, **kwargs):
         super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
 
         self.addStep(Canonicalize())
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())

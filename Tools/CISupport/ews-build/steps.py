@@ -77,6 +77,7 @@ CANONICAL_GITHUB_PROJECT = 'WebKit/WebKit'
 HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
 DEFAULT_REMOTE = 'origin'
+FEATURE_BRANCHES = [re.compile(r'^swift-adoption-experiments$'), re.compile(r'^feature/.+$')]
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, CANONICAL_GITHUB_PROJECT, DEFAULT_BRANCH)
 MAX_COMMITS_IN_PR_SERIES = 50
 QUEUES_WITH_PUSH_ACCESS = ('merge-queue', 'unsafe-merge-queue')
@@ -92,6 +93,10 @@ USE_GITHUB_PROJECTS_FOR_HOOKS = load_password('USE_GITHUB_PROJECTS_FOR_HOOKS', d
 
 if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES:
     CURRENT_HOSTNAME = 'ews-build.webkit.org'
+
+
+def is_feature_branch(branch):
+    return any(candidate.match(branch or '') for candidate in FEATURE_BRANCHES)
 
 
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
@@ -1874,12 +1879,14 @@ class ValidateChange(buildstep.BuildStep, AddToLogMixin, GitHubMixin):
         enableSkipEWSLabel=True,
         branches=None,
         excluded_branches=None,
+        excludeFeatureBranches=True,
     ):
         self.verifyObsolete = verifyObsolete
         self.verifyPRClosed = verifyPRClosed
         self.verifyMergeQueue = verifyMergeQueue
         self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
         self.enableSkipEWSLabel = enableSkipEWSLabel
+        self.excludeFeatureBranches = excludeFeatureBranches
         self.addURLs = addURLs
 
         branches = branches or [r'.+']
@@ -1921,6 +1928,10 @@ class ValidateChange(buildstep.BuildStep, AddToLogMixin, GitHubMixin):
 
         if any(candidate.match(branch) for candidate in self.excluded_branches):
             rc = yield self.skip_build(f"Skipping as PR {pr_number} targets '{branch}' branch")
+            return defer.returnValue(rc)
+
+        if self.excludeFeatureBranches and is_feature_branch(branch):
+            rc = yield self.skip_build(f"Skipping as PR {pr_number} targets the '{branch}' feature branch")
             return defer.returnValue(rc)
 
         if not any(candidate.match(branch) for candidate in self.branches):
@@ -7615,7 +7626,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
                         Canonicalize(),
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
+                        # Only queues which land on feature branches reach this point with a feature branch
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False, excludeFeatureBranches=False),
                         PushPullRequestBranch(),
                         UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
@@ -7894,7 +7906,9 @@ class MapBranchAlias(shell.ShellCommand):
     def doStepIf(self, step):
         if not self.getProperty('github.number'):
             return False
-        return self.getProperty('github.base.ref', DEFAULT_BRANCH) != DEFAULT_BRANCH
+        # Feature branches may be contained by the default branch or a production branch, but should never be re-mapped
+        branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        return branch != DEFAULT_BRANCH and not is_feature_branch(branch)
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
