@@ -97,7 +97,7 @@ Vector<Thread> Thread::collect(const Snapshot& snapshot)
         Error::report("Cannot read threads from an invalid snapshot");
         return result;
     }
-    mach_port_t task = snapshot.corpsePort();
+    mach_port_t task = snapshot.cookie();
 
     thread_act_array_t threads = nullptr;
     mach_msg_type_number_t threadCount = 0;

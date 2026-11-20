@@ -29,7 +29,6 @@
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseRegion.h>
-#include <mach/mach.h>
 #include <stdint.h>
 #include <string>
 #include <wtf/Vector.h>

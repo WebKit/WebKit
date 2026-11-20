@@ -36,12 +36,15 @@
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <array>
 #include <limits>
-#include <mach/mach.h>
-#include <mach/mach_vm.h>
 #include <span>
 #include <unistd.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakRandom.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
+#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -51,6 +54,8 @@ using JSC::Corpse::Address;
 using JSC::Corpse::Memory;
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
+
+#if OS(DARWIN)
 
 namespace {
 
@@ -346,7 +351,7 @@ void testMemory()
         TEST_ASSERT_EQ(span.error(), Memory::Error::InvalidRequest, "and is rejected as a bad request");
     }
     {
-        auto span = memory.span<uint8_t>(Address(static_cast<mach_vm_address_t>(8)), sizeof(uint64_t));
+        auto span = memory.span<uint8_t>(Address(static_cast<Address::Primitive>(8)), sizeof(uint64_t));
         TEST_ASSERT(!span.isValid(), "a near-null address does not map");
         TEST_ASSERT_EQ(span.error(), Memory::Error::InvalidRequest, "and is rejected as a bad request");
     }
@@ -432,6 +437,18 @@ void testMemory()
             TEST_ASSERT(!isMappedLocally(localBase), "all mapped pages should be unmapped, not leaked");
     }
 }
+
+#else
+
+void testMemory()
+{
+    SuiteTracer tracer("Memory");
+    if (!tracer.shouldRun())
+        return;
+    skipSuite("Memory", "the test arena is laid out with Mach VM calls");
+}
+
+#endif // OS(DARWIN)
 
 } // namespace JSCToolsTest
 

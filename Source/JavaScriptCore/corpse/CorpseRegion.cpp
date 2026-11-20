@@ -28,6 +28,7 @@
 
 #if ENABLE(LIB_JSC_TOOLS)
 
+#include <mach/mach.h>
 #include <mach/mach_vm.h>
 
 namespace JSC {
@@ -38,7 +39,7 @@ uint64_t Region::pageCount() const
     return vm_kernel_page_size ? m_size / vm_kernel_page_size : 0;
 }
 
-std::optional<Region> Region::findContaining(mach_port_t task, Address address)
+std::optional<Region> Region::findContaining(TaskHandle::Cookie taskCookie, Address address)
 {
     // mach_vm_region_recurse reports the region at or above the address it is given,
     // so the result only describes `address` if it turns out to contain it.
@@ -46,11 +47,11 @@ std::optional<Region> Region::findContaining(mach_port_t task, Address address)
     mach_vm_size_t regionSize = 0;
     vm_region_submap_info_data_64_t info;
     for (natural_t depth = 0; ; ++depth) {
-        regionAddress = address.toMachVMAddress();
+        regionAddress = address.primitive();
         regionSize = 0;
         natural_t depthLimit = depth; // We tell the kernel how deep we want to go. Kernel tells us how deep it can go.
         mach_msg_type_number_t infoCount = VM_REGION_SUBMAP_INFO_COUNT_64;
-        kern_return_t kr = mach_vm_region_recurse(task, &regionAddress, &regionSize,
+        kern_return_t kr = mach_vm_region_recurse(taskCookie, &regionAddress, &regionSize,
             &depthLimit, reinterpret_cast<vm_region_recurse_info_t>(&info), &infoCount);
         if (kr != KERN_SUCCESS)
             return std::nullopt;

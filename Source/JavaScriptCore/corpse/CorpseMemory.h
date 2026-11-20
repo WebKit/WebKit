@@ -28,13 +28,17 @@
 #if ENABLE(LIB_JSC_TOOLS)
 
 #include <JavaScriptCore/CorpseAddress.h>
-#include <mach/mach.h>
+#include <JavaScriptCore/CorpseTaskHandle.h>
 #include <stdint.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
 
 namespace JSC {
 namespace Corpse {
@@ -75,19 +79,27 @@ namespace Corpse {
 class Memory {
     WTF_FORBID_HEAP_ALLOCATION; // Because Memory is always embedded in its owner Snapshot.
 public:
+#if OS(DARWIN)
+    using KernelResult = kern_return_t;
+    static constexpr KernelResult kernelSuccess = KERN_SUCCESS;
+#else
+    using KernelResult = int; // An errno.
+    static constexpr KernelResult kernelSuccess = 0;
+#endif
+
     enum class Error : uint8_t {
         None,
         InvalidRequest,    // Zero size, or the range runs off the end of the address space.
         UnmappedHole,      // The corpse does not have the range mapped over its whole length.
         NotReadable,       // Some page of the range denies read access.
         OutOfAddressSpace, // No room to place the mapping in this process.
-        Unknown,           // kernResult() says what the kernel reported.
+        Unknown,           // kernelResult() says what the kernel reported.
     };
 
     template<typename T> class Ptr; // See CorpseMemoryPtr.h.
     template<typename T> class Span; // See CorpseMemorySpan.h.
 
-    explicit Memory(mach_port_t corpsePort);
+    explicit Memory(TaskHandle::Cookie snapshotCookie);
     ~Memory();
 
     Memory(const Memory&) = delete;
@@ -134,7 +146,7 @@ private:
         RefPtr<Region> region { };
         const uint8_t* data { nullptr };
         Error error { Error::None };
-        kern_return_t kernResult { KERN_SUCCESS };
+        KernelResult kernelResult { kernelSuccess };
     };
 
     MapResult map(Address, size_t bytes);
@@ -142,7 +154,7 @@ private:
     void addRegion(RefPtr<Region>);
     void removeRegion(Region*);
 
-    mach_port_t m_corpsePort { MACH_PORT_NULL };
+    TaskHandle::Cookie m_snapshotCookie { TaskHandle::invalidCookie };
 
     // The Address key must be page aligned. The value is a Vector because there
     // can be more than one Region of different sizes which start at the same page

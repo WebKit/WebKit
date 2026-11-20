@@ -31,7 +31,6 @@
 #include "LibJSCToolsTestUtilities.h"
 
 #include <JavaScriptCore/CorpseAddress.h>
-#include <mach/mach.h>
 #include <type_traits>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -54,18 +53,18 @@ void testAddress()
         Address none;
         TEST_ASSERT(!none, "a default Address is null");
         TEST_ASSERT(none == nullptr, "a default Address compares equal to nullptr");
-        TEST_ASSERT_HEX_EQ(none.toMachVMAddress(), 0, "a default Address holds zero");
+        TEST_ASSERT_HEX_EQ(none.primitive(), 0, "a default Address holds zero");
     }
     {
-        Address address(static_cast<mach_vm_address_t>(0x1000));
+        Address address(static_cast<Address::Primitive>(0x1000));
         TEST_ASSERT(static_cast<bool>(address), "a non-zero Address is not null");
         TEST_ASSERT(!(address == nullptr), "a non-zero Address does not compare equal to nullptr");
-        TEST_ASSERT_HEX_EQ(address.toMachVMAddress(), 0x1000, "an Address holds what it was given");
+        TEST_ASSERT_HEX_EQ(address.primitive(), 0x1000, "an Address holds what it was given");
     }
     {
         int local = 0;
         Address address(&local);
-        TEST_ASSERT_HEX_EQ(address.toMachVMAddress(), reinterpret_cast<uintptr_t>(&local),
+        TEST_ASSERT_HEX_EQ(address.primitive(), reinterpret_cast<uintptr_t>(&local),
             "an Address built from a pointer holds that pointer");
     }
     {
@@ -77,25 +76,25 @@ void testAddress()
             "an Address does not convert to a pointer");
     }
     {
-        Address low(static_cast<mach_vm_address_t>(0x1000));
-        Address high(static_cast<mach_vm_address_t>(0x2000));
+        Address low(static_cast<Address::Primitive>(0x1000));
+        Address high(static_cast<Address::Primitive>(0x2000));
         TEST_ASSERT(low < high, "Addresses order by value");
         TEST_ASSERT(high > low, "Addresses order by value the other way");
         TEST_ASSERT(low <= low && low >= low, "an Address is not less or greater than itself");
-        TEST_ASSERT(low == Address(static_cast<mach_vm_address_t>(0x1000)), "equal values compare equal");
+        TEST_ASSERT(low == Address(static_cast<Address::Primitive>(0x1000)), "equal values compare equal");
         TEST_ASSERT(low != high, "different values do not compare equal");
     }
     {
-        Address base(static_cast<mach_vm_address_t>(0x1000));
-        TEST_ASSERT_HEX_EQ((base + 0x20).toMachVMAddress(), 0x1020, "adding an offset moves forward");
-        TEST_ASSERT_HEX_EQ((base - 0x20).toMachVMAddress(), 0x0fe0, "subtracting an offset moves back");
-        TEST_ASSERT_HEX_EQ(Address(static_cast<mach_vm_address_t>(0x1030)) - base, 0x30,
+        Address base(static_cast<Address::Primitive>(0x1000));
+        TEST_ASSERT_HEX_EQ((base + 0x20).primitive(), 0x1020, "adding an offset moves forward");
+        TEST_ASSERT_HEX_EQ((base - 0x20).primitive(), 0x0fe0, "subtracting an offset moves back");
+        TEST_ASSERT_HEX_EQ(Address(static_cast<Address::Primitive>(0x1030)) - base, 0x30,
             "subtracting two Addresses gives the distance between them");
     }
     {
         // A plain address has nothing to strip, whatever the platform.
-        Address plain(static_cast<mach_vm_address_t>(0x0000000100002000));
-        TEST_ASSERT_HEX_EQ(plain.stripped().toMachVMAddress(), 0x0000000100002000,
+        Address plain(static_cast<Address::Primitive>(0x0000000100002000));
+        TEST_ASSERT_HEX_EQ(plain.stripped().primitive(), 0x0000000100002000,
             "stripping an unsigned address changes nothing");
     }
 #if CPU(ARM64E)
@@ -110,14 +109,14 @@ void testAddress()
             signedPointer = ptrauth_sign_unauthenticated(raw, ptrauth_key_process_dependent_code, 0);
         } while (signedPointer == raw && ++count <= maxRetryCount);
         TEST_ASSERT(count <= maxRetryCount, "unable to generate PAC signed pointer for test");
-        TEST_ASSERT_HEX_EQ(Address(signedPointer).stripped().toMachVMAddress(),
+        TEST_ASSERT_HEX_EQ(Address(signedPointer).stripped().primitive(),
             reinterpret_cast<uintptr_t>(raw), "stripping recovers the address a signed pointer names");
     }
     {
         // Top-byte-ignore and memory tagging both leave data in the top byte, which
         // is not part of the address either.
-        Address tagged(static_cast<mach_vm_address_t>(0x4200000100002000));
-        TEST_ASSERT_HEX_EQ(tagged.stripped().toMachVMAddress(), 0x0000000100002000,
+        Address tagged(static_cast<Address::Primitive>(0x4200000100002000));
+        TEST_ASSERT_HEX_EQ(tagged.stripped().primitive(), 0x0000000100002000,
             "stripping clears a tagged top byte");
     }
 #endif
@@ -125,8 +124,8 @@ void testAddress()
     {
         // Test Address as a hash table key.
         HashMap<Address, unsigned> map;
-        Address first(static_cast<mach_vm_address_t>(0x100000000));
-        Address second(static_cast<mach_vm_address_t>(0x100004000));
+        Address first(static_cast<Address::Primitive>(0x100000000));
+        Address second(static_cast<Address::Primitive>(0x100004000));
 
         map.add(first, 1u);
         map.add(second, 2u);
@@ -165,12 +164,12 @@ void testAddress()
 
         // A truncated probe chain only shows up once keys collide. Test with churning.
         static constexpr size_t pageSize = 16384;
-        static constexpr mach_vm_address_t keyBase = 0x100000000;
+        static constexpr Address::Primitive keyBase = 0x100000000;
         static constexpr unsigned windowSize = 64;
         static constexpr unsigned rounds = 200;
 
         auto keyAt = [] (unsigned index) {
-            return Address(keyBase + static_cast<mach_vm_address_t>(index) * pageSize);
+            return Address(keyBase + static_cast<Address::Primitive>(index) * pageSize);
         };
 
         HashMap<Address, unsigned> map;
