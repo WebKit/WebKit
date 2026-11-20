@@ -688,7 +688,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
                     if (blockFlow.isFloatingOrOutOfFlowPositioned())
                         continue;
                     if (blockFlow.lowestFloatLogicalBottom() + blockFlow.logicalTop() > newHeight)
-                        addOverhangingFloats(blockFlow, false);
+                        addOverhangingFloats(blockFlow);
                 }
             }
         }
@@ -1402,7 +1402,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     // If the child has overhanging floats that intrude into following siblings (or possibly out
     // of this block), then the parent gets notified of the floats now.
     if (childBlockFlow && childBlockFlow->containsFloats())
-        maxFloatLogicalBottom = std::max(maxFloatLogicalBottom, addOverhangingFloats(*childBlockFlow, !childNeededLayout));
+        maxFloatLogicalBottom = std::max(maxFloatLogicalBottom, addOverhangingFloats(*childBlockFlow));
 
     LayoutSize childOffset = child.location() - oldRect.location();
     if (childOffset.width() || childOffset.height()) {
@@ -1706,7 +1706,7 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
             auto oldLogicalHeight = logicalHeight();
             setLogicalHeight(logicalTopAfterMarginCollapse);
             if (previousBlockSibling->containsFloats() && !previousBlockSibling->avoidsFloats())
-                addOverhangingFloats(*previousBlockSibling, false);
+                addOverhangingFloats(*previousBlockSibling);
             setLogicalHeight(oldLogicalHeight);
         }
     };
@@ -2824,20 +2824,34 @@ void RenderBlockFlow::computeInFlowOverflow(LayoutRect contentArea, OptionSet<Co
 {
     RenderBlock::computeInFlowOverflow(contentArea, options);
 
-    auto addOverflowFromFloatsIfApplicable = [&] {
-
+    auto addOverflowFromFloats = [&] {
         if (!m_floatingObjects)
             return;
         auto shouldIncludeFloats = !multiColumnFlow() && (options.contains(ComputeOverflowOptions::RecomputeFloats) || createsNewFormattingContext() || hasSelfPaintingLayer());
-        if (!shouldIncludeFloats)
-            return;
+
+        // Painting and hit testing reach the floats of this block, overhanging ones included, through its ink overflow.
+        // Floats with a layer of their own are included too, since the layer can stop painting itself without this block being laid out again.
+        auto addInkOverflowFromOwnFloat = [&](const RenderBox& floatBox, LayoutSize offset) {
+            if (paintContainmentApplies() || hasPotentiallyScrollableOverflow())
+                return;
+            auto floatInkOverflowRect = floatBox.visualOverflowRectForPropagation(writingMode());
+            floatInkOverflowRect.move(offset);
+            if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow())
+                fragmentedFlow->addFragmentsVisualOverflow(*this, floatInkOverflowRect);
+            addVisualOverflow(floatInkOverflowRect);
+        };
 
         for (auto& floatingObject : m_floatingObjects->set()) {
-            if (floatingObject->isDescendant())
+            CheckedPtr floatBox = floatingObject->renderer();
+            if (!floatBox || !floatingObject->isDescendant())
+                continue;
+            if (shouldIncludeFloats)
                 addOverflowFromFloatBox(*floatingObject);
+            if (floatBox->containingBlock() == this)
+                addInkOverflowFromOwnFloat(*floatBox, floatingObject->locationOffsetOfBorderBox());
         }
     };
-    addOverflowFromFloatsIfApplicable();
+    addOverflowFromFloats();
 }
 
 void RenderBlockFlow::repaintOverhangingFloats(bool paintAllDescendants)
@@ -2854,12 +2868,12 @@ void RenderBlockFlow::repaintOverhangingFloats(bool paintAllDescendants)
         if (!floatingObject->renderer())
             continue;
         // Only repaint the object if it is overhanging, is not in its own layer, and
-        // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
+        // is our responsibility to paint (we are its containing block). When paintAllDescendants is true, the latter
         // condition is replaced with being a descendant of us.
         auto& renderer = *floatingObject->renderer();
         if (logicalBottomForFloat(*floatingObject) > logicalHeight()
             && !renderer.hasSelfPaintingLayer()
-            && (floatingObject->paintsFloat() || (paintAllDescendants && renderer.isDescendantOf(this)))) {
+            && (renderer.containingBlock() == this || (paintAllDescendants && renderer.isDescendantOf(this)))) {
             renderer.repaint();
             renderer.repaintOverhangingFloats(false);
         }
@@ -3266,16 +3280,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() co
     return lowestFloatBottom;
 }
 
-NODELETE static RenderLayer* enclosingFloatPaintingLayer(const RenderBox& renderer)
-{
-    for (auto& box : lineageOfType<RenderBox>(renderer)) {
-        if (box.layer() && box.layer()->isSelfPaintingLayer())
-            return box.layer();
-    }
-    return { };
-}
-
-LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool makeChildPaintOtherFloats)
+LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child)
 {
     ASSERT(!layoutContext().isSkippedContentForLayout(*this));
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
@@ -3286,9 +3291,6 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool ma
     LayoutUnit childLogicalLeft = child.logicalLeft();
     LayoutUnit lowestFloatLogicalBottom;
 
-    // Floats that will remain the child's responsibility to paint should factor into its
-    // overflow.
-    auto blockHasOverflowClip = effectiveOverflowX() == Overflow::Clip || effectiveOverflowY() == Overflow::Clip;
     for (auto& floatingObject : child.m_floatingObjects->set()) {
         if (!floatingObject->renderer())
             continue;
@@ -3301,33 +3303,13 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool ma
             // If the object is not in the list, we add it now.
             if (!containsFloat(renderer)) {
                 LayoutSize offset = isHorizontalWritingMode() ? LayoutSize(-childLogicalLeft, -childLogicalTop) : LayoutSize(-childLogicalTop, -childLogicalLeft);
-                bool shouldPaint = false;
-
-                // The nearest enclosing layer always paints the float (so that zindex and stacking
-                // behaves properly). We always want to propagate the desire to paint the float as
-                // far out as we can, to the outermost block that overlaps the float, stopping only
-                // if we hit a self-painting layer boundary.
-                if (!floatingObject->hasAncestorWithOverflowClip() && enclosingFloatPaintingLayer(renderer) == enclosingFloatPaintingLayer(*this)) {
-                    floatingObject->setPaintsFloat(false);
-                    shouldPaint = true;
-                }
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
                     createFloatingObjects();
 
-                m_floatingObjects->add(floatingObject->copyToNewContainer(offset, shouldPaint, true, floatingObject->hasAncestorWithOverflowClip() || blockHasOverflowClip));
+                m_floatingObjects->add(floatingObject->copyToNewContainer(offset, true));
             }
         } else {
-            if (makeChildPaintOtherFloats && !floatingObject->paintsFloat() && !renderer->hasSelfPaintingLayer()
-                && renderer->isDescendantOf(&child) && enclosingFloatPaintingLayer(renderer) == enclosingFloatPaintingLayer(child)) {
-                // The float is not overhanging from this block, so if it is a descendant of the child, the child should
-                // paint it (the other case is that it is intruding into the child), unless it has its own layer or enclosing
-                // layer.
-                // If makeChildPaintOtherFloats is false, it means that the child must already know about all the floats
-                // it should paint.
-                floatingObject->setPaintsFloat(true);
-            }
-            
             // Since the float doesn't overhang, it didn't get put into our list. We need to add its overflow in to the child now.
             if (floatingObject->isDescendant())
                 child.addOverflowFromFloatBox(*floatingObject);
@@ -3456,22 +3438,6 @@ void RenderBlockFlow::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     }
 }
 
-LayoutPoint RenderBlockFlow::blockStartRelativeToPhysicalForFloat(const FloatingObject& child, const LayoutPoint& point) const
-{
-    if (!child.renderer())
-        return point;
-
-    if (!writingMode().isBlockFlipped())
-        return point;
-    
-    // This is similar to RenderBox::blockStartRelativeToPhysicalForChild. We have to subtract out our left/top offsets twice, since
-    // it's going to get added back in. We hide this complication here so that the calling code looks the same as when no
-    // conversion is needed.
-    if (isHorizontalWritingMode())
-        return LayoutPoint(point.x(), point.y() + borderBoxHeight() - child.renderer()->borderBoxHeight() - 2 * child.locationOffsetOfBorderBox().height());
-    return LayoutPoint(point.x() + borderBoxWidth() - child.renderer()->borderBoxWidth() - 2 * child.locationOffsetOfBorderBox().width(), point.y());
-}
-
 LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutUnit logicalTop)
 {
     // There is no need to compute clearance if we have no floats.
@@ -3567,36 +3533,24 @@ LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutU
     return result;
 }
 
-bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset)
-{
-    if (!m_floatingObjects)
-        return false;
-
-    LayoutPoint adjustedLocation = accumulatedOffset;
-    if (auto* renderView = dynamicDowncast<RenderView>(*this))
-        adjustedLocation += toLayoutSize(protect(renderView->frameView())->scrollPosition());
-
-    for (auto& floatingObject : m_floatingObjects->set() | std::views::reverse) {
-        auto* renderer = floatingObject->renderer();
-        if (!renderer)
-            continue;
-        if (floatingObject->shouldPaint()) {
-            LayoutPoint childPoint = blockStartRelativeToPhysicalForFloat(*floatingObject, adjustedLocation + floatingObject->translationOffsetToAncestor());
-            if (renderer->hitTest(request, result, locationInContainer, childPoint)) {
-                updateHitTestResult(result, locationInContainer.point() - toLayoutSize(childPoint));
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     ASSERT(childrenInline());
 
-    return inlineLayout() && inlineLayout()->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    CheckedPtr inlineLayout = this->inlineLayout();
+    if (hitTestAction == HitTestAction::Float && inlineLayout && inlineLayout->hasFloats()) {
+        // Like BlockPainter::paintFloatsAndBlockLevelContentInInline, in reverse.
+        for (auto& child : inlineLayout->floatsAndBlockLevelBoxesInTreeOrder() | std::views::reverse) {
+            if (child->hasSelfPaintingLayer())
+                continue;
+            auto childPoint = blockStartRelativeToPhysicalForChild(child, accumulatedOffset);
+            if (child->isFloating() ? hitTestFloat(child, request, result, locationInContainer, childPoint) : child->nodeAtPoint(request, result, locationInContainer, childPoint, hitTestAction))
+                return true;
+        }
+        return false;
+    }
+
+    return inlineLayout && inlineLayout->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 void RenderBlockFlow::addOverflowFromInlineChildren()
