@@ -23750,6 +23750,7 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
     auto print = [&](bool siteIsolationAndRemoteSnapshotting) -> RetainPtr<NSData> {
         RetainPtr configuration = server.httpsProxyConfiguration();
         setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", siteIsolationAndRemoteSnapshotting);
+        setFeatureEnabled(configuration.get(), @"SiteIsolationEnabled", siteIsolationAndRemoteSnapshotting);
         auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600), siteIsolationAndRemoteSnapshotting);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
         [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
