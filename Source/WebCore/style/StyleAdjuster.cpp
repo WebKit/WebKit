@@ -109,6 +109,14 @@ namespace Style {
 using namespace CSS::Literals;
 using namespace HTMLNames;
 
+#if ENABLE(MATHML)
+static bool isChildOfMathMLLayoutBox(const Element& element)
+{
+    RefPtr parent = dynamicDowncast<MathMLElement>(element.parentElementInComposedTree());
+    return parent && (parent->isMathMLRowElement() || parent->isMathMLToken());
+}
+#endif
+
 Adjuster::Adjuster(const Document& document, const Style::ComputedStyle& parentStyle, const Style::ComputedStyle* parentBoxStyle, Element* element)
     : m_document(document)
     , m_parentStyle(parentStyle)
@@ -539,6 +547,15 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
                 style.setPosition(PositionType::Static);
                 style.setFloating(Float::None);
             }
+
+#if ENABLE(MATHML)
+            // https://w3c.github.io/mathml-core/#css-styling
+            // "The float property does not create floating of elements whose parent's computed display value is block math or inline math,
+            // and does not take them out-of-flow."
+            // FIXME: Check m_parentBoxStyle for display: math instead of the parent's element class (webkit.org/b/278533).
+            if (isChildOfMathMLLayoutBox(*element))
+                style.setFloating(Float::None);
+#endif
 
             if (element->hasTagName(legendTag))
                 style.setDisplayMaintainingOriginalDisplay(style.display().blockified());
