@@ -463,7 +463,6 @@ private:
     void checkForPaginationLogicalHeightChange(RelayoutChildren&, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged);
 
 
-    void repaintOverhangingFloats(bool paintAllDescendants) final;
     void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
 
     void insertFloatingBoxAndMarkForLayout(RenderBox&);
