@@ -53,6 +53,11 @@ Adapter::Adapter(Instance& instance)
 
 Adapter::~Adapter() = default;
 
+RefPtr<WebGPU::Instance> Adapter::instance() const
+{
+    return m_instance.get();
+}
+
 Vector<WebGPU::FeatureName> Adapter::features() const
 {
     return m_capabilities.features;
