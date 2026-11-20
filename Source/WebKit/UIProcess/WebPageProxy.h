@@ -4657,6 +4657,7 @@ private:
     bool m_userScriptsNotified { false };
     bool m_hasExecutedAppBoundBehaviorBeforeNavigation { false };
     bool m_canUseCredentialStorage { true };
+    bool m_shouldDispatchFakeMouseMoveEvents { true };
 
     size_t m_suspendMediaPlaybackCounter { 0 };
 

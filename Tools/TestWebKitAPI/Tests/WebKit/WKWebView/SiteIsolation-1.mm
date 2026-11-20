@@ -4885,6 +4885,49 @@ TEST(SiteIsolation, PopupNavigationWithWebsiteDataStoreOfOpenerKeepsOpener)
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
 }
 
+#if PLATFORM(MAC)
+
+TEST(SiteIsolation, IgnoresNonWheelEventsAppliesToCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body style='height: 2000px'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScript:@"window.mouseMoveCount = 0; window.lastMouseMoveX = 0; addEventListener('mousemove', event => { window.mouseMoveCount++; window.lastMouseMoveX = event.clientX; }); true" inFrame:childFrame.get()];
+
+    [webView mouseMoveToPoint:[webView convertPoint:NSMakePoint(100, 100) toView:nil] withFlags:0];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount" inFrame:childFrame.get()] intValue] > 0;
+    }));
+
+    int countBeforeScroll = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount" inFrame:childFrame.get()] intValue];
+    int xForMoveTo100 = [[webView objectByEvaluatingJavaScript:@"window.lastMouseMoveX" inFrame:childFrame.get()] intValue];
+
+    [webView _setIgnoresNonWheelEvents:YES];
+
+    [webView objectByEvaluatingJavaScript:@"scrollTo(0, 500); true" inFrame:childFrame.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrame.get()] intValue] == 500;
+    }));
+
+    [webView mouseMoveToPoint:[webView convertPoint:NSMakePoint(150, 100) toView:nil] withFlags:0];
+    [webView _setIgnoresNonWheelEvents:NO];
+    [webView mouseMoveToPoint:[webView convertPoint:NSMakePoint(200, 100) toView:nil] withFlags:0];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.lastMouseMoveX" inFrame:childFrame.get()] intValue] == xForMoveTo100 + 100;
+    }));
+
+    EXPECT_EQ(countBeforeScroll + 1, [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount" inFrame:childFrame.get()] intValue]);
+}
+
+#endif // PLATFORM(MAC)
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
 
 // When a web process's hit test reaches a frame hosted by another process, it replies with that frame and the point in

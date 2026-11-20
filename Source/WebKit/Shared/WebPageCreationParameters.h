@@ -380,6 +380,7 @@ struct WebPageCreationParameters {
     String presentingApplicationBundleIdentifier;
 #endif
     bool shouldSendConsoleLogsToUIProcessForTesting { false };
+    bool shouldDispatchFakeMouseMoveEvents { true };
 
 #if ENABLE(IMAGE_ANALYSIS)
     std::optional<WebCore::ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers { std::nullopt };
