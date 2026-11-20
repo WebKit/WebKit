@@ -1835,13 +1835,6 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::generatePositionOption(const
     return resolveAgainInDifferentContext(resolvedStyle, styleable, *protect(resolutionContext.parentStyle), PropertyCascade::normalPropertyTypes(), WTF::move(builderFallback), resolutionContext);
 }
 
-const Style::ComputedStyle& TreeResolver::PositionOptions::originalStyle() const
-{
-    ASSERT(optionStyles.size());
-    ASSERT(optionStyles[0].style);
-    return *optionStyles[0].style;
-}
-
 std::unique_ptr<Style::ComputedStyle> TreeResolver::PositionOptions::currentOption() const
 {
     ASSERT(index < optionStyles.size());
@@ -1859,8 +1852,8 @@ void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const S
     if (!box || !box->isOutOfFlowPositioned())
         return;
 
-    auto order = options.originalStyle().positionTryOrder();
-    if (order != PositionTryOrder::Normal && options.optionStyles.size() > 2) {
+    auto order = options.originalResolvedStyle.style->positionTryOrder();
+    if (order != PositionTryOrder::Normal && options.optionStyles.size() > 1) {
         // "For each entry in the position options list, apply that position option to the box, and find
         // the specified inset-modified containing block size that results from those styles."
         // https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
@@ -1872,7 +1865,7 @@ void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const S
         };
         Vector<SortingOption> optionsForSorting(ReserveCapacityTag { }, options.optionStyles.size());
 
-        for (size_t i = 1; i < options.optionStyles.size(); ++i) {
+        for (size_t i = 0; i < options.optionStyles.size(); ++i) {
             auto constraints = PositionedLayoutConstraints { *box, *protect(options.optionStyles[i].style), boxAxis };
             constraints.computeInsets();
             optionsForSorting.append({ WTF::move(options.optionStyles[i]), constraints.insetModifiedContainingSize() });
@@ -1882,7 +1875,7 @@ void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const S
         std::ranges::stable_sort(optionsForSorting, std::ranges::greater { }, &SortingOption::containingBlockSize);
 
         for (size_t i = 0; i < optionsForSorting.size(); ++i)
-            options.optionStyles[i + 1] = WTF::move(optionsForSorting[i].option);
+            options.optionStyles[i] = WTF::move(optionsForSorting[i].option);
     }
 
     // If the styleable has a last successful position option...
@@ -1933,7 +1926,7 @@ std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleab
 
         options.chosen = true;
         options.index = 0;
-        return ResolvedStyle { Style::ComputedStyle::clonePtr(protect(options.originalStyle())) };
+        return ResolvedStyle { options.currentOption() };
     }
 
     // On the first try, we force apply the original style (which _could_ be different from

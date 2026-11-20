@@ -239,7 +239,7 @@ private:
     };
 
     struct PositionOptions {
-        // Array of option styles. By convention, the original style is at index 0.
+        // Original style is included in optionStyles and sorted by position-try-order.
         Vector<PositionOption> optionStyles { };
         ResolvedStyle originalResolvedStyle;
         size_t index { 0 };
@@ -247,7 +247,6 @@ private:
         bool chosen { false };
         bool isFirstTry { true };
 
-        NODELETE const Style::ComputedStyle& originalStyle() const;
         std::unique_ptr<Style::ComputedStyle> currentOption() const;
     };
     HashMap<WeakStyleable, PositionOptions> m_positionOptions;
