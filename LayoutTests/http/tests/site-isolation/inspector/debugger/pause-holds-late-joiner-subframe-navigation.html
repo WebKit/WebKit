@@ -31,13 +31,12 @@ function test() {
             await GlobalPause.pause(frameATarget);
             await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameB').src = 'https://127.0.0.1:8443/site-isolation/inspector/debugger/resources/same-process-frame.html?B2'");
 
-            let newBTarget = await GlobalPause.waitForFrameTarget("same-process-frame.html?B2", [GlobalPause.processIdentifier(InspectorTest.mainFrameTarget), GlobalPause.processIdentifier(frameATarget)]);
+            let newBTarget = await GlobalPause.waitForFrameTarget("same-process-frame.html?B2");
             InspectorTest.expectNotNull(newBTarget, "Should find the frame target for frame B's new document.");
             let newProcess = GlobalPause.processIdentifier(newBTarget);
             InspectorTest.expectNotEqual(newProcess, GlobalPause.processIdentifier(frameATarget), "Frame B's new document should be in a new process, not frame A's.");
             InspectorTest.expectNotEqual(newProcess, GlobalPause.processIdentifier(InspectorTest.mainFrameTarget), "Frame B's new document should be in a new process, not the main frame's.");
 
-            await GlobalPause.cancelPauseRequest(newBTarget);
             let before = await GlobalPause.expectHeld(newBTarget, "(window.ticks || 0)", "Frame B's new interval", "while frame A is paused");
             await GlobalPause.resumeAll();
             await GlobalPause.expectRunning(newBTarget, "(window.ticks || 0)", before, "Frame B's new interval after resuming");

@@ -1,0 +1,20 @@
+Tests that the frame targets of a document that replaces a page which was paused in the debugger are not paused.
+
+
+
+== Running test suite: SiteIsolation.Debugger.FrontendNavigationNewFrameTargets
+-- Running test case: SiteIsolation.Debugger.FrontendNavigationNewFrameTargets.CrossSiteFrameStopped
+PASS: Should find the frame target of frame A.
+PASS: The new document's load listener should run.
+PASS: Should find the frame target of the new frame B.
+PASS: The debugger should not be paused.
+PASS: No target should be paused or asked to pause.
+PASS: The new frame B's interval should advance.
+
+-- Running test case: SiteIsolation.Debugger.FrontendNavigationNewFrameTargets.MainFrameStopped
+PASS: The new document's load listener should run.
+PASS: Should find the frame target of the new frame C.
+PASS: The debugger should not be paused.
+PASS: No target should be paused or asked to pause.
+PASS: The new frame C's interval should advance.
+

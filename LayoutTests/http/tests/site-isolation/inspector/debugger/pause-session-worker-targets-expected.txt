@@ -1,0 +1,16 @@
+Test that a worker target joins and leaves a pause like any target: a pause armed in an idle worker is cancelled by the resume, and a worker created during a pause is asked to pause.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionWorkerTargets
+-- Running test case: SiteIsolation.Debugger.PauseSessionWorkerTargets.Setup
+PASS: Should find the frame target for frame A.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionWorkerTargets.ArmedPauseIsResumed
+PASS: Should find the worker target.
+PASS: The worker should answer a message sent after the resume.
+PASS: The worker should not pause by itself after the resume.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionWorkerTargets.NewWorkerJoinsPause
+PASS: The new worker should pause while the frame is paused.
+
