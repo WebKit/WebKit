@@ -211,8 +211,8 @@ public:
     ~WebProcessProxy();
 
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, NOESCAPE const Function<void(WebPageProxy&)>&);
-    void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&, LoadedWebArchive);
-    const std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
+    void addAllowedFirstPartyForCookies(const WebCore::Site&, LoadedWebArchive);
+    const std::pair<LoadedWebArchive, HashSet<WebCore::Site>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
 
     void initializeWebProcess(WebProcessCreationParameters&&);
 
@@ -868,7 +868,7 @@ private:
     HashSet<WebCore::Site> m_committedSites;
     std::optional<WebCore::Site> m_sharedProcessMainFrameSite;
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
-    std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
+    std::pair<LoadedWebArchive, HashSet<WebCore::Site>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
     bool m_isInProcessCache { false };
     HashMap<String, WebCore::CertificateInfo> m_hostAndPortToCertificateInfo;
     bool m_isShuttingDown { false };

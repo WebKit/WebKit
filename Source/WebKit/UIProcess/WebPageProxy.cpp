@@ -1195,7 +1195,7 @@ ProcessID WebPageProxy::gpuProcessID() const
     return 0;
 }
 
-void WebPageProxy::addAllowedFirstPartyForCookies(WebProcessProxy& process, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::addAllowedFirstPartyForCookies(WebProcessProxy& process, const WebCore::Site& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
     Ref networkProcess = websiteDataStore().networkProcess();
     // Record that this process is now legitimately hosting a frame of this page, so the network process can validate
@@ -2662,7 +2662,7 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
         });
     };
 
-    addAllowedFirstPartyForCookies(process, RegistrableDomain(baseURL), LoadedWebArchive::No, WTF::move(continueLoad));
+    addAllowedFirstPartyForCookies(process, Site { baseURL }, LoadedWebArchive::No, WTF::move(continueLoad));
 }
 
 void WebPageProxy::stopLoading()
@@ -6087,7 +6087,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             if (frame->isMainFrame()) {
                 Ref process { sharedProcess->process() };
                 auto shutdownPreventingScope = process->shutdownPreventingScope();
-                addAllowedFirstPartyForCookies(sharedProcess->process(), site.domain(), LoadedWebArchive::No, [
+                addAllowedFirstPartyForCookies(sharedProcess->process(), site, LoadedWebArchive::No, [
                     process = WTF::move(process),
                     shutdownPreventingScope = WTF::move(shutdownPreventingScope),
                     continueWithProcessForNavigation = WTF::move(continueWithProcessForNavigation)
@@ -6526,12 +6526,12 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         continuation = [
             protectedThis = Ref { *this },
             continuation = WTF::move(continuation),
-            navigationDomain = RegistrableDomain(navigation.currentRequest().url()),
+            navigationSite = Site { navigation.currentRequest().url() },
             process,
             preventProcessShutdownScope = process->shutdownPreventingScope(),
             loadedWebArchive
         ] () mutable {
-            protectedThis->addAllowedFirstPartyForCookies(process, navigationDomain, loadedWebArchive, WTF::move(continuation));
+            protectedThis->addAllowedFirstPartyForCookies(process, navigationSite, loadedWebArchive, WTF::move(continuation));
         };
     }
 
@@ -10503,7 +10503,7 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
 {
     auto preventProcessShutdown = processForNavigation->shutdownPreventingScope();
 
-    auto domain = RegistrableDomain { navigation.currentRequest().url() };
+    auto site = Site { navigation.currentRequest().url() };
     auto navigationID = navigation.navigationID();
     Ref process = processForNavigation.get();
 
@@ -10531,7 +10531,7 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
         completionHandler(destinationWebProcessIdentifier);
     };
 
-    addAllowedFirstPartyForCookies(process, domain, LoadedWebArchive::No, WTF::move(addCookiesCompletionHandler));
+    addAllowedFirstPartyForCookies(process, site, LoadedWebArchive::No, WTF::move(addCookiesCompletionHandler));
 }
 
 void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier> destinationWebProcess)>&& completionHandler)
