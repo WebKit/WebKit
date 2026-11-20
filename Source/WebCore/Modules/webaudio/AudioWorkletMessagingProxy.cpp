@@ -97,11 +97,14 @@ void AudioWorkletMessagingProxy::stopThread(StopThread option)
         if (RefPtr worklet = m_worklet)
             worklet->releaseProcessors(*this);
     }
-    m_workletThread->stop();
+    m_workletThread->stop([protectedThis = Ref { *this }] {
+        protectedThis->m_workletThread->clearProxies();
+    });
 }
 
 AudioWorkletMessagingProxy::~AudioWorkletMessagingProxy()
 {
+    ASSERT(m_wasAskedToTerminate);
     stopThread(StopThread::ThreadOnly);
     m_workletThread->clearProxies();
 }

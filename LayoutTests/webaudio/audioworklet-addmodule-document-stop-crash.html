@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that stopping a document while an AudioWorklet addModule() task is still queued on the worklet thread does not crash. The dropped task must not deref the main-thread-only Worklet on the worklet thread.");
+jsTestIsAsync = true;
+
+// Each iteration starts an AudioContext in a fresh subframe, posts an
+// addModule() task to the just-started worklet thread, then immediately
+// removes the frame. Removing the frame stops the document, which stops the
+// worklet thread and drops the still-queued addModule task. Before the fix
+// that task captured a PendingActivity<Worklet> and was destroyed on the
+// worklet thread, derefing the Worklet off the main thread (a security crash
+// under RefCountDebugger / release-assert). Spacing the iterations with
+// setTimeout lets each worklet thread finish starting so the stop lands while
+// the task is still queued.
+const iterations = 25;
+let n = 0;
+
+function round() {
+    const frame = document.createElement("iframe");
+    document.body.appendChild(frame);
+    const ctx = new frame.contentWindow.AudioContext();
+    ctx.audioWorklet.addModule("data:text/javascript, ").catch(() => { });
+    frame.remove();
+
+    if (++n < iterations) {
+        setTimeout(round, 0);
+        return;
+    }
+    setTimeout(() => {
+        testPassed("Did not crash after stopping documents with queued addModule() tasks.");
+        finishJSTest();
+    }, 50);
+}
+
+onload = round;
+</script>
+</body>
+</html>

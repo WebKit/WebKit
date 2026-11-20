@@ -87,9 +87,9 @@ void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options,
     m_pendingTasksSet.add(pendingTasks);
 
     for (Ref proxy : borrow(m_proxies).get()) {
-        proxy->postTaskForModeToWorkletGlobalScope([pendingTasks = pendingTasks.copyRef(), moduleURL = moduleURL.isolatedCopy(), credentials = options.credentials, pendingActivity = makePendingActivity(*this)](ScriptExecutionContext& context) mutable {
-            downcast<WorkletGlobalScope>(context).fetchAndInvokeScript(moduleURL, credentials, [pendingTasks = WTF::move(pendingTasks), pendingActivity = WTF::move(pendingActivity)](std::optional<Exception>&& exception) mutable {
-                callOnMainThread([pendingTasks = WTF::move(pendingTasks), exception = crossThreadCopy(WTF::move(exception)), pendingActivity = WTF::move(pendingActivity)]() mutable {
+        proxy->postTaskForModeToWorkletGlobalScope([pendingTasks = pendingTasks.copyRef(), moduleURL = moduleURL.isolatedCopy(), credentials = options.credentials](ScriptExecutionContext& context) mutable {
+            downcast<WorkletGlobalScope>(context).fetchAndInvokeScript(moduleURL, credentials, [pendingTasks = WTF::move(pendingTasks)](std::optional<Exception>&& exception) mutable {
+                callOnMainThread([pendingTasks = WTF::move(pendingTasks), exception = crossThreadCopy(WTF::move(exception))] mutable {
                     if (exception)
                         pendingTasks->abort(WTF::move(*exception));
                     else
@@ -98,6 +98,11 @@ void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options,
             });
         }, WorkerRunLoop::defaultMode());
     }
+}
+
+bool Worklet::virtualHasPendingActivity() const
+{
+    return !m_pendingTasksSet.isEmpty();
 }
 
 void Worklet::finishPendingTasks(WorkletPendingTasks& tasks)
