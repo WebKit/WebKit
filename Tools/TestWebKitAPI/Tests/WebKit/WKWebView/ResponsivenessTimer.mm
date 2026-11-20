@@ -25,27 +25,23 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/PlatformWebView.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-@interface ResponsivenessTimerDelegate : NSObject <WKNavigationDelegate>
+@interface ResponsivenessTimerDelegate : TestNavigationDelegate
+@property (nonatomic, readonly) BOOL didBecomeUnresponsive;
 @end
-    
-@implementation ResponsivenessTimerDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    didFinishLoad = true;
-}
+@implementation ResponsivenessTimerDelegate
 
 - (void)_webViewWebProcessDidBecomeUnresponsive:(WKWebView *)webView
 {
-    didBecomeUnresponsive = true;
+    _didBecomeUnresponsive = YES;
 }
 
 @end
@@ -64,18 +60,17 @@ TEST(WebKit, ResponsivenessTimerShouldNotFireAfterTearDown)
     [webView1 setNavigationDelegate:delegate.get()];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView1 loadRequest:request];
-    Util::run(&didFinishLoad);
+    [delegate waitForDidFinishNavigation];
 
-    EXPECT_FALSE(didBecomeUnresponsive);
+    EXPECT_FALSE([delegate didBecomeUnresponsive]);
 
     RetainPtr webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
 
-    didFinishLoad = false;
     [webView2 loadRequest:request];
-    Util::run(&didFinishLoad);
+    [delegate waitForDidFinishNavigation];
 
-    EXPECT_FALSE(didBecomeUnresponsive);
+    EXPECT_FALSE([delegate didBecomeUnresponsive]);
 
     // Call stopLoading() and close() on the first page in quick succession.
     [webView1 stopLoading];
@@ -85,7 +80,7 @@ TEST(WebKit, ResponsivenessTimerShouldNotFireAfterTearDown)
     Util::runFor(4_s);
 
     // We should not report the second page sharing the same process as unresponsive.
-    EXPECT_FALSE(didBecomeUnresponsive);
+    EXPECT_FALSE([delegate didBecomeUnresponsive]);
 }
 
 } // namespace TestWebKitAPI
