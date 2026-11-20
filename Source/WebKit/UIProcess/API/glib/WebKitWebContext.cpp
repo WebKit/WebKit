@@ -501,6 +501,12 @@ static void webkitWebContextDispose(GObject* object)
 #endif
 
     if (priv->processPool) {
+#if ENABLE(REMOTE_INSPECTOR)
+        if (priv->automationSession) {
+            priv->processPool->setAutomationSession(nullptr);
+            priv->automationSession = nullptr;
+        }
+#endif
         priv->processPool->setUserMessageHandler(nullptr);
         priv->processPool = nullptr;
     }
