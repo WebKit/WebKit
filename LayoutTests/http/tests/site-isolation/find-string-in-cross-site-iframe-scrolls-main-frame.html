@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<body>
+<div style="height: 3000px"></div>
+<iframe id="frame" style="width: 300px; height: 100px"></iframe>
+<div style="height: 3000px"></div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message) { document.getElementById("log").textContent += message + "\n"; }
+
+async function waitForMainFrameScroll() {
+    for (let i = 0; i < 100; ++i) {
+        if (window.scrollY > 0)
+            return true;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    return false;
+}
+
+onload = async () => {
+    const frame = document.getElementById("frame");
+    await new Promise(resolve => {
+        frame.onload = resolve;
+        frame.src = "http://localhost:8000/site-isolation/resources/find-string-target.html";
+    });
+
+    const found = await testRunner.findString("needle", []);
+    log(found ? "PASS: found the match" : "FAIL: did not find the match");
+
+    const scrolled = await waitForMainFrameScroll();
+    const frameRect = frame.getBoundingClientRect();
+    const frameIsVisible = frameRect.top >= 0 && frameRect.bottom <= window.innerHeight;
+    log(scrolled && frameIsVisible ? "PASS: main frame scrolled to reveal the iframe" : `FAIL: main frame did not reveal the iframe (scrollY ${window.scrollY}, iframe top ${frameRect.top})`);
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
