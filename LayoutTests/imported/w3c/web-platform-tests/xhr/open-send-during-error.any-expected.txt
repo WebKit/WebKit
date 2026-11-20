@@ -1,0 +1,4 @@
+
+PASS open() and send() in an error event listener start a new request
+PASS open() and send() in an error event listener start a new request, which can fail too
+

@@ -6340,7 +6340,6 @@ imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-data-url
 imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url-cross-origin.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url.window.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials.html [ Skip ]
-imported/w3c/web-platform-tests/xhr/abort-with-error.any.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Skip ]
 
 # This test needs proper promise handling in fullscreen to avoid the flaky console message:

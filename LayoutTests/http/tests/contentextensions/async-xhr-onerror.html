@@ -18,9 +18,12 @@ function runTest(shouldAbort) {
     xhr.ontimeout = function () {
         log("timeout - this should not be called.");
     };
+    xhr.onabort = function () {
+        log("onabort was called.");
+    };
     xhr.onerror = function () {
         log("onerror was called.");
-        if (shouldAbort) // The second time this is called.
+        if (!shouldAbort)
             testRunner.notifyDone();
     };
 
