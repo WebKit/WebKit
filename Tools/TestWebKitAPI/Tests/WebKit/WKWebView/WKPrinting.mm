@@ -29,6 +29,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/PrintingTestUtilities.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestPDFDocument.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -207,6 +208,43 @@ TEST(Printing, PrintPageBorders)
 
     [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
     [webView _waitUntilPageBorderDrawn];
+}
+
+static NSRect firstPageInPreview(NSPrintOperation *operation, NSPaperOrientation orientation)
+{
+    RetainPtr view = [operation view];
+    [view endDocument];
+    [operation printInfo].orientation = orientation;
+    NSRange pageRange { 0, NSIntegerMax };
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        [view knowsPageRange:&pageRange];
+        return pageRange.length != NSIntegerMax;
+    }));
+    NSRect page = [view rectForPage:1];
+    return { [view locationOfPrintRect:page], page.size };
+}
+
+TEST(Printing, PreviewPageDoesNotDependOnPreviousOrientation)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<style>@page { margin: 1in }</style>Hello"];
+
+    RetainPtr printInfo = adoptNS([[NSPrintInfo alloc] init]);
+    [printInfo setPaperSize:TestWebKitAPI::usLetterPaperSizeInPoints];
+    [printInfo setTopMargin:36];
+    [printInfo setBottomMargin:36];
+    [printInfo setLeftMargin:18];
+    [printInfo setRightMargin:18];
+    RetainPtr operation = [webView printOperationWithPrintInfo:printInfo];
+    [NSPrintOperation setCurrentOperation:operation];
+
+    auto portraitPage = firstPageInPreview(operation, NSPaperOrientationPortrait);
+    firstPageInPreview(operation, NSPaperOrientationLandscape);
+    auto portraitPageAfterLandscape = firstPageInPreview(operation, NSPaperOrientationPortrait);
+    [NSPrintOperation setCurrentOperation:nil];
+
+    EXPECT_EQ(portraitPage, NSMakeRect(72, 72, 468, 648));
+    EXPECT_EQ(portraitPageAfterLandscape, portraitPage);
 }
 
 #if HAVE(PDFKIT)

@@ -47,6 +47,8 @@
 
 NSString * const WebKitOriginalTopPrintingMarginKey = @"WebKitOriginalTopMargin";
 NSString * const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomMargin";
+NSString * const WebKitOriginalLeftPrintingMarginKey = @"WebKitOriginalLeftMargin";
+NSString * const WebKitOriginalRightPrintingMarginKey = @"WebKitOriginalRightMargin";
 
 NSString * const NSPrintInfoDidChangeNotification = @"NSPrintInfoDidChange";
 
@@ -142,32 +144,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr info = [_printOperation.get() printInfo];
     RetainPtr infoDictionary = [info dictionary];
 
-    // We need to modify the top and bottom margins in the NSPrintInfo to account for the space needed by the
-    // header and footer. Because this method can be called more than once on the same NSPrintInfo (see 5038087),
-    // we stash away the unmodified top and bottom margins the first time this method is called, and we read from
-    // those stashed-away values on subsequent calls.
-    double originalTopMargin;
-    double originalBottomMargin;
-    RetainPtr originalTopMarginNumber = dynamic_objc_cast<NSNumber>([infoDictionary objectForKey:WebKitOriginalTopPrintingMarginKey]);
-    if (!originalTopMarginNumber) {
-        ASSERT(![infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey]);
-        originalTopMargin = [info topMargin];
-        originalBottomMargin = [info bottomMargin];
-        [infoDictionary setObject:@(originalTopMargin) forKey:WebKitOriginalTopPrintingMarginKey];
-        [infoDictionary setObject:@(originalBottomMargin) forKey:WebKitOriginalBottomPrintingMarginKey];
-    } else {
-        ASSERT([originalTopMarginNumber isKindOfClass:[NSNumber class]]);
-        ASSERT([[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] isKindOfClass:[NSNumber class]]);
-        originalTopMargin = [originalTopMarginNumber doubleValue];
-        originalBottomMargin = [[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] doubleValue];
-    }
-    
-    CGFloat scale = [info scalingFactor];
+    // pageDidComputePageRects() replaces the margins with the @page margins so every pass starts from the ones stashed on the first.
+    // rdar://5038087
+    auto originalMargin = [&infoDictionary](NSString *key, CGFloat margin) -> CGFloat {
+        if (RetainPtr stashedMargin = dynamic_objc_cast<NSNumber>([infoDictionary objectForKey:key]))
+            return [stashedMargin doubleValue];
+        [infoDictionary setObject:@(margin) forKey:key];
+        return margin;
+    };
+    CGFloat topMargin = originalMargin(WebKitOriginalTopPrintingMarginKey, [info topMargin]);
+    CGFloat bottomMargin = originalMargin(WebKitOriginalBottomPrintingMarginKey, [info bottomMargin]);
+    [info setLeftMargin:originalMargin(WebKitOriginalLeftPrintingMarginKey, [info leftMargin])];
+    [info setRightMargin:originalMargin(WebKitOriginalRightPrintingMarginKey, [info rightMargin])];
+
     Ref webFrame = *_webFrame;
     if (RefPtr page = webFrame->page()) {
-        [info setTopMargin:originalTopMargin + page->headerHeightForPrinting(webFrame) * scale];
-        [info setBottomMargin:originalBottomMargin + page->footerHeightForPrinting(webFrame) * scale];
+        CGFloat scale = [info scalingFactor];
+        topMargin += page->headerHeightForPrinting(webFrame) * scale;
+        bottomMargin += page->footerHeightForPrinting(webFrame) * scale;
     }
+    [info setTopMargin:topMargin];
+    [info setBottomMargin:bottomMargin];
 }
 
 - (BOOL)_isPrintingPreview
@@ -417,12 +414,16 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
     }
 
     [self _suspendAutodisplay];
-    
+
+    // AppKit places these pages with the @page margins that pageDidComputePageRects() set.
+    if ([self _hasPageRects]) {
+        *range = NSMakeRange(1, _printingPageRects.size());
+        return YES;
+    }
+
     [self performSelectorOnMainThread:@selector(_adjustPrintingMarginsForHeaderAndFooter) withObject:nil waitUntilDone:YES];
 
-    if ([self _hasPageRects])
-        *range = NSMakeRange(1, _printingPageRects.size());
-    else if (!RunLoop::isMain()) {
+    if (!RunLoop::isMain()) {
         ASSERT(![self _isPrintingPreview]);
         Locker lock { _printingCallbackMutex };
 
