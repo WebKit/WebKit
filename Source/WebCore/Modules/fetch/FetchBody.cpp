@@ -203,10 +203,10 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
     else if (isArrayBufferView())
         closeStream = source.enqueue(ArrayBuffer::tryCreate(protect(arrayBufferViewBody())->span()));
     else if (isText()) {
-        auto data = textBody().utf8Bytes();
+        auto data = utf8Bytes(textBody());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(borrow(data)->span()));
     } else if (isURLSearchParams()) {
-        auto data = protect(urlSearchParamsBody())->toString().utf8Bytes();
+        auto data = utf8Bytes(protect(urlSearchParamsBody())->toString());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(borrow(data)->span()));
     } else if (isBlob())
         owner.loadBlob(protect(blobBody()).get(), nullptr);
@@ -235,7 +235,7 @@ void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromis
 
 void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
 {
-    auto data = text.utf8Bytes();
+    auto data = utf8Bytes(text);
     protect(consumer())->resolveWithData(WTF::move(promise), owner.contentType(), borrow(data)->span());
     m_data = nullptr;
 }
@@ -268,9 +268,9 @@ void FetchBody::loadingSucceeded(const String& contentType)
 RefPtr<FormData> FetchBody::bodyAsFormData() const
 {
     if (isText())
-        return FormData::create(textBody().utf8Bytes());
+        return FormData::create(utf8Bytes(textBody()));
     if (isURLSearchParams())
-        return FormData::create(protect(urlSearchParamsBody())->toString().utf8Bytes());
+        return FormData::create(utf8Bytes(protect(urlSearchParamsBody())->toString()));
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
@@ -385,9 +385,9 @@ FetchBody::TakenData FetchBody::take()
         return formDataBody();
 
     if (isText())
-        return SharedBuffer::create(textBody().utf8Bytes());
+        return SharedBuffer::create(utf8Bytes(textBody()));
     if (isURLSearchParams())
-        return SharedBuffer::create(protect(urlSearchParamsBody())->toString().utf8Bytes());
+        return SharedBuffer::create(utf8Bytes(protect(urlSearchParamsBody())->toString()));
 
     if (isArrayBuffer())
         return SharedBuffer::create(protect(arrayBufferBody())->span());

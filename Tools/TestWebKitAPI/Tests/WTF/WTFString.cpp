@@ -571,7 +571,7 @@ TEST(WTF, StringUTF8ConversionLongStrings)
             Vector<Latin1Character> characters(FillWith { }, 100, filler);
             characters[position] = 0xFF;
             String string { characters.span() };
-            auto bytes = string.utf8Bytes();
+            auto bytes = utf8Bytes(string);
             EXPECT_EQ(bytes.size(), bytes.capacity());
             EXPECT_EQ(string, String::fromUTF8(bytes.span()));
             EXPECT_EQ(string, String::fromUTF8(string.utf8().span()));
@@ -585,7 +585,7 @@ TEST(WTF, StringUTF8ConversionLongStrings)
                 characters[position] = 0xFFFD;
                 String expected { characters.span() };
 
-                auto bytes = string.utf8Bytes();
+                auto bytes = utf8Bytes(string);
                 EXPECT_EQ(bytes.size(), bytes.capacity());
                 EXPECT_EQ(expected, String::fromUTF8(bytes.span()));
                 EXPECT_EQ(expected, String::fromUTF8(string.utf8().span()));

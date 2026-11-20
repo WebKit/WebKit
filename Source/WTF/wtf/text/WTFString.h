@@ -130,7 +130,6 @@ public:
     WTF_EXPORT_PRIVATE Latin1CString latin1() const;
 
     WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = ConversionMode::Lenient) const;
-    Vector<uint8_t> utf8Bytes() const;
 
     template<typename Func>
     std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = ConversionMode::Lenient) const;

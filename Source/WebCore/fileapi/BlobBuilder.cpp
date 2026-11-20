@@ -64,7 +64,7 @@ void BlobBuilder::append(Ref<Blob>&& blob)
 
 void BlobBuilder::append(const String& text)
 {
-    auto bytes = text.utf8Bytes();
+    auto bytes = utf8Bytes(text);
 
     if (m_endings == EndingType::Native)
         bytes = normalizeLineEndingsToNative(WTF::move(bytes));

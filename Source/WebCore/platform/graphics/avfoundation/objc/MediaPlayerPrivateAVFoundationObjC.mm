@@ -2220,7 +2220,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (scheme == "clearkey"_s) {
         String keyID = [[[avRequest request] URL] resourceSpecifier];
-        auto encodedKeyId = keyID.utf8Bytes();
+        auto encodedKeyId = utf8Bytes(keyID);
         auto initData = SharedBuffer::create(WTF::move(encodedKeyId));
 
         auto keyData = player->cachedKeyForKeyId(keyID);

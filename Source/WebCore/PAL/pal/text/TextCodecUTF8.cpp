@@ -480,7 +480,7 @@ upConvertTo16Bit:
 
 Vector<uint8_t> TextCodecUTF8::encode(StringView string, UnencodableHandling) const
 {
-    return string.utf8Bytes();
+    return utf8Bytes(string);
 }
 
 } // namespace PAL

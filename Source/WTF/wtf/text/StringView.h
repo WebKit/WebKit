@@ -132,7 +132,6 @@ public:
 
     WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = ConversionMode::Lenient) const;
     WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = ConversionMode::Lenient) const;
-    WTF_EXPORT_PRIVATE Vector<uint8_t> utf8Bytes() const;
 
     template<typename Func>
     std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = ConversionMode::Lenient) const;
@@ -291,6 +290,8 @@ struct StringViewWithUnderlyingString;
 WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
 
 WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
+
+WTF_EXPORT_PRIVATE Vector<uint8_t> utf8Bytes(StringView);
 
 inline StringView nullStringView() { return { }; }
 inline StringView emptyStringView() { return ""_span; }
@@ -1438,11 +1439,6 @@ NODELETE inline bool endsWithIgnoringASCIICase(StringView reference, StringView 
     return equalIgnoringASCIICaseWithLength(reference.span16().subspan(startOffset), suffix.span16(), suffix.length());
 }
 
-inline Vector<uint8_t> String::utf8Bytes() const
-{
-    return StringView { *this }.utf8Bytes();
-}
-
 inline size_t String::find(StringView string) const
 {
     return m_impl ? m_impl->find(string) : notFound;
@@ -1619,3 +1615,4 @@ using WTF::nullStringView;
 using WTF::emptyStringView;
 using WTF::codePointCompare;
 using WTF::codePointCompareLessThan;
+using WTF::utf8Bytes;

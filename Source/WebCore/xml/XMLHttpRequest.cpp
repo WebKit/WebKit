@@ -469,7 +469,7 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<Document>&& document)
 
         // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send Step 4.2.
         auto serialized = serializeFragment(document, SerializedNodes::SubtreeIncludingNode);
-        auto encoded = serialized.utf8Bytes();
+        auto encoded = utf8Bytes(serialized);
         m_requestEntityBody = FormData::create(WTF::move(encoded));
         Locker locker { m_gcLock };
         if (m_upload)
@@ -539,7 +539,7 @@ ExceptionOr<void> XMLHttpRequest::sendStringData(String&& body, const String& de
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 
-        m_requestEntityBody = FormData::create(body.utf8Bytes());
+        m_requestEntityBody = FormData::create(utf8Bytes(body));
         Locker locker { m_gcLock };
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);

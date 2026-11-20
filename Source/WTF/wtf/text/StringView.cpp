@@ -131,17 +131,17 @@ UTF8CString StringView::utf8(ConversionMode mode) const
     return expectedString.value();
 }
 
-Vector<uint8_t> StringView::utf8Bytes() const
+Vector<uint8_t> utf8Bytes(StringView string)
 {
-    if (is8Bit()) {
-        auto characters = byteCast<uint8_t>(span8());
+    if (string.is8Bit()) {
+        auto characters = byteCast<uint8_t>(string.span8());
         Vector<uint8_t> bytes(simdutf::utf8_length_from_latin1(characters));
         auto bytesWritten = simdutf::convert_latin1_to_utf8(characters, borrow(bytes)->mutableSpan());
         ASSERT_UNUSED(bytesWritten, bytesWritten == bytes.size());
         return bytes;
     }
     Vector<uint8_t> bytes;
-    auto result = StringImpl::convertToUTF8(span16(), bytes, ConversionMode::Lenient);
+    auto result = StringImpl::convertToUTF8(string.span16(), bytes, ConversionMode::Lenient);
     RELEASE_ASSERT(result);
     return bytes;
 }
