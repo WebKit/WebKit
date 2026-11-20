@@ -281,11 +281,12 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
     // scroll (i.e. one at or behind the original offset), so both remaining candidates are valid
     // targets in the scroll direction. Among them, prefer whichever is closest to the scroll
     // destination, so a snap point between the origin and the destination is preferred over one that
-    // overshoots it. Only fall back to the scroll direction to break an exact tie.
+    // overshoots it. Break an exact tie using the scroll direction, preferring the previous offset when
+    // there is none.
     auto distanceToPrevious = scrollDestinationOffset - (*previous).first;
     auto distanceToNext = (*next).first - scrollDestinationOffset;
     if (distanceToPrevious == distanceToNext)
-        return velocity < 0 ? *previous : *next;
+        return velocity <= 0 ? *previous : *next;
     return distanceToPrevious < distanceToNext ? *previous : *next;
 }
 

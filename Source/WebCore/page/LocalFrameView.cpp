@@ -3433,10 +3433,15 @@ void LocalFrameView::setScrollOffsetWithOptions(const ScrollOffset& scrollOffset
     auto snappedOffset = ceiledIntPoint(scrollAnimator().scrollOffsetAdjustedForSnapping(scrollOffset, options.snapPointSelectionMethod));
     auto snappedPosition = scrollPositionFromOffset(snappedOffset);
 
+    // The scrolling tree applies originalScrollDelta without snapping, so send the snapped position instead.
+    auto adjustedOptions = options;
+    if (snappedOffset != scrollOffset)
+        adjustedOptions.originalScrollDelta = std::nullopt;
+
     if (options.animated == ScrollIsAnimated::Yes)
-        scrollToPositionWithAnimation(snappedPosition, options);
+        scrollToPositionWithAnimation(snappedPosition, adjustedOptions);
     else
-        ScrollView::setScrollPosition(snappedPosition, options);
+        ScrollView::setScrollPosition(snappedPosition, adjustedOptions);
 }
 
 void LocalFrameView::scrollToEdgeWithOptions(RectEdges<bool> edges, const ScrollPositionChangeOptions& options)

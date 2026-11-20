@@ -316,6 +316,11 @@ ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrol
     ScrollOffset snappedOffset = ceiledIntPoint(scrollAnimator().scrollOffsetAdjustedForSnapping(clampedScrollOffset, options.snapPointSelectionMethod));
     auto snappedPosition = scrollPositionFromOffset(snappedOffset);
 
+    // The scrolling tree applies originalScrollDelta without snapping, so send the snapped position instead.
+    auto adjustedOptions = options;
+    if (snappedOffset != clampedScrollOffset)
+        adjustedOptions.originalScrollDelta = std::nullopt;
+
     if (scrollAnimationStatus() == ScrollAnimationStatus::Animating) {
         // If a smooth scroll animation is already running and the new request is also
         // animated, retarget the running animation to the new destination instead of
@@ -336,8 +341,8 @@ ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrol
 
     if (options.animated == ScrollIsAnimated::Yes) {
         registerScrollableAreaForAnimatedScroll();
-        ScrollableArea::scrollToPositionWithAnimation(snappedPosition, options);
-    } else if (!requestScrollToPosition(snappedPosition, options))
+        ScrollableArea::scrollToPositionWithAnimation(snappedPosition, adjustedOptions);
+    } else if (!requestScrollToPosition(snappedPosition, adjustedOptions))
         scrollToPositionWithoutAnimation(snappedPosition, options.clamping);
 
     return snappedOffset;
