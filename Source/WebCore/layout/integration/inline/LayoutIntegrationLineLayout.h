@@ -162,6 +162,10 @@ public:
     FloatRect applySVGTextFragments();
 
     NODELETE bool hasBlocks() const;
+    // Whether this inline content places floats of its own (not ones intruding from outside).
+    NODELETE bool hasFloats() const;
+    // The floats and the block-level boxes of this inline content, in tree order, which the Float paint phase and hit test action visit.
+    Vector<CheckedRef<RenderBox>> floatsAndBlockLevelBoxesInTreeOrder() const;
 
     // The last layout() pass. A pagination restart runs a second pass from inside layout().
     struct LayoutInfoForTesting {

@@ -34,6 +34,10 @@ namespace WebCore {
 class RenderBox;
 struct PaintInfo;
 
+namespace LayoutIntegration {
+class LineLayout;
+}
+
 namespace Paint {
 
 class BlockPainter {
@@ -55,7 +59,8 @@ public:
 private:
     void paintContents(const LayoutPoint&);
     void paintInlineChildren(const LayoutPoint&);
-    void paintFloats(const LayoutPoint&, bool preservePhase);
+    void paintFloatsAndBlockLevelContentInInline(const LayoutIntegration::LineLayout&);
+    void paintFloat(RenderBox&, const LayoutPoint&);
     void paintColumnRules(const LayoutPoint&);
     void paintExcludedChildrenInBorder();
     void paintCarets();

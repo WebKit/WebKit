@@ -812,6 +812,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         }
     }
 
+    auto hasFloats = false;
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
         if (didDiscardContent) {
             CheckedRef renderer = *layoutBox->rendererForIntegration();
@@ -839,6 +840,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             renderer->setIsClippedByLineClamp(LineClampUpdater::isInsideLineClampContainer(renderer));
             auto isInitialLetter = layoutBox->style().pseudoElementType() == PseudoElementType::FirstLetter;
             auto& floatingObject = blockFlow->insertFloatingBox(renderer);
+            hasFloats = true;
             auto [marginBoxVisualRect, borderBoxVisualRect] = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(logicalGeometry, m_inlineContentConstraints->formattingRootBorderBoxSize(), placedFloatsWritingMode);
 
             auto paginationOffset = floatPaginationOffsetMap.getOptional(layoutBox);
@@ -890,6 +892,8 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
         }
     }
+    if (m_inlineContent)
+        m_inlineContent->setHasFloats(hasFloats);
 }
 
 bool LineLayout::layoutSVGText()
@@ -1931,6 +1935,46 @@ bool LineLayout::contentNeedsVisualReordering() const
 bool LineLayout::hasBlocks() const
 {
     return m_inlineContent && m_inlineContent->hasBlockLevelBoxes();
+}
+
+bool LineLayout::hasFloats() const
+{
+    return m_inlineContent && m_inlineContent->hasFloats();
+}
+
+Vector<CheckedRef<RenderBox>> LineLayout::floatsAndBlockLevelBoxesInTreeOrder() const
+{
+    auto isInsideInlineBoxWithSelfPaintingLayer = [&](const Layout::Box& layoutBox) {
+        for (CheckedPtr ancestor = &layoutBox.parent(); ancestor != &rootLayoutBox(); ancestor = &ancestor->parent()) {
+            if (CheckedPtr inlineBox = dynamicDowncast<RenderLayerModelObject>(ancestor->rendererForIntegration()); inlineBox && inlineBox->hasSelfPaintingLayer())
+                return true;
+        }
+        return false;
+    };
+
+    auto isFullyTruncated = [&](const Layout::Box& layoutBox) {
+        if (!m_inlineContent)
+            return false;
+        auto* box = m_inlineContent->firstBoxForLayoutBox(layoutBox);
+        return box && box->isFullyTruncated();
+    };
+
+    // Floats have no display boxes, so their order among the block-level boxes comes from the layout tree.
+    auto boxes = Vector<CheckedRef<RenderBox>> { };
+    for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
+        if (layoutBox->isOutOfFlowPositioned())
+            continue;
+        if (!layoutBox->isFloatingPositioned()) {
+            // Atomic inline-level boxes are painted and hit tested in the foreground phase.
+            if (!layoutBox->isBlockLevelBox())
+                continue;
+            // Like InlineContentPainter. The layer of an inline box paints and hit tests the block-level boxes inside it (see LayerPaintScope).
+            if (isInsideInlineBoxWithSelfPaintingLayer(layoutBox) || isFullyTruncated(layoutBox))
+                continue;
+        }
+        boxes.append(downcast<RenderBox>(*layoutBox->rendererForIntegration()));
+    }
+    return boxes;
 }
 
 #if ENABLE(TREE_DEBUGGING)
