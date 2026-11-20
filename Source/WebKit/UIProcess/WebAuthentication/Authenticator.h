@@ -35,7 +35,9 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
+#if PLATFORM(COCOA)
 #include <wtf/spi/cocoa/SecuritySPI.h>
+#endif
 
 OBJC_CLASS LAContext;
 

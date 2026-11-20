@@ -28,7 +28,9 @@
 
 #if ENABLE(WEB_AUTHN)
 #include "DigitalCredentialsCoordinatorMessages.h"
+#if PLATFORM(COCOA)
 #include "DigitalCredentialsRequestValidatorBridge.h"
+#endif
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -120,9 +122,16 @@ void DigitalCredentialsCoordinator::showChooserInUIProcess(std::optional<WebCore
 
 ExceptionOr<Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>>> DigitalCredentialsCoordinator::validateAndParseDigitalCredentialRequests(const SecurityOrigin& topOrigin, const Document& document, const Vector<UnvalidatedDigitalCredentialRequest>& unvalidatedRequests)
 {
+#if PLATFORM(COCOA)
     return DigitalCredentials::validateRequests(topOrigin.data(), unvalidatedRequests, [&](const String& message) {
         const_cast<Document&>(document).addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
     });
+#else
+    UNUSED_PARAM(topOrigin);
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(unvalidatedRequests);
+    return Exception { WebCore::ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s };
+#endif
 }
 
 void DigitalCredentialsCoordinator::dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&& completionHandler)

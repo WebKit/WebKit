@@ -3325,9 +3325,10 @@ ipc/convert-to-luminance-mask-float16.html [ Skip ]
 ipc/restrictedendpoints/allow-access-attachmentElement.html [ Skip ]
 ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
 
-# WebAuthn not enabled
-ipc/web-authenticator-get-assertion.html [ Skip ]
-ipc/web-authenticator-signal-main-thread.html [ Skip ]
+# These build a FrameInfoData holding Cocoa's CertificateInfo, whose only member
+# is a SecTrustRef; the SOUP one takes a GTlsCertificate and GTlsCertificateFlags.
+http/tests/ipc/web-authenticator-get-assertion-spoofed-origin-crash.html [ Skip ]
+http/tests/ipc/web-authenticator-make-credential-spoofed-origin-crash.html [ Skip ]
 
 # These tests require UseGPUProcessForMediaEnabled
 ipc/restrictedendpoints/allow-access-testOnlyIPC.html [ Skip ]
@@ -3507,10 +3508,8 @@ svg/webarchive [ WontFix ]
 svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
 inspector/page/archive.html [ WontFix ]
 
-# WebAuthN
+# These drive the mock authenticator, which is not built for the GLib ports.
 http/wpt/webauthn/ [ Skip ]
-imported/w3c/web-platform-tests/credential-management/ [ Skip ]
-imported/w3c/web-platform-tests/webauthn [ Skip ]
 
 # Layout formatting context tests that still fail.
 fast/layoutformattingcontext/br-and-wbr-simple.html [ ImageOnlyFailure ]

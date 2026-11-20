@@ -169,8 +169,12 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsAtMostTheMaximumNumberOfOpenI
 
 TEST(ValidatedOpenID4VPRequest, LimitsBoundEveryElement)
 {
+    OpenID4VPCredentialQuery credential;
+    credential.identifier = "credential"_s;
+    credential.format = OpenID4VPCredentialFormat::MsoMdoc;
+
     ValidatedOpenID4VPRequestObject request;
-    request.credentials.append(OpenID4VPCredentialQuery { .identifier = "credential"_s, .format = OpenID4VPCredentialFormat::MsoMdoc });
+    request.credentials.append(WTF::move(credential));
     EXPECT_TRUE(isWithinOpenID4VPRequestLimits(request));
 
     request.credentials[0].claimSets.resize(maxOpenID4VPRequestElementCount);
@@ -179,8 +183,11 @@ TEST(ValidatedOpenID4VPRequest, LimitsBoundEveryElement)
 
 TEST(ValidatedOpenID4VPRequest, LimitsBoundStringLength)
 {
+    OpenID4VPVerifierIdentity verifier;
+    verifier.identifier = "verifier"_s;
+
     ValidatedOpenID4VPRequestObject request;
-    request.verifierIdentities.append(OpenID4VPVerifierIdentity { .identifier = "verifier"_s });
+    request.verifierIdentities.append(WTF::move(verifier));
     EXPECT_TRUE(isWithinOpenID4VPRequestLimits(request));
 
     StringBuilder longIdentifier;

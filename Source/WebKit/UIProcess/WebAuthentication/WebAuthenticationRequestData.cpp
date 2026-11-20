@@ -28,9 +28,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#import "WebFrameProxy.h"
-#import <WebCore/SecurityOriginData.h>
-#import <WebCore/UserVerificationRequirement.h>
+#include "WebFrameProxy.h"
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/UserVerificationRequirement.h>
 
 namespace WebKit {
 using namespace WebCore;
