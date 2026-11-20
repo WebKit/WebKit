@@ -430,6 +430,7 @@ step
 style
 subtitle
 summary
+surfacecolor
 switch
 tabindex
 target

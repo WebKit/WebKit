@@ -21,6 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import CoreGraphics
 import Foundation
 import os
 
@@ -37,24 +38,14 @@ extension os.Logger {
     fileprivate static let usdStageConverter = Logger(subsystem: "com.apple.WebKit", category: "USDStageConverter")
 }
 
-private func usdStageType(forMIMEType mimeType: String) -> UTType {
-    // model/usd and model/vnd.pixar.usd are unofficial types that nothing declares,
-    // so UTType(mimeType:) yields only a dyn.* placeholder for them.
-    switch mimeType {
-    case "model/usd", "model/vnd.pixar.usd": .usd
-    case "model/stl": UTType(filenameExtension: "stl") ?? .data
-    default: UTType(mimeType: mimeType) ?? .usdz
-    }
-}
-
 @objc
 @implementation
 extension WKUSDStageConverter {
-    @objc(convert:mimeType:)
-    class func convert(_ data: Data, mimeType: String) -> Data? {
+    @objc(convert:mimeType:surfaceColor:)
+    class func convert(_ data: Data, mimeType: String, surfaceColor: CGColor?) -> Data? {
         let stage: USDStage
         do {
-            stage = try USDStage(data, type: usdStageType(forMIMEType: mimeType))
+            stage = try USDStage(modelData: data, mimeType: mimeType, surfaceColor: surfaceColor)
         } catch {
             Logger.usdStageConverter.error("WKUSDStageConverter: Failed to open stage: \(error)")
             return nil
@@ -74,8 +65,8 @@ extension WKUSDStageConverter {
 @objc
 @implementation
 extension WKUSDStageConverter {
-    @objc(convert:mimeType:)
-    class func convert(_ data: Data, mimeType: String) -> Data? {
+    @objc(convert:mimeType:surfaceColor:)
+    class func convert(_ data: Data, mimeType: String, surfaceColor: CGColor?) -> Data? {
         nil
     }
 }

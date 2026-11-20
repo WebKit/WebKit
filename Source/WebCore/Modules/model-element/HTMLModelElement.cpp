@@ -31,6 +31,7 @@
 
 #include "ARKitBadgeSystemImage.h"
 #include "AbortSignal.h"
+#include "CSSPropertyParserConsumer+ColorInlines.h"
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
 #include "DOMMatrixReadOnly.h"
@@ -248,7 +249,7 @@ NODELETE static bool isSupportedModelType(const AtomString& type)
     return type.isEmpty() || MIMETypeRegistry::isSupportedModelMIMEType(type);
 }
 
-URL HTMLModelElement::selectModelSource() const
+auto HTMLModelElement::selectModelSource() const -> SelectedModelSource
 {
     // FIXME: This should probably work more like media element resource
     // selection, where if a <source> element fails to load, an error event
@@ -257,8 +258,11 @@ URL HTMLModelElement::selectModelSource() const
     if (!document().hasBrowsingContext())
         return { };
 
+    bool isSTLEnabled = document().settings().modelElementSTLEnabled();
+    auto& surfaceColor = isSTLEnabled ? attributeWithoutSynchronization(surfacecolorAttr) : nullAtom();
+
     if (auto src = getNonEmptyURLAttribute(srcAttr); src.isValid())
-        return src;
+        return { WTF::move(src), surfaceColor };
 
     Ref document = this->document();
     for (Ref element : childrenOfType<HTMLSourceElement>(*this)) {
@@ -266,15 +270,20 @@ URL HTMLModelElement::selectModelSource() const
         if (!isSupportedModelType(type))
             continue;
 
-        if (MIMETypeRegistry::isSTLMIMEType(type) && !document->settings().modelElementSTLEnabled())
+        if (MIMETypeRegistry::isSTLMIMEType(type) && !isSTLEnabled)
             continue;
 
         auto& queries = element->parsedMediaAttribute(document);
         if (!queries.isEmpty() && !MQ::MediaQueryEvaluator { screenAtom(), document }.evaluate(queries))
             continue;
 
-        if (auto src = element->getNonEmptyURLAttribute(srcAttr); src.isValid())
-            return src;
+        if (auto src = element->getNonEmptyURLAttribute(srcAttr); src.isValid()) {
+            bool mayBeSTL = isSTLEnabled && (type.isEmpty() || MIMETypeRegistry::isSTLMIMEType(type));
+            if (!mayBeSTL)
+                return { WTF::move(src), nullAtom() };
+            auto& sourceSurfaceColor = element->attributeWithoutSynchronization(surfacecolorAttr);
+            return { WTF::move(src), sourceSurfaceColor.isNull() ? surfaceColor : sourceSurfaceColor };
+        }
     }
 
     return { };
@@ -282,7 +291,8 @@ URL HTMLModelElement::selectModelSource() const
 
 void HTMLModelElement::sourcesChanged()
 {
-    setSourceURL(selectModelSource());
+    auto [url, surfaceColor] = selectModelSource();
+    setSource(url, surfaceColor);
 }
 
 CachedResourceRequest HTMLModelElement::createResourceRequest(const URL& resourceURL, FetchOptions::Destination destination)
@@ -305,13 +315,14 @@ CachedResourceRequest HTMLModelElement::createResourceRequest(const URL& resourc
     return request;
 }
 
-void HTMLModelElement::setSourceURL(const URL& url)
+void HTMLModelElement::setSource(const URL& url, const AtomString& surfaceColor)
 {
-    if (url == m_sourceURL)
+    if (url == m_sourceURL && surfaceColor == m_surfaceColor)
         return;
 
     bool rendersFallbackContentBefore = rendersFallbackContent();
     m_sourceURL = url;
+    m_surfaceColor = surfaceColor;
 
     m_data.reset();
     m_dataMemoryCost.store(0, std::memory_order_relaxed);
@@ -722,7 +733,7 @@ void HTMLModelElement::didConvertModelData(ModelPlayer& modelPlayer, Ref<SharedB
 
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement::didConvertModelData: Received converted model data, size=%zu mimeType=%s", this, convertedData->size(), convertedMIMEType.utf8());
 
-    m_model = Model::create(WTF::move(convertedData), String { convertedMIMEType }, m_sourceURL, true /* isConverted */);
+    m_model = Model::create(WTF::move(convertedData), String { convertedMIMEType }, m_sourceURL, std::nullopt, true /* isConverted */);
     m_dataMemoryCost.store(m_model->data()->size(), std::memory_order_relaxed);
     reportExtraMemoryCost();
 }
@@ -1340,7 +1351,7 @@ bool HTMLModelElement::isInteractive() const
 
 void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == srcAttr)
+    if (name == srcAttr || name == surfacecolorAttr)
         sourcesChanged();
     else if (name == interactiveAttr) {
         if (auto* modelPlayer = m_modelPlayer.get())
@@ -1838,6 +1849,20 @@ static String modelMIMEType(const SharedBuffer& data, const String& contentType)
     return mimeType.isNull() ? contentType : mimeType;
 }
 
+std::optional<Color> HTMLModelElement::parsedSurfaceColor() const
+{
+    if (m_surfaceColor.isEmpty())
+        return std::nullopt;
+
+    Ref document = this->document();
+    auto color = CSSPropertyParserHelpers::parseColorRaw(m_surfaceColor, document->cssParserContext(), document);
+    if (!color.isValid()) {
+        document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("Ignoring the surfacecolor \""_s, m_surfaceColor, "\" of the model because it is not a valid CSS color."_s));
+        return std::nullopt;
+    }
+    return color;
+}
+
 void HTMLModelElement::modelResourceFinished()
 {
     auto invalidateResourceHandleAndUpdateRenderer = [&] {
@@ -1878,7 +1903,8 @@ void HTMLModelElement::modelResourceFinished()
     m_dataComplete = true;
     m_dataMemoryCost.store(data->size(), std::memory_order_relaxed);
     m_originalMIMEType = resource->mimeType();
-    m_model = Model::create(WTF::move(data), WTF::move(mimeType), resource->url());
+    auto surfaceColor = MIMETypeRegistry::isSTLMIMEType(mimeType) ? parsedSurfaceColor() : std::nullopt;
+    m_model = Model::create(WTF::move(data), WTF::move(mimeType), resource->url(), WTF::move(surfaceColor));
 
     ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 

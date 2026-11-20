@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <WebCore/Color.h>
 #include <WebCore/SharedBuffer.h>
+#include <optional>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
@@ -38,22 +40,24 @@ namespace WebCore {
 
 class Model final : public RefCounted<Model> {
 public:
-    WEBCORE_EXPORT static Ref<Model> create(Ref<SharedBuffer>&&, String&&, URL, bool isConverted = false);
+    WEBCORE_EXPORT static Ref<Model> create(Ref<SharedBuffer>&&, String&&, URL, std::optional<Color>&& surfaceColor = std::nullopt, bool isConverted = false);
     WEBCORE_EXPORT ~Model();
 
     // FIXME: data() should return SharedBuffer& and we should have a separate dataForSerialization() that returns a Ref.
     Ref<SharedBuffer> data() const { return m_data; }
     const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
+    const std::optional<Color>& surfaceColor() const LIFETIME_BOUND { return m_surfaceColor; }
     bool isConverted() const { return m_isConverted; }
     WEBCORE_EXPORT String filename() const;
 
 private:
-    Model(Ref<SharedBuffer>&&, String&&, URL, bool isConverted);
+    Model(Ref<SharedBuffer>&&, String&&, URL, std::optional<Color>&& surfaceColor, bool isConverted);
 
     const Ref<SharedBuffer> m_data;
     String m_mimeType;
     URL m_url;
+    std::optional<Color> m_surfaceColor;
     bool m_isConverted { false };
 };
 

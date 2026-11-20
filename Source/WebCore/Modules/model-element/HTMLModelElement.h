@@ -67,6 +67,7 @@
 namespace WebCore {
 
 class CachedResourceRequest;
+class Color;
 class DOMMatrixReadOnly;
 class DOMPointReadOnly;
 class EnvironmentMapLoader;
@@ -258,8 +259,12 @@ public:
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 
-    URL selectModelSource() const;
-    void setSourceURL(const URL&);
+    struct SelectedModelSource {
+        URL url;
+        AtomString surfaceColor;
+    };
+    SelectedModelSource selectModelSource() const;
+    void setSource(const URL&, const AtomString& surfaceColor);
     void modelDidChange();
     void createModelPlayer();
     void deleteModelPlayer();
@@ -392,6 +397,7 @@ private:
 #endif
 
     void modelResourceFinished();
+    std::optional<Color> parsedSurfaceColor() const;
     void sourceRequestResource();
     bool shouldDeferLoading() const;
     NODELETE bool isModelDeferred() const;
@@ -407,6 +413,7 @@ private:
 #endif
 
     URL m_sourceURL;
+    AtomString m_surfaceColor;
     CachedResourceHandle<CachedRawResource> m_resource;
     String m_originalMIMEType;
     SharedBufferBuilder m_data;

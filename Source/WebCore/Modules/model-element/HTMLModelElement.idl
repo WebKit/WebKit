@@ -63,6 +63,8 @@
 
     [Conditional=MODEL_ELEMENT_PORTAL, EnabledBySetting=ModelProcessEnabled&ModelNoPortalAttributeEnabled, Reflect] attribute boolean noportal;
 
+    [EnabledBySetting=ModelElementSTLEnabled, Reflect] attribute DOMString surfaceColor;
+
     undefined enterFullscreen();
 
     [Conditional=MODEL_ELEMENT_IMMERSIVE, EnabledBySetting=ModelElementImmersiveEnabled] attribute EventHandler onimmersivechange;
