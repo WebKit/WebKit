@@ -850,10 +850,20 @@ auto CSSSelector::RareData::create(AtomString value) -> Ref<RareData>
 
 bool CSSSelector::RareData::matchNth(int count)
 {
-    if (a > 0)
-        return count >= b && !((count - b) % a);
-    if (a < 0)
-        return count <= b && !((b - count) % -a);
+    if (a > 0) {
+        // Normalize a negative b to [0, a) so count - b cannot overflow.
+        int offset = b;
+        if (offset < 0) {
+            offset %= a;
+            if (offset)
+                offset += a;
+        }
+        return count >= offset && !((count - offset) % a);
+    }
+    if (a < 0) {
+        // % a, not % -a, since -a overflows for INT_MIN.
+        return count <= b && !((b - count) % a);
+    }
     return count == b;
 }
 
