@@ -1,0 +1,5 @@
+
+PASS XHTML parser should use null registry for a non-empty customelementregistry value
+PASS XHTML parser should give descendants of an element with customelementregistry a null registry
+PASS XHTML parser should ignore customelementregistry on non-HTML elements
+

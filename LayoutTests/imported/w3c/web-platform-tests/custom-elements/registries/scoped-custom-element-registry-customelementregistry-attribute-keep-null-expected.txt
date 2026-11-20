@@ -1,0 +1,21 @@
+
+PASS htmlCustomElementRegistry reflects as a string
+PASS A non-empty customelementregistry value has boolean attribute semantics
+PASS innerHTML gives an element with customelementregistry and its descendants a null registry
+PASS Markup parsed into an element with customelementregistry gets a null registry
+PASS An element initialized after parsing no longer keeps a null registry
+PASS customelementregistry has no parser effect on non-HTML elements
+PASS A scoped registry can initialize and clone an intentionally null registry subtree
+PASS Adoption preserves a parser-created intentionally null registry subtree
+PASS Adoption resolves an unflagged null registry from the destination document
+PASS Cloning and adopting preserves a parser-created intentionally null registry subtree
+PASS Importing does not apply a fallback registry to an intentionally null registry subtree
+PASS Importing with an explicit registry leaves an intentionally null registry subtree to initialize()
+PASS Importing applies the destination fallback registry to an unflagged null registry element
+PASS customelementregistry does not set a declarative shadow root registry to null
+PASS Element and shadow root null registry attributes compose
+PASS Changing the attribute after parsing does not change the established registry boundary
+PASS Element and global shadow root registry boundaries serialize independently
+PASS Element and null shadow root registry boundaries serialize independently
+PASS Initial parse: a non-empty customelementregistry value has boolean semantics
+

@@ -1242,6 +1242,9 @@ void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* f
     if (currentDepth >= cloneMaxDepth)
         return;
 
+    if (auto* element = dynamicDowncast<Element>(*this); element && element->keepsCustomElementRegistryNull()) [[unlikely]]
+        fallbackRegistry = nullptr;
+
     NodeVector postInsertionNotificationTargets;
     bool hadElement = false;
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
