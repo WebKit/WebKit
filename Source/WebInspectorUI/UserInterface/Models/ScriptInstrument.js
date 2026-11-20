@@ -39,13 +39,15 @@ WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
         return WI.TimelineRecord.Type.Script;
     }
 
-    startInstrumentation(initiatedByBackend)
+    startInstrumentation(initiatingTarget)
     {
-        if (initiatedByBackend)
-            return;
+        for (let target of WI.targets) {
+            // The target that started capturing on its own starts its ScriptProfiler domain itself.
+            if (target === initiatingTarget)
+                continue;
 
-        for (let target of WI.targets)
             this._startTrackingForTarget(target);
+        }
     }
 
     startInstrumentationForTarget(target)

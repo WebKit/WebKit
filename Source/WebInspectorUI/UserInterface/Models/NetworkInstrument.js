@@ -32,7 +32,7 @@ WI.NetworkInstrument = class NetworkInstrument extends WI.Instrument
         return WI.TimelineRecord.Type.Network;
     }
 
-    startInstrumentation(initiatedByBackend)
+    startInstrumentation(initiatingTarget)
     {
         // Nothing to do, network instrumentation is always happening.
     }

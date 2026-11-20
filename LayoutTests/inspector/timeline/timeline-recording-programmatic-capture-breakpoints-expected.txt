@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: Checking whether breakpoints are active
+CONSOLE MESSAGE: Checking whether breakpoints are active
+CONSOLE MESSAGE: Checking whether breakpoints are active
+CONSOLE MESSAGE: Checking whether breakpoints are active
+CONSOLE MESSAGE: Checking whether breakpoints are active
+CONSOLE MESSAGE: Checking whether breakpoints are active
+Tests that a programmatic capture (console.profile/profileEnd) turns breakpoints off while it runs and turns them back on when it ends, also when the frontend ends it.
+
+
+== Running test suite: Timeline.ProgrammaticCapture.Breakpoints
+-- Running test case: Timeline.ProgrammaticCapture.Breakpoints.StoppedByConsoleProfileEnd
+PASS: Should not pause during the programmatic capture.
+PASS: Should pause after the programmatic capture.
+
+-- Running test case: Timeline.ProgrammaticCapture.Breakpoints.StoppedByFrontend
+PASS: Should not pause during the programmatic capture.
+PASS: Should pause after the frontend stopped the programmatic capture.
+
+-- Running test case: Timeline.ProgrammaticCapture.Breakpoints.NextCapture
+PASS: Should not pause during the next programmatic capture.
+PASS: Should pause after the next programmatic capture.
+

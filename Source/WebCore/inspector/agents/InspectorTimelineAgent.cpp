@@ -48,6 +48,7 @@
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/InspectorScriptProfilerAgent.h>
 #include <JavaScriptCore/ScriptArguments.h>
+#include <utility>
 #include <wtf/SetForScope.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -109,9 +110,22 @@ Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(std::opti
 
 Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::stop()
 {
-    if (tracking())
-        internalStop();
+    ASSERT(tracking() || m_pendingConsoleProfileRecords.isEmpty());
 
+    if (tracking()) {
+        // End open console profiles with the capture, so that their `console.profileEnd()` does not stop a capture
+        // that is not running, and the next `console.profile()` starts a new one.
+        for (auto& record : m_pendingConsoleProfileRecords)
+            didCompleteRecordEntry(record);
+
+        internalStop();
+    }
+
+    // A programmatic capture can end here instead of in `stopProgrammaticCapture()`, either because its console
+    // profiles were ended above, or because a later `Timeline.start` kept `console.profileEnd()` from stopping it.
+    restoreBreakpointsAfterProgrammaticCapture();
+
+    m_pendingConsoleProfileRecords.clear();
     m_trackingFromFrontend = false;
 
     return { };
@@ -351,7 +365,7 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     ASSERT(!tracking());
 
     // Disable breakpoints during programmatic capture.
-    if (CheckedPtr webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent()) {
+    if (CheckedPtr webDebuggerAgent = debuggerAgentForProgrammaticCapture()) {
         m_programmaticCaptureRestoreBreakpointActiveValue = webDebuggerAgent->breakpointsActive();
         if (m_programmaticCaptureRestoreBreakpointActiveValue)
             std::ignore = webDebuggerAgent->setBreakpointsActive(false);
@@ -372,11 +386,22 @@ void InspectorTimelineAgent::stopProgrammaticCapture()
     toggleTimelineInstrument(InstrumentState::Stop);
     toggleScriptProfilerInstrument(InstrumentState::Stop);
 
-    // Re-enable breakpoints if they were enabled.
-    if (m_programmaticCaptureRestoreBreakpointActiveValue) {
-        if (CheckedPtr webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent())
-            std::ignore = webDebuggerAgent->setBreakpointsActive(true);
-    }
+    restoreBreakpointsAfterProgrammaticCapture();
+}
+
+void InspectorTimelineAgent::restoreBreakpointsAfterProgrammaticCapture()
+{
+    // Clearing the value keeps a later stop from turning on breakpoints that the user has turned off since.
+    if (!std::exchange(m_programmaticCaptureRestoreBreakpointActiveValue, false))
+        return;
+
+    if (CheckedPtr webDebuggerAgent = debuggerAgentForProgrammaticCapture())
+        std::ignore = webDebuggerAgent->setBreakpointsActive(true);
+}
+
+WebDebuggerAgent* InspectorTimelineAgent::debuggerAgentForProgrammaticCapture() const
+{
+    return protect(m_instrumentingAgents)->enabledWebDebuggerAgent();
 }
 
 void InspectorTimelineAgent::toggleInstruments(InstrumentState state)

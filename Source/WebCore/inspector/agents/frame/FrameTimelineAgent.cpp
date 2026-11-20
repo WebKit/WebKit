@@ -30,11 +30,13 @@
 #include "Element.h"
 #include "FloatQuad.h"
 #include "FrameDOMAgent.h"
+#include "FrameDebuggerAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "LayoutRect.h"
 #include "LocalFrameView.h"
 #include "Node.h"
+#include "NodeDocument.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -208,6 +210,13 @@ void FrameTimelineAgent::didEnqueueFirstContentfulPaint()
 void FrameTimelineAgent::didEnqueueLargestContentfulPaint(Element* element, unsigned area)
 {
     appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeIdForNode(element), area), TimelineRecordType::LargestContentfulPaint, false);
+}
+
+WebDebuggerAgent* FrameTimelineAgent::debuggerAgentForProgrammaticCapture() const
+{
+    // Unlike `enabledWebDebuggerAgent()`, this does not fall back to the page's agent, so a frame's capture never
+    // turns off the page target's breakpoints.
+    return protect(m_instrumentingAgents)->enabledFrameDebuggerAgent();
 }
 
 Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForNode(Node* node) const

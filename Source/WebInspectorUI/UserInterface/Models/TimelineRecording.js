@@ -158,7 +158,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     get startTime() { return this._startTime; }
     get endTime() { return this._endTime; }
 
-    start(initiatedByBackend)
+    start(initiatingTarget)
     {
         console.assert(!this._capturing, "Attempted to start an already started session.");
         console.assert(!this._readonly, "Attempted to start a readonly session.");
@@ -166,7 +166,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._capturing = true;
 
         for (let instrument of this._instruments)
-            instrument.startInstrumentation(initiatedByBackend);
+            instrument.startInstrumentation(initiatingTarget);
 
         if (!isNaN(this._discontinuityStartTime)) {
             for (let instrument of this._instruments)

@@ -54,7 +54,7 @@ WI.Instrument = class Instrument
         }
     }
 
-    static startLegacyTimelineAgent(initiatedByBackend)
+    static startLegacyTimelineAgent(initiatingTarget)
     {
         console.assert(WI.timelineManager._enabled);
 
@@ -63,11 +63,14 @@ WI.Instrument = class Instrument
 
         WI.Instrument._legacyTimelineAgentStarted = true;
 
-        if (initiatedByBackend)
-            return;
+        for (let target of WI.targets) {
+            // The target that started capturing on its own has already started its Timeline domain. Starting it again
+            // would make that target ignore its own `console.profileEnd()`, so capturing would not stop.
+            if (target === initiatingTarget)
+                continue;
 
-        for (let target of WI.targets)
             WI.Instrument._startLegacyTimelineAgentOnTargetIfNeeded(target);
+        }
     }
 
     static startLegacyTimelineAgentForTarget(target)
@@ -117,9 +120,9 @@ WI.Instrument = class Instrument
         return null; // Implemented by subclasses.
     }
 
-    startInstrumentation(initiatedByBackend)
+    startInstrumentation(initiatingTarget)
     {
-        WI.Instrument.startLegacyTimelineAgent(initiatedByBackend);
+        WI.Instrument.startLegacyTimelineAgent(initiatingTarget);
     }
 
     startInstrumentationForTarget(target)

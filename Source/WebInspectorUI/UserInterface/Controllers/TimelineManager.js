@@ -47,7 +47,10 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._capturingStartTime = NaN;
         this._capturingEndTime = NaN;
 
-        this._initiatedByBackendStart = false;
+        // The target that started capturing on its own (with `console.profile()` or auto-capture), if any. The
+        // frontend does not start it, since it has already started its own domains, and a target that the frontend
+        // started ignores its own `console.profileEnd()`.
+        this._programmaticStartTarget = null;
         this._programmaticStopTarget = null;
 
         // For each target, the domains that are tracking and have not reported that they stopped, each
@@ -60,6 +63,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         // Matches the answer to a stop command with the capture that sent it.
         this._captureIdentifier = 0;
+        // For each target, the time at which each of its domains started in the current capture. Each domain is
+        // started by its own command, so they can start far apart.
+        this._trackingStartTimesForTarget = new Map;
 
         this._capturingBecameActive = false;
         this._autoCaptureTimelineTypes = [];
@@ -332,11 +338,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         ++this._captureIdentifier;
         this._programmaticStopTarget = null;
+        this._trackingStartTimesForTarget.clear();
 
         this._updateCapturingState(TimelineManager.CapturingState.Starting);
 
         this._capturingStartTime = NaN;
-        this._activeRecording.start(this._initiatedByBackendStart);
+        this._activeRecording.start(this._programmaticStartTarget);
     }
 
     stopCapturing()
@@ -500,10 +507,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             this._resetAutoCaptureState();
         }
         if (this._capturingState === TimelineManager.CapturingState.Inactive || restartedProgrammatically) {
-            this._initiatedByBackendStart = true;
+            this._programmaticStartTarget = target;
             this._activeRecording.addScriptInstrumentForProgrammaticCapture();
             this.startCapturing();
         }
+
+        if (!isNaN(startTime))
+            this._trackingStartTimesForTarget.getOrInsertComputed(target, () => new Map).set(domain, startTime);
 
         let trackingDomains = this._trackingDomainsForTarget.getOrInsertComputed(target, () => new Map);
         if (!trackingDomains.has(domain)) {
@@ -597,7 +607,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._stopWaitingIfPossible();
     }
 
-    autoCaptureStarted()
+    autoCaptureStarted(target)
     {
         console.assert(this._enabled);
 
@@ -606,12 +616,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (this._capturingState === TimelineManager.CapturingState.Starting || this._capturingState === TimelineManager.CapturingState.Active)
             this.stopCapturing();
 
-        this._initiatedByBackendStart = true;
-
         // We may already have an fresh TimelineRecording created if autoCaptureStarted is received
         // between sending the Timeline.start command and receiving Timeline.capturingStarted event.
         // In that case, there is no need to call startCapturing again. Reuse the fresh recording.
         if (!waitingForCapturingStartedEvent) {
+            this._programmaticStartTarget = target;
+
             const createNewRecording = true;
             this.startCapturing(createNewRecording);
         }
@@ -777,8 +787,18 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             let scriptProfilerRecords = this._scriptProfilerRecordsForTarget.get(target);
             console.assert(scriptProfilerRecords, this._scriptProfilerRecordsForTarget, target);
 
-            let webTimelineScriptRecordsExpectingScriptProfilerEvents = this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.get(target);
-            console.assert(!webTimelineScriptRecordsExpectingScriptProfilerEvents || scriptProfilerRecords.length >= webTimelineScriptRecordsExpectingScriptProfilerEvents.length);
+            let webTimelineScriptRecordsExpectingScriptProfilerEvents = this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.get(target) || [];
+
+            // Script that ran while only Timeline was tracking (e.g. while the target was busy loading the page that
+            // started an auto-capture) has a Timeline record but no ScriptProfiler event, and the other way around.
+            let trackingStartTimes = this._trackingStartTimesForTarget.get(target);
+            let scriptProfilerStartTime = trackingStartTimes?.get("ScriptProfiler") ?? NaN;
+            if (!isNaN(scriptProfilerStartTime)) {
+                webTimelineScriptRecordsExpectingScriptProfilerEvents = webTimelineScriptRecordsExpectingScriptProfilerEvents.filter((record) => record.startTime >= scriptProfilerStartTime);
+                this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.set(target, webTimelineScriptRecordsExpectingScriptProfilerEvents);
+            }
+
+            console.assert(scriptProfilerRecords.length >= webTimelineScriptRecordsExpectingScriptProfilerEvents.length);
 
             if (samples) {
                 let {stackTraces} = samples;
@@ -834,7 +854,17 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 scriptProfilerRecords = scriptProfilerRecords.filter((x) => x.__scriptProfilerType === InspectorBackend.Enum.ScriptProfiler.EventType.Other);
                 this._scriptProfilerRecordsForTarget.set(target, scriptProfilerRecords);
 
-                this._mergeScriptProfileRecords(scriptProfilerRecords, webTimelineScriptRecordsExpectingScriptProfilerEvents || []);
+                // ScriptProfiler events from before this target's Timeline started have no Timeline record to join.
+                let timelineStartTime = trackingStartTimes?.get("Timeline") ?? NaN;
+                if (!isNaN(timelineStartTime)) {
+                    for (let record of scriptProfilerRecords) {
+                        if (record.startTime < timelineStartTime)
+                            this._addRecord(record);
+                    }
+                    scriptProfilerRecords = scriptProfilerRecords.filter((record) => record.startTime >= timelineStartTime);
+                }
+
+                this._mergeScriptProfileRecords(scriptProfilerRecords, webTimelineScriptRecordsExpectingScriptProfilerEvents);
             }
 
             this._scriptProfilerRecordsForTarget.delete(target);
@@ -1088,7 +1118,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._activeRecording.capturingStopped(this._capturingEndTime);
 
         this._resetAutoCaptureState();
-        this._initiatedByBackendStart = false;
+        this._programmaticStartTarget = null;
         this._programmaticStopTarget = null;
 
         if (this._shouldUpdateAutoCaptureInstrumentsWhenInactive) {
@@ -1524,7 +1554,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._loadNewRecording();
 
         // The frontend starts this capture, even if the previous one was started by the backend.
-        this._initiatedByBackendStart = false;
+        this._programmaticStartTarget = null;
         this.startCapturing();
 
         this._addRecord(new WI.ResourceTimelineRecord(mainResource));
@@ -1809,6 +1839,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             wasWaitedFor = true;
         this._scriptProfilerRecordsForTarget.delete(target);
         this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.delete(target);
+        this._trackingStartTimesForTarget.delete(target);
 
         // A target that was not waited for must not stop a capture that is still waiting for its starts.
         if (wasWaitedFor)

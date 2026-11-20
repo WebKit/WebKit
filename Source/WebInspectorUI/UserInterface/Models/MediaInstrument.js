@@ -32,14 +32,14 @@ WI.MediaInstrument = class MediaInstrument extends WI.Instrument
         return WI.TimelineRecord.Type.Media;
     }
 
-    startInstrumentation(initiatedByBackend)
+    startInstrumentation(initiatingTarget)
     {
         // Audio/Video/Picture instrumentation is always happening.
 
-        if (!initiatedByBackend) {
-            // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
-            if (InspectorBackend.hasDomain("Animation")) {
-                let target = WI.assumingMainTarget();
+        // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
+        if (InspectorBackend.hasDomain("Animation")) {
+            let target = WI.assumingMainTarget();
+            if (target !== initiatingTarget) {
                 WI.timelineManager.willStartTrackingForTarget(target, "Animation");
                 target.AnimationAgent.startTracking();
             }

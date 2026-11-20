@@ -45,6 +45,7 @@
 namespace WebCore {
 
 class Event;
+class WebDebuggerAgent;
 
 enum class TimelineRecordType {
     EventDispatch,
@@ -143,6 +144,9 @@ protected:
     virtual bool shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument) const { return true; }
     void autoCaptureStarted() const;
 
+    // The debugger agent whose breakpoints are turned off during a programmatic capture.
+    virtual WebDebuggerAgent* debuggerAgentForProgrammaticCapture() const;
+
     const Vector<Inspector::Protocol::Timeline::Instrument>& instruments() const LIFETIME_BOUND { return m_instruments; }
 
     enum class InstrumentState { Start, Stop };
@@ -173,6 +177,7 @@ protected:
 private:
     void startProgrammaticCapture();
     void stopProgrammaticCapture();
+    void restoreBreakpointsAfterProgrammaticCapture();
 
     void toggleScriptProfilerInstrument(InstrumentState);
     void toggleHeapInstrument(InstrumentState);

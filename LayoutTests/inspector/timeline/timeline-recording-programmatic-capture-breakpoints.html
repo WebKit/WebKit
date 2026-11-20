@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    // This is a protocol test because Web Inspector itself turns breakpoints off and back on around every capture,
+    // which would hide a failure.
+    let suite = ProtocolTest.createAsyncSuite("Timeline.ProgrammaticCapture.Breakpoints");
+
+    function evaluate(expression) {
+        return InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression}});
+    }
+
+    // A failed assertion pauses only while breakpoints are active.
+    async function expectPauseOnAssertionFailure(shouldPause, message) {
+        let didPause = false;
+        InspectorProtocol.eventHandler["Debugger.paused"] = () => {
+            didPause = true;
+            InspectorProtocol.sendCommand("Debugger.resume");
+        };
+
+        await evaluate(`console.assert(false, "Checking whether breakpoints are active")`);
+
+        InspectorProtocol.eventHandler["Debugger.paused"] = undefined;
+        ProtocolTest.expectEqual(didPause, shouldPause, message);
+    }
+
+    async function startProgrammaticCapture() {
+        let recordingStartedPromise = InspectorProtocol.awaitEvent({event: "Timeline.recordingStarted"});
+        await evaluate(`console.profile("breakpoints")`);
+        await recordingStartedPromise;
+    }
+
+    suite.addTestCase({
+        name: "Timeline.ProgrammaticCapture.Breakpoints.StoppedByConsoleProfileEnd",
+        description: "Check that a programmatic capture turns breakpoints off and console.profileEnd() turns them back on.",
+        async test() {
+            await startProgrammaticCapture();
+            await expectPauseOnAssertionFailure(false, "Should not pause during the programmatic capture.");
+
+            let recordingStoppedPromise = InspectorProtocol.awaitEvent({event: "Timeline.recordingStopped"});
+            await evaluate(`console.profileEnd("breakpoints")`);
+            await recordingStoppedPromise;
+
+            await expectPauseOnAssertionFailure(true, "Should pause after the programmatic capture.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ProgrammaticCapture.Breakpoints.StoppedByFrontend",
+        description: "Check that breakpoints are turned back on when the frontend stops a programmatic capture whose console profile is still open.",
+        async test() {
+            await startProgrammaticCapture();
+            await expectPauseOnAssertionFailure(false, "Should not pause during the programmatic capture.");
+
+            await InspectorProtocol.awaitCommand({method: "Timeline.stop", params: {}});
+
+            await expectPauseOnAssertionFailure(true, "Should pause after the frontend stopped the programmatic capture.");
+
+            // The console profile ended with the capture, so this only warns.
+            await evaluate(`console.profileEnd("breakpoints")`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ProgrammaticCapture.Breakpoints.NextCapture",
+        description: "Check that after the frontend stops a programmatic capture, the next programmatic capture turns breakpoints off and console.profileEnd() turns them back on.",
+        async test() {
+            await startProgrammaticCapture();
+            await InspectorProtocol.awaitCommand({method: "Timeline.stop", params: {}});
+
+            // The console profile ended with the first capture, so the same title starts a new capture.
+            await startProgrammaticCapture();
+            await expectPauseOnAssertionFailure(false, "Should not pause during the next programmatic capture.");
+
+            let recordingStoppedPromise = InspectorProtocol.awaitEvent({event: "Timeline.recordingStopped"});
+            await evaluate(`console.profileEnd("breakpoints")`);
+            await recordingStoppedPromise;
+
+            await expectPauseOnAssertionFailure(true, "Should pause after the next programmatic capture.");
+        },
+    });
+
+    InspectorProtocol.sendCommand("Debugger.enable");
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+    InspectorProtocol.sendCommand("Debugger.setPauseOnAssertions", {enabled: true});
+    InspectorProtocol.sendCommand("Timeline.enable");
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a programmatic capture (console.profile/profileEnd) turns breakpoints off while it runs and turns them back on when it ends, also when the frontend ends it.</p>
+</body>
+</html>

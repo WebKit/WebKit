@@ -35,6 +35,19 @@ function createExtraWorker() {
     extraWorkers.push(createWorker());
 }
 
+function postMessageToExtraWorkerAndAwaitReply(index, message) {
+    let worker = extraWorkers[index];
+    let listener = (event) => {
+        if (event.data !== message)
+            return;
+
+        worker.removeEventListener("message", listener);
+        TestPage.dispatchEventToFrontend("ExtraWorkerReplied");
+    };
+    worker.addEventListener("message", listener);
+    worker.postMessage(message);
+}
+
 function makeExtraWorkerBusy(index) {
     let worker = extraWorkers[index];
     worker.addEventListener("message", (event) => {
@@ -147,6 +160,13 @@ function test()
 
     function postMessageToExtraWorker(worker, message) {
         return InspectorTest.evaluateInPage(`extraWorkers[${worker.index}].postMessage("${message}")`);
+    }
+
+    // Resolves once the Worker has handled the message.
+    async function postMessageToExtraWorkerAndWait(worker, message) {
+        let repliedPromise = InspectorTest.awaitEvent("ExtraWorkerReplied");
+        await InspectorTest.evaluateInPage(`postMessageToExtraWorkerAndAwaitReply(${worker.index}, "${message}")`);
+        await repliedPromise;
     }
 
     // Resolves once the Worker has started its infinite loop, so that it is not terminated while still handling the message.
@@ -280,26 +300,50 @@ function test()
 
     suite.addTestCase({
         name: "Timeline.MultipleTargets.ProgrammaticCaptureInPageAndWorker",
-        description: "Check that a programmatic stop from the page also stops a Worker that started a programmatic capture on its own.",
+        description: "Check that a programmatic capture from the page also starts an existing Worker, that a console profile the Worker leaves open ends with the capture, and that the Worker's next programmatic capture starts the page target.",
         async test() {
             trackingEvents = [];
 
             let worker = await addExtraWorker();
 
+            let workerStartedPromises = ["Timeline", "ScriptProfiler"].map((domain) => awaitTrackingEvent("capturingStarted", worker.target, domain));
             let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
             await InspectorTest.evaluateInPage(`console.profile("multiple-targets")`);
-            await activePromise;
+            await Promise.all([activePromise, ...workerStartedPromises]);
+            InspectorTest.pass("The Worker target started Timeline and ScriptProfiler.");
 
-            let workerStartedPromise = awaitTrackingEvent("capturingStarted", worker.target, "Timeline");
-            await postMessageToExtraWorker(worker, "profile");
-            await workerStartedPromise;
-            InspectorTest.pass("Worker started a programmatic capture.");
+            // The frontend started the Worker, so its own console profile does not start or stop anything.
+            await postMessageToExtraWorkerAndWait(worker, "profile");
 
             let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
             await InspectorTest.evaluateInPage(`console.profileEnd("multiple-targets")`);
             let trackingEventsBeforeInactive = await inactivePromise;
             InspectorTest.pass("Capturing stopped after console.profileEnd in the page.");
-            expectTrackingStopped(trackingEventsBeforeInactive, worker.target, "Worker target with its own programmatic capture");
+            expectTrackingStopped(trackingEventsBeforeInactive, worker.target, "Worker target");
+            expectEveryStartedDomainStopped(trackingEventsBeforeInactive);
+
+            let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+            let workerProfileRecorded = scriptTimeline.records.some((record) => record.eventType === WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded && record.target === worker.target);
+            InspectorTest.expectThat(workerProfileRecorded, "The Worker's open console profile should be recorded when capturing stops.");
+
+            // The Worker's profile ended with the capture, so its next console profile starts a capture.
+            trackingEvents = [];
+            let pageStartedPromises = ["Timeline", "ScriptProfiler"].map((domain) => awaitTrackingEvent("capturingStarted", WI.mainTarget, domain));
+            activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await postMessageToExtraWorker(worker, "profile");
+            await Promise.all([activePromise, ...pageStartedPromises]);
+            InspectorTest.pass("The Worker started a programmatic capture, and the page target started Timeline and ScriptProfiler.");
+
+            let pageRecordPromise = awaitTimerFiredRecord(mainFrameTarget);
+            await InspectorTest.evaluateInPage(`fireTimerInPage()`);
+            await pageRecordPromise;
+            InspectorTest.pass("Recorded a timer from the page during the Worker's capture.");
+
+            inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await postMessageToExtraWorker(worker, "profile-end");
+            trackingEventsBeforeInactive = await inactivePromise;
+            InspectorTest.pass("Capturing stopped after console.profileEnd in the Worker.");
+            expectTrackingStopped(trackingEventsBeforeInactive, WI.mainTarget, "Page target");
             expectEveryStartedDomainStopped(trackingEventsBeforeInactive);
 
             await terminateExtraWorker(worker);
@@ -364,12 +408,14 @@ function test()
             await InspectorTest.evaluateInPage(`console.profile("first")`);
             await activePromise;
 
+            // The second capture can start before the first one has finished stopping, because the first one also
+            // waits for the Workers, which the frontend started.
             let restartedPromise = new Promise((resolve) => {
-                let becameInactive = false;
+                let becameStopping = false;
                 let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
-                    if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive)
-                        becameInactive = true;
-                    else if (becameInactive && WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
+                    if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Stopping)
+                        becameStopping = true;
+                    else if (becameStopping && WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
                         WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
                         resolve();
                     }
@@ -390,6 +436,22 @@ function test()
             InspectorTest.pass("Capturing stopped after console.profileEnd for the second capture.");
         },
     });
+
+    // Sets the instruments of the next capture. Starting a capture reuses the active recording while it is empty, so
+    // that recording gets the same instruments.
+    function setTimelineTypes(timelineTypes) {
+        WI.timelineManager.enabledTimelineTypes = timelineTypes;
+
+        let recording = WI.timelineManager.activeRecording;
+        for (let instrument of recording.instruments.slice()) {
+            if (!timelineTypes.includes(instrument.timelineRecordType))
+                recording.removeInstrument(instrument);
+        }
+        for (let timelineType of timelineTypes) {
+            if (!recording.instruments.some((instrument) => instrument.timelineRecordType === timelineType))
+                recording.addInstrument(WI.Instrument.createForTimelineType(timelineType));
+        }
+    }
 
     // Resolves with every capturing state change until the given number of changes to Inactive.
     function recordCapturingStates(inactiveCount) {
@@ -439,20 +501,32 @@ function test()
         name: "Timeline.MultipleTargets.RestartedByBackendWithoutStarting",
         description: "Check that a capture that the backend restarts while active, but that starts nothing, stops once the previous capture has stopped.",
         async test() {
+            // The frontend starts the CPU instrument only on the page target, so a capture that the page target
+            // restarts starts nothing on the other targets.
+            let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
+            setTimelineTypes([WI.TimelineRecord.Type.CPU]);
+
             await startCapturing();
 
-            // Simulate the backend starting an auto-capture whose domains were already tracking.
+            // Simulate the page target starting an auto-capture whose domains were already tracking.
             let capturingStatesPromise = recordCapturingStates(1);
-            WI.timelineManager.autoCaptureStarted();
+            WI.timelineManager.autoCaptureStarted(WI.mainTarget);
             InspectorTest.log(`Capturing states: ${(await capturingStatesPromise).join(", ")}`);
             InspectorTest.expectFalse(WI.debuggerManager.breakpointsDisabledTemporarily, "Breakpoints should no longer be disabled temporarily.");
+
+            setTimelineTypes(originalTimelineTypes);
         },
     });
 
     suite.addTestCase({
         name: "Timeline.MultipleTargets.RestartedByBackendWithoutStartingWithBusyWorker",
-        description: "Check that a capture that the backend restarts while active, but that starts nothing, stops once the last target of the previous capture is removed instead of reporting that it stopped.",
+        description: "Check that a capture that the backend restarts while active, and that waits only for a busy Worker, stops once that Worker is removed, since the busy Worker never reports that it stopped.",
         async test() {
+            // Like the previous test case, but JavaScript Allocations also starts Heap on Workers, and not on frame
+            // targets (FIXME: <https://webkit.org/b/298984>), so the restarted capture waits only for the busy Worker.
+            let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
+            setTimelineTypes([WI.TimelineRecord.Type.CPU, WI.TimelineRecord.Type.HeapAllocations]);
+
             let busyWorker = await addExtraWorker();
 
             await startCapturing();
@@ -461,15 +535,17 @@ function test()
             let pageDomains = new Set(trackingEvents.filter((event) => event.functionName === "capturingStarted" && event.target === WI.mainTarget).map((event) => event.domain));
             let pageStoppedPromises = Array.from(pageDomains, (domain) => awaitTrackingEvent("capturingStopped", WI.mainTarget, domain));
 
-            // Simulate the backend starting an auto-capture whose domains were already tracking.
+            // Simulate the page target starting an auto-capture whose domains were already tracking.
             let capturingStatesPromise = recordCapturingStates(1);
-            WI.timelineManager.autoCaptureStarted();
+            WI.timelineManager.autoCaptureStarted(WI.mainTarget);
             await Promise.all(pageStoppedPromises);
             InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Starting, "Capturing should still be starting while the busy Worker has not reported that it stopped.");
 
             await terminateExtraWorker(busyWorker);
             InspectorTest.log(`Capturing states: ${(await capturingStatesPromise).join(", ")}`);
             InspectorTest.expectFalse(WI.debuggerManager.breakpointsDisabledTemporarily, "Breakpoints should no longer be disabled temporarily.");
+
+            setTimelineTypes(originalTimelineTypes);
         },
     });
 
@@ -478,14 +554,11 @@ function test()
         description: "Check that a programmatic capture that the page starts right after a programmatic stop, with Heap enabled, is stopped by the next programmatic stop and does not start another capture.",
         async test() {
             let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
-            WI.timelineManager.enabledTimelineTypes = [...originalTimelineTypes, WI.TimelineRecord.Type.HeapAllocations];
+            setTimelineTypes([...originalTimelineTypes, WI.TimelineRecord.Type.HeapAllocations]);
 
-            // Heap starts after the domain that makes capturing active, so wait for it too.
-            let heapStartedPromise = Promise.resolve();
-            // FIXME: <https://webkit.org/b/298984> Under Site Isolation, `console.profile()` in the main frame reaches
-            // its frame target's Timeline agent, which does not start Heap yet.
-            if (!(mainFrameTarget instanceof WI.FrameTarget))
-                heapStartedPromise = awaitTrackingEvent("capturingStarted", WI.mainTarget, "Heap");
+            // Heap starts after the domain that makes capturing active, so wait for it too. Under Site Isolation,
+            // `console.profile()` reaches the main frame target, and the frontend starts Heap on the page target.
+            let heapStartedPromise = awaitTrackingEvent("capturingStarted", WI.mainTarget, "Heap");
             let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
             await InspectorTest.evaluateInPage(`console.profile("first")`);
             await Promise.all([activePromise, heapStartedPromise]);
@@ -506,7 +579,7 @@ function test()
             InspectorTest.pass("Capturing stopped after console.profileEnd for the second capture.");
             InspectorTest.expectFalse(WI.debuggerManager.breakpointsDisabledTemporarily, "Breakpoints should no longer be disabled temporarily.");
 
-            WI.timelineManager.enabledTimelineTypes = originalTimelineTypes;
+            setTimelineTypes(originalTimelineTypes);
         },
     });
 
