@@ -315,11 +315,6 @@ inline Metal::Instance& metalFromAPI(WGPUInstance handle)
     return downcast<Metal::Instance>(fromAPI(handle));
 }
 
-inline Metal::QuerySet& metalFromAPI(WGPUQuerySet handle)
-{
-    return downcast<Metal::QuerySet>(fromAPI(handle));
-}
-
 inline Metal::Queue& metalFromAPI(WGPUQueue handle)
 {
     return downcast<Metal::Queue>(fromAPI(handle));

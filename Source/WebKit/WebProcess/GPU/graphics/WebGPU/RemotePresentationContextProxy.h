@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGPUProxy.h"
+#include "RemoteTextureProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <array>
@@ -91,6 +92,9 @@ private:
     const Ref<RemoteGPUProxy> m_parent;
     static constexpr size_t textureCount = 3;
     std::array<RefPtr<RemoteTextureProxy>, textureCount> m_currentTexture;
+    // The properties of the textures of the current configuration, as configured: the GPU Process
+    // may clamp the size or replace an unsupported format.
+    RemoteTextureProxy::Properties m_textureProperties;
 };
 
 } // namespace WebKit::WebGPU
