@@ -25,7 +25,7 @@
 
 WI.Redirect = class Redirect
 {
-    constructor(url, requestMethod, requestHeaders, responseStatusCode, responseStatusText, responseHeaders, timestamp)
+    constructor(url, requestMethod, requestHeaders, responseStatusCode, responseStatusText, responseHeaders, timestamp, walltime)
     {
         console.assert(typeof url === "string");
         console.assert(typeof requestMethod === "string");
@@ -34,6 +34,7 @@ WI.Redirect = class Redirect
         console.assert(typeof responseStatusText === "string");
         console.assert(typeof responseHeaders === "object");
         console.assert(!isNaN(timestamp));
+        console.assert(!walltime || typeof walltime === "number");
 
         // FIXME: <https://webkit.org/b/190214> Redirect model only stores basic information.
         // Missing from backend: detailed timing breakdown (ResourceTiming), size metrics (Metrics),
@@ -48,6 +49,7 @@ WI.Redirect = class Redirect
         this._responseStatusText = responseStatusText;
         this._responseHeaders = responseHeaders;
         this._timestamp = timestamp;
+        this._walltime = walltime || null;
     }
 
     // Public
@@ -59,6 +61,7 @@ WI.Redirect = class Redirect
     get responseStatusText() { return this._responseStatusText; }
     get responseHeaders() { return this._responseHeaders; }
     get timestamp() { return this._timestamp; }
+    get walltime() { return this._walltime; }
 
     get urlComponents()
     {
