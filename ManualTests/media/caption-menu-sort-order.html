@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caption menu sort order follows the user's language</title>
+<style>
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    video { width: 100%; max-width: 640px; }
+    td, th { padding: 2px 8px; text-align: left; }
+</style>
+</head>
+<body>
+<p>This test checks that WTF::Collator's default locale follows the user's preferred language on macOS and iOS.
+WebKit sorts the subtitle tracks in the media controls' captions menu with that collator.</p>
+
+<ol>
+    <li>Set the system language. On iOS, use Settings &gt; General &gt; Language &amp; Region &gt; Preferred Languages.
+    On macOS, use System Settings &gt; General &gt; Language &amp; Region &gt; Preferred Languages.
+    Quit and relaunch the browser after changing it.</li>
+    <li>Load this page. Open the captions (subtitles) menu in the video's controls.</li>
+    <li>Below "Off" and "Auto", the tracks should be in the order listed for that language.</li>
+</ol>
+
+<table>
+    <tr><th>Preferred language</th><th>Expected order</th></tr>
+    <tr><td>English, German</td><td>Abisko, Åre, Örebro, Ostrava, Zagreb</td></tr>
+    <tr><td>Swedish, Finnish</td><td>Abisko, Ostrava, Zagreb, Åre, Örebro</td></tr>
+    <tr><td>Danish, Norwegian</td><td>Abisko, Ostrava, Zagreb, Örebro, Åre</td></tr>
+</table>
+
+<p>Serve this page from a WebKit checkout so that the video loads, for example by running
+<code>python3 -m http.server</code> in the checkout's root directory and opening
+<code>http://&lt;host&gt;:8000/ManualTests/media/caption-menu-sort-order.html</code>.</p>
+
+<video id="video" controls playsinline src="../../LayoutTests/media/content/test.mp4"></video>
+
+<script>
+const video = document.getElementById("video");
+for (const label of ["Zagreb", "Örebro", "Åre", "Ostrava", "Abisko"])
+    video.addTextTrack("subtitles", label, "en");
+</script>
+</body>
+</html>
