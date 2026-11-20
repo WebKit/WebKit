@@ -54,23 +54,24 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<::WebGPU::Device>&&)>&& callback)
+void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::Device>, String>&&)>&& callback)
 {
     Ref convertToBackingContext = m_convertToBackingContext;
     auto convertedDescriptor = convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
-        return callback(nullptr);
+        return callback(makeUnexpected("Device descriptor is invalid"_s));
 
     auto identifier = WebGPUIdentifier::generate();
     auto queueIdentifier = WebGPUIdentifier::generate();
     auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier));
     if (!sendResult.succeeded())
-        return callback(nullptr);
+        return callback(makeUnexpected("GPU Process connection is closed"_s));
 
-    auto [features, supportedLimits] = sendResult.takeReply();
+    // A reply without a device has empty limits.
+    auto [features, supportedLimits, error] = sendResult.takeReply();
     if (!supportedLimits.maxTextureDimension2D) {
-        callback(nullptr);
+        callback(makeUnexpected(WTF::move(error)));
         return;
     }
 

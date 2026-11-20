@@ -141,8 +141,8 @@ void wgpuSupportedFeaturesFreeMembers(WGPUSupportedFeatures features)
 WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        Ref protectedAdapter = WebGPU::CAPI::metalFromAPI(adapter);
-        WebGPU::CAPI::Future future { protectedAdapter->weakInstance().get() };
+        Ref protectedAdapter = WebGPU::CAPI::fromAPI(adapter);
+        WebGPU::CAPI::Future future { WebGPU::CAPI::metalFromAPI(adapter).weakInstance().get() };
         auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
             callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
@@ -156,13 +156,13 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
             callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::CAPI::toAPI("Device does not support requested features"_s));
             return future.future();
         }
-        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+        protectedAdapter->requestDevice(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Device>, String>&& device) {
             if (!device) {
                 auto message = device.error().utf8();
                 return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::CAPI::toAPI(message));
             }
             if (uncapturedErrorCallbackInfo.callback)
-                listenForUncapturedErrors(device->get(), uncapturedErrorCallbackInfo);
+                listenForUncapturedErrors(downcast<WebGPU::Metal::Device>(device->get()), uncapturedErrorCallbackInfo);
             callback(WGPURequestDeviceStatus_Success, WebGPU::CAPI::releaseToAPI(WTF::move(*device)), WebGPU::CAPI::toAPI(""_s));
         });
         return future.future();

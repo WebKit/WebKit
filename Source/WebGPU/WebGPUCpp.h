@@ -1312,8 +1312,8 @@ public:
     virtual const Limits& limits() const = 0;
     virtual AdapterInfo info() = 0;
     virtual bool isXRCompatible() const = 0;
-    // Completes with nullptr when the device cannot be created. An adapter creates one device.
-    virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) = 0;
+    // Completes with the device, or with why it cannot be created. An adapter creates one device.
+    virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
