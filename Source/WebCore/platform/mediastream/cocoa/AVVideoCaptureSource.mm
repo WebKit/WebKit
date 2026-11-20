@@ -254,19 +254,6 @@ static WorkQueue& photoQueueSingleton()
     return queue.get();
 }
 
-#if PLATFORM(IOS_FAMILY)
-static bool s_useAVCaptureDeviceRotationCoordinatorAPI = false;
-#endif
-
-void AVVideoCaptureSource::setUseAVCaptureDeviceRotationCoordinatorAPI(bool value)
-{
-#if PLATFORM(IOS_FAMILY)
-    s_useAVCaptureDeviceRotationCoordinatorAPI = value;
-#else
-    UNUSED_PARAM(value);
-#endif
-}
-
 CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
     RetainPtr avDevice = [PAL::getAVCaptureDeviceClassSingleton() deviceWithUniqueID:device.persistentId().createNSString().get()];
@@ -1339,13 +1326,14 @@ bool AVVideoCaptureSource::setupCaptureSession()
     [session() addOutput:m_videoOutput.get()];
 
 #if PLATFORM(IOS_FAMILY)
-    if (s_useAVCaptureDeviceRotationCoordinatorAPI) {
-        AVCaptureConnection* connection = [m_videoOutput connectionWithMediaType:AVMediaTypeVideo];
-        if ([connection isVideoRotationAngleSupported:0]) {
-            RELEASE_LOG(WebRTC, "Setting AVVideoCaptureSource connection angle to 0");
-            [connection setVideoRotationAngle:0];
-        }
-    }
+    AVCaptureConnection* connection = [m_videoOutput connectionWithMediaType:AVMediaTypeVideo];
+    // For backward compatibility reasons, we keep AVFoundation's default rotation angle, which is 180 for the front camera of devices whose camera sensor is on the side.
+    // FIXME: Set videoRotationAngle back to 0 once enough websites migrate to using VideoFrame.rotation.
+    m_connectionVideoFrameRotation = parseVideoFrameRotation([connection videoRotationAngle]);
+    if (m_connectionVideoFrameRotation != VideoFrameRotation::None && m_connectionVideoFrameRotation != VideoFrameRotation::UpsideDown)
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Connection rotation is unexpected: ", m_connectionVideoFrameRotation);
+    if (!m_useSensorAndDeviceOrientation)
+        updateVideoFrameRotationFromRotationCoordinator();
 #endif
 
     setSessionSizeFrameRateAndZoom();
@@ -1388,11 +1376,18 @@ void AVVideoCaptureSource::rotationAngleForHorizonLevelDisplayChanged(const Stri
         return;
 
     m_useSensorAndDeviceOrientation = false;
+    m_rotationCoordinatorVideoFrameRotation = videoFrameRotation;
+    updateVideoFrameRotationFromRotationCoordinator();
+}
 
+void AVVideoCaptureSource::updateVideoFrameRotationFromRotationCoordinator()
+{
+    ASSERT(!m_useSensorAndDeviceOrientation);
+    auto videoFrameRotation = subtractVideoFrameRotations(m_rotationCoordinatorVideoFrameRotation, m_connectionVideoFrameRotation);
     if (videoFrameRotation == m_videoFrameRotation)
         return;
 
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "rotation = ", m_videoFrameRotation);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "rotation = ", videoFrameRotation, ", connection rotation = ", m_connectionVideoFrameRotation);
     m_videoFrameRotation = videoFrameRotation;
     notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }

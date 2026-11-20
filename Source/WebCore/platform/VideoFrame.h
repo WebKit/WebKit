@@ -186,6 +186,11 @@ private:
     const PlatformVideoColorSpace m_colorSpace;
 };
 
+VideoFrameRotation parseVideoFrameRotation(double);
+VideoFrameRotation addVideoFrameRotations(VideoFrameRotation baseRotation, bool baseFlip, VideoFrameRotation rotation);
+VideoFrameRotation subtractVideoFrameRotations(VideoFrameRotation, VideoFrameRotation);
+VideoFrameRotation combineVideoFrameRotations(const VideoFrame&, double);
+
 }
 
 #endif // ENABLE(VIDEO)

@@ -31,10 +31,6 @@
 
 namespace WebCore {
 
-VideoFrameRotation parseVideoFrameRotation(double);
-VideoFrame::Rotation addVideoFrameRotations(VideoFrame::Rotation baseRotation, bool baseFlip, VideoFrame::Rotation rotation);
-VideoFrame::Rotation combineVideoFrameRotations(const VideoFrame&, double);
-
 NODELETE bool isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&);
 NODELETE bool verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
 ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit&, const std::optional<DOMRectInit>&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);

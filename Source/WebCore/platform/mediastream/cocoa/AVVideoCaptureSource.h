@@ -31,6 +31,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/RealtimeVideoCaptureSource.h>
 #include <WebCore/Timer.h>
+#include <WebCore/VideoFrame.h>
 #include <wtf/Lock.h>
 #include <wtf/text/StringHash.h>
 
@@ -66,7 +67,6 @@ public:
     static RetainPtr<NSArray> cameraCaptureDeviceTypes();
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
-    NODELETE WEBCORE_EXPORT static void setUseAVCaptureDeviceRotationCoordinatorAPI(bool);
 
     void captureSessionBeginInterruption(RetainPtr<NSNotification>);
     void captureSessionEndInterruption(RetainPtr<NSNotification>);
@@ -119,6 +119,7 @@ private:
     void setSessionSizeFrameRateAndZoom();
     bool setPreset(NSString*);
     void computeVideoFrameRotation();
+    void updateVideoFrameRotationFromRotationCoordinator();
     RetainPtr<AVFrameRateRange> frameDurationForFrameRate(double);
     void stopSession();
 
@@ -171,7 +172,9 @@ private:
 
     IntDegrees m_sensorOrientation { 0 };
     IntDegrees m_deviceOrientation { 0 };
-    VideoFrameRotation m_videoFrameRotation { };
+    VideoFrameRotation m_videoFrameRotation { VideoFrameRotation::None };
+    VideoFrameRotation m_rotationCoordinatorVideoFrameRotation { VideoFrameRotation::None };
+    VideoFrameRotation m_connectionVideoFrameRotation { VideoFrameRotation::None };
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
