@@ -31,6 +31,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#ifdef __OBJC__
+#include <wtf/cocoa/NSTypeTraits.h>
+#endif
+
 namespace WTF {
 
 template <DestructionThread destructionThread>
@@ -71,6 +75,10 @@ using MainRunLoopCallbackAggregator = CallbackAggregatorOnThread<DestructionThre
 template<typename> class EagerCallbackAggregator;
 template <typename Out, typename... In>
 class EagerCallbackAggregator<Out(In...)> : public ThreadSafeRefCounted<EagerCallbackAggregator<Out(In...)>> {
+#ifdef __OBJC__
+    // Required to prevent ODR violations when compiling with ARC enabled.
+    static_assert(!((IsNSType<std::remove_cvref_t<In>> && !std::is_class_v<std::remove_cvref_t<In>>) || ...), "Use RetainPtr, WeakObjCPtr or BlockPtr instead of raw Objective-C pointers.");
+#endif
 public:
     template<typename CallableType>
         requires (std::is_rvalue_reference_v<CallableType&&>)

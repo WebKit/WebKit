@@ -785,7 +785,7 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
 
     ++m_pendingPermissionRequests;
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTF::move(internalCompletionHandler), nil, nil);
+    Ref callbackAggregator = EagerCallbackAggregator<void(RetainPtr<NSSet>, RetainPtr<NSDate>)>::create(WTF::move(internalCompletionHandler), nil, nil);
 
     // Timeout the request after a delay, denying all the requested match patterns.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {
@@ -864,7 +864,7 @@ void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& request
 
     ++m_pendingPermissionRequests;
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTF::move(internalCompletionHandler), nil, nil);
+    Ref callbackAggregator = EagerCallbackAggregator<void(RetainPtr<NSSet>, RetainPtr<NSDate>)>::create(WTF::move(internalCompletionHandler), nil, nil);
 
     // Timeout the request after a delay, denying all the requested URLs.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {
@@ -924,7 +924,7 @@ void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPerm
 
     ++m_pendingPermissionRequests;
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTF::move(internalCompletionHandler), nil, nil);
+    Ref callbackAggregator = EagerCallbackAggregator<void(RetainPtr<NSSet>, RetainPtr<NSDate>)>::create(WTF::move(internalCompletionHandler), nil, nil);
 
     // Timeout the request after a delay, denying all the requested permissions.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {

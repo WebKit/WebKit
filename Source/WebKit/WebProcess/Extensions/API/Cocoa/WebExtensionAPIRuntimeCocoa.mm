@@ -62,7 +62,7 @@
 namespace WebKit {
 
 enum class IsDefaultReply : bool { No, Yes };
-using ReplyCallbackAggregator = EagerCallbackAggregator<void(id, IsDefaultReply)>;
+using ReplyCallbackAggregator = EagerCallbackAggregator<void(RetainPtr<id>, IsDefaultReply)>;
 
 }
 
