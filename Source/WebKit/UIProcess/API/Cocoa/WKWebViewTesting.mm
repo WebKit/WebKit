@@ -383,6 +383,25 @@ static RetainPtr<NSArray<NSDictionary<NSString *, NSString *> *>> devicesForTest
 #endif
 }
 
+- (void)_enableMirrorLayerTreeForTesting:(void (^)(CALayer *))completionHandler
+{
+    RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea());
+    if (!drawingArea) {
+        completionHandler(nil);
+        return;
+    }
+
+    drawingArea->enableMirrorLayerTree()->whenSettled(RunLoop::mainSingleton(), [completionHandler = makeBlockPtr(completionHandler)](auto&& result) {
+        completionHandler(result ? result->layer.get() : nil);
+    });
+}
+
+- (void)_disableMirrorLayerTreeForTesting
+{
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea()))
+        drawingArea->disableMirrorLayerTree();
+}
+
 static bool shouldDumpLayer(CALayer *layer, _WKCALayerTreeAsTextOptions options)
 {
     return !(options & _WKCALayerTreeAsTextOptionsRemoteLayersOnly) || WebKit::RemoteLayerTreeNode::forCALayer(layer);

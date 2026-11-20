@@ -30,14 +30,11 @@
 #import "RemoteLayerTreeLayers.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
-#endif
-
-#if PLATFORM(VISION)
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #endif
 
 #if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
@@ -163,6 +160,29 @@ void RemoteLayerTreeNode::applyBackingStore(RemoteLayerTreeHost* host, RemoteLay
 
     bool applied = properties.applyBackingStoreToNode(*this, host->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView.get());
     setAsyncContentsIdentifier(applied ? properties.contentsFrameIdentifier() : std::nullopt);
+}
+
+void RemoteLayerTreeNode::copyContentsFrom(const RemoteLayerTreeNode& source)
+{
+    RetainPtr sourceLayer = source.layer();
+    RetainPtr layer = this->layer();
+
+    [layer setContents:retainPtr([sourceLayer contents])];
+
+#if PLATFORM(MAC)
+    // FIXME: when implementing mirroring on iOS, contentsOpaque should be handled without SPI.
+    [layer setContentsOpaque:[sourceLayer contentsOpaque]];
+#endif
+
+    if ([CALayer instancesRespondToSelector:@selector(contentsDirtyRect)])
+        [layer setContentsDirtyRect:[sourceLayer contentsDirtyRect]];
+
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [layer setWantsExtendedDynamicRangeContent:[sourceLayer wantsExtendedDynamicRangeContent]];
+    [layer setContentsHeadroom:[sourceLayer contentsHeadroom]];
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 }
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)

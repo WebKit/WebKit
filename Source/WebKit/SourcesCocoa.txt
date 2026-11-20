@@ -717,6 +717,7 @@ UIProcess/RemoteLayerTree/RemoteMonotonicTimelineRegistry.cpp
 UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.mm @nonARC
+UIProcess/RemoteLayerTree/RemoteLayerTreeMirror.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp @cost:3

@@ -82,6 +82,9 @@ RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawin
     : m_drawingArea(drawingArea)
     , m_role(role)
 {
+#if PLATFORM(IOS_FAMILY)
+    ASSERT(role != Role::Mirror);
+#endif
 }
 
 RemoteLayerTreeHost::~RemoteLayerTreeHost()
@@ -635,7 +638,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
             return RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);
 
 #if HAVE(AVKIT)
-        if (properties.videoElementData) {
+        if (properties.videoElementData && isPrimary()) {
             RefPtr page = drawingArea().page();
             if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr) {
                 auto playerIdentifier = PlaybackSessionContextIdentifier { properties.videoElementData->playerIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };

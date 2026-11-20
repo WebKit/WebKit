@@ -35,6 +35,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Deque.h>
+#include <wtf/NativePromise.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashMap.h>
 
@@ -47,6 +48,7 @@ class RemoteScrollingCoordinatorTransaction;
 struct MainFrameData;
 struct PageData;
 struct RemoteLayerTreeCommitBundle;
+class RemoteLayerTreeMirror;
 
 #if ENABLE(THREADED_ANIMATIONS)
 class RemoteAnimationStack;
@@ -92,7 +94,14 @@ struct ProcessState {
     TransactionID nextLayerTreeTransactionID;
     std::optional<TransactionID> committedLayerTreeTransactionID;
     uint32_t delayedCommits { 0 };
+    bool hasPendingFullStateRequest { false };
 };
+
+struct MirrorLayerTree {
+    RetainPtr<CALayer> layer;
+    Ref<GenericPromise> invalidationPromise;
+};
+using MirrorLayerTreePromise = NativePromise<MirrorLayerTree, void, PromiseOption::Default | PromiseOption::WithoutCrossThreadCopy>;
 
 } // namespace WebKit
 
@@ -154,6 +163,10 @@ public:
 
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
+    Ref<MirrorLayerTreePromise> enableMirrorLayerTree();
+    void disableMirrorLayerTree();
+    bool hasMirrorLayerTree() const { return !!m_mirror; }
+
     RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
     void viewWillStartLiveResize() final;
@@ -210,6 +223,10 @@ private:
     float indicatorScale(WebCore::IntSize contentsSize) const;
     void updateDebugIndicator() final;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
+
+    void didReceiveMirrorFullState(IPC::Connection&, WebPageProxy&, const RemoteLayerTreeFullState&, bool hasMainFrame);
+    void completeMirrorAttachIfReady();
+
     void initializeDebugIndicator();
 
     void initializeSlowFrameIndicator();
@@ -264,6 +281,9 @@ private:
     WebCore::IntSize m_lastSentSizeToContentAutoSizeMaximumSize;
 
     const std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
+    std::unique_ptr<RemoteLayerTreeMirror> m_mirror;
+    std::optional<MirrorLayerTreePromise::AutoRejectProducer> m_mirrorAttachProducer;
+    std::optional<GenericPromise::Producer> m_mirrorInvalidationProducer;
     const RetainPtr<CALayer> m_tileMapHostLayer;
     const RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 

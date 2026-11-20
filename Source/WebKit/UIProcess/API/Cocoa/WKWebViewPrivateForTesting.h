@@ -120,6 +120,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (NSString *)_caLayerTreeAsTextWithOptions:(_WKCALayerTreeAsTextOptions)options;
 - (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer options:(_WKCALayerTreeAsTextOptions)options;
 
+- (void)_enableMirrorLayerTreeForTesting:(void (^)(CALayer * _Nullable mirrorLayer))completionHandler;
+- (void)_disableMirrorLayerTreeForTesting;
+
 - (NSDictionary<NSString *, id> *)_propertiesOfLayerWithID:(unsigned long long)layerID;
 
 // The transient zoom override on the scrolled-contents layer, empty when there is none. macOS only.

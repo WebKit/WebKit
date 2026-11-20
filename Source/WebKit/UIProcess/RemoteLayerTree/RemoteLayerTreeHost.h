@@ -65,7 +65,7 @@ class RemoteLayerTreeHost {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeHost);
 public:
     // Secondary hosts build another tree from the same transactions, without page-wide side effects.
-    enum class Role : uint8_t { Primary, DebugIndicator };
+    enum class Role : uint8_t { Primary, DebugIndicator, Mirror };
 
     RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&, Role);
     ~RemoteLayerTreeHost();

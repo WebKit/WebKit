@@ -237,6 +237,7 @@ Tests/WebKit/WKWebView/MemoryCachePartitioning.mm @nonARC
 Tests/WebKit/WKWebView/MemoryFootprintMonitor.mm @nonARC
 Tests/WebKit/WKWebView/MemoryFootprintThreshold.mm @nonARC
 Tests/WebKit/WKWebView/MessagePortProviders.mm @nonARC
+Tests/WebKit/WKWebView/MirrorLayerTree.mm @nonARC
 Tests/WebKit/WKWebView/ModalAlerts.mm @nonARC
 Tests/WebKit/WKWebView/ModelProcess.mm @nonARC
 Tests/WebKit/WKWebView/NSAttributedStringWebKitAdditions.mm @nonARC
