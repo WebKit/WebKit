@@ -323,7 +323,7 @@ static NSString *emptyPcmDBPath()
 
 static void cleanUp(RetainPtr<WKWebView> webView)
 {
-    static bool isDone = false;
+    __block bool isDone = false;
     [[webView.get() configuration].websiteDataStore _closeDatabases:^{
         NSFileManager *defaultFileManager = NSFileManager.defaultManager;
         NSString *itpRoot = resourceLoadStatisticsDirectory().path;

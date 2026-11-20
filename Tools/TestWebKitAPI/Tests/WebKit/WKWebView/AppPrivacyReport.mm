@@ -276,7 +276,7 @@ enum class ResponseType { Synthetic, Fetched };
 enum class IsAppInitiated : bool { No, Yes };
 static void runTest(ResponseType responseType, IsAppInitiated isAppInitiated)
 {
-    static bool isDone = false;
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         isDone = true;
     }];
@@ -438,7 +438,7 @@ TEST(AppPrivacyReport, MultipleWebViewsWithSharedServiceWorker)
 
 static void softUpdateTest(IsAppInitiated isAppInitiated)
 {
-    static bool isDone = false;
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         isDone = true;
     }];
@@ -720,7 +720,7 @@ static void loadSimulatedRequestTest(IsAppInitiated isAppInitiated)
     [webView loadSimulatedRequest:loadRequest responseHTMLString:HTML];
     [delegate waitForDidFinishNavigation];
 
-    static bool isDone = false;
+    __block bool isDone = false;
     bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     [webView _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
@@ -754,7 +754,7 @@ static void restoreFromSessionStateTest(IsAppInitiated isAppInitiated)
     RetainPtr<_WKSessionState> sessionState = [webView1 _sessionState];
     [webView1 _close];
 
-    static bool isDone = false;
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         isDone = true;
     }];
@@ -801,7 +801,7 @@ static void restoreFromInteractionStateTest(IsAppInitiated isAppInitiated)
     id interactionState = [webView1 interactionState];
     [webView1 _close];
 
-    static bool isDone = false;
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         isDone = true;
     }];
@@ -846,7 +846,7 @@ static void loadFileTest(IsAppInitiated isAppInitiated)
     [webView loadFileRequest:request allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
     [webView _test_waitForDidFinishNavigation];
 
-    static bool isDone = false;
+    __block bool isDone = false;
     bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     [webView _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
