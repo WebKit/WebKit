@@ -225,6 +225,7 @@ private:
 #endif
 #endif
 
+    void setIsPlaying(bool);
     void setSynchronizerRate(float, std::optional<MonotonicTime>);
     // Returns the rate we last passed to [m_synchronizer setRate:]. Cached
     // because [m_synchronizer rate] is heavy (dispatch_sync), and querying
@@ -249,6 +250,11 @@ private:
     void flushAudioTrack(TrackIdentifier);
     void removeBlockedSamples(NOESCAPE const Function<bool(TrackIdentifier)>& = { });
     void notifyRequiresFlushToResume();
+    bool shouldSuspendVideo() const;
+    void updateVideoSuspension();
+    void suspendVideoForVisibility();
+    void resumeVideoForVisibility();
+    void setDisplayLayerHidden(bool);
     void requestVideoDataWhenReady(TrackIdentifier);
     void cancelVideoDataRequest();
     void clearReadyToRequestVideoData();
@@ -362,6 +368,10 @@ private:
     SampleBufferLayerState m_sampleBufferDisplayLayerState { SampleBufferLayerState::RemovedFromSynchronizer };
     bool m_renderingCanBeAccelerated { false };
     bool m_visible { false };
+    bool m_videoSuspendedForVisibility { false };
+    bool m_videoSuspensionPending { false };
+    bool m_videoSamplesDroppedWhileSuspended { false };
+    RefPtr<VideoFrame> m_videoFrameWhileSuspended;
     IntSize m_presentationSize;
     bool m_shouldMaintainAspectRatio { true };
     std::optional<TrackIdentifier> m_enabledVideoTrackId;
