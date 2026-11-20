@@ -698,8 +698,8 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
 
-    auto message = platformCreateOutgoingMessage(WTF::move(encoder));
-    if (!message)
+    auto messages = platformCreateOutgoingMessages(WTF::move(encoder));
+    if (messages.isEmpty())
         return Error::FailedToEncodeMessageArguments;
 
     bool shouldDispatchMessageSend;
@@ -710,14 +710,31 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     ASCIILiteral maxOutgoingMessageName;
     {
         Locker locker { m_sendLock };
-#if PLATFORM(COCOA)
-        if (canSendOnCallingThread(qos) && trySendOnCallingThread(*message))
-            return Error::NoError;
-#endif
         if (m_receiverIsGone)
             return Error::InvalidConnection;
         shouldDispatchMessageSend = m_outgoingMessages.isEmpty();
-        m_outgoingMessages.append(WTF::move(*message));
+        for (auto& message : borrow(messages))
+            m_outgoingMessages.append(WTF::move(message));
+
+#if PLATFORM(COCOA)
+        if (shouldDispatchMessageSend && canSendOnCallingThread(qos)) {
+            // Send the queued messages in order, with m_sendLock held, so that no other thread sends meanwhile.
+            for (;;) {
+                auto result = platformSendOutgoingMessage(m_outgoingMessages.first());
+                if (result == PlatformSendResult::Done) {
+                    m_outgoingMessages.removeFirst();
+                    if (m_outgoingMessages.isEmpty())
+                        return Error::NoError;
+                } else if (result == PlatformSendResult::ReceiverIsGone) {
+                    markReceiverGone();
+                    return Error::InvalidConnection;
+                } else {
+                    ASSERT(result == PlatformSendResult::ReceiverIsFull);
+                    break;
+                }
+            }
+        }
+#endif
         outgoingMessagesCount = m_outgoingMessages.size();
         shouldNotifyOfQueueGrowingLarge = m_outgoingMessageQueueIsGrowingLargeCallback && outgoingMessagesCount > largeOutgoingMessageQueueCountThreshold && (MonotonicTime::now() - m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime) >= largeOutgoingMessageQueueTimeThreshold;
         if (shouldNotifyOfQueueGrowingLarge) {
@@ -1319,6 +1336,11 @@ void Connection::connectionDidClose()
     m_isValid = false;
     platformInvalidate();
 
+#if OS(DARWIN)
+    // Drop any ports from an incomplete burst of pending attachments messages, releasing their send rights.
+    m_receivedPendingAttachments.clear();
+#endif
+
     bool hasPendingWaiters = false;
     {
         Locker locker { m_syncReplyStateLock };
@@ -1360,30 +1382,13 @@ bool Connection::canSendOnCallingThread(std::optional<Thread::QOS> qos) const
 {
     if (!sendOnCallingThreadEnabled())
         return false;
-
+    if (!platformCanSendOutgoingMessages())
+        return false;
     // Never send at a lower QoS than the connection queue or the requested one, or from a thread without a QoS class.
     // Lower Thread::QOS values are higher QoS classes.
     auto requiredQOS = std::min(m_connectionQueueQOS, qos.value_or(m_connectionQueueQOS));
     auto currentQOS = Thread::currentThreadQOS();
     return currentQOS && *currentQOS <= requiredQOS;
-}
-
-bool Connection::trySendOnCallingThread(OutgoingMessage& message)
-{
-    if (!m_outgoingMessages.isEmpty() || !platformCanSendOutgoingMessages())
-        return false;
-
-    switch (platformSendOutgoingMessage(message)) {
-    case PlatformSendResult::Done:
-        break;
-    case PlatformSendResult::ReceiverIsFull:
-        m_outgoingMessages.append(WTF::move(message));
-        break;
-    case PlatformSendResult::ReceiverIsGone:
-        markReceiverGone();
-        break;
-    }
-    return true;
 }
 
 #endif // PLATFORM(COCOA)

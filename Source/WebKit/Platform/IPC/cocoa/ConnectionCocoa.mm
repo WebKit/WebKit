@@ -233,15 +233,13 @@ bool Connection::platformHasMessageInFlight() const
     return false;
 }
 
-auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> std::optional<OutgoingMessage>
+auto Connection::platformCreateOutgoingMessages(UniqueRef<Encoder>&& encoder) -> Vector<OutgoingMessage, 1>
 {
     auto messageName = encoder->messageName();
-    auto message = MachMessage::create(WTF::move(encoder));
-    if (!message) {
-        RELEASE_LOG_ERROR(IPC, "platformCreateOutgoingMessage: Dropping message '%" PUBLIC_LOG_STRING "' with more attachments than a mach message can carry", description(messageName).characters());
-        return std::nullopt;
-    }
-    return makeUniqueRefFromNonNullUniquePtr(WTF::move(message));
+    auto messages = MachMessage::createMessages(WTF::move(encoder));
+    if (messages.isEmpty())
+        RELEASE_LOG_ERROR(IPC, "platformCreateOutgoingMessages: Dropping message '%" PUBLIC_LOG_STRING "' that could not be encoded as a mach message", description(messageName).characters());
+    return messages;
 }
 
 auto Connection::platformSendOutgoingMessage(OutgoingMessage& message) -> PlatformSendResult
@@ -258,9 +256,9 @@ auto Connection::sendFirstOutgoingMessage(Locker<SendLock>& locker) -> PlatformS
     ASSERT(m_sendSource);
 
     // While m_sendLock is dropped, other threads can append to m_outgoingMessages, which can move
-    // its storage, so hold onto the message itself. The message stays first in the queue, a thread
-    // only sends directly when no message is queued, and only the connection queue sends queued
-    // messages, so neither the message nor m_sendPort and m_sendSource change meanwhile.
+    // its storage, so hold onto the message itself. The message stays first in the queue, and a thread
+    // only sends its messages directly when it found no message queued, so neither the message nor
+    // m_sendPort and m_sendSource change meanwhile.
     auto& message = m_outgoingMessages.first().get();
     auto sendPort = m_sendPort;
     // FIXME (rdar://188839922): Send with m_sendLock held, as a direct send does.
@@ -336,10 +334,11 @@ static bool shouldLogIncomingMessageHandling()
 void Connection::receiveSourceEventHandler()
 {
     ASSERT(MACH_PORT_VALID(m_receivePort));
-    auto received = MachMessage::receiveDecoder(m_receivePort);
+    auto received = MachMessage::receiveDecoder(m_receivePort, m_receivedPendingAttachments);
     if (!received) {
         if (received.error() == MachMessage::ReceiveResult::NoSenders)
             connectionDidClose();
+        // For PendingAttachments, wait for the message that the attachments belong to.
         return;
     }
     UniqueRef<Decoder> decoder = WTF::move(received.value());
