@@ -683,7 +683,7 @@ static void testAccessibleStateChangedFocus(AccessibilityTest* test, gconstpoint
     auto documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
 
-    test->startEventMonitor(nullptr, { "object:state-changed"_s });
+    test->startEventMonitor(nullptr, { "object:state-changed:focused"_s });
     test->runJavaScriptAndWaitUntilFinished(
         "container=document.getElementById('container');"
         "var i = document.createElement('div');"
