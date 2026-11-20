@@ -2759,11 +2759,24 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
 
 void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* selectedOption)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
-
     auto& settings = document().settings();
-    if (settings.htmlEnhancedSelectEnabled() && !settings.mutationEventsEnabled())
-        updateSelectedContent(selectedOption);
+    if (!settings.htmlEnhancedSelectEnabled() || settings.mutationEventsEnabled())
+        return;
+
+    // Updating the <selectedcontent> elements mutates the DOM, so it must not happen while script
+    // is disallowed. That is reachable from the attribute change steps, which
+    // Element::cloneAttributesFromElement() replays on every clone, because SVGUseElement
+    // deep-clones its target's subtree from inside Document::resolveStyle(). Queue the update
+    // instead, like the insertion, removal and moving steps already do. A clone has no children
+    // yet at that point, so in practice there is nothing to queue and nothing to update: the
+    // cloned <selectedcontent> children queue the update from their own insertion steps. The
+    // assertion stays on updateSelectedContent(), which is where the DOM is actually mutated.
+    if (!ScriptDisallowedScope::InMainThread::isScriptAllowed()) [[unlikely]] {
+        queueSelectedContentUpdate();
+        return;
+    }
+
+    updateSelectedContent(selectedOption);
 }
 
 void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
@@ -2810,10 +2823,14 @@ Vector<Ref<HTMLSelectedContentElement>> HTMLSelectElement::selectedContentElemen
 
 void HTMLSelectElement::cloneOptionsIntoSelectedContent()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
-
     if (!m_multiple || !m_selectedContentDescendantCount || !updatesSelectedContent())
         return;
+
+    // See the comment in updateSelectedContentIfEnabled().
+    if (!ScriptDisallowedScope::InMainThread::isScriptAllowed()) [[unlikely]] {
+        queueSelectedContentUpdate();
+        return;
+    }
 
     for (Ref selectedContent : selectedContentElements())
         cloneOptionsIntoSelectedContent(selectedContent);
