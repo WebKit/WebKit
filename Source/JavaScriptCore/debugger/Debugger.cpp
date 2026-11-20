@@ -43,6 +43,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -759,6 +760,8 @@ void Debugger::clearBreakpoints()
     m_breakpointsForSourceID.clear();
     m_breakpoints.clear();
     m_specialBreakpoint = nullptr;
+    m_specialBreakpointPauseContext = nullptr;
+    m_afterBlackboxedScriptPauseContext = nullptr;
 
     ClearCodeBlockDebuggerRequestsFunctor functor(this);
     m_vm.heap.forEachCodeBlock(functor);
@@ -902,12 +905,13 @@ void Debugger::cancelPauseAtNextOpportunity()
     m_pauseAtNextOpportunity = false;
 }
 
-bool Debugger::schedulePauseForSpecialBreakpoint(Breakpoint& breakpoint)
+bool Debugger::schedulePauseForSpecialBreakpoint(Breakpoint& breakpoint, RefPtr<PauseContext>&& pauseContext)
 {
     if (m_specialBreakpoint)
         return false;
 
     m_specialBreakpoint = &breakpoint;
+    m_specialBreakpointPauseContext = WTF::move(pauseContext);
     setSteppingMode(SteppingModeEnabled);
     return true;
 }
@@ -918,10 +922,11 @@ bool Debugger::cancelPauseForSpecialBreakpoint(Breakpoint& breakpoint)
         return false;
 
     m_specialBreakpoint = nullptr;
+    m_specialBreakpointPauseContext = nullptr;
     return true;
 }
 
-void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
+void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint, RefPtr<PauseContext>&& pauseContext)
 {
     if (m_isPaused || isPauseBlockedByAnotherDebugger())
         return;
@@ -929,14 +934,17 @@ void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
     if (!m_vm.topCallFrame)
         return;
 
+    bool hasSpecialBreakpoint = !!specialBreakpoint;
     if (specialBreakpoint) {
         ASSERT(!m_specialBreakpoint);
         m_specialBreakpoint = WTF::move(specialBreakpoint);
+        m_specialBreakpointPauseContext = WTF::move(pauseContext);
     } else
         m_pauseAtNextOpportunity = true;
 
     setSteppingMode(SteppingModeEnabled);
     m_currentCallFrame = m_vm.topCallFrame;
+    SetForScope isBreakingForSpecialBreakpoint(m_isBreakingForSpecialBreakpoint, hasSpecialBreakpoint);
     pauseIfNeeded(m_currentCallFrame->lexicalGlobalObject(m_vm));
 }
 
@@ -945,6 +953,7 @@ void Debugger::continueProgram()
     resetImmediatePauseState();
     resetEventualPauseState();
     m_deferredBreakpoints.clear();
+    m_deferredBreakpointPauseContexts.clear();
 
     if (!m_isPaused)
         return;
@@ -1096,7 +1105,12 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     // Special breakpoints are only given one opportunity to pause.
     if (m_specialBreakpoint) {
         pauseNow = true;
-        m_deferredBreakpoints.add(m_specialBreakpoint.releaseNonNull());
+        Ref specialBreakpoint = m_specialBreakpoint.releaseNonNull();
+        if (RefPtr pauseContext = std::exchange(m_specialBreakpointPauseContext, nullptr))
+            m_deferredBreakpointPauseContexts.set(specialBreakpoint.copyRef(), WTF::move(pauseContext));
+        else
+            m_deferredBreakpointPauseContexts.remove(specialBreakpoint);
+        m_deferredBreakpoints.add(WTF::move(specialBreakpoint));
     }
 
     m_lastExecutedLine = position.m_line.zeroBasedInt();
@@ -1106,6 +1120,7 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     DebuggerPausedScope debuggerPausedScope(*this);
 
     bool didPauseInAwait = m_didPauseInAwait;
+    RefPtr afterBlackboxedScriptPauseContext = std::exchange(m_afterBlackboxedScriptPauseContext, nullptr);
 
     resetImmediatePauseState();
     resetAsyncPauseState();
@@ -1133,6 +1148,8 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
             m_pausingBreakpointID = noBreakpointID;
         }
 
+        m_afterBlackboxedScriptPauseContext = m_pausingContext ? std::exchange(m_pausingContext, nullptr) : WTF::move(afterBlackboxedScriptPauseContext);
+
         schedulePauseAtNextOpportunity();
         return true;
     };
@@ -1140,36 +1157,49 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     if (m_blackboxBreakpointEvaluations && shouldDeferPause())
         return;
 
+    RefPtr<PauseContext> nonPausingPauseContext;
     if (!m_deferredBreakpoints.isEmpty()) {
         std::optional<BreakpointID> pausingBreakpointID;
+        RefPtr<PauseContext> pausingContext;
         bool hasEvaluatedSpecialBreakpoint = false;
         bool shouldContinue = true;
 
+        auto pauseContexts = std::exchange(m_deferredBreakpointPauseContexts, { });
         for (auto&& deferredBreakpoint : std::exchange(m_deferredBreakpoints, { })) {
+            RefPtr pauseContext = pauseContexts.take(deferredBreakpoint);
+
             // Note that breakpoint evaluations can potentially stop the debugger, so we need to
             // check that we still have a current call frame after evaluating them.
 
             bool shouldPause = deferredBreakpoint->shouldPause(*this, globalObject);
             if (!m_currentCallFrame)
                 return;
-            if (!shouldPause)
+            if (!shouldPause) {
+                if (!nonPausingPauseContext)
+                    nonPausingPauseContext = WTF::move(pauseContext);
                 continue;
+            }
 
             evaluateBreakpointActions(deferredBreakpoint, globalObject);
             if (!m_currentCallFrame)
                 return;
 
-            if (deferredBreakpoint->isAutoContinue())
+            if (deferredBreakpoint->isAutoContinue()) {
+                if (!nonPausingPauseContext)
+                    nonPausingPauseContext = WTF::move(pauseContext);
                 continue;
+            }
 
             shouldContinue = false;
 
             // Only propagate `PausedForBreakpoint` to the `InspectorDebuggerAgent` if the first
             // line:column breakpoint hit was before the first special breakpoint, as the latter
-            // would already have set a unique reason before attempting to pause.
-            if (!deferredBreakpoint->isLinked())
+            // has a unique reason in its pause context.
+            if (!deferredBreakpoint->isLinked()) {
+                if (!pausingContext)
+                    pausingContext = WTF::move(pauseContext);
                 hasEvaluatedSpecialBreakpoint = true;
-            else if (!hasEvaluatedSpecialBreakpoint && !pausingBreakpointID)
+            } else if (!hasEvaluatedSpecialBreakpoint && !pausingBreakpointID)
                 pausingBreakpointID = deferredBreakpoint->id();
         }
 
@@ -1186,6 +1216,8 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
             }
         } else if (pausingBreakpointID)
             m_pausingBreakpointID = *pausingBreakpointID;
+
+        m_pausingContext = WTF::move(pausingContext);
     }
 
     if (!m_blackboxBreakpointEvaluations && shouldDeferPause())
@@ -1205,11 +1237,20 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
             reason = PausedForBreakpoint;
         PauseReasonDeclaration rauseReasonDeclaration(*this, reason);
 
+        if (afterBlackboxedScript && !m_pausingContext)
+            m_pausingContext = WTF::move(afterBlackboxedScriptPauseContext);
+
+        // FIXME: <https://webkit.org/b/332052> `breakProgram()` pauses without a reason, so a step that pauses inside it
+        // still gets the context of the special breakpoint that did not pause, and is reported with its reason.
+        if (reason == NotPaused && m_isBreakingForSpecialBreakpoint && !m_pausingContext)
+            m_pausingContext = WTF::move(nonPausingPauseContext);
+
         handlePause(globalObject);
         scope.releaseAssertNoException();
     }
 
     m_pausingBreakpointID = noBreakpointID;
+    m_pausingContext = nullptr;
 
     if (!m_pauseAtNextOpportunity && !m_pauseOnCallFrame && !m_specialBreakpoint) {
         setSteppingMode(SteppingModeDisabled);
@@ -1289,6 +1330,7 @@ void Debugger::exception(JSGlobalObject* globalObject, CallFrame* callFrame, JSV
     PauseReasonDeclaration reason(*this, PausedForException);
     if (m_pauseOnAllExceptionsBreakpoint || (m_pauseOnUncaughtExceptionsBreakpoint && !hasCatchHandler)) {
         m_specialBreakpoint = m_pauseOnAllExceptionsBreakpoint ? m_pauseOnAllExceptionsBreakpoint.copyRef() : m_pauseOnUncaughtExceptionsBreakpoint.copyRef();
+        m_specialBreakpointPauseContext = nullptr;
         setSteppingMode(SteppingModeEnabled);
     }
 
@@ -1476,6 +1518,7 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     TextPosition position = DebuggerCallFrame::positionForCallFrame(m_vm, m_currentCallFrame);
     bool shouldKeepPause = m_pauseAtNextOpportunity && !blackboxFlagsAtPosition(sourceID, position).isEmpty();
     bool wasAfterBlackboxedScript = m_afterBlackboxedScript;
+    RefPtr afterBlackboxedScriptPauseContext = m_afterBlackboxedScriptPauseContext;
 
     EntryFrame* topEntryFrame = m_vm.topEntryFrame;
     CallFrame* callerFrame = m_currentCallFrame->callerFrame(topEntryFrame);
@@ -1498,10 +1541,12 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
         resetImmediatePauseState();
         resetEventualPauseState();
         m_deferredBreakpoints.clear();
+        m_deferredBreakpointPauseContexts.clear();
 
         if (shouldKeepPause) {
             schedulePauseAtNextOpportunity();
             m_afterBlackboxedScript = wasAfterBlackboxedScript;
+            m_afterBlackboxedScriptPauseContext = WTF::move(afterBlackboxedScriptPauseContext);
         } else if (hadPauseAtNextOpportunity) {
             dispatchFunctionToObservers([&](Observer& observer) {
                 observer.didDropPauseAtNextOpportunity();
@@ -1514,7 +1559,9 @@ void Debugger::resetImmediatePauseState()
 {
     m_pauseAtNextOpportunity = false;
     m_afterBlackboxedScript = false;
+    m_afterBlackboxedScriptPauseContext = nullptr;
     m_specialBreakpoint = nullptr;
+    m_specialBreakpointPauseContext = nullptr;
 }
 
 void Debugger::resetEventualPauseState()
@@ -1543,6 +1590,7 @@ void Debugger::didReachDebuggerStatement(CallFrame* callFrame)
 
     PauseReasonDeclaration reason(*this, PausedForDebuggerStatement);
     m_specialBreakpoint = m_pauseOnDebuggerStatementsBreakpoint.copyRef();
+    m_specialBreakpointPauseContext = nullptr;
     setSteppingMode(SteppingModeEnabled);
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
 }

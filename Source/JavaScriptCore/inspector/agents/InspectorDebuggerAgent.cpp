@@ -65,6 +65,38 @@
 
 namespace Inspector {
 
+class InspectorDebuggerAgentPauseContext final : public JSC::Debugger::PauseContext {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorDebuggerAgentPauseContext);
+public:
+    static Ref<InspectorDebuggerAgentPauseContext> create(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
+    {
+        return adoptRef(*new InspectorDebuggerAgentPauseContext(reason, WTF::move(data)));
+    }
+
+    DebuggerFrontendDispatcher::Reason reason() const { return m_reason; }
+    RefPtr<JSON::Object> data() const { return m_data; }
+
+private:
+    InspectorDebuggerAgentPauseContext(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
+        : m_reason(reason)
+        , m_data(WTF::move(data))
+    {
+    }
+
+    bool isInspectorDebuggerAgentPauseContext() const final { return true; }
+
+    DebuggerFrontendDispatcher::Reason m_reason;
+    RefPtr<JSON::Object> m_data;
+};
+
+} // namespace Inspector
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(Inspector::InspectorDebuggerAgentPauseContext)
+    static bool isType(const JSC::Debugger::PauseContext& context) { return context.isInspectorDebuggerAgentPauseContext(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+namespace Inspector {
+
 const ASCIILiteral InspectorDebuggerAgent::backtraceObjectGroup = "backtrace"_s;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDebuggerAgent);
@@ -1206,20 +1238,12 @@ bool InspectorDebuggerAgent::schedulePauseForSpecialBreakpoint(JSC::Breakpoint& 
 {
     JSC::JSLockHolder locker(m_debugger.vm());
 
-    if (!m_debugger.schedulePauseForSpecialBreakpoint(breakpoint))
-        return false;
-
-    updatePauseReasonAndData(reason, WTF::move(data));
-    return true;
+    return m_debugger.schedulePauseForSpecialBreakpoint(breakpoint, InspectorDebuggerAgentPauseContext::create(reason, WTF::move(data)));
 }
 
 bool InspectorDebuggerAgent::cancelPauseForSpecialBreakpoint(JSC::Breakpoint& breakpoint)
 {
-    if (!m_debugger.cancelPauseForSpecialBreakpoint(breakpoint))
-        return false;
-
-    clearPauseDetails();
-    return true;
+    return m_debugger.cancelPauseForSpecialBreakpoint(breakpoint);
 }
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::pause()
@@ -1941,6 +1965,11 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
 
     auto injectedScript = injectedScriptManager().injectedScriptFor(m_pausedGlobalObject);
 
+    if (RefPtr pauseContext = m_debugger.pausingContext()) {
+        Ref specialBreakpointPauseContext = downcast<InspectorDebuggerAgentPauseContext>(pauseContext.releaseNonNull());
+        updatePauseReasonAndData(specialBreakpointPauseContext->reason(), specialBreakpointPauseContext->data());
+    }
+
     // If a high level pause pause reason is not already set, try to infer a reason from the debugger.
     if (m_pauseReason == DebuggerFrontendDispatcher::Reason::Other) {
         switch (m_debugger.reasonForPause()) {
@@ -2106,9 +2135,14 @@ void InspectorDebuggerAgent::didDropPauseAtNextOpportunity()
 
 void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data, RefPtr<JSC::Breakpoint>&& specialBreakpoint)
 {
+    if (specialBreakpoint) {
+        m_debugger.breakProgram(WTF::move(specialBreakpoint), InspectorDebuggerAgentPauseContext::create(reason, WTF::move(data)));
+        return;
+    }
+
     updatePauseReasonAndData(reason, WTF::move(data));
 
-    m_debugger.breakProgram(WTF::move(specialBreakpoint));
+    m_debugger.breakProgram();
 }
 
 void InspectorDebuggerAgent::clearInspectorBreakpointState()
