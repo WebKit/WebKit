@@ -2008,19 +2008,15 @@ void TreeResolver::updateForPositionVisibility(Style::ComputedStyle& style, cons
             if (AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxes(*anchored))
                 return true;
         }
+
         if (style.positionVisibility().contains(PositionVisibilityValue::NoOverflow)) {
             if (AnchorPositionEvaluator::overflowsInsetModifiedContainingBlock(*anchored))
                 return true;
         }
-        if (style.positionVisibility().contains(PositionVisibilityValue::AnchorsValid) || style.positionVisibility().contains(PositionVisibilityValue::AnchorValid)) {
-            auto* anchorPositionedState = m_treeResolutionState->anchorPositionedStates.get(styleable);
-            if (anchorPositionedState) {
-                for (auto& anchorElement : anchorPositionedState->anchorElements.values()) {
-                    if (!anchorElement)
-                        return true;
-                }
-            }
-        }
+
+        if (style.positionVisibility().contains(PositionVisibilityValue::AnchorsValid) || style.positionVisibility().contains(PositionVisibilityValue::AnchorValid))
+            return !AnchorPositionEvaluator::defaultAnchorForBox(*anchored);
+
         return false;
     };
 
