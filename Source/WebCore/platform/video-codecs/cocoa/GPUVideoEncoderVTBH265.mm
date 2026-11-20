@@ -47,7 +47,7 @@ static std::optional<HEVCParameters> hevcParametersFromFormatParameters(const Ve
     // https://datatracker.ietf.org/doc/html/rfc7798#section-7.1
     std::optional<HEVCParameters> hevcParameters;
     String interopConstraints;
-    for (auto& [name, value] : parameters) {
+    for (auto& [name, value] : borrow(parameters).get()) {
         if (equalLettersIgnoringASCIICase(name, "profile-id"_s)) {
             auto profileIDC = parseInteger<uint8_t>(value);
             if (!profileIDC)
