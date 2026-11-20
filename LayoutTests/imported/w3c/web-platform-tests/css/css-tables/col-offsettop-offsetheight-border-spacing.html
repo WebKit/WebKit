@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Tables: col / colgroup offsetTop and offsetHeight exclude the outer border-spacing</title>
+<link rel="help" href="https://drafts.csswg.org/cssom-view/#extensions-to-the-htmlelement-interface">
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#bounding-box-assignment">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+table {
+  border: 3px solid;
+  border-spacing: 10px 7px;
+  margin-bottom: 10px;
+}
+td {
+  padding: 0;
+}
+td > div {
+  width: 20px;
+  height: 20px;
+}
+</style>
+
+<!-- Single row group. -->
+<table id="body-only">
+  <colgroup><col><col></colgroup>
+  <tr data-first><td><div></div></td><td><div></div></td></tr>
+  <tr><td><div></div></td><td><div></div></td></tr>
+  <tr data-last><td><div></div></td><td><div></div></td></tr>
+</table>
+
+<!-- Caption, thead, tbody and tfoot. The tfoot comes before the tbody in the DOM but is laid out last. -->
+<table id="all-sections">
+  <caption>Caption</caption>
+  <colgroup><col><col></colgroup>
+  <thead><tr data-first><td><div></div></td><td><div></div></td></tr></thead>
+  <tfoot><tr data-last><td><div></div></td><td><div></div></td></tr></tfoot>
+  <tbody>
+    <tr><td><div></div></td><td><div></div></td></tr>
+    <tr><td><div></div></td><td><div></div></td></tr>
+  </tbody>
+</table>
+
+<!-- Empty row groups before and after the rows. -->
+<table id="empty-sections">
+  <colgroup><col><col></colgroup>
+  <tbody></tbody>
+  <tbody>
+    <tr data-first><td><div></div></td><td><div></div></td></tr>
+    <tr data-last><td><div></div></td><td><div></div></td></tr>
+  </tbody>
+  <tbody></tbody>
+</table>
+
+<!-- border-collapse: collapse has no border-spacing. -->
+<table id="collapse" style="border-collapse: collapse">
+  <colgroup><col><col></colgroup>
+  <thead><tr data-first><td><div></div></td><td><div></div></td></tr></thead>
+  <tbody><tr data-last><td><div></div></td><td><div></div></td></tr></tbody>
+</table>
+
+<script>
+// Compare differences against 0 so failure messages show how far off the column box is.
+for (const table of document.querySelectorAll("table")) {
+    const firstRow = table.querySelector("tr[data-first]");
+    const lastRow = table.querySelector("tr[data-last]");
+    const rowsTop = firstRow.offsetTop;
+    const rowsHeight = lastRow.offsetTop + lastRow.offsetHeight - rowsTop;
+
+    let columnIndex = 0;
+    for (const column of table.querySelectorAll("colgroup, col")) {
+        const name = column.localName === "col" ? `${table.id}: col ${++columnIndex}` : `${table.id}: colgroup`;
+        test(() => {
+            assert_equals(column.offsetTop - rowsTop, 0);
+        }, `${name} offsetTop matches the top of the first row`);
+
+        test(() => {
+            assert_equals(column.offsetHeight - rowsHeight, 0);
+        }, `${name} offsetHeight spans from the first row to the last row`);
+    }
+}
+</script>

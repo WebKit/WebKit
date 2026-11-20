@@ -1,0 +1,27 @@
+Caption
+
+PASS body-only: colgroup offsetTop matches the top of the first row
+PASS body-only: colgroup offsetHeight spans from the first row to the last row
+PASS body-only: col 1 offsetTop matches the top of the first row
+PASS body-only: col 1 offsetHeight spans from the first row to the last row
+PASS body-only: col 2 offsetTop matches the top of the first row
+PASS body-only: col 2 offsetHeight spans from the first row to the last row
+PASS all-sections: colgroup offsetTop matches the top of the first row
+PASS all-sections: colgroup offsetHeight spans from the first row to the last row
+PASS all-sections: col 1 offsetTop matches the top of the first row
+PASS all-sections: col 1 offsetHeight spans from the first row to the last row
+PASS all-sections: col 2 offsetTop matches the top of the first row
+PASS all-sections: col 2 offsetHeight spans from the first row to the last row
+PASS empty-sections: colgroup offsetTop matches the top of the first row
+PASS empty-sections: colgroup offsetHeight spans from the first row to the last row
+PASS empty-sections: col 1 offsetTop matches the top of the first row
+PASS empty-sections: col 1 offsetHeight spans from the first row to the last row
+PASS empty-sections: col 2 offsetTop matches the top of the first row
+PASS empty-sections: col 2 offsetHeight spans from the first row to the last row
+PASS collapse: colgroup offsetTop matches the top of the first row
+PASS collapse: colgroup offsetHeight spans from the first row to the last row
+PASS collapse: col 1 offsetTop matches the top of the first row
+PASS collapse: col 1 offsetHeight spans from the first row to the last row
+PASS collapse: col 2 offsetTop matches the top of the first row
+PASS collapse: col 2 offsetHeight spans from the first row to the last row
+
