@@ -117,7 +117,7 @@ public:
     bool isBaselineAlignmentForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContext) const;
 
     StyleContentAlignmentData contentAlignment(Style::GridTrackSizingDirection) const;
-    StyleSelfAlignmentData selfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal, const Style::ComputedStyle* = nullptr) const;
+    StyleSelfAlignmentData selfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, const Style::ComputedStyle& gridStyle, StretchingMode = StretchingMode::Normal) const;
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
     // These functions handle the actual implementation of layoutBlock based on if

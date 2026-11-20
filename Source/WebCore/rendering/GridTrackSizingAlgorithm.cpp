@@ -1331,7 +1331,7 @@ ItemPosition GridTrackSizingAlgorithm::baselineAlignmentPositionForGridItem(cons
     // is the subgrid rather than the grid running the algorithm.
     auto& parentGrid = downcast<RenderGrid>(*gridItem.parent());
     auto parentAlignmentContextType = GridLayoutFunctions::flowAwareDirection(*m_renderGrid, parentGrid, alignmentContextType);
-    return parentGrid.selfAlignmentForGridItem(gridItem, Style::logicalAxis(parentAlignmentContextType)).position();
+    return parentGrid.selfAlignmentForGridItem(gridItem, Style::logicalAxis(parentAlignmentContextType), parentGrid.style()).position();
 }
 
 LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const

@@ -253,7 +253,8 @@ bool hasStretchableSizeInColumnAxis(const RenderBox& gridItem, const RenderGrid&
     if (!(columnAxisSize.isAuto() || columnAxisSize.isStretch()))
         return false;
 
-    if (gridItem.style().aspectRatio().hasRatio() && !gridContainer.selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Block, StretchingMode::Explicit).isStretch()) {
+    CheckedRef gridStyle { gridContainer.style() };
+    if (gridItem.style().aspectRatio().hasRatio() && !gridContainer.selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Block, gridStyle, StretchingMode::Explicit).isStretch()) {
         if (gridContainer.isHorizontalWritingMode() == gridItem.isHorizontalWritingMode()) {
             // A non-auto inline size means the same for block size (column axis size) because of the aspect ratio.
             if (!gridItem.style().logicalWidth().isAuto())
@@ -278,7 +279,8 @@ bool hasStretchableSizeInRowAxis(const RenderBox& gridItem, const RenderGrid& gr
     if (!(rowAxisSize.isAuto() || rowAxisSize.isStretch()))
         return false;
 
-    if (gridItem.style().aspectRatio().hasRatio() && !gridContainer.selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Inline, StretchingMode::Explicit).isStretch()) {
+    CheckedRef gridStyle { gridContainer.style() };
+    if (gridItem.style().aspectRatio().hasRatio() && !gridContainer.selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Inline, gridStyle, StretchingMode::Explicit).isStretch()) {
         if (gridContainer.isHorizontalWritingMode() != gridItem.isHorizontalWritingMode()) {
             // A non-auto inline size (column axis size) means the same for block size (row axis size) because of the aspect ratio.
             if (!gridItem.style().logicalWidth().isAuto())
