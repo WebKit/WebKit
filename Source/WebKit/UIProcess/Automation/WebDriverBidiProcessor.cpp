@@ -201,6 +201,12 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
         return "no such history entry"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NodeIsNotAnElement:
         return "no such element"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::NoSuchStoragePartition:
+        return "no such storage partition"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::UnderspecifiedStoragePartition:
+        return "underspecified storage partition"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::UnableToSetCookie:
+        return "unable to set cookie"_s;
     case Inspector::Protocol::Automation::ErrorMessage::UnableToSetFileInput:
         return "unable to set file input"_s;
     default:

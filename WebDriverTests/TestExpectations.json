@@ -5451,39 +5451,54 @@
     },
 
     "imported/w3c/webdriver/tests/bidi/storage/get_cookies/filter.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288110"}}
-    },
-    "imported/w3c/webdriver/tests/bidi/storage/get_cookies/invalid.py": {
         "subtests": {
-            "test_params_filter_invalid_type[False]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_filter_domain": {
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/332704"}}
             },
-            "test_params_filter_invalid_type[42]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_filter_same_site[none-default]": {
+                "expected": { "mac": { "status": ["FAIL"], "bug": "webkit.org/b/332703"}}
             },
-            "test_params_filter_invalid_type[foo]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_filter_same_site[default-lax]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332703"}}
             },
-            "test_params_filter_invalid_type[value3]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_filter_same_site[default-strict]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/332703"}}
             },
-            "test_params_partition_invalid_type[False]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_filter_http_only[True-False]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
             },
-            "test_params_partition_invalid_type[42]": {
-                "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_params_partition_invalid_type[foo]": {
-                "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_params_partition_invalid_type[value3]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_filter_http_only[False-True]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
             }
-        },
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288110"}}
+        }
     },
     "imported/w3c/webdriver/tests/bidi/storage/get_cookies/partition.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288110"}}
+        "subtests": {
+            "test_default_partition": {
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/332704"}}
+            },
+            "test_partition_context": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
+            },
+            "test_partition_context_with_different_domain": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
+            },
+            "test_partition_context_iframe[same_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
+            },
+            "test_partition_context_iframe[cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
+            },
+            "test_partition_source_origin[http]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
+            },
+            "test_partition_source_origin[https]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288111"}}
+            },
+            "test_partition_user_context": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/storage/delete_cookies/filter.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288112"}}

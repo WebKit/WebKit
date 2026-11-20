@@ -92,7 +92,10 @@
                 "NoSuchScript",
                 "NoSuchHistoryEntry",
                 "NodeIsNotAnElement",
-                "UnableToSetFileInput"
+                "UnableToSetFileInput",
+                "NoSuchStoragePartition",
+                "UnderspecifiedStoragePartition",
+                "UnableToSetCookie"
             ]
         },
         {

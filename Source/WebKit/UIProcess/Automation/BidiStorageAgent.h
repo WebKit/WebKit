@@ -30,9 +30,48 @@
 #include "APIHTTPCookieStore.h"
 #include "WebDriverBidiBackendDispatchers.h"
 
+namespace WebCore {
+struct Cookie;
+}
+
 namespace WebKit {
 
 class WebAutomationSession;
+class WebsiteDataStore;
+
+// The storage partition that a storage.PartitionDescriptor resolves to.
+// https://w3c.github.io/webdriver-bidi/#expand-a-storage-partition-spec
+struct BidiStoragePartition {
+    // The user context's data store. Its cookie store lives in the network process, so cookies
+    // are read and written there for every frame, whichever web process the frame is in.
+    Ref<WebsiteDataStore> dataStore;
+    Ref<Inspector::Protocol::BidiStorage::PartitionKey> partitionKey;
+    // The host of a storageKey descriptor's sourceOrigin, or null. WebKit keeps one cookie store
+    // per user context, so a sourceOrigin limits the partition to the cookies that domain-match it.
+    String sourceOriginHost;
+
+    Ref<API::HTTPCookieStore> cookieStore() const;
+    bool containsCookie(const WebCore::Cookie&) const;
+};
+
+// A deserialized storage.CookieFilter. An empty filter matches every cookie.
+// https://w3c.github.io/webdriver-bidi/#deserialize-filter
+struct BidiCookieFilter {
+    static Inspector::Protocol::ErrorStringOr<BidiCookieFilter> fromProtocol(const RefPtr<JSON::Object>&);
+
+    // https://w3c.github.io/webdriver-bidi/#match-cookie
+    bool matches(const WebCore::Cookie&) const;
+
+    std::optional<String> name;
+    std::optional<Vector<uint8_t>> value;
+    std::optional<String> domain;
+    std::optional<String> path;
+    std::optional<uint64_t> size;
+    std::optional<bool> httpOnly;
+    std::optional<bool> secure;
+    std::optional<Inspector::Protocol::BidiStorage::CookieSameSitePolicy> sameSite;
+    std::optional<uint64_t> expiry;
+};
 
 class BidiStorageAgent final : public Inspector::BidiStorageBackendDispatcherHandler {
     WTF_MAKE_TZONE_ALLOCATED(BidiStorageAgent);
@@ -40,9 +79,13 @@ public:
     BidiStorageAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
     ~BidiStorageAgent() override;
 
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::BidiStorage::PartitionKey>> makePartitionKey(RefPtr<JSON::Object> partitionDescriptor);
-    Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> cookieStoreForPartition(RefPtr<JSON::Object> partitionDescriptor);
-    void getCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<JSON::Object>&& optionalPartition, Inspector::CommandCallbackOf<Ref<JSON::ArrayOf<Inspector::Protocol::BidiStorage::PartialCookie>>, Ref<Inspector::Protocol::BidiStorage::PartitionKey>>&&) override;
+    // https://w3c.github.io/webdriver-bidi/#expand-a-storage-partition-spec and #get-the-cookie-store.
+    Inspector::Protocol::ErrorStringOr<BidiStoragePartition> resolveStoragePartition(const RefPtr<JSON::Object>& partitionSpec);
+
+    // https://w3c.github.io/webdriver-bidi/#serialize-cookie
+    static Ref<Inspector::Protocol::BidiStorage::Cookie> serializeCookie(const WebCore::Cookie&);
+
+    void getCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<JSON::Object>&& optionalPartition, Inspector::CommandCallbackOf<Ref<JSON::ArrayOf<Inspector::Protocol::BidiStorage::Cookie>>, Ref<Inspector::Protocol::BidiStorage::PartitionKey>>&&) override;
     void setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::Object>&& optionalPartition, Inspector::CommandCallback<Ref<Inspector::Protocol::BidiStorage::PartitionKey>>&&) override;
     void deleteCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<JSON::Object>&& optionalPartition, Inspector::CommandCallback<Ref<Inspector::Protocol::BidiStorage::PartitionKey>>&&) override;
 

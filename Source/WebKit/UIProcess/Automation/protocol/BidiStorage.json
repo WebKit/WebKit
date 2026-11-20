@@ -17,20 +17,54 @@
             ]
         },
         {
+            "id": "BytesValueType",
+            "type": "string",
+            "description": "The encoding of a <code>BidiStorage.BytesValue</code>.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-BytesValue",
+            "enum": [ "string", "base64"]
+        },
+        {
+            "id": "BytesValue",
+            "type": "object",
+            "description": "Binary data, either as a string or base64 encoded.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-BytesValue",
+            "properties": [
+                { "name": "type", "$ref": "BytesValueType", "description": "The encoding of the value." },
+                { "name": "value", "type": "string", "description": "The data, as a string or as base64." }
+            ]
+        },
+        {
+            "id": "Cookie",
+            "type": "object",
+            "description": "Represents a stored cookie.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Cookie",
+            "properties": [
+                { "name": "name", "type": "string", "description": "The name of the cookie." },
+                { "name": "value", "$ref": "BytesValue", "description": "The value of the cookie." },
+                { "name": "domain", "type": "string", "description": "The domain of the cookie, without a leading dot." },
+                { "name": "path", "type": "string", "description": "The path of the cookie." },
+                { "name": "size", "type": "integer", "description": "The byte length of the cookie's name and value." },
+                { "name": "httpOnly", "type": "boolean", "description": "Whether the cookie is HTTP only." },
+                { "name": "secure", "type": "boolean", "description": "Whether the cookie is secure." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "The <code>SameSite</code> attribute of the cookie." },
+                { "name": "expiry", "type": "number", "optional": true, "description": "The expiry of the cookie, in seconds since the Unix epoch. Absent for session cookies." }
+            ]
+        },
+        {
             "id": "CookieFilter",
             "type": "object",
             "description": "Filter parameters for cookie retrieval and deletion.",
             "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
             "properties": [
                 { "name": "name", "type": "string", "optional": true, "description": "The name of the cookie." },
-                { "name": "value", "type": "string", "optional": true, "description": "The value of the cookie (as a string)." },
+                { "name": "value", "$ref": "BytesValue", "optional": true, "description": "The value of the cookie." },
                 { "name": "domain", "type": "string", "optional": true, "description": "The domain of the cookie." },
                 { "name": "path", "type": "string", "optional": true, "description": "The path of the cookie." },
-                { "name": "size", "type": "integer", "optional": true, "description": "The size of the cookie." },
+                { "name": "size", "type": "number", "optional": true, "description": "The size of the cookie: the byte length of its name and value." },
                 { "name": "httpOnly", "type": "boolean", "optional": true, "description": "If the cookie is HTTP only." },
                 { "name": "secure", "type": "boolean", "optional": true, "description": "If the cookie is secure." },
-                { "name": "sameSite", "type": "string", "optional": true, "description": "The <code>SameSite</code> attribute of the cookie." },
-                { "name": "expiry", "type": "integer", "optional": true, "description": "The expiry timestamp of the cookie." }
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "optional": true, "description": "The <code>SameSite</code> attribute of the cookie." },
+                { "name": "expiry", "type": "number", "optional": true, "description": "The expiry of the cookie, in seconds since the Unix epoch." }
             ]
         },
         {
@@ -76,8 +110,8 @@
             "id": "CookieSameSitePolicy",
             "type": "string",
             "description": "Enumerates values for cookies same site policy.",
-            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
-            "enum": [ "None", "Lax", "Strict"]
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-network-Cookie",
+            "enum": [ "strict", "lax", "none", "default"]
         },
         {
             "id": "PartialCookie",
@@ -107,7 +141,7 @@
                 { "name": "partition", "$ref": "BidiStorage.PartitionDescriptor", "optional": true, "description": "The storage partition in which to get cookies." }
             ],
             "returns": [
-                { "name": "cookies", "type": "array", "items": { "$ref": "BidiStorage.PartialCookie" }, "description": "The list of matching cookies" },
+                { "name": "cookies", "type": "array", "items": { "$ref": "BidiStorage.Cookie" }, "description": "The list of matching cookies." },
                 { "name": "partitionKey", "$ref": "BidiStorage.PartitionKey", "description": "The storage partition key" }
             ],
             "async": true
