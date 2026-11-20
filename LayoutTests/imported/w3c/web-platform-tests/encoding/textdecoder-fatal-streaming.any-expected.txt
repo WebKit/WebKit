@@ -1,4 +1,10 @@
 
 PASS Fatal flag, non-streaming cases
 PASS Fatal flag, streaming cases
+PASS Fatal flag, streaming error discards the remaining input: utf-8
+PASS Fatal flag, streaming error resets BOM handling: utf-8
+PASS Fatal flag, streaming error discards the remaining input: utf-16le
+PASS Fatal flag, streaming error resets BOM handling: utf-16le
+PASS Fatal flag, streaming error discards the remaining input: utf-16be
+PASS Fatal flag, streaming error resets BOM handling: utf-16be
 

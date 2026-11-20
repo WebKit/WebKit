@@ -60,7 +60,7 @@ private:
 
     const PAL::TextEncoding m_textEncoding;
     const Options m_options;
-    const std::unique_ptr<PAL::TextCodec> m_codec;
+    std::unique_ptr<PAL::TextCodec> m_codec;
 };
 
 }
