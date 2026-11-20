@@ -55,6 +55,7 @@
 #include "NetworkStorageSession.h"
 #include "NetworkTransportSession.h"
 #include "NetworkTransportSessionMessages.h"
+#include "NetworkValidationProcedures.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PreconnectRequest.h"
 #include "PreconnectTask.h"
@@ -141,6 +142,9 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, this->connection(), completion)
 #define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, this->connection(), returnValue)
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    EXTRACT_WITH_MESSAGE_CHECK_BASE(this->connection(), name, untrusted, (void)0, __VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -1385,8 +1389,8 @@ void NetworkConnectionToWebProcess::allCookiesDeleted()
 
 void NetworkConnectionToWebProcess::subscribeToStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain)
 {
-    auto topFrameDomain = WTF::move(untrustedTopFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto subFrameDomain = WTF::move(untrustedSubFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, ProcessHostsDomain { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
@@ -1396,8 +1400,8 @@ void NetworkConnectionToWebProcess::subscribeToStorageAccessPermissionChanges(IP
 
 void NetworkConnectionToWebProcess::unsubscribeFromStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain)
 {
-    auto topFrameDomain = WTF::move(untrustedTopFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto subFrameDomain = WTF::move(untrustedSubFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, ProcessHostsDomain { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
@@ -1673,7 +1677,7 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier 
 
 void NetworkConnectionToWebProcess::logUserInteraction(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain)
 {
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (!NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, domain)) {
         ASSERT_NOT_REACHED();
@@ -1719,8 +1723,8 @@ void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<Resourc
 
 void NetworkConnectionToWebProcess::hasStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto subFrameDomain = WTF::move(untrustedSubFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto topFrameDomain = WTF::move(untrustedTopFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, ProcessHostsDomain { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
@@ -1736,8 +1740,8 @@ void NetworkConnectionToWebProcess::hasStorageAccess(IPC::Untrusted<WebCore::Reg
 
 void NetworkConnectionToWebProcess::requestStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult result)>&& completionHandler)
 {
-    auto subFrameDomain = WTF::move(untrustedSubFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto topFrameDomain = WTF::move(untrustedTopFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, ProcessHostsDomain { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
@@ -1751,8 +1755,8 @@ void NetworkConnectionToWebProcess::requestStorageAccess(IPC::Untrusted<WebCore:
 
 void NetworkConnectionToWebProcess::queryStorageAccessPermission(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
-    auto subFrameDomain = WTF::move(untrustedSubFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto topFrameDomain = WTF::move(untrustedTopFrameDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, ProcessHostsDomain { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
@@ -1804,8 +1808,9 @@ void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(URL&& to
 
 void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomainInNeedOfStorageAccess, WebPageProxyIdentifier openerWebPageProxyID, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedOpenerDomain)
 {
-    auto domainInNeedOfStorageAccess = WTF::move(untrustedDomainInNeedOfStorageAccess).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto openerDomain = WTF::move(untrustedOpenerDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(domainInNeedOfStorageAccess, untrustedDomainInNeedOfStorageAccess, ProcessMayClaimFirstPartyForCookies { NetworkProcess::singleton(), m_webProcessIdentifier, ShouldCheckWithoutSiteIsolation::No });
+    // Names the page the access is requested under; with site isolation the opened page's process sends this and does not host the opener.
+    auto openerDomain = WTF::move(untrustedOpenerDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
 
     MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, domainInNeedOfStorageAccess));
 
@@ -2470,3 +2475,4 @@ void NetworkConnectionToWebProcess::removeSyntheticParkedLoaderForTesting(Networ
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_WITH_RETURN_VALUE
+#undef EXTRACT_WITH_MESSAGE_CHECK
