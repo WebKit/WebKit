@@ -29,7 +29,6 @@
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 #import "AdditionalReadAccessAllowedURLsProtocol.h"
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
@@ -97,6 +96,7 @@ TEST(WebKit, AdditionalReadAccessAllowedURLs)
     [@"hello" writeToURL:readableFileURL atomically:YES encoding:NSUTF8StringEncoding error:nullptr];
     [@"secret" writeToURL:unreadableFileURL atomically:YES encoding:NSUTF8StringEncoding error:nullptr];
 
+    __block bool done = false;
     [proxy readStringFromURL:readableFileURL completionHandler:^(NSString *string, NSError *error) {
         done = true;
         EXPECT_WK_STREQ(@"hello", string);
@@ -276,6 +276,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 TEST(WebKit, NSAttributedStringWithInvalidReadOnlyPaths)
 {
+    __block bool done = false;
+
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     RetainPtr options = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:@[ @"/some/random/path" ], _WKReadAccessFileURLsOption, nil]);
 ALLOW_NEW_API_WITHOUT_GUARDS_END

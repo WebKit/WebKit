@@ -26,7 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
@@ -71,6 +70,8 @@ TEST(WKWebView, EvaluateEmptyJavaScript)
 
 TEST(WKWebView, EvaluateJavaScriptBlockCrash)
 {
+    __block bool isDone = false;
+
     @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -108,6 +109,7 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
         @"[ document.body ]",
         @"{ a : document.body }",
     ];
+    __block bool isDone = false;
     for (NSString *unsupported in unsupportedTypes) {
         isDone = false;
         [webView evaluateJavaScript:unsupported completionHandler:^(id result, NSError *error) {
