@@ -45,7 +45,10 @@ struct UsedTrackSizes;
 
 namespace LayoutIntegration {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_GridLayout);
+
 class GridLayout {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(GridLayout, LayoutIntegration_GridLayout);
 public:
     GridLayout(RenderGrid&);
     ~GridLayout();

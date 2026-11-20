@@ -45,11 +45,12 @@ namespace WebCore {
 
 namespace LayoutIntegration {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_GridLayout);
+
 GridLayout::GridLayout(RenderGrid& renderGrid)
     : m_gridBox(&renderGrid.layoutBox())
     , m_layoutState(renderGrid.view().layoutState())
 {
-    gridBox().setIsGridIntegrationRoot(true);
 }
 
 GridLayout::~GridLayout()
@@ -60,6 +61,8 @@ GridLayout::~GridLayout()
 
 void GridLayout::updateFormattingContextGeometries()
 {
+    gridBox().setIsGridIntegrationRoot(true);
+
     clearGridItemGridAreas();
 
     auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
@@ -325,6 +328,9 @@ void GridLayout::layout()
 
     // https://drafts.csswg.org/css-grid-2/#resolved-track-list
     renderGrid->setResolvedTrackSizes(WTF::move(usedTrackSizes.columnSizes), WTF::move(usedTrackSizes.rowSizes));
+
+    BoxTreeUpdater::tearDown(protect(renderGrid));
+    gridBox().setIsGridIntegrationRoot(false);
 }
 
 void GridLayout::updateOverflow(RenderGrid& renderGrid)

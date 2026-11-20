@@ -612,14 +612,22 @@ bool RenderGrid::layoutUsingGridFormattingContext()
     m_hasGridFormattingContextLayout = LayoutIntegration::canUseForGridLayout(*this);
     if (!*m_hasGridFormattingContextLayout) {
         LayoutIntegration::GridLayout::invalidateFormattingContextRootRenderer(*this);
+        m_gridLayout = { };
         return false;
     }
 
-    auto gridLayout = LayoutIntegration::GridLayout { *this };
+    auto& gridLayout = ensureGridLayout();
     gridLayout.updateFormattingContextGeometries();
 
     gridLayout.layout();
     return true;
+}
+
+LayoutIntegration::GridLayout& RenderGrid::ensureGridLayout()
+{
+    if (!m_gridLayout)
+        m_gridLayout = makeUnique<LayoutIntegration::GridLayout>(*this);
+    return *m_gridLayout;
 }
 
 // "Percentages: relative to the grid-axis content box size of the grid lanes container"

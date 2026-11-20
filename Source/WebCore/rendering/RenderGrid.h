@@ -347,6 +347,11 @@ private:
 
     bool layoutUsingGridFormattingContext();
 
+    const LayoutIntegration::GridLayout* gridLayout() const { return m_gridLayout.get(); }
+    LayoutIntegration::GridLayout* gridLayout() { return m_gridLayout.get(); }
+    LayoutIntegration::GridLayout& ensureGridLayout();
+
+    std::unique_ptr<LayoutIntegration::GridLayout> m_gridLayout;
     LayoutUnit m_gridLanesContentSizeForWebInspectorOverlay;
     std::optional<bool> m_hasGridFormattingContextLayout;
 
