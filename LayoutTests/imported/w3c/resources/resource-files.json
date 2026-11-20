@@ -5532,6 +5532,7 @@
         "web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-002-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-003-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-004-ref.html",
+        "web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-contain-size-001-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-refinalize-row-geometry-001-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-refinalize-row-geometry-002-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-flow-start-flow-end-align-properties-ref.html",

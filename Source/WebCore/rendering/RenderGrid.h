@@ -255,6 +255,7 @@ private:
     LayoutUnit columnAxisOffsetForGridItem(const RenderBox&, GridLanesResultRef) const;
     LayoutUnit rowAxisOffsetForGridItem(const RenderBox&, GridLanesResultRef) const;
     ContentAlignmentData computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const;
+    ContentAlignmentData stackingAxisContentAlignment(Style::GridTrackSizingDirection, LayoutUnit stackingRangeSize) const;
     void setLogicalPositionForGridItem(RenderBox&, GridLanesResultRef) const;
     LayoutUnit logicalOffsetForGridItem(const RenderBox&, Style::GridTrackSizingDirection, GridLanesResultRef) const;
 

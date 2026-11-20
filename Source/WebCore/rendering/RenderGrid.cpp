@@ -710,7 +710,8 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
         computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns, gridLayoutState);
 
         // 1.5. Compute Content Distribution offsets for column tracks
-        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Columns));
+        if (!hasStackingAxisColumns())
+            m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Columns));
 
         // 2. Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
@@ -739,6 +740,9 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
         // be drawing.
         m_gridLanesContentSizeForWebInspectorOverlay = gridLanesResult.gridContentSize();
 
+        if (hasStackingAxisColumns())
+            m_offsetBetweenColumns = stackingAxisContentAlignment(Style::GridTrackSizingDirection::Columns, gridLanesResult.gridContentSize());
+
         LayoutUnit trackBasedLogicalHeight = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         if (auto size = explicitIntrinsicInnerLogicalSize(Style::GridTrackSizingDirection::Rows))
             trackBasedLogicalHeight += size.value();
@@ -757,11 +761,14 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
 
         // Once grid's indefinite height is resolved, we can compute the
         // available free space for Content Alignment.
-        if (!hasDefiniteLogicalHeight || hasStackingAxisRows())
+        if (!hasDefiniteLogicalHeight && !hasStackingAxisRows())
             m_trackSizingAlgorithm.setFreeSpace(Style::GridTrackSizingDirection::Rows, logicalHeight() - trackBasedLogicalHeight);
 
         // 2.5. Compute Content Distribution offsets for rows tracks
-        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Rows));
+        if (hasStackingAxisRows())
+            m_offsetBetweenRows = stackingAxisContentAlignment(Style::GridTrackSizingDirection::Rows, gridLanesResult.gridContentSize());
+        else
+            m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Rows));
 
         if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
             updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems, gridLayoutState, gridLanesResult);
@@ -2461,6 +2468,16 @@ StyleContentAlignmentData RenderGrid::contentAlignment(Style::GridTrackSizingDir
     return direction == Style::GridTrackSizingDirection::Columns
         ? style().justifyContent().resolve(contentAlignmentNormalBehaviorGrid())
         : style().alignContent().resolve(contentAlignmentNormalBehaviorGrid());
+}
+
+// "In the stacking axis, content-distribution is applied to the content as a whole, similarly to how it behaves in block containers.
+// More specifically, the alignment subject is the stacking range."
+ContentAlignmentData RenderGrid::stackingAxisContentAlignment(Style::GridTrackSizingDirection direction, LayoutUnit stackingRangeSize) const
+{
+    constexpr unsigned alignmentSubjectCount = 1;
+    auto contentBoxSize = direction == Style::GridTrackSizingDirection::Columns ? contentBoxLogicalWidth() : contentBoxLogicalHeight();
+    // "the distributed alignment values behave as their fallback alignments"
+    return { computeContentPositionAndDistributionOffset(direction, contentBoxSize - stackingRangeSize, alignmentSubjectCount).positionOffset, 0_lu };
 }
 
 ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
