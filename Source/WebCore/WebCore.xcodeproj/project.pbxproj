@@ -10586,6 +10586,9 @@
 		3128CA67147331520074C72A /* NotificationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationController.cpp; sourceTree = "<group>"; };
 		3128CA6A147331630074C72A /* NotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationController.h; sourceTree = "<group>"; };
 		313171541FB079D1008D91FC /* CanvasBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasBase.h; sourceTree = "<group>"; };
+		0FC41A2E2D9B4E1100CA1001 /* CameraMovedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraMovedEvent.cpp; sourceTree = "<group>"; };
+		0FC41A2F2D9B4E1100CA1002 /* CameraMovedEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraMovedEvent.h; sourceTree = "<group>"; };
+		0FC41A302D9B4E1100CA1003 /* CameraMovedEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CameraMovedEvent.idl; sourceTree = "<group>"; };
 		313171571FB0969E008D91FC /* CanvasBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasBase.cpp; sourceTree = "<group>"; };
 		313591001E7DDC6000F30630 /* RTCIceConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceConnectionState.h; sourceTree = "<group>"; };
 		313591011E7DDC6000F30630 /* RTCIceGatheringState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceGatheringState.h; sourceTree = "<group>"; };
@@ -33419,6 +33422,9 @@
 				F55B3D7C1251F12D003EF269 /* ButtonInputType.h */,
 				830030F71B7D398800ED3AAC /* CachedHTMLCollection.h */,
 				CD814C342996CA6A005A780A /* CachedHTMLCollectionInlines.h */,
+				0FC41A2E2D9B4E1100CA1001 /* CameraMovedEvent.cpp */,
+				0FC41A2F2D9B4E1100CA1002 /* CameraMovedEvent.h */,
+				0FC41A302D9B4E1100CA1003 /* CameraMovedEvent.idl */,
 				313171571FB0969E008D91FC /* CanvasBase.cpp */,
 				313171541FB079D1008D91FC /* CanvasBase.h */,
 				72BE1E9830660D54008E5A73 /* CanvasContent.h */,

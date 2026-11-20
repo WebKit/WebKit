@@ -1,0 +1,49 @@
+Testing the live camera attributes. yaw, pitch and fieldOfView are the camera as it is now: writable, not reflected to the markup, and reported by a cameramoved event that carries them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Before the camera has moved, the live values report the declared view:
+PASS video.yaw is 90
+PASS video.pitch is -15
+PASS video.fieldOfView is 60
+
+They are writable, and writing one does not rewrite the markup or the declared value:
+PASS video.yaw is 10
+PASS video.defaultYaw is 90
+PASS video.getAttribute('yaw') is "90"
+
+Writing the declared value does reflect, and leaves the live value alone:
+PASS video.getAttribute('yaw') is "45"
+PASS video.yaw is 10
+
+A value that is not a finite number is a TypeError, as for any WebIDL double:
+PASS video.yaw = NaN threw exception TypeError: The provided value is non-finite.
+PASS video.fieldOfView = Infinity threw exception TypeError: The provided value is non-finite.
+
+The event carries the camera:
+PASS movedEvent.yaw is 1
+PASS movedEvent.pitch is 2
+PASS movedEvent.fieldOfView is 3
+PASS movedEvent.bubbles is false
+PASS movedEvent.cancelable is false
+
+...and defaults to zero for anything the page leaves out:
+PASS bareEvent.yaw is 0
+PASS bareEvent.pitch is 0
+PASS bareEvent.fieldOfView is 0
+
+oncameramoved is an event handler attribute:
+PASS handled is 7
+
+The renderer adopts a live value a page assigned, clamping what it needs to:
+PASS support._yaw is within 0.0001 of 3.141592653589793
+PASS support._pitch is within 0.0001 of 1.5607963267948965
+PASS support._cameraFieldOfView is 30
+
+A live value it reported itself is not re-adopted:
+PASS support._yaw is 1.25
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

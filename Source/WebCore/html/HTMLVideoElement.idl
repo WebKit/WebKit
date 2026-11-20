@@ -43,9 +43,10 @@
     [CEReactions=NotNeeded, ReflectSetter="yaw", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultYaw;
     [CEReactions=NotNeeded, ReflectSetter="pitch", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultPitch;
     [CEReactions=NotNeeded, ReflectSetter="fieldofview", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultFieldOfView;
-    [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double yaw;
-    [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double pitch;
-    [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double fieldOfView;
+    [EnabledBySetting=SpatialVideoRenderingEnabled] attribute double yaw;
+    [EnabledBySetting=SpatialVideoRenderingEnabled] attribute double pitch;
+    [EnabledBySetting=SpatialVideoRenderingEnabled] attribute double fieldOfView;
+    [Conditional=VIDEO, EnabledBySetting=SpatialVideoRenderingEnabled] attribute EventHandler oncameramoved;
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
