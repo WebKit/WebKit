@@ -644,10 +644,15 @@ public:
         return true;
     }
 
+    bool isLineStart(unsigned position)
+    {
+        return !position || testCharacterClass(pattern->newlineCharacterClass, input.readCodePoint(Backward, position - 1));
+    }
+
     bool matchAssertionBOL(ByteTerm& term)
     {
         unsigned position = input.positionAt(term.matchDirection(), term.inputPosition);
-        return !position || (term.multiline() && testCharacterClass(pattern->newlineCharacterClass, input.readCodePoint(Backward, position - 1)));
+        return term.multiline() ? isLineStart(position) : !position;
     }
 
     bool matchAssertionEOL(ByteTerm& term)
@@ -1921,12 +1926,23 @@ public:
             if (offset > 0)
                 MATCH_NEXT();
 
-            if (input.atEnd() || pattern->sticky()) {
+            if (input.atEnd() || pattern->sticky() || pattern->m_bodyRestart == BodyRestart::Never) {
                 DUMP_EXTRA("- Return NoMatch\n");
                 return JSRegExpResult::NoMatch;
             }
 
             input.next();
+
+            if (pattern->m_bodyRestart == BodyRestart::LineStart) {
+                RELEASE_ASSERT(input.getPos() <= input.end());
+                while (!isLineStart(input.getPos())) {
+                    if (input.atEnd()) {
+                        DUMP_EXTRA("- Return NoMatch\n");
+                        return JSRegExpResult::NoMatch;
+                    }
+                    input.next();
+                }
+            }
 
             context->matchBegin = input.getPos();
 
@@ -2183,7 +2199,51 @@ public:
             ByteTermDumper(&m_pattern).dumpDisjunction(m_bodyDisjunction.get());
 #endif
 
-        return makeUnique<BytecodePattern>(WTF::move(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock, m_pattern.offsetVectorBaseForNamedCaptures(), m_pattern.offsetsSize());
+        return makeUnique<BytecodePattern>(WTF::move(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock, m_pattern.offsetVectorBaseForNamedCaptures(), m_pattern.offsetsSize(), bodyRestart());
+    }
+
+    // If the only body alternative begins with an unbounded quantified dot, any match found from a
+    // restart position can also be found from the start of its line, which is tried first. So
+    // restarts only need to stop at line starts, and never happen at all when the dot matches
+    // line terminators.
+    BodyRestart bodyRestart()
+    {
+        if (!Options::useRegExpInterpreterBodyRestart())
+            return BodyRestart::AnyPosition;
+
+        if (m_pattern.sticky() || m_pattern.eitherUnicode() || m_pattern.m_saveInitialStartValue)
+            return BodyRestart::AnyPosition;
+
+        auto& alternatives = m_pattern.m_body->m_alternatives;
+        if (alternatives.size() != 1 || alternatives[0]->m_terms.isEmpty())
+            return BodyRestart::AnyPosition;
+
+        auto& terms = alternatives[0]->m_terms;
+        auto isForwardCharacterClass = [](const PatternTerm& term) {
+            return term.type == PatternTerm::Type::CharacterClass && term.matchDirection() == Forward;
+        };
+
+        // The parser splits .{n,} into .{n} followed by .*.
+        size_t index = 0;
+        if (terms.size() > 1
+            && isForwardCharacterClass(terms[0])
+            && isForwardCharacterClass(terms[1])
+            && terms[0].quantityType == QuantifierType::FixedCount
+            && terms[0].characterClass == terms[1].characterClass
+            && terms[0].invert() == terms[1].invert())
+            index = 1;
+
+        auto& term = terms[index];
+        if (!isForwardCharacterClass(term)
+            || term.quantityType == QuantifierType::FixedCount
+            || term.quantityMaxCount != quantifyInfinite)
+            return BodyRestart::AnyPosition;
+
+        if (term.characterClass == m_pattern.newlineCharacterClass() && term.invert())
+            return BodyRestart::LineStart;
+        if (term.characterClass == m_pattern.anyCharacterClass() && !term.invert())
+            return BodyRestart::Never;
+        return BodyRestart::AnyPosition;
     }
 
     void checkInput(MatchDirection matchDirection, unsigned count)

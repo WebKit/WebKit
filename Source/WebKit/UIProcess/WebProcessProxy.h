@@ -211,6 +211,7 @@ public:
     enum class ShouldLaunchProcess : bool { No, Yes };
     using LockdownMode = WebKit::LockdownMode;
     enum class EnableWebAssemblyDebugger : bool { No, Yes };
+    enum class EnableRegExpInterpreterBodyRestart : bool { No, Yes };
     enum class CreateSandboxExtensionForNetworkingProcess : bool { No, Yes };
 
     enum class IsolatedProcessType : uint8_t {
@@ -220,7 +221,7 @@ public:
         Shared
     };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, ShouldLaunchProcess = ShouldLaunchProcess::Yes, EnableRegExpInterpreterBodyRestart = EnableRegExpInterpreterBodyRestart::No);
 
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
@@ -735,7 +736,7 @@ public:
 private:
     Type type() const final { return Type::WebContent; }
 
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, ProcessCrossOriginIsolation, LockdownMode, EnhancedSecurity);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, ProcessCrossOriginIsolation, LockdownMode, EnhancedSecurity, EnableRegExpInterpreterBodyRestart = EnableRegExpInterpreterBodyRestart::No);
 
     void updateSiteForMainFrameNavigation(const URL&);
     void sendHostedDomainsToNetworkProcess();
@@ -989,6 +990,7 @@ private:
     LockdownMode m_lockdownMode { LockdownMode::Disabled };
     EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };
     const ProcessCrossOriginIsolation m_crossOriginIsolation;
+    const EnableRegExpInterpreterBodyRestart m_enableRegExpInterpreterBodyRestart;
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
     bool m_sentFontdMachExtensionHandles { false };
