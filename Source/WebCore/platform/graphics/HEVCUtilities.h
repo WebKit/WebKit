@@ -64,6 +64,7 @@ struct HEVCParameters {
 WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCCodecParameters(StringView);
 WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC, const SharedBuffer&);
 WEBCORE_EXPORT String createHEVCCodecParametersString(const HEVCParameters&);
+WEBCORE_EXPORT bool isHEVCMain42210Profile(const HEVCParameters&);
 
 struct DoViParameters {
     enum class Codec { AVC1, AVC3, HEV1, HVC1 } codec { Codec::HVC1 };

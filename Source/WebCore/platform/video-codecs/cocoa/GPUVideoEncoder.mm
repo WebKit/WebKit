@@ -47,7 +47,7 @@ RefPtr<GPUVideoEncoder> GPUVideoEncoder::create(CreationInfo&& creationInfo, con
     if (creationInfo.codecType == VideoCodecType::H265) {
         // We only support L1T1 for H265.
         creationInfo.scalabilityMode = VideoEncoderScalabilityMode::L1T1;
-        return GPUVideoEncoderVTBH265::create(WTF::move(creationInfo), WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
+        return GPUVideoEncoderVTBH265::create(WTF::move(creationInfo), parameters, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
     }
 
     if (creationInfo.codecType == VideoCodecType::H264) {

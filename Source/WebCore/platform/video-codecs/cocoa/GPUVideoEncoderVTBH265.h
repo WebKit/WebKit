@@ -35,17 +35,19 @@ namespace WebCore {
 class GPUVideoEncoderVTBH265 final : public GPUVideoEncoderVTB {
     WTF_MAKE_TZONE_ALLOCATED(GPUVideoEncoderVTBH265);
 public:
-    static Ref<GPUVideoEncoderVTBH265> create(CreationInfo&& info, GPUVideoEncoderCallback&& encoderCallback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
-    {
-        return adoptRef(*new GPUVideoEncoderVTBH265(WTF::move(info), WTF::move(encoderCallback), WTF::move(descriptionCallback), WTF::move(errorCallback)));
-    }
+    static RefPtr<GPUVideoEncoderVTBH265> create(CreationInfo&&, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
 
     ~GPUVideoEncoderVTBH265() = default;
 
 private:
-    GPUVideoEncoderVTBH265(CreationInfo&&, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+    GPUVideoEncoderVTBH265(CreationInfo&&, RetainPtr<CFStringRef>&& profileLevel, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+
+    static bool isProfileLevelSupported(CFStringRef, IntSize);
 
     bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, GPUVideoEncoderFrameInfo&&, const PlatformVideoColorSpace&) final;
+    void configureAdditionalProperties() final;
+
+    const RetainPtr<CFStringRef> m_profileLevel;
 };
 
 }

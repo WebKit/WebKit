@@ -69,6 +69,9 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_High_5_0, 
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_High_5_1, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_High_5_2, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_High_AutoLevel, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_HEVC_Main_AutoLevel, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_HEVC_Main10_AutoLevel, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_HEVC_Main42210_AutoLevel, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_0, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_1, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_2, CFStringRef)
@@ -81,6 +84,8 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_Main_5_2, 
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_Main_AutoLevel, CFStringRef)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, VideoToolbox, VTCompressionSessionCreate, OSStatus, (CFAllocatorRef allocator, int32_t width, int32_t height, CMVideoCodecType codecType, CFDictionaryRef encoderSpecification, CFDictionaryRef sourceImageBufferAttributes, CFAllocatorRef compressedDataAllocator, VTCompressionOutputCallback outputCallback, void* outputCallbackRefCon, CF_RETURNS_RETAINED VTCompressionSessionRef* compressionSessionOut), (allocator, width, height, codecType, encoderSpecification, sourceImageBufferAttributes, compressedDataAllocator, outputCallback, outputCallbackRefCon, compressionSessionOut))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, VideoToolbox, VTCopySupportedPropertyDictionaryForEncoder, OSStatus, (int32_t width, int32_t height, CMVideoCodecType codecType, CFDictionaryRef encoderSpecification, CF_RETURNS_RETAINED CFStringRef* encoderIDOut, CF_RETURNS_RETAINED CFDictionaryRef* supportedPropertiesOut), (width, height, codecType, encoderSpecification, encoderIDOut, supportedPropertiesOut))
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTPropertySupportedValueListKey, CFStringRef)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, VideoToolbox, VTCompressionSessionCompleteFrames, OSStatus, (VTCompressionSessionRef session, CMTime completeUntilPresentationTimeStamp), (session, completeUntilPresentationTimeStamp))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, VideoToolbox, VTCompressionSessionEncodeFrame, OSStatus, (VTCompressionSessionRef session, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime duration, CFDictionaryRef frameProperties, void* sourceFrameRefcon, VTEncodeInfoFlags* infoFlagsOut), (session, imageBuffer, presentationTimeStamp, duration, frameProperties, sourceFrameRefcon, infoFlagsOut))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, VideoToolbox, VTCompressionSessionEncodeFrameWithOutputHandler, OSStatus, (VTCompressionSessionRef session, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime duration, CFDictionaryRef frameProperties, VTEncodeInfoFlags* infoFlagsOut, VTCompressionOutputHandler outputHandler), (session, imageBuffer, presentationTimeStamp, duration, frameProperties, infoFlagsOut, outputHandler))

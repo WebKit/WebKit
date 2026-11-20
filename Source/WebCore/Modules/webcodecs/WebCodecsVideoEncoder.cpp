@@ -31,6 +31,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "ExceptionOr.h"
+#include "HEVCUtilities.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsVideoEncoderSupport.h"
@@ -98,6 +99,23 @@ static bool isSupportedVP9EncoderCodec(const String& codec, const SettingsValues
     }
 }
 
+static bool isSupportedHEVCEncoderCodec(const String& codec, const SettingsValues& settings)
+{
+    if (!settings.webCodecsHEVCEnabled)
+        return false;
+#if PLATFORM(COCOA)
+    auto parameters = parseHEVCCodecParameters(codec);
+    if (!parameters)
+        return false;
+    // Main 4:2:2 10 is the only range extensions profile VideoToolbox encodes.
+    constexpr uint8_t rangeExtensionsProfileIDC = 4;
+    return parameters->generalProfileIDC != rangeExtensionsProfileIDC || isHEVCMain42210Profile(*parameters);
+#else
+    UNUSED_PARAM(codec);
+    return true;
+#endif
+}
+
 static bool isSupportedEncoderCodec(const WebCodecsVideoEncoderConfig& config, const SettingsValues& settings)
 {
     constexpr size_t maxFrameDimension = 32767;
@@ -106,8 +124,7 @@ static bool isSupportedEncoderCodec(const WebCodecsVideoEncoderConfig& config, c
 
     return config.codec.startsWith("vp8"_s) || config.codec.startsWith("avc1."_s)
         || (config.codec.startsWith("vp09."_s) && isSupportedVP9EncoderCodec(config.codec, settings))
-        || (config.codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
-        || (config.codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
+        || ((config.codec.startsWith("hev1."_s) || config.codec.startsWith("hvc1."_s)) && isSupportedHEVCEncoderCodec(config.codec, settings))
         || (config.codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);
 }
 

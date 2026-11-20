@@ -11,14 +11,17 @@ const tolerance = 1;
 const inputFormats = ['I420P10', 'I422P10', 'I444P10', 'I420P12', 'I422P12', 'I444P12'];
 const highBitDepthCodec = 'vp09.02.10.10';
 const eightBitCodec = 'vp09.00.10.08';
+const hevcMain10Codec = 'hvc1.2.4.L93.B0';
+const hevcMainCodec = 'hvc1.1.6.L93.B0';
+const hevcMain42210Codec = 'hvc1.4.10.L93.9D.08';
 
-function chromaSize(format)
+function chromaSize(format, frameWidth = width, frameHeight = height)
 {
     if (format.startsWith('I420'))
-        return [width / 2, height / 2];
+        return [frameWidth / 2, frameHeight / 2];
     if (format.startsWith('I422'))
-        return [width / 2, height];
-    return [width, height];
+        return [frameWidth / 2, frameHeight];
+    return [frameWidth, frameHeight];
 }
 
 function createFrame(format)
@@ -41,7 +44,7 @@ function createFrame(format)
     });
 }
 
-async function encodeDecode(t, codec, frame, encodedWidth = width, encodedHeight = height)
+async function encodeDecode(t, codec, frame, encodedWidth = width, encodedHeight = height, checkDecoderConfig = null)
 {
     const config = { codec, width: encodedWidth, height: encodedHeight, bitrate: 2000000, framerate: 30 };
     const support = await VideoEncoder.isConfigSupported(config);
@@ -63,6 +66,7 @@ async function encodeDecode(t, codec, frame, encodedWidth = width, encodedHeight
     encoder.close();
     assert_equals(chunks.length, 1, 'chunk count');
     assert_not_equals(decoderConfig, undefined, 'decoderConfig');
+    checkDecoderConfig?.(decoderConfig);
 
     const decoded = [];
     const decoder = new VideoDecoder({
@@ -77,14 +81,27 @@ async function encodeDecode(t, codec, frame, encodedWidth = width, encodedHeight
     return decoded[0];
 }
 
-async function checkTenBitSamples(decoded)
+// ISO/IEC 14496-15 8.3.3.1 HEVCDecoderConfigurationRecord.
+function hvcCChecker(profileIDC, chromaFormatIDC, bitDepth)
 {
-    assert_equals(decoded.format, 'I420P10', 'decoded format');
+    return decoderConfig => {
+        const record = new Uint8Array(ArrayBuffer.isView(decoderConfig.description) ? decoderConfig.description.buffer : decoderConfig.description);
+        assert_greater_than_equal(record.length, 23, 'hvcC size');
+        assert_equals(record[1] & 0x1f, profileIDC, 'hvcC general_profile_idc');
+        assert_equals(record[16] & 0x3, chromaFormatIDC, 'hvcC chroma_format_idc');
+        assert_equals((record[17] & 0x7) + 8, bitDepth, 'hvcC luma bit depth');
+    };
+}
+
+async function checkTenBitSamples(decoded, expectedFormat = 'I420P10')
+{
+    assert_equals(decoded.format, expectedFormat, 'decoded format');
 
     const buffer = new ArrayBuffer(decoded.allocationSize());
     const layout = await decoded.copyTo(buffer);
-    const lumaSize = decoded.codedWidth * decoded.codedHeight;
-    const planeSizes = [lumaSize, lumaSize / 4, lumaSize / 4];
+    const { width: decodedWidth, height: decodedHeight } = decoded.visibleRect;
+    const [chromaWidth, chromaHeight] = chromaSize(expectedFormat, decodedWidth, decodedHeight);
+    const planeSizes = [decodedWidth * decodedHeight, chromaWidth * chromaHeight, chromaWidth * chromaHeight];
     for (let plane = 0; plane < 3; ++plane) {
         const samples = new Uint16Array(buffer, layout[plane].offset, planeSizes[plane]);
         const mismatch = samples.findIndex(sample => Math.abs(sample - tenBitSamples[plane]) > tolerance);
@@ -119,4 +136,39 @@ promise_test(async t => {
     t.add_cleanup(() => decoded.close());
     assert_in_array(decoded.format, ['I420', 'NV12'], 'decoded format');
 }, `I420P10 frame encoded with ${eightBitCodec} decodes to 8 bits`);
+
+for (const format of inputFormats) {
+    promise_test(async t => {
+        const frame = createFrame(format);
+        t.add_cleanup(() => frame.close());
+        const decoded = await encodeDecode(t, hevcMain10Codec, frame, width, height, hvcCChecker(2, 1, 10));
+        t.add_cleanup(() => decoded.close());
+        await checkTenBitSamples(decoded);
+    }, `${format} frame encoded with ${hevcMain10Codec} keeps 10 bits`);
+}
+
+promise_test(async t => {
+    const frame = createFrame('I420P10');
+    t.add_cleanup(() => frame.close());
+    const decoded = await encodeDecode(t, hevcMainCodec, frame, width, height, hvcCChecker(1, 1, 8));
+    t.add_cleanup(() => decoded.close());
+    assert_in_array(decoded.format, ['I420', 'NV12'], 'decoded format');
+}, `I420P10 frame encoded with ${hevcMainCodec} decodes to 8 bits`);
+
+promise_test(async t => {
+    const frame = createFrame('I422P10');
+    t.add_cleanup(() => frame.close());
+    const decoded = await encodeDecode(t, hevcMain42210Codec, frame, width, height, hvcCChecker(4, 2, 10));
+    t.add_cleanup(() => decoded.close());
+    await checkTenBitSamples(decoded, 'I422P10');
+}, `I422P10 frame encoded with ${hevcMain42210Codec} keeps 10 bits and 4:2:2`);
+
+for (const codec of ['hvc1.4.10.L93.98', 'hvc1.4.10.L93']) {
+    promise_test(async t => {
+        const mainSupport = await VideoEncoder.isConfigSupported({ codec: hevcMainCodec, width, height });
+        assert_implements_optional(mainSupport.supported, `${hevcMainCodec} encoding is not supported`);
+        const support = await VideoEncoder.isConfigSupported({ codec, width, height });
+        assert_false(support.supported);
+    }, `${codec} encoding is not supported`);
+}
 </script>

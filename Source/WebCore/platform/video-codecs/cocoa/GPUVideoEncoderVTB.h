@@ -59,6 +59,7 @@ protected:
 
     WorkQueue& queue() { return m_creationInfo.queue; }
 
+    static RetainPtr<CFDictionaryRef> encoderSpecification();
     static std::optional<Vector<uint8_t>> toVector(CMSampleBufferRef);
 
 private:

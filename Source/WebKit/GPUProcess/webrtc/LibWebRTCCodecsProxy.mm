@@ -336,7 +336,14 @@ static bool validateEncoderConfiguration(WebCore::VideoCodecType codecType, cons
     return true;
 }
 
-void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, CompletionHandler<void(bool)>&& callback)
+static constexpr int maximumEncoderDimension = 16384;
+
+static bool validateEncoderSize(WebCore::IntSize size)
+{
+    return size.width() >= 0 && size.height() >= 0 && size.width() <= maximumEncoderDimension && size.height() <= maximumEncoderDimension;
+}
+
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, WebCore::IntSize size, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
 
@@ -347,7 +354,7 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
         return;
     }
 
-    if (!validateEncoderConfiguration(codecType, codecString, useLowLatency, scalabilityMode)) {
+    if (!validateEncoderConfiguration(codecType, codecString, useLowLatency, scalabilityMode) || !validateEncoderSize(size)) {
         callback(false);
         return;
     }
@@ -370,6 +377,7 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
         .useAnnexB = useAnnexB,
         .scalabilityMode = scalabilityMode,
         .isLowLatencyEnabled = useLowLatency,
+        .size = size,
         .queue = workQueue()
     }, parameters, WTF::move(newFrameBlock), WTF::move(newConfigurationBlock), WTF::move(errorBlock));
     if (!encoder) {

@@ -30,10 +30,13 @@
 
 #include "LibWebRTCCodecs.h"
 #include "WebProcess.h"
+#include <WebCore/HEVCUtilities.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Borrow.h>
+#include <wtf/HexNumber.h>
 #include <wtf/StdUnorderedMap.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
@@ -180,6 +183,15 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
         if (auto position = codec.find('.');position != notFound && position != codec.length()) {
             auto profileLevelId = byteCast<char>(codec.span8().subspan(position + 1));
             parameters["profile-level-id"] = std::string(profileLevelId.data(), profileLevelId.size());
+        }
+    } else if (type == WebCore::VideoCodecType::H265) {
+        // https://datatracker.ietf.org/doc/html/rfc7798#section-7.1
+        if (auto hevcParameters = WebCore::parseHEVCCodecParameters(codec)) {
+            parameters["profile-id"] = std::to_string(hevcParameters->generalProfileIDC);
+            StringBuilder interopConstraints;
+            for (auto flag : hevcParameters->generalConstraintIndicatorFlags)
+                interopConstraints.append(hex(flag, 2));
+            parameters["interop-constraints"] = interopConstraints.toString().utf8().toStdString();
         }
     }
 

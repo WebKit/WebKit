@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/IntSize.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
@@ -67,6 +68,7 @@ public:
         bool useAnnexB;
         VideoEncoderScalabilityMode scalabilityMode;
         bool isLowLatencyEnabled;
+        IntSize size;
         Ref<WorkQueue> queue;
     };
     WEBCORE_EXPORT static RefPtr<GPUVideoEncoder> create(CreationInfo&&, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);

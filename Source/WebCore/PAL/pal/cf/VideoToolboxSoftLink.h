@@ -108,6 +108,12 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_5_2, 
 #define kVTProfileLevel_H264_High_5_2 get_VideoToolbox_kVTProfileLevel_H264_High_5_2Singleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_AutoLevel, CFStringRef)
 #define kVTProfileLevel_H264_High_AutoLevel get_VideoToolbox_kVTProfileLevel_H264_High_AutoLevelSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_HEVC_Main_AutoLevel, CFStringRef)
+#define kVTProfileLevel_HEVC_Main_AutoLevel get_VideoToolbox_kVTProfileLevel_HEVC_Main_AutoLevelSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_HEVC_Main10_AutoLevel, CFStringRef)
+#define kVTProfileLevel_HEVC_Main10_AutoLevel get_VideoToolbox_kVTProfileLevel_HEVC_Main10_AutoLevelSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_HEVC_Main42210_AutoLevel, CFStringRef)
+#define kVTProfileLevel_HEVC_Main42210_AutoLevel get_VideoToolbox_kVTProfileLevel_HEVC_Main42210_AutoLevelSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_0, CFStringRef)
 #define kVTProfileLevel_H264_Main_3_0 get_VideoToolbox_kVTProfileLevel_H264_Main_3_0Singleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_1, CFStringRef)
@@ -132,6 +138,10 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_AutoL
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionCreate, OSStatus, (CFAllocatorRef allocator, int32_t width, int32_t height, CMVideoCodecType codecType, CFDictionaryRef encoderSpecification, CFDictionaryRef sourceImageBufferAttributes, CFAllocatorRef compressedDataAllocator, VTCompressionOutputCallback outputCallback, void* outputCallbackRefCon, CF_RETURNS_RETAINED VTCompressionSessionRef* compressionSessionOut), (allocator, width, height, codecType, encoderSpecification, sourceImageBufferAttributes, compressedDataAllocator, outputCallback, outputCallbackRefCon, compressionSessionOut))
 #define VTCompressionSessionCreate softLink_VideoToolbox_VTCompressionSessionCreate
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCopySupportedPropertyDictionaryForEncoder, OSStatus, (int32_t width, int32_t height, CMVideoCodecType codecType, CFDictionaryRef encoderSpecification, CF_RETURNS_RETAINED CFStringRef* encoderIDOut, CF_RETURNS_RETAINED CFDictionaryRef* supportedPropertiesOut), (width, height, codecType, encoderSpecification, encoderIDOut, supportedPropertiesOut))
+#define VTCopySupportedPropertyDictionaryForEncoder softLink_VideoToolbox_VTCopySupportedPropertyDictionaryForEncoder
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTPropertySupportedValueListKey, CFStringRef)
+#define kVTPropertySupportedValueListKey get_VideoToolbox_kVTPropertySupportedValueListKeySingleton()
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionCompleteFrames, OSStatus, (VTCompressionSessionRef session, CMTime completeUntilPresentationTimeStamp), (session, completeUntilPresentationTimeStamp))
 #define VTCompressionSessionCompleteFrames softLink_VideoToolbox_VTCompressionSessionCompleteFrames
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionEncodeFrame, OSStatus, (VTCompressionSessionRef session, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime duration, CFDictionaryRef frameProperties, void* sourceFrameRefcon, VTEncodeInfoFlags* infoFlagsOut), (session, imageBuffer, presentationTimeStamp, duration, frameProperties, sourceFrameRefcon, infoFlagsOut))

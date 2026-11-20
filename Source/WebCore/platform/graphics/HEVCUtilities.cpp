@@ -241,6 +241,23 @@ String createHEVCCodecParametersString(const HEVCParameters& parameters)
     return resultBuilder.toString();
 }
 
+bool isHEVCMain42210Profile(const HEVCParameters& parameters)
+{
+    constexpr uint8_t rangeExtensionsProfileIDC = 4;
+    if (parameters.generalProfileIDC != rangeExtensionsProfileIDC)
+        return false;
+
+    // ISO/IEC 23008-2 7.3.3: the general_max_*_constraint_flags follow general_frame_only_constraint_flag.
+    auto& flags = parameters.generalConstraintIndicatorFlags;
+    bool max10Bit = flags[0] & 0x04;
+    bool max422Chroma = flags[0] & 0x01;
+    bool max420Chroma = flags[1] & 0x80;
+    bool maxMonochrome = flags[1] & 0x40;
+    bool intra = flags[1] & 0x20;
+    bool onePictureOnly = flags[1] & 0x10;
+    return max10Bit && max422Chroma && !max420Chroma && !maxMonochrome && !intra && !onePictureOnly;
+}
+
 std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCode, const SharedBuffer& buffer)
 {
     // ISO/IEC 14496-15:2014

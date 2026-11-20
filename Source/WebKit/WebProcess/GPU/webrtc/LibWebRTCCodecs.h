@@ -39,6 +39,7 @@
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/H264Utilities.h>
 #include <WebCore/HEVCUtilities.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/TrackInfo.h>
 #include <WebCore/VideoCodecType.h>
@@ -156,13 +157,14 @@ public:
     struct Encoder {
         WTF_MAKE_TZONE_ALLOCATED(Encoder);
     public:
-        explicit Encoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType type, const String& codec, bool useAnnexB, bool isRealtime, WebCore::VideoEncoderScalabilityMode scalabilityMode)
+        explicit Encoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType type, const String& codec, bool useAnnexB, bool isRealtime, WebCore::VideoEncoderScalabilityMode scalabilityMode, WebCore::IntSize size)
             : identifier(identifier)
             , type(type)
             , codec(codec.isolatedCopy())
             , useAnnexB(useAnnexB)
             , isRealtime(isRealtime)
             , scalabilityMode(scalabilityMode)
+            , size(size)
         {
         }
 
@@ -182,6 +184,7 @@ public:
         const bool useAnnexB { true };
         const bool isRealtime { true };
         const WebCore::VideoEncoderScalabilityMode scalabilityMode { WebCore::VideoEncoderScalabilityMode::L1T1 };
+        const WebCore::IntSize size;
 
         Vector<std::pair<String, String>> parameters;
         std::optional<EncoderInitializationData> initializationData;
@@ -268,7 +271,7 @@ private:
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
 
     Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation, bool isMirrored, Function<void(Decoder(*))>&&);
-    Encoder* createEncoderInternal(WebCore::VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, Function<void(Encoder*)>&&);
+    Encoder* createEncoderInternal(WebCore::VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, WebCore::IntSize, Function<void(Encoder*)>&&);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, bool isMirrored, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternalWithLock(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, bool isMirrored, MediaTime, int64_t timestamp, std::optional<uint64_t> duration) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
 
