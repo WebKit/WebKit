@@ -74,12 +74,12 @@ void wgpuCommandEncoderCopyBufferToBuffer(WGPUCommandEncoder commandEncoder, WGP
 
 // A copy whose source or destination does not convert invalidates the encoder, as a failed copy
 // validation does.
-static constexpr auto invalidTexelCopyMessage = @"GPUCommandEncoder copy has a null buffer or texture or an invalid aspect";
+static constexpr auto invalidTexelCopyMessage = "GPUCommandEncoder copy has a null buffer or texture or an invalid aspect"_s;
 
 void wgpuCommandEncoderCopyBufferToTexture(WGPUCommandEncoder commandEncoder, const WGPUTexelCopyBufferInfo* source, const WGPUTexelCopyTextureInfo* destination, const WGPUExtent3D* copySize)
 {
     @autoreleasepool {
-        Ref protectedCommandEncoder = WebGPU::CAPI::metalFromAPI(commandEncoder);
+        Ref protectedCommandEncoder = WebGPU::CAPI::fromAPI(commandEncoder);
         auto apiSource = WebGPU::CAPI::fromAPI(*source);
         auto apiDestination = WebGPU::CAPI::fromAPI(*destination);
         if (!apiSource || !apiDestination)
@@ -91,7 +91,7 @@ void wgpuCommandEncoderCopyBufferToTexture(WGPUCommandEncoder commandEncoder, co
 void wgpuCommandEncoderCopyTextureToBuffer(WGPUCommandEncoder commandEncoder, const WGPUTexelCopyTextureInfo* source, const WGPUTexelCopyBufferInfo* destination, const WGPUExtent3D* copySize)
 {
     @autoreleasepool {
-        Ref protectedCommandEncoder = WebGPU::CAPI::metalFromAPI(commandEncoder);
+        Ref protectedCommandEncoder = WebGPU::CAPI::fromAPI(commandEncoder);
         auto apiSource = WebGPU::CAPI::fromAPI(*source);
         auto apiDestination = WebGPU::CAPI::fromAPI(*destination);
         if (!apiSource || !apiDestination)
@@ -103,7 +103,7 @@ void wgpuCommandEncoderCopyTextureToBuffer(WGPUCommandEncoder commandEncoder, co
 void wgpuCommandEncoderCopyTextureToTexture(WGPUCommandEncoder commandEncoder, const WGPUTexelCopyTextureInfo* source, const WGPUTexelCopyTextureInfo* destination, const WGPUExtent3D* copySize)
 {
     @autoreleasepool {
-        Ref protectedCommandEncoder = WebGPU::CAPI::metalFromAPI(commandEncoder);
+        Ref protectedCommandEncoder = WebGPU::CAPI::fromAPI(commandEncoder);
         auto apiSource = WebGPU::CAPI::fromAPI(*source);
         auto apiDestination = WebGPU::CAPI::fromAPI(*destination);
         if (!apiSource || !apiDestination)

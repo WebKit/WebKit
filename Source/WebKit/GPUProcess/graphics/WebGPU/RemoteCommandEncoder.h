@@ -130,6 +130,7 @@ private:
 
     void finish(const WebGPU::CommandBufferDescriptor&, WebGPUIdentifier);
 
+    void makeInvalid(String&& error);
     void setLabel(String&&);
     void destruct();
 

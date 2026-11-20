@@ -1648,6 +1648,11 @@ void CommandEncoder::makeInvalid(NSString* errorString)
         commandBuffer->makeInvalid(errorString);
 }
 
+void CommandEncoder::makeInvalid(String&& error)
+{
+    makeInvalid(error.createNSString().get());
+}
+
 void CommandEncoder::addICB(id<MTLIndirectCommandBuffer> icb)
 {
     if (!icb)

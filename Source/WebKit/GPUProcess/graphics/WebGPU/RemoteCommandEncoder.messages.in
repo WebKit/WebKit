@@ -45,6 +45,7 @@ messages -> RemoteCommandEncoder Stream {
     void WriteTimestamp(WebKit::WebGPUIdentifier identifier, uint32_t queryIndex)
     void ResolveQuerySet(WebKit::WebGPUIdentifier identifier, uint32_t firstQuery, uint32_t queryCount, WebKit::WebGPUIdentifier destination, uint64_t destinationOffset)
     void Finish(WebKit::WebGPU::CommandBufferDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
+    void MakeInvalid(String error)
     void SetLabel(String label)
 }
 

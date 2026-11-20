@@ -236,6 +236,12 @@ RefPtr<::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const ::WebGPU
     return result;
 }
 
+void RemoteCommandEncoderProxy::makeInvalid(String&& error)
+{
+    auto sendResult = send(Messages::RemoteCommandEncoder::MakeInvalid(WTF::move(error)));
+    UNUSED_VARIABLE(sendResult);
+}
+
 void RemoteCommandEncoderProxy::setLabel(String&& label)
 {
     auto sendResult = send(Messages::RemoteCommandEncoder::SetLabel(WTF::move(label)));

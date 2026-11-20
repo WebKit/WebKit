@@ -114,6 +114,7 @@ private:
     void executeBundles(Vector<WebGPUIdentifier>&&);
     void end();
 
+    void makeInvalid(String&& error);
     void setLabel(String&&);
     void destruct();
 
