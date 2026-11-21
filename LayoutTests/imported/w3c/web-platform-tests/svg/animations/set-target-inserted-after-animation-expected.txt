@@ -1,0 +1,6 @@
+
+abc
+
+PASS <set> targeting a <rect> inserted after it
+PASS <set> targeting a <textPath> inserted after it
+
