@@ -1020,9 +1020,6 @@ public:
 
     const Color& themeColor();
 
-    void setTextColor(const Color& color) { m_textColor = color; }
-    const Color& textColor() const LIFETIME_BOUND { return m_textColor; }
-
     Color linkColor(const Style::ComputedStyle&, StyleColorOptionsPurpose) const;
     Color visitedLinkColor(const Style::ComputedStyle&, StyleColorOptionsPurpose) const;
     Color activeLinkColor(const Style::ComputedStyle&, StyleColorOptionsPurpose) const;
@@ -2504,7 +2501,6 @@ private:
     Color m_applicationManifestThemeColor;
     Color m_applicationManifestThemeColorDark;
 
-    Color m_textColor { Color::black };
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;

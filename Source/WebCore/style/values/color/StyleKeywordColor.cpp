@@ -49,8 +49,6 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(KeywordColor);
 Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& state)
 {
     switch (unresolved.valueID) {
-    case CSSValueID::InternalDocumentTextColor:
-        return { state.document->textColor() };
     case CSSValueID::Currentcolor:
         return { CurrentColor() };
     case CSSValueID::Accentcolor:
@@ -63,6 +61,17 @@ Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& st
 
     auto resolveColor = [&](StyleColorOptionsPurpose purpose) {
         switch (unresolved.valueID) {
+        case CSSValueID::InternalDocumentTextColor: {
+            switch (purpose) {
+            case StyleColorOptionsPurpose::ComputedStyle:
+                return state.bodyTextColor;
+            case StyleColorOptionsPurpose::Rendering:
+                return state.renderingBodyTextColor;
+            }
+
+            ASSERT_NOT_REACHED();
+            return state.bodyTextColor;
+        }
         case CSSValueID::WebkitLink:
             return state.forVisitedLink == ForVisitedLink::Yes ? state.document->visitedLinkColor(state.style, purpose) : state.document->linkColor(state.style, purpose);
         case CSSValueID::WebkitActivelink:

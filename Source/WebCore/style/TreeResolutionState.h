@@ -34,6 +34,8 @@ namespace Style {
 // This state has lifetime of a single style resolution cycle, including any layout interleaving.
 struct TreeResolutionState : public CanMakeCheckedPtr<TreeResolutionState> {
     AnchorPositionedStates anchorPositionedStates;
+    WebCore::Color bodyTextColor { WebCore::Color::black };
+    WebCore::Color renderingBodyTextColor { WebCore::Color::black };
 
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TreeResolutionState);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(TreeResolutionState);

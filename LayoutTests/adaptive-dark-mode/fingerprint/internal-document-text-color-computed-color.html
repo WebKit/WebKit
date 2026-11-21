@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ AXCustomColorModeEnabled=true ] -->
+<!-- No <!DOCTYPE html> here, this page should be tested in quirks mode -->
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<table id="table">
+  <tr>
+    <td>This text should be white when Adaptive Dark Mode is enabled.</td>
+  </tr>
+</table>
+
+<script>
+  test(() => {
+    assert_equals(getComputedStyle(table).color, "rgb(0, 0, 0)");
+  }, "The default value of -internal-document-text-color computes to black when Adaptive Dark Mode is enabled");
+</script>

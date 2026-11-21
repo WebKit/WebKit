@@ -366,8 +366,10 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
 
     // This is needed for resolving color:-webkit-text for subsequent elements.
     // FIXME: We shouldn't mutate document when resolving style.
-    if (&element == m_document->body())
-        m_document->setTextColor(update.style->visitedDependentColor());
+    if (&element == m_document->body()) {
+        m_treeResolutionState->bodyTextColor = update.style->color();
+        m_treeResolutionState->renderingBodyTextColor = update.style->usedColor();
+    }
 
     // FIXME: These elements should not change renderer based on appearance property.
     if (auto* input = dynamicDowncast<HTMLInputElement>(element); (input && input->isSearchField())
@@ -1619,6 +1621,13 @@ std::unique_ptr<Update> TreeResolver::resolve()
         m_update = makeUnique<Update>(m_document);
     m_scopeStack.append(adoptRef(*new Scope(m_document, *protect(m_update))));
     m_parentStack.append(Parent(m_document));
+
+    if (RefPtr body = m_document->body()) {
+        if (CheckedPtr bodyStyle = body->renderOrDisplayContentsStyle()) {
+            m_treeResolutionState->bodyTextColor = bodyStyle->color();
+            m_treeResolutionState->renderingBodyTextColor = bodyStyle->usedColor();
+        }
+    }
 
     resolveComposedTree();
 

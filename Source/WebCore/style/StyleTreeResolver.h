@@ -174,6 +174,7 @@ private:
     NODELETE const Style::ComputedStyle* parentBoxStyle() const LIFETIME_BOUND;
     NODELETE const Style::ComputedStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const LIFETIME_BOUND;
     NODELETE const Style::ComputedStyle* documentElementStyle() const;
+    const Style::ComputedStyle* documentBodyStyle() const;
 
     LayoutInterleavingAction updateAnchorPositioningState(Element&, const Style::ComputedStyle*);
 

@@ -1,0 +1,4 @@
+This text should be white when Adaptive Dark Mode is enabled.
+
+PASS The default value of -internal-document-text-color computes to black when Adaptive Dark Mode is enabled
+

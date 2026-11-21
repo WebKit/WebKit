@@ -207,6 +207,9 @@ public:
     AnchorPositionedStates* anchorPositionedStates() LIFETIME_BOUND { return m_context.treeResolutionState ? &m_context.treeResolutionState->anchorPositionedStates : nullptr; }
     const std::optional<BuilderPositionTryFallback>& positionTryFallback() const LIFETIME_BOUND { return m_context.positionTryFallback; }
 
+    WebCore::Color bodyTextColor() const { return m_context.treeResolutionState ? m_context.treeResolutionState->bodyTextColor : WebCore::Color::black; }
+    WebCore::Color renderingBodyTextColor() const { return m_context.treeResolutionState ? m_context.treeResolutionState->renderingBodyTextColor : WebCore::Color::black; }
+
     // FIXME: Copying a FontCascadeDescription is really inefficient. Migrate all callers to
     // setFontDescriptionXXX() variants below, then remove these functions.
     inline void setFontDescription(FontCascadeDescription&&);

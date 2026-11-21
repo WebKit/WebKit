@@ -397,7 +397,9 @@ auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState
         .document = builderState.document(),
         .style = builderState.style(),
         .conversionData = builderState.cssToLengthConversionData(),
-        .forVisitedLink = forVisitedLink
+        .forVisitedLink = forVisitedLink,
+        .bodyTextColor = builderState.bodyTextColor(),
+        .renderingBodyTextColor = builderState.renderingBodyTextColor()
     };
     return toStyleColor(value, resolutionState);
 }

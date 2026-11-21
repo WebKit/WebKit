@@ -43,6 +43,8 @@ struct ColorResolutionState {
     const CheckedRef<const ComputedStyle> style;
     CSSToLengthConversionData conversionData;
     ForVisitedLink forVisitedLink;
+    WebCore::Color bodyTextColor;
+    WebCore::Color renderingBodyTextColor;
 
     unsigned nestingLevel = 0;
 };
