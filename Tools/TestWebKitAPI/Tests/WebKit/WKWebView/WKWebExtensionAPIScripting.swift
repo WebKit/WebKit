@@ -186,26 +186,6 @@ struct WKWebExtensionAPIScriptingTests {
         }
     }
 
-    /// The match pattern for every path on the URL's scheme and host.
-    private func matchPatternForAllPaths(
-        of url: URL,
-        fileID: String = #fileID,
-        filePath: String = #filePath,
-        line: Int = #line,
-        column: Int = #column
-    ) throws -> WKWebExtension.MatchPattern {
-        let scheme = try requireNonNil(url.scheme, fileID: fileID, filePath: filePath, line: line, column: column)
-        let host = try requireNonNil(url.host(), fileID: fileID, filePath: filePath, line: line, column: column)
-
-        return try requireNonNil(
-            WKWebExtension.MatchPattern.cachedPattern(scheme: scheme, host: host, path: "/*"),
-            fileID: fileID,
-            filePath: filePath,
-            line: line,
-            column: column
-        )
-    }
-
     private func loadAndRun(backgroundScript: String) async throws {
         let manager = try loadWebExtension(manifest: scriptingManifest, resources: ["background.js": backgroundScript])
         try await manager.run()
@@ -377,7 +357,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.webNavigation)
             context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
@@ -832,7 +812,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
             try await manager.waitForTestMessage("Load Tab")
@@ -927,7 +907,7 @@ struct WKWebExtensionAPIScriptingTests {
             let url = configuration.address
 
             for permittedURL in [url, configuration.localhostAddress] {
-                let matchPattern = try matchPatternForAllPaths(of: permittedURL)
+                let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: permittedURL))
                 context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
             }
 
@@ -1008,7 +988,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
             try await manager.waitForTestMessage("Load Tab")
@@ -1232,7 +1212,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.webNavigation)
             context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
@@ -1489,7 +1469,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.webNavigation)
             context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
@@ -1581,7 +1561,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.webNavigation)
             context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
@@ -1658,7 +1638,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.webNavigation)
             context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
@@ -1861,7 +1841,7 @@ struct WKWebExtensionAPIScriptingTests {
 
             let url = configuration.localhostAddress
 
-            let matchPattern = try matchPatternForAllPaths(of: url)
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(matchingAllPathsOf: url))
             testContext.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.webNavigation)
             testContext.setPermissionStatus(.grantedExplicitly, for: matchPattern)
 
