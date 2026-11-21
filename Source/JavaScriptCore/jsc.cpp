@@ -4521,7 +4521,7 @@ void CommandLine::parseArguments(int argc, char** argv, int start)
             // We just assume input is utf-8 (probably ascii)
             String subArgList = String::fromLatin1(arg + singleStringSubArgList.length());
             auto splitArgs = subArgList.split(" "_s).map([](const String& arg) {
-                return arg.impl()->utf8();
+                return arg.utf8();
             });
             Vector<char*> buffer = splitArgs.map([](const UTF8CString& arg) {
                 return const_cast<char*>(arg.legacyCStringPointer());

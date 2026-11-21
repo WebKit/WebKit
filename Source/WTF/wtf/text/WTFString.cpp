@@ -387,9 +387,7 @@ Vector<String> String::splitAllowingEmptyEntries(StringView separator) const
 
 ASCIICString String::ascii() const
 {
-    if (is8Bit())
-        return StringImpl::asciiForCharacters(span8());
-    return StringImpl::asciiForCharacters(span16());
+    return StringView { *this }.ascii();
 }
 
 Latin1CString String::latin1() const
@@ -416,7 +414,7 @@ Latin1CString String::latin1() const
 
 std::expected<UTF8CString, UTF8ConversionError> String::tryGetUTF8(ConversionMode mode) const
 {
-    SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->tryGetUTF8(mode) : UTF8CString { u8""_span };
+    return StringView { *this }.tryGetUTF8(mode);
 }
 
 UTF8CString String::utf8(ConversionMode mode) const

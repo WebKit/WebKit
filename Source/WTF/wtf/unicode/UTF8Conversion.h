@@ -52,6 +52,17 @@ NODELETE WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const La
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t>, std::span<char16_t>);
 NODELETE WTF_EXPORT_PRIVATE ConversionResult<char8_t> convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
 
+// Unpaired surrogates count as replacement characters.
+WTF_EXPORT_PRIVATE size_t lengthUTF8(std::span<const Latin1Character>);
+WTF_EXPORT_PRIVATE size_t lengthUTF8(std::span<const char16_t>);
+
+// Unlike convert() and convertReplacingInvalidSequences(), these rely on the caller to size the buffer.
+// lengthUTF8AssumingWellFormed() is exact if there are no unpaired surrogates, and convertWellFormed() fails if there are.
+// convertReplacingUnpairedSurrogates() needs a buffer of exactly lengthUTF8().
+WTF_EXPORT_PRIVATE size_t lengthUTF8AssumingWellFormed(std::span<const char16_t>);
+NODELETE WTF_EXPORT_PRIVATE bool convertWellFormed(std::span<const char16_t>, std::span<char8_t>);
+NODELETE WTF_EXPORT_PRIVATE void convertReplacingUnpairedSurrogates(std::span<const char16_t>, std::span<char8_t>);
+
 NODELETE WTF_EXPORT_PRIVATE bool equal(std::span<const char16_t>, std::span<const char8_t>);
 NODELETE WTF_EXPORT_PRIVATE bool equal(std::span<const Latin1Character>, std::span<const char8_t>);
 
