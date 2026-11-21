@@ -63,12 +63,17 @@ private:
     CustomPropertyData(const CustomPropertyData&);
 
     template<typename Callback> void forEachInternal(NOESCAPE const Callback&) const;
+    bool valuesEqual(const CustomPropertyData&) const;
+    static uint64_t nextIdentifier();
 
     const RefPtr<const CustomPropertyData> m_parentValues;
     CustomPropertyValueMap m_ownValues;
     unsigned m_size { 0 };
     unsigned m_ancestorCount { 0 };
     bool m_mayHaveAnimatableProperties { false };
+    // Every descendant that inherits the same pair of maps compares them again; remember the last unequal one.
+    uint64_t m_identifier { nextIdentifier() };
+    mutable uint64_t m_lastUnequalIdentifier { 0 };
 #if ASSERT_ENABLED
     mutable bool m_hasChildren { false };
 #endif

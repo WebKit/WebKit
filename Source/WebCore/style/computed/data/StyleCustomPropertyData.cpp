@@ -27,12 +27,20 @@
 #include "config.h"
 #include "StyleCustomPropertyData.h"
 
+#include <atomic>
+
 namespace WebCore {
 namespace Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CustomPropertyData);
 
 static constexpr auto maximumAncestorCount = 4;
+
+uint64_t CustomPropertyData::nextIdentifier()
+{
+    static std::atomic<uint64_t> identifier;
+    return ++identifier;
+}
 
 CustomPropertyData::CustomPropertyData(const CustomPropertyData& other)
     : m_size(other.m_size)
@@ -90,6 +98,8 @@ void CustomPropertyData::set(const AtomString& name, Ref<const CustomProperty>&&
     m_mayHaveAnimatableProperties = m_mayHaveAnimatableProperties || value->isAnimatable();
 
     auto addResult = m_ownValues.set(name, WTF::move(value));
+    m_identifier = nextIdentifier();
+    m_lastUnequalIdentifier = 0;
 
     bool isNewProperty = addResult.isNewEntry && (!m_parentValues || !m_parentValues->get(name));
     if (isNewProperty)
@@ -101,6 +111,19 @@ bool CustomPropertyData::operator==(const CustomPropertyData& other) const
     if (m_size != other.m_size)
         return false;
 
+    if (m_lastUnequalIdentifier == other.m_identifier || other.m_lastUnequalIdentifier == m_identifier)
+        return false;
+
+    if (valuesEqual(other))
+        return true;
+
+    m_lastUnequalIdentifier = other.m_identifier;
+    other.m_lastUnequalIdentifier = m_identifier;
+    return false;
+}
+
+bool CustomPropertyData::valuesEqual(const CustomPropertyData& other) const
+{
     if (m_parentValues == other.m_parentValues) {
         // This relies on the values in m_ownValues never being equal to those in m_parentValues.
         if (m_ownValues.size() != other.m_ownValues.size())
