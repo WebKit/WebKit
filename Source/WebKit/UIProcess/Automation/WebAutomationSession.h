@@ -290,6 +290,7 @@ public:
     // Unlike the classic command, a user prompt does not end the evaluation: it completes when the script does.
     void evaluateJavaScriptFunctionForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& forceUserGesture, Inspector::CommandCallback<String>&&);
     void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
+    void locateNodesForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, Inspector::CommandCallback<String>&&);
 #if ENABLE(WEBDRIVER_BIDI)
     void getBidiRealmInfo(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
 #endif

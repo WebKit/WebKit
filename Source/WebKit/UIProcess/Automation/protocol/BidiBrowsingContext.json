@@ -114,9 +114,8 @@
             "id": "LocatorType",
             "description": "The type of locator strategy to use for finding nodes.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Locator",
-            "bug": "https://bugs.webkit.org/show_bug.cgi?id=288329",
             "type": "string",
-            "enum": [ "css" ]
+            "enum": [ "css", "xpath", "innerText", "accessibility", "context" ]
         },
         {
             "id": "Viewport",

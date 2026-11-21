@@ -62,6 +62,8 @@
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/HTMLDataListElement.h>
@@ -454,6 +456,46 @@ static JSValueRef shadowRootForElement(JSContextRef context, JSObjectRef functio
     return toRef(globalObject, WebCore::toJS(globalObject, elementGlobalObject, static_cast<WebCore::Node&>(*shadowRoot)));
 }
 
+// accessibilityPropertiesForElement(element, includeRole, includeName, updateCache) returns [role, name] for an element, with
+// null for a property that wasn't asked for, or null when the element has no accessibility object. An array is returned
+// rather than an object, so that page script can't change what the caller reads through accessors on Object.prototype.
+// The caller asks for a cache update once per command, since updating it lays out the page.
+static JSValueRef accessibilityPropertiesForElement(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
+{
+    // This is using the JSC C API so we cannot take a std::span in argument directly.
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
+    if (arguments.size() != 4 || !JSValueIsObject(context, arguments[0]))
+        return JSValueMakeNull(context);
+
+    JSObjectRef object = JSValueToObject(context, arguments[0], exception);
+    auto elementWrapper = object ? dynamicDowncast<WebCore::JSElement>(toJS(object)) : nullptr;
+    if (!elementWrapper)
+        return JSValueMakeNull(context);
+
+    bool includeRole = JSValueToBoolean(context, arguments[1]);
+    bool includeName = JSValueToBoolean(context, arguments[2]);
+    bool updateCache = JSValueToBoolean(context, arguments[3]);
+
+    Ref element = elementWrapper->wrapped();
+    WebCore::AXObjectCache::enableAccessibility();
+    CheckedPtr axObjectCache = protect(element->document())->axObjectCache();
+    if (!axObjectCache)
+        return JSValueMakeNull(context);
+
+    // Without a layout and cache update, an element whose renderer was just created has no accessibility object.
+    if (updateCache)
+        axObjectCache->performDeferredCacheUpdate(ForceLayout::Yes);
+    RefPtr axObject = axObjectCache->exportedGetOrCreate(element.get());
+    if (!axObject)
+        return JSValueMakeNull(context);
+
+    JSValueRef properties[] = {
+        includeRole ? toJSValue(context, axObject->computedRoleString()) : JSValueMakeNull(context),
+        includeName ? toJSValue(context, axObject->computedLabel()) : JSValueMakeNull(context),
+    };
+    return JSObjectMakeArray(context, std::size(properties), properties, exception);
+}
+
 // A script can throw an object whose name or message can't be converted to a string, such as a symbol.
 static String toStringIgnoringExceptions(JSContextRef context, JSValueRef value)
 {
@@ -564,7 +606,8 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
     JSObjectRef bidiRemoteValueTypeFunction = JSObjectMakeFunctionWithCallback(context, nullptr, bidiRemoteValueType);
     JSObjectRef frameIdentifierForWindowProxyFunction = JSObjectMakeFunctionWithCallback(context, nullptr, frameIdentifierForWindowProxy);
     JSObjectRef shadowRootModeFunction = JSObjectMakeFunctionWithCallback(context, nullptr, shadowRootMode);
-    JSValueRef arguments[] = { sessionIdentifier, currentFrameIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction, isKnownReferenceFunction, addKnownReferenceFunction, shadowRootForElementFunction, bidiRemoteValueTypeFunction, frameIdentifierForWindowProxyFunction, shadowRootModeFunction };
+    JSObjectRef accessibilityPropertiesForElementFunction = JSObjectMakeFunctionWithCallback(context, nullptr, accessibilityPropertiesForElement);
+    JSValueRef arguments[] = { sessionIdentifier, currentFrameIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction, isKnownReferenceFunction, addKnownReferenceFunction, shadowRootForElementFunction, bidiRemoteValueTypeFunction, frameIdentifierForWindowProxyFunction, shadowRootModeFunction, accessibilityPropertiesForElementFunction };
     JSObjectRef scriptObject = const_cast<JSObjectRef>(JSObjectCallAsFunction(context, scriptObjectFunction, nullptr, std::size(arguments), arguments, &exception));
     ASSERT(JSValueIsObject(context, scriptObject));
 
@@ -862,6 +905,63 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
         exceptionMessage = adoptRef(JSValueToStringCopy(context, exception, nullptr))->string();
 
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
+}
+
+void WebAutomationSessionProxy::locateNodesForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
+    if (!window || !window->frame())
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    // No need to track the main frame, this is handled by didClearWindowObjectForFrame.
+    if (!coreLocalFrame->isMainFrame())
+        ensureObserverForFrame(*frame);
+
+    JSObjectRef scriptObject = scriptObjectForFrame(*frame);
+    ASSERT(scriptObject);
+
+    JSGlobalContextRef context = frame->jsContext();
+    JSValueRef exception = nullptr;
+    JSValueRef startNodes = startNodeIdentifiers ? toJSArray(context, *startNodeIdentifiers, toJSValue, &exception) : JSValueMakeNull(context);
+
+    // https://w3c.github.io/webdriver-bidi/#locate-the-container-element
+    // The context locator names a child frame, which may be in another process. Its owner element is in this frame's
+    // document, possibly in a closed shadow tree that script can't reach.
+    JSValueRef containerElement = JSValueMakeNull(context);
+    if (containerFrameID) {
+        RefPtr childFrame = WebProcess::singleton().webFrame(*containerFrameID);
+        RefPtr coreChildFrame = childFrame ? childFrame->coreFrame() : nullptr;
+        RefPtr ownerElement = coreChildFrame ? coreChildFrame->ownerElement() : nullptr;
+        if (ownerElement && ownerElement->document().frame() == coreLocalFrame.get()) {
+            if (auto* globalObject = dynamicDowncast<WebCore::JSDOMGlobalObject>(toJS(context))) {
+                SUPPRESS_UNCOUNTED_LOCAL JSC::VM& vm = globalObject->vm();
+                JSC::JSLockHolder locker(vm);
+                containerElement = toRef(globalObject, WebCore::toJS(globalObject, globalObject, static_cast<WebCore::Node&>(*ownerElement)));
+            }
+        }
+    }
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, locator),
+        startNodes,
+        maxNodeCount ? JSValueMakeNumber(context, *maxNodeCount) : JSValueMakeNull(context),
+        maxObjectDepth ? JSValueMakeNumber(context, *maxObjectDepth) : JSValueMakeNull(context),
+        maxDomDepth ? JSValueMakeNumber(context, *maxDomDepth) : JSValueMakeNull(context),
+        toJSValue(context, includeShadowTree),
+        containerElement
+    };
+
+    JSValueRef result = callPropertyFunction(context, scriptObject, "locateNodesForBidi"_s, std::size(functionArguments), functionArguments, &exception);
+    if (exception || !JSValueIsString(context, result))
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
+
+    completionHandler(adoptRef(JSValueToStringCopy(context, result, nullptr))->string(), { });
 }
 
 void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&& completionHandler)

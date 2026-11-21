@@ -25,7 +25,7 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, shadowRootForElement, bidiRemoteValueType, frameIdentifierForWindowProxy, shadowRootMode) {
+(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, shadowRootForElement, bidiRemoteValueType, frameIdentifierForWindowProxy, shadowRootMode, accessibilityPropertiesForElement) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
@@ -41,6 +41,15 @@ const setForEach = Set.prototype.forEach;
 const elementNodeType = 1;
 const attributeNodeType = 2;
 const documentNodeType = 9;
+const documentFragmentNodeType = 11;
+
+const htmlNamespace = "http://www.w3.org/1999/xhtml";
+
+// XPathResult.ORDERED_NODE_SNAPSHOT_TYPE.
+const xpathOrderedNodeSnapshotType = 7;
+
+// Errors that browsingContext.locateNodes reports, named after the ErrorMessage values in Automation.json.
+const bidiLocateNodesErrorNames = new Set(["InvalidParameter", "InvalidSelector", "NodeNotFound", "InternalError"]);
 
 // The UI process can't parse JSON that is nested more than 1000 levels deep. This leaves room for
 // the message around a remote value, and for the levels inside the innermost remote value.
@@ -127,6 +136,41 @@ let AutomationSessionProxy = class AutomationSessionProxy
             let fallbackMessage = name === "JavaScriptTimeout" ? "Script evaluation timed out." : "Script evaluation failed.";
             resultCallback(frameID, callbackID, createBidiScriptError(error, name, fallbackMessage));
         });
+    }
+
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes
+    // The UI process validates the parameters. Returns a JSON string, either { nodes } with each node serialized
+    // as a remote value, or { error, message } where error names an ErrorMessage value.
+    locateNodesForBidi(locatorString, startNodeIdentifiers, maxNodeCount, maxObjectDepth, maxDomDepth, includeShadowTree, containerElement)
+    {
+        try {
+            // Check the type of each start node before clearing stale nodes, since a node that isn't in the document, such as an
+            // attribute, is invalid as a start node rather than unknown.
+            if (startNodeIdentifiers)
+                startNodeIdentifiers.forEach(identifier => this._validateBidiLocateNodesStartNodeType(identifier));
+
+            this._clearStaleNodes();
+
+            let locator = JSON.parse(locatorString);
+            let contextNodes = startNodeIdentifiers ? startNodeIdentifiers.map(identifier => this._bidiLocateNodesStartNode(identifier)) : [document];
+            let nodes;
+            if (locator.type === "context") {
+                // The UI process checked that the context is a child of this one, and the web process found its container element.
+                if (startNodeIdentifiers)
+                    throw { name: "InvalidParameter", message: "The context locator can't be used with startNodes." };
+                nodes = containerElement ? [containerElement] : [];
+            } else
+                nodes = this._bidiLocateNodes(locator, contextNodes, maxNodeCount);
+
+            // Each node gets its own serialization internal map.
+            let serializedNodes = nodes.map(node => this.serializeBidiRemoteValue(node, maxObjectDepth, maxDomDepth, includeShadowTree, new Map));
+            return jsonStringify({ nodes: serializedNodes });
+        } catch (error) {
+            let name = safelyReadStringProperty(error, "name");
+            if (!bidiLocateNodesErrorNames.has(name))
+                name = "InternalError";
+            return jsonStringify({ error: name, message: safelyReadStringProperty(error, "message") || "" });
+        }
     }
 
     nodeForIdentifier(identifier)
@@ -433,6 +477,175 @@ let AutomationSessionProxy = class AutomationSessionProxy
         addKnownReference(currentFrameIdentifier, identifier);
 
         return identifier;
+    }
+
+    _validateBidiLocateNodesStartNodeType(identifier)
+    {
+        let node = this._idToNodeMap.get(identifier);
+        if (!node)
+            return;
+
+        let nodeType = node.nodeType;
+        if (nodeType !== elementNodeType && nodeType !== documentNodeType && nodeType !== documentFragmentNodeType)
+            throw { name: "InvalidParameter", message: "startNodes must be elements, documents or document fragments." };
+    }
+
+    _bidiLocateNodesStartNode(identifier)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-shared-reference
+        try {
+            return this._nodeForIdentifier(identifier);
+        } catch {
+            throw { name: "NodeNotFound", message: `No node with sharedId '${identifier}' was found in this browsing context.` };
+        }
+    }
+
+    _bidiLocateNodes(locator, contextNodes, maxNodeCount)
+    {
+        switch (locator.type) {
+        case "css":
+            return this._bidiLocateNodesUsingCSS(contextNodes, locator.value, maxNodeCount);
+        case "xpath":
+            return this._bidiLocateNodesUsingXPath(contextNodes, locator.value, maxNodeCount);
+        case "innerText": {
+            if (!locator.value)
+                throw { name: "InvalidSelector", message: "The innerText locator value must not be empty." };
+            let ignoreCase = locator.ignoreCase ?? false;
+            let searchText = ignoreCase ? locator.value.toUpperCase() : locator.value;
+            return this._bidiLocateNodesUsingInnerText(contextNodes, searchText, locator.maxDepth ?? null, locator.matchType ?? "full", ignoreCase, maxNodeCount);
+        }
+        case "accessibility": {
+            let returnedNodes = [];
+            let state = { selector: locator.value, maxNodeCount, returnedNodes, needsCacheUpdate: true };
+            this._bidiCollectNodesUsingAccessibilityAttributes(contextNodes, state);
+            return returnedNodes;
+        }
+        }
+
+        throw { name: "InvalidParameter", message: `Unknown locator type '${locator.type}'.` };
+    }
+
+    _bidiLocateNodesUsingCSS(contextNodes, selector, maxNodeCount)
+    {
+        // https://w3c.github.io/webdriver-bidi/#locate-nodes-using-css
+        let returnedNodes = [];
+        for (let contextNode of contextNodes) {
+            let elements;
+            try {
+                elements = contextNode.querySelectorAll(selector);
+            } catch (error) {
+                throw { name: "InvalidSelector", message: `Invalid CSS selector: ${safelyReadStringProperty(error, "message")}` };
+            }
+
+            for (let element of elements) {
+                returnedNodes.push(element);
+                if (maxNodeCount !== null && returnedNodes.length === maxNodeCount)
+                    return returnedNodes;
+            }
+        }
+        return returnedNodes;
+    }
+
+    _bidiLocateNodesUsingXPath(contextNodes, selector, maxNodeCount)
+    {
+        // https://w3c.github.io/webdriver-bidi/#locate-nodes-using-xpath
+        let returnedNodes = [];
+        for (let contextNode of contextNodes) {
+            let evaluateResult;
+            try {
+                evaluateResult = document.evaluate(selector, contextNode, null, xpathOrderedNodeSnapshotType, null);
+            } catch (error) {
+                let message = safelyReadStringProperty(error, "message");
+                if (safelyReadStringProperty(error, "name") === "SyntaxError")
+                    throw { name: "InvalidSelector", message: `Invalid XPath expression: ${message}` };
+                throw { name: "InternalError", message: `Evaluating the XPath expression failed: ${message}` };
+            }
+
+            let length = evaluateResult.snapshotLength;
+            for (let index = 0; index < length; ++index) {
+                returnedNodes.push(evaluateResult.snapshotItem(index));
+                if (maxNodeCount !== null && returnedNodes.length === maxNodeCount)
+                    return returnedNodes;
+            }
+        }
+        return returnedNodes;
+    }
+
+    _bidiLocateNodesUsingInnerText(contextNodes, searchText, maxDepth, matchType, ignoreCase, maxNodeCount)
+    {
+        // https://w3c.github.io/webdriver-bidi/#locate-nodes-using-inner-text
+        // "Children" here are element children, as in other implementations and the WPT expectations.
+        let returnedNodes = [];
+        for (let contextNode of contextNodes) {
+            let nodeType = contextNode.nodeType;
+            if (nodeType === documentNodeType || nodeType === documentFragmentNodeType) {
+                // Max depth isn't decreased, so searching a document matches searching its document element.
+                returnedNodes.push(...this._bidiLocateNodesUsingInnerText([...contextNode.children], searchText, maxDepth, matchType, ignoreCase, maxNodeCount));
+                continue;
+            }
+
+            if (nodeType !== elementNodeType)
+                continue;
+
+            // Elements that aren't HTML elements, such as SVG text, have no innerText. Match their text content instead.
+            let nodeInnerText = contextNode.namespaceURI === htmlNamespace ? contextNode.innerText : contextNode.textContent;
+            let nodeText = ignoreCase ? nodeInnerText.toUpperCase() : nodeInnerText;
+            if (!nodeText.includes(searchText))
+                continue;
+
+            let childNodes = [...contextNode.children];
+            if (!childNodes.length || maxDepth === 0) {
+                if (matchType === "partial" || nodeText === searchText)
+                    returnedNodes.push(contextNode);
+                continue;
+            }
+
+            let childMaxDepth = maxDepth === null ? null : maxDepth - 1;
+            let childNodeMatches = this._bidiLocateNodesUsingInnerText(childNodes, searchText, childMaxDepth, matchType, ignoreCase, maxNodeCount);
+            if (!childNodeMatches.length && matchType === "partial")
+                returnedNodes.push(contextNode);
+            else
+                returnedNodes.push(...childNodeMatches);
+        }
+
+        if (maxNodeCount !== null && returnedNodes.length > maxNodeCount)
+            returnedNodes.length = maxNodeCount;
+        return returnedNodes;
+    }
+
+    // Returns true once the maximum returned node count is reached, so the whole walk stops.
+    _bidiCollectNodesUsingAccessibilityAttributes(contextNodes, state)
+    {
+        // https://w3c.github.io/webdriver-bidi/#collect-nodes-using-accessibility-attributes
+        let { selector, maxNodeCount, returnedNodes } = state;
+        let includeRole = selector.role !== undefined;
+        let includeName = selector.name !== undefined;
+        for (let contextNode of contextNodes) {
+            let match = contextNode.nodeType === elementNodeType;
+            if (match) {
+                let properties = accessibilityPropertiesForElement(contextNode, includeRole, includeName, state.needsCacheUpdate);
+                state.needsCacheUpdate = false;
+                if (!properties)
+                    match = false;
+                else {
+                    // Indexing, unlike destructuring, doesn't go through the array iterator, which page script can replace.
+                    if (includeRole && properties[0] !== selector.role)
+                        match = false;
+                    if (includeName && properties[1] !== selector.name)
+                        match = false;
+                }
+            }
+
+            if (match) {
+                returnedNodes.push(contextNode);
+                if (maxNodeCount !== null && returnedNodes.length === maxNodeCount)
+                    return true;
+            }
+
+            if (this._bidiCollectNodesUsingAccessibilityAttributes([...contextNode.children], state))
+                return true;
+        }
+        return false;
     }
 
     _clearStaleNodes()
