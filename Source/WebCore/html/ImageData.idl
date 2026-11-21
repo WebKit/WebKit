@@ -29,7 +29,6 @@
 typedef (Uint8ClampedArray or Float16Array) ImageDataArray;
 
 [
-    CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     ReportExtraMemoryCost,
@@ -41,7 +40,7 @@ typedef (Uint8ClampedArray or Float16Array) ImageDataArray;
 
     readonly attribute unsigned long width;
     readonly attribute unsigned long height;
-    readonly attribute ImageDataArray data;
+    [CachedAttribute] readonly attribute ImageDataArray data;
     [EnabledBySetting=CanvasColorSpaceEnabled] readonly attribute PredefinedColorSpace colorSpace;
     [EnabledBySetting=CanvasColorTypeEnabled] readonly attribute ImageDataPixelFormat pixelFormat;
 };
