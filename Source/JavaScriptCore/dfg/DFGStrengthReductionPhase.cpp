@@ -1583,6 +1583,25 @@ private:
             break;
         }
 
+        case ToLowerCase:
+        case ToUpperCase: {
+            Node* stringNode = m_node->child1().node();
+            String string = stringNode->tryGetString(m_graph);
+            if (!string || !string.containsOnlyASCII())
+                break;
+
+            String result = m_node->op() == ToLowerCase ? string.convertToASCIILowercase() : string.convertToASCIIUppercase();
+
+            m_changed = true;
+            m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+            if (result.impl() == string.impl()) {
+                m_node->convertToIdentityOn(stringNode);
+                break;
+            }
+            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, WTF::move(result)));
+            break;
+        }
+
         case ArrayJoin: {
             Edge& separatorEdge = m_graph.varArgChild(m_node, 1);
             Node* separator = separatorEdge.node();
