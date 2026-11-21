@@ -266,6 +266,13 @@ enum class MapMode : uint8_t {
     Write = 1 << 1,
 };
 
+// https://gpuweb.github.io/gpuweb/#enumdef-gpubuffermapstate
+enum class BufferMapState : uint8_t {
+    Unmapped,
+    Pending,
+    Mapped,
+};
+
 enum class MipmapFilterMode : uint8_t {
     Nearest,
     Linear,
@@ -900,6 +907,8 @@ struct AdapterInfo {
     bool isFallbackAdapter { false };
     uint32_t subgroupMinSize { 0 };
     uint32_t subgroupMaxSize { 0 };
+    // Not in GPUAdapterInfo: whether the CPU and the GPU share memory, as on an integrated GPU.
+    bool hasUnifiedMemory { false };
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpudevicedescriptor
@@ -1343,6 +1352,9 @@ public:
     // was created with.
     virtual void mapAsync(OptionSet<MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) = 0;
     virtual void getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>&) = 0;
+    // A range of the mapped buffer that stays valid until unmap(), as the C API needs it. Ranges may
+    // overlap. Empty outside the mapped range.
+    virtual std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) = 0;
     virtual void unmap() = 0;
     virtual void destroy() = 0;
     // Generates the validation error of mapping a buffer that is not unmapped.
@@ -1350,6 +1362,11 @@ public:
     // The whole contents, where the implementation can reach them. Only the GPU Process can.
     virtual std::span<uint8_t> getBufferContents() = 0;
     virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
+    // https://gpuweb.github.io/gpuweb/#gpubuffer: the size the buffer was created with, its usage and
+    // its map state.
+    virtual uint64_t size() const = 0;
+    virtual OptionSet<BufferUsage> usage() const = 0;
+    virtual BufferMapState mapState() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1431,6 +1448,8 @@ class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
 public:
     virtual ~Device() = default;
 
+    // The adapter that created the device.
+    virtual Adapter& adapter() const = 0;
     virtual Vector<FeatureName> features() const = 0;
     virtual const Limits& limits() const = 0;
     virtual Ref<Queue> queue() = 0;
@@ -1554,6 +1573,10 @@ public:
     virtual ~QuerySet() = default;
 
     virtual void destroy() = 0;
+    // https://gpuweb.github.io/gpuweb/#gpuqueryset: the values the query set was created with. The
+    // type is std::nullopt when the implementation does not know it, as for some invalid query sets.
+    virtual uint32_t count() const = 0;
+    virtual std::optional<QueryType> type() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1568,6 +1591,8 @@ class Queue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Queue> {
 public:
     virtual ~Queue() = default;
 
+    // Null once the device is gone: the device owns its queue.
+    virtual RefPtr<Device> device() const = 0;
     virtual void submit(Vector<Ref<CommandBuffer>>&&) = 0;
     virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
     // A write of at least largeBufferSize bytes may alias `data` rather than copy it, until the work
@@ -1695,11 +1720,23 @@ class Texture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Texture> 
 public:
     virtual ~Texture() = default;
 
+    // The device that created the texture.
+    virtual Device& device() const = 0;
     // std::nullopt is a descriptor with all members at their defaults.
     virtual RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
     virtual void destroy() = 0;
     // Recreates a destroyed canvas texture, for the frame that reuses it.
     virtual void undestroy() = 0;
+    // https://gpuweb.github.io/gpuweb/#gputexture: the values the texture was created with. The
+    // format is std::nullopt when the implementation does not know it, as for some invalid textures.
+    virtual uint32_t width() const = 0;
+    virtual uint32_t height() const = 0;
+    virtual uint32_t depthOrArrayLayers() const = 0;
+    virtual uint32_t mipLevelCount() const = 0;
+    virtual uint32_t sampleCount() const = 0;
+    virtual TextureDimension dimension() const = 0;
+    virtual std::optional<TextureFormat> optionalFormat() const = 0;
+    virtual OptionSet<TextureUsage> usage() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 

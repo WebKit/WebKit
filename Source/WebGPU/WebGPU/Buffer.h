@@ -90,9 +90,9 @@ public:
     // The mapped range as a span, for the C API. The C++ API has getMappedRange() instead,
     // because a proxy cannot return a pointer into the mapping.
     std::span<uint8_t> getMappedRangeSpan(uint64_t offset, std::optional<uint64_t> size);
-    // The mapped range for the C API, which, unlike the JavaScript API, lets the ranges that it hands
-    // out overlap: they are pointers into the mapping, not ArrayBuffers that are detached on unmap.
-    std::span<uint8_t> mappedRangeForCAPI(uint64_t offset, std::optional<uint64_t> size);
+    // Unlike getMappedRange(), lets the ranges that it hands out overlap: they are pointers into the
+    // mapping, not ArrayBuffers that are detached on unmap.
+    std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) final;
     void unmap() final;
     void setLabel(String&&) final;
     void generateAValidationError() final;
@@ -113,8 +113,11 @@ public:
 
     NODELETE uint64_t initialSize() const;
     uint64_t currentSize() const;
-    OptionSet<WebGPU::BufferUsage> usage() const { return m_usage; }
+    NODELETE OptionSet<WebGPU::BufferUsage> usage() const final { return m_usage; }
     State state() const { return m_state; }
+    // The size of the C++ API is the creation size; currentSize() is a detail of the Metal buffer.
+    uint64_t size() const final { return initialSize(); }
+    WebGPU::BufferMapState mapState() const final;
 
     Device& device() const { return m_device; }
     bool isDestroyed() const { return state() == State::Destroyed; }

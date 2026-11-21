@@ -30,19 +30,19 @@
 
 NODELETE void wgpuExternalTextureAddRef(WGPUExternalTexture externalTexture)
 {
-    WebGPU::CAPI::metalFromAPI(externalTexture).ref();
+    WebGPU::CAPI::fromAPI(externalTexture).ref();
 }
 
 void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(externalTexture).deref();
+        WebGPU::CAPI::fromAPI(externalTexture).deref();
     }
 }
 
 void wgpuExternalTextureDestroy(WGPUExternalTexture externalTexture)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(externalTexture))->destroy();
+        protect(WebGPU::CAPI::fromAPI(externalTexture))->destroy();
     }
 }

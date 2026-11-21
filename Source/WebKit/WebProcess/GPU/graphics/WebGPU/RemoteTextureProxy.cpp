@@ -38,10 +38,12 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureProxy);
 
-RemoteTextureProxy::RemoteTextureProxy(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool isCanvasBacking)
+RemoteTextureProxy::RemoteTextureProxy(RemoteDeviceProxy& device, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, const Properties& properties, bool isCanvasBacking)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_root(WTF::move(root))
+    , m_root(device.root())
+    , m_device(device)
+    , m_properties(properties)
     , m_isCanvasBacking(isCanvasBacking)
 {
 }
