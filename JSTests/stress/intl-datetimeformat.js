@@ -365,8 +365,38 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_An
     shouldBeOneOfForICUVersion(78, Intl.DateTimeFormat('en-u-ca-islamic-civil', opts).format(Date.UTC(650, 0, 1)), ['Anno Hegirae 29', '29 Anno Hegirae']);
     shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-tbla', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 1', '1 Before Hijra']);
     shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-umalqura', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 1', '1 Before Hijra']);
-    // coptic AM epoch is ISO 284-08-29T07:52:58.000Z.
+    // coptic AM epoch is the local Tout 1 of year 1, not a fixed UTC instant.
     shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-coptic', opts).format(Date.UTC(200, 0, 1)), ['Anno Martyrum 85', '85 Anno Martyrum']);
+
+    function eraAndYear(calendar, timeZone, iso) {
+        const parts = Intl.DateTimeFormat(`en-u-ca-${calendar}`, { era: "short", year: "numeric", month: "long", day: "numeric", timeZone }).formatToParts(new Date(iso));
+        return {
+            era: parts.find(part => part.type === "era").value,
+            year: parts.find(part => part.type === "year").value,
+        };
+    }
+    // 1 Muharram is year 1 AH at local midnight. ICU's year is already in the formatter's time zone.
+    {
+        const utc = eraAndYear("islamic-civil", "UTC", "0622-07-19T00:00:00Z");
+        shouldBe(utc.era, "AH");
+        shouldBe(utc.year, "1");
+        const riyadh = eraAndYear("islamic-civil", "Asia/Riyadh", "0622-07-19T07:00:00Z");
+        shouldBe(riyadh.era, "AH");
+        shouldBe(riyadh.year, "1");
+        const honolulu = eraAndYear("islamic-civil", "Pacific/Honolulu", "0622-07-19T08:00:00Z");
+        shouldBe(honolulu.era, "Before Hijra");
+        shouldBe(honolulu.year, "1");
+        const tbla = eraAndYear("islamic-tbla", "UTC", "0622-07-18T00:00:00Z");
+        shouldBe(tbla.era, "AH");
+        shouldBe(tbla.year, "1");
+        const umalqura = eraAndYear("islamic-umalqura", "UTC", "0622-07-19T00:00:00Z");
+        shouldBe(umalqura.era, "AH");
+        shouldBe(umalqura.year, "1");
+        const coptic = eraAndYear("coptic", "UTC", "0284-08-29T00:00:00Z");
+        shouldBe(coptic.year, "1");
+        if (coptic.era === "Anno Martyrum")
+            throw new Error(`coptic epoch day in UTC formatted as Anno Martyrum, got era ${coptic.era}`);
+    }
     // ICU < 78 has no distinct long-form "Anno Martyrum" era string for coptic in this locale and falls back to the generic "ERA1" placeholder.
     shouldBeOneOfForICUVersion(78, Intl.DateTimeFormat('en-u-ca-coptic', opts).format(Date.UTC(400, 0, 1)), ['Anno Martyrum 116', '116 Anno Martyrum']);
 }
