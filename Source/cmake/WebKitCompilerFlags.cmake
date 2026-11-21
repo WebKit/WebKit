@@ -253,6 +253,10 @@ if (COMPILER_IS_GCC_OR_CLANG)
         )
     endif ()
 
+    if ((CMAKE_CXX_COMPILER_ID STREQUAL Clang) AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 22))
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-dangling)
+    endif ()
+
     # GCC gives false warnings for subobject-linkage <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105595>
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-subobject-linkage)
