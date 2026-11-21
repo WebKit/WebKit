@@ -83,14 +83,24 @@ void DigitalCredentialsCoordinator::showDigitalCredentialsChooser(std::optional<
         RefPtr page = m_page;
         if (!page)
             return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "The page is not available."_s }));
-        page->sendWithAsyncReply(Messages::WebPageProxy::HasVirtualWalletForDigitalCredentials(frameID), [weakThis = WeakPtr { *this }, frameID, rawRequests = WTF::move(rawRequests), request = WebCore::DigitalCredentialsRequestData { request }, completionHandler = WTF::move(completionHandler)](bool hasVirtualWallet) mutable {
+        auto requestIdentifier = ++m_lastNetworkProcessRequestIdentifier;
+        m_networkProcessRequestIdentifier = requestIdentifier;
+        page->sendWithAsyncReply(Messages::WebPageProxy::HasVirtualWalletForDigitalCredentials(frameID), [weakThis = WeakPtr { *this }, requestIdentifier, frameID, rawRequests = WTF::move(rawRequests), request = WebCore::DigitalCredentialsRequestData { request }, completionHandler = WTF::move(completionHandler)](bool hasVirtualWallet) mutable {
             RefPtr protectedThis = weakThis;
             RefPtr page = protectedThis ? protectedThis->m_page.get() : nullptr;
             if (!page)
                 return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "The coordinator is no longer available."_s }));
-            if (hasVirtualWallet)
+            if (protectedThis->m_networkProcessRequestIdentifier != requestIdentifier)
+                return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "The request was aborted."_s }));
+            if (hasVirtualWallet) {
+                protectedThis->m_networkProcessRequestIdentifier = std::nullopt;
                 return protectedThis->showChooserInUIProcess(frameID, WTF::move(rawRequests), request, WTF::move(completionHandler));
-            protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::PresentDigitalCredentialRequest(page->webPageProxyIdentifier(), request, WTF::move(rawRequests)), WTF::move(completionHandler));
+            }
+            protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::PresentDigitalCredentialRequest(page->webPageProxyIdentifier(), request, WTF::move(rawRequests)), [weakThis = WeakPtr { *protectedThis }, requestIdentifier, completionHandler = WTF::move(completionHandler)](std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&& responseOrException) mutable {
+                if (RefPtr protectedThis = weakThis; protectedThis && protectedThis->m_networkProcessRequestIdentifier == requestIdentifier)
+                    protectedThis->m_networkProcessRequestIdentifier = std::nullopt;
+                completionHandler(WTF::move(responseOrException));
+            });
         });
         return;
     }
@@ -128,6 +138,10 @@ ExceptionOr<Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>>> D
 void DigitalCredentialsCoordinator::dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&& completionHandler)
 {
     m_rawRequests.clear();
+#if PLATFORM(COCOA)
+    if (std::exchange(m_networkProcessRequestIdentifier, std::nullopt))
+        return completionHandler(true);
+#endif
     if (RefPtr page = m_page.get())
         page->dismissDigitalCredentialsChooser(WTF::move(completionHandler));
     else

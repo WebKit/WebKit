@@ -75,6 +75,10 @@ private:
     WeakPtr<WebPage> m_page;
     const WebCore::PageIdentifier m_pageIdentifier;
     WebCore::DigitalCredentialsRawRequests m_rawRequests;
+#if PLATFORM(COCOA)
+    std::optional<uint64_t> m_networkProcessRequestIdentifier;
+    uint64_t m_lastNetworkProcessRequestIdentifier { 0 };
+#endif
 };
 
 } // namespace WebKit
