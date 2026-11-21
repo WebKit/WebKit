@@ -29,12 +29,14 @@
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
-#import <WebKit/WKWebsiteDataStore.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 @interface LocalStorageClearMessageHandler : NSObject <WKScriptMessageHandler>
@@ -58,6 +60,8 @@ TEST(WKWebView, LocalStorageClear)
     [configuration _setNeedsStorageAccessFromFileURLsQuirk:NO];
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
 
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
+
     @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -70,14 +74,15 @@ TEST(WKWebView, LocalStorageClear)
         webView = nil;
     }
 
-    NSString *dbPath = [@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/file__0.localstorage" stringByExpandingTildeInPath];
-    NSString *dbSHMPath = [@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/file__0.localstorage-shm" stringByExpandingTildeInPath];
-    NSString *dbWALPath = [@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/file__0.localstorage-wal" stringByExpandingTildeInPath];
-    NSString *trackerPath = [@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/StorageTracker.db" stringByExpandingTildeInPath];
-    NSString *trackerSHMPath = [@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/StorageTracker.db-shm" stringByExpandingTildeInPath];
-    NSString *trackerWALPath = [@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/StorageTracker.db-wal" stringByExpandingTildeInPath];
+    NSURL *localStorageDirectory = [[[configuration websiteDataStore] _configuration] _webStorageDirectory];
+    NSString *dbPath = [localStorageDirectory URLByAppendingPathComponent:@"file__0.localstorage"].path;
+    NSString *dbSHMPath = [localStorageDirectory URLByAppendingPathComponent:@"file__0.localstorage-shm"].path;
+    NSString *dbWALPath = [localStorageDirectory URLByAppendingPathComponent:@"file__0.localstorage-wal"].path;
+    NSString *trackerPath = [localStorageDirectory URLByAppendingPathComponent:@"StorageTracker.db"].path;
+    NSString *trackerSHMPath = [localStorageDirectory URLByAppendingPathComponent:@"StorageTracker.db-shm"].path;
+    NSString *trackerWALPath = [localStorageDirectory URLByAppendingPathComponent:@"StorageTracker.db-wal"].path;
 
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:dbPath]);
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:dbSHMPath]);
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:dbWALPath]);
