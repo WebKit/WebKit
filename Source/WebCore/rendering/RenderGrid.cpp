@@ -70,6 +70,12 @@ RenderGrid::RenderGrid(Element& element, UniqueRef<Style::ComputedStyle>&& style
 
 RenderGrid::~RenderGrid() = default;
 
+void RenderGrid::willBeDestroyed()
+{
+    m_gridLayout = { };
+    RenderBlock::willBeDestroyed();
+}
+
 bool RenderGrid::isExtrinsicallySized() const
 {
     auto& gridStyle = style();

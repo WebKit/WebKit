@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+</script>
+<style>
+  .grid { display: grid; grid-template-columns: 100px 100px; gap: 5px; }
+</style>
+<div class="grid" id="g"><div>hello</div><div>world</div></div>
+<script>
+addEventListener('load', () => {
+    // Force layout first so the grid is laid out by GFC and gets a persistent driver.
+    document.getElementById('g').offsetWidth;
+    // Remove it, collect the node, then force the deferred renderer deletion.
+    document.getElementById('g').remove();
+    if (window.gc) gc();
+    if (window.internals) internals.beginSimulatedMemoryPressure();
+    document.body.textContent = 'PASS';
+    if (window.testRunner) testRunner.notifyDone();
+});
+</script>
