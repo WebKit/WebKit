@@ -8,15 +8,15 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (0,0) size 395x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 395x19
           chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 61 width 394.59: "This should show three markers on the path for start/mid/end."
-      RenderSVGText {text} at (0,20) size 374x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 374x19
-          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 55 width 373.20: "Start marker has no markerWidth/markerHeight specified."
-      RenderSVGText {text} at (0,40) size 277x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 277x19
-          chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 40 width 276.35: "Mid marker has no markerWidth specified."
-      RenderSVGText {text} at (0,60) size 280x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 280x19
-          chunk 1 text run 1 at (0.00,80.00) startOffset 0 endOffset 41 width 279.01: "End marker has no markerHeight specified."
+      RenderSVGText {text} at (0,20) size 372x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 372x19
+          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 55 width 371.69: "Start marker has no markerWidth/markerHeight specified."
+      RenderSVGText {text} at (0,40) size 275x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 275x19
+          chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 40 width 274.84: "Mid marker has no markerWidth specified."
+      RenderSVGText {text} at (0,60) size 279x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 279x19
+          chunk 1 text run 1 at (0.00,80.00) startOffset 0 endOffset 41 width 278.13: "End marker has no markerHeight specified."
       RenderSVGPath {path} at (130,114.41) size 50x50 [start marker=marker1] [middle marker=marker2] [end marker=marker3] [data="M 130 120 L 180 120 L 180 170"]
 layer at (0,0) size 3x4
   RenderSVGResourceMarker {marker} at (0,-5.59) size 3x3

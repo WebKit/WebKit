@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
     RenderSVGTransformableContainer {g} at (-15,-30) size 459.52x292.97
-      RenderSVGText {text} at (106,42) size 268x16 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 267x16
-          chunk 1 (middle anchor) text run 1 at (91.63,25.00) startOffset 0 endOffset 44 width 266.74: "Test rotate='auto' and rotate='auto-reverse'"
+      RenderSVGText {text} at (107,42) size 266x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 266x16
+          chunk 1 (middle anchor) text run 1 at (92.41,25.00) startOffset 0 endOffset 44 width 265.19: "Test rotate='auto' and rotate='auto-reverse'"
       RenderSVGTransformableContainer {g} at (0,0) size 459.52x292.97
         RenderSVGPath {path} at (40,202.73) size 150x52.27 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M 25 225 C 25 175 125 150 175 200"]
         RenderSVGRect {rect} at (25,225) size 30x30 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=195.00] [width=30.00] [height=30.00]

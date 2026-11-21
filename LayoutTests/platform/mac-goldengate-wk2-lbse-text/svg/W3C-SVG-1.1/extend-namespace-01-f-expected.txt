@@ -4,13 +4,13 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-    RenderSVGTransformableContainer {g} at (63.45,15.52) size 353.09x254.72
-      RenderSVGTransformableContainer {g} at (0,0) size 353.09x17.88
-        RenderSVGHiddenContainer {defs} at (-63.45,-15.52) size 0x0
-        RenderSVGText {text} at (0,0) size 354x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 354x18
-            chunk 1 (middle anchor) text run 1 at (63.46,30.00) startOffset 0 endOffset 51 width 353.08: "Pie chart built from data in a different namespace."
-      RenderSVGTransformableContainer {g} at (76.14,54.17) size 200.42x200.55
+    RenderSVGTransformableContainer {g} at (63.59,15.52) size 352.81x254.72
+      RenderSVGTransformableContainer {g} at (0,0) size 352.81x17.88
+        RenderSVGHiddenContainer {defs} at (-63.59,-15.52) size 0x0
+        RenderSVGText {text} at (0,0) size 353x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 353x18
+            chunk 1 (middle anchor) text run 1 at (63.61,30.00) startOffset 0 endOffset 51 width 352.79: "Pie chart built from data in a different namespace."
+      RenderSVGTransformableContainer {g} at (76,54.17) size 200.42x200.55
         RenderSVGPath {path} at (100.41,22.31) size 100.02x78 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF8888]}] [data="M 240 170 L 340 170 C 340.103 139.741 326.499 111.063 303 92 Z"]
         RenderSVGText {text} at (145,59) size 29x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 29x16
@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (0,12.31) size 100.41x128.02 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#929292]}] [data="M 240 170 L 192 82 C 146.3 106.75 127.176 162.382 148 210 Z"]
         RenderSVGText {text} at (22,66) size 33x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x16
-            chunk 1 (middle anchor) text run 1 at (162.06,149.00) startOffset 0 endOffset 4 width 31.89: "West"
+            chunk 1 (middle anchor) text run 1 at (162.18,149.00) startOffset 0 endOffset 4 width 31.64: "West"
         RenderSVGPath {path} at (8.41,100.31) size 92x98 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B6B6B6]}] [data="M 240 170 L 148 210 C 160.888 239.682 187.343 261.293 219 268 Z"]
         RenderSVGText {text} at (36,137) size 46x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 46x16

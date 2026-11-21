@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
     RenderSVGTransformableContainer {g} at (-5,-10) size 83.02x61.70
-      RenderSVGText {text} at (12,10) size 67x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 67x9
-          chunk 1 text run 1 at (7.00,8.00) startOffset 0 endOffset 18 width 66.26: "Test a motion path"
+      RenderSVGText {text} at (12,10) size 66x10 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 66x9
+          chunk 1 text run 1 at (7.00,8.00) startOffset 0 endOffset 18 width 65.37: "Test a motion path"
       RenderSVGText {text} at (15,20) size 59x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 59x9
           chunk 1 text run 1 at (10.00,18.00) startOffset 0 endOffset 16 width 58.20: "'mpath' element."

@@ -4,10 +4,10 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-    RenderSVGTransformableContainer {g} at (0,0) size 470.83x260
-      RenderSVGText {text} at (10,53) size 461x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 461x21
-          chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 60 width 460.83: "Test 'overflow'/'clip' on outermost and inner 'svg' elements"
+    RenderSVGTransformableContainer {g} at (0,0) size 468.84x260
+      RenderSVGText {text} at (10,53) size 459x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 459x21
+          chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 60 width 458.83: "Test 'overflow'/'clip' on outermost and inner 'svg' elements"
       RenderSVGTransformableContainer {g} at (0,0) size 250x60
       RenderSVGRect {rect} at (115,100) size 250x160 [stroke={[type=SOLID] [color=#006600] [stroke width=5.00]}] [x=115.00] [y=100.00] [width=250.00] [height=160.00]
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)

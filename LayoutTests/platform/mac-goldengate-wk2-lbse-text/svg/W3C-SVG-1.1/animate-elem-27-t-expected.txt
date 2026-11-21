@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
     RenderSVGTransformableContainer {g} at (15.41,25.52) size 409.59x221.45
-      RenderSVGText {text} at (10,0) size 399x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 398x18
-          chunk 1 (middle anchor) text run 1 at (26.23,40.00) startOffset 0 endOffset 57 width 397.55: "Test animation options for specifying the target element."
+      RenderSVGText {text} at (11,0) size 397x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 396x18
+          chunk 1 (middle anchor) text run 1 at (27.11,40.00) startOffset 0 endOffset 57 width 395.77: "Test animation options for specifying the target element."
       RenderSVGTransformableContainer {g} at (0,54.48) size 409.59x166.97
         RenderSVGText {text} at (0,151) size 65x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 65x16

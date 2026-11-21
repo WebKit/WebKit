@@ -4,13 +4,13 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-    RenderSVGTransformableContainer {g} at (-140,0) size 532.69x147.64
+    RenderSVGTransformableContainer {g} at (-140,0) size 531.20x147.64
       RenderSVGText {text} at (143,8) size 321x46 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 321x45
           chunk 1 text run 1 at (3.00,45.00) startOffset 0 endOffset 17 width 320.78: "calcMode=\"linear\""
-      RenderSVGText {text} at (143,63) size 390x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 390x45
-          chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 389.69: "keyTimes=\"0;.25;.5;1\""
+      RenderSVGText {text} at (143,63) size 389x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 389x45
+          chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 388.20: "keyTimes=\"0;.25;.5;1\""
       RenderSVGTransformableContainer {g} at (0,0) size 450.03x147.64
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
@@ -18,9 +18,9 @@ layer at (0,0) size 480x360
     RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 layer at (-140,0) size 451x148 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 450.03x147.64
-    RenderSVGText {text} at (0,107) size 142x41 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 142x41
-        chunk 1 text run 1 at (-140.00,140.00) startOffset 0 endOffset 9 width 141.98: "Time (s):"
+    RenderSVGText {text} at (0,107) size 141x41 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 141x41
+        chunk 1 text run 1 at (-140.00,140.00) startOffset 0 endOffset 9 width 140.64: "Time (s):"
     RenderSVGText {text} at (430,107) size 21x41 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 21x41
         chunk 1 text run 1 at (290.00,140.00) startOffset 0 endOffset 1 width 20.02: "0"

@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGViewportContainer at (0,0) size 480x360
-      RenderSVGTransformableContainer {g} at (0,-14) size 543.08x74
+      RenderSVGTransformableContainer {g} at (0,-14) size 538.20x74
         RenderSVGText {text} at (114,23) size 252x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 251x14
             chunk 1 (middle anchor) text run 1 at (114.93,20.00) startOffset 0 endOffset 50 width 250.14: "Filters: feDistantLight, fePointLight, feSpotLight"
@@ -38,11 +38,11 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 264x46
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
       RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-layer at (70,-4) size 361x64 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (70,10) size 360.78x64
-    RenderSVGText {text} at (0,0) size 361x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 361x18
-        chunk 1 text run 1 at (70.00,10.00) startOffset 0 endOffset 55 width 360.78: "Various values for feDistantLight azimuth and elevation"
+layer at (70,-4) size 360x64 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (70,10) size 359.02x64
+    RenderSVGText {text} at (0,0) size 360x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 360x18
+        chunk 1 text run 1 at (70.00,10.00) startOffset 0 endOffset 55 width 359.01: "Various values for feDistantLight azimuth and elevation"
     RenderSVGText {text} at (0,15) size 35x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 35x18
         chunk 1 text run 1 at (70.00,25.00) startOffset 0 endOffset 6 width 34.66: "(0, 0)"
@@ -65,9 +65,9 @@ layer at (355,30) size 50x30
   RenderSVGImage {image} at (285,34) size 50x30
 layer at (70,-4) size 360x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (70,10) size 359.66x33
-    RenderSVGText {text} at (0,0) size 279x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 279x18
-        chunk 1 text run 1 at (70.00,10.00) startOffset 0 endOffset 44 width 278.38: "Various values for fePointLight's x, y and z"
+    RenderSVGText {text} at (0,0) size 277x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 277x18
+        chunk 1 text run 1 at (70.00,10.00) startOffset 0 endOffset 44 width 276.61: "Various values for fePointLight's x, y and z"
     RenderSVGText {text} at (0,15) size 59x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 59x18
         chunk 1 text run 1 at (70.00,25.00) startOffset 0 endOffset 10 width 58.66: "(0, 0, 10)"
@@ -88,11 +88,11 @@ layer at (0,0) size 50x30
   RenderSVGImage {image} at (0,0) size 50x30
 layer at (0,0) size 50x30
   RenderSVGImage {image} at (0,0) size 50x30
-layer at (70,-14) size 474x48 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (70,0) size 473.08x48
-    RenderSVGText {text} at (0,0) size 474x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 474x18
-        chunk 1 text run 1 at (70.00,0.00) startOffset 0 endOffset 73 width 473.07: "Various values for feSpotLight's x, y, z, pointsAtX, pointsAtY, pointsAtZ"
+layer at (70,-14) size 469x48 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (70,0) size 468.20x48
+    RenderSVGText {text} at (0,0) size 469x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 469x18
+        chunk 1 text run 1 at (70.00,0.00) startOffset 0 endOffset 73 width 468.20: "Various values for feSpotLight's x, y, z, pointsAtX, pointsAtY, pointsAtZ"
     RenderSVGText {text} at (0,15) size 67x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 67x18
         chunk 1 text run 1 at (70.00,15.00) startOffset 0 endOffset 11 width 66.66: "(25, 0, 25)"

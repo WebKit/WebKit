@@ -89,7 +89,7 @@ layer at (168,84) size 707x252 backgroundClip at (0,0) size 480x360 clip at (0,0
           chunk 1 text run 1 at (177.00,213.00) startOffset 0 endOffset 7 width 29.47: "online:"
       RenderSVGText {text} at (424,216) size 73x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 73x10
-          chunk 1 text run 1 at (601.00,321.00) startOffset 0 endOffset 16 width 72.80: "Sibyll Trelawney"
+          chunk 1 text run 1 at (601.00,321.00) startOffset 0 endOffset 16 width 72.44: "Sibyll Trelawney"
     RenderSVGTransformableContainer {g} at (72,13.30) size 183.44x181.02
       RenderSVGText {text} at (16,53) size 154x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 154x10

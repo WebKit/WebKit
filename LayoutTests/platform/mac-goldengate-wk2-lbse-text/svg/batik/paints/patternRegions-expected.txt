@@ -95,9 +95,9 @@ layer at (0,-9.50) size 124x32 backgroundClip at (0,0) size 450x500 clip at (0,0
     RenderSVGText {text} at (0,10) size 85x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 85x12
         chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 20 width 84.51: "contentUnits=default"
-    RenderSVGText {text} at (0,20) size 69x12 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 69x12
-        chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 68.40: "overflow=visible"
+    RenderSVGText {text} at (0,20) size 68x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 68x12
+        chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 67.86: "overflow=visible"
 layer at (0,-11.50) size 138x42 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (0,0) size 137.30x41.50
     RenderSVGRect {rect} at (0,11.50) size 40x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=40.00] [height=30.00]
@@ -112,9 +112,9 @@ layer at (0,-9.50) size 138x32 backgroundClip at (0,0) size 450x500 clip at (0,0
     RenderSVGText {text} at (0,10) size 138x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 138x12
         chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 137.29: "contentUnits=objectBoundingBox"
-    RenderSVGText {text} at (0,20) size 69x12 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 69x12
-        chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 68.40: "overflow=visible"
+    RenderSVGText {text} at (0,20) size 68x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 68x12
+        chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 67.86: "overflow=visible"
 layer at (0,-11.50) size 138x42 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (0,0) size 137.30x41.50
     RenderSVGRect {rect} at (0,11.50) size 40x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=40.00] [height=30.00]
@@ -185,9 +185,9 @@ layer at (0,-9.50) size 155x22 backgroundClip at (0,0) size 450x500 clip at (0,0
     RenderSVGText {text} at (0,0) size 155x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 155x12
         chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 34 width 154.21: "preserveAspectRatio=xMinYmin slice"
-    RenderSVGText {text} at (0,10) size 69x12 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 69x12
-        chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 16 width 68.40: "overflow=visible"
+    RenderSVGText {text} at (0,10) size 68x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 68x12
+        chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 16 width 67.86: "overflow=visible"
 layer at (0,0) size 447x497
   RenderSVGTransformableContainer {use} at (0,0) size 447x497
     RenderSVGTransformableContainer {g} at (0,0) size 447x497

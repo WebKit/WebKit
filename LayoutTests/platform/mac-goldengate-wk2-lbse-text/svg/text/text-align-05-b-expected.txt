@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-    RenderSVGTransformableContainer {g} at (-12.50,-100.55) size 486.23x268.13
-      RenderSVGText {text} at (17,104) size 470x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 469x45
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 468.73: "Test 'text-anchor' (vertical)"
+    RenderSVGTransformableContainer {g} at (-12.50,-100.55) size 481.80x268.13
+      RenderSVGText {text} at (17,104) size 465x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 465x45
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 464.30: "Test 'text-anchor' (vertical)"
       RenderSVGTransformableContainer {g} at (0,0) size 25x268.13
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46

@@ -13,13 +13,13 @@ layer at (0,-27.75) size 126x211 backgroundClip at (0,0) size 480x360 clip at (0
     RenderSVGTransformableContainer {g} at (0,0) size 125.89x210
       RenderSVGText {text} at (10,50) size 38x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 38x10
-          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 10 width 37.50: "SVG to fit"
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 10 width 37.01: "SVG to fit"
       RenderSVGText {text} at (10,130) size 41x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 41x10
-          chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 40.74: "Viewport 1"
+          chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 40.21: "Viewport 1"
       RenderSVGText {text} at (10,200) size 41x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 41x10
-          chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 40.74: "Viewport 2"
+          chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 40.21: "Viewport 2"
 layer at (0.50,0.50) size 30x40
   RenderSVGTransformableContainer {g} at (0.50,28.25) size 29x39
     RenderSVGRect {rect} at (0,0) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]

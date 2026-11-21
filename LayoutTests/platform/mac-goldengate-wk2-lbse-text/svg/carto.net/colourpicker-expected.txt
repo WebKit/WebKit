@@ -89,18 +89,18 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (302,459.84) size 108x7.52 [fill={[type=SOLID] [color=#00000000]}] [x=302.00] [y=459.85] [width=108.00] [height=7.50]
         RenderSVGPath {line} at (302,463.59) size 108x0.02 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x1=302.00] [y1=463.60] [x2=410.00] [y2=463.60]
         RenderSVGPath {line} at (302,463.59) size 108x0.02 [x1=302.00] [y1=463.60] [x2=410.00] [y2=463.60]
-        RenderSVGText {text} at (416,457) size 53x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 53x14
-            chunk 1 text run 1 at (416.00,468.10) startOffset 0 endOffset 9 width 52.69: "Value (%)"
+        RenderSVGText {text} at (416,457) size 52x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 52x14
+            chunk 1 text run 1 at (416.00,468.10) startOffset 0 endOffset 9 width 51.80: "Value (%)"
         RenderSVGRect {rect} at (302,483.84) size 108x7.52 [fill={[type=SOLID] [color=#00000000]}] [x=302.00] [y=483.85] [width=108.00] [height=7.50]
         RenderSVGPath {line} at (302,487.59) size 108x0.02 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x1=302.00] [y1=487.60] [x2=410.00] [y2=487.60]
         RenderSVGPath {line} at (302,487.59) size 108x0.02 [x1=302.00] [y1=487.60] [x2=410.00] [y2=487.60]
         RenderSVGText {text} at (416,481) size 63x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 63x14
             chunk 1 text run 1 at (416.00,492.10) startOffset 0 endOffset 11 width 62.68: "Opacity (%)"
-        RenderSVGText {text} at (212,503) size 241x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 241x14
-            chunk 1 text run 1 at (212.00,514.00) startOffset 0 endOffset 40 width 240.17: "RGBA: 0,255,0,100; HSVA: 120,100,100,100"
+        RenderSVGText {text} at (212,503) size 240x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 240x14
+            chunk 1 text run 1 at (212.00,514.00) startOffset 0 endOffset 40 width 239.28: "RGBA: 0,255,0,100; HSVA: 120,100,100,100"
       RenderSVGTransformableContainer {g} at (0,0) size 1024x768
         RenderSVGRect {rect} at (500,200) size 300x100 [fill={[type=SOLID] [color=#DCDCDC]}] [x=500.00] [y=200.00] [width=300.00] [height=100.00]
         RenderSVGRect {rect} at (512,209.25) size 198x7.50 [fill={[type=SOLID] [color=#00000000]}] [x=512.00] [y=209.25] [width=198.00] [height=7.50]
@@ -120,12 +120,12 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (602,262.58) size 108x7.52 [fill={[type=SOLID] [color=#00000000]}] [x=602.00] [y=262.58] [width=108.00] [height=7.50]
         RenderSVGPath {line} at (602,266.33) size 108x0.02 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x1=602.00] [y1=266.33] [x2=710.00] [y2=266.33]
         RenderSVGPath {line} at (602,266.33) size 108x0.02 [x1=602.00] [y1=266.33] [x2=710.00] [y2=266.33]
-        RenderSVGText {text} at (716,259) size 53x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 53x14
-            chunk 1 text run 1 at (716.00,270.83) startOffset 0 endOffset 9 width 52.69: "Value (%)"
-        RenderSVGText {text} at (512,284) size 227x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 227x14
-            chunk 1 text run 1 at (512.00,295.00) startOffset 0 endOffset 38 width 226.82: "RGBA: 255,0,0,100; HSVA: 0,100,100,100"
+        RenderSVGText {text} at (716,259) size 52x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 52x14
+            chunk 1 text run 1 at (716.00,270.83) startOffset 0 endOffset 9 width 51.80: "Value (%)"
+        RenderSVGText {text} at (512,284) size 226x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 226x14
+            chunk 1 text run 1 at (512.00,295.00) startOffset 0 endOffset 38 width 225.93: "RGBA: 255,0,0,100; HSVA: 0,100,100,100"
       RenderSVGTransformableContainer {g} at (0,0) size 1024x768
         RenderSVGRect {rect} at (700,500) size 300x120 [fill={[type=SOLID] [color=#DCDCDC]}] [x=700.00] [y=500.00] [width=300.00] [height=120.00]
         RenderSVGRect {rect} at (712,511.84) size 198x7.52 [fill={[type=SOLID] [color=#00000000]}] [x=712.00] [y=511.85] [width=198.00] [height=7.50]
@@ -144,18 +144,18 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (772,559.84) size 138x7.52 [fill={[type=SOLID] [color=#00000000]}] [x=772.00] [y=559.85] [width=138.00] [height=7.50]
         RenderSVGPath {line} at (772,563.59) size 138x0.02 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x1=772.00] [y1=563.60] [x2=910.00] [y2=563.60]
         RenderSVGPath {line} at (772,563.59) size 138x0.02 [x1=772.00] [y1=563.60] [x2=910.00] [y2=563.60]
-        RenderSVGText {text} at (916,557) size 53x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 53x14
-            chunk 1 text run 1 at (916.00,568.10) startOffset 0 endOffset 9 width 52.69: "Value (%)"
+        RenderSVGText {text} at (916,557) size 52x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 52x14
+            chunk 1 text run 1 at (916.00,568.10) startOffset 0 endOffset 9 width 51.80: "Value (%)"
         RenderSVGRect {rect} at (772,583.84) size 138x7.52 [fill={[type=SOLID] [color=#00000000]}] [x=772.00] [y=583.85] [width=138.00] [height=7.50]
         RenderSVGPath {line} at (772,587.59) size 138x0.02 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x1=772.00] [y1=587.60] [x2=910.00] [y2=587.60]
         RenderSVGPath {line} at (772,587.59) size 138x0.02 [x1=772.00] [y1=587.60] [x2=910.00] [y2=587.60]
         RenderSVGText {text} at (916,581) size 63x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 63x14
             chunk 1 text run 1 at (916.00,592.10) startOffset 0 endOffset 11 width 62.68: "Opacity (%)"
-        RenderSVGText {text} at (712,603) size 234x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 234x14
-            chunk 1 text run 1 at (712.00,614.00) startOffset 0 endOffset 39 width 233.50: "RGBA: 120,120,120,100; HSVA: 0,0,47,100"
+        RenderSVGText {text} at (712,603) size 233x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 233x14
+            chunk 1 text run 1 at (712.00,614.00) startOffset 0 endOffset 39 width 232.61: "RGBA: 120,120,120,100; HSVA: 0,0,47,100"
     RenderSVGTransformableContainer {g} at (499,169) size 367x350
       RenderSVGTransformableContainer {g} at (10,272) size 112x22
         RenderSVGRect {rect} at (0,0) size 110x20 [fill={[type=SOLID] [color=#FFFFFF]}] [x=509.00] [y=441.00] [width=110.00] [height=20.00]
@@ -279,9 +279,9 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
       RenderSVGText {text} at (716,253) size 63x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 63x14
           chunk 1 text run 1 at (716.00,264.20) startOffset 0 endOffset 11 width 62.68: "Opacity (%)"
-      RenderSVGText {text} at (512,274) size 241x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 241x14
-          chunk 1 text run 1 at (512.00,285.50) startOffset 0 endOffset 40 width 240.17: "RGBA: 0,255,255,50; HSVA: 180,100,100,50"
+      RenderSVGText {text} at (512,274) size 240x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 240x14
+          chunk 1 text run 1 at (512.00,285.50) startOffset 0 endOffset 40 width 239.28: "RGBA: 0,255,255,50; HSVA: 180,100,100,50"
 layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,0) size 1024x768
     RenderSVGViewportContainer {svg} at (0,0) size 1024x768

@@ -4,9 +4,9 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-    RenderSVGText {text} at (5,210) size 368x32 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 368x32
-        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 367.83: "Test of keyPoints and keyTimes."
+    RenderSVGText {text} at (5,210) size 365x32 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 365x32
+        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 364.90: "Test of keyPoints and keyTimes."
     RenderSVGText {text} at (5,248) size 389x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 389x21
         chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 54 width 388.14: "Number indicates the circle's passing time in seconds."

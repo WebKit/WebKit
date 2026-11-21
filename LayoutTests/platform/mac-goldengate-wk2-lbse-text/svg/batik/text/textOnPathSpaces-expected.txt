@@ -5,9 +5,9 @@ layer at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
     RenderSVGTransformableContainer {g} at (2.28,-10.05) size 897.72x251.47
-      RenderSVGText {text} at (92,35) size 261x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 260x18
-          chunk 1 (middle anchor) text run 1 at (95.14,40.00) startOffset 0 endOffset 36 width 259.72: "Text on a path with adjusted spacing"
+      RenderSVGText {text} at (93,35) size 259x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 258x18
+          chunk 1 (middle anchor) text run 1 at (96.03,40.00) startOffset 0 endOffset 36 width 257.95: "Text on a path with adjusted spacing"
       RenderSVGHiddenContainer {defs} at (97.72,35.05) size 800x216.42
         RenderSVGPath {path} at (0,33.58) size 800x182.84 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
         RenderSVGPath {path} at (0,0) size 300x75 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 100 C 100 0 400 0 400 100"]
@@ -45,10 +45,10 @@ layer at (10.06,-9.11) size 891x252 backgroundClip at (0,0) size 450x500 clip at
       RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGText {text} at (4,59) size 121x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 120x12
-        chunk 1 text run 1 at (15.00,60.00) startOffset 0 endOffset 28 width 119.91: "tspan x=\"10,30,50,75,95,110\""
+        chunk 1 text run 1 at (15.00,60.00) startOffset 0 endOffset 28 width 119.55: "tspan x=\"10,30,50,75,95,110\""
     RenderSVGText {text} at (24,69) size 35x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 34x12
-        chunk 1 text run 1 at (35.00,70.00) startOffset 0 endOffset 7 width 33.80: "y=\"110\""
+        chunk 1 text run 1 at (35.00,70.00) startOffset 0 endOffset 7 width 33.44: "y=\"110\""
 layer at (100,58.58) size 801x184 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {use} at (89.94,67.69) size 800x182.84
     RenderSVGPath {path} at (0,0) size 800x182.84 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
@@ -211,7 +211,7 @@ layer at (2.28,-9.48) size 898x252 backgroundClip at (0,0) size 450x500 clip at 
       RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGText {text} at (32,59) size 78x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 77x12
-        chunk 1 text run 1 at (35.00,60.00) startOffset 0 endOffset 19 width 76.55: "letter-spacing=\"-3\""
+        chunk 1 text run 1 at (35.00,60.00) startOffset 0 endOffset 19 width 76.36: "letter-spacing=\"-3\""
 layer at (100,58.58) size 801x183 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {use} at (97.72,68.06) size 800x182.84
     RenderSVGPath {path} at (0,0) size 800x182.84 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]

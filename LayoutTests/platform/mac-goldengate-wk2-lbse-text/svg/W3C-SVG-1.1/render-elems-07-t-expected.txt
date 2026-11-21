@@ -6,9 +6,9 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGTransformableContainer {g} at (1,1) size 478x358
-      RenderSVGText {text} at (179,11) size 136x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 136x35
-          chunk 1 text run 1 at (180.00,40.00) startOffset 0 endOffset 11 width 135.79: "Text stroke"
+      RenderSVGText {text} at (179,11) size 134x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 134x35
+          chunk 1 text run 1 at (180.00,40.00) startOffset 0 endOffset 11 width 133.70: "Text stroke"
       RenderSVGTransformableContainer {g} at (59,68.98) size 365x248.13
         RenderSVGText {text} at (0,0) size 152x249 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 152x249

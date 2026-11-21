@@ -15,21 +15,21 @@ layer at (-68.41,-12.50) size 225x192 backgroundClip at (0,0) size 480x360 clip 
   RenderSVGTransformableContainer {g} at (-68.41,-12.50) size 224.41x191
 layer at (-68.41,-12.50) size 69x191 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 68.41x191
-    RenderSVGText {text} at (3,0) size 66x16 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 65x16
-        chunk 1 (end anchor) text run 1 at (-64.53,0.00) startOffset 0 endOffset 11 width 64.53: "unspecified"
+    RenderSVGText {text} at (4,0) size 65x16 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x16
+        chunk 1 (end anchor) text run 1 at (-63.77,0.00) startOffset 0 endOffset 11 width 63.77: "unspecified"
     RenderSVGText {text} at (36,25) size 33x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 32x16
-        chunk 1 (end anchor) text run 1 at (-31.88,25.00) startOffset 0 endOffset 6 width 31.88: "offset"
+        chunk 1 (end anchor) text run 1 at (-31.63,25.00) startOffset 0 endOffset 6 width 31.63: "offset"
     RenderSVGText {text} at (9,50) size 60x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 59x16
         chunk 1 (end anchor) text run 1 at (-58.69,50.00) startOffset 0 endOffset 10 width 58.69: "event base"
     RenderSVGText {text} at (14,75) size 55x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 55x16
         chunk 1 (end anchor) text run 1 at (-54.04,75.00) startOffset 0 endOffset 9 width 54.04: "sync base"
-    RenderSVGText {text} at (14,100) size 55x16 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 54x16
-        chunk 1 (end anchor) text run 1 at (-53.65,100.00) startOffset 0 endOffset 10 width 53.65: "indefinite"
+    RenderSVGText {text} at (15,100) size 54x16 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 53x16
+        chunk 1 (end anchor) text run 1 at (-52.88,100.00) startOffset 0 endOffset 10 width 52.88: "indefinite"
     RenderSVGText {text} at (24,125) size 45x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 44x16
         chunk 1 (end anchor) text run 1 at (-43.52,125.00) startOffset 0 endOffset 8 width 43.52: "repeat()"

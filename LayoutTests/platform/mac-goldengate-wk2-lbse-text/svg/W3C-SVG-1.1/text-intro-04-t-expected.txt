@@ -6,9 +6,9 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGTransformableContainer {g} at (10,5.52) size 448.36x238.55
-      RenderSVGText {text} at (0,0) size 140x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 140x18
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 139.62: "Test horizontal text."
+      RenderSVGText {text} at (0,0) size 138x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 138x18
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 137.84: "Test horizontal text."
       RenderSVGTransformableContainer {g} at (0,36.33) size 448.36x202.22
         RenderSVGText {text} at (0,0) size 306x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 306x23

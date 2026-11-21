@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-    RenderSVGTransformableContainer {g} at (-5,-14) size 115.19x370
+    RenderSVGTransformableContainer {g} at (-5,-14) size 114.91x370
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
@@ -171,29 +171,29 @@ layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) 
 layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {use} at (0,0) size 50x22
     RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
-layer at (0,-14) size 111x370 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (5,0) size 110.19x370
+layer at (0,-14) size 110x370 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (5,0) size 109.91x370
     RenderSVGText {text} at (0,0) size 33x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 33x18
         chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 32.88: "color"
     RenderSVGText {text} at (0,22) size 47x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 47x18
         chunk 1 text run 1 at (0.00,22.00) startOffset 0 endOffset 7 width 46.22: "display"
-    RenderSVGText {text} at (0,44) size 19x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 19x18
-        chunk 1 text run 1 at (0.00,44.00) startOffset 0 endOffset 4 width 18.66: "fill"
-    RenderSVGText {text} at (0,66) size 49x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 49x18
-        chunk 1 text run 1 at (0.00,66.00) startOffset 0 endOffset 9 width 48.87: "fill-rule"
+    RenderSVGText {text} at (0,44) size 18x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 18x18
+        chunk 1 text run 1 at (0.00,44.00) startOffset 0 endOffset 4 width 17.79: "fill"
+    RenderSVGText {text} at (0,66) size 48x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 48x18
+        chunk 1 text run 1 at (0.00,66.00) startOffset 0 endOffset 9 width 47.99: "fill-rule"
     RenderSVGText {text} at (0,88) size 40x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 40x18
         chunk 1 text run 1 at (0.00,88.00) startOffset 0 endOffset 6 width 39.10: "stroke"
     RenderSVGText {text} at (0,110) size 107x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 107x18
         chunk 1 text run 1 at (0.00,110.00) startOffset 0 endOffset 16 width 106.62: "stroke-dasharray"
-    RenderSVGText {text} at (0,132) size 111x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 111x18
-        chunk 1 text run 1 at (0.00,132.00) startOffset 0 endOffset 17 width 110.19: "stroke-dashoffset"
+    RenderSVGText {text} at (0,132) size 110x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 110x18
+        chunk 1 text run 1 at (0.00,132.00) startOffset 0 endOffset 17 width 109.91: "stroke-dashoffset"
     RenderSVGText {text} at (0,154) size 91x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 91x18
         chunk 1 text run 1 at (0.00,154.00) startOffset 0 endOffset 14 width 90.63: "stroke-linecap"

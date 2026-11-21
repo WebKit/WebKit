@@ -29,9 +29,9 @@ layer at (0,0) size 480x360
 layer at (-4,-30.02) size 424x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 424x34.02
     RenderSVGTransformableContainer {g} at (0,0) size 424x34.02
-      RenderSVGText {text} at (4,17) size 167x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 167x16
-          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 166.39: "horiz-origin-x unspecified (0)"
+      RenderSVGText {text} at (4,17) size 166x17 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 166x16
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 165.62: "horiz-origin-x unspecified (0)"
       RenderSVGText {text} at (244,0) size 180x31 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 180x31
           chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 4 width 180.00: "1234"

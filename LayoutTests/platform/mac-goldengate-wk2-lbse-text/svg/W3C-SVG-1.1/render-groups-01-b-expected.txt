@@ -24,8 +24,8 @@ layer at (20,5.63) size 230x160
     RenderSVGRect {rect} at (0,4.38) size 230x155 [stroke={[type=SOLID] [color=#000000]}] [x=20.00] [y=10.00] [width=230.00] [height=155.00]
 layer at (30,5.63) size 212x150
   RenderSVGTransformableContainer {g} at (10,0) size 212x149.38 [opacity=0.50]
-    RenderSVGText {text} at (0,0) size 133x121 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 133x121
-        chunk 1 text run 1 at (30.00,90.00) startOffset 0 endOffset 3 width 132.36: "SVG"
+    RenderSVGText {text} at (0,0) size 138x121 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 138x121
+        chunk 1 text run 1 at (30.00,90.00) startOffset 0 endOffset 3 width 137.16: "SVG"
     RenderSVGRect {rect} at (40,49.38) size 130x70 [fill={[type=SOLID] [color=#820032]}] [x=70.00] [y=55.00] [width=130.00] [height=70.00]
     RenderSVGImage {image} at (132,69.38) size 80x80

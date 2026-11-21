@@ -32,18 +32,18 @@ layer at (0,0) size 500x290 backgroundClip at (0.50,0.50) size 479.50x359.50 cli
       RenderSVGText {text} at (19,53) size 197x50 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 197x49
           chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 196.02: "Unfiltered"
-      RenderSVGText {text} at (19,153) size 674x50 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 674x49
-          chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 673.11: "type=\"matrix\" (grayscale matrix)"
-      RenderSVGText {text} at (19,253) size 577x50 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 577x49
-          chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 576.41: "type=\"saturate\" values=\".4\""
-      RenderSVGText {text} at (19,353) size 627x50 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 627x49
-          chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 626.58: "type=\"hueRotate\" values=\"90\""
-      RenderSVGText {text} at (19,453) size 525x50 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 525x49
-          chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 524.63: "type=\"luminanceToAlpha\""
+      RenderSVGText {text} at (19,153) size 672x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 672x49
+          chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 671.89: "type=\"matrix\" (grayscale matrix)"
+      RenderSVGText {text} at (19,253) size 575x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 575x49
+          chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 574.73: "type=\"saturate\" values=\".4\""
+      RenderSVGText {text} at (19,353) size 625x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 625x49
+          chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 624.63: "type=\"hueRotate\" values=\"90\""
+      RenderSVGText {text} at (19,453) size 518x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 518x49
+          chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 517.40: "type=\"luminanceToAlpha\""
 layer at (20,120) size 760x40 backgroundClip at (0,5) size 480x290 clip at (0,5) size 480x290
   RenderSVGRect {rect} at (19,119) size 760x40 [fill={[type=SOLID] [color=#00000000]}] [x=20.00] [y=120.00] [width=760.00] [height=40.00]
 layer at (20,220) size 760x40 backgroundClip at (0,5) size 480x290 clip at (0,5) size 480x290

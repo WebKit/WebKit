@@ -40,9 +40,9 @@ layer at (10,6) size 138x87
       RenderSVGText {text} at (0,0) size 137x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 137x18
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 136.85: "Horizontal blur (3x1)"
-      RenderSVGText {text} at (0,0) size 120x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 120x18
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 19 width 119.95: "Vertical blur (1x3)"
+      RenderSVGText {text} at (0,0) size 119x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 119x18
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 19 width 118.18: "Vertical blur (1x3)"
 layer at (10,30) size 50x63
   RenderSVGImage {image} at (0,0) size 50x63
 layer at (10,30) size 50x63

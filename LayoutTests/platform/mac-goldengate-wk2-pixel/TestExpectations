@@ -44,9 +44,11 @@ svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Pass ImageOn
 svg/W3C-SVG-1.1/pservers-grad-19-b.svg [ Pass ImageOnlyFailure ]
 
 # Flaky in full runs, pass on their own.
-svg/hixie/cascade/001-broken.xml [ Pass ImageOnlyFailure ]
-svg/hixie/data-types/001.xml     [ Pass ImageOnlyFailure ]
-svg/hixie/painting/001.xml       [ Pass ImageOnlyFailure ]
+fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html             [ Pass ImageOnlyFailure ]
+imported/blink/fast/shapes/shape-outside-floats/shape-outside-image-too-big.html [ Pass ImageOnlyFailure ]
+svg/hixie/cascade/001-broken.xml                                                 [ Pass ImageOnlyFailure ]
+svg/hixie/data-types/001.xml                                                     [ Pass ImageOnlyFailure ]
+svg/hixie/painting/001.xml                                                       [ Pass ImageOnlyFailure ]
 
 # Flaky in Release too, platform/mac-wk2/TestExpectations only marks it for Debug.
 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
@@ -56,11 +58,12 @@ http/tests/misc/slow-loading-image-in-pattern.html [ Failure ImageOnlyFailure ]
 
 # Marked as failing in the shared TestExpectations (for the Golden Gate bots, Tahoe+ or generically),
 # but they pass in these runs.
-fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html                                    [ Pass ]
 fast/hidpi/filters-blur.html                                                                            [ Pass ]
 fast/hidpi/filters-hue-rotate.html                                                                      [ Pass ]
 fast/hidpi/filters-invert.html                                                                          [ Pass ]
 fast/hidpi/filters-multiple.html                                                                        [ Pass ]
+imported/mozilla/svg/filters/feColorMatrix-1.svg                                                        [ Pass ]
+imported/mozilla/svg/filters/feColorMatrix-2.svg                                                        [ Pass ]
 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-003.html     [ Pass ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html                       [ Pass ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub.html                 [ Pass ]

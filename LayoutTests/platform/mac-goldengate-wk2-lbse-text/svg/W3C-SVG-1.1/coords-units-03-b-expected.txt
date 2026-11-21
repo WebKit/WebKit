@@ -15,14 +15,14 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.4 $"
     RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-layer at (20,6) size 373x198
-  RenderSVGTransformableContainer {g} at (20,6) size 372.17x197.34
+layer at (20,6) size 372x198
+  RenderSVGTransformableContainer {g} at (20,6) size 371.44x197.34
     RenderSVGText {text} at (0,0) size 20x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 20x16
         chunk 1 text run 1 at (20.00,18.00) startOffset 0 endOffset 3 width 20.00: "200"
-    RenderSVGText {text} at (210,2) size 163x16 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 163x16
-        chunk 1 text run 1 at (230.00,20.00) startOffset 0 endOffset 31 width 162.16: "User space units (no specifier)"
+    RenderSVGText {text} at (210,2) size 162x16 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 162x16
+        chunk 1 text run 1 at (230.00,20.00) startOffset 0 endOffset 31 width 161.43: "User space units (no specifier)"
     RenderSVGRect {rect} at (0,14) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=20.00] [width=200.00] [height=1.00]
     RenderSVGText {text} at (0,20) size 37x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 37x16

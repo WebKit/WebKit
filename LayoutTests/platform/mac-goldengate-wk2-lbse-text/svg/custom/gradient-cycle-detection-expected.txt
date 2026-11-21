@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFA500]
         RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
       RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGText {text} at (10,136) size 555x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 555x18
-          chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 85 width 554.08: "The square above should show a gradient now that webkit supports proper fill fallback"
+      RenderSVGText {text} at (10,136) size 554x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 554x18
+          chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 85 width 553.20: "The square above should show a gradient now that webkit supports proper fill fallback"

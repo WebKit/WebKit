@@ -4,9 +4,9 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-    RenderSVGText {text} at (108,35) size 234x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 234x18
-        chunk 1 (middle anchor) text run 1 at (108.49,50.00) startOffset 0 endOffset 34 width 233.02: "patternRegion, x, y, width, height"
+    RenderSVGText {text} at (109,35) size 232x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 232x18
+        chunk 1 (middle anchor) text run 1 at (109.08,50.00) startOffset 0 endOffset 34 width 231.84: "patternRegion, x, y, width, height"
     RenderSVGTransformableContainer {g} at (-5,-19.48) size 246.95x69.48
       RenderSVGHiddenContainer {defs} at (5,19.48) size 20x20
         RenderSVGTransformableContainer {g} at (0,0) size 20x20
@@ -169,8 +169,8 @@ layer at (0,0) size 10x10
   RenderSVGTransformableContainer {g} at (0,0) size 10x10
     RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
     RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
-layer at (-5,-19.48) size 247x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 246.05x69.48
+layer at (-5,-19.48) size 246x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 245.77x69.48
     RenderSVGTransformableContainer {g} at (5,0) size 184.09x69.48
       RenderSVGText {text} at (0,0) size 185x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 185x18
@@ -178,24 +178,24 @@ layer at (-5,-19.48) size 247x70 backgroundClip at (0,0) size 450x500 clip at (0
       RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
       RenderSVGRect {rect} at (0,19.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
 layer at (-5,-19.48) size 220x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 219.36x69.48
+  RenderSVGTransformableContainer {g} at (0,0) size 219.08x69.48
     RenderSVGText {text} at (5,0) size 215x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 215x18
-        chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 214.36: "patternRegion offset to the left"
+        chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 214.07: "patternRegion offset to the left"
     RenderSVGRect {rect} at (5,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
     RenderSVGRect {rect} at (0,19.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=-5.00] [y=0.00] [width=20.00] [height=20.00]
-layer at (0,-19.48) size 216x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (5,0) size 215.27x69.48
-    RenderSVGText {text} at (0,0) size 216x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 216x18
-        chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 31 width 215.26: "patternRegion offset to the top"
+layer at (0,-19.48) size 215x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (5,0) size 214.97x69.48
+    RenderSVGText {text} at (0,0) size 215x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 215x18
+        chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 31 width 214.97: "patternRegion offset to the top"
     RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
     RenderSVGRect {rect} at (0,14.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=-5.00] [width=20.00] [height=20.00]
-layer at (0,-19.48) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (5,0) size 241.05x69.48
-    RenderSVGText {text} at (0,0) size 242x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 242x18
-        chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 36 width 241.05: "patternRegion offset to the top/left"
+layer at (0,-19.48) size 241x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (5,0) size 240.77x69.48
+    RenderSVGText {text} at (0,0) size 241x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 241x18
+        chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 36 width 240.76: "patternRegion offset to the top/left"
     RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
     RenderSVGRect {rect} at (10,29.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=10.00] [y=10.00] [width=20.00] [height=20.00]
 layer at (0,-19.48) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500

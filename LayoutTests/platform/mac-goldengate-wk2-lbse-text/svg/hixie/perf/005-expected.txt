@@ -107,9 +107,9 @@ layer at (0,0) size 400x400
     RenderSVGRect {rect} at (54.81,67.81) size 12.38x24.38 [fill={[type=SOLID] [color=#00000000]}] [x=54.81] [y=67.81] [width=12.38] [height=24.38]
     RenderSVGRect {rect} at (6.92,-12.94) size 14.16x27.88 [fill={[type=SOLID] [color=#00000000]}] [x=6.93] [y=-12.93] [width=14.14] [height=27.86]
     RenderSVGRect {rect} at (-9.50,37.50) size 33x65 [fill={[type=SOLID] [color=#00000000]}] [x=-9.50] [y=37.50] [width=33.00] [height=65.00]
-    RenderSVGText {text} at (10,90) size 33x7 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 33x6
-        chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.35: "Test completed"
+    RenderSVGText {text} at (10,90) size 32x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 32x6
+        chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 31.89: "Test completed"
     RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
       RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]

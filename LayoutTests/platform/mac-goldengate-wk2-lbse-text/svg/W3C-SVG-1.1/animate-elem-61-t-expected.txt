@@ -17,7 +17,7 @@ layer at (-75.03,-12.50) size 76x166 backgroundClip at (0,0) size 480x360 clip a
   RenderSVGTransformableContainer {g} at (0,40) size 75.03x166
     RenderSVGText {text} at (27,0) size 49x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 48x16
-        chunk 1 (end anchor) text run 1 at (-47.82,0.00) startOffset 0 endOffset 9 width 47.82: "2 offsets"
+        chunk 1 (end anchor) text run 1 at (-47.58,0.00) startOffset 0 endOffset 9 width 47.58: "2 offsets"
     RenderSVGText {text} at (5,25) size 71x16 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 70x16
         chunk 1 (end anchor) text run 1 at (-69.99,25.00) startOffset 0 endOffset 12 width 69.99: "2 sync bases"

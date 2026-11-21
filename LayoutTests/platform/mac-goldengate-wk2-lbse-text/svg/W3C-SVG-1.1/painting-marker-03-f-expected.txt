@@ -11,9 +11,9 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (171,52) size 138x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 137x23
         chunk 1 (middle anchor) text run 1 at (171.70,70.00) startOffset 0 endOffset 17 width 136.59: "'marker' property"
-    RenderSVGText {text} at (33,182) size 414x23 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 414x23
-        chunk 1 (middle anchor) text run 1 at (33.44,200.00) startOffset 0 endOffset 53 width 413.12: "'marker-start', 'marker-mid' & 'marker-end' attribute"
+    RenderSVGText {text} at (34,182) size 412x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 412x23
+        chunk 1 (middle anchor) text run 1 at (34.03,200.00) startOffset 0 endOffset 53 width 411.94: "'marker-start', 'marker-mid' & 'marker-end' attribute"
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
