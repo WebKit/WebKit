@@ -184,8 +184,8 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
     auto [pageHandle, frameHandle] = handles.value();
 
-    // FIXME: implement the `document` origin; captures are always relative to the viewport. <https://webkit.org/b/323419>
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalOrigin.isNull() && optionalOrigin != "viewport"_s && optionalOrigin != "document"_s, InvalidParameter);
+    bool documentOrigin = optionalOrigin == "document"_s;
 
     if (optionalFormat) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformat
@@ -202,23 +202,25 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
         // FIXME: honor the requested image format and quality; captures are always encoded as PNG. <https://webkit.org/b/323422>
     }
 
+    std::optional<double> maxWidth;
+    std::optional<double> maxHeight;
     if (optionalImageSize) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimagesize
-        for (auto key : { "maxWidth"_s, "maxHeight"_s }) {
+        for (auto [key, maxDimension] : { std::pair { "maxWidth"_s, &maxWidth }, std::pair { "maxHeight"_s, &maxHeight } }) {
             if (RefPtr value = optionalImageSize->getValue(key)) {
-                // maxWidth and maxHeight are js-uint (0..2^53-1) constrained to be greater than 1.
+                // maxWidth and maxHeight are js-uint (0..2^53-1) constrained to be at least 1.
                 // asInteger() truncates a JSON double, so validate integrality and both bounds
                 // against the raw double, matching the js-uint handling in getTree above.
                 auto doubleValue = value->asDouble();
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!doubleValue, InvalidParameter);
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::floor(*doubleValue) != *doubleValue, InvalidParameter);
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*doubleValue <= 1 || *doubleValue > JSC::maxSafeInteger(), InvalidParameter);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*doubleValue < 1 || *doubleValue > JSC::maxSafeInteger(), InvalidParameter);
+                *maxDimension = *doubleValue;
             }
         }
-
-        // FIXME: honor the requested image size; the captured image is never downscaled. <https://webkit.org/b/323419>
     }
 
+    std::optional<WebCore::FloatRect> clip;
     if (optionalClip) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextcliprectangle
         RefPtr clipTypeValue = optionalClip->getValue("type"_s);
@@ -260,15 +262,25 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
             auto height = *optionalClip->getDouble("height"_s);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!width || !height, ScreenshotError);
 
-            // FIXME: apply the clip rectangle to the captured image. <https://webkit.org/b/323419>
+            // Normalize here, in double, and clamp the edges rather than the sizes. A huge clip then still covers what
+            // it should, and the WebContent process gets finite values that stay finite when it applies the zoom.
+            // LayoutUnit limits documents and viewports to about 3.3e7 pixels, so the clamp never cuts into them.
+            auto clampedEdge = [](double edge) {
+                constexpr float maxEdge = 1e9;
+                return clampTo<float>(edge, -maxEdge, maxEdge);
+            };
+            auto x = *optionalClip->getDouble("x"_s);
+            auto y = *optionalClip->getDouble("y"_s);
+            auto left = clampedEdge(std::min(x, x + width));
+            auto right = clampedEdge(std::max(x, x + width));
+            auto top = clampedEdge(std::min(y, y + height));
+            auto bottom = clampedEdge(std::max(y, y + height));
+            clip = WebCore::FloatRect(left, top, right - left, bottom - top);
         } else
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
     }
 
-    // FIXME: this always captures the full page viewport: the empty node handle, and the
-    // absent scrollIntoViewIfNeeded and clipToViewport arguments, are placeholders until the
-    // origin, clip, and image-size options above are applied. <https://webkit.org/b/323419>
-    session->takeScreenshot(pageHandle, frameHandle, emptyString(), std::nullopt, std::nullopt, WTF::move(callback));
+    session->captureBidiScreenshot(pageHandle, frameHandle, documentOrigin, WTF::move(clip), WTF::move(maxWidth), WTF::move(maxHeight), WTF::move(callback));
 }
 
 void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std::optional<bool>&& optionalPromptUnload, CommandCallback<void>&& callback)
