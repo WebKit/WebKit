@@ -2246,7 +2246,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         coordinator->setRootNodeIsInUserScroll(true);
 
         if (coordinator->scrollingPerformanceTestingEnabled() && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%s", _page->currentURL().utf8());
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, _page->currentURL().utf8());
             _scrollPerfIntervalState = ScrollPerfIntervalState::FingerDown;
             _scrollPerfRubberbandingNotified = NO;
         }
@@ -2334,7 +2334,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
                 _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
             }
             if (decelerate && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-                WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%s", _page->currentURL().utf8());
+                WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, _page->currentURL().utf8());
                 _scrollPerfIntervalState = ScrollPerfIntervalState::Momentum;
             }
         }

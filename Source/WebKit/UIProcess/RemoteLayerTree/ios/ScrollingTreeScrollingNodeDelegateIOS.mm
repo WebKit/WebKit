@@ -109,7 +109,7 @@
             _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
         }
         if (_scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, scrollingTreeNodeDelegate->currentURL().utf8());
             _scrollPerfIntervalState = ScrollPerfIntervalState::FingerDown;
         }
     }
@@ -189,7 +189,7 @@
             _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
         }
         if (willDecelerate && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, scrollingTreeNodeDelegate->currentURL().utf8());
             _scrollPerfIntervalState = ScrollPerfIntervalState::Momentum;
         }
     }
@@ -578,6 +578,15 @@ void ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture() cons
 bool ScrollingTreeScrollingNodeDelegateIOS::isScrollingPerformanceTestingEnabled() const
 {
     return scrollingTree()->scrollingPerformanceTestingEnabled();
+}
+
+String ScrollingTreeScrollingNodeDelegateIOS::currentURL() const
+{
+    RefPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
+    if (!scrollingCoordinatorProxy)
+        return { };
+
+    return protect(scrollingCoordinatorProxy->webPageProxy())->currentURL();
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollOffset, bool inUserInteraction)

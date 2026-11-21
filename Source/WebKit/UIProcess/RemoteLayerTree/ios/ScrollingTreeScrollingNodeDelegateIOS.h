@@ -66,6 +66,7 @@ public:
     void scrollViewWillStartPanGesture() const;
     void scrollViewDidScroll(const WebCore::FloatPoint& scrollOffset, bool inUserInteraction);
     bool isScrollingPerformanceTestingEnabled() const;
+    String currentURL() const;
 
     void currentSnapPointIndicesDidChange(std::optional<unsigned> horizontal, std::optional<unsigned> vertical) const;
     CALayer *scrollLayer() const { return m_scrollLayer.get(); }
