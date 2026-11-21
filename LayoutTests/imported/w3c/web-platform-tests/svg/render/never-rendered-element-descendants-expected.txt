@@ -1,0 +1,76 @@
+
+PASS control: a shape inside a g is hit by elementFromPoint
+PASS control: a shape inside a g can receive focus
+PASS control: a shape inside a g contributes to the bounding box of an ancestor
+PASS defs: a shape inside is not hit by elementFromPoint
+PASS defs: a shape inside cannot receive focus
+PASS defs: a shape inside does not contribute to the bounding box of an ancestor
+PASS defs with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS defs with display: inline !important: a shape inside cannot receive focus
+PASS defs with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS title: a shape inside is not hit by elementFromPoint
+PASS title: a shape inside cannot receive focus
+PASS title: a shape inside does not contribute to the bounding box of an ancestor
+PASS title with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS title with display: inline !important: a shape inside cannot receive focus
+PASS title with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS desc: a shape inside is not hit by elementFromPoint
+PASS desc: a shape inside cannot receive focus
+PASS desc: a shape inside does not contribute to the bounding box of an ancestor
+PASS desc with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS desc with display: inline !important: a shape inside cannot receive focus
+PASS desc with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS metadata: a shape inside is not hit by elementFromPoint
+PASS metadata: a shape inside cannot receive focus
+PASS metadata: a shape inside does not contribute to the bounding box of an ancestor
+PASS metadata with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS metadata with display: inline !important: a shape inside cannot receive focus
+PASS metadata with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS symbol: a shape inside is not hit by elementFromPoint
+PASS symbol: a shape inside cannot receive focus
+PASS symbol: a shape inside does not contribute to the bounding box of an ancestor
+PASS symbol with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS symbol with display: inline !important: a shape inside cannot receive focus
+PASS symbol with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS marker: a shape inside is not hit by elementFromPoint
+PASS marker: a shape inside cannot receive focus
+PASS marker: a shape inside does not contribute to the bounding box of an ancestor
+PASS marker with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS marker with display: inline !important: a shape inside cannot receive focus
+PASS marker with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS pattern: a shape inside is not hit by elementFromPoint
+PASS pattern: a shape inside cannot receive focus
+PASS pattern: a shape inside does not contribute to the bounding box of an ancestor
+PASS pattern with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS pattern with display: inline !important: a shape inside cannot receive focus
+PASS pattern with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS clipPath: a shape inside is not hit by elementFromPoint
+PASS clipPath: a shape inside cannot receive focus
+PASS clipPath: a shape inside does not contribute to the bounding box of an ancestor
+PASS clipPath with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS clipPath with display: inline !important: a shape inside cannot receive focus
+PASS clipPath with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS mask: a shape inside is not hit by elementFromPoint
+PASS mask: a shape inside cannot receive focus
+PASS mask: a shape inside does not contribute to the bounding box of an ancestor
+PASS mask with display: inline !important: a shape inside is not hit by elementFromPoint
+PASS mask with display: inline !important: a shape inside cannot receive focus
+PASS mask with display: inline !important: a shape inside does not contribute to the bounding box of an ancestor
+PASS control: a link without tabindex inside a g can receive focus
+PASS defs: a link without tabindex inside cannot receive focus
+PASS title: a link without tabindex inside cannot receive focus
+PASS desc: a link without tabindex inside cannot receive focus
+PASS metadata: a link without tabindex inside cannot receive focus
+PASS symbol: a link without tabindex inside cannot receive focus
+PASS marker: a link without tabindex inside cannot receive focus
+PASS pattern: a link without tabindex inside cannot receive focus
+PASS clipPath: a link without tabindex inside cannot receive focus
+PASS mask: a link without tabindex inside cannot receive focus
+PASS control: text inside a tspan is counted by getNumberOfChars
+PASS desc: text inside is not counted by getNumberOfChars
+PASS desc with display: inline !important: text inside is not counted by getNumberOfChars
+PASS title: text inside is not counted by getNumberOfChars
+PASS title with display: inline !important: text inside is not counted by getNumberOfChars
+PASS metadata: text inside is not counted by getNumberOfChars
+PASS metadata with display: inline !important: text inside is not counted by getNumberOfChars
+

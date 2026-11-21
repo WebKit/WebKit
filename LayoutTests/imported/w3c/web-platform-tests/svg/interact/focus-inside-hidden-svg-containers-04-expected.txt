@@ -7,4 +7,9 @@ PASS Non-rendered <marker> is not focusable
 PASS Non-rendered <pattern> is not focusable
 PASS Non-rendered <linearGradient> is not focusable
 PASS Non-rendered <radialGradient> is not focusable
+PASS Non-rendered <filter> is not focusable
+PASS Non-rendered <feFlood> is not focusable
+PASS Control: a <rect> inside a <g> is focusable after layout
+PASS A <rect> inside a <g> with display: none is not focusable after layout
+PASS An <feFlood> inside a <filter> inserted by script is not focusable before layout
 

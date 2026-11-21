@@ -53,10 +53,6 @@ svg:root {
     height: 100%
 }
 
-title {
-    display: none;
-}
-
 text, foreignObject {
     display: block
 }

@@ -55,6 +55,8 @@ public:
 private:
     SVGFilterElement(const QualifiedName&, Document&);
 
+    bool supportsFocus() const final { return false; }
+
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;

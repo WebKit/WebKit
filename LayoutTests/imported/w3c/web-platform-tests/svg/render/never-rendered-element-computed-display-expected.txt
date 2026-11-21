@@ -1,0 +1,28 @@
+
+PASS defs: display computes to inline
+PASS defs: display="block" computes to block
+PASS title: display computes to inline
+PASS title: display="block" computes to block
+PASS desc: display computes to inline
+PASS desc: display="block" computes to block
+PASS metadata: display computes to inline
+PASS metadata: display="block" computes to block
+PASS symbol: display computes to inline
+PASS symbol: display="block" computes to block
+PASS marker: display computes to inline
+PASS marker: display="block" computes to block
+PASS clipPath: display computes to inline
+PASS clipPath: display="block" computes to block
+PASS mask: display computes to inline
+PASS mask: display="block" computes to block
+PASS linearGradient: display computes to inline
+PASS linearGradient: display="block" computes to block
+PASS radialGradient: display computes to inline
+PASS radialGradient: display="block" computes to block
+PASS pattern: display computes to inline
+PASS pattern: display="block" computes to block
+PASS script: display computes to inline
+PASS script: display="block" computes to block
+PASS style: display computes to inline
+PASS style: display="block" computes to block
+

@@ -33,6 +33,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/filter-effects-on-pattern.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/nested-svg-overflow-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/nested-svg-overflow-clip.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/never-rendered-element-display-attribute-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/never-rendered-element-display-attribute.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/never-rendered-element-display-important-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/never-rendered-element-display-important.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/never-rendered-element-display-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/overflow-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/overflow-clip.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/rect-ref.html
