@@ -197,8 +197,12 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
         return;
     }
 
+    // A committed loader here is a page being restored from the back/forward cache. It keeps its URL, so filtering
+    // would make the client approve a different URL than the one the provisional load reports.
+    bool isRestoringFromBackForwardCache = isSameDocumentNavigation == IsSameDocumentNavigation::No && isBackForwardLoadType(m_loadType) && loader->isCommitted();
+
     // Filter only if top-level navigation and the URL was not previously filtered.
-    if (RefPtr page = frame->page(); page && frame->isMainFrame() && !request.didFilterLinkDecoration()) {
+    if (RefPtr page = frame->page(); page && frame->isMainFrame() && !request.didFilterLinkDecoration() && !isRestoringFromBackForwardCache) {
         auto [filteredURL, didFilter] = page->chrome().client().applyLinkDecorationFilteringWithResult(request.url(), LinkDecorationFilteringTrigger::Navigation);
         request.setURL(WTF::move(filteredURL), didFilter == DidFilterLinkDecoration::Yes);
     }
