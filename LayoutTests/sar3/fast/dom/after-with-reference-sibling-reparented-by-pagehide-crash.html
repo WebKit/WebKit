@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests ChildNode.after() when a subframe pagehide listener, run by the detach step of
+"converting nodes into a node", re-parents the reference sibling into another container. This reaches the
+same window as before-after-with-reparented-reference-sibling-crash.html but through
+disconnectSubframesIfNeeded rather than DOMNodeRemoved, so it needs no mutation-event preference.<br>
+WebKit should throw NotFoundError instead of splicing the new children into the other container's sibling chain.`);
+
+jsTestIsAsync = true;
+
+var parent = document.createElement('div');
+var otherParent = document.createElement('div');
+var target = document.createElement('span');
+var refSibling = document.createElement('span');
+// n1 wraps the iframe, so removing n1 during the detach step disconnects the subframe and fires pagehide.
+var n1 = document.createElement('div');
+var n2 = document.createElement('span');
+var frame = document.createElement('iframe');
+
+parent.append(target, refSibling);
+n1.appendChild(frame);
+document.body.append(parent, otherParent, n1);
+
+frame.onload = () => {
+    frame.contentWindow.addEventListener('pagehide', () => otherParent.appendChild(refSibling), { once: true });
+
+    shouldThrowErrorName(`target.after(n1, n2)`, 'NotFoundError');
+    shouldBe('refSibling.parentNode', 'otherParent');
+    shouldBe('parent.firstChild', 'target');
+    shouldBe('parent.lastChild', 'target');
+    shouldBe('n1.parentNode', 'null');
+    shouldBe('n2.parentNode', 'null');
+
+    if (window.internals)
+        internals.releaseMemoryNow();
+    if (window.GCController)
+        GCController.collect();
+    // Before the fix, parent and otherParent shared one sibling chain, so this reassigned
+    // otherParent's CheckedPtr<Node> m_lastChild over a destroyed node.
+    shouldNotThrow(`otherParent.appendChild(document.createElement('span'))`);
+
+    finishJSTest();
+};
+frame.src = 'about:blank';
+
+</script>
+</body>
+</html>
