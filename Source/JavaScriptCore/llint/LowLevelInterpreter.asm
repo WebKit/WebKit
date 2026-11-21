@@ -237,7 +237,6 @@ const JSEntrySlowPathPtrTag = constexpr JSEntrySlowPathPtrTag
 const NativeToJITGatePtrTag = constexpr NativeToJITGatePtrTag
 const VMEntryToJITGatePtrTag = constexpr VMEntryToJITGatePtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
-const YarrEntryPtrTag = constexpr YarrEntryPtrTag
 const CSSSelectorPtrTag = constexpr CSSSelectorPtrTag
 const LLIntToWasmEntryPtrTag = constexpr LLIntToWasmEntryPtrTag
 const NoPtrTag = constexpr NoPtrTag
@@ -1915,19 +1914,36 @@ else
     _vmEntryToNative:
 end
     doVMEntry(makeHostFunctionCall)
-if ARM64E
-    global _vmEntryToYarrJITAfter
-end
-global _vmEntryToYarrJIT
-_vmEntryToYarrJIT:
+
+# UGPRPair vmEntryToYarrJIT*(const void* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*, const void* codePtr);
+macro vmEntryToYarrJITThroughGate(gate)
     functionPrologue()
-if ARM64E
-    jmp t5, YarrEntryPtrTag
-    _vmEntryToYarrJITAfter:
+    leap _g_config, t6
+    jmp JSCConfigGateMapOffset + gate * PtrSize[t6], NativeToJITGatePtrTag
 end
-    move cfr, sp
-    functionEpilogue()
-    ret
+
+if ARM64E
+    global _vmEntryToYarrJIT8
+    _vmEntryToYarrJIT8:
+        vmEntryToYarrJITThroughGate(constexpr Gate::vmEntryToYarrJIT8)
+
+    global _vmEntryToYarrJIT16
+    _vmEntryToYarrJIT16:
+        vmEntryToYarrJITThroughGate(constexpr Gate::vmEntryToYarrJIT16)
+
+    global _vmEntryToYarrJITMatchOnly8
+    _vmEntryToYarrJITMatchOnly8:
+        vmEntryToYarrJITThroughGate(constexpr Gate::vmEntryToYarrJITMatchOnly8)
+
+    global _vmEntryToYarrJITMatchOnly16
+    _vmEntryToYarrJITMatchOnly16:
+        vmEntryToYarrJITThroughGate(constexpr Gate::vmEntryToYarrJITMatchOnly16)
+
+    global _vmEntryToYarrJITGateAfter
+    _vmEntryToYarrJITGateAfter:
+        functionEpilogue()
+        ret
+end
 
 # a0, a1, a2 are used. a3 contains function address.
 # EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue, PropertyName, void*);

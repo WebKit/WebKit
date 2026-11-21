@@ -51,6 +51,12 @@ namespace JSC {
     v(llint_function_for_construct_arity_checkTag, NoPtrTag) \
     v(vmEntryToJavaScript, JSEntryPtrTag) \
 
+#define JSC_YARR_GATES(v) \
+    v(vmEntryToYarrJIT8, Yarr8BitPtrTag) \
+    v(vmEntryToYarrJIT16, Yarr16BitPtrTag) \
+    v(vmEntryToYarrJITMatchOnly8, YarrMatchOnly8BitPtrTag) \
+    v(vmEntryToYarrJITMatchOnly16, YarrMatchOnly16BitPtrTag) \
+
 #define JSC_JS_GATE_OPCODES(v) \
     v(op_call, JSEntryPtrTag) \
     v(op_call_ignore_result, JSEntryPtrTag) \
@@ -88,6 +94,7 @@ enum class Gate : uint8_t {
 #define JSC_DEFINE_GATE_ENUM(gateName, tag) gateName,
 #define JSC_DEFINE_OPCODE_GATE_ENUM(gateName, tag) gateName, gateName##_wide16, gateName##_wide32,
     JSC_UTILITY_GATES(JSC_DEFINE_GATE_ENUM)
+    JSC_YARR_GATES(JSC_DEFINE_GATE_ENUM)
     JSC_JS_GATE_OPCODES(JSC_DEFINE_OPCODE_GATE_ENUM)
     JSC_WASM_GATE_OPCODES(JSC_DEFINE_OPCODE_GATE_ENUM)
     // Keep the hot gates above together for better cache locality
@@ -97,7 +104,7 @@ enum class Gate : uint8_t {
 
 #define JSC_COUNT(gateName, tag) + 1
 #define JSC_OPCODE_COUNT(gateName, tag) + 3
-static constexpr unsigned numberOfGates = 0 JSC_UTILITY_GATES(JSC_COUNT) JSC_JS_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_UTILITY_GATES(JSC_OPCODE_COUNT);
+static constexpr unsigned numberOfGates = 0 JSC_UTILITY_GATES(JSC_COUNT) JSC_YARR_GATES(JSC_COUNT) JSC_JS_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_UTILITY_GATES(JSC_OPCODE_COUNT);
 #undef JSC_COUNT
 #undef JSC_OPCODE_COUNT
 

@@ -383,6 +383,20 @@ void initialize()
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmOSREntry)] = nullptr;
     }
 
+#if ENABLE(YARR_JIT)
+    if (Options::useRegExpJIT()) {
+#define INITIALIZE_YARR_GATE(name, tag) \
+        do { \
+            static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef; \
+            codeRef.construct(createJSGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToYarrJITGateAfter), tag, #name)); \
+            g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::name)] = codeRef.get().code().taggedPtr(); \
+        } while (0);
+
+        JSC_YARR_GATES(INITIALIZE_YARR_GATE)
+#undef INITIALIZE_YARR_GATE
+    }
+#endif
+
 #if ENABLE(WEBASSEMBLY)
     {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;

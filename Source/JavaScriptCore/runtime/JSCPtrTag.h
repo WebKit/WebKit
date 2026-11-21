@@ -44,10 +44,6 @@ using PtrTag = WTF::PtrTag;
     v(JITCompilationPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     v(ExecutableMemoryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     v(LinkBufferPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
-    v(Yarr8BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
-    v(Yarr16BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
-    v(YarrMatchOnly8BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
-    v(YarrMatchOnly16BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     /* Callee:Native Caller:Native */ \
     v(BytecodePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(CustomAccessorPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
@@ -63,7 +59,6 @@ using PtrTag = WTF::PtrTag;
     /* Callee:JIT Caller:Native */ \
     v(NativeToJITGatePtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     v(VMEntryToJITGatePtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
-    v(YarrEntryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     v(LLIntToWasmEntryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     v(CSSSelectorPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     /* Callee:Native Caller:JIT */ \
@@ -79,6 +74,10 @@ using PtrTag = WTF::PtrTag;
     v(OSREntryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
     v(OSRExitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
     v(WasmEntryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
+    v(Yarr8BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
+    v(Yarr16BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
+    v(YarrMatchOnly8BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
+    v(YarrMatchOnly16BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
     v(YarrBacktrackPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
 
 #define JSC_DECLARE_PTRTAG(name, type, target) WTF_DECLARE_PTRTAG(name)
