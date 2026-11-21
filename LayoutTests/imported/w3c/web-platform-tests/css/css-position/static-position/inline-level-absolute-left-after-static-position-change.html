@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>CSS Position Test: inline-level absolutely positioned box with a specified left follows its static position vertically when it changes</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#staticpos-rect">
+<link rel="match" href="inline-level-absolute-left-after-static-position-change-ref.html">
+<meta name="assert" content="An absolutely positioned box with 'left: 100px' and 'top: auto' uses its static position in the block axis, so it moves down when a preceding inline box containing a block stops being display: none.">
+<style>
+body {
+  margin: 0;
+}
+.hidden {
+  display: none;
+}
+#container {
+  overflow: hidden;
+  width: 300px;
+  height: 300px;
+}
+#block {
+  height: 200px;
+  background: green;
+}
+#abspos {
+  position: absolute;
+  left: 100px;
+  width: 50px;
+  height: 50px;
+  background: black;
+}
+</style>
+<div id="container"><span id="inlineBox" class="hidden"><div id="block"></div></span><span id="abspos"></span></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("inlineBox").classList.remove("hidden");
+</script>

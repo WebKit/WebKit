@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<title>CSS Position Test: inline-level absolutely positioned box with a specified top keeps its position when its static position changes</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#resolving-inset-auto">
+<link rel="match" href="inline-level-absolute-top-after-static-position-change-ref.html">
+<meta name="assert" content="An absolutely positioned box with 'left: auto' and 'top: 100px' uses its static position only in the inline axis, so it does not move down when a preceding inline box containing a block stops being display: none.">
+<style>
+body {
+  margin: 0;
+}
+.hidden {
+  display: none;
+}
+#block {
+  width: 100px;
+  height: 200px;
+  background: green;
+}
+#abspos {
+  position: absolute;
+  top: 100px;
+  width: 50px;
+  height: 50px;
+  background: black;
+}
+</style>
+<span id="inlineBox" class="hidden"><div id="block"></div></span>
+<span id="abspos"></span>
+<script>
+document.body.offsetHeight;
+document.getElementById("inlineBox").classList.remove("hidden");
+</script>

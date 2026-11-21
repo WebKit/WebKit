@@ -875,14 +875,16 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             ASSERT(renderer->layer());
             CheckedRef layer = *renderer->layer();
             auto borderBoxLogicalTopLeft = Layout::BoxGeometry::borderBoxTopLeft(logicalGeometry);
-            auto previousStaticPosition = LayoutPoint { layer->staticInlinePosition(), layer->staticBlockPosition() };
-            auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
-            auto hasStaticInlinePositioning = layoutBox->style().hasStaticInlinePosition(renderer->isHorizontalWritingMode());
 
             if (layoutBox->style().originalDisplay().isInlineType()) {
+                auto previousStaticPosition = LayoutPoint { layer->staticInlinePosition(), layer->staticBlockPosition() };
+                auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
+                auto isHorizontalWritingMode = blockFlow->writingMode().isHorizontal();
+                auto inlineDelta = layoutBox->style().hasStaticInlinePosition(isHorizontalWritingMode) ? delta.width() : 0_lu;
+                auto blockDelta = layoutBox->style().hasStaticBlockPosition(isHorizontalWritingMode) ? delta.height() : 0_lu;
+
                 blockFlow->setStaticInlinePositionForChild(renderer, borderBoxLogicalTopLeft.x());
-                if (hasStaticInlinePositioning)
-                    renderer->move(delta.width(), delta.height());
+                renderer->move(isHorizontalWritingMode ? inlineDelta : blockDelta, isHorizontalWritingMode ? blockDelta : inlineDelta);
             }
 
             layer->setStaticBlockPosition(borderBoxLogicalTopLeft.y());
