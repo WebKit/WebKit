@@ -326,7 +326,6 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-
 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-block-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-inline-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-gradient-interpolation-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-backgrounds/background-rounded-image-clip-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-028.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-030.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-031.html [ Pass ]

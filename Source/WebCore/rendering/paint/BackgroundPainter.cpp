@@ -451,6 +451,16 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         context.setCompositeOperation(CompositeOperator::SourceOver);
     };
 
+    auto paddingOrContentClipRect = [&] -> std::optional<LayoutRect> {
+        if (layerClip != FillBox::PaddingBox && layerClip != FillBox::ContentBox)
+            return std::nullopt;
+        bool includePadding = layerClip == FillBox::ContentBox;
+        return LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : 0_lu),
+            scrolledPaintRect.y() + m_renderer.borderTop() + (includePadding ? m_renderer.paddingTop() : 0_lu),
+            scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : 0_lu),
+            scrolledPaintRect.height() - m_renderer.borderTop() - m_renderer.borderBottom() - (includePadding ? m_renderer.paddingTop() + m_renderer.paddingBottom() : 0_lu));
+    }();
+
     switch (layerClip) {
     case FillBox::BorderBox:
         break;
@@ -458,13 +468,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
     case FillBox::ContentBox: {
         // Clip to the padding or content boxes as necessary.
         if (!clipForBorder) {
-            bool includePadding = layerClip == FillBox::ContentBox;
-            LayoutRect clipRect = LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : 0_lu),
-                scrolledPaintRect.y() + m_renderer.borderTop() + (includePadding ? m_renderer.paddingTop() : 0_lu),
-                scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : 0_lu),
-                scrolledPaintRect.height() - m_renderer.borderTop() - m_renderer.borderBottom() - (includePadding ? m_renderer.paddingTop() + m_renderer.paddingBottom() : 0_lu));
             backgroundClipStateSaver.save();
-            context.clip(clipRect);
+            context.clip(*paddingOrContentClipRect);
         }
         break;
     }
@@ -567,6 +572,9 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         auto& clientForBackgroundImage = backgroundObject ? *backgroundObject : m_renderer;
 
         geometry.clip(LayoutRect(pixelSnappedRect));
+        // Clip the destination too so drawTiled() can skip tiling when one tile covers the visible area.
+        if (paddingOrContentClipRect)
+            geometry.clip(LayoutRect(encloseRectToDevicePixels(*paddingOrContentClipRect, snappingScaleFactor)));
         bool isFirstLine = inlineBoxIterator && inlineBoxIterator->lineBox().isFirst();
         if (!geometry.destinationRect.isEmpty() && bgImage->canDrawAtSize(clientForBackgroundImage, geometry.tileSize)) {
             // image-orientation does not apply to mask images (https://drafts.csswg.org/css-images-3/#propdef-image-orientation).
@@ -609,7 +617,14 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
             };
 
-            auto drawResult = bgImage->drawTiled(context, clientForBackgroundImage, descriptor, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, isFirstLine);
+            // Inflate to cover the layer's subpixel offset, which paintOffset includes but m_paintInfo.rect doesn't.
+            auto dirtyRect = m_paintInfo.rect;
+            dirtyRect.inflate(1_lu);
+            // Clip only drawing to the dirty rect, since paint timing and AX color inversion need the full destination.
+            auto dirtyGeometry = geometry;
+            dirtyGeometry.clip(LayoutRect(encloseRectToDevicePixels(intersection(geometry.destinationRect, dirtyRect), snappingScaleFactor)));
+
+            auto drawResult = bgImage->drawTiled(context, clientForBackgroundImage, descriptor, dirtyGeometry.destinationRect, toLayoutPoint(dirtyGeometry.relativePhase()), dirtyGeometry.tileSize, dirtyGeometry.spaceSize, isFirstLine);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
