@@ -792,7 +792,7 @@ bool RenderBlock::simplifiedLayout()
     // are statically positioned and thus need to move with their absolute ancestors.
     bool canContainFixedPosObjects = canContainFixedPositionObjects();
     if (outOfFlowChildNeedsLayout() || canContainFixedPosObjects)
-        layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects);
+        layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects ? FixedPositionObjectsOnly::Yes : FixedPositionObjectsOnly::No);
     addOverflowFromOutOfFlowBoxes();
 
     // Transform-origin depends on box size. When simplified layout doesn't change our
@@ -849,7 +849,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::intrinsicLogicalMarginStartAndEnd
     return { startValue, endValue };
 }
 
-static void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& containingBlock, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+static void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& containingBlock, RelayoutChildren relayoutChildren, FixedPositionObjectsOnly fixedPositionObjectsOnly)
 {
     ASSERT(outOfFlowBox.isOutOfFlowPositioned());
 
@@ -875,7 +875,7 @@ static void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& co
     // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
     // it has static position.
     markFixedPositionBoxForLayoutIfNeeded(outOfFlowBox, containingBlock);
-    if (fixedPositionObjectsOnly) {
+    if (fixedPositionObjectsOnly == FixedPositionObjectsOnly::Yes) {
         outOfFlowBox.layoutIfNeeded();
         return;
     }
@@ -962,7 +962,7 @@ static void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& co
     }
 }
 
-void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, FixedPositionObjectsOnly fixedPositionObjectsOnly)
 {
     auto* outOfFlowDescendants = outOfFlowBoxes();
     if (!outOfFlowDescendants)

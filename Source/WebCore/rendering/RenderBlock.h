@@ -46,6 +46,7 @@ class BlockPainter;
 
 enum CaretType { CursorCaret, DragCaret };
 enum class RelayoutChildren : bool { No, Yes };
+enum class FixedPositionObjectsOnly : bool { No, Yes };
 
 enum TextRunFlag {
     DefaultTextRunFlags = 0,
@@ -250,7 +251,7 @@ public:
 
     Node* nodeForHitTest() const override;
 
-    void layoutOutOfFlowBoxes(RelayoutChildren, bool fixedPositionObjectsOnly = false);
+    void layoutOutOfFlowBoxes(RelayoutChildren, FixedPositionObjectsOnly = FixedPositionObjectsOnly::No);
 
     void estimateFragmentRangeForBoxChild(const RenderBox&) const;
     bool updateFragmentRangeForBoxChild(const RenderBox&) const;
