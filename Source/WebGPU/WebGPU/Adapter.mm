@@ -53,6 +53,11 @@ Adapter::Adapter(Instance& instance)
 
 Adapter::~Adapter() = default;
 
+RefPtr<WebGPU::Instance> Adapter::instance() const
+{
+    return m_instance.get();
+}
+
 Vector<WebGPU::FeatureName> Adapter::features() const
 {
     return m_capabilities.features;
@@ -88,6 +93,7 @@ WebGPU::AdapterInfo Adapter::info()
         .name = m_device.name,
         // A Metal device is never a fallback (software) adapter.
         .isFallbackAdapter = false,
+        .hasUnifiedMemory = static_cast<bool>(m_device.hasUnifiedMemory),
     };
     if (hasFeature(WebGPU::FeatureName::Subgroups)) {
         // Metal exposes a single SIMD-group (subgroup) width per device, so

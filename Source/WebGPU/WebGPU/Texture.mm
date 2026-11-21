@@ -3243,6 +3243,11 @@ static std::optional<MTLTextureSwizzleChannels> composedSwizzleChannels(const Re
     return channels;
 }
 
+RefPtr<WebGPU::TextureView> Texture::createInvalidView()
+{
+    return TextureView::createInvalid(*this, m_device);
+}
+
 RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::TextureViewDescriptor>& optionalDescriptor)
 {
     auto device = m_device;

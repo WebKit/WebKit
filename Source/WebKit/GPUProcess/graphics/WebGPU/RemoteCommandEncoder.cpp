@@ -98,6 +98,24 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
     objectHeap->addObject(identifier, computeRenderPassEncoder);
 }
 
+void RemoteCommandEncoder::beginInvalidRenderPass(String&& error, WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr renderPassEncoder = protect(m_backing)->beginInvalidRenderPass(WTF::move(error));
+    MESSAGE_CHECK(renderPassEncoder);
+    auto remoteRenderPassEncoder = RemoteRenderPassEncoder::create(*renderPassEncoder, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteRenderPassEncoder);
+}
+
+void RemoteCommandEncoder::beginInvalidComputePass(String&& error, WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr computePassEncoder = protect(m_backing)->beginInvalidComputePass(WTF::move(error));
+    MESSAGE_CHECK(computePassEncoder);
+    auto remoteComputePassEncoder = RemoteComputePassEncoder::create(*computePassEncoder, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteComputePassEncoder);
+}
+
 void RemoteCommandEncoder::copyBufferToBuffer(
     WebGPUIdentifier source,
     uint64_t sourceOffset,

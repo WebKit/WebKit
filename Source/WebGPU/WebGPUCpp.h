@@ -266,6 +266,13 @@ enum class MapMode : uint8_t {
     Write = 1 << 1,
 };
 
+// https://gpuweb.github.io/gpuweb/#enumdef-gpubuffermapstate
+enum class BufferMapState : uint8_t {
+    Unmapped,
+    Pending,
+    Mapped,
+};
+
 enum class MipmapFilterMode : uint8_t {
     Nearest,
     Linear,
@@ -900,6 +907,8 @@ struct AdapterInfo {
     bool isFallbackAdapter { false };
     uint32_t subgroupMinSize { 0 };
     uint32_t subgroupMaxSize { 0 };
+    // Not in GPUAdapterInfo: whether the CPU and the GPU share memory, as on an integrated GPU.
+    bool hasUnifiedMemory { false };
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpudevicedescriptor
@@ -1297,6 +1306,8 @@ class Adapter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Adapter> 
 public:
     virtual ~Adapter() = default;
 
+    // The instance that created the adapter. Null when the instance is gone.
+    virtual RefPtr<Instance> instance() const = 0;
     virtual Vector<FeatureName> features() const = 0;
     virtual const Limits& limits() const = 0;
     virtual AdapterInfo info() = 0;
@@ -1343,13 +1354,19 @@ public:
     // was created with.
     virtual void mapAsync(OptionSet<MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) = 0;
     virtual void getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>&) = 0;
+    // A range of the mapped buffer that stays valid until unmap(), as the C API needs it. Ranges may
+    // overlap. Empty outside the mapped range.
+    virtual std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) = 0;
     virtual void unmap() = 0;
     virtual void destroy() = 0;
-    // Generates the validation error of mapping a buffer that is not unmapped.
-    virtual void generateAValidationError() = 0;
     // The whole contents, where the implementation can reach them. Only the GPU Process can.
     virtual std::span<uint8_t> getBufferContents() = 0;
     virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
+    // https://gpuweb.github.io/gpuweb/#gpubuffer: the size the buffer was created with, its usage and
+    // its map state.
+    virtual uint64_t size() const = 0;
+    virtual OptionSet<BufferUsage> usage() const = 0;
+    virtual BufferMapState mapState() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1387,6 +1404,13 @@ public:
     virtual void writeTimestamp(QuerySet&, uint32_t queryIndex) = 0;
     virtual void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset) = 0;
     virtual RefPtr<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
+
+    // Begins an invalid pass, as for a descriptor that the caller could not convert. Beginning one
+    // generates no error. The error is in the validation error that finishing this encoder
+    // generates.
+    virtual RefPtr<RenderPassEncoder> beginInvalidRenderPass(String&& error) = 0;
+    virtual RefPtr<ComputePassEncoder> beginInvalidComputePass(String&& error) = 0;
+
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1431,6 +1455,8 @@ class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
 public:
     virtual ~Device() = default;
 
+    // The adapter that created the device.
+    virtual Adapter& adapter() const = 0;
     virtual Vector<FeatureName> features() const = 0;
     virtual const Limits& limits() const = 0;
     virtual Ref<Queue> queue() = 0;
@@ -1469,6 +1495,26 @@ public:
     virtual void resolveDeviceLostPromise(CompletionHandler<void(DeviceLostReason, String&&)>&&) = 0;
     // Stops generating errors, for the objects that are created invalid on purpose.
     virtual void pauseAllErrorReporting(bool pause) = 0;
+
+    // Invalid objects, as for a descriptor that the caller could not convert. Creating one
+    // generates no error; generateAValidationError() generates one.
+    virtual RefPtr<BindGroup> createInvalidBindGroup() = 0;
+    virtual RefPtr<BindGroupLayout> createInvalidBindGroupLayout() = 0;
+    virtual RefPtr<Buffer> createInvalidBuffer() = 0;
+    virtual RefPtr<CommandBuffer> createInvalidCommandBuffer() = 0;
+    virtual RefPtr<CommandEncoder> createInvalidCommandEncoder() = 0;
+    virtual RefPtr<ComputePipeline> createInvalidComputePipeline() = 0;
+    virtual RefPtr<PipelineLayout> createInvalidPipelineLayout() = 0;
+    virtual RefPtr<QuerySet> createInvalidQuerySet() = 0;
+    // The error is the one of the validation error that finishing the encoder generates.
+    virtual RefPtr<RenderBundleEncoder> createInvalidRenderBundleEncoder(String&& error) = 0;
+    virtual RefPtr<RenderPipeline> createInvalidRenderPipeline() = 0;
+    virtual RefPtr<Sampler> createInvalidSampler() = 0;
+    virtual RefPtr<ShaderModule> createInvalidShaderModule() = 0;
+    virtual RefPtr<Texture> createInvalidTexture() = 0;
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error
+    virtual void generateAValidationError(String&& message) = 0;
+
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1554,6 +1600,10 @@ public:
     virtual ~QuerySet() = default;
 
     virtual void destroy() = 0;
+    // https://gpuweb.github.io/gpuweb/#gpuqueryset: the values the query set was created with. The
+    // type is std::nullopt when the implementation does not know it, as for some invalid query sets.
+    virtual uint32_t count() const = 0;
+    virtual std::optional<QueryType> type() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1568,6 +1618,8 @@ class Queue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Queue> {
 public:
     virtual ~Queue() = default;
 
+    // Null once the device is gone: the device owns its queue.
+    virtual RefPtr<Device> device() const = 0;
     virtual void submit(Vector<Ref<CommandBuffer>>&&) = 0;
     virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
     // A write of at least largeBufferSize bytes may alias `data` rather than copy it, until the work
@@ -1695,11 +1747,26 @@ class Texture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Texture> 
 public:
     virtual ~Texture() = default;
 
+    // The device that created the texture.
+    virtual Device& device() const = 0;
     // std::nullopt is a descriptor with all members at their defaults.
     virtual RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
+    // An invalid view, as for a descriptor that the caller could not convert. Creating one
+    // generates no error.
+    virtual RefPtr<TextureView> createInvalidView() = 0;
     virtual void destroy() = 0;
     // Recreates a destroyed canvas texture, for the frame that reuses it.
     virtual void undestroy() = 0;
+    // https://gpuweb.github.io/gpuweb/#gputexture: the values the texture was created with. The
+    // format is std::nullopt when the implementation does not know it, as for some invalid textures.
+    virtual uint32_t width() const = 0;
+    virtual uint32_t height() const = 0;
+    virtual uint32_t depthOrArrayLayers() const = 0;
+    virtual uint32_t mipLevelCount() const = 0;
+    virtual uint32_t sampleCount() const = 0;
+    virtual TextureDimension dimension() const = 0;
+    virtual std::optional<TextureFormat> optionalFormat() const = 0;
+    virtual OptionSet<TextureUsage> usage() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 

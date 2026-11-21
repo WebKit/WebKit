@@ -30,13 +30,13 @@
 
 NODELETE void wgpuSurfaceAddRef(WGPUSurface surface)
 {
-    WebGPU::CAPI::metalFromAPI(surface).ref();
+    WebGPU::CAPI::fromAPI(surface).ref();
 }
 
 void wgpuSurfaceRelease(WGPUSurface surface)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(surface).deref();
+        WebGPU::CAPI::fromAPI(surface).deref();
     }
 }
 
@@ -68,7 +68,7 @@ void wgpuSurfaceCapabilitiesFreeMembers(WGPUSurfaceCapabilities)
 void wgpuSurfaceConfigure(WGPUSurface surface, const WGPUSurfaceConfiguration* configuration)
 {
     @autoreleasepool {
-        Ref presentationContext = WebGPU::CAPI::metalFromAPI(surface);
+        Ref presentationContext = WebGPU::CAPI::fromAPI(surface);
         auto format = WebGPU::CAPI::fromAPI(configuration->format);
         auto usage = WebGPU::CAPI::textureUsageFromAPI(configuration->usage);
         Vector<WebGPU::TextureFormat> viewFormats;
@@ -99,7 +99,7 @@ void wgpuSurfaceConfigure(WGPUSurface surface, const WGPUSurfaceConfiguration* c
 void wgpuSurfaceUnconfigure(WGPUSurface surface)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(surface))->unconfigure();
+        protect(WebGPU::CAPI::fromAPI(surface))->unconfigure();
     }
 }
 
@@ -107,7 +107,7 @@ void wgpuSurfaceUnconfigure(WGPUSurface surface)
 void wgpuSurfaceGetCurrentTexture(WGPUSurface surface, WGPUSurfaceTexture* surfaceTexture)
 {
     @autoreleasepool {
-        RefPtr texture = protect(WebGPU::CAPI::metalFromAPI(surface))->getCurrentTexture(0);
+        RefPtr texture = protect(WebGPU::CAPI::fromAPI(surface))->getCurrentTexture(0);
         surfaceTexture->status = texture ? WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal : WGPUSurfaceGetCurrentTextureStatus_Error;
         surfaceTexture->texture = WebGPU::CAPI::releaseToAPI(WTF::move(texture));
     }
@@ -116,7 +116,7 @@ void wgpuSurfaceGetCurrentTexture(WGPUSurface surface, WGPUSurfaceTexture* surfa
 WGPUStatus wgpuSurfacePresent(WGPUSurface surface)
 {
     @autoreleasepool {
-        Ref presentationContext = WebGPU::CAPI::metalFromAPI(surface);
+        Ref presentationContext = WebGPU::CAPI::fromAPI(surface);
         if (!presentationContext->isValid())
             return WGPUStatus_Error;
         presentationContext->present(0);
@@ -127,6 +127,6 @@ WGPUStatus wgpuSurfacePresent(WGPUSurface surface)
 void wgpuSurfaceSetLabel(WGPUSurface surface, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(surface))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(surface))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

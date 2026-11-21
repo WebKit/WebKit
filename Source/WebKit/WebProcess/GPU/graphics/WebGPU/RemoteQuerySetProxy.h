@@ -39,9 +39,14 @@ class ConvertToBackingContext;
 class RemoteQuerySetProxy final : public ::WebGPU::QuerySet {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQuerySetProxy);
 public:
-    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, const ::WebGPU::QuerySetDescriptor& descriptor)
     {
-        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier, descriptor.count, descriptor.type));
+    }
+    // An invalid query set, which, as the Metal one, has no count and no type.
+    static Ref<RemoteQuerySetProxy> createInvalid(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    {
+        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier, 0, std::nullopt));
     }
 
     virtual ~RemoteQuerySetProxy();
@@ -50,6 +55,8 @@ public:
     RemoteGPUProxy& root() { return m_parent->root(); }
 
     void destroy() final;
+    uint32_t count() const final { return m_count; }
+    std::optional<::WebGPU::QueryType> type() const final { return m_type; }
 
     void setLabel(String&&) final;
     bool isValid() const final;
@@ -57,7 +64,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier, uint32_t count, std::optional<::WebGPU::QueryType>);
 
     RemoteQuerySetProxy(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy(RemoteQuerySetProxy&&) = delete;
@@ -75,6 +82,8 @@ private:
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
+    const uint32_t m_count;
+    const std::optional<::WebGPU::QueryType> m_type;
 };
 
 } // namespace WebKit::WebGPU
