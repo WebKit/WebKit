@@ -58,7 +58,7 @@ static CFStringRef CLAppResetChangedNotification = CFSTR("com.apple.locationd.ap
 
 static void clearGeolocationCache(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    [(WKWebGeolocationPolicyDecider *)observer clearCache];
+    [(__bridge WKWebGeolocationPolicyDecider *)observer clearCache];
 }
 
 static bool appHasPreciseLocationPermission()
@@ -134,14 +134,14 @@ struct PermissionRequest {
 
     _diskDispatchQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", serialQueueWithAutoreleasePoolAttrSingleton()));
 
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, clearGeolocationCache, protect(CLAppResetChangedNotification), NULL, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), (__bridge const void *)self, clearGeolocationCache, protect(CLAppResetChangedNotification), NULL, CFNotificationSuspensionBehaviorCoalesce);
 
     return self;
 }
 
 - (void)dealloc
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, protect(CLAppResetChangedNotification), NULL);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), (__bridge const void *)self, protect(CLAppResetChangedNotification), NULL);
     [super dealloc];
 }
 
@@ -242,10 +242,10 @@ struct PermissionRequest {
 
 - (NSString *)_siteFile
 {
-    static NSString *sSiteFile = nil;
-    if (!sSiteFile)
-        sSiteFile = [[self _siteFileInContainerDirectory:protect(NSHomeDirectory()).get() creatingIntermediateDirectoriesIfNecessary:YES] retain];
-    return sSiteFile;
+    static NeverDestroyed<RetainPtr<NSString>> sSiteFile;
+    if (!sSiteFile.get())
+        sSiteFile.get() = [self _siteFileInContainerDirectory:protect(NSHomeDirectory()).get() creatingIntermediateDirectoriesIfNecessary:YES];
+    return sSiteFile.get().get();
 }
 
 static RetainPtr<NSMutableDictionary> createChallengeDictionary(NSData *data)

@@ -41,6 +41,7 @@
 #import "WKNSString.h"
 #import "WKNSURL.h"
 #import "WKNSURLRequest.h"
+#import "WKObject.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
 #import "WKURLRequestNS.h"
@@ -380,11 +381,10 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     }
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebProcessPlugInBrowserContextController);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInBrowserContextController.class, self))
-        return;
-
     if (_remoteObjectRegistry)
         [_remoteObjectRegistry _invalidate];
 

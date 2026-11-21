@@ -91,14 +91,14 @@ void GestureRecognizerConsistencyEnforcer::timerFired()
 
 void GestureRecognizerConsistencyEnforcer::ref() const
 {
-    auto strongView = m_view.get();
-    [strongView retain];
+    if (auto strongView = m_view.get())
+        CFRetain((__bridge CFTypeRef)strongView.get());
 }
 
 void GestureRecognizerConsistencyEnforcer::deref() const
 {
-    auto strongView = m_view.get();
-    [strongView release];
+    if (auto strongView = m_view.get())
+        CFRelease((__bridge CFTypeRef)strongView.get());
 }
 
 } // namespace WebKit

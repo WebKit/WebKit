@@ -30,6 +30,7 @@
 
 #import "LayerHostingContext.h"
 #import "VideoLayerRemote.h"
+#import "WKObject.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntSize.h>
@@ -75,11 +76,10 @@ static const Seconds PostAnimationDelay { 100_ms };
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKVideoLayerRemote);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainThread(WKVideoLayerRemote.class, self))
-        return;
-
     [super dealloc];
 }
 

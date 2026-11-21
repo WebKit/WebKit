@@ -49,6 +49,7 @@
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
 #import <wtf/UUID.h>
@@ -836,7 +837,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
 
         auto relaxedAppsSelector = NSSelectorFromString(@"crossSiteTrackingPreventionRelaxedApps");
         if ([PAL::getMCProfileConnectionClassSingleton() instancesRespondToSelector:relaxedAppsSelector])
-            crossSiteTrackingPreventionRelaxedApps = [[PAL::getMCProfileConnectionClassSingleton() sharedConnection] performSelector:relaxedAppsSelector];
+            crossSiteTrackingPreventionRelaxedApps = wtfObjCMsgSend<NSArray<NSString *> *>([PAL::getMCProfileConnectionClassSingleton() sharedConnection], relaxedAppsSelector);
         else
             crossSiteTrackingPreventionRelaxedApps = @[];
 #endif

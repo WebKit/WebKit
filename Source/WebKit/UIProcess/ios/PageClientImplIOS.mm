@@ -1143,14 +1143,18 @@ void PageClientImpl::videosInElementFullscreenChanged()
 
 void PageClientImpl::refView()
 {
-    SUPPRESS_UNRETAINED_ARG [m_contentView retain];
-    SUPPRESS_UNRETAINED_ARG [m_webView retain];
+    if (RetainPtr contentView = m_contentView.get())
+        CFRetain((__bridge CFTypeRef)contentView.get());
+    if (RetainPtr webView = m_webView.get())
+        CFRetain((__bridge CFTypeRef)webView.get());
 }
 
 void PageClientImpl::derefView()
 {
-    SUPPRESS_UNRETAINED_ARG [m_contentView release];
-    SUPPRESS_UNRETAINED_ARG [m_webView release];
+    if (RetainPtr contentView = m_contentView.get())
+        CFRelease((__bridge CFTypeRef)contentView.get());
+    if (RetainPtr webView = m_webView.get())
+        CFRelease((__bridge CFTypeRef)webView.get());
 }
 
 void PageClientImpl::didRestoreScrollPosition()

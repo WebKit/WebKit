@@ -30,6 +30,7 @@
 #import "WKContentWorldInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLExtras.h"
+#import "WKObject.h"
 #import "WKWebViewInternal.h"
 #import "WebKit2Initialize.h"
 #import "WebPageProxy.h"
@@ -61,11 +62,10 @@
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKUserStyleSheet);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKUserStyleSheet.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _userStyleSheet->~UserStyleSheet();
 
     [super dealloc];
@@ -88,7 +88,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return retainPtr(self).leakRef();
 }
 
 #pragma mark WKObject protocol implementation

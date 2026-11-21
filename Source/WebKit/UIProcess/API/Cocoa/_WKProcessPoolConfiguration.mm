@@ -27,6 +27,7 @@
 #import "_WKProcessPoolConfigurationInternal.h"
 
 #import "LegacyGlobalSettings.h"
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <objc/runtime.h>
 #import <wtf/Borrow.h>
@@ -48,11 +49,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKProcessPoolConfiguration);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKProcessPoolConfiguration.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _processPoolConfiguration->~ProcessPoolConfiguration();
 
     [super dealloc];
@@ -348,7 +348,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [wrapper(protect(*_processPoolConfiguration)->copy()) retain];
+    return wrapper(protect(*_processPoolConfiguration)->copy()).leakRef();
 }
 
 - (NSString *)customWebContentServiceBundleIdentifier
