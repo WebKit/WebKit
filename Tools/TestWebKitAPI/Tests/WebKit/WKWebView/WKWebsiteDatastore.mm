@@ -29,6 +29,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebCore/SQLiteDatabase.h>
@@ -217,8 +218,9 @@ self.addEventListener('install', (event) => {
 
 TEST(WKWebsiteDataStore, RemoveDataWaitUntilWebProcessesExit)
 {
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -236,6 +238,7 @@ TEST(WKWebsiteDataStore, RemoveDataWaitUntilWebProcessesExit)
 
     RetainPtr handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     receivedScriptMessage = false;
@@ -434,15 +437,18 @@ TEST(WKWebsiteDataStore, FetchPersistentWebStorage)
 {
     auto dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeSessionStorage, nil];
     auto localStorageType = [NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, nil];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     @autoreleasepool {
-        RetainPtr webView = adoptNS([[WKWebView alloc] init]);
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setWebsiteDataStore:dataStore];
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         RetainPtr navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];
         [webView loadHTMLString:@"<script>sessionStorage.setItem('session', 'storage'); localStorage.setItem('local', 'storage');</script>" baseURL:[NSURL URLWithString:@"http://localhost"]];
@@ -450,7 +456,7 @@ TEST(WKWebsiteDataStore, FetchPersistentWebStorage)
     }
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+    [dataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
         EXPECT_EQ([records count], 1u);
         EXPECT_TRUE([[[records firstObject] dataTypes] isEqualToSet:localStorageType]);
         readyToContinue = true;
@@ -666,7 +672,7 @@ TEST(WKWebsiteDataStore, DataStoreWithIdentifierAndPushPartition)
 
 TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifier)
 {
-    NSString *uuidString = @"68753a44-4d6f-1226-9c60-0050e4c00067";
+    NSString *uuidString = @"68753a44-4d6f-1226-9c60-0050e4c00070";
     RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:uuidString]);
     RetainPtr<NSURL> generalStorageDirectory;
     @autoreleasepool {
@@ -690,23 +696,23 @@ TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifier)
 
 TEST(WKWebsiteDataStore, RemoveSessionWithIdentifierFromNetworkProcess)
 {
-    // Launch network process with operation on default data store.
+    // Launch network process with operation on another data store.
     __block bool done = false;
-    RetainPtr defaultDataStore = [WKWebsiteDataStore defaultDataStore];
-    [defaultDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    auto *otherDataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
+    [otherDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
-    pid_t defaultNetworkProcessIdentifier = [defaultDataStore _networkProcessIdentifier];
-    EXPECT_NE(defaultNetworkProcessIdentifier, 0);
+    pid_t networkProcessIdentifier = [otherDataStore _networkProcessIdentifier];
+    EXPECT_NE(networkProcessIdentifier, 0);
 
-    NSString *uuidString = @"68753a44-4d6f-1226-9c60-0050e4c00067";
+    NSString *uuidString = @"68753a44-4d6f-1226-9c60-0050e4c00071";
     RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:uuidString]);
     RetainPtr<NSURL> generalStorageDirectory;
     @autoreleasepool {
         RetainPtr websiteDataStore = createWebsiteDataStoreAndPrepare(uuid.get(), @"");
         generalStorageDirectory = websiteDataStore.get()._configuration.generalStorageDirectory;
-        EXPECT_EQ(defaultNetworkProcessIdentifier, [websiteDataStore _networkProcessIdentifier]);
+        EXPECT_EQ(networkProcessIdentifier, [websiteDataStore _networkProcessIdentifier]);
     }
 
     EXPECT_NOT_NULL(generalStorageDirectory.get());
@@ -714,7 +720,7 @@ TEST(WKWebsiteDataStore, RemoveSessionWithIdentifierFromNetworkProcess)
     EXPECT_TRUE([fileManager fileExistsAtPath:generalStorageDirectory.get().path]);
 
     // Make sure network process is still alive.
-    EXPECT_FALSE(kill(defaultNetworkProcessIdentifier, 0));
+    EXPECT_FALSE(kill(networkProcessIdentifier, 0));
 
     done = false;
     [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
@@ -730,7 +736,7 @@ TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifierRemoveCredentials)
     // FIXME: we should use persistent credential for test after rdar://100722784 is in build.
     usePersistentCredentialStorage = false;
     done = false;
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00072"]);
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     pid_t networkProcessIdentifier;
     @autoreleasepool {
@@ -784,7 +790,7 @@ TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifierRemoveCredentials)
 
 TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifierErrorWhenInUse)
 {
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00073"]);
     auto websiteDataStore = createWebsiteDataStoreAndPrepare(uuid.get(), @"");
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:websiteDataStore.get()];
@@ -898,7 +904,7 @@ TEST(WKWebsiteDataStore, DataStoreForEmptyIdentifier)
 
 TEST(WKWebsiteDataStoreConfiguration, OriginQuotaRatio)
 {
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00074"]);
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithInteger:2 * MB]];
     auto ratioNumber = [NSNumber numberWithDouble:0.5];
@@ -952,7 +958,7 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
 {
     done = false;
     receivedScriptMessage = false;
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00075"]);
     // Clear existing data.
     [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
         done = true;
@@ -1035,7 +1041,7 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithResourceLoadStatisticsE
 {
     done = false;
     receivedScriptMessage = false;
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00076"]);
     // Clear existing data.
     [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
         done = true;
@@ -1124,7 +1130,7 @@ TEST(WKWebsiteDataStoreTotalQuota, EvictionSkipsPersistedDomain)
 {
     done = false;
     receivedScriptMessage = false;
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00077"]);
     [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
         done = true;
         EXPECT_NULL(error);
@@ -1188,7 +1194,7 @@ TEST(WKWebsiteDataStoreTotalQuota, ClearPersistedDomain)
 {
     done = false;
     receivedScriptMessage = false;
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00078"]);
     [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
         done = true;
         EXPECT_NULL(error);
@@ -1276,7 +1282,7 @@ TEST(WKWebsiteDataStoreConfiguration, QuotaRatioDefaultValue)
 
 TEST(WKWebsiteDataStoreConfiguration, StandardVolumeCapacity)
 {
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00079"]);
     readyToContinue = false;
     [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
         readyToContinue = true;
