@@ -31,10 +31,13 @@
 #include <compare>
 #include <cstddef>
 #include <limits>
-#include <mach/mach.h>
 #include <stdint.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
 
 #if CPU(ARM64E)
 #include <ptrauth.h>
@@ -47,19 +50,25 @@ namespace Corpse {
 // by accident.
 class Address {
 public:
+#if OS(DARWIN)
+    using Primitive = mach_vm_address_t;
+#else
+    using Primitive = uint64_t;
+#endif
+
     Address() = default;
-    explicit Address(mach_vm_address_t value)
-        : m_value(value)
+    explicit Address(Primitive primitiveAddress)
+        : m_primitive(primitiveAddress)
     {
     }
 
     explicit Address(const void* pointer)
-        : m_value(reinterpret_cast<mach_vm_address_t>(pointer))
+        : m_primitive(reinterpret_cast<Primitive>(pointer))
     {
     }
 
-    mach_vm_address_t toMachVMAddress() const { return m_value; }
-    explicit operator bool() const { return m_value; }
+    Primitive primitive() const { return m_primitive; }
+    explicit operator bool() const { return m_primitive; }
     template<typename T> explicit operator T() const = delete;
 
     Address stripped() const
@@ -68,7 +77,7 @@ public:
         // We don't know if this is a code or data pointer. The 2 have different number of
         // bits. But we know that code pointers have more PAC bits. So, we'll conservatively
         // use XPACI to strip the max number of PAC bits.
-        auto stripped = ptrauth_strip(reinterpret_cast<void*>(m_value), ptrauth_key_process_dependent_code);
+        auto stripped = ptrauth_strip(reinterpret_cast<void*>(m_primitive), ptrauth_key_process_dependent_code);
 
         // While XPACI may have already stripped the MTE tag in data pointers as well,
         // we don't want to assume that code pointer PAC bits will always cover the MTE
@@ -87,17 +96,17 @@ public:
     friend bool operator==(Address, Address) = default;
     friend auto operator<=>(Address, Address) = default;
 
-    friend bool operator==(Address address, std::nullptr_t) { return !address.m_value; }
+    friend bool operator==(Address address, std::nullptr_t) { return !address.m_primitive; }
 
-    Address operator+(uint64_t offset) const { return Address(m_value + offset); }
-    Address operator-(uint64_t offset) const { return Address(m_value - offset); }
+    Address operator+(uint64_t offset) const { return Address(m_primitive + offset); }
+    Address operator-(uint64_t offset) const { return Address(m_primitive - offset); }
 
-    uint64_t operator-(Address other) const { return m_value - other.m_value; }
+    uint64_t operator-(Address other) const { return m_primitive - other.m_primitive; }
 
-    static constexpr Address deletedValue() { return Address(std::numeric_limits<mach_vm_address_t>::max()); }
+    static constexpr Address deletedValue() { return Address(std::numeric_limits<Primitive>::max()); }
 
 private:
-    mach_vm_address_t m_value { 0 };
+    Primitive m_primitive { 0 };
 };
 
 } // namespace Corpse
@@ -107,7 +116,7 @@ namespace WTF {
 
 template<> struct DefaultHash<JSC::Corpse::Address> {
     using Address = JSC::Corpse::Address;
-    static unsigned hash(Address address) { return intHash(address.toMachVMAddress()); }
+    static unsigned hash(Address address) { return intHash(address.primitive()); }
     static bool equal(Address a, Address b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };

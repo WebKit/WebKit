@@ -31,8 +31,6 @@
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <errno.h>
-#include <mach/mach.h>
-#include <mach/mach_vm.h>
 #include <pthread.h>
 #include <signal.h>
 #include <string>
@@ -40,6 +38,11 @@
 #include <unistd.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
+#endif
 
 namespace JSCToolsTest {
 
@@ -88,6 +91,8 @@ void skipSuite(const char* name, const char* why)
     dataLogLn("SKIP: ", name, ": ", why);
 }
 
+#if OS(DARWIN)
+
 unsigned machPortNameCount()
 {
     mach_port_name_array_t names = nullptr;
@@ -114,6 +119,8 @@ unsigned machPortSendRightCount(mach_port_t port)
     RELEASE_ASSERT(result == KERN_SUCCESS);
     return refs; // Can still be 0 (which still means no send right).
 }
+
+#endif // OS(DARWIN)
 
 void killChild(pid_t child)
 {

@@ -28,7 +28,6 @@
 #if ENABLE(LIB_JSC_TOOLS)
 
 #include <JavaScriptCore/CorpseAddress.h>
-#include <mach/mach.h>
 #include <stdint.h>
 #include <string>
 #include <string_view>

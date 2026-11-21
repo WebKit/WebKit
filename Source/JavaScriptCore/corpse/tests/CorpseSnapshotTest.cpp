@@ -32,13 +32,18 @@
 
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
-#include <mach/mach.h>
+#include <JavaScriptCore/CorpseTaskHandle.h>
 #include <unistd.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
 
 namespace JSCToolsTest {
 
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
+using JSC::Corpse::TaskHandle;
 
 void testSnapshot()
 {
@@ -53,28 +58,33 @@ void testSnapshot()
     }
 
     unsigned firstId = 0;
-    mach_port_t firstCorpsePort = MACH_PORT_NULL;
-    mach_port_t secondCorpsePort = MACH_PORT_NULL;
+    TaskHandle::Cookie firstSnapshotCookie = TaskHandle::invalidCookie;
+    TaskHandle::Cookie secondSnapshotCookie = TaskHandle::invalidCookie;
     {
         Snapshot snapshot(process);
         TEST_ASSERT(snapshot.isValid(), "a snapshot of this process is valid");
-        TEST_ASSERT(MACH_PORT_VALID(snapshot.corpsePort()), "a valid snapshot holds a corpse port");
+        TEST_ASSERT(TaskHandle::isValidCookie(snapshot.cookie()), "a valid snapshot holds a corpse port");
         TEST_ASSERT(snapshot.process() == process.get(), "a snapshot keeps the process it came from");
         firstId = snapshot.id();
         TEST_ASSERT(firstId, "a snapshot has an identifier");
-        firstCorpsePort = snapshot.corpsePort();
+        firstSnapshotCookie = snapshot.cookie();
 
         Snapshot second(process);
         TEST_ASSERT(second.isValid(), "a second snapshot of the same process is valid");
         TEST_ASSERT(second.id() > firstId, "identifiers increase");
-        TEST_ASSERT(second.corpsePort() != snapshot.corpsePort(),
+        TEST_ASSERT(second.cookie() != snapshot.cookie(),
             "two snapshots hold two different corpses");
-        secondCorpsePort = second.corpsePort();
+        secondSnapshotCookie = second.cookie();
     }
-    TEST_ASSERT_EQ(machPortSendRightCount(firstCorpsePort), 0u,
+#if OS(DARWIN)
+    TEST_ASSERT_EQ(machPortSendRightCount(firstSnapshotCookie), 0u,
         "destroying a snapshot gives its corpse port back");
-    TEST_ASSERT_EQ(machPortSendRightCount(secondCorpsePort), 0u,
+    TEST_ASSERT_EQ(machPortSendRightCount(secondSnapshotCookie), 0u,
         "and so does destroying the second");
+#else
+    UNUSED_VARIABLE(firstSnapshotCookie);
+    UNUSED_VARIABLE(secondSnapshotCookie);
+#endif
     {
         // The two above are gone; their identifiers must not come back.
         Snapshot later(process);
@@ -98,6 +108,7 @@ void testSnapshot()
         TEST_ASSERT(!snapshot.symbol(""), "an empty symbol name resolves to nothing");
     }
 
+#if OS(DARWIN)
     {
         // A corpse and the thread rights read out of it are Mach ports. Taking a snapshot
         // must not leave any of them behind.
@@ -109,7 +120,7 @@ void testSnapshot()
                 TEST_ASSERT(false, "a snapshot of this process is valid");
                 return;
             }
-            corpsePort = snapshot.corpsePort();
+            corpsePort = snapshot.cookie();
             TEST_ASSERT(machPortSendRightCount(corpsePort), "a snapshot holds a right to its corpse");
 
             unsigned namesBeforeThreads = machPortNameCount();
@@ -123,6 +134,7 @@ void testSnapshot()
         TEST_ASSERT_EQ(machPortNameCount(), namesBefore,
             "and leaves no port name behind");
     }
+#endif // OS(DARWIN)
 }
 
 } // namespace JSCToolsTest

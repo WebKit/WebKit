@@ -1682,6 +1682,7 @@ if (ENABLE_JAVASCRIPTCORE_TOOLS)
         corpse/CorpseRegion.h
         corpse/CorpseSnapshot.h
         corpse/CorpseSymbol.h
+        corpse/CorpseTaskHandle.h
         corpse/CorpseThread.h
     )
 endif ()

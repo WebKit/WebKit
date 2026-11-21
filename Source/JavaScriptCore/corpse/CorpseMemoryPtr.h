@@ -28,7 +28,6 @@
 #if ENABLE(LIB_JSC_TOOLS)
 
 #include <JavaScriptCore/CorpseMemory.h>
-#include <mach/mach.h>
 #include <stdint.h>
 #include <type_traits>
 #include <wtf/Assertions.h>
@@ -72,7 +71,7 @@ public:
     explicit operator bool() const { return isValid(); }
 
     Error error() const { return m_error; }
-    kern_return_t kernResult() const { return m_kernResult; }
+    KernelResult kernelResult() const { return m_kernelResult; }
 
     Address address() const { return m_address; }
     size_t sizeInBytes() const { return isValid() ? sizeof(T) : 0; }
@@ -96,7 +95,7 @@ private:
         , m_address(address)
         , m_region(WTF::move(result.region))
         , m_error(result.error)
-        , m_kernResult(result.kernResult)
+        , m_kernelResult(result.kernelResult)
     {
     }
 
@@ -107,7 +106,7 @@ private:
     RefPtr<Region> m_region;
 
     Error m_error { Error::None };
-    kern_return_t m_kernResult { KERN_SUCCESS };
+    KernelResult m_kernelResult { kernelSuccess };
 };
 
 template<typename T>
@@ -122,7 +121,7 @@ Memory::Ptr<T>& Memory::Ptr<T>::operator=(Ptr&& other)
     m_address = other.m_address;
     m_region = WTF::move(other.m_region);
     m_error = other.m_error;
-    m_kernResult = other.m_kernResult;
+    m_kernelResult = other.m_kernelResult;
 
     other.m_data = nullptr;
 

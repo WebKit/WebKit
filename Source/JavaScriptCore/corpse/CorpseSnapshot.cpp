@@ -43,18 +43,18 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Snapshot);
 
 unsigned Snapshot::s_nextId = 1;
 
-// Returns MACH_PORT_NULL if the snapshot could not be taken, having reported why.
-static mach_port_t takeSnapshot(Process* process)
+// Returns an invalid handle if the snapshot could not be taken, having reported why.
+static TaskHandle takeSnapshot(Process* process)
 {
     if (!process || !process->isAttached()) {
         Error::report("Could not snapshot: No process attached");
-        return MACH_PORT_NULL;
+        return { };
     }
 
     mach_port_t corpsePort = MACH_PORT_NULL;
-    kern_return_t kr = task_generate_corpse(process->taskPort(), &corpsePort);
+    kern_return_t kr = task_generate_corpse(process->cookie(), &corpsePort);
     if (kr == KERN_SUCCESS)
-        return corpsePort;
+        return TaskHandle::adopt(corpsePort);
 
     if (!process->holdsLiveTask()) {
         Error::report("Could not snapshot PID %d: the process has terminated",
@@ -63,21 +63,15 @@ static mach_port_t takeSnapshot(Process* process)
         Error::report("Could not snapshot PID %d: %s (0x%x)",
             static_cast<int>(process->pid()), mach_error_string(kr), kr);
     }
-    return MACH_PORT_NULL;
+    return { };
 }
 
 Snapshot::Snapshot(RefPtr<Process> process)
     : m_process(WTF::move(process))
-    , m_corpsePort(takeSnapshot(m_process.get()))
+    , m_corpseHandle(takeSnapshot(m_process.get()))
     , m_id(s_nextId++)
-    , m_memory(m_corpsePort)
+    , m_memory(cookie())
 {
-}
-
-Snapshot::~Snapshot()
-{
-    if (isValid())
-        mach_port_deallocate(mach_task_self(), m_corpsePort);
 }
 
 const Vector<Thread>& Snapshot::threads()

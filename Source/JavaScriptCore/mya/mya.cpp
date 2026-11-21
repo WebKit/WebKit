@@ -40,6 +40,7 @@
 #include <limits.h>
 #include <memory>
 #include <pwd.h>
+#include <span>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,7 +57,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/CString.h>
 
 #if HAVE(READLINE)
 // readline/history.h has a Function typedef that conflicts with WTF::Function;
@@ -290,14 +294,14 @@ private:
     }
 
     // Writes a byte count in the largest unit that keeps it readable, e.g. "512 KB" or "1.50 MB".
-    static void formatByteSize(size_t bytes, char* out, size_t outSize)
+    static void formatByteSize(size_t bytes, std::span<char> out)
     {
         if (bytes >= 1024 * 1024)
-            snprintf(out, outSize, "%.2f MB", bytes / (1024.0 * 1024.0));
+            SAFE_SPRINTF(out, "%.2f MB", bytes / (1024.0 * 1024.0));
         else if (bytes >= 1024)
-            snprintf(out, outSize, "%zu KB", bytes / 1024);
+            SAFE_SPRINTF(out, "%zu KB", bytes / 1024);
         else
-            snprintf(out, outSize, "%zu B", bytes);
+            SAFE_SPRINTF(out, "%zu B", bytes);
     }
 
     enum class ContinuationAction { Continue, Exit, Error };
@@ -584,36 +588,36 @@ private:
             const Thread& thread = threads[i];
             Row row;
 
-            snprintf(buffer, sizeof(buffer), "%zu", i + 1);
+            SAFE_SPRINTF(std::span { buffer }, "%zu", i + 1);
             row.cells[0] = buffer;
-            snprintf(buffer, sizeof(buffer), "0x%llx", static_cast<unsigned long long>(thread.id()));
+            SAFE_SPRINTF(std::span { buffer }, "0x%llx", static_cast<unsigned long long>(thread.id()));
             row.cells[1] = buffer;
             row.cells[2] = thread.runStateDescription();
-            snprintf(buffer, sizeof(buffer), "%.3f", thread.userTimeUsec() / 1000.0);
+            SAFE_SPRINTF(std::span { buffer }, "%.3f", thread.userTimeUsec() / 1000.0);
             row.cells[3] = buffer;
-            snprintf(buffer, sizeof(buffer), "%.3f", thread.systemTimeUsec() / 1000.0);
+            SAFE_SPRINTF(std::span { buffer }, "%.3f", thread.systemTimeUsec() / 1000.0);
             row.cells[4] = buffer;
             if (thread.stackPointer()) {
-                snprintf(buffer, sizeof(buffer), "0x%llx",
-                    thread.stackPointer().toMachVMAddress());
+                SAFE_SPRINTF(std::span { buffer }, "0x%llx",
+                    static_cast<unsigned long long>(thread.stackPointer().primitive()));
                 row.cells[5] = buffer;
             } else
                 row.cells[5] = "-";
             if (thread.hasStack()) {
                 const auto& stack = thread.stackRegion();
-                snprintf(buffer, sizeof(buffer), "0x%llx-0x%llx",
-                    stack.base().toMachVMAddress(),
-                    stack.end().toMachVMAddress());
+                SAFE_SPRINTF(std::span { buffer }, "0x%llx-0x%llx",
+                    static_cast<unsigned long long>(stack.base().primitive()),
+                    static_cast<unsigned long long>(stack.end().primitive()));
                 row.cells[6] = buffer;
-                formatByteSize(stack.size(), buffer, sizeof(buffer));
+                formatByteSize(stack.size(), std::span { buffer });
                 row.cells[7] = buffer;
-                snprintf(buffer, sizeof(buffer), "%llu",
+                SAFE_SPRINTF(std::span { buffer }, "%llu",
                     static_cast<unsigned long long>(stack.pageCount()));
                 row.cells[8] = buffer;
-                snprintf(buffer, sizeof(buffer), "%llu",
+                SAFE_SPRINTF(std::span { buffer }, "%llu",
                     static_cast<unsigned long long>(stack.residentPageCount()));
                 row.cells[9] = buffer;
-                snprintf(buffer, sizeof(buffer), "%llu",
+                SAFE_SPRINTF(std::span { buffer }, "%llu",
                     static_cast<unsigned long long>(stack.dirtyPageCount()));
                 row.cells[10] = buffer;
             } else {
@@ -709,16 +713,16 @@ private:
             return;
         }
 
-        std::string name(token);
-        Address address = snapshot->symbol(name.c_str());
+        UTF8CString name = UTF8CString::fromUTF8(std::span { token });
+        Address address = snapshot->symbol(name.legacyCStringPointer());
         if (!address) {
-            fprintf(stderr, "mya: No symbol '%s' in snapshot #%u\n", name.c_str(), snapshot->id());
+            SAFE_FPRINTF(stderr, "mya: No symbol '%s' in snapshot #%u\n", name, snapshot->id());
             return;
         }
         if (hex)
-            printf("&%s = 0x%llx\n", name.c_str(), address.toMachVMAddress());
+            SAFE_PRINTF("&%s = 0x%llx\n", name, static_cast<unsigned long long>(address.primitive()));
         else
-            printf("&%s = %llu\n", name.c_str(), address.toMachVMAddress());
+            SAFE_PRINTF("&%s = %llu\n", name, static_cast<unsigned long long>(address.primitive()));
     }
 
     // Releases resources without extra output. Dropping the current selection
@@ -1159,7 +1163,7 @@ private:
 
         // Qualified by pid so two mya instances cannot land on the same temporary.
         char temporaryName[64];
-        snprintf(temporaryName, sizeof(temporaryName), "%s.%d.tmp", historyFileName,
+        SAFE_SPRINTF(std::span { temporaryName }, "%s.%d.tmp", ASCIILiteral::fromLiteralUnsafe(historyFileName),
             static_cast<int>(getpid()));
 
         int descriptor = openat(m_historyDirDescriptor, temporaryName,
@@ -1401,7 +1405,7 @@ int main(int argc, char** argv)
 #else
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
-    printf("Not supported platform for mya\n");
+    SAFE_PRINTF("Not supported platform for mya\n");
     return 1;
 #endif // ENABLE(LIB_JSC_TOOLS)
 }

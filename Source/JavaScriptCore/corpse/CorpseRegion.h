@@ -28,7 +28,7 @@
 #if ENABLE(LIB_JSC_TOOLS)
 
 #include <JavaScriptCore/CorpseAddress.h>
-#include <mach/mach.h>
+#include <JavaScriptCore/CorpseTaskHandle.h>
 #include <optional>
 #include <stdint.h>
 
@@ -39,7 +39,7 @@ namespace Corpse {
 class Region {
 public:
     // The region containing `address`, or nullopt if not found in any region.
-    static std::optional<Region> findContaining(mach_port_t task, Address);
+    static std::optional<Region> findContaining(TaskHandle::Cookie taskCookie, Address);
 
     Address base() const { return m_base; }
     size_t size() const { return m_size; }

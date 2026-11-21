@@ -47,18 +47,19 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 namespace Corpse {
 
-// A task port name outlives the task it named: when the target exits, the right we
-// hold becomes a dead name while the name itself is unchanged. MACH_PORT_VALID only
-// looks at the name, so it keeps reporting the port as good. Asking the kernel which
-// pid the port names is what tells a still-attached process apart from one that has
-// since exited -- and, because the answer is compared against m_pid, from a later
-// process that inherited the same pid.
 bool Process::holdsLiveTask() const
 {
-    if (!MACH_PORT_VALID(m_taskPort))
+    // On OS(DARWIN):
+    // A task port name outlives the task it named: when the target exits, the right we
+    // hold becomes a dead name while the name itself is unchanged. MACH_PORT_VALID (via
+    // isAttached() here) only looks at the name, so it keeps reporting the port as good.
+    // Asking the kernel which pid the port names is what tells a still-attached process
+    // apart from one that has since exited -- and, because the answer is compared against
+    // m_pid, from a later process that inherited the same pid.
+    if (!isAttached())
         return false;
     int pid = -1;
-    return pid_for_task(m_taskPort, &pid) == KERN_SUCCESS && pid == m_pid;
+    return pid_for_task(cookie(), &pid) == KERN_SUCCESS && pid == m_pid;
 }
 
 bool Process::isTranslated() const
@@ -89,7 +90,7 @@ bool Process::attach()
     kern_return_t kr = task_for_pid(mach_task_self(), m_pid, &taskPort);
 #endif
     if (kr == KERN_SUCCESS) {
-        m_taskPort = taskPort;
+        m_taskHandle = TaskHandle::adopt(taskPort);
         return true;
     }
 
@@ -101,13 +102,6 @@ bool Process::attach()
             static_cast<unsigned>(m_pid), mach_error_string(kr), kr);
     }
     return false;
-}
-
-void Process::detach()
-{
-    if (MACH_PORT_VALID(m_taskPort))
-        mach_port_deallocate(mach_task_self(), m_taskPort);
-    m_taskPort = MACH_PORT_NULL;
 }
 
 } // namespace Corpse

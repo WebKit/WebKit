@@ -1864,6 +1864,7 @@
 		4E5F60718293A4B5C6D7E8F9 /* CorpseMemorySpan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D4E5F60718293A4B5C6D7E8 /* CorpseMemorySpan.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5601486802533982ACC870BE /* CorpseSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1FA0900D09DF06EE63F7D2 /* CorpseSymbol.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377C8C2416AE3DF90650C0E9 /* CorpseSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8D1735B28066A3B1D756ECC /* CorpseSymbol.cpp */; };
+		F2D5B3E6CE829947BF35ADCB /* CorpseTaskHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = CA719742269557FA77FBABC0 /* CorpseTaskHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7952070E15E8A800A898AB /* ArrayConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A84E0255597D01FF60F7 /* ArrayPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 704FD35305697E6D003DBED9 /* BooleanObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4104,6 +4105,7 @@
 		3D4E5F60718293A4B5C6D7E8 /* CorpseMemorySpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseMemorySpan.h; sourceTree = "<group>"; };
 		8F1FA0900D09DF06EE63F7D2 /* CorpseSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseSymbol.h; sourceTree = "<group>"; };
 		E8D1735B28066A3B1D756ECC /* CorpseSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseSymbol.cpp; sourceTree = "<group>"; };
+		CA719742269557FA77FBABC0 /* CorpseTaskHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseTaskHandle.h; sourceTree = "<group>"; };
 		68BBF9CBD85C8635B2B8385F /* CorpseProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseProcess.cpp; sourceTree = "<group>"; };
 		C8503B7E641A29DF5B0E3742 /* CorpseRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseRegion.cpp; sourceTree = "<group>"; };
 		5E906BE4CC29012A83A8F299 /* CorpseSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseSnapshot.cpp; sourceTree = "<group>"; };
@@ -7010,6 +7012,7 @@
 				94711688984F16F71D615DE5 /* CorpseSnapshot.h */,
 				E8D1735B28066A3B1D756ECC /* CorpseSymbol.cpp */,
 				8F1FA0900D09DF06EE63F7D2 /* CorpseSymbol.h */,
+				CA719742269557FA77FBABC0 /* CorpseTaskHandle.h */,
 				960BD2B783EAEBE3233F91BF /* CorpseThread.cpp */,
 				211E3D6CA97F31CEB385A75A /* CorpseThread.h */,
 			);
@@ -11727,6 +11730,7 @@
 				3A7C1E5D9B0F4A2681C34D07 /* CorpseRegion.h in Headers */,
 				CA47D093D003440A28D15924 /* CorpseSnapshot.h in Headers */,
 				5601486802533982ACC870BE /* CorpseSymbol.h in Headers */,
+				F2D5B3E6CE829947BF35ADCB /* CorpseTaskHandle.h in Headers */,
 				56C6C2B7EBDCC63B6ECEA9AD /* CorpseThread.h in Headers */,
 				C4F4B6F41A05C944005CAB76 /* cpp_generator.py in Headers */,
 				C4F4B6F31A05C944005CAB76 /* cpp_generator_templates.py in Headers */,
