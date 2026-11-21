@@ -72,6 +72,7 @@ public:
         HashSet<Inspector::Protocol::BidiBrowsingContext::BrowsingContext> associatedTopLevelContexts;
         bool creationNotified { false };
         std::optional<WebCore::FrameIdentifier> frameIdentifier;
+        String sandbox;
     };
 
 
@@ -124,10 +125,15 @@ private:
         Inspector::Protocol::BidiBrowsingContext::BrowsingContext ownerBrowsingContext;
     };
 
+    struct AccumulatedRealmData {
+        RefPtr<Inspector::Protocol::BidiScript::RealmInfo> info;
+        Inspector::Protocol::BidiBrowsingContext::BrowsingContext context;
+    };
+
     void sendRealmCreatedEvent(RealmIdentifier, const RealmInfo&);
     void sendRealmDestroyedEvent(RealmIdentifier, const RealmInfo&);
 
-    void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
+    void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<AccumulatedRealmData>&&, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
     void collectExecutionReadyFrames(FrameTreeNodeData&&, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter);
     NODELETE bool isFrameExecutionReady(const FrameInfoData&);
     static Ref<Inspector::Protocol::BidiScript::RealmInfo> createProtocolRealmInfo(RealmIdentifier, const RealmInfo&);
@@ -136,6 +142,9 @@ private:
     void removeDedicatedWorkerRealmsForOwnerRealm(RealmIdentifier);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
     String generateRealmIdForBrowsingContext(const String& browsingContext);
+    bool isValidSandboxName(const String&) const;
+    bool canCreateSandboxRealm(const String& browsingContext, const String& sandboxName) const;
+    String generateSandboxRealmId(const String& browsingContext, const String& sandboxName);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
     struct ParsedStackTrace {
@@ -159,12 +168,15 @@ private:
     // Track current realm identifier for each browsing context.
     HashMap<String, RealmIdentifier> m_browsingContextToRealmId;
 
-    // Store active realms (key: realm identifier, value: realm info).
+    // Store active default window, sandbox, and worker realms.
     HashMap<RealmIdentifier, RealmInfo> m_activeRealms;
 
     // Store dedicated worker identity and ownership by realm identifier.
     HashMap<RealmIdentifier, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealms;
     Vector<std::pair<PreloadScriptIdentifier, PreloadScriptInfo>> m_preloadScripts;
+
+    // Map (browsingContext handle, sandbox name) -> RealmIdentifier for sandbox realms.
+    HashMap<std::pair<String, String>, RealmIdentifier> m_sandboxRealms;
 };
 
 } // namespace WebKit
