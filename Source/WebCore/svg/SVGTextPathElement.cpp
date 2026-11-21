@@ -185,15 +185,15 @@ void SVGTextPathElement::buildPendingResource()
 
 Node::NeedsPostConnectionSteps SVGTextPathElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGTextContentElement::insertionSteps(insertionType, parentOfInsertedTree);
-    if (!insertionType.connectedToDocument)
-        return NeedsPostConnectionSteps::No;
-    return NeedsPostConnectionSteps::Yes;
+    auto result = SVGTextContentElement::insertionSteps(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
+        return NeedsPostConnectionSteps::Yes;
+    return result;
 }
 
 void SVGTextPathElement::postConnectionSteps()
 {
-    SVGTextContentElement::buildPendingResource();
+    SVGTextContentElement::postConnectionSteps();
     buildPendingResource();
 }
 
