@@ -219,7 +219,6 @@ platform/graphics/FontSelectionAlgorithm.cpp
 platform/graphics/GraphicsContextGL.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/MeshGradient.cpp
-platform/graphics/MeshGradientRenderer.cpp
 platform/graphics/Path.cpp
 platform/graphics/PathStream.cpp
 platform/graphics/PathUtilities.cpp

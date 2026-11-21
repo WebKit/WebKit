@@ -74,6 +74,7 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::DrawFilteredImageBuffer
     , WebCore::DisplayList::DrawFocusRingPath
     , WebCore::DisplayList::DrawFocusRingRects
+    , WebCore::DisplayList::DrawFreeformGradient
     , WebCore::DisplayList::DrawGlyphs
     , WebCore::DisplayList::DrawDisplayList
     , WebCore::DisplayList::DrawImageBuffer

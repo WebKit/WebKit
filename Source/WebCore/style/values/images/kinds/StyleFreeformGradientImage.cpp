@@ -28,6 +28,11 @@
 
 #include "CSSFreeformGradientValue.h"
 #include "DeprecatedCSSOMValue.h"
+#include "FreeformGradient.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "RenderElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
@@ -72,16 +77,62 @@ void FreeformGradientImage::load(CachedResourceLoader&, const ResourceLoaderOpti
 {
 }
 
-ImageDrawResult FreeformGradientImage::draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect&, const FloatRect&, bool) const
+Ref<WebCore::FreeformGradient> FreeformGradientImage::gradientForSize(const RenderElement& renderer, FloatSize size, bool isForFirstLine, CachedGradient*& cached) const
 {
-    // FIXME: Draw freeform-gradient().
-    return ImageDrawResult::DidNothing;
+    cached = nullptr;
+
+    CheckedRef style = isForFirstLine ? renderer.firstLineStyle() : renderer.style();
+
+    // A gradient that uses currentColor can differ for each renderer, so it is not cached.
+    if (m_containsCurrentColor)
+        return createPlatformFreeformGradient(m_gradient.parameters, size, style);
+
+    cached = &m_gradients.ensure(size, style->appleColorFilter(), [&] {
+        return createPlatformFreeformGradient(m_gradient.parameters, size, style);
+    });
+    return cached->value();
 }
 
-ImageDrawResult FreeformGradientImage::drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, bool) const
+ImageDrawResult FreeformGradientImage::draw(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const
 {
-    // FIXME: Draw freeform-gradient().
-    return ImageDrawResult::DidNothing;
+    auto size = descriptor.concreteObjectSize.size() * descriptor.concreteObjectSize.zoom();
+    if (size.isEmpty() || context.paintingDisabled())
+        return ImageDrawResult::DidNothing;
+
+    CachedGradient* cached = nullptr;
+    Ref gradient = gradientForSize(renderer, size, isForFirstLine, cached);
+
+    return drawIntoDestination(context, descriptor, destination, source, [&](GraphicsContext& context) {
+        context.drawFreeformGradient(gradient, FloatRect { { }, size });
+        return ImageDrawResult::DidDraw;
+    });
+}
+
+ImageDrawResult FreeformGradientImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const
+{
+    auto size = descriptor.concreteObjectSize.size() * descriptor.concreteObjectSize.zoom();
+    if (size.isEmpty() || context.paintingDisabled())
+        return ImageDrawResult::DidNothing;
+
+    CachedGradient* cached = nullptr;
+    Ref gradient = gradientForSize(renderer, size, isForFirstLine, cached);
+
+    auto scaleFactor = context.scaleFactor();
+
+    RefPtr buffer = cached ? cached->patternBuffer(descriptor, size, scaleFactor) : nullptr;
+    if (!buffer) {
+        RefPtr newBuffer = createPatternBuffer(context, descriptor, size, [&](GraphicsContext& context) {
+            context.drawFreeformGradient(gradient, FloatRect { { }, size });
+        });
+        if (!newBuffer)
+            return ImageDrawResult::DidNothing;
+
+        buffer = newBuffer.copyRef();
+        if (cached)
+            cached->setPatternBuffer(newBuffer.releaseNonNull(), descriptor, size, scaleFactor);
+    }
+
+    return drawPatternBuffer(context, *buffer, size, descriptor, destination, tile, patternTransform, phase, spacing);
 }
 
 bool FreeformGradientImage::knownToBeOpaque(const RenderElement&) const

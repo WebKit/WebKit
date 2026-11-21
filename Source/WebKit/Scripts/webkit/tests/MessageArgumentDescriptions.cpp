@@ -686,6 +686,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteGraphicsContextIdentifier"_s,
         "WebKit::RemoteGPUIdentifier"_s,
         "WebKit::RemoteGradientIdentifier"_s,
+        "WebKit::RemoteFreeformGradientIdentifier"_s,
         "WebKit::RemoteMeshGradientIdentifier"_s,
         "WebKit::RemoteDisplayListIdentifier"_s,
         "WebKit::RemoteDisplayListRecorderIdentifier"_s,

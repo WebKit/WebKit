@@ -41,6 +41,7 @@
 #include <WebCore/FEFlood.h>
 #include <WebCore/FEImage.h>
 #include <WebCore/FontCustomPlatformData.h>
+#include <WebCore/FreeformGradient.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/MeshGradient.h>
@@ -704,6 +705,17 @@ static void testFiltersWithImages(Tester& tester)
     expectSameDrawing(tester, drawingImage(DisplayList::DrawFilteredImageBuffer { std::nullopt, filterRegion, filterWithEffect(FEImage::create(SourceImage { testImageBuffer() }, filterRegion)) }), "Filters with an image buffer"_s);
 }
 
+static void testFreeformGradients(Tester& tester)
+{
+    Vector<FreeformGradient::Stop> stops {
+        { { 0, 0 }, Color::red, 1 },
+        { { 100, 0 }, Color::green, 1 },
+        { { 50, 100 }, Color::blue, 1 },
+    };
+    Ref gradient = FreeformGradient::create({ ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, WTF::move(stops));
+    expectSameDrawing(tester, drawingImage(DisplayList::DrawFreeformGradient { WTF::move(gradient), { 10, 10, 80, 80 } }), "Freeform gradients"_s);
+}
+
 static void testMeshGradients(Tester& tester)
 {
     Vector<MeshGradient::Point> points {
@@ -826,6 +838,7 @@ Vector<String> testDisplayListData(const Vector<Ref<SharedBuffer>>& webFonts)
     testImageBuffers(tester);
     testPatternBrushes(tester);
     testFiltersWithImages(tester);
+    testFreeformGradients(tester);
     testMeshGradients(tester);
     testInvalidImages(tester);
     testInvalidData(tester);

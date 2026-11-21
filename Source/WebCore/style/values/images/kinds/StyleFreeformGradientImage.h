@@ -27,8 +27,12 @@
 
 #include "StyleFreeformGradient.h"
 #include "StyleGeneratedImage.h"
+#include "StyleGeneratedImageCache.h"
 
 namespace WebCore {
+
+class FreeformGradient;
+
 namespace Style {
 
 class FreeformGradientImage final : public GeneratedImage {
@@ -60,8 +64,12 @@ private:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
+    using CachedGradient = GeneratedImageCacheEntry<WebCore::FreeformGradient>;
+    Ref<WebCore::FreeformGradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
+
     Gradient m_gradient;
     bool m_containsCurrentColor { false };
+    mutable GeneratedImageCache<WebCore::FreeformGradient> m_gradients;
 };
 
 } // namespace Style

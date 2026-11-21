@@ -32,6 +32,7 @@
 #include "NativeImage.h"
 #include "PixelBuffer.h"
 #include "PixelBufferConversion.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -101,7 +102,8 @@ bool MeshGradientRenderer::draw(GraphicsContext& context, const MeshGradient& gr
         if (!render(gradient, { format, PixelBuffer::bytesPerPixel(format.pixelFormat) * pixelSize.width(), pixels.mutableSpan() }, pixelSize, scale))
             return false;
 
-        auto source = PixelBufferSourceView::create(format, pixelSize, pixels.span());
+        Borrow borrowedPixels = pixels;
+        auto source = PixelBufferSourceView::create(format, pixelSize, borrowedPixels->span());
         if (!source)
             return false;
 

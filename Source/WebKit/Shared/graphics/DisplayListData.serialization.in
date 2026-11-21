@@ -357,6 +357,11 @@ header: <WebCore/DisplayListItems.h>
     Ref<WebCore::Filter> m_filter;
 }
 
+[CustomHeader] class WebCore::DisplayList::DrawFreeformGradient {
+    Ref<WebCore::FreeformGradient> m_gradient;
+    WebCore::FloatRect m_destination;
+}
+
 [CustomHeader] class WebCore::DisplayList::DrawImageBuffer {
     WebCore::RenderingResourceIdentifier imageIdentifier();
     WebCore::FloatRect destinationRect();
@@ -438,6 +443,7 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::DrawFilteredImageBuffer,
     WebCore::DisplayList::DrawFocusRingPath,
     WebCore::DisplayList::DrawFocusRingRects,
+    WebCore::DisplayList::DrawFreeformGradient,
     WebCore::DisplayList::DrawGlyphs,
     WebCore::DisplayList::DrawDisplayList,
     WebCore::DisplayList::DrawImageBuffer,
