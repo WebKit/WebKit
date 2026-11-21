@@ -160,12 +160,13 @@ std::optional<float> parseNumber(StringParsingBuffer<char16_t>& buffer, SuffixSk
     return genericParseNumber(buffer, skip);
 }
 
-std::optional<float> parseNumber(StringView string, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringView string)
 {
-    return readCharactersForParsing(string, [skip](auto buffer) -> std::optional<float> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<float> {
         // <number> uses CSS syntax, which ignores whitespace around the value.
         skipOptionalSVGSpaces(buffer);
-        auto result = genericParseNumber(buffer, skip);
+        auto result = genericParseNumber(buffer, SuffixSkippingPolicy::DontSkip);
+        skipOptionalSVGSpaces(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
@@ -213,13 +214,15 @@ std::optional<std::pair<float, float>> parseNumberOptionalNumber(StringView stri
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::pair<float, float>> {
         skipOptionalSVGSpaces(buffer);
 
-        auto x = parseNumber(buffer);
+        auto x = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
         if (!x)
             return std::nullopt;
 
+        skipOptionalSVGSpaces(buffer);
         if (buffer.atEnd())
             return std::make_pair(*x, *x);
 
+        skipOptionalSVGSpacesOrDelimiter(buffer);
         auto y = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
         if (!y)
             return std::nullopt;
@@ -258,7 +261,7 @@ std::optional<FloatRect> parseRect(StringView string)
 {
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<FloatRect> {
         skipOptionalSVGSpaces(buffer);
-        
+
         auto x = parseNumber(buffer);
         if (!x)
             return std::nullopt;
@@ -270,6 +273,10 @@ std::optional<FloatRect> parseRect(StringView string)
             return std::nullopt;
         auto height = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
         if (!height)
+            return std::nullopt;
+
+        skipOptionalSVGSpaces(buffer);
+        if (!buffer.atEnd())
             return std::nullopt;
 
         return FloatRect { *x, *y, *width, *height };

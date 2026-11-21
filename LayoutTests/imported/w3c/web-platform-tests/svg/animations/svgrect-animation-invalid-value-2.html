@@ -1,0 +1,64 @@
+<!doctype html>
+<title>Test SVGRect animation with invalid values: Trailing junk after the fourth number.</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/animations/#AnimationAttributesAndProperties">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/coords.html#ViewBoxAttribute">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg id="from" viewBox="0 0 100 100">
+    <animate attributeName="viewBox" from="0 0 100 100 junk" to="50 50 50 50" begin="0s" dur="4s"/>
+</svg>
+<svg id="to" viewBox="0 0 100 100">
+    <animate attributeName="viewBox" from="0 0 100 100" to="50 50 50 50 junk" begin="0s" dur="4s"/>
+</svg>
+<svg id="fifth-number" viewBox="0 0 100 100">
+    <animate attributeName="viewBox" from="0 0 100 100" to="50 50 50 50 50" begin="0s" dur="4s"/>
+</svg>
+<svg id="trailing-comma" viewBox="0 0 100 100">
+    <animate attributeName="viewBox" from="0 0 100 100" to="50 50 50 50," begin="0s" dur="4s"/>
+</svg>
+<svg id="valid" viewBox="0 0 100 100">
+    <animate attributeName="viewBox" from="0 0 100 100" to=" 50,50 50 50 " begin="0s" dur="4s"/>
+</svg>
+
+<script>
+function assertViewBox(rect, x, y, width, height) {
+    assert_equals(rect.x, x, "x");
+    assert_equals(rect.y, y, "y");
+    assert_equals(rect.width, width, "width");
+    assert_equals(rect.height, height, "height");
+}
+
+const invalidCases = [
+    { id: "from", description: "trailing junk in from" },
+    { id: "to", description: "trailing junk in to" },
+    { id: "fifth-number", description: "a fifth number in to" },
+    { id: "trailing-comma", description: "a trailing comma in to" },
+];
+
+const loaded = new Promise(resolve => window.addEventListener("load", resolve));
+
+function sampleAt(svg, time) {
+    return loaded.then(() => {
+        svg.pauseAnimations();
+        svg.setCurrentTime(time);
+        return new Promise(resolve => requestAnimationFrame(resolve));
+    });
+}
+
+for (const { id, description } of invalidCases) {
+    promise_test(async () => {
+        const svg = document.getElementById(id);
+        await sampleAt(svg, 2);
+        assertViewBox(svg.viewBox.baseVal, 0, 0, 100, 100);
+        assertViewBox(svg.viewBox.animVal, 0, 0, 100, 100);
+    }, `An animation with ${description} has no effect`);
+}
+
+promise_test(async () => {
+    const svg = document.getElementById("valid");
+    await sampleAt(svg, 2);
+    assertViewBox(svg.viewBox.baseVal, 0, 0, 100, 100);
+    assertViewBox(svg.viewBox.animVal, 25, 25, 75, 75);
+}, "An animation with surrounding whitespace and a comma separator is applied");
+</script>
