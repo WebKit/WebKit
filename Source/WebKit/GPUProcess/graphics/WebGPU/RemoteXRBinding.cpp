@@ -42,7 +42,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRBinding);
 
-RemoteXRBinding::RemoteXRBinding(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteXRBinding::RemoteXRBinding(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUXRBindingIdentifier identifier)
     : m_backing(xrBinding)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -60,7 +60,7 @@ void RemoteXRBinding::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteXRBinding::createProjectionLayer(::WebGPU::TextureFormat colorFormat, std::optional<::WebGPU::TextureFormat> depthStencilFormat, OptionSet<::WebGPU::TextureUsage> textureUsage, double scaleFactor, WebGPUIdentifier identifier)
+void RemoteXRBinding::createProjectionLayer(::WebGPU::TextureFormat colorFormat, std::optional<::WebGPU::TextureFormat> depthStencilFormat, OptionSet<::WebGPU::TextureUsage> textureUsage, double scaleFactor, WebGPUXRProjectionLayerIdentifier identifier)
 {
     ::WebGPU::XRProjectionLayerDescriptor init {
         .colorFormat = colorFormat,
@@ -79,7 +79,7 @@ void RemoteXRBinding::createProjectionLayer(::WebGPU::TextureFormat colorFormat,
     objectHeap->addObject(identifier, remoteProjectionLayer);
 }
 
-void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebGPUIdentifier identifier)
+void RemoteXRBinding::getViewSubImage(WebGPUXRProjectionLayerIdentifier projectionLayerIdentifier, WebGPUXRSubImageIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     RefPtr projectionLayer = objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);

@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 std::optional<ComputePipelineDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::ComputePipelineDescriptor& computePipelineDescriptor)
 {
-    std::optional<WebGPUIdentifier> layout;
+    std::optional<WebGPUPipelineLayoutIdentifier> layout;
     if (computePipelineDescriptor.layout)
         layout = convertToBacking(*protect(computePipelineDescriptor.layout));
 

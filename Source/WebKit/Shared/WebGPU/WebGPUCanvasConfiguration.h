@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 class Device;
 
 struct CanvasConfiguration {
-    WebGPUIdentifier device;
+    WebGPUDeviceIdentifier device;
     ::WebGPU::TextureFormat format { ::WebGPU::TextureFormat::R8unorm };
     OptionSet<::WebGPU::TextureUsage> usage { ::WebGPU::TextureUsage::RenderAttachment };
     Vector<::WebGPU::TextureFormat> viewFormats;

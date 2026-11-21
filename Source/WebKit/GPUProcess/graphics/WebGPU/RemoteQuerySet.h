@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteQuerySet final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQuerySet);
 public:
-    static Ref<RemoteQuerySet> create(::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteQuerySet> create(::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUQuerySetIdentifier identifier)
     {
         return adoptRef(*new RemoteQuerySet(querySet, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -63,7 +63,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteQuerySet(::WebGPU::QuerySet&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteQuerySet(::WebGPU::QuerySet&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUQuerySetIdentifier);
 
     RemoteQuerySet(const RemoteQuerySet&) = delete;
     RemoteQuerySet(RemoteQuerySet&&) = delete;
@@ -83,7 +83,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUQuerySetIdentifier m_identifier;
 };
 
 } // namespace WebKit

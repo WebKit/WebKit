@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQuerySetProxy);
 
-RemoteQuerySetProxy::RemoteQuerySetProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteQuerySetProxy::RemoteQuerySetProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)

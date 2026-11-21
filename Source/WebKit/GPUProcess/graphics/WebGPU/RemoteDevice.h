@@ -86,7 +86,7 @@ struct TextureDescriptor;
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteDevice);
 public:
-    static Ref<RemoteDevice> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDevice> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
     {
         return adoptRef(*new RemoteDevice(gpuConnectionToWebProcess, gpu, device, objectHeap, WTF::move(streamConnection), identifier, queueIdentifier));
     }
@@ -102,7 +102,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDevice(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUDeviceIdentifier, WebGPUQueueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
@@ -116,31 +116,31 @@ private:
     void destroy();
     void destruct();
 
-    void createXRBinding(WebGPUIdentifier);
-    void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
-    void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
-    void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
+    void createXRBinding(WebGPUXRBindingIdentifier);
+    void createBuffer(const WebGPU::BufferDescriptor&, WebGPUBufferIdentifier);
+    void createTexture(const WebGPU::TextureDescriptor&, WebGPUTextureIdentifier);
+    void createSampler(const WebGPU::SamplerDescriptor&, WebGPUSamplerIdentifier);
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    void importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);
-    void updateExternalTexture(WebGPUIdentifier, const WebCore::MediaPlayerIdentifier&);
+    void importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor&, WebGPUExternalTextureIdentifier);
+    void updateExternalTexture(WebGPUExternalTextureIdentifier, const WebCore::MediaPlayerIdentifier&);
 #endif
 
-    void createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor&, WebGPUIdentifier);
-    void createPipelineLayout(const WebGPU::PipelineLayoutDescriptor&, WebGPUIdentifier);
-    void createBindGroup(const WebGPU::BindGroupDescriptor&, WebGPUIdentifier);
+    void createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor&, WebGPUBindGroupLayoutIdentifier);
+    void createPipelineLayout(const WebGPU::PipelineLayoutDescriptor&, WebGPUPipelineLayoutIdentifier);
+    void createBindGroup(const WebGPU::BindGroupDescriptor&, WebGPUBindGroupIdentifier);
 
-    void createShaderModule(const WebGPU::ShaderModuleDescriptor&, WebGPUIdentifier);
-    void createComputePipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier);
-    void createComputePipelineWithPipelineLayoutFromPipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
-    void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier);
-    void createRenderPipelineWithPipelineLayoutFromPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
-    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
-    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
+    void createShaderModule(const WebGPU::ShaderModuleDescriptor&, WebGPUShaderModuleIdentifier);
+    void createComputePipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUComputePipelineIdentifier);
+    void createComputePipelineWithPipelineLayoutFromPipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUComputePipelineIdentifier, WebGPUComputePipelineIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
+    void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPURenderPipelineIdentifier);
+    void createRenderPipelineWithPipelineLayoutFromPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPURenderPipelineIdentifier, WebGPURenderPipelineIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
+    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUComputePipelineIdentifier, CompletionHandler<void(bool, String&&)>&&);
+    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPURenderPipelineIdentifier, CompletionHandler<void(bool, String&&)>&&);
 
-    void createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>&, WebGPUIdentifier);
-    void createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&, WebGPUIdentifier);
+    void createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>&, WebGPUCommandEncoderIdentifier);
+    void createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&, WebGPURenderBundleEncoderIdentifier);
 
-    void createQuerySet(const WebGPU::QuerySetDescriptor&, WebGPUIdentifier);
+    void createQuerySet(const WebGPU::QuerySetDescriptor&, WebGPUQuerySetIdentifier);
 
     void pushErrorScope(::WebGPU::ErrorFilter);
     void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&);
@@ -155,7 +155,7 @@ private:
     const Ref<::WebGPU::Device> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
-    WebGPUIdentifier m_identifier;
+    WebGPUDeviceIdentifier m_identifier;
     const Ref<RemoteQueue> m_queue;
 #if ENABLE(VIDEO)
     const Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;

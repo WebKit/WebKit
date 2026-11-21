@@ -37,7 +37,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderPipelineProxy);
 
-RemoteRenderPipelineProxy::RemoteRenderPipelineProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteRenderPipelineProxy::RemoteRenderPipelineProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPURenderPipelineIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
@@ -53,7 +53,7 @@ RemoteRenderPipelineProxy::~RemoteRenderPipelineProxy()
 Ref<::WebGPU::BindGroupLayout> RemoteRenderPipelineProxy::getBindGroupLayout(uint32_t index)
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUBindGroupLayoutIdentifier::generate();
     auto sendResult = send(Messages::RemoteRenderPipeline::GetBindGroupLayout(index, identifier));
     UNUSED_VARIABLE(sendResult);
 

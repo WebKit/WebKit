@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSamplerProxy);
 
-RemoteSamplerProxy::RemoteSamplerProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteSamplerProxy::RemoteSamplerProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUSamplerIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)

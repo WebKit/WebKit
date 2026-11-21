@@ -33,7 +33,7 @@
 namespace WebKit::WebGPU {
 
 struct ShaderModuleCompilationHint {
-    WebGPUIdentifier pipelineLayout;
+    WebGPUPipelineLayoutIdentifier pipelineLayout;
 };
 
 } // namespace WebKit::WebGPU

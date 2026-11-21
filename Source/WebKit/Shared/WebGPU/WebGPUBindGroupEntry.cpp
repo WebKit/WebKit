@@ -37,66 +37,50 @@ namespace WebKit::WebGPU {
 std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const ::WebGPU::BindGroupEntry& bindGroupEntry)
 {
     return WTF::switchOn(bindGroupEntry.resource, [&](const Ref<::WebGPU::Sampler>& sampler) -> std::optional<BindGroupEntry> {
-        auto identifier = convertToBacking(protect(sampler.get()).get());
-
-        return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::Sampler } };
+        return { { bindGroupEntry.binding, { convertToBacking(protect(sampler.get()).get()) } } };
     }, [&](const Ref<::WebGPU::Texture>& texture) -> std::optional<BindGroupEntry> {
-        auto identifier = convertToBacking(protect(texture.get()).get());
-
-        return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::Texture } };
+        return { { bindGroupEntry.binding, { convertToBacking(protect(texture.get()).get()) } } };
     }, [&](const Ref<::WebGPU::TextureView>& textureView) -> std::optional<BindGroupEntry> {
-        auto identifier = convertToBacking(protect(textureView.get()).get());
-
-        return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::TextureView } };
+        return { { bindGroupEntry.binding, { convertToBacking(protect(textureView.get()).get()) } } };
     }, [&] (const auto& bufferBinding) -> std::optional<BindGroupEntry> {
         auto convertedBufferBinding = convertToBacking(bufferBinding);
         if (!convertedBufferBinding)
             return std::nullopt;
 
-        return { { bindGroupEntry.binding, WTF::move(*convertedBufferBinding), convertedBufferBinding->buffer, BindingResourceType::BufferBinding } };
+        return { { bindGroupEntry.binding, { WTF::move(*convertedBufferBinding) } } };
     }, [&](const Ref<::WebGPU::ExternalTexture>& externalTexture) -> std::optional<BindGroupEntry> {
-        auto identifier = convertToBacking(protect(externalTexture.get()).get());
-
-        return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::ExternalTexture } };
+        return { { bindGroupEntry.binding, { convertToBacking(protect(externalTexture.get()).get()) } } };
     });
 }
 
 std::optional<::WebGPU::BindGroupEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupEntry& bindGroupEntry)
 {
-    switch (bindGroupEntry.type) {
-    case BindingResourceType::Sampler: {
-        RefPtr sampler = convertSamplerFromBacking(bindGroupEntry.identifier);
+    return WTF::switchOn(bindGroupEntry.resource, [&](WebGPUSamplerIdentifier identifier) -> std::optional<::WebGPU::BindGroupEntry> {
+        RefPtr sampler = convertSamplerFromBacking(identifier);
         if (!sampler)
             return std::nullopt;
         return { { bindGroupEntry.binding, { *sampler } } };
-    }
-    case BindingResourceType::Texture: {
-        RefPtr texture = convertTextureFromBacking(bindGroupEntry.identifier);
+    }, [&](WebGPUTextureIdentifier identifier) -> std::optional<::WebGPU::BindGroupEntry> {
+        RefPtr texture = convertTextureFromBacking(identifier);
         if (!texture)
             return std::nullopt;
         return { { bindGroupEntry.binding, { *texture } } };
-    }
-    case BindingResourceType::TextureView: {
-        RefPtr textureView = convertTextureViewFromBacking(bindGroupEntry.identifier);
+    }, [&](WebGPUTextureViewIdentifier identifier) -> std::optional<::WebGPU::BindGroupEntry> {
+        RefPtr textureView = convertTextureViewFromBacking(identifier);
         if (!textureView)
             return std::nullopt;
         return { { bindGroupEntry.binding, { *textureView } } };
-    }
-    case BindingResourceType::BufferBinding: {
-        auto bufferBinding = convertFromBacking(bindGroupEntry.bufferBinding);
-        if (!bufferBinding)
+    }, [&](const BufferBinding& bufferBinding) -> std::optional<::WebGPU::BindGroupEntry> {
+        auto convertedBufferBinding = convertFromBacking(bufferBinding);
+        if (!convertedBufferBinding)
             return std::nullopt;
-        return { { bindGroupEntry.binding, { *bufferBinding } } };
-    }
-    case BindingResourceType::ExternalTexture: {
-        auto externalTexture = convertExternalTextureFromBacking(bindGroupEntry.identifier);
+        return { { bindGroupEntry.binding, { *convertedBufferBinding } } };
+    }, [&](WebGPUExternalTextureIdentifier identifier) -> std::optional<::WebGPU::BindGroupEntry> {
+        auto externalTexture = convertExternalTextureFromBacking(identifier);
         if (!externalTexture.get())
             return std::nullopt;
         return { { bindGroupEntry.binding, { *externalTexture.get() } } };
-    }
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
+    });
 }
 
 } // namespace WebKit

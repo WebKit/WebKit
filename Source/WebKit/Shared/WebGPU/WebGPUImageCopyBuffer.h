@@ -35,7 +35,7 @@
 namespace WebKit::WebGPU {
 
 struct ImageCopyBuffer : public ImageDataLayout {
-    WebGPUIdentifier buffer;
+    WebGPUBufferIdentifier buffer;
 };
 
 } // namespace WebKit::WebGPU

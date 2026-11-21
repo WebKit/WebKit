@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBindGroupLayoutProxy);
 
-RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBindGroupLayoutIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)

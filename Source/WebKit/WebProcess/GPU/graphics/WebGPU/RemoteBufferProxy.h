@@ -40,7 +40,7 @@ static constexpr size_t maxCrossProcessResourceCopySize = 16 * MB;
 class RemoteBufferProxy final : public ::WebGPU::Buffer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBufferProxy);
 public:
-    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation)
+    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBufferIdentifier identifier, bool mappedAtCreation)
     {
         return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier, mappedAtCreation));
     }
@@ -65,14 +65,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier, bool mappedAtCreation);
+    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUBufferIdentifier, bool mappedAtCreation);
 
     RemoteBufferProxy(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy(RemoteBufferProxy&&) = delete;
     RemoteBufferProxy& operator=(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy& operator=(RemoteBufferProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUBufferIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -90,7 +90,7 @@ private:
         return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUBufferIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
     OptionSet<::WebGPU::MapMode> m_mapModeFlags;

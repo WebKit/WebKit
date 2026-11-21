@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteComputePassEncoder);
 
-RemoteComputePassEncoder::RemoteComputePassEncoder(::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteComputePassEncoder::RemoteComputePassEncoder(::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUComputePassEncoderIdentifier identifier)
     : m_backing(computePassEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -60,7 +60,7 @@ void RemoteComputePassEncoder::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteComputePassEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
+void RemoteComputePassEncoder::setPipeline(WebGPUComputePipelineIdentifier computePipeline)
 {
     auto convertedComputePipeline = protect(m_objectHeap)->convertComputePipelineFromBacking(computePipeline);
     ASSERT(convertedComputePipeline);
@@ -75,7 +75,7 @@ void RemoteComputePassEncoder::dispatch(uint32_t workgroupCountX, uint32_t workg
     protect(m_backing)->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
-void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, uint64_t indirectOffset)
+void RemoteComputePassEncoder::dispatchIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
     auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
@@ -90,7 +90,7 @@ void RemoteComputePassEncoder::end()
     protect(m_backing)->end();
 }
 
-void RemoteComputePassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUIdentifier> bindGroup,
+void RemoteComputePassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUBindGroupIdentifier> bindGroup,
     std::optional<Vector<uint32_t>>&& offsets)
 {
     if (!bindGroup) {

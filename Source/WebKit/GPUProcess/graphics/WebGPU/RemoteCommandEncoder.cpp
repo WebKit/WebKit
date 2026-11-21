@@ -46,7 +46,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCommandEncoder);
 
-RemoteCommandEncoder::RemoteCommandEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteCommandEncoder::RemoteCommandEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUCommandEncoderIdentifier identifier)
     : m_backing(commandEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -69,7 +69,7 @@ void RemoteCommandEncoder::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteCommandEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor, WebGPURenderPassEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<std::optional<::WebGPU::RenderPassColorAttachment>> colorAttachments;
@@ -82,7 +82,7 @@ void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& d
     objectHeap->addObject(identifier, remoteRenderPassEncoder);
 }
 
-void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>& descriptor, WebGPUIdentifier identifier)
+void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>& descriptor, WebGPUComputePassEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     std::optional<::WebGPU::ComputePassDescriptor> convertedDescriptor;
@@ -99,9 +99,9 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
 }
 
 void RemoteCommandEncoder::copyBufferToBuffer(
-    WebGPUIdentifier source,
+    WebGPUBufferIdentifier source,
     uint64_t sourceOffset,
-    WebGPUIdentifier destination,
+    WebGPUBufferIdentifier destination,
     uint64_t destinationOffset,
     uint64_t size)
 {
@@ -162,7 +162,7 @@ void RemoteCommandEncoder::copyTextureToTexture(
 }
 
 void RemoteCommandEncoder::clearBuffer(
-    WebGPUIdentifier buffer,
+    WebGPUBufferIdentifier buffer,
     uint64_t offset,
     std::optional<uint64_t> size)
 {
@@ -189,7 +189,7 @@ void RemoteCommandEncoder::insertDebugMarker(String&& markerLabel)
     protect(m_backing)->insertDebugMarker(WTF::move(markerLabel));
 }
 
-void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, uint32_t queryIndex)
+void RemoteCommandEncoder::writeTimestamp(WebGPUQuerySetIdentifier querySet, uint32_t queryIndex)
 {
     auto convertedQuerySet = protect(m_objectHeap)->convertQuerySetFromBacking(querySet);
     ASSERT(convertedQuerySet);
@@ -200,10 +200,10 @@ void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, uint32_t qu
 }
 
 void RemoteCommandEncoder::resolveQuerySet(
-    WebGPUIdentifier querySet,
+    WebGPUQuerySetIdentifier querySet,
     uint32_t firstQuery,
     uint32_t queryCount,
-    WebGPUIdentifier destination,
+    WebGPUBufferIdentifier destination,
     uint64_t destinationOffset)
 {
     Ref objectHeap = m_objectHeap.get();
@@ -217,7 +217,7 @@ void RemoteCommandEncoder::resolveQuerySet(
     protect(m_backing)->resolveQuerySet(protect(*convertedQuerySet), firstQuery, queryCount, protect(*convertedDestination), destinationOffset);
 }
 
-void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor, WebGPUCommandBufferIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto commandBuffer = protect(m_backing)->finish(descriptor);

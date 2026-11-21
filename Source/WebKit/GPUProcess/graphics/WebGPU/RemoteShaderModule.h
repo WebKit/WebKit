@@ -52,7 +52,7 @@ class ObjectHeap;
 class RemoteShaderModule final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteShaderModule);
 public:
-    static Ref<RemoteShaderModule> create(::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteShaderModule> create(::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUShaderModuleIdentifier identifier)
     {
         return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -66,7 +66,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteShaderModule(::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteShaderModule(::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUShaderModuleIdentifier);
 
     RemoteShaderModule(const RemoteShaderModule&) = delete;
     RemoteShaderModule(RemoteShaderModule&&) = delete;
@@ -86,7 +86,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUShaderModuleIdentifier m_identifier;
 };
 
 } // namespace WebKit

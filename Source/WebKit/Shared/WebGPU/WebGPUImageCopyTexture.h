@@ -36,7 +36,7 @@
 namespace WebKit::WebGPU {
 
 struct ImageCopyTexture {
-    WebGPUIdentifier texture;
+    WebGPUTextureIdentifier texture;
     uint32_t mipLevel { 0 };
     std::optional<Origin3D> origin;
     ::WebGPU::TextureAspect aspect { ::WebGPU::TextureAspect::All };

@@ -64,7 +64,7 @@ static void keepAliveUntilSubmittedWorkDone(::WebGPU::Queue& backing, RefPtr<Web
     });
 }
 
-RemoteQueue::RemoteQueue([[maybe_unused]] GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteQueue::RemoteQueue([[maybe_unused]] GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUQueueIdentifier identifier)
     : m_backing(queue)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -93,10 +93,10 @@ void RemoteQueue::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteQueue::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
+void RemoteQueue::submit(Vector<WebGPUCommandBufferIdentifier>&& commandBuffers)
 {
     Vector<Ref<::WebGPU::CommandBuffer>> convertedCommandBuffers(ReserveCapacityTag { }, commandBuffers.size());
-    for (WebGPUIdentifier identifier : commandBuffers) {
+    for (WebGPUCommandBufferIdentifier identifier : commandBuffers) {
         auto convertedCommandBuffer = protect(m_objectHeap)->convertCommandBufferFromBacking(identifier);
         ASSERT(convertedCommandBuffer);
         if (!convertedCommandBuffer)
@@ -114,7 +114,7 @@ void RemoteQueue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 }
 
 void RemoteQueue::writeBuffer(
-    WebGPUIdentifier buffer,
+    WebGPUBufferIdentifier buffer,
     uint64_t bufferOffset,
     std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
     CompletionHandler<void(bool)>&& completionHandler)
@@ -134,7 +134,7 @@ void RemoteQueue::writeBuffer(
 }
 
 void RemoteQueue::writeBufferWithCopy(
-    WebGPUIdentifier buffer,
+    WebGPUBufferIdentifier buffer,
     uint64_t bufferOffset,
     Vector<uint8_t>&& data)
 {

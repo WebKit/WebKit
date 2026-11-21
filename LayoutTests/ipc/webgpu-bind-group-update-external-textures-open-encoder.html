@@ -104,9 +104,7 @@ async function run()
             bindGroupLayout: bindGroupLayoutId,
             entries: [{
                 binding: 0,
-                bufferBinding: { buffer: boundTextureId, offset: 0, size: { } },
-                identifier: boundTextureId,
-                type: 4, // BindingResourceType::ExternalTexture
+                resource: { variantType: 'WebKit::WebGPUExternalTextureIdentifier', variant: boundTextureId },
             }],
         },
         identifier: bindGroupId,

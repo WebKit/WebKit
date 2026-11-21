@@ -37,8 +37,8 @@ namespace WebKit::WebGPU {
 
 std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
 {
-    std::optional<Vector<WebGPUIdentifier>> optionalBindGroupLayouts;
-    Vector<WebGPUIdentifier> bindGroupLayouts;
+    std::optional<Vector<WebGPUBindGroupLayoutIdentifier>> optionalBindGroupLayouts;
+    Vector<WebGPUBindGroupLayoutIdentifier> bindGroupLayouts;
     if (pipelineLayoutDescriptor.bindGroupLayouts) {
         bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
         for (auto backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts)

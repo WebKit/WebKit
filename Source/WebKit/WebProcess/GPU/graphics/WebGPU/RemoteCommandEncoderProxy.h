@@ -39,7 +39,7 @@ class ConvertToBackingContext;
 class RemoteCommandEncoderProxy final : public ::WebGPU::CommandEncoder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCommandEncoderProxy);
 public:
-    static Ref<RemoteCommandEncoderProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandEncoderProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUCommandEncoderIdentifier identifier)
     {
         return adoptRef(*new RemoteCommandEncoderProxy(root, convertToBackingContext, identifier));
     }
@@ -90,14 +90,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteCommandEncoderProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteCommandEncoderProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUCommandEncoderIdentifier);
 
     RemoteCommandEncoderProxy(const RemoteCommandEncoderProxy&) = delete;
     RemoteCommandEncoderProxy(RemoteCommandEncoderProxy&&) = delete;
     RemoteCommandEncoderProxy& operator=(const RemoteCommandEncoderProxy&) = delete;
     RemoteCommandEncoderProxy& operator=(RemoteCommandEncoderProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUCommandEncoderIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -110,7 +110,7 @@ private:
         return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUCommandEncoderIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
 };

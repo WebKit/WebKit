@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteExternalTexture);
 
-RemoteExternalTexture::RemoteExternalTexture(::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteExternalTexture::RemoteExternalTexture(::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUExternalTextureIdentifier identifier)
     : m_backing(externalTexture)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

@@ -39,7 +39,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderPassEncoder);
 
-RemoteRenderPassEncoder::RemoteRenderPassEncoder(::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteRenderPassEncoder::RemoteRenderPassEncoder(::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPURenderPassEncoderIdentifier identifier)
     : m_backing(renderPassEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -61,7 +61,7 @@ void RemoteRenderPassEncoder::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteRenderPassEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteRenderPassEncoder::setPipeline(WebGPUIdentifier renderPipeline)
+void RemoteRenderPassEncoder::setPipeline(WebGPURenderPipelineIdentifier renderPipeline)
 {
     auto convertedRenderPipeline = protect(m_objectHeap)->convertRenderPipelineFromBacking(renderPipeline);
     ASSERT(convertedRenderPipeline);
@@ -71,7 +71,7 @@ void RemoteRenderPassEncoder::setPipeline(WebGPUIdentifier renderPipeline)
     protect(m_backing)->setPipeline(protect(*convertedRenderPipeline));
 }
 
-void RemoteRenderPassEncoder::setIndexBuffer(WebGPUIdentifier buffer, ::WebGPU::IndexFormat indexFormat, uint64_t offset, std::optional<uint64_t> size)
+void RemoteRenderPassEncoder::setIndexBuffer(WebGPUBufferIdentifier buffer, ::WebGPU::IndexFormat indexFormat, uint64_t offset, std::optional<uint64_t> size)
 {
     auto convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
@@ -81,7 +81,7 @@ void RemoteRenderPassEncoder::setIndexBuffer(WebGPUIdentifier buffer, ::WebGPU::
     protect(m_backing)->setIndexBuffer(protect(*convertedBuffer), indexFormat, offset, size);
 }
 
-void RemoteRenderPassEncoder::setVertexBuffer(uint32_t slot, WebGPUIdentifier buffer, uint64_t offset, std::optional<uint64_t> size)
+void RemoteRenderPassEncoder::setVertexBuffer(uint32_t slot, WebGPUBufferIdentifier buffer, uint64_t offset, std::optional<uint64_t> size)
 {
     RefPtr convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
@@ -111,7 +111,7 @@ void RemoteRenderPassEncoder::drawIndexed(uint32_t indexCount,
     protect(m_backing)->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
-void RemoteRenderPassEncoder::drawIndirect(WebGPUIdentifier indirectBuffer, uint64_t indirectOffset)
+void RemoteRenderPassEncoder::drawIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
     auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
@@ -121,7 +121,7 @@ void RemoteRenderPassEncoder::drawIndirect(WebGPUIdentifier indirectBuffer, uint
     protect(m_backing)->drawIndirect(protect(*convertedIndirectBuffer), indirectOffset);
 }
 
-void RemoteRenderPassEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuffer, uint64_t indirectOffset)
+void RemoteRenderPassEncoder::drawIndexedIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
     auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
@@ -131,7 +131,7 @@ void RemoteRenderPassEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuffe
     protect(m_backing)->drawIndexedIndirect(protect(*convertedIndirectBuffer), indirectOffset);
 }
 
-void RemoteRenderPassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUIdentifier> bindGroup,
+void RemoteRenderPassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUBindGroupIdentifier> bindGroup,
     std::optional<Vector<uint32_t>>&& dynamicOffsets)
 {
     if (!bindGroup) {
@@ -194,10 +194,10 @@ void RemoteRenderPassEncoder::endOcclusionQuery()
     protect(m_backing)->endOcclusionQuery();
 }
 
-void RemoteRenderPassEncoder::executeBundles(Vector<WebGPUIdentifier>&& renderBundles)
+void RemoteRenderPassEncoder::executeBundles(Vector<WebGPURenderBundleIdentifier>&& renderBundles)
 {
     Vector<Ref<::WebGPU::RenderBundle>> convertedBundles(ReserveCapacityTag { }, renderBundles.size());
-    for (WebGPUIdentifier identifier : renderBundles) {
+    for (WebGPURenderBundleIdentifier identifier : renderBundles) {
         auto convertedBundle = protect(m_objectHeap)->convertRenderBundleFromBacking(identifier);
         ASSERT(convertedBundle);
         if (!convertedBundle)

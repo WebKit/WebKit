@@ -39,7 +39,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCommandEncoderProxy);
 
-RemoteCommandEncoderProxy::RemoteCommandEncoderProxy(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteCommandEncoderProxy::RemoteCommandEncoderProxy(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUCommandEncoderIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_root(root)
@@ -59,7 +59,7 @@ RefPtr<::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(c
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPURenderPassEncoderIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginRenderPass(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -80,7 +80,7 @@ RefPtr<::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass
             return nullptr;
     }
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUComputePassEncoderIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginComputePass(convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -206,7 +206,7 @@ void RemoteCommandEncoderProxy::resolveQuerySet(
 
 RefPtr<::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const ::WebGPU::CommandBufferDescriptor& descriptor)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUCommandBufferIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::Finish(descriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;

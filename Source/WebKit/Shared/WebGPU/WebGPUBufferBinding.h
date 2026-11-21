@@ -35,7 +35,7 @@
 namespace WebKit::WebGPU {
 
 struct BufferBinding {
-    WebGPUIdentifier buffer;
+    WebGPUBufferIdentifier buffer;
     uint64_t offset { 0 };
     std::optional<uint64_t> size { std::nullopt };
 };

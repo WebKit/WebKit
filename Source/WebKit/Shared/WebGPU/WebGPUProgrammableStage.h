@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 using PipelineConstantValue = double; // May represent WGSL’s bool, f32, i32, u32.
 
 struct ProgrammableStage {
-    WebGPUIdentifier module;
+    WebGPUShaderModuleIdentifier module;
     String entryPoint;
     Vector<KeyValuePair<String, PipelineConstantValue>> constants;
 };

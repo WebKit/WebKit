@@ -39,7 +39,7 @@ class ConvertToBackingContext;
 class RemoteQuerySetProxy final : public ::WebGPU::QuerySet {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQuerySetProxy);
 public:
-    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier)
     {
         return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier));
     }
@@ -57,14 +57,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUQuerySetIdentifier);
 
     RemoteQuerySetProxy(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy(RemoteQuerySetProxy&&) = delete;
     RemoteQuerySetProxy& operator=(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy& operator=(RemoteQuerySetProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUQuerySetIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -72,7 +72,7 @@ private:
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUQuerySetIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };

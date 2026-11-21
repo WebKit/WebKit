@@ -34,8 +34,8 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     [EnabledBy=WebGLEnabled] void CreateGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier, struct WebCore::GraphicsContextGLAttributes attributes, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
     [EnabledBy=WebGLEnabled] void ReleaseGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier) AllowedWhenWaitingForSyncReply
 #endif
-    [EnabledBy=WebGPUEnabled] void CreateGPU(WebKit::WebGPUIdentifier identifier, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
-    [EnabledBy=WebGPUEnabled] void ReleaseGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGPUEnabled] void CreateGPU(WebKit::RemoteGPUIdentifier identifier, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGPUEnabled] void ReleaseGPU(WebKit::RemoteGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
     void ClearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier> pageIdentifier)
     void AbandonSnapshotFrame(WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameIdentifier)
     void FailSnapshot(WebKit::RemoteSnapshotIdentifier snapshotIdentifier)

@@ -34,7 +34,7 @@
 
 namespace WebKit::WebGPU {
 
-static WebGPUIdentifier colorAttachmentViewIdentifier(ConvertToBackingContext& convertToBacking, const ::WebGPU::RenderPassAttachmentView& view)
+static WebGPURenderPassAttachmentViewIdentifier colorAttachmentViewIdentifier(ConvertToBackingContext& convertToBacking, const ::WebGPU::RenderPassAttachmentView& view)
 {
     // RenderPassAttachmentView is a std::variant, see WebGPUCpp.h.
     if (auto* textureView = std::get_if<Ref<::WebGPU::TextureView>>(&view))
@@ -45,40 +45,42 @@ std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacki
 {
     auto identifier = colorAttachmentViewIdentifier(*this, renderPassColorAttachment.view);
 
-    std::optional<WebGPUIdentifier> resolveTarget;
+    std::optional<WebGPURenderPassAttachmentViewIdentifier> resolveTarget;
     if (renderPassColorAttachment.resolveTarget)
         resolveTarget = colorAttachmentViewIdentifier(*this, *renderPassColorAttachment.resolveTarget);
 
     return { { identifier, renderPassColorAttachment.depthSlice, resolveTarget, renderPassColorAttachment.clearValue, renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
 }
 
+static std::optional<::WebGPU::RenderPassAttachmentView> colorAttachmentViewFromBacking(ConvertFromBackingContext& convertFromBacking, const WebGPURenderPassAttachmentViewIdentifier& view)
+{
+    return WTF::switchOn(view, [&](WebGPUTextureViewIdentifier identifier) -> std::optional<::WebGPU::RenderPassAttachmentView> {
+        RefPtr textureView = convertFromBacking.convertTextureViewFromBacking(identifier);
+        if (!textureView)
+            return std::nullopt;
+        return ::WebGPU::RenderPassAttachmentView { textureView.releaseNonNull() };
+    }, [&](WebGPUTextureIdentifier identifier) -> std::optional<::WebGPU::RenderPassAttachmentView> {
+        RefPtr texture = convertFromBacking.convertTextureFromBacking(identifier);
+        if (!texture)
+            return std::nullopt;
+        return ::WebGPU::RenderPassAttachmentView { texture.releaseNonNull() };
+    });
+}
+
 std::optional<::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
 {
-    RefPtr view = convertTextureViewFromBacking(renderPassColorAttachment.view);
-    RefPtr texture = !view ? convertTextureFromBacking(renderPassColorAttachment.view) : nullptr;
-    if (!view && !texture)
+    auto view = colorAttachmentViewFromBacking(*this, renderPassColorAttachment.view);
+    if (!view)
         return std::nullopt;
 
     std::optional<::WebGPU::RenderPassAttachmentView> resolveTarget;
     if (renderPassColorAttachment.resolveTarget) {
-        RefPtr view = convertTextureViewFromBacking(renderPassColorAttachment.resolveTarget.value());
-        if (!view) {
-            RefPtr texture = convertTextureFromBacking(renderPassColorAttachment.resolveTarget.value());
-            if (!texture)
-                return std::nullopt;
-
-            resolveTarget = ::WebGPU::RenderPassAttachmentView { texture.releaseNonNull() };
-        } else
-            resolveTarget = ::WebGPU::RenderPassAttachmentView { view.releaseNonNull() };
+        resolveTarget = colorAttachmentViewFromBacking(*this, *renderPassColorAttachment.resolveTarget);
+        if (!resolveTarget)
+            return std::nullopt;
     }
 
-    ::WebGPU::RenderPassAttachmentView viewTextureVariant = [&] -> ::WebGPU::RenderPassAttachmentView {
-        if (view)
-            return view.releaseNonNull();
-        return texture.releaseNonNull();
-    }();
-
-    return { { WTF::move(viewTextureVariant), renderPassColorAttachment.depthSlice, WTF::move(resolveTarget), renderPassColorAttachment.clearValue.value_or(::WebGPU::Color { }), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
+    return { { WTF::move(*view), renderPassColorAttachment.depthSlice, WTF::move(resolveTarget), renderPassColorAttachment.clearValue.value_or(::WebGPU::Color { }), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
 }
 
 } // namespace WebKit

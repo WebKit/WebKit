@@ -64,7 +64,7 @@ class ObjectHeap;
 class RemoteXRSubImage final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImage);
 public:
-    static Ref<RemoteXRSubImage> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteXRSubImage> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUXRSubImageIdentifier identifier)
     {
         return adoptRef(*new RemoteXRSubImage(gpuConnectionToWebProcess, xrSubImage, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -77,7 +77,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteXRSubImage(GPUConnectionToWebProcess&, ::WebGPU::XRSubImage&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteXRSubImage(GPUConnectionToWebProcess&, ::WebGPU::XRSubImage&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUXRSubImageIdentifier);
 
     RemoteXRSubImage(const RemoteXRSubImage&) = delete;
     RemoteXRSubImage(RemoteXRSubImage&&) = delete;
@@ -88,14 +88,14 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
-    void getColorTexture(WebGPUIdentifier);
-    void getDepthTexture(WebGPUIdentifier);
+    void getColorTexture(WebGPUTextureIdentifier);
+    void getDepthTexture(WebGPUTextureIdentifier);
 
     const Ref<::WebGPU::XRSubImage> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
-    WebGPUIdentifier m_identifier;
+    WebGPUXRSubImageIdentifier m_identifier;
     WeakRef<RemoteGPU> m_gpu;
 };
 

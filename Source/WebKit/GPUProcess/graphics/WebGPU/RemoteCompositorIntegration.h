@@ -66,7 +66,7 @@ class ObjectHeap;
 class RemoteCompositorIntegration final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCompositorIntegration);
 public:
-    static Ref<RemoteCompositorIntegration> create(WebCore::WebGPUCompositorIntegration& compositorIntegration, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteCompositorIntegration> create(WebCore::WebGPUCompositorIntegration& compositorIntegration, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUCompositorIntegrationIdentifier identifier)
     {
         return adoptRef(*new RemoteCompositorIntegration(compositorIntegration, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -80,7 +80,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteCompositorIntegration(WebCore::WebGPUCompositorIntegration&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteCompositorIntegration(WebCore::WebGPUCompositorIntegration&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUCompositorIntegrationIdentifier);
 
     RemoteCompositorIntegration(const RemoteCompositorIntegration&) = delete;
     RemoteCompositorIntegration(RemoteCompositorIntegration&&) = delete;
@@ -94,7 +94,7 @@ private:
     void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, uint32_t, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA)
-    void recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(uint32_t)>&&);
+    void recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, WebKit::WebGPUDeviceIdentifier, CompletionHandler<void(uint32_t)>&&);
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds, Seconds, MachSendRight&&, std::optional<uint32_t>)>&&);
 #endif
 
@@ -104,7 +104,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUCompositorIntegrationIdentifier m_identifier;
 };
 
 } // namespace WebKit

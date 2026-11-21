@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderBundleEncoderProxy);
 
-RemoteRenderBundleEncoderProxy::RemoteRenderBundleEncoderProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteRenderBundleEncoderProxy::RemoteRenderBundleEncoderProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPURenderBundleEncoderIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
@@ -115,7 +115,7 @@ void RemoteRenderBundleEncoderProxy::drawIndexedIndirect(::WebGPU::Buffer& indir
 
 void RemoteRenderBundleEncoderProxy::setBindGroup(uint32_t index, const ::WebGPU::BindGroup* bindGroup, std::optional<std::span<const uint32_t>> dynamicOffsets)
 {
-    std::optional<WebGPUIdentifier> convertedBindGroup;
+    std::optional<WebGPUBindGroupIdentifier> convertedBindGroup;
     if (bindGroup)
         convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
@@ -144,7 +144,7 @@ void RemoteRenderBundleEncoderProxy::insertDebugMarker(String&& markerLabel)
 RefPtr<::WebGPU::RenderBundle> RemoteRenderBundleEncoderProxy::finish(const ::WebGPU::RenderBundleDescriptor& descriptor)
 {
     Ref convertToBackingContext = m_convertToBackingContext;
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPURenderBundleIdentifier::generate();
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::Finish(descriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;

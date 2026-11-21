@@ -37,9 +37,9 @@
 namespace WebKit::WebGPU {
 
 struct RenderPassColorAttachment {
-    WebGPUIdentifier view;
+    WebGPURenderPassAttachmentViewIdentifier view;
     std::optional<uint32_t> depthSlice;
-    std::optional<WebGPUIdentifier> resolveTarget;
+    std::optional<WebGPURenderPassAttachmentViewIdentifier> resolveTarget;
 
     std::optional<Color> clearValue;
     ::WebGPU::LoadOp loadOp { ::WebGPU::LoadOp::Load };

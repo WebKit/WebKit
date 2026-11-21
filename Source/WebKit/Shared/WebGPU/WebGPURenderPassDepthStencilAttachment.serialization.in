@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::RenderPassDepthStencilAttachment {
-    WebKit::WebGPUIdentifier view
+    Variant<WebKit::WebGPUTextureViewIdentifier, WebKit::WebGPUTextureIdentifier> view
 
     float depthClearValue
     std::optional<::WebGPU::LoadOp> depthLoadOp

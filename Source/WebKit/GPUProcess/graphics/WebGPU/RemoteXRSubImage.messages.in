@@ -30,8 +30,8 @@
 ]
 messages -> RemoteXRSubImage Stream {
     void Destruct()
-    void GetColorTexture(WebKit::WebGPUIdentifier identifier)
-    void GetDepthTexture(WebKit::WebGPUIdentifier identifier)
+    void GetColorTexture(WebKit::WebGPUTextureIdentifier identifier)
+    void GetDepthTexture(WebKit::WebGPUTextureIdentifier identifier)
 }
 
 #endif

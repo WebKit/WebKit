@@ -31,23 +31,23 @@
 messages -> RemoteDevice Stream {
     void Destroy()
     void Destruct()
-    void CreateXRBinding(WebKit::WebGPUIdentifier identifier)
-    void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateTexture(WebKit::WebGPU::TextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateSampler(WebKit::WebGPU::SamplerDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateBindGroupLayout(WebKit::WebGPU::BindGroupLayoutDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreatePipelineLayout(WebKit::WebGPU::PipelineLayoutDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateBindGroup(WebKit::WebGPU::BindGroupDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateShaderModule(WebKit::WebGPU::ShaderModuleDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateComputePipeline(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateComputePipelineWithPipelineLayoutFromPipeline(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier, WebKit::WebGPUIdentifier pipelineToReplaceIdentifier) -> (bool success)
-    void CreateRenderPipeline(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateRenderPipelineWithPipelineLayoutFromPipeline(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier, WebKit::WebGPUIdentifier pipelineToReplaceIdentifier) -> (bool success)
-    void CreateComputePipelineAsync(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier) -> (bool success, String error)
-    void CreateRenderPipelineAsync(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier) -> (bool success, String error)
-    void CreateCommandEncoder(std::optional<WebKit::WebGPU::CommandEncoderDescriptor> descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateRenderBundleEncoder(WebKit::WebGPU::RenderBundleEncoderDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateQuerySet(WebKit::WebGPU::QuerySetDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
+    void CreateXRBinding(WebKit::WebGPUXRBindingIdentifier identifier)
+    void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, WebKit::WebGPUBufferIdentifier identifier)
+    void CreateTexture(WebKit::WebGPU::TextureDescriptor descriptor, WebKit::WebGPUTextureIdentifier identifier)
+    void CreateSampler(WebKit::WebGPU::SamplerDescriptor descriptor, WebKit::WebGPUSamplerIdentifier identifier)
+    void CreateBindGroupLayout(WebKit::WebGPU::BindGroupLayoutDescriptor descriptor, WebKit::WebGPUBindGroupLayoutIdentifier identifier)
+    void CreatePipelineLayout(WebKit::WebGPU::PipelineLayoutDescriptor descriptor, WebKit::WebGPUPipelineLayoutIdentifier identifier)
+    void CreateBindGroup(WebKit::WebGPU::BindGroupDescriptor descriptor, WebKit::WebGPUBindGroupIdentifier identifier)
+    void CreateShaderModule(WebKit::WebGPU::ShaderModuleDescriptor descriptor, WebKit::WebGPUShaderModuleIdentifier identifier)
+    void CreateComputePipeline(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUComputePipelineIdentifier identifier)
+    void CreateComputePipelineWithPipelineLayoutFromPipeline(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUComputePipelineIdentifier identifier, WebKit::WebGPUComputePipelineIdentifier pipelineToReplaceIdentifier) -> (bool success)
+    void CreateRenderPipeline(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPURenderPipelineIdentifier identifier)
+    void CreateRenderPipelineWithPipelineLayoutFromPipeline(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPURenderPipelineIdentifier identifier, WebKit::WebGPURenderPipelineIdentifier pipelineToReplaceIdentifier) -> (bool success)
+    void CreateComputePipelineAsync(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUComputePipelineIdentifier identifier) -> (bool success, String error)
+    void CreateRenderPipelineAsync(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPURenderPipelineIdentifier identifier) -> (bool success, String error)
+    void CreateCommandEncoder(std::optional<WebKit::WebGPU::CommandEncoderDescriptor> descriptor, WebKit::WebGPUCommandEncoderIdentifier identifier)
+    void CreateRenderBundleEncoder(WebKit::WebGPU::RenderBundleEncoderDescriptor descriptor, WebKit::WebGPURenderBundleEncoderIdentifier identifier)
+    void CreateQuerySet(WebKit::WebGPU::QuerySetDescriptor descriptor, WebKit::WebGPUQuerySetIdentifier identifier)
     void PushErrorScope(::WebGPU::ErrorFilter errorFilter)
     void PopErrorScope() -> (bool success, std::optional<::WebGPU::Error> error)
     void ResolveUncapturedErrorEvent() -> (bool hasUncapturedError, std::optional<::WebGPU::Error> error)
@@ -57,8 +57,8 @@ messages -> RemoteDevice Stream {
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
-    void ImportExternalTextureFromVideoFrame(WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier) NotStreamEncodable
-    void UpdateExternalTexture(WebKit::WebGPUIdentifier externalTextureIdentifier, WebCore::MediaPlayerIdentifier mediaIdentifier)
+    void ImportExternalTextureFromVideoFrame(WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUExternalTextureIdentifier identifier) NotStreamEncodable
+    void UpdateExternalTexture(WebKit::WebGPUExternalTextureIdentifier externalTextureIdentifier, WebCore::MediaPlayerIdentifier mediaIdentifier)
 #endif
 }
 

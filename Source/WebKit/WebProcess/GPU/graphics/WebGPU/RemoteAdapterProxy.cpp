@@ -37,7 +37,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAdapterProxy);
 
-RemoteAdapterProxy::RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteAdapterProxy::RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUAdapterIdentifier identifier)
     : m_backing(identifier)
     , m_features(WTF::move(features))
     , m_limits(limits)
@@ -62,8 +62,8 @@ void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descrip
     if (!convertedDescriptor)
         return callback(nullptr);
 
-    auto identifier = WebGPUIdentifier::generate();
-    auto queueIdentifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUDeviceIdentifier::generate();
+    auto queueIdentifier = WebGPUQueueIdentifier::generate();
     auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier));
     if (!sendResult.succeeded())
         return callback(nullptr);

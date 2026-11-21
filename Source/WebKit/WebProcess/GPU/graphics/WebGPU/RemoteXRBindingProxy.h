@@ -41,7 +41,7 @@ class ConvertToBackingContext;
 class RemoteXRBindingProxy final : public ::WebGPU::XRBinding {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRBindingProxy);
 public:
-    static Ref<RemoteXRBindingProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteXRBindingProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRBindingIdentifier identifier)
     {
         return adoptRef(*new RemoteXRBindingProxy(parent, convertToBackingContext, identifier));
     }
@@ -59,14 +59,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteXRBindingProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteXRBindingProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUXRBindingIdentifier);
 
     RemoteXRBindingProxy(const RemoteXRBindingProxy&) = delete;
     RemoteXRBindingProxy(RemoteXRBindingProxy&&) = delete;
     RemoteXRBindingProxy& operator=(const RemoteXRBindingProxy&) = delete;
     RemoteXRBindingProxy& operator=(RemoteXRBindingProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUXRBindingIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -79,7 +79,7 @@ private:
         return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUXRBindingIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };

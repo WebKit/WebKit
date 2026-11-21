@@ -187,7 +187,7 @@ void RemoteGPUProxy::requestAdapter(const ::WebGPU::RequestAdapterOptions& optio
         return;
     }
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUAdapterIdentifier::generate();
     auto sendResult = sendSync(Messages::RemoteGPU::RequestAdapter(options, identifier));
     if (!sendResult.succeeded()) {
         gpuProcessConnectionDidClose();
@@ -246,7 +246,7 @@ RefPtr<::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUPresentationContextIdentifier::generate();
     auto sendResult = send(Messages::RemoteGPU::CreatePresentationContext(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -258,7 +258,7 @@ RefPtr<WebCore::WebGPUCompositorIntegration> RemoteGPUProxy::createCompositorInt
 {
     // FIXME: Should we be consulting m_lost?
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUCompositorIntegrationIdentifier::generate();
     auto sendResult = send(Messages::RemoteGPU::CreateCompositorIntegration(identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;

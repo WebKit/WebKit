@@ -24,7 +24,7 @@
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::RenderPassDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
     Vector<std::optional<WebKit::WebGPU::RenderPassColorAttachment>> colorAttachments;
     std::optional<WebKit::WebGPU::RenderPassDepthStencilAttachment> depthStencilAttachment;
-    std::optional<WebKit::WebGPUIdentifier> occlusionQuerySet;
+    std::optional<WebKit::WebGPUQuerySetIdentifier> occlusionQuerySet;
     std::optional<WebKit::WebGPU::RenderPassTimestampWrites> timestampWrites;
     std::optional<uint64_t> maxDrawCount;
 };

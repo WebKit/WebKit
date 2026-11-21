@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteRenderPipeline final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteRenderPipeline);
 public:
-    static Ref<RemoteRenderPipeline> create(::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderPipeline> create(::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPURenderPipelineIdentifier identifier)
     {
         return adoptRef(*new RemoteRenderPipeline(renderPipeline, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -63,7 +63,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteRenderPipeline(::WebGPU::RenderPipeline&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteRenderPipeline(::WebGPU::RenderPipeline&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPURenderPipelineIdentifier);
 
     RemoteRenderPipeline(const RemoteRenderPipeline&) = delete;
     RemoteRenderPipeline(RemoteRenderPipeline&&) = delete;
@@ -74,7 +74,7 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void getBindGroupLayout(uint32_t index, WebGPUIdentifier);
+    void getBindGroupLayout(uint32_t index, WebGPUBindGroupLayoutIdentifier);
 
     void setLabel(String&&);
     void destruct();
@@ -83,7 +83,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPURenderPipelineIdentifier m_identifier;
 };
 
 } // namespace WebKit

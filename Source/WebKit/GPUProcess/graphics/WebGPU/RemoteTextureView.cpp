@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureView);
 
-RemoteTextureView::RemoteTextureView(::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteTextureView::RemoteTextureView(::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUTextureViewIdentifier identifier)
     : m_backing(textureView)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

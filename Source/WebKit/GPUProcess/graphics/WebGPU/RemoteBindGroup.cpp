@@ -39,7 +39,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBindGroup);
 
-RemoteBindGroup::RemoteBindGroup(::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteBindGroup::RemoteBindGroup(::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUBindGroupIdentifier identifier)
     : m_backing(bindGroup)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -56,7 +56,7 @@ void RemoteBindGroup::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteBindGroup::updateExternalTextures(WebGPUIdentifier externalTextureIdentifier, CompletionHandler<void(bool)>&& completion)
+void RemoteBindGroup::updateExternalTextures(WebGPUExternalTextureIdentifier externalTextureIdentifier, CompletionHandler<void(bool)>&& completion)
 {
     if (auto externalTexture = protect(m_objectHeap)->convertExternalTextureFromBacking(externalTextureIdentifier); externalTexture.get())
         completion(protect(m_backing)->updateExternalTextures(*externalTexture.get()));

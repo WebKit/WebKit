@@ -52,7 +52,7 @@ struct CanvasConfiguration;
 class RemotePresentationContext final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemotePresentationContext);
 public:
-    static Ref<RemotePresentationContext> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemotePresentationContext> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUPresentationContextIdentifier identifier)
     {
         return adoptRef(*new RemotePresentationContext(gpuConnectionToWebProcess, gpu, presentationContext, objectHeap, WTF::move(streamConnection), identifier));
     }
@@ -66,7 +66,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemotePresentationContext(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemotePresentationContext(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUPresentationContextIdentifier);
 
     RemotePresentationContext(const RemotePresentationContext&) = delete;
     RemotePresentationContext(RemotePresentationContext&&) = delete;
@@ -80,12 +80,12 @@ private:
     void configure(const WebGPU::CanvasConfiguration&);
     void unconfigure();
 
-    void getCurrentTexture(WebGPUIdentifier, uint32_t frameIndex);
+    void getCurrentTexture(WebGPUTextureIdentifier, uint32_t frameIndex);
 
     const Ref<::WebGPU::PresentationContext> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
-    WebGPUIdentifier m_identifier;
+    WebGPUPresentationContextIdentifier m_identifier;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WeakRef<RemoteGPU> m_gpu;
 };

@@ -36,7 +36,7 @@
 namespace WebKit::WebGPU {
 
 struct BindGroupDescriptor : public ObjectDescriptorBase {
-    WebGPUIdentifier bindGroupLayout;
+    WebGPUBindGroupLayoutIdentifier bindGroupLayout;
     Vector<BindGroupEntry> entries;
 };
 

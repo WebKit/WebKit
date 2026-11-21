@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteTextureView final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextureView);
 public:
-    static Ref<RemoteTextureView> create(::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteTextureView> create(::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUTextureViewIdentifier identifier)
     {
         return adoptRef(*new RemoteTextureView(textureView, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -63,7 +63,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteTextureView(::WebGPU::TextureView&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteTextureView(::WebGPU::TextureView&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUTextureViewIdentifier);
 
     RemoteTextureView(const RemoteTextureView&) = delete;
     RemoteTextureView(RemoteTextureView&&) = delete;
@@ -81,7 +81,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUTextureViewIdentifier m_identifier;
 };
 
 } // namespace WebKit

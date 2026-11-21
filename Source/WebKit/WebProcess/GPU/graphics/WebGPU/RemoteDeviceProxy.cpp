@@ -59,7 +59,7 @@ static ::WebGPU::PipelineError invalidDescriptorError(String&& message)
     return { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(message) };
 }
 
-RemoteDeviceProxy::RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+RemoteDeviceProxy::RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
     : m_backing(identifier)
     , m_features(WTF::move(features))
     , m_limits(limits)
@@ -88,7 +88,7 @@ void RemoteDeviceProxy::destroy()
 
 RefPtr<::WebGPU::XRBinding> RemoteDeviceProxy::createXRBinding()
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUXRBindingIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateXRBinding(identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -98,7 +98,7 @@ RefPtr<::WebGPU::XRBinding> RemoteDeviceProxy::createXRBinding()
 
 RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const ::WebGPU::BufferDescriptor& descriptor)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUBufferIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateBuffer(descriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -114,7 +114,7 @@ RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createTexture(const ::WebGPU::Textu
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUTextureIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateTexture(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -126,7 +126,7 @@ RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createTexture(const ::WebGPU::Textu
 
 RefPtr<::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const ::WebGPU::SamplerDescriptor& descriptor)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUSamplerIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateSampler(descriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -138,7 +138,7 @@ RefPtr<::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const ::WebGPU::Sampl
 
 RefPtr<::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const WebCore::WebGPUExternalTextureDescriptor& descriptor)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUExternalTextureIdentifier::generate();
 
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor)
@@ -192,7 +192,7 @@ RefPtr<::WebGPU::BindGroupLayout> RemoteDeviceProxy::createBindGroupLayout(const
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUBindGroupLayoutIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateBindGroupLayout(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -208,7 +208,7 @@ RefPtr<::WebGPU::PipelineLayout> RemoteDeviceProxy::createPipelineLayout(const :
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUPipelineLayoutIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreatePipelineLayout(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -224,7 +224,7 @@ RefPtr<::WebGPU::BindGroup> RemoteDeviceProxy::createBindGroup(const ::WebGPU::B
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUBindGroupIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateBindGroup(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -240,7 +240,7 @@ RefPtr<::WebGPU::ShaderModule> RemoteDeviceProxy::createShaderModule(const ::Web
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUShaderModuleIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateShaderModule(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -256,7 +256,7 @@ RefPtr<::WebGPU::ComputePipeline> RemoteDeviceProxy::createComputePipeline(const
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUComputePipelineIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateComputePipeline(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -272,7 +272,7 @@ RefPtr<::WebGPU::RenderPipeline> RemoteDeviceProxy::createRenderPipeline(const :
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPURenderPipelineIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateRenderPipeline(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -291,7 +291,7 @@ void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipeli
         return;
     }
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUComputePipelineIdentifier::generate();
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
@@ -311,7 +311,7 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipeline
     if (!convertedDescriptor)
         return callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s)));
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPURenderPipelineIdentifier::generate();
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
@@ -333,7 +333,7 @@ void RemoteDeviceProxy::createComputePipelineWithPipelineLayoutFromPipelineAsync
         return;
     }
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUComputePipelineIdentifier::generate();
     auto pipelineToReplaceIdentifier = m_convertToBackingContext->convertToBacking(pipelineToReplace);
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineWithPipelineLayoutFromPipeline(*convertedDescriptor, identifier, pipelineToReplaceIdentifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](bool success) mutable {
         if (!success) {
@@ -356,7 +356,7 @@ void RemoteDeviceProxy::createRenderPipelineWithPipelineLayoutFromPipelineAsync(
         return;
     }
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPURenderPipelineIdentifier::generate();
     auto pipelineToReplaceIdentifier = m_convertToBackingContext->convertToBacking(pipelineToReplace);
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineWithPipelineLayoutFromPipeline(*convertedDescriptor, identifier, pipelineToReplaceIdentifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](bool success) mutable {
         if (!success) {
@@ -373,7 +373,7 @@ void RemoteDeviceProxy::createRenderPipelineWithPipelineLayoutFromPipelineAsync(
 
 RefPtr<::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(const ::WebGPU::CommandEncoderDescriptor& descriptor)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUCommandEncoderIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateCommandEncoder(descriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -389,7 +389,7 @@ RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createRenderBundleEncod
     if (!convertedDescriptor)
         return nullptr;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPURenderBundleEncoderIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateRenderBundleEncoder(*convertedDescriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
@@ -401,7 +401,7 @@ RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createRenderBundleEncod
 
 RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createQuerySet(const ::WebGPU::QuerySetDescriptor& descriptor)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUQuerySetIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateQuerySet(descriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;

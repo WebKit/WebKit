@@ -32,7 +32,7 @@
 namespace WebKit::WebGPU {
 
 struct PresentationContextDescriptor {
-    WebGPUIdentifier compositorIntegration;
+    WebGPUCompositorIntegrationIdentifier compositorIntegration;
 };
 
 } // namespace WebKit::WebGPU

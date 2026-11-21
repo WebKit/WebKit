@@ -41,7 +41,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRBindingProxy);
 
-RemoteXRBindingProxy::RemoteXRBindingProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteXRBindingProxy::RemoteXRBindingProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRBindingIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
@@ -56,7 +56,7 @@ RemoteXRBindingProxy::~RemoteXRBindingProxy()
 
 RefPtr<::WebGPU::XRProjectionLayer> RemoteXRBindingProxy::createProjectionLayer(const ::WebGPU::XRProjectionLayerDescriptor& descriptor)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUXRProjectionLayerIdentifier::generate();
 
     auto sendResult = send(Messages::RemoteXRBinding::CreateProjectionLayer(descriptor.colorFormat, descriptor.depthStencilFormat, descriptor.textureUsage, descriptor.scaleFactor, identifier));
     if (sendResult != IPC::Error::NoError)
@@ -68,7 +68,7 @@ RefPtr<::WebGPU::XRProjectionLayer> RemoteXRBindingProxy::createProjectionLayer(
 
 RefPtr<::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(::WebGPU::XRProjectionLayer& projectionLayer)
 {
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUXRSubImageIdentifier::generate();
     auto sendResult = send(Messages::RemoteXRBinding::GetViewSubImage(downcast<RemoteXRProjectionLayerProxy>(projectionLayer).backing(), identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;

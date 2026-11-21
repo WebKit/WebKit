@@ -22,17 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-[Nested] enum class WebKit::WebGPU::BindingResourceType : uint8_t {
-    Sampler,
-    Texture,
-    TextureView,
-    BufferBinding,
-    ExternalTexture,
-}
-
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BindGroupEntry {
     uint32_t binding
-    WebKit::WebGPU::BufferBinding bufferBinding
-    WebKit::WebGPUIdentifier identifier
-    WebKit::WebGPU::BindingResourceType type
+    Variant<WebKit::WebGPUSamplerIdentifier, WebKit::WebGPUTextureIdentifier, WebKit::WebGPUTextureViewIdentifier, WebKit::WebGPU::BufferBinding, WebKit::WebGPUExternalTextureIdentifier> resource
 }

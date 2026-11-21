@@ -70,7 +70,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDevice);
 
-RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
     : m_backing(device)
     , m_objectHeap(objectHeap)
     , m_streamConnection(streamConnection.copyRef())
@@ -110,7 +110,7 @@ void RemoteDevice::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
+void RemoteDevice::createXRBinding(WebGPUXRBindingIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     RefPtr binding = m_backing->createXRBinding();
@@ -119,7 +119,7 @@ void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
     objectHeap->addObject(identifier, remoteBinding);
 }
 
-void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUBufferIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto buffer = m_backing->createBuffer(descriptor);
@@ -128,7 +128,7 @@ void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebG
     objectHeap->addObject(identifier, remoteBuffer);
 }
 
-void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, WebGPUTextureIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
@@ -140,7 +140,7 @@ void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, We
     objectHeap->addObject(identifier, remoteTexture);
 }
 
-void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, WebGPUSamplerIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto sampler = m_backing->createSampler(descriptor);
@@ -167,7 +167,7 @@ void RemoteDevice::pauseAllErrorReporting(bool pauseErrorReporting)
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUExternalTextureIdentifier identifier)
 {
     std::optional<WebKit::SharedVideoFrame> sharedVideoFrame = descriptor.sharedFrame;
     RetainPtr<CVPixelBufferRef> pixelBuffer { nullptr };
@@ -196,7 +196,7 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
     objectHeap->addObject(identifier, remoteExternalTexture);
 }
 
-void RemoteDevice::updateExternalTexture(WebKit::WebGPUIdentifier externalTextureIdentifier, const WebCore::MediaPlayerIdentifier& mediaPlayerIdentifier)
+void RemoteDevice::updateExternalTexture(WebKit::WebGPUExternalTextureIdentifier externalTextureIdentifier, const WebCore::MediaPlayerIdentifier& mediaPlayerIdentifier)
 {
     auto externalTexture = protect(m_objectHeap)->convertExternalTextureFromBacking(externalTextureIdentifier);
     if (!externalTexture.get())
@@ -217,7 +217,7 @@ void RemoteDevice::updateExternalTexture(WebKit::WebGPUIdentifier externalTextur
 }
 #endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 
-void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor& descriptor, WebGPUBindGroupLayoutIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::BindGroupLayoutEntry> entries;
@@ -230,7 +230,7 @@ void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor
     objectHeap->addObject(identifier, remoteBindGroupLayout);
 }
 
-void RemoteDevice::createPipelineLayout(const WebGPU::PipelineLayoutDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createPipelineLayout(const WebGPU::PipelineLayoutDescriptor& descriptor, WebGPUPipelineLayoutIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<Ref<::WebGPU::BindGroupLayout>> bindGroupLayouts;
@@ -243,7 +243,7 @@ void RemoteDevice::createPipelineLayout(const WebGPU::PipelineLayoutDescriptor& 
     objectHeap->addObject(identifier, remotePipelineLayout);
 }
 
-void RemoteDevice::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor, WebGPUBindGroupIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::BindGroupEntry> entries;
@@ -256,7 +256,7 @@ void RemoteDevice::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor
     objectHeap->addObject(identifier, remoteBindGroup);
 }
 
-void RemoteDevice::createShaderModule(const WebGPU::ShaderModuleDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createShaderModule(const WebGPU::ShaderModuleDescriptor& descriptor, WebGPUShaderModuleIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ShaderModuleCompilationHint> hints;
@@ -270,7 +270,7 @@ void RemoteDevice::createShaderModule(const WebGPU::ShaderModuleDescriptor& desc
 
 }
 
-void RemoteDevice::createComputePipeline(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createComputePipeline(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUComputePipelineIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
@@ -283,7 +283,7 @@ void RemoteDevice::createComputePipeline(const WebGPU::ComputePipelineDescriptor
     objectHeap->addObject(identifier, remoteComputePipeline);
 }
 
-void RemoteDevice::createComputePipelineWithPipelineLayoutFromPipeline(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteDevice::createComputePipelineWithPipelineLayoutFromPipeline(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUComputePipelineIdentifier identifier, WebGPUComputePipelineIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
@@ -305,7 +305,7 @@ void RemoteDevice::createComputePipelineWithPipelineLayoutFromPipeline(const Web
     });
 }
 
-void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPURenderPipelineIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
@@ -318,7 +318,7 @@ void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& 
     objectHeap->addObject(identifier, remoteRenderPipeline);
 }
 
-void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPURenderPipelineIdentifier identifier, WebGPURenderPipelineIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
@@ -340,7 +340,7 @@ void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebG
     });
 }
 
-void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUComputePipelineIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
@@ -363,7 +363,7 @@ void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescr
     });
 }
 
-void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPURenderPipelineIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
@@ -386,7 +386,7 @@ void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescrip
     });
 }
 
-void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>& descriptor, WebGPUCommandEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto commandEncoder = m_backing->createCommandEncoder(descriptor.value_or(::WebGPU::CommandEncoderDescriptor { }));
@@ -395,7 +395,7 @@ void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncod
     objectHeap->addObject(identifier, remoteCommandEncoder);
 }
 
-void RemoteDevice::createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor& descriptor, WebGPURenderBundleEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
@@ -407,7 +407,7 @@ void RemoteDevice::createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDe
     objectHeap->addObject(identifier, remoteRenderBundleEncoder);
 }
 
-void RemoteDevice::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor, WebGPUQuerySetIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto querySet = m_backing->createQuerySet(descriptor);

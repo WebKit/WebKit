@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::CanvasConfiguration {
-    WebKit::WebGPUIdentifier device
+    WebKit::WebGPUDeviceIdentifier device
     ::WebGPU::TextureFormat format
     OptionSet<::WebGPU::TextureUsage> usage
     Vector<::WebGPU::TextureFormat> viewFormats

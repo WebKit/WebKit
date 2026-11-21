@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteShaderModule);
 
-RemoteShaderModule::RemoteShaderModule(::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteShaderModule::RemoteShaderModule(::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUShaderModuleIdentifier identifier)
     : m_backing(shaderModule)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

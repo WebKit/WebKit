@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BindGroupDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    WebKit::WebGPUIdentifier bindGroupLayout;
+    WebKit::WebGPUBindGroupLayoutIdentifier bindGroupLayout;
     Vector<WebKit::WebGPU::BindGroupEntry> entries;
 };
 #endif

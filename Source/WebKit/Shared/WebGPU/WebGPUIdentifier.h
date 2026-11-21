@@ -28,11 +28,101 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/Variant.h>
 
 namespace WebKit {
 
+struct RemoteGPUIdentifierType;
+using RemoteGPUIdentifier = AtomicObjectIdentifier<RemoteGPUIdentifierType>;
+
+// FIXME: should not be used. Figure out if still needed.
+// Untyped: the value of an identifier of any of the types below. Used only by RemoteGPU::IsValid.
 struct WebGPUIdentifierType;
 using WebGPUIdentifier = AtomicObjectIdentifier<WebGPUIdentifierType>;
+
+struct WebGPUAdapterIdentifierType;
+using WebGPUAdapterIdentifier = AtomicObjectIdentifier<WebGPUAdapterIdentifierType>;
+
+struct WebGPUBindGroupIdentifierType;
+using WebGPUBindGroupIdentifier = AtomicObjectIdentifier<WebGPUBindGroupIdentifierType>;
+
+struct WebGPUBindGroupLayoutIdentifierType;
+using WebGPUBindGroupLayoutIdentifier = AtomicObjectIdentifier<WebGPUBindGroupLayoutIdentifierType>;
+
+struct WebGPUBufferIdentifierType;
+using WebGPUBufferIdentifier = AtomicObjectIdentifier<WebGPUBufferIdentifierType>;
+
+struct WebGPUCommandBufferIdentifierType;
+using WebGPUCommandBufferIdentifier = AtomicObjectIdentifier<WebGPUCommandBufferIdentifierType>;
+
+struct WebGPUCommandEncoderIdentifierType;
+using WebGPUCommandEncoderIdentifier = AtomicObjectIdentifier<WebGPUCommandEncoderIdentifierType>;
+
+struct WebGPUCompositorIntegrationIdentifierType;
+using WebGPUCompositorIntegrationIdentifier = AtomicObjectIdentifier<WebGPUCompositorIntegrationIdentifierType>;
+
+struct WebGPUComputePassEncoderIdentifierType;
+using WebGPUComputePassEncoderIdentifier = AtomicObjectIdentifier<WebGPUComputePassEncoderIdentifierType>;
+
+struct WebGPUComputePipelineIdentifierType;
+using WebGPUComputePipelineIdentifier = AtomicObjectIdentifier<WebGPUComputePipelineIdentifierType>;
+
+struct WebGPUDeviceIdentifierType;
+using WebGPUDeviceIdentifier = AtomicObjectIdentifier<WebGPUDeviceIdentifierType>;
+
+struct WebGPUExternalTextureIdentifierType;
+using WebGPUExternalTextureIdentifier = AtomicObjectIdentifier<WebGPUExternalTextureIdentifierType>;
+
+struct WebGPUPipelineLayoutIdentifierType;
+using WebGPUPipelineLayoutIdentifier = AtomicObjectIdentifier<WebGPUPipelineLayoutIdentifierType>;
+
+struct WebGPUPresentationContextIdentifierType;
+using WebGPUPresentationContextIdentifier = AtomicObjectIdentifier<WebGPUPresentationContextIdentifierType>;
+
+struct WebGPUQuerySetIdentifierType;
+using WebGPUQuerySetIdentifier = AtomicObjectIdentifier<WebGPUQuerySetIdentifierType>;
+
+struct WebGPUQueueIdentifierType;
+using WebGPUQueueIdentifier = AtomicObjectIdentifier<WebGPUQueueIdentifierType>;
+
+struct WebGPURenderBundleIdentifierType;
+using WebGPURenderBundleIdentifier = AtomicObjectIdentifier<WebGPURenderBundleIdentifierType>;
+
+struct WebGPURenderBundleEncoderIdentifierType;
+using WebGPURenderBundleEncoderIdentifier = AtomicObjectIdentifier<WebGPURenderBundleEncoderIdentifierType>;
+
+struct WebGPURenderPassEncoderIdentifierType;
+using WebGPURenderPassEncoderIdentifier = AtomicObjectIdentifier<WebGPURenderPassEncoderIdentifierType>;
+
+struct WebGPURenderPipelineIdentifierType;
+using WebGPURenderPipelineIdentifier = AtomicObjectIdentifier<WebGPURenderPipelineIdentifierType>;
+
+struct WebGPUSamplerIdentifierType;
+using WebGPUSamplerIdentifier = AtomicObjectIdentifier<WebGPUSamplerIdentifierType>;
+
+struct WebGPUShaderModuleIdentifierType;
+using WebGPUShaderModuleIdentifier = AtomicObjectIdentifier<WebGPUShaderModuleIdentifierType>;
+
+struct WebGPUTextureIdentifierType;
+using WebGPUTextureIdentifier = AtomicObjectIdentifier<WebGPUTextureIdentifierType>;
+
+struct WebGPUTextureViewIdentifierType;
+using WebGPUTextureViewIdentifier = AtomicObjectIdentifier<WebGPUTextureViewIdentifierType>;
+
+struct WebGPUXRBindingIdentifierType;
+using WebGPUXRBindingIdentifier = AtomicObjectIdentifier<WebGPUXRBindingIdentifierType>;
+
+struct WebGPUXRProjectionLayerIdentifierType;
+using WebGPUXRProjectionLayerIdentifier = AtomicObjectIdentifier<WebGPUXRProjectionLayerIdentifierType>;
+
+struct WebGPUXRSubImageIdentifierType;
+using WebGPUXRSubImageIdentifier = AtomicObjectIdentifier<WebGPUXRSubImageIdentifierType>;
+
+struct WebGPUXRViewIdentifierType;
+using WebGPUXRViewIdentifier = AtomicObjectIdentifier<WebGPUXRViewIdentifierType>;
+
+// A render pass attachment view is either a texture view or a texture, see ::WebGPU::RenderPassAttachmentView.
+using WebGPURenderPassAttachmentViewIdentifier = Variant<WebGPUTextureViewIdentifier, WebGPUTextureIdentifier>;
 
 } // namespace WebKit
 

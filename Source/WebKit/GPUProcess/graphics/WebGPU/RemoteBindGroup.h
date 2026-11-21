@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteBindGroup final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBindGroup);
 public:
-    static Ref<RemoteBindGroup> create(::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteBindGroup> create(::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUBindGroupIdentifier identifier)
     {
         return adoptRef(*new RemoteBindGroup(bindGroup, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -63,7 +63,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBindGroup(::WebGPU::BindGroup&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteBindGroup(::WebGPU::BindGroup&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUBindGroupIdentifier);
 
     RemoteBindGroup(const RemoteBindGroup&) = delete;
     RemoteBindGroup(RemoteBindGroup&&) = delete;
@@ -76,13 +76,13 @@ private:
 
     void setLabel(String&&);
     void destruct();
-    void updateExternalTextures(WebGPUIdentifier, CompletionHandler<void(bool)>&&);
+    void updateExternalTextures(WebGPUExternalTextureIdentifier, CompletionHandler<void(bool)>&&);
 
     const Ref<::WebGPU::BindGroup> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUBindGroupIdentifier m_identifier;
 };
 
 } // namespace WebKit

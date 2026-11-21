@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BufferBinding {
-    WebKit::WebGPUIdentifier buffer
+    WebKit::WebGPUBufferIdentifier buffer
     uint64_t offset
     std::optional<uint64_t> size
 }

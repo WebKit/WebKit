@@ -31,7 +31,7 @@
 messages -> RemoteBindGroup Stream {
     void Destruct()
     void SetLabel(String label)
-    void UpdateExternalTextures(WebKit::WebGPUIdentifier externalTextureIdentifier) -> (bool success) Synchronous
+    void UpdateExternalTextures(WebKit::WebGPUExternalTextureIdentifier externalTextureIdentifier) -> (bool success) Synchronous
 }
 
 #endif

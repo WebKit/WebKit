@@ -68,7 +68,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGPU);
 
-RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
+RemoteGPU::RemoteGPU(RemoteGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_sharedPreferencesForWebProcess(gpuConnectionToWebProcess.sharedPreferencesForWebProcessValue())
     , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"_s))
@@ -169,7 +169,7 @@ void RemoteGPU::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::Mess
 }
 
 
-void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&& callback)
+void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUAdapterIdentifier identifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&& callback)
 {
     assertIsCurrent(workQueue());
     RefPtr backing = m_backing;
@@ -190,7 +190,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
     });
 }
 
-void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescriptor& descriptor, WebGPUPresentationContextIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     RefPtr backing = m_backing;
@@ -211,7 +211,7 @@ RefPtr<GPUConnectionToWebProcess> RemoteGPU::gpuConnectionToWebProcess() const
     return m_gpuConnectionToWebProcess.get();
 }
 
-void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
+void RemoteGPU::createCompositorIntegration(WebGPUCompositorIntegrationIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     RefPtr backing = m_backing;
@@ -389,6 +389,7 @@ void RemoteGPU::createModelBacking(unsigned width, unsigned height, WebModel::Im
 
 void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool, bool)>&& completionHandler)
 {
+    // FIXME: should not be used. Figure out if still needed.
     assertIsCurrent(workQueue());
     RefPtr gpu = m_backing;
     if (!gpu) {

@@ -55,7 +55,7 @@ class ObjectHeap;
 class RemoteBuffer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBuffer);
 public:
-    static Ref<RemoteBuffer> create(::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, bool mappedAtCreation, WebGPUIdentifier identifier)
+    static Ref<RemoteBuffer> create(::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, bool mappedAtCreation, WebGPUBufferIdentifier identifier)
     {
         return adoptRef(*new RemoteBuffer(buffer, objectHeap, WTF::move(streamConnection), gpu, mappedAtCreation, identifier));
     }
@@ -69,7 +69,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBuffer(::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, bool mappedAtCreation, WebGPUIdentifier);
+    RemoteBuffer(::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, bool mappedAtCreation, WebGPUBufferIdentifier);
 
     RemoteBuffer(const RemoteBuffer&) = delete;
     RemoteBuffer(RemoteBuffer&&) = delete;
@@ -96,7 +96,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUBufferIdentifier m_identifier;
     bool m_isMapped { false };
     bool m_pendingMap { false };
     OptionSet<::WebGPU::MapMode> m_mapModeFlags;

@@ -35,7 +35,7 @@
 namespace WebKit::WebGPU {
 
 struct PipelineDescriptorBase : public ObjectDescriptorBase {
-    Markable<WebGPUIdentifier> layout;
+    Markable<WebGPUPipelineLayoutIdentifier> layout;
 };
 
 } // namespace WebKit::WebGPU

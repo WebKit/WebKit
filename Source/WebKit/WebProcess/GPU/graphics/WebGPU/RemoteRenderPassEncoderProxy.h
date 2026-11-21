@@ -39,7 +39,7 @@ class ConvertToBackingContext;
 class RemoteRenderPassEncoderProxy final : public ::WebGPU::RenderPassEncoder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteRenderPassEncoderProxy);
 public:
-    static Ref<RemoteRenderPassEncoderProxy> create(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderPassEncoderProxy> create(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPURenderPassEncoderIdentifier identifier)
     {
         return adoptRef(*new RemoteRenderPassEncoderProxy(parent, convertToBackingContext, identifier));
     }
@@ -81,14 +81,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteRenderPassEncoderProxy(RemoteCommandEncoderProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteRenderPassEncoderProxy(RemoteCommandEncoderProxy&, ConvertToBackingContext&, WebGPURenderPassEncoderIdentifier);
 
     RemoteRenderPassEncoderProxy(const RemoteRenderPassEncoderProxy&) = delete;
     RemoteRenderPassEncoderProxy(RemoteRenderPassEncoderProxy&&) = delete;
     RemoteRenderPassEncoderProxy& operator=(const RemoteRenderPassEncoderProxy&) = delete;
     RemoteRenderPassEncoderProxy& operator=(RemoteRenderPassEncoderProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPURenderPassEncoderIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -97,7 +97,7 @@ private:
     }
 
 
-    WebGPUIdentifier m_backing;
+    WebGPURenderPassEncoderIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
 };

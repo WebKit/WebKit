@@ -86,110 +86,138 @@ public:
 
     ~ObjectHeap();
 
-    void addObject(WebGPUIdentifier, RemoteAdapter&);
-    void addObject(WebGPUIdentifier, RemoteBindGroup&);
-    void addObject(WebGPUIdentifier, RemoteBindGroupLayout&);
-    void addObject(WebGPUIdentifier, RemoteBuffer&);
-    void addObject(WebGPUIdentifier, RemoteCommandBuffer&);
-    void addObject(WebGPUIdentifier, RemoteCommandEncoder&);
-    void addObject(WebGPUIdentifier, RemoteCompositorIntegration&);
-    void addObject(WebGPUIdentifier, RemoteComputePassEncoder&);
-    void addObject(WebGPUIdentifier, RemoteComputePipeline&);
-    void addObject(WebGPUIdentifier, RemoteDevice&);
-    void addObject(WebGPUIdentifier, RemoteExternalTexture&);
-    void addObject(WebGPUIdentifier, RemotePipelineLayout&);
-    void addObject(WebGPUIdentifier, RemotePresentationContext&);
-    void addObject(WebGPUIdentifier, RemoteQuerySet&);
-    void addObject(WebGPUIdentifier, RemoteQueue&);
-    void addObject(WebGPUIdentifier, RemoteRenderBundleEncoder&);
-    void addObject(WebGPUIdentifier, RemoteRenderBundle&);
-    void addObject(WebGPUIdentifier, RemoteRenderPassEncoder&);
-    void addObject(WebGPUIdentifier, RemoteRenderPipeline&);
-    void addObject(WebGPUIdentifier, RemoteSampler&);
-    void addObject(WebGPUIdentifier, RemoteShaderModule&);
-    void addObject(WebGPUIdentifier, RemoteTexture&);
-    void addObject(WebGPUIdentifier, RemoteTextureView&);
-    void addObject(WebGPUIdentifier, RemoteXRBinding&);
-    void addObject(WebGPUIdentifier, RemoteXRSubImage&);
-    void addObject(WebGPUIdentifier, RemoteXRProjectionLayer&);
-    void addObject(WebGPUIdentifier, RemoteXRView&);
+    void addObject(WebGPUAdapterIdentifier, RemoteAdapter&);
+    void addObject(WebGPUBindGroupIdentifier, RemoteBindGroup&);
+    void addObject(WebGPUBindGroupLayoutIdentifier, RemoteBindGroupLayout&);
+    void addObject(WebGPUBufferIdentifier, RemoteBuffer&);
+    void addObject(WebGPUCommandBufferIdentifier, RemoteCommandBuffer&);
+    void addObject(WebGPUCommandEncoderIdentifier, RemoteCommandEncoder&);
+    void addObject(WebGPUCompositorIntegrationIdentifier, RemoteCompositorIntegration&);
+    void addObject(WebGPUComputePassEncoderIdentifier, RemoteComputePassEncoder&);
+    void addObject(WebGPUComputePipelineIdentifier, RemoteComputePipeline&);
+    void addObject(WebGPUDeviceIdentifier, RemoteDevice&);
+    void addObject(WebGPUExternalTextureIdentifier, RemoteExternalTexture&);
+    void addObject(WebGPUPipelineLayoutIdentifier, RemotePipelineLayout&);
+    void addObject(WebGPUPresentationContextIdentifier, RemotePresentationContext&);
+    void addObject(WebGPUQuerySetIdentifier, RemoteQuerySet&);
+    void addObject(WebGPUQueueIdentifier, RemoteQueue&);
+    void addObject(WebGPURenderBundleIdentifier, RemoteRenderBundle&);
+    void addObject(WebGPURenderBundleEncoderIdentifier, RemoteRenderBundleEncoder&);
+    void addObject(WebGPURenderPassEncoderIdentifier, RemoteRenderPassEncoder&);
+    void addObject(WebGPURenderPipelineIdentifier, RemoteRenderPipeline&);
+    void addObject(WebGPUSamplerIdentifier, RemoteSampler&);
+    void addObject(WebGPUShaderModuleIdentifier, RemoteShaderModule&);
+    void addObject(WebGPUTextureIdentifier, RemoteTexture&);
+    void addObject(WebGPUTextureViewIdentifier, RemoteTextureView&);
+    void addObject(WebGPUXRBindingIdentifier, RemoteXRBinding&);
+    void addObject(WebGPUXRProjectionLayerIdentifier, RemoteXRProjectionLayer&);
+    void addObject(WebGPUXRSubImageIdentifier, RemoteXRSubImage&);
+    void addObject(WebGPUXRViewIdentifier, RemoteXRView&);
 
-    void removeObject(WebGPUIdentifier);
+    void removeObject(WebGPUAdapterIdentifier);
+    void removeObject(WebGPUBindGroupIdentifier);
+    void removeObject(WebGPUBindGroupLayoutIdentifier);
+    void removeObject(WebGPUBufferIdentifier);
+    void removeObject(WebGPUCommandBufferIdentifier);
+    void removeObject(WebGPUCommandEncoderIdentifier);
+    void removeObject(WebGPUCompositorIntegrationIdentifier);
+    void removeObject(WebGPUComputePassEncoderIdentifier);
+    void removeObject(WebGPUComputePipelineIdentifier);
+    void removeObject(WebGPUDeviceIdentifier);
+    void removeObject(WebGPUExternalTextureIdentifier);
+    void removeObject(WebGPUPipelineLayoutIdentifier);
+    void removeObject(WebGPUPresentationContextIdentifier);
+    void removeObject(WebGPUQuerySetIdentifier);
+    void removeObject(WebGPUQueueIdentifier);
+    void removeObject(WebGPURenderBundleIdentifier);
+    void removeObject(WebGPURenderBundleEncoderIdentifier);
+    void removeObject(WebGPURenderPassEncoderIdentifier);
+    void removeObject(WebGPURenderPipelineIdentifier);
+    void removeObject(WebGPUSamplerIdentifier);
+    void removeObject(WebGPUShaderModuleIdentifier);
+    void removeObject(WebGPUTextureIdentifier);
+    void removeObject(WebGPUTextureViewIdentifier);
+    void removeObject(WebGPUXRBindingIdentifier);
+    void removeObject(WebGPUXRProjectionLayerIdentifier);
+    void removeObject(WebGPUXRSubImageIdentifier);
+    void removeObject(WebGPUXRViewIdentifier);
 
     void clear();
 
     Vector<Ref<::WebGPU::Device>> devices() const;
 
-    RefPtr<::WebGPU::Adapter> convertAdapterFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::BindGroup> convertBindGroupFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::BindGroupLayout> convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::Buffer> convertBufferFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::CommandBuffer> convertCommandBufferFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::CommandEncoder> convertCommandEncoderFromBacking(WebGPUIdentifier) final;
-    WeakPtr<WebCore::WebGPUCompositorIntegration> convertCompositorIntegrationFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::ComputePassEncoder> convertComputePassEncoderFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::ComputePipeline> convertComputePipelineFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::Device> convertDeviceFromBacking(WebGPUIdentifier) final;
-    ThreadSafeWeakPtr<::WebGPU::ExternalTexture> convertExternalTextureFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::PipelineLayout> convertPipelineLayoutFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::PresentationContext> convertPresentationContextFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::QuerySet> convertQuerySetFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::Queue> convertQueueFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::RenderBundleEncoder> convertRenderBundleEncoderFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::RenderBundle> convertRenderBundleFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::RenderPassEncoder> convertRenderPassEncoderFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::RenderPipeline> convertRenderPipelineFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::Sampler> convertSamplerFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::ShaderModule> convertShaderModuleFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::Texture> convertTextureFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::TextureView> convertTextureViewFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::XRBinding> convertXRBindingFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::XRSubImage> convertXRSubImageFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::XRProjectionLayer> convertXRProjectionLayerFromBacking(WebGPUIdentifier) final;
-    RefPtr<::WebGPU::XRView> createXRViewFromBacking(WebGPUIdentifier) final;
+    RefPtr<::WebGPU::Adapter> convertAdapterFromBacking(WebGPUAdapterIdentifier) final;
+    RefPtr<::WebGPU::BindGroup> convertBindGroupFromBacking(WebGPUBindGroupIdentifier) final;
+    RefPtr<::WebGPU::BindGroupLayout> convertBindGroupLayoutFromBacking(WebGPUBindGroupLayoutIdentifier) final;
+    RefPtr<::WebGPU::Buffer> convertBufferFromBacking(WebGPUBufferIdentifier) final;
+    RefPtr<::WebGPU::CommandBuffer> convertCommandBufferFromBacking(WebGPUCommandBufferIdentifier) final;
+    RefPtr<::WebGPU::CommandEncoder> convertCommandEncoderFromBacking(WebGPUCommandEncoderIdentifier) final;
+    WeakPtr<WebCore::WebGPUCompositorIntegration> convertCompositorIntegrationFromBacking(WebGPUCompositorIntegrationIdentifier) final;
+    RefPtr<::WebGPU::ComputePassEncoder> convertComputePassEncoderFromBacking(WebGPUComputePassEncoderIdentifier) final;
+    RefPtr<::WebGPU::ComputePipeline> convertComputePipelineFromBacking(WebGPUComputePipelineIdentifier) final;
+    RefPtr<::WebGPU::Device> convertDeviceFromBacking(WebGPUDeviceIdentifier) final;
+    ThreadSafeWeakPtr<::WebGPU::ExternalTexture> convertExternalTextureFromBacking(WebGPUExternalTextureIdentifier) final;
+    RefPtr<::WebGPU::PipelineLayout> convertPipelineLayoutFromBacking(WebGPUPipelineLayoutIdentifier) final;
+    RefPtr<::WebGPU::PresentationContext> convertPresentationContextFromBacking(WebGPUPresentationContextIdentifier) final;
+    RefPtr<::WebGPU::QuerySet> convertQuerySetFromBacking(WebGPUQuerySetIdentifier) final;
+    RefPtr<::WebGPU::Queue> convertQueueFromBacking(WebGPUQueueIdentifier) final;
+    RefPtr<::WebGPU::RenderBundle> convertRenderBundleFromBacking(WebGPURenderBundleIdentifier) final;
+    RefPtr<::WebGPU::RenderBundleEncoder> convertRenderBundleEncoderFromBacking(WebGPURenderBundleEncoderIdentifier) final;
+    RefPtr<::WebGPU::RenderPassEncoder> convertRenderPassEncoderFromBacking(WebGPURenderPassEncoderIdentifier) final;
+    RefPtr<::WebGPU::RenderPipeline> convertRenderPipelineFromBacking(WebGPURenderPipelineIdentifier) final;
+    RefPtr<::WebGPU::Sampler> convertSamplerFromBacking(WebGPUSamplerIdentifier) final;
+    RefPtr<::WebGPU::ShaderModule> convertShaderModuleFromBacking(WebGPUShaderModuleIdentifier) final;
+    RefPtr<::WebGPU::Texture> convertTextureFromBacking(WebGPUTextureIdentifier) final;
+    RefPtr<::WebGPU::TextureView> convertTextureViewFromBacking(WebGPUTextureViewIdentifier) final;
+    RefPtr<::WebGPU::XRBinding> convertXRBindingFromBacking(WebGPUXRBindingIdentifier) final;
+    RefPtr<::WebGPU::XRProjectionLayer> convertXRProjectionLayerFromBacking(WebGPUXRProjectionLayerIdentifier) final;
+    RefPtr<::WebGPU::XRSubImage> convertXRSubImageFromBacking(WebGPUXRSubImageIdentifier) final;
+    RefPtr<::WebGPU::XRView> createXRViewFromBacking(WebGPUXRViewIdentifier) final;
 
     struct ExistsAndValid {
         bool exists { false };
         bool valid { false };
     };
+    // Identifiers of different types may have the same value. The object exists when an object of any
+    // type has the value, and is valid when every object that has it is valid.
     ExistsAndValid objectExistsAndValid(const WebCore::WebGPUIntegration&, WebGPUIdentifier) const;
 private:
     ObjectHeap();
 
-    using Object = Variant<
-        std::monostate,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>,
-        IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>,
-        IPC::ScopedActiveMessageReceiveQueue<RemotePresentationContext>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>
-    >;
+    // Calls the functor with every per-type map.
+    template<typename Self, typename Functor> static decltype(auto) applyToMaps(Self&, NOESCAPE Functor&&);
+    // A member, since the Remote* classes expose backing() only to ObjectHeap.
+    template<typename Identifier, typename Object> static auto* findBackingInMap(HashMap<Identifier, IPC::ScopedActiveMessageReceiveQueue<Object>>&, Identifier);
 
-    HashMap<WebGPUIdentifier, Object> m_objects;
+    HashMap<WebGPUAdapterIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>> m_adapters;
+    HashMap<WebGPUBindGroupIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>> m_bindGroups;
+    HashMap<WebGPUBindGroupLayoutIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>> m_bindGroupLayouts;
+    HashMap<WebGPUBufferIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>> m_buffers;
+    HashMap<WebGPUCommandBufferIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>> m_commandBuffers;
+    HashMap<WebGPUCommandEncoderIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>> m_commandEncoders;
+    HashMap<WebGPUCompositorIntegrationIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>> m_compositorIntegrations;
+    HashMap<WebGPUComputePassEncoderIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>> m_computePassEncoders;
+    HashMap<WebGPUComputePipelineIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>> m_computePipelines;
+    HashMap<WebGPUDeviceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>> m_devices;
+    HashMap<WebGPUExternalTextureIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>> m_externalTextures;
+    HashMap<WebGPUPipelineLayoutIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>> m_pipelineLayouts;
+    HashMap<WebGPUPresentationContextIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemotePresentationContext>> m_presentationContexts;
+    HashMap<WebGPUQuerySetIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>> m_querySets;
+    HashMap<WebGPUQueueIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>> m_queues;
+    HashMap<WebGPURenderBundleIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>> m_renderBundles;
+    HashMap<WebGPURenderBundleEncoderIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>> m_renderBundleEncoders;
+    HashMap<WebGPURenderPassEncoderIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>> m_renderPassEncoders;
+    HashMap<WebGPURenderPipelineIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>> m_renderPipelines;
+    HashMap<WebGPUSamplerIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>> m_samplers;
+    HashMap<WebGPUShaderModuleIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>> m_shaderModules;
+    HashMap<WebGPUTextureIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>> m_textures;
+    HashMap<WebGPUTextureViewIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>> m_textureViews;
+    HashMap<WebGPUXRBindingIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>> m_xrBindings;
+    HashMap<WebGPUXRProjectionLayerIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>> m_xrProjectionLayers;
+    HashMap<WebGPUXRSubImageIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>> m_xrSubImages;
+    HashMap<WebGPUXRViewIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>> m_xrViews;
     // Every device added that is still alive: work in flight can keep a device alive after its object is removed.
-    ThreadSafeWeakHashSet<::WebGPU::Device> m_devices;
+    ThreadSafeWeakHashSet<::WebGPU::Device> m_backingDevices;
 };
 
 } // namespace WebKit::WebGPU

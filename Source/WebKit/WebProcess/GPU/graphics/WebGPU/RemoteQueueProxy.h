@@ -43,7 +43,7 @@ class ConvertToBackingContext;
 class RemoteQueueProxy final : public ::WebGPU::Queue {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQueueProxy);
 public:
-    static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQueueIdentifier identifier)
     {
         return adoptRef(*new RemoteQueueProxy(parent, convertToBackingContext, identifier));
     }
@@ -70,14 +70,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteQueueProxy(RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteQueueProxy(RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUQueueIdentifier);
 
     RemoteQueueProxy(const RemoteQueueProxy&) = delete;
     RemoteQueueProxy(RemoteQueueProxy&&) = delete;
     RemoteQueueProxy& operator=(const RemoteQueueProxy&) = delete;
     RemoteQueueProxy& operator=(RemoteQueueProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUQueueIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -102,7 +102,7 @@ private:
         const ::WebGPU::Extent3D& copySize);
 #endif
 
-    WebGPUIdentifier m_backing;
+    WebGPUQueueIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteAdapterProxy> m_parent;
 #if ENABLE(VIDEO)

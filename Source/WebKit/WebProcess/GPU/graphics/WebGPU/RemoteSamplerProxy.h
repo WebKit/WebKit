@@ -39,7 +39,7 @@ class ConvertToBackingContext;
 class RemoteSamplerProxy final : public ::WebGPU::Sampler {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSamplerProxy);
 public:
-    static Ref<RemoteSamplerProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteSamplerProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUSamplerIdentifier identifier)
     {
         return adoptRef(*new RemoteSamplerProxy(parent, convertToBackingContext, identifier));
     }
@@ -55,14 +55,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteSamplerProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteSamplerProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUSamplerIdentifier);
 
     RemoteSamplerProxy(const RemoteSamplerProxy&) = delete;
     RemoteSamplerProxy(RemoteSamplerProxy&&) = delete;
     RemoteSamplerProxy& operator=(const RemoteSamplerProxy&) = delete;
     RemoteSamplerProxy& operator=(RemoteSamplerProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUSamplerIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -70,7 +70,7 @@ private:
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUSamplerIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };

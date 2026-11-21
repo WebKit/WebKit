@@ -39,7 +39,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteComputePipeline);
 
-RemoteComputePipeline::RemoteComputePipeline(::WebGPU::ComputePipeline& computePipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteComputePipeline::RemoteComputePipeline(::WebGPU::ComputePipeline& computePipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUComputePipelineIdentifier identifier)
     : m_backing(computePipeline)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -61,7 +61,7 @@ void RemoteComputePipeline::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteComputePipeline::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteComputePipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier identifier)
+void RemoteComputePipeline::getBindGroupLayout(uint32_t index, WebGPUBindGroupLayoutIdentifier identifier)
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
     Ref objectHeap = m_objectHeap.get();

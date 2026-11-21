@@ -39,7 +39,7 @@ class ConvertToBackingContext;
 class RemoteRenderBundleEncoderProxy final : public ::WebGPU::RenderBundleEncoder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteRenderBundleEncoderProxy);
 public:
-    static Ref<RemoteRenderBundleEncoderProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderBundleEncoderProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPURenderBundleEncoderIdentifier identifier)
     {
         return adoptRef(*new RemoteRenderBundleEncoderProxy(parent, convertToBackingContext, identifier));
     }
@@ -72,14 +72,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteRenderBundleEncoderProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteRenderBundleEncoderProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPURenderBundleEncoderIdentifier);
 
     RemoteRenderBundleEncoderProxy(const RemoteRenderBundleEncoderProxy&) = delete;
     RemoteRenderBundleEncoderProxy(RemoteRenderBundleEncoderProxy&&) = delete;
     RemoteRenderBundleEncoderProxy& operator=(const RemoteRenderBundleEncoderProxy&) = delete;
     RemoteRenderBundleEncoderProxy& operator=(RemoteRenderBundleEncoderProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPURenderBundleEncoderIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -87,7 +87,7 @@ private:
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPURenderBundleEncoderIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };

@@ -50,7 +50,7 @@ class ObjectHeap;
 class RemoteRenderPassEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteRenderPassEncoder);
 public:
-    static Ref<RemoteRenderPassEncoder> create(::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderPassEncoder> create(::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPURenderPassEncoderIdentifier identifier)
     {
         return adoptRef(*new RemoteRenderPassEncoder(renderPassEncoder, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -64,7 +64,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteRenderPassEncoder(::WebGPU::RenderPassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteRenderPassEncoder(::WebGPU::RenderPassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPURenderPassEncoderIdentifier);
 
     RemoteRenderPassEncoder(const RemoteRenderPassEncoder&) = delete;
     RemoteRenderPassEncoder(RemoteRenderPassEncoder&&) = delete;
@@ -75,10 +75,10 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void setPipeline(WebGPUIdentifier);
+    void setPipeline(WebGPURenderPipelineIdentifier);
 
-    void setIndexBuffer(WebGPUIdentifier, ::WebGPU::IndexFormat, uint64_t offset, std::optional<uint64_t>);
-    void setVertexBuffer(uint32_t slot, WebGPUIdentifier, uint64_t offset, std::optional<uint64_t>);
+    void setIndexBuffer(WebGPUBufferIdentifier, ::WebGPU::IndexFormat, uint64_t offset, std::optional<uint64_t>);
+    void setVertexBuffer(uint32_t slot, WebGPUBufferIdentifier, uint64_t offset, std::optional<uint64_t>);
     void unsetVertexBuffer(uint32_t slot, uint64_t offset, std::optional<uint64_t>);
 
     void draw(uint32_t vertexCount, uint32_t instanceCount,
@@ -88,10 +88,10 @@ private:
         int32_t baseVertex,
         uint32_t firstInstance);
 
-    void drawIndirect(WebGPUIdentifier indirectBuffer, uint64_t indirectOffset);
-    void drawIndexedIndirect(WebGPUIdentifier indirectBuffer, uint64_t indirectOffset);
+    void drawIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset);
+    void drawIndexedIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset);
 
-    void setBindGroup(uint32_t, std::optional<WebGPUIdentifier>,
+    void setBindGroup(uint32_t, std::optional<WebGPUBindGroupIdentifier>,
         std::optional<Vector<uint32_t>>&& dynamicOffsets);
 
     void pushDebugGroup(String&& groupLabel);
@@ -111,7 +111,7 @@ private:
     void beginOcclusionQuery(uint32_t queryIndex);
     void endOcclusionQuery();
 
-    void executeBundles(Vector<WebGPUIdentifier>&&);
+    void executeBundles(Vector<WebGPURenderBundleIdentifier>&&);
     void end();
 
     void setLabel(String&&);
@@ -121,7 +121,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPURenderPassEncoderIdentifier m_identifier;
 };
 
 } // namespace WebKit

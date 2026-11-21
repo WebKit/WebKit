@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBindGroupLayout);
 
-RemoteBindGroupLayout::RemoteBindGroupLayout(::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteBindGroupLayout::RemoteBindGroupLayout(::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUBindGroupLayoutIdentifier identifier)
     : m_backing(bindGroupLayout)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

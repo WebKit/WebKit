@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureProxy);
 
-RemoteTextureProxy::RemoteTextureProxy(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool isCanvasBacking)
+RemoteTextureProxy::RemoteTextureProxy(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUTextureIdentifier identifier, bool isCanvasBacking)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_root(WTF::move(root))
@@ -77,7 +77,7 @@ RefPtr<::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional
 
     Ref convertToBackingContext = m_convertToBackingContext;
 
-    auto identifier = WebGPUIdentifier::generate();
+    auto identifier = WebGPUTextureViewIdentifier::generate();
     auto sendResult = send(Messages::RemoteTexture::CreateView(descriptor, identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;

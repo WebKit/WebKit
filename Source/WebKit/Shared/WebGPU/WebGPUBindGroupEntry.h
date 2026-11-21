@@ -32,22 +32,15 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <optional>
+#include <wtf/Variant.h>
 
 namespace WebKit::WebGPU {
 
-enum class BindingResourceType : uint8_t {
-    Sampler,
-    Texture,
-    TextureView,
-    BufferBinding,
-    ExternalTexture,
-};
+using BindingResource = Variant<WebGPUSamplerIdentifier, WebGPUTextureIdentifier, WebGPUTextureViewIdentifier, BufferBinding, WebGPUExternalTextureIdentifier>;
 
 struct BindGroupEntry {
     uint32_t binding { 0 };
-    BufferBinding bufferBinding;
-    WebGPUIdentifier identifier;
-    BindingResourceType type { BindingResourceType::Sampler };
+    BindingResource resource;
 };
 
 } // namespace WebKit::WebGPU

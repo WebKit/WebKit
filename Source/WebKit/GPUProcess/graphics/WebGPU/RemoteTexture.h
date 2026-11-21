@@ -53,7 +53,7 @@ class ObjectHeap;
 class RemoteTexture final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTexture);
 public:
-    static Ref<RemoteTexture> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteTexture> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUTextureIdentifier identifier)
     {
         return adoptRef(*new RemoteTexture(gpuConnectionToWebProcess, gpu, texture, objectHeap, WTF::move(streamConnection), identifier));
     }
@@ -67,7 +67,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteTexture(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::Texture&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteTexture(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::Texture&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUTextureIdentifier);
 
     RemoteTexture(const RemoteTexture&) = delete;
     RemoteTexture(RemoteTexture&&) = delete;
@@ -78,7 +78,7 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void createView(const std::optional<WebGPU::TextureViewDescriptor>&, WebGPUIdentifier);
+    void createView(const std::optional<WebGPU::TextureViewDescriptor>&, WebGPUTextureViewIdentifier);
 
     void destroy();
     void undestroy();
@@ -89,7 +89,7 @@ private:
     const Ref<::WebGPU::Texture> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
-    WebGPUIdentifier m_identifier;
+    WebGPUTextureIdentifier m_identifier;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WeakRef<RemoteGPU> m_gpu;
 };

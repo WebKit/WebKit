@@ -45,7 +45,7 @@ class ConvertToBackingContext;
 class RemoteCompositorIntegrationProxy final : public WebCore::WebGPUCompositorIntegration {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCompositorIntegrationProxy);
 public:
-    static Ref<RemoteCompositorIntegrationProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteCompositorIntegrationProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUCompositorIntegrationIdentifier identifier)
     {
         return adoptRef(*new RemoteCompositorIntegrationProxy(parent, convertToBackingContext, identifier));
     }
@@ -61,7 +61,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteCompositorIntegrationProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteCompositorIntegrationProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUCompositorIntegrationIdentifier);
 
     RemoteCompositorIntegrationProxy(const RemoteCompositorIntegrationProxy&) = delete;
     RemoteCompositorIntegrationProxy(RemoteCompositorIntegrationProxy&&) = delete;
@@ -70,7 +70,7 @@ private:
 
     bool isRemoteCompositorIntegrationProxy() const final { return true; }
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUCompositorIntegrationIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -93,7 +93,7 @@ private:
     Seconds lastFrameGPUCost() const final { return m_lastFrameGPUCost; }
     Seconds lastFramePresentStall() const final { return m_lastFramePresentStall; }
 
-    WebGPUIdentifier m_backing;
+    WebGPUCompositorIntegrationIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
     Seconds m_lastFrameGPUCost { 0_s };

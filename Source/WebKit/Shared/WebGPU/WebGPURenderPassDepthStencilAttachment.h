@@ -35,7 +35,7 @@
 namespace WebKit::WebGPU {
 
 struct RenderPassDepthStencilAttachment {
-    WebGPUIdentifier view;
+    WebGPURenderPassAttachmentViewIdentifier view;
 
     float depthClearValue { 0 };
     std::optional<::WebGPU::LoadOp> depthLoadOp;

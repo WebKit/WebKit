@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePipelineLayoutProxy);
 
-RemotePipelineLayoutProxy::RemotePipelineLayoutProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemotePipelineLayoutProxy::RemotePipelineLayoutProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUPipelineLayoutIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)

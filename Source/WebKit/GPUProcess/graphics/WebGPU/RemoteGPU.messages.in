@@ -29,9 +29,9 @@
     EnabledBy=WebGPUEnabled
 ]
 messages -> RemoteGPU Stream {
-    void RequestAdapter(WebKit::WebGPU::RequestAdapterOptions options, WebKit::WebGPUIdentifier identifier) -> (struct std::optional<WebKit::RemoteGPURequestAdapterResponse> response) Synchronous
-    void CreatePresentationContext(WebKit::WebGPU::PresentationContextDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
-    void CreateCompositorIntegration(WebKit::WebGPUIdentifier identifier)
+    void RequestAdapter(WebKit::WebGPU::RequestAdapterOptions options, WebKit::WebGPUAdapterIdentifier identifier) -> (struct std::optional<WebKit::RemoteGPURequestAdapterResponse> response) Synchronous
+    void CreatePresentationContext(WebKit::WebGPU::PresentationContextDescriptor descriptor, WebKit::WebGPUPresentationContextIdentifier identifier)
+    void CreateCompositorIntegration(WebKit::WebGPUCompositorIntegrationIdentifier identifier)
 
     void IsValid(WebKit::WebGPUIdentifier identifier) -> (bool isValid, bool exists) Synchronous
 #if ENABLE(GPU_PROCESS_MODEL)

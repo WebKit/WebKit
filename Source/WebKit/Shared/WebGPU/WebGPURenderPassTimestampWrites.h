@@ -36,7 +36,7 @@
 namespace WebKit::WebGPU {
 
 struct RenderPassTimestampWrites {
-    WebGPUIdentifier querySet;
+    WebGPUQuerySetIdentifier querySet;
     std::optional<uint32_t> beginningOfPassWriteIndex;
     std::optional<uint32_t> endOfPassWriteIndex;
 };

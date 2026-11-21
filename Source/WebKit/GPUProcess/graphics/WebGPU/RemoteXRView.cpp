@@ -40,7 +40,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRView);
 
-RemoteXRView::RemoteXRView(::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteXRView::RemoteXRView(::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUXRViewIdentifier identifier)
     : m_backing(xrView)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

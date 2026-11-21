@@ -40,7 +40,7 @@ class ConvertToBackingContext;
 class RemoteXRProjectionLayerProxy final : public ::WebGPU::XRProjectionLayer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRProjectionLayerProxy);
 public:
-    static Ref<RemoteXRProjectionLayerProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteXRProjectionLayerProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRProjectionLayerIdentifier identifier)
     {
         return adoptRef(*new RemoteXRProjectionLayerProxy(WTF::move(parent), convertToBackingContext, identifier));
     }
@@ -49,7 +49,7 @@ public:
 
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent; }
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUXRProjectionLayerIdentifier backing() const { return m_backing; }
 
 #if PLATFORM(COCOA)
     void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples) final;
@@ -62,7 +62,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUXRProjectionLayerIdentifier);
 
     RemoteXRProjectionLayerProxy(const RemoteXRProjectionLayerProxy&) = delete;
     RemoteXRProjectionLayerProxy(RemoteXRProjectionLayerProxy&&) = delete;
@@ -80,7 +80,7 @@ private:
         return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUXRProjectionLayerIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
 };

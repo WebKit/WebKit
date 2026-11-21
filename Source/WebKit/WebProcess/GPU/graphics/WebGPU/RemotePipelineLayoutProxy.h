@@ -39,7 +39,7 @@ class ConvertToBackingContext;
 class RemotePipelineLayoutProxy final : public ::WebGPU::PipelineLayout {
     WTF_MAKE_TZONE_ALLOCATED(RemotePipelineLayoutProxy);
 public:
-    static Ref<RemotePipelineLayoutProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemotePipelineLayoutProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUPipelineLayoutIdentifier identifier)
     {
         return adoptRef(*new RemotePipelineLayoutProxy(parent, convertToBackingContext, identifier));
     }
@@ -55,14 +55,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemotePipelineLayoutProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemotePipelineLayoutProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUPipelineLayoutIdentifier);
 
     RemotePipelineLayoutProxy(const RemotePipelineLayoutProxy&) = delete;
     RemotePipelineLayoutProxy(RemotePipelineLayoutProxy&&) = delete;
     RemotePipelineLayoutProxy& operator=(const RemotePipelineLayoutProxy&) = delete;
     RemotePipelineLayoutProxy& operator=(RemotePipelineLayoutProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUPipelineLayoutIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -70,7 +70,7 @@ private:
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUPipelineLayoutIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };

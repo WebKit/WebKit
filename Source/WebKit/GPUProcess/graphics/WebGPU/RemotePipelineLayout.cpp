@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePipelineLayout);
 
-RemotePipelineLayout::RemotePipelineLayout(::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemotePipelineLayout::RemotePipelineLayout(::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUPipelineLayoutIdentifier identifier)
     : m_backing(pipelineLayout)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCommandBufferProxy);
 
-RemoteCommandBufferProxy::RemoteCommandBufferProxy(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteCommandBufferProxy::RemoteCommandBufferProxy(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUCommandBufferIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_root(root)

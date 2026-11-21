@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQuerySet);
 
-RemoteQuerySet::RemoteQuerySet(::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteQuerySet::RemoteQuerySet(::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUQuerySetIdentifier identifier)
     : m_backing(querySet)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

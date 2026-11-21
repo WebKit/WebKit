@@ -58,7 +58,7 @@ struct RenderPassDescriptor;
 class RemoteCommandEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCommandEncoder);
 public:
-    static Ref<RemoteCommandEncoder> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandEncoder> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUCommandEncoderIdentifier identifier)
     {
         return adoptRef(*new RemoteCommandEncoder(gpuConnectionToWebProcess, gpu, commandEncoder, objectHeap, WTF::move(streamConnection), identifier));
     }
@@ -72,7 +72,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteCommandEncoder(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::CommandEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteCommandEncoder(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::CommandEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUCommandEncoderIdentifier);
 
     RemoteCommandEncoder(const RemoteCommandEncoder&) = delete;
     RemoteCommandEncoder(RemoteCommandEncoder&&) = delete;
@@ -83,13 +83,13 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void beginRenderPass(const WebGPU::RenderPassDescriptor&, WebGPUIdentifier);
-    void beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>&, WebGPUIdentifier);
+    void beginRenderPass(const WebGPU::RenderPassDescriptor&, WebGPURenderPassEncoderIdentifier);
+    void beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>&, WebGPUComputePassEncoderIdentifier);
 
     void copyBufferToBuffer(
-        WebGPUIdentifier source,
+        WebGPUBufferIdentifier source,
         uint64_t sourceOffset,
-        WebGPUIdentifier destination,
+        WebGPUBufferIdentifier destination,
         uint64_t destinationOffset,
         uint64_t);
 
@@ -109,7 +109,7 @@ private:
         const WebGPU::Extent3D& copySize);
 
     void clearBuffer(
-        WebGPUIdentifier buffer,
+        WebGPUBufferIdentifier,
         uint64_t offset = 0,
         std::optional<uint64_t> = std::nullopt);
 
@@ -117,16 +117,16 @@ private:
     void popDebugGroup();
     void insertDebugMarker(String&& markerLabel);
 
-    void writeTimestamp(WebGPUIdentifier, uint32_t queryIndex);
+    void writeTimestamp(WebGPUQuerySetIdentifier, uint32_t queryIndex);
 
     void resolveQuerySet(
-        WebGPUIdentifier,
+        WebGPUQuerySetIdentifier,
         uint32_t firstQuery,
         uint32_t queryCount,
-        WebGPUIdentifier destination,
+        WebGPUBufferIdentifier destination,
         uint64_t destinationOffset);
 
-    void finish(const WebGPU::CommandBufferDescriptor&, WebGPUIdentifier);
+    void finish(const WebGPU::CommandBufferDescriptor&, WebGPUCommandBufferIdentifier);
 
     void setLabel(String&&);
     void destruct();
@@ -134,7 +134,7 @@ private:
     const Ref<::WebGPU::CommandEncoder> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
-    WebGPUIdentifier m_identifier;
+    WebGPUCommandEncoderIdentifier m_identifier;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WeakRef<RemoteGPU> m_gpu;
 };

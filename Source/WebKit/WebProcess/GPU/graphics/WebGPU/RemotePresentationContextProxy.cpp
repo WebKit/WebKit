@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePresentationContextProxy);
 
-RemotePresentationContextProxy::RemotePresentationContextProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemotePresentationContextProxy::RemotePresentationContextProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUPresentationContextIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
@@ -72,7 +72,7 @@ RefPtr<::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture(uint
         return nullptr;
 
     if (!m_currentTexture[frameIndex]) {
-        auto identifier = WebGPUIdentifier::generate();
+        auto identifier = WebGPUTextureIdentifier::generate();
         auto sendResult = send(Messages::RemotePresentationContext::GetCurrentTexture(identifier, frameIndex));
         if (sendResult != IPC::Error::NoError)
             return nullptr;

@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteComputePassEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteComputePassEncoder);
 public:
-    static Ref<RemoteComputePassEncoder> create(::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteComputePassEncoder> create(::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUComputePassEncoderIdentifier identifier)
     {
         return adoptRef(*new RemoteComputePassEncoder(computePassEncoder, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -63,7 +63,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteComputePassEncoder(::WebGPU::ComputePassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteComputePassEncoder(::WebGPU::ComputePassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUComputePassEncoderIdentifier);
 
     RemoteComputePassEncoder(const RemoteComputePassEncoder&) = delete;
     RemoteComputePassEncoder(RemoteComputePassEncoder&&) = delete;
@@ -74,13 +74,13 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void setPipeline(WebGPUIdentifier);
+    void setPipeline(WebGPUComputePipelineIdentifier);
     void dispatch(uint32_t workgroupCountX, uint32_t workgroupCountY = 1, uint32_t workgroupCountZ = 1);
-    void dispatchIndirect(WebGPUIdentifier indirectBuffer, uint64_t indirectOffset);
+    void dispatchIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset);
 
     void end();
 
-    void setBindGroup(uint32_t, std::optional<WebGPUIdentifier>,
+    void setBindGroup(uint32_t, std::optional<WebGPUBindGroupIdentifier>,
         std::optional<Vector<uint32_t>>&&);
 
     void pushDebugGroup(String&& groupLabel);
@@ -94,7 +94,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUComputePassEncoderIdentifier m_identifier;
 };
 
 } // namespace WebKit

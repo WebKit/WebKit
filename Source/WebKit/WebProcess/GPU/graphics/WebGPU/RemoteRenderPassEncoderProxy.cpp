@@ -37,7 +37,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderPassEncoderProxy);
 
-RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPURenderPassEncoderIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_root(parent.root())
@@ -114,7 +114,7 @@ void RemoteRenderPassEncoderProxy::drawIndexedIndirect(::WebGPU::Buffer& indirec
 
 void RemoteRenderPassEncoderProxy::setBindGroup(uint32_t index, const ::WebGPU::BindGroup* bindGroup, std::optional<std::span<const uint32_t>> dynamicOffsets)
 {
-    std::optional<WebGPUIdentifier> convertedBindGroup;
+    std::optional<WebGPUBindGroupIdentifier> convertedBindGroup;
     if (bindGroup)
         convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
@@ -181,7 +181,7 @@ void RemoteRenderPassEncoderProxy::endOcclusionQuery()
 
 void RemoteRenderPassEncoderProxy::executeBundles(std::span<const Ref<::WebGPU::RenderBundle>> renderBundles)
 {
-    auto convertedRenderBundles = WTF::compactMap(renderBundles, [&](auto& renderBundle) -> std::optional<WebGPUIdentifier> {
+    auto convertedRenderBundles = WTF::compactMap(renderBundles, [&](auto& renderBundle) -> std::optional<WebGPURenderBundleIdentifier> {
         return m_convertToBackingContext->convertToBacking(renderBundle);
     });
 

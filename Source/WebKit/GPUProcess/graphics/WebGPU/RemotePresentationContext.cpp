@@ -41,7 +41,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePresentationContext);
 
-RemotePresentationContext::RemotePresentationContext(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemotePresentationContext::RemotePresentationContext(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUPresentationContextIdentifier identifier)
     : m_backing(presentationContext)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -74,7 +74,7 @@ void RemotePresentationContext::unconfigure()
     protect(m_backing)->unconfigure();
 }
 
-void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier, uint32_t frameIndex)
+void RemotePresentationContext::getCurrentTexture(WebGPUTextureIdentifier identifier, uint32_t frameIndex)
 {
     auto texture = protect(m_backing)->getCurrentTexture(frameIndex);
     ASSERT(texture);
@@ -83,7 +83,7 @@ void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier, u
         return;
 
     // We're creating a new resource here, because we don't want the GetCurrentTexture message to be sync.
-    // If the message is async, then the WebGPUIdentifier goes from the Web process to the GPU Process, which
+    // If the message is async, then the WebGPUTextureIdentifier goes from the Web process to the GPU Process, which
     // means the Web Process is going to proceed and interact with the texture as-if it has this identifier.
     // So we need to make sure the texture has this identifier.
     // Maybe one day we could add the same texture into the ObjectHeap multiple times under multiple identifiers,

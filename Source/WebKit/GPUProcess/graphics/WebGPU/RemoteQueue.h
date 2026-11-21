@@ -68,7 +68,7 @@ class ObjectHeap;
 class RemoteQueue final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQueue);
 public:
-    static Ref<RemoteQueue> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteQueue> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUQueueIdentifier identifier)
     {
         return adoptRef(*new RemoteQueue(gpuConnectionToWebProcess, queue, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -82,7 +82,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteQueue(GPUConnectionToWebProcess&, ::WebGPU::Queue&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteQueue(GPUConnectionToWebProcess&, ::WebGPU::Queue&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUQueueIdentifier);
 
     RemoteQueue(const RemoteQueue&) = delete;
     RemoteQueue(RemoteQueue&&) = delete;
@@ -93,18 +93,18 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void submit(Vector<WebGPUIdentifier>&&);
+    void submit(Vector<WebGPUCommandBufferIdentifier>&&);
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&);
 
     void writeBuffer(
-        WebGPUIdentifier,
+        WebGPUBufferIdentifier,
         uint64_t bufferOffset,
         std::optional<WebCore::SharedMemoryHandle>&&,
         CompletionHandler<void(bool)>&&);
 
     void writeBufferWithCopy(
-        WebGPUIdentifier,
+        WebGPUBufferIdentifier,
         uint64_t bufferOffset,
         Vector<uint8_t>&&);
 
@@ -144,7 +144,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
-    WebGPUIdentifier m_identifier;
+    WebGPUQueueIdentifier m_identifier;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     SharedVideoFrameReader m_sharedVideoFrameReader;
 #endif

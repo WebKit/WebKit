@@ -35,7 +35,7 @@
 namespace WebKit::WebGPU {
 
 struct PipelineLayoutDescriptor : public ObjectDescriptorBase {
-    std::optional<Vector<WebGPUIdentifier>> bindGroupLayouts;
+    std::optional<Vector<WebGPUBindGroupLayoutIdentifier>> bindGroupLayouts;
 };
 
 } // namespace WebKit::WebGPU

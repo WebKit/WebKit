@@ -38,7 +38,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderBundle);
 
-RemoteRenderBundle::RemoteRenderBundle(::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteRenderBundle::RemoteRenderBundle(::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPURenderBundleIdentifier identifier)
     : m_backing(renderBundle)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

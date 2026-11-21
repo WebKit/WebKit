@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRViewProxy);
 
-RemoteXRViewProxy::RemoteXRViewProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteXRViewProxy::RemoteXRViewProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRViewIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)

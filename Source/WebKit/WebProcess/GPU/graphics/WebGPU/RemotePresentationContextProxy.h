@@ -45,7 +45,7 @@ class RemoteTextureProxy;
 class RemotePresentationContextProxy final : public ::WebGPU::PresentationContext {
     WTF_MAKE_TZONE_ALLOCATED(RemotePresentationContextProxy);
 public:
-    static Ref<RemotePresentationContextProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemotePresentationContextProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUPresentationContextIdentifier identifier)
     {
         return adoptRef(*new RemotePresentationContextProxy(parent, convertToBackingContext, identifier));
     }
@@ -71,14 +71,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemotePresentationContextProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemotePresentationContextProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUPresentationContextIdentifier);
 
     RemotePresentationContextProxy(const RemotePresentationContextProxy&) = delete;
     RemotePresentationContextProxy(RemotePresentationContextProxy&&) = delete;
     RemotePresentationContextProxy& operator=(const RemotePresentationContextProxy&) = delete;
     RemotePresentationContextProxy& operator=(RemotePresentationContextProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUPresentationContextIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -86,7 +86,7 @@ private:
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUPresentationContextIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
     static constexpr size_t textureCount = 3;

@@ -39,7 +39,7 @@ class ConvertToBackingContext;
 class RemoteExternalTextureProxy final : public ::WebGPU::ExternalTexture {
     WTF_MAKE_TZONE_ALLOCATED(RemoteExternalTextureProxy);
 public:
-    static Ref<RemoteExternalTextureProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteExternalTextureProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUExternalTextureIdentifier identifier)
     {
         return adoptRef(*new RemoteExternalTextureProxy(parent, convertToBackingContext, identifier));
     }
@@ -60,14 +60,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteExternalTextureProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteExternalTextureProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUExternalTextureIdentifier);
 
     RemoteExternalTextureProxy(const RemoteExternalTextureProxy&) = delete;
     RemoteExternalTextureProxy(RemoteExternalTextureProxy&&) = delete;
     RemoteExternalTextureProxy& operator=(const RemoteExternalTextureProxy&) = delete;
     RemoteExternalTextureProxy& operator=(RemoteExternalTextureProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUExternalTextureIdentifier backing() const { return m_backing; }
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -75,7 +75,7 @@ private:
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUExternalTextureIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };

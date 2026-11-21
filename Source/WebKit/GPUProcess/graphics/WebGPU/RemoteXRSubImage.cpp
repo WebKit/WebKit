@@ -43,7 +43,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRSubImage);
 
-RemoteXRSubImage::RemoteXRSubImage(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteXRSubImage::RemoteXRSubImage(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUXRSubImageIdentifier identifier)
     : m_backing(xrSubImage)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -61,7 +61,7 @@ void RemoteXRSubImage::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteXRSubImage::getColorTexture(WebGPUIdentifier identifier)
+void RemoteXRSubImage::getColorTexture(WebGPUTextureIdentifier identifier)
 {
     auto texture = protect(m_backing)->colorTexture();
     ASSERT(texture);
@@ -74,7 +74,7 @@ void RemoteXRSubImage::getColorTexture(WebGPUIdentifier identifier)
     objectHeap->addObject(identifier, remoteTexture);
 }
 
-void RemoteXRSubImage::getDepthTexture(WebGPUIdentifier identifier)
+void RemoteXRSubImage::getDepthTexture(WebGPUTextureIdentifier identifier)
 {
     auto texture = protect(m_backing)->depthStencilTexture();
     ASSERT(texture);

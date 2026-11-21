@@ -47,7 +47,7 @@ class RemoteQueueProxy;
 class RemoteDeviceProxy final : public ::WebGPU::Device {
     WTF_MAKE_TZONE_ALLOCATED(RemoteDeviceProxy);
 public:
-    static Ref<RemoteDeviceProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDeviceProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
     {
         return adoptRef(*new RemoteDeviceProxy(WTF::move(features), limits, parent, convertToBackingContext, identifier, queueIdentifier));
     }
@@ -62,7 +62,7 @@ public:
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void updateExternalTexture(const ::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&);
 #endif
-    WebGPUIdentifier backing() const { return m_backing; }
+    WebGPUDeviceIdentifier backing() const { return m_backing; }
 
     Vector<::WebGPU::FeatureName> features() const final { return m_features; }
     const ::WebGPU::Limits& limits() const LIFETIME_BOUND final { return m_limits; }
@@ -101,7 +101,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUDeviceIdentifier, WebGPUQueueIdentifier);
 
     RemoteDeviceProxy(const RemoteDeviceProxy&) = delete;
     RemoteDeviceProxy(RemoteDeviceProxy&&) = delete;
@@ -119,7 +119,7 @@ private:
         return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
     }
 
-    WebGPUIdentifier m_backing;
+    WebGPUDeviceIdentifier m_backing;
     const Vector<::WebGPU::FeatureName> m_features;
     const ::WebGPU::Limits m_limits;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;

@@ -29,7 +29,7 @@
     EnabledBy=WebGPUEnabled
 ]
 messages -> RemoteTexture Stream {
-    void CreateView(std::optional<WebKit::WebGPU::TextureViewDescriptor> descriptor, WebKit::WebGPUIdentifier identifier)
+    void CreateView(std::optional<WebKit::WebGPU::TextureViewDescriptor> descriptor, WebKit::WebGPUTextureViewIdentifier identifier)
     void Destroy()
     void Undestroy()
     void Destruct()

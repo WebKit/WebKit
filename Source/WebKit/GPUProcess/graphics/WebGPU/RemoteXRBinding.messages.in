@@ -30,8 +30,8 @@
 ]
 messages -> RemoteXRBinding Stream {
     void Destruct()
-    void CreateProjectionLayer(::WebGPU::TextureFormat colorFormat, std::optional<::WebGPU::TextureFormat> depthStencilFormat, OptionSet<::WebGPU::TextureUsage> textureUsage, double scaleFactor, WebKit::WebGPUIdentifier identifier)
-    void GetViewSubImage(WebKit::WebGPUIdentifier projectionLayerIdentifier, WebKit::WebGPUIdentifier identifier)
+    void CreateProjectionLayer(::WebGPU::TextureFormat colorFormat, std::optional<::WebGPU::TextureFormat> depthStencilFormat, OptionSet<::WebGPU::TextureUsage> textureUsage, double scaleFactor, WebKit::WebGPUXRProjectionLayerIdentifier identifier)
+    void GetViewSubImage(WebKit::WebGPUXRProjectionLayerIdentifier projectionLayerIdentifier, WebKit::WebGPUXRSubImageIdentifier identifier)
 }
 
 #endif

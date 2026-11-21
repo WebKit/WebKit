@@ -63,7 +63,7 @@ class ObjectHeap;
 class RemoteXRView final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRView);
 public:
-    static Ref<RemoteXRView> create(::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteXRView> create(::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUXRViewIdentifier identifier)
     {
         return adoptRef(*new RemoteXRView(xrView, objectHeap, gpu, WTF::move(streamConnection), identifier));
     }
@@ -76,7 +76,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteXRView(::WebGPU::XRView&, WebGPU::ObjectHeap&, RemoteGPU&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteXRView(::WebGPU::XRView&, WebGPU::ObjectHeap&, RemoteGPU&, Ref<IPC::StreamServerConnection>&&, WebGPUXRViewIdentifier);
 
     RemoteXRView(const RemoteXRView&) = delete;
     RemoteXRView(RemoteXRView&&) = delete;
@@ -91,7 +91,7 @@ private:
     const Ref<::WebGPU::XRView> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
-    WebGPUIdentifier m_identifier;
+    WebGPUXRViewIdentifier m_identifier;
     WeakRef<RemoteGPU> m_gpu;
 };
 

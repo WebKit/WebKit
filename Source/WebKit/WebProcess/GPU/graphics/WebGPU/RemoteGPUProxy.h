@@ -85,7 +85,7 @@ public:
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void updateExternalTexture(::WebGPU::Device&, const ::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
 #endif
-    WebGPUIdentifier backing() const { return m_backing; }
+    RemoteGPUIdentifier backing() const { return m_backing; }
     NODELETE RefPtr<WebKit::Mesh> createModelBacking(unsigned width, unsigned height, WebModel::ImageAsset&& diffuseTexture, WebModel::ImageAsset&& specularTexture, bool standardDynamicRange, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 
 private:
@@ -178,7 +178,7 @@ private:
     const RefPtr<IPC::StreamClientConnection> m_streamConnection;
     const RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
     const Ref<RemoteRenderingBackendProxy> m_renderingBackend;
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    RemoteGPUIdentifier m_backing { RemoteGPUIdentifier::generate() };
     bool m_didInitialize { false };
     bool m_lost { false };
 };
