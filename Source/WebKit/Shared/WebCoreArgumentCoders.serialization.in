@@ -543,6 +543,8 @@ header: <WebCore/ElementTargetingTypes.h>
     bool hasAudibleMedia
     Vector<WebCore::IntSize> largestReplacedContentSizes
     HashSet<URL> mediaAndLinkURLs
+    String renderedText
+    String screenReaderText
 };
 
 header: <WebCore/RenderStyleConstants.h>
