@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("A MediaStreamAudioDestinationNode goes silent after its input disconnects.");
+jsTestIsAsync = true;
+
+var context = new AudioContext();
+var destination = new MediaStreamAudioDestinationNode(context);
+var oscillator = new OscillatorNode(context, { frequency: 440 });
+oscillator.connect(destination);
+oscillator.start();
+
+var tap = new MediaStreamAudioSourceNode(context, { mediaStream: destination.stream });
+var analyser = new AnalyserNode(context, { fftSize: 2048 });
+tap.connect(analyser);
+var samples = new Float32Array(analyser.fftSize);
+
+function level() {
+    analyser.getFloatTimeDomainData(samples);
+    var sum = 0;
+    for (var i = 0; i < samples.length; ++i)
+        sum += samples[i] * samples[i];
+    return Math.sqrt(sum / samples.length);
+}
+
+function waitUntil(predicate, timeoutMs) {
+    return new Promise(function(resolve, reject) {
+        var start = performance.now();
+        var timer = setInterval(function() {
+            if (predicate()) {
+                clearInterval(timer);
+                resolve();
+            } else if (performance.now() - start > timeoutMs) {
+                clearInterval(timer);
+                reject(new Error("timed out"));
+            }
+        }, 20);
+    });
+}
+
+context.resume().then(function() {
+    return waitUntil(function() { return level() > 0.05; }, 3000);
+}).then(function() {
+    oscillator.disconnect(destination);
+    return new Promise(function(resolve) { setTimeout(resolve, 1000); });
+}).then(function() {
+    var value = level();
+    if (value < 0.02)
+        testPassed("silence after disconnect");
+    else
+        testFailed("audio continued after disconnect, level " + value);
+    finishJSTest();
+}).catch(function(error) {
+    testFailed(String(error));
+    finishJSTest();
+});
+</script>
+</body>
+</html>

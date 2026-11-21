@@ -124,6 +124,7 @@ private:
     bool m_shouldComputeOutputSampleOffset { true };
 
     uint64_t m_readCount { 0 };
+    uint64_t m_lastReadFrame { 0 };
     enum { NoSeek = std::numeric_limits<uint64_t>::max() };
     std::atomic<uint64_t> m_seekTo { NoSeek };
 
