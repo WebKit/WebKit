@@ -47,6 +47,60 @@ namespace WebKit {
 
 using namespace Inspector;
 
+template<typename Module>
+static consteval bool hasValidEventNames()
+{
+    if (Module::s_name.isEmpty() || Module::s_eventNames.empty())
+        return false;
+
+    for (auto eventName : Module::s_eventNames) {
+        if (eventName.length() <= Module::s_name.length() + 1)
+            return false;
+        for (size_t index = 0; index < Module::s_name.length(); ++index) {
+            if (eventName[index] != Module::s_name[index])
+                return false;
+        }
+        if (eventName[Module::s_name.length()] != '.')
+            return false;
+    }
+
+    return true;
+}
+
+static_assert(hasValidEventNames<BidiEventNames::BrowsingContext::Module>(), "Every browsingContext event name must belong to its module");
+static_assert(hasValidEventNames<BidiEventNames::Input::Module>(), "Every input event name must belong to its module");
+static_assert(hasValidEventNames<BidiEventNames::Log::Module>(), "Every log event name must belong to its module");
+static_assert(hasValidEventNames<BidiEventNames::Network::Module>(), "Every network event name must belong to its module");
+static_assert(hasValidEventNames<BidiEventNames::Script::Module>(), "Every script event name must belong to its module");
+
+template<typename Module>
+static bool addExpandedEventNamesForModule(const String& requestedName, HashSet<AtomString>& eventNames)
+{
+    if (requestedName == Module::s_name) {
+        for (auto eventName : Module::s_eventNames)
+            eventNames.add(AtomString { eventName });
+        return true;
+    }
+
+    for (auto eventName : Module::s_eventNames) {
+        if (requestedName == eventName) {
+            eventNames.add(AtomString { eventName });
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool addExpandedEventNames(const String& requestedName, HashSet<AtomString>& eventNames)
+{
+    return addExpandedEventNamesForModule<BidiEventNames::BrowsingContext::Module>(requestedName, eventNames)
+        || addExpandedEventNamesForModule<BidiEventNames::Input::Module>(requestedName, eventNames)
+        || addExpandedEventNamesForModule<BidiEventNames::Log::Module>(requestedName, eventNames)
+        || addExpandedEventNamesForModule<BidiEventNames::Network::Module>(requestedName, eventNames)
+        || addExpandedEventNamesForModule<BidiEventNames::Script::Module>(requestedName, eventNames);
+}
+
 static bool shouldReplayRealmCreatedEvents(const HashSet<AtomString>& events)
 {
     return events.contains(AtomString { BidiEventNames::Script::RealmCreated });
@@ -77,9 +131,6 @@ BidiSessionAgent::~BidiSessionAgent() = default;
 
 void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&& contexts, RefPtr<JSON::Array>&& userContexts, Inspector::CommandCallback<Inspector::Protocol::BidiSession::SubscriptionID>&& callback)
 {
-    // FIXME: Process/validate list of event names (e.g. expanding if given only the module name)
-    // https://bugs.webkit.org/show_bug.cgi?id=291371
-
     auto subscriptionID = WTF::createVersion4UUIDString();
 
     HashSet<AtomString> atomEventNames;
@@ -87,7 +138,7 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
         auto eventName = event->asString();
 
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(eventName.isEmpty(), InvalidParameter, "Event name must be a valid string."_s);
-        atomEventNames.add(AtomString { eventName });
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!addExpandedEventNames(eventName, atomEventNames), InvalidParameter, "Unknown event or module name."_s);
     }
 
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(contexts && userContexts, InvalidParameter, "Contexts and user contexts cannot be used together."_s);
@@ -113,7 +164,7 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
     if (contexts) {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!contexts->length(), InvalidParameter, "At least one browsing context must be provided."_s);
 
-        RefPtr session = m_session.get();
+        RefPtr session = m_session;
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
         for (const auto& context : *contexts) {
@@ -137,7 +188,7 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
     m_eventSubscriptions.add(subscriptionID, BidiEventSubscription { subscriptionID, WTF::move(atomEventNames), WTF::move(browsingContextIDs), { } });
 
     if (shouldReplayRealmCreatedEvents(m_eventSubscriptions.get(subscriptionID).events)) {
-        RefPtr session = m_session.get();
+        RefPtr session = m_session;
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
         session->bidiProcessor().scriptAgent().emitEventsForActiveRealms(m_eventSubscriptions.get(subscriptionID).browsingContextIDs);
     }
@@ -155,13 +206,11 @@ IGNORE_GCC_WARNINGS_END
 
     HashMap<String, BidiEventSubscription> subscriptionsToKeep;
     HashSet<String> matchedEvents;
-    // FIXME: Process/validate list of event names (e.g. expanding if given only the module name)
-    // https://bugs.webkit.org/show_bug.cgi?id=291371
     HashSet<AtomString> eventNames;
     for (const auto& event : *events) {
         auto eventName = event->asString();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(eventName.isEmpty(), InvalidParameter, "Event name must be a valid non-empty string."_s);
-        eventNames.add(AtomString { eventName });
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!addExpandedEventNames(eventName, eventNames), InvalidParameter, "Unknown event or module name."_s);
     }
 
     for (const auto& subscription : m_eventSubscriptions) {
