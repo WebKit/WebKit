@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<input id="fixed" type="number" value="5" style="height: 50px">
+<input id="dynamic" type="number" value="5">
+<script>
+function spinButton(input)
+{
+    return internals.shadowRoot(input).querySelector("[useragentpart='-webkit-inner-spin-button'], [pseudo='-webkit-inner-spin-button']");
+}
+
+function contentBoxHeight(input)
+{
+    const style = getComputedStyle(input);
+    return input.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+}
+
+function clickUpperQuarter(input)
+{
+    const spinRect = spinButton(input).getBoundingClientRect();
+    const inputRect = input.getBoundingClientRect();
+    eventSender.mouseMoveTo(spinRect.left + spinRect.width / 2, inputRect.top + inputRect.height / 4);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseMoveTo(0, 0);
+}
+
+function testField(input, description)
+{
+    test(() => {
+        assert_approx_equals(spinButton(input).getBoundingClientRect().height, contentBoxHeight(input), 1);
+        clickUpperQuarter(input);
+        assert_equals(input.value, "6");
+    }, description);
+}
+
+testField(document.getElementById("fixed"), "The spin button fills a field with a specified height");
+
+const dynamic = document.getElementById("dynamic");
+dynamic.offsetHeight;
+dynamic.style.height = "50px";
+testField(dynamic, "The spin button fills a field whose height is set after layout");
+</script>

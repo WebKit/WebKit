@@ -551,6 +551,10 @@ UniqueRef<Style::ComputedStyle> HTMLTextAreaElement::createInnerTextStyle(const 
 {
     auto textBlockStyle = Style::ComputedStyle::create();
     textBlockStyle->inheritFrom(style);
+    // The inner text is the text area's flex item: it fills the inline axis and grows with its content in the block axis.
+    textBlockStyle->setFlexGrow(1);
+    textBlockStyle->setLogicalMinWidth(0_css_px);
+    textBlockStyle->setAlignSelf(CSS::Keyword::FlexStart { });
     adjustInnerTextStyle(style, textBlockStyle);
     textBlockStyle->setDisplay(Style::DisplayType::BlockFlow);
     return textBlockStyle;

@@ -99,7 +99,6 @@ std::optional<Style::UnadjustedStyle> TextControlInnerContainer::resolveCustomSt
     auto elementStyle = resolveStyle(resolutionContext);
     CheckedRef elementStyleStyle = *elementStyle.style;
     if (isStrongPasswordTextField(shadowHost.get())) {
-        elementStyleStyle->setFlexWrap(Style::FlexWrapType::Wrap);
         elementStyleStyle->setOverflowX(Overflow::Hidden);
         elementStyleStyle->setOverflowY(Overflow::Hidden);
     }
@@ -230,6 +229,14 @@ Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Documen
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::placeholder());
     return element;
+}
+
+RenderPtr<RenderElement> TextControlPlaceholderElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& position)
+{
+    // The text control positions the placeholder. It is never one of its flex items, including for intrinsic widths.
+    auto renderer = HTMLDivElement::createElementRenderer(WTF::move(style), position);
+    renderer->setIsExcludedFromNormalLayout(true);
+    return renderer;
 }
 
 std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)

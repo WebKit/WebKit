@@ -1,0 +1,5 @@
+
+
+PASS The spin button fills a field with a specified height
+PASS The spin button fills a field whose height is set after layout
+
