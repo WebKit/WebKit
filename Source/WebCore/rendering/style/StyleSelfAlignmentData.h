@@ -82,9 +82,7 @@ public:
         return position() == ItemPosition::Stretch;
     }
 
-    // https://drafts.csswg.org/css-align-3/#positional-values
-    // "The positional alignment keywords specify a position for an alignment subject with respect to its alignment container."
-    // Resolves positional and baseline values to Start, Center or End of the container. Normal, stretch, auto and legacy are returned as-is.
+    // Must resolve Auto before calling. Resolves positional and baseline values to Start, Center or End of the container. Normal, stretch and legacy are returned as-is.
     NODELETE static ItemPosition resolvePositionalAlignment(ItemPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode);
 
     // Must resolve Auto before calling. Normal treated as Start.

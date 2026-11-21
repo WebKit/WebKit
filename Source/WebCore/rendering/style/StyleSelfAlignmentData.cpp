@@ -36,6 +36,8 @@ namespace WebCore {
 
 ItemPosition StyleSelfAlignmentData::resolvePositionalAlignment(ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode)
 {
+    ASSERT(ItemPosition::Auto != alignmentPosition);
+
     switch (alignmentPosition) {
     case ItemPosition::Start:
     case ItemPosition::FlexStart:
@@ -102,8 +104,6 @@ ItemPosition StyleSelfAlignmentData::resolvePositionalAlignment(ItemPosition ali
 
 LayoutUnit StyleSelfAlignmentData::adjustmentFromStartEdge(LayoutUnit extraSpace, ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode)
 {
-    ASSERT(ItemPosition::Auto != alignmentPosition);
-
     switch (resolvePositionalAlignment(alignmentPosition, containerAxis, containerWritingMode, selfWritingMode)) {
     case ItemPosition::Normal:
     case ItemPosition::Stretch:
