@@ -88,6 +88,10 @@
 #include "StaticNodeList.h"
 #include "StorageAccessQuirks.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "CSSPropertyParser.h"
+#include "CSSSerializationContext.h"
+#include "CSSValuePool.h"
+#include "StyleExtractor.h"
 #include "TrustedFonts.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserAgent.h"
@@ -1210,6 +1214,45 @@ bool Quirks::shouldNotMoveFocusWhenMutatingSelectionRange() const
 #else
     return false;
 #endif
+}
+
+static RefPtr<CSSValue> parsedQuirkStyleValue(const QuirkStyleDeclaration& declaration)
+{
+    auto id = cssPropertyID(declaration.longhandProperty);
+    if (id == CSSPropertyID::Invalid || id == CSSPropertyID::Custom || isShorthand(id))
+        return nullptr;
+
+    static NeverDestroyed<HashMap<std::pair<String, String>, RefPtr<CSSValue>>> cache;
+    return cache.get().ensure({ declaration.longhandProperty, declaration.value }, [&] {
+        return CSSPropertyParser::parseStylePropertyLonghand(cssPropertyID(declaration.longhandProperty), declaration.value, strictCSSParserContext());
+    }).iterator->value;
+}
+
+Vector<std::pair<CSSPropertyID, Ref<CSSValue>>> Quirks::computedStyleOverrides(Element& element, const Style::ComputedStyle& computedStyle) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE({ });
+
+    constexpr auto id = QuirkBehaviorID::NeedsComputedStyleOverrideQuirk;
+    if (!m_quirksData.isBehaviorEnabled(id))
+        return { };
+
+    Style::Extractor extractor { &element };
+    auto conditionsMatch = [&](const QuirkBehavior& behavior) {
+        return std::ranges::all_of(behavior.computedStyle, [&](auto& condition) {
+            return extractor.propertyValueSerializationInStyle(computedStyle, cssPropertyID(condition.longhandProperty), CSS::defaultSerializationContext(), CSSValuePool::singleton()) == condition.value;
+        });
+    };
+
+    Vector<std::pair<CSSPropertyID, Ref<CSSValue>>> overrides;
+    for (auto& behavior : m_quirksData.behaviors()) {
+        if (behavior.id != id || !elementMatchesSelectorCondition(behavior.elementSelector, &element) || !conditionsMatch(behavior))
+            continue;
+        for (auto& declaration : behavior.styleOverride) {
+            if (RefPtr parsedValue = parsedQuirkStyleValue(declaration))
+                overrides.append({ cssPropertyID(declaration.longhandProperty), parsedValue.releaseNonNull() });
+        }
+    }
+    return overrides;
 }
 
 // facebook.com rdar://141103350

@@ -77,6 +77,7 @@ enum class QuirkTableParseErrorKind : uint8_t {
     DuplicateBehavior,
     InvalidBugs,
     DuplicateBug,
+    InvalidStyleDeclarations,
 };
 
 struct QuirkTableParseError {

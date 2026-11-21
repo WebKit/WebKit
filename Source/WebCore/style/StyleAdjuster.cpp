@@ -31,6 +31,8 @@
 #include "StyleAdjuster.h"
 
 #include "CSSFontSelector.h"
+#include "CSSParserContext.h"
+#include "CSSPropertyParser.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
@@ -69,6 +71,8 @@
 #include "SelectPopoverElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleBuilder.h"
+#include "StyleBuilderState.h"
 #include "StyleableInlines.h"
 #include "StyleContainmentCheckerInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -1262,15 +1266,8 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     }
 #endif
 
-#if PLATFORM(MAC)
-    if (documentQuirks.needsZomatoEmailLoginLabelQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> class1("eNjKGZ"_s);
-        if (is<HTMLLabelElement>(*m_element)
-            && m_element->hasClassName(class1)
-            && style.backgroundColorResolvingCurrentColor() == WebCore::Color::white)
-            style.setBackgroundColor({ WebCore::Color::transparentBlack });
-    }
-#endif
+    for (auto& [propertyID, value] : documentQuirks.computedStyleOverrides(*m_element, style))
+        Builder::applyQuirkOverride(style, { .document = m_document, .parentStyle = &m_parentStyle, .element = m_element }, propertyID, value);
 
     if (documentQuirks.needsInstagramResizingReelsQuirk(protect(*m_element), style, parentStyle))
         style.setFlexGrow(1);

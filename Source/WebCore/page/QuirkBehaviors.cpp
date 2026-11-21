@@ -30,6 +30,11 @@
 
 namespace WebCore {
 
+TextStream& operator<<(TextStream& textStream, const QuirkStyleDeclaration& declaration)
+{
+    return textStream << declaration.longhandProperty << ": " << declaration.value;
+}
+
 TextStream& operator<<(TextStream& textStream, const QuirkBehavior& quirkBehavior)
 {
     textStream << WTF::enumName(quirkBehavior.id);
@@ -45,8 +50,10 @@ TextStream& operator<<(TextStream& textStream, const QuirkBehavior& quirkBehavio
     printIfExists("chromeCompatibilityVersion"_s, quirkBehavior, &QuirkBehavior::chromeCompatibilityVersion);
     printIfExists("cookieNames"_s, quirkBehavior, &QuirkBehavior::cookieNames);
     printIfExists("styleSheet"_s, quirkBehavior, &QuirkBehavior::styleSheet);
+    printIfExists("styleOverride"_s, quirkBehavior, &QuirkBehavior::styleOverride);
     printIfExists("elementSelector"_s, quirkBehavior, &QuirkBehavior::elementSelector);
     printIfExists("documentSelector"_s, quirkBehavior, &QuirkBehavior::documentSelector);
+    printIfExists("computedStyle"_s, quirkBehavior, &QuirkBehavior::computedStyle);
     printIfExists("secondaryURL"_s, quirkBehavior, &QuirkBehavior::secondaryURL);
 
     return textStream;

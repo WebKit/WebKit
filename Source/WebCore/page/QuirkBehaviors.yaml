@@ -352,9 +352,14 @@ NeedsYouTubeOverflowScrollQuirk:
 # hbomax.com: rdar://138424489
 NeedsZeroMaxTouchPointsQuirk:
 
+# Applies `styleOverride` to elements that match `elementSelector` once every `computedStyle` property has the given resolved value.
 # zomato.com <rdar://problem/128962778>
-NeedsZomatoEmailLoginLabelQuirk:
-  available: mac
+# The label's white background can hide the email input's caret at certain zoom levels.
+NeedsComputedStyleOverrideQuirk:
+  parameters: [StyleOverride]
+  conditions: [ElementSelector, ComputedStyle]
+  conditionsRequired: true
+  implementation: custom
 
 # x.com: rdar://73369869
 # X (Twitter) will remove the "src" attribute of a <video> element that has scrolled out of the viewport and

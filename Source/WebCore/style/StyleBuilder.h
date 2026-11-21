@@ -57,6 +57,8 @@ public:
     // https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
     void applyHighlightInheritance();
 
+    static void applyQuirkOverride(Style::ComputedStyle&, BuilderContext&&, CSSPropertyID, CSSValue&);
+
     void applyProperty(CSSPropertyID propertyID) { applyProperties(propertyID, propertyID); }
     void applyCustomProperty(const AtomString& name);
 

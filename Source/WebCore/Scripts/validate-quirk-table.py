@@ -38,9 +38,11 @@ class QuirkTableValidator(object):
     ROW_FIELDS = ('bugs', 'comment', 'matches', 'embeddedMatches', 'excludeMatches', 'queryContains', 'fragmentContains', 'environment', 'available', 'behaviors')
     PATTERN_FIELDS = ('matches', 'embeddedMatches', 'excludeMatches')
     SUBSTRING_FIELDS = ('queryContains', 'fragmentContains')
-    PARAMETER_FIELDS = {'script': 'Script', 'userAgent': 'UserAgent', 'chromeCompatibilityVersion': 'ChromeCompatibilityVersion', 'cookieNames': 'CookieNames', 'styleSheet': 'StyleSheet'}
-    CONDITION_FIELDS = {'elementSelector': 'ElementSelector', 'secondaryURL': 'SecondaryURL', 'documentSelector': 'DocumentSelector'}
+    PARAMETER_FIELDS = {'script': 'Script', 'userAgent': 'UserAgent', 'chromeCompatibilityVersion': 'ChromeCompatibilityVersion', 'cookieNames': 'CookieNames', 'styleSheet': 'StyleSheet', 'styleOverride': 'StyleOverride'}
+    CONDITION_FIELDS = {'elementSelector': 'ElementSelector', 'secondaryURL': 'SecondaryURL', 'documentSelector': 'DocumentSelector', 'computedStyle': 'ComputedStyle'}
     LIST_FIELDS = ('cookieNames', 'secondaryURL')
+    # Objects of CSS longhand names to values. The names and values are checked when the table is parsed.
+    DECLARATION_FIELDS = ('styleOverride', 'computedStyle')
     BEHAVIOR_FIELDS = ('id',) + tuple(PARAMETER_FIELDS) + tuple(CONDITION_FIELDS) + ('bugs', 'comment')
     BUG_LINK = re.compile(r'^(rdar://\d+|https://webkit\.org/b/\d+)$')
     AVAILABLE_TOKEN = re.compile(r' *(\|\||&&|!|\(|\)|[A-Za-z0-9_]+)')
@@ -326,6 +328,11 @@ class QuirkTableValidator(object):
 
         for field in tuple(self.PARAMETER_FIELDS) + tuple(self.CONDITION_FIELDS):
             if field not in entry:
+                continue
+            if field in self.DECLARATION_FIELDS:
+                declarations = entry[field]
+                if not isinstance(declarations, dict) or not declarations or not all(self._is_non_empty_string(name) and self._is_non_empty_string(value) for name, value in declarations.items()):
+                    self._error('%s: "%s" must be a non-empty object of property names to non-empty strings.' % (location, field))
                 continue
             is_list = field in self.LIST_FIELDS
             if not (self._is_non_empty_string_list(entry[field]) if is_list else self._is_non_empty_string(entry[field])):

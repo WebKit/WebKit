@@ -40,13 +40,24 @@ enum class QuirkParametersNeeded : uint8_t {
     NeedsChromeCompatibilityVersion = 1 << 2,
     NeedsCookieNames = 1 << 3,
     NeedsStyleSheet = 1 << 4,
+    NeedsStyleOverride = 1 << 5,
 };
 
 enum class QuirkConditionsSupported : uint8_t {
     ElementSelector = 1 << 0,
     SecondaryURL = 1 << 1,
     DocumentSelector = 1 << 2,
+    ComputedStyle = 1 << 3,
 };
+
+struct QuirkStyleDeclaration {
+    String longhandProperty;
+    String value;
+
+    friend bool operator==(const QuirkStyleDeclaration&, const QuirkStyleDeclaration&) = default;
+};
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const QuirkStyleDeclaration&);
 
 struct QuirkBehaviorDeclaration {
     QuirkBehaviorID id;
@@ -71,9 +82,11 @@ struct QuirkBehavior {
     String chromeCompatibilityVersion { };
     Vector<String> cookieNames { };
     String styleSheet { };
+    Vector<QuirkStyleDeclaration> styleOverride { };
 
     String elementSelector { };
     String documentSelector { };
+    Vector<QuirkStyleDeclaration> computedStyle { };
     Vector<QuirkMatchPattern> secondaryURL { };
 };
 

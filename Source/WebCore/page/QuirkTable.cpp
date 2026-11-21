@@ -26,6 +26,8 @@
 #include "config.h"
 #include "QuirkTable.h"
 
+#include "CSSParserContext.h"
+#include "CSSPropertyParser.h"
 #include "Logging.h"
 #include "QuirkBehaviorDeclarations.h"
 #include <array>
@@ -74,7 +76,7 @@ void Quirk::apply(QuirksData& quirksData) const
 }
 
 static constexpr std::array rowFields { "bugs"_s, "comment"_s, "matches"_s, "embeddedMatches"_s, "excludeMatches"_s, "queryContains"_s, "fragmentContains"_s, "environment"_s, "available"_s, "behaviors"_s };
-static constexpr std::array behaviorFields { "id"_s, "script"_s, "userAgent"_s, "chromeCompatibilityVersion"_s, "cookieNames"_s, "styleSheet"_s, "elementSelector"_s, "documentSelector"_s, "secondaryURL"_s, "bugs"_s, "comment"_s };
+static constexpr std::array behaviorFields { "id"_s, "script"_s, "userAgent"_s, "chromeCompatibilityVersion"_s, "cookieNames"_s, "styleSheet"_s, "styleOverride"_s, "elementSelector"_s, "documentSelector"_s, "secondaryURL"_s, "computedStyle"_s, "bugs"_s, "comment"_s };
 
 NODELETE static String nonEmptyString(const JSON::Value& value)
 {
@@ -239,13 +241,23 @@ static constexpr std::array parameterFields {
     std::pair { "chromeCompatibilityVersion"_s, QuirkParametersNeeded::NeedsChromeCompatibilityVersion },
     std::pair { "cookieNames"_s, QuirkParametersNeeded::NeedsCookieNames },
     std::pair { "styleSheet"_s, QuirkParametersNeeded::NeedsStyleSheet },
+    std::pair { "styleOverride"_s, QuirkParametersNeeded::NeedsStyleOverride },
 };
 
 static constexpr std::array conditionFields {
     std::pair { "elementSelector"_s, QuirkConditionsSupported::ElementSelector },
     std::pair { "documentSelector"_s, QuirkConditionsSupported::DocumentSelector },
     std::pair { "secondaryURL"_s, QuirkConditionsSupported::SecondaryURL },
+    std::pair { "computedStyle"_s, QuirkConditionsSupported::ComputedStyle },
 };
+
+static bool isValidStyleDeclaration(const QuirkStyleDeclaration& declaration)
+{
+    auto id = cssPropertyID(declaration.longhandProperty);
+    if (id == CSSPropertyID::Invalid || id == CSSPropertyID::Custom || isShorthand(id))
+        return false;
+    return CSSPropertyParser::parseStylePropertyLonghand(id, declaration.value, strictCSSParserContext());
+}
 
 class QuirkTableParser {
 public:
@@ -363,6 +375,29 @@ public:
             return { };
         }
         return WTF::move(*strings);
+    }
+
+    Vector<QuirkStyleDeclaration> styleDeclarations(ASCIILiteral field)
+    {
+        RefPtr fieldValue = value(field);
+        if (!fieldValue)
+            return { };
+        RefPtr object = fieldValue->asObject();
+        if (!object || !object->size()) {
+            m_parser.reject(m_location, Kind::InvalidStyleDeclarations, field);
+            return { };
+        }
+
+        Vector<QuirkStyleDeclaration> declarations;
+        for (auto& key : object->keys()) {
+            QuirkStyleDeclaration declaration { key, nonEmptyString(*object->getValue(key)) };
+            if (declaration.value.isNull() || !isValidStyleDeclaration(declaration)) {
+                m_parser.reject(m_location, Kind::InvalidStyleDeclarations, field, key);
+                continue;
+            }
+            declarations.append(WTF::move(declaration));
+        }
+        return declarations;
     }
 
     Vector<QuirkMatchPattern> patterns(ASCIILiteral field)
@@ -580,8 +615,10 @@ std::optional<QuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value& value,
         .chromeCompatibilityVersion = fields.string("chromeCompatibilityVersion"_s),
         .cookieNames = fields.strings("cookieNames"_s),
         .styleSheet = fields.string("styleSheet"_s),
+        .styleOverride = fields.styleDeclarations("styleOverride"_s),
         .elementSelector = fields.string("elementSelector"_s),
         .documentSelector = fields.string("documentSelector"_s),
+        .computedStyle = fields.styleDeclarations("computedStyle"_s),
         .secondaryURL = fields.patterns("secondaryURL"_s),
     };
 
@@ -645,6 +682,9 @@ static String message(const QuirkTableParseError& error)
         return "\"bugs\" must be a non-empty array of rdar://N or https://webkit.org/b/N references"_s;
     case DuplicateBug:
         return makeString("\"bugs\" lists "_s, error.value, " more than once"_s);
+    case InvalidStyleDeclarations:
+        return error.value.isNull() ? makeString('"', error.field, "\" must be a non-empty object of CSS longhand property names to non-empty values"_s)
+            : makeString('"', error.field, "\" has an unknown, shorthand or invalid declaration for \""_s, error.value, '"');
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

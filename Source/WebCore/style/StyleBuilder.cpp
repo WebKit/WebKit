@@ -114,6 +114,13 @@ Builder::Builder(Style::ComputedStyle& style, BuilderContext&& context, const Ma
 
 Builder::~Builder() = default;
 
+void Builder::applyQuirkOverride(Style::ComputedStyle& style, BuilderContext&& context, CSSPropertyID propertyID, CSSValue& value)
+{
+    Ref matchResult = MatchResult::create();
+    Builder builder { style, WTF::move(context), matchResult.get() };
+    builder.applyProperty(propertyID, value, SelectorChecker::MatchDefault, PropertyCascade::Origin::Quirk);
+}
+
 void Builder::applyAllProperties()
 {
     if (m_cascade.isEmpty())
