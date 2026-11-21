@@ -1880,7 +1880,7 @@ void JIT::emit_op_enumerator_next(const JSInstruction* currentInstruction)
     GPRReg baseGPR = regT2;
 
     // This is the most common mode set we tend to see, so special case it if we profile it in the LLInt.
-    if (bytecode.metadata(m_profiledCodeBlock).m_enumeratorMetadata == JSPropertyNameEnumerator::OwnStructureMode) {
+    if (bytecode.metadata(m_profiledCodeBlock).m_enumeratorMetadata & JSPropertyNameEnumerator::OwnStructureMode) {
         GPRReg enumeratorGPR = regT3;
         GPRReg scratch1GPR = regT4;
         emitGetVirtualRegister(enumerator, enumeratorGPR);
