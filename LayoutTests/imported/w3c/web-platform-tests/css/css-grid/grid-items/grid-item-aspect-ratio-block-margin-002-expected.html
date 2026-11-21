@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<title>CSS Grid reference: aspect-ratio grid item with a block-axis margin in a vertical grid</title>
+<style>
+.container { position: relative; width: 170px; height: 200px; }
+.item { position: absolute; left: 20px; width: 100px; height: 200px; background: green; }
+.below { position: absolute; left: 0; width: 20px; height: 200px; background: green; }
+</style>
+<p>Test passes if there is a green 100px by 200px rectangle, a 50px gap to its right, and a 20px-wide green bar to its left.</p>
+<div class="container">
+  <div class="item"></div>
+  <div class="below"></div>
+</div>
