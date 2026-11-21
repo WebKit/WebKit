@@ -74,6 +74,11 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         return displayName;
     }
 
+    get supportsOptions()
+    {
+        return true;
+    }
+
     get editable()
     {
         return true;
