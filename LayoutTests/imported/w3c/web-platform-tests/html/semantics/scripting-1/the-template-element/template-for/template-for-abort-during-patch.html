@@ -1,0 +1,52 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - stopping or detaching the parsing document during a patch</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#prepare-content-patching">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+  <script>
+    test((t) => {
+      const outerIframe = document.createElement("iframe");
+      document.body.appendChild(outerIframe);
+      t.add_cleanup(() => outerIframe.remove());
+
+      const doc = outerIframe.contentDocument;
+      doc.open();
+      doc.write(`<div id="target"><?start name="p"><iframe></iframe><?end></div>`);
+
+      let pagehideRan = false;
+      doc.querySelector("iframe").contentWindow.onpagehide = t.step_func(() => {
+        pagehideRan = true;
+        outerIframe.contentWindow.stop();
+      });
+
+      doc.write(`<template for="p">New</template>`);
+      doc.close();
+
+      assert_true(pagehideRan, "pagehide should have fired");
+      assert_not_equals(doc.querySelector("#target"), null,
+        "the document should survive window.stop() during patch preparation");
+    }, "window.stop() from pagehide while a patch is being prepared does not crash");
+
+    test(() => {
+      const outerIframe = document.createElement("iframe");
+      document.body.appendChild(outerIframe);
+
+      const doc = outerIframe.contentDocument;
+      doc.open();
+      doc.write(`<div id="target"><?start name="p"><iframe></iframe><?end></div>`);
+
+      let pagehideRan = false;
+      doc.querySelector("iframe").contentWindow.onpagehide = () => {
+        pagehideRan = true;
+        outerIframe.remove();
+      };
+
+      doc.write(`<template for="p">New</template>`);
+
+      assert_true(pagehideRan, "pagehide should have fired");
+      assert_equals(outerIframe.parentNode, null, "the frame should be detached");
+    }, "Detaching the frame of the parsing document while a patch is being prepared does not crash");
+  </script>
+</body>

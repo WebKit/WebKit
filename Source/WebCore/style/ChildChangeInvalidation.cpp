@@ -403,7 +403,11 @@ static void invalidateForLastChildState(Element& child, bool state)
 
 void ChildChangeInvalidation::invalidateAfterChange()
 {
-    if (m_childChange.source == ContainerNode::ChildChange::Source::Parser)
+    // While an element is being parsed the parser only appends, and
+    // invalidateAfterFinishedParsingChildren runs the sibling checks once at the end.
+    // A <template for> patch makes parser insertions into an element that has already
+    // finished parsing, so those need the sibling checks per change.
+    if (m_childChange.source == ContainerNode::ChildChange::Source::Parser && !parentElement().isFinishedParsingChildren())
         return;
 
     checkForSiblingStyleChanges();

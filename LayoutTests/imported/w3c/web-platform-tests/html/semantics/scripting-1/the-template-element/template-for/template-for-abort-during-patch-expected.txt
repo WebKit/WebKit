@@ -1,0 +1,4 @@
+
+PASS window.stop() from pagehide while a patch is being prepared does not crash
+PASS Detaching the frame of the parsing document while a patch is being prepared does not crash
+

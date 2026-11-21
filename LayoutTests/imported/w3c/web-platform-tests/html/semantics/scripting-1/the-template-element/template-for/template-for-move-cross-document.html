@@ -34,7 +34,7 @@
     assert_equals(after.ownerDocument, otherDoc);
     assert_equals(after.parentNode, target,
       "content appended after the move is inserted into the moved target");
-    assert_equals(after.previousSibling.textContent, "A",
+    assert_equals(target.firstChild.textContent, "A",
       "content appended before the move remains in the target");
 
     assert_equals(

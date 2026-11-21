@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - patched text merges with the text before the insertion point</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/parsing.html#insert-a-character">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-template-for">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+  <p id="p1">Hello <?marker name="m1"></p>
+  <template for="m1">world</template>
+  <script>
+    test(() => {
+      const p = document.getElementById("p1");
+      assert_equals(p.textContent, "Hello world");
+      assert_equals(p.childNodes.length, 1, "the patched text should merge into one Text node");
+      assert_equals(p.childNodes[0].data, "Hello world");
+    }, "Patched text merges with the Text node before the marker");
+
+    test((t) => {
+      const outerIframe = document.createElement("iframe");
+      document.body.appendChild(outerIframe);
+      t.add_cleanup(() => outerIframe.remove());
+
+      const doc = outerIframe.contentDocument;
+      doc.open();
+      doc.write(`<p id="p2">Hello <?marker name="m2"></p>`);
+      doc.write(`<template for="m2">wor`);
+      doc.write(`ld</template>`);
+      doc.close();
+
+      const p = doc.getElementById("p2");
+      assert_equals(p.textContent, "Hello world");
+      assert_equals(p.childNodes.length, 1, "text written in separate chunks should still merge");
+      assert_equals(p.childNodes[0].data, "Hello world");
+    }, "Patched text written in separate chunks merges into one Text node");
+  </script>
+</body>

@@ -1,0 +1,6 @@
+
+PASS document.open() in pagehide throws InvalidStateError while preparing a patch nested in another patch
+PASS document.write() in pagehide throws InvalidStateError while preparing a patch nested in another patch
+PASS document.writeln() in pagehide throws InvalidStateError while preparing a patch nested in another patch
+PASS document.close() in pagehide throws InvalidStateError while preparing a patch nested in another patch
+
