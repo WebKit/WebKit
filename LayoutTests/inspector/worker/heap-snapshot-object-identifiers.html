@@ -43,8 +43,8 @@ function test()
     }
 
     async function disableAndEnablePageHeap() {
-        await HeapAgent.disable();
-        await HeapAgent.enable();
+        await InspectorTest.mainFrameTarget.HeapAgent.disable();
+        await InspectorTest.mainFrameTarget.HeapAgent.enable();
     }
 
     suite.addTestCase({
@@ -55,10 +55,10 @@ function test()
             InspectorTest.expectEqual(workerTarget.type, WI.TargetType.Worker, "Should have a Worker target.");
 
             // Taking a page snapshot creates the page VM's heap profiler, so that disabling Heap on the page acts on it.
-            let {snapshotData} = await HeapAgent.snapshot();
+            let {snapshotData} = await InspectorTest.mainFrameTarget.HeapAgent.snapshot();
 
-            // The page target's snapshot includes every window in the process whose document is still alive, such as
-            // windows of earlier loads of this test, so there can be more than one PageMarker.
+            // The snapshot can also include windows of earlier loads of this test that are still alive, so there can be
+            // more than one PageMarker.
             let {instanceIdentifiers} = findIdentifiers(snapshotData, "PageMarker");
             InspectorTest.expectGreaterThan(instanceIdentifiers.length, 0, "Snapshot should have at least one PageMarker instance.");
         },

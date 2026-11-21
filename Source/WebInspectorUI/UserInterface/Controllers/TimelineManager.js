@@ -318,7 +318,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._enabled = false;
     }
 
-    startCapturing(shouldCreateRecording)
+    startCapturing(shouldCreateRecording, {autoCapture} = {})
     {
         console.assert(this._enabled);
 
@@ -343,7 +343,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._updateCapturingState(TimelineManager.CapturingState.Starting);
 
         this._capturingStartTime = NaN;
-        this._activeRecording.start(this._programmaticStartTarget);
+        this._activeRecording.start(this._programmaticStartTarget, {autoCapture});
     }
 
     stopCapturing()
@@ -623,7 +623,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             this._programmaticStartTarget = target;
 
             const createNewRecording = true;
-            this.startCapturing(createNewRecording);
+            this.startCapturing(createNewRecording, {autoCapture: true});
         }
 
         this._shouldSetAutoCapturingMainResource = true;

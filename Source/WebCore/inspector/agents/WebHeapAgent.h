@@ -31,6 +31,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
 class SendGarbageCollectionEventsTask;
@@ -52,7 +56,17 @@ public:
     // HeapBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> disable() override;
 
+    // InspectorInstrumentation
+    void mainFrameNavigated();
+
+    // JSC::HeapSnapshotBuilder::Client
+    String heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder&, JSC::JSCell*, const String& currentClassName) override;
+    bool heapSnapshotBuilderIsElement(const JSC::HeapSnapshotBuilder&, JSC::JSCell*) override;
+
 protected:
+    // InspectorHeapAgent
+    bool canCreateInjectedScript(JSC::JSGlobalObject&) const override;
+
     void dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime) final;
     void dispatchGarbageCollectionEventsAfterDelay(Vector<GarbageCollectionData>&& collections);
 

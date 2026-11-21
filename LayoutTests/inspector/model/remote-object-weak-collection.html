@@ -58,7 +58,7 @@ function test()
             InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
             InspectorTest.assert(!wasThrown);
 
-            HeapAgent.gc(function(error) {
+            InspectorTest.mainFrameTarget.HeapAgent.gc(function(error) {
                 InspectorTest.assert(!error, error);
 
                 remoteObject.getCollectionEntries(function(entries) {
