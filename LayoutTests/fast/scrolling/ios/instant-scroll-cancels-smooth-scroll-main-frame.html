@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+
+    .tall {
+        height: 5000px;
+        width: 10px;
+        background-image: repeating-linear-gradient(white, silver 250px);
+    }
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    async function runTest()
+    {
+        description("Verifies that an instant window.scrollTo() cancels an in-flight smooth scroll of the main frame.");
+
+        window.scrollTo(0, 1000);
+        await UIHelper.renderingUpdate();
+        await shouldBecomeEqual("window.scrollY > 0", "true");
+
+        window.scrollTo({ top: 100, behavior: 'instant' });
+        await UIHelper.waitForTargetScrollAnimationToSettle(window);
+        shouldBe("window.scrollY", "100");
+
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setTimeout(runTest, 0);
+    }, false);
+</script>
+</head>
+<body>
+<div class="tall"></div>
+<div id="console"></div>
+</body>
+</html>

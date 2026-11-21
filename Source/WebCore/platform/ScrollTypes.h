@@ -79,7 +79,7 @@ enum class ScrollAnimationStatus : uint8_t {
 };
 
 enum class ScrollIsAnimated : bool { No, Yes };
-enum class InterruptScrollAnimation : bool { No, Yes };
+enum class InterruptScrollAnimation : uint8_t { No, Yes, ProgrammaticAnimationsOnly };
 
 enum class OverflowAnchor : bool {
     Auto,

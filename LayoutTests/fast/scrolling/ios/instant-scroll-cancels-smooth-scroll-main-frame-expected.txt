@@ -1,0 +1,11 @@
+Verifies that an instant window.scrollTo() cancels an in-flight smooth scroll of the main frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scrollY > 0 became true
+PASS window.scrollY is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

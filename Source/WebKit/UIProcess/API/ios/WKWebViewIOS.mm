@@ -1630,7 +1630,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return contentOffset.constrainedBetween(minimumContentOffset, WebCore::FloatPoint(maximumContentOffset));
 }
 
-- (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin animated:(BOOL)animated interruptAnimation:(BOOL)interruptAnimation
+- (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin animated:(BOOL)animated interruptAnimation:(WebCore::InterruptScrollAnimation)interruptAnimation
 {
     if (_perProcessState.commitDidRestoreScrollPosition || self._shouldDeferGeometryUpdates)
         return;
@@ -1651,13 +1651,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGPoint contentOffsetInScrollViewCoordinates = [self _contentOffsetAdjustedForObscuredInset:scaledOffset];
     contentOffsetInScrollViewCoordinates = contentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
 
-    if (interruptAnimation)
+    bool didInterruptAnimation = interruptAnimation == WebCore::InterruptScrollAnimation::Yes || (interruptAnimation == WebCore::InterruptScrollAnimation::ProgrammaticAnimationsOnly && [_scrollView _wk_isScrollAnimating]);
+    if (didInterruptAnimation)
         [_scrollView _wk_stopScrollingAndZooming];
 
     CGPoint scrollViewContentOffset = [_scrollView contentOffset];
 
     if (!CGPointEqualToPoint(contentOffsetInScrollViewCoordinates, scrollViewContentOffset)) {
-        if (interruptAnimation || animated)
+        if (didInterruptAnimation || animated)
             [_scrollView setContentOffset:contentOffsetInScrollViewCoordinates animated:animated];
         else
             [_scrollView setContentOffset:contentOffsetInScrollViewCoordinates];

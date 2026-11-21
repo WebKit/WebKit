@@ -142,7 +142,7 @@ enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class DOMPasteRequiresInteraction : bool;
 enum class ScrollIsAnimated : bool;
-enum class InterruptScrollAnimation : bool;
+enum class InterruptScrollAnimation : uint8_t;
 
 struct AppHighlight;
 struct AriaNotifyData;
