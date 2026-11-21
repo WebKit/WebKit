@@ -148,9 +148,6 @@ void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode l
 // The start margin of an outside marker, in its list item's inline direction, against the start edge of the line it
 // goes on. It is negative: the marker hangs off the start of the line.
 LayoutUnit outsideMarkerMarginStart(const RenderBlockFlow&);
-// The logical top of an outside marker in the box of its primary font or image, which puts its first baseline on
-// theirs. A marker with `content` is that box itself.
-LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow&);
 
 inline int RenderListItem::value() const
 {

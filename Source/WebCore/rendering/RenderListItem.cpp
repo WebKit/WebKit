@@ -660,7 +660,9 @@ LayoutUnit outsideMarkerMarginStart(const RenderBlockFlow& marker)
     return -marker.logicalWidth();
 }
 
-LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow& marker)
+// The logical top of an outside marker in the box of its primary font or image, which puts its first baseline on
+// theirs. A marker with `content` is that box itself.
+static LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow& marker)
 {
     if (CheckedPtr image = imageForMarker(marker))
         return -image->logicalTop();
