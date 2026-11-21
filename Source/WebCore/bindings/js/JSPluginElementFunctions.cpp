@@ -21,7 +21,6 @@
 #include "JSPluginElementFunctions.h"
 
 #include "BridgeJSC.h"
-#include "DOMTimer.h"
 #include "DOMWrapperWorld.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
@@ -57,9 +56,6 @@ JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement*
     CheckedPtr element = dynamicDowncast<HTMLPlugInElement>(jsHTMLElement->wrapped());
     if (!element)
         return nullptr;
-
-    // Choke point for script/plugin interaction; notify DOMTimer of the event.
-    DOMTimer::scriptDidInteractWithPlugin();
 
     // The plugin element holds an owning reference, so we don't have to.
     RefPtr instance = element->bindingsInstance();

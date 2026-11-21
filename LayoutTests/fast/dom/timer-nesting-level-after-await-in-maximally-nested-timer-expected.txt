@@ -1,0 +1,34 @@
+Tests the nesting level of a setTimeout(callback, 0) when scheduled by another timer after an await. Code after an await runs in a microtask, not a timer task, so the HTML spec says the new timer shouldn't be considered nested.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1) Awaiting an already settled promise
+PASS levelInNestedTimer is maxNestingLevel
+FAIL levelAfterAwait should be 0. Was 10.
+FAIL newTimerIsThrottled should be false. Was true.
+FAIL levelInNewTimer should be 1. Was 10.
+
+2) Awaiting a promise that a timer settles immediately
+PASS levelInNestedTimer is maxNestingLevel
+FAIL levelAfterAwait should be 0. Was 10.
+FAIL newTimerIsThrottled should be false. Was true.
+FAIL levelInNewTimer should be 1. Was 10.
+
+3) Awaiting a promise that a microtask settles
+PASS levelInNestedTimer is maxNestingLevel
+FAIL levelAfterAwait should be 0. Was 10.
+FAIL newTimerIsThrottled should be false. Was true.
+FAIL levelInNewTimer should be 1. Was 10.
+
+4) Awaiting a promise that a message event handler settles, after the microtask checkpoint
+PASS levelInNestedTimer is maxNestingLevel
+PASS levelAfterAwait is 0
+PASS newTimerIsThrottled is false
+PASS levelInNewTimer is 1
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

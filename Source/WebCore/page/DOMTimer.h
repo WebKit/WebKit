@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-class DOMTimerFireState;
-class Document;
 class ImminentlyScheduledWorkScope;
 class ScheduledAction;
 class UserGestureToken;
@@ -64,8 +62,6 @@ public:
     // setting for the context has changed).
     void updateTimerIntervalIfNecessary();
 
-    NODELETE static void scriptDidInteractWithPlugin();
-
     EventLoopTimerHandle timer() const { return m_timer; }
     bool hasReachedMaxNestingLevel() const { return m_hasReachedMaxNestingLevel; }
 
@@ -75,9 +71,6 @@ private:
 
     WEBCORE_EXPORT Seconds intervalClampedToMinimum() const;
 
-    NODELETE bool isDOMTimersThrottlingEnabled(const Document&) const;
-    void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
-
     void fired();
 
     // ActiveDOMObject.
@@ -86,18 +79,11 @@ private:
     void makeImminentlyScheduledWorkScopeIfPossible(ScriptExecutionContext&);
     void clearImminentlyScheduledWorkScope();
 
-    enum TimerThrottleState {
-        Undetermined,
-        ShouldThrottle,
-        ShouldNotThrottle
-    };
-
     int m_timeoutId { 0 };
     int m_nestingLevel;
     EventLoopTimerHandle m_timer;
     Function<void(ScriptExecutionContext&)> m_action;
     Seconds m_originalInterval;
-    TimerThrottleState m_throttleState;
     bool m_oneShot;
     bool m_hasReachedMaxNestingLevel;
     Seconds m_currentTimerInterval;

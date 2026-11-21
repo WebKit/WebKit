@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+description("Tests the nesting level of a setTimeout(callback, 0) when scheduled by another timer after an await. Code after an await runs in a microtask, not a timer task, so the HTML spec says the new timer shouldn't be considered nested.");
+
+// FIXME: we currently preserve the nesting level of the timer that just ran during
+// the microtask checkpoint following it. This behavior is against the spec, but
+// widespread across browsers. See
+// wpt/html/webappapis/timers/timer-nesting-not-inherited-in-microtask.html
+
+var levelInNestedTimer;
+var levelAfterAwait;
+var newTimerIsThrottled;
+var levelInNewTimer;
+
+const maxNestingLevel = 10;
+function runInMaximallyNestedTimer(callback, depth = maxNestingLevel)
+{
+    setTimeout(() => {
+        if (depth > 1)
+            runInMaximallyNestedTimer(callback, depth - 1);
+        else
+            callback();
+    }, 0);
+}
+
+async function runCase(name, makePromise)
+{
+    await new Promise(resolve => {
+        runInMaximallyNestedTimer(async () => {
+            levelInNestedTimer = internals.timerNestingLevel();
+            await makePromise();
+            levelAfterAwait = internals.timerNestingLevel();
+            const timeoutId = setTimeout(() => {
+                levelInNewTimer = internals.timerNestingLevel();
+                resolve();
+            }, 0);
+            newTimerIsThrottled = internals.isTimerThrottled(timeoutId);
+        });
+    });
+
+    debug(name);
+    shouldBe("levelInNestedTimer", "maxNestingLevel");
+    shouldBe("levelAfterAwait", "0");
+    shouldBeFalse("newTimerIsThrottled");
+    shouldBe("levelInNewTimer", "1");
+    debug("");
+}
+
+if (!window.internals) {
+    testFailed("Test requires internals.");
+    finishJSTest();
+} else {
+    (async () => {
+        await runCase("1) Awaiting an already settled promise", () => Promise.resolve());
+        await runCase("2) Awaiting a promise that a timer settles immediately", () => new Promise(resolve => setTimeout(resolve, 0)));
+        await runCase("3) Awaiting a promise that a microtask settles", () => new Promise(resolve => queueMicrotask(resolve)));
+        await runCase("4) Awaiting a promise that a message event handler settles, after the microtask checkpoint", () => new Promise(resolve => {
+            addEventListener("message", resolve, { once: true });
+            postMessage("settle", "*");
+        }));
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>
