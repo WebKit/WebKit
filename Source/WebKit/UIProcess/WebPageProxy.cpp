@@ -11149,6 +11149,7 @@ void WebPageProxy::handleFrameGeometryUpdates(IPC::Connection& connection, const
         updatesToRelay.append({ frame.releaseNonNull(), update });
     }
 
+    bool didRelayUpdates = false;
     auto sendFrameGeometryUpdatesToProcess = [&](WebProcessProxy& webProcess, PageIdentifier pageID, RemotePageProxy* remotePage) {
         if (webProcess == process)
             return;
@@ -11170,14 +11171,22 @@ void WebPageProxy::handleFrameGeometryUpdates(IPC::Connection& connection, const
                 updatesForProcess.append(WTF::move(mainFrameUpdate));
         }
 
-        if (!updatesForProcess.isEmpty())
+        if (!updatesForProcess.isEmpty()) {
             webProcess.send(Messages::WebPage::FrameGeometryChangedInAnotherProcess(updatesForProcess), pageID);
+            didRelayUpdates = true;
+        }
     };
 
     protect(browsingContextGroup())->forEachRemotePage(*this, [&](auto& remotePage) {
         sendFrameGeometryUpdatesToProcess(remotePage.process(), remotePage.pageID(), &remotePage);
     });
     sendFrameGeometryUpdatesToProcess(protect(legacyMainFrameProcess()), webPageIDInMainFrameProcess(), nullptr);
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // Accessibility frame geometry depends on its ancestors, so it has to be updated after FrameGeometryChangedInAnotherProcess messages.
+    if (didRelayUpdates)
+        scheduleAccessibilityFrameGeometryUpdate();
+#endif
 }
 
 RefPtr<WebProcessProxy> WebPageProxy::validatedUserActivationSenderProcess(IPC::Connection& connection, FrameIdentifier sourceFrameID, std::optional<UserGestureTokenIdentifier> forcedActivationToken)

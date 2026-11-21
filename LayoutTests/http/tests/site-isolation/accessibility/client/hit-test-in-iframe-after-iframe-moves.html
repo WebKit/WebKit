@@ -1,0 +1,84 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+body { margin: 0; }
+iframe { width: 400px; height: 100px; border: none; }
+#spacer { height: 150px; }
+</style>
+</head>
+<body>
+
+<input type="text" aria-label="Outer field">
+<h3>Iframe</h3>
+<iframe src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-two-text-inputs.html"></iframe>
+
+<script>
+var output = "Tests that the accessibility frames of elements in a cross-site iframe follow the iframe when it moves in its parent, so hit-testing their centers via the client accessibility APIs finds them.\n\n";
+
+function findByDescription(element, description, depth) {
+    if (!element || depth > 12)
+        return null;
+    if (element.description == description)
+        return element;
+    for (let i = 0; i < element.childrenCount; i++) {
+        const found = findByDescription(element.childAtIndex(i), description, depth + 1);
+        if (found)
+            return found;
+    }
+    return null;
+}
+
+function isInsideIframe(element) {
+    const webArea = accessibilityController.rootElement.childAtIndex(0);
+    const box = document.querySelector("iframe").getBoundingClientRect();
+    const left = webArea.x + box.left;
+    const top = webArea.y + box.top;
+    return element.x >= left && element.y >= top && element.x + element.width <= left + box.width && element.y + element.height <= top + box.height;
+}
+
+function innerFieldsAreInsideIframe() {
+    const first = findByDescription(accessibilityController.rootElement, "Inner first", 0);
+    const second = findByDescription(accessibilityController.rootElement, "Inner second", 0);
+    return first && second && isInsideIframe(first) && isInsideIframe(second);
+}
+
+function hitTestCenter(description) {
+    const target = findByDescription(accessibilityController.rootElement, description, 0);
+    if (!target)
+        return `${description}: FAIL, not found\n`;
+    const hit = accessibilityController.elementAtPoint(Math.round(target.x + target.width / 2), Math.round(target.y + target.height / 2));
+    return `${description}: ${hit && hit.isEqual(target) ? "PASS" : `FAIL, hit ${hit ? hit.role : "null"}`}\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForFrameGeometryReady();
+        output += `Inner fields inside iframe before move: ${await waitFor(innerFieldsAreInsideIframe) ? "PASS" : "FAIL"}\n`;
+
+        // Move the iframe down and lay out, then keep this process busy so that the frame geometry
+        // it syncs to the iframe's process after its next rendering update arrives well after any
+        // accessibility frame geometry request triggered by the move.
+        const spacer = document.createElement("div");
+        spacer.id = "spacer";
+        document.querySelector("iframe").before(spacer);
+        document.body.offsetTop;
+        const start = Date.now();
+        while (Date.now() - start < 500) { }
+
+        output += `Inner fields inside iframe after move: ${await waitFor(innerFieldsAreInsideIframe) ? "PASS" : "FAIL"}\n`;
+        output += hitTestCenter("Inner first");
+        output += hitTestCenter("Inner second");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
