@@ -1671,6 +1671,7 @@ void Heap::setNeedCollectionEpilogue()
 {
     unsigned oldState = m_worldState.exchangeOr(needCollectionEpilogueBit);
     // Only End sets this, once per collection, while the mutator is stopped or conducting.
+    ASSERT(isInPhase(CollectorPhase::End));
     RELEASE_ASSERT(!(oldState & needCollectionEpilogueBit), oldState);
     RELEASE_ASSERT((oldState & stoppedBit) || (oldState & mutatorHasConnBit), oldState);
     m_stopIfNecessaryTimer->scheduleSoon();
@@ -1682,9 +1683,9 @@ void Heap::waitWhileNeedCollectionEpilogue()
     for (;;) {
         unsigned oldState = m_worldState.load();
         if (!(oldState & needCollectionEpilogueBit)) {
-            // This means that either there was no epilogue request or the main thread will run it
-            // with heap access, so a subsequent call to stopTheWorld() will return only when
-            // the epilogue finishes.
+            // The mutator clears the bit just before running the epilogue, so the epilogue may still be running.
+            // Returning is still safe: the mutator holds access while it runs, so stopTheMutator() hands it the conn
+            // instead of stopping it, and the mutator conducts only once the epilogue has finished.
             return;
         }
         ParkingLot::compareAndPark(&m_worldState, oldState);

@@ -966,6 +966,13 @@ private:
     static constexpr unsigned mutatorHasConnBit = 1u << 0u;
     static constexpr unsigned stoppedBit = 1u << 1u; // Only set when !hasAccessBit
     static constexpr unsigned hasAccessBit = 1u << 2u;
+    // Rules for needCollectionEpilogueBit, which says this heap's collection epilogue has yet to run:
+    // - Only End sets it, once per collection, while the mutator is stopped or conducting.
+    // - Only the mutator clears it, holding access, just before running the epilogue: at the resume edge after End if
+    //   it conducted, or else when it next takes access.
+    // - So the mutator never runs JS with it set, and it is clear before the heap's next collection begins: the
+    //   collector thread cannot run the epilogue, having no access, so it waits for the bit to clear before the stop
+    //   that begins a collection.
     static constexpr unsigned needCollectionEpilogueBit = 1u << 3u;
     static constexpr unsigned mutatorWaitingBit = 1u << 4u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
