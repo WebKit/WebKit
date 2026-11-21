@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        width: 400px;
+        height: 200px;
+        background-color: #ddd;
+    }
+    .child {
+        display: flex;
+        width: 360px;
+        height: 100px;
+        margin: 20px 0 0 20px;
+    }
+    .child > div {
+        flex: 1;
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="child">
+        <div style="background-color: rgba(60, 140, 70, 0.5)"></div>
+        <div style="background-color: rgba(70, 70, 140, 0.25)"></div>
+        <div style="background-color: rgba(200, 120, 90, 0.3)"></div>
+        <div style="background-color: rgba(128, 128, 128, 0.75)"></div>
+        <div style="background-color: rgba(255, 255, 255, 0.5)"></div>
+        <div style="background-color: rgba(120, 90, 160, 0.9)"></div>
+    </div>
+</div>
+</body>
+</html>

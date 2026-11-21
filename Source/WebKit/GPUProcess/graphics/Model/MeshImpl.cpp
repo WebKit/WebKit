@@ -83,6 +83,21 @@ void MeshImpl::setPortalChildTransform(WebCore::NodeIdentifier nodeIdentifier, c
 {
     m_backing->setTransform(nodeIdentifier, transform);
 }
+
+bool MeshImpl::updatePortalContentTexture(const WebModel::TypedResourceId& identifier, IOSurfaceRef surface, bool isOpaque, uint64_t bufferIdentifier)
+{
+    return m_backing->updatePortalContentTexture(identifier, surface, isOpaque, bufferIdentifier);
+}
+
+void MeshImpl::removePortalContentTexture(uint64_t bufferIdentifier)
+{
+    m_backing->removePortalContentTexture(bufferIdentifier);
+}
+
+void MeshImpl::clearPortalContentTextures()
+{
+    m_backing->clearPortalContentTextures();
+}
 #endif
 
 #if PLATFORM(COCOA)

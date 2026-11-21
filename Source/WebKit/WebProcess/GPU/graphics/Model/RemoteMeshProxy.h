@@ -139,10 +139,13 @@ private:
 #if ENABLE(SPATIAL_PORTAL) && PLATFORM(COCOA)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalChildTransform(WebCore::NodeIdentifier, const WebModel::Float4x4&) final;
+    void setPortalChildQuads(Vector<PortalChildQuad>&&) final;
     std::optional<WebModel::Float4x4> resolvedPortalTransform() const final;
 #endif
 #if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
     std::pair<simd_float4, simd_float4> portalContentCenterAndExtents(const simd_float4x4& transformBeforeAuto) const;
+    std::optional<WebModel::Float4x4> portalChildQuadTransform(const PortalChildQuad&) const;
+    void updatePortalChildQuads();
 #endif
     void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
 #if ENABLE(SPATIAL_PORTAL)
@@ -168,6 +171,10 @@ private:
 #if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
     std::optional<WebCore::UsedPortalTransform> m_portalTransform;
     std::optional<WebModel::Float4x4> m_fittedPortalTransform;
+    std::optional<WebModel::Float4x4> m_sentEntityTransform;
+    Vector<PortalChildQuad> m_portalChildQuads;
+    HashMap<WebCore::NodeIdentifier, WebModel::Float4x4> m_sentPortalChildTransforms;
+    Vector<WebModel::PortalContentSource> m_sentPortalContentSources;
 #endif
 };
 

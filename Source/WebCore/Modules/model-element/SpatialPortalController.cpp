@@ -38,6 +38,7 @@
 #include "Element.h"
 #include "ElementInlines.h"
 #include "EnvironmentMapLoader.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -1149,7 +1150,14 @@ void SpatialPortalController::handleGestureEvent(Event& event)
     if (!element || !player || !player->supportsMouseInteraction())
         return;
 
-    m_interactionGesture.handleEvent(*element, *player, event);
+    m_interactionGesture.handleEvent(*element, *player, event, [&](FloatPoint) {
+        RefPtr target = dynamicDowncast<Element>(event.target());
+        if (target == element)
+            return true;
+
+        RefPtr model = dynamicDowncast<HTMLModelElement>(target);
+        return model && model->lastRegisteredPortalController() == this;
+    });
 }
 
 void SpatialPortalController::cancelGesture()

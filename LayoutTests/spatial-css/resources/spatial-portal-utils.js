@@ -100,7 +100,7 @@ async function waitForHostedPromotedChildren(portal, count, timeout = 5000) {
     }
 }
 
-async function snapshotOnceModelsRender(afterReady)
+async function snapshotOnceModelsRender(afterReady, hostedPromotedChildren = 0)
 {
     window.testRunner?.waitUntilDone();
     window.internals?.disableModelLoadDelaysForTesting();
@@ -109,7 +109,13 @@ async function snapshotOnceModelsRender(afterReady)
     await UIHelper.ensureStablePresentationUpdate();
 
     if (afterReady) {
-        afterReady();
+        await afterReady();
+        await UIHelper.ensureStablePresentationUpdate();
+    }
+
+    if (hostedPromotedChildren) {
+        await waitForHostedPromotedChildren(document.querySelector(".portal"), hostedPromotedChildren);
+        await UIHelper.ensureStablePresentationUpdate();
         await UIHelper.ensureStablePresentationUpdate();
     }
 

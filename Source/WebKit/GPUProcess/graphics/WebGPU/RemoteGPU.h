@@ -27,8 +27,10 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ImageBufferSetIdentifier.h"
 #include "ModelObjectHeap.h"
 #include "RemoteGPURequestAdapterResponse.h"
+#include "RemoteImageBufferSet.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "StreamConnectionWorkQueue.h"
@@ -43,10 +45,15 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
+
+#if HAVE(IOSURFACE)
+#include <IOSurface/IOSurfaceRef.h>
+#endif
 
 namespace IPC {
 class Connection;
@@ -100,6 +107,15 @@ public:
     // The root, which has the commands that take WebCore sources.
     RefPtr<WebCore::WebGPUIntegration> backing();
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() const;
+
+#if ENABLE(GPU_PROCESS_MODEL) && ENABLE(SPATIAL_PORTAL) && HAVE(IOSURFACE)
+    struct PortalContentRequest {
+        ImageBufferSetIdentifier bufferSet;
+        Vector<uint64_t> mappedBuffers;
+    };
+
+    Vector<RemoteImageBufferSet::ExternalReadResult> fetchPortalContentSurfaces(const Vector<PortalContentRequest>&);
+#endif
 
     static Vector<UniqueRef<WebCore::IOSurface>> createRenderBuffers(unsigned width, unsigned height, const WebCore::ProcessIdentity&, bool standardDynamicRange = false);
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }

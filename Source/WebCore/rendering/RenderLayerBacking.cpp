@@ -2354,7 +2354,12 @@ void RenderLayerBacking::updateHostedPromotedChildren()
 
 void RenderLayerBacking::updateIsHostedInSpatialPortalScene()
 {
-    m_graphicsLayer->setIsHostedInSpatialPortalScene(!!hostingSpatialPortalController());
+    bool isHosted = !!hostingSpatialPortalController();
+    if (m_graphicsLayer->isHostedInSpatialPortalScene() == isHosted)
+        return;
+
+    m_owningLayer.clearClipRectsIncludingDescendants(RootRelativeClipRects);
+    m_graphicsLayer->setIsHostedInSpatialPortalScene(isHosted);
 }
 
 SpatialPortalController* RenderLayerBacking::promotedChildPortalController() const

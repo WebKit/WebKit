@@ -164,6 +164,18 @@ auto RemoteImageBufferSet::frontBufferSendRightForExternalRead(const Vector<uint
     return { WTF::move(*sendRight), bufferIdentifier };
 }
 
+RemoteImageBufferSet::ExternalReadResult RemoteImageBufferSet::frontBufferSurfaceForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers)
+{
+    auto [sendRight, bufferIdentifier, isBusy] = frontBufferSendRightForExternalRead(alreadyMappedBuffers);
+    if (!sendRight)
+        return { nullptr, bufferIdentifier, isBusy };
+
+    RetainPtr surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight->sendRight()));
+    if (!surface)
+        return { };
+
+    return { WTF::move(surface), bufferIdentifier };
+}
 #endif
 
 #if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)

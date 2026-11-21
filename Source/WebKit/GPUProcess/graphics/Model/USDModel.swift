@@ -387,7 +387,8 @@ private func makeParameters(
     for function: (any LowLevelMaterialResource.Function)?,
     renderContext: any LowLevelRenderContext,
     textureHashesAndResources: [WKBridgeTypedResourceId: (String, LowLevelTextureResource)],
-    fallbackTexture: LowLevelTextureResource
+    fallbackTexture: LowLevelTextureResource,
+    overrideTexture: LowLevelTextureResource? = nil
 ) throws -> LowLevelArgumentTable? {
     guard let function else { return nil }
     guard let argumentTableDescriptor = function.argumentTableDescriptor else { return nil }
@@ -396,7 +397,9 @@ private func makeParameters(
     // Every slot starts out as the fallback texture, so a slot the parameter mapping doesn't cover still gets one.
     var textures: [LowLevelTextureResource] = argumentTableDescriptor.textures.map({ _ in fallbackTexture })
     for parameter in parameterMapping?.textures ?? [] {
-        if let textureHashAndResource = textureHashesAndResources.values.first(where: { $0.0 == parameter.name }) {
+        if let overrideTexture {
+            textures[parameter.textureIndex] = overrideTexture
+        } else if let textureHashAndResource = textureHashesAndResources.values.first(where: { $0.0 == parameter.name }) {
             textures[parameter.textureIndex] = textureHashAndResource.1
         } else {
             // use fallback texture if no texture if found
@@ -419,6 +422,60 @@ private func makeParameters(
         descriptor: argumentTableDescriptor,
         buffers: buffers,
         textures: textures
+    )
+}
+
+private func makePortalChildQuadMaterial(
+    renderContext: any LowLevelRenderContext,
+    contentTextureIdentifier: WKBridgeTypedResourceId?,
+    textureHashesAndResources: [WKBridgeTypedResourceId: (String, LowLevelTextureResource)],
+    fallbackTexture: LowLevelTextureResource
+) throws -> WKBridgeReceiver.Material {
+    let surfaceShader = try renderContext.makeSimpleSurfaceShader(
+        descriptor: .init(
+            useTintColor: false,
+            useTexture: true,
+            outputChannel: .emissiveColor,
+            outputOpacity: true
+        )
+    )
+    let lightingFunction = renderContext.lighting.makeUnlitLightingFunction()
+    let geometryModifier = renderContext.makeDefaultGeometryModifier()
+
+    let materialResource = try renderContext.makeMaterialResource(
+        descriptor: .init(
+            geometry: geometryModifier,
+            surface: surfaceShader,
+            lighting: lightingFunction
+        )
+    )
+
+    let contentTexture = contentTextureIdentifier.flatMap { textureHashesAndResources[$0]?.1 }
+
+    return .init(
+        resource: materialResource,
+        geometryArguments: try makeParameters(
+            for: geometryModifier,
+            renderContext: renderContext,
+            textureHashesAndResources: [:],
+            fallbackTexture: fallbackTexture
+        ),
+        surfaceArguments: try makeParameters(
+            for: surfaceShader,
+            renderContext: renderContext,
+            textureHashesAndResources: [:],
+            fallbackTexture: fallbackTexture,
+            overrideTexture: contentTexture
+        ),
+        lightingArguments: try makeParameters(
+            for: lightingFunction,
+            renderContext: renderContext,
+            textureHashesAndResources: [:],
+            fallbackTexture: fallbackTexture
+        ),
+        contentTextureIndex: surfaceShader.parameterMapping?.textures.first?.textureIndex,
+        contentTextureIdentifier: contentTextureIdentifier,
+        blending: .transparent
     )
 }
 
@@ -685,6 +742,9 @@ extension WKBridgeReceiver {
         let resource: LowLevelMaterialResource
         let geometryArguments: LowLevelArgumentTable?
         let surfaceArguments: LowLevelArgumentTable?
+        let lightingArguments: LowLevelArgumentTable?
+        let contentTextureIndex: Int?
+        let contentTextureIdentifier: WKBridgeTypedResourceId?
         let blending: LowLevelMaterialResource.ShaderGraphOutput.Blending
     }
     @nonobjc
@@ -921,6 +981,16 @@ extension WKBridgeReceiver {
                 let identifier = data.identifier
                 logInfo("updateMaterial \(identifier)")
 
+                if data.materialGraph?.graphName == WKBridgePortalChildQuadGraphName {
+                    materialsAndParams[identifier] = try makePortalChildQuadMaterial(
+                        renderContext: renderContext,
+                        contentTextureIdentifier: data.portalContentTextureIdentifier,
+                        textureHashesAndResources: textureHashesAndResources,
+                        fallbackTexture: self.fallbackTexture
+                    )
+                    continue
+                }
+
                 guard let shaderGraph = ShaderGraph.fromWKDescriptor(data.materialGraph) else {
                     fatalError("No materialGraph data provided for material \(identifier)")
                 }
@@ -957,12 +1027,77 @@ extension WKBridgeReceiver {
                     resource: materialResource,
                     geometryArguments: geometryArguments,
                     surfaceArguments: surfaceArguments,
+                    lightingArguments: nil,
+                    contentTextureIndex: nil,
+                    contentTextureIdentifier: nil,
                     blending: shaderGraphOutput.blending
                 )
             }
         } catch {
             logError("updateMaterial failed \(error)")
         }
+    }
+
+    @objc(updatePortalContentTexture:texture:forceOpaque:)
+    func updatePortalContentTexture(_ identifier: WKBridgeTypedResourceId, texture: any MTLTexture, forceOpaque: Bool) -> Bool {
+        var resourceDescriptor = LowLevelTextureResource.Descriptor.from(
+            texture,
+            swizzle: MTLTextureSwizzleChannels(red: .red, green: .green, blue: .blue, alpha: .alpha)
+        )
+        resourceDescriptor.pixelFormat = .rgba16Float
+        resourceDescriptor.textureUsage = [.shaderRead, .shaderWrite]
+
+        let existingTexture = textureHashesAndResources[identifier]?.1
+        let needsNewTexture = existingTexture?.descriptor != resourceDescriptor
+
+        guard
+            let textureResource = needsNewTexture
+                ? (try? renderContext.makeTextureResource(descriptor: resourceDescriptor)) : existingTexture
+        else {
+            logError("could not create the portal content texture resource")
+            return false
+        }
+
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+            logError("could not create the portal content command buffer")
+            return false
+        }
+
+        let outTexture = textureResource.replace(commandBuffer: commandBuffer, memoryOwner: memoryOwner)
+        var didConvert = true
+        do {
+            try appRenderer.convertPortalContent(
+                source: texture,
+                destination: outTexture,
+                isOpaque: forceOpaque,
+                commandBuffer: commandBuffer
+            )
+        } catch {
+            logError("could not convert the portal content texture: \(error)")
+            didConvert = false
+        }
+        commandBuffer.commit()
+
+        guard didConvert else { return false }
+        guard needsNewTexture else { return true }
+
+        textureHashesAndResources[identifier] = (WKBridgePortalChildQuadGraphName, textureResource)
+
+        for (materialIdentifier, material) in materialsAndParams {
+            guard
+                material.contentTextureIdentifier == identifier,
+                let index = material.contentTextureIndex,
+                let arguments = material.surfaceArguments
+            else {
+                continue
+            }
+            do {
+                try arguments.setTexture(textureResource, at: index)
+            } catch {
+                logError("failed to bind the portal content texture for \(materialIdentifier): \(error)")
+            }
+        }
+        return true
     }
 
     @objc
@@ -1117,7 +1252,7 @@ extension WKBridgeReceiver {
                                     pipeline: pipeline,
                                     geometryArguments: material.geometryArguments,
                                     surfaceArguments: material.surfaceArguments,
-                                    lightingArguments: lightingArguments,
+                                    lightingArguments: material.lightingArguments ?? lightingArguments,
                                     transform: instanceTransform,
                                     sortCategory: material.blending == .transparent ? .transparent : .opaque
                                 )
@@ -2699,7 +2834,8 @@ final class USDModelLoader {
                         uuid: makeUUID(from: material.id.description),
                         path: material.primPath,
                         hashValue: material.id.hashValue
-                    )
+                    ),
+                    portalContentTextureIdentifier: nil
                 )
             }
         )
@@ -3052,6 +3188,11 @@ extension WKBridgeReceiver {
 
     @objc(updateTexture:)
     func updateTexture(_ data: [WKBridgeUpdateTexture]) {
+    }
+
+    @objc(updatePortalContentTexture:texture:forceOpaque:)
+    func updatePortalContentTexture(_ identifier: WKBridgeTypedResourceId, texture: any MTLTexture, forceOpaque: Bool) -> Bool {
+        false
     }
 
     @objc(updateMaterial:)

@@ -1,0 +1,9 @@
+
+PASS A hosted child behind the portal is hit where the scene draws it
+PASS A hosted child of a portal with a portal-transform is hit where the scene draws it
+PASS Clicking where the scene draws a hosted child activates it
+PASS A promoted child that stays flat is hit where its box is
+PASS A hosted child in front of another one is hit even when it comes first in paint order
+PASS A hosted child behind another one is not hit even when it comes last in paint order
+PASS Hosted children in the same plane are hit in paint order
+

@@ -1,0 +1,142 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        position: relative;
+        width: 400px;
+        height: 300px;
+    }
+    .content {
+        position: absolute;
+        inset: 0;
+        transform-style: preserve-3d;
+    }
+    button {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 0;
+        background-color: rgb(60, 140, 70);
+    }
+    .card {
+        position: absolute;
+        transform-style: preserve-3d;
+        background-color: rgb(70, 70, 140);
+    }
+    .large {
+        left: 50px;
+        top: 50px;
+        width: 300px;
+        height: 200px;
+    }
+    .small {
+        left: 150px;
+        top: 100px;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<body>
+<script>
+'use strict';
+
+// The GPU process draws the portal scene from a camera 0.5 m in front of the portal.
+const viewerDistance = 0.5 * 96 / 2.54 * 100;
+
+const portalCenter = { x: 200, y: 150 };
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    portal.innerHTML = `<div class="content" style="transform: translateZ(${-viewerDistance}px)"><button style="left: 320px; top: 220px"></button></div>`;
+    const button = portal.querySelector("button");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    // As far behind the portal as the viewer is in front of it, the button is drawn halfway to the portal's center.
+    const buttonCenter = { x: 340, y: 240 };
+    const drawnCenter = { x: (buttonCenter.x + portalCenter.x) / 2, y: (buttonCenter.y + portalCenter.y) / 2 };
+
+    assert_equals(document.elementFromPoint(drawnCenter.x, drawnCenter.y), button, "the button is hit where the scene draws it");
+    assert_not_equals(document.elementFromPoint(buttonCenter.x, buttonCenter.y), button, "the button is not hit where it would be without depth");
+}, "A hosted child behind the portal is hit where the scene draws it");
+
+promise_test(async test => {
+    const depth = -200;
+    const portal = createPortal(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    portal.innerHTML = `<div class="content" style="transform: translateZ(${depth}px)"><button style="left: 320px; top: 220px"></button></div>`;
+    const button = portal.querySelector("button");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    const buttonCenter = { x: 340, y: 240 };
+    const perspective = new DOMMatrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -1 / viewerDistance, 0, 0, 0, 1]);
+    const projection = new DOMMatrix().translate(portalCenter.x, portalCenter.y).multiply(perspective).rotateAxisAngle(0, 1, 0, 40).translate(-portalCenter.x, -portalCenter.y);
+    const drawnCenter = projection.transformPoint(new DOMPoint(buttonCenter.x, buttonCenter.y, depth));
+
+    assert_equals(document.elementFromPoint(drawnCenter.x / drawnCenter.w, drawnCenter.y / drawnCenter.w), button, "the button is hit where the scene draws it");
+    assert_not_equals(document.elementFromPoint(buttonCenter.x, buttonCenter.y), button, "the button is not hit where it would be without the portal-transform");
+}, "A hosted child of a portal with a portal-transform is hit where the scene draws it");
+
+promise_test(async test => {
+    const portal = createPortal(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    portal.innerHTML = `<div class="content"><button style="left: 320px; top: 220px"></button></div>`;
+    const button = portal.querySelector("button");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    let clicked = false;
+    button.addEventListener("click", () => clicked = true);
+
+    const perspective = new DOMMatrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -1 / viewerDistance, 0, 0, 0, 1]);
+    const projection = new DOMMatrix().translate(portalCenter.x, portalCenter.y).multiply(perspective).rotateAxisAngle(0, 1, 0, 40).translate(-portalCenter.x, -portalCenter.y);
+    const drawnCenter = projection.transformPoint(new DOMPoint(340, 240));
+    eventSender.mouseMoveTo(Math.round(drawnCenter.x / drawnCenter.w), Math.round(drawnCenter.y / drawnCenter.w));
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    assert_true(clicked, "the button is clicked where the scene draws it");
+}, "Clicking where the scene draws a hosted child activates it");
+
+promise_test(async test => {
+    const portal = createPortal(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    portal.innerHTML = `<div class="content"><button style="left: 320px; top: 220px"></button></div>`;
+    const button = portal.querySelector("button");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    button.parentElement.style.opacity = "0.5";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    assert_equals(document.elementFromPoint(340, 240), button);
+}, "A promoted child that stays flat is hit where its box is");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    portal.innerHTML = `<div class="card small" style="transform: translateZ(60px)"></div><div class="card large"></div>`;
+    await waitForHostedPromotedChildren(portal, 2);
+
+    assert_equals(document.elementFromPoint(portalCenter.x, portalCenter.y), portal.firstElementChild);
+}, "A hosted child in front of another one is hit even when it comes first in paint order");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    portal.innerHTML = `<div class="card large"></div><div class="card small" style="transform: translateZ(-60px)"></div>`;
+    await waitForHostedPromotedChildren(portal, 2);
+
+    assert_equals(document.elementFromPoint(portalCenter.x, portalCenter.y), portal.firstElementChild);
+}, "A hosted child behind another one is not hit even when it comes last in paint order");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    portal.innerHTML = `<div class="card large"></div><div class="card small"></div>`;
+    await waitForHostedPromotedChildren(portal, 2);
+
+    assert_equals(document.elementFromPoint(portalCenter.x, portalCenter.y), portal.lastElementChild);
+}, "Hosted children in the same plane are hit in paint order");
+</script>
+</body>
+</html>

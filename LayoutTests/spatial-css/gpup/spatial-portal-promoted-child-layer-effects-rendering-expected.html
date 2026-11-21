@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        width: 400px;
+        height: 200px;
+        background-color: #ddd;
+    }
+    .child {
+        position: absolute;
+        top: 20px;
+        box-sizing: border-box;
+        width: 160px;
+        height: 90px;
+        padding: 8px;
+        border: 6px solid rgb(70, 70, 140);
+        background-color: rgb(60, 140, 70);
+        color: white;
+        font: 20px sans-serif;
+    }
+    .faded {
+        left: 20px;
+        opacity: 0.5;
+    }
+    .filtered {
+        left: 210px;
+        filter: grayscale(1);
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="child faded">Faded</div>
+    <div class="child filtered">Filtered</div>
+</div>
+</body>
+</html>

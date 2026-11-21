@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        width: 400px;
+        height: 240px;
+        box-sizing: border-box;
+        padding: 50px 0 0 60px;
+        background-color: #ddd;
+    }
+    .child {
+        box-sizing: border-box;
+        width: 200px;
+        height: 120px;
+        padding: 8px;
+        border: 6px solid rgb(70, 70, 140);
+        background-color: rgb(60, 140, 70);
+        box-shadow: -30px -24px 0 rgb(150, 90, 60);
+        color: white;
+        font: 20px sans-serif;
+    }
+    .nested {
+        width: 60px;
+        height: 30px;
+        margin-top: 10px;
+        background-color: rgb(140, 120, 50);
+        will-change: transform;
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="child">Hosted<div class="nested"></div></div>
+</div>
+</body>
+</html>
