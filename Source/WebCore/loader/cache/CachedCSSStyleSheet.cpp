@@ -153,6 +153,11 @@ bool CachedCSSStyleSheet::mimeTypeAllowedByNosniff() const
     return parseContentTypeOptionsHeader(response().httpHeaderField(HTTPHeaderName::XContentTypeOptions)) != ContentTypeOptionsDisposition::Nosniff || equalLettersIgnoringASCIICase(responseMIMEType(), "text/css"_s);
 }
 
+ReferrerPolicy CachedCSSStyleSheet::referrerPolicy() const
+{
+    return parseReferrerPolicy(response().httpHeaderField(HTTPHeaderName::ReferrerPolicy), ReferrerPolicySource::HTTPHeader).value_or(ReferrerPolicy::EmptyString);
+}
+
 std::optional<CachedCSSStyleSheet::Error> CachedCSSStyleSheet::canUseSheet(MIMETypeCheckHint mimeTypeCheckHint) const
 {
     if (errorOccurred())

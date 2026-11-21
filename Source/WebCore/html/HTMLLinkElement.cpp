@@ -596,9 +596,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
     // Completing the sheet load may cause scripts to execute.
     Ref<HTMLLinkElement> protectedThis(*this);
 
-    CSSParserContext parserContext(document.get(), baseURL, charset, IsExternalStyleSheet::Yes);
-    if (!cachedStyleSheet.isCORSSameOrigin())
-        parserContext.loadedFromOpaqueSource = LoadedFromOpaqueSource::Yes;
+    CSSParserContext parserContext(document.get(), baseURL, charset, IsExternalStyleSheet::Yes, cachedStyleSheet.referrerPolicy(), cachedStyleSheet.isCORSSameOrigin() ? LoadedFromOpaqueSource::No : LoadedFromOpaqueSource::Yes);
     auto cachePolicy = frame->loader().subresourceCachePolicy(baseURL);
 
     if (auto restoredSheet = const_cast<CachedCSSStyleSheet&>(cachedStyleSheet).restoreParsedStyleSheet(parserContext, cachePolicy, frame->loader())) {

@@ -2,13 +2,13 @@ Check that resources from external stylesheets (referenced from a ProcessingInst
 
 
 
-FAIL Styling SVG from ProcessingInstruction fill promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction stroke promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction filter promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction clip-path promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction marker-start promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction marker-mid promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction marker-end promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction mask promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Styling SVG from ProcessingInstruction mask-image promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Styling SVG from ProcessingInstruction fill
+PASS Styling SVG from ProcessingInstruction stroke
+PASS Styling SVG from ProcessingInstruction filter
+PASS Styling SVG from ProcessingInstruction clip-path
+PASS Styling SVG from ProcessingInstruction marker-start
+PASS Styling SVG from ProcessingInstruction marker-mid
+PASS Styling SVG from ProcessingInstruction marker-end
+PASS Styling SVG from ProcessingInstruction mask
+PASS Styling SVG from ProcessingInstruction mask-image
 

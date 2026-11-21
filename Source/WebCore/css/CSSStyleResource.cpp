@@ -77,6 +77,12 @@ CachedResourceRequest createStyleResourceRequest(Document& document, const WTF::
     //
     // The url is resolved when the style is parsed and the settings object is the document.
 
+    // Set req's referrer policy to the style sheet's, as the Referrer Policy spec requires. This is done
+    // before step 5 so that a referrer-policy() modifier takes precedence.
+    // https://w3c.github.io/webappsec-referrer-policy/#integration-with-css
+    if (provenance.styleSheetReferrerPolicy != ReferrerPolicy::EmptyString)
+        options.referrerPolicy = provenance.styleSheetReferrerPolicy;
+
     // Steps 3 through 5.
     applyStyleResourceRequestOptions(options, modifiers, corsMode);
 
@@ -87,14 +93,15 @@ CachedResourceRequest createStyleResourceRequest(Document& document, const WTF::
     // 6. If req's mode is "cors", and sheet is not null, then set req's referrer to the style resource base URL
     //    given cssRuleOrDeclaration.
     //
-    // FIXME: This sets the referrer in every mode (and not just in the "cors" mode like the spec requires) to match other engines and WPT.
+    // This sets the referrer in every mode, not just "cors", as the Referrer Policy spec requires.
+    // https://w3c.github.io/webappsec-referrer-policy/#integration-with-css
     if (!provenance.styleSheetURL.isNull())
         request.resourceRequest().setHTTPReferrer(provenance.styleSheetURL.string());
 
     // 7. If sheet's origin-clean flag is set, set req's initiator type to "css".
     //
     // Otherwise the load is marked as loaded from an opaque source.
-    if (provenance.loadedFromOpaqueSource == LoadedFromOpaqueSource::No)
+    if (provenance.isStyleSheetOriginClean)
         request.setInitiatorType(initiatorType.isNull() ? cachedResourceRequestInitiatorTypes().css : initiatorType);
     else {
         auto requestOptions = request.options();
@@ -120,7 +127,7 @@ void applyStyleResourceRequestSteps(ThreadableLoaderOptions& options, const URLM
     // 7. If sheet's origin-clean flag is set, set req's initiator type to "css".
     //
     // Otherwise the load is marked as loaded from an opaque source.
-    if (provenance.loadedFromOpaqueSource == LoadedFromOpaqueSource::No)
+    if (provenance.isStyleSheetOriginClean)
         options.initiatorType = cachedResourceRequestInitiatorTypes().css;
     else
         options.loadedFromOpaqueSource = LoadedFromOpaqueSource::Yes;
