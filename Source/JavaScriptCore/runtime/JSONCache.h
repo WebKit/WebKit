@@ -55,14 +55,15 @@ ALWAYS_INLINE auto findUnsafeJSONStringCharacter(VectorType input)
 
 // Caches for JSON.parse: atoms and JSStrings for short keys and values, a map from (Structure, property
 // name) to the Structure's existing property addition transition, so that a key seen before skips both the
-// atom lookup and the transition table lookup, and name tables that let such a key be matched directly
-// against the source text.
+// atom lookup and the transition table lookup, name tables that let such a key be matched directly
+// against the source text, and object templates that let a repeated object be made without reading its keys.
 //
-// Transition and name entries are stored without write barriers and are not otherwise marked. While a parse is running,
-// visitAggregate() marks every entry; otherwise the transitions are cleared at the end of every GC, before
-// anything is swept. Both decisions are made with the mutator stopped: the final marking fixpoint runs every
-// constraint, and the collector goes from it to the end phase without resuming the mutator, so the two see
-// the same m_isParsing. Every entry therefore refers to a live Structure.
+// Transition, name, and object template entries are stored without write barriers and are not otherwise marked. While a
+// parse is running, visitAggregate() marks every entry; otherwise they are dropped at the end of every GC, before
+// anything is swept: the transitions and names are cleared, and the object templates' epoch ends. Both decisions are
+// made with the mutator stopped: the final marking fixpoint runs every constraint, and the collector goes from it to the
+// end phase without resuming the mutator, so the two see the same m_isParsing. Every entry that can be found therefore
+// refers to live cells.
 class JSONCache {
     WTF_MAKE_NONCOPYABLE(JSONCache);
     WTF_MAKE_TZONE_ALLOCATED(JSONCache);
@@ -144,6 +145,8 @@ public:
             , m_wasParsing(cache.m_isParsing)
         {
             cache.m_isParsing = true;
+            if (!m_wasParsing)
+                cache.resetObjectTemplateCredit();
         }
 
         ~ParsingScope()
@@ -191,6 +194,57 @@ public:
     // Records the first textLength characters of source, a string token without escapes, as the text of string.
     ALWAYS_INLINE void addString(std::span<const Latin1Character> source, unsigned textLength, JSString*);
 
+    // JSON often repeats an object exactly, such as a stack frame, so an object is recorded with its text. The same text
+    // later makes a new object with the same Structure and values. Values that are objects are made anew, so only empty
+    // arrays and objects whose own values are not objects can be part of a template, and only a few of them.
+    static constexpr unsigned maxObjectTemplateProperties = 6;
+    static constexpr unsigned maxObjectTemplateTextLength = 256;
+    static constexpr unsigned maxObjectTemplateObjectValues = 2;
+    static constexpr unsigned objectTemplateLookAhead = 32;
+    struct ObjectTemplateValue {
+        // The value is an empty array if structure is null.
+        WriteBarrierStructureID structure;
+        unsigned offset;
+        std::array<WriteBarrier<Unknown>, maxObjectTemplateProperties> values;
+    };
+    struct ObjectTemplate {
+        // Of the first objectTemplateLookAhead characters after the "{", which can go past the "}".
+        uint64_t hash;
+        // The epoch the template was recorded in, and the StructureID of an empty object of the global object that
+        // recorded it, as objectTemplateOwner() combines them. JSONCache is shared by the global objects of a VM, and a
+        // template only makes objects for the one whose Structures it has. The epoch ends with the first GC that is not
+        // during a parse, after which the entry is no longer marked and its cells may be dead.
+        uint64_t owner;
+        WriteBarrierStructureID structure;
+        // The text after the object's "{", through its "}".
+        unsigned textLength;
+        uint8_t objectValueCount;
+        // The index of the template that made the element after this one the last time this one made an element of
+        // an array.
+        uint8_t successor;
+        // Values that are objects are empty here, and described by objectValues instead.
+        std::array<WriteBarrier<Unknown>, maxObjectTemplateProperties> values;
+        std::array<Latin1Character, maxObjectTemplateTextLength> text;
+        // The first objectValueCount are used. They are last because most templates have none.
+        std::array<ObjectTemplateValue, maxObjectTemplateObjectValues> objectValues;
+    };
+    // Does not change while a parse is running.
+    ALWAYS_INLINE uint64_t objectTemplateOwner(StructureID emptyObjectStructureID) const
+    {
+        return (static_cast<uint64_t>(m_objectTemplateEpoch) << 32) | emptyObjectStructureID.bits();
+    }
+    // The source starts after a "{". Returns the template of owner whose text the source starts with, unless templates
+    // are paused. previous is the template that made the array element before this one, if there is one, and its
+    // successor is tried first, so that elements that repeat in the same order are found without hashing the source.
+    ALWAYS_INLINE const ObjectTemplate* lookUpObjectTemplate(const ObjectTemplate* previous, std::span<const Latin1Character> source, uint64_t owner) LIFETIME_BOUND;
+    // Records object, made from the first textLength characters of source, which start after its "{", unless its
+    // properties do not all fit in its inline storage or a value cannot be part of a template.
+    void addObjectTemplate(std::span<const Latin1Character> source, unsigned textLength, JSObject*, uint64_t owner);
+    // Looking up and recording templates costs more than they save unless most recorded templates are used, which they
+    // are not for objects that do not repeat, or that repeat among more distinct objects than the table holds. Each
+    // costs credit and each use earns it, and templates are paused for a while when the credit runs out.
+    ALWAYS_INLINE bool shouldRecordObjectTemplate() const { return !m_objectTemplatePause; }
+
     ALWAYS_INLINE void clearStrings()
     {
         m_atomStrings.fill({ });
@@ -215,6 +269,7 @@ public:
         m_secondaryTransitions.fill({ });
         m_names.m_entries.fill({ });
         m_prefixedNames.m_entries.fill({ });
+        advanceObjectTemplateEpoch();
     }
 
 private:
@@ -262,6 +317,56 @@ private:
     static ALWAYS_INLINE unsigned secondaryTransitionIndex(uint64_t key);
     template<typename CharacterType> static ALWAYS_INLINE Structure* transitionIfMatches(const TransitionEntry&, StructureID from, std::span<const CharacterType> name);
     static ALWAYS_INLINE unsigned prefixedNameIndex(StructureID, uint32_t prefix);
+    static constexpr unsigned objectTemplateSize = 128;
+    static constexpr unsigned objectTemplateWays = 2;
+    // In units of about the cost of a lookup that fails.
+    static constexpr int32_t objectTemplateCreditPerUse = 4;
+    static constexpr int32_t objectTemplateRecordCost = 3;
+    static constexpr int32_t objectTemplateMissCost = 1;
+    static constexpr int32_t initialObjectTemplateCredit = 64;
+    static constexpr int32_t objectTemplateCreditAfterPause = 32;
+    static constexpr int32_t maxObjectTemplateCredit = 1024;
+    // In lookups that are skipped.
+    static constexpr uint32_t objectTemplatePauseLength = 256;
+    static ALWAYS_INLINE uint64_t objectTemplateHash(std::span<const Latin1Character> source);
+    static ALWAYS_INLINE unsigned objectTemplateIndex(uint64_t hash);
+    ALWAYS_INLINE const ObjectTemplate* findObjectTemplate(std::span<const Latin1Character> source, uint64_t owner);
+    ALWAYS_INLINE const ObjectTemplate* findNextElementObjectTemplate(const ObjectTemplate* previous, std::span<const Latin1Character> source, uint64_t owner);
+    static ALWAYS_INLINE bool objectTemplateMatches(const ObjectTemplate&, uint64_t hash, uint64_t owner, std::span<const Latin1Character> source);
+    static ALWAYS_INLINE bool objectTemplateTextMatches(const ObjectTemplate&, uint64_t owner, std::span<const Latin1Character> source);
+    ALWAYS_INLINE void creditObjectTemplateUse()
+    {
+        m_objectTemplateCredit = std::min(m_objectTemplateCredit + objectTemplateCreditPerUse, maxObjectTemplateCredit);
+    }
+    ALWAYS_INLINE void debitObjectTemplates(int32_t cost)
+    {
+        m_objectTemplateCredit -= cost;
+        if (m_objectTemplateCredit <= 0) [[unlikely]] {
+            m_objectTemplatePause = objectTemplatePauseLength;
+            m_objectTemplateCredit = objectTemplateCreditAfterPause;
+        }
+    }
+    ALWAYS_INLINE void resetObjectTemplateCredit()
+    {
+        m_objectTemplateCredit = initialObjectTemplateCredit;
+        m_objectTemplatePause = 0;
+    }
+    ALWAYS_INLINE void advanceObjectTemplateEpoch()
+    {
+        // An entry whose epoch comes around again would match with cells that may be dead.
+        if (!++m_objectTemplateEpoch) [[unlikely]] {
+            if (m_objectTemplates)
+                m_objectTemplates->m_entries.fill({ });
+            m_objectTemplateEpoch = 1;
+        }
+    }
+    struct ObjectTemplates {
+        WTF_MAKE_TZONE_ALLOCATED(ObjectTemplates);
+    public:
+        std::array<ObjectTemplate, objectTemplateSize> m_entries { };
+        // The way of each set used most recently. A new template replaces the other one, so that no template is copied.
+        std::array<uint8_t, objectTemplateSize / objectTemplateWays> m_recentWays { };
+    };
     // Characters are folded to bytes before they are hashed, so that 16-bit text finds the names and long
     // strings recorded from the same 8-bit text.
     static ALWAYS_INLINE uint32_t sourcePrefix(std::span<const Latin1Character> source);
@@ -337,6 +442,12 @@ private:
     StringTable m_strings { };
     std::array<StringEntry, longStringEntrySize> m_longStrings { };
     std::array<StringEntry, secondaryLongStringEntrySize> m_secondaryLongStrings { };
+    // Allocated when the first template is recorded, since many VMs never parse such JSON.
+    std::unique_ptr<ObjectTemplates> m_objectTemplates;
+    // Empty entries have epoch 0, which is never current.
+    uint32_t m_objectTemplateEpoch { 1 };
+    int32_t m_objectTemplateCredit { initialObjectTemplateCredit };
+    uint32_t m_objectTemplatePause { 0 };
     bool m_isParsing { false };
 };
 
