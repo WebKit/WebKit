@@ -1428,7 +1428,7 @@ void RenderElement::willBeDestroyed()
         protect(view())->removeRendererWithPausedImageAnimations(*this);
 
     if (style().contentVisibility() == ContentVisibility::Auto && element())
-        ContentVisibilityDocumentState::unobserve(*protect(element()));
+        ContentVisibilityDocumentState::rendererWillBeDestroyed(*protect(element()));
 }
 
 void RenderElement::setNeedsOutOfFlowMovementLayout(const Style::ComputedStyle* oldStyle)

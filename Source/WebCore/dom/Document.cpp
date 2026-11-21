@@ -2748,6 +2748,8 @@ void Document::updateRenderTree(std::unique_ptr<Style::Update> styleUpdate)
             RenderTreeUpdater updater(*this, callbackDisabler);
             updater.commit(WTF::move(styleUpdate));
         }
+        if (m_contentVisibilityDocumentState)
+            m_contentVisibilityDocumentState->finishRenderTreeUpdate();
     }
 }
 

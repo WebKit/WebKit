@@ -38,7 +38,9 @@
 #include "Logging.h"
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 #include "Settings.h"
 #include "SimpleRange.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -87,6 +89,7 @@ void ContentVisibilityDocumentState::observe(Element& element)
 {
     Ref document = element.document();
     auto& state = document->contentVisibilityDocumentState();
+    state.m_elementsWithRetainedRelevancy.remove(element);
     if (RefPtr intersectionObserver = state.intersectionObserver(document))
         intersectionObserver->observe(element);
 }
@@ -102,6 +105,41 @@ void ContentVisibilityDocumentState::unobserve(Element& element)
     element.setContentRelevancy({ });
 }
 
+void ContentVisibilityDocumentState::rendererWillBeDestroyed(Element& element)
+{
+    Ref document = element.document();
+    if (!document->inRenderTreeUpdate() || !element.isConnected()) {
+        unobserve(element);
+        return;
+    }
+
+    // A render tree update that destroys the renderer of a connected element usually creates a new one for it right away, for example
+    // when the renderers of a subtree are rebuilt. The style of the new renderer was resolved against the element's current relevancy,
+    // so resetting the relevancy here would make the skipped state in that style disagree with the element's, and layout would skip
+    // content that style considers relevant. Keep the relevancy until the update is done; finishRenderTreeUpdate() resets it for
+    // elements that did not get a new content-visibility:auto renderer.
+    auto& state = document->contentVisibilityDocumentState();
+    if (RefPtr intersectionObserver = state.m_observer)
+        intersectionObserver->unobserve(element);
+    state.m_elementsWithRetainedRelevancy.add(element);
+}
+
+void ContentVisibilityDocumentState::finishRenderTreeUpdate()
+{
+    if (m_elementsWithRetainedRelevancy.isEmptyIgnoringNullReferences())
+        return;
+
+    Vector<Ref<Element>> elements;
+    for (auto& element : m_elementsWithRetainedRelevancy)
+        elements.append(element);
+    m_elementsWithRetainedRelevancy.clear();
+
+    for (auto& element : elements) {
+        removeViewportProximity(element);
+        element->setContentRelevancy({ });
+    }
+}
+
 IntersectionObserver* ContentVisibilityDocumentState::intersectionObserver(Document& document)
 {
     if (!m_observer) {
@@ -114,6 +152,26 @@ IntersectionObserver* ContentVisibilityDocumentState::intersectionObserver(Docum
         lazyInitialize(m_observer, observer.releaseReturnValue());
     }
     return m_observer.get();
+}
+
+// When a skipped content root is laid out, the layout bits of its whole subtree are cleared without the descendants being laid out.
+// Those descendants get laid out when the root becomes relevant because the change in used content-visibility makes style
+// resolution give every descendant a layout-affecting style change. That does not happen when the renderer was replaced in the
+// meantime: the new renderer already got the style for the relevant state, so the style does not change again when the
+// element's relevancy catches up. Dirty the stale content explicitly.
+static void markSkippedContentForRelayout(Element& target)
+{
+    CheckedPtr renderer = target.renderer();
+    if (!renderer)
+        return;
+
+    renderer->setNeedsLayout();
+    for (CheckedRef descendant : descendantsOfType<RenderObject>(*renderer)) {
+        auto wasSkippedDuringLastLayout = descendant->wasSkippedDuringLastLayoutDueToContentVisibility();
+        // Never had layout, or was skipped during the last one.
+        if (!wasSkippedDuringLastLayout || *wasSkippedDuringLastLayout)
+            descendant->setNeedsLayout(MarkingBehavior::OnlyThis);
+    }
 }
 
 bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(Element& target, OptionSet<ContentRelevancy> relevancyToCheck) const
@@ -167,6 +225,8 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
     auto wasSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.setContentRelevancy(newRelevancy);
     auto isSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
+    if (wasSkippedContent == IsSkippedContent::Yes && isSkippedContent == IsSkippedContent::No)
+        markSkippedContentForRelayout(target);
     target.invalidateStyle();
     updateAnimations(target, wasSkippedContent, isSkippedContent);
     Node::queueTaskKeepingNodeAlive(target, TaskSource::DOMManipulation, [isSkippedContent](auto& element) {
