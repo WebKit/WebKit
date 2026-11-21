@@ -881,6 +881,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtensionAPIPermissions.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPITabs.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPITest.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIWebNavigation.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIWebRequest.swift
