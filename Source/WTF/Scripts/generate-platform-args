@@ -6,6 +6,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 
 # Preprocesses wtf/Platform.h with clang, extracts macro definitions, and saves
 # the platform flags to a Swift-style response file containing -D arguments.
@@ -25,6 +26,13 @@ import sys
 #
 #   cmake feature defines (--print-feature-defines): writes the truthy platform
 #   define names to --output (or stdout) for the generators' --defines-file.
+#   With --check-probe, also fails if a flag CMake read at configure time no
+#   longer has the value --cmake-probe gave it.
+#
+#   cmake probe (--cmake-probe): run at configure time. Writes a CMake file
+#   setting WEBKIT_PLATFORM_H_<NAME> to 0 or 1 for every HAVE_/USE_/ENABLE_
+#   macro, evaluated the way #if sees it, and WEBKIT_PLATFORM_H_OVERRIDES to the
+#   --cmakeconfig entries that change a value wtf/Platform.h alone defines.
 
 DEFINE_RE = re.compile(r'^#define (\w+) (.+)', re.MULTILINE)
 PLATFORM_PREFIX_RE = re.compile(r'^(HAVE_|USE_|ENABLE_|WTF_PLATFORM|ASSERT_|LOG_)')
@@ -196,8 +204,92 @@ def write_if_changed(path, content):
         f.write(content)
 
 
+EVALUATED_PREFIX_RE = re.compile(r'^(HAVE_|USE_|ENABLE_)')
+VALUE_MARKER = '__WK_PLATFORM_ARGS_VALUE__'
+
+
+def strip_command_separator(command):
+    if command and command[0] == '--':
+        return command[1:]
+    return command
+
+
+def without_depfile(command):
+    result = []
+    skip_next = False
+    for arg in strip_command_separator(command):
+        if skip_next:
+            skip_next = False
+        elif arg in ('-MF', '-MT', '-MQ'):
+            skip_next = True
+        elif arg not in ('-MD', '-MMD'):
+            result.append(arg)
+    return result
+
+
+def evaluate_macros(command, names):
+    """Return {name: 0 or 1} for each of `names` that the -dM preprocess `command`
+    defines, as `#if defined(NAME) && NAME` evaluates it. Unlike
+    platform_defines_from_dM, this handles values like `PLATFORM(COCOA)` or `(A || B)`."""
+    evaluate = [arg for arg in without_depfile(command)[:-1] if arg != '-dM']
+    with tempfile.NamedTemporaryFile('w', suffix='.cpp', delete=False) as source:
+        for index, name in enumerate(names):
+            source.write(f'#if defined({name})\n#if {name}\n{VALUE_MARKER} {index} 1\n'
+                         f'#else\n{VALUE_MARKER} {index} 0\n#endif\n#endif\n')
+    try:
+        output = run_clang_command([*evaluate, '-w', source.name])
+    finally:
+        os.unlink(source.name)
+    return {names[int(index)]: int(value) for index, value
+            in re.findall(rf'^{VALUE_MARKER} (\d+) ([01])$', output, re.MULTILINE)}
+
+
+def evaluate_platform_macros(command):
+    names = sorted({m.group(1) for m in re.finditer(DEFINE_RE, run_clang_command(command))
+                    if EVALUATED_PREFIX_RE.match(m.group(1))})
+    return evaluate_macros(command, names)
+
+
+def read_cmakeconfig(path):
+    with open(path) as f:
+        return {m.group(1): m.group(2) for m in re.finditer(DEFINE_RE, f.read())}
+
+
+def run_cmake_probe_mode(args):
+    command = strip_command_separator(args.command)
+    values = evaluate_platform_macros(command)
+    overrides = []
+    if args.cmakeconfig:
+        alone_command = without_depfile(command)
+        alone = evaluate_platform_macros([*alone_command[:-1], '-DCMAKECONFIG_H', alone_command[-1]])
+        for name in sorted(read_cmakeconfig(args.cmakeconfig)):
+            if name in values and name in alone and values[name] != alone[name]:
+                overrides.append(f'{name}={values[name]}:{alone[name]}')
+    lines = [f'set(WEBKIT_PLATFORM_H_{name} {value})' for name, value in sorted(values.items())]
+    lines.append(f'set(WEBKIT_PLATFORM_H_OVERRIDES "{";".join(overrides)}")')
+    write_if_changed(args.output, '\n'.join(lines) + '\n')
+
+
+def check_probe(command, expectations_path):
+    with open(expectations_path) as f:
+        expected = dict(line.strip().split('=') for line in f if '=' in line)
+    if not expected:
+        return
+    actual = evaluate_macros(command, sorted(expected))
+    stale = [f'{name} (configured {value}, now {actual.get(name, 0)})'
+             for name, value in sorted(expected.items()) if actual.get(name, 0) != int(value)]
+    if stale:
+        sys.exit('error: CMake read these wtf/Platform.h features at configure time, and their '
+                 'values have changed since: ' + ', '.join(stale) + '. Re-run cmake once. On a new '
+                 'build directory with the Apple internal SDK this can happen once: cmake ran before '
+                 'the build staged WebKitAdditions/AdditionalFeatureDefines.h, so it read the SDK\'s '
+                 'copy of that header.')
+
+
 def run_print_feature_defines_mode(args):
     names = platform_defines_from_dM(run_clang_command(args.command))
+    if args.check_probe:
+        check_probe(args.command, args.check_probe)
     if args.output:
         write_if_changed(args.output, '\n'.join(names) + '\n')
     else:
@@ -216,12 +308,21 @@ def main():
                     help='cmake mode: output path (--cmake resp or '
                          '--print-feature-defines names).')
     ap.add_argument('--cmakeconfig',
-                    help='cmake mode: path to cmakeconfig.h to seed the clang importer.')
+                    help='cmake mode: path to cmakeconfig.h to seed the clang importer. '
+                         'cmake probe mode: cmakeconfig.h to report overrides of.')
+    ap.add_argument('--cmake-probe', action='store_true',
+                    help='Write the evaluated platform macros to --output as a CMake file.')
+    ap.add_argument('--check-probe',
+                    help='--print-feature-defines: NAME=VALUE lines that must still hold.')
     ap.add_argument('command', nargs=argparse.REMAINDER,
                     help='cmake mode: clang preprocess command (preceded by --).')
     args = ap.parse_args()
 
-    if args.print_feature_defines:
+    if args.cmake_probe:
+        if not args.output:
+            ap.error('--cmake-probe requires --output')
+        run_cmake_probe_mode(args)
+    elif args.print_feature_defines:
         run_print_feature_defines_mode(args)
     elif args.cmake:
         if not args.output or not args.cmakeconfig:
