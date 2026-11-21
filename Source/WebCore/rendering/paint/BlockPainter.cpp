@@ -30,7 +30,6 @@
 #include "BorderShape.h"
 #include "BoxDecorationPainter.h"
 #include "EventRegion.h"
-#include "FloatingObjects.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HTMLTextFormControlElement.h"
@@ -225,8 +224,12 @@ bool BlockPainter::paintChild(RenderBox& child, PaintInfo& paintInfoForChild, bo
     }
 
     LayoutPoint childPoint = m_block->blockStartRelativeToPhysicalForChild(child, m_paintOffset);
-    if (!child.hasSelfPaintingLayer() && !child.isFloating()) {
-        if (paintType == PaintAsInlineBlock)
+    if (!child.hasSelfPaintingLayer()) {
+        if (child.isFloating()) {
+            // Only a RenderBlockFlow places floats.
+            if (is<RenderBlockFlow>(m_block))
+                paintFloat(child, childPoint);
+        } else if (paintType == PaintAsInlineBlock)
             child.paintAsInlineBlock(paintInfoForChild, childPoint);
         else
             child.paint(paintInfoForChild, childPoint);
@@ -441,20 +444,6 @@ void BlockPainter::paintObject()
         m_block->paintSelection(m_paintInfo, scrolledOffset);
     }
 
-    if (shouldPaintContent) {
-        // 4. paint floats.
-        auto isNonPaintingTraversalPhase = paintPhase == PaintPhase::Selection
-            || paintPhase == PaintPhase::TextClip
-            || paintPhase == PaintPhase::EventRegion
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-            || paintPhase == PaintPhase::AXCustomColorComputeBackdrops
-            || paintPhase == PaintPhase::AXCustomColorCollectBackgrounds
-#endif
-            || paintPhase == PaintPhase::Accessibility;
-        if (paintPhase == PaintPhase::Float || isNonPaintingTraversalPhase)
-            paintFloats(scrolledOffset, isNonPaintingTraversalPhase);
-    }
-
     // 5. paint outline.
     if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && m_block->hasOutline() && m_block->usedStyle().visibility() == UsedVisibility::Visible)
         m_block->paintOutline(m_paintInfo, LayoutRect(m_paintOffset, m_block->borderBoxSize()));
@@ -492,60 +481,65 @@ void BlockPainter::paintColumnRules(const LayoutPoint& paintOffset)
     }
 }
 
-void BlockPainter::paintFloats(const LayoutPoint& paintOffset, bool preservePhase)
+static bool isNonPaintingTraversalPhase(PaintPhase phase)
 {
-    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_block);
-    if (!blockFlow)
+    return phase == PaintPhase::Selection
+        || phase == PaintPhase::TextClip
+        || phase == PaintPhase::EventRegion
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        || phase == PaintPhase::AXCustomColorComputeBackdrops
+        || phase == PaintPhase::AXCustomColorCollectBackgrounds
+#endif
+        || phase == PaintPhase::Accessibility;
+}
+
+void BlockPainter::paintFloat(RenderBox& floatBox, const LayoutPoint& floatBoxLocation)
+{
+    ASSERT(floatBox.isFloating() && !floatBox.hasSelfPaintingLayer());
+
+    auto preservePhase = isNonPaintingTraversalPhase(m_paintInfo.phase);
+    if (m_paintInfo.phase != PaintPhase::Float && !preservePhase)
+        return;
+    // Layout skips the floats that line-clamp hides after the clamp point.
+    if (floatBox.isForceHiddenByLineClamp())
         return;
 
-    auto* floatingObjectSet = blockFlow->floatingObjectSet();
-    if (!floatingObjectSet)
+    GraphicsContextStateSaver stateSaver(m_paintInfo.context(), false);
+
+    auto clipBlockEndIfNeeded = [&] {
+        // The clip rect in the float's own coordinates, moved to where the float's border box paints.
+        auto clipRect = LineClampUpdater::blockEndClipRect(floatBox, floatBox);
+        if (!clipRect)
+            return;
+        clipRect->moveBy(floatBoxLocation + floatBox.locationOffset());
+        // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
+        clipRect->intersect(m_paintInfo.rect);
+        stateSaver.save();
+        m_paintInfo.context().clip(*clipRect);
+    };
+    clipBlockEndIfNeeded();
+
+    if (preservePhase) {
+        floatBox.paint(m_paintInfo, floatBoxLocation);
         return;
-
-    for (auto& floatingObject : *floatingObjectSet) {
-        if (!floatingObject->renderer())
-            continue;
-        if (!floatingObject->shouldPaint())
-            continue;
-
-        auto floatBoxLocation = blockFlow->blockStartRelativeToPhysicalForFloat(*floatingObject, paintOffset + floatingObject->translationOffsetToAncestor());
-        CheckedRef renderer = *floatingObject->renderer();
-        GraphicsContextStateSaver stateSaver(m_paintInfo.context(), false);
-
-        auto clipBlockEndIfNeeded = [&] {
-            // The clip rect in the float's own coordinates, moved to where the float's border box paints.
-            auto clipRect = LineClampUpdater::blockEndClipRect(renderer, renderer);
-            if (!clipRect)
-                return;
-            clipRect->moveBy(floatBoxLocation + renderer->locationOffset());
-            // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
-            clipRect->intersect(m_paintInfo.rect);
-            stateSaver.save();
-            m_paintInfo.context().clip(*clipRect);
-        };
-        clipBlockEndIfNeeded();
-
-        if (preservePhase) {
-            renderer->paint(m_paintInfo, floatBoxLocation);
-            continue;
-        }
-        auto paintInfoForFloat = PaintInfo { m_paintInfo };
-
-        paintInfoForFloat.phase = PaintPhase::BlockBackground;
-        renderer->paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::ChildBlockBackgrounds;
-        renderer->paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Float;
-        renderer->paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Foreground;
-        renderer->paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Outline;
-        renderer->paint(paintInfoForFloat, floatBoxLocation);
     }
+    // "Paint a stacking context given |root| and |canvas|, treating |root| as if it created a new stacking context" (css-position-4, paint a stacking container).
+    auto paintInfoForFloat = PaintInfo { m_paintInfo };
+
+    paintInfoForFloat.phase = PaintPhase::BlockBackground;
+    floatBox.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::ChildBlockBackgrounds;
+    floatBox.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::Float;
+    floatBox.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::Foreground;
+    floatBox.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::Outline;
+    floatBox.paint(paintInfoForFloat, floatBoxLocation);
 }
 
 void BlockPainter::paintInlineChildren(const LayoutPoint& paintOffset)
@@ -561,8 +555,23 @@ void BlockPainter::paintInlineChildren(const LayoutPoint& paintOffset)
     if (!blockFlow)
         return;
 
-    if (CheckedPtr inlineLayout = blockFlow->inlineLayout())
-        inlineLayout->paint(m_paintInfo, paintOffset);
+    CheckedPtr inlineLayout = blockFlow->inlineLayout();
+    if (!inlineLayout)
+        return;
+
+    if (m_paintInfo.phase == PaintPhase::Float && inlineLayout->hasFloats()) {
+        BlockPainter { m_block, m_paintInfo, paintOffset }.paintFloatsAndBlockLevelContentInInline(*inlineLayout);
+        return;
+    }
+
+    inlineLayout->paint(m_paintInfo, paintOffset);
+
+    if (isNonPaintingTraversalPhase(m_paintInfo.phase) && inlineLayout->hasFloats()) {
+        for (auto& child : inlineLayout->floatsAndBlockLevelBoxesInTreeOrder()) {
+            if (child->isFloating() && !child->hasSelfPaintingLayer())
+                paintFloat(child, blockFlow->blockStartRelativeToPhysicalForChild(child, paintOffset));
+        }
+    }
 }
 
 void BlockPainter::paintBlockLevelContentInInline()
@@ -573,10 +582,25 @@ void BlockPainter::paintBlockLevelContentInInline()
 
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_block)); !walker.atEnd(); walker.advance()) {
         CheckedPtr child = dynamicDowncast<RenderBox>(walker.current());
-        if (!child)
+        // paintInlineChildren() paints the floats.
+        if (!child || child->isFloating())
             continue;
         if (!paintChild(*child, paintInfoForChildren, false))
             return;
+    }
+}
+
+void BlockPainter::paintFloatsAndBlockLevelContentInInline(const LayoutIntegration::LineLayout& inlineLayout)
+{
+    ASSERT(m_paintInfo.phase == PaintPhase::Float);
+
+    PaintInfo paintInfoForChildren = paintInfoForBlockChildren(m_block, m_paintInfo);
+
+    for (auto& child : inlineLayout.floatsAndBlockLevelBoxesInTreeOrder()) {
+        // Like InlineContentPainter.
+        if (!child->isFloating() && !m_paintInfo.shouldPaintWithinRoot(child))
+            continue;
+        paintChild(child, paintInfoForChildren, false);
     }
 }
 

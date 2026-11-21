@@ -548,7 +548,6 @@ public:
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
     void repaintDuringLayoutIfMoved(const LayoutRect&);
-    virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
     // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
@@ -609,8 +608,6 @@ public:
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
     NODELETE bool computeHasTransformRelatedProperty(const Style::ComputedStyle&) const;
-
-    void updateFloatPainterAfterSelfPaintingLayerChange();
 
     ShapeOutsideInfo* shapeOutsideInfo() const LIFETIME_BOUND;
 

@@ -1629,8 +1629,6 @@ bool RenderBlock::hitTestChildren(const HitTestRequest& request, HitTestResult& 
     const LayoutSize localOffset = toLayoutSize(adjustedLocation);
     const LayoutSize scrolledOffset(localOffset - toLayoutSize(scrollPosition()));
 
-    if (hitTestAction == HitTestAction::Float && hitTestFloats(request, result, locationInContainer, toLayoutPoint(scrolledOffset)))
-        return true;
     if (hitTestContents(request, result, locationInContainer, toLayoutPoint(scrolledOffset), hitTestAction)) {
         updateHitTestResult(result, physicalToBlockStartRelative(locationInContainer.point() - localOffset));
         return true;
@@ -1700,11 +1698,38 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         childHitTest = HitTestAction::ChildBlockBackground;
     for (auto* child = lastChildBox(); child; child = child->previousSiblingBox()) {
         LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*child, accumulatedOffset);
-        if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest))
+        if (child->hasSelfPaintingLayer())
+            continue;
+        if (child->isFloating()) {
+            // Like BlockPainter::paintChild, in reverse.
+            if (hitTestAction == HitTestAction::Float && is<RenderBlockFlow>(*this) && hitTestFloat(*child, request, result, locationInContainer, childPoint))
+                return true;
+            continue;
+        }
+        if (child->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest))
             return true;
     }
 
     return false;
+}
+
+bool RenderBlock::hitTestFloat(RenderBox& floatBox, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& floatBoxLocation)
+{
+    ASSERT(floatBox.isFloating() && !floatBox.hasSelfPaintingLayer());
+
+    // Layout skips the floats that line-clamp hides after the clamp point.
+    if (floatBox.isForceHiddenByLineClamp())
+        return false;
+
+    auto adjustedFloatBoxLocation = floatBoxLocation;
+    if (auto* renderView = dynamicDowncast<RenderView>(*this))
+        adjustedFloatBoxLocation += toLayoutSize(protect(renderView->frameView())->scrollPosition());
+
+    // Like BlockPainter::paintFloat, as a whole.
+    if (!floatBox.hitTest(request, result, locationInContainer, adjustedFloatBoxLocation))
+        return false;
+    updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedFloatBoxLocation));
+    return true;
 }
 
 static inline bool isEditingBoundary(RenderElement* ancestor, RenderBox& child)

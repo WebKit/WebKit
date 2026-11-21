@@ -268,6 +268,8 @@ protected:
     
     void markFixedPositionBoxForLayoutIfNeeded(RenderBox& child);
 
+    bool hitTestFloat(RenderBox&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&);
+
     std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalMarginStartAndEnd(const RenderBox&) const;
     inline LayoutUnit marginIntrinsicLogicalWidthForChild(const RenderBox&) const;
 
@@ -347,8 +349,6 @@ private:
     void paintSelection(PaintInfo&, const LayoutPoint&);
 
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
-    // FIXME-BLOCKFLOW: Remove virtualization when all callers have moved to RenderBlockFlow
-    virtual bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&) { return false; }
     virtual bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction);
     virtual bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) { return false; }
 
