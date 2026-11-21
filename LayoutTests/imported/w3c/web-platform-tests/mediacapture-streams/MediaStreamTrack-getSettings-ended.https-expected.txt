@@ -1,0 +1,6 @@
+
+PASS getSettings() of an ended camera track only exposes inherent properties
+PASS getSettings() of an ended microphone track only exposes inherent properties
+PASS getSettings() of an ended canvas capture track only exposes inherent properties
+PASS getSettings() of an ended WebAudio track only exposes inherent properties
+

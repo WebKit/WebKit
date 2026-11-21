@@ -278,6 +278,18 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
 {
     auto& settings = m_private->settings();
     TrackSettings result;
+
+    // https://w3c.github.io/mediacapture-main/#dom-mediastreamtrack-getsettings
+    if (m_readyState == State::Ended) {
+        if (settings.supportsFacingMode())
+            result.facingMode = convertEnumerationToString(settings.facingMode());
+        if (settings.supportsDeviceId())
+            result.deviceId = settings.deviceId();
+        if (settings.supportsGroupId())
+            result.groupId = settings.groupId();
+        return result;
+    }
+
     if (settings.supportsWidth() && settings.width())
         result.width = settings.width();
     if (settings.supportsHeight() && settings.height())
