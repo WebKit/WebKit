@@ -17563,6 +17563,7 @@ WebPageCreationParameters WebPageProxy::creationParametersForProvisionalPage(Web
 WebPageCreationParameters WebPageProxy::creationParametersForRemotePage(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RemotePageParameters&& remotePageParameters)
 {
     constexpr bool isProcessSwap = true;
+    remotePageParameters.pageScaleFactor = m_pageScaleFactor;
     return creationParameters(process, drawingArea, m_mainFrame->frameID(), WTF::move(remotePageParameters), isProcessSwap);
 }
 

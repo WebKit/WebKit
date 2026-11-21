@@ -113,6 +113,7 @@ struct RemotePageParameters {
     FrameTreeCreationParameters frameTreeParameters;
     std::optional<WebsitePoliciesData> websitePoliciesData;
     Ref<WebCore::DocumentSyncData> topDocumentSyncData;
+    double pageScaleFactor { 1 };
 };
 
 struct WebPageCreationParameters {

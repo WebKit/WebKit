@@ -5269,4 +5269,65 @@ TEST(SiteIsolation, ClosePageFromIframeProcessIsCheckedAgainstClosePolicy)
 
 #endif // ENABLE(IPC_TESTING_API)
 
+#if PLATFORM(IOS_FAMILY)
+
+TEST(SiteIsolation, PageScaleReachesCrossOriginIframesAfterZooming)
+{
+    static constexpr auto iframeHTML = "<body>iframe</body>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><body><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { iframeHTML } },
+        { "/iframe2"_s, { iframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // Give each site its own process, so the iframe added below needs a new one.
+    RetainPtr configuration = configurationWithInternals(server);
+    setFeatureEnabled(configuration.get(), @"SiteIsolationSharedProcessEnabled", false);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    auto pageScale = [&](WKFrameInfo *frame) {
+        return [[webView objectByEvaluatingJavaScript:@"internals.pageScaleFactor()" inFrame:frame] doubleValue];
+    };
+
+    // Zooming only takes effect once the first layer tree commit has set the scroll view's zoom range.
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(Util::waitFor([&] {
+        if (std::abs(pageScale(nil) - 2) < 0.01)
+            return true;
+        [[webView scrollView] setZoomScale:2 animated:NO];
+        return false;
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return std::abs(pageScale(childFrame.get()) - 2) < 0.01;
+    }));
+
+    // A process created after zooming has to start out with the page's scale.
+    [webView objectByEvaluatingJavaScript:@"let iframe = document.createElement('iframe'); iframe.onload = () => window.addedIframeLoaded = true; iframe.src = 'https://apple.com/iframe'; document.body.appendChild(iframe); true"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.addedIframeLoaded"] boolValue];
+    }));
+    RetainPtr newChildFrame = [webView secondChildFrame];
+    EXPECT_NE(newChildFrame.get()._processIdentifier, childFrame.get()._processIdentifier);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return std::abs(pageScale(newChildFrame.get()) - 2) < 0.01;
+    }));
+
+    // A load committing in an iframe's process keeps the page's scale.
+    [webView objectByEvaluatingJavaScript:@"location.href = '/iframe2'; true" inFrame:childFrame.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView firstChildFrame].request.URL.path isEqualToString:@"/iframe2"];
+    }));
+    RetainPtr navigatedChildFrame = [webView firstChildFrame];
+    EXPECT_EQ(navigatedChildFrame.get()._processIdentifier, childFrame.get()._processIdentifier);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return std::abs(pageScale(navigatedChildFrame.get()) - 2) < 0.01;
+    }));
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 } // namespace TestWebKitAPI

@@ -1218,6 +1218,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (parameters.viewScaleFactor != 1)
         scaleView(parameters.viewScaleFactor);
 
+    if (parameters.remotePageParameters && parameters.remotePageParameters->pageScaleFactor != 1)
+        didScalePage(parameters.remotePageParameters->pageScaleFactor, { });
+
     page->addLayoutMilestones(parameters.observedLayoutMilestones);
 
 #if PLATFORM(COCOA)
@@ -8867,7 +8870,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
         reportUsedFeatures();
 
     // Only restore the scale factor for standard frame loads (of the main frame).
-    if (frame->coreLocalFrame()->loader().loadType() == FrameLoadType::Standard) {
+    if (frame->isMainFrame() && frame->coreLocalFrame()->loader().loadType() == FrameLoadType::Standard) {
         RefPtr page = frame->coreLocalFrame()->page();
 
 #if PLATFORM(MAC)
