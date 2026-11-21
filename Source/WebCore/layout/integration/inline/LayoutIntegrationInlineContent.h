@@ -81,6 +81,7 @@ public:
     float clearBeforeAfterGaps() const { return m_clearGapBeforeFirstLine + m_clearGapAfterLastLine; }
     float clearGapBeforeFirstLine() const { return m_clearGapBeforeFirstLine; }
     bool hasBlockLevelBoxes() const { return m_hasBlockLevelBoxes; }
+    bool hasFloats() const { return m_hasFloats; }
     bool hasPaintedInlineLevelBoxes() const { return m_hasPaintedInlineLevelBoxes; }
     bool contentFitsWithinMaximumLines() const { return m_contentFitsWithinMaximumLines; }
 
@@ -118,6 +119,7 @@ private:
     void setClearGapAfterLastLine(float clearGapAfterLastLine) { m_clearGapAfterLastLine = clearGapAfterLastLine; }
     void setFirstLinePaginationOffset(float firstLinePaginationOffset) { m_firstLinePaginationOffset = firstLinePaginationOffset; }
     void setHasBlockLevelBoxes() { m_hasBlockLevelBoxes = true; }
+    void setHasFloats(bool hasFloats) { m_hasFloats = hasFloats; }
     void setContentMayHaveInkOverflow(bool mayHaveInkOverflow) { m_contentMayHaveInkOverflow = mayHaveInkOverflow; }
     bool contentMayHaveInkOverflow() const { return m_contentMayHaveInkOverflow; }
     void setHasPaintedInlineLevelBoxes() { m_hasPaintedInlineLevelBoxes = true; }
@@ -142,6 +144,7 @@ private:
 
     bool m_hasMultilinePaintOverlap { false };
     bool m_hasBlockLevelBoxes { false };
+    bool m_hasFloats { false };
     bool m_contentMayHaveInkOverflow { false };
     bool m_hasPaintedInlineLevelBoxes { false };
 
