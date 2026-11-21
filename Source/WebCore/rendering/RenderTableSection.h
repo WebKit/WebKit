@@ -190,7 +190,7 @@ private:
 
     void ensureRows(unsigned);
 
-    void relayoutCellIfFlexed(RenderTableCell&, int rowIndex, int rowHeight);
+    void relayoutCellIfFlexed(RenderTableCell&, int rowIndex, LayoutUnit rowHeight);
     
     NODELETE LayoutUnit rowLogicalHeight(unsigned row) const;
 

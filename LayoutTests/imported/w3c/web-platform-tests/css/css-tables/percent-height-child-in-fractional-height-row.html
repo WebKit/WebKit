@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<title>Percentage-height children of table cells in rows with fractional heights</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#row-layout">
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#height-distribution-algorithm">
+<meta name="assert" content="A table cell (and its percentage-height children) is sized to the full, non-truncated height of its row when that height is fractional.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+table {
+    border-spacing: 0;
+    margin-bottom: 10px;
+}
+td {
+    padding: 0;
+    width: 50px;
+}
+.child {
+    height: 100%;
+    background: green;
+}
+canvas.child {
+    display: block;
+    width: 50px;
+}
+</style>
+
+<table id="fixed-cell-height">
+    <tr><td style="height: 50.5px"><div class="child"></div></td></tr>
+</table>
+
+<table id="fixed-cell-height-replaced">
+    <tr><td style="height: 50.5px"><canvas class="child" width="50" height="10"></canvas></td></tr>
+</table>
+
+<table id="distributed-table-height" style="height: 101px">
+    <tr><td style="height: 10px"><div class="child"></div></td></tr>
+    <tr><td style="height: 10px"><div class="child"></div></td></tr>
+</table>
+
+<script>
+const epsilon = 0.02;
+
+function checkTable(id, expectedRowHeight) {
+    const table = document.getElementById(id);
+    for (const row of table.rows) {
+        const rowRect = row.getBoundingClientRect();
+        const cellRect = row.cells[0].getBoundingClientRect();
+        const childRect = row.cells[0].firstElementChild.getBoundingClientRect();
+        assert_approx_equals(rowRect.height, expectedRowHeight, epsilon, `row ${row.rowIndex} height`);
+        assert_approx_equals(cellRect.height, expectedRowHeight, epsilon, `cell in row ${row.rowIndex} height`);
+        assert_approx_equals(childRect.height, expectedRowHeight, epsilon, `percentage-height child in row ${row.rowIndex} height`);
+        assert_approx_equals(childRect.top, rowRect.top, epsilon, `percentage-height child in row ${row.rowIndex} top`);
+    }
+}
+
+test(() => checkTable("fixed-cell-height", 50.5), "Block child with height: 100% in a cell with height: 50.5px");
+test(() => checkTable("fixed-cell-height-replaced", 50.5), "Replaced child with height: 100% in a cell with height: 50.5px");
+test(() => checkTable("distributed-table-height", 50.5), "Block children with height: 100% in cells with height: 10px, in rows sharing a 101px table height");
+</script>
