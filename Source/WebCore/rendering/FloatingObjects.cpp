@@ -42,7 +42,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatingObjects);
 struct SameSizeAsFloatingObject {
     SingleThreadWeakPtr<RenderBox> renderer;
     LayoutRect rect;
-    int paginationStrut;
     LayoutSize size;
     uint32_t bitfields : 8;
 };
@@ -61,19 +60,15 @@ FloatingObject::FloatingObject(RenderBox& renderer)
         m_type = FloatLeft;
     else if (type == UsedFloat::Right)
         m_type = FloatRight;
-    if (CheckedPtr containingBlock = renderer.containingBlock())
-        m_hasAncestorWithOverflowClip = containingBlock->effectiveOverflowX() == Overflow::Clip || containingBlock->effectiveOverflowY() == Overflow::Clip;
 }
 
-FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool shouldPaint, bool isDescendant, bool overflowClipped)
+FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool isDescendant)
     : m_renderer(renderer)
     , m_frameRect(frameRect)
     , m_marginOffset(marginOffset)
     , m_type(type)
-    , m_paintsFloat(shouldPaint)
     , m_isDescendant(isDescendant)
     , m_isPlaced(true)
-    , m_hasAncestorWithOverflowClip(overflowClipped)
 {
 }
 
@@ -84,33 +79,18 @@ std::unique_ptr<FloatingObject> FloatingObject::create(RenderBox& renderer)
     return object;
 }
 
-std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant, bool overflowClipped) const
+std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool isDescendant) const
 {
     ASSERT(renderer());
-    return makeUnique<FloatingObject>(*renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), marginOffset(), shouldPaint, isDescendant, overflowClipped);
+    return makeUnique<FloatingObject>(*renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), marginOffset(), isDescendant);
 }
 
 std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
     ASSERT(renderer());
-    auto cloneObject = makeUnique<FloatingObject>(*renderer(), type(), m_frameRect, m_marginOffset, m_paintsFloat, m_isDescendant, m_hasAncestorWithOverflowClip);
-    cloneObject->m_paginationStrut = m_paginationStrut;
+    auto cloneObject = makeUnique<FloatingObject>(*renderer(), type(), m_frameRect, m_marginOffset, m_isDescendant);
     cloneObject->m_isPlaced = m_isPlaced;
     return cloneObject;
-}
-
-bool FloatingObject::shouldPaint() const
-{
-    if (!m_renderer)
-        return false;
-
-    return !m_renderer->hasSelfPaintingLayer() && m_paintsFloat;
-}
-
-LayoutSize FloatingObject::translationOffsetToAncestor() const
-{
-    ASSERT(renderer());
-    return locationOffsetOfBorderBox() - renderer()->locationOffset();
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -124,7 +104,7 @@ TextStream& operator<<(TextStream& stream, const FloatingObject& object)
         stream << " " << object.frameRect();
     else
         stream << " (not placed yet)";
-    return stream << " paintsFloat " << object.paintsFloat() << " shouldPaint " << object.shouldPaint();
+    return stream << " isDescendant " << object.isDescendant();
 }
 
 #endif
@@ -226,13 +206,11 @@ public:
     void collectIfNeeded(const IntervalType&);
 
     NODELETE LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
-    NODELETE LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
     SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_belowLogicalHeight;
     std::optional<LayoutUnit> m_nextLogicalBottom;
-    std::optional<LayoutUnit> m_nextShapeLogicalBottom;
 };
 
 inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalType& interval)
@@ -253,22 +231,7 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
     if (!floatingObject.renderer())
         return;
 
-    if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer()->shapeOutsideInfo()) {
-        LayoutUnit shapeBottom = m_renderer->logicalTopForFloat(floatingObject) + m_renderer->marginBeforeForChild(*floatingObject.renderer()) + shapeOutside->shapeLogicalBottom();
-        // Use the shapeBottom unless it extends outside of the margin box, in which case it is clipped.
-        m_nextShapeLogicalBottom = std::min(shapeBottom, floatBottom);
-    } else
-        m_nextShapeLogicalBottom = floatBottom;
     m_nextLogicalBottom = floatBottom;
-}
-
-LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelow(LayoutUnit logicalHeight)
-{
-    FindNextFloatLogicalBottomAdapter adapter(renderer(), logicalHeight);
-    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
-        placedFloatsTree->allOverlapsWithAdapter(adapter);
-
-    return adapter.nextShapeLogicalBottom();
 }
 
 LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight)
