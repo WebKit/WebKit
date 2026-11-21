@@ -87,6 +87,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-with-revalidation.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-svg-resource-no-fragment-id-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-svg-resource-no-fragment-id.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-then-data-url-href-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-then-data-url-href.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-use-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-use.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-foreignObject-expected.html

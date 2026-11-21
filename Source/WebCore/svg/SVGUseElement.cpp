@@ -663,11 +663,13 @@ void SVGUseElement::updateExternalDocument()
 {
     URL externalDocumentURL;
     Ref<Document> document = this->document();
-    // FIXME: This early exit should be removed once the ASSERT(!url.protocolIsData()) is removed from isExternalURIReference().
-    if (document->encodingParseURL(href()).protocolIsData())
-        return;
-    if (isConnected() && isExternalURIReference(href(), document))
-        externalDocumentURL = document->encodingParseURL(href());
+    if (isConnected()) {
+        auto url = document->encodingParseURL(href());
+        // FIXME: This data: check should be removed once the ASSERT(!url.protocolIsData()) is removed from isExternalURIReference().
+        // A data: href never has an external document, so fall through to release any previously loaded one.
+        if (!url.protocolIsData() && isExternalURIReference(href(), document))
+            externalDocumentURL = WTF::move(url);
+    }
 
     if (externalDocumentURL == (m_externalDocument ? protect(*m_externalDocument)->url() : URL()))
         return;
