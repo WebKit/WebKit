@@ -7465,6 +7465,9 @@
 		FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */; };
 		FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD671A78159BB07000197559 /* MediaStreamAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */; };
+		2EF0A1ADB65543008EBC8CB4 /* MediaStreamTrackAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 54EDB902FCCD42B2B4082EC9 /* MediaStreamTrackAudioSourceNode.h */; };
+		1E557A879B924348B30450CA /* MediaStreamTrackAudioSourceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 20A29742E00244199A73DB33 /* MediaStreamTrackAudioSourceOptions.h */; };
+		FE52A69BA95A4BA295C65684 /* JSMediaStreamTrackAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 864958D81E024D07B6D7AEFC /* JSMediaStreamTrackAudioSourceNode.h */; };
 		FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */; };
 		FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */; };
 		FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */; };
@@ -24042,6 +24045,13 @@
 		FD671A74159BB07000197559 /* MediaStreamAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamAudioSourceNode.h; sourceTree = "<group>"; };
 		FD671A76159BB07000197559 /* MediaStreamAudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamAudioSourceNode.idl; sourceTree = "<group>"; };
+		39548FDC0030487AB8FA09FB /* MediaStreamTrackAudioSourceNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrackAudioSourceNode.cpp; sourceTree = "<group>"; };
+		54EDB902FCCD42B2B4082EC9 /* MediaStreamTrackAudioSourceNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackAudioSourceNode.h; sourceTree = "<group>"; };
+		F0A9AE63B7C947A2894C21F2 /* MediaStreamTrackAudioSourceNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaStreamTrackAudioSourceNode.idl; sourceTree = "<group>"; };
+		20A29742E00244199A73DB33 /* MediaStreamTrackAudioSourceOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackAudioSourceOptions.h; sourceTree = "<group>"; };
+		C234B3646F6746B299092761 /* MediaStreamTrackAudioSourceOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaStreamTrackAudioSourceOptions.idl; sourceTree = "<group>"; };
+		9E1D3D12CFE94D51915A08C7 /* JSMediaStreamTrackAudioSourceNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackAudioSourceNode.cpp; sourceTree = "<group>"; };
+		864958D81E024D07B6D7AEFC /* JSMediaStreamTrackAudioSourceNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrackAudioSourceNode.h; sourceTree = "<group>"; };
 		FD677734195CAB200072E0D3 /* CSSSupportsRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSupportsRule.cpp; sourceTree = "<group>"; };
 		FD677735195CAB200072E0D3 /* DOMCSSNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCSSNamespace.cpp; sourceTree = "<group>"; };
 		FD677736195CAB7D0072E0D3 /* JSCSSSupportsRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSSupportsRule.cpp; sourceTree = "<group>"; };
@@ -44031,6 +44041,11 @@
 				FD671A76159BB07000197559 /* MediaStreamAudioSourceNode.idl */,
 				834CBFBF24DC785500C2A3D8 /* MediaStreamAudioSourceOptions.h */,
 				834CBFC124DC785600C2A3D8 /* MediaStreamAudioSourceOptions.idl */,
+				39548FDC0030487AB8FA09FB /* MediaStreamTrackAudioSourceNode.cpp */,
+				54EDB902FCCD42B2B4082EC9 /* MediaStreamTrackAudioSourceNode.h */,
+				F0A9AE63B7C947A2894C21F2 /* MediaStreamTrackAudioSourceNode.idl */,
+				20A29742E00244199A73DB33 /* MediaStreamTrackAudioSourceOptions.h */,
+				C234B3646F6746B299092761 /* MediaStreamTrackAudioSourceOptions.idl */,
 				FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */,
 				FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */,
 				FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */,
@@ -44273,6 +44288,8 @@
 				FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */,
 				FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */,
 				FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */,
+				9E1D3D12CFE94D51915A08C7 /* JSMediaStreamTrackAudioSourceNode.cpp */,
+				864958D81E024D07B6D7AEFC /* JSMediaStreamTrackAudioSourceNode.h */,
 				FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */,
 				FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */,
 				FDA9326416703BA9008982DC /* JSOfflineAudioContext.cpp */,
@@ -47300,6 +47317,7 @@
 				07277E4F17D018CC0015534D /* JSMediaStreamAudioDestinationNode.h in Headers */,
 				FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */,
 				07277E5317D018CC0015534D /* JSMediaStreamTrack.h in Headers */,
+				FE52A69BA95A4BA295C65684 /* JSMediaStreamTrackAudioSourceNode.h in Headers */,
 				07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */,
 				17277E5317D018CC0015535D /* JSMediaStreamTrackProcessor.h in Headers */,
 				932CC0D51DFFD667004C0F9F /* JSMediaTrackConstraints.h in Headers */,
@@ -48037,6 +48055,8 @@
 				078E093717D16B2C00420AA1 /* MediaStreamPrivate.h in Headers */,
 				078E3CC01FE1C73C00483C1D /* MediaStreamRequest.h in Headers */,
 				078E091817D14D1C00420AA1 /* MediaStreamTrack.h in Headers */,
+				2EF0A1ADB65543008EBC8CB4 /* MediaStreamTrackAudioSourceNode.h in Headers */,
+				1E557A879B924348B30450CA /* MediaStreamTrackAudioSourceOptions.h in Headers */,
 				410398A72B593B7100C9E03D /* MediaStreamTrackDataHolder.h in Headers */,
 				078E091917D14D1C00420AA1 /* MediaStreamTrackEvent.h in Headers */,
 				410B7F032EF587B9001217C2 /* MediaStreamTrackHandle.h in Headers */,

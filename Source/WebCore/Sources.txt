@@ -483,6 +483,7 @@ Modules/webaudio/MediaElementAudioSourceNode.cpp
 Modules/webaudio/MediaStreamAudioDestinationNode.cpp
 Modules/webaudio/MediaStreamAudioSource.cpp
 Modules/webaudio/MediaStreamAudioSourceNode.cpp
+Modules/webaudio/MediaStreamTrackAudioSourceNode.cpp
 Modules/webaudio/OfflineAudioCompletionEvent.cpp
 Modules/webaudio/OfflineAudioContext.cpp
 Modules/webaudio/OfflineAudioDestinationNode.cpp
@@ -4775,6 +4776,8 @@ JSMediaStreamAudioDestinationNode.cpp
 JSMediaStreamAudioSourceNode.cpp
 JSMediaStreamAudioSourceOptions.cpp
 JSMediaStreamTrack.cpp
+JSMediaStreamTrackAudioSourceNode.cpp
+JSMediaStreamTrackAudioSourceOptions.cpp
 JSMediaStreamTrackEvent.cpp
 JSMediaStreamTrackHandle.cpp
 JSMediaStreamTrackProcessor.cpp
