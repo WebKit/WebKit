@@ -42,6 +42,7 @@ class PaymentMerchantSession;
 struct ApplePayCouponCodeUpdate;
 struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
+struct ApplePayReferenceRequest;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
@@ -73,6 +74,10 @@ public:
     virtual void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler) { completionHandler({ }); }
     virtual void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<Ref<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void endApplePaySetup() { }
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    virtual void prepareReferenceSession(const ApplePayReferenceRequest&, bool /* shouldDiscloseCapability */, CompletionHandler<void(std::optional<String>&&)>&& completionHandler) { completionHandler(std::nullopt); }
+#endif
 
     virtual ~PaymentCoordinatorClient() = default;
 };

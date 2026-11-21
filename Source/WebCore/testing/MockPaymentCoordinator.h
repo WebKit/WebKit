@@ -30,6 +30,7 @@
 #include "ApplePayInstallmentConfigurationWebCore.h"
 #include "ApplePayLaterAvailability.h"
 #include "ApplePayLineItem.h"
+#include "ApplePayReferenceRequest.h"
 #include "ApplePaySetupConfiguration.h"
 #include "ApplePayShippingContactEditingMode.h"
 #include "ApplePayShippingMethod.h"
@@ -70,6 +71,12 @@ public:
     void cancelPayment();
 
     void addSetupFeature(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    void setReferenceSessionToken(String&& token) { m_referenceSessionToken = WTF::move(token); }
+    const ApplePayReferenceRequest& referenceSessionRequest() const LIFETIME_BOUND { return m_referenceSessionRequest; }
+    bool referenceSessionShouldDiscloseCapability() const { return m_referenceSessionShouldDiscloseCapability; }
+#endif
     const ApplePaySetupConfiguration& setupConfiguration() const LIFETIME_BOUND { return m_setupConfiguration; }
 
     const ApplePayLineItem& total() const LIFETIME_BOUND { return m_total; }
@@ -150,6 +157,9 @@ private:
 
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&) final;
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<Ref<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    void prepareReferenceSession(const ApplePayReferenceRequest&, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&&) final;
+#endif
 
     void dispatchIfShowing(Function<void()>&&);
 
@@ -159,6 +169,11 @@ private:
     uint64_t m_hideCount { 0 };
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    String m_referenceSessionToken;
+    ApplePayReferenceRequest m_referenceSessionRequest;
+    bool m_referenceSessionShouldDiscloseCapability { false };
+#endif
     MockPaymentAddress m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;
