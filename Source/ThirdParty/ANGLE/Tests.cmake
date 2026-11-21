@@ -1,7 +1,8 @@
 # ANGLE test executables: ANGLEUnitTests, ANGLEEnd2EndTests, ANGLEDeqpGLES2Tests and
 # ANGLEDeqpGLES3Tests. They mirror the targets of the same name in ANGLE.xcodeproj.
-# Nothing here is part of the default build; build the ANGLETests target (or one of the
-# executables) to get them.
+# On macOS and iOS, the ANGLETests target builds them as part of the default build, as the
+# "ANGLE Tests (Platform filters)" target does in Xcode. Elsewhere, build the ANGLETests
+# target (or one of the executables) to get them.
 #
 # On iOS, ANGLEEnd2EndTests and the dEQP tests open a window, so they are app bundles named
 # <name>App, as in the Xcode project. ANGLEUnitTests stays a test executable.
@@ -151,12 +152,22 @@ endfunction()
 
 add_library(ANGLETestUtils STATIC EXCLUDE_FROM_ALL ${angle_test_utils_sources} ${angle_test_utils_platform_sources})
 ANGLE_TEST_TARGET(ANGLETestUtils)
+WEBKIT_ADD_PREFIX_HEADER(ANGLETestUtils ANGLETestsPrefix.h PREFIX_LANGUAGES CXX OBJCXX)
 target_link_libraries(ANGLETestUtils PUBLIC ANGLE-static ${angle_gtest})
+
+# Built without a prefix header: GPUTestConfig.cpp has its own IsNVIDIA() and friends, which
+# clash with the ones ANGLETest.h declares.
+add_library(ANGLETestHarness STATIC EXCLUDE_FROM_ALL ${angle_test_harness_sources})
+ANGLE_TEST_TARGET(ANGLETestHarness)
+target_compile_definitions(ANGLETestHarness PRIVATE ${angle_test_definitions})
+target_link_libraries(ANGLETestHarness PUBLIC ANGLE-static ${angle_gtest})
 
 add_executable(ANGLEUnitTests EXCLUDE_FROM_ALL ${angle_unittests_sources})
 ANGLE_TEST_TARGET(ANGLEUnitTests)
+WEBKIT_ADD_PREFIX_HEADER(ANGLEUnitTests ANGLEUnitTestsPrefix.h PREFIX_LANGUAGES CXX)
 target_compile_definitions(ANGLEUnitTests PRIVATE ${angle_test_definitions})
 target_link_libraries(ANGLEUnitTests PRIVATE
+    ANGLETestHarness
     ANGLETestUtils
     ANGLE-static
     ${angle_gmock}
@@ -183,8 +194,10 @@ add_custom_target(${angle_end2end_tests_target}-data DEPENDS ${angle_end2end_tes
 
 add_executable(${angle_end2end_tests_target} EXCLUDE_FROM_ALL ${angle_end2end_tests_sources})
 ANGLE_TEST_TARGET(${angle_end2end_tests_target})
+WEBKIT_ADD_PREFIX_HEADER(${angle_end2end_tests_target} ANGLETestsPrefix.h PREFIX_LANGUAGES CXX OBJCXX)
 target_compile_definitions(${angle_end2end_tests_target} PRIVATE ${angle_test_definitions})
 target_link_libraries(${angle_end2end_tests_target} PRIVATE
+    ANGLETestHarness
     ANGLETestUtils
     ANGLE-static
     ${angle_gmock}
@@ -267,6 +280,7 @@ endmacro()
 add_library(ANGLEDeqpSupport STATIC EXCLUDE_FROM_ALL ${angle_deqp_support_sources})
 ANGLE_DEQP_TARGET(ANGLEDeqpSupport)
 target_compile_options(ANGLEDeqpSupport PRIVATE ${angle_deqp_compile_options})
+WEBKIT_ADD_PREFIX_HEADER(ANGLEDeqpSupport ANGLEDeqpPrefix.h PREFIX_LANGUAGES CXX)
 target_link_libraries(ANGLEDeqpSupport PUBLIC
     ANGLE-static
     "-framework CoreFoundation"
@@ -295,21 +309,26 @@ foreach (_module IN ITEMS gles2 gles3)
     set(_target ANGLEDeqp${_MODULE}Tests${angle_test_app_suffix})
     set(_sources ${angle_deqp_${_module}_tests_sources})
 
-    # Everything except the gtest harness is dEQP code: the modules, plus the libtester
-    # entry point and platform.
+    # Everything except the gtest harness (under src/tests/) is dEQP module code.
     set(_deqp_sources ${_sources})
     list(FILTER _deqp_sources EXCLUDE REGEX "^src/tests/")
-    list(APPEND _deqp_sources
-        "src/tests/deqp_support/angle_deqp_libtester_main.cpp"
-        "src/tests/deqp_support/tcuANGLEPlatform.cpp"
-    )
     set_source_files_properties(${_deqp_sources} PROPERTIES COMPILE_OPTIONS "${angle_deqp_compile_options}")
 
     add_executable(${_target} EXCLUDE_FROM_ALL ${_sources})
     ANGLE_DEQP_TARGET(${_target})
     target_compile_definitions(${_target} PRIVATE ANGLE_DEQP_${_MODULE}_TESTS)
+
+    # Only the dEQP sources are built with ${angle_deqp_compile_options}, so the prefix header
+    # is too, and the gtest harness sources, which are not, skip it.
+    target_precompile_headers(${_target} PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/ANGLEDeqpPrefix.h>")
+    set_property(SOURCE "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${_target}.dir/cmake_pch.hxx.cxx"
+        APPEND PROPERTY COMPILE_OPTIONS "${angle_deqp_compile_options}")
+    set(_harness_sources ${_sources})
+    list(REMOVE_ITEM _harness_sources ${_deqp_sources})
+    set_source_files_properties(${_harness_sources} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
     target_link_libraries(${_target} PRIVATE
         ANGLEDeqpSupport
+        ANGLETestHarness
         ANGLETestUtils
         ANGLE-static
         ${angle_gtest}
@@ -325,7 +344,11 @@ foreach (_module IN ITEMS gles2 gles3)
     list(APPEND angle_deqp_tests_targets ${_target})
 endforeach ()
 
-add_custom_target(ANGLETests)
+if (WEBKIT_PLATFORM_MAC OR WEBKIT_SDK_IS_IOS)
+    add_custom_target(ANGLETests ALL)
+else ()
+    add_custom_target(ANGLETests)
+endif ()
 add_dependencies(ANGLETests
     ANGLEUnitTests
     ${angle_end2end_tests_target}

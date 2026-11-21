@@ -30,6 +30,11 @@ GCC_ENABLE_CPP_RTTI = YES;
 // Common prefix for the VK-GL-CTS source tree, used by HEADER_SEARCH_PATHS.
 DEQP_SRC = $(ANGLE_HEADER_PATH_PREFIX)/third_party/VK-GL-CTS/src;
 HEADER_SEARCH_PATHS = $(DEQP_SRC)/executor $(DEQP_SRC)/execserver $(DEQP_SRC)/framework/platform/null $(DEQP_SRC)/framework/xexml $(DEQP_SRC)/modules/gles2 $(DEQP_SRC)/modules/gles2/functional $(DEQP_SRC)/modules/gles2/accuracy $(DEQP_SRC)/modules/gles2/performance $(DEQP_SRC)/modules/gles2/stress $(DEQP_SRC)/modules/gles2/usecases $(DEQP_SRC)/modules/gles3 $(DEQP_SRC)/modules/gles3/functional $(DEQP_SRC)/modules/gles3/accuracy $(DEQP_SRC)/modules/gles3/performance $(DEQP_SRC)/modules/gles3/stress $(DEQP_SRC)/modules/gles3/usecases $(DEQP_SRC)/modules/glusecases $(DEQP_SRC)/modules/egl $(DEQP_SRC)/framework/common $(DEQP_SRC)/framework/qphelper $(DEQP_SRC)/framework/egl $(DEQP_SRC)/framework/egl/wrapper $(DEQP_SRC)/framework/opengl $(DEQP_SRC)/framework/opengl/wrapper $(DEQP_SRC)/framework/opengl/simplereference $(DEQP_SRC)/framework/referencerenderer $(DEQP_SRC)/framework/randomshaders $(DEQP_SRC)/framework/platform $(DEQP_SRC)/framework/delibs/debase $(DEQP_SRC)/framework/delibs/decpp $(DEQP_SRC)/framework/delibs/depool $(DEQP_SRC)/framework/delibs/dethread $(DEQP_SRC)/framework/delibs/deutil $(DEQP_SRC)/framework/delibs/destream $(DEQP_SRC)/modules/glshared $(inherited);
+
+// In XBS builds, gtest and gmock are separate projects that install libgtest.a and libgmock.a into the SDK,
+// not into BUILT_PRODUCTS_DIR (as TestWebKitAPI's Base.xcconfig also accounts for).
+LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
+
 GCC_PREPROCESSOR_DEFINITIONS = DEQP_TARGET_NAME=\"angle\" _HAS_EXCEPTIONS=1 _XOPEN_SOURCE=700 _DARWIN_C_SOURCE ANGLE_DEQP_LIBTESTER_IMPLEMENTATION DEQP_EGL_DIRECT_LINK ANGLE_DEQP_DATA_DIR=\"vk_gl_cts_data/data\" QP_SUPPORT_PNG QP_SUPPORT_PNG_IMAGEIO EGL_EGLEXT_PROTOTYPES=1 GL_GLES_PROTOTYPES=1 GL_GLEXT_PROTOTYPES=1 ANGLE_EGL_LIBRARY_NAME=\"\" $(inherited);
 // dEQP is vendored third-party code; upstream's gn build drops ANGLE's
 // constructor/destructor and extra-warning configs for it. Don't gate on its
