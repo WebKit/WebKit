@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Text Test: tab-size before a ::first-letter with a font size of its own</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@webkit.org">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#tab-size-property">
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#first-letter-pseudo">
+<link rel="match" href="tab-size-first-letter-001-ref.html">
+<meta name="assert" content="A ::first-letter that is not floated is an inline box, not a block container, so a <number> tab-size is measured against the space of the paragraph rather than of the first letter's font, whether or not the tab before the letter belongs to the ::first-letter.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+div {
+  font: 20px/24px Ahem;
+  white-space: pre;
+}
+.letter,
+.test::first-letter {
+  font-size: 80px;
+}
+</style>
+<p>Test passes if the left edges of the two large black squares below are aligned.
+<!-- The first large square is placed with 8 spaces of the 20px font. In the second row, the tab stop is at
+8 * 20px = 160px, not at 8 times the first letter's 80px space. -->
+<div>        <span class="letter">A</span>bc</div>
+<div class="test">&#9;Abc</div>
