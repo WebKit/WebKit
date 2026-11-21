@@ -268,7 +268,7 @@ bool SVGPathParser::parseArcToSegment()
         return false;
 
     // If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto") joining the endpoints.
-    // http://www.w3.org/TR/SVG/implnote.html#ArcOutOfRangeParameters
+    // https://w3c.github.io/svgwg/svg2-draft/paths.html#ArcOutOfRangeParameters
     // If the current point and target point for the arc are identical, it should be treated as a zero length
     // path. This ensures continuity in animations.
     bool arcIsZeroLength = false;
@@ -280,15 +280,13 @@ bool SVGPathParser::parseArcToSegment()
         else
             arcIsZeroLength = result->targetPoint == m_currentPoint;
     }
-    if (!result->rx || !result->ry || arcIsZeroLength) {
-        if (m_pathParsingMode == NormalizedParsing) {
-            if (m_mode == RelativeCoordinates)
-                m_currentPoint += result->targetPoint;
-            else
-                m_currentPoint = result->targetPoint;
-            m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
-        } else
-            m_consumer->lineTo(result->targetPoint, m_mode);
+    // In unaltered mode the arc is preserved as-is so that it serializes and interpolates correctly.
+    if (m_pathParsingMode == NormalizedParsing && (!result->rx || !result->ry || arcIsZeroLength)) {
+        if (m_mode == RelativeCoordinates)
+            m_currentPoint += result->targetPoint;
+        else
+            m_currentPoint = result->targetPoint;
+        m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
         return true;
     }
 

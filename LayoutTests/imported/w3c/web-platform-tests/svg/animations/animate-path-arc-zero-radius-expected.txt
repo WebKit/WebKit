@@ -1,0 +1,7 @@
+
+PASS from-to animation, rx is 0 in the from value
+PASS from-to animation, ry is 0 in the from value
+PASS from-to animation, rx is 0 in the to value
+PASS from-to animation, relative arc with rx 0 in the from value
+PASS values animation passing through rx 0
+
