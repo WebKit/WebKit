@@ -31,6 +31,7 @@
 #include <wtf/TZoneMalloc.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
+#import "RemoteAnimationVisibility.h"
 #import "RemoteMonotonicTimelineRegistry.h"
 #endif
 
@@ -85,7 +86,12 @@ public:
     HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const override;
     void progressBasedTimelinesWereUpdatedForNode(const WebCore::ScrollingTreeScrollingNode&) override;
     bool hasHighImpactMonotonicAnimations() const override;
+    bool hasMonotonicAnimations() const override;
+    void setAnimatedContentVisibilityNeedsUpdate() override { m_animationVisibility.setNeedsUpdate(); }
+    void updateAnimatedContentVisibilityIfNeeded() override;
 #endif
+
+    void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale) override;
 
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
@@ -121,6 +127,7 @@ private:
     void updateTimeDependentAnimationStacks();
     void updateAnimationStacksDependentOnScrollingNode(const WebCore::ScrollingTreeScrollingNode&);
     void updateAnimationStacks(NOESCAPE const Function<bool(const RemoteAnimationStack&)>&);
+    void animatedContentGeometryMayHaveChanged();
 #endif
 
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;
@@ -141,6 +148,7 @@ private:
 
 #if ENABLE(THREADED_ANIMATIONS)
     HashSet<WebCore::PlatformLayerIdentifier> m_animatedNodeLayerIDs;
+    RemoteAnimationVisibility m_animationVisibility;
     std::unique_ptr<RemoteMonotonicTimelineRegistry> m_monotonicTimelineRegistry;
 #endif
 };
