@@ -47,12 +47,15 @@ public:
     bool canMapBackingStore() const final;
     String debugDescription() const final;
 
+    void releaseGraphicsContext() final;
+    bool hasGraphicsContext() const final;
+
 private:
     using ImageBufferBackend::ImageBufferBackend;
     unsigned bytesPerRow() const final;
     bool isNullImageBufferBackend() const final;
 
-    NullGraphicsContext m_context;
+    std::unique_ptr<NullGraphicsContext> m_context;
 };
 
 } // namespace WebCore
