@@ -538,6 +538,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE BorderRadiusPercentageBasis
+#define FOR_EACH(CASE) CASE(Normal) CASE(BlockSize)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 #define TYPE BoxDirection
 #define FOR_EACH(CASE) CASE(Normal) CASE(Reverse)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS

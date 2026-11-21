@@ -6,7 +6,7 @@ The bar for changing this file is high. Entries state rules, invariants and dire
 
 ## Consuming style
 
-- Style reaches a renderer only from style resolution, through `RenderTreeUpdater`, at creation or in `RenderElement::setStyle()`. Change handling is driven by diffing old and new style. Layout and painting never write style. They pass used values through layout state. Known exceptions, not to be extended: layout-time sizing of shadow and anonymous children in replaced elements, form controls and list markers, iOS theme border radius adjustment during layout, and text autosizing.
+- Style reaches a renderer only from style resolution, through `RenderTreeUpdater`, at creation or in `RenderElement::setStyle()`. Change handling is driven by diffing old and new style. Layout and painting never write style. They pass used values through layout state. Known exceptions, not to be extended: layout-time sizing of shadow and anonymous children in replaced elements, form controls and list markers, and text autosizing.
 - Used values that depend on the box go through `UsedStyle` (`rendering/style/UsedStyle.h`), so every client sees the same answer. Don't add box-dependent `used*` accessors to `ComputedStyle` and don't construct a `UsedStyle` without a renderer. Code that only has a style uses `Style::effective*()`.
 - `UsedStyle` covers used values common to all boxes. Geometry specific to a formatting context, such as collapsed table borders, stays in the renderer and is built on top of `UsedStyle`.
 - Renderer state that changes used values without a style change must do its own repaint and layout invalidation. The style diff never sees it.

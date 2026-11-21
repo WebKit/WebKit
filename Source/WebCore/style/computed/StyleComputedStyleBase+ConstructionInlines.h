@@ -82,6 +82,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
     m_nonInheritedFlags.hasZeroEffectiveBorderWidths = true;
     m_nonInheritedFlags.hasZeroPadding = true;
+    m_nonInheritedFlags.borderRadiusPercentageBasis = static_cast<unsigned>(ComputedStyle::initialBorderRadiusPercentageBasis());
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
@@ -147,6 +148,7 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     disallowsFastPathInheritance = other.disallowsFastPathInheritance;
     hasZeroEffectiveBorderWidths = other.hasZeroEffectiveBorderWidths;
     hasZeroPadding = other.hasZeroPadding;
+    borderRadiusPercentageBasis = other.borderRadiusPercentageBasis;
 }
 
 } // namespace Style

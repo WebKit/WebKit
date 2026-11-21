@@ -328,6 +328,14 @@ void RenderTheme::adjustStyle(Style::ComputedStyle& style, const Style::Computed
     if (!supportsBoxShadow(style))
         style.setBoxShadow(CSS::Keyword::None { });
 
+    adjustStyleForAppearance(style, appearance, element);
+
+    if (element)
+        adjustControlBorderRadius(style, *element);
+}
+
+void RenderTheme::adjustStyleForAppearance(Style::ComputedStyle& style, StyleAppearance appearance, const Element* element) const
+{
     switch (appearance) {
     case StyleAppearance::Checkbox:
         return adjustCheckboxStyle(style, element);
@@ -391,6 +399,10 @@ void RenderTheme::adjustStyle(Style::ComputedStyle& style, const Style::Computed
     default:
         break;
     }
+}
+
+void RenderTheme::adjustControlBorderRadius(Style::ComputedStyle&, const Element&) const
+{
 }
 
 StyleAppearance RenderTheme::autoAppearanceForElement(Style::ComputedStyle& style, const Element* elementPtr) const

@@ -382,7 +382,7 @@ void RenderThemeIOS::paintTextAreaDecorations(const RenderBox& box, const PaintI
 
 // These values are taken from the UIKit button system.
 constexpr auto largeButtonSize = 45;
-constexpr auto largeButtonBorderRadiusRatio = 0.35f / 2;
+constexpr auto largeButtonBorderRadiusRatio = 0.35 / 2;
 
 const int MenuListMinHeight = 15;
 
@@ -409,9 +409,9 @@ Style::PaddingBox RenderThemeIOS::platformPopupInternalPaddingBox(const Style::C
     return { 0_css_px };
 }
 
-static inline bool canAdjustBorderRadiusForAppearance(StyleAppearance appearance, const RenderBox& box)
+static bool canAdjustBorderRadiusForAppearance(const Style::ComputedStyle& style)
 {
-    switch (appearance) {
+    switch (style.usedAppearance()) {
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
 #endif
@@ -420,40 +420,71 @@ static inline bool canAdjustBorderRadiusForAppearance(StyleAppearance appearance
     case StyleAppearance::SearchField:
         return false;
     case StyleAppearance::MenulistButton:
-        return !box.style().hasExplicitlySetBorderRadius();
+        return !style.hasExplicitlySetBorderRadius();
     default:
         return true;
     };
 }
 
-void RenderThemeIOS::adjustRoundBorderRadius(Style::ComputedStyle& style, RenderBox& box)
+static bool isButtonAppearance(StyleAppearance appearance)
 {
-    if (!canAdjustBorderRadiusForAppearance(style.usedAppearance(), box) || Style::hasImageInAnyLayer(style.backgroundLayers()))
-        return;
-
-    auto usedZoom = style.usedZoomForLength();
-
-    auto boxLogicalHeight = box.logicalHeight();
-    auto unzoomedBoxLogicalHeight = box.logicalHeight() / usedZoom.value;
-
-    auto minDimension = std::min(box.borderBoxWidth(), box.borderBoxHeight());
-    auto unzoomedMinDimension = minDimension / usedZoom.value;
-
-    if ((isAnyOf<RenderButton, RenderMenuList>(box)) && boxLogicalHeight >= largeButtonSize) {
-        auto largeButtonBorderRadius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { unzoomedMinDimension * largeButtonBorderRadiusRatio };
-        style.setBorderRadius({ largeButtonBorderRadius, largeButtonBorderRadius });
-        return;
+    switch (appearance) {
+    case StyleAppearance::PushButton:
+    case StyleAppearance::SquareButton:
+    case StyleAppearance::DefaultButton:
+    case StyleAppearance::Button:
+        return true;
+    default:
+        return false;
     }
+}
 
-    // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
-    auto borderRadius = Style::BorderRadiusValue {
-        Style::LengthPercentage<CSS::Nonnegative>::Dimension { unzoomedMinDimension / 2 },
-        Style::LengthPercentage<CSS::Nonnegative>::Dimension { unzoomedBoxLogicalHeight / 2 },
+// FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
+void RenderThemeIOS::adjustControlBorderRadius(Style::ComputedStyle& style, const Element& element) const
+{
+    if (!canAdjustBorderRadiusForAppearance(style) || Style::hasImageInAnyLayer(style.backgroundLayers()))
+        return;
+
+    auto usesLargeButtonRadius = [&] {
+        if (is<HTMLButtonElement>(element))
+            return true;
+        if (RefPtr select = dynamicDowncast<HTMLSelectElement>(element))
+            return select->boxType(&style) == HTMLSelectElement::BoxType::DropdownBox;
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(element))
+            return input->isTextButton();
+        return false;
     };
-    if (!style.writingMode().isHorizontal())
-        borderRadius.transpose();
 
-    style.setBorderRadius(WTF::move(borderRadius));
+    auto isPill = [&] {
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); input && input->isSearchField())
+            return true;
+#if ENABLE(FORM_CONTROL_REFRESH)
+        if (element.document().settings().formControlRefreshEnabled())
+            return false;
+#endif
+        return isButtonAppearance(style.usedAppearance());
+    };
+
+    auto radius = [&] -> std::optional<Style::LengthPercentage<CSS::Nonnegative>> {
+        if (usesLargeButtonRadius()) {
+            // calc(50% - (32.5% * clamp(0, sign(100% - 45px) + 1, 1)))
+            namespace Calculation = Style::Calculation;
+            auto isLarge = Calculation::makeChild(Calculation::Clamp {
+                Calculation::number(0),
+                Calculation::add(Calculation::makeChild(Calculation::Sign { Calculation::subtract(Calculation::percentage(100), Calculation::dimension(largeButtonSize)) }), Calculation::number(1)),
+                Calculation::number(1),
+            });
+            return Style::LengthPercentage<CSS::Nonnegative>::Calc { Calculation::subtract(Calculation::percentage(50), Calculation::multiply(Calculation::percentage(50 - 100 * largeButtonBorderRadiusRatio), WTF::move(isLarge))) };
+        }
+        if (isPill())
+            return Style::LengthPercentage<CSS::Nonnegative>::Percentage { 50 };
+        return std::nullopt;
+    }();
+    if (!radius)
+        return;
+
+    style.setBorderRadiusPercentageBasis(BorderRadiusPercentageBasis::BlockSize);
+    style.setBorderRadius(Style::BorderRadiusValue { *radius, *radius });
 }
 
 static void applyCommonButtonPaddingToStyle(Style::ComputedStyle& style)
@@ -906,18 +937,6 @@ void RenderThemeIOS::adjustSearchFieldStyle(Style::ComputedStyle& style, const E
     RenderTheme::adjustSearchFieldStyle(style, element);
 
     applyCommonNonCapsuleBorderRadiusToStyle(style);
-
-    if (!element)
-        return;
-
-    if (!style.border().hasBorder())
-        return;
-
-    RenderBox* box = element->renderBox();
-    if (!box)
-        return;
-
-    adjustRoundBorderRadius(style, *box);
 }
 
 void RenderThemeIOS::paintSearchFieldDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
@@ -996,12 +1015,6 @@ void RenderThemeIOS::adjustButtonStyle(Style::ComputedStyle& style, const Elemen
         return;
 
     adjustButtonLikeControlStyle(style, *element);
-
-    RenderBox* box = element->renderBox();
-    if (!box)
-        return;
-
-    adjustRoundBorderRadius(style, *box);
 }
 
 Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const

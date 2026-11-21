@@ -47,8 +47,6 @@ class RenderThemeIOS final : public RenderThemeCocoa {
 public:
     friend NeverDestroyed<RenderThemeIOS>;
 
-    static void adjustRoundBorderRadius(Style::ComputedStyle&, RenderBox&);
-
 #if USE(SYSTEM_PREVIEW)
     void paintSystemPreviewBadge(RefPtr<NativeImage>&&, const PaintInfo&, const FloatRect&) final;
     void paintSystemPreviewBadge(const PaintInfo&, const FloatRect&) final;
@@ -73,6 +71,8 @@ public:
     int baselinePosition(const RenderBox&) const final;
 
     bool isControlStyled(const Style::ComputedStyle&) const final;
+
+    void adjustControlBorderRadius(Style::ComputedStyle&, const Element&) const final;
 
     // Methods for each appearance value.
     void adjustCheckboxStyle(Style::ComputedStyle&, const Element*) const final;

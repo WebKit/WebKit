@@ -474,6 +474,7 @@ void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const
     LOG_IF_DIFFERENT(disallowsFastPathInheritance);
     LOG_IF_DIFFERENT(hasZeroEffectiveBorderWidths);
     LOG_IF_DIFFERENT(hasZeroPadding);
+    LOG_IF_DIFFERENT_WITH_CAST(BorderRadiusPercentageBasis, borderRadiusPercentageBasis);
 
     LOG_IF_DIFFERENT(firstChildState);
     LOG_IF_DIFFERENT(lastChildState);

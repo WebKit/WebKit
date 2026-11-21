@@ -48,10 +48,6 @@ public:
 
     void setOptionsChanged(bool changed) { m_needsOptionsWidthUpdate = changed; }
 
-#if PLATFORM(IOS_FAMILY)
-    void layout() override;
-#endif
-
     void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
 
 #if PLATFORM(WIN)

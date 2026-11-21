@@ -874,7 +874,8 @@ public:
 
         if (visibilityIncludingForceHidden(a) != visibilityIncludingForceHidden(b)
             || a.inheritedFlags().printColorAdjust != b.inheritedFlags().printColorAdjust
-            || a.inheritedFlags().insideLink != b.inheritedFlags().insideLink)
+            || a.inheritedFlags().insideLink != b.inheritedFlags().insideLink
+            || a.nonInheritedFlags().borderRadiusPercentageBasis != b.nonInheritedFlags().borderRadiusPercentageBasis)
             return true;
 
 

@@ -301,26 +301,4 @@ LayoutUnit RenderMenuList::clientPaddingRight() const
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-void RenderMenuList::layout()
-{
-    RenderFlexibleBox::layout();
-
-    // Ideally, we should not be adjusting styles during layout. However, for a
-    // pill-shaped appearance, the horizontal border radius is dependent on the
-    // computed height of the box. This means that the appearance cannot be declared
-    // prior to layout, since CSS only allows the horizontal border radius to be
-    // dependent on the computed width of the box.
-    //
-    // Ignoring the style's border radius and forcing a pill-shaped appearance at
-    // paint time is not an option, since focus rings and tap highlights will not
-    // use the correct border radius. Consequently, we need to adjust the border
-    // radius here.
-    //
-    // Note that similar adjustments are made in RenderSliderThumb, RenderButton
-    // and RenderTextControlSingleLine.
-    RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
-}
-#endif
-
 }

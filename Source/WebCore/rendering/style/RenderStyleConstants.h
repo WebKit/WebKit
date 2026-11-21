@@ -256,6 +256,11 @@ enum class BoxSizing : bool {
     BorderBox
 };
 
+enum class BorderRadiusPercentageBasis : bool {
+    Normal,
+    BlockSize
+};
+
 // Random visual rendering model attributes. Not inherited.
 
 enum class Overflow : uint8_t {
@@ -1205,6 +1210,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, BlockStepAlign);
 WTF::TextStream& operator<<(WTF::TextStream&, BlockStepInsert);
 WTF::TextStream& operator<<(WTF::TextStream&, BlockStepRound);
 WTF::TextStream& operator<<(WTF::TextStream&, BorderCollapse);
+WTF::TextStream& operator<<(WTF::TextStream&, BorderRadiusPercentageBasis);
 WTF::TextStream& operator<<(WTF::TextStream&, BorderStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, BoxAlignment);
 WTF::TextStream& operator<<(WTF::TextStream&, BoxDecorationBreak);

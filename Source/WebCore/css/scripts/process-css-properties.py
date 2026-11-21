@@ -675,6 +675,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("style-builder-custom", allowed_types=[str]),
         Schema.Entry("style-builder-requires-system-font-shorthand-check", allowed_types=[bool], default_value=False),
         Schema.Entry("style-extractor-custom", allowed_types=[bool], default_value=False),
+        Schema.Entry("style-extractor-initial-value-if", allowed_types=[str]),
         Schema.Entry("top-priority-reason", allowed_types=[str]),
         Schema.Entry("top-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("url", allowed_types=[str]),
@@ -820,6 +821,11 @@ class StylePropertyCodeGenProperties:
                 raise Exception(f"{key_path} can't specify both 'shorthand-pattern' and 'shorthand-style-extractor-pattern'.")
             json_value["shorthand-parser-pattern"] = json_value["shorthand-pattern"]
             json_value["shorthand-style-extractor-pattern"] = json_value["shorthand-pattern"]
+
+        if "style-extractor-initial-value-if" in json_value:
+            for incompatible in ["style-extractor-custom", "visited-link-color-support", "coordinated-value-list-property", "longhands"]:
+                if json_value.get(incompatible):
+                    raise Exception(f"{key_path} can't specify both 'style-extractor-initial-value-if' and '{incompatible}'.")
 
         if "logical-property-group" in json_value:
             if json_value.get("longhands"):
@@ -5172,9 +5178,19 @@ class GenerateStyleExtractorGenerated:
     # All other property value getters.
 
     def _generate_property_value_getter(self, to, property):
+        if property.codegen_properties.style_extractor_initial_value_if:
+            to.write(f"if (ExtractorCustom::{property.codegen_properties.style_extractor_initial_value_if}(extractorState))")
+            with to.indent():
+                to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'ComputedStyle::{property.codegen_properties.computed_style_initial}()')};")
         to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style->{property.codegen_properties.computed_style_getter}()')};")
 
     def _generate_property_value_serialization_getter(self, to, property):
+        if property.codegen_properties.style_extractor_initial_value_if:
+            to.write(f"if (ExtractorCustom::{property.codegen_properties.style_extractor_initial_value_if}(extractorState)) {{")
+            with to.indent():
+                to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'ComputedStyle::{property.codegen_properties.computed_style_initial}()')};")
+                to.write(f"return;")
+            to.write(f"}}")
         to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'extractorState.style->{property.codegen_properties.computed_style_getter}()')};")
 
     # Shorthand property value getter.

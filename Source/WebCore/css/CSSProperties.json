@@ -2969,6 +2969,7 @@
                     "resolver": "bottom-left"
                 },
                 "disables-native-appearance": true,
+                "style-extractor-initial-value-if": "hidesThemeBorderRadius",
                 "computed-style-has-explicitly-set-policy": "all-border-radius",
                 "computed-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "surroundData"],
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.radii"],
@@ -2994,6 +2995,7 @@
                     "resolver": "bottom-right"
                 },
                 "disables-native-appearance": true,
+                "style-extractor-initial-value-if": "hidesThemeBorderRadius",
                 "computed-style-has-explicitly-set-policy": "all-border-radius",
                 "computed-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "surroundData"],
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.radii"],
@@ -3937,6 +3939,25 @@
                 "url": "https://www.w3.org/TR/css3-background/#the-border-color"
             }
         },
+        "-internal-border-radius-percentage-basis": {
+            "animation-type": "not animatable (internal)",
+            "initial": "normal",
+            "values": [
+                "normal",
+                "block-size"
+            ],
+            "codegen-properties": {
+                "computed-style-initial-constexpr": true,
+                "computed-style-storage-path": ["m_nonInheritedFlags"],
+                "computed-style-storage-container": "struct",
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "BorderRadiusPercentageBasis",
+                "computed-style-name-for-methods": "BorderRadiusPercentageBasis",
+                "parser-grammar": "<<values>>",
+                "internal-only": true
+            },
+            "status": "non-standard"
+        },
         "border-top-left-radius": {
             "animation-type": "by computed value",
             "initial": "0px",
@@ -3949,6 +3970,7 @@
                     "resolver": "top-left"
                 },
                 "disables-native-appearance": true,
+                "style-extractor-initial-value-if": "hidesThemeBorderRadius",
                 "computed-style-has-explicitly-set-policy": "all-border-radius",
                 "computed-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "surroundData"],
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.radii"],
@@ -3987,6 +4009,7 @@
                     "resolver": "top-right"
                 },
                 "disables-native-appearance": true,
+                "style-extractor-initial-value-if": "hidesThemeBorderRadius",
                 "computed-style-has-explicitly-set-policy": "all-border-radius",
                 "computed-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "surroundData"],
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.radii"],

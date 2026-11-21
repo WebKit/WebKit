@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="controls">
+<button id="button" style="width: 100px; height: 30px"></button>
+<button id="large-button" style="width: 100px; height: 60px"></button>
+<input id="input-button" type="button" style="width: 100px; height: 30px">
+<select id="select" style="width: 100px; height: 30px"></select>
+</div>
+<script>
+document.body.offsetWidth;
+
+for (const control of document.querySelectorAll("#controls > *")) {
+    test(() => {
+        const style = getComputedStyle(control);
+        for (const property of ["border-top-left-radius", "border-top-right-radius", "border-bottom-left-radius", "border-bottom-right-radius"])
+            assert_equals(style.getPropertyValue(property), "0px", property);
+    }, `${control.id} does not expose the theme border radius`);
+}
+
+document.getElementById("controls").remove();
+</script>
+</body>
+</html>

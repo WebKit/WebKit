@@ -1873,6 +1873,10 @@ layout
 inline-size
 scroll-state
 
+// -internal-border-radius-percentage-basis
+// normal
+block-size
+
 // offset-path
 // https://drafts.fxtf.org/motion-1/#offset-path-property
 ray

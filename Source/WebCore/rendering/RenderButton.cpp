@@ -149,16 +149,6 @@ LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) co
     return LayoutRect(additionalOffset.x() + borderLeft(), additionalOffset.y() + borderTop(), borderBoxWidth() - borderLeft() - borderRight(), borderBoxHeight() - borderTop() - borderBottom());
 }
 
-#if PLATFORM(IOS_FAMILY)
-void RenderButton::layout()
-{
-    RenderFlexibleBox::layout();
-
-    // FIXME: We should not be adjusting styles during layout. See <rdar://problem/7675493>.
-    RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
-}
-#endif
-
 // Only clip overflow on input elements, to match other browsers.
 bool RenderButton::hasControlClip() const
 {

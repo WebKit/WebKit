@@ -306,6 +306,10 @@ public:
     static void extractWebkitMaskBoxImageShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitMaskPositionShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractMarkerShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+
+    // MARK: Custom Initial Value Conditions
+
+    static bool hidesThemeBorderRadius(ExtractorState&);
 };
 
 template<typename T, typename U> auto unzoomed(ExtractorState& state, U value) -> T
@@ -1914,24 +1918,23 @@ inline Ref<CSSValue> extractBorderRadiusShorthand(ExtractorState& state, CSSProp
         return true;
     };
 
-    auto extractBorderRadiusCornerValues = [&](auto& state, const auto& radius) {
-        auto x = createCSSValue(state.pool, state.style, radius.width());
-        auto y = radius.width() == radius.height() ? x.copyRef() : createCSSValue(state.pool, state.style, radius.height());
-        return std::pair<Ref<CSSValue>, Ref<CSSValue>> { WTF::move(x), WTF::move(y) };
+    auto extractBorderRadiusCornerValues = [&](CSSPropertyID longhand) {
+        Ref value = downcast<CSSValuePair>(ExtractorGenerated::extractValue(state, longhand).releaseNonNull());
+        return std::pair<Ref<CSSValue>, Ref<CSSValue>> { value->first(), value->second() };
     };
 
-    bool showHorizontalBottomLeft = state.style->borderTopRightRadius().width() != state.style->borderBottomLeftRadius().width();
-    bool showHorizontalBottomRight = showHorizontalBottomLeft || (state.style->borderBottomRightRadius().width() != state.style->borderTopLeftRadius().width());
-    bool showHorizontalTopRight = showHorizontalBottomRight || (state.style->borderTopRightRadius().width() != state.style->borderTopLeftRadius().width());
+    auto [topLeftRadiusX, topLeftRadiusY] = extractBorderRadiusCornerValues(CSSPropertyID::BorderTopLeftRadius);
+    auto [topRightRadiusX, topRightRadiusY] = extractBorderRadiusCornerValues(CSSPropertyID::BorderTopRightRadius);
+    auto [bottomRightRadiusX, bottomRightRadiusY] = extractBorderRadiusCornerValues(CSSPropertyID::BorderBottomRightRadius);
+    auto [bottomLeftRadiusX, bottomLeftRadiusY] = extractBorderRadiusCornerValues(CSSPropertyID::BorderBottomLeftRadius);
 
-    bool showVerticalBottomLeft = state.style->borderTopRightRadius().height() != state.style->borderBottomLeftRadius().height();
-    bool showVerticalBottomRight = showVerticalBottomLeft || (state.style->borderBottomRightRadius().height() != state.style->borderTopLeftRadius().height());
-    bool showVerticalTopRight = showVerticalBottomRight || (state.style->borderTopRightRadius().height() != state.style->borderTopLeftRadius().height());
+    bool showHorizontalBottomLeft = !topRightRadiusX->equals(bottomLeftRadiusX);
+    bool showHorizontalBottomRight = showHorizontalBottomLeft || !bottomRightRadiusX->equals(topLeftRadiusX);
+    bool showHorizontalTopRight = showHorizontalBottomRight || !topRightRadiusX->equals(topLeftRadiusX);
 
-    auto [topLeftRadiusX, topLeftRadiusY] = extractBorderRadiusCornerValues(state, state.style->borderTopLeftRadius());
-    auto [topRightRadiusX, topRightRadiusY] = extractBorderRadiusCornerValues(state, state.style->borderTopRightRadius());
-    auto [bottomRightRadiusX, bottomRightRadiusY] = extractBorderRadiusCornerValues(state, state.style->borderBottomRightRadius());
-    auto [bottomLeftRadiusX, bottomLeftRadiusY] = extractBorderRadiusCornerValues(state, state.style->borderBottomLeftRadius());
+    bool showVerticalBottomLeft = !topRightRadiusY->equals(bottomLeftRadiusY);
+    bool showVerticalBottomRight = showVerticalBottomLeft || !bottomRightRadiusY->equals(topLeftRadiusY);
+    bool showVerticalTopRight = showVerticalBottomRight || !topRightRadiusY->equals(topLeftRadiusY);
 
     CSSValueListBuilder horizontalRadii;
     horizontalRadii.append(WTF::move(topLeftRadiusX));
@@ -3910,6 +3913,32 @@ inline RefPtr<CSSValue> ExtractorCustom::extractMarkerShorthand(ExtractorState& 
     if (markerStart == markerMid && markerMid == markerEnd)
         return createCSSValue(state.pool, state.style, markerStart);
     return nullptr;
+}
+
+// MARK: - Custom Initial Value Conditions
+
+inline bool ExtractorCustom::hidesThemeBorderRadius(ExtractorState& state)
+{
+#if PLATFORM(IOS_FAMILY)
+    if (state.style->nativeAppearanceDisabled())
+        return false;
+
+    switch (state.style->usedAppearance()) {
+    case StyleAppearance::Button:
+    case StyleAppearance::DefaultButton:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::SquareButton:
+    case StyleAppearance::Menulist:
+        return true;
+    case StyleAppearance::MenulistButton:
+        return !state.style->hasExplicitlySetBorderRadius();
+    default:
+        return false;
+    }
+#else
+    UNUSED_PARAM(state);
+    return false;
+#endif
 }
 
 } // namespace Style

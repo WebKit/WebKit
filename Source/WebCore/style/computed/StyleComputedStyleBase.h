@@ -79,6 +79,7 @@ enum class BlockStepAlign : uint8_t;
 enum class BlockStepInsert : uint8_t;
 enum class BlockStepRound : uint8_t;
 enum class BorderCollapse : bool;
+enum class BorderRadiusPercentageBasis : bool;
 enum class BorderStyle : uint8_t;
 enum class BoxAlignment : uint8_t;
 enum class BoxDecorationBreak : bool;
@@ -826,6 +827,7 @@ public:
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
         PREFERRED_TYPE(bool) unsigned hasZeroEffectiveBorderWidths : 1; // Maintained by the border setters.
         PREFERRED_TYPE(bool) unsigned hasZeroPadding : 1; // Maintained by the padding setters.
+        PREFERRED_TYPE(BorderRadiusPercentageBasis) unsigned borderRadiusPercentageBasis : 1;
 
         // Non-property related state bits. These do not get copied by copyNonInheritedFrom().
         PREFERRED_TYPE(bool) unsigned firstChildState : 1;

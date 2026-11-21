@@ -330,6 +330,8 @@ protected:
     virtual bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
 
+    virtual void adjustControlBorderRadius(Style::ComputedStyle&, const Element&) const;
+
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(Style::ComputedStyle&, const Element*) const;
     virtual bool paintCheckbox(const RenderElement&, const PaintInfo&, const FloatRect&) { return true; }
@@ -502,6 +504,7 @@ protected:
 private:
     StyleAppearance autoAppearanceForElement(Style::ComputedStyle&, const Element*) const;
     StyleAppearance adjustAppearanceForElement(Style::ComputedStyle&, const Style::ComputedStyle& parentStyle, const Element*, StyleAppearance) const;
+    void adjustStyleForAppearance(Style::ComputedStyle&, StyleAppearance, const Element*) const;
 
     Color spellingMarkerColor(OptionSet<StyleColorOptions>) const;
     Color dictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const;

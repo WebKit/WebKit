@@ -491,6 +491,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'style-builder-custom': self.validate_string,
             'style-builder-requires-system-font-shorthand-check': self.validate_boolean,
             'style-extractor-custom': self.validate_boolean,
+            'style-extractor-initial-value-if': self.validate_string,
             'top-priority-reason': self.validate_string,
             'top-priority': self.validate_boolean,
             'used-style': self.validate_string,

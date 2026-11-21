@@ -180,6 +180,15 @@ TextStream& operator<<(TextStream& ts, BorderCollapse collapse)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, BorderRadiusPercentageBasis basis)
+{
+    switch (basis) {
+    case BorderRadiusPercentageBasis::Normal: ts << "normal"_s; break;
+    case BorderRadiusPercentageBasis::BlockSize: ts << "block-size"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, BorderStyle borderStyle)
 {
     switch (borderStyle) {

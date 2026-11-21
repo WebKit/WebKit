@@ -275,11 +275,6 @@ void RenderTextControlSingleLine::layout()
             placeholderLayer->setNeedsPositionUpdate();
     }
 
-#if PLATFORM(IOS_FAMILY)
-    // FIXME: We should not be adjusting styles during layout. <rdar://problem/7675493>
-    if (inputElement().isSearchField())
-        RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
-#endif
     if (innerTextSizeChanged && frame().selection().isFocusedAndActive() && document().focusedElement() == &inputElement()) {
         // The caps lock indicator was hidden or shown. If it is now visible then it may be occluding
         // the current selection (say, the caret was after the last character in the text field).

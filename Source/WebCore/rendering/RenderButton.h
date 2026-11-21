@@ -57,10 +57,6 @@ public:
     void setText(const String&);
     NODELETE String text() const;
 
-#if PLATFORM(IOS_FAMILY)
-    void layout() override;
-#endif
-
     RenderTextFragment* textRenderer() const { return m_buttonText.get(); }
 
     RenderBlock* innerRenderer() const { return m_inner.get(); }
