@@ -34,66 +34,85 @@
 
 namespace WebCore {
 
-LayoutUnit StyleSelfAlignmentData::adjustmentFromStartEdge(LayoutUnit extraSpace, ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode)
+ItemPosition StyleSelfAlignmentData::resolvePositionalAlignment(ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode)
 {
-    ASSERT(ItemPosition::Auto != alignmentPosition);
-
     switch (alignmentPosition) {
-    case ItemPosition::Normal:
-    case ItemPosition::Stretch:
     case ItemPosition::Start:
     case ItemPosition::FlexStart:
-        return 0_lu;
+        return ItemPosition::Start;
 
     case ItemPosition::Center:
     case ItemPosition::AnchorCenter:
-        return extraSpace / 2;
+        return ItemPosition::Center;
 
     case ItemPosition::End:
     case ItemPosition::FlexEnd:
-        return extraSpace;
+        return ItemPosition::End;
 
     case ItemPosition::SelfStart:
         if (LogicalBoxAxis::Inline == containerAxis)
-            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? 0_lu : extraSpace;
-        return containerWritingMode.isBlockMatchingAny(selfWritingMode) ? 0_lu : extraSpace;
+            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? ItemPosition::Start : ItemPosition::End;
+        return containerWritingMode.isBlockMatchingAny(selfWritingMode) ? ItemPosition::Start : ItemPosition::End;
     case ItemPosition::SelfEnd:
         if (LogicalBoxAxis::Inline == containerAxis)
-            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? extraSpace : 0_lu;
-        return containerWritingMode.isBlockMatchingAny(selfWritingMode) ? extraSpace : 0_lu;
+            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? ItemPosition::End : ItemPosition::Start;
+        return containerWritingMode.isBlockMatchingAny(selfWritingMode) ? ItemPosition::End : ItemPosition::Start;
 
     case ItemPosition::Left:
         if (LogicalBoxAxis::Inline == containerAxis)
-            return containerWritingMode.isBidiLTR() ? 0_lu : extraSpace;
-        return containerWritingMode.isBlockLeftToRight() ? 0_lu : extraSpace;
+            return containerWritingMode.isBidiLTR() ? ItemPosition::Start : ItemPosition::End;
+        return containerWritingMode.isBlockLeftToRight() ? ItemPosition::Start : ItemPosition::End;
 
     case ItemPosition::Right:
         if (LogicalBoxAxis::Inline == containerAxis)
-            return containerWritingMode.isBidiLTR() ? extraSpace : 0_lu;
-        return containerWritingMode.isBlockLeftToRight() ? extraSpace : 0_lu;
+            return containerWritingMode.isBidiLTR() ? ItemPosition::End : ItemPosition::Start;
+        return containerWritingMode.isBlockLeftToRight() ? ItemPosition::End : ItemPosition::Start;
 
     case ItemPosition::Baseline:
         // Self-start if self block axis; else fall back to start.
         if (!selfWritingMode.isOrthogonal(containerWritingMode)) {
             if (LogicalBoxAxis::Inline == containerAxis)
-                return 0_lu;
-            return containerWritingMode.isBlockOpposing(selfWritingMode) ? extraSpace : 0_lu;
+                return ItemPosition::Start;
+            return containerWritingMode.isBlockOpposing(selfWritingMode) ? ItemPosition::End : ItemPosition::Start;
         }
         if (LogicalBoxAxis::Inline == containerAxis) // Self block axis.
-            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? 0_lu : extraSpace;
-        return 0_lu;
+            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? ItemPosition::Start : ItemPosition::End;
+        return ItemPosition::Start;
 
     case ItemPosition::LastBaseline:
         // Self-end if self block axis; else fall back to end.
         if (!selfWritingMode.isOrthogonal(containerWritingMode)) {
             if (LogicalBoxAxis::Inline == containerAxis)
-                return extraSpace;
-            return containerWritingMode.isBlockOpposing(selfWritingMode) ? 0_lu : extraSpace;
+                return ItemPosition::End;
+            return containerWritingMode.isBlockOpposing(selfWritingMode) ? ItemPosition::Start : ItemPosition::End;
         }
         if (LogicalBoxAxis::Inline == containerAxis) // Self block axis.
-            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? extraSpace : 0_lu;
-        return extraSpace;
+            return containerWritingMode.isInlineMatchingAny(selfWritingMode) ? ItemPosition::End : ItemPosition::Start;
+        return ItemPosition::End;
 
+    case ItemPosition::Legacy:
+    case ItemPosition::Auto:
+    case ItemPosition::Normal:
+    case ItemPosition::Stretch:
+        return alignmentPosition;
+    }
+    ASSERT_NOT_REACHED();
+    return alignmentPosition;
+}
+
+LayoutUnit StyleSelfAlignmentData::adjustmentFromStartEdge(LayoutUnit extraSpace, ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode)
+{
+    ASSERT(ItemPosition::Auto != alignmentPosition);
+
+    switch (resolvePositionalAlignment(alignmentPosition, containerAxis, containerWritingMode, selfWritingMode)) {
+    case ItemPosition::Normal:
+    case ItemPosition::Stretch:
+    case ItemPosition::Start:
+        return 0_lu;
+    case ItemPosition::Center:
+        return extraSpace / 2;
+    case ItemPosition::End:
+        return extraSpace;
     default:
         ASSERT_NOT_REACHED();
         return 0_lu;
