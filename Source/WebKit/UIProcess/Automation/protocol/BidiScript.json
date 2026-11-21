@@ -285,7 +285,7 @@
             "description": "Disowns the given handles. This removes the handles from the realm, allowing the garbage collector to reclaim the associated objects.",
             "spec": "https://w3c.github.io/webdriver-bidi/#command-script-disown",
             "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/script/disown",
-            "bug": "https://bugs.webkit.org/show_bug.cgi?id=288059",
+            "bug": "https://bugs.webkit.org/show_bug.cgi?id=328254",
             "async": true,
             "parameters": [
                 { "name": "handles", "type": "array", "items": { "$ref": "BidiScript.Handle" }, "description": "The handles to disown." },

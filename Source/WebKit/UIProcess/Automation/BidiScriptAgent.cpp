@@ -535,9 +535,6 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
 
 void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& target, CommandCallback<void>&& callback)
 {
-    // FIXME: WebProcess forwarding to actually release JavaScript objects will be added
-    // once resultOwnership="root" support is implemented. https://bugs.webkit.org/show_bug.cgi?id=288059
-
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
@@ -576,9 +573,10 @@ void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& tar
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
     }
 
-    // FIXME: Implement WebProcess forwarding to release JavaScript objects.
-    // https://bugs.webkit.org/show_bug.cgi?id=288059
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
+    // No handles exist yet, because resultOwnership="root" isn't implemented, and the spec
+    // ignores unknown handles. So there is nothing to release.
+    // FIXME: Release the handles in the WebProcess once they exist. <https://webkit.org/b/328254>
+    callback({ });
 }
 
 void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, std::optional<bool>&&, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)

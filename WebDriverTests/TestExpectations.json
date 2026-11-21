@@ -346,7 +346,7 @@
             "test_call_function_with_serialization_options": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/296255"}}},
             "test_call_function_with_await_promise": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/296255"}}},
             "test_call_function_with_result_ownership": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/296255"}}},
-            "test_disown_handles": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288059"]}}},
+            "test_disown_handles": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/328254"]}}},
             "test_execute_script_returns_promise": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/296255"}}},
             "test_execute_script_accessing_dom": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/296255"}}}
         }
@@ -4832,10 +4832,10 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/disown/handles.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288059"}}
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/328254"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/disown/target.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288059"}}
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/328254"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/evaluate.py": {
         "expected": { "all": { "status": ["PASS"] }},
