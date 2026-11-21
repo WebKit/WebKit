@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+// iframe.contentWindow follows the iframe's navigations, so keep an object of each earlier document to keep it alive.
+let keptMarkers = [];
+
+function navigateIFrameAndKeepItsMarkers(iframeID, url)
+{
+    let iframe = document.getElementById(iframeID);
+    keptMarkers.push(iframe.contentWindow.markers);
+    iframe.src = url;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.NavigatedFrameSnapshot");
+
+    const sameProcessMarkerClassName = HeapTest.markerClassName("SameProcessMarker");
+    const otherProcessMarkerClassName = HeapTest.markerClassName("OtherProcessMarker");
+    const crossOriginMarkerClassName = HeapTest.markerClassName("CrossOriginMarker");
+
+    const inaccessibleGlobalObjectError = "Unable to get object details - Inaccessible GlobalObject";
+
+    let mainFrameTarget = null;
+    let iframeTarget = null;
+    let secondIFrameTarget = null;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.NavigatedFrameSnapshot.SameProcess",
+        description: "The objects of a document that a same-process iframe navigated away from should stay in the iframe's snapshots only, and be previewable.",
+        async test() {
+            // FIXME: <https://webkit.org/b/332030> Use an InspectorTest helper that waits for the main frame target,
+            // instead of matching this test's URL. InspectorTest.mainFrameTarget falls back to the page target while the
+            // frontend does not yet know the main frame target's frame.
+            mainFrameTarget = await waitForFrameTargetForURLContaining("/navigated-frame-heap-snapshot.html");
+            InspectorTest.assert(mainFrameTarget, "Should find the main frame's target.");
+            iframeTarget = await waitForFrameTargetForURLContaining("?initial");
+            InspectorTest.assert(iframeTarget, "Should find the same-origin iframe's target.");
+            secondIFrameTarget = await waitForFrameTargetForURLContaining("?cross-origin-before");
+            InspectorTest.assert(secondIFrameTarget, "Should find the second iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+            InspectorTest.expectEqual(HeapTest.processIdentifier(iframeTarget), HeapTest.processIdentifier(mainFrameTarget), "The same-origin iframe should be in the main frame's process.");
+            await HeapTest.evaluate(iframeTarget, `createMarker("${sameProcessMarkerClassName}")`);
+
+            await HeapTest.evaluate(mainFrameTarget, `navigateIFrameAndKeepItsMarkers("first-iframe", "resources/heap-frame.html?same-process")`);
+            let navigatedIFrameTarget = await waitForFrameTargetForURLContaining("?same-process");
+            InspectorTest.expectEqual(navigatedIFrameTarget, iframeTarget, "The iframe should keep its frame target after navigating in its process.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+
+            let iframeSnapshot = await HeapTest.takeSnapshot(iframeTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, sameProcessMarkerClassName), 1, "The iframe's snapshot should include the marker of the document it navigated away from.");
+            let [sameProcessMarker] = await HeapTest.instances(iframeSnapshot, sameProcessMarkerClassName);
+            let {preview} = await iframeTarget.HeapAgent.getPreview(sameProcessMarker.id);
+            InspectorTest.expectEqual(preview?.description, sameProcessMarkerClassName, "The iframe's target should preview that marker.");
+            let {result} = await iframeTarget.HeapAgent.getRemoteObject(sameProcessMarker.id, "test");
+            InspectorTest.expectEqual(result?.description, sameProcessMarkerClassName, "The iframe's target should get a remote object for that marker.");
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, sameProcessMarkerClassName), 0, "The main frame's snapshot should not include the marker of the document the iframe navigated away from.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.NavigatedFrameSnapshot.OtherProcess",
+        description: "The objects of a document that an iframe navigated away from to another process should appear in the snapshots of the frame targets in the old process, but not be previewable.",
+        async test() {
+            await HeapTest.evaluate(iframeTarget, `createMarker("${otherProcessMarkerClassName}")`);
+
+            await HeapTest.evaluate(mainFrameTarget, `navigateIFrameAndKeepItsMarkers("first-iframe", "http://localhost:8000/site-isolation/inspector/heap/resources/heap-frame.html?other-process")`);
+            let otherProcessIFrameTarget = await waitForFrameTargetForURLContaining("?other-process");
+            InspectorTest.expectNotEqual(HeapTest.processIdentifier(otherProcessIFrameTarget), HeapTest.processIdentifier(mainFrameTarget), "The iframe should be in another process after navigating to another site.");
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, otherProcessMarkerClassName), 1, "The main frame's snapshot should include the marker of the document that the iframe navigated away from.");
+
+            // The old document's window proxy now stands for a window in another process.
+            let [otherProcessMarker] = await HeapTest.instances(mainFrameSnapshot, otherProcessMarkerClassName);
+            let previewError = await HeapTest.commandError(mainFrameTarget.HeapAgent.getPreview(otherProcessMarker.id));
+            InspectorTest.expectEqual(previewError?.message, inaccessibleGlobalObjectError, "Previewing that marker should fail.");
+            let remoteObjectError = await HeapTest.commandError(mainFrameTarget.HeapAgent.getRemoteObject(otherProcessMarker.id, "test"));
+            InspectorTest.expectEqual(remoteObjectError?.message, inaccessibleGlobalObjectError, "Getting a remote object for that marker should fail.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.NavigatedFrameSnapshot.SameProcessCrossOrigin",
+        description: "After an iframe navigates to another origin in its process, the objects of its old document should appear in its snapshots, but not be previewable.",
+        async test() {
+            await waitForExpressionInTarget(secondIFrameTarget, "typeof createMarker === 'function'");
+            await HeapTest.evaluate(secondIFrameTarget, `createMarker("${crossOriginMarkerClassName}")`);
+
+            // Another port of the same host is another origin of the same site, so the iframe stays in its process.
+            await HeapTest.evaluate(mainFrameTarget, `navigateIFrameAndKeepItsMarkers("second-iframe", "http://127.0.0.1:8080/site-isolation/inspector/heap/resources/heap-frame.html?cross-origin-after")`);
+            let navigatedIFrameTarget = await waitForFrameTargetForURLContaining("?cross-origin-after");
+            InspectorTest.expectEqual(navigatedIFrameTarget, secondIFrameTarget, "The second iframe should keep its frame target after navigating to another origin in its process.");
+
+            let iframeSnapshot = await HeapTest.takeSnapshot(secondIFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, crossOriginMarkerClassName), 1, "The second iframe's snapshot should include the marker of its old document.");
+
+            // The old document's window proxy now stands for a window of another origin.
+            let [crossOriginMarker] = await HeapTest.instances(iframeSnapshot, crossOriginMarkerClassName);
+            let previewError = await HeapTest.commandError(secondIFrameTarget.HeapAgent.getPreview(crossOriginMarker.id));
+            InspectorTest.expectEqual(previewError?.message, inaccessibleGlobalObjectError, "Previewing that marker should fail.");
+            let remoteObjectError = await HeapTest.commandError(secondIFrameTarget.HeapAgent.getRemoteObject(crossOriginMarker.id, "test"));
+            InspectorTest.expectEqual(remoteObjectError?.message, inaccessibleGlobalObjectError, "Getting a remote object for that marker should fail.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, the objects of an iframe's earlier documents appear in the right heap snapshots after the iframe navigates, and can be previewed only if their document can access the iframe's current window.</p>
+<iframe id="first-iframe" src="resources/heap-frame.html?initial"></iframe>
+<iframe id="second-iframe" src="resources/heap-frame.html?cross-origin-before"></iframe>
+</body>
