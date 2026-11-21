@@ -35,8 +35,10 @@
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <pal/SessionID.h>
+#include <wtf/Borrow.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
@@ -132,6 +134,34 @@ String BidiBrowserAgent::userContextForPage(const WebPageProxy& page) const
     if (m_userContexts.contains(userContextID))
         return userContextID;
     return defaultUserContextID();
+}
+
+RefPtr<WebsiteDataStore> BidiBrowserAgent::dataStoreForUserContext(const String& userContextID) const
+{
+    if (userContextID != defaultUserContextID()) {
+        auto it = m_userContexts.find(userContextID);
+        if (it == m_userContexts.end())
+            return nullptr;
+        return &it->value->dataStore();
+    }
+
+    // The default user context has no record of its own: its data store is the one used by
+    // the automation process pool's pages that are not in a user context created by the session.
+    RefPtr session = m_session;
+    if (!session)
+        return nullptr;
+
+    RefPtr processPool = session->processPool();
+    if (!processPool)
+        return nullptr;
+
+    for (Ref process : borrow(processPool->processes()).get()) {
+        for (Ref page : process->mainPages()) {
+            if (userContextForPage(page) == defaultUserContextID())
+                return &page->websiteDataStore();
+        }
+    }
+    return nullptr;
 }
 
 // MARK: Inspector::BidiBrowserDispatcherHandler methods.
