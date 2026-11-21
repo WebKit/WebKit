@@ -93,6 +93,42 @@ std::optional<TextDirection> TextUtil::overridingDirection(const RenderText& ren
     });
 }
 
+static TabSize resolvedTabSize(const Style::ComputedStyle& style, const Style::ComputedStyle& blockContainerStyle)
+{
+    // A <number> is a multiple of the advance of the space character of the preserved tab's nearest block container
+    // ancestor, including its letter-spacing and word-spacing, so an inline box with a font of its own does not scale
+    // the tab stops. See https://drafts.csswg.org/css-text-3/#tab-size-property
+    if (auto spaces = style.tabSize().trySpaces()) {
+        // Measuring the space, rather than taking the primary font's space advance, uses the font that renders it, as the
+        // primary font may have no glyph for U+0020, and includes letter-spacing. A lone space gets no word-spacing.
+        CheckedRef fontCascade = blockContainerStyle.fontCascade();
+        return { spaces->value * (fontCascade->widthOfSpaceString() + fontCascade->wordSpacing()), LengthValueType };
+    }
+    return Style::toPlatform(style.tabSize(), style.usedZoomForLength());
+}
+
+void TextUtil::setTabSize(TextRun& run, const Style::ComputedStyle& style, const Style::ComputedStyle& blockContainerStyle)
+{
+    if (style.collapseWhiteSpace())
+        return;
+
+    run.setTabSize(true, resolvedTabSize(style, blockContainerStyle));
+}
+
+void TextUtil::setTabSize(TextRun& run, const InlineTextBox& inlineTextBox)
+{
+    CheckedRef style = inlineTextBox.style();
+    if (style->collapseWhiteSpace() || style->tabSize().isZero())
+        return;
+
+    CheckedPtr ancestor = &inlineTextBox.parent();
+    while (ancestor->isInlineBox())
+        ancestor = &ancestor->parent();
+
+    CheckedRef blockContainerStyle = ancestor->style();
+    run.setTabSize(true, resolvedTabSize(style, blockContainerStyle));
+}
+
 InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization useTrailingWhitespaceMeasuringOptimization, TextSpacing::SpacingState spacingState, GlyphOverflow* glyphOverflow)
 {
     if (from == to)
@@ -128,10 +164,8 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         else
             width = fontCascade.widthForTextUsingSimplifiedMeasuring(view, direction, directionalOverride);
     } else {
-        CheckedRef style = inlineTextBox.style();
         auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), direction, directionalOverride == DirectionalOverride::Yes };
-        if (!style->collapseWhiteSpace() && !style->tabSize().isZero())
-            run.setTabSize(true, Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+        setTabSize(run, inlineTextBox);
         // FIXME: consider moving this to TextRun ctor
         run.setTextSpacingState(spacingState);
         width = fontCascade.width(run, { }, glyphOverflow);
