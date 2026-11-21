@@ -162,8 +162,6 @@ public:
 
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
 
-    void callClearTarget() { clearTarget(); }
-
     class InstanceUpdateBlocker;
     class InstanceInvalidationGuard;
 
