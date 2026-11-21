@@ -54,6 +54,29 @@
 		1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA92273A41C20095F8D5 /* Instance.mm */; };
 		1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA98273A426D0095F8D5 /* RenderPipeline.mm */; };
 		1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA9D273A426D0095F8D5 /* Buffer.mm */; };
+		C014A6682DE7917B023E5DC1 /* CAPIAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = F608EB181590FA961077F15A /* CAPIAdapter.mm */; };
+		D8EFF9AAD77CAA11F999115E /* CAPIBindGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = F8275FED7DF5F0A2F4E491DF /* CAPIBindGroup.mm */; };
+		53AFC00F70D71F1911FB91BA /* CAPIBindGroupLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52C04FAC0732E2F5CCA36E13 /* CAPIBindGroupLayout.mm */; };
+		43F17EE45A672980EEF519C7 /* CAPIBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF477EC6E1785967F6F7A9C /* CAPIBuffer.mm */; };
+		E65545DC63ABEB87BAFC5062 /* CAPICommandBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E9B2504EAECBF05A4F84E /* CAPICommandBuffer.mm */; };
+		F40B518494A96A82E6F13C29 /* CAPICommandEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = C22BB5D74BEC5EA0C91E657B /* CAPICommandEncoder.mm */; };
+		8D801CBC56250562A19E176C /* CAPIComputePassEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = F48D97FBE89BEE32343C3D63 /* CAPIComputePassEncoder.mm */; };
+		D867A7F0A5FCF1446BC66558 /* CAPIComputePipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = C8E9ECC8D75AF79B4D557CDA /* CAPIComputePipeline.mm */; };
+		2DDE43A3C109B04C0F05101F /* CAPIDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB57A6BEBE7257EAB7578E /* CAPIDevice.mm */; };
+		201168F238C03D14AF8FB652 /* CAPIExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29C0ADD94D5A0018051B62E3 /* CAPIExternalTexture.mm */; };
+		33FFE2C8F320CDE3BD243A3F /* CAPIInstanceFunctions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 91F2EDA2B01C5A7DEC85D4C0 /* CAPIInstanceFunctions.mm */; };
+		FD8B6A8978A0EBABFE63F91A /* CAPIPipelineLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D9B5ABD767818492BDF75 /* CAPIPipelineLayout.mm */; };
+		B4BB356FF96A7435EDE6E3B7 /* CAPIPresentationContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2C85735803A2C804F3F81C28 /* CAPIPresentationContext.mm */; };
+		F8020E616C42E7D238F0E077 /* CAPIQuerySet.mm in Sources */ = {isa = PBXBuildFile; fileRef = D595B8907C348921421EFA57 /* CAPIQuerySet.mm */; };
+		BBCAA29254800E44900F92A2 /* CAPIQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC0FD1FAA6D3A22851003FF /* CAPIQueue.mm */; };
+		53ADF553BB24A3476AD7BC6B /* CAPIRenderBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96EA5DC417CDD78F764D5975 /* CAPIRenderBundle.mm */; };
+		94C920E01881E12CDD1851D4 /* CAPIRenderBundleEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5FE613D635C1421A2399C9C /* CAPIRenderBundleEncoder.mm */; };
+		4B37130611B1A0AB0C12B537 /* CAPIRenderPassEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 87445639B5D589EEE1C111B4 /* CAPIRenderPassEncoder.mm */; };
+		B0AF8E33AFA9DE3F503EE5C5 /* CAPIRenderPipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = EE5CE9E01E3C07E62C9D3B92 /* CAPIRenderPipeline.mm */; };
+		033B021A83C06537D7F5FE58 /* CAPISampler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5341C5C6BACC7A458C78F526 /* CAPISampler.mm */; };
+		46DDF9B245F010C7FC710260 /* CAPIShaderModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46908E3ACC718B74DCEB751A /* CAPIShaderModule.mm */; };
+		F66C3241EFF5518A4D4E68C0 /* CAPITexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C68A74911447C178DF236CB /* CAPITexture.mm */; };
+		D42C7300F0EF8812134ED42A /* CAPITextureView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 97A112C4F9230711F784241A /* CAPITextureView.mm */; };
 		1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA9F273A426D0095F8D5 /* QuerySet.mm */; };
 		1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA2273A426D0095F8D5 /* ComputePipeline.mm */; };
 		1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA3273A426D0095F8D5 /* Device.mm */; };
@@ -249,7 +272,7 @@
 		DD5697FE2DC1316A00050321 /* rdar150228472.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5697FC2DC1311D00050321 /* rdar150228472.swift */; };
 		DDE748802F7B4337008013AB /* WorkAround173516139.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE7487F2F7B4331008013AB /* WorkAround173516139.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		596E957DAF12D022D09D9ED4 /* WebGPUCpp.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */; };
+		6469478598FF93E1DB6A49B4 /* CAPIConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1200F6945D158EA8B6CDD818 /* CAPIConversions.h */; };
 		1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */; };
 /* End PBXBuildFile section */
 
@@ -385,6 +408,29 @@
 		1C5ACAA3273A426D0095F8D5 /* Device.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Device.mm; sourceTree = "<group>"; };
 		1C5ACAA4273A426D0095F8D5 /* RenderPassEncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderPassEncoder.mm; sourceTree = "<group>"; };
 		1C5ACAA5273A426D0095F8D5 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
+		F608EB181590FA961077F15A /* CAPIAdapter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIAdapter.mm; sourceTree = "<group>"; };
+		F8275FED7DF5F0A2F4E491DF /* CAPIBindGroup.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIBindGroup.mm; sourceTree = "<group>"; };
+		52C04FAC0732E2F5CCA36E13 /* CAPIBindGroupLayout.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIBindGroupLayout.mm; sourceTree = "<group>"; };
+		CDF477EC6E1785967F6F7A9C /* CAPIBuffer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIBuffer.mm; sourceTree = "<group>"; };
+		CF1E9B2504EAECBF05A4F84E /* CAPICommandBuffer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPICommandBuffer.mm; sourceTree = "<group>"; };
+		C22BB5D74BEC5EA0C91E657B /* CAPICommandEncoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPICommandEncoder.mm; sourceTree = "<group>"; };
+		F48D97FBE89BEE32343C3D63 /* CAPIComputePassEncoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIComputePassEncoder.mm; sourceTree = "<group>"; };
+		C8E9ECC8D75AF79B4D557CDA /* CAPIComputePipeline.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIComputePipeline.mm; sourceTree = "<group>"; };
+		8ACB57A6BEBE7257EAB7578E /* CAPIDevice.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIDevice.mm; sourceTree = "<group>"; };
+		29C0ADD94D5A0018051B62E3 /* CAPIExternalTexture.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIExternalTexture.mm; sourceTree = "<group>"; };
+		91F2EDA2B01C5A7DEC85D4C0 /* CAPIInstanceFunctions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIInstanceFunctions.mm; sourceTree = "<group>"; };
+		CF7D9B5ABD767818492BDF75 /* CAPIPipelineLayout.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIPipelineLayout.mm; sourceTree = "<group>"; };
+		2C85735803A2C804F3F81C28 /* CAPIPresentationContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIPresentationContext.mm; sourceTree = "<group>"; };
+		D595B8907C348921421EFA57 /* CAPIQuerySet.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIQuerySet.mm; sourceTree = "<group>"; };
+		7AC0FD1FAA6D3A22851003FF /* CAPIQueue.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIQueue.mm; sourceTree = "<group>"; };
+		96EA5DC417CDD78F764D5975 /* CAPIRenderBundle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIRenderBundle.mm; sourceTree = "<group>"; };
+		B5FE613D635C1421A2399C9C /* CAPIRenderBundleEncoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIRenderBundleEncoder.mm; sourceTree = "<group>"; };
+		87445639B5D589EEE1C111B4 /* CAPIRenderPassEncoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIRenderPassEncoder.mm; sourceTree = "<group>"; };
+		EE5CE9E01E3C07E62C9D3B92 /* CAPIRenderPipeline.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIRenderPipeline.mm; sourceTree = "<group>"; };
+		5341C5C6BACC7A458C78F526 /* CAPISampler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPISampler.mm; sourceTree = "<group>"; };
+		46908E3ACC718B74DCEB751A /* CAPIShaderModule.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPIShaderModule.mm; sourceTree = "<group>"; };
+		7C68A74911447C178DF236CB /* CAPITexture.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPITexture.mm; sourceTree = "<group>"; };
+		97A112C4F9230711F784241A /* CAPITextureView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CAPITextureView.mm; sourceTree = "<group>"; };
 		1C5ACAA6273A426D0095F8D5 /* RenderBundleEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBundleEncoder.h; sourceTree = "<group>"; };
 		1C5ACAA7273A426D0095F8D5 /* ComputePipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputePipeline.h; sourceTree = "<group>"; };
 		1C5ACAA8273A426D0095F8D5 /* ComputePassEncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComputePassEncoder.mm; sourceTree = "<group>"; };
@@ -609,7 +655,7 @@
 		DD8EE22F2CE6B4B3004DD6F8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		DDE7487F2F7B4331008013AB /* WorkAround173516139.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkAround173516139.h; sourceTree = "<group>"; };
 		B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCpp.h; sourceTree = "<group>"; };
-		34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCppBridge.h; sourceTree = "<group>"; };
+		1200F6945D158EA8B6CDD818 /* CAPIConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPIConversions.h; sourceTree = "<group>"; };
 		83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCppConversions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -684,9 +730,42 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B9A775AA49D3F279A447BE3C /* CAPI */ = {
+			isa = PBXGroup;
+			children = (
+				F608EB181590FA961077F15A /* CAPIAdapter.mm */,
+				F8275FED7DF5F0A2F4E491DF /* CAPIBindGroup.mm */,
+				52C04FAC0732E2F5CCA36E13 /* CAPIBindGroupLayout.mm */,
+				CDF477EC6E1785967F6F7A9C /* CAPIBuffer.mm */,
+				CF1E9B2504EAECBF05A4F84E /* CAPICommandBuffer.mm */,
+				C22BB5D74BEC5EA0C91E657B /* CAPICommandEncoder.mm */,
+				F48D97FBE89BEE32343C3D63 /* CAPIComputePassEncoder.mm */,
+				C8E9ECC8D75AF79B4D557CDA /* CAPIComputePipeline.mm */,
+				1200F6945D158EA8B6CDD818 /* CAPIConversions.h */,
+				8ACB57A6BEBE7257EAB7578E /* CAPIDevice.mm */,
+				29C0ADD94D5A0018051B62E3 /* CAPIExternalTexture.mm */,
+				91F2EDA2B01C5A7DEC85D4C0 /* CAPIInstanceFunctions.mm */,
+				CF7D9B5ABD767818492BDF75 /* CAPIPipelineLayout.mm */,
+				2C85735803A2C804F3F81C28 /* CAPIPresentationContext.mm */,
+				D595B8907C348921421EFA57 /* CAPIQuerySet.mm */,
+				7AC0FD1FAA6D3A22851003FF /* CAPIQueue.mm */,
+				96EA5DC417CDD78F764D5975 /* CAPIRenderBundle.mm */,
+				B5FE613D635C1421A2399C9C /* CAPIRenderBundleEncoder.mm */,
+				87445639B5D589EEE1C111B4 /* CAPIRenderPassEncoder.mm */,
+				EE5CE9E01E3C07E62C9D3B92 /* CAPIRenderPipeline.mm */,
+				5341C5C6BACC7A458C78F526 /* CAPISampler.mm */,
+				46908E3ACC718B74DCEB751A /* CAPIShaderModule.mm */,
+				7C68A74911447C178DF236CB /* CAPITexture.mm */,
+				97A112C4F9230711F784241A /* CAPITextureView.mm */,
+				83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */,
+			);
+			path = CAPI;
+			sourceTree = "<group>";
+		};
 		1CEBD7E52716AFBA00A5254D /* WebGPU */ = {
 			isa = PBXGroup;
 			children = (
+				B9A775AA49D3F279A447BE3C /* CAPI */,
 				DD8EE22E2CE6B490004DD6F8 /* Internal */,
 				1C5ACAB2273A426D0095F8D5 /* Adapter.h */,
 				1C5ACAA9273A426D0095F8D5 /* Adapter.mm */,
@@ -761,8 +840,6 @@
 				1CEBD7E62716AFBA00A5254D /* WebGPU.h */,
 				1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */,
 				07607E0D2EFC966700A2F311 /* WebGPU_Private.modulemap */,
-				34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */,
-				83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */,
 				DDE7487F2F7B4331008013AB /* WorkAround173516139.h */,
 				0D943C0D2C6571BC00D33BA5 /* XRBinding.h */,
 				0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */,
@@ -1034,6 +1111,7 @@
 				07D291722EC9CECC00A32120 /* BindGroup.h in Headers */,
 				07D291732EC9CECF00A32120 /* BindGroupLayout.h in Headers */,
 				94E02AFC2CF03B580052068F /* Buffer.h in Headers */,
+				6469478598FF93E1DB6A49B4 /* CAPIConversions.h in Headers */,
 				07D291742EC9CED600A32120 /* CommandBuffer.h in Headers */,
 				94200C4F2CADBCAD00484401 /* CommandEncoder.h in Headers */,
 				94200C522CADBE5200484401 /* CommandsMixin.h in Headers */,
@@ -1066,7 +1144,6 @@
 				0D164A3A2E8EE14700864EA1 /* TextureOrTextureView.h in Headers */,
 				07D291822EC9CF2A00A32120 /* TextureView.h in Headers */,
 				596E957DAF12D022D09D9ED4 /* WebGPUCpp.h in Headers */,
-				CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */,
 				1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */,
 				DDE748802F7B4337008013AB /* WorkAround173516139.h in Headers */,
 				0D943C0F2C6571BC00D33BA5 /* XRBinding.h in Headers */,
@@ -1418,6 +1495,29 @@
 				1C5ACAE1273A55C10095F8D5 /* BindGroupLayout.mm in Sources */,
 				1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */,
 				9478714A2C98CECB003DB695 /* Buffer.swift in Sources */,
+				C014A6682DE7917B023E5DC1 /* CAPIAdapter.mm in Sources */,
+				D8EFF9AAD77CAA11F999115E /* CAPIBindGroup.mm in Sources */,
+				53AFC00F70D71F1911FB91BA /* CAPIBindGroupLayout.mm in Sources */,
+				43F17EE45A672980EEF519C7 /* CAPIBuffer.mm in Sources */,
+				E65545DC63ABEB87BAFC5062 /* CAPICommandBuffer.mm in Sources */,
+				F40B518494A96A82E6F13C29 /* CAPICommandEncoder.mm in Sources */,
+				8D801CBC56250562A19E176C /* CAPIComputePassEncoder.mm in Sources */,
+				D867A7F0A5FCF1446BC66558 /* CAPIComputePipeline.mm in Sources */,
+				2DDE43A3C109B04C0F05101F /* CAPIDevice.mm in Sources */,
+				201168F238C03D14AF8FB652 /* CAPIExternalTexture.mm in Sources */,
+				33FFE2C8F320CDE3BD243A3F /* CAPIInstanceFunctions.mm in Sources */,
+				FD8B6A8978A0EBABFE63F91A /* CAPIPipelineLayout.mm in Sources */,
+				B4BB356FF96A7435EDE6E3B7 /* CAPIPresentationContext.mm in Sources */,
+				F8020E616C42E7D238F0E077 /* CAPIQuerySet.mm in Sources */,
+				BBCAA29254800E44900F92A2 /* CAPIQueue.mm in Sources */,
+				53ADF553BB24A3476AD7BC6B /* CAPIRenderBundle.mm in Sources */,
+				94C920E01881E12CDD1851D4 /* CAPIRenderBundleEncoder.mm in Sources */,
+				4B37130611B1A0AB0C12B537 /* CAPIRenderPassEncoder.mm in Sources */,
+				B0AF8E33AFA9DE3F503EE5C5 /* CAPIRenderPipeline.mm in Sources */,
+				033B021A83C06537D7F5FE58 /* CAPISampler.mm in Sources */,
+				46DDF9B245F010C7FC710260 /* CAPIShaderModule.mm in Sources */,
+				F66C3241EFF5518A4D4E68C0 /* CAPITexture.mm in Sources */,
+				D42C7300F0EF8812134ED42A /* CAPITextureView.mm in Sources */,
 				1C5ACAE3273A55CD0095F8D5 /* CommandBuffer.mm in Sources */,
 				1C5ACAC9273A426E0095F8D5 /* CommandEncoder.mm in Sources */,
 				94200C512CADBD7200484401 /* CommandEncoder.swift in Sources */,

@@ -187,24 +187,3 @@ bool CommandBuffer::waitForCompletion()
 }
 
 } // namespace WebGPU::Metal
-
-#pragma mark WGPU Stubs
-
-NODELETE void wgpuCommandBufferAddRef(WGPUCommandBuffer commandBuffer)
-{
-    WebGPU::Metal::fromAPI(commandBuffer).ref();
-}
-
-void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(commandBuffer).deref();
-    }
-}
-
-void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, WGPUStringView label)
-{
-    @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(commandBuffer))->setLabel(WebGPU::Metal::fromAPI(label));
-    }
-}

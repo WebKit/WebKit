@@ -29,12 +29,14 @@
 #error This header requires ARC. Include it only from files compiled with -fobjc-arc.
 #endif
 
-#import "WebGPUCppBridge.h"
+#import "CAPIConversions.h"
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
+#import <algorithm>
 #import <optional>
 #import <type_traits>
 #import <wtf/Borrow.h>
+#import <wtf/FastMalloc.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/OptionSet.h>
 #import <wtf/StdLibExtras.h>
@@ -52,10 +54,10 @@
 // and returns a descriptor whose spans point into it. The storage has to outlive every use of the
 // descriptor, and it must not be modified while the descriptor is in use.
 //
-// Handles in descriptors resolve to the C++ API objects through the transition bridge
-// (WebGPUCppBridge.h), so the conversions do not depend on the implementation that created them.
+// Handles in descriptors resolve to the C++ API objects through the handle conversions of
+// CAPIConversions.h, so the conversions do not depend on the implementation that created them.
 
-namespace WebGPU::Metal {
+namespace WebGPU::CAPI {
 
 inline String fromAPI(WGPUStringView string)
 {
@@ -1809,7 +1811,7 @@ inline std::optional<WebGPU::TexelCopyBufferInfo> fromAPI(const WGPUTexelCopyBuf
 {
     if (!info.buffer)
         return std::nullopt;
-    return WebGPU::TexelCopyBufferInfo { .layout = fromAPI(info.layout), .buffer = WebGPU::fromAPI(info.buffer) };
+    return WebGPU::TexelCopyBufferInfo { .layout = fromAPI(info.layout), .buffer = WebGPU::CAPI::fromAPI(info.buffer) };
 }
 
 inline std::optional<WebGPU::TexelCopyTextureInfo> fromAPI(const WGPUTexelCopyTextureInfo& info)
@@ -1818,7 +1820,7 @@ inline std::optional<WebGPU::TexelCopyTextureInfo> fromAPI(const WGPUTexelCopyTe
     if (!info.texture || !aspect)
         return std::nullopt;
     return WebGPU::TexelCopyTextureInfo {
-        .texture = WebGPU::fromAPI(info.texture),
+        .texture = WebGPU::CAPI::fromAPI(info.texture),
         .mipLevel = info.mipLevel,
         .origin = fromAPI(info.origin),
         .aspect = *aspect,
@@ -2106,7 +2108,7 @@ inline std::optional<WebGPU::PipelineLayoutDescriptor> fromAPI(const WGPUPipelin
         for (auto bindGroupLayout : unsafeMakeSpan(descriptor.bindGroupLayouts, descriptor.bindGroupLayoutCount)) {
             if (!bindGroupLayout)
                 return std::nullopt;
-            storage.bindGroupLayouts.append(Ref { WebGPU::fromAPI(bindGroupLayout) });
+            storage.bindGroupLayouts.append(Ref { WebGPU::CAPI::fromAPI(bindGroupLayout) });
         }
         bindGroupLayouts = storage.bindGroupLayouts.span();
     }
@@ -2128,16 +2130,16 @@ inline std::optional<WebGPU::BindGroupEntry> fromAPI(const WGPUBindGroupEntry& e
     auto resource = [&]() -> WebGPU::BindingResource {
         if (entry.buffer) {
             return WebGPU::BufferBinding {
-                .buffer = WebGPU::fromAPI(entry.buffer),
+                .buffer = WebGPU::CAPI::fromAPI(entry.buffer),
                 .offset = entry.offset,
                 .size = entry.size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional<uint64_t> { entry.size },
             };
         }
         if (entry.sampler)
-            return Ref { WebGPU::fromAPI(entry.sampler) };
+            return Ref { WebGPU::CAPI::fromAPI(entry.sampler) };
         if (entry.textureView)
-            return Ref { WebGPU::fromAPI(entry.textureView) };
-        return Ref { WebGPU::fromAPI(externalTexture) };
+            return Ref { WebGPU::CAPI::fromAPI(entry.textureView) };
+        return Ref { WebGPU::CAPI::fromAPI(externalTexture) };
     }();
 
     return WebGPU::BindGroupEntry {
@@ -2169,7 +2171,7 @@ inline std::optional<WebGPU::BindGroupDescriptor> fromAPI(const WGPUBindGroupDes
 
     return WebGPU::BindGroupDescriptor {
         .label = fromAPI(descriptor.label),
-        .layout = WebGPU::fromAPI(descriptor.layout),
+        .layout = WebGPU::CAPI::fromAPI(descriptor.layout),
         .entries = storage.entries.span(),
     };
 }
@@ -2235,7 +2237,7 @@ inline std::optional<WebGPU::ProgrammableStage> programmableStageFromAPI(WGPUSha
         return WebGPU::ConstantEntry { .key = fromAPI(constant.key), .value = constant.value };
     });
     return WebGPU::ProgrammableStage {
-        .module = WebGPU::fromAPI(module),
+        .module = WebGPU::CAPI::fromAPI(module),
         .entryPoint = entryPointFromAPI(entryPoint),
         .constants = constantsStorage.span(),
     };
@@ -2253,7 +2255,7 @@ inline std::optional<WebGPU::ComputePipelineDescriptor> fromAPI(const WGPUComput
 
     return WebGPU::ComputePipelineDescriptor {
         .label = fromAPI(descriptor.label),
-        .layout = descriptor.layout ? RefPtr { &WebGPU::fromAPI(descriptor.layout) } : nullptr,
+        .layout = descriptor.layout ? RefPtr { &WebGPU::CAPI::fromAPI(descriptor.layout) } : nullptr,
         .compute = WTF::move(*compute),
     };
 }
@@ -2423,7 +2425,7 @@ inline std::optional<WebGPU::RenderPipelineDescriptor> fromAPI(const WGPURenderP
 
     return WebGPU::RenderPipelineDescriptor {
         .label = fromAPI(descriptor.label),
-        .layout = descriptor.layout ? RefPtr { &WebGPU::fromAPI(descriptor.layout) } : nullptr,
+        .layout = descriptor.layout ? RefPtr { &WebGPU::CAPI::fromAPI(descriptor.layout) } : nullptr,
         .vertex = {
             .stage = WTF::move(*vertexStage),
             .buffers = storage.vertexBuffers.span(),
@@ -2465,7 +2467,7 @@ inline std::optional<WebGPU::PassTimestampWrites> fromAPI(const WGPUPassTimestam
         return value == WGPU_QUERY_SET_INDEX_UNDEFINED ? std::nullopt : std::optional { value };
     };
     return WebGPU::PassTimestampWrites {
-        .querySet = WebGPU::fromAPI(timestampWrites.querySet),
+        .querySet = WebGPU::CAPI::fromAPI(timestampWrites.querySet),
         .beginningOfPassWriteIndex = writeIndex(timestampWrites.beginningOfPassWriteIndex),
         .endOfPassWriteIndex = writeIndex(timestampWrites.endOfPassWriteIndex),
     };
@@ -2489,7 +2491,7 @@ inline std::optional<WebGPU::ComputePassDescriptor> fromAPI(const WGPUComputePas
 inline std::optional<WebGPU::RenderPassAttachmentView> renderPassAttachmentViewFromAPI(WGPUTextureView view)
 {
     if (view)
-        return WebGPU::RenderPassAttachmentView { Ref { WebGPU::fromAPI(view) } };
+        return WebGPU::RenderPassAttachmentView { Ref { WebGPU::CAPI::fromAPI(view) } };
     return std::nullopt;
 }
 
@@ -2567,7 +2569,7 @@ inline std::optional<WebGPU::RenderPassDescriptor> fromAPI(const WGPURenderPassD
         .label = fromAPI(descriptor.label),
         .colorAttachments = storage.colorAttachments.span(),
         .depthStencilAttachment = WTF::move(depthStencilAttachment),
-        .occlusionQuerySet = descriptor.occlusionQuerySet ? RefPtr { &WebGPU::fromAPI(descriptor.occlusionQuerySet) } : nullptr,
+        .occlusionQuerySet = descriptor.occlusionQuerySet ? RefPtr { &WebGPU::CAPI::fromAPI(descriptor.occlusionQuerySet) } : nullptr,
         .timestampWrites = WTF::move(timestampWrites),
         .maxDrawCount = maxDrawCount ? std::optional { maxDrawCount->maxDrawCount } : std::nullopt,
     };
@@ -2754,4 +2756,58 @@ inline WGPUErrorType toAPI(const std::optional<WebGPU::Error>& error)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace WebGPU::Metal
+// Literals have static storage, so the view can borrow them freely.
+inline WGPUStringView toAPI(ASCIILiteral literal)
+{
+    return { literal.characters(), literal.length() };
+}
+
+// The view borrows the UTF-8 string.
+inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
+{
+    auto characters = byteCast<char>(string.span());
+    return { characters.data(), characters.size() };
+}
+
+// A string that the caller of the C API frees, with fastFree() of its data. The *FreeMembers
+// functions free the strings of the structs they are for.
+inline WGPUStringView toAPIAllocated(const String& string)
+{
+    auto utf8 = string.utf8();
+    auto source = utf8.spanIncludingNullTerminator();
+    auto* data = static_cast<char*>(fastMalloc(source.size()));
+    memcpySpan(unsafeMakeSpan(data, source.size()), source);
+    return { data, utf8.length() };
+}
+
+inline void freeAllocated(WGPUStringView string)
+{
+    fastFree(const_cast<char*>(string.data));
+}
+
+// The C API features of a feature list, as wgpuAdapterGetFeatures() and wgpuDeviceGetFeatures()
+// return them: in increasing order of their WGPUFeatureName values, without duplicates and without
+// the features that have no C API equivalent. The caller of the C API frees the array with
+// wgpuSupportedFeaturesFreeMembers(). An empty list has no array.
+inline WGPUSupportedFeatures toAPIAllocated(const Vector<WebGPU::FeatureName>& features)
+{
+    Vector<WGPUFeatureName> apiFeatures;
+    for (auto feature : features) {
+        if (auto apiFeature = toAPI(feature); apiFeature && !apiFeatures.contains(*apiFeature))
+            apiFeatures.append(*apiFeature);
+    }
+    if (apiFeatures.isEmpty())
+        return { 0, nullptr };
+    std::ranges::sort(apiFeatures);
+    auto* data = static_cast<WGPUFeatureName*>(fastMalloc(apiFeatures.sizeInBytes()));
+    memcpySpan(unsafeMakeSpan(data, apiFeatures.size()), apiFeatures.span());
+    return { apiFeatures.size(), data };
+}
+
+inline void freeAllocated(WGPUSupportedFeatures features)
+{
+    fastFree(const_cast<WGPUFeatureName*>(features.features));
+}
+
+
+} // namespace WebGPU::CAPI

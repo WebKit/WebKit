@@ -270,33 +270,3 @@ const BufferBindingSizesForBindGroup* ComputePipeline::minimumBufferSizes(uint32
 }
 
 } // namespace WebGPU::Metal
-
-#pragma mark WGPU Stubs
-
-NODELETE void wgpuComputePipelineAddRef(WGPUComputePipeline computePipeline)
-{
-    WebGPU::Metal::fromAPI(computePipeline).ref();
-}
-
-void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(computePipeline).deref();
-    }
-}
-
-WGPUBindGroupLayout wgpuComputePipelineGetBindGroupLayout(WGPUComputePipeline computePipeline, uint32_t groupIndex)
-{
-    @autoreleasepool {
-        // Every WebGPU::BindGroupLayout that a WebGPU::Metal::ComputePipeline returns is a WebGPU::Metal::BindGroupLayout.
-        Ref bindGroupLayout = downcast<WebGPU::Metal::BindGroupLayout>(protect(WebGPU::Metal::fromAPI(computePipeline))->getBindGroupLayout(groupIndex).get());
-        return WebGPU::Metal::releaseToAPI(WTF::move(bindGroupLayout));
-    }
-}
-
-void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, WGPUStringView label)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(computePipeline).setLabel(WebGPU::Metal::fromAPI(label));
-    }
-}

@@ -388,24 +388,3 @@ NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLa
 }
 
 } // namespace WebGPU::Metal
-
-#pragma mark WGPU Stubs
-
-NODELETE void wgpuPipelineLayoutAddRef(WGPUPipelineLayout pipelineLayout)
-{
-    WebGPU::Metal::fromAPI(pipelineLayout).ref();
-}
-
-void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(pipelineLayout).deref();
-    }
-}
-
-void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, WGPUStringView label)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(pipelineLayout).setLabel(WebGPU::Metal::fromAPI(label));
-    }
-}

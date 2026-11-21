@@ -1,3 +1,4 @@
+CAPI/WebGPUCppConversions.h
 CommandBuffer.mm
 ComputePassEncoder.mm
 Pipeline.mm
@@ -15,4 +16,3 @@ WGSL/Parser.cpp
 WGSL/TypeCheck.cpp
 WGSL/UniformityAnalysis.cpp
 WGSL/WGSLShaderModule.h
-WebGPUCppConversions.h

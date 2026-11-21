@@ -1208,7 +1208,7 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::D
         }
         auto textureUsage = apiTextureView->usage();
         if ((textureEntry && !textureUsage.contains(WebGPU::TextureUsage::TextureBinding)) || (storageTextureEntry && !textureUsage.contains(WebGPU::TextureUsage::StorageBinding))) {
-            VALIDATION_ERROR([NSString stringWithFormat:@"Storage texture usage(%llu) did not have storage usage or storage texture entry did not have storage binding", toAPI(textureUsage)]);
+            VALIDATION_ERROR([NSString stringWithFormat:@"Storage texture usage(%llu) did not have storage usage or storage texture entry did not have storage binding", static_cast<unsigned long long>(textureUsage.toRaw())]);
             return BindGroup::createInvalid(object);
         }
         if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView->sampleCount())) {
@@ -1491,7 +1491,7 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
                     }
 
                     if (!hasProperUsageFlags(layoutBinding->type, apiBuffer->usage())) {
-                        VALIDATION_ERROR([NSString stringWithFormat:@"Unexpected type(%u), buffer.usage(%llu)", layoutBinding->type, toAPI(apiBuffer->usage())]);
+                        VALIDATION_ERROR([NSString stringWithFormat:@"Unexpected type(%u), buffer.usage(%llu)", layoutBinding->type, static_cast<unsigned long long>(apiBuffer->usage().toRaw())]);
                         return BindGroup::createInvalid(*this);
                     }
 
@@ -1931,24 +1931,3 @@ bool BindGroup::previouslyValidatedBindGroup(uint32_t groupIndex, uint64_t pipel
 }
 
 } // namespace WebGPU::Metal
-
-#pragma mark WGPU Stubs
-
-NODELETE void wgpuBindGroupAddRef(WGPUBindGroup bindGroup)
-{
-    WebGPU::Metal::fromAPI(bindGroup).ref();
-}
-
-void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(bindGroup).deref();
-    }
-}
-
-void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, WGPUStringView label)
-{
-    @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(bindGroup))->setLabel(WebGPU::Metal::fromAPI(label));
-    }
-}

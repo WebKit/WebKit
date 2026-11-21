@@ -358,24 +358,3 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
 }
 
 } // namespace WebGPU::Metal
-
-#pragma mark WGPU Stubs
-
-NODELETE void wgpuSamplerAddRef(WGPUSampler sampler)
-{
-    WebGPU::Metal::fromAPI(sampler).ref();
-}
-
-void wgpuSamplerRelease(WGPUSampler sampler)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(sampler).deref();
-    }
-}
-
-void wgpuSamplerSetLabel(WGPUSampler sampler, WGPUStringView label)
-{
-    @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(sampler))->setLabel(WebGPU::Metal::fromAPI(label));
-    }
-}

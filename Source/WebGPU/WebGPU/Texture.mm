@@ -3083,12 +3083,12 @@ NSString* Texture::errorValidatingTextureViewCreation(const ResolvedTextureViewD
     // The view's usage narrows the texture's, and each usage it keeps has to be supported by the
     // view's own format rather than by the format of the texture it is a view of.
     if (!m_usage.containsAll(descriptor.usage))
-        return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) is not a subset of the texture's usage(%llu)", toAPI(descriptor.usage), toAPI(m_usage)]);
+        return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) is not a subset of the texture's usage(%llu)", static_cast<unsigned long long>(descriptor.usage.toRaw()), static_cast<unsigned long long>(m_usage.toRaw())]);
 
     // Transient textures never leave tile memory, so a view of one cannot drop any of the
     // texture's usages. A zero usage has already been resolved to the texture's usage above.
     if (m_usage.contains(WebGPU::TextureUsage::Transient) && descriptor.usage != m_usage)
-        return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) must be either zero or exactly the transient texture's usage(%llu)", toAPI(descriptor.usage), toAPI(m_usage)]);
+        return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) must be either zero or exactly the transient texture's usage(%llu)", static_cast<unsigned long long>(descriptor.usage.toRaw()), static_cast<unsigned long long>(m_usage.toRaw())]);
 
     if (!descriptor.swizzle.isIdentity() && !m_device->hasFeature(WebGPU::FeatureName::TextureComponentSwizzle))
         return ERROR_STRING(@"swizzle is not \"rgba\" and the texture-component-swizzle feature is not enabled");
@@ -3278,7 +3278,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
     }
 
     if (!inputDescriptor.usage.isEmpty() && !m_usage.containsAll(inputDescriptor.usage)) {
-        device->generateAValidationError([NSString stringWithFormat:@"GPUTexture.createView: when the view's usage(%llu) is specified it must be a subset of the Texture's usage(%llu)", toAPI(inputDescriptor.usage), toAPI(m_usage)]);
+        device->generateAValidationError([NSString stringWithFormat:@"GPUTexture.createView: when the view's usage(%llu) is specified it must be a subset of the Texture's usage(%llu)", static_cast<unsigned long long>(inputDescriptor.usage.toRaw()), static_cast<unsigned long long>(m_usage.toRaw())]);
         return TextureView::createInvalid(*this, device.get());
     }
 
@@ -4252,108 +4252,3 @@ void Texture::updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t
 }
 
 } // namespace WebGPU::Metal
-
-#pragma mark WGPU Stubs
-
-NODELETE void wgpuTextureAddRef(WGPUTexture texture)
-{
-    WebGPU::Metal::fromAPI(texture).ref();
-}
-
-void wgpuTextureRelease(WGPUTexture texture)
-{
-    @autoreleasepool {
-        WebGPU::Metal::fromAPI(texture).deref();
-    }
-}
-
-WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
-{
-    @autoreleasepool {
-        Ref protectedTexture = WebGPU::Metal::fromAPI(texture);
-        // A null descriptor is a descriptor with all members at their defaults.
-        std::optional<WebGPU::TextureViewDescriptor> apiDescriptor;
-        if (descriptor) {
-            apiDescriptor = WebGPU::Metal::fromAPI(*descriptor);
-            if (!apiDescriptor) {
-                Ref device = protectedTexture->device();
-                device->generateAValidationError("GPUTextureViewDescriptor has an invalid enum value or usage bit"_s);
-                return WebGPU::Metal::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
-            }
-        }
-        // Every WebGPU::TextureView that a WebGPU::Metal::Texture creates is a WebGPU::Metal::TextureView.
-        Ref view = downcast<WebGPU::Metal::TextureView>(*protectedTexture->createView(apiDescriptor));
-        return WebGPU::Metal::releaseToAPI(WTF::move(view));
-    }
-}
-
-void wgpuTextureDestroy(WGPUTexture texture)
-{
-    @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(texture))->destroy();
-    }
-}
-
-void wgpuTextureSetLabel(WGPUTexture texture, WGPUStringView label)
-{
-    @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(texture))->setLabel(WebGPU::Metal::fromAPI(label));
-    }
-}
-
-uint32_t wgpuTextureGetDepthOrArrayLayers(WGPUTexture texture)
-{
-    @autoreleasepool {
-        return protect(WebGPU::Metal::fromAPI(texture))->depthOrArrayLayers();
-    }
-}
-
-WGPUTextureDimension wgpuTextureGetDimension(WGPUTexture texture)
-{
-    @autoreleasepool {
-        return WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(texture))->dimension());
-    }
-}
-
-WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
-{
-    @autoreleasepool {
-        auto format = protect(WebGPU::Metal::fromAPI(texture))->optionalFormat();
-        return format ? WebGPU::Metal::toAPI(*format) : WGPUTextureFormat_Undefined;
-    }
-}
-
-uint32_t wgpuTextureGetHeight(WGPUTexture texture)
-{
-    @autoreleasepool {
-        return protect(WebGPU::Metal::fromAPI(texture))->height();
-    }
-}
-
-uint32_t wgpuTextureGetWidth(WGPUTexture texture)
-{
-    @autoreleasepool {
-        return protect(WebGPU::Metal::fromAPI(texture))->width();
-    }
-}
-
-uint32_t wgpuTextureGetMipLevelCount(WGPUTexture texture)
-{
-    @autoreleasepool {
-        return protect(WebGPU::Metal::fromAPI(texture))->mipLevelCount();
-    }
-}
-
-uint32_t wgpuTextureGetSampleCount(WGPUTexture texture)
-{
-    @autoreleasepool {
-        return protect(WebGPU::Metal::fromAPI(texture))->sampleCount();
-    }
-}
-
-WGPUTextureUsage wgpuTextureGetUsage(WGPUTexture texture)
-{
-    @autoreleasepool {
-        return WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(texture))->usage());
-    }
-}

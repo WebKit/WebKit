@@ -31,8 +31,6 @@
 
 #import "Texture.h"
 #import "TextureView.h"
-
-#import "WebGPUCppConversions.h"
 #import <WebGPU/WebGPU.h>
 #import <wtf/Ref.h>
 

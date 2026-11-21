@@ -31,7 +31,6 @@
 #import "CommandBuffer.h"
 #import "HardwareCapabilities.h"
 #import "PresentationContext.h"
-#import "PresentationContextCoreAnimation.h"
 #import <cstring>
 #import <dlfcn.h>
 #import <wtf/BlockPtr.h>
@@ -296,94 +295,3 @@ RefPtr<Instance> createInstance(InstanceDescriptor&& descriptor)
 }
 
 } // namespace WebGPU
-
-#pragma mark WGPU Stubs
-
-NODELETE void wgpuInstanceAddRef(WGPUInstance instance)
-{
-    WebGPU::Metal::fromAPI(instance).ref();
-}
-
-void wgpuInstanceRelease(WGPUInstance instance)
-{
-    @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(instance))->waitForCommandBufferCompletions();
-        WebGPU::Metal::fromAPI(instance).deref();
-    }
-}
-
-// The required instance features are not checked: the instance has all of them. The instance has
-// no scheduler: its callbacks run in wgpuInstanceProcessEvents() and wgpuInstanceWaitAny().
-WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor*)
-{
-    @autoreleasepool {
-        return WebGPU::Metal::releaseToAPI(WebGPU::Metal::Instance::create({ }));
-    }
-}
-
-NODELETE WGPUProc wgpuGetProcAddress(WGPUStringView)
-{
-    return nullptr;
-}
-
-// A surface presents into the CAMetalLayer of its WGPUSurfaceSourceMetalLayer. The other surface
-// sources are not supported: the surface presents nowhere.
-WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
-{
-    @autoreleasepool {
-        if (auto* metalLayerSource = descriptor ? WebGPU::Metal::findChainedStruct<WGPUSurfaceSourceMetalLayer>(descriptor->nextInChain) : nullptr) {
-            if (CAMetalLayer *layer = (__bridge CAMetalLayer *)metalLayerSource->layer)
-                return WebGPU::Metal::releaseToAPI(WebGPU::Metal::PresentationContextCoreAnimation::create(layer));
-        }
-        return WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::PresentationContext>(protect(WebGPU::Metal::fromAPI(instance))->createPresentationContext({ }));
-    }
-}
-
-void wgpuInstanceProcessEvents(WGPUInstance instance)
-{
-    @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(instance))->processEvents();
-    }
-}
-
-// The C API reports an adapter that is not available with WGPURequestAdapterStatus_Unavailable
-// and no adapter. Null options are the default ones.
-WGPUFuture wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallbackInfo callbackInfo)
-{
-    @autoreleasepool {
-        Ref protectedInstance = WebGPU::Metal::fromAPI(instance);
-        WebGPU::Metal::CAPIFuture future { protectedInstance.copyRef() };
-        auto callback = [callbackInfo, future](WGPURequestAdapterStatus status, WGPUAdapter adapter, ASCIILiteral message) {
-            callbackInfo.callback(status, adapter, WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
-        };
-        WGPURequestAdapterOptions defaultOptions = WGPU_REQUEST_ADAPTER_OPTIONS_INIT;
-        auto apiOptions = WebGPU::Metal::fromAPI(options ? *options : defaultOptions);
-        if (!apiOptions) {
-            callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference"_s);
-            return future.future();
-        }
-        protectedInstance->requestAdapter(*apiOptions, [callback = WTF::move(callback)](RefPtr<WebGPU::Adapter>&& adapter) {
-            if (!adapter)
-                return callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present"_s);
-            callback(WGPURequestAdapterStatus_Success, WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::Adapter>(WTF::move(adapter)), ""_s);
-        });
-        return future.future();
-    }
-}
-
-// A timeout of UINT64_MAX never passes.
-WGPUWaitStatus wgpuInstanceWaitAny(WGPUInstance instance, size_t futureCount, WGPUFutureWaitInfo* futures, uint64_t timeoutNS)
-{
-    @autoreleasepool {
-        auto waitInfos = unsafeMakeSpan(futures, futureCount);
-        auto futureIDs = WTF::map(waitInfos, [](auto& waitInfo) {
-            return waitInfo.future.id;
-        });
-        auto timeout = timeoutNS == UINT64_MAX ? Seconds::infinity() : Seconds::fromNanoseconds(timeoutNS);
-        bool completed = protect(WebGPU::Metal::fromAPI(instance))->waitForAnyFuture(borrow(futureIDs)->span(), timeout, [&](size_t index) {
-            waitInfos[index].completed = true;
-        });
-        return completed ? WGPUWaitStatus_Success : WGPUWaitStatus_TimedOut;
-    }
-}

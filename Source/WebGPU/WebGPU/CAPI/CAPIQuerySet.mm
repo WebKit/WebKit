@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#import "CAPIConversions.h"
+#import "WebGPUCppConversions.h"
+
+NODELETE void wgpuQuerySetAddRef(WGPUQuerySet querySet)
+{
+    WebGPU::CAPI::metalFromAPI(querySet).ref();
+}
+
+void wgpuQuerySetRelease(WGPUQuerySet querySet)
+{
+    @autoreleasepool {
+        WebGPU::CAPI::metalFromAPI(querySet).deref();
+    }
+}
+
+void wgpuQuerySetDestroy(WGPUQuerySet querySet)
+{
+    @autoreleasepool {
+        protect(WebGPU::CAPI::metalFromAPI(querySet))->destroy();
+    }
+}
+
+void wgpuQuerySetSetLabel(WGPUQuerySet querySet, WGPUStringView label)
+{
+    @autoreleasepool {
+        protect(WebGPU::CAPI::metalFromAPI(querySet))->setLabel(WebGPU::CAPI::fromAPI(label));
+    }
+}
+
+uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
+{
+    @autoreleasepool {
+        return WebGPU::CAPI::metalFromAPI(querySet).count();
+    }
+}
+
+WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
+{
+    @autoreleasepool {
+        auto type = WebGPU::CAPI::metalFromAPI(querySet).type();
+        return type ? WebGPU::CAPI::toAPI(*type) : WGPUQueryType_Force32;
+    }
+}
