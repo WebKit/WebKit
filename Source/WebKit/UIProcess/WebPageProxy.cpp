@@ -20846,6 +20846,8 @@ void WebPageProxy::requestAttachmentIcon(IPC::Connection& connection, const Stri
 
 RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& identifier) const
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+
     if (identifier.isEmpty())
         return nullptr;
 
