@@ -913,13 +913,18 @@ void WebPageProxy::Internals::speakingErrorOccurred(WebCore::PlatformSpeechSynth
 void WebPageProxy::Internals::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
 {
     Ref protectedPage = page.get();
-    protect(protectedPage->legacyMainFrameProcess())->send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength), protectedPage->webPageIDInMainFrameProcess());
+    RefPtr process = protectedPage->internals().speechSynthesisData().processSpeaking;
+    if (!process)
+        process = protectedPage->legacyMainFrameProcess();
+    protect(process)->send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength), protectedPage->webPageIDInProcess(*process));
 }
 
 void WebPageProxy::Internals::voicesDidChange()
 {
     Ref protectedPage = page.get();
-    protect(protectedPage->legacyMainFrameProcess())->send(Messages::WebPage::VoicesDidChange(), protectedPage->webPageIDInMainFrameProcess());
+    protectedPage->forEachWebContentProcess([](auto& process, auto pageID) {
+        process.send(Messages::WebPage::VoicesDidChange(), pageID);
+    });
 }
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

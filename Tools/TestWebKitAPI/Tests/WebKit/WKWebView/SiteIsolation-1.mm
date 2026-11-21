@@ -2172,6 +2172,64 @@ TEST(SiteIsolation, AppHighlightsVisibilityInCrossOriginIframe)
     }));
 }
 
+#if ENABLE(SPEECH_SYNTHESIS)
+
+TEST(SiteIsolation, SpeechSynthesisBoundaryEventInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScript:@"window.sawBoundaryEvent = false; window.sawEndEvent = false;"
+        "var utterance = new SpeechSynthesisUtterance('hello world');"
+        "utterance.onboundary = () => { window.sawBoundaryEvent = true; };"
+        "utterance.onend = () => { window.sawEndEvent = true; };"
+        "speechSynthesis.speak(utterance); true" inFrame:childFrame.get()];
+
+    auto sawEvent = [&](const char *flag) {
+        return [[webView objectByEvaluatingJavaScript:[NSString stringWithUTF8String:flag] inFrame:childFrame.get()] boolValue];
+    };
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return sawEvent("window.sawEndEvent");
+    }));
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return sawEvent("window.sawBoundaryEvent");
+    }));
+
+    [webView objectByEvaluatingJavaScript:@"speechSynthesis.cancel(); true" inFrame:childFrame.get()];
+}
+
+TEST(SiteIsolation, SpeechSynthesisVoicesChangedInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScript:@"window.sawVoicesChanged = false;"
+        "speechSynthesis.onvoiceschanged = () => { window.sawVoicesChanged = true; };"
+        "speechSynthesis.getVoices(); true" inFrame:childFrame.get()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.sawVoicesChanged" inFrame:childFrame.get()] boolValue];
+    }));
+}
+
+#endif // ENABLE(SPEECH_SYNTHESIS)
+
 #if PLATFORM(MAC)
 TEST(SiteIsolation, ContextMenuQuickNoteInCrossOriginIframe)
 {
