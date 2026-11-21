@@ -426,10 +426,8 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     if (!context->shouldBypassMainWorldContentSecurityPolicy() && !protect(context->contentSecurityPolicy())->allowConnectToSource(m_url, WTF::move(sourcePosition))) {
         if (!m_async)
             return ExceptionOr<void> { Exception { ExceptionCode::NetworkError } };
-        m_timeoutTimer.stop();
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& xhr) {
-            xhr.networkError();
-        });
+        m_sendFlag = true;
+        queueNetworkError();
         return ExceptionOr<void> { };
     }
 
@@ -654,7 +652,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
             }();
             upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, protect(request.httpBody())->lengthInBytes());
         }
-        if (readyState() != OPENED || !m_sendFlag || m_loadingActivity)
+        if (readyState() != OPENED || !m_sendFlag || m_loadingActivity || m_errorTaskCancellationGroup.hasPendingTask())
             return { };
 
         // ThreadableLoader::create can return null here, for example if we're no longer attached to a page or if a content blocker blocks the load.
@@ -665,7 +663,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
             m_loadingActivity = LoadingActivity { Ref { *this }, loader.releaseNonNull() };
 
         // Either loader is null or some error was synchronously sent to us.
-        ASSERT(m_loadingActivity || !m_sendFlag);
+        ASSERT(m_loadingActivity || m_errorTaskCancellationGroup.hasPendingTask() || !m_sendFlag);
     } else {
         if (RefPtr document = dynamicDowncast<Document>(context)) {
             if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::SyncXHR, *document))
@@ -712,7 +710,7 @@ bool XMLHttpRequest::internalAbort()
     m_receivedLength = 0;
 
     m_decoder = nullptr;
-    m_abortErrorGroup.cancel();
+    m_errorTaskCancellationGroup.cancel();
 
     m_timeoutTimer.stop();
 
@@ -725,11 +723,12 @@ bool XMLHttpRequest::internalAbort()
     auto loadingActivity = std::exchange(m_loadingActivity, std::nullopt);
     protect(loadingActivity->loader)->cancel();
 
-    // If window.onload callback calls open() and send() on the same xhr, m_loadingActivity is now set to a new value.
+    // If window.onload callback calls open() and send() on the same xhr, m_loadingActivity is now set to a new value,
+    // or a network error is queued for the new request if it failed right away.
     // The function calling internalAbort() should abort to let the open() and send() calls continue properly.
     // We ask the function calling internalAbort() to exit by returning false.
     // Save this information to a local variable since we are going to drop protection.
-    bool newLoadStarted = !!m_loadingActivity;
+    bool newLoadStarted = m_loadingActivity || m_errorTaskCancellationGroup.hasPendingTask();
 
     return !newLoadStarted;
 }
@@ -772,9 +771,22 @@ void XMLHttpRequest::genericError()
 
 void XMLHttpRequest::networkError()
 {
+    bool wasAsync = m_async;
     genericError();
     dispatchErrorEvents(eventNames().errorEvent);
-    internalAbort();
+    if (!wasAsync || !m_sendFlag)
+        internalAbort();
+}
+
+void XMLHttpRequest::queueNetworkError()
+{
+    ASSERT(m_async);
+    ASSERT(m_sendFlag);
+
+    m_timeoutTimer.stop();
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::Networking, m_errorTaskCancellationGroup, [](auto& xhr) {
+        xhr.networkError();
+    });
 }
 
 void XMLHttpRequest::abortError()
@@ -899,7 +911,7 @@ String XMLHttpRequest::statusText() const
 void XMLHttpRequest::handleCancellation()
 {
     m_exceptionCode = ExceptionCode::AbortError;
-    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::Networking, m_abortErrorGroup, [](auto& xhr) {
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::Networking, m_errorTaskCancellationGroup, [](auto& xhr) {
         xhr.abortError();
     });
 }
@@ -930,11 +942,7 @@ void XMLHttpRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, co
 
     // In case didFail is called synchronously on an asynchronous XHR call, let's dispatch network error asynchronously
     if (m_async && m_sendFlag && !m_loadingActivity) {
-        m_sendFlag = false;
-        m_timeoutTimer.stop();
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& xhr) {
-            xhr.networkError();
-        });
+        queueNetworkError();
         return;
     }
     m_exceptionCode = ExceptionCode::NetworkError;

@@ -189,7 +189,7 @@ private:
     void changeState(State);
     void callReadyStateChangeListener();
 
-    // Returns false when cancelling the loader within internalAbort() triggers an event whose callback creates a new loader. 
+    // Returns false when cancelling the loader within internalAbort() triggers an event whose callback starts a new request.
     // In that case, the function calling internalAbort should exit.
     bool internalAbort();
 
@@ -203,6 +203,7 @@ private:
 
     void genericError();
     void networkError();
+    void queueNetworkError();
     void abortError();
 
     void dispatchErrorEvents(const AtomString&);
@@ -261,7 +262,7 @@ private:
     std::optional<ExceptionCode> m_exceptionCode;
     RefPtr<UserGestureToken> m_userGestureToken;
     bool m_hasRelevantEventListener { false };
-    TaskCancellationGroup m_abortErrorGroup;
+    TaskCancellationGroup m_errorTaskCancellationGroup;
     bool m_wasDidSendDataCalledForTotalBytes { false };
 };
 

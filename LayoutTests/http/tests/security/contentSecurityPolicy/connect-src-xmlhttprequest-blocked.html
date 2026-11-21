@@ -18,12 +18,12 @@ xhrSync.addEventListener("error", function () {
 var xhrAsync = new XMLHttpRequest;
 xhrAsync.addEventListener("error", function () {
     debug("PASS An error event was received for the asynchronous call.");
+    finishJSTest();
 });
 
 var xhrAsyncAbort = new XMLHttpRequest;
-xhrAsyncAbort.addEventListener("error", function () {
-    debug("PASS An error event was received for the aborted asynchronous call.");
-    finishJSTest();
+xhrAsyncAbort.addEventListener("abort", function () {
+    debug("PASS An abort event was received for the aborted asynchronous call.");
 });
 
 shouldNotThrow('xhrSync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", false)'); // Synchronous request

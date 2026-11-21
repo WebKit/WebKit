@@ -7,9 +7,9 @@ CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/contentextensi
 Asynchronous onreadystatechange status: 0, readyState:1, responseText:
 Finished runTest. Waiting for callbacks
 Asynchronous onreadystatechange status: 0, readyState:1, responseText:
-Finished runTest. Waiting for callbacks
 Asynchronous onreadystatechange status: 0, readyState:4, responseText:
-onerror was called.
+onabort was called.
+Finished runTest. Waiting for callbacks
 Asynchronous onreadystatechange status: 0, readyState:4, responseText:
 onerror was called.
 
