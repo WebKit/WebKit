@@ -54,6 +54,26 @@
 @protocol BEExtendedTextInputTraits;
 #endif
 
+#if ENABLE(WRITING_TOOLS)
+@class _WKTextPreview;
+@protocol WKIntelligenceTextEffectCoordinating;
+
+@protocol WKIntelligenceTextEffectCoordinatorDelegate <NSObject>
+
+#if PLATFORM(IOS_FAMILY)
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(UITargetedPreview *))completion;
+#else
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(NSArray<_WKTextPreview *> *))completion;
+#endif
+
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator rectsForProofreadingSuggestionsInRange:(NSRange)range completion:(void (^)(NSArray<NSValue *> *))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator updateTextVisibilityForRange:(NSRange)range visible:(BOOL)visible identifier:(NSUUID *)identifier completion:(void (^)(void))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator decorateReplacementsForRange:(NSRange)range completion:(void (^)(void))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator setSelectionForRange:(NSRange)range completion:(void (^)(void))completion;
+
+@end
+#endif // ENABLE(WRITING_TOOLS)
+
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface WKWebView (AdditionalDeclarations)

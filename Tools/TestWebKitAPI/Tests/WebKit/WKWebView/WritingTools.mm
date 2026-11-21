@@ -101,22 +101,6 @@
 
 #endif
 
-@protocol WKIntelligenceTextEffectCoordinating;
-
-@protocol WKIntelligenceTextEffectCoordinatorDelegate <NSObject>
-
-#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
-- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(UITargetedPreview *))completion;
-#else
-- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(NSArray<_WKTextPreview *> *))completion;
-#endif
-
-- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator rectsForProofreadingSuggestionsInRange:(NSRange)range completion:(void (^)(NSArray<NSValue *> *))completion;
-
-- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator updateTextVisibilityForRange:(NSRange)range visible:(BOOL)visible identifier:(NSUUID *)identifier completion:(void (^)(void))completion;
-
-@end
-
 @interface NSString (Extras)
 - (NSString *)_withVisibleReplacementCharacters;
 @end

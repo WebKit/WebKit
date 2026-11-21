@@ -69,6 +69,7 @@
 #import <WebKit/_WKResourceLoadInfo.h>
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
+#import <WebKit/_WKTextPreview.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/BlockPtr.h>
@@ -266,6 +267,11 @@
 }
 
 @end
+
+@interface NSObject (SiteIsolationWritingToolsTesting)
+- (void)willBeginWritingToolsSession:(WTSession *)session forProofreadingReview:(BOOL)proofreadingReview requestContexts:(void (^)(NSArray<WTContext *> *contexts))completion;
+@end
+
 #endif // ENABLE(WRITING_TOOLS)
 
 #if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
@@ -3807,6 +3813,318 @@ TEST(SiteIsolation, ProofreadingDetailsPopoverInFrameNestedInScrolledCrossOrigin
 TEST(SiteIsolation, ProofreadingDetailsPopoverInFrameNestedInScrolledCrossOriginIframeWithScrolledMainFrame)
 {
     checkProofreadingDetailsPopoverInFrameNestedInCrossOriginIframe(100, 30);
+}
+
+static WebViewWithFocusedCrossOriginIframe writingToolsWebViewWithEditableCrossOriginIframe(const HTTPServer& server)
+{
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configurationWithInternals(server).get());
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.body ? document.body.textContent : ''" inFrame:childFrame.get()] isEqualToString:@"AAAA BBBB CCCC"];
+    }));
+
+    [webView objectByEvaluatingJavaScript:@"document.body.focus(); getSelection().setBaseAndExtent(document.body.firstChild, 0, document.body.firstChild, document.body.firstChild.length)" inFrame:childFrame.get()];
+    [webView waitForNextPresentationUpdate];
+
+    return { WTF::move(webView), WTF::move(navigationDelegate), WTF::move(childFrame) };
+}
+
+static id<WTWritingToolsDelegate> writingToolsDelegateForWebView(TestWKWebView *webView)
+{
+#if PLATFORM(IOS_FAMILY)
+    return (id<WTWritingToolsDelegate>)[webView textInputContentView];
+#else
+    return (id<WTWritingToolsDelegate>)webView;
+#endif
+}
+
+TEST(SiteIsolation, ProofreadingSessionInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body contenteditable>AAAA BBBB CCCC</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = writingToolsWebViewWithEditableCrossOriginIframe(server);
+    auto writingToolsDelegate = writingToolsDelegateForWebView(webView.get());
+
+    auto bodyText = [&] {
+        return [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()];
+    };
+    auto hasSuggestionMarker = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"(() => { getSelection().setBaseAndExtent(document.body.firstChild, 0, document.body.firstChild, 0); return internals.hasWritingToolsTextSuggestionMarker(0, 4); })()" inFrame:childFrame.get()] boolValue];
+    };
+
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    __block RetainPtr<WTContext> context;
+    __block bool didReceiveContexts = false;
+    [writingToolsDelegate willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        context = contexts.firstObject;
+        didReceiveContexts = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&didReceiveContexts, 5_s));
+
+    // The session's text is the cross-origin iframe's text, gathered in the iframe's process.
+    ASSERT_NOT_NULL(context.get());
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [context attributedText].string);
+
+    [writingToolsDelegate didBeginWritingToolsSession:session.get() contexts:@[ context.get() ]];
+
+    RetainPtr firstSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"ZZZZ"]);
+    RetainPtr secondSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(10, 4) replacement:@"YYYY"]);
+    [writingToolsDelegate proofreadingSession:session.get() didReceiveSuggestions:@[ firstSuggestion.get(), secondSuggestion.get() ] processedRange:NSMakeRange(0, 14) inContext:context.get() finished:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [bodyText() isEqualToString:@"ZZZZ BBBB YYYY"];
+    }));
+
+    [writingToolsDelegate writingToolsSession:session.get() didReceiveAction:WTActionShowOriginal];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [bodyText() isEqualToString:@"AAAA BBBB CCCC"];
+    }));
+
+    [writingToolsDelegate writingToolsSession:session.get() didReceiveAction:WTActionShowRewritten];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [bodyText() isEqualToString:@"ZZZZ BBBB YYYY"];
+    }));
+
+    [writingToolsDelegate proofreadingSession:session.get() didUpdateState:WTTextSuggestionStateRejected forSuggestionWithUUID:[secondSuggestion uuid] inContext:context.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [bodyText() isEqualToString:@"ZZZZ BBBB CCCC"];
+    }));
+    EXPECT_TRUE(hasSuggestionMarker());
+
+    [writingToolsDelegate didEndWritingToolsSession:session.get() accepted:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !hasSuggestionMarker();
+    }));
+    EXPECT_WK_STREQ(@"ZZZZ BBBB CCCC", bodyText());
+}
+
+TEST(SiteIsolation, CompositionSessionInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body contenteditable>AAAA BBBB CCCC</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = writingToolsWebViewWithEditableCrossOriginIframe(server);
+    auto writingToolsDelegate = writingToolsDelegateForWebView(webView.get());
+
+    auto bodyText = [&] {
+        return [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()];
+    };
+
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    __block RetainPtr<WTContext> context;
+    __block bool didReceiveContexts = false;
+    [writingToolsDelegate willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        context = contexts.firstObject;
+        didReceiveContexts = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&didReceiveContexts, 5_s));
+
+    ASSERT_NOT_NULL(context.get());
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [context attributedText].string);
+
+    [writingToolsDelegate didBeginWritingToolsSession:session.get() contexts:@[ context.get() ]];
+
+    RetainPtr rewrittenText = adoptNS([[NSAttributedString alloc] initWithString:@"ZZZZ BBBB YYYY"]);
+    [writingToolsDelegate compositionSession:session.get() didReceiveText:rewrittenText.get() replacementRange:NSMakeRange(0, 14) inContext:context.get() finished:NO];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [bodyText() isEqualToString:@"ZZZZ BBBB YYYY"];
+    }));
+
+    [writingToolsDelegate compositionSession:session.get() didReceiveText:rewrittenText.get() replacementRange:NSMakeRange(0, 14) inContext:context.get() finished:YES];
+    [webView waitForNextPresentationUpdate];
+
+    [writingToolsDelegate didEndWritingToolsSession:session.get() accepted:YES];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ(@"ZZZZ BBBB YYYY", bodyText());
+}
+
+TEST(SiteIsolation, ProofreadingReviewSessionInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body contenteditable>AAAA BBBB CCCC</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = writingToolsWebViewWithEditableCrossOriginIframe(server);
+    auto writingToolsDelegate = writingToolsDelegateForWebView(webView.get());
+
+    auto bodyText = [&] {
+        return [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()];
+    };
+
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    __block RetainPtr<WTContext> context;
+    __block bool didReceiveContexts = false;
+    [(id)writingToolsDelegate willBeginWritingToolsSession:session.get() forProofreadingReview:YES requestContexts:^(NSArray<WTContext *> *contexts) {
+        context = contexts.firstObject;
+        didReceiveContexts = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&didReceiveContexts, 5_s));
+
+    ASSERT_NOT_NULL(context.get());
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [context attributedText].string);
+
+    [writingToolsDelegate didBeginWritingToolsSession:session.get() contexts:@[ context.get() ]];
+
+    RetainPtr suggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"ZZZZ"]);
+    [writingToolsDelegate proofreadingSession:session.get() didReceiveSuggestions:@[ suggestion.get() ] processedRange:NSMakeRange(0, 14) inContext:context.get() finished:YES];
+
+    // In review mode, suggestions do not modify the text until accepted.
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", bodyText());
+
+    [writingToolsDelegate proofreadingSession:session.get() didUpdateState:WTTextSuggestionStateAccepted forSuggestionWithUUID:[suggestion uuid] inContext:context.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [bodyText() isEqualToString:@"ZZZZ BBBB CCCC"];
+    }));
+
+    // Ending a review session routes through willEndWritingToolsSession before didEndWritingToolsSession.
+    [writingToolsDelegate didEndWritingToolsSession:session.get() accepted:YES];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ(@"ZZZZ BBBB CCCC", bodyText());
+}
+
+TEST(SiteIsolation, WritingToolsTextEffectsInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body contenteditable>AAAA BBBB CCCC</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = writingToolsWebViewWithEditableCrossOriginIframe(server);
+    auto writingToolsDelegate = writingToolsDelegateForWebView(webView.get());
+
+    auto bodyText = [&] {
+        return [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()];
+    };
+
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    __block RetainPtr<WTContext> context;
+    __block bool didReceiveContexts = false;
+    [writingToolsDelegate willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        context = contexts.firstObject;
+        didReceiveContexts = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&didReceiveContexts, 5_s));
+
+    ASSERT_NOT_NULL(context.get());
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [context attributedText].string);
+
+    [writingToolsDelegate didBeginWritingToolsSession:session.get() contexts:@[ context.get() ]];
+
+    RetainPtr firstSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"ZZZZ"]);
+    RetainPtr secondSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(10, 4) replacement:@"YYYY"]);
+    [writingToolsDelegate proofreadingSession:session.get() didReceiveSuggestions:@[ firstSuggestion.get(), secondSuggestion.get() ] processedRange:NSMakeRange(0, 14) inContext:context.get() finished:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [bodyText() isEqualToString:@"ZZZZ BBBB YYYY"];
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    auto coordinatorDelegate = (id<WKIntelligenceTextEffectCoordinatorDelegate>)webView.get();
+    id<WKIntelligenceTextEffectCoordinating> coordinator = nil;
+
+    __block RetainPtr<NSArray<NSValue *>> rects;
+    __block bool gotRects = false;
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator rectsForProofreadingSuggestionsInRange:NSMakeRange(0, 14) completion:^(NSArray<NSValue *> *values) {
+        rects = values;
+        gotRects = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&gotRects, 5_s));
+    EXPECT_EQ([rects count], 2UL);
+
+    RetainPtr identifier = [NSUUID UUID];
+    __block bool visibilityUpdated = false;
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:NSMakeRange(0, 14) visible:NO identifier:identifier.get() completion:^{
+        visibilityUpdated = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&visibilityUpdated, 5_s));
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"(() => { getSelection().setBaseAndExtent(document.body.firstChild, 0, document.body.firstChild, 0); return internals.hasTransparentContentMarker(0, 14); })()" inFrame:childFrame.get()] boolValue]);
+
+    visibilityUpdated = false;
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:NSMakeRange(0, 14) visible:YES identifier:identifier.get() completion:^{
+        visibilityUpdated = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&visibilityUpdated, 5_s));
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"(() => { getSelection().setBaseAndExtent(document.body.firstChild, 0, document.body.firstChild, 0); return internals.hasTransparentContentMarker(0, 14); })()" inFrame:childFrame.get()] boolValue]);
+
+#if PLATFORM(MAC)
+    __block RetainPtr<NSArray<_WKTextPreview *>> previews;
+    __block bool gotPreviews = false;
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator textPreviewsForRange:NSMakeRange(0, 14) completion:^(NSArray<_WKTextPreview *> *result) {
+        previews = result;
+        gotPreviews = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&gotPreviews, 5_s));
+    EXPECT_EQ([previews count], 1UL);
+#endif
+
+    __block bool decorated = false;
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator decorateReplacementsForRange:NSMakeRange(0, 14) completion:^{
+        decorated = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&decorated, 5_s));
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"(() => { getSelection().setBaseAndExtent(document.body.firstChild, 0, document.body.firstChild, 0); return internals.hasWritingToolsTextSuggestionMarker(0, 4); })()" inFrame:childFrame.get()] boolValue]);
+
+    __block bool selectionSet = false;
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator setSelectionForRange:NSMakeRange(5, 4) completion:^{
+        selectionSet = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&selectionSet, 5_s));
+    EXPECT_WK_STREQ(@"BBBB", [webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()]);
+
+    [writingToolsDelegate didEndWritingToolsSession:session.get() accepted:YES];
+}
+
+TEST(SiteIsolation, TextAnimationTransparencyMarkersInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body contenteditable>AAAA BBBB CCCC</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = writingToolsWebViewWithEditableCrossOriginIframe(server);
+    auto writingToolsDelegate = writingToolsDelegateForWebView(webView.get());
+
+    auto transparentMarkerCount = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"internals.markerCountForNode(document.body.childNodes[0], 'transparentcontent')" inFrame:childFrame.get()] unsignedIntegerValue];
+    };
+
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    __block RetainPtr<WTContext> context;
+    __block bool didReceiveContexts = false;
+    [writingToolsDelegate willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        context = contexts.firstObject;
+        didReceiveContexts = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&didReceiveContexts, 5_s));
+
+    ASSERT_NOT_NULL(context.get());
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [context attributedText].string);
+
+    [writingToolsDelegate didBeginWritingToolsSession:session.get() contexts:@[ context.get() ]];
+
+    [writingToolsDelegate writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return transparentMarkerCount() == 1U;
+    }));
+
+    RetainPtr rewrittenText = adoptNS([[NSAttributedString alloc] initWithString:@"ZZZZ BBBB YYYY"]);
+    [writingToolsDelegate compositionSession:session.get() didReceiveText:rewrittenText.get() replacementRange:NSMakeRange(0, 14) inContext:context.get() finished:NO];
+    [writingToolsDelegate compositionSession:session.get() didReceiveText:rewrittenText.get() replacementRange:NSMakeRange(0, 14) inContext:context.get() finished:YES];
+
+    [writingToolsDelegate didEndWritingToolsSession:session.get() accepted:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return transparentMarkerCount() == 0U;
+    }));
 }
 
 #endif // ENABLE(WRITING_TOOLS)
