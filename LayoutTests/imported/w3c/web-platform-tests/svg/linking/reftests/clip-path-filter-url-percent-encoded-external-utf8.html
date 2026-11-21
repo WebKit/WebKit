@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>clip-path and filter: url() to an external document finds an element whose id is non-ASCII and written percent-encoded (UTF-8)</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-target">
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#the-clip-path">
+<link rel="help" href="https://drafts.csswg.org/filter-effects-1/#FilterProperty">
+<link rel="help" href="https://url.spec.whatwg.org/#fragment-state">
+<link rel="match" href="url-percent-encoded-external-ref.html">
+<meta name="assert" content="In clip-path and filter, url(support/percent-encoded-fragment-targets.svg#%C3%A9-clip) and url(support/percent-encoded-fragment-targets.svg#é-clip), and the same two forms of #é-filter, which the URL parser also stores escaped, resolve to the clipPath with id é-clip and the filter with id é-filter (U+00E9) in the external document, so no red is painted.">
+<style>svg { display: block; }</style>
+<svg width="100" height="100" viewBox="0 0 100 100">
+  <rect width="100" height="50" fill="red"/>
+  <rect y="50" width="50" height="50" fill="red"
+        style="filter: url(support/percent-encoded-fragment-targets.svg#%C3%A9-filter)"/>
+  <rect x="50" y="50" width="50" height="50" fill="red"
+        style="filter: url(support/percent-encoded-fragment-targets.svg#é-filter)"/>
+  <g style="clip-path: url(support/percent-encoded-fragment-targets.svg#%C3%A9-clip)">
+    <rect width="50" height="50" fill="green"/>
+    <rect y="50" width="50" height="50" fill="red"/>
+  </g>
+  <g style="clip-path: url(support/percent-encoded-fragment-targets.svg#é-clip)">
+    <rect x="50" width="50" height="50" fill="green"/>
+    <rect x="50" y="50" width="50" height="50" fill="red"/>
+  </g>
+</svg>

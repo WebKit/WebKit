@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<title>SVG and CSS references decode a percent-encoded fragment once, so #%2541 finds id="%41"</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-target">
+<link rel="help" href="https://url.spec.whatwg.org/#fragment-percent-encode-set">
+<link rel="help" href="https://url.spec.whatwg.org/#percent-decode">
+<link rel="match" href="url-fragment-percent-encoded-decode-once-ref.html">
+<meta name="assert" content="Each id literally contains the text %4X. The references write the % of that text as %25, so one percent-decode of #%2541 gives the id %41. fill, marker-start, mask, clip-path and filter url() and use href all find their element, so every cell is green.">
+<style>svg { display: block; }</style>
+<svg width="170" height="110" viewBox="0 0 170 110">
+  <defs>
+    <pattern id="%41" width="1" height="1" viewBox="0 0 1 1">
+      <rect width="1" height="1" fill="green"/>
+    </pattern>
+    <marker id="%42" markerUnits="userSpaceOnUse" markerWidth="50" markerHeight="50">
+      <rect width="50" height="50" fill="green"/>
+    </marker>
+    <mask id="%43">
+      <rect width="50" height="50" fill="white"/>
+      <rect x="20" y="20" width="10" height="10" fill="black"/>
+    </mask>
+    <clipPath id="%44">
+      <rect x="-20" y="-20" width="10" height="10"/>
+    </clipPath>
+    <filter id="%45" x="0" y="0" width="1" height="1">
+      <feFlood flood-color="green"/>
+    </filter>
+    <symbol id="%46">
+      <rect width="50" height="50" fill="green"/>
+    </symbol>
+  </defs>
+
+  <g transform="translate(0 0)">
+    <rect width="50" height="50" fill="red"/>
+    <rect width="50" height="50" fill="url(#%2541) red"/>
+  </g>
+  <g transform="translate(60 0)">
+    <rect width="50" height="50" fill="red"/>
+    <path d="M0 0 h1" fill="none" marker-start="url(#%2542)"/>
+  </g>
+  <!-- Engines differ on a missing mask: drawn without a mask, or not drawn (https://drafts.csswg.org/css-masking-1/#the-mask-image). Each shows red. -->
+  <g transform="translate(120 0)">
+    <rect width="50" height="50" fill="red"/>
+    <rect x="20" y="20" width="10" height="10" fill="green"/>
+    <g mask="url(#%2543)">
+      <rect width="50" height="50" fill="green"/>
+      <rect x="20" y="20" width="10" height="10" fill="red"/>
+    </g>
+  </g>
+  <g transform="translate(0 60)">
+    <rect width="50" height="50" fill="green"/>
+    <rect width="50" height="50" fill="red" clip-path="url(#%2544)"/>
+  </g>
+  <g transform="translate(60 60)">
+    <rect width="50" height="50" fill="red"/>
+    <rect width="50" height="50" fill="red" filter="url(#%2545)"/>
+  </g>
+  <g transform="translate(120 60)">
+    <rect width="50" height="50" fill="red"/>
+    <use href="#%2546" width="50" height="50"/>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<title>filter: url() finds an element whose id is written percent-encoded (ASCII)</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-target">
+<link rel="help" href="https://url.spec.whatwg.org/#fragment-percent-encode-set">
+<link rel="match" href="filter-url-percent-encoded-ref.html">
+<meta name="assert" content="url(#%74gt) in filter resolves to the filter with id tgt, so the rect is replaced by the flood colour over its filter region.">
+<style>svg { display: block; }</style>
+<svg width="64" height="64" viewBox="0 0 64 64">
+  <filter id="tgt"><feFlood flood-color="green"/></filter>
+  <rect x="20" y="20" width="40" height="40" fill="red" style="filter: url(#%74gt)"/>
+</svg>

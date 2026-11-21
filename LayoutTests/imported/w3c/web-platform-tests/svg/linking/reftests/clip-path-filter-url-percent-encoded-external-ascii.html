@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>clip-path and filter: url() to an external document finds an element whose id is written percent-encoded (ASCII)</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-target">
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#the-clip-path">
+<link rel="help" href="https://drafts.csswg.org/filter-effects-1/#FilterProperty">
+<link rel="help" href="https://url.spec.whatwg.org/#fragment-state">
+<link rel="match" href="url-percent-encoded-external-ref.html">
+<meta name="assert" content="url(support/percent-encoded-fragment-targets.svg#%74gt-clip) in clip-path and url(support/percent-encoded-fragment-targets.svg#%74gt-filter) in filter resolve to the clipPath with id tgt-clip and the filter with id tgt-filter in the external document, so no red is painted.">
+<style>svg { display: block; }</style>
+<svg width="100" height="100" viewBox="0 0 100 100">
+  <rect width="100" height="50" fill="red"/>
+  <rect y="50" width="100" height="50" fill="red"
+        style="filter: url(support/percent-encoded-fragment-targets.svg#%74gt-filter)"/>
+  <g style="clip-path: url(support/percent-encoded-fragment-targets.svg#%74gt-clip)">
+    <rect width="100" height="50" fill="green"/>
+    <rect y="50" width="100" height="50" fill="red"/>
+  </g>
+</svg>
