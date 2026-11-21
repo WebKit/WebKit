@@ -70,7 +70,7 @@ def send_email(to_emails, subject, text, reference=''):
         msg.add_header('references', '{}@webkit.org'.format(reference))
 
     server = smtplib.SMTP(SERVER)
-    server.sendmail(FROM_EMAIL, to_emails, msg.as_string())
+    server.send_message(msg)
     server.quit()
 
 
