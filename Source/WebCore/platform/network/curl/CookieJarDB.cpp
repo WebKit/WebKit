@@ -31,6 +31,8 @@
 #include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"
 #include "SQLiteFileSystem.h"
+#include "SQLiteTransaction.h"
+#include "SameSiteInfo.h"
 #include <wtf/DateMath.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
@@ -59,6 +61,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieJarDB);
     "  session INTEGER NOT NULL,"\
     "  httponly INTEGER NOT NULL DEFAULT 0,"\
     "  secure INTEGER NOT NULL DEFAULT 0,"\
+    "  sameSite INTEGER NOT NULL DEFAULT 0,"\
     "  lastupdated INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "\
     "  UNIQUE(name, domain, path));"_s
 #define CREATE_DOMAIN_INDEX_SQL \
@@ -72,8 +75,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieJarDB);
 #define CHECK_EXISTS_HTTPONLY_COOKIE_SQL \
     "SELECT name FROM Cookie WHERE (name = ?) AND (domain = ?) AND (path = ?) AND (httponly = 1);"_s
 #define SET_COOKIE_SQL \
-    "INSERT OR REPLACE INTO Cookie (name, value, domain, path, expires, size, session, httponly, secure) "\
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"_s
+    "INSERT OR REPLACE INTO Cookie (name, value, domain, path, expires, size, session, httponly, secure, sameSite) "\
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"_s
 #define DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL \
     "DELETE FROM Cookie WHERE name = ? AND domain = ? AND path = ?;"_s
 #define DELETE_COOKIE_BY_NAME_DOMAIN_SQL \
@@ -91,7 +94,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieJarDB);
 // If the database schema is updated:
 // - Increment schemaVersion
 // - Add upgrade logic in verifySchemaVersion to migrate databases from the previous schema version
-static constexpr int schemaVersion = 1;
+static constexpr int schemaVersion = 2;
 
 
 CookieJarDB::CookieJarDB(const String& databasePath)
@@ -118,68 +121,66 @@ bool CookieJarDB::openDatabase()
     if (m_database.isOpen())
         return true;
 
+    auto result = tryOpenDatabase();
+    if (!result && result.error() != DatabaseError::Unavailable && !isOnMemory()) {
+        LOG_ERROR("Cookie database is corrupt or has an invalid schema, attempting to recreate the database");
+        deleteAllDatabaseFiles();
+        result = tryOpenDatabase();
+    }
+
+    if (!result)
+        closeDatabase();
+
+    return result.has_value();
+}
+
+std::expected<void, CookieJarDB::DatabaseError> CookieJarDB::tryOpenDatabase()
+{
     bool existsDatabaseFile = false;
     if (!isOnMemory())
         existsDatabaseFile = SQLiteFileSystem::ensureDatabaseFileExists(m_databasePath, false);
 
+    if (!existsDatabaseFile && !isOnMemory() && !FileSystem::makeAllDirectories(FileSystem::parentPath(m_databasePath))) {
+        LOG_ERROR("Unable to create the Cookie Database path %s", m_databasePath.utf8());
+        return makeUnexpected(DatabaseError::Unavailable);
+    }
+
+    if (!m_database.open(m_databasePath)) {
+        LOG_ERROR("Failed to open cookie database %s: %s", m_databasePath.utf8(), m_database.lastErrorMsg());
+        return makeUnexpected(errorForSQLiteResult(m_database.lastError()));
+    }
+
     if (existsDatabaseFile) {
-        if (m_database.open(m_databasePath)) {
-            if (checkDatabaseValidity())
-                executeSQLStatement(m_database.prepareStatement(DELETE_ALL_SESSION_COOKIE_SQL));
-            else {
-                // delete database and try to re-create again
-                LOG_ERROR("Cookie database validity check failed, attempting to recreate the database");
-                m_database.close();
-                deleteAllDatabaseFiles();
-                existsDatabaseFile = false;
-            }
-        } else {
-            LOG_ERROR("Failed to open cookie database: %s, attempting to recreate the database", m_databasePath.utf8());
-            deleteAllDatabaseFiles();
-            existsDatabaseFile = false;
-        }
+        if (auto result = checkDatabaseValidity(); !result)
+            return result;
     }
-
-    if (!existsDatabaseFile) {
-        if (!isOnMemory() && !FileSystem::makeAllDirectories(FileSystem::parentPath(m_databasePath)))
-            LOG_ERROR("Unable to create the Cookie Database path %s", m_databasePath.utf8());
-
-        m_database.open(m_databasePath);
-    }
-
-    if (!m_database.isOpen())
-        return false;
 
     if (!isOnMemory() && !m_database.turnOnIncrementalAutoVacuum())
         LOG_ERROR("Unable to turn on incremental auto-vacuum (%d %s)", m_database.lastError(), m_database.lastErrorMsg());
 
-    verifySchemaVersion();
-
-    if (!existsDatabaseFile || !m_database.tableExists("Cookie"_s)) {
-        bool ok = executeSQLStatement(m_database.prepareStatement(CREATE_COOKIE_TABLE_SQL))
-            && executeSQLStatement(m_database.prepareStatement(CREATE_DOMAIN_INDEX_SQL))
-            && executeSQLStatement(m_database.prepareStatement(CREATE_PATH_INDEX_SQL));
-
-        if (!ok) {
-            // give up create database at this time (all cookies on request/response are ignored)
-            m_database.close();
-            deleteAllDatabaseFiles();
-            return false;
+    if (existsDatabaseFile) {
+        if (auto result = verifySchemaVersion(); !result)
+            return result;
+        if (auto result = executeSQLStatement(m_database.prepareStatement(DELETE_ALL_SESSION_COOKIE_SQL)); !result)
+            return result;
+    } else {
+        for (auto sql : { CREATE_COOKIE_TABLE_SQL, CREATE_DOMAIN_INDEX_SQL, CREATE_PATH_INDEX_SQL }) {
+            if (auto result = executeSQLStatement(m_database.prepareStatement(sql)); !result)
+                return result;
         }
+        if (auto result = executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version="_s, schemaVersion))); !result)
+            return result;
     }
 
     m_database.setSynchronous(SQLiteDatabase::SyncNormal);
 
     // create prepared statements
-    createPrepareStatement(SET_COOKIE_SQL);
-    createPrepareStatement(CHECK_EXISTS_COOKIE_SQL);
-    createPrepareStatement(CHECK_EXISTS_HTTPONLY_COOKIE_SQL);
-    createPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL);
-    createPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_SQL);
-    createPrepareStatement(DELETE_COOKIES_BY_DOMAIN_SQL);
-    createPrepareStatement(DELETE_COOKIES_BY_DOMAIN_EXCEPT_HTTP_ONLY_SQL);
+    for (auto sql : { SET_COOKIE_SQL, CHECK_EXISTS_COOKIE_SQL, CHECK_EXISTS_HTTPONLY_COOKIE_SQL, DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL, DELETE_COOKIE_BY_NAME_DOMAIN_SQL, DELETE_COOKIES_BY_DOMAIN_SQL, DELETE_COOKIES_BY_DOMAIN_EXCEPT_HTTP_ONLY_SQL }) {
+        if (auto result = createPrepareStatement(sql); !result)
+            return result;
+    }
 
-    return true;
+    return { };
 }
 
 void CookieJarDB::closeDatabase()
@@ -190,40 +191,74 @@ void CookieJarDB::closeDatabase()
     }
 }
 
-void CookieJarDB::verifySchemaVersion()
+static constexpr int primarySQLiteResultCode(int code)
 {
-    if (isOnMemory())
-        return;
-
-    auto statement = m_database.prepareStatement("PRAGMA user_version"_s);
-    int version = statement ? statement->columnInt(0) : 0;
-    if (version == schemaVersion)
-        return;
-
-    switch (version) {
-        // Placeholder for schema version upgrade logic
-        // Ensure cases fall through to the next version's upgrade logic
-
-    case 0:
-        deleteAllTables();
-        break;
-    default:
-        // This case can be reached when downgrading versions
-        LOG_ERROR("Unknown cookie database version: %d", version);
-        deleteAllTables();
-        break;
-    }
-
-    // Update version
-    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version="_s, schemaVersion)));
+    return code & 0xff;
 }
 
-void CookieJarDB::deleteAllTables()
+CookieJarDB::DatabaseError CookieJarDB::errorForSQLiteResult(int code)
 {
-    if (!m_database.isOpen())
-        return;
+    switch (primarySQLiteResultCode(code)) {
+    case SQLITE_CORRUPT:
+    case SQLITE_FORMAT:
+    case SQLITE_NOTADB:
+        return DatabaseError::Corrupt;
+    default:
+        return DatabaseError::Unavailable;
+    }
+}
 
-    m_database.clearAllTables();
+CookieJarDB::DatabaseError CookieJarDB::errorForSchemaResult(int code)
+{
+    if (primarySQLiteResultCode(code) == SQLITE_ERROR)
+        return DatabaseError::InvalidSchema;
+
+    return errorForSQLiteResult(code);
+}
+
+std::expected<void, CookieJarDB::DatabaseError> CookieJarDB::verifySchemaVersion()
+{
+    auto statement = m_database.prepareStatement("PRAGMA user_version"_s);
+    if (!statement) {
+        LOG_ERROR("Failed to prepare cookie database schema version query: %s", m_database.lastErrorMsg());
+        return makeUnexpected(errorForSchemaResult(m_database.lastError()));
+    }
+    int resultCode = statement->step();
+    if (resultCode != SQLITE_ROW) {
+        LOG_ERROR("Failed to read cookie database schema version: %s", m_database.lastErrorMsg());
+        return makeUnexpected(errorForSQLiteResult(resultCode));
+    }
+    int version = statement->columnInt(0);
+    statement = nullptr;
+    if (version == schemaVersion) {
+        if (!m_database.prepareStatement("SELECT sameSite FROM Cookie LIMIT 0"_s)) {
+            LOG_ERROR("Failed to verify cookie database schema: %s", m_database.lastErrorMsg());
+            return makeUnexpected(errorForSchemaResult(m_database.lastError()));
+        }
+        return { };
+    }
+    if (version == 1) {
+        SQLiteTransaction transaction(m_database);
+        transaction.begin();
+        if (!transaction.inProgress())
+            return makeUnexpected(errorForSQLiteResult(m_database.lastError()));
+
+        if (auto result = executeSQLStatement(m_database.prepareStatement("ALTER TABLE Cookie ADD COLUMN sameSite INTEGER NOT NULL DEFAULT 0"_s)); !result)
+            return result;
+
+        // Update version
+        if (auto result = executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version="_s, schemaVersion))); !result)
+            return result;
+        transaction.commit();
+        if (transaction.inProgress()) {
+            LOG_ERROR("Failed to commit cookie database schema migration");
+            return makeUnexpected(errorForSQLiteResult(m_database.lastError()));
+        }
+    } else {
+        LOG_ERROR("Unsupported cookie database version: %d", version);
+        return makeUnexpected(DatabaseError::InvalidSchema);
+    }
+    return { };
 }
 
 String CookieJarDB::getCorruptionMarkerPath() const
@@ -254,57 +289,55 @@ bool CookieJarDB::checkDatabaseCorruptionAndRemoveIfNeeded()
 
 bool CookieJarDB::checkSQLiteReturnCode(int code)
 {
-    if (!m_detectedDatabaseCorruption) {
-        switch (code) {
-        case SQLITE_CORRUPT:
-        case SQLITE_SCHEMA:
-        case SQLITE_FORMAT:
-        case SQLITE_NOTADB:
-            flagDatabaseCorruption();
-            m_detectedDatabaseCorruption = true;
-        }
+    if (!m_detectedDatabaseCorruption && errorForSQLiteResult(code) == DatabaseError::Corrupt) {
+        flagDatabaseCorruption();
+        m_detectedDatabaseCorruption = true;
     }
+    code = primarySQLiteResultCode(code);
     return code == SQLITE_OK || code == SQLITE_DONE || code == SQLITE_ROW;
 }
 
-bool CookieJarDB::checkDatabaseValidity()
+std::expected<void, CookieJarDB::DatabaseError> CookieJarDB::checkDatabaseValidity()
 {
     ASSERT(m_database.isOpen());
 
-    if (!m_database.tableExists("Cookie"_s))
-        return false;
+    if (!m_database.prepareStatement("SELECT name, value, domain, path, expires, size, session, httponly, secure, lastupdated FROM Cookie LIMIT 0"_s)) {
+        LOG_ERROR("Failed to verify cookie database schema: %s", m_database.lastErrorMsg());
+        return makeUnexpected(errorForSchemaResult(m_database.lastError()));
+    }
 
     auto integrity = m_database.prepareStatement("PRAGMA quick_check;"_s);
     if (!integrity) {
         LOG_ERROR("Failed to execute database integrity check");
-        return false;
+        return makeUnexpected(errorForSchemaResult(m_database.lastError()));
     }
 
     int resultCode = integrity->step();
     if (resultCode != SQLITE_ROW) {
         LOG_ERROR("Integrity quick_check step returned %d", resultCode);
-        return false;
+        return makeUnexpected(errorForSQLiteResult(resultCode));
     }
 
     int columns = integrity->columnCount();
     if (columns != 1) {
         LOG_ERROR("Received %i columns performing integrity check, should be 1", columns);
-        return false;
+        return makeUnexpected(DatabaseError::Corrupt);
     }
 
     String resultText = integrity->columnText(0);
 
     if (resultText != "ok"_s) {
         LOG_ERROR("Cookie database integrity check failed - %s", resultText.utf8());
-        return false;
+        return makeUnexpected(DatabaseError::Corrupt);
     }
 
-    return true;
+    return { };
 }
 
 void CookieJarDB::deleteAllDatabaseFiles()
 {
     closeDatabase();
+    m_detectedDatabaseCorruption = false;
     if (isOnMemory())
         return;
 
@@ -367,7 +400,7 @@ bool CookieJarDB::hasCookies(const URL& url)
     return statement.step() == SQLITE_ROW;
 }
 
-std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session)
+std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session)
 {
     if (!isEnabled() || !m_database.isOpen())
         return std::nullopt;
@@ -385,7 +418,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, 
 
     RegistrableDomain registrableDomain { requestUrl };
 
-    auto pstmt = m_database.prepareStatement("SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie WHERE "\
+    auto pstmt = m_database.prepareStatement("SELECT name, value, domain, path, expires, httponly, secure, session, sameSite FROM Cookie WHERE "\
         "(NOT ((session = 0) AND (expires < ?)))"
         "AND (httponly = COALESCE(NULLIF(?, -1), httponly)) "\
         "AND (secure = COALESCE(NULLIF(?, -1), secure)) "\
@@ -421,6 +454,14 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, 
         bool cookieHttpOnly = (pstmt->columnInt(5) == 1);
         bool cookieSecure = (pstmt->columnInt(6) == 1);
         bool cookieSession = (pstmt->columnInt(7) == 1);
+        auto cookieSameSite = static_cast<Cookie::SameSitePolicy>(pstmt->columnInt(8));
+
+        if (!sameSiteInfo.isSameSite) {
+            if (cookieSameSite == Cookie::SameSitePolicy::Strict)
+                continue;
+            if (cookieSameSite == Cookie::SameSitePolicy::Lax && (!sameSiteInfo.isTopSite || !sameSiteInfo.isSafeHTTPMethod))
+                continue;
+        }
 
         if (!CookieUtil::domainMatch(cookieDomain, requestHost))
             continue;
@@ -443,6 +484,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, 
         cookie.httpOnly = cookieHttpOnly;
         cookie.secure = cookieSecure;
         cookie.session = cookieSession;
+        cookie.sameSite = cookieSameSite;
         results.append(WTF::move(cookie));
     }
 
@@ -455,7 +497,7 @@ Vector<Cookie> CookieJarDB::getAllCookies()
     if (!isEnabled() || !m_database.isOpen())
         return result;
 
-    auto pstmt = m_database.prepareStatement("SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie"_s);
+    auto pstmt = m_database.prepareStatement("SELECT name, value, domain, path, expires, httponly, secure, session, sameSite FROM Cookie"_s);
     if (!pstmt)
         return result;
 
@@ -471,6 +513,7 @@ Vector<Cookie> CookieJarDB::getAllCookies()
         cookie.httpOnly = (pstmt->columnInt(5) == 1);
         cookie.secure = (pstmt->columnInt(6) == 1);
         cookie.session = (pstmt->columnInt(7) == 1);
+        cookie.sameSite = static_cast<Cookie::SameSitePolicy>(pstmt->columnInt(8));
         result.append(WTF::move(cookie));
     }
     return result;
@@ -519,6 +562,9 @@ bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, c
 
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
+    if (!isEnabled() || !m_database.isOpen())
+        return false;
+
     auto expires = cookie.expires.value_or(0.0);
     if (!cookie.session && MonotonicTime::fromRawSeconds(expires / msPerSecond) <= MonotonicTime::now())
         return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
@@ -535,6 +581,7 @@ bool CookieJarDB::setCookie(const Cookie& cookie)
     statement.bindInt(7, cookie.session ? 1 : 0);
     statement.bindInt(8, cookie.httpOnly ? 1 : 0);
     statement.bindInt(9, cookie.secure ? 1 : 0);
+    statement.bindInt(10, static_cast<int>(cookie.sameSite));
     return checkSQLiteReturnCode(statement.step());
 }
 
@@ -624,6 +671,9 @@ bool CookieJarDB::deleteCookies(const String&)
 
 bool CookieJarDB::deleteCookiesForHostname(const String& hostname, IncludeHttpOnlyCookies includeHttpOnlyCookies)
 {
+    if (!isEnabled() || !m_database.isOpen())
+        return false;
+
     auto& statement = preparedStatement(includeHttpOnlyCookies == IncludeHttpOnlyCookies::Yes ? DELETE_COOKIES_BY_DOMAIN_SQL : DELETE_COOKIES_BY_DOMAIN_EXCEPT_HTTP_ONLY_SQL);
     statement.bindText(1, hostname);
     return checkSQLiteReturnCode(statement.step());
@@ -634,14 +684,20 @@ bool CookieJarDB::deleteAllCookies()
     if (!isEnabled() || !m_database.isOpen())
         return false;
 
-    return executeSQLStatement(m_database.prepareStatement(DELETE_ALL_COOKIE_SQL));
+    return executeSQLStatement(m_database.prepareStatement(DELETE_ALL_COOKIE_SQL)).has_value();
 }
 
-void CookieJarDB::createPrepareStatement(ASCIILiteral sql)
+std::expected<void, CookieJarDB::DatabaseError> CookieJarDB::createPrepareStatement(ASCIILiteral sql)
 {
     auto statement = m_database.prepareStatement(sql);
-    ASSERT(statement);
+    if (!statement) {
+        int error = m_database.lastError();
+        checkSQLiteReturnCode(error);
+        LOG_ERROR("Failed to prepare cookie database statement: %s", m_database.lastErrorMsg());
+        return makeUnexpected(errorForSchemaResult(error));
+    }
     m_statements.add(sql, WTF::move(statement));
+    return { };
 }
 
 SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)
@@ -652,20 +708,22 @@ SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)
     return *statement;
 }
 
-bool CookieJarDB::executeSQLStatement(std::unique_ptr<SQLiteStatement>&& statement)
+std::expected<void, CookieJarDB::DatabaseError> CookieJarDB::executeSQLStatement(std::unique_ptr<SQLiteStatement>&& statement)
 {
-    if (!statement && !checkSQLiteReturnCode(m_database.lastError())) {
+    if (!statement) {
+        int error = m_database.lastError();
+        checkSQLiteReturnCode(error);
         LOG_ERROR("Failed to prepare sql statement with error: %s", m_database.lastErrorMsg());
-        return false;
+        return makeUnexpected(errorForSchemaResult(error));
     }
 
     int ret = statement->step();
     if (!checkSQLiteReturnCode(ret)) {
         LOG_ERROR("Failed to execute SQL error: %s", m_database.lastErrorMsg());
-        return false;
+        return makeUnexpected(errorForSchemaResult(ret));
     }
 
-    return true;
+    return { };
 }
 
 } // namespace WebCore

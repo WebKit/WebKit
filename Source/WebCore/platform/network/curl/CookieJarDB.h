@@ -28,6 +28,7 @@
 #include "CookieJar.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
+#include <expected>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -59,7 +60,7 @@ public:
     CookieAcceptPolicy acceptPolicy() const { return m_acceptPolicy; }
 
     WEBCORE_EXPORT HashSet<String> allDomains();
-    WEBCORE_EXPORT std::optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
+    WEBCORE_EXPORT std::optional<Vector<Cookie>> searchCookies(const URL& firstParty, const SameSiteInfo&, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, std::optional<Seconds> cappedLifetime = std::nullopt);
     WEBCORE_EXPORT bool setCookie(const Cookie&);
@@ -73,6 +74,12 @@ public:
     WEBCORE_EXPORT ~CookieJarDB();
 
 private:
+    enum class DatabaseError : uint8_t {
+        Unavailable,
+        Corrupt,
+        InvalidSchema
+    };
+
     CookieAcceptPolicy m_acceptPolicy { CookieAcceptPolicy::Always };
     String m_databasePath;
 
@@ -81,22 +88,24 @@ private:
     bool isOnMemory() const { return m_databasePath == ":memory:"_s; };
 
     bool openDatabase();
+    std::expected<void, DatabaseError> tryOpenDatabase();
     void closeDatabase();
 
+    static DatabaseError errorForSQLiteResult(int);
+    static DatabaseError errorForSchemaResult(int);
     bool checkSQLiteReturnCode(int);
     void flagDatabaseCorruption();
     bool checkDatabaseCorruptionAndRemoveIfNeeded();
     String getCorruptionMarkerPath() const;
 
-    bool checkDatabaseValidity();
+    std::expected<void, DatabaseError> checkDatabaseValidity();
     void deleteAllDatabaseFiles();
 
-    void verifySchemaVersion();
-    void deleteAllTables();
+    std::expected<void, DatabaseError> verifySchemaVersion();
 
-    void createPrepareStatement(ASCIILiteral);
+    std::expected<void, DatabaseError> createPrepareStatement(ASCIILiteral);
     SQLiteStatement& preparedStatement(const String&);
-    bool executeSQLStatement(std::unique_ptr<SQLiteStatement>&&);
+    std::expected<void, DatabaseError> executeSQLStatement(std::unique_ptr<SQLiteStatement>&&);
 
     bool deleteCookieInternal(const String& name, const String& domain, const String& path);
     bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);

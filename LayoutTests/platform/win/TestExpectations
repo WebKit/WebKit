@@ -4900,8 +4900,6 @@ compositing/layer-creation/no-compositing-for-overlapping-negative-z-siblings.ht
 fast/forms/select/base/select-multiple-picker-keyboard.html [ Failure ]
 http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-short-frequency-with-user-interaction-7-days-ago.html [ Failure ]
 http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-30-days-ago.html [ Failure ]
-http/tests/websocket/tests/hybi/websocket-samesite-lax-not-sent-cross-site.html [ Failure ]
-http/tests/websocket/tests/hybi/websocket-samesite-strict-not-sent-cross-site.html [ Failure ]
 http/wpt/fetch/local-network-access/address-space-overrides-apply-to-both-host-forms.html [ Failure ]
 http/wpt/fetch/local-network-access/document-address-space.html [ Failure ]
 imported/w3c/web-platform-tests/audio-session/audiosession-default-values.https.html [ Failure ]
