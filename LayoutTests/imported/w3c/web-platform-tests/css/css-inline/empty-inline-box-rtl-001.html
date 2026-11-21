@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<title>CSS Inline: empty inline boxes in a right-to-left line</title>
+<link rel="help" href="https://www.w3.org/TR/CSS2/visuren.html#inline-formatting">
+<link rel="help" href="https://drafts.csswg.org/css-writing-modes-4/#logical-direction-layout">
+<meta name="assert" content="Empty inline boxes, with or without margins, borders and padding, are placed starting from the inline-start edge of a right-to-left line.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+div { direction: rtl; font-size: 10px; line-height: 20px; inline-size: 200px; margin: 0 0 10px 50px; }
+.decorated { border-inline-start: 10px solid green; padding-inline-start: 30px; }
+</style>
+
+<div id="decorated"><span id="decorated-target" class="decorated"></span><span id="decorated-after"></span></div>
+
+<div id="undecorated"><span id="undecorated-target"></span></div>
+
+<div id="margin"><span id="margin-target" style="margin-inline-start: 40px; border-inline-start: 10px solid green"></span></div>
+
+<div id="nested"><span id="nested-outer" class="decorated"><span id="nested-inner"></span></span></div>
+
+<div id="vertical-rl" style="writing-mode: vertical-rl"><span id="vertical-rl-target" class="decorated"></span><span id="vertical-rl-after"></span></div>
+
+<div id="sideways-lr" style="writing-mode: sideways-lr"><span id="sideways-lr-target" class="decorated"></span></div>
+
+<div id="left" style="text-align: left"><span id="left-target" class="decorated"></span></div>
+
+<div id="center" style="text-align: center"><span id="center-target" class="decorated"></span></div>
+
+<script>
+function rect(id) {
+  return document.getElementById(id).getBoundingClientRect();
+}
+
+test(() => {
+  assert_equals(rect("decorated").right - rect("decorated-target").right, 0, "right offset");
+  assert_equals(rect("decorated-target").width, 40, "width");
+  assert_equals(rect("decorated").right - rect("decorated-after").right, 40, "following sibling right offset");
+  assert_equals(rect("decorated").height, 20, "line box is not empty");
+}, "Border and padding");
+
+test(() => {
+  assert_equals(rect("undecorated").right - rect("undecorated-target").right, 0, "right offset");
+  assert_equals(rect("undecorated-target").width, 0, "width");
+}, "No decoration");
+
+test(() => {
+  assert_equals(rect("margin").right - rect("margin-target").right, 40, "right offset");
+  assert_equals(rect("margin-target").width, 10, "width");
+}, "margin-inline-start");
+
+test(() => {
+  assert_equals(rect("nested").right - rect("nested-outer").right, 0, "outer right offset");
+  assert_equals(rect("nested-outer").width, 40, "outer width");
+  assert_equals(rect("nested").right - rect("nested-inner").right, 40, "inner right offset");
+}, "Nested inline boxes");
+
+test(() => {
+  assert_equals(rect("vertical-rl").bottom - rect("vertical-rl-target").bottom, 0, "bottom offset");
+  assert_equals(rect("vertical-rl-target").height, 40, "height");
+  assert_equals(rect("vertical-rl").bottom - rect("vertical-rl-after").bottom, 40, "following sibling bottom offset");
+  assert_equals(rect("vertical-rl").width, 20, "line box is not empty");
+}, "writing-mode: vertical-rl");
+
+test(() => {
+  assert_equals(rect("sideways-lr-target").top - rect("sideways-lr").top, 0, "top offset");
+  assert_equals(rect("sideways-lr-target").height, 40, "height");
+}, "writing-mode: sideways-lr");
+
+test(() => {
+  assert_equals(rect("left-target").left - rect("left").left, 0, "left offset");
+  assert_equals(rect("left-target").width, 40, "width");
+}, "text-align: left");
+
+test(() => {
+  assert_equals(rect("center-target").left - rect("center").left, 80, "left offset");
+  assert_equals(rect("center-target").width, 40, "width");
+}, "text-align: center");
+</script>

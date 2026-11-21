@@ -108,6 +108,22 @@ InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineLayoutResult& 
     else
         processNonBidiContent(lineLayoutResult, boxes);
 
+    auto isRightToLeftLineWithInlineBoxesOnly = [&] {
+        if (contentNeedsBidiReordering || m_displayLine.isLeftToRightInlineDirection())
+            return false;
+        for (auto& lineRun : lineLayoutResult.runs) {
+            if (!lineRun.isInlineBox())
+                return false;
+        }
+        return true;
+    };
+    if (isRightToLeftLineWithInlineBoxesOnly()) {
+        for (auto& box : boxes) {
+            if (box.isNonRootInlineBox())
+                mirrorInlineBoxForRightToLeftLine(box);
+        }
+    }
+
     insertRubyAnnotationBoxes(processRubyContent(boxes.mutableSpan(), lineLayoutResult), boxes);
 
     formattingContext().layoutState().setContentMayHaveInkOverflow(m_contentHasInkOverflow);
@@ -729,14 +745,23 @@ bool InlineDisplayContentBuilder::processBidiLinesWithNoContent(const LineLayout
             ASSERT_NOT_REACHED();
             return false;
         }
-        if (box.isNonRootInlineBox()) {
-            m_displayLine.isHorizontal() ? box.setLeft(m_displayLine.lineBoxRight()) : box.setTop(m_displayLine.lineBoxBottom());
-
-            auto& inlineBoxGeometry = formattingContext().geometryForBox(protect(box.layoutBox()));
-            m_displayLine.isHorizontal() ? inlineBoxGeometry.setLeft(LayoutUnit { box.left() }) : inlineBoxGeometry.setTop(LayoutUnit { box.top() });
-        }
+        if (box.isNonRootInlineBox())
+            mirrorInlineBoxForRightToLeftLine(box);
     }
     return true;
+}
+
+void InlineDisplayContentBuilder::mirrorInlineBoxForRightToLeftLine(InlineDisplay::Box& box)
+{
+    ASSERT(box.isNonRootInlineBox());
+    auto& inlineBoxGeometry = formattingContext().geometryForBox(protect(box.layoutBox()));
+    if (m_displayLine.isHorizontal()) {
+        box.setLeft(m_displayLine.lineBoxLeft() + m_displayLine.lineBoxRight() - box.right());
+        inlineBoxGeometry.setLeft(LayoutUnit { box.left() });
+        return;
+    }
+    box.setTop(m_displayLine.lineBoxTop() + m_displayLine.lineBoxBottom() - box.bottom());
+    inlineBoxGeometry.setTop(LayoutUnit { box.top() });
 }
 
 void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lineLayoutResult, InlineDisplay::Boxes& boxes)

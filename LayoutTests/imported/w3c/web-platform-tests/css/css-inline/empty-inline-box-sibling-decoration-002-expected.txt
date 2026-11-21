@@ -1,0 +1,12 @@
+
+PASS direction: rtl with the decorated box first
+PASS direction: rtl
+PASS direction: rtl with margin-inline-start
+PASS writing-mode: vertical-rl
+PASS writing-mode: vertical-lr with margin-inline-start
+PASS writing-mode: vertical-rl; direction: rtl
+PASS writing-mode: sideways-rl
+PASS writing-mode: sideways-lr
+PASS text-align: center
+PASS text-align: right
+
