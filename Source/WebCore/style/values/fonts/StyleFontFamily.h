@@ -92,7 +92,7 @@ struct FontFamilies {
 
     class const_iterator {
     public:
-        using inner_iterator = RefCountedFixedVector<WebCore::FontFamily>::const_iterator;
+        using inner_iterator = std::span<const WebCore::FontFamily>::iterator;
         using iterator_category = std::forward_iterator_tag;
         using value_type = FontFamily;
         using difference_type = std::ptrdiff_t;
@@ -101,10 +101,8 @@ struct FontFamilies {
 
         value_type operator*() const { return FontFamily { *m_it }; }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         const_iterator& operator++() { ++m_it; return *this; }
         const_iterator operator++(int) { auto result = *this; ++(*this); return result; }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         bool operator==(const const_iterator&) const = default;
 
@@ -112,8 +110,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         inner_iterator m_it;
     };
 
-    const_iterator begin() const LIFETIME_BOUND { return const_iterator(m_families->begin()); }
-    const_iterator end() const LIFETIME_BOUND { return const_iterator(m_families->end()); }
+    const_iterator begin() const LIFETIME_BOUND { return const_iterator(span().begin()); }
+    const_iterator end() const LIFETIME_BOUND { return const_iterator(span().end()); }
 
     unsigned size() const { return m_families->size(); }
 
@@ -134,6 +132,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:
+    // Ref::operator->() returns a non-const pointer, so explicitly convert to a span of const elements.
+    std::span<const WebCore::FontFamily> span() const LIFETIME_BOUND { return m_families->span(); }
+
     Ref<RefCountedFixedVector<WebCore::FontFamily>> m_families;
     FontFamilyKind m_firstFontKind { FontFamilyKind::Generic };
 };
