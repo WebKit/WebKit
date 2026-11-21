@@ -1508,156 +1508,10 @@ class CheckChangeRelevance(AnalyzeChange):
     name = 'check-change-relevance'
     description = ['check-change-relevance running']
     descriptionDone = ['Change contains relevant changes']
-    MAX_LINE_SIZE = 250
 
-    bindings_path_regexes = [
-        re.compile(rb'Source/WebCore', re.IGNORECASE),
-        re.compile(rb'Tools', re.IGNORECASE),
-    ]
-
-    services_path_regexes = [
-        re.compile(rb'Tools/CISupport/build-webkit-org', re.IGNORECASE),
-        re.compile(rb'Tools/CISupport/ews-build', re.IGNORECASE),
-        re.compile(rb'Tools/CISupport/Shared', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/libraries/resultsdbpy', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/libraries/webkitcorepy', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/libraries/webkitscmpy', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/webkitpy/autoinstalled', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/webkitpy/__init__.py', re.IGNORECASE),
-    ]
-
-    jsc_path_regexes = [
-        re.compile(rb'.*javascriptcore.*', re.IGNORECASE),
-        re.compile(rb'JSTests/', re.IGNORECASE),
-        re.compile(rb'LayoutTests/js.*', re.IGNORECASE),  # This catches both js/ and jsc-layout-tests.yaml
-        re.compile(rb'Source/WTF/', re.IGNORECASE),
-        re.compile(rb'Source/bmalloc/', re.IGNORECASE),
-        re.compile(rb'Source/cmake/', re.IGNORECASE),
-        re.compile(rb'.*Makefile.*', re.IGNORECASE),
-        re.compile(rb'Tools/.*jsc.*', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/build-webkit', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/webkitdirs.pm', re.IGNORECASE),
-    ]
-
-    wk1_path_regexes = [
-        re.compile(rb'Source/WebKitLegacy', re.IGNORECASE),
-        re.compile(rb'Source/WebCore', re.IGNORECASE),
-        re.compile(rb'Source/WebInspectorUI', re.IGNORECASE),
-        re.compile(rb'Source/WebDriver', re.IGNORECASE),
-        re.compile(rb'Source/WTF', re.IGNORECASE),
-        re.compile(rb'Source/bmalloc', re.IGNORECASE),
-        re.compile(rb'Source/JavaScriptCore', re.IGNORECASE),
-        re.compile(rb'Source/ThirdParty', re.IGNORECASE),
-        re.compile(rb'LayoutTests', re.IGNORECASE),
-        re.compile(rb'Tools', re.IGNORECASE),
-    ]
-
-    monterey_builder_path_regexes = [
-        re.compile(rb'Source/', re.IGNORECASE),
-        re.compile(rb'Tools/', re.IGNORECASE),
-    ]
-
-    webkitpy_path_regexes = [
-        re.compile(rb'Tools/Scripts/webkitpy', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/libraries', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/commit-log-editor', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/test262', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/webkit-sysprof', re.IGNORECASE),
-        re.compile(rb'Source/WebKit/Scripts', re.IGNORECASE),
-        re.compile(rb'metadata/contributors.json', re.IGNORECASE),
-    ]
-
-    safer_cpp_path_regexes = [
-        re.compile(rb'Source/WebCore', re.IGNORECASE),
-        re.compile(rb'Source/WebDriver', re.IGNORECASE),
-        re.compile(rb'Source/WebGPU', re.IGNORECASE),
-        re.compile(rb'Source/WebInspectorUI', re.IGNORECASE),
-        re.compile(rb'Source/WebKit', re.IGNORECASE),
-        re.compile(rb'Source/WebKitLegacy', re.IGNORECASE),
-        re.compile(rb'Source/WTF', re.IGNORECASE),
-        re.compile(rb'Source/JavaScriptCore', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/build-and-analyze', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/generate-dirty-files', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/compare-static-analysis-results', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/generate-dirty-files', re.IGNORECASE),
-        re.compile(rb'Tools/CISupport/Shared/download-and-install-build-tools', re.IGNORECASE),
-        re.compile(rb'Tools/CISupport/safer-cpp-swift-version', re.IGNORECASE)
-    ]
-
-    webdriver_path_regexes = [
-        re.compile(rb'Source/WebDriver/', re.IGNORECASE),
-        re.compile(rb'Tools/minidriver/', re.IGNORECASE),
-        re.compile(rb'Source/WebKit/UIProcess/Automation/', re.IGNORECASE),
-        re.compile(rb'Source/WebKit/WebProcess/Automation/', re.IGNORECASE),
-        re.compile(rb'Source/WebKit/Shared/Automation/', re.IGNORECASE),
-        re.compile(rb'Source/WebCore/automation/', re.IGNORECASE),
-        re.compile(rb'Source/WebCore/Modules/webdriver/', re.IGNORECASE),
-        re.compile(rb'Tools/MiniBrowser/mac/', re.IGNORECASE),
-        re.compile(rb'Tools/MiniBrowser/MiniBrowser.xcodeproj', re.IGNORECASE),
-        re.compile(rb'WebDriverTests/', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/webkitpy/webdriver_tests/', re.IGNORECASE),
-        re.compile(rb'Tools/Scripts/run-webdriver-tests', re.IGNORECASE),
-    ]
-
-    group_to_paths_mapping = {
-        'bindings': bindings_path_regexes,
-        'monterey-release-build': monterey_builder_path_regexes,
-        'services-ews': services_path_regexes,
-        'jsc': jsc_path_regexes,
-        'webkitpy': webkitpy_path_regexes,
-        'wk1-tests': wk1_path_regexes,
-        'safer-cpp': safer_cpp_path_regexes,
-        'webdriver': webdriver_path_regexes,
-    }
-
-    # A change that only touches these paths has no build inputs, so queues created with
-    # skip_if_no_build_inputs skip it. Anything not listed here, or mixed with it, still builds.
-    no_build_inputs_path_regexes = [
-        re.compile(rb'^Websites/', re.IGNORECASE),
-        re.compile(rb'^docs/', re.IGNORECASE),
-        re.compile(rb'^metadata/', re.IGNORECASE),
-        re.compile(rb'^Tools/CISupport/(ews-build|build-webkit-org|ews-app)/', re.IGNORECASE),
-        re.compile(rb'^(?!Source/).*\.md$', re.IGNORECASE),
-    ]
-
-    def __init__(self, skip_if_no_build_inputs=False):
-        self.skip_if_no_build_inputs = skip_if_no_build_inputs
-        super().__init__()
-
-    def _has_build_inputs(self, changed_files):
-        files = changed_files.splitlines()
-        if not files:
-            return True
-        for line in files:
-            # '--- path' is a removed or renamed file, and a rename only lists the new path.
-            if line.startswith(b'--- '):
-                return True
-            path = line[4:] if line.startswith(b'+++ ') else line
-            if not any(regex.search(path) for regex in self.no_build_inputs_path_regexes):
-                return True
-        return False
-
-    def _change_is_relevant(self, changed_files, builderName, timeout=30):
-        if self.skip_if_no_build_inputs:
-            return self._has_build_inputs(changed_files)
-
-        group = [group for group in self.group_to_paths_mapping.keys() if group.lower() in builderName.lower()]
-        if not group:
-            # This builder doesn't have paths defined, all changes are relevant.
-            return True
-
-        relevant_path_regexes = self.group_to_paths_mapping.get(group[0], [])
-        start = time.time()
-
-        for change in changed_files.splitlines():
-            for regex in relevant_path_regexes:
-                if type(change) == str:
-                    change = change.encode(encoding='utf-8', errors='replace')
-                if regex.search(change[:self.MAX_LINE_SIZE]):
-                    return True
-            if time.time() > start + timeout:
-                return False
-        return False
+    def __init__(self, relevance, **kwargs):
+        self.relevance = relevance
+        super().__init__(**kwargs)
 
     @defer.inlineCallbacks
     def run(self):
@@ -1666,7 +1520,7 @@ class CheckChangeRelevance(AnalyzeChange):
             # This build doesn't have a change, it might be a force build.
             defer.returnValue(SUCCESS)
 
-        if self._change_is_relevant(changed_files, self.getProperty('buildername', '')):
+        if self.relevance.is_relevant(changed_files):
             yield self._addToLog('stdio', 'This pull request contains relevant changes.')
             defer.returnValue(SUCCESS)
 
