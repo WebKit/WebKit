@@ -29,10 +29,8 @@
 #include "FloatAvoider.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutShape.h"
-#include "LayoutState.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
@@ -76,14 +74,14 @@ public:
     const PlacedFloats::Item* inlineStart() const;
     const PlacedFloats::Item* inlineEnd() const;
     bool intersects(const FloatAvoider&) const;
-    bool intersects(BoxGeometry::HorizontalEdges) const;
+    bool intersects(AxisRange<ParentFormattingContextRoot>) const;
     bool containsFloatFromFormattingContext() const;
-    NODELETE PositionInContextRoot highestBlockAxisPosition() const { return m_highestBlockAxisPosition; }
-    NODELETE PositionInContextRoot lowestBlockAxisPosition() const;
+    NODELETE AxisPosition<ParentFormattingContextRoot> highestBlockAxisPosition() const { return m_highestBlockAxisPosition; }
+    NODELETE AxisPosition<ParentFormattingContextRoot> lowestBlockAxisPosition() const;
 
     struct InlineAxisConstraints {
-        std::optional<PositionInContextRoot> start;
-        std::optional<PositionInContextRoot> end;
+        std::optional<AxisPosition<ParentFormattingContextRoot>> start;
+        std::optional<AxisPosition<ParentFormattingContextRoot>> end;
     };
     InlineAxisConstraints inlineAxisConstraints() const;
     NODELETE InlineStartEndIndex operator*() const { return m_floatPair; };
@@ -95,25 +93,25 @@ private:
 
     const PlacedFloats::List& m_floats;
     InlineStartEndIndex m_floatPair;
-    PositionInContextRoot m_highestBlockAxisPosition;
+    AxisPosition<ParentFormattingContextRoot> m_highestBlockAxisPosition;
 };
 
 class Iterator {
 public:
-    Iterator(const PlacedFloats::List&, std::optional<PositionInContextRoot> blockStart);
+    Iterator(const PlacedFloats::List&, std::optional<AxisPosition<ParentFormattingContextRoot>> blockStart);
 
     NODELETE const FloatPair& operator*() const { return m_current; }
     Iterator& operator++();
     bool operator==(const Iterator&) const;
 
 private:
-    void set(PositionInContextRoot blockAxisPosition);
+    void set(AxisPosition<ParentFormattingContextRoot> blockAxisPosition);
 
     const PlacedFloats::List& m_floats;
     FloatPair m_current;
 };
 
-static Iterator begin(const PlacedFloats::List& floats, PositionInContextRoot initialBlockStart)
+static Iterator begin(const PlacedFloats::List& floats, AxisPosition<ParentFormattingContextRoot> initialBlockStart)
 {
     // Start with the inner-most floating pair for the initial vertical position.
     return Iterator(floats, initialBlockStart);
@@ -128,27 +126,27 @@ static Iterator end(const PlacedFloats::List& floats)
 static bool areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
 {
     auto& floats = placedFloats.list();
-    auto inlineEndEdgeOfInlineStartFloats = LayoutUnit::min();
-    auto inlineStartEdgeOfInlineEndFloats = LayoutUnit::max();
-    auto lowestBlockAxisPositionAtInlineStart = std::optional<LayoutUnit> { };
-    auto lowestBlockAxisPositionAtInlineEnd = std::optional<LayoutUnit> { };
+    auto inlineEndEdgeOfInlineStartFloats = AxisPosition<ParentFormattingContextRoot> { LayoutUnit::min() };
+    auto inlineStartEdgeOfInlineEndFloats = AxisPosition<ParentFormattingContextRoot> { LayoutUnit::max() };
+    auto lowestBlockAxisPositionAtInlineStart = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
+    auto lowestBlockAxisPositionAtInlineEnd = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
 
     for (auto& floatItem : floats) {
         if (floatItem.isStartPositioned()) {
-            auto inlineEndEdge = floatItem.absoluteRectWithMargin().right();
+            auto inlineEndEdge = floatItem.marginBoxRight();
             if (inlineEndEdge < inlineEndEdgeOfInlineStartFloats) {
-                if (lowestBlockAxisPositionAtInlineStart && floatItem.absoluteRectWithMargin().top() < *lowestBlockAxisPositionAtInlineStart)
+                if (lowestBlockAxisPositionAtInlineStart && floatItem.marginBoxTop() < *lowestBlockAxisPositionAtInlineStart)
                     return false;
             }
-            lowestBlockAxisPositionAtInlineStart = floatItem.absoluteRectWithMargin().bottom();
+            lowestBlockAxisPositionAtInlineStart = floatItem.marginBoxBottom();
             inlineEndEdgeOfInlineStartFloats = inlineEndEdge;
         } else {
-            auto inlineStarEdge = floatItem.absoluteRectWithMargin().left();
+            auto inlineStarEdge = floatItem.marginBoxLeft();
             if (inlineStarEdge > inlineStartEdgeOfInlineEndFloats) {
-                if (lowestBlockAxisPositionAtInlineEnd && floatItem.absoluteRectWithMargin().top() < *lowestBlockAxisPositionAtInlineEnd)
+                if (lowestBlockAxisPositionAtInlineEnd && floatItem.marginBoxTop() < *lowestBlockAxisPositionAtInlineEnd)
                     return false;
             }
-            lowestBlockAxisPositionAtInlineEnd = floatItem.absoluteRectWithMargin().bottom();
+            lowestBlockAxisPositionAtInlineEnd = floatItem.marginBoxBottom();
             inlineStartEdgeOfInlineEndFloats = inlineStarEdge;
         }
     }
@@ -156,12 +154,12 @@ static bool areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
 }
 #endif
 
-static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats::List& floats, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges)
+static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats::List& floats, AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges)
 {
-    auto lowestBlockAxisPosition = std::optional<PositionInContextRoot> { };
+    auto lowestBlockAxisPosition = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
     auto innerMostInlineStartAndEnd = std::optional<FloatPair::InlineStartEndIndex> { };
     auto end = Layout::end(floats);
-    for (auto iterator = begin(floats, { floatAvoider.blockStart() }); iterator != end; ++iterator) {
+    for (auto iterator = begin(floats, floatAvoider.blockStart()); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
         auto inlineStartEndFloatPair = *iterator;
         innerMostInlineStartAndEnd = innerMostInlineStartAndEnd.value_or(*inlineStartEndFloatPair);
@@ -208,30 +206,31 @@ static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatA
 }
 
 struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
-    LayoutPoint topLeft;
-    LayoutPoint containingBlockTopLeft;
-    BoxGeometry::HorizontalEdges containingBlockContentBox;
+    Point<ParentFormattingContextRoot> topLeft;
+    Point<ParentFormattingContextRoot> containingBlockTopLeft;
+    AxisRange<ParentFormattingContextRoot> containingBlockContentBox;
 };
 
-FloatingContext::FloatingContext(const ElementBox& formattingContextRoot, const LayoutState& layoutState, const PlacedFloats& placedFloats)
+FloatingContext::FloatingContext(const ElementBox& formattingContextRoot, const PlacedFloats& placedFloats, Point<ParentFormattingContextRoot> rootTopLeft, LayoutUnit rootBorderBoxInlineSize)
     : m_formattingContextRoot(formattingContextRoot)
-    , m_layoutState(layoutState)
     , m_placedFloats(placedFloats)
+    , m_rootTopLeft(rootTopLeft)
+    , m_rootBorderBoxInlineSize(rootBorderBoxInlineSize)
 {
 }
 
-LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeometry& boxGeometry, const HorizontalConstraints& horizontalConstraints) const
+LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeometry& boxGeometry, const ContainingBlock& containingBlock) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
     ASSERT(areFloatsHorizontallySorted(m_placedFloats));
     auto borderBoxTopLeft = BoxGeometry::borderBoxTopLeft(boxGeometry);
 
     if (isEmpty()) {
-        auto alignWithContainingBlock = [&]() -> Position {
+        auto alignWithContainingBlock = [&] -> LayoutUnit {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
             if (isFloatingCandidateStartPositionedInBlockFormattingContext(layoutBox))
-                return { horizontalConstraints.logicalLeft + boxGeometry.marginStart() };
-            return { horizontalConstraints.logicalRight() - boxGeometry.marginEnd() - boxGeometry.borderBoxWidth() };
+                return { containingBlock.contentBox.logicalLeft + boxGeometry.marginStart() };
+            return { containingBlock.contentBox.logicalRight() - boxGeometry.marginEnd() - boxGeometry.borderBoxWidth() };
         };
         // No float box on the context yet -> align it with the containing block's left/right edge.
         return { alignWithContainingBlock(), borderBoxTopLeft.y() };
@@ -239,7 +238,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
 
     // Find the top most position where the float box fits.
     ASSERT(!isEmpty());
-    auto clearPosition = [&]() -> std::optional<LayoutUnit> {
+    auto clearPosition = [&] -> std::optional<AxisPosition<ParentFormattingContextRoot>> {
         if (!layoutBox.hasFloatClear())
             return { };
         // The vertical position candidate needs to clear the existing floats in this context.
@@ -256,12 +255,12 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
         return { };
     };
 
-    auto absoluteCoordinates = this->absoluteCoordinates(layoutBox, borderBoxTopLeft);
+    auto absoluteCoordinates = this->absoluteCoordinates(borderBoxTopLeft, containingBlock);
     auto absoluteTopLeft = absoluteCoordinates.topLeft;
     auto blockStartCandidate = absoluteTopLeft.y();
     // Incoming float cannot be placed higher than existing floats (margin box of the last float).
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-    auto lastFloatAbsoluteTop = placedFloats().last()->absoluteRectWithMargin().top();
+    auto lastFloatAbsoluteTop = placedFloats().last()->marginBoxTop();
     auto lastOrClearedFloatPosition = std::max(clearPosition().value_or(lastFloatAbsoluteTop), lastFloatAbsoluteTop);
     if (blockStartCandidate - boxGeometry.marginBefore() < lastOrClearedFloatPosition)
         blockStartCandidate = lastOrClearedFloatPosition + boxGeometry.marginBefore();
@@ -275,7 +274,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     return { floatBox.inlineStart() + margins.horizontal.start - containingBlockTopLeft.x(), floatBox.blockStart() + margins.vertical.before - containingBlockTopLeft.y() };
 }
 
-LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layoutBox, const BoxGeometry& boxGeometry) const
+LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layoutBox, const BoxGeometry& boxGeometry, const ContainingBlock& containingBlock) const
 {
     ASSERT(layoutBox.establishesBlockFormattingContext());
     ASSERT(!layoutBox.isFloatingPositioned());
@@ -286,7 +285,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     if (isEmpty())
         return borderBoxTopLeft;
 
-    auto absoluteCoordinates = this->absoluteCoordinates(layoutBox, borderBoxTopLeft);
+    auto absoluteCoordinates = this->absoluteCoordinates(borderBoxTopLeft, containingBlock);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, false, layoutBox.writingMode().isBidiLTR() };
     findPositionForFormattingContextRoot(floatAvoider, absoluteCoordinates.containingBlockContentBox);
@@ -294,7 +293,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     return { floatAvoider.inlineStart() - containingBlockTopLeft.x(), floatAvoider.blockStart() - containingBlockTopLeft.y() };
 }
 
-std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::blockAxisPositionWithClearance(const Box& layoutBox, const BoxGeometry& boxGeometry) const
+std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::blockAxisPositionWithClearance(const Box& layoutBox, const BoxGeometry& boxGeometry, const ContainingBlock& containingBlock) const
 {
     ASSERT(layoutBox.hasFloatClear());
     ASSERT(areFloatsHorizontallySorted(m_placedFloats));
@@ -310,7 +309,7 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
         //
         // 1. The amount necessary to place the border edge of the block even with the bottom outer edge of the lowest float that is to be cleared.
         // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
-        auto logicalTopRelativeToBlockFormattingContextRoot = mapTopLeftToBlockFormattingContextRoot(layoutBox, BoxGeometry::borderBoxTopLeft(boxGeometry)).y();
+        auto logicalTopRelativeToBlockFormattingContextRoot = mapTopLeftToParentFormattingContextRoot(BoxGeometry::borderBoxTopLeft(boxGeometry), containingBlock).y();
         auto clearance = *blockAxisPosition - logicalTopRelativeToBlockFormattingContextRoot;
         if (clearance <= 0)
             return { };
@@ -325,12 +324,7 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
         ASSERT(*blockAxisPosition == logicalTopRelativeToBlockFormattingContextRoot);
 
         // The return vertical position needs to be in the containing block's coordinate system.
-        CheckedRef containingBlock = Layout::containingBlock(layoutBox);
-        if (containingBlock.ptr() == &placedFloats().blockFormattingContextRoot())
-            return BlockAxisPositionWithClearance { logicalTopRelativeToBlockFormattingContextRoot, clearance };
-
-        auto containingBlockTopLeft = BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(containingBlock));
-        auto containingBlockRootRelativeTop = mapTopLeftToBlockFormattingContextRoot(containingBlock, containingBlockTopLeft).y();
+        auto containingBlockRootRelativeTop = mapTopLeftToParentFormattingContextRoot({ }, containingBlock).y();
         return BlockAxisPositionWithClearance { logicalTopRelativeToBlockFormattingContextRoot - containingBlockRootRelativeTop, clearance };
     };
 
@@ -348,23 +342,22 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
     return { };
 }
 
-NODELETE static bool floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
+NODELETE static bool floatContainsLine(const PlacedFloats::Item& floatItem, AxisPosition<ParentFormattingContextRoot> candidateTop, AxisPosition<ParentFormattingContextRoot> candidateBottom, LayoutUnit candidateHeight)
 {
-    if (floatBoxRect.isEmpty())
+    if (floatItem.marginBoxSize().isEmpty())
         return false;
     if (!candidateHeight)
-        return floatBoxRect.top() <= candidateTop && floatBoxRect.bottom() > candidateTop;
-    return floatBoxRect.top() < candidateBottom && floatBoxRect.bottom() > candidateTop;
+        return floatItem.marginBoxTop() <= candidateTop && floatItem.marginBoxBottom() > candidateTop;
+    return floatItem.marginBoxTop() < candidateBottom && floatItem.marginBoxBottom() > candidateTop;
 }
 
-static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeShapeEdge(const PlacedFloats::Item& floatItem, const Rect& marginRect, LayoutUnit candidateTop, LayoutUnit candidateHeight)
+static std::optional<std::pair<AxisPosition<ParentFormattingContextRoot>, AxisPosition<ParentFormattingContextRoot>>> computeShapeEdge(const PlacedFloats::Item& floatItem, AxisPosition<ParentFormattingContextRoot> candidateTop, LayoutUnit candidateHeight)
 {
     RefPtr shape = floatItem.shape();
     if (!shape)
         return { };
 
-    auto borderRect = floatItem.absoluteBorderBoxRect();
-    auto positionInShape = candidateTop - borderRect.top();
+    auto positionInShape = candidateTop - floatItem.borderBoxTop();
 
     if (!shape->lineOverlapsShapeMarginBounds(positionInShape, candidateHeight))
         return { };
@@ -378,27 +371,26 @@ static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeShapeEdge(const P
     auto bottom = candidateTop + 1_lu;
 
     if (floatItem.isStartPositioned()) {
-        auto shapeRight = borderRect.left() + LayoutUnit { segment.logicalRight };
-        return std::pair { std::min(shapeRight, marginRect.right()), bottom };
+        auto shapeRight = floatItem.borderBoxLeft() + LayoutUnit { segment.logicalRight };
+        return std::pair { std::min(shapeRight, floatItem.marginBoxRight()), bottom };
     }
-    auto shapeLeft = borderRect.left() + LayoutUnit { segment.logicalLeft };
-    return std::pair { std::max(shapeLeft, marginRect.left()), bottom };
+    auto shapeLeft = floatItem.borderBoxLeft() + LayoutUnit { segment.logicalLeft };
+    return std::pair { std::max(shapeLeft, floatItem.marginBoxLeft()), bottom };
 }
 
-static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeFloatEdgeAndBottom(const PlacedFloats::Item& floatItem, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
+static std::optional<std::pair<AxisPosition<ParentFormattingContextRoot>, AxisPosition<ParentFormattingContextRoot>>> computeFloatEdgeAndBottom(const PlacedFloats::Item& floatItem, AxisPosition<ParentFormattingContextRoot> candidateTop, AxisPosition<ParentFormattingContextRoot> candidateBottom, LayoutUnit candidateHeight)
 {
-    auto marginRect = floatItem.absoluteRectWithMargin();
-    if (!floatContainsLine(marginRect, candidateTop, candidateBottom, candidateHeight))
+    if (!floatContainsLine(floatItem, candidateTop, candidateBottom, candidateHeight))
         return { };
 
     if (floatItem.shape())
-        return computeShapeEdge(floatItem, marginRect, candidateTop, candidateHeight);
+        return computeShapeEdge(floatItem, candidateTop, candidateHeight);
 
-    auto edge = floatItem.isStartPositioned() ? marginRect.right() : marginRect.left();
-    return std::pair { edge, marginRect.bottom() };
+    auto edge = floatItem.isStartPositioned() ? floatItem.marginBoxRight() : floatItem.marginBoxLeft();
+    return std::pair { edge, floatItem.marginBoxBottom() };
 }
 
-FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat mayBeAboveLastFloat) const
+FloatingContext::Constraints FloatingContext::constraints(AxisPosition<FormattingContextRoot> candidateTop, AxisPosition<FormattingContextRoot> candidateBottom, MayBeAboveLastFloat mayBeAboveLastFloat) const
 {
     if (isEmpty())
         return { };
@@ -406,21 +398,15 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     // 2. Find the inner left/right floats at candidateTop/candidateBottom. Note when MayBeAboveLastFloat is 'no', we can just stop at the inner most (last) float (block vs. inline case).
     // 3. Convert left/right positions back to formattingContextRoot's coordinate system.
     auto& placedFloats = this->placedFloats();
-    auto coordinateMappingIsRequired = &placedFloats.blockFormattingContextRoot() != &root();
-    auto adjustedCandidateTop = candidateTop;
-    LayoutSize adjustingDelta;
-    if (coordinateMappingIsRequired) {
-        auto adjustedCandidatePosition = mapPointFromFloatingContextRootToBlockFormattingContextRoot({ 0, candidateTop });
-        adjustedCandidateTop = adjustedCandidatePosition.y;
-        adjustingDelta = { adjustedCandidatePosition.x, adjustedCandidateTop - candidateTop };
-    }
+    auto adjustedCandidateTop = m_rootTopLeft.y() + candidateTop.value();
     auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
     auto candidateHeight = adjustedCandidateBottom - adjustedCandidateTop;
 
-    auto constraints = Constraints { };
+    auto start = std::optional<Point<ParentFormattingContextRoot>> { };
+    auto end = std::optional<Point<ParentFormattingContextRoot>> { };
     if (mayBeAboveLastFloat == MayBeAboveLastFloat::No) {
         for (auto& floatItem : placedFloats.list() | std::views::reverse) {
-            if ((constraints.start && floatItem.isStartPositioned()) || (constraints.end && !floatItem.isStartPositioned()))
+            if ((start && floatItem.isStartPositioned()) || (end && !floatItem.isStartPositioned()))
                 continue;
 
             auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem, adjustedCandidateTop, adjustedCandidateBottom, candidateHeight);
@@ -430,11 +416,11 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             auto [edge, bottom] = *edgeAndBottom;
 
             if (floatItem.isStartPositioned())
-                constraints.start = PointInContextRoot { edge, bottom };
+                start = Point<ParentFormattingContextRoot> { edge, bottom };
             else
-                constraints.end = PointInContextRoot { edge, bottom };
+                end = Point<ParentFormattingContextRoot> { edge, bottom };
 
-            if ((constraints.start && constraints.end) || (constraints.start && !placedFloats.hasEndPositioned()) || (constraints.end && !placedFloats.hasStartPositioned()))
+            if ((start && end) || (start && !placedFloats.hasEndPositioned()) || (end && !placedFloats.hasStartPositioned()))
                 break;
         }
     } else {
@@ -446,55 +432,52 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             auto [edge, bottom] = *edgeAndBottom;
 
             if (floatItem.isStartPositioned()) {
-                if (!constraints.start || constraints.start->x < edge)
-                    constraints.start = PointInContextRoot { edge, bottom };
+                if (!start || start->x() < edge)
+                    start = Point<ParentFormattingContextRoot> { edge, bottom };
             } else {
-                if (!constraints.end || constraints.end->x > edge)
-                    constraints.end = PointInContextRoot { edge, bottom };
+                if (!end || end->x() > edge)
+                    end = Point<ParentFormattingContextRoot> { edge, bottom };
             }
             // FIXME: Bail out when floats are way above.
         }
     }
 
-    if (coordinateMappingIsRequired) {
-        if (constraints.start)
-            constraints.start->move(-adjustingDelta);
-
-        if (constraints.end)
-            constraints.end->move(-adjustingDelta);
-    }
+    auto mapToRoot = [&](Point<ParentFormattingContextRoot> point) -> Point<FormattingContextRoot> {
+        return { AxisPosition<FormattingContextRoot> { point.x() - m_rootTopLeft.x() }, AxisPosition<FormattingContextRoot> { point.y() - m_rootTopLeft.y() } };
+    };
+    auto constraints = Constraints { };
+    if (start)
+        constraints.start = mapToRoot(*start);
+    if (end)
+        constraints.end = mapToRoot(*end);
 
     if (placedFloats.blockFormattingContextRoot().style().writingMode().isInlineOpposing(root().writingMode())) {
-        // FIXME: Move it under coordinateMappingIsRequired when the integration codepath starts initiating the floating state with the
+        // FIXME: Move it under a &placedFloats.blockFormattingContextRoot() != &root() check when the integration codepath starts initiating the floating state with the
         // correct containing block (i.e. when the float comes from the parent BFC).
 
         // Flip to logical in inline direction.
         auto logicalConstraints = Constraints { };
-        auto borderBoxWidth = containingBlockGeometries().geometryForBox(root()).borderBoxWidth();
+        auto borderBoxWidth = m_rootBorderBoxInlineSize;
         if (constraints.start)
-            logicalConstraints.end = PointInContextRoot { borderBoxWidth - constraints.start->x, constraints.start->y };
+            logicalConstraints.end = Point<FormattingContextRoot> { AxisPosition<FormattingContextRoot> { borderBoxWidth - constraints.start->x().value() }, constraints.start->y() };
         if (constraints.end)
-            logicalConstraints.start = PointInContextRoot { borderBoxWidth - constraints.end->x, constraints.end->y };
+            logicalConstraints.start = Point<FormattingContextRoot> { AxisPosition<FormattingContextRoot> { borderBoxWidth - constraints.end->x().value() }, constraints.end->y() };
         constraints = logicalConstraints;
     }
     return constraints;
 }
 
-PlacedFloats::Item FloatingContext::makeFloatItem(const Box& floatBox, const BoxGeometry& boxGeometry, std::optional<size_t> line) const
+PlacedFloats::Item FloatingContext::makeFloatItem(const Box& floatBox, const BoxGeometry& boxGeometry, const ContainingBlock& containingBlock, std::optional<size_t> line) const
 {
     auto borderBoxTopLeft = BoxGeometry::borderBoxTopLeft(boxGeometry);
     auto absoluteBoxGeometry = BoxGeometry { boxGeometry };
-    absoluteBoxGeometry.setTopLeft(mapTopLeftToBlockFormattingContextRoot(floatBox, borderBoxTopLeft));
+    auto absoluteTopLeft = mapTopLeftToParentFormattingContextRoot(borderBoxTopLeft, containingBlock);
+    absoluteBoxGeometry.setTopLeft({ absoluteTopLeft.x().value(), absoluteTopLeft.y().value() });
     auto position = isFloatingCandidateStartPositionedInBlockFormattingContext(floatBox) ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End;
     return { floatBox, position, absoluteBoxGeometry, borderBoxTopLeft, line };
 }
 
-const LayoutState& FloatingContext::containingBlockGeometries() const
-{
-    return m_layoutState;
-}
-
-void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
+void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider, AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges) const
 {
     // A non-floating formatting root's initial vertical position is its static position.
     // It means that such boxes can end up vertically placed in-between existing floats (which is
@@ -521,10 +504,9 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
                 auto& floatBox = floats[i];
 
                 auto intersects = [&] {
-                    auto floatingRect = floatBox.absoluteRectWithMargin();
-                    if (floatAvoider.inlineStart() >= floatingRect.right() || floatAvoider.inlineEnd() <= floatingRect.left())
+                    if (floatAvoider.inlineStart() >= floatBox.marginBoxRight() || floatAvoider.inlineEnd() <= floatBox.marginBoxLeft())
                         return false;
-                    return floatAvoider.blockStart() >= floatingRect.top() && floatAvoider.blockStart() < floatingRect.bottom();
+                    return floatAvoider.blockStart() >= floatBox.marginBoxTop() && floatAvoider.blockStart() < floatBox.marginBoxBottom();
                 }();
                 if (intersects)
                     return &floatBox;
@@ -536,42 +518,20 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
         auto* intersectedFloatBox = overlappingFloatBox(startIndex, floatAvoider);
         if (!intersectedFloatBox)
             return;
-        floatAvoider.setBlockStart({ intersectedFloatBox->absoluteRectWithMargin().top() });
+        floatAvoider.setBlockStart(intersectedFloatBox->marginBoxTop());
     }
 }
 
-FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteCoordinates(const Box& floatAvoider, LayoutPoint borderBoxTopLeft) const
+FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteCoordinates(LayoutPoint borderBoxTopLeft, const ContainingBlock& containingBlock) const
 {
-    CheckedRef containingBlock = Layout::containingBlock(floatAvoider);
-    auto& containingBlockGeometry = containingBlockGeometries().geometryForBox(containingBlock);
-    auto absoluteTopLeft = mapTopLeftToBlockFormattingContextRoot(floatAvoider, borderBoxTopLeft);
-
-    if (containingBlock.ptr() == &placedFloats().blockFormattingContextRoot())
-        return { absoluteTopLeft, { }, { containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxRight() } };
-
-    auto containingBlockAbsoluteTopLeft = mapTopLeftToBlockFormattingContextRoot(containingBlock, BoxGeometry::borderBoxTopLeft(containingBlockGeometry));
-    return { absoluteTopLeft, containingBlockAbsoluteTopLeft, { containingBlockAbsoluteTopLeft.x() + containingBlockGeometry.contentBoxLeft(), containingBlockAbsoluteTopLeft.x() + containingBlockGeometry.contentBoxRight() } };
+    auto containingBlockAbsoluteTopLeft = mapTopLeftToParentFormattingContextRoot({ }, containingBlock);
+    auto& contentBox = containingBlock.contentBox;
+    return { mapTopLeftToParentFormattingContextRoot(borderBoxTopLeft, containingBlock), containingBlockAbsoluteTopLeft, { containingBlockAbsoluteTopLeft.x() + contentBox.logicalLeft, containingBlockAbsoluteTopLeft.x() + contentBox.logicalRight() } };
 }
 
-LayoutPoint FloatingContext::mapTopLeftToBlockFormattingContextRoot(const Box& layoutBox, LayoutPoint borderBoxTopLeft) const
+Point<ParentFormattingContextRoot> FloatingContext::mapTopLeftToParentFormattingContextRoot(LayoutPoint borderBoxTopLeft, const ContainingBlock& containingBlock) const
 {
-    ASSERT(layoutBox.isFloatingPositioned() || layoutBox.isInFlow());
-    CheckedRef blockFormattingContextRoot = placedFloats().blockFormattingContextRoot();
-    for (CheckedRef containingBlock : containingBlockChain(layoutBox, blockFormattingContextRoot))
-        borderBoxTopLeft.moveBy(BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(containingBlock)));
-    return borderBoxTopLeft;
-}
-
-Point FloatingContext::mapPointFromFloatingContextRootToBlockFormattingContextRoot(Point position) const
-{
-    CheckedRef from = root();
-    CheckedRef to = placedFloats().blockFormattingContextRoot();
-    if (from.ptr() == to.ptr())
-        return position;
-    auto mappedPosition = position;
-    for (CheckedPtr containingBlock = from.ptr(); containingBlock != to.ptr(); containingBlock = &Layout::containingBlock(*containingBlock))
-        mappedPosition.moveBy(BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(*containingBlock)));
-    return mappedPosition;
+    return { m_rootTopLeft.x() + containingBlock.borderBoxTopLeft.x().value() + borderBoxTopLeft.x(), m_rootTopLeft.y() + containingBlock.borderBoxTopLeft.y().value() + borderBoxTopLeft.y() };
 }
 
 bool FloatingContext::isStartPositioned(const Box& floatBox) const
@@ -653,25 +613,24 @@ bool FloatPair::intersects(const FloatAvoider& floatAvoider) const
     auto intersects = [&](auto* floating) {
         if (!floating)
             return false;
-        auto floatingRect = floating->absoluteRectWithMargin();
-        if (floatAvoider.inlineStart() >= floatingRect.right() || floatAvoider.inlineEnd() <= floatingRect.left())
+        if (floatAvoider.inlineStart() >= floating->marginBoxRight() || floatAvoider.inlineEnd() <= floating->marginBoxLeft())
             return false;
-        return floatAvoider.blockStart() >= floatingRect.top() && floatAvoider.blockStart() < floatingRect.bottom();
+        return floatAvoider.blockStart() >= floating->marginBoxTop() && floatAvoider.blockStart() < floating->marginBoxBottom();
     };
 
     ASSERT(!m_floatPair.isEmpty());
     return intersects(inlineStart()) || intersects(inlineEnd());
 }
 
-NODELETE bool FloatPair::intersects(BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
+NODELETE bool FloatPair::intersects(AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges) const
 {
     ASSERT(!m_floatPair.isEmpty());
 
     auto inlineAxisConstraints = this->inlineAxisConstraints();
-    if (inlineAxisConstraints.start && *inlineAxisConstraints.start > containingBlockContentBoxEdges.start)
+    if (inlineAxisConstraints.start && *inlineAxisConstraints.start > containingBlockContentBoxEdges.start())
         return true;
 
-    if (inlineAxisConstraints.end && *inlineAxisConstraints.end < containingBlockContentBoxEdges.end)
+    if (inlineAxisConstraints.end && *inlineAxisConstraints.end < containingBlockContentBoxEdges.end())
         return true;
 
     return false;
@@ -696,26 +655,26 @@ NODELETE bool FloatPair::operator ==(const FloatPair& other) const
 
 NODELETE FloatPair::InlineAxisConstraints FloatPair::inlineAxisConstraints() const
 {
-    auto startEdge = std::optional<PositionInContextRoot> { };
-    auto endEdge = std::optional<PositionInContextRoot> { };
+    auto startEdge = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
+    auto endEdge = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
 
     if (auto* inlineStart = this->inlineStart())
-        startEdge = PositionInContextRoot { inlineStart->absoluteRectWithMargin().right() };
+        startEdge = inlineStart->marginBoxRight();
 
     if (auto* inlineEnd = this->inlineEnd())
-        endEdge = PositionInContextRoot { inlineEnd->absoluteRectWithMargin().left() };
+        endEdge = inlineEnd->marginBoxLeft();
 
     return { startEdge, endEdge };
 }
 
-PositionInContextRoot FloatPair::lowestBlockAxisPosition() const
+AxisPosition<ParentFormattingContextRoot> FloatPair::lowestBlockAxisPosition() const
 {
     auto* inlineStart = this->inlineStart();
     auto* inlineEnd = this->inlineEnd();
     ASSERT(inlineStart || inlineEnd);
 
-    auto lowestBlockAxisPositionAtInlineStart = inlineStart ? std::optional<PositionInContextRoot>(PositionInContextRoot { inlineStart->absoluteRectWithMargin().bottom() }) : std::nullopt;
-    auto lowestBlockAxisPositionAtInlineEnd = inlineEnd ? std::optional<PositionInContextRoot>(PositionInContextRoot { inlineEnd->absoluteRectWithMargin().bottom() }) : std::nullopt;
+    auto lowestBlockAxisPositionAtInlineStart = inlineStart ? std::optional<AxisPosition<ParentFormattingContextRoot>>(inlineStart->marginBoxBottom()) : std::nullopt;
+    auto lowestBlockAxisPositionAtInlineEnd = inlineEnd ? std::optional<AxisPosition<ParentFormattingContextRoot>>(inlineEnd->marginBoxBottom()) : std::nullopt;
 
     if (lowestBlockAxisPositionAtInlineStart && lowestBlockAxisPositionAtInlineEnd)
         return std::max(*lowestBlockAxisPositionAtInlineStart, *lowestBlockAxisPositionAtInlineEnd);
@@ -726,7 +685,7 @@ PositionInContextRoot FloatPair::lowestBlockAxisPosition() const
     return *lowestBlockAxisPositionAtInlineEnd;
 }
 
-Iterator::Iterator(const PlacedFloats::List& floats, std::optional<PositionInContextRoot> blockStart)
+Iterator::Iterator(const PlacedFloats::List& floats, std::optional<AxisPosition<ParentFormattingContextRoot>> blockStart)
     : m_floats(floats)
     , m_current(floats)
 {
@@ -763,7 +722,7 @@ Iterator& Iterator::operator++()
         if (!currentIndex)
             return { };
 
-        auto currentBlockAxisPosition = m_floats[currentIndex].absoluteRectWithMargin().bottom();
+        auto currentBlockAxisPosition = m_floats[currentIndex].marginBoxBottom();
 
         std::optional<size_t> index = currentIndex;
         while (true) {
@@ -771,7 +730,7 @@ Iterator& Iterator::operator++()
             if (!index)
                 return { };
 
-            if (m_floats[*index].absoluteRectWithMargin().bottom() > currentBlockAxisPosition)
+            if (m_floats[*index].marginBoxBottom() > currentBlockAxisPosition)
                 return index;
         }
 
@@ -785,8 +744,8 @@ Iterator& Iterator::operator++()
     // Ensure that the new floating bottom edge is positioned lower than the current one -which essentially means skipping in-between floats that are positioned higher).
     // 3. Reset the vertical position and align it with the new left-right pair. These floats are now the inner-most boxes for the current vertical position.
     // As the result we have more horizontal space on the current vertical position.
-    auto lowestBlockAxisPositionAtInlineStart = m_current.inlineStart() ? std::optional<PositionInContextRoot>(m_current.inlineStart()->absoluteBottom()) : std::nullopt;
-    auto lowestBlockAxisPositionAtInlineEnd = m_current.inlineEnd() ? std::optional<PositionInContextRoot>(m_current.inlineEnd()->absoluteBottom()) : std::nullopt;
+    auto lowestBlockAxisPositionAtInlineStart = m_current.inlineStart() ? std::optional<AxisPosition<ParentFormattingContextRoot>>(m_current.inlineStart()->marginBoxBottom()) : std::nullopt;
+    auto lowestBlockAxisPositionAtInlineEnd = m_current.inlineEnd() ? std::optional<AxisPosition<ParentFormattingContextRoot>>(m_current.inlineEnd()->marginBoxBottom()) : std::nullopt;
 
     auto updateInlineStartSide = (lowestBlockAxisPositionAtInlineStart == lowestBlockAxisPositionAtInlineEnd) || (!lowestBlockAxisPositionAtInlineEnd || (lowestBlockAxisPositionAtInlineStart && *lowestBlockAxisPositionAtInlineStart < *lowestBlockAxisPositionAtInlineEnd));
     auto updateInlineEndSide = (lowestBlockAxisPositionAtInlineStart == lowestBlockAxisPositionAtInlineEnd) || (!lowestBlockAxisPositionAtInlineStart || (lowestBlockAxisPositionAtInlineEnd && *lowestBlockAxisPositionAtInlineStart > *lowestBlockAxisPositionAtInlineEnd));
@@ -806,7 +765,7 @@ Iterator& Iterator::operator++()
     return *this;
 }
 
-void Iterator::set(PositionInContextRoot blockAxisPosition)
+void Iterator::set(AxisPosition<ParentFormattingContextRoot> blockAxisPosition)
 {
     // Move the iterator to the initial vertical position by starting at the inner-most floating pair (last floats on left/right).
     // 1. Check if the inner-most pair covers the vertical position.
@@ -833,8 +792,8 @@ void Iterator::set(PositionInContextRoot blockAxisPosition)
                 return { };
 
             // Is this floating intrusive on this position?
-            auto rect = m_floats[*index].absoluteRectWithMargin();
-            if (rect.top() <= blockAxisPosition && rect.bottom() > blockAxisPosition)
+            auto& floatItem = m_floats[*index];
+            if (floatItem.marginBoxTop() <= blockAxisPosition && floatItem.marginBoxBottom() > blockAxisPosition)
                 return index;
         }
 

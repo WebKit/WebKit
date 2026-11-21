@@ -61,19 +61,15 @@ FloatingObject::FloatingObject(RenderBox& renderer)
         m_type = FloatLeft;
     else if (type == UsedFloat::Right)
         m_type = FloatRight;
-    if (CheckedPtr containingBlock = renderer.containingBlock())
-        m_hasAncestorWithOverflowClip = containingBlock->effectiveOverflowX() == Overflow::Clip || containingBlock->effectiveOverflowY() == Overflow::Clip;
 }
 
-FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool shouldPaint, bool isDescendant, bool overflowClipped)
+FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool isDescendant)
     : m_renderer(renderer)
     , m_frameRect(frameRect)
     , m_marginOffset(marginOffset)
     , m_type(type)
-    , m_paintsFloat(shouldPaint)
     , m_isDescendant(isDescendant)
     , m_isPlaced(true)
-    , m_hasAncestorWithOverflowClip(overflowClipped)
 {
 }
 
@@ -84,33 +80,19 @@ std::unique_ptr<FloatingObject> FloatingObject::create(RenderBox& renderer)
     return object;
 }
 
-std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant, bool overflowClipped) const
+std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool isDescendant) const
 {
     ASSERT(renderer());
-    return makeUnique<FloatingObject>(*renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), marginOffset(), shouldPaint, isDescendant, overflowClipped);
+    return makeUnique<FloatingObject>(*renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), marginOffset(), isDescendant);
 }
 
 std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
     ASSERT(renderer());
-    auto cloneObject = makeUnique<FloatingObject>(*renderer(), type(), m_frameRect, m_marginOffset, m_paintsFloat, m_isDescendant, m_hasAncestorWithOverflowClip);
+    auto cloneObject = makeUnique<FloatingObject>(*renderer(), type(), m_frameRect, m_marginOffset, m_isDescendant);
     cloneObject->m_paginationStrut = m_paginationStrut;
     cloneObject->m_isPlaced = m_isPlaced;
     return cloneObject;
-}
-
-bool FloatingObject::shouldPaint() const
-{
-    if (!m_renderer)
-        return false;
-
-    return !m_renderer->hasSelfPaintingLayer() && m_paintsFloat;
-}
-
-LayoutSize FloatingObject::translationOffsetToAncestor() const
-{
-    ASSERT(renderer());
-    return locationOffsetOfBorderBox() - renderer()->locationOffset();
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -124,7 +106,7 @@ TextStream& operator<<(TextStream& stream, const FloatingObject& object)
         stream << " " << object.frameRect();
     else
         stream << " (not placed yet)";
-    return stream << " paintsFloat " << object.paintsFloat() << " shouldPaint " << object.shouldPaint();
+    return stream << " isDescendant " << object.isDescendant();
 }
 
 #endif
