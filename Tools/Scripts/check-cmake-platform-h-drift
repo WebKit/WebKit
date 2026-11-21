@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Lists the cmakeconfig.h entries of configured Cocoa CMake build directories that
+override a value wtf/Platform.h defines, which is where a CMake build can drift
+from an Xcode build. Exits with status 1 if any override is not known to match
+Xcode, and 2 if a directory can't be checked."""
+
+import argparse
+import fnmatch
+import os
+import re
+import subprocess
+import sys
+import tempfile
+
+SOURCE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
+SCRIPT = os.path.join(SOURCE_DIR, 'Source', 'WTF', 'Scripts', 'generate-platform-args')
+WEBGPU_XCCONFIG = os.path.join(SOURCE_DIR, 'Source', 'WebGPU', 'Configurations', 'WebGPU.xcconfig')
+
+EXPECTED = {
+    # Xcode sets it for Debug and sanitizer builds too (Base.xcconfig, Sanitizers.xcconfig).
+    'ENABLE_CONJECTURE_ASSERT': 'matches the Xcode Debug and sanitizer configurations',
+}
+
+
+class CheckError(Exception):
+    pass
+
+
+def sdk_name(command):
+    """The SDK's canonical name, like iphonesimulator27.5.internal, from -isysroot."""
+    if '-isysroot' not in command:
+        return None
+    name = os.path.basename(command[command.index('-isysroot') + 1].rstrip('/')).lower()
+    return name[:-len('.sdk')] if name.endswith('.sdk') else name
+
+
+def webgpu_swift_reason(cmake_value, sdk):
+    """WebGPU.xcconfig sets ENABLE_WEBGPU_SWIFT per SDK, for the WebGPU target only. The last
+    matching assignment wins. Returns None when CMake's value differs from Xcode's."""
+    enabled = False
+    with open(WEBGPU_XCCONFIG) as f:
+        for match in re.finditer(r'^ENABLE_WEBGPU_SWIFT(?:\[sdk=([^\]]+)\])?\s*=\s*([^;\n]*);?', f.read(), re.MULTILINE):
+            if sdk and (not match.group(1) or fnmatch.fnmatchcase(sdk, match.group(1))):
+                enabled = bool(match.group(2).strip())
+    if int(enabled) != int(cmake_value):
+        return None
+    return f'WebGPU.xcconfig sets it to {int(enabled)} on {sdk} for the WebGPU target only; CMake sets it for every target'
+
+
+def overrides(build_dir):
+    if not os.path.isdir(build_dir):
+        raise CheckError('not a directory')
+    probe_dir = os.path.join(build_dir, 'PlatformH')
+    command_path = os.path.join(probe_dir, 'command.txt')
+    cmakeconfig = os.path.join(build_dir, 'cmakeconfig.h')
+    for path in (command_path, cmakeconfig):
+        if not os.path.isfile(path):
+            raise CheckError(f'no {os.path.relpath(path, build_dir)}; configure it with a tree that has '
+                             'WEBKIT_PROBE_PLATFORM_H() first')
+    with open(command_path) as f:
+        command = [line for line in f.read().split('\n') if line]
+    if not command or not os.path.exists(command[0]):
+        raise CheckError(f'the compiler it was configured with is gone ({command[0] if command else "none"}); '
+                         're-run cmake in it')
+    result = []
+    skip_next = False
+    for arg in command:
+        if skip_next:
+            skip_next = False
+        elif arg in ('-MF', '-MT'):
+            skip_next = True
+        elif arg == probe_dir or arg.startswith(probe_dir + os.sep):
+            result.append(build_dir + arg[len(probe_dir):])
+        elif arg != '-MD':
+            result.append(arg)
+    with tempfile.TemporaryDirectory() as temporary_dir:
+        output = os.path.join(temporary_dir, 'values.cmake')
+        process = subprocess.run([sys.executable, SCRIPT, '--cmake-probe', '--output', output,
+                                  '--cmakeconfig', cmakeconfig, '--', *result],
+                                 cwd=temporary_dir, capture_output=True, text=True)
+        if process.returncode:
+            lines = (process.stderr or process.stdout).strip().split('\n')
+            detail = next((line for line in lines if 'error' in line), lines[-1]).strip()
+            raise CheckError(f'preprocessing wtf/Platform.h failed; re-run cmake in it ({detail})')
+        with open(output) as f:
+            match = re.search(r'^set\(WEBKIT_PLATFORM_H_OVERRIDES "(.*)"\)$', f.read(), re.MULTILINE)
+    if not match:
+        raise CheckError('the probe wrote no WEBKIT_PLATFORM_H_OVERRIDES')
+    entries = [entry for entry in match.group(1).split(';') if entry]
+    return sdk_name(command), [(name, values.split(':')) for name, values in (entry.split('=') for entry in entries)]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('build_dirs', nargs='+', help='configured CMake build directories')
+    args = parser.parse_args()
+
+    unexpected = 0
+    errors = 0
+    for build_dir in args.build_dirs:
+        build_dir = os.path.abspath(build_dir)
+        try:
+            sdk, found = overrides(build_dir)
+        except CheckError as error:
+            print(f'error: {build_dir}: {error}', file=sys.stderr)
+            errors += 1
+            continue
+        print(f'{build_dir} ({sdk}):')
+        if not found:
+            print('    no overrides')
+        for name, (cmake, platform_h) in found:
+            if name == 'ENABLE_WEBGPU_SWIFT':
+                reason = webgpu_swift_reason(cmake, sdk)
+            else:
+                reason = EXPECTED.get(name)
+            if not reason:
+                unexpected += 1
+                reason = 'UNEXPECTED'
+            print(f'    {name}: cmakeconfig.h {cmake}, Platform.h {platform_h} ({reason})')
+    if errors:
+        return 2
+    return 1 if unexpected else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
