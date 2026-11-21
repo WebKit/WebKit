@@ -90,7 +90,7 @@ NODELETE static HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& ta
 
 static NSURLSession *statelessSessionWithoutRedirectsSingleton(const ApplicationBundleIdentifiersOrAuditToken& applicationBundleIdentifier)
 {
-    static NeverDestroyed<RetainPtr<WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON>> delegate = adoptNS([WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON new]);
+    SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<RetainPtr<WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON>> delegate = adoptNS([WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON new]);
     static NeverDestroyed<RetainPtr<NSURLSession>> session = [&] {
         RetainPtr configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
 

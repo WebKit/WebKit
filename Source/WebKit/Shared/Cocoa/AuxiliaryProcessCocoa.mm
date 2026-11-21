@@ -113,7 +113,7 @@ static void prewarmLogs()
     } };
 
     for (auto& log : logs) {
-        OSObjectPtr logHandle = adoptOSObject(os_log_create(log.first, log.second));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr logHandle = adoptOSObject(os_log_create(log.first, log.second));
         bool enabled = os_log_type_enabled(logHandle.get(), OS_LOG_TYPE_ERROR);
         UNUSED_PARAM(enabled);
     }

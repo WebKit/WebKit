@@ -119,7 +119,7 @@ private:
 
 static dispatch_queue_t udpSocketQueueSingleton()
 {
-    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("WebRTC UDP socket queue", concurrentQueueWithAutoreleasePoolAttrSingleton()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("WebRTC UDP socket queue", concurrentQueueWithAutoreleasePoolAttrSingleton()));
     return queue.get().get();
 }
 
@@ -150,8 +150,8 @@ void NetworkRTCUDPSocketCocoa::sendTo(std::span<const uint8_t> data, const webrt
 
 static WebRTCNetwork::EcnMarking getECN(nw_content_context_t nwContext, NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker& connection)
 {
-    auto protocol = adoptNS(nw_protocol_copy_ip_definition());
-    auto metadata = adoptNS(nw_content_context_copy_protocol_metadata(nwContext, protocol.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr protocol = adoptNS(nw_protocol_copy_ip_definition());
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr metadata = adoptNS(nw_content_context_copy_protocol_metadata(nwContext, protocol.get()));
 
     if (metadata && nw_protocol_metadata_is_ip(metadata.get())) {
         auto ecnFlag = nw_ip_metadata_get_ecn_flag(metadata.get());
@@ -179,7 +179,7 @@ static WebRTCNetwork::EcnMarking getECN(nw_content_context_t nwContext, NetworkR
 
 static webrtc::SocketAddress socketAddressFromIncomingConnection(nw_connection_t connection)
 {
-    auto endpoint = adoptNS(nw_connection_copy_endpoint(connection));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr endpoint = adoptNS(nw_connection_copy_endpoint(connection));
     auto type = nw_endpoint_get_type(endpoint.get());
     if (type == nw_endpoint_type_address) {
         auto ipAddress = adoptSystemMalloc(nw_endpoint_copy_address_string(endpoint.get()));
@@ -238,10 +238,10 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     , m_sourceApplicationAuditToken(rtcProvider.sourceApplicationAuditToken())
     , m_attributedBundleIdentifier(WTF::move(attributedBundleIdentifier))
 {
-    auto parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     {
         auto hostAddress = computeHostAddress(address);
-        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), 0));
         ASSERT(localEndpoint && nw_endpoint_get_hostname(localEndpoint.get()));
         if (auto* hostname = nw_endpoint_get_hostname(localEndpoint.get()))
             m_address = { hostname, nw_endpoint_get_port(localEndpoint.get()) };
@@ -251,7 +251,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     }
     configureParameters(parameters.get(), address.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
 
-    m_nwListener = adoptNS(nw_listener_create(parameters.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_nwListener = adoptNS(nw_listener_create(parameters.get()));
     nw_listener_set_queue(m_nwListener.get(), udpSocketQueueSingleton());
 
     // The callback holds a reference to the nw_listener and we clear it when going in nw_listener_state_cancelled state, which is triggered when closing the socket.
@@ -312,8 +312,8 @@ void NetworkRTCUDPSocketCocoaConnections::setListeningPort(int port)
 
 void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t parameters, nw_ip_version_t version)
 {
-    auto protocolStack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters));
-    auto options = adoptNS(nw_protocol_stack_copy_internet_protocol(protocolStack.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr protocolStack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr options = adoptNS(nw_protocol_stack_copy_internet_protocol(protocolStack.get()));
 
     if (version != nw_ip_version_any)
         nw_ip_options_set_version(options.get(), version);
@@ -386,14 +386,14 @@ static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref
 
 auto NetworkRTCUDPSocketCocoaConnections::createNWConnection(const webrtc::SocketAddress& remoteAddress) -> Connection
 {
-    auto parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     {
         auto hostAddress = m_address.ipaddr().ToString();
         if (m_address.ipaddr().IsNil())
             hostAddress = m_address.hostname();
 
         nw_parameters_allow_sharing_port_with_listener(parameters.get(), m_nwListener.get());
-        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), m_address.port()));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), m_address.port()));
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), ipVersionFromFamily(remoteAddress.family()));
@@ -404,8 +404,8 @@ auto NetworkRTCUDPSocketCocoaConnections::createNWConnection(const webrtc::Socke
     auto remoteHostAddress = remoteAddress.ipaddr().ToString();
     if (remoteAddress.ipaddr().IsNil())
         remoteHostAddress = remoteAddress.hostname();
-    RetainPtr host = adoptNS(nw_endpoint_create_host(remoteHostAddress.c_str(), String::number(remoteAddress.port()).utf8().legacyCStringPointer()));
-    RetainPtr nwConnection = adoptNS(nw_connection_create(host.get(), parameters.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr host = adoptNS(nw_endpoint_create_host(remoteHostAddress.c_str(), String::number(remoteAddress.port()).utf8().legacyCStringPointer()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr nwConnection = adoptNS(nw_connection_create(host.get(), parameters.get()));
 
     auto connectionStateTracker = ConnectionStateTracker::create();
 
@@ -445,7 +445,7 @@ void NetworkRTCUDPSocketCocoaConnections::sendTo(std::span<const uint8_t> data, 
     }();
     connection.tracker->incrementPendingSendCount();
 
-    OSObjectPtr value = adoptOSObject(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr value = adoptOSObject(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
     nw_connection_send(connection.nwConnection.get(), value.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, ipcConnection = m_connection.copyRef(), connection, options](_Nullable nw_error_t error) mutable {
         RELEASE_LOG_ERROR_IF(error, WebRTC, "NetworkRTCUDPSocketCocoaConnections::sendTo failed with error %d", error ? nw_error_get_error_code(error) : 0);
         ipcConnection->send(Messages::LibWebRTCNetwork::SignalSentPacket { identifier, options.packet_id, webrtc::TimeMillis() }, 0);

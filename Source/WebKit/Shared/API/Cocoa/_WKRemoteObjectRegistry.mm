@@ -300,7 +300,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
         };
 
         RefPtr<ReplyBlockCallChecker> checker = ReplyBlockCallChecker::create(self, replyID);
-        auto replyBlock = adoptNS(__NSMakeSpecialForwardingCaptureBlock([wireBlockSignature UTF8String], [interface, remoteObjectRegistry, replyID, checker](NSInvocation *invocation) {
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr replyBlock = adoptNS(__NSMakeSpecialForwardingCaptureBlock([wireBlockSignature UTF8String], [interface, remoteObjectRegistry, replyID, checker](NSInvocation *invocation) {
             auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
             [encoder encodeObject:invocation forKey:invocationKey];
 

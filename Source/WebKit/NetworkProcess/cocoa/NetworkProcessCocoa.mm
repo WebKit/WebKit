@@ -166,7 +166,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // See TestController::cocoaPlatformInitialize for supporting a local DNS resolver when !ENABLE(TEST_DNS_SERVER_IN_NETWORKING_PROCESS).
     auto webPlatformTestDomain = "web-platform.test"_s;
     if (parameters.localhostAliasesForTesting.contains(webPlatformTestDomain)) {
-        m_resolverConfig = adoptOSObject(nw_resolver_config_create());
+        SUPPRESS_RETAINPTR_CTOR_ADOPT m_resolverConfig = adoptOSObject(nw_resolver_config_create());
         if (auto resolverConfig = m_resolverConfig) {
             nw_resolver_config_set_protocol(resolverConfig.get(), nw_resolver_protocol_dns53);
             nw_resolver_config_set_class(resolverConfig.get(), nw_resolver_class_designated_direct);
@@ -234,7 +234,7 @@ void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedS
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_clearCacheDispatchGroup)
+    SUPPRESS_RETAINPTR_CTOR_ADOPT if (!m_clearCacheDispatchGroup)
         m_clearCacheDispatchGroup = adoptOSObject(dispatch_group_create());
 
     RetainPtr group = m_clearCacheDispatchGroup.get();

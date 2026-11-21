@@ -39,7 +39,7 @@ namespace WebKit {
 
 void startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t))
 {
-    static NeverDestroyed<OSObjectPtr<xpc_connection_t>> listener = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), XPC_CONNECTION_MACH_SERVICE_LISTENER));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<OSObjectPtr<xpc_connection_t>> listener = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), XPC_CONNECTION_MACH_SERVICE_LISTENER));
     xpc_connection_set_event_handler(listener.get().get(), ^(xpc_object_t peer) {
         if (xpc_get_type(peer) != XPC_TYPE_CONNECTION)
             return;
@@ -82,19 +82,19 @@ void startListeningForMachServiceConnections(const char* serviceName, ASCIILiter
 
 OSObjectPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&& vector)
 {
-    return adoptOSObject(xpc_data_create_with_dispatch_data(makeDispatchData(WTF::move(vector)).get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptOSObject(xpc_data_create_with_dispatch_data(makeDispatchData(WTF::move(vector)).get()));
 }
 
 OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
 {
     __block auto blockEncoder = WTF::move(encoder);
     auto buffer = blockEncoder->span();
-    auto dispatchData = adoptOSObject(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr dispatchData = adoptOSObject(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
         // Explicitly clear out the encoder, destroying it.
         blockEncoder.moveToUniquePtr();
     }));
 
-    return adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 }
 
 } // namespace WebKit

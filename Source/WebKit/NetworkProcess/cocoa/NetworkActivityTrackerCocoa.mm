@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-NetworkActivityTracker::NetworkActivityTracker(Label label, Domain domain)
+SUPPRESS_RETAINPTR_CTOR_ADOPT NetworkActivityTracker::NetworkActivityTracker(Label label, Domain domain)
     : m_domain(domain)
     , m_label(label)
     , m_networkActivity(adoptNS(nw_activity_create(static_cast<uint32_t>(m_domain), static_cast<uint32_t>(m_label))))
