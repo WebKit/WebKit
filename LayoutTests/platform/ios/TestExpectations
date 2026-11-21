@@ -8928,6 +8928,8 @@ webkit.org/b/319761 imported/w3c/web-platform-tests/css/css-viewport/zoom/perspe
 webkit.org/b/319784 editing/selection/ios/bidi-visually-contiguous-selection-multiline.html [ Failure ]
 
 webkit.org/b/256299 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]
+webkit.org/b/332651 imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-openid4vp.https.html [ Failure ]
+webkit.org/b/332651 imported/w3c/web-platform-tests/digital-credentials/webdriver/get-openid4vp.https.html [ Failure ]
 
 webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]
 
