@@ -2051,10 +2051,47 @@ bool RenderGrid::isBaselineAlignmentForGridItem(const RenderBox& gridItem, Style
         : !GridLayoutFunctions::hasAutoMarginsInRowAxis(gridItem, writingMode());
 }
 
+static std::optional<LayoutUnit> alignmentBaselineForGridItem(const RenderGrid& grid, const RenderBox& gridItem, ItemPosition alignment)
+{
+    if (GridLayoutFunctions::isOrthogonalGridItem(grid, gridItem))
+        return { };
+    auto baseline = alignment == ItemPosition::Baseline ? gridItem.firstLineBaseline() : gridItem.lastLineBaseline();
+    if (!baseline)
+        return { };
+    return grid.logicalTopForChild(gridItem) + *baseline;
+}
+
+// https://drafts.csswg.org/css-grid-3/#grid-lanes-baseline-alignment
+// "The first baseline set of the grid container in this axis is generated from the highest alignment baseline
+// among the grid items placed first in each track, and the last baseline set from the lowest alignment baseline
+// among the grid items placed last in each track."
+static std::optional<LayoutUnit> stackingAxisBaselineForGridLanes(const RenderGrid& grid, ItemPosition alignment)
+{
+    ASSERT(grid.hasStackingAxisRows());
+    std::optional<LayoutUnit> containerBaseline;
+    auto& currentGrid = grid.currentGrid();
+    for (unsigned column = 0; column < currentGrid.numTracks(Style::GridTrackSizingDirection::Columns); ++column) {
+        auto& gridItemsInTrack = currentGrid.cell(0, column);
+        std::optional<LayoutUnit> trackBaseline;
+        for (size_t index = 0; index < gridItemsInTrack.size() && !trackBaseline; ++index) {
+            CheckedRef gridItem = *gridItemsInTrack[alignment == ItemPosition::Baseline ? index : gridItemsInTrack.size() - 1 - index];
+            trackBaseline = alignmentBaselineForGridItem(grid, gridItem, alignment);
+        }
+        if (trackBaseline && (!containerBaseline || (alignment == ItemPosition::Baseline ? *trackBaseline < *containerBaseline : *trackBaseline > *containerBaseline)))
+            containerBaseline = trackBaseline;
+    }
+    return containerBaseline;
+}
+
 std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 {
     if ((isWritingModeRoot() && !isFlexItem()) || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return { };
+
+    if (hasStackingAxisRows()) {
+        if (auto baseline = stackingAxisBaselineForGridLanes(*this, ItemPosition::Baseline))
+            return baseline;
+    }
 
     // Finding the first grid item in grid order.
     CheckedPtr baselineGridItem = this->baselineGridItem(ItemPosition::Baseline);
@@ -2082,6 +2119,11 @@ std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
 {
     if (isWritingModeRoot() || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return { };
+
+    if (hasStackingAxisRows()) {
+        if (auto baseline = stackingAxisBaselineForGridLanes(*this, ItemPosition::LastBaseline))
+            return baseline;
+    }
 
     CheckedPtr baselineGridItem = this->baselineGridItem(ItemPosition::LastBaseline);
     if (!baselineGridItem)
