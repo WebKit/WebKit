@@ -104,6 +104,9 @@ public:
         RELEASE_ASSERT(ObjectIdentifierGenericBase::isValidIdentifier(identifier));
     }
 
+    // Declared here, not inherited: Swift does not import this member of ObjectIdentifierGenericBase.
+    uint64_t toUInt64() const { return ObjectIdentifierGenericBase::toUInt64(); }
+
     bool isHashTableEmptyValue() const { return !ObjectIdentifierGenericBase::toUInt64(); }
 
     // Do not call this constructor explicitly, it should only be used by the Hashtable implementation.

@@ -647,7 +647,8 @@ UIProcess/ios/WKWebGeolocationPolicyDeciderIOS.mm @nonARC
 
 UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm @nonARC
 
-UIProcess/mac/AppKitGestures/WKAppKitGestureController.mm @nonARC
+UIProcess/mac/AppKitGestures/AppKitGestureMomentumEventGenerator.mm @nonARC
+UIProcess/mac/AppKitGestures/WKAppKitGestureControllerCxxSupport.mm @nonARC @no-unify // Imports WKDeferringGestureRecognizer.h, whose PlatformEvent another file's using namespace WebCore makes ambiguous.
 UIProcess/mac/CapturePromptUtilities.mm
 UIProcess/mac/CorrectionPanel.mm @nonARC
 UIProcess/mac/DisplayLinkMac.cpp
@@ -668,7 +669,6 @@ UIProcess/mac/WKCapturePreviewPrompt.mm @nonARC
 UIProcess/mac/WKDocumentPictureInPictureWindowController.mm @nonARC
 UIProcess/mac/WKFullScreenWindowController.mm @nonARC
 UIProcess/mac/WKImmediateActionController.mm @nonARC
-UIProcess/mac/PositionInformationManager.cpp
 UIProcess/mac/WKPrintingView.mm @nonARC
 UIProcess/mac/WKQuickLookPreviewController.mm @nonARC
 UIProcess/mac/WKRevealItemPresenter.mm @nonARC

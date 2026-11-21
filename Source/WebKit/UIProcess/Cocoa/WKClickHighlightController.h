@@ -34,6 +34,8 @@
 #import <WebCore/FloatRect.h>
 #import <wtf/Vector.h>
 
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
 @class WKClickHighlightController;
 @class WKClickHighlightView;
 
@@ -41,9 +43,9 @@
 - (void)clickHighlightController:(WKClickHighlightController *)controller installHighlightView:(WKClickHighlightView *)highlightView;
 - (CGFloat)clickHighlightControllerContentScale:(WKClickHighlightController *)controller;
 - (CGFloat)clickHighlightControllerCornerRadiusScale:(WKClickHighlightController *)controller;
-- (WebCore::FloatRect)clickHighlightControllerUnobscuredRect:(WKClickHighlightController *)controller;
-- (WebCore::FloatRect)clickHighlightControllerBoundaryRect:(WKClickHighlightController *)controller;
-- (BOOL)clickHighlightControllerIsPotentialTapInProgress:(WKClickHighlightController *)controller;
+- (CGRect)clickHighlightControllerUnobscuredRect:(WKClickHighlightController *)controller;
+- (CGRect)clickHighlightControllerBoundaryRect:(WKClickHighlightController *)controller;
+- (BOOL)clickHighlightControllerIsPotentialTapInProgress:(WKClickHighlightController *)controller NS_SWIFT_NAME(clickHighlightControllerIsPotentialTapInProgress(_:));
 @end
 
 @interface WKClickHighlightController : NSObject
@@ -72,5 +74,7 @@
 @property (nonatomic, readonly) BOOL isShowingHighlight;
 
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // ENABLE(TWO_PHASE_CLICKS)

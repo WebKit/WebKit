@@ -69,6 +69,7 @@
 #import "ViewGestureController.h"
 #import "WKAlternatePDFHUDView.h"
 #import "WKAppKitGestureController.h"
+#import "WKAppKitGestureControllerCxxSupport.h"
 #import "WKDefaultPDFHUDView.h"
 #if ENABLE(DOCUMENT_PIP)
 #import "WKDocumentPictureInPictureWindowController.h"
@@ -8473,7 +8474,7 @@ void WebViewImpl::invalidateCachedPositionInformation()
 
 void WebViewImpl::positionInformationDidChange(const InteractionInformationAtPosition& info)
 {
-    [m_appKitGestureController positionInformationDidChange:info];
+    [protect([m_appKitGestureController cxxSupport]) positionInformationDidChange:info];
 }
 
 void WebViewImpl::installClickHighlightView(NSView *highlightView)
