@@ -57,7 +57,7 @@ private:
     void constructInlineLevelBoxes(LineBox&);
     void constructBlockContent(LineBox&);
     void adjustIdeographicBaselineIfApplicable(LineBox&);
-    NODELETE void stretchRootInlineBoxForExcludedMarkers(LineBox&) const;
+    NODELETE void stretchRootInlineBoxForOutsideMarkers(LineBox&) const;
     NODELETE void expandAboveRootInlineBox(LineBox&, InlineLayoutUnit) const;
 
     bool isFirstFormattedLine() const { return lineLayoutResult().isFirstLast.isFirstFormattedLine == IsFirstFormattedLine::Yes; }

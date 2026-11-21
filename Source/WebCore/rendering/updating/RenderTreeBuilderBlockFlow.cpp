@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RenderTreeBuilderBlockFlow.h"
 
-#include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderMultiColumn.h"
@@ -50,7 +49,7 @@ void RenderTreeBuilder::BlockFlow::attach(RenderBlockFlow& parent, RenderPtr<Ren
 
         // The outside marker takes no part in multi-column layout. The list item positions it against its first
         // formatted line after layout, which it can only do while the marker is its own child.
-        auto markerAvoidsMulticolumn = is<RenderListItem>(parent) && child->isOutsideListMarker();
+        auto markerAvoidsMulticolumn = child->isOutsideListMarker();
         if (markerAvoidsMulticolumn)
             return m_builder.blockBuilder().attach(parent, WTF::move(child), beforeChild);
 

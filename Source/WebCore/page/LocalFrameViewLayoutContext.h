@@ -203,12 +203,12 @@ public:
 
     bool repaintsBlocked() const { return m_repaintsBlocked; }
 
-    // The list items laying out an excluded marker, which their first formatted line aligns with.
+    // The list items laying out an outside marker, which their first formatted line aligns with.
     using ListItemList = Vector<SingleThreadWeakPtr<RenderListItem>>;
-    const ListItemList& listItemsWithExcludedMarker() const LIFETIME_BOUND { return m_listItemsWithExcludedMarker; }
+    const ListItemList& listItemsWithOutsideMarker() const LIFETIME_BOUND { return m_listItemsWithOutsideMarker; }
 
 private:
-    friend class ListItemExcludedMarkerScope;
+    friend class ListItemOutsideMarkerScope;
     friend class LayoutFrameScope;
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
@@ -293,7 +293,7 @@ private:
     bool m_revealedWhenFoundIgnored { false };
     bool m_updateCompositingLayersIsPending { false };
     bool m_repaintsBlocked { false };
-    ListItemList m_listItemsWithExcludedMarker;
+    ListItemList m_listItemsWithOutsideMarker;
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
@@ -367,10 +367,10 @@ private:
     const Ref<Document> m_document;
 };
 
-class ListItemExcludedMarkerScope {
+class ListItemOutsideMarkerScope {
 public:
-    ListItemExcludedMarkerScope(LocalFrameViewLayoutContext&, RenderListItem&);
-    NODELETE ~ListItemExcludedMarkerScope();
+    ListItemOutsideMarkerScope(LocalFrameViewLayoutContext&, RenderListItem&);
+    NODELETE ~ListItemOutsideMarkerScope();
 
 private:
     const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;

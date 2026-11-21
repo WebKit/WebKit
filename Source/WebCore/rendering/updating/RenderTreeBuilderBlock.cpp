@@ -29,7 +29,6 @@
 #include "RenderBlockInlines.h"
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
-#include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderTextControl.h"
@@ -89,19 +88,14 @@ struct ParentAndBeforeChild {
     SingleThreadWeakPtr<RenderObject> beforeChild;
 };
 
-NODELETE static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& child)
-{
-    return child.isOutsideListMarker() && is<RenderListItem>(parent);
-}
-
 NODELETE static bool hasInlineInFlowChild(const RenderBlock& parent)
 {
     for (CheckedPtr child = parent.firstChild(); child; child = child->nextSibling()) {
         if (child->isFloatingOrOutOfFlowPositioned())
             continue;
-        // An excluded marker takes no part in in-flow layout, so it does not make the children inline. A
+        // An outside marker takes no part in in-flow layout, so it does not make the children inline. A
         // list item left holding nothing but its marker still has the marker's line though.
-        if (isExcludedMarker(parent, *child) && (child->previousSibling() || child->nextSibling()))
+        if (child->isOutsideListMarker() && (child->previousSibling() || child->nextSibling()))
             continue;
         if (child->isInline())
             return true;
@@ -203,13 +197,13 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
             CheckedPtr firstInFlowChild = container.firstInFlowChild();
             if (!firstInFlowChild)
                 return false;
-            // An excluded marker takes no part in in-flow layout either, so it leaves the decision to the content.
-            return !isExcludedMarker(container, *firstInFlowChild) || firstInFlowChild->nextInFlowSibling();
+            // An outside marker takes no part in in-flow layout either, so it leaves the decision to the content.
+            return !firstInFlowChild->isOutsideListMarker() || firstInFlowChild->nextInFlowSibling();
         };
         if (!child->isFloatingOrOutOfFlowPositioned() && !hasInFlowChild(parent))
             parent.setChildrenInline(child->isInline());
-        else if (child->isInline() && !isExcludedMarker(parent, *child)) {
-            // An excluded marker takes no part in in-flow layout, so it does not make the children inline.
+        else if (child->isInline() && !child->isOutsideListMarker()) {
+            // An outside marker takes no part in in-flow layout, so it does not make the children inline.
             parent.setChildrenInline(true);
         }
         m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
@@ -231,9 +225,9 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
         return;
     }
 
-    // Parent and inflow child match. An excluded marker matches either way: it takes no part in in-flow layout, so
+    // Parent and inflow child match. An outside marker matches either way: it takes no part in in-flow layout, so
     // it stays a direct child of the list item whatever the other children are, never forcing an anonymous block.
-    if ((parent.childrenInline() && child->isInline()) || (!parent.childrenInline() && !child->isInline()) || isExcludedMarker(parent, *child))
+    if ((parent.childrenInline() && child->isInline()) || (!parent.childrenInline() && !child->isInline()) || child->isOutsideListMarker())
         return m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
 
     // Inline parent with block child.

@@ -80,7 +80,6 @@ inline bool RenderElement::isAnonymousBlock() const
 #if ENABLE(MATHML)
         && !isRenderMathMLBlock()
 #endif
-        && !isRenderListOutsideMarker()
         && !isRenderFragmentedFlow()
         && !isRenderMultiColumnSet()
         && !isRenderView()

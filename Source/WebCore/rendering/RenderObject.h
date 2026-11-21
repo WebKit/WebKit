@@ -147,7 +147,6 @@ public:
         LineBreak,
         ListBox,
         ListItem,
-        ListOutsideMarker,
         Media,
         MenuList,
         Meter,
@@ -453,7 +452,6 @@ public:
     virtual bool isImage() const { return false; }
     bool isRenderListBox() const { return type() == Type::ListBox; }
     bool isRenderListItem() const { return type() == Type::ListItem; }
-    bool isRenderListOutsideMarker() const { return type() == Type::ListOutsideMarker; }
     inline bool isListMarkerBox() const; // Defined in RenderObjectInlines.h
     bool isRenderMedia() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsMedia); }
     bool isRenderMenuList() const { return type() == Type::MenuList; }
@@ -693,9 +691,9 @@ public:
     bool isExcludedFromNormalLayout() const { return m_stateBitfields.hasFlag(StateFlag::IsExcludedFromNormalLayout); }
     void setIsExcludedFromNormalLayout(bool excluded) { m_stateBitfields.setFlag(StateFlag::IsExcludedFromNormalLayout, excluded); }
     bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
-    // An outside list marker: the box showing the marker beside its list item's content.
+    // An outside list marker: the inline-block with the ::marker style holding what the marker shows. It is always the
+    // direct child of its list item, never wrapped in an anonymous block, and takes no part in in-flow layout.
     NODELETE bool isOutsideListMarker() const;
-    NODELETE bool isExcludedMarker() const;
 
     bool isYouTubeReplacement() const { return hasRareData() && rareData().isYouTubeReplacement; }
     void markIsYouTubeReplacement();

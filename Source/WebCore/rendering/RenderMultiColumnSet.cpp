@@ -552,7 +552,7 @@ static std::optional<LayoutUnit> baselineInColumn(const RenderBlockFlow&, Baseli
 // of its parent's block axis.
 static std::optional<LayoutUnit> baselineOfChildInColumn(const RenderBox& child, const RenderBlockFlow& parent, BaselineSet baselineSet, LayoutUnit columnStart, LayoutUnit columnEnd)
 {
-    if ((child.isLegend() && child.isExcludedFromNormalLayout()) || child.isExcludedMarker())
+    if ((child.isLegend() && child.isExcludedFromNormalLayout()) || child.isOutsideListMarker())
         return { };
     auto childStart = child.logicalTop();
     auto childEnd = childStart + child.logicalHeight();

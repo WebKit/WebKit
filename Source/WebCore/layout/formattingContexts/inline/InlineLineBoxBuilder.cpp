@@ -66,10 +66,11 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         constructBlockContent(lineBox);
     else {
         constructInlineLevelBoxes(lineBox);
-        if (lineLayoutResult.hasContentfulInlineContent()) {
-            adjustIdeographicBaselineIfApplicable(lineBox);
+        // A vertical line sits on the ideographic baseline whether or not it has content.
+        adjustIdeographicBaselineIfApplicable(lineBox);
+        if (lineLayoutResult.hasContentfulInlineContent())
             adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
-        } else {
+        else {
             // Collapse all inline boxes (they are supposed to be empty as well).
             for (auto& inlineBox : lineBox.nonRootInlineLevelBoxes()) {
                 if (!inlineBox.isInlineBox()) {
@@ -84,7 +85,7 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         if (m_lineHasNonLineSpanningRubyContent)
             RubyFormattingContext::applyAnnotationContributionToLayoutBounds(lineBox, formattingContext());
         if (isFirstFormattedLine())
-            stretchRootInlineBoxForExcludedMarkers(lineBox);
+            stretchRootInlineBoxForOutsideMarkers(lineBox);
         computeLineBoxGeometry(lineBox);
 
         if (auto adjustment = formattingContext().quirks().adjustmentForLineGridLineSnap(lineBox))
@@ -103,7 +104,7 @@ LineBox LineBoxBuilder::buildForRootInlineBoxOnly(size_t lineIndex)
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalPropertiesForInlineLevelBox(lineBox, rootInlineBox);
     if (isFirstFormattedLine())
-        stretchRootInlineBoxForExcludedMarkers(lineBox);
+        stretchRootInlineBoxForOutsideMarkers(lineBox);
     rootInlineBox.setLogicalTop(rootInlineBox.layoutBounds().ascent - rootInlineBox.ascent());
     auto lineBoxLogicalHeight = applyTextBoxTrimOnLineBoxIfNeeded(rootInlineBox.layoutBounds().height(), lineBox);
     lineBox.setLogicalRect({ lineLayoutResult.lineGeometry.logicalTopLeft, lineLayoutResult.lineGeometry.logicalWidth, lineBoxLogicalHeight });
@@ -897,12 +898,12 @@ InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimOnLineBoxIfNeeded(InlineLayoutU
     return lineBoxLogicalHeight;
 }
 
-void LineBoxBuilder::stretchRootInlineBoxForExcludedMarkers(LineBox& lineBox) const
+void LineBoxBuilder::stretchRootInlineBoxForOutsideMarkers(LineBox& lineBox) const
 {
-    // An excluded list marker belonging to an ancestor list item is aligned with this line but is no part of its content.
+    // An outside list marker belonging to an ancestor list item is aligned with this line but is no part of its content.
     // Make the room a baseline aligned marker box would have taken by growing the root inline box's layout bounds.
-    auto& excludedMarkerLayoutBounds = layoutState().excludedMarkerLayoutBounds();
-    if (excludedMarkerLayoutBounds.isEmpty())
+    auto& outsideMarkerLayoutBounds = layoutState().outsideMarkerLayoutBounds();
+    if (outsideMarkerLayoutBounds.isEmpty())
         return;
 
     // On an ideographic baseline a marker takes the parent inline box's metrics instead of its own layout bounds
@@ -912,7 +913,7 @@ void LineBoxBuilder::stretchRootInlineBoxForExcludedMarkers(LineBox& lineBox) co
 
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto layoutBounds = rootInlineBox.layoutBounds();
-    for (auto [markerAscent, markerDescent] : excludedMarkerLayoutBounds) {
+    for (auto [markerAscent, markerDescent] : outsideMarkerLayoutBounds) {
         layoutBounds.ascent = std::max(layoutBounds.ascent, markerAscent);
         layoutBounds.descent = std::max(layoutBounds.descent, markerDescent);
     }
@@ -921,7 +922,7 @@ void LineBoxBuilder::stretchRootInlineBoxForExcludedMarkers(LineBox& lineBox) co
 
 void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
 {
-    auto hasContentfulInlineContent = lineLayoutResult().hasContentfulInlineContent() || (isFirstFormattedLine() && !layoutState().excludedMarkerLayoutBounds().isEmpty());
+    auto hasContentfulInlineContent = lineLayoutResult().hasContentfulInlineContent() || (isFirstFormattedLine() && !layoutState().outsideMarkerLayoutBounds().isEmpty());
     auto lineBoxLogicalHeight = applyTextBoxTrimOnLineBoxIfNeeded(LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox, hasContentfulInlineContent), lineBox);
     lineBox.setLogicalRect({ lineLayoutResult().lineGeometry.logicalTopLeft, lineLayoutResult().lineGeometry.logicalWidth, lineBoxLogicalHeight });
 }

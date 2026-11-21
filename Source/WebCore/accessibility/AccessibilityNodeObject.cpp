@@ -118,7 +118,6 @@
 #include "RenderImage.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -4274,22 +4273,22 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
     };
     // Our own outside marker takes no part in our lines, so it is not one of the leaf boxes below, but it belongs at
     // the start of the group for the line it was positioned against, when that line is one of ours.
-    auto stitchableExcludedMarker = [&]() -> CheckedPtr<RenderListOutsideMarker> {
+    auto stitchableOutsideMarker = [&] -> CheckedPtr<RenderBlockFlow> {
         // The marker's list item is this block flow itself when the item's own content makes the line, and an
         // ancestor of it when the line is in a descendant block of the item.
         for (CheckedPtr<const RenderBoxModelObject> ancestor = renderBlockFlow; ancestor; ancestor = ancestor->containingBlock()) {
             CheckedPtr listItem = dynamicDowncast<RenderListItem>(ancestor.get());
             CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
-            if (!marker || !marker->isExcludedMarker() || listMarkerIsDisclosure(marker.get()))
+            if (!marker || listMarkerIsDisclosure(marker.get()))
                 continue;
-            auto& excludedPosition = listItem->excludedMarkerPosition();
-            if (excludedPosition && excludedPosition->firstFormattedLineRoot.get() == renderBlockFlow.get())
+            auto& markerPosition = listItem->outsideMarkerPosition();
+            if (markerPosition && markerPosition->firstFormattedLineRoot.get() == renderBlockFlow.get())
                 return marker;
         }
         return { };
     }();
-    if (stitchableExcludedMarker) {
-        if (RefPtr object = cache->getOrCreate(*stitchableExcludedMarker))
+    if (stitchableOutsideMarker) {
+        if (RefPtr object = cache->getOrCreate(*stitchableOutsideMarker))
             appendToCurrentGroup(object->objectID());
     }
 
@@ -4301,12 +4300,6 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
 
             if (listMarkerIsDisclosure(protect(dynamicDowncast<RenderElement>(box->renderer()))) || listMarkerIsDisclosure(protect(box->renderer().parent()))) {
                 finalizeCurrentGroup();
-                continue;
-            }
-
-            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(box->renderer())) {
-                if (RefPtr object = cache->getOrCreate(const_cast<RenderListOutsideMarker&>(*renderListMarker)))
-                    appendToCurrentGroup(object->objectID());
                 continue;
             }
 
