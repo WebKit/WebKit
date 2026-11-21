@@ -247,6 +247,7 @@ private struct PinchEventCounts {
     var wheelWhileButtonIsDown = 0
     var gestureChange = 0
     var gestureChangeWhileButtonIsDown = 0
+    var lastDragTranslation = CGSize.zero
 }
 
 extension MacTouchSupportTests.Quirks {
@@ -254,11 +255,25 @@ extension MacTouchSupportTests.Quirks {
         try await page.callJavaScript(arguments: ["frameID": "surfaceFrame", "preventingGestureEvents": preventingGestureEvents]) {
             """
             const surfaceDocument = document.getElementById(frameID).contentDocument;
-            window.pinchEvents = { down: 0, up: 0, move: 0, wheel: 0, heldWheel: 0, gchange: 0, heldGchange: 0 };
+            window.pinchEvents = { down: 0, up: 0, move: 0, wheel: 0, heldWheel: 0, gchange: 0, heldGchange: 0, dragDX: 0, dragDY: 0 };
             let buttonIsDown = false;
-            surfaceDocument.addEventListener("mousedown", () => { buttonIsDown = true; window.pinchEvents.down++; }, true);
-            surfaceDocument.addEventListener("mouseup", () => { buttonIsDown = false; window.pinchEvents.up++; }, true);
-            surfaceDocument.addEventListener("mousemove", () => { window.pinchEvents.move++; }, true);
+            let previous = null;
+            surfaceDocument.addEventListener("mousedown", event => {
+                buttonIsDown = true;
+                window.pinchEvents.down++;
+                window.pinchEvents.dragDX = 0;
+                window.pinchEvents.dragDY = 0;
+                previous = event;
+            }, true);
+            surfaceDocument.addEventListener("mouseup", () => { buttonIsDown = false; window.pinchEvents.up++; previous = null; }, true);
+            surfaceDocument.addEventListener("mousemove", event => {
+                window.pinchEvents.move++;
+                if (!previous)
+                    return;
+                window.pinchEvents.dragDX += event.clientX - previous.clientX;
+                window.pinchEvents.dragDY += event.clientY - previous.clientY;
+                previous = event;
+            }, true);
             surfaceDocument.addEventListener("wheel", () => {
                 window.pinchEvents.wheel++;
                 if (buttonIsDown)
@@ -286,11 +301,11 @@ extension MacTouchSupportTests.Quirks {
         let values = try await page.callJavaScript(returning: [Double].self) {
             """
             const e = window.pinchEvents;
-            return [e.down, e.up, e.move, e.wheel, e.heldWheel, e.gchange, e.heldGchange];
+            return [e.down, e.up, e.move, e.wheel, e.heldWheel, e.gchange, e.heldGchange, e.dragDX, e.dragDY];
             """
         }
 
-        try #require(values.count == 7)
+        try #require(values.count == 9)
 
         return PinchEventCounts(
             down: Int(values[0]),
@@ -299,11 +314,15 @@ extension MacTouchSupportTests.Quirks {
             wheel: Int(values[3]),
             wheelWhileButtonIsDown: Int(values[4]),
             gestureChange: Int(values[5]),
-            gestureChangeWhileButtonIsDown: Int(values[6])
+            gestureChangeWhileButtonIsDown: Int(values[6]),
+            lastDragTranslation: CGSize(width: values[7], height: values[8])
         )
     }
 
-    private func pinchAfterMouseTracking(over surface: ManipulationSurface) async throws {
+    private func pinchAfterMouseTracking(
+        over surface: ManipulationSurface,
+        followedByTranslationOf translation: CGSize? = nil
+    ) async throws {
         let center = CGPoint(x: surface.bounds.midX, y: surface.bounds.midY)
 
         await recap.play { composer in
@@ -312,7 +331,8 @@ extension MacTouchSupportTests.Quirks {
                 end: CGPoint(x: center.x + 30, y: center.y),
                 spreadBy: 100,
                 duration: .seconds(0.5),
-                precededByDragOf: CGSize(width: 0, height: 40)
+                precededByDragOf: CGSize(width: 0, height: 40),
+                followedByTranslationOf: translation
             )
             composer.liftUpAtAllActivePoints()
         }
@@ -347,6 +367,25 @@ extension MacTouchSupportTests.Quirks {
         #expect(counts.wheel == 0)
         #expect(counts.down == 1)
         #expect(counts.up == 1)
+    }
+
+    @Test
+    func translationAfterAPinchResumesMouseTrackingForContentThatDoesNotHandleIt() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "none")
+        try await installPinchEventCounters(preventingGestureEvents: false)
+
+        let translation = CGSize(width: 0, height: 120)
+        try await pinchAfterMouseTracking(over: surface, followedByTranslationOf: translation)
+
+        let counts = try await pinchEventCounts()
+
+        try #require(counts.wheel > 0, "\(counts)")
+        #expect(counts.down > 1)
+        #expect(counts.down == counts.up)
+
+        // The drag before the pinch also sends mouse moves, so check that the resumed drag followed the translation.
+        #expect(abs(counts.lastDragTranslation.width - translation.width) < manipulationSurfaceDragInset, "\(counts)")
+        #expect(abs(counts.lastDragTranslation.height - translation.height) < manipulationSurfaceDragInset, "\(counts)")
     }
 }
 

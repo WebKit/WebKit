@@ -1396,6 +1396,19 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return NO;
 }
 
+- (void)_handOffMouseTrackingFromGesture:(WKMouseTrackingGestureRecognizer *)gesture
+{
+    ASSERT(_activeMouseTrackingGestureRecognizer.get() == gesture);
+    _activeMouseTrackingGestureRecognizer = nil;
+
+    bool wasSendingMouseMoves = std::exchange(_mouseTrackingSendsMouseMoves, false);
+    if (wasSendingMouseMoves || !_mouseTrackingHasSentMouseDown)
+        return;
+
+    // The next gesture continues the drag from where this one left off.
+    _mouseTrackingStartLocationInWindow = [gesture mouseLocationInWindow];
+}
+
 - (BOOL)_isRecognizingTransformGesture
 {
     auto isRecognizing = [](NSGestureRecognizer *gesture) {
@@ -1559,6 +1572,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     switch (gesture.state) {
     case NSGestureRecognizerStateBegan:
         _mouseTrackingIsSuppressedForTransformGesture = false;
+        // AppKit may send this action before the previously active gesture's Cancelled action,
+        // which is then ignored below, so hand off from that gesture here.
+        if (RetainPtr previousGesture = _activeMouseTrackingGestureRecognizer.get(); previousGesture && previousGesture != mouseTrackingGesture) {
+            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Handing off mouse tracking from a gesture that has not ended");
+            [self _handOffMouseTrackingFromGesture:previousGesture.get()];
+        }
         _activeMouseTrackingGestureRecognizer = mouseTrackingGesture.get();
         if (_mouseTrackingHasSentMouseDown)
             [mouseTrackingGesture beginTrackingMouseInheritedFromWindowLocation:_mouseTrackingStartLocationInWindow];
@@ -1649,16 +1668,16 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (_activeMouseTrackingGestureRecognizer.get() != mouseTrackingGesture)
             break;
 
+        if ([self _mouseTrackingWillBeHandedOff]) {
+            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Handing off mouse tracking to another gesture");
+            [self _handOffMouseTrackingFromGesture:mouseTrackingGesture.get()];
+            break;
+        }
+
         _activeMouseTrackingGestureRecognizer = nil;
 
         if (std::exchange(_mouseTrackingSendsMouseMoves, false))
             break;
-
-        if ([self _mouseTrackingWillBeHandedOff]) {
-            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Handing off mouse tracking to another gesture");
-            _mouseTrackingStartLocationInWindow = [mouseTrackingGesture mouseLocationInWindow];
-            break;
-        }
 
         if (std::exchange(_mouseTrackingHasSentMouseDown, false)) {
             NSPoint locationInWindow = [mouseTrackingGesture mouseLocationInWindow];
