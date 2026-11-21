@@ -7522,6 +7522,17 @@ bool LocalFrameView::isVisibleToHitTesting() const
     return isVisibleToHitTest;
 }
 
+void LocalFrameView::frameOwnerVisibleToHitTestingDidChange()
+{
+    updateScrollableAreaSet();
+
+    // The compositor caches whether this frame needs to be composited for scrolling, and only recomputes it
+    // when this frame's style or layout is updated. When the owner becomes visible to hit testing and the
+    // frame is scrollable, schedule a layout to get a compositing update.
+    if (isVisibleToHitTesting() && isScrollable())
+        setNeedsLayoutAfterViewConfigurationChange();
+}
+
 LayoutRect LocalFrameView::getPossiblyFixedRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, EnumSet<BoxAxis> isFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
 {
     if (!isFixed.containsAny({ BoxAxis::Horizontal, BoxAxis::Vertical }))
