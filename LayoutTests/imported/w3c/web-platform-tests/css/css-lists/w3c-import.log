@@ -57,6 +57,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-10-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-7-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-box-generated-before-counter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-box-generated-before-counter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-box-generated-before-counter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-box-generated-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-box-generated-update-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-box-generated-update.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-invalid-expected.html

@@ -559,6 +559,9 @@ void RenderTreeUpdater::GeneratedContent::updateCounters()
         m_updater.renderView().setHasCounterTreeNeedingUpdate(false);
     }
 
+    for (CheckedRef renderer : protect(m_updater.renderView())->takeRenderersNeedingCounterNodes())
+        RenderCounter::createCounterNodes(renderer);
+
     auto update = [&] {
         auto counters = protect(m_updater.renderView())->takeCountersNeedingUpdate();
         for (CheckedRef counter : counters)
