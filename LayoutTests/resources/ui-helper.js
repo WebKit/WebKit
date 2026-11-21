@@ -1572,10 +1572,10 @@ window.UIHelper = class UIHelper {
     {
         const zoomScale = () => new Promise(resolve => testRunner.runUIScript('uiController.uiScriptComplete(uiController.zoomScale)', resolve));
 
-        const isHoldingUpdateUntilEaseEnds = async () => {
+        const isHoldingAnUpdate = async () => {
             if (!this.isWebKit2() || !this.isMac())
                 return false;
-            return /holding the web process update until the ease ends/.test(await UIHelper.delegatedZoomOverrideAsText());
+            return /holding the web process update until the ease ends|holding the scrolling tree until the web process lays out/.test(await UIHelper.delegatedZoomOverrideAsText());
         };
 
         let lastScale = await zoomScale();
@@ -1583,7 +1583,7 @@ window.UIHelper = class UIHelper {
         for (let i = 0; i < 60 && stableCount < 3; ++i) {
             await UIHelper.ensurePresentationUpdate();
             const scale = await zoomScale();
-            stableCount = (scale === lastScale && !await isHoldingUpdateUntilEaseEnds()) ? stableCount + 1 : 0;
+            stableCount = (scale === lastScale && !await isHoldingAnUpdate()) ? stableCount + 1 : 0;
             lastScale = scale;
         }
         return parseFloat(lastScale);

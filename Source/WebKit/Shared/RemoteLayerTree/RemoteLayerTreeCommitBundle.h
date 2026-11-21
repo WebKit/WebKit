@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "EditorState.h"
+#include "IdentifierTypes.h"
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
 #include "TransactionID.h"
@@ -84,6 +85,7 @@ struct MainFrameData {
     double initialScaleFactor { 1 };
     double viewportMetaTagWidth { -1 };
     ActivityStateChangeID activityStateChangeID { ActivityStateChangeAsynchronous };
+    VisibleContentRectUpdateIdentifier lastVisibleContentRectUpdateIdentifier;
     OptionSet<WebCore::LayoutMilestone> newlyReachedPaintingMilestones;
     bool scaleWasSetByUIProcess { false };
     bool allowsUserScaling { false };

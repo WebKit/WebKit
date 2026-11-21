@@ -27,6 +27,7 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
+#include "IdentifierTypes.h"
 #include "TransactionID.h"
 #include <WebCore/BoxExtents.h>
 #include <WebCore/FloatRect.h>
@@ -68,7 +69,7 @@ public:
     VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets,
         const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& layoutViewportRect,
         const WebCore::FloatBoxExtent& obscuredInsets, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double scale, OptionSet<ViewStabilityFlag> viewStability,
-        bool isFirstUpdateForNewViewSize, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, bool needsScrollend, const WebCore::VelocityData& scrollVelocity, TransactionID lastLayerTreeTransactionId)
+        bool isFirstUpdateForNewViewSize, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, bool needsScrollend, const WebCore::VelocityData& scrollVelocity, TransactionID lastLayerTreeTransactionId, VisibleContentRectUpdateIdentifier identifier = { })
         : m_exposedContentRect(exposedContentRect)
         , m_unobscuredContentRect(unobscuredContentRect)
         , m_contentInsets(contentInsets)
@@ -79,6 +80,7 @@ public:
         , m_unobscuredSafeAreaInsets(unobscuredSafeAreaInsets)
         , m_scrollVelocity(scrollVelocity)
         , m_lastLayerTreeTransactionID(lastLayerTreeTransactionId)
+        , m_identifier(identifier)
         , m_scale(scale)
         , m_viewStability(viewStability)
         , m_isFirstUpdateForNewViewSize(isFirstUpdateForNewViewSize)
@@ -106,6 +108,7 @@ public:
     bool needsScrollend() const { return m_needsScrollend; }
     const WebCore::VelocityData& scrollVelocity() const LIFETIME_BOUND { return m_scrollVelocity; }
     TransactionID lastLayerTreeTransactionID() const { return m_lastLayerTreeTransactionID; }
+    VisibleContentRectUpdateIdentifier identifier() const { return m_identifier; }
 
     MonotonicTime timestamp() const { return m_scrollVelocity.lastUpdateTime; }
 
@@ -122,6 +125,7 @@ private:
     WebCore::FloatBoxExtent m_unobscuredSafeAreaInsets;
     WebCore::VelocityData m_scrollVelocity;
     TransactionID m_lastLayerTreeTransactionID;
+    VisibleContentRectUpdateIdentifier m_identifier;
     double m_scale { -1 };
     OptionSet<ViewStabilityFlag> m_viewStability;
     bool m_isFirstUpdateForNewViewSize { false };

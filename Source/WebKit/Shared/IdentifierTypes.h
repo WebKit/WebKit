@@ -51,6 +51,9 @@ using EditorStateIdentifier = MonotonicObjectIdentifier<EditorStateIdentifierTyp
 struct FocusedElementInformationIdentifierType;
 using FocusedElementInformationIdentifier = MonotonicObjectIdentifier<FocusedElementInformationIdentifierType>;
 
+struct VisibleContentRectUpdateIdentifierType;
+using VisibleContentRectUpdateIdentifier = MonotonicObjectIdentifier<VisibleContentRectUpdateIdentifierType>;
+
 #if ENABLE(WEBDRIVER_BIDI)
 struct RealmIdentifierType;
 using NonProcessQualifiedRealmIdentifier = ObjectIdentifier<RealmIdentifierType>;

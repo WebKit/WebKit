@@ -2567,6 +2567,11 @@ bool WebPageProxy::updateLayoutViewportParameters(const MainFrameData& mainFrame
     return true;
 }
 
+VisibleContentRectUpdateIdentifier WebPageProxy::nextVisibleContentRectUpdateIdentifier()
+{
+    return internals().lastVisibleContentRectUpdateIdentifier.increment();
+}
+
 void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
 {
     if (visibleContentRectUpdate == internals().lastVisibleContentRectUpdate && !sendEvenIfUnchanged)

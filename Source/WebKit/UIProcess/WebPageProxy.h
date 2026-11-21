@@ -717,6 +717,7 @@ struct TransactionIDType;
 struct URLSchemeTaskParameters;
 struct UserMessage;
 struct ViewWindowCoordinates;
+struct VisibleContentRectUpdateIdentifierType;
 struct WebAutocorrectionContext;
 struct WebAutocorrectionData;
 struct WebExtensionContentRuleListBlockedLoadInfo;
@@ -827,6 +828,7 @@ using TapIdentifier = ObjectIdentifier<TapIdentifierType>;
 using TextCheckerRequestID = ObjectIdentifier<TextCheckerRequestType>;
 using TransactionIdentifier = MonotonicObjectIdentifier<TransactionIDType>;
 using TransactionID = WebCore::ProcessQualified<TransactionIdentifier>;
+using VisibleContentRectUpdateIdentifier = MonotonicObjectIdentifier<VisibleContentRectUpdateIdentifierType>;
 using WebPageProxyIdentifier = ObjectIdentifier<WebPageProxyIdentifierType>;
 using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandlerIdentifierType>;
 using WebUndoStepID = ObjectIdentifier<WebUndoStepIDType>;
@@ -1303,6 +1305,7 @@ public:
     void setCanShowPlaceholder(const WebCore::ElementContext&, bool);
 
 #if ENABLE(UI_SIDE_COMPOSITING)
+    VisibleContentRectUpdateIdentifier nextVisibleContentRectUpdateIdentifier();
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, bool sendEvenIfUnchanged);
     void updateVisibleContentRectsLocally(const VisibleContentRectUpdateInfo&);
 #if PLATFORM(MAC)
