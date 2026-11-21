@@ -76,6 +76,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <optional>
 #include <wtf/Assertions.h>
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -1032,9 +1033,11 @@ void Navigation::resumeDeferredTraversalIfNeeded()
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#abort-the-ongoing-navigation
 void Navigation::abortOngoingNavigation(NavigateEvent& event)
 {
-    m_abortHandlers.forEach([](auto& abortHandler) {
-        abortHandler.markAsAborted();
-    });
+    if (!m_isAbortingSupersededNavigation) {
+        m_abortHandlers.forEach([](auto& abortHandler) {
+            abortHandler.markAsAborted();
+        });
+    }
 
     // A traverse history step deferred by a pending precommit handler must never be applied
     // once the navigation is aborted.
@@ -1430,7 +1433,10 @@ NavigateEventDispatchResult Navigation::innerDispatchNavigateEvent(NavigationNav
 
     bool wasBeingDispatched = m_ongoingNavigateEvent && m_ongoingNavigateEvent->isBeingDispatched();
 
-    abortOngoingNavigationIfNeeded();
+    {
+        SetForScope isAbortingSupersededNavigation { m_isAbortingSupersededNavigation, true };
+        abortOngoingNavigationIfNeeded();
+    }
 
     // Prevent recursion on synchronous history navigation steps issued
     // from the navigate event handler.

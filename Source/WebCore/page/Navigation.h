@@ -330,6 +330,7 @@ private:
     bool m_suppressNormalScrollRestorationDuringOngoingNavigation { false };
     MethodTrackerRegistry m_methodTrackers;
     WeakHashSet<AbortHandler> m_abortHandlers;
+    bool m_isAbortingSupersededNavigation { false };
     RateLimiter m_rateLimiter;
 };
 
