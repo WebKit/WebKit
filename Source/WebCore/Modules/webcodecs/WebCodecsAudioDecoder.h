@@ -83,6 +83,7 @@ private:
     ExceptionOr<void> closeDecoder(Exception&&);
     ExceptionOr<void> resetDecoder(const Exception&);
     void setInternalDecoder(Ref<AudioDecoder>&&);
+    void createInternalDecoder(const String& codec, const AudioDecoder::Config&);
 
     const Ref<WebCodecsAudioDataOutputCallback> m_output;
     const Ref<WebCodecsErrorCallback> m_error;

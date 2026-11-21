@@ -172,72 +172,87 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
     setState(WebCodecsCodecState::Configured);
     m_isKeyChunkRequired = true;
 
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }] mutable {
+        RefPtr internalDecoder = m_internalDecoder;
+        if (!internalDecoder)
+            return WebCodecsControlMessageOutcome::Processed;
+        blockControlMessageQueue();
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }](auto&&) {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->unblockControlMessageQueue();
+        });
+        return WebCodecsControlMessageOutcome::Processed;
+    } });
+
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
-    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, codec = config.codec, config = createVideoDecoderConfig(config), isSupportedCodec]() mutable {
-        auto rotation = config.rotation;
-        auto isMirrored = config.isMirrored;
-        RefPtr context = scriptExecutionContext();
-
-        auto identifier = context->identifier();
-
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, codec = config.codec, config = createVideoDecoderConfig(config), isSupportedCodec] mutable {
         blockControlMessageQueue();
         if (!isSupportedCodec) {
-            postTaskToCodec<WebCodecsVideoDecoder>(identifier, *this, [] (auto& decoder) {
+            postTaskToCodec<WebCodecsVideoDecoder>(protect(scriptExecutionContext())->identifier(), *this, [](auto& decoder) {
                 decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
                 decoder.unblockControlMessageQueue();
             });
             return WebCodecsControlMessageOutcome::Processed;
         }
 
-        Ref createDecoderPromise = VideoDecoder::create(codec, WTF::move(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount, rotation, isMirrored](auto&& result) {
-            postTaskToCodec<WebCodecsVideoDecoder>(identifier, weakThis, [result = WTF::move(result), decoderCount, rotation, isMirrored](auto& decoder) mutable {
-                if (decoder.state() != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
-                    return;
-
-                if (!result) {
-                    decoder.closeDecoder(Exception { ExceptionCode::EncodingError, WTF::move(result).error() });
-                    return;
-                }
-
-                auto decodedResult = WTF::move(result).value();
-                Ref frame = WTF::move(decodedResult.frame);
-                // Decoders should create frames with the orientation of the configuration, we override for decoders that do not know about orientation.
-                frame = frame->updateOrientation(rotation, isMirrored, VideoFrame::ShouldClone::No);
-                auto presentationSize = frame->presentationSize();
-                Ref context = *decoder.scriptExecutionContext();
-                WebCodecsVideoFrame::BufferInit init {
-                    .format = WebCodecsVideoFrame::videoPixelFormatForContext(context, frame),
-                    .codedWidth = static_cast<size_t>(presentationSize.width()),
-                    .codedHeight = static_cast<size_t>(presentationSize.height()),
-                    .timestamp = decodedResult.timestamp,
-                    .duration = decodedResult.duration,
-                    .displayWidth = static_cast<size_t>(frame->rotatedSize().width()),
-                    .displayHeight = static_cast<size_t>(frame->rotatedSize().height()),
-                    .colorSpace = frame->colorSpace()
-                };
-
-                auto videoFrame = WebCodecsVideoFrame::create(context, WTF::move(frame), WTF::move(init));
-                decoder.m_output->invoke(WTF::move(videoFrame));
-            });
-        });
-
-        context->enqueueTaskWhenSettled(WTF::move(createDecoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
-            auto protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            auto scopeExit = makeScopeExit([protectedThis] {
-                protectedThis->unblockControlMessageQueue();
-            });
-            if (!result) {
-                protectedThis->closeDecoder(Exception { ExceptionCode::NotSupportedError, WTF::move(result.error()) });
-                return;
-            }
-            protectedThis->setInternalDecoder(WTF::move(*result));
-        });
-
+        createInternalDecoder(codec, config);
         return WebCodecsControlMessageOutcome::Processed;
     } });
     return { };
+}
+
+void WebCodecsVideoDecoder::createInternalDecoder(const String& codec, const VideoDecoder::Config& config)
+{
+    auto rotation = config.rotation;
+    auto isMirrored = config.isMirrored;
+    RefPtr context = scriptExecutionContext();
+    auto identifier = context->identifier();
+
+    Ref createDecoderPromise = VideoDecoder::create(codec, config, [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount, rotation, isMirrored](auto&& result) {
+        postTaskToCodec<WebCodecsVideoDecoder>(identifier, weakThis, [result = WTF::move(result), decoderCount, rotation, isMirrored](auto& decoder) mutable {
+            if (decoder.state() != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
+                return;
+
+            if (!result) {
+                decoder.closeDecoder(Exception { ExceptionCode::EncodingError, WTF::move(result).error() });
+                return;
+            }
+
+            auto decodedResult = WTF::move(result).value();
+            Ref frame = WTF::move(decodedResult.frame);
+            // Decoders should create frames with the orientation of the configuration, we override for decoders that do not know about orientation.
+            frame = frame->updateOrientation(rotation, isMirrored, VideoFrame::ShouldClone::No);
+            auto presentationSize = frame->presentationSize();
+            Ref context = *decoder.scriptExecutionContext();
+            WebCodecsVideoFrame::BufferInit init {
+                .format = WebCodecsVideoFrame::videoPixelFormatForContext(context, frame),
+                .codedWidth = static_cast<size_t>(presentationSize.width()),
+                .codedHeight = static_cast<size_t>(presentationSize.height()),
+                .timestamp = decodedResult.timestamp,
+                .duration = decodedResult.duration,
+                .displayWidth = static_cast<size_t>(frame->rotatedSize().width()),
+                .displayHeight = static_cast<size_t>(frame->rotatedSize().height()),
+                .colorSpace = frame->colorSpace()
+            };
+
+            auto videoFrame = WebCodecsVideoFrame::create(context, WTF::move(frame), WTF::move(init));
+            decoder.m_output->invoke(WTF::move(videoFrame));
+        });
+    });
+
+    context->enqueueTaskWhenSettled(WTF::move(createDecoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }](VideoDecoder::CreateResult&& result) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        auto scopeExit = makeScopeExit([protectedThis] {
+            protectedThis->unblockControlMessageQueue();
+        });
+        if (!result) {
+            protectedThis->closeDecoder(Exception { ExceptionCode::NotSupportedError, WTF::move(result.error()) });
+            return;
+        }
+        protectedThis->setInternalDecoder(WTF::move(*result));
+    });
 }
 
 ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&& chunk)
@@ -253,9 +268,8 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
 
     queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, data = chunk->encodedData()] mutable {
         incrementCodecOperationCount();
-        Ref internalDecoder = *m_internalDecoder;
         // An empty chunk is a decoding error, see https://github.com/w3c/webcodecs/issues/983.
-        auto decodePromise = data.data->isEmpty() ? VideoDecoder::DecodePromise::createAndReject("Empty chunk"_s) : internalDecoder->decode(WTF::move(data));
+        auto decodePromise = data.data->isEmpty() ? VideoDecoder::DecodePromise::createAndReject("Empty chunk"_s) : protect(*m_internalDecoder)->decode(WTF::move(data));
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(WTF::move(decodePromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)](auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -279,9 +293,8 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise);
-    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
-        Ref internalDecoder = *m_internalDecoder;
-        protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)] mutable {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalDecoder)->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)](auto&&) {
             promise->resolve();
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->m_pendingFlushPromises.removeFirstMatching([&](auto& flushPromise) { return promise.ptr() == flushPromise.ptr(); });
@@ -313,7 +326,7 @@ void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
-    Ref createDecoderPromise = VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [] (auto&&) { });
+    Ref createDecoderPromise = VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [](auto&&) { });
     context.enqueueTaskWhenSettled(WTF::move(createDecoderPromise), TaskSource::MediaElement, [config = WTF::move(config), promise = WTF::move(promise)](auto&& result) mutable {
         promise->template resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { !!result, WTF::move(config) });
     });
@@ -338,6 +351,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::resetDecoder(const Exception& exception
         return Exception { ExceptionCode::InvalidStateError, "VideoDecoder is closed"_s };
 
     setState(WebCodecsCodecState::Unconfigured);
+    ++m_decoderCount;
     if (RefPtr internalDecoder = std::exchange(m_internalDecoder, { }))
         internalDecoder->reset();
     clearControlMessageQueueAndMaybeScheduleDequeueEvent();

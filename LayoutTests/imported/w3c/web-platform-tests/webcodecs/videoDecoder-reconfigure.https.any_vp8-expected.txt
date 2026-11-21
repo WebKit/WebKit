@@ -1,0 +1,5 @@
+
+PASS Test configure() between decode() calls outputs the frames decoded with the previous configuration
+PASS Test reset() while configure() waits for the previous decoder discards its frames
+PASS Test configure() with an unsupported codec outputs the frames decoded with the previous configuration
+
