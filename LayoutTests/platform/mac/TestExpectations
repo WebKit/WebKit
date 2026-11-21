@@ -1772,14 +1772,13 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Pass ]
 
-# Encoding a float16 linear canvas to PNG crashes in QuartzCore.
-webkit.org/b/332044 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.png.linear.float.html [ Skip ]
-webkit.org/b/332044 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.png.linear.float.html [ Skip ]
-
 # CoreGraphics clamps fills to [0, 1] in IOSurface-backed extended-range contexts on x86_64.
 [ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.worker.html [ Failure ]
+# It also keeps only 256 levels per component when filling those contexts on x86_64.
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.png.linear.float.html [ Failure ]
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.png.linear.float.html [ Failure ]
 
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Failure ]
