@@ -108,11 +108,6 @@ struct WasmGCAccessKey {
     unsigned hash() const { return WTF::computeHash(base, index, heap, slotEpoch, allEpoch); }
 };
 
-struct WasmGCAccessKeyTraits : HashTraits<WasmGCAccessKey> {
-    static constexpr bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const WasmGCAccessKey& key) { return !key.base; }
-};
-
 // What a redundant access at the same key can be replaced with. A value forwarded out of a store
 // to a packed field still has to be narrowed the way the load would have narrowed it.
 struct WasmGCAvailableValue {
@@ -5416,7 +5411,7 @@ private:
     LayeredHashMap<ValueKey, Value*> m_layeredCSE;
 
     bool m_trackWasmGCAccesses { false };
-    LayeredHashMap<WasmGCAccessKey, WasmGCAvailableValue, DefaultHash<WasmGCAccessKey>, WasmGCAccessKeyTraits> m_wasmGCMap;
+    LayeredHashMap<WasmGCAccessKey, WasmGCAvailableValue> m_wasmGCMap;
     HeapRange m_wasmGCStructSpan;
     HeapRange m_wasmGCArraySpan;
     std::array<HeapRange, numberOfWasmGCArrayElementTypes> m_wasmGCArrayHeaps;

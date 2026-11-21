@@ -268,14 +268,7 @@ class OrderedHashMap final {
 private:
     using KeyTraits = KeyTraitsArg;
     using MappedTraits = MappedTraitsArg;
-
-    struct KeyValuePairTraits : KeyValuePairHashTraits<KeyTraits, MappedTraits> {
-        static constexpr bool hasIsEmptyValueFunction = true;
-        static bool isEmptyValue(const typename KeyValuePairHashTraits<KeyTraits, MappedTraits>::TraitType& value)
-        {
-            return isHashTraitsEmptyValue<KeyTraits>(value.key);
-        }
-    };
+    using KeyValuePairTraits = KeyValuePairHashTraits<KeyTraits, MappedTraits>;
 
 public:
     using KeyType = typename KeyTraits::TraitType;
@@ -391,11 +384,7 @@ public:
 
     bool remove(const KeyType& key)
     {
-        auto it = find(key);
-        if (it == end())
-            return false;
-        remove(it);
-        return true;
+        return m_impl.remove(key);
     }
 
     bool remove(iterator it)
@@ -465,19 +454,7 @@ public:
         return MappedTraits::peek(entry->value);
     }
 
-    static bool isValidKey(const KeyType& key)
-    {
-        if (KeyTraits::isDeletedValue(key))
-            return false;
-        if constexpr (HashFunctions::safeToCompareToEmptyOrDeleted) {
-            if (key == KeyTraits::emptyValue())
-                return false;
-        } else {
-            if (isHashTraitsEmptyValue<KeyTraits>(key))
-                return false;
-        }
-        return true;
-    }
+    static bool isValidKey(const KeyType& key) { return HashTableType::isValidKey(key); }
 
 private:
     template<typename K, typename V>

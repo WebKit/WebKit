@@ -41,13 +41,32 @@ struct TestKey {
     unsigned hash() const { return value & 0x7; }
 };
 
-// Reserving UINT_MAX rather than the default-constructed key leaves zero usable below, and
-// makes the map answer to traits it did not choose for itself.
-struct TestKeyTraits : HashTraits<TestKey> {
-    static TestKey emptyValue() { return TestKey { UINT_MAX }; }
+using TestMap = LayeredHashMap<TestKey, unsigned>;
+
+// Neither type can be default-constructed, so the map cannot be building placeholder entries.
+struct OpaqueKey {
+    explicit OpaqueKey(unsigned value)
+        : value(value)
+    {
+    }
+    unsigned value;
+    friend bool operator==(const OpaqueKey&, const OpaqueKey&) = default;
 };
 
-using TestMap = LayeredHashMap<TestKey, unsigned, DefaultHash<TestKey>, TestKeyTraits>;
+struct OpaqueKeyHash {
+    static unsigned hash(const OpaqueKey& key) { return key.value & 0x3; }
+    static bool equal(const OpaqueKey& a, const OpaqueKey& b) { return a == b; }
+};
+
+struct OpaqueMapped {
+    explicit OpaqueMapped(unsigned value)
+        : value(value)
+    {
+    }
+    unsigned value;
+};
+
+using OpaqueMap = LayeredHashMap<OpaqueKey, OpaqueMapped, OpaqueKeyHash, WTF::GenericHashTraits<OpaqueKey>>;
 
 // Enough keys to force several rehashes out of the smallest table.
 constexpr unsigned keysPerLayer = 40;
@@ -209,10 +228,17 @@ TEST(WTF_LayeredHashMap, RandomizedAgainstModel)
         return 0;
     };
 
+    // UINT_MAX and 0 stand in for the values HashTraits would reserve.
+    auto randomKey = [&] {
+        unsigned key = nextRandom() % (keyCount + 1);
+        return key == keyCount ? UINT_MAX : key;
+    };
+
     auto checkAgainstModel = [&] {
         EXPECT_EQ(map.layerCount(), model.size());
         for (unsigned key = 0; key < keyCount; ++key)
             EXPECT_EQ(map.find(TestKey { key }).value_or(0), modelFind(key));
+        EXPECT_EQ(map.find(TestKey { UINT_MAX }).value_or(0), modelFind(UINT_MAX));
     };
 
     for (unsigned step = 0; step < 2000; ++step) {
@@ -231,12 +257,12 @@ TEST(WTF_LayeredHashMap, RandomizedAgainstModel)
             model.clear();
             map.clear();
         } else if (action < 6) {
-            unsigned key = nextRandom() % keyCount;
+            unsigned key = randomKey();
             unsigned value = step + 1;
             map.overlay(TestKey { key }, value);
             model.last().append({ key, value });
         } else {
-            unsigned key = nextRandom() % keyCount;
+            unsigned key = randomKey();
             unsigned value = step + 1;
             unsigned existing = modelFind(key);
             EXPECT_EQ(map.findOrAdd(TestKey { key }, value).value_or(0), existing);
@@ -406,16 +432,119 @@ TEST(WTF_LayeredHashMap, ClearEntriesDropsOverlays)
     EXPECT_FALSE(map.find(TestKey { 4 }));
 }
 
-TEST(WTF_LayeredHashMap, DefaultTraits)
+TEST(WTF_LayeredHashMap, HashTraitsEmptyValueIsOrdinaryKey)
 {
-    // With the default traits the default-constructed key is the reserved empty one, so the keys
-    // below all avoid it.
-    LayeredHashMap<TestKey, unsigned> map;
+    // HashTraits reserves the default-constructed key as empty for WTF::HashTable. This map must
+    // treat it, and the other extreme, like any other key.
+    TestMap map;
     map.startLayer();
+    EXPECT_FALSE(map.find(TestKey { 0 }));
+    EXPECT_TRUE(map.add(TestKey { 0 }, 7));
+    EXPECT_TRUE(map.add(TestKey { UINT_MAX }, 8));
+    EXPECT_FALSE(map.add(TestKey { 0 }, 9));
     for (unsigned key = 1; key <= 64; ++key)
         EXPECT_TRUE(map.add(TestKey { key }, key * 7));
-    for (unsigned key = 1; key <= 64; ++key)
-        EXPECT_EQ(map.find(TestKey { key }).value_or(0), key * 7);
+    EXPECT_EQ(map.find(TestKey { 0 }).value_or(0), 7U);
+    EXPECT_EQ(map.find(TestKey { UINT_MAX }).value_or(0), 8U);
+
+    map.startLayer();
+    map.overlay(TestKey { 0 }, 70);
+    EXPECT_EQ(map.find(TestKey { 0 }).value_or(0), 70U);
+    map.dropLastLayer();
+    EXPECT_EQ(map.find(TestKey { 0 }).value_or(0), 7U);
+
+    map.dropLastLayer();
+    EXPECT_FALSE(map.find(TestKey { 0 }));
+    EXPECT_FALSE(map.find(TestKey { UINT_MAX }));
+    EXPECT_EQ(map.layerCount(), 0U);
+
+    LayeredHashMap<unsigned, unsigned> integers;
+    integers.startLayer();
+    EXPECT_TRUE(integers.add(0, 1));
+    EXPECT_TRUE(integers.add(UINT_MAX, 2));
+    EXPECT_TRUE(integers.add(UINT_MAX - 1, 3));
+    EXPECT_EQ(integers.find(0).value_or(0), 1U);
+    EXPECT_EQ(integers.find(UINT_MAX).value_or(0), 2U);
+    EXPECT_EQ(integers.find(UINT_MAX - 1).value_or(0), 3U);
+    integers.dropLastLayer();
+    EXPECT_FALSE(integers.find(0));
+}
+
+TEST(WTF_LayeredHashMap, KeyAndMappedWithoutDefaultConstructor)
+{
+    OpaqueMap map;
+    map.startLayer();
+    for (unsigned key = 0; key < keysPerLayer; ++key)
+        EXPECT_TRUE(map.add(OpaqueKey { key }, OpaqueMapped { key + 1 }));
+    map.startLayer();
+    for (unsigned key = 0; key < keysPerLayer; key += 2)
+        map.overlay(OpaqueKey { key }, OpaqueMapped { key + 100 });
+    for (unsigned key = 0; key < keysPerLayer; ++key)
+        EXPECT_EQ(map.find(OpaqueKey { key })->value, key % 2 ? key + 1 : key + 100);
+    EXPECT_EQ(map.findOrAdd(OpaqueKey { 1 }, OpaqueMapped { 0 })->value, 2U);
+    map.dropLastLayer();
+    for (unsigned key = 0; key < keysPerLayer; ++key)
+        EXPECT_EQ(map.find(OpaqueKey { key })->value, key + 1);
+    map.dropLastLayer();
+    EXPECT_FALSE(map.find(OpaqueKey { 0 }));
+}
+
+TEST(WTF_LayeredHashMap, EmptyLayers)
+{
+    // Layers that add nothing have to nest and unwind like any other, including around a layer
+    // that does add entries.
+    TestMap map;
+    map.startLayer();
+    map.startLayer();
+    EXPECT_EQ(map.layerCount(), 2U);
+    map.dropLastLayer();
+    EXPECT_TRUE(map.add(TestKey { 3 }, 30));
+
+    map.startLayer();
+    map.startLayer();
+    map.overlay(TestKey { 3 }, 31);
+    map.startLayer();
+    EXPECT_EQ(map.find(TestKey { 3 }).value_or(0), 31U);
+    map.dropLastLayer();
+    EXPECT_EQ(map.find(TestKey { 3 }).value_or(0), 31U);
+
+    // Overlaying in a fresh layer shadows rather than updates the entry made one layer down.
+    map.startLayer();
+    map.overlay(TestKey { 3 }, 32);
+    map.dropLastLayer();
+    EXPECT_EQ(map.find(TestKey { 3 }).value_or(0), 31U);
+
+    map.dropLastLayer();
+    EXPECT_EQ(map.find(TestKey { 3 }).value_or(0), 30U);
+    map.dropLastLayer();
+    EXPECT_EQ(map.find(TestKey { 3 }).value_or(0), 30U);
+    map.dropLastLayer();
+    EXPECT_FALSE(map.find(TestKey { 3 }));
+    EXPECT_EQ(map.layerCount(), 0U);
+}
+
+TEST(WTF_LayeredHashMap, ClearEntriesThenOverlayInEveryLayer)
+{
+    // After clearEntries() every surviving layer starts at the front of the entries, so an overlay
+    // in the innermost layer must update in place while one in a new layer must shadow.
+    TestMap map;
+    for (unsigned layer = 0; layer < 3; ++layer) {
+        map.startLayer();
+        for (unsigned i = 0; i < keysPerSibling; ++i)
+            map.overlay(TestKey { i }, layer * 100 + i);
+    }
+    map.clearEntries();
+    map.overlay(TestKey { 1 }, 1);
+    map.overlay(TestKey { 1 }, 2);
+    EXPECT_EQ(map.find(TestKey { 1 }).value_or(0), 2U);
+    map.startLayer();
+    map.overlay(TestKey { 1 }, 3);
+    EXPECT_EQ(map.find(TestKey { 1 }).value_or(0), 3U);
+    map.dropLastLayer();
+    EXPECT_EQ(map.find(TestKey { 1 }).value_or(0), 2U);
+    map.dropLastLayer();
+    EXPECT_FALSE(map.find(TestKey { 1 }));
+    map.dropLastLayer();
     map.dropLastLayer();
     EXPECT_EQ(map.layerCount(), 0U);
 }
