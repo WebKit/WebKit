@@ -1,0 +1,5 @@
+
+PASS <template> inside <annotation-xml> respects HTML integration point encoding
+PASS Parser-created <annotation-xml> checks live no-namespace encoding attribute once outside open parser stack
+PASS Open <annotation-xml> uses start-tag token during active parsing
+

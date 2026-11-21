@@ -1,0 +1,20 @@
+
+
+
+PASS HTMLTemplateElement.contentNamespace gets/sets namespace URLs without reflecting contentnamespace
+PASS <template contentnamespace='svg'> parses contents in the SVG namespace
+PASS <template contentnamespace='mathml'> parses contents in the MathML namespace
+PASS <template contentnamespace='html'> inside <svg> parses non-breakout and table contents in the HTML namespace
+PASS <template> inside <svg> is an HTMLTemplateElement and inherits SVG namespace unless in foreignObject or overridden
+PASS <template> inside <math> is an HTMLTemplateElement and inherits MathML namespace unless in a MathML text integration point
+PASS CDATA sections are supported inside SVG templates (both explicit contentnamespace='svg' and inherited)
+PASS <script> inside <template contentnamespace='svg'> is an inert SVGScriptElement and closes properly
+PASS <foreignObject> inside <template contentnamespace='svg'> uses 'in body' insertion mode rather than 'in template' for table tags
+PASS Stray end tag inside <template contentnamespace='svg'> or <svg><template> does not close an open HTML ancestor outside <template>
+PASS Unclosed foreign elements inside <template contentnamespace='svg'> are closed by </template>
+PASS Foreign-content HTML breakout tag inside <template contentnamespace='svg'> breaks out to the template root in HTML namespace
+PASS Stray </form> inside <svg> fragment parsing reaches HTML mode on root while stopping at <template contentnamespace='svg'>
+PASS Resetting insertion mode after <table> inside <foreignObject> restores foreign <template> 'in body' mode
+PASS Self-closing template tag in SVG/MathML, MathML <mfrac> layout with <template>, and XML parser contentNamespace
+PASS HTML fragment serialization always emits contentnamespace first and round-trips safely
+

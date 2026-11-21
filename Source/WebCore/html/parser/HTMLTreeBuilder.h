@@ -168,6 +168,12 @@ private:
     void defaultForAfterHead();
     void defaultForInTableText();
 
+    bool parserNamespaceIsHTML(const HTMLStackItem&) const;
+    const AtomString& parserNamespace(const HTMLStackItem&) const;
+    enum class EncodingAttributeSource : bool { Token, Element };
+    const AtomString& contextNamespaceForStackItem(HTMLStackItem&, EncodingAttributeSource) const;
+    const AtomString& adjustedContextNamespace();
+    const AtomString& fragmentContextNamespace();
     bool shouldProcessTokenInForeignContent(const AtomHTMLToken&);
     void processTokenInForeignContent(AtomHTMLToken&&);
 

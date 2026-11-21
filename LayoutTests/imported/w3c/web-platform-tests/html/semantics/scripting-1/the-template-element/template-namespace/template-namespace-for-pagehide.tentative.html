@@ -1,0 +1,70 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>HTML Templates: &lt;template for&gt; attribute mutations in pagehide during prepare content patching</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-template-element">
+<link rel="help" href="https://github.com/whatwg/html/pull/13100">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+// TENTATIVE: Removing an iframe destroys its document rather than unloading it,
+// so synchronous pagehide on disconnection is legacy engine behavior.
+test(t => {
+  const iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+  t.add_cleanup(() => iframe.remove());
+  const win = iframe.contentWindow;
+  const doc = iframe.contentDocument;
+
+  let capturedAutoTpl = null;
+  let capturedExplicitTpl = null;
+  win.customElements.define("patch-auto-tpl", class extends win.HTMLTemplateElement {
+    constructor() {
+      super();
+      capturedAutoTpl = this;
+    }
+  }, { extends: "template" });
+  win.customElements.define("patch-explicit-tpl", class extends win.HTMLTemplateElement {
+    constructor() {
+      super();
+      capturedExplicitTpl = this;
+    }
+  }, { extends: "template" });
+
+  let pagehideAutoRan = false;
+  let pagehideExpRan = false;
+  doc.open();
+  doc.write(
+    "<!doctype html><body>" +
+    "<svg id='svg-host'><?start name='svg-direct'><?end></svg>" +
+    "<div id='div-host'><?start name='div-p'><iframe id='if-exp'></iframe><?end></div>"
+  );
+  const svgHost = doc.getElementById("svg-host");
+  const ifSvg = doc.createElement("iframe");
+  svgHost.insertBefore(ifSvg, svgHost.lastChild);
+  ifSvg.contentWindow.addEventListener("pagehide", () => {
+    pagehideAutoRan = true;
+    capturedAutoTpl.setAttribute("contentnamespace", "html");
+  });
+  doc.getElementById("if-exp").contentWindow.addEventListener("pagehide", () => {
+    pagehideExpRan = true;
+    capturedExplicitTpl.setAttribute("contentnamespace", "svg");
+    capturedExplicitTpl.setAttribute("shadowrootmode", "open");
+  });
+  doc.write(
+    "<template is='patch-auto-tpl' for='svg-direct'><circle id='c-auto'/></template>" +
+    "<template is='patch-explicit-tpl' for='div-p' contentnamespace='html'><div id='d-exp'></div></template></body>"
+  );
+  doc.close();
+
+  assert_equals(doc.getElementById("c-auto").namespaceURI, SVG_NS);
+  assert_equals(doc.getElementById("d-exp").namespaceURI, HTML_NS);
+  assert_implements_optional(
+    pagehideAutoRan && pagehideExpRan,
+    "pagehide fired synchronously during prepare content patching"
+  );
+}, "Attribute changes on <template for> during prepare content patching do not change its active parser namespace");
+</script>

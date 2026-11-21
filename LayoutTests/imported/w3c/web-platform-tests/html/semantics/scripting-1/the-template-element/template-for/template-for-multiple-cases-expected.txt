@@ -234,39 +234,39 @@ PASS Hash in marker name - contextualFragment with 4 chunks
 FAIL Hash in marker name - stream  promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
 FAIL Hash in marker name - stream with 2 chunks promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
 FAIL Hash in marker name - stream with 4 chunks promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
-PASS Empty marker name with <?start> and <?end> - innerHTML
-PASS Empty marker name with <?start> and <?end> - innerHTML with 2 chunks
-PASS Empty marker name with <?start> and <?end> - innerHTML with 4 chunks
-PASS Empty marker name with <?start> and <?end> - iframe
-PASS Empty marker name with <?start> and <?end> - iframe with 2 chunks
-PASS Empty marker name with <?start> and <?end> - iframe with 4 chunks
-PASS Empty marker name with <?start> and <?end> - template
-PASS Empty marker name with <?start> and <?end> - template with 2 chunks
-PASS Empty marker name with <?start> and <?end> - template with 4 chunks
-PASS Empty marker name with <?start> and <?end> - parse
-PASS Empty marker name with <?start> and <?end> - parse with 2 chunks
-PASS Empty marker name with <?start> and <?end> - parse with 4 chunks
-PASS Empty marker name with <?start> and <?end> - contextualFragment
-PASS Empty marker name with <?start> and <?end> - contextualFragment with 2 chunks
-PASS Empty marker name with <?start> and <?end> - contextualFragment with 4 chunks
+FAIL Empty marker name with <?start> and <?end> - innerHTML  assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - innerHTML with 2 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - innerHTML with 4 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - iframe  assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - iframe with 2 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - iframe with 4 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - template  assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - template with 2 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - template with 4 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - parse  assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - parse with 2 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - parse with 4 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - contextualFragment  assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - contextualFragment with 2 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?start> and <?end> - contextualFragment with 4 chunks assert_equals: expected "<div><?start name=\"\"?>Old<?end ?></div><template for=\"\">New</template>" but got "<div><?start name=\"\"?>Old<?end ?></div><template contentnamespace=\"html\" for=\"\">New</template>"
 FAIL Empty marker name with <?start> and <?end> - stream  promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
 FAIL Empty marker name with <?start> and <?end> - stream with 2 chunks promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
 FAIL Empty marker name with <?start> and <?end> - stream with 4 chunks promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
-PASS Empty marker name with <?marker> - innerHTML
-PASS Empty marker name with <?marker> - innerHTML with 2 chunks
-PASS Empty marker name with <?marker> - innerHTML with 4 chunks
-PASS Empty marker name with <?marker> - iframe
-PASS Empty marker name with <?marker> - iframe with 2 chunks
-PASS Empty marker name with <?marker> - iframe with 4 chunks
-PASS Empty marker name with <?marker> - template
-PASS Empty marker name with <?marker> - template with 2 chunks
-PASS Empty marker name with <?marker> - template with 4 chunks
-PASS Empty marker name with <?marker> - parse
-PASS Empty marker name with <?marker> - parse with 2 chunks
-PASS Empty marker name with <?marker> - parse with 4 chunks
-PASS Empty marker name with <?marker> - contextualFragment
-PASS Empty marker name with <?marker> - contextualFragment with 2 chunks
-PASS Empty marker name with <?marker> - contextualFragment with 4 chunks
+FAIL Empty marker name with <?marker> - innerHTML  assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - innerHTML with 2 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - innerHTML with 4 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - iframe  assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - iframe with 2 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - iframe with 4 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - template  assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - template with 2 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - template with 4 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - parse  assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - parse with 2 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - parse with 4 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - contextualFragment  assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - contextualFragment with 2 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
+FAIL Empty marker name with <?marker> - contextualFragment with 4 chunks assert_equals: expected "<div><?marker name=\"\"?>Old</div><template for=\"\">New</template>" but got "<div><?marker name=\"\"?>Old</div><template contentnamespace=\"html\" for=\"\">New</template>"
 FAIL Empty marker name with <?marker> - stream  promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
 FAIL Empty marker name with <?marker> - stream with 2 chunks promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"
 FAIL Empty marker name with <?marker> - stream with 4 chunks promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTMLUnsafe is not a function. (In 'element.streamAppendHTMLUnsafe()', 'element.streamAppendHTMLUnsafe' is undefined)"

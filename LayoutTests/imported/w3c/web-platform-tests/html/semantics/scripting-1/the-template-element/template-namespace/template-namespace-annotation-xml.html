@@ -1,0 +1,80 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>HTML Templates: &lt;annotation-xml&gt; quirks and template contents namespace</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-template-element">
+<link rel="help" href="https://github.com/whatwg/html/pull/13100">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<math>
+  <annotation-xml encoding="text/html">
+    <template id="in-annotation-html">
+      <a href="#">inside annotation-xml text/html</a>
+    </template>
+  </annotation-xml>
+  <annotation-xml encoding="application/xhtml+xml">
+    <template id="in-annotation-xhtml">
+      <a href="#">inside annotation-xml application/xhtml+xml</a>
+    </template>
+  </annotation-xml>
+  <annotation-xml encoding="application/mathml-presentation+xml">
+    <template id="in-annotation-mathml">
+      <mrow><mi>z</mi></mrow>
+    </template>
+  </annotation-xml>
+</math>
+
+<script>
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+const MATHML_NS = "http://www.w3.org/1998/Math/MathML";
+
+test(() => {
+  const inAnnotationHtml = document.getElementById("in-annotation-html");
+  assert_equals(inAnnotationHtml.namespaceURI, HTML_NS);
+  assert_equals(inAnnotationHtml.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const inAnnotationXhtml = document.getElementById("in-annotation-xhtml");
+  assert_equals(inAnnotationXhtml.namespaceURI, HTML_NS);
+  assert_equals(inAnnotationXhtml.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const inAnnotationMathml = document.getElementById("in-annotation-mathml");
+  assert_equals(inAnnotationMathml.namespaceURI, HTML_NS);
+  assert_equals(inAnnotationMathml.content.firstElementChild.namespaceURI, MATHML_NS);
+}, "<template> inside <annotation-xml> respects HTML integration point encoding");
+
+test(() => {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = "<math><annotation-xml></annotation-xml></math>";
+  const ax = wrap.querySelector("annotation-xml");
+  ax.setAttribute("encoding", "text/html");
+
+  ax.innerHTML = "<template><a href='#'>html link</a></template>";
+  assert_equals(ax.firstElementChild.contentNamespace, HTML_NS);
+  assert_equals(ax.firstElementChild.content.firstElementChild.namespaceURI, HTML_NS);
+
+  ax.removeAttribute("encoding");
+  ax.setAttributeNS("http://example.com/ns", "encoding", "text/html");
+  ax.innerHTML = "<template><mrow><mi>x</mi></mrow></template>";
+  assert_equals(ax.firstElementChild.contentNamespace, MATHML_NS);
+  assert_equals(ax.firstElementChild.content.firstElementChild.namespaceURI, MATHML_NS);
+}, "Parser-created <annotation-xml> checks live no-namespace encoding attribute once outside open parser stack");
+
+test(t => {
+  const iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+  t.add_cleanup(() => iframe.remove());
+  const doc = iframe.contentDocument;
+  doc.open();
+  doc.write("<!doctype html><body><math><annotation-xml id='ax'>");
+  doc.getElementById("ax").setAttribute("encoding", "text/html");
+  doc.write("<template id='open-ax-tpl'><mi>x</mi></template></annotation-xml></math>");
+  doc.close();
+
+  assert_equals(doc.getElementById("open-ax-tpl").content.firstElementChild.namespaceURI, MATHML_NS);
+
+  const ax = doc.getElementById("ax");
+  ax.innerHTML = "<template><a href='#'>after close</a></template>";
+  assert_equals(ax.firstElementChild.contentNamespace, HTML_NS);
+  assert_equals(ax.firstElementChild.content.firstElementChild.namespaceURI, HTML_NS);
+}, "Open <annotation-xml> uses start-tag token during active parsing");
+</script>

@@ -7,7 +7,7 @@ test(() => {
   document.body.insertAdjacentHTML('afterbegin', '<div><template><table><td></table></template></div>');
   let t = document.querySelector('template');
   assert_equals(t.innerHTML, '<table><tbody><tr><td></td></tr></tbody></table>');
-  assert_equals(t.parentNode.innerHTML, '<template><table><tbody><tr><td></td></tr></tbody></table></template>');
+  assert_equals(t.parentNode.innerHTML, '<template contentnamespace="html"><table><tbody><tr><td></td></tr></tbody></table></template>');
 }, 'Template element content is correctly serialized');
 
 test(() => {

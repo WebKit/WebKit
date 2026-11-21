@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -53,7 +54,15 @@ public:
     DocumentFragment& content() const;
     NODELETE DocumentFragment* contentIfAvailable() const;
 
-    bool prepareContentPatching(ContainerNode&);
+    bool prepareContentPatching(ContainerNode&, const AtomString& fragmentRootNamespace);
+
+    const AtomString& contentNamespace() const { return m_contentNamespace; }
+    ExceptionOr<void> setContentNamespace(const AtomString&);
+    void setContentNamespaceFromParser(const AtomString&);
+    // Returns the contentnamespace attribute's state, or fallbackNamespace when the
+    // attribute is missing or invalid.
+    const AtomString& resolveContentNamespace(const AtomString& fallbackNamespace) const;
+    static const AtomString& resolveParserContextNamespace(ContainerNode&, const AtomString& fragmentRootNamespace);
 
     const AtomString& shadowRootMode() const;
     const AtomString& shadowRootSlotAssignment() const;
@@ -71,6 +80,7 @@ private:
     void finishParsingChildren() final;
 
     const RefPtr<TemplateContentDocumentFragment> m_content;
+    AtomString m_contentNamespace;
     WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData> m_declarativeShadowRoot;
     RefPtr<ContainerNode> m_insertionTarget;
     RefPtr<ProcessingInstruction> m_insertionStartMarker;
