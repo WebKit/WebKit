@@ -94,6 +94,7 @@ public:
 private:
     explicit TextControlPlaceholderElement(Document&);
 
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
 };
 

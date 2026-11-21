@@ -447,6 +447,10 @@ input[type="search"] {
 input::-webkit-textfield-decoration-container {
     display: flex;
     align-items: center;
+    flex-grow: 1;
+    min-inline-size: 0;
+    min-block-size: 100%;
+    align-self: center;
     content: none !important;
     writing-mode: inherit !important;
 }
@@ -586,9 +590,6 @@ input::-webkit-inner-spin-button {
     display: block;
     position: relative;
     cursor: default;
-    /* This height property is ignored for input type "number" and others which
-     * use RenderTextControlSingleLine as renderer which sets height of spin
-     * button in layout(). */
     height: 1.5em;
     flex: none;
     -webkit-user-select: none;
@@ -604,6 +605,8 @@ input::-webkit-strong-password-auto-fill-button {
     color: rgba(0, 0, 0, 0.8) !important;
     padding-inline-start: 6px !important;
     white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 input::-webkit-credentials-auto-fill-button {

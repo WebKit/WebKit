@@ -255,7 +255,6 @@ public:
     enum class BlockFlowFlag : uint8_t {
         IsFragmentContainer = 1 << 0,
         IsFragmentedFlow = 1 << 1,
-        IsTextControl = 1 << 2,
         IsSVGBlock = 1 << 3,
         IsViewTransitionContainingBlock = 1 << 4,
     };
@@ -476,7 +475,7 @@ public:
     bool isRenderTableCol() const { return type() == Type::TableCol; }
     bool isRenderTableCaption() const { return type() == Type::TableCaption; }
     bool isRenderTableSection() const { return type() == Type::TableSection; }
-    bool isRenderTextControl() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsTextControl); }
+    bool isRenderTextControl() const { return type() == Type::TextControlSingleLine || type() == Type::TextControlMultiLine || type() == Type::SearchField; }
     bool isRenderTextControlMultiLine() const { return type() == Type::TextControlMultiLine; }
     bool isRenderTextControlSingleLine() const { return isRenderTextControl() && !isRenderTextControlMultiLine(); }
     bool isRenderSearchField() const { return type() == Type::SearchField; }

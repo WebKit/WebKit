@@ -50,7 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControl);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlInnerContainer);
 
 RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, UniqueRef<Style::ComputedStyle>&& style)
-    : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsTextControl)
+    : RenderFlexibleBox(type, element, WTF::move(style))
 {
     ASSERT(isRenderTextControl());
 }
@@ -69,15 +69,14 @@ RefPtr<TextControlInnerTextElement> RenderTextControl::innerTextElement() const
 
 void RenderTextControl::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
-    RenderBlockFlow::styleDidChange(diff, oldStyle);
+    RenderFlexibleBox::styleDidChange(diff, oldStyle);
     auto innerText = innerTextElement();
     if (!innerText)
         return;
     Ref formControlElement = textFormControlElement();
     CheckedPtr innerTextRenderer = innerText->renderer();
     if (innerTextRenderer && oldStyle) {
-        // FIXME: The height property of the inner text block style may be mutated by RenderTextControlSingleLine::layout.
-        // See if the original has changed before setting it and triggering a layout.
+        // Only set the inner text style if it changed, to avoid triggering a layout.
         auto newInnerTextStyle = formControlElement->createInnerTextStyle(protect(style()));
         auto oldInnerTextStyle = formControlElement->createInnerTextStyle(*oldStyle);
         if (newInnerTextStyle.get() != oldInnerTextStyle.get())
@@ -182,12 +181,13 @@ float RenderTextControl::scaleEmToUnits(int x) const
 std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidths() const
 {
     if (style().fieldSizing() == FieldSizing::Content) {
-        auto [minLogicalWidth, maxLogicalWidth] = RenderBlockFlow::computeIntrinsicLogicalWidths();
+        auto [minLogicalWidth, maxLogicalWidth] = RenderFlexibleBox::computeIntrinsicLogicalWidths();
         Ref formControlElement = textFormControlElement();
         RefPtr placeholder = formControlElement->placeholderElement();
         CheckedPtr placeholderBox = placeholder ? placeholder->renderBox() : nullptr;
-        if (RefPtr input = placeholderBox ? dynamicDowncast<HTMLInputElement>(formControlElement) : nullptr) {
-            auto decoration = LayoutUnit::fromFloatCeil(input->decorationWidth(maxLogicalWidth));
+        if (placeholderBox) {
+            RefPtr input = dynamicDowncast<HTMLInputElement>(formControlElement);
+            auto decoration = input ? LayoutUnit::fromFloatCeil(input->decorationWidth(maxLogicalWidth)) : 0_lu;
             minLogicalWidth = std::max(minLogicalWidth, placeholderBox->minContentLogicalWidthContribution() + decoration);
             maxLogicalWidth = std::max(maxLogicalWidth, placeholderBox->maxContentLogicalWidthContribution() + decoration);
         }
@@ -217,7 +217,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidt
 {
     ASSERT(hasInvalidContentLogicalWidths());
     if (style().fieldSizing() == FieldSizing::Content)
-        return RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
+        return RenderFlexibleBox::computeIntrinsicLogicalWidthContributions();
 
     if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero()) {
         auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth(), LayoutUnit { fixedLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
@@ -228,7 +228,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidt
 
 void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
-    RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
+    RenderFlexibleBox::layoutExcludedChildren(relayoutChildren);
 
     RefPtr placeholder = protect(textFormControlElement())->placeholderElement();
     if (!placeholder)
@@ -237,8 +237,6 @@ void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren
     CheckedPtr placeholderRenderer = placeholder->renderer();
     if (!placeholderRenderer)
         return;
-
-    placeholderRenderer->setIsExcludedFromNormalLayout(true);
 
     if (style().fieldSizing() == FieldSizing::Content) {
         // In order to take placeholder height into account while computing the size of the input box, we need to

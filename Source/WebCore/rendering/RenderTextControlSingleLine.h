@@ -23,6 +23,7 @@
 #pragma once
 
 #include "HTMLInputElement.h"
+#include "RenderBlockFlow.h"
 #include "RenderTextControl.h"
 
 namespace WebCore {
