@@ -622,13 +622,11 @@ static void wpeIMContextWaylandV1Reset(WPEInputMethodContext *context)
 {
     auto* self = WPE_IM_CONTEXT_WAYLAND_V1(context);
     auto* global = textInputV1GetGlobalByContext(self);
-    if (global->current == nullptr)
+    if (!global)
         return;
 
-    if (global->current == context) {
-        zwp_text_input_v1_reset(global->textInput);
-        textInputV1UpdateState(self);
-    }
+    zwp_text_input_v1_reset(global->textInput);
+    textInputV1UpdateState(self);
 }
 
 static void wpe_im_context_wayland_v1_class_init(WPEIMContextWaylandV1Class* klass)
