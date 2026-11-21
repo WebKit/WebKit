@@ -54,6 +54,7 @@
     undefined nullableSequenceOfUnionsArg(sequence<(STRING or SEQUENCE_OF_STRINGS)>? sequenceArg);
 
     undefined unionArg(UNION_STRING_LONG unionArg);
+    undefined sequenceOfUnionsWithUSVStringReplacedByImplementationArg(sequence<UNION_USVSTRING_LONG> sequenceArg);
 
     undefined funcWithClamp([Clamp] ULONGLONG arg1, optional [Clamp] ULONGLONG arg2);
     undefined funcWithClampInTypedef(CLAMPED_LONG arg);
@@ -90,3 +91,4 @@ typedef Int32Array                 ARRAY;
 typedef DOMException               E;
 typedef TestEventTarget            TEST_EVENT_TARGET;
 typedef (DOMString or long)        UNION_STRING_LONG;
+typedef ([ImplementationReplacesUnpairedSurrogates] USVString or long) UNION_USVSTRING_LONG;

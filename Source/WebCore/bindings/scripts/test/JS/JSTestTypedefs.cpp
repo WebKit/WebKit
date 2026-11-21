@@ -81,6 +81,7 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_sequenceOfNulla
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceOfNullablesArg);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceOfUnionsArg);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_unionArg);
+static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_sequenceOfUnionsWithUSVStringReplacedByImplementationArg);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_funcWithClamp);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_funcWithClampInTypedef);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_pointFunction);
@@ -208,7 +209,7 @@ template<> void JSTestTypedefsDOMConstructor::initializeProperties(VM& vm, JSDOM
 
 /* Hash table for prototype */
 
-static const std::array<HashTableValue, 21> JSTestTypedefsPrototypeTableValues {
+static const std::array<HashTableValue, 22> JSTestTypedefsPrototypeTableValues {
     HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestTypedefsConstructor, 0 } },
     HashTableValue { "unsignedLongLongAttr"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestTypedefs_unsignedLongLongAttr, setJSTestTypedefs_unsignedLongLongAttr } },
     HashTableValue { "serializedScriptValue"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestTypedefs_serializedScriptValue, setJSTestTypedefs_serializedScriptValue } },
@@ -224,6 +225,7 @@ static const std::array<HashTableValue, 21> JSTestTypedefsPrototypeTableValues {
     HashTableValue { "nullableSequenceOfNullablesArg"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestTypedefsPrototypeFunction_nullableSequenceOfNullablesArg, 1 } },
     HashTableValue { "nullableSequenceOfUnionsArg"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestTypedefsPrototypeFunction_nullableSequenceOfUnionsArg, 1 } },
     HashTableValue { "unionArg"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestTypedefsPrototypeFunction_unionArg, 1 } },
+    HashTableValue { "sequenceOfUnionsWithUSVStringReplacedByImplementationArg"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestTypedefsPrototypeFunction_sequenceOfUnionsWithUSVStringReplacedByImplementationArg, 1 } },
     HashTableValue { "funcWithClamp"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestTypedefsPrototypeFunction_funcWithClamp, 1 } },
     HashTableValue { "funcWithClampInTypedef"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestTypedefsPrototypeFunction_funcWithClampInTypedef, 1 } },
     HashTableValue { "pointFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestTypedefsPrototypeFunction_pointFunction, 0 } },
@@ -690,6 +692,27 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_unionArgBody(J
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_unionArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_unionArgBody>(*lexicalGlobalObject, *callFrame, "unionArg"_s);
+}
+
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_sequenceOfUnionsWithUSVStringReplacedByImplementationArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sequenceArgConversionResult = convert<IDLSequence<IDLUnion<IDLDOMString, IDLLong>>>(*lexicalGlobalObject, argument0.value());
+    if (sequenceArgConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.sequenceOfUnionsWithUSVStringReplacedByImplementationArg(sequenceArgConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_sequenceOfUnionsWithUSVStringReplacedByImplementationArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_sequenceOfUnionsWithUSVStringReplacedByImplementationArgBody>(*lexicalGlobalObject, *callFrame, "sequenceOfUnionsWithUSVStringReplacedByImplementationArg"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcWithClampBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)

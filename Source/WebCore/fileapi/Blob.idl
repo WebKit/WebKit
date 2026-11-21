@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef (BufferSource or Blob or USVString) BlobPart;
+typedef (BufferSource or Blob or [ImplementationReplacesUnpairedSurrogates] USVString) BlobPart;
 
 [
     ActiveDOMObject,

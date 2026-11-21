@@ -8111,6 +8111,8 @@ sub GetBaseIDLType
         return $type->extendedAttributes->{OverrideIDLType};
     }
 
+    return "IDLDOMString" if $type->extendedAttributes->{ImplementationReplacesUnpairedSurrogates};
+
     my %IDLTypes = (
         "undefined" => "IDLUndefined",
         "any" => "IDLAny",

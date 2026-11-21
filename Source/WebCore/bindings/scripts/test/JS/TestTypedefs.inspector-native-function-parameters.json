@@ -10,6 +10,7 @@
             "nullableSequenceOfNullablesArg": "sequenceArg",
             "nullableSequenceOfUnionsArg": "sequenceArg",
             "sequenceOfNullablesArg": "sequenceArg",
+            "sequenceOfUnionsWithUSVStringReplacedByImplementationArg": "sequenceArg",
             "setShadow": "width, height, blur, [color], [alpha]",
             "stringSequenceFunction": "values",
             "stringSequenceFunction2": "values",
