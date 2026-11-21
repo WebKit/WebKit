@@ -51,6 +51,9 @@ GamepadLibWPE::GamepadLibWPE(struct wpe_gamepad_provider* provider, uintptr_t ga
 
     m_id = String::fromUTF8(wpe_gamepad_get_id(m_gamepad.get()));
     m_mapping = String::fromUTF8("standard");
+    // The WPE API does not expose which allocated button slots have inputs.
+    // Keep the fallback type until the backend can provide that information.
+    setNonStandardButtonTypes(m_buttonValues.size());
 
     static const struct wpe_gamepad_client_interface s_client = {
         // button_event

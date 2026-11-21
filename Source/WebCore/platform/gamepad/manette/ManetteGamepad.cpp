@@ -30,6 +30,7 @@
 
 #include "ManetteGamepadProvider.h"
 #include "SharedGamepadValue.h"
+#include <array>
 #include <linux/input-event-codes.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
@@ -254,6 +255,18 @@ ManetteGamepad::ManetteGamepad(ManetteDevice* device, unsigned index)
     m_buttonValues.resize(static_cast<size_t>(standardGamepadButtonCount));
     for (auto& value : m_buttonValues)
         value.setValue(0.0);
+    setNonStandardButtonTypes(m_buttonValues.size());
+    constexpr std::array<unsigned, standardGamepadButtonCount> buttonCodes {
+        BTN_A, BTN_B, BTN_X, BTN_Y,
+        BTN_TL, BTN_TR, BTN_TL2, BTN_TR2,
+        BTN_SELECT, BTN_START, BTN_THUMBL, BTN_THUMBR,
+        BTN_DPAD_UP, BTN_DPAD_DOWN, BTN_DPAD_LEFT, BTN_DPAD_RIGHT,
+        BTN_MODE
+    };
+    for (size_t i = 0; i < buttonCodes.size(); ++i) {
+        if (manette_device_has_input(m_device.get(), EV_KEY, buttonCodes[i]))
+            setStandardButtonType(i);
+    }
 
     if (manette_device_has_rumble(m_device.get()))
         m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);

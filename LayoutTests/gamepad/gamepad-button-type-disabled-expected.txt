@@ -1,0 +1,12 @@
+Disabling GamepadButton.type preserves existing additional buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'type' in GamepadButton.prototype is false
+PASS gamepad.buttons.length is 19
+PASS 'type' in gamepad.buttons[0] is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

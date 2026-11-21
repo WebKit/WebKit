@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Disabling GamepadButton.type preserves existing additional buttons.");
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setGamepadButtonTypeEnabled(false);
+
+var gamepad;
+onload = () => {
+    shouldBeFalse("'type' in GamepadButton.prototype");
+    addEventListener("gamepadconnected", event => {
+        gamepad = event.gamepad;
+        shouldBe("gamepad.buttons.length", "19");
+        shouldBeFalse("'type' in gamepad.buttons[0]");
+        finishJSTest();
+    }, { once: true });
+    testRunner.setMockGamepadDetails(0, "Standard Gamepad with Extras", "standard", 4, 19, false);
+    testRunner.connectMockGamepad(0);
+};
+</script>
+</body>

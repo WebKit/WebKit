@@ -82,6 +82,7 @@ void GameControllerGamepad::setupElements()
     RetainPtr<GCControllerButtonInput> homeButton = profile.get().buttons[GCInputButtonHome];
     bool isExtended = m_gcController.get().extendedGamepad != nil;
     m_buttonValues.resize((homeButton || isExtended) ? numberOfStandardGamepadButtonsWithHomeButton : numberOfStandardGamepadButtonsWithoutHomeButton);
+    setNonStandardButtonTypes(m_buttonValues.size());
 
     m_id = makeString(String(m_gcController.get().vendorName), m_gcController.get().extendedGamepad ? " Extended Gamepad"_s : " Gamepad"_s);
 
@@ -106,6 +107,8 @@ void GameControllerGamepad::setupElements()
         m_buttonValues[(size_t)index].setValue(button.value);
         if (!button)
             return;
+
+        setStandardButtonType(static_cast<size_t>(index));
 
         button.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
             // GameController framework will materialize missing values from a HID report as NaN.
@@ -140,7 +143,7 @@ void GameControllerGamepad::setupElements()
     bindButton(profile.get().dpads[GCInputDirectionPad].down, GamepadButtonRole::LeftClusterBottom);
     bindButton(profile.get().dpads[GCInputDirectionPad].left, GamepadButtonRole::LeftClusterLeft);
     bindButton(profile.get().dpads[GCInputDirectionPad].right, GamepadButtonRole::LeftClusterRight);
-    
+
     // Home, Select, Start
     if (homeButton) {
         bindButton(homeButton.get(), GamepadButtonRole::CenterClusterCenter);
