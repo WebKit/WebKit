@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class SVGTextContentElement;
-class SVGTextMetrics;
+struct SVGTextMetrics;
 struct SVGTextFragment;
 
 namespace Layout {
@@ -53,6 +53,8 @@ public:
 private:
     static constexpr unsigned notFound32 = std::numeric_limits<unsigned>::max();
 
+    // The per-character "result" of the layout algorithm, one entry per character of the text content in logical order.
+    // Only the first character of a typographic character has metrics, the glyph data is stored on it.
     struct Character {
         // Position of the glyph origin, without the baseline shift.
         float x { 0 };

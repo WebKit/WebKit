@@ -1,6 +1,6 @@
 ABC
 ABCDEF
 
-PASS A point on the edge between two glyph cells belongs to one of them
+PASS A point on the left or top edge of a glyph cell is inside it
 PASS Characters beyond the end of a text path
 

@@ -21,23 +21,11 @@
 
 namespace WebCore {
 
-class SVGTextMetrics {
-public:
-    SVGTextMetrics() = default;
-    SVGTextMetrics(unsigned length, float scaledWidth, float scaledHeight)
-        : m_width(scaledWidth)
-        , m_height(scaledHeight)
-        , m_length(length)
-    { }
-
-    float width() const { return m_width; }
-    float height() const { return m_height; }
-    unsigned length() const { return m_length; }
-
-private:
-    float m_width { 0 };
-    float m_height { 0 };
-    unsigned m_length { 0 };
+// The size of a typographic character in user space, and the number of characters of the text it spans.
+struct SVGTextMetrics {
+    unsigned length { 0 };
+    float width { 0 };
+    float height { 0 };
 };
 
 } // namespace WebCore
