@@ -732,8 +732,8 @@ private:
     
     void willStartCollection(CollectionScope) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
     
-    void gatherStackRoots(ConservativeRoots&);
-    void gatherVMRoots(ConservativeRoots&);
+    void gatherStackRoots(ConservativeRoots&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
+    void gatherVMRoots(ConservativeRoots&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
     void beginMarking() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 #if ENABLE(WEBASSEMBLY)
     void beginMarkingWasmCallees() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
@@ -804,10 +804,10 @@ private:
     void iterateExecutingAndCompilingCodeBlocks(Visitor&, NOESCAPE const Function<void(CodeBlock*)>&);
     
     template<typename Func, typename Visitor>
-    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, NOESCAPE const Func&);
+    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, NOESCAPE const Func&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
     
     void dumpHeapStatisticsAtVMDestruction();
-    void lastChanceToFinalize();
+    void lastChanceToFinalize() WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
 
     bool shouldSweepSynchronously() WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
 

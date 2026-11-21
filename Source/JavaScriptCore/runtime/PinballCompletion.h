@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/EvacuatedStack.h>
+#include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSFunctionWithFields.h>
@@ -69,7 +70,7 @@ public:
     CPURegister* calleeSaves() { return m_calleeSaves; }
 
     void assimilate(PinballCompletion*);
-    void gatherConservativeRoots(ConservativeRoots&);
+    void gatherConservativeRoots(ConservativeRoots&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     DECLARE_INFO;
     DECLARE_VISIT_CHILDREN;

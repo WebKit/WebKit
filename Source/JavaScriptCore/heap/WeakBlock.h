@@ -76,11 +76,12 @@ public:
 
     JSC::Heap& heap() const { return m_heap; }
     Lock& weakBlockLock() const WTF_RETURNS_CAPABILITY(m_weakBlockLock);
-    void assertWorldIsStopped() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_weakBlockLock);
+    // Markers only read the block, so this asserts the weak block lock as held shared.
+    void assertIsMarkerWithWorldStopped() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_weakBlockLock);
 
     bool isEmpty() const { return m_freeList.load<MemoryOrder::Relaxed>() == allWeakAtomsMask(); }
     bool hasLiveHandles(Locker<Lock>& locker) const { locker.assertIsHolding(weakBlockLock()); return hasLiveHandles(); }
-    bool hasLiveHandles() const WTF_REQUIRES_CAPABILITY(m_weakBlockLock) { return liveAtoms(); }
+    bool hasLiveHandles() const WTF_REQUIRES_SHARED_CAPABILITY(m_weakBlockLock) { return liveAtoms(); }
     bool hasOnlyFinalizedHandles(Locker<Lock>& locker) { locker.assertIsHolding(weakBlockLock()); return hasOnlyFinalizedHandles(); }
     bool hasOnlyFinalizedHandles() WTF_REQUIRES_CAPABILITY(m_weakBlockLock);
     bool hasFreeCell() const { return !!m_freeList.load<MemoryOrder::Relaxed>(); }
@@ -128,7 +129,7 @@ private:
     bool addFreeCell(WeakImpl*, WeakImpl::State previousState);
     void deallocate(WeakImpl*, WeakImpl::State previousState);
 
-    uint64_t liveAtoms() const WTF_REQUIRES_CAPABILITY(m_weakBlockLock) { return ~m_freeList.load<MemoryOrder::Relaxed>() & ~m_reapedAtoms.load<MemoryOrder::Relaxed>() & allWeakAtomsMask(); }
+    uint64_t liveAtoms() const WTF_REQUIRES_SHARED_CAPABILITY(m_weakBlockLock) { return ~m_freeList.load<MemoryOrder::Relaxed>() & ~m_reapedAtoms.load<MemoryOrder::Relaxed>() & allWeakAtomsMask(); }
     uint64_t reapedAtoms() const { return m_reapedAtoms.load<MemoryOrder::Relaxed>() & allWeakAtomsMask(); }
     template<typename Func> static void forEachAtom(uint64_t atoms, NOESCAPE const Func& func) { WTF::forEachSetBit(singleElementSpan(std::as_const(atoms)), func); }
 

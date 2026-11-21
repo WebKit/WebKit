@@ -237,7 +237,7 @@ void WeakBlock::specializedVisit(ContainerType& container, Visitor& visitor)
 template<typename Visitor>
 ALWAYS_INLINE void WeakBlock::visitImpl(Visitor& visitor)
 {
-    assertWorldIsStopped();
+    assertIsMarkerWithWorldStopped();
     // specializedVisit only ever acts on a live handle.
     if (!hasLiveHandles())
         return;

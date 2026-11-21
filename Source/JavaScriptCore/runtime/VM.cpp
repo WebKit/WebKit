@@ -1266,7 +1266,6 @@ void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
 
 void VM::scanSideState(ConservativeRoots& roots) const
 {
-    heap.collector().assertIsMarkerWithWorldStopped();
     for (const auto& sideState : m_checkpointSideState) {
         static_assert(sizeof(sideState->tmps) / sizeof(JSValue) == maxNumCheckpointTmps);
         roots.add(sideState->tmps, sideState->tmps + maxNumCheckpointTmps);

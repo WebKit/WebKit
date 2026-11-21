@@ -913,14 +913,14 @@ public:
         return m_exceptionFuzzBuffer.get();
     }
 
-    void gatherScratchBufferRoots(ConservativeRoots&);
+    void gatherScratchBufferRoots(ConservativeRoots&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     static constexpr unsigned expectedMaxActiveSideStateCount = 4;
     void pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&&);
     std::unique_ptr<CheckpointOSRExitSideState> popCheckpointOSRSideState(CallFrame* expectedFrame);
     void popAllCheckpointOSRSideStateUntil(CallFrame* targetFrame);
     bool hasCheckpointOSRSideState() const { return m_checkpointSideState.size(); }
-    void scanSideState(ConservativeRoots&) const;
+    void scanSideState(ConservativeRoots&) const WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     Interpreter interpreter;
     VMEntryScope* entryScope { nullptr };

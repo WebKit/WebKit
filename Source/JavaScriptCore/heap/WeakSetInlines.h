@@ -26,6 +26,8 @@
 #pragma once
 
 #include <JavaScriptCore/CellContainerInlines.h>
+#include <JavaScriptCore/Collector.h>
+#include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/JSCell.h>
 #include <JavaScriptCore/MarkedBlock.h>
 
@@ -36,9 +38,9 @@ inline Lock& WeakBlock::weakBlockLock() const
     return m_heap.weakBlockLock();
 }
 
-inline void WeakBlock::assertWorldIsStopped() const
+inline void WeakBlock::assertIsMarkerWithWorldStopped() const
 {
-    ASSERT(m_heap.worldIsStopped());
+    m_heap.collector().assertIsMarkerWithWorldStopped();
 }
 
 inline Lock& WeakSet::weakBlockLock() const
@@ -51,9 +53,9 @@ inline void WeakSet::assertIsHoldingWeakBlockLock() const
     assertIsHeld(weakBlockLock());
 }
 
-inline void WeakSet::assertWorldIsStopped() const
+inline void WeakSet::assertIsMarkerWithWorldStopped() const
 {
-    ASSERT(heap()->worldIsStopped());
+    heap()->collector().assertIsMarkerWithWorldStopped();
 }
 
 inline void WeakSet::assertIsExclusiveAccessHolder() const

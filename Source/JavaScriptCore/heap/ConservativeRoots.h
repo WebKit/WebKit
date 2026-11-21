@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/Heap.h>
 
 namespace JSC {
@@ -38,8 +39,8 @@ public:
     ConservativeRoots(Heap&);
     ~ConservativeRoots();
 
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, JITStubRoutineSet&, CodeBlockSet&);
+    void add(void* begin, void* end) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
+    void add(void* begin, void* end, JITStubRoutineSet&, CodeBlockSet&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
     
     size_t size() const;
     HeapCell** roots() const;
@@ -48,10 +49,10 @@ private:
     static constexpr size_t inlineCapacity = 2048;
     
     template<bool lookForWasmCallees, typename MarkHook>
-    void genericAddPointer(char*, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t> jsGCFilter, TinyBloomFilter<uintptr_t> boxedWasmCalleeFilter, MarkHook&);
+    void genericAddPointer(char*, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t> jsGCFilter, TinyBloomFilter<uintptr_t> boxedWasmCalleeFilter, MarkHook&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     template<typename MarkHook>
-    void genericAddSpan(void* begin, void* end, MarkHook&);
+    void genericAddSpan(void* begin, void* end, MarkHook&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
     
     void grow();
 

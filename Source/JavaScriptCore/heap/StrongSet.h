@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/SlotVisitorMacros.h>
 #include <JavaScriptCore/StrongBlock.h>
 #include <wtf/HashCountedSet.h>
@@ -68,7 +69,7 @@ public:
     HandleSlot allocate();
     static void deallocate(HandleSlot);
 
-    DECLARE_VISIT_AGGREGATE;
+    DECLARE_VISIT_AGGREGATE_WITH_MODIFIER(WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole));
 
     // Runs with the JSLock held (see the class comment). The functor must not
     // allocate or deallocate handles. See forEachSlot.

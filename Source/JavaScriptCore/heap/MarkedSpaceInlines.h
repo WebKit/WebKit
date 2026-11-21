@@ -101,7 +101,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visito
                 if (m_current) {
                     auto* block = m_current;
                     m_current = m_current->next();
-                    block->assertWorldIsStopped();
+                    block->assertIsMarkerWithWorldStopped();
                     if (!block->hasLiveHandles())
                         continue;
                     results[resultsSize++] = block;
@@ -112,7 +112,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visito
 
                 if (m_newActiveCursor != m_markedSpace.m_newActiveWeakSets.end()) {
                     WeakSet& weakSet = *m_newActiveCursor;
-                    weakSet.assertWorldIsStopped();
+                    weakSet.assertIsMarkerWithWorldStopped();
                     m_current = weakSet.head();
                     ++m_newActiveCursor;
                     continue;
@@ -120,7 +120,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visito
 
                 if (m_activeCursor != m_markedSpace.m_activeWeakSets.end()) {
                     WeakSet& weakSet = *m_activeCursor;
-                    weakSet.assertWorldIsStopped();
+                    weakSet.assertIsMarkerWithWorldStopped();
                     m_current = weakSet.head();
                     ++m_activeCursor;
                     continue;

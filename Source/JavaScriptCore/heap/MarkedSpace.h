@@ -124,7 +124,7 @@ public:
     void resumeAllocating(); // If we just stopped allocation but we didn't do a collection, we need to resume allocation.
     
     
-    void prepareForConservativeScan();
+    void prepareForConservativeScan() WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 

@@ -60,11 +60,11 @@ public:
         markSlow(address);
     }
 
-    void prepareForConservativeScan();
+    void prepareForConservativeScan() WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
     
     void deleteUnmarkedJettisonedStubRoutines(VM&) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
-    template<typename Visitor> void traceMarkedStubRoutines(Visitor&);
+    template<typename Visitor> void traceMarkedStubRoutines(Visitor&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
     
 private:
     void markSlow(uintptr_t address);
@@ -90,9 +90,9 @@ public:
     void add(GCAwareJITStubRoutine*) { }
     void clearMarks() { }
     void mark(void*) { }
-    void prepareForConservativeScan() { }
+    void prepareForConservativeScan() WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole) { }
     void deleteUnmarkedJettisonedStubRoutines(VM&) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole) { }
-    template<typename Visitor> void traceMarkedStubRoutines(Visitor&) { }
+    template<typename Visitor> void traceMarkedStubRoutines(Visitor&) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole) { }
 };
 
 #endif // !ENABLE(JIT)

@@ -129,9 +129,9 @@ public:
     void assertIsConductorOrHelper() const;
     // Asserts that every member heap's world is stopped and that the current thread is a marker, meaning the
     // conductor or one of its marking helpers: the only threads that run against a stopped heap.
-    void assertIsMarkerWithWorldStopped() const;
+    void assertIsMarkerWithWorldStopped() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 #else
-    ALWAYS_INLINE void assertIsMarkerWithWorldStopped() const { }
+    ALWAYS_INLINE void assertIsMarkerWithWorldStopped() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(markerWithWorldStoppedRole) { }
 #endif
 
 private:

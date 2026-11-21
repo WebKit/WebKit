@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/RegisterState.h>
 #include <wtf/Lock.h>
 #include <wtf/ScopedLambda.h>
@@ -46,7 +47,7 @@ class MachineThreads {
 public:
     MachineThreads();
 
-    void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState* conductingMutatorState, Thread* conductorThread);
+    void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState* conductingMutatorState, Thread* conductorThread) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     // Only needs to be called by clients that can use the same heap from multiple threads.
     bool addCurrentThread() { return Ref { m_threadGroup }->addCurrentThread() == ThreadGroupAddResult::NewlyAdded; }
@@ -55,7 +56,7 @@ public:
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker& locker) const { return m_threadGroup->threads(locker); }
 
 private:
-    void gatherFromConductor(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState& conductingMutatorState);
+    void gatherFromConductor(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState& conductingMutatorState) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     void tryCopyOtherThreadStack(const ThreadSuspendLocker&, Thread&, void*, size_t capacity, size_t*);
     bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*, Thread& conductorThread);

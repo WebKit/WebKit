@@ -195,7 +195,6 @@ template<typename MarkHook>
 SUPPRESS_ASAN
 void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHook)
 {
-    m_heap.collector().assertIsMarkerWithWorldStopped();
     if (begin > end)
         std::swap(begin, end);
 

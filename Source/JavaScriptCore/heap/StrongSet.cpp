@@ -198,7 +198,6 @@ void StrongSet::didBecomeEmpty(StrongBlock* block)
 template<typename Visitor>
 void StrongSet::visitAggregateImpl(Visitor& visitor)
 {
-    m_vm.heap.collector().assertIsMarkerWithWorldStopped();
     forEachSlot([&](HandleSlot slot) {
         JSValue value = *slot;
         if (!value)

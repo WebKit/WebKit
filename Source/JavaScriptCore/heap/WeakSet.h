@@ -71,10 +71,11 @@ public:
     static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(WeakSet, m_vm); }
 
     void assertIsHoldingWeakBlockLock() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_weakBlockLock) WTF_ASSERTS_ACQUIRED_CAPABILITY(m_mutatorReadOrWeakBlockLock);
-    // Every thread that changes m_blocks is a GC aware thread, so a stopped world excludes them all.
-    void assertWorldIsStopped() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_weakBlockLock);
+    // Every thread that changes m_blocks is a GC aware thread, so a stopped world excludes them all. Markers only read
+    // m_blocks, so this asserts the weak block lock as held shared.
+    void assertIsMarkerWithWorldStopped() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_weakBlockLock);
 
-    WeakBlock* head() WTF_REQUIRES_CAPABILITY(m_weakBlockLock) { return m_blocks.head(); }
+    WeakBlock* head() WTF_REQUIRES_SHARED_CAPABILITY(m_weakBlockLock) { return m_blocks.head(); }
 
     template<typename Functor>
     void forEachBlock(NOESCAPE const Functor& functor) WTF_REQUIRES_CAPABILITY(m_weakBlockLock)

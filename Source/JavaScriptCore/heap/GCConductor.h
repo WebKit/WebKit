@@ -51,6 +51,11 @@ extern ConductorRole& conductorRole;
 class WTF_CAPABILITY("conductor with world stopped") ConductorWithWorldStoppedRole { };
 extern ConductorWithWorldStoppedRole& conductorWithWorldStoppedRole;
 
+// Being a marker while every member heap's world is stopped: the conductor or one of its marking helpers. Held shared,
+// since they mark at the same time. Global for the same reason as ConductorRole, and likewise never defined.
+class WTF_CAPABILITY("marker with world stopped") MarkerWithWorldStoppedRole { };
+extern MarkerWithWorldStoppedRole& markerWithWorldStoppedRole;
+
 } // namespace JSC
 
 namespace WTF {
