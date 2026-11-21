@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("ProcessSampleTimeline");
+
+    const MainThread = InspectorBackend.Enum.CPUProfiler.ThreadInfoType.Main;
+
+    // The timelines read only the identifier and the process of a target.
+    const targetA = {identifier: "page-1", processIdentifier: "A"};
+    const targetB = {identifier: "frame-2", processIdentifier: "B"};
+    const WebKitThread = InspectorBackend.Enum.CPUProfiler.ThreadInfoType.WebKit;
+
+    function round(value) {
+        return Number(value.toFixed(6));
+    }
+
+    function mainThread(usage) {
+        return {name: "Main Thread", usage, type: MainThread};
+    }
+
+    function workerThread(targetId, usage) {
+        return {name: "Worker Thread", usage, type: WebKitThread, targetId};
+    }
+
+    function cpuSample(timestamp, threads) {
+        let usage = threads.reduce((sum, thread) => sum + thread.usage, 0);
+        return new WI.CPUTimelineRecord({timestamp, usage, threads});
+    }
+
+    function memorySample(timestamp, {javascript = 0, jit = 0, images = 0, layers = 0, page = 0, other = 0}) {
+        return new WI.MemoryTimelineRecord(timestamp, [
+            {type: "javascript", size: javascript},
+            {type: "jit", size: jit},
+            {type: "images", size: images},
+            {type: "layers", size: layers},
+            {type: "page", size: page},
+            {type: "other", size: other},
+        ]);
+    }
+
+    function describe(record) {
+        if (record instanceof WI.CPUTimelineRecord)
+            return `${record.timestamp} (usage ${round(record.usage)}, main ${round(record.mainThreadUsage)}, worker ${round(record.workerThreadUsage)})`;
+        return `${record.timestamp} (total ${record.totalSize}: ${record.categories.map((category) => category.type + " " + category.size).join(", ")})`;
+    }
+
+    // Adds a sample the way TimelineManager does, and logs the records that it completes.
+    function addSample(timeline, liveTargets, target, record) {
+        let aggregateRecords = timeline.addProcessRecord(target, record, liveTargets);
+        for (let aggregateRecord of aggregateRecords)
+            timeline.addRecord(aggregateRecord);
+        InspectorTest.log(`${WI.ProcessSampleTimeline.processKeyForTarget(target)} sample at ${record.timestamp}: ` + (aggregateRecords.map(describe).join(", ") || "no record"));
+        return aggregateRecords;
+    }
+
+    // Stops a capture the way TimelineRecording does.
+    function flush(timeline, liveTargets) {
+        let aggregateRecords = timeline.flushProcessRecords(liveTargets);
+        for (let aggregateRecord of aggregateRecords)
+            timeline.addRecord(aggregateRecord);
+        InspectorTest.log(`Stop: ` + (aggregateRecords.map(describe).join(", ") || "no record"));
+        return aggregateRecords;
+    }
+
+    function expectCPURecord(record, {timestamp, usage, main, worker}) {
+        InspectorTest.expectEqual(record.timestamp, timestamp, `Record should end at ${timestamp}.`);
+        InspectorTest.expectEqual(round(record.usage), usage, `Record at ${timestamp} should have usage ${usage}.`);
+        InspectorTest.expectEqual(round(record.mainThreadUsage), main, `Record at ${timestamp} should have main thread usage ${main}.`);
+        InspectorTest.expectEqual(round(record.workerThreadUsage), worker, `Record at ${timestamp} should have worker thread usage ${worker}.`);
+    }
+
+    function expectMemoryRecord(record, {timestamp, javascript, images, layers, page}) {
+        let sizes = [javascript, images, layers, page];
+        InspectorTest.expectEqual(record.timestamp, timestamp, `Record should end at ${timestamp}.`);
+        InspectorTest.expectShallowEqual(record.categories.map((category) => category.type), ["javascript", "images", "layers", "page"], `Record at ${timestamp} should have every category in order.`);
+        InspectorTest.expectShallowEqual(record.categories.map((category) => category.size), sizes, `Record at ${timestamp} should have sizes ${sizes.join(", ")}.`);
+        InspectorTest.expectEqual(record.totalSize, javascript + images + layers + page, `Record at ${timestamp} should have the sum as total size.`);
+    }
+
+    function expectContiguous(timeline) {
+        let records = timeline.records;
+        InspectorTest.expectThat(records.every((record, i) => !i || (record.startTime === records[i - 1].endTime && record.endTime > record.startTime)), "Records should follow each other in time.");
+    }
+
+    // Frontend assertions do not reach the test output, so count the ones that fail.
+    async function expectNoAssertionFailures(callback) {
+        let failures = [];
+        let originalAssert = console.assert;
+        console.assert = function(condition, ...args) {
+            if (!condition)
+                failures.push(args.map(String).join(" "));
+        };
+        try {
+            await callback();
+        } finally {
+            console.assert = originalAssert;
+        }
+        for (let failure of failures)
+            InspectorTest.log("Assertion failed: " + failure);
+        InspectorTest.expectEqual(failures.length, 0, "Should not fail a frontend assertion.");
+    }
+
+    // Two processes that sample 0.2s apart. B has a worker in its second sample.
+    function phaseOffsetSamples() {
+        return {
+            a10: cpuSample(10, [mainThread(40)]),
+            a10_5: cpuSample(10.5, [mainThread(40)]),
+            a11: cpuSample(11, [mainThread(40)]),
+            a11_5: cpuSample(11.5, [mainThread(40)]),
+            b10_2: cpuSample(10.2, [mainThread(10)]),
+            b10_7: cpuSample(10.7, [mainThread(20), workerThread("worker-b", 10)]),
+            b11_2: cpuSample(11.2, [mainThread(20)]),
+        };
+    }
+
+    // Expected records for `phaseOffsetSamples()`. A covers each bin. B's samples cover 0.4 and 0.6 of it.
+    const phaseOffsetRecords = [
+        {timestamp: 10, usage: 40, main: 40, worker: 0},
+        {timestamp: 10.5, usage: 40 + 10 * 0.4 + 30 * 0.6, main: 40 + 10 * 0.4 + 20 * 0.6, worker: 10 * 0.6},
+        {timestamp: 11, usage: 40 + 30 * 0.4 + 20 * 0.6, main: 40 + 20 * 0.4 + 20 * 0.6, worker: 10 * 0.4},
+        {timestamp: 11.5, usage: 40 + 20 * 0.4, main: 40 + 20 * 0.4, worker: 0},
+    ];
+
+    function cpuThreads() {
+        return [
+            mainThread(12.5),
+            {name: "JSC Heap Helper Thread", usage: 1.25, type: WebKitThread},
+            {name: "JSC Heap Helper Thread", usage: 0.75, type: WebKitThread},
+            workerThread("worker-1", 7.75),
+            {name: "Other", usage: 0.5},
+        ];
+    }
+
+    function expectIdentity(todayTimeline, timeline, propertyNames) {
+        InspectorTest.expectEqual(timeline.records.length, todayTimeline.records.length, "Should have as many records as today.");
+        let mismatches = [];
+        for (let i = 0; i < todayTimeline.records.length; ++i) {
+            let todayRecord = todayTimeline.records[i];
+            let record = timeline.records[i];
+            for (let propertyName of propertyNames) {
+                if (record[propertyName] !== todayRecord[propertyName])
+                    mismatches.push(`${i}.${propertyName}`);
+            }
+            if (JSON.stringify(record.toJSON()) !== JSON.stringify(todayRecord.toJSON()))
+                mismatches.push(`${i}.toJSON()`);
+        }
+        InspectorTest.expectEqual(mismatches.join(", "), "", "Every record should have today's times, values and export data.");
+    }
+
+    // Today's records come from adding each sample. With one process, the per-process path must give the same ones.
+    function testSingleProcessIdentity(createTimeline, events, createRecord, propertyNames) {
+        // A capture, then a second capture after a discontinuity.
+        let discontinuity = {startTime: 13, endTime: 19.9};
+        let secondCaptureIndex = events.findIndex((event) => event.timestamp >= discontinuity.endTime);
+
+        let todayTimeline = createTimeline();
+        events.forEach((event, i) => {
+            todayTimeline.addRecord(createRecord(event), i === secondCaptureIndex ? {discontinuity} : {});
+        });
+
+        for (let liveTargets of [[targetA], []]) {
+            InspectorTest.log(liveTargets.length ? "The process has a target:" : "The process has no target:");
+
+            let timeline = createTimeline();
+            let recordsAddedPerSample = [];
+            let flushedRecordCount = 0;
+            events.forEach((event, i) => {
+                if (i === secondCaptureIndex)
+                    flushedRecordCount += timeline.flushProcessRecords(liveTargets).length;
+
+                let aggregateRecords = timeline.addProcessRecord(targetA, createRecord(event), liveTargets);
+                recordsAddedPerSample.push(aggregateRecords.length);
+                for (let aggregateRecord of aggregateRecords)
+                    timeline.addRecord(aggregateRecord, i === secondCaptureIndex ? {discontinuity} : {});
+            });
+            flushedRecordCount += timeline.flushProcessRecords(liveTargets).length;
+
+            InspectorTest.expectThat(recordsAddedPerSample.every((count) => count === 1), "Every sample should add one record right away.");
+            InspectorTest.expectEqual(flushedRecordCount, 0, "Stopping should have no record left to add.");
+            InspectorTest.expectEqual(timeline.processRecords.get("A").length, events.length, "Should keep every sample of the process.");
+            expectIdentity(todayTimeline, timeline, propertyNames);
+        }
+    }
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.SingleProcessIdentity",
+        description: "With one process, CPU records should equal today's records.",
+        async test() {
+            let events = [
+                {timestamp: 10, usage: 22.75, threads: cpuThreads()},
+                {timestamp: 10.5, usage: 3.1, threads: [mainThread(3.1)]},
+                {timestamp: 11.02, usage: 0},
+                {timestamp: 11.5, usage: 22.75, threads: cpuThreads()},
+                {timestamp: 12.7, usage: 0.3, threads: [mainThread(0.1), {name: "Other", usage: 0.2}]},
+                {timestamp: 20, usage: 1.7, threads: [mainThread(1.7)]},
+                {timestamp: 20.5, usage: 22.75, threads: cpuThreads()},
+            ];
+            testSingleProcessIdentity(() => new WI.CPUTimeline(WI.TimelineRecord.Type.CPU), events, (event) => new WI.CPUTimelineRecord(event), ["timestamp", "startTime", "endTime", "usage", "mainThreadUsage", "webkitThreadUsage", "workerThreadUsage", "unknownThreadUsage"]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.Memory.SingleProcessIdentity",
+        description: "With one process, Memory records should equal today's records.",
+        async test() {
+            let events = [
+                {timestamp: 10, categories: memorySample(10, {javascript: 100, jit: 20, images: 0, layers: 5, page: 300, other: 7}).protocolCategories},
+                {timestamp: 10.5, categories: memorySample(10.5, {javascript: 110, page: 300}).protocolCategories},
+                {timestamp: 11.02, categories: memorySample(11.02, {javascript: 110, jit: 40, images: 1024, layers: 5, page: 310, other: 7}).protocolCategories},
+                {timestamp: 12.7, categories: memorySample(12.7, {}).protocolCategories},
+                {timestamp: 20, categories: memorySample(20, {javascript: 90, page: 280}).protocolCategories},
+                {timestamp: 20.5, categories: memorySample(20.5, {javascript: 95, images: 64, page: 280}).protocolCategories},
+            ];
+            testSingleProcessIdentity(() => new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory), events, ({timestamp, categories}) => new WI.MemoryTimelineRecord(timestamp, categories), ["timestamp", "startTime", "endTime", "totalSize"]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.PhaseOffset",
+        description: "CPU records should add up processes that sample at different times, weighted by time.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            let samples = phaseOffsetSamples();
+
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetA, samples.a10);
+                addSample(timeline, live, targetB, samples.b10_2);
+                addSample(timeline, live, targetA, samples.a10_5);
+                addSample(timeline, live, targetB, samples.b10_7);
+                addSample(timeline, live, targetA, samples.a11);
+                addSample(timeline, live, targetB, samples.b11_2);
+                addSample(timeline, live, targetA, samples.a11_5);
+                flush(timeline, live);
+            });
+
+            InspectorTest.expectEqual(timeline.records.length, phaseOffsetRecords.length, "Should have one record per sample of A.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, phaseOffsetRecords[i]));
+            expectContiguous(timeline);
+
+            let combinedRecord = timeline.records[1];
+            let mainThreads = combinedRecord.threads.filter((thread) => thread.type === MainThread);
+            InspectorTest.expectShallowEqual(mainThreads.map((thread) => thread.processKey), ["A", "B"], "A record that combines processes should have a main thread for each process.");
+            InspectorTest.expectShallowEqual(combinedRecord.workersData.map((thread) => thread.targetId + " in " + thread.processKey), ["worker-b in B"], "Worker threads should keep their target and process.");
+            InspectorTest.expectEqual(timeline.records[0].threads.filter((thread) => thread.processKey).length, 0, "A record with one process should have untagged threads.");
+            InspectorTest.expectEqual(timeline.processRecords.get("A").length, 4, "Should keep every sample of A.");
+            InspectorTest.expectEqual(timeline.processRecords.get("B").length, 3, "Should keep every sample of B.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.OutOfOrderAcrossProcesses",
+        description: "CPU records should not depend on the order in which samples of different processes arrive.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            let samples = phaseOffsetSamples();
+
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetA, samples.a10);
+                addSample(timeline, live, targetB, samples.b10_2);
+                addSample(timeline, live, targetB, samples.b10_7);
+                addSample(timeline, live, targetA, samples.a10_5);
+                addSample(timeline, live, targetB, samples.b11_2);
+                addSample(timeline, live, targetA, samples.a11);
+                addSample(timeline, live, targetA, samples.a11_5);
+                flush(timeline, live);
+            });
+
+            InspectorTest.expectEqual(timeline.records.length, phaseOffsetRecords.length, "Should have one record per sample of A.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, phaseOffsetRecords[i]));
+            expectContiguous(timeline);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.LateSamplesFromBusyProcess",
+        description: "A process with a busy main thread delivers its samples late. CPU records should wait for them.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            let samples = phaseOffsetSamples();
+
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetA, samples.a10);
+                addSample(timeline, live, targetB, samples.b10_2);
+                addSample(timeline, live, targetA, samples.a10_5);
+                addSample(timeline, live, targetA, samples.a11);
+                addSample(timeline, live, targetA, samples.a11_5);
+                addSample(timeline, live, targetB, samples.b10_7);
+                addSample(timeline, live, targetB, samples.b11_2);
+                addSample(timeline, live, targetB, cpuSample(11.7, [mainThread(20)]));
+            });
+
+            let expectedRecords = phaseOffsetRecords.slice(0, 3).concat({timestamp: 11.5, usage: 40 + 20 * 0.4 + 20 * 0.6, main: 40 + 20 * 0.4 + 20 * 0.6, worker: 0});
+            InspectorTest.expectEqual(timeline.records.length, expectedRecords.length, "Should have one record per sample of A.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, expectedRecords[i]));
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.Join",
+        description: "A process that joins should count from its first sample on.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetA, cpuSample(10, [mainThread(40)]));
+                addSample(timeline, live, targetA, cpuSample(10.5, [mainThread(40)]));
+                addSample(timeline, live, targetA, cpuSample(11, [mainThread(40)]));
+                addSample(timeline, live, targetB, cpuSample(11.2, [mainThread(10)]));
+                addSample(timeline, live, targetA, cpuSample(11.5, [mainThread(40)]));
+                addSample(timeline, live, targetB, cpuSample(11.7, [mainThread(10)]));
+                addSample(timeline, live, targetA, cpuSample(12, [mainThread(40)]));
+                flush(timeline, live);
+            });
+
+            let expectedRecords = [
+                {timestamp: 10, usage: 40, main: 40, worker: 0},
+                {timestamp: 10.5, usage: 40, main: 40, worker: 0},
+                {timestamp: 11, usage: 40, main: 40, worker: 0},
+                {timestamp: 11.5, usage: 40 + 10 * 0.4 + 10 * 0.6, main: 40 + 10 * 0.4 + 10 * 0.6, worker: 0},
+                {timestamp: 12, usage: 40 + 10 * 0.4, main: 40 + 10 * 0.4, worker: 0},
+            ];
+            InspectorTest.expectEqual(timeline.records.length, expectedRecords.length, "Should have one record per sample of A.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, expectedRecords[i]));
+            expectContiguous(timeline);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.Leave",
+        description: "A process with a target should be waited for. After its last target is gone, it should count 0.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            let samples = phaseOffsetSamples();
+
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetA, samples.a10);
+                addSample(timeline, live, targetB, samples.b10_2);
+                addSample(timeline, live, targetA, samples.a10_5);
+                addSample(timeline, live, targetB, samples.b10_7);
+                addSample(timeline, live, targetA, samples.a11);
+                addSample(timeline, live, targetB, samples.b11_2);
+                addSample(timeline, live, targetA, samples.a11_5);
+
+                InspectorTest.log("The last target of B goes away.");
+                live.remove(targetB);
+                addSample(timeline, live, targetA, cpuSample(12, [mainThread(40)]));
+            });
+
+            let expectedRecords = phaseOffsetRecords.concat({timestamp: 12, usage: 40, main: 40, worker: 0});
+            InspectorTest.expectEqual(timeline.records.length, expectedRecords.length, "Should have one record per sample of A.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, expectedRecords[i]));
+            expectContiguous(timeline);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.ClockProcessLeaves",
+        description: "When the process whose samples end the records goes away, the next process to report should take over.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            let samples = phaseOffsetSamples();
+
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetA, samples.a10);
+                addSample(timeline, live, targetB, samples.b10_2);
+                addSample(timeline, live, targetA, samples.a10_5);
+                addSample(timeline, live, targetB, samples.b10_7);
+
+                InspectorTest.log("The last target of A goes away.");
+                live.remove(targetA);
+                addSample(timeline, live, targetB, samples.b11_2);
+                addSample(timeline, live, targetB, cpuSample(11.7, [mainThread(20)]));
+            });
+
+            // B's samples cover 0.2s and 0.5s of the 0.7s from A's last sample to 11.2.
+            let expectedRecords = phaseOffsetRecords.slice(0, 2).concat(
+                {timestamp: 11.2, usage: round((30 * 0.2 + 20 * 0.5) / 0.7), main: 20, worker: round(10 * 0.2 / 0.7)},
+                {timestamp: 11.7, usage: 20, main: 20, worker: 0});
+            InspectorTest.expectEqual(timeline.records.length, expectedRecords.length, "Should have one record per bin.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, expectedRecords[i]));
+            expectContiguous(timeline);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CPU.HandoverDropsStaleSamples",
+        description: "A sample that is not newer than the last sample of its process should be dropped.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            let samples = phaseOffsetSamples();
+
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetA, samples.a10);
+                addSample(timeline, live, targetB, samples.b10_2);
+                addSample(timeline, live, targetA, samples.a10_5);
+                addSample(timeline, live, targetB, samples.b10_7);
+
+                InspectorTest.log("Another target of B starts reporting, and the previous one delivers two more samples.");
+                addSample(timeline, live, targetB, cpuSample(10.7, [mainThread(99)]));
+                addSample(timeline, live, targetB, cpuSample(10.65, [mainThread(99)]));
+                addSample(timeline, live, targetA, samples.a11);
+                addSample(timeline, live, targetB, samples.b11_2);
+            });
+
+            InspectorTest.expectShallowEqual(timeline.processRecords.get("B").map((record) => record.timestamp), [10.2, 10.7, 11.2], "Should drop the samples that are not newer.");
+            let expectedRecords = phaseOffsetRecords.slice(0, 3);
+            InspectorTest.expectEqual(timeline.records.length, expectedRecords.length, "Should have one record per sample of A.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, expectedRecords[i]));
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.Memory.PhaseOffsetAndZeroCategories",
+        description: "Memory records should add up the latest sample of each process, including categories that are 0 in one process.",
+        async test() {
+            let timeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+            let live = [targetA, targetB];
+            let a = {javascript: 100, layers: 10, page: 200};
+            let b = {javascript: 50, jit: 25, images: 500, page: 30, other: 5};
+
+            addSample(timeline, live, targetA, memorySample(10, a));
+            addSample(timeline, live, targetB, memorySample(10.2, b));
+            addSample(timeline, live, targetA, memorySample(10.5, a));
+            addSample(timeline, live, targetB, memorySample(10.7, {...b, images: 600}));
+            addSample(timeline, live, targetA, memorySample(11, {...a, javascript: 120}));
+            flush(timeline, live);
+
+            InspectorTest.expectEqual(timeline.records.length, 3, "Should have one record per sample of A.");
+            expectMemoryRecord(timeline.records[0], {timestamp: 10, javascript: 100, images: 0, layers: 10, page: 200});
+            expectMemoryRecord(timeline.records[1], {timestamp: 10.5, javascript: 175, images: 500, layers: 10, page: 235});
+            expectMemoryRecord(timeline.records[2], {timestamp: 11, javascript: 195, images: 600, layers: 10, page: 235});
+            InspectorTest.expectEqual(JSON.stringify(timeline.records[1].toJSON().categories), JSON.stringify([
+                {type: "javascript", size: 150},
+                {type: "jit", size: 25},
+                {type: "images", size: 500},
+                {type: "layers", size: 10},
+                {type: "page", size: 230},
+                {type: "other", size: 5},
+            ]), "Should export the sum of every protocol category.");
+            expectContiguous(timeline);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.Memory.HoldLastValueWhileProcessHasTarget",
+        description: "A process that stops reporting should keep its last value while it has a target, and count 0 after.",
+        async test() {
+            let timeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+            const nextTargetB = {identifier: "frame-4", processIdentifier: "B"};
+            let live = [targetA, targetB, nextTargetB];
+
+            addSample(timeline, live, targetA, memorySample(10, {javascript: 100}));
+            addSample(timeline, live, targetB, memorySample(10.2, {images: 500}));
+            InspectorTest.log("The target that reports for B goes away, and another target of B takes over.");
+            live.remove(targetB);
+            addSample(timeline, live, targetA, memorySample(10.5, {javascript: 100}));
+            addSample(timeline, live, targetA, memorySample(11, {javascript: 100}));
+            addSample(timeline, live, nextTargetB, memorySample(11.2, {images: 700}));
+            InspectorTest.log("The last target of B goes away.");
+            live.remove(nextTargetB);
+            addSample(timeline, live, targetA, memorySample(11.5, {javascript: 100}));
+
+            InspectorTest.expectShallowEqual(timeline.records.map((record) => record.totalSize), [100, 600, 600, 100], "B should keep its last value until another target reports, and count 0 after its last target is gone.");
+
+            InspectorTest.log("A capture stops while B has a target but has not reported.");
+            let stoppedTimeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+            let stoppedLive = [targetA, targetB];
+            addSample(stoppedTimeline, stoppedLive, targetA, memorySample(10, {javascript: 100}));
+            addSample(stoppedTimeline, stoppedLive, targetB, memorySample(10.2, {images: 500}));
+            addSample(stoppedTimeline, stoppedLive, targetA, memorySample(10.5, {javascript: 100}));
+            flush(stoppedTimeline, stoppedLive);
+            InspectorTest.expectShallowEqual(stoppedTimeline.records.map((record) => record.totalSize), [100, 600], "Stopping should add the waiting record with B's last value.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.ReportingTargetRemovedWhileProcessHasAnotherTarget",
+        description: "When the target that reports for a process goes away and another target of the process stays, records should keep coming. The process should count 0 for CPU after its last sample, and keep its last Memory value.",
+        async test() {
+            // After a page swap, the old page's process can still host a frame of the new page, which does not report.
+            const otherTargetA = {identifier: "frame-3", processIdentifier: "A"};
+
+            InspectorTest.log("CPU, when B's samples end the records:");
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, otherTargetA, targetB];
+            let recordCountsAfterRemoval = [];
+            await expectNoAssertionFailures(() => {
+                addSample(timeline, live, targetB, cpuSample(10, [mainThread(40)]));
+                addSample(timeline, live, targetA, cpuSample(10.2, [mainThread(10)]));
+                addSample(timeline, live, targetB, cpuSample(10.5, [mainThread(40)]));
+                addSample(timeline, live, targetA, cpuSample(10.7, [mainThread(20), workerThread("worker-a", 10)]));
+                InspectorTest.log("The target that reports for A goes away. Another target of A stays.");
+                live.remove(targetA);
+                recordCountsAfterRemoval.push(addSample(timeline, live, targetB, cpuSample(11, [mainThread(40)])).length);
+                recordCountsAfterRemoval.push(addSample(timeline, live, targetB, cpuSample(11.5, [mainThread(40)])).length);
+            });
+            InspectorTest.expectShallowEqual(recordCountsAfterRemoval, [1, 1], "Every sample of B should add a record right away.");
+            let expectedRecords = [
+                {timestamp: 10, usage: 40, main: 40, worker: 0},
+                {timestamp: 10.5, usage: 40 + 10 * 0.4 + 30 * 0.6, main: 40 + 10 * 0.4 + 20 * 0.6, worker: 10 * 0.6},
+                {timestamp: 11, usage: 40 + 30 * 0.4, main: 40 + 20 * 0.4, worker: 10 * 0.4},
+                {timestamp: 11.5, usage: 40, main: 40, worker: 0},
+            ];
+            InspectorTest.expectEqual(timeline.records.length, expectedRecords.length, "Should have one record per sample of B.");
+            timeline.records.forEach((record, i) => expectCPURecord(record, expectedRecords[i]));
+            expectContiguous(timeline);
+
+            InspectorTest.log("CPU, when A's samples end the records:");
+            let clockTimeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let clockLive = [targetA, otherTargetA, targetB];
+            let samples = phaseOffsetSamples();
+            await expectNoAssertionFailures(() => {
+                addSample(clockTimeline, clockLive, targetA, samples.a10);
+                addSample(clockTimeline, clockLive, targetB, samples.b10_2);
+                addSample(clockTimeline, clockLive, targetA, samples.a10_5);
+                addSample(clockTimeline, clockLive, targetB, samples.b10_7);
+                InspectorTest.log("The target that reports for A goes away. Another target of A stays.");
+                clockLive.remove(targetA);
+                addSample(clockTimeline, clockLive, targetB, samples.b11_2);
+                addSample(clockTimeline, clockLive, targetB, cpuSample(11.7, [mainThread(20)]));
+            });
+            let expectedClockRecords = phaseOffsetRecords.slice(0, 2).concat(
+                {timestamp: 11.2, usage: round((30 * 0.2 + 20 * 0.5) / 0.7), main: 20, worker: round(10 * 0.2 / 0.7)},
+                {timestamp: 11.7, usage: 20, main: 20, worker: 0});
+            InspectorTest.expectEqual(clockTimeline.records.length, expectedClockRecords.length, "B's samples should end the records from then on.");
+            clockTimeline.records.forEach((record, i) => expectCPURecord(record, expectedClockRecords[i]));
+            expectContiguous(clockTimeline);
+
+            InspectorTest.log("Memory:");
+            let memoryTimeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+            let memoryLive = [targetA, otherTargetA, targetB];
+            addSample(memoryTimeline, memoryLive, targetB, memorySample(10, {javascript: 100}));
+            addSample(memoryTimeline, memoryLive, targetA, memorySample(10.2, {images: 500}));
+            addSample(memoryTimeline, memoryLive, targetB, memorySample(10.5, {javascript: 100}));
+            addSample(memoryTimeline, memoryLive, targetA, memorySample(10.7, {images: 600}));
+            InspectorTest.log("The target that reports for A goes away. Another target of A stays.");
+            memoryLive.remove(targetA);
+            addSample(memoryTimeline, memoryLive, targetB, memorySample(11, {javascript: 100}));
+            addSample(memoryTimeline, memoryLive, targetB, memorySample(11.5, {javascript: 100}));
+            InspectorTest.log("The last target of A goes away.");
+            memoryLive.remove(otherTargetA);
+            addSample(memoryTimeline, memoryLive, targetB, memorySample(12, {javascript: 100}));
+            InspectorTest.expectShallowEqual(memoryTimeline.records.map((record) => record.totalSize), [100, 600, 700, 700, 100], "A should keep its last value while it has a target, and count 0 after.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.StopFlushesWaitingRecords",
+        description: "When capturing stops, the recording should add the records that wait for a late process.",
+        async test() {
+            let recording = new WI.TimelineRecording("process-sample-timeline-test", "Test");
+            let timeline = recording.timelineForRecordType(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            function addToRecording(target, record) {
+                for (let aggregateRecord of timeline.addProcessRecord(target, record, live))
+                    recording.addRecord(aggregateRecord);
+            }
+
+            addToRecording(targetA, cpuSample(10, [mainThread(40)]));
+            addToRecording(targetB, cpuSample(10.2, [mainThread(10)]));
+            addToRecording(targetA, cpuSample(10.5, [mainThread(40)]));
+            InspectorTest.expectEqual(timeline.records.length, 1, "The record at 10.5 should wait for B.");
+
+            recording.capturingStopped(10.6);
+            InspectorTest.expectEqual(timeline.records.length, 2, "Stopping should add the waiting record.");
+            expectCPURecord(timeline.records[1], {timestamp: 10.5, usage: 40 + 10 * 0.4, main: 40 + 10 * 0.4, worker: 0});
+
+            InspectorTest.log("Next capture.");
+            addToRecording(targetA, cpuSample(20, [mainThread(40)]));
+            InspectorTest.expectEqual(timeline.records.length, 3, "A new capture should not wait for a process that has not reported in it.");
+            expectCPURecord(timeline.records[2], {timestamp: 20, usage: 40, main: 40, worker: 0});
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.Import",
+        description: "Imported records should be added as they are, including records that combine processes.",
+        async test() {
+            let timeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            let live = [targetA, targetB];
+            let samples = phaseOffsetSamples();
+            for (let [target, record] of [[targetA, samples.a10], [targetB, samples.b10_2], [targetA, samples.a10_5], [targetB, samples.b10_7]]) {
+                for (let aggregateRecord of timeline.addProcessRecord(target, record, live))
+                    timeline.addRecord(aggregateRecord);
+            }
+            let memoryRecord = memorySample(10, {javascript: 100, images: 0, page: 200});
+
+            let recording = null;
+            await expectNoAssertionFailures(async () => {
+                recording = await WI.TimelineRecording.import("process-sample-timeline-import", {
+                    startTime: 9.5,
+                    endTime: 10.5,
+                    discontinuities: [],
+                    instrumentTypes: [WI.TimelineRecord.Type.CPU, WI.TimelineRecord.Type.Memory],
+                    records: [...timeline.records.map((record) => record.toJSON()), memoryRecord.toJSON()],
+                    markers: [],
+                    memoryPressureEvents: [],
+                }, "Test");
+            });
+
+            let importedTimeline = recording.timelineForRecordType(WI.TimelineRecord.Type.CPU);
+            InspectorTest.expectEqual(importedTimeline.records.length, 2, "Should import every CPU record.");
+            importedTimeline.records.forEach((record, i) => expectCPURecord(record, phaseOffsetRecords[i]));
+            InspectorTest.expectShallowEqual(importedTimeline.records[1].threads.filter((thread) => thread.type === MainThread).map((thread) => thread.processKey), ["A", "B"], "Should import the process of each main thread.");
+            InspectorTest.expectEqual(importedTimeline.processRecords.size, 0, "Imported records should not be kept per process.");
+
+            let importedMemoryTimeline = recording.timelineForRecordType(WI.TimelineRecord.Type.Memory);
+            InspectorTest.expectEqual(importedMemoryTimeline.records.length, 1, "Should import every Memory record.");
+            expectMemoryRecord(importedMemoryTimeline.records[0], {timestamp: 10, javascript: 100, images: 0, layers: 0, page: 200});
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessSampleTimeline.CaptureWithOneProcess",
+        description: "A capture with one process should add one record per sample, equal to the sample.",
+        async test() {
+            let timelineTypes = [WI.TimelineRecord.Type.CPU, WI.TimelineRecord.Type.Memory];
+            let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
+            WI.timelineManager.enabledTimelineTypes = timelineTypes;
+
+            // An empty recording is reused, and it was created with the default instruments.
+            for (let type of timelineTypes) {
+                let activeRecording = WI.timelineManager.activeRecording;
+                if (activeRecording.isEmpty() && !activeRecording.instruments.some((instrument) => instrument.timelineRecordType === type))
+                    activeRecording.addInstrument(WI.Instrument.createForTimelineType(type));
+            }
+
+            const newRecording = true;
+            WI.timelineManager.startCapturing(newRecording);
+            let recording = WI.timelineManager.activeRecording;
+
+            let timelines = [recording.timelineForRecordType(WI.TimelineRecord.Type.CPU), recording.timelineForRecordType(WI.TimelineRecord.Type.Memory)];
+            await Promise.all(timelines.map(async (timeline) => {
+                while (timeline.records.length < 3)
+                    await timeline.awaitEvent(WI.Timeline.Event.RecordAdded);
+            }));
+
+            WI.timelineManager.stopCapturing();
+            while (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Inactive)
+                await WI.timelineManager.awaitEvent(WI.TimelineManager.Event.CapturingStateChanged);
+            WI.timelineManager.enabledTimelineTypes = originalTimelineTypes;
+
+            let expectedProcessKey = WI.ProcessSampleTimeline.processKeyForTarget(WI.assumingMainTarget());
+            for (let timeline of timelines) {
+                InspectorTest.log(`${timeline.type}:`);
+                InspectorTest.expectShallowEqual(Array.from(timeline.processRecords.keys()), [expectedProcessKey], "Samples should come from the process of the main target.");
+
+                let samples = timeline.processRecords.get(expectedProcessKey) || [];
+                InspectorTest.expectEqual(timeline.records.length, samples.length, "Should have one record per sample.");
+                InspectorTest.expectThat(timeline.records.every((record, i) => JSON.stringify(record.toJSON()) === JSON.stringify(samples[i]?.toJSON())), "Every record should export like its sample.");
+                expectContiguous(timeline);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WI.CPUTimeline and WI.MemoryTimeline keep samples per process and add up the processes in their records.</p>
+</body>
+</html>

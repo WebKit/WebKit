@@ -63,10 +63,11 @@ WI.ScriptTimeline = class ScriptTimeline extends WI.Timeline
         this.dispatchEventToListeners(WI.Timeline.Event.Refresh);
     }
 
-    mainThreadRecordsInTimeRange(startTime, endTime, options)
+    mainThreadRecordsInTimeRange(startTime, endTime, options, recording)
     {
         // Worker script runs on its own thread, which the CPU graph shows separately.
-        return this.recordsInTimeRange(startTime, endTime, options).filter((record) => record.target.type !== WI.TargetType.Worker);
+        return super.mainThreadRecordsInTimeRange(startTime, endTime, options, recording)
+            .filter((record) => record.target.type !== WI.TargetType.Worker);
     }
 
     callingContextTree(target, type)
