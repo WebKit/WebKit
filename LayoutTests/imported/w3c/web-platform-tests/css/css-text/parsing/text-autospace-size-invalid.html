@@ -10,11 +10,14 @@
 </head>
 <body>
 <script>
+test_invalid_value("text-autospace-size", "-0.25");
 test_invalid_value("text-autospace-size", "normal");
 test_invalid_value("text-autospace-size", "none");
 test_invalid_value("text-autospace-size", "10%");
 test_invalid_value("text-autospace-size", "10px");
 test_invalid_value("text-autospace-size", "calc(1em / 3)");
+test_invalid_value("text-autospace-size", "0.25ic");
+test_invalid_value("text-autospace-size", "0.125 0.25");
 </script>
 </body>
 </html>

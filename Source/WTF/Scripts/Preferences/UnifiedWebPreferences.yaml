@@ -1316,6 +1316,14 @@ CSSSymbolsFunctionEnabled:
   humanReadableDescription: "Enable the CSS Counter Styles symbols() function"
   defaultValue: true
 
+CSSTextAutospaceSizeEnabled:
+  type: bool
+  status: stable
+  category: css
+  humanReadableName: "CSS text-autospace-size property"
+  humanReadableDescription: "Enable the text-autospace-size property, which controls the width of the space inserted by text-autospace"
+  defaultValue: true
+
 CSSTextDecorationInsetEnabled:
   type: bool
   status: stable

@@ -952,7 +952,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (!isCombiningMark(character)) {
                     auto characterClass = TextSpacing::characterClass(character);
                     if (textAutoSpace.shouldApplySpacing(previousCharacterClass, characterClass)) {
-                        textAutoSpaceSpacing = complexTextRun->textAutospaceSize();
+                        textAutoSpaceSpacing = m_fontCascade->textAutospaceSize(font);
                         advance.expand(textAutoSpaceSpacing, 0);
                         // This is added to this glyph's own origin below too, so it moves the whole cluster.
                         advanceAdjustmentExcludedFromMarkCompensation += textAutoSpaceSpacing;
@@ -1032,7 +1032,6 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::spa
     , m_indexEnd(indexEnd)
     , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
-    , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
     auto runLengthInCodeUnits = m_indexEnd - m_indexBegin;
     m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
@@ -1070,7 +1069,6 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& a
     , m_glyphCount(glyphs.size())
     , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
-    , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
 }
 

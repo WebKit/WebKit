@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>Changing text-autospace-size after layout updates the inserted space</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/8510#issuecomment-6438888621">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<link rel="match" href="text-autospace-size-dynamic-001-ref.html">
+<style>
+.test {
+  font-family: Ahem;
+  font-size: 40px;
+  text-autospace: normal;
+}
+</style>
+<div id="container">
+  <div class="test">国国XX国</div>
+  <div class="test" style="text-autospace-size: 0.5">国国XX国</div>
+</div>
+<script>
+// Change text-autospace-size after the initial rendering has been painted.
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  const container = document.getElementById("container");
+  container.style.textAutospaceSize = "0.25";
+  container.children[1].style.textAutospaceSize = "0";
+  requestAnimationFrame(() => {
+    document.documentElement.classList.remove("reftest-wait");
+  });
+}));
+</script>
+</html>

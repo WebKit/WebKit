@@ -123,7 +123,6 @@ public:
         bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
         void setIsNonMonotonic();
-        float textAutospaceSize() const { return m_textAutospaceSize; }
 
     private:
         ComplexTextRun(CTRunRef, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, std::span<const unsigned> originalIndices);
@@ -149,7 +148,6 @@ public:
         unsigned m_stringLocation;
         bool m_isLTR;
         bool m_isMonotonic { true };
-        float m_textAutospaceSize { 0 };
     };
 private:
     ComplexTextController(const TextRun&, const FontCascade&);

@@ -146,6 +146,7 @@ public:
     void setWordSpacing(float spacing) { m_spacing.word = spacing; }
     TextSpacingTrim textSpacingTrim() const { return m_fontDescription.textSpacingTrim(); }
     TextAutospace textAutospace() const { return m_fontDescription.textAutospace(); }
+    NODELETE float textAutospaceSize(const Font&) const;
     inline bool isFixedPitch() const; // Defined in FontCascadeInlines.h
     inline bool canTakeFixedPitchFastContentMeasuring() const; // Defined in FontCascadeInlines.h
 

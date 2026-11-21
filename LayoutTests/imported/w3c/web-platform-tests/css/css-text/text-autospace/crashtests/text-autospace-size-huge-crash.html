@@ -14,21 +14,12 @@
 .a {
   text-autospace-size: 10;
 }
-.b {
-  text-autospace-size: -10;
-}
 /* even extreme values must be handled safely */
-.c {
+.b {
   text-autospace-size: 1000000;
 }
-.d {
-  text-autospace-size: -1000000;
-}
-.e {
+.c {
   text-autospace-size: 1e40;
-}
-.f {
-  text-autospace-size: -1e40;
 }
 </style>
 <div class="a">
@@ -40,18 +31,6 @@
   <div dir="rtl" class="test normal">国国XX国</div>
 </div>
 <div class="c">
-  <div class="test normal">国国XX国</div>
-  <div dir="rtl" class="test normal">国国XX国</div>
-</div>
-<div class="d">
-  <div class="test normal">国国XX国</div>
-  <div dir="rtl" class="test normal">国国XX国</div>
-</div>
-<div class="e">
-  <div class="test normal">国国XX国</div>
-  <div dir="rtl" class="test normal">国国XX国</div>
-</div>
-<div class="f">
   <div class="test normal">国国XX国</div>
   <div dir="rtl" class="test normal">国国XX国</div>
 </div>

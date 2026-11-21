@@ -337,6 +337,7 @@ PASS text-align
 PASS text-align-last
 PASS text-anchor
 PASS text-autospace
+PASS text-autospace-size
 PASS text-box-edge
 PASS text-box-trim
 PASS text-combine-upright
