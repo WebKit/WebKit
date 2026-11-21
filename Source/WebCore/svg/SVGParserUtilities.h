@@ -39,7 +39,7 @@ enum class SuffixSkippingPolicy {
 
 NODELETE std::optional<float> parseNumber(StringParsingBuffer<Latin1Character>&, SuffixSkippingPolicy = SuffixSkippingPolicy::Skip);
 NODELETE std::optional<float> parseNumber(StringParsingBuffer<char16_t>&, SuffixSkippingPolicy = SuffixSkippingPolicy::Skip);
-std::optional<float> parseNumber(StringView, SuffixSkippingPolicy = SuffixSkippingPolicy::Skip);
+std::optional<float> parseNumber(StringView);
 
 std::optional<std::pair<float, float>> parseNumberOptionalNumber(StringView);
 

@@ -55,6 +55,8 @@ const unparseable = [
   { label: 'unit suffix', value: '5px' },
   { label: 'trailing junk', value: '12abc' },
   { label: 'trailing dot', value: '5.' },
+  { label: 'trailing comma', value: '5,' },
+  { label: 'trailing comma and space', value: '5, ' },
   { label: 'two signs', value: '--3' },
   { label: 'lone sign', value: '-' },
 ];
@@ -133,7 +135,7 @@ for (let info of pairs) {
 
   // A pair fails as a whole, so both properties revert. Keeping the first number would leave the
   // element in a state the author never asked for.
-  for (let value of ['3 abc', '3px', '']) {
+  for (let value of ['3 abc', '3px', '', '3,', '3,4,']) {
     test(function() {
       let e = create(info.element);
       e.setAttribute(info.contentAttribute, primer);

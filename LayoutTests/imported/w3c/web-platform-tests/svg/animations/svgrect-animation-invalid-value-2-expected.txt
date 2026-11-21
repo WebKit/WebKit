@@ -1,0 +1,7 @@
+
+PASS An animation with trailing junk in from has no effect
+PASS An animation with trailing junk in to has no effect
+PASS An animation with a fifth number in to has no effect
+PASS An animation with a trailing comma in to has no effect
+PASS An animation with surrounding whitespace and a comma separator is applied
+

@@ -64,7 +64,9 @@ void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomStrin
         if (isPercentage)
             valueView = valueView.left(valueView.length() - 1);
 
-        auto parsedValue = parseNumber(valueView, SuffixSkippingPolicy::DontSkip);
+        std::optional<float> parsedValue;
+        if (!isPercentage || valueView.isEmpty() || !isASCIIWhitespace(valueView[valueView.length() - 1]))
+            parsedValue = parseNumber(valueView);
         if (parsedValue && isPercentage)
             parsedValue = *parsedValue / 100.0f;
 
