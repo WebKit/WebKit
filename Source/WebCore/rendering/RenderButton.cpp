@@ -26,7 +26,6 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "LayoutIntegrationLineLayout.h"
 #include "PlatformRenderTheme.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
@@ -72,16 +71,6 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
 {
     ASSERT(!m_inner.get());
     m_inner = innerRenderer;
-    updateAnonymousChildStyle(protect(innerRenderer.mutableStyle()));
-
-    if (LayoutIntegration::BoxTreeUpdater::isLaidOutByIntegration(innerRenderer)) {
-        if (CheckedPtr inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(innerRenderer)) {
-            if (CheckedPtr inlineLayout = inlineFormattingContextRoot->inlineLayout())
-                inlineLayout->rootStyleWillChange(*inlineFormattingContextRoot, protect(inlineFormattingContextRoot->style()));
-        }
-        if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(innerRenderer))
-            lineLayout->styleWillChange(innerRenderer, protect(innerRenderer.style()), Style::DifferenceResult::Layout);
-    }
 }
 
 void RenderButton::updateAnonymousChildStyle(Style::ComputedStyle& childStyle) const

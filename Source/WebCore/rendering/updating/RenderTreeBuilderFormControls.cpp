@@ -65,14 +65,18 @@ RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& pa
     return m_builder.detach(*innerRenderer, child, willBeDestroyed);
 }
 
-
 CheckedRef<RenderBlock> RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderButton& parent)
 {
     CheckedPtr innerRenderer = parent.innerRenderer();
     if (innerRenderer)
         return innerRenderer.releaseNonNull();
 
-    auto wrapper = Block::createAnonymousBlockWithStyle(protect(parent.document()), protect(parent.style()));
+    auto newStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(parent.style()), Style::DisplayType::BlockFlow);
+    parent.updateAnonymousChildStyle(newStyle);
+
+    auto wrapper = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, protect(parent.document()), WTF::move(newStyle));
+    wrapper->initializeStyle();
+
     innerRenderer = wrapper.get();
     m_builder.blockBuilder().attach(parent, WTF::move(wrapper), nullptr);
     parent.setInnerRenderer(*innerRenderer);

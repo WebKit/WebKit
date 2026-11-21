@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+button { width: 100px; height: 60px; font: 16px monospace; }
+.vertical { writing-mode: vertical-rl; width: 60px; height: 100px; }
+.narrow { width: 40px; }
+</style>
+<button id="horizontal"></button>
+<button id="vertical" class="vertical"></button>
+<button id="narrow" class="narrow"></button>
+<script>
+document.body.offsetHeight;
+document.getElementById("horizontal").append("Text");
+document.getElementById("vertical").append("Text");
+document.getElementById("narrow").append("Overflowing");
+</script>
