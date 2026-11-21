@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+    body {
+        margin: 0;
+        height: 5000px;
+    }
+    #scroller {
+        position: relative;
+        overflow: auto;
+        width: 300px;
+        height: 100px;
+    }
+    .fixed {
+        position: fixed;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        background-color: green;
+    }
+    .relative {
+        position: relative;
+        height: 200px;
+        background-color: blue;
+    }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("load", async () => {
+    if (!window.eventSender)
+        return;
+
+    await UIHelper.startMonitoringWheelEvents();
+    eventSender.mouseMoveTo(100, 300);
+
+    // mouseScrollBy() forces a rendering update and then sends the wheel event to the UI process without waiting. So the
+    // change below happens after the rendering update, and the asynchronous document scroll can only reach the web
+    // process once this script yields, normally before the next layout.
+    eventSender.mouseScrollBy(0, -10);
+
+    // The scroller stops being a composited scroller, which changes the scrolling scope of its descendants. Resolve its
+    // style without laying it out.
+    const scroller = document.getElementById("scroller");
+    scroller.style.overflow = "visible";
+    getComputedStyle(scroller).overflow;
+
+    await UIHelper.waitForScrollCompletion();
+
+    document.getElementById("result").textContent = window.scrollY > 0 ? "PASS: the document scrolled, and nothing crashed." : "FAIL: the document did not scroll.";
+    testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<div id="scroller">
+    <div class="fixed"></div>
+    <div class="relative"></div>
+</div>
+<p id="result">This test requires WebKitTestRunner.</p>
+</body>
+</html>

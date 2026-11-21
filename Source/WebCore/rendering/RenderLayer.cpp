@@ -1690,6 +1690,9 @@ void RenderLayer::verifySkippedLayerPositionsAfterDocumentScroll()
     if (!m_hasVisibleDescendant && !m_hasVisibleContent)
         return;
 
+    if (renderer().view().frameView().layoutContext().needsLayout())
+        return;
+
     updateLayerPosition(nullptr, Verify);
 
     for (auto* child = firstChild(); child; child = child->nextSibling())
