@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
+#include "WebDriverBidiProcessor.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatPoint.h>
@@ -172,15 +173,6 @@ static std::optional<double> numberValue(const JSON::Value& value)
     return value.asDouble();
 }
 
-static std::optional<double> integerValue(const JSON::Value& value, double min, double max)
-{
-    auto number = numberValue(value);
-    if (!number || std::trunc(*number) != *number || *number < min || *number > max)
-        return std::nullopt;
-
-    return number;
-}
-
 // Returns: nullopt = property absent; error string = invalid; value otherwise.
 template<typename T> using PropertyResult = std::expected<std::optional<T>, String>;
 
@@ -190,7 +182,7 @@ static PropertyResult<uint64_t> optionalUnsigned(const JSON::Object& object, con
     if (!value)
         return std::optional<uint64_t> { };
 
-    auto integer = integerValue(*value, 0, max);
+    auto integer = WebDriverBidiProcessor::integerValue(*value, 0, max);
     if (!integer)
         return makeUnexpected(makeString("'"_s, name, "' must be an integer between 0 and "_s, max));
 
@@ -216,7 +208,7 @@ static PropertyResult<int> optionalIntegerInRange(const JSON::Object& object, co
     if (!value)
         return std::optional<int> { };
 
-    auto integer = integerValue(*value, min, max);
+    auto integer = WebDriverBidiProcessor::integerValue(*value, min, max);
     if (!integer)
         return makeUnexpected(makeString("'"_s, name, "' must be an integer in range"_s));
 
@@ -252,15 +244,11 @@ static std::optional<String> elementOriginSharedId(const JSON::Value& origin)
     if (!element)
         return std::nullopt;
 
-    RefPtr sharedId = element->getValue("sharedId"_s);
-    if (!sharedId || sharedId->type() != JSON::Value::Type::String)
+    auto remoteReference = WebDriverBidiProcessor::parseRemoteReference(*element);
+    if (!remoteReference || remoteReference->sharedId.isNull())
         return std::nullopt;
 
-    RefPtr handle = element->getValue("handle"_s);
-    if (handle && handle->type() != JSON::Value::Type::String)
-        return std::nullopt;
-
-    return sharedId->asString();
+    return remoteReference->sharedId;
 }
 
 static std::expected<void, String> processOrigin(const JSON::Object& item, Action& action, bool allowPointerOrigin)
@@ -352,7 +340,7 @@ static std::expected<void, String> processPointerProperties(const JSON::Object& 
 static std::expected<void, String> processButton(const JSON::Object& item, Action& action)
 {
     RefPtr value = item.getValue("button"_s);
-    auto button = value ? integerValue(*value, 0, maxSafeInteger) : std::nullopt;
+    auto button = value ? WebDriverBidiProcessor::integerValue(*value, 0, maxSafeInteger) : std::nullopt;
     if (!button)
         return makeUnexpected("'button' must be an integer between 0 and 2^53-1"_s);
 
@@ -430,7 +418,7 @@ static std::expected<void, String> processWheelAction(const JSON::Object& item, 
 
     auto integerProperty = [&](ASCIILiteral name) -> std::optional<int64_t> {
         RefPtr value = item.getValue(String { name });
-        auto integer = value ? integerValue(*value, -maxSafeInteger, maxSafeInteger) : std::nullopt;
+        auto integer = value ? WebDriverBidiProcessor::integerValue(*value, -maxSafeInteger, maxSafeInteger) : std::nullopt;
         return integer ? std::optional<int64_t> { static_cast<int64_t>(*integer) } : std::nullopt;
     };
 

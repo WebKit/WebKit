@@ -44,8 +44,10 @@
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-LocalValue",
             "type": "object",
             "properties": [
-                { "name": "type", "$ref": "BidiScript.LocalValueType" },
-                { "name": "value", "type": "any" }
+                { "name": "type", "$ref": "BidiScript.LocalValueType", "optional": true },
+                { "name": "value", "type": "any", "optional": true },
+                { "name": "sharedId", "$ref": "BidiScript.SharedId", "optional": true },
+                { "name": "handle", "$ref": "BidiScript.Handle", "optional": true }
             ]
         },
         {
@@ -55,10 +57,18 @@
             "type": "string",
             "enum": [
                 "array",
+                "bigint",
+                "boolean",
+                "channel",
                 "date",
                 "map",
+                "null",
+                "number",
                 "object",
-                "set"
+                "regexp",
+                "set",
+                "string",
+                "undefined"
             ]
         },
         {

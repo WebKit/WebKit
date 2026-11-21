@@ -46,6 +46,7 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/MathCommon.h>
+#include <cmath>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -96,33 +97,43 @@ void WebDriverBidiProcessor::processBidiMessage(const String& message)
     m_backendDispatcher->dispatch(message);
 }
 
+std::optional<double> WebDriverBidiProcessor::integerValue(const JSON::Value& value, double minimum, double maximum)
+{
+    if (value.type() != JSON::Value::Type::Double && value.type() != JSON::Value::Type::Integer)
+        return std::nullopt;
+
+    auto number = value.asDouble();
+    if (!number || std::trunc(*number) != *number || *number < minimum || *number > maximum)
+        return std::nullopt;
+
+    return number;
+}
+
+std::optional<WebDriverBidiProcessor::RemoteReference> WebDriverBidiProcessor::parseRemoteReference(const JSON::Object& object)
+{
+    RemoteReference remoteReference;
+    if (auto sharedId = object.getValue("sharedId"_s); sharedId && !sharedId->asString(remoteReference.sharedId))
+        return std::nullopt;
+    if (auto handle = object.getValue("handle"_s); handle && !handle->asString(remoteReference.handle))
+        return std::nullopt;
+    if (remoteReference.sharedId.isNull() && remoteReference.handle.isNull())
+        return std::nullopt;
+    return remoteReference;
+}
+
 Inspector::CommandResult<void> WebDriverBidiProcessor::validateSerializationOptions(const JSON::Object& serializationOptions)
 {
-    RefPtr<JSON::Value> maxDomDepthValue;
-    if (serializationOptions.getValue("maxDomDepth"_s, maxDomDepthValue)) {
-        if (auto maxDomDepth = maxDomDepthValue->asDouble()) {
-            if (*maxDomDepth < 0)
-                return makeUnexpected("serializationOptions.maxDomDepth must be non-negative"_s);
-            if (std::floor(*maxDomDepth) != *maxDomDepth)
-                return makeUnexpected("serializationOptions.maxDomDepth must be an integer"_s);
-            if (*maxDomDepth > JSC::maxSafeInteger())
-                return makeUnexpected("serializationOptions.maxDomDepth exceeds maximum safe integer"_s);
-        }
+    for (auto key : { "maxDomDepth"_s, "maxObjectDepth"_s }) {
+        if (auto value = serializationOptions.getValue(key); value && !value->isNull() && !integerValue(*value, 0, JSC::maxSafeInteger()))
+            return makeUnexpected(makeString("serializationOptions."_s, key, " must be null or an integer between 0 and 2^53-1"_s));
     }
 
-    RefPtr<JSON::Value> maxObjectDepthValue;
-    if (serializationOptions.getValue("maxObjectDepth"_s, maxObjectDepthValue)) {
-        if (auto maxObjectDepth = maxObjectDepthValue->asDouble()) {
-            if (*maxObjectDepth < 0)
-                return makeUnexpected("serializationOptions.maxObjectDepth must be non-negative"_s);
-            if (std::floor(*maxObjectDepth) != *maxObjectDepth)
-                return makeUnexpected("serializationOptions.maxObjectDepth must be an integer"_s);
-            if (*maxObjectDepth > JSC::maxSafeInteger())
-                return makeUnexpected("serializationOptions.maxObjectDepth exceeds maximum safe integer"_s);
-        }
+    RefPtr<JSON::Value> includeShadowTreeValue;
+    if (serializationOptions.getValue("includeShadowTree"_s, includeShadowTreeValue)) {
+        String includeShadowTree;
+        if (!includeShadowTreeValue->asString(includeShadowTree) || (includeShadowTree != "none"_s && includeShadowTree != "open"_s && includeShadowTree != "all"_s))
+            return makeUnexpected("serializationOptions.includeShadowTree must be none, open, or all"_s);
     }
-
-    // Note: includeShadowTree validation is handled by the protocol enum definition in BidiScript.json
 
     return { };
 }
