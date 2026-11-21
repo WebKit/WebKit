@@ -151,6 +151,34 @@ ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char
     return convertInternal<Replacement::ReplaceInvalidSequences>(source, buffer);
 }
 
+size_t lengthUTF8(std::span<const Latin1Character> source)
+{
+    return simdutf::utf8_length_from_latin1(byteCast<uint8_t>(source));
+}
+
+size_t lengthUTF8(std::span<const char16_t> source)
+{
+    return simdutf::utf8_length_from_utf16le_with_replacement(source).count;
+}
+
+size_t lengthUTF8AssumingWellFormed(std::span<const char16_t> source)
+{
+    return simdutf::utf8_length_from_utf16le(source);
+}
+
+bool convertWellFormed(std::span<const char16_t> source, std::span<char8_t> buffer)
+{
+    ASSERT(buffer.size() >= lengthUTF8AssumingWellFormed(source));
+    return simdutf::convert_utf16le_to_utf8_with_errors(source, buffer).error == simdutf::error_code::SUCCESS;
+}
+
+void convertReplacingUnpairedSurrogates(std::span<const char16_t> source, std::span<char8_t> buffer)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(buffer.size() == lengthUTF8(source));
+    auto written = simdutf::convert_utf16le_to_utf8_with_replacement(source, buffer);
+    ASSERT_UNUSED(written, written == buffer.size());
+}
+
 std::span<const char8_t> checkUTF8WithoutUTF16Length(std::span<const char8_t> source)
 {
     auto result = simdutf::validate_utf8_with_errors(source);

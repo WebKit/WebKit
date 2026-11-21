@@ -108,20 +108,33 @@ bool StringView::endsWithIgnoringASCIICase(StringView suffix) const
     return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
 
+template<typename CharacterType> static ASCIICString asciiForCharacters(std::span<const CharacterType> characters)
+{
+    // Printable ASCII characters 32..127 and the null character are
+    // preserved, characters outside of this range are converted to '?'.
+
+    std::span<char> characterBuffer;
+    auto result = ASCIICString::newUninitialized(characters.size(), characterBuffer);
+
+    size_t characterBufferIndex = 0;
+    for (auto character : characters)
+        characterBuffer[characterBufferIndex++] = character && (character < 0x20 || character > 0x7f) ? '?' : static_cast<char>(character);
+
+    return result;
+}
+
 ASCIICString StringView::ascii() const
 {
     if (is8Bit())
-        return StringImpl::asciiForCharacters(span8());
-    return StringImpl::asciiForCharacters(span16());
+        return asciiForCharacters(span8());
+    return asciiForCharacters(span16());
 }
 
 std::expected<UTF8CString, UTF8ConversionError> StringView::tryGetUTF8(ConversionMode mode) const
 {
-    if (isNull())
-        return UTF8CString { u8""_span };
-    if (is8Bit())
-        return StringImpl::utf8ForCharacters(span8());
-    return StringImpl::utf8ForCharacters(span16(), mode);
+    return tryGetUTF8([](std::span<const char8_t> converted) {
+        return UTF8CString { converted };
+    }, mode);
 }
 
 UTF8CString StringView::utf8(ConversionMode mode) const
@@ -129,6 +142,35 @@ UTF8CString StringView::utf8(ConversionMode mode) const
     auto expectedString = tryGetUTF8(mode);
     RELEASE_ASSERT(expectedString);
     return expectedString.value();
+}
+
+template<typename CharacterType, size_t inlineCapacity>
+static std::expected<void, UTF8ConversionError> convertUTF16ToUTF8(std::span<const char16_t> characters, Vector<CharacterType, inlineCapacity>& buffer, ConversionMode mode)
+{
+    // Exact unless there are unpaired surrogates, which make the conversion fail.
+    size_t utf8Length = Unicode::lengthUTF8AssumingWellFormed(characters);
+    if (!isValidCapacityForVector<CharacterType>(utf8Length)) [[unlikely]]
+        return makeUnexpected(UTF8ConversionError::OutOfMemory);
+
+    buffer.resizeToFit(utf8Length);
+    if (Unicode::convertWellFormed(characters, byteCast<char8_t>(buffer.mutableSpan())))
+        return { };
+
+    if (mode == ConversionMode::Strict)
+        return makeUnexpected(UTF8ConversionError::Invalid);
+
+    utf8Length = Unicode::lengthUTF8(characters);
+    if (!isValidCapacityForVector<CharacterType>(utf8Length)) [[unlikely]]
+        return makeUnexpected(UTF8ConversionError::OutOfMemory);
+
+    buffer.resizeToFit(utf8Length);
+    Unicode::convertReplacingUnpairedSurrogates(characters, byteCast<char8_t>(buffer.mutableSpan()));
+    return { };
+}
+
+std::expected<void, UTF8ConversionError> StringView::convertToUTF8(std::span<const char16_t> characters, Vector<char8_t, 1024>& buffer, ConversionMode mode)
+{
+    return convertUTF16ToUTF8(characters, buffer, mode);
 }
 
 Vector<uint8_t> utf8Bytes(StringView string)
@@ -141,7 +183,7 @@ Vector<uint8_t> utf8Bytes(StringView string)
         return bytes;
     }
     Vector<uint8_t> bytes;
-    auto result = StringImpl::convertToUTF8(string.span16(), bytes, ConversionMode::Lenient);
+    auto result = convertUTF16ToUTF8(string.span16(), bytes, ConversionMode::Lenient);
     RELEASE_ASSERT(result);
     return bytes;
 }
@@ -456,8 +498,8 @@ String normalizedNFC(const String& string)
 size_t utf8Length(StringView string)
 {
     if (string.is8Bit())
-        return simdutf::utf8_length_from_latin1(byteCast<uint8_t>(string.span8()));
-    return StringImpl::utf8LengthFromUTF16ReplacingUnpairedSurrogates(string.span16());
+        return Unicode::lengthUTF8(string.span8());
+    return Unicode::lengthUTF8(string.span16());
 }
 
 bool equalRespectingNullity(StringView a, StringView b)

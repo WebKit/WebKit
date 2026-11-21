@@ -524,14 +524,6 @@ inline String String::substring(unsigned position, unsigned length) const
     SUPPRESS_UNCOUNTED_ARG return m_impl->substring(position, length);
 }
 
-template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> String::tryGetUTF8(NOESCAPE const Func& function, ConversionMode mode) const
-{
-    if (!m_impl)
-        return function(nonNullEmptyUTF8Span());
-    SUPPRESS_UNCOUNTED_ARG return m_impl->tryGetUTF8(function, mode);
-}
-
 #if USE(FOUNDATION) && defined(__OBJC__)
 
 inline RetainPtr<NSString> String::createNSString() const

@@ -163,7 +163,7 @@ void printInternal(PrintStream& out, const StringImpl* string)
         printInternal(out, "(null StringImpl*)");
         return;
     }
-    printExpectedCStringHelper(out, "StringImpl*", string->tryGetUTF8());
+    printExpectedCStringHelper(out, "StringImpl*", StringView { *string }.tryGetUTF8());
 }
 
 void printInternal(PrintStream& stream, std::span<const char8_t> codeUnits)
