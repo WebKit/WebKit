@@ -2003,7 +2003,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     load(loader.get(), initiatorOrigin.get());
 }
 
-void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, NavigationAction&& action, FrameLoadType type, RefPtr<const FormSubmission>&& formSubmission, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, std::optional<NavigationIdentifier> navigationIDForCacheOnlyLoadRetry, CompletionHandler<void()>&& completionHandler)
+void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, NavigationAction&& action, FrameLoadType type, RefPtr<const FormSubmission>&& formSubmission, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, std::optional<NavigationIdentifier> navigationIDForCacheOnlyLoadRetry, CompletionHandler<void()>&& completionHandler, ResourceRequest&& originalRequest)
 {
     FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderLoadWithNavigationAction);
 
@@ -2020,7 +2020,7 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
     }
 
     auto&& substituteData = defaultSubstituteDataForURL(request.url());
-    Ref loader = m_client->createDocumentLoader(WTF::move(request), WTF::move(substituteData));
+    Ref loader = m_client->createDocumentLoader(WTF::move(request), WTF::move(substituteData), WTF::move(originalRequest));
     if (navigationIDForCacheOnlyLoadRetry) {
         loader->setNavigationID(*navigationIDForCacheOnlyLoadRetry);
         loader->markIsCacheOnlyLoadRetry();
@@ -5013,6 +5013,11 @@ void FrameLoader::resumeDeferredTraversal()
     loadSameDocumentItem(*item);
 }
 
+void FrameLoader::setRedirectedRequestForContinuingHistoryLoad(std::optional<ResourceRequest>&& request)
+{
+    m_redirectedRequestForContinuingHistoryLoad = request ? makeUnique<ResourceRequest>(WTF::move(*request)) : nullptr;
+}
+
 // FIXME: This function should really be split into a couple pieces, some of
 // which should be methods of HistoryController and some of which should be
 // methods of FrameLoader.
@@ -5021,6 +5026,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadDifferentDocumentItem: frame load started");
 
     Ref frame = m_frame.get();
+    auto redirectedRequest = std::exchange(m_redirectedRequestForContinuingHistoryLoad, nullptr);
 
     // History items should not be reported to the parent.
     m_shouldReportResourceTimingToParentFrame = false;
@@ -5136,7 +5142,11 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
     action.setNavigationAPIType(determineNavigationType(loadType, NavigationHistoryBehavior::Auto));
     action.setPolicyAlreadyDecided(policyAlreadyDecided);
 
-    loadWithNavigationAction(WTF::move(request), WTF::move(action), loadType, { }, AllowNavigationToInvalidURL::Yes, shouldTreatAsContinuingLoad, shouldRestoreFromBackForwardCache, navigationIDForCacheOnlyLoadRetry);
+    ResourceRequest originalRequest;
+    if (redirectedRequest && shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::No)
+        originalRequest = std::exchange(request, WTF::move(*redirectedRequest));
+
+    loadWithNavigationAction(WTF::move(request), WTF::move(action), loadType, { }, AllowNavigationToInvalidURL::Yes, shouldTreatAsContinuingLoad, shouldRestoreFromBackForwardCache, navigationIDForCacheOnlyLoadRetry, [] { }, WTF::move(originalRequest));
 }
 
 bool FrameLoader::shouldDispatchNavigateEventForHistoryTraversal(const HistoryItem& item, const HistoryItem* fromItem)

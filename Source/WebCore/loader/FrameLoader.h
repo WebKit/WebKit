@@ -346,6 +346,8 @@ public:
     NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior() const { return m_navigationUpgradeToHTTPSBehavior; }
     void setNavigationUpgradeToHTTPSBehavior(NavigationUpgradeToHTTPSBehavior behavior) { m_navigationUpgradeToHTTPSBehavior = behavior; }
 
+    WEBCORE_EXPORT void setRedirectedRequestForContinuingHistoryLoad(std::optional<ResourceRequest>&&);
+
     bool shouldSkipHTTPSUpgradeForSameSiteNavigation() const { return m_shouldSkipHTTPSUpgradeForSameSiteNavigation; }
 
     WEBCORE_EXPORT void completePageTransitionIfNeeded();
@@ -480,7 +482,7 @@ private:
     bool shouldCheckNavigationPolicyAfterDispatchingEvents(DocumentLoader&);
     void load(DocumentLoader&, const SecurityOrigin* requesterOrigin); // Calls loadWithDocumentLoader
 
-    void loadWithNavigationAction(ResourceRequest&&, NavigationAction&&, FrameLoadType, RefPtr<const FormSubmission>&&, AllowNavigationToInvalidURL, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, std::optional<NavigationIdentifier> navigationIDForCacheOnlyLoadRetry = std::nullopt, CompletionHandler<void()>&& = [] { }); // Calls loadWithDocumentLoader
+    void loadWithNavigationAction(ResourceRequest&&, NavigationAction&&, FrameLoadType, RefPtr<const FormSubmission>&&, AllowNavigationToInvalidURL, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, std::optional<NavigationIdentifier> navigationIDForCacheOnlyLoadRetry = std::nullopt, CompletionHandler<void()>&& = [] { }, ResourceRequest&& originalRequest = { }); // Calls loadWithDocumentLoader
 
     void loadPostRequest(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, RefPtr<const FormSubmission>&&, CompletionHandler<void()>&&);
     void loadURL(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, RefPtr<const FormSubmission>&&, std::optional<PrivateClickMeasurement>&&, CompletionHandler<void()>&&);
@@ -606,6 +608,7 @@ private:
 
     bool m_inStopForBackForwardCache { false };
     NavigationUpgradeToHTTPSBehavior m_navigationUpgradeToHTTPSBehavior { NavigationUpgradeToHTTPSBehavior::BasedOnPolicy };
+    std::unique_ptr<ResourceRequest> m_redirectedRequestForContinuingHistoryLoad;
     bool m_shouldSkipHTTPSUpgradeForSameSiteNavigation { false };
     bool m_shouldRestoreScrollPositionAndViewState { false };
 

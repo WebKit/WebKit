@@ -9068,6 +9068,84 @@ TEST(SiteIsolation, CrossSiteIframeUnsafeURLReferrerPolicyAfterPersistedSessionR
     testCrossSiteIframeReferrerAfterPersistedSessionRestore("unsafe-url"_s, @"https://example.com/main");
 }
 
+TEST(SiteIsolation, PostMessageToCrossSiteIframeAfterPersistedSessionRestoreWithSameSiteRedirectAndCOOP)
+{
+    HTTPServer server({
+        { "/start"_s, { "<script>history.replaceState(null, '', '/redirect'); alert('ready');</script>"_s } },
+        { "/redirect"_s, { 302, { { "Location"_s, "https://example.com/final"_s } }, "redirecting..."_s } },
+        { "/final"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "<iframe src='https://webkit.org/frame' onload='this.contentWindow.postMessage(\"ping\", \"*\")'></iframe>"_s } },
+        { "/frame"_s, { "<script>onmessage = (event) => alert(event.origin + ' ' + event.data);</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.example.com/start"]]];
+    EXPECT_WK_STREQ("ready", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://www.example.com/redirect", [webView URL].absoluteString);
+
+    RetainPtr persistedSessionState = adoptNS([[_WKSessionState alloc] initWithData:[[webView _sessionState] data]]);
+    auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [newWebView _restoreSessionState:persistedSessionState.get() andNavigate:YES];
+    EXPECT_WK_STREQ("https://example.com ping", [newWebView _test_waitForAlert]);
+
+    EXPECT_WK_STREQ("https://example.com/final", [newWebView URL].absoluteString);
+    EXPECT_WK_STREQ("https://www.example.com/redirect", [newWebView backForwardList].currentItem.initialURL.absoluteString);
+    EXPECT_WK_STREQ("back_forward", [newWebView objectByEvaluatingJavaScript:@"performance.getEntriesByType('navigation')[0].type"]);
+}
+
+TEST(SiteIsolation, GoBackWithCrossSiteRedirect)
+{
+    Vector<String> requestedPaths;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            requestedPaths.append(path);
+            if (path == "/start"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<script>history.replaceState(null, '', '/redirect'); alert('ready');</script>"_s).serialize());
+                continue;
+            }
+            if (path == "/other"_s) {
+                co_await connection.awaitableSend(HTTPResponse("other"_s).serialize());
+                continue;
+            }
+            if (path == "/redirect"_s) {
+                co_await connection.awaitableSend(HTTPResponse(302, { { "Location"_s, "https://webkit.org/final"_s } }, "redirecting..."_s).serialize());
+                continue;
+            }
+            if (path == "/final"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<script>alert(location.href + ' ' + origin)</script>"_s).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPoolWithBackForwardCacheDisabled().get()];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.example.com/start"]]];
+    EXPECT_WK_STREQ("ready", [webView _test_waitForAlert]);
+    EXPECT_TRUE(Util::waitFor([&] { return ![webView isLoading]; }));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.example.com/other"]]];
+    EXPECT_TRUE(Util::waitFor([&] { return [[webView URL].absoluteString isEqualToString:@"https://www.example.com/other"] && ![webView isLoading]; }));
+    EXPECT_WK_STREQ("https://www.example.com/redirect", [webView backForwardList].backItem.URL.absoluteString);
+
+    requestedPaths.clear();
+    [webView goBack];
+    EXPECT_WK_STREQ("https://webkit.org/final https://webkit.org", [webView _test_waitForAlert]);
+
+    EXPECT_EQ(requestedPaths.size(), 2u);
+    if (requestedPaths.size() == 2) {
+        EXPECT_WK_STREQ("/redirect", requestedPaths[0]);
+        EXPECT_WK_STREQ("/final", requestedPaths[1]);
+    }
+    EXPECT_WK_STREQ("https://webkit.org/final", [webView URL].absoluteString);
+    EXPECT_WK_STREQ("https://www.example.com/redirect", [webView backForwardList].currentItem.initialURL.absoluteString);
+    EXPECT_WK_STREQ("back_forward", [webView objectByEvaluatingJavaScript:@"performance.getEntriesByType('navigation')[0].type"]);
+}
+
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];

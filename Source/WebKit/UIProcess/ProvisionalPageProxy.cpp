@@ -418,10 +418,14 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
     SandboxExtension::Handle sandboxExtensionHandle;
     URL itemURL { item.url() };
     Ref frameState = copyFrameStateForBackForwardNavigation(navigation, item);
+    std::optional<ResourceRequest> redirectedRequest;
+    if (navigation.currentRequestIsRedirect())
+        redirectedRequest = navigation.currentRequest();
     page->maybeInitializeSandboxExtensionHandle(process, itemURL, item.resourceDirectoryURL(), true, [
         weakThis = WeakPtr { *this },
         itemURL,
         frameState = WTF::move(frameState),
+        redirectedRequest = WTF::move(redirectedRequest),
         navigationLoadType = *navigation.backForwardFrameLoadType(),
         shouldTreatAsContinuingLoad,
         websitePoliciesData = WTF::move(websitePoliciesData),
@@ -432,10 +436,10 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(itemURL);
+        auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(redirectedRequest ? redirectedRequest->url() : itemURL);
         if (sandboxExtension)
             sandboxExtensionHandle = WTF::move(*sandboxExtension);
-        GoToBackForwardItemParameters parameters { navigation->navigationID(), WTF::move(frameState), navigationLoadType, shouldTreatAsContinuingLoad, WTF::move(websitePoliciesData), weakThis->m_page->lastNavigationWasAppInitiated(), WebCore::ShouldRestoreFromBackForwardCache::Unspecified, existingNetworkResourceLoadIdentifierToResume, WTF::move(publicSuffix), WTF::move(sandboxExtensionHandle), shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No ? navigation->agentClusterAssignment() : std::nullopt };
+        GoToBackForwardItemParameters parameters { navigation->navigationID(), WTF::move(frameState), navigationLoadType, shouldTreatAsContinuingLoad, WTF::move(websitePoliciesData), weakThis->m_page->lastNavigationWasAppInitiated(), WebCore::ShouldRestoreFromBackForwardCache::Unspecified, existingNetworkResourceLoadIdentifierToResume, WTF::move(publicSuffix), WTF::move(sandboxExtensionHandle), shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No ? navigation->agentClusterAssignment() : std::nullopt, WTF::move(redirectedRequest) };
         if (!protectedThis->process().isLaunching() || !itemURL.protocolIsFile())
             protectedThis->sendWithAsyncReply(Messages::WebPage::GoToBackForwardItem(WTF::move(parameters)), [](FrameTraversalResult) { });
         else

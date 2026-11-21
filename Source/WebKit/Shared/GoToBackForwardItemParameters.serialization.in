@@ -32,6 +32,7 @@
     WebCore::PublicSuffix publicSuffix;
     WebKit::SandboxExtensionHandle sandboxExtensionHandle;
     std::optional<WebCore::AgentClusterAssignment> agentClusterAssignment;
+    std::optional<WebCore::ResourceRequest> redirectedRequest;
 };
 
 enum class WebKit::FrameTraversalResult : uint8_t {
