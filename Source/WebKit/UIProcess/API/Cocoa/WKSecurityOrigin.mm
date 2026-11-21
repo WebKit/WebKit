@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKSecurityOriginInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -35,11 +36,10 @@
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKSecurityOrigin);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKSecurityOrigin.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _securityOrigin->~SecurityOrigin();
 
     [super dealloc];

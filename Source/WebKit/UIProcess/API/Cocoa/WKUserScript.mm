@@ -27,6 +27,7 @@
 #import "WKUserScriptInternal.h"
 
 #import "WKContentWorldInternal.h"
+#import "WKObject.h"
 #import "_WKUserContentWorldInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -50,11 +51,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKUserScript);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKUserScript.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _userScript->~UserScript();
 
     [super dealloc];

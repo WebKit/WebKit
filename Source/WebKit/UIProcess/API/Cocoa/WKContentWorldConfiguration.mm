@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKContentWorldConfigurationInternal.h"
 
+#import "WKObject.h"
 #include "_WKContentWorldConfiguration.h"
 #include <WebCore/WebCoreObjCExtras.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
@@ -44,11 +45,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKContentWorldConfiguration);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContentWorldConfiguration.class, self))
-        return;
-
     protect(*_worldConfiguration)->API::ContentWorldConfiguration::~ContentWorldConfiguration();
 
     [super dealloc];

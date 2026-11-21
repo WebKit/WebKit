@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKInspectorDebuggableInfo
@@ -90,11 +91,10 @@
     _debuggableInfo->setTargetIsSimulator(targetIsSimulator);
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKInspectorDebuggableInfo);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInspectorDebuggableInfo.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _debuggableInfo->~DebuggableInfo();
 
     [super dealloc];

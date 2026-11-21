@@ -30,10 +30,10 @@
 
 @implementation WKDOMNodeSnapshot
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKDOMNodeSnapshot);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKDOMNodeSnapshot.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _node->API::SerializedNode::~SerializedNode();
     [super dealloc];
 }

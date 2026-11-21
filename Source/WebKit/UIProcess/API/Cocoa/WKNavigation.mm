@@ -30,6 +30,7 @@
 #import "APINavigation.h"
 #import "FrameInfoData.h"
 #import "WKFrameInfoInternal.h"
+#import "WKObject.h"
 #import "WebFrameProxy.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/AlignedStorage.h>
@@ -40,11 +41,10 @@
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKNavigation);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigation.class, self))
-        return;
-
     Ref { *_navigation }->~Navigation();
 
     [super dealloc];

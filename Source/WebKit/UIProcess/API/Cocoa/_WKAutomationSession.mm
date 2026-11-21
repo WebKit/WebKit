@@ -57,11 +57,10 @@
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKAutomationSession);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKAutomationSession.class, self))
-        return;
-
     protect(*_session)->setClient(nullptr);
     SUPPRESS_UNCOUNTED_ARG _session->~WebAutomationSession();
 

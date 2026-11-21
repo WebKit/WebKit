@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "WKObject.h"
 #import <CoreLocation/CLLocation.h>
 #import <WebCore/WebCoreObjCExtras.h>
 
@@ -41,11 +42,10 @@
     return wrapper(WebKit::WebGeolocationPosition::create(WebCore::GeolocationPositionData { location })).autorelease();
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKGeolocationPosition);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKGeolocationPosition.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _geolocationPosition->~WebGeolocationPosition();
 
     [super dealloc];

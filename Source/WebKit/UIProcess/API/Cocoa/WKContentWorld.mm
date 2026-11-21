@@ -80,11 +80,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return wrapper(WTF::move(apiWorld)).autorelease();
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKContentWorld);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContentWorld.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _contentWorld->~ContentWorld();
 
     [super dealloc];

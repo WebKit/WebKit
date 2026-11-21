@@ -177,11 +177,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return adoptNS([[self alloc] init]).autorelease();
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebpagePreferences);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebpagePreferences.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _websitePolicies->API::WebsitePolicies::~WebsitePolicies();
 
     [super dealloc];

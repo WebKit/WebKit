@@ -30,6 +30,7 @@
 #import "APIJSHandle.h"
 #import "WKContentWorldInternal.h"
 #import "WKFrameInfoInternal.h"
+#import "WKObject.h"
 #import "WKRemoteObjectCoder.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
@@ -39,10 +40,10 @@
 
 @implementation WKJSHandle
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKJSHandle);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKJSHandle.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _ref->API::JSHandle::~JSHandle();
     [super dealloc];
 }

@@ -123,11 +123,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKProcessPool);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKProcessPool.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _processPool->~WebProcessPool();
 
     [super dealloc];

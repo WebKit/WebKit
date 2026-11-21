@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "WKFrameInfoInternal.h"
+#import "WKObject.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
@@ -37,10 +38,10 @@
 
 @implementation _WKFrameTreeNode
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKFrameTreeNode);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKFrameTreeNode.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _node->API::FrameTreeNode::~FrameTreeNode();
     [super dealloc];
 }

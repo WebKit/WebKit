@@ -37,11 +37,10 @@
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKBackForwardList);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBackForwardList.class, self))
-        return;
-
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
     protect(*_list)->~WebBackForwardListWrapper();
 #else

@@ -351,10 +351,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return downloadProgress.autorelease();
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKDownload);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKDownload.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _download->~DownloadProxy();
     [super dealloc];
 }
