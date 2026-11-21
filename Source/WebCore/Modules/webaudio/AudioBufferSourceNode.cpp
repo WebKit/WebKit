@@ -153,6 +153,13 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         return;
     }
 
+    if (m_sourceChannels.size() != m_buffer->numberOfChannels()) {
+        outputBus->zero();
+        if (m_playbackState != UNSCHEDULED_STATE && !hasFinished())
+            finish();
+        return;
+    }
+
     // After calling setBuffer() with a buffer having a different number of channels, there can in rare cases be a slight delay
     // before the output bus is updated to the new number of channels because of use of tryLocks() in the context's updating system.
     // In this case, if the buffer has just been changed and we're not quite ready yet, then just output silence.
@@ -231,7 +238,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
     // Basic sanity checking
     ASSERT(m_buffer);
     RefPtr buffer = m_buffer;
-    if (!buffer)
+    if (!buffer || m_sourceChannels.size() != this->numberOfChannels())
         return false;
 
     unsigned numberOfChannels = this->numberOfChannels();
@@ -517,10 +524,21 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
 void AudioBufferSourceNode::acquireBufferContent()
 {
     ASSERT(isMainThread());
+    ASSERT(m_processLock.isHeld());
 
-    // FIXME: We should implement https://www.w3.org/TR/webaudio/#acquire-the-content.
-    if (RefPtr buffer = m_buffer)
-        buffer->markBuffersAsNonDetachable();
+    RefPtr buffer = m_buffer;
+    if (!buffer)
+        return;
+
+    if (!buffer->acquireContents(m_acquiredChannels)) {
+        m_acquiredChannels = { };
+        m_sourceChannels = { };
+        return;
+    }
+
+    m_sourceChannels = FixedVector<std::span<const float>>(m_acquiredChannels.size());
+    for (unsigned i = 0; i < m_acquiredChannels.size(); ++i)
+        m_sourceChannels[i] = m_acquiredChannels[i]->typedSpan();
 }
 
 ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer>&& buffer)
@@ -549,8 +567,11 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
         m_sourceChannels = FixedVector<std::span<const float>>(numberOfChannels);
         m_destinationChannels = FixedVector<std::span<float>>(numberOfChannels);
 
-        for (unsigned i = 0; i < numberOfChannels; ++i)
-            m_sourceChannels[i] = buffer->channelData(i)->typedSpan();
+        for (unsigned i = 0; i < numberOfChannels; ++i) {
+            RefPtr channelData = buffer->channelData(i);
+            m_sourceChannels[i] = channelData->typedSpan();
+            channelData->setDetachable(false);
+        }
     } else {
         m_sourceChannels = { };
         m_destinationChannels = { };
@@ -565,7 +586,9 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     if (m_isGrain)
         adjustGrainParameters();
 
-    acquireBufferContent();
+    // Acquire only after start(). Until then the page can still edit the buffer.
+    if (m_playbackState != UNSCHEDULED_STATE)
+        acquireBufferContent();
 
     return { };
 }

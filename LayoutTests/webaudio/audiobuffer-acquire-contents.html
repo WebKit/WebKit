@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("AudioBufferSourceNode.start acquires the AudioBuffer, so later edits do not change playback.");
+
+window.jsTestIsAsync = true;
+
+var context = new OfflineAudioContext(1, 128, 44100);
+var buffer = context.createBuffer(1, 128, 44100);
+var data = buffer.getChannelData(0);
+for (var i = 0; i < data.length; ++i)
+    data[i] = 0.25;
+
+var source = context.createBufferSource();
+source.buffer = buffer;
+data[0] = 0.5;
+source.connect(context.destination);
+source.start(0);
+
+var after = buffer.getChannelData(0);
+shouldBeTrue("after !== data");
+data[0] = 0.9;
+after[0] = 0;
+
+context.startRendering().then(function(rendered) {
+    window.firstSample = rendered.getChannelData(0)[0];
+    shouldBe("firstSample", "0.5");
+    finishJSTest();
+}, function(exception) {
+    testFailed(String(exception));
+    finishJSTest();
+});
+</script>
+</body>
+</html>
