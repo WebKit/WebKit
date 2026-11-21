@@ -234,8 +234,7 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
 
         if (isAccumulated() && repeatCount) {
             auto endOfPath = m_animationPath.traversalStateAtLength(pathLength).current();
-            for (unsigned i = 0; i < repeatCount; ++i)
-                transform->translate(endOfPath);
+            transform->translate(endOfPath.x() * static_cast<double>(repeatCount), endOfPath.y() * static_cast<double>(repeatCount));
         }
 
         angle = traversalState.normalAngle();

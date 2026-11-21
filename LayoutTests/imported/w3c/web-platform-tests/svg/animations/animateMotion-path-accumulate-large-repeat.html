@@ -1,0 +1,40 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>&lt;animateMotion> path animation with accumulate="sum" and a large repeat iteration</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/animations/#AnimateMotionElement">
+<link rel="help" href="https://www.w3.org/TR/SMIL3/smil-animation.html#adef-accumulate">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!-- The motion path ends at (1, 2). With dur=1s, seeking to a whole number of
+     seconds T lands at the start of repeat iteration T, so the accumulated
+     offset is T times the end of the path: (T, 2T). The seek times are
+     multiples of 256 just below 2^32, so they are exactly representable as
+     single-precision floats and fit in a 32-bit repeat counter. -->
+
+<svg width="100" height="100">
+  <rect width="10" height="10" fill="green">
+    <animateMotion path="M 0 0 L 1 2" dur="1s" repeatCount="indefinite" accumulate="sum"/>
+  </rect>
+</svg>
+
+<script>
+const svg = document.querySelector("svg");
+const rect = document.querySelector("rect");
+svg.pauseAnimations();
+
+promise_setup(() => new Promise(
+  resolve => window.addEventListener("load", resolve, {once: true})));
+
+promise_test(async t => {
+  for (let i = 0; i < 10; ++i) {
+    const time = 4294967040 - i * 256;
+    svg.setCurrentTime(time);
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    const m = rect.getCTM();
+    assert_not_equals(m, null, `t=${time}: getCTM()`);
+    assert_approx_equals(m.e, time, 1, `t=${time}: translate x`);
+    assert_approx_equals(m.f, 2 * time, 1, `t=${time}: translate y`);
+  }
+}, 'accumulate="sum" on a motion path adds the end of the path once per completed repeat, for a large repeat count');
+</script>

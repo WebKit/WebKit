@@ -1,0 +1,3 @@
+
+PASS accumulate="sum" on a motion path adds the end of the path once per completed repeat, for a large repeat count
+
