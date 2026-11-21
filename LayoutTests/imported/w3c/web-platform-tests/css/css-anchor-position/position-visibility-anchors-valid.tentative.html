@@ -26,5 +26,5 @@
 <div class="anchor" style="anchor-name: --a1;">anchor1</div>
 <div id="target1" class="target" style="position-anchor: --a1; background: green">target1</div>
 
-<!-- #target2 should not be visible because anchor name does not exist. -->
-<div id="target2" class="target" style="top: anchor(--does-not-exist bottom);">target2</div>
+<!-- #target2 should not be visible because the default anchor does not exist. -->
+<div id="target2" class="target" style="position-anchor: --does-not-exist; top: anchor(bottom);">target2</div>
