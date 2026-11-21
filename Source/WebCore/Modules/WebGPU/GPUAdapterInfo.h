@@ -34,22 +34,23 @@ namespace WebCore {
 
 class GPUAdapterInfo : public RefCounted<GPUAdapterInfo> {
 public:
-    static Ref<GPUAdapterInfo> create(String&& name, uint32_t subgroupMinSize, uint32_t subgroupMaxSize)
+    static Ref<GPUAdapterInfo> create(String&& name, bool isFallbackAdapter, uint32_t subgroupMinSize, uint32_t subgroupMaxSize)
     {
-        return adoptRef(*new GPUAdapterInfo(WTF::move(name), subgroupMinSize, subgroupMaxSize));
+        return adoptRef(*new GPUAdapterInfo(WTF::move(name), isFallbackAdapter, subgroupMinSize, subgroupMaxSize));
     }
 
     String vendor() const { const auto v = m_name.split(' '); return v.size() ? normalizedIdentifier(v[0]) : ""_s; }
     String architecture() const { return vendor(); }
     String device() const { return vendor(); }
     String description() const { return vendor(); }
-    bool isFallbackAdapter() const { return false; }
+    bool isFallbackAdapter() const { return m_isFallbackAdapter; }
     uint32_t subgroupMinSize() const { return m_subgroupMinSize; }
     uint32_t subgroupMaxSize() const { return m_subgroupMaxSize; }
 
 private:
-    GPUAdapterInfo(String&& name, uint32_t subgroupMinSize, uint32_t subgroupMaxSize)
+    GPUAdapterInfo(String&& name, bool isFallbackAdapter, uint32_t subgroupMinSize, uint32_t subgroupMaxSize)
         : m_name(name)
+        , m_isFallbackAdapter(isFallbackAdapter)
         , m_subgroupMinSize(subgroupMinSize)
         , m_subgroupMaxSize(subgroupMaxSize)
     {
@@ -57,6 +58,7 @@ private:
     static String normalizedIdentifier(const String& s) { return s.convertToLowercaseWithoutLocale().removeCharacters([](auto c) { return !isASCIIAlphanumeric(c); }); }
 
     String m_name;
+    bool m_isFallbackAdapter { false };
     uint32_t m_subgroupMinSize { 0 };
     uint32_t m_subgroupMaxSize { 0 };
 };
