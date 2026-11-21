@@ -29,23 +29,27 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 
+#include "ArgumentCoders.h"
 #include "AutomationProtocolObjects.h"
 #include "BidiEventNames.h"
 #include "FrameTreeNodeData.h"
 #include "PageLoadState.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
+#include "WebAutomationSessionProxyMessages.h"
 #include "WebDriverBidiProcessor.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebFrameMetrics.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <JavaScriptCore/MathCommon.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
+#include <tuple>
 #include <wtf/Borrow.h>
 #include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
@@ -674,10 +678,9 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
 {
     // https://w3c.github.io/webdriver-bidi/#command-script-getRealms
 
-    // FIXME: Implement worker realm support (dedicated-worker, shared-worker, service-worker, worker).
-    // https://bugs.webkit.org/show_bug.cgi?id=304300
-    // Currently only window realms (main frames and iframes) are supported.
-    // Worker realm types require tracking worker global scopes and their owner sets.
+    // Dedicated workers owned directly by a top-level document are supported.
+    // FIXME: Implement iframe-owned and nested dedicated workers, shared workers,
+    // service workers, and generic worker realms.
 
     // FIXME: Implement worklet realm support (paint-worklet, audio-worklet, worklet).
     // https://bugs.webkit.org/show_bug.cgi?id=304301
@@ -699,8 +702,8 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!resolvedPageForContext, FrameNotFound);
     }
 
-    // Early short-circuit: if a non-window realm type is requested, return empty (we currently only support window realms).
-    if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::Window) {
+    // Unsupported realm types are valid filters, but there are no matching realms yet.
+    if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::Window && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::DedicatedWorker) {
         auto realmsArray = JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>::create();
         callback(WTF::move(realmsArray));
         return;
@@ -921,37 +924,73 @@ String BidiScriptAgent::originStringFromSecurityOriginData(const WebCore::Securi
     return originData.toString();
 }
 
-std::optional<RealmIdentifier> BidiScriptAgent::registerDedicatedWorkerRealm(const WorkerIdentifier& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier realmIdentifier, RealmIdentifier ownerRealmIdentifier, const BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData& origin, bool emitCreatedEvent)
+bool BidiScriptAgent::DedicatedWorkerRealmInfo::matches(const WorkerIdentifier& candidateWorkerIdentifier, WebCore::FrameIdentifier candidateOwnerFrameIdentifier, RealmIdentifier candidateOwnerRealmIdentifier, const BrowsingContext& candidateOwnerBrowsingContext) const
 {
-    auto currentOwnerRealmIterator = m_browsingContextToRealmId.find(ownerBrowsingContext);
-    if (currentOwnerRealmIterator == m_browsingContextToRealmId.end() || currentOwnerRealmIterator->value != ownerRealmIdentifier)
-        return std::nullopt;
+    return workerIdentifier == candidateWorkerIdentifier
+        && ownerFrameIdentifier == candidateOwnerFrameIdentifier
+        && ownerRealmIdentifier == candidateOwnerRealmIdentifier
+        && ownerBrowsingContext == candidateOwnerBrowsingContext;
+}
 
-    auto ownerRealmIterator = m_activeRealms.find(ownerRealmIdentifier);
-    if (ownerRealmIterator == m_activeRealms.end()
-        || ownerRealmIterator->value.type != Inspector::Protocol::BidiScript::RealmType::Window
-        || ownerRealmIterator->value.context != ownerBrowsingContext
-        || ownerRealmIterator->value.frameIdentifier != ownerFrameIdentifier)
-        return std::nullopt;
+bool BidiScriptAgent::isCurrentWindowRealm(RealmIdentifier realmIdentifier, WebCore::FrameIdentifier frameIdentifier, const BrowsingContext& browsingContext) const
+{
+    auto currentRealmIterator = m_browsingContextToRealmId.find(browsingContext);
+    if (currentRealmIterator == m_browsingContextToRealmId.end() || currentRealmIterator->value != realmIdentifier)
+        return false;
+
+    auto realmIterator = m_activeRealms.find(realmIdentifier);
+    return realmIterator != m_activeRealms.end()
+        && realmIterator->value.type == Inspector::Protocol::BidiScript::RealmType::Window
+        && realmIterator->value.context == browsingContext
+        && realmIterator->value.frameIdentifier == frameIdentifier;
+}
+
+const BidiScriptAgent::RealmInfo* BidiScriptAgent::findRegisteredDedicatedWorkerRealm(const WorkerIdentifier& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier realmIdentifier, RealmIdentifier ownerRealmIdentifier, const BrowsingContext& ownerBrowsingContext, WebPageProxy& ownerPage, WebProcessProxy& workerProcess) const
+{
+    auto workerProcessIdentifier = workerProcess.coreProcessIdentifier();
+    if (realmIdentifier == ownerRealmIdentifier
+        || realmIdentifier.processIdentifier() != workerProcessIdentifier
+        || ownerRealmIdentifier.processIdentifier() != workerProcessIdentifier)
+        return nullptr;
+
+    RefPtr ownerFrame = WebFrameProxy::webFrame(ownerFrameIdentifier);
+    if (!ownerFrame || !ownerFrame->isMainFrame() || ownerFrame->page() != &ownerPage || &ownerFrame->process() != &workerProcess)
+        return nullptr;
 
     auto workerRealmIterator = m_dedicatedWorkerRealms.find(realmIdentifier);
-    if (workerRealmIterator != m_dedicatedWorkerRealms.end()) {
-        if (workerRealmIterator->value.workerIdentifier != workerIdentifier
-            || workerRealmIterator->value.ownerFrameIdentifier != ownerFrameIdentifier
-            || workerRealmIterator->value.ownerRealmIdentifier != ownerRealmIdentifier
-            || workerRealmIterator->value.ownerBrowsingContext != ownerBrowsingContext)
-            return std::nullopt;
-    } else
-        m_dedicatedWorkerRealms.set(realmIdentifier, DedicatedWorkerRealmInfo { workerIdentifier.isolatedCopy(), ownerFrameIdentifier, ownerRealmIdentifier, ownerBrowsingContext.isolatedCopy() });
+    if (workerRealmIterator == m_dedicatedWorkerRealms.end() || !workerRealmIterator->value.matches(workerIdentifier, ownerFrameIdentifier, ownerRealmIdentifier, ownerBrowsingContext))
+        return nullptr;
+
+    if (!isCurrentWindowRealm(ownerRealmIdentifier, ownerFrameIdentifier, ownerBrowsingContext))
+        return nullptr;
 
     auto activeRealmIterator = m_activeRealms.find(realmIdentifier);
-    if (activeRealmIterator != m_activeRealms.end()) {
-        if (emitCreatedEvent && !activeRealmIterator->value.creationNotified) {
-            activeRealmIterator->value.creationNotified = true;
-            sendRealmCreatedEvent(realmIdentifier, activeRealmIterator->value);
-        }
-        return realmIdentifier;
-    }
+    if (activeRealmIterator == m_activeRealms.end())
+        return nullptr;
+
+    const auto& realmInfo = activeRealmIterator->value;
+    if (realmInfo.type != Inspector::Protocol::BidiScript::RealmType::DedicatedWorker
+        || realmInfo.context
+        || realmInfo.owners.size() != 1
+        || realmInfo.owners[0] != ownerRealmIdentifier
+        || !realmInfo.associatedTopLevelContexts.contains(ownerBrowsingContext))
+        return nullptr;
+
+    return &realmInfo;
+}
+
+void BidiScriptAgent::registerDedicatedWorkerRealm(const WorkerIdentifier& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier realmIdentifier, RealmIdentifier ownerRealmIdentifier, const BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData& origin)
+{
+    if (!isCurrentWindowRealm(ownerRealmIdentifier, ownerFrameIdentifier, ownerBrowsingContext))
+        return;
+
+    if (m_dedicatedWorkerRealms.contains(realmIdentifier) || m_activeRealms.contains(realmIdentifier))
+        return;
+
+    auto ownerRealmIterator = m_activeRealms.find(ownerRealmIdentifier);
+    ASSERT(ownerRealmIterator != m_activeRealms.end());
+
+    m_dedicatedWorkerRealms.set(realmIdentifier, DedicatedWorkerRealmInfo { workerIdentifier.isolatedCopy(), ownerFrameIdentifier, ownerRealmIdentifier, ownerBrowsingContext.isolatedCopy() });
 
     RealmInfo realmInfo {
         origin.isolatedCopy(),
@@ -959,36 +998,26 @@ std::optional<RealmIdentifier> BidiScriptAgent::registerDedicatedWorkerRealm(con
         std::nullopt,
         { },
         { },
-        emitCreatedEvent,
         std::nullopt
     };
     realmInfo.owners.append(ownerRealmIdentifier);
     realmInfo.associatedTopLevelContexts = ownerRealmIterator->value.associatedTopLevelContexts;
     m_activeRealms.set(realmIdentifier, WTF::move(realmInfo));
 
-    if (emitCreatedEvent) {
-        activeRealmIterator = m_activeRealms.find(realmIdentifier);
-        ASSERT(activeRealmIterator != m_activeRealms.end());
-        sendRealmCreatedEvent(realmIdentifier, activeRealmIterator->value);
-    }
-
-    return realmIdentifier;
+    auto activeRealmIterator = m_activeRealms.find(realmIdentifier);
+    ASSERT(activeRealmIterator != m_activeRealms.end());
+    sendRealmCreatedEvent(realmIdentifier, activeRealmIterator->value);
 }
 
 void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
 {
     if (pagesToProcess.isEmpty()) {
-        // Assemble final array with window realms only.
         auto realmsArray = JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>::create();
         for (auto& realmInfo : borrow(accumulated)) {
             if (!realmInfo)
                 continue;
-            if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::Window)
-                continue; // Only window realms supported currently.
-
             realmsArray->addItem(realmInfo.releaseNonNull());
         }
-
         callback(WTF::move(realmsArray));
         return;
     }
@@ -996,14 +1025,15 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
     Ref<WebPageProxy> currentPage = pagesToProcess.first();
     pagesToProcess.removeFirst();
 
-    currentPage->getAllFrames([weakThis = WeakPtr { *this }, pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback)](std::optional<FrameTreeNodeData>&& frameTree) mutable {
+    currentPage->getAllFrames([weakThis = WeakPtr { *this }, currentPage = currentPage.copyRef(), pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback)](std::optional<FrameTreeNodeData>&& frameTree) mutable {
         CheckedPtr protectedThis = weakThis;
         if (!protectedThis) {
             callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
             return;
         }
+        bool includeWindowRealms = !optionalRealmType || *optionalRealmType == Inspector::Protocol::BidiScript::RealmType::Window;
         Vector<FrameInfoData> candidateFrames;
-        if (frameTree)
+        if (includeWindowRealms && frameTree)
             protectedThis->collectExecutionReadyFrames(WTF::move(*frameTree), candidateFrames, contextHandleFilter);
 
         RefPtr session = protectedThis->m_session;
@@ -1014,7 +1044,7 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
 
         auto candidateRealms = Box<Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>>::create();
         candidateRealms->grow(candidateFrames.size());
-        Ref aggregator = CallbackAggregator::create([weakThis, pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback), candidateRealms] mutable {
+        Ref aggregator = CallbackAggregator::create([weakThis, currentPage = currentPage.copyRef(), pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback), candidateRealms] mutable {
             CheckedPtr protectedThis = weakThis;
             if (!protectedThis) {
                 callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
@@ -1024,7 +1054,56 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
             for (auto& realmInfo : *candidateRealms)
                 accumulated.append(WTF::move(realmInfo));
 
-            protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+            bool includeDedicatedWorkerRealms = !optionalRealmType || *optionalRealmType == Inspector::Protocol::BidiScript::RealmType::DedicatedWorker;
+            if (!includeDedicatedWorkerRealms) {
+                protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+                return;
+            }
+
+            RefPtr session = protectedThis->m_session;
+            if (!session) {
+                callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                return;
+            }
+
+            auto ownerBrowsingContext = session->handleForWebPageProxy(currentPage);
+            if (ownerBrowsingContext.isEmpty() || (contextHandleFilter && *contextHandleFilter != ownerBrowsingContext)) {
+                protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+                return;
+            }
+
+            Ref workerProcess = currentPage->legacyMainFrameProcess();
+            // The reply is an ordering barrier on this connection: UIProcess handles earlier
+            // worker lifecycle notifications before filtering the returned identity snapshot.
+            workerProcess->sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetDedicatedWorkerRealms(currentPage->webPageIDInMainFrameProcess()), [weakThis, currentPage = currentPage.copyRef(), workerProcess = workerProcess.copyRef(), ownerBrowsingContext = ownerBrowsingContext.isolatedCopy(), pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback)](Vector<std::tuple<String, WebCore::FrameIdentifier, RealmIdentifier, RealmIdentifier>>&& workerRealms) mutable {
+                CheckedPtr protectedThis = weakThis;
+                if (!protectedThis) {
+                    callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                    return;
+                }
+
+                RefPtr session = protectedThis->m_session;
+                if (!session) {
+                    callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                    return;
+                }
+
+                RefPtr currentOwnerPage = session->webPageProxyForHandle(ownerBrowsingContext);
+                if (currentOwnerPage != currentPage.ptr() || &currentPage->legacyMainFrameProcess() != workerProcess.ptr()) {
+                    protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+                    return;
+                }
+
+                HashSet<RealmIdentifier> appendedRealmIdentifiers;
+                for (const auto& [workerIdentifier, ownerFrameIdentifier, realmIdentifier, ownerRealmIdentifier] : workerRealms) {
+                    const auto* realmInfo = protectedThis->findRegisteredDedicatedWorkerRealm(workerIdentifier, ownerFrameIdentifier, realmIdentifier, ownerRealmIdentifier, ownerBrowsingContext, currentPage.get(), workerProcess.get());
+                    if (!realmInfo || !appendedRealmIdentifiers.add(realmIdentifier).isNewEntry)
+                        continue;
+                    accumulated.append(protectedThis->createProtocolRealmInfo(realmIdentifier, *realmInfo));
+                }
+
+                protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+            });
         });
 
         size_t index = 0;
@@ -1094,10 +1173,6 @@ std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData
 
 void BidiScriptAgent::collectExecutionReadyFrames(FrameTreeNodeData&& frameTree, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter)
 {
-    // FIXME: Per W3C BiDi spec, when contextHandleFilter is present, we should also include
-    // worker realms whose owner set includes the active document of that context.
-    // Currently only collecting window realms (frames).
-
     // Check if frame is execution ready per W3C BiDi spec step 1:
     // "Let environment settings be a list of all the environment settings objects that have their execution ready flag set."
     if (isFrameExecutionReady(frameTree.info)) {
@@ -1162,7 +1237,6 @@ void BidiScriptAgent::notifyRealmCreatedFromBrowsingContext(RealmIdentifier real
         browsingContext,
         { },
         { },
-        true,
         frameIdentifier
     };
     realmInfo.associatedTopLevelContexts.add(topLevelContext);
@@ -1192,7 +1266,7 @@ void BidiScriptAgent::notifyRealmDestroyedFromBrowsingContext(RealmIdentifier re
 
 void BidiScriptAgent::notifyRealmCreatedFromWorker(const WorkerIdentifier& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier realmIdentifier, RealmIdentifier ownerRealmIdentifier, BrowsingContext ownerBrowsingContext, const WebCore::SecurityOriginData& origin)
 {
-    registerDedicatedWorkerRealm(workerIdentifier, ownerFrameIdentifier, realmIdentifier, ownerRealmIdentifier, ownerBrowsingContext, origin, true);
+    registerDedicatedWorkerRealm(workerIdentifier, ownerFrameIdentifier, realmIdentifier, ownerRealmIdentifier, ownerBrowsingContext, origin);
 }
 
 void BidiScriptAgent::notifyRealmDestroyedFromWorker(const WorkerIdentifier& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier realmIdentifier, RealmIdentifier ownerRealmIdentifier)
@@ -1297,9 +1371,9 @@ void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFi
 {
     // Per W3C BiDi spec: when subscribing to script.realmCreated with subscribe priority 2,
     // emit events for all currently active realms.
-    for (auto& entry : m_activeRealms) {
+    for (const auto& entry : m_activeRealms) {
         RealmIdentifier realmIdentifier = entry.key;
-        RealmInfo& realmInfo = entry.value;
+        const RealmInfo& realmInfo = entry.value;
 
         if (!contextFilter.isEmpty()) {
             bool matchesContextFilter = false;
@@ -1314,7 +1388,6 @@ void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFi
         }
 
         sendRealmCreatedEvent(realmIdentifier, realmInfo);
-        realmInfo.creationNotified = true;
     }
 }
 
