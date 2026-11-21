@@ -39,6 +39,7 @@ struct CachedResourceRequestInitiatorTypes {
     const AtomString fetch;
     const AtomString icon;
     const AtomString navigation;
+    const AtomString ping;
     const AtomString xmlhttprequest;
     WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiatorTypes);
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceRequestInitiatorTypes, Loader);
