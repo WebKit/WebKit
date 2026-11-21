@@ -1094,6 +1094,11 @@ void ViewTransition::clearViewTransition()
     for (auto& [name, capturedElement] : m_namedElements.map()) {
         if (auto newStyleable = capturedElement->newElement.styleable())
             newStyleable->setCapturedInViewTransition(nullAtom());
+        // Nothing draws the snapshot of the old state once the pseudo-element tree is gone.
+        // Release it now: otherwise it lives as long as the ViewTransition wrapper, until a
+        // garbage collection that its size (an accelerated ImageBuffer) does not prompt.
+        if (capturedElement->oldImage)
+            *capturedElement->oldImage = nullptr;
     }
 
     document->setHasViewTransitionPseudoElementTree(false);

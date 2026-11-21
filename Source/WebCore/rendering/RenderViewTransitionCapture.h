@@ -76,6 +76,7 @@ private:
     String debugDescription() const override;
 
     void updateFromStyle() override;
+    void willBeDestroyed() override;
 
     Node* nodeForHitTest() const override;
 
