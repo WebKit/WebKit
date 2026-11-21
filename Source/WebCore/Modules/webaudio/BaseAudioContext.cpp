@@ -32,7 +32,6 @@
 #include "AnalyserNode.h"
 #include "AsyncAudioDecoder.h"
 #include "AudioBuffer.h"
-#include "AudioBufferCallback.h"
 #include "AudioBufferOptions.h"
 #include "AudioBufferSourceNode.h"
 #include "AudioDestination.h"
@@ -53,6 +52,9 @@
 #include "ConstantSourceOptions.h"
 #include "ContextDestructionObserverInlines.h"
 #include "ConvolverNode.h"
+#include "DOMException.h"
+#include "DecodeErrorCallback.h"
+#include "DecodeSuccessCallback.h"
 #include "DelayNode.h"
 #include "DelayOptions.h"
 #include "DocumentPage.h"
@@ -322,11 +324,21 @@ ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfCh
     return AudioBuffer::create(AudioBufferOptions {numberOfChannels, length, sampleRate});
 }
 
-void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, Ref<DeferredPromise>&& promise)
+void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<DecodeSuccessCallback>&& successCallback, RefPtr<DecodeErrorCallback>&& errorCallback, Ref<DeferredPromise>&& promise)
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
+        return;
+    }
+
+    if (audioData->isDetached()) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [errorCallback = WTF::move(errorCallback), promise = WTF::move(promise)](auto&) mutable {
+            auto exception = Exception { ExceptionCode::DataCloneError };
+            if (errorCallback)
+                errorCallback->invoke(DOMException::create(exception));
+            promise->reject(WTF::move(exception));
+        });
         return;
     }
 
@@ -342,15 +354,16 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
             audioData->unpin();
 
             if (!result) {
-                promise->reject(WTF::move(result.error()));
+                auto exception = WTF::move(result.error());
                 if (errorCallback)
-                    errorCallback->invoke(nullptr);
+                    errorCallback->invoke(DOMException::create(exception));
+                promise->reject(WTF::move(exception));
                 return;
             }
             auto audioBuffer = WTF::move(result.value());
             promise->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
             if (successCallback)
-                successCallback->invoke(audioBuffer.ptr());
+                successCallback->invoke(audioBuffer);
         });
     });
 }

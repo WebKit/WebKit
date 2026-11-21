@@ -953,7 +953,6 @@ $(PROJECT_DIR)/Modules/web-locks/WebLockMode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBuffer.idl
-$(PROJECT_DIR)/Modules/webaudio/AudioBufferCallback.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferSourceOptions.idl
@@ -996,6 +995,8 @@ $(PROJECT_DIR)/Modules/webaudio/ConstantSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ConstantSourceOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/ConvolverNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ConvolverOptions.idl
+$(PROJECT_DIR)/Modules/webaudio/DecodeErrorCallback.idl
+$(PROJECT_DIR)/Modules/webaudio/DecodeSuccessCallback.idl
 $(PROJECT_DIR)/Modules/webaudio/DelayNode.idl
 $(PROJECT_DIR)/Modules/webaudio/DelayOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/DistanceModelType.idl

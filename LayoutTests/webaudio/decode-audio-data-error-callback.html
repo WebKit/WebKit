@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("decodeAudioData's error callback receives the DOMException.");
+
+window.jsTestIsAsync = true;
+
+var context = new OfflineAudioContext(1, 128, 44100);
+
+var detached = new ArrayBuffer(4);
+structuredClone({}, { transfer: [detached] });
+var detachedCallbackName = null;
+var detachedPromiseName = null;
+var detachedSuccess = false;
+var invalidCallbackName = null;
+var invalidPromiseName = null;
+
+context.decodeAudioData(detached, function() {
+    detachedSuccess = true;
+}, function(error) {
+    detachedCallbackName = error.name;
+}).then(function() {
+    testFailed("decodeAudioData fulfilled a detached ArrayBuffer");
+    finishJSTest();
+}, function(error) {
+    detachedPromiseName = error.name;
+    shouldBeFalse("detachedSuccess");
+    shouldBeEqualToString("detachedCallbackName", "DataCloneError");
+    shouldBeEqualToString("detachedPromiseName", "DataCloneError");
+    decodeInvalid();
+});
+
+function decodeInvalid() {
+    context.decodeAudioData(new Uint8Array([0, 1, 2, 3]).buffer, function() {
+        testFailed("decodeAudioData called the success callback for bytes that are not an audio file");
+        finishJSTest();
+    }, function(error) {
+        invalidCallbackName = error.name;
+    }).then(function() {
+        testFailed("decodeAudioData fulfilled bytes that are not an audio file");
+        finishJSTest();
+    }, function(error) {
+        invalidPromiseName = error.name;
+        shouldBeEqualToString("invalidCallbackName", "EncodingError");
+        shouldBeEqualToString("invalidPromiseName", "EncodingError");
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

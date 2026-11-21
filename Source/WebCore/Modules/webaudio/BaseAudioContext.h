@@ -56,7 +56,8 @@ namespace WebCore {
 class AnalyserNode;
 class AsyncAudioDecoder;
 class AudioBuffer;
-class AudioBufferCallback;
+class DecodeErrorCallback;
+class DecodeSuccessCallback;
 class AudioBufferSourceNode;
 class AudioListener;
 class AudioNodeOutput;
@@ -121,7 +122,7 @@ public:
     float sampleRate() const { return destination().sampleRate(); }
 
     // Asynchronous audio file data decoding.
-    void decodeAudioData(Ref<JSC::ArrayBuffer>&&, RefPtr<AudioBufferCallback>&&, RefPtr<AudioBufferCallback>&&, Ref<DeferredPromise>&&);
+    void decodeAudioData(Ref<JSC::ArrayBuffer>&&, RefPtr<DecodeSuccessCallback>&&, RefPtr<DecodeErrorCallback>&&, Ref<DeferredPromise>&&);
 
     AudioListener& listener() { return m_listener; }
 

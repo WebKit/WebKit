@@ -1,0 +1,14 @@
+decodeAudioData's error callback receives the DOMException.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS detachedSuccess is false
+PASS detachedCallbackName is "DataCloneError"
+PASS detachedPromiseName is "DataCloneError"
+PASS invalidCallbackName is "EncodingError"
+PASS invalidPromiseName is "EncodingError"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
