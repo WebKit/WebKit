@@ -544,7 +544,7 @@ NODELETE static bool shouldFlexCellChild(const RenderTableCell& cell, const Rend
     return is<HTMLFormControlElement>(cellDescendant.element()) && !is<HTMLFieldSetElement>(cellDescendant.element());
 }
 
-void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowIndex, int rowHeight)
+void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowIndex, LayoutUnit rowHeight)
 {
     // Force percent height children to lay themselves out again.
     // This will cause these children to grow to fill the cell.
