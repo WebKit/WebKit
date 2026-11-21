@@ -1921,6 +1921,8 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage-rgbx.any.worker.h
 imported/w3c/web-platform-tests/webcodecs/videoFrame-rgbx-imageBitmap.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-rgbx-imageBitmap.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-rgbx-webgl.window.html [ Failure ]
+webkit.org/b/331780 http/wpt/webcodecs/videoFrame-alpha-planar-yuv-copyTo.html [ Failure ]
+webkit.org/b/331780 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.worker.html [ Failure ]
 
 # Missing RGBX/BGRX support in our implementation of VideoFrame::copyTo().
 webkit.org/b/329733 imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo-rgbx.any.html [ Failure ]

@@ -349,8 +349,8 @@ PASS Unsupported format I420P10
 PASS Unsupported format I420P12
 PASS Unsupported format I420A
 PASS Unsupported format I422
-FAIL Unsupported format I422A assert_throws_dom: function "() => frame.allocationSize(options)" threw object "TypeError: Type error" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+PASS Unsupported format I422A
 PASS Unsupported format I444
-FAIL Unsupported format I444A assert_throws_dom: function "() => frame.allocationSize(options)" threw object "TypeError: Type error" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+PASS Unsupported format I444A
 PASS Unsupported format NV12
 

@@ -34,6 +34,7 @@
 #import "PlanarImageConverterCV.h"
 #import "RealtimeVideoUtilities.h"
 #import <array>
+#import <pal/spi/cf/CoreVideoSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
@@ -220,15 +221,11 @@ void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef pixelBuffer, CGImageAlphaInfo
         CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferAlphaChannelIsOpaque);
 }
 
-static constexpr OSType pixelFormat422YpCbCr8VideoRange8ATriPlanar = 'v2a8';
-static constexpr OSType pixelFormat420YpCbCr10VideoRange8ATriPlanar = 'x0a8';
-static constexpr OSType pixelFormat422YpCbCr10VideoRange8ATriPlanar = 'x2a8';
-
 static constexpr std::array<OSType, 4> alphaPlanePixelFormats {
     kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar,
-    pixelFormat420YpCbCr10VideoRange8ATriPlanar,
-    pixelFormat422YpCbCr8VideoRange8ATriPlanar,
-    pixelFormat422YpCbCr10VideoRange8ATriPlanar,
+    kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar,
+    kCVPixelFormatType_422YpCbCr8VideoRange_8A_TriPlanar,
+    kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar,
 };
 
 // VideoToolbox tags the frames it decodes into these formats as opaque.
@@ -306,7 +303,7 @@ std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(
 bool copyI420ToPixelBuffer(std::span<const uint8_t> source, size_t width, size_t height, CVPixelBufferRef destination)
 {
     auto format = CVPixelBufferGetPixelFormatType(destination);
-    bool hasAlpha = format == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar || format == pixelFormat420YpCbCr10VideoRange8ATriPlanar;
+    bool hasAlpha = format == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar || format == kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar;
     if (!hasAlpha && format != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && format != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
         return false;
 
@@ -374,7 +371,7 @@ bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> des
 RetainPtr<CVPixelBufferRef> createBiPlanarPixelBufferFromColorPlanes(CVPixelBufferRef source)
 {
     auto sourceFormat = CVPixelBufferGetPixelFormatType(source);
-    if (sourceFormat != pixelFormat420YpCbCr10VideoRange8ATriPlanar && sourceFormat != pixelFormat422YpCbCr10VideoRange8ATriPlanar)
+    if (sourceFormat != kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar && sourceFormat != kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar)
         return nullptr;
     auto description = PlanarImageConverter::pixelFormatDescription(sourceFormat);
     if (!description)
