@@ -40,6 +40,6 @@
     readonly attribute DOMString encoding;
 
     // FIXME: `encode` should not return a nullable type.
-    [NewObject] Uint8Array? encode(optional USVString input = "");
+    [NewObject] Uint8Array? encode(optional [ImplementationReplacesUnpairedSurrogates] USVString input = "");
     TextEncoderEncodeIntoResult encodeInto(USVString source, [AllowShared] Uint8Array destination);
 };

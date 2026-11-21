@@ -64,5 +64,5 @@ enum BinaryType { "blob", "arraybuffer" };
     undefined send(ArrayBuffer data);
     undefined send(ArrayBufferView data);
     undefined send(Blob data);
-    undefined send(USVString data);
+    undefined send([ImplementationReplacesUnpairedSurrogates] USVString data);
 };

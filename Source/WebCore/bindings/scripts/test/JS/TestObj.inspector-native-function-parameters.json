@@ -95,6 +95,7 @@
             "methodWithRecord": "recordParameter",
             "methodWithStandaloneEnumArg": "enumArg",
             "methodWithUSVStringArg": "str",
+            "methodWithUSVStringArgReplacedByImplementation": "str",
             "methodWithUSVStringArgTreatingNullAsEmptyString": "str",
             "methodWithUnsignedLongSequence": "unsignedLongSequence",
             "methodWithXPathNSResolverParameter": "resolver",

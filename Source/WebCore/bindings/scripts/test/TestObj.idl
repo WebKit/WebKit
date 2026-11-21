@@ -203,6 +203,7 @@ enum TestConfidence { "high", "kinda-low" };
     undefined methodWithUSVStringArg(USVString str);
     undefined methodWithNullableUSVStringArg(USVString? str);
     undefined methodWithUSVStringArgTreatingNullAsEmptyString([LegacyNullToEmptyString] USVString str);
+    undefined methodWithUSVStringArgReplacedByImplementation([ImplementationReplacesUnpairedSurrogates] USVString str);
 
     undefined methodWithByteStringArg(ByteString str);
     undefined methodWithNullableByteStringArg(ByteString? str);

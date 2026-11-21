@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef (Blob or BufferSource or DOMFormData or USVString or URLSearchParams) XMLHttpRequestBodyInit;
+typedef (Blob or BufferSource or DOMFormData or [ImplementationReplacesUnpairedSurrogates] USVString or URLSearchParams) XMLHttpRequestBodyInit;
 
 enum XMLHttpRequestResponseType {
     "",

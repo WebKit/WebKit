@@ -318,6 +318,11 @@
             "contextsAllowed": ["dictionary-member"],
             "notes": "Allows treating the dictionary member as required when the specification doesn't specify the required keyword but using it is unobservable."
         },
+        "ImplementationReplacesUnpairedSurrogates": {
+            "contextsAllowed": ["type"],
+            "typesAllowed": ["USVString"],
+            "notes": "Converts the USVString like a DOMString, leaving unpaired surrogates in place, when the implementation replaces them anyway, such as by encoding the string as UTF-8, so that replacing them in the bindings too is unobservable."
+        },
         "InlineCapacity": {
             "contextsAllowed": ["type"],
             "values": ["*"]
