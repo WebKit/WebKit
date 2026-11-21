@@ -1838,7 +1838,9 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parsePrimaryExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArrayLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArrayElement(TreeBuilder&);
+    template <typename Functor> ALWAYS_INLINE void scanSimpleArrayElementsAfterComma(const Functor&);
     template <class TreeBuilder> ALWAYS_INLINE void parseSimpleArrayElementsAfterComma(TreeBuilder&, typename TreeBuilder::ElementList& tail);
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseConstantArrayPrefix(TreeBuilder&, const JSTokenLocation&, typename TreeBuilder::ElementList& head, typename TreeBuilder::ElementList& tail);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseObjectLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeClassExpression parseClassExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseFunctionExpression(TreeBuilder&);
@@ -2159,6 +2161,10 @@ private:
     SuperBinding m_superBinding;
     bool m_hasStackOverflow;
     ScopeStack m_scopeStack;
+    // Scratch buffers for parseConstantArrayPrefix, kept as members so one allocation serves every array literal
+    // in the source. They hold only numbers and null, which are not cells, so the GC does not need to see them.
+    Vector<JSValue> m_constantArrayValues;
+    Vector<unsigned> m_constantArrayInt32DoubleLiteralIndices;
 
     static void verifyLayout();
 };

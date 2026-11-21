@@ -228,6 +228,14 @@ public:
     }
 
     ExpressionNode* createArray(const JSTokenLocation& location, ElementNode* elems) { return new (m_parserArena) ArrayNode(location, elems); }
+    ExpressionNode* createConstantArray(const JSTokenLocation& location, std::span<const JSValue> values, std::span<const unsigned> int32DoubleLiteralIndices, IndexingType indexingType)
+    {
+        return new (m_parserArena) ArrayNode(location, new (m_parserArena) ConstantArrayElements(values, int32DoubleLiteralIndices, indexingType));
+    }
+    ExpressionNode* createConstantArrayElement(const JSTokenLocation& location, JSValue value, SourceCodeRepresentation representation)
+    {
+        return ConstantArrayElements::createNode(m_parserArena, location, value, representation);
+    }
     ExpressionNode* createArray(const JSTokenLocation& location, int elisions, ElementNode* elems)
     {
         return new (m_parserArena) ArrayNode(location, elisions, elems);

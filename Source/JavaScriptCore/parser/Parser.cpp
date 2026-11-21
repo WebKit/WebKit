@@ -26,11 +26,13 @@
 #include "ASTBuilder.h"
 #include "BuiltinNames.h"
 #include "DebuggerParseData.h"
+#include "IndexingTypeInlines.h"
 #include "JSCJSValueInlines.h"
 #include "RegExpCache.h"
 #include "VM.h"
 #include "VariableEnvironmentInlines.h"
 #include <utility>
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StringPrintStream.h>
@@ -4961,7 +4963,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayElement
 }
 
 template <typename LexerType>
-template <class TreeBuilder> void Parser<LexerType>::parseSimpleArrayElementsAfterComma(TreeBuilder& context, typename TreeBuilder::ElementList& tail)
+template <typename Functor> void Parser<LexerType>::scanSimpleArrayElementsAfterComma(const Functor& functor)
 {
     // Leaves the parser in exactly the state that lexing each element and its trailing ',' as tokens would.
     ASSERT(match(COMMA));
@@ -4976,6 +4978,20 @@ template <class TreeBuilder> void Parser<LexerType>::parseSimpleArrayElementsAft
         type = elementType;
         location.startOffset = start;
         location.endOffset = m_lexer->currentOffset() - 1;
+        functor(location, type, value);
+    }
+    if (type == ERRORTOK)
+        return;
+    m_lastTokenLocation = location;
+    m_lastTokenType = type;
+    m_token.m_startPosition = JSTextPosition(location.endOffset);
+    m_token.m_endPosition = JSTextPosition(location.endOffset + 1);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> void Parser<LexerType>::parseSimpleArrayElementsAfterComma(TreeBuilder& context, typename TreeBuilder::ElementList& tail)
+{
+    scanSimpleArrayElementsAfterComma([&](const JSTokenLocation& location, JSTokenType type, double value) {
         TreeExpression element;
         switch (type) {
         case INTEGER:
@@ -4990,13 +5006,55 @@ template <class TreeBuilder> void Parser<LexerType>::parseSimpleArrayElementsAft
             break;
         }
         tail = context.createElementList(tail, 0, element);
-    }
-    if (type == ERRORTOK)
-        return;
-    m_lastTokenLocation = location;
-    m_lastTokenType = type;
-    m_token.m_startPosition = JSTextPosition(location.endOffset);
-    m_token.m_endPosition = JSTextPosition(location.endOffset + 1);
+    });
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseConstantArrayPrefix(TreeBuilder& context, const JSTokenLocation& location, typename TreeBuilder::ElementList& head, typename TreeBuilder::ElementList& tail)
+{
+    auto atConstantElement = [&] {
+        return (match(INTEGER) || match(DOUBLE) || match(NULLTOKEN)) && m_lexer->nextCharacterIsCommaOrCloseBracket();
+    };
+    if (!atConstantElement())
+        return 0;
+
+    auto& values = m_constantArrayValues;
+    auto& int32DoubleLiteralIndices = m_constantArrayInt32DoubleLiteralIndices;
+    values.shrink(0);
+    int32DoubleLiteralIndices.shrink(0);
+    IndexingType indexingType = ArrayWithUndecided;
+    auto append = [&](JSTokenType type, double number) {
+        JSValue value = jsNull();
+        if (type != NULLTOKEN) {
+            value = jsNumber(number);
+            if (type == DOUBLE && value.isInt32())
+                int32DoubleLiteralIndices.append(values.size());
+        }
+        indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, value);
+        values.append(value);
+    };
+    do {
+        append(m_token.m_type, m_token.m_data.doubleValue);
+        next();
+        if (consume(CLOSEBRACKET))
+            return context.createConstantArray(location, borrow(values)->span(), borrow(int32DoubleLiteralIndices)->span(), indexingType);
+        ASSERT(match(COMMA));
+        scanSimpleArrayElementsAfterComma([&](const JSTokenLocation&, JSTokenType type, double value) {
+            append(type, value);
+        });
+        next();
+        if (consume(CLOSEBRACKET))
+            return context.createConstantArray(location, borrow(values)->span(), borrow(int32DoubleLiteralIndices)->span(), indexingType);
+    } while (atConstantElement());
+
+    ConstantArrayElements::forEach(borrow(values)->span(), borrow(int32DoubleLiteralIndices)->span(), [&](JSValue value, SourceCodeRepresentation representation) {
+        auto element = context.createConstantArrayElement(location, value, representation);
+        if (tail)
+            tail = context.createElementList(tail, 0, element);
+        else
+            head = tail = context.createElementList(0, element);
+    });
+    return 0;
 }
 
 template <typename LexerType>
@@ -5014,25 +5072,40 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
     }
     if (consume(CLOSEBRACKET))
         return context.createArray(location, elisions);
-    
-    TreeExpression elem;
-    if (match(DOTDOTDOT)) [[unlikely]] {
-        auto spreadLocation = m_token.location();
-        auto start = m_token.m_startPosition;
-        auto divot = m_token.m_endPosition;
-        next();
-        auto spreadExpr = parseAssignmentExpression(context);
-        failIfFalse(spreadExpr, "Cannot parse subject of a spread operation");
-        elem = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, lastTokenEndPosition());
-    } else
-        elem = parseArrayElement(context);
-    failIfFalse(elem, "Cannot parse array literal element");
-    typename TreeBuilder::ElementList elementList = context.createElementList(elisions, elem);
-    typename TreeBuilder::ElementList tail = elementList;
-    elisions = 0;
-    while (match(COMMA)) {
-        parseSimpleArrayElementsAfterComma(context, tail);
-        next(TreeBuilder::DontBuildStrings);
+
+    typename TreeBuilder::ElementList elementList = 0;
+    typename TreeBuilder::ElementList tail = 0;
+    bool atElementAfterComma = false;
+    if constexpr (std::is_same_v<TreeBuilder, ASTBuilder>) {
+        if (!elisions) {
+            if (auto array = parseConstantArrayPrefix(context, location, elementList, tail))
+                return array;
+            atElementAfterComma = !!elementList;
+        }
+    }
+
+    if (!atElementAfterComma) {
+        TreeExpression elem;
+        if (match(DOTDOTDOT)) [[unlikely]] {
+            auto spreadLocation = m_token.location();
+            auto start = m_token.m_startPosition;
+            auto divot = m_token.m_endPosition;
+            next();
+            auto spreadExpr = parseAssignmentExpression(context);
+            failIfFalse(spreadExpr, "Cannot parse subject of a spread operation");
+            elem = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, lastTokenEndPosition());
+        } else
+            elem = parseArrayElement(context);
+        failIfFalse(elem, "Cannot parse array literal element");
+        elementList = context.createElementList(elisions, elem);
+        tail = elementList;
+    }
+    while (atElementAfterComma || match(COMMA)) {
+        if (!atElementAfterComma) {
+            parseSimpleArrayElementsAfterComma(context, tail);
+            next(TreeBuilder::DontBuildStrings);
+        }
+        atElementAfterComma = false;
         elisions = 0;
         
         while (consume(COMMA))

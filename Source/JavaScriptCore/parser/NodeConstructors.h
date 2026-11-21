@@ -249,6 +249,27 @@ namespace JSC {
     {
     }
 
+    inline ArrayNode::ArrayNode(const JSTokenLocation& location, ConstantArrayElements* constantElements)
+        : ExpressionNode(location)
+        , m_element(nullptr)
+        , m_constantElements(constantElements)
+        , m_elision(0)
+    {
+    }
+
+    inline ExpressionNode* ConstantArrayElements::createNode(ParserArena& parserArena, const JSTokenLocation& location, JSValue value, SourceCodeRepresentation representation)
+    {
+        switch (representation) {
+        case SourceCodeRepresentation::Integer:
+            return new (parserArena) IntegerNode(location, value.asNumber());
+        case SourceCodeRepresentation::Double:
+            return new (parserArena) DoubleNode(location, value.asNumber());
+        default:
+            ASSERT(value.isNull());
+            return new (parserArena) NullNode(location);
+        }
+    }
+
     inline PropertyNode::PropertyNode(const Identifier& name, Type type, SuperBinding superBinding, ClassElementTag tag)
         : m_name(&name)
         , m_type(type)

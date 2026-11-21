@@ -441,13 +441,43 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
 
 // ------------------------------ ArrayNode ------------------------------------
 
+static RegisterID* emitNewArrayBufferWithConstants(BytecodeGenerator& generator, RegisterID* dst, std::span<const JSValue> constants, IndexingType recommendedIndexingType, bool allDenseStrings)
+{
+    VM& vm = generator.vm();
+    ASSERT(vm.heap.isDeferred());
+    recommendedIndexingType |= CopyOnWrite;
+
+    Structure* cellButterflyStructure = allDenseStrings ? vm.cellButterflyOnlyAtomStringsStructure.get() : vm.cellButterflyStructure(recommendedIndexingType);
+    auto* array = JSCellButterfly::tryCreate(vm, cellButterflyStructure, constants.size());
+    RELEASE_ASSERT(array);
+
+    if (hasInt32(array->indexingType()) || hasContiguous(array->indexingType())) {
+        auto elements = unsafeMakeSpan(std::bit_cast<EncodedJSValue*>(array->toButterfly()->contiguous().data()), constants.size());
+        auto encodedConstants = spanReinterpretCast<const EncodedJSValue>(constants);
+        if (hasInt32(array->indexingType()))
+            memcpySpan(elements, encodedConstants);
+        else {
+            gcSafeMemcpySpan(elements, encodedConstants);
+            vm.writeBarrier(array);
+        }
+    } else {
+        for (unsigned index = 0; index < constants.size(); ++index)
+            array->setIndex(vm, index, constants[index]);
+    }
+    return generator.emitNewArrayBuffer(dst, array, recommendedIndexingType);
+}
+
 RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    AssertNoGC assertNoGC;
+
+    if (m_constantElements)
+        return emitNewArrayBufferWithConstants(generator, generator.finalDestination(dst), m_constantElements->values(), m_constantElements->indexingType(), /* allDenseStrings */ false);
+
     bool hadVariableExpression = false;
     bool allDenseStrings = true;
     unsigned length = 0;
 
-    AssertNoGC assertNoGC;
     Vector<JSValue, 16> constants;
 
     IndexingType recommendedIndexingType = ArrayWithUndecided;
@@ -482,35 +512,17 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
     auto newArray = [&](RegisterID* dst, ElementNode* elements, unsigned length) {
         if (length && !hadVariableExpression) {
-            VM& vm = generator.vm();
-            recommendedIndexingType |= CopyOnWrite;
-
-            Structure* cellButterflyStructure = allDenseStrings ? vm.cellButterflyOnlyAtomStringsStructure.get() : vm.cellButterflyStructure(recommendedIndexingType);
-            auto* array = JSCellButterfly::tryCreate(generator.vm(), cellButterflyStructure, length);
-            RELEASE_ASSERT(array);
-
             ASSERT(elements == m_element);
             ASSERT(constants.size() == length);
             if (allDenseStrings) {
+                VM& vm = generator.vm();
                 for (auto& slot : constants) {
                     JSString* string = asString(slot);
                     StringImpl* stringImpl = const_cast<StringImpl*>(string->getValueImpl());
                     slot = vm.atomStringToJSStringMap.ensureValue(stringImpl, [&] { return string; });
                 }
             }
-
-            if (hasInt32(array->indexingType())) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                memcpy(std::bit_cast<EncodedJSValue*>(array->toButterfly()->contiguous().data()), std::bit_cast<const EncodedJSValue*>(constants.span().data()), length * sizeof(EncodedJSValue));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-            } else if (hasContiguous(array->indexingType())) {
-                gcSafeMemcpy(std::bit_cast<EncodedJSValue*>(array->toButterfly()->contiguous().data()), std::bit_cast<const EncodedJSValue*>(constants.span().data()), length * sizeof(EncodedJSValue));
-                vm.writeBarrier(array);
-            } else {
-                for (unsigned index = 0; index < length; ++index)
-                    array->setIndex(vm, index, constants[index]);
-            }
-            return generator.emitNewArrayBuffer(dst, array, recommendedIndexingType);
+            return emitNewArrayBufferWithConstants(generator, dst, constants.span(), recommendedIndexingType, allDenseStrings);
         }
         return generator.emitNewArray(dst, elements, length, recommendedIndexingType);
     };
@@ -600,17 +612,25 @@ bool ArrayNode::isSimpleArray() const
 ArgumentListNode* ArrayNode::toArgumentList(ParserArena& parserArena, int startPosition) const
 {
     ASSERT(!m_elision);
-    ElementNode* ptr = m_element;
-    if (!ptr)
-        return nullptr;
     JSTokenLocation location;
     location.startOffset = startPosition;
-    ArgumentListNode* head = new (parserArena) ArgumentListNode(location, ptr->value());
-    ArgumentListNode* tail = head;
-    ptr = ptr->next();
-    for (; ptr; ptr = ptr->next()) {
+    ArgumentListNode* head = nullptr;
+    ArgumentListNode* tail = nullptr;
+    auto append = [&](ExpressionNode* value) {
+        if (tail)
+            tail = new (parserArena) ArgumentListNode(location, tail, value);
+        else
+            head = tail = new (parserArena) ArgumentListNode(location, value);
+    };
+    if (m_constantElements) {
+        m_constantElements->forEach([&](JSValue value, SourceCodeRepresentation representation) {
+            append(ConstantArrayElements::createNode(parserArena, location, value, representation));
+        });
+        return head;
+    }
+    for (ElementNode* ptr = m_element; ptr; ptr = ptr->next()) {
         ASSERT(!ptr->elision());
-        tail = new (parserArena) ArgumentListNode(location, tail, ptr->value());
+        append(ptr->value());
     }
     return head;
 }
@@ -2583,14 +2603,23 @@ RegisterID* ReflectConstructFunctionCallDotNode::emitBytecode(BytecodeGenerator&
     generator.emitNode(target, m_args->m_listNode->m_expr);
     std::optional<CallArguments> constructArguments;
     if (argumentsListNode->m_expr->isSimpleArray()) {
-        ElementNode* elements = static_cast<ArrayNode*>(argumentsListNode->m_expr)->elements();
-        unsigned elementCount = 0;
-        for (ElementNode* element = elements; element; element = element->next())
-            ++elementCount;
-        constructArguments.emplace(generator, nullptr, elementCount);
-        unsigned elementIndex = 0;
-        for (ElementNode* element = elements; element; element = element->next())
-            generator.emitNode(constructArguments->argumentRegister(elementIndex++), element->value());
+        auto* arrayNode = static_cast<ArrayNode*>(argumentsListNode->m_expr);
+        if (auto* constants = arrayNode->constantElements()) {
+            constructArguments.emplace(generator, nullptr, constants->values().size());
+            unsigned elementIndex = 0;
+            constants->forEach([&](JSValue value, SourceCodeRepresentation representation) {
+                generator.emitLoad(constructArguments->argumentRegister(elementIndex++), value, representation);
+            });
+        } else {
+            ElementNode* elements = arrayNode->elements();
+            unsigned elementCount = 0;
+            for (ElementNode* element = elements; element; element = element->next())
+                ++elementCount;
+            constructArguments.emplace(generator, nullptr, elementCount);
+            unsigned elementIndex = 0;
+            for (ElementNode* element = elements; element; element = element->next())
+                generator.emitNode(constructArguments->argumentRegister(elementIndex++), element->value());
+        }
     } else
         generator.emitNode(argumentsList, argumentsListNode->m_expr);
     unsigned argumentIndex = 2;

@@ -126,6 +126,15 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
 #endif
 }
 
+template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
+ALWAYS_INLINE void gcSafeMemcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
+{
+    static_assert(sizeof(T) == sizeof(JSValue));
+    static_assert(sizeof(U) == sizeof(JSValue));
+    RELEASE_ASSERT(destination.size() >= source.size());
+    gcSafeMemcpy(std::bit_cast<uint64_t*>(destination.data()), std::bit_cast<const uint64_t*>(source.data()), source.size_bytes());
+}
+
 template <typename T>
 ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
 {
