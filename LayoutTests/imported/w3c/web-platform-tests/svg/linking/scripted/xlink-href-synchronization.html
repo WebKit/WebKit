@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<title>XLink 'href' attribute synchronization with href.baseVal</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#XLinkRefAttrs">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#linkRefAttrs">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const svgNs = 'http://www.w3.org/2000/svg';
+const xlinkNs = 'http://www.w3.org/1999/xlink';
+
+function createElement() {
+    return document.createElementNS(svgNs, 'a');
+}
+
+test(function() {
+    const element = createElement();
+    element.href.baseVal = 'foo';
+    assert_array_equals(element.getAttributeNames(), ['href']);
+}, document.title + ', getAttributeNames() after baseVal setter with no attributes.');
+
+test(function() {
+    const element = createElement();
+    element.href.baseVal = 'foo';
+    assert_equals(element.attributes.length, 1);
+    assert_equals(element.attributes[0].namespaceURI, null);
+    assert_equals(element.attributes[0].localName, 'href');
+    assert_equals(element.attributes[0].value, 'foo');
+}, document.title + ', attributes after baseVal setter with no attributes.');
+
+test(function() {
+    const element = createElement();
+    element.href.baseVal = 'foo';
+    const clone = element.cloneNode();
+    assert_true(clone.hasAttributeNS(null, 'href'), '"href" exists on clone');
+    assert_false(clone.hasAttributeNS(xlinkNs, 'href'), '"xlink:href" does not exist on clone');
+    assert_equals(clone.getAttributeNS(null, 'href'), 'foo');
+    assert_equals(clone.href.baseVal, 'foo');
+}, document.title + ', cloneNode() after baseVal setter with no attributes.');
+
+test(function() {
+    const element = createElement();
+    element.href.baseVal = 'foo';
+    const markup = new XMLSerializer().serializeToString(element);
+    assert_true(markup.includes(' href="foo"'), markup);
+    assert_false(markup.includes('xlink'), markup);
+}, document.title + ', XMLSerializer after baseVal setter with no attributes.');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(null, 'href', 'foo');
+    element.href.baseVal = 'bar';
+    assert_equals(element.attributes.length, 1);
+    assert_equals(element.attributes[0].namespaceURI, null);
+    assert_equals(element.attributes[0].value, 'bar');
+}, document.title + ', attributes after baseVal setter with "href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'foo');
+    element.href.baseVal = 'bar';
+    assert_equals(element.attributes.length, 1);
+    assert_equals(element.attributes[0].namespaceURI, xlinkNs);
+    assert_equals(element.attributes[0].localName, 'href');
+    assert_equals(element.attributes[0].value, 'bar');
+}, document.title + ', attributes after baseVal setter with "xlink:href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'foo');
+    element.href.baseVal = 'bar';
+    const clone = element.cloneNode();
+    assert_false(clone.hasAttributeNS(null, 'href'), '"href" does not exist on clone');
+    assert_equals(clone.getAttributeNS(xlinkNs, 'href'), 'bar');
+}, document.title + ', cloneNode() after baseVal setter with "xlink:href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'foo');
+    element.href.baseVal = '';
+    assert_equals(element.getAttributeNS(null, 'href'), null);
+    assert_equals(element.getAttributeNS(xlinkNs, 'href'), '');
+    assert_equals(element.href.baseVal, '');
+}, document.title + ', empty baseVal with "xlink:href" updates "xlink:href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(null, 'href', 'foo');
+    element.href.baseVal = '';
+    assert_equals(element.getAttributeNS(null, 'href'), '');
+    assert_false(element.hasAttributeNS(xlinkNs, 'href'), '"xlink:href" does not exist');
+    assert_equals(element.href.baseVal, '');
+}, document.title + ', empty baseVal with "href" updates "href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'foo');
+    element.setAttributeNS(null, 'href', '');
+    assert_equals(element.href.baseVal, '', 'empty "href" is not treated as absent');
+    assert_equals(element.getAttributeNS(xlinkNs, 'href'), 'foo');
+}, document.title + ', empty "href" takes precedence over "xlink:href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(null, 'href', 'foo');
+    element.href.baseVal = 'bar';
+    element.removeAttributeNS(null, 'href');
+    assert_false(element.hasAttributeNS(null, 'href'), '"href" does not exist');
+    assert_false(element.hasAttributeNS(xlinkNs, 'href'), '"xlink:href" does not exist');
+    assert_equals(element.href.baseVal, '');
+}, document.title + ', removeAttribute(href) after baseVal setter with "href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(null, 'href', 'foo');
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'baz');
+    element.href.baseVal = 'bar';
+    element.removeAttributeNS(null, 'href');
+    assert_false(element.hasAttributeNS(null, 'href'), '"href" does not exist');
+    assert_equals(element.getAttributeNS(xlinkNs, 'href'), 'baz');
+    assert_equals(element.href.baseVal, 'baz');
+}, document.title + ', removeAttribute(href) after baseVal setter with "href" and "xlink:href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'foo');
+    element.href.baseVal = 'bar';
+    element.removeAttributeNS(xlinkNs, 'href');
+    assert_false(element.hasAttributeNS(null, 'href'), '"href" does not exist');
+    assert_false(element.hasAttributeNS(xlinkNs, 'href'), '"xlink:href" does not exist');
+    assert_equals(element.href.baseVal, '');
+}, document.title + ', removeAttribute(xlink:href) after baseVal setter with "xlink:href".');
+
+test(function() {
+    const element = createElement();
+    element.href.baseVal = 'foo';
+    element.removeAttribute('href');
+    assert_false(element.hasAttributeNS(null, 'href'), '"href" does not exist');
+    assert_false(element.hasAttributeNS(xlinkNs, 'href'), '"xlink:href" does not exist');
+    assert_equals(element.href.baseVal, '');
+}, document.title + ', removeAttribute(href) after baseVal setter with no attributes.');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(null, 'href', 'foo');
+    const attr = element.getAttributeNodeNS(null, 'href');
+    element.href.baseVal = 'bar';
+    element.removeAttributeNode(attr);
+    assert_false(element.hasAttributeNS(null, 'href'), '"href" does not exist');
+    assert_false(element.hasAttributeNS(xlinkNs, 'href'), '"xlink:href" does not exist');
+    assert_equals(element.href.baseVal, '');
+}, document.title + ', removeAttributeNode(href) after baseVal setter with "href".');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'foo');
+    const attr = element.getAttributeNodeNS(xlinkNs, 'href');
+    element.href.baseVal = 'bar';
+    element.removeAttributeNode(attr);
+    assert_false(element.hasAttributeNS(null, 'href'), '"href" does not exist');
+    assert_false(element.hasAttributeNS(xlinkNs, 'href'), '"xlink:href" does not exist');
+    assert_equals(element.href.baseVal, '');
+}, document.title + ', removeAttributeNode(xlink:href) after baseVal setter with "xlink:href".');
+
+test(function() {
+    const element = createElement();
+    element.href.baseVal = 'foo';
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'bar');
+    assert_equals(element.href.baseVal, 'foo', 'baseVal still reflects "href"');
+    assert_equals(element.getAttributeNS(null, 'href'), 'foo');
+    assert_equals(element.getAttributeNS(xlinkNs, 'href'), 'bar');
+}, document.title + ', setAttribute(xlink:href) after baseVal setter keeps "href".');
+
+function recordsForRemoval(element, remove) {
+    const observer = new MutationObserver(() => { });
+    observer.observe(element, { attributes: true, attributeOldValue: true });
+    remove(element);
+    const records = observer.takeRecords();
+    observer.disconnect();
+    return records;
+}
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(null, 'href', 'foo');
+    element.href.baseVal = 'bar';
+    const records = recordsForRemoval(element, element => element.removeAttribute('href'));
+    assert_equals(records.length, 1, 'one mutation record');
+    assert_equals(records[0].attributeNamespace, null);
+    assert_equals(records[0].attributeName, 'href');
+    assert_equals(records[0].oldValue, 'bar');
+}, document.title + ', mutation record for removeAttribute(href) after baseVal setter with "href".');
+
+test(function() {
+    const element = createElement();
+    element.href.baseVal = 'foo';
+    const records = recordsForRemoval(element, element => element.removeAttribute('href'));
+    assert_equals(records.length, 1, 'one mutation record');
+    assert_equals(records[0].attributeNamespace, null);
+    assert_equals(records[0].attributeName, 'href');
+    assert_equals(records[0].oldValue, 'foo');
+}, document.title + ', mutation record for removeAttribute(href) after baseVal setter with no attributes.');
+
+test(function() {
+    const element = createElement();
+    element.setAttributeNS(xlinkNs, 'xlink:href', 'foo');
+    element.href.baseVal = 'bar';
+    const records = recordsForRemoval(element, element => element.removeAttributeNS(xlinkNs, 'href'));
+    assert_equals(records.length, 1, 'one mutation record');
+    assert_equals(records[0].attributeNamespace, xlinkNs);
+    assert_equals(records[0].attributeName, 'href');
+    assert_equals(records[0].oldValue, 'bar');
+}, document.title + ', mutation record for removeAttribute(xlink:href) after baseVal setter with "xlink:href".');
+</script>
