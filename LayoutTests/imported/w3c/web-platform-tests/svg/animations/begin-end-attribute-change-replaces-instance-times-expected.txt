@@ -1,0 +1,7 @@
+
+
+PASS Changing 'begin' discards the begin time from the previous value
+PASS Adding 'begin' discards the implicit begin time of 0
+PASS Changing 'begin' to 'indefinite' discards the begin time from the previous value
+PASS Changing 'end' discards the end time from the previous value
+

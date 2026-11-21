@@ -235,6 +235,23 @@ static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& time
     });
 }
 
+static void insertSortedAndUnique(Vector<SMILTimeWithOrigin>& list, SMILTimeWithOrigin time)
+{
+    ASSERT(std::is_sorted(list.begin(), list.end()));
+    size_t position = std::lower_bound(list.begin(), list.end(), time) - list.begin();
+    // The list is only ordered by time, so entries sharing this time are contiguous
+    // starting at `position`. Skip the insertion if the same (time, origin) pair is
+    // already present to keep repeated beginElementAt/endElementAt calls from ballooning
+    // the list with duplicates.
+    for (auto& existing : list.subspan(position)) {
+        if (existing.time() != time.time())
+            break;
+        if (existing.origin() == time.origin())
+            return;
+    }
+    list.insert(position, time);
+}
+
 void SVGSMILElement::reset()
 {
     stopAnimation(protect(targetElement()).get());
@@ -273,7 +290,7 @@ Node::NeedsPostConnectionSteps SVGSMILElement::insertionSteps(InsertionType inse
 
     // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
     if (!hasAttributeWithoutSynchronization(SVGNames::beginAttr))
-        m_beginTimes.append(SMILTimeWithOrigin());
+        insertSortedAndUnique(m_beginTimes, SMILTimeWithOrigin(0, SMILTimeWithOrigin::AttributeOrigin));
 
     if (m_isWaitingForFirstInterval)
         resolveFirstInterval();
@@ -473,17 +490,18 @@ void SVGSMILElement::parseBeginOrEnd(StringView parseString, BeginOrEnd beginOrE
     Vector<SMILTimeWithOrigin>& timeList = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
     if (beginOrEnd == End)
         m_hasEndEventConditions = false;
-    HashSet<double> existing;
-    for (auto& time : timeList)
-        existing.add(time.time().value());
+    timeList.removeAllMatching([](auto& time) {
+        return time.origin() == SMILTimeWithOrigin::AttributeOrigin;
+    });
+    if (beginOrEnd == Begin && parseString.isNull() && m_timeContainer)
+        insertSortedAndUnique(timeList, SMILTimeWithOrigin(0, SMILTimeWithOrigin::AttributeOrigin));
     for (auto string : parseString.split(';')) {
         SMILTime value = parseClockValue(string);
         if (value.isUnresolved())
             parseCondition(string, beginOrEnd);
-        else if (!existing.contains(value.value()))
-            timeList.append(SMILTimeWithOrigin(value, SMILTimeWithOrigin::ParserOrigin));
+        else
+            insertSortedAndUnique(timeList, SMILTimeWithOrigin(value, SMILTimeWithOrigin::AttributeOrigin));
     }
-    std::sort(timeList.begin(), timeList.end());
 }
 
 bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -517,6 +535,8 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
         parseBeginOrEnd(newValue, Begin);
         if (isConnected())
             connectConditions();
+        if (m_timeContainer)
+            listChanged(Begin, elapsed());
         break;
     case AttributeNames::endAttr:
         if (!m_conditions.isEmpty()) {
@@ -527,6 +547,8 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
         parseBeginOrEnd(newValue, End);
         if (isConnected())
             connectConditions();
+        if (m_timeContainer)
+            listChanged(End, elapsed());
         break;
     case AttributeNames::onendAttr:
         setAttributeEventListener(eventNames().endEventEvent, name, newValue);
@@ -775,23 +797,6 @@ SMILTime SVGSMILElement::simpleDuration() const
     return std::min(dur(), SMILTime::indefinite());
 }
 
-static void insertSortedAndUnique(Vector<SMILTimeWithOrigin>& list, SMILTimeWithOrigin time)
-{
-    ASSERT(std::is_sorted(list.begin(), list.end()));
-    size_t position = std::lower_bound(list.begin(), list.end(), time) - list.begin();
-    // The list is only ordered by time, so entries sharing this time are contiguous
-    // starting at `position`. Skip the insertion if the same (time, origin) pair is
-    // already present to keep repeated beginElementAt/endElementAt calls from ballooning
-    // the list with duplicates.
-    for (auto& existing : list.subspan(position)) {
-        if (existing.time() != time.time())
-            break;
-        if (existing.originIsScript() == time.originIsScript())
-            return;
-    }
-    list.insert(position, time);
-}
-
 void SVGSMILElement::addInstanceTime(BeginOrEnd beginOrEnd, SMILTime time, SMILTimeWithOrigin::Origin origin)
 {
     SMILTime elapsed = this->elapsed();
@@ -909,7 +914,13 @@ void SVGSMILElement::resolveFirstInterval()
     resolveInterval(true, begin, end);
     ASSERT(!begin.isIndefinite());
 
-    if (!begin.isUnresolved() && (begin != m_intervalBegin || end != m_intervalEnd)) {
+    if (begin.isUnresolved()) {
+        m_intervalBegin = SMILTime::unresolved();
+        m_intervalEnd = SMILTime::unresolved();
+        return;
+    }
+
+    if (begin != m_intervalBegin || end != m_intervalEnd) {
         m_intervalBegin = begin;
         m_intervalEnd = end;
         notifyDependentsIntervalChanged();
