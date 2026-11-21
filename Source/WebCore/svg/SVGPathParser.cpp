@@ -430,17 +430,21 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, const F
     pointTransform.rotate(-angle);
 
     FloatPoint transformedMidPoint = pointTransform.mapPoint(FloatPoint(midPointDistance.width(), midPointDistance.height()));
-    float squareRx = rx * rx;
-    float squareRy = ry * ry;
-    float squareX = transformedMidPoint.x() * transformedMidPoint.x();
-    float squareY = transformedMidPoint.y() * transformedMidPoint.y();
 
     // Check if the radii are big enough to draw the arc, scale radii if not.
-    // http://www.w3.org/TR/SVG/implnote.html#ArcCorrectionOutOfRangeRadii
-    float radiiScale = squareX / squareRx + squareY / squareRy;
+    // https://w3c.github.io/svgwg/svg2-draft/implnote.html#ArcCorrectionOutOfRangeRadii
+    // This is sqrt(x'^2 / rx^2 + y'^2 / ry^2), computed from the ratios in double so that squaring
+    // tiny or huge radii cannot underflow or overflow.
+    double radiiScale = std::hypot(static_cast<double>(transformedMidPoint.x()) / rx, static_cast<double>(transformedMidPoint.y()) / ry);
     if (radiiScale > 1) {
-        rx *= sqrtf(radiiScale);
-        ry *= sqrtf(radiiScale);
+        rx = static_cast<float>(rx * radiiScale);
+        ry = static_cast<float>(ry * radiiScale);
+    }
+
+    // The scaled radii can still overflow float for extreme inputs; there is no meaningful ellipse then, so draw a line.
+    if (!std::isfinite(rx) || !std::isfinite(ry)) {
+        m_consumer->lineTo(end, AbsoluteCoordinates);
+        return true;
     }
 
     pointTransform.makeIdentity();
@@ -471,6 +475,11 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, const F
         thetaArc += 2 * std::numbers::pi_v<float>;
     else if (thetaArc > 0 && !sweepFlag)
         thetaArc -= 2 * std::numbers::pi_v<float>;
+
+    if (!std::isfinite(thetaArc)) {
+        m_consumer->lineTo(end, AbsoluteCoordinates);
+        return true;
+    }
 
     pointTransform.makeIdentity();
     pointTransform.rotate(angle);
