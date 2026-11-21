@@ -41,7 +41,6 @@
 
 namespace WebCore {
 class WebGPUCompositorIntegration;
-class WebGPUIntegration;
 }
 
 namespace WebKit {
@@ -152,7 +151,7 @@ public:
         bool exists { false };
         bool valid { false };
     };
-    ExistsAndValid objectExistsAndValid(const WebCore::WebGPUIntegration&, WebGPUIdentifier) const;
+    ExistsAndValid objectExistsAndValid(WebGPUIdentifier) const;
 private:
     ObjectHeap();
 
