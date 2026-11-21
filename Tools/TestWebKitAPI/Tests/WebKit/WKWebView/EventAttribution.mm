@@ -568,7 +568,7 @@ static void attemptConnectionInProcessWithoutEntitlement()
         done = true;
     });
     xpc_connection_activate(connection.get());
-    OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create_empty());
     xpc_connection_send_message(connection.get(), dictionary.get());
     TestWebKitAPI::Util::run(&done);
 #endif

@@ -125,20 +125,20 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
 
     const char* serviceName = (preferTestService == WebPushTool::PreferTestService::Yes) ? "org.webkit.webpushtestdaemon.service" : "com.apple.webkit.webpushd.service";
 
-    OSObjectPtr plist = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr plist = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_string(plist.get(), "_ManagedBy", "webpushtool");
     xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.webpushtestdaemon");
     xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
     xpc_dictionary_set_bool(plist.get(), "RootedSimulatorPath", true);
 
     {
-        OSObjectPtr environmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        OSObjectPtr environmentVariables = adoptOSObject(xpc_dictionary_create_empty());
         xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectoryURL.get().fileSystemRepresentation);
         xpc_dictionary_set_string(environmentVariables.get(), "DYLD_LIBRARY_PATH", currentExecutableDirectoryURL.get().fileSystemRepresentation);
         xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
     }
     {
-        OSObjectPtr machServices = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        OSObjectPtr machServices = adoptOSObject(xpc_dictionary_create_empty());
         xpc_dictionary_set_bool(machServices.get(), serviceName, true);
         xpc_dictionary_set_value(plist.get(), "MachServices", machServices.get());
     }
