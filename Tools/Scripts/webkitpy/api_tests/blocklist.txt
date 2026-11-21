@@ -880,21 +880,7 @@ TestWebKitAPI.WebpagePreferences.WebsitePoliciesUserInterferenceWithPlaying
 TestWebKitAPI.WritingTools.APIWithBehaviorCompleteAndEnhancedSiri
 TestWebKitAPI.WritingTools.APIWithBehaviorDefaultAndEnhancedSiri
 TestWebKitAPI.WritingTools.APIWithBehaviorNoneAndEnhancedSiri
-TestWebKitAPI.WritingTools.AttributedStringWithWebKitLegacy
 TestWebKitAPI.WritingTools.CompositionAnimationSizing
-TestWebKitAPI.WritingTools.CompositionShowOriginalHasNoTransparentMarkers
-TestWebKitAPI.WritingTools.CompositionWithAttemptedEditing
-TestWebKitAPI.WritingTools.CompositionWithAttributedStringAttributes
-TestWebKitAPI.WritingTools.CompositionWithList
-TestWebKitAPI.WritingTools.CompositionWithMultipleChunks
-TestWebKitAPI.WritingTools.CompositionWithTextAttachment
-TestWebKitAPI.WritingTools.FocusWebViewAfterAnimation
-TestWebKitAPI.WritingTools.FocusWebViewAfterProofreadingAnimation
-TestWebKitAPI.WritingTools.ProofreadingAcceptReject
-TestWebKitAPI.WritingTools.ProofreadingShowOriginal
-TestWebKitAPI.WritingTools.ProofreadingUndoRevertsEverySuggestionInBatch
-TestWebKitAPI.WritingTools.RevealOffScreenSuggestionWhenActive
-TestWebKitAPI.WritingTools.SmartRepliesTextColor
 TestWebKitAPI._WKDataTask.Basic
 TestWebKitAPI._WKDataTask.Blob
 TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
@@ -916,6 +902,7 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ ios ] TestWebKitAPI.PasteHTML.TransformColorsOfDarkContentButNotSemanticColor
 [ ios ] TestWebKitAPI.PasteRTFD.DoesNotTransformColorsOfLightContent
 [ ios ] TestWebKitAPI.SiteIsolation.CrossSiteIframeReplaceKeepsItemURLBeforeCommit
+[ ios ] TestWebKitAPI.WritingTools.CompositionWithMultipleChunks
 
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendLocalSyncMessageWithDataReply/ClientIsA
 [ mac ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendLocalSyncMessageWithDataReply/ServerIsA
@@ -1463,11 +1450,4 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ mac ] TestWebKitAPI.WebKit2.GetUserMediaAfterMuting
 [ mac ] TestWebKitAPI.WebKit2.SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage
 [ mac ] TestWebKitAPI.WebTransport.ServiceWorker
-[ mac ] TestWebKitAPI.WritingTools.IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadingSuggestionsInRange
-[ mac ] TestWebKitAPI.WritingTools.ProofreadingRevert
-[ mac ] TestWebKitAPI.WritingTools.ProofreadingRevertWithMultiwordSuggestions
-[ mac ] TestWebKitAPI.WritingTools.ProofreadingRevertWithSuggestionAtEndOfText
-[ mac ] TestWebKitAPI.WritingTools.ProofreadingWithAttemptedEditing
-[ mac ] TestWebKitAPI.WritingTools.ProofreadingWithLongReplacement
-[ mac ] TestWebKitAPI.WritingTools.ProofreadingWithStreamingSuggestions
 [ mac ] TestWebKitAPI._WKDownload.RedirectedLoadConvertedToDownload
