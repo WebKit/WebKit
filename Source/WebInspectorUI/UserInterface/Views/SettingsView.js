@@ -84,6 +84,27 @@ WI.SettingsView = class SettingsView extends WI.View
 
         return containerElement;
     }
+
+    addReloadRequiredFooter(settings)
+    {
+        let reloadButton = document.createElement("button");
+        reloadButton.textContent = WI.UIString("Reload Web Inspector");
+        reloadButton.addEventListener("click", function() {
+            InspectorFrontendHost.reopen();
+        });
+
+        let container = this.addCenteredContainer(reloadButton, WI.UIString("for changes to take effect"));
+        container.classList.add("hidden");
+
+        let initialValues = new Map;
+        for (let setting of settings) {
+            initialValues.set(setting, setting.value);
+            setting.addEventListener(WI.Setting.Event.Changed, function() {
+                let allUnchanged = initialValues.entries().every(([s, v]) => s.value === v);
+                container.classList.toggle("hidden", allUnchanged);
+            });
+        }
+    }
 };
 
 WI.SettingsView.EditorType = {
