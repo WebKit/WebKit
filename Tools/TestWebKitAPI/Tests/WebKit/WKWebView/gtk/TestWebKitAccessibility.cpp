@@ -22,6 +22,7 @@
 #include "WebViewTest.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/glib/GLibExtras.h>
+#include <wtf/glib/GSpanExtras.h>
 
 // The libatspi headers don't use G_BEGIN_DECLS
 extern "C" {
@@ -116,21 +117,6 @@ public:
         atspi_event_listener_deregister(listener.get(), "object:children-changed:add", nullptr);
     }
 
-    void waitUntilChildrenRemoved(AtspiAccessible* accessible)
-    {
-        m_eventSource = accessible;
-        GRefPtr<AtspiEventListener> listener = adoptGRef(atspi_event_listener_new(
-            [](AtspiEvent* event, gpointer userData) {
-                auto* test = static_cast<AccessibilityTest*>(userData);
-                if (event->source == test->m_eventSource)
-                    g_main_loop_quit(test->m_mainLoop);
-        }, this, nullptr));
-        atspi_event_listener_register(listener.get(), "object:children-changed:remove", nullptr);
-        g_main_loop_run(m_mainLoop);
-        atspi_event_listener_deregister(listener.get(), "object:children-changed:remove", nullptr);
-        m_eventSource = nullptr;
-    }
-
     static bool accessibleApplicationIsTestProgram(AtspiAccessible* accessible)
     {
         GRefPtr<AtspiAccessible> application = adoptGRef(atspi_accessible_get_application(accessible, nullptr));
@@ -164,6 +150,15 @@ public:
 
         for (const auto& event : m_eventMonitor.eventTypes)
             atspi_event_listener_register(m_eventMonitor.listener.get(), event.characters(), nullptr);
+
+        if (source && source.value()) {
+            // Applications emit events only for listeners the registry told them about. This uncached call
+            // returns after the application has handled that notification, so events triggered from now on
+            // are emitted even when they go through WebKit IPC instead of the a11y bus.
+            GRefPtr<GArray> relations = adoptGRef(atspi_accessible_get_relation_set(source.value(), nullptr));
+            for (auto* relation : span<AtspiRelation*>(relations))
+                g_object_unref(relation);
+        }
     }
 
     Vector<UniqueAtspiEvent> stopEventMonitor(unsigned expectedEvents, std::optional<Seconds> timeout = std::nullopt)
@@ -205,8 +200,6 @@ public:
     }
 
 private:
-    AtspiAccessible* m_eventSource { nullptr };
-
     struct {
         GRefPtr<AtspiEventListener> listener;
         Vector<ASCIILiteral> eventTypes;
@@ -275,6 +268,9 @@ static void testAccessibleBasicHierarchy(AccessibilityTest* test, gconstpointer)
     name.reset(atspi_accessible_get_localized_role_name(link.get(), nullptr));
     g_assert_cmpstr(name.get(), ==, "link");
 
+    // Check that children-changed::remove is emitted on the root object on navigation,
+    // and the a11y hierarchy is updated.
+    test->startEventMonitor(rootObject.get(), { "object:children-changed:remove"_s });
     test->loadHtml(
         "<html>"
         "  <body>"
@@ -283,9 +279,9 @@ static void testAccessibleBasicHierarchy(AccessibilityTest* test, gconstpointer)
         "  </body>"
         "</html>",
         nullptr);
-    // Check that children-changed::remove is emitted on the root object on navigation,
-    // and the a11y hierarchy is updated.
-    test->waitUntilChildrenRemoved(rootObject.get());
+    test->waitUntilLoadFinished();
+    auto events = test->stopEventMonitor(1);
+    g_assert_false(events.isEmpty());
 
     documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
