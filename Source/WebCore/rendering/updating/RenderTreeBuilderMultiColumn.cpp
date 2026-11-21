@@ -27,7 +27,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
-#include "RenderListOutsideMarker.h"
+#include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -308,29 +308,20 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     CheckedRef fragmentedFlow = *newFragmentedFlow;
     m_builder.blockBuilder().attach(flow, WTF::move(newFragmentedFlow), nullptr);
 
-    // An excluded marker takes no part in multi-column layout, and the list item positions it against its first
-    // formatted line afterwards, which it can only do while the marker is still its own child.
-    CheckedPtr<RenderListOutsideMarker> excludedMarker;
-    for (auto& marker : childrenOfType<RenderListOutsideMarker>(flow)) {
-        if (marker.isExcludedMarker()) {
-            excludedMarker = &marker;
-            break;
-        }
-    }
-
-    // Reparent children preceding the fragmented flow into the fragmented flow.
-    m_builder.moveChildren(flow, fragmentedFlow, protect(flow.firstChild()), fragmentedFlow.ptr(), RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+    // Reparent children preceding the fragmented flow into the fragmented flow, all but the outside marker: it takes no
+    // part in multi-column layout, and the list item positions it against its first formatted line afterwards, which it
+    // can only do while the marker is its own child.
+    CheckedPtr listItem = dynamicDowncast<RenderListItem>(flow);
+    CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
+    if (marker)
+        m_builder.moveChildren(flow, fragmentedFlow, protect(flow.firstChild()), marker.get(), RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+    m_builder.moveChildren(flow, fragmentedFlow, protect(marker ? marker->nextSibling() : flow.firstChild()), fragmentedFlow.ptr(), RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     if (flow.isFieldset()) {
         // Keep legends out of the flow thread.
         for (CheckedRef box : childrenOfType<RenderBox>(fragmentedFlow.get())) {
             if (box->isLegend())
                 m_builder.move(fragmentedFlow, flow, box, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         }
-    }
-    if (excludedMarker) {
-        // moveChildren() may have wrapped the marker in an anonymous block inside the flow thread, so move it back out from wherever it actually landed.
-        if (CheckedPtr markerParent = dynamicDowncast<RenderBoxModelObject>(excludedMarker->parent()))
-            m_builder.move(*markerParent, flow, *excludedMarker, fragmentedFlow.ptr(), RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     }
 
     flow.setMultiColumnFlow(fragmentedFlow);

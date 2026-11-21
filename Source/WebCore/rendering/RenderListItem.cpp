@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderListItem.h"
 
+#include "BaselineAlignment.h"
 #include "CSSCounterStyleDescriptors.h"
 #include "CSSCounterStyleRegistry.h"
 #include "ContainerNodeInlines.h"
@@ -89,7 +90,7 @@ NODELETE static MarkerSearchBoxType markerSearchBoxType(const RenderObject& box)
         return MarkerSearchBoxType::SpannerPlaceholder;
     // A nested list item's own marker is inline level but takes no part in any line, so it must not make its list item
     // the answer: that list item may well have nothing but block level children and never run inline layout.
-    if (box.isExcludedMarker())
+    if (box.isOutsideListMarker())
         return MarkerSearchBoxType::Opaque;
     // Before the form control check below: a control on a line is inline content like any other.
     if (box.isInline())
@@ -105,7 +106,7 @@ NODELETE static MarkerSearchBoxType markerSearchBoxType(const RenderObject& box)
     return MarkerSearchBoxType::BlockContainer;
 }
 
-static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firstFormattedLineRoot, const RenderListItem& listItem, bool isLineStartConstrainedByFloat)
+static LayoutUnit outsideMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firstFormattedLineRoot, const RenderListItem& listItem, bool isLineStartConstrainedByFloat)
 {
     // <ul><li id=o><ul><li id=i><div style="border-left: 5px solid">text</div></li></ul></li></ul>
     // UA sets 40px start padding on <ul>
@@ -410,17 +411,16 @@ void RenderListItem::updateValue()
     m_value = std::nullopt;
     if (CheckedPtr marker = markerBox()) {
         marker->setNeedsLayoutAndInvalidateContentLogicalWidths();
-        if (m_excludedMarkerPosition)
-            invalidateExcludedMarkerContainer();
+        if (m_outsideMarkerPosition)
+            invalidateOutsideMarkerContainer();
     }
 }
 
-static RenderImage* imageForMarker(const RenderListOutsideMarker& marker)
+static RenderImage* imageForMarker(const RenderBlockFlow& marker)
 {
     if (listMarkerHasContent(marker.style(), marker.document()) || !listMarkerImage(marker.style()))
         return nullptr;
-    CheckedPtr contentContainer = marker.contentContainer();
-    return contentContainer ? dynamicDowncast<RenderImage>(contentContainer->firstChild()) : nullptr;
+    return dynamicDowncast<RenderImage>(marker.firstChild());
 }
 
 RenderImage* RenderListItem::markerImage() const
@@ -462,8 +462,7 @@ void RenderListItem::updateMarkerContent()
 
         // The marker text is only known here (counter values resolve at layout), while the renderer holding it was
         // created from style. Push the text down so the inline formatting context has something to lay out.
-        CheckedPtr contentContainer = markerBox->contentContainer();
-        CheckedPtr textRenderer = contentContainer ? dynamicDowncast<RenderText>(contentContainer->firstChild()) : nullptr;
+        CheckedPtr textRenderer = dynamicDowncast<RenderText>(markerBox->firstChild());
         if (!textRenderer)
             return;
         auto textContent = listMarkerTextContent(markerBox->style(), *this);
@@ -538,8 +537,8 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
     if (diff == Style::DifferenceResult::Layout) {
         if (oldStyle && oldStyle->usedCounterDirectives().map.get("list-item"_s) != style().usedCounterDirectives().map.get("list-item"_s))
             usedCounterDirectivesChanged();
-        if (m_excludedMarkerPosition)
-            invalidateExcludedMarkerContainer();
+        if (m_outsideMarkerPosition)
+            invalidateOutsideMarkerContainer();
     }
 
     RefPtr oldImage = oldStyle ? outsideMarkerImage(*oldStyle) : nullptr;
@@ -582,30 +581,24 @@ void RenderListItem::imageChanged(WrappedImagePtr changedImage, const IntRect* r
 
 std::pair<LayoutUnit, LayoutUnit> RenderListItem::computeIntrinsicLogicalWidths() const
 {
-    if (CheckedPtr excludedMarker = this->excludedMarker(); excludedMarker && !excludedMarker->nextSibling())
+    if (CheckedPtr outsideMarker = markerBox(); outsideMarker && !outsideMarker->nextSibling())
         return { };
 
     return RenderBlockFlow::computeIntrinsicLogicalWidths();
 }
 
-RenderListOutsideMarker* RenderListItem::excludedMarker() const
-{
-    auto* marker = markerBox();
-    return marker && marker->isExcludedMarker() ? marker : nullptr;
-}
-
 void RenderListItem::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
 {
-    CheckedPtr excludedMarker = this->excludedMarker();
-    if (!excludedMarker) {
-        m_excludedMarkerPosition = { };
+    CheckedPtr outsideMarker = markerBox();
+    if (!outsideMarker) {
+        m_outsideMarkerPosition = { };
         return RenderBlockFlow::layoutBlock(relayoutChildren, pageLogicalHeight);
     }
 
-    auto markerScope = ListItemExcludedMarkerScope { view().frameView().layoutContext(), *this };
+    auto markerScope = ListItemOutsideMarkerScope { view().frameView().layoutContext(), *this };
     RenderBlockFlow::layoutBlock(relayoutChildren, pageLogicalHeight);
-    placeExcludedMarker(*excludedMarker);
-    addOverflowFromContainedBox(*excludedMarker);
+    placeOutsideMarker(*outsideMarker);
+    addOverflowFromContainedBox(*outsideMarker);
 }
 
 static std::pair<float, float> layoutBoundsForMarkerText(const Style::ComputedStyle& style, const String& text)
@@ -643,30 +636,56 @@ static std::pair<float, float> layoutBoundsForMarkerText(const Style::ComputedSt
     return { primaryFontAscentAndDescent.first + halfLeading, primaryFontAscentAndDescent.second + halfLeading };
 }
 
-static std::pair<float, float> excludedMarkerLayoutBounds(const RenderListOutsideMarker& marker, const String& markerText)
+static std::pair<float, float> outsideMarkerLayoutBounds(const RenderBlockFlow& marker, const String& markerText)
 {
-    CheckedPtr content = marker.contentContainer();
-    if (!content) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
     if (CheckedPtr image = imageForMarker(marker))
         return { image->logicalHeight().toFloat(), 0.f };
 
     CheckedRef style = marker.style();
     if (listMarkerHasContent(style, protect(marker.document()))) {
-        auto contentLogicalHeight = content->logicalHeight();
-        auto contentBaseline = content->firstLineBaseline().value_or(contentLogicalHeight);
-        return { contentBaseline.toFloat(), (contentLogicalHeight - contentBaseline).toFloat() };
+        auto markerLogicalHeight = marker.logicalHeight();
+        auto contentBaseline = marker.firstLineBaseline().value_or(markerLogicalHeight);
+        return { contentBaseline.toFloat(), (markerLogicalHeight - contentBaseline).toFloat() };
     }
     return layoutBoundsForMarkerText(style, markerText);
 }
 
+LayoutUnit outsideMarkerMarginStart(const RenderBlockFlow& marker)
+{
+    if (imageForMarker(marker))
+        return -marker.logicalWidth() - listMarkerImagePadding;
+    CheckedRef style = marker.style();
+    if (listMarkerSynthesizesGlyph(style, protect(marker.document())))
+        return LayoutUnit { -(style->metricsOfPrimaryFont().intAscent() * 2 / 3) - listMarkerImagePadding - 1 };
+    return -marker.logicalWidth();
+}
+
+// The logical top of an outside marker in the box of its primary font or image, which puts its first baseline on
+// theirs. A marker with `content` is that box itself.
+static LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow& marker)
+{
+    if (CheckedPtr image = imageForMarker(marker))
+        return -image->logicalTop();
+    CheckedRef style = marker.style();
+    if (listMarkerHasContent(style, protect(marker.document())))
+        return 0_lu;
+    // Both baselines are from the block-start edge, which is the line-under edge when lines are inverted.
+    auto& metricsOfPrimaryFont = style->metricsOfPrimaryFont();
+    auto writingMode = marker.writingMode();
+    auto fontLogicalHeight = LayoutUnit { metricsOfPrimaryFont.intHeight() };
+    auto fontBaseline = [&] {
+        if (writingMode.prefersCentralBaseline())
+            return fontLogicalHeight / 2;
+        auto ascent = LayoutUnit { metricsOfPrimaryFont.ascent(BaselineAlignment::dominantBaseline(writingMode)) };
+        return writingMode.isLineInverted() ? fontLogicalHeight - ascent : ascent;
+    }();
+    return fontBaseline - marker.firstLineBaseline().value_or(marker.logicalHeight());
+}
+
 void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
-    CheckedPtr excludedMarker = this->excludedMarker();
-    if (!excludedMarker)
+    CheckedPtr outsideMarker = markerBox();
+    if (!outsideMarker)
         return RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 
     auto markerNeedsOwnLine = [&] {
@@ -684,17 +703,17 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     if (!childrenInline() && markerNeedsOwnLine())
         setLogicalHeight(logicalHeight() + lineHeight());
 
-    excludedMarker->setIsExcludedFromNormalLayout(true);
+    outsideMarker->setIsExcludedFromNormalLayout(true);
     if (relayoutChildren == RelayoutChildren::Yes)
-        excludedMarker->setNeedsLayout(MarkingBehavior::OnlyThis);
-    auto markerNeedsLayout = excludedMarker->needsLayout();
-    excludedMarker->layoutIfNeeded();
+        outsideMarker->setNeedsLayout(MarkingBehavior::OnlyThis);
+    auto markerNeedsLayout = outsideMarker->needsLayout();
+    outsideMarker->layoutIfNeeded();
 
     if (markerNeedsLayout) {
-        auto layoutBounds = excludedMarkerLayoutBounds(*excludedMarker, markerText());
+        auto layoutBounds = outsideMarkerLayoutBounds(*outsideMarker, markerText());
         // The line the marker is aligned with made room for it, so it has to be laid out again when the marker needs a different amount.
-        if (m_excludedMarkerPosition && layoutBounds != m_markerLayoutBounds)
-            invalidateExcludedMarkerContainer();
+        if (m_outsideMarkerPosition && layoutBounds != m_markerLayoutBounds)
+            invalidateOutsideMarkerContainer();
         m_markerLayoutBounds = layoutBounds;
     }
 
@@ -711,15 +730,15 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (CheckedPtr excludedMarker = this->excludedMarker(); excludedMarker && !excludedMarker->hasSelfPaintingLayer())
-        excludedMarker->paintAsInlineBlock(paintInfo, blockStartRelativeToPhysicalForChild(*excludedMarker, paintOffset));
+    if (CheckedPtr outsideMarker = markerBox(); outsideMarker && !outsideMarker->hasSelfPaintingLayer())
+        outsideMarker->paintAsInlineBlock(paintInfo, blockStartRelativeToPhysicalForChild(*outsideMarker, paintOffset));
 
     RenderBlockFlow::paintObject(paintInfo, paintOffset);
 }
 
 bool RenderListItem::hasLineIfEmpty() const
 {
-    if (excludedMarker())
+    if (markerBox())
         return true;
 
     return RenderBlockFlow::hasLineIfEmpty();
@@ -730,18 +749,20 @@ bool RenderListItem::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     if (RenderBlockFlow::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return true;
 
-    CheckedPtr excludedMarker = this->excludedMarker();
-    if (!excludedMarker || excludedMarker->hasSelfPaintingLayer())
+    CheckedPtr outsideMarker = markerBox();
+    if (!outsideMarker || outsideMarker->hasSelfPaintingLayer())
         return false;
 
     // The marker's own location is relative to us, so it needs our adjusted one, the way hitTestChildren gets it.
     auto adjustedLocation = accumulatedOffset + location();
-    return excludedMarker->nodeAtPoint(request, result, locationInContainer, blockStartRelativeToPhysicalForChild(*excludedMarker, adjustedLocation), hitTestAction);
+    // RenderBlock::nodeAtPoint is protected, the RenderBox one is not.
+    return static_cast<RenderBox&>(*outsideMarker).nodeAtPoint(request, result, locationInContainer, blockStartRelativeToPhysicalForChild(*outsideMarker, adjustedLocation), hitTestAction);
 }
 
-RenderListOutsideMarker* RenderListItem::markerBox() const
+RenderBlockFlow* RenderListItem::markerBox() const
 {
-    return dynamicDowncast<RenderListOutsideMarker>(m_marker.get());
+    // An inside marker is an inline box, so a block marker is the outside one.
+    return dynamicDowncast<RenderBlockFlow>(m_marker);
 }
 
 RenderListItem* RenderListItem::listItemForMarker(const RenderObject& marker)
@@ -831,15 +852,16 @@ bool RenderListItem::isInReversedOrderedList() const
     return list && list->isReversed();
 }
 
-void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
+void RenderListItem::placeOutsideMarker(RenderBlockFlow& marker)
 {
-    auto& excludedPosition = m_excludedMarkerPosition;
+    auto& excludedPosition = m_outsideMarkerPosition;
     CheckedPtr firstFormattedLineRoot = excludedPosition ? excludedPosition->firstFormattedLineRoot.get() : nullptr;
     if (!firstFormattedLineRoot) {
         // Reached only when no line took the marker: we have no formatted line to align it with, either because we have no content at all.
-        // Let's top align it at our content edge; the marker contributes no height, which is what a marker on a collapsed line inside such content would have done.
-        setLogicalTopForChild(marker, borderAndPaddingBefore());
-        auto markerLogicalLeft = writingMode().isLogicalLeftInlineStart() ? marginStartForChild(marker) : logicalWidth() - logicalWidthForChild(marker) - marginStartForChild(marker);
+        // Let's top align its primary font or image at our content edge; the marker contributes no height, which is what a marker on a collapsed line inside such content would have done.
+        setLogicalTopForChild(marker, borderAndPaddingBefore() + outsideMarkerContentLogicalTop(marker));
+        auto marginStart = outsideMarkerMarginStart(marker);
+        auto markerLogicalLeft = writingMode().isLogicalLeftInlineStart() ? marginStart : logicalWidth() - logicalWidthForChild(marker) - marginStart;
         setLogicalLeftForChild(marker, markerLogicalLeft);
         return;
     }
@@ -847,7 +869,7 @@ void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
     // Line layout placed the marker on the line as if it belonged to the list item establishing that formatting context.
     // Take it from there: out to our own border box start, then across the in-flow content up to us.
     auto logicalTop = LayoutUnit { excludedPosition->topLeft.y() };
-    auto logicalLeft = LayoutUnit { excludedPosition->topLeft.x() } + excludedMarkerLogicalLeftOffsetFor(*firstFormattedLineRoot, *this, excludedPosition->isLineStartConstrainedByFloat);
+    auto logicalLeft = LayoutUnit { excludedPosition->topLeft.x() } + outsideMarkerLogicalLeftOffsetFor(*firstFormattedLineRoot, *this, excludedPosition->isLineStartConstrainedByFloat);
     for (CheckedPtr<RenderBlock> ancestor = firstFormattedLineRoot; ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
         // Inside a fragmented flow the coordinates are in flow thread space, where the content is one continuous
         // strip. The column the line ended up in is a sibling of the flow thread rather than an ancestor, so leave
@@ -937,11 +959,11 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
     return { { }, fallbackParent };
 }
 
-Vector<CheckedPtr<RenderListItem>> RenderListItem::listItemsWithExcludedMarkerFor(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListItem>>& listItemsWithExcludedMarker)
+Vector<CheckedPtr<RenderListItem>> RenderListItem::listItemsWithOutsideMarkerFor(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListItem>>& listItemsWithOutsideMarker)
 {
     auto listItems = Vector<CheckedPtr<RenderListItem>> { };
-    for (auto& listItem : listItemsWithExcludedMarker) {
-        CheckedPtr marker = listItem ? listItem->excludedMarker() : nullptr;
+    for (auto& listItem : listItemsWithOutsideMarker) {
+        CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
         if (!marker) {
             ASSERT_NOT_REACHED();
             continue;
@@ -953,25 +975,25 @@ Vector<CheckedPtr<RenderListItem>> RenderListItem::listItemsWithExcludedMarkerFo
     return listItems;
 }
 
-void RenderListItem::setExcludedMarkerPosition(ExcludedMarkerPosition&& excludedPosition)
+void RenderListItem::setOutsideMarkerPosition(OutsideMarkerPosition&& excludedPosition)
 {
     ASSERT(excludedPosition.firstFormattedLineRoot);
-    m_excludedMarkerPosition = WTF::move(excludedPosition);
+    m_outsideMarkerPosition = WTF::move(excludedPosition);
 }
 
-void RenderListItem::invalidateExcludedMarkerContainer()
+void RenderListItem::invalidateOutsideMarkerContainer()
 {
-    ASSERT(m_excludedMarkerPosition);
+    ASSERT(m_outsideMarkerPosition);
 
-    if (!m_excludedMarkerPosition || !m_excludedMarkerPosition->firstFormattedLineRoot) {
-        m_excludedMarkerPosition = { };
+    if (!m_outsideMarkerPosition || !m_outsideMarkerPosition->firstFormattedLineRoot) {
+        m_outsideMarkerPosition = { };
         return;
     }
 
-    if (m_excludedMarkerPosition->firstFormattedLineRoot->isDescendantOf(this))
-        return m_excludedMarkerPosition->firstFormattedLineRoot->setNeedsLayout();
+    if (m_outsideMarkerPosition->firstFormattedLineRoot->isDescendantOf(this))
+        return m_outsideMarkerPosition->firstFormattedLineRoot->setNeedsLayout();
 
-    m_excludedMarkerPosition = { };
+    m_outsideMarkerPosition = { };
 }
 
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd)

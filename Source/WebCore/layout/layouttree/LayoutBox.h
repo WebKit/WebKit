@@ -64,7 +64,6 @@ public:
         IFrame,
         LineBreak,
         WordBreakOpportunity,
-        ListMarker,
         ImplicitFlexBox // These boxes are implicit flex boxes with no flex display type and they should probably turned into proper flex boxes.
     };
 
@@ -146,7 +145,7 @@ public:
     bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
-    bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
+    bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image; }
     bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
     NODELETE bool isInternalTableBox() const;
     NODELETE inline bool isRuby() const;
@@ -174,7 +173,7 @@ public:
     bool isIntegrationRoot() const { return m_isInlineIntegrationRoot || m_isGridIntegrationRoot; }
     bool isAnonymousTextIndentCandidateForIntegration() const { return m_isAnonymousTextIndentCandidateForIntegration; }
 
-    // Navigation follows the render tree, skipping excluded list markers. The initial containing block is the parent of
+    // Navigation follows the render tree, skipping outside list markers. The initial containing block is the parent of
     // RenderView and of renderers without a parent. parent() is defined in RenderElement.h, the siblings in RenderText.h.
     inline const ElementBox& parent() const;
     inline const Box* nextSibling() const;

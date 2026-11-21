@@ -627,7 +627,7 @@ void BoxGeometryUpdater::setFormattingContextContentGeometry(std::optional<Layou
 
     if (rootLayoutBox().establishesInlineFormattingContext()) {
         for (auto walker = InlineWalker(downcast<RenderBlockFlow>(rootRenderer())); !walker.atEnd(); walker.advance()) {
-            if (walker.current()->isExcludedMarker() || is<RenderText>(walker.current()))
+            if (walker.current()->isOutsideListMarker() || is<RenderText>(walker.current()))
                 continue;
             updateBoxGeometry(protect(downcast<RenderElement>(*walker.current())), availableLogicalWidth, intrinsicWidthMode);
         }

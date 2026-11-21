@@ -193,7 +193,7 @@ bool BlockPainter::paintChild(RenderBox& child, PaintInfo& paintInfoForChild, bo
     if (child.isExcludedAndPlacedInBorder())
         return true;
 
-    if (child.isExcludedMarker())
+    if (child.isOutsideListMarker())
         return true;
 
     if (child.isSkippedContent()) {

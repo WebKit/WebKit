@@ -8,11 +8,15 @@ layer at (0,0) size 800x600
           text run at (0,0) width 360: "Meters with border values"
       RenderBlock {UL} at (0,58) size 784x271
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 169x18
             text run at (0,0) width 169: "min,low,optimal,high,max"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderInline {B} at (0,0) size 8x18
             RenderText {#text} at (0,0) size 8x18
               text run at (0,0) width 8: "9"
@@ -20,7 +24,9 @@ layer at (0,0) size 800x600
             text run at (8,0) width 108: "|10,20,30,40,50: "
           RenderMeter {METER} at (115,1) size 81x17
         RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderInline {B} at (0,0) size 16x18
             RenderText {#text} at (0,0) size 16x18
               text run at (0,0) width 16: "10"
@@ -28,7 +34,9 @@ layer at (0,0) size 800x600
             text run at (16,0) width 89: ",20,30,40,50: "
           RenderMeter {METER} at (104,1) size 81x17
         RenderListItem {LI} at (40,54) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 20x18
             text run at (0,0) width 20: "10,"
           RenderInline {B} at (0,0) size 16x18
@@ -40,7 +48,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (184,0) size 113x18
             text run at (184,0) width 113: "(should be green)"
         RenderListItem {LI} at (40,72) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 40x18
             text run at (0,0) width 40: "10,20,"
           RenderInline {B} at (0,0) size 16x18
@@ -52,7 +62,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (184,0) size 113x18
             text run at (184,0) width 113: "(should be green)"
         RenderListItem {LI} at (40,90) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 60x18
             text run at (0,0) width 60: "10,20,30,"
           RenderInline {B} at (0,0) size 16x18
@@ -64,7 +76,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (184,0) size 113x18
             text run at (184,0) width 113: "(should be green)"
         RenderListItem {LI} at (40,108) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 80x18
             text run at (0,0) width 80: "10,20,30,40,"
           RenderInline {B} at (0,0) size 16x18
@@ -76,7 +90,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (184,0) size 121x18
             text run at (184,0) width 121: "(should be yellow)"
         RenderListItem {LI} at (40,126) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 100x18
             text run at (0,0) width 100: "10,20,30,40,50|"
           RenderInline {B} at (0,0) size 17x18
@@ -88,7 +104,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (203,0) size 121x18
             text run at (203,0) width 121: "(should be yellow)"
         RenderListItem {LI} at (40,144) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 20x18
             text run at (0,0) width 20: "10,"
           RenderInline {B} at (0,0) size 16x18
@@ -98,7 +116,9 @@ layer at (0,0) size 800x600
             text run at (36,0) width 69: ",30,40,50: "
           RenderMeter {METER} at (104,1) size 81x17
         RenderListItem {LI} at (40,162) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 60x18
             text run at (0,0) width 60: "10,20,30,"
           RenderInline {B} at (0,0) size 16x18
@@ -110,7 +130,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (184,0) size 113x18
             text run at (184,0) width 113: "(should be green)"
         RenderListItem {LI} at (40,180) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderInline {B} at (0,0) size 8x18
             RenderText {#text} at (0,0) size 8x18
               text run at (0,0) width 8: "9"
@@ -118,7 +140,9 @@ layer at (0,0) size 800x600
             text run at (8,0) width 108: "|10,10,10,20,30: "
           RenderMeter {METER} at (115,1) size 81x17
         RenderListItem {LI} at (40,198) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 40x18
             text run at (0,0) width 40: "10,10,"
           RenderInline {B} at (0,0) size 16x18
@@ -128,7 +152,9 @@ layer at (0,0) size 800x600
             text run at (56,0) width 49: ",20,30: "
           RenderMeter {METER} at (104,1) size 81x17
         RenderListItem {LI} at (40,216) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 40x18
             text run at (0,0) width 40: "10,20,"
           RenderInline {B} at (0,0) size 16x18
@@ -140,7 +166,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (184,0) size 113x18
             text run at (184,0) width 113: "(should be green)"
         RenderListItem {LI} at (40,234) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 100x18
             text run at (0,0) width 100: "10,20,30,30,30|"
           RenderInline {B} at (0,0) size 17x18
@@ -152,7 +180,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (203,0) size 113x18
             text run at (203,0) width 113: "(should be green)"
         RenderListItem {LI} at (40,252) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 40x18
             text run at (0,0) width 40: "10,20,"
           RenderInline {B} at (0,0) size 16x18

@@ -31,15 +31,21 @@ layer at (0,0) size 785x1716
           text run at (0,0) width 383: "The images used as backgrounds are the following:"
       RenderBlock {UL} at (0,260) size 769x732
         RenderListItem {LI} at (40,0) size 729x34
-          RenderListMarker at (-16,18) size 6x16: bullet
+          RenderBlock (generated) at (-16,18) size 6x16
+            RenderText at (0,0) size 6x15
+              text run at (0,0) width 6: "\x{2022}"
           RenderImage {IMG} at (0,0) size 80x30
           RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,33) size 729x84
-          RenderListMarker at (-16,68) size 6x16: bullet
+          RenderBlock (generated) at (-16,68) size 6x16
+            RenderText at (0,0) size 6x15
+              text run at (0,0) width 6: "\x{2022}"
           RenderImage {IMG} at (0,0) size 30x80
           RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,116) size 729x615
-          RenderListMarker at (-16,599) size 6x16: bullet
+          RenderBlock (generated) at (-16,599) size 6x16
+            RenderText at (0,0) size 6x15
+              text run at (0,0) width 6: "\x{2022}"
           RenderImage {IMG} at (0,0) size 779x611
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1004) size 769x16
@@ -80,163 +86,217 @@ layer at (0,0) size 785x1716
           text run at (0,0) width 199: "Table of Contents"
       RenderBlock {OL} at (0,1231) size 769x455
         RenderListItem {LI} at (40,0) size 729x105
-          RenderListMarker at (-24,0) size 24x15: "A"
+          RenderBlock (generated) at (-24,0) size 24x15
+            RenderText at (0,0) size 24x15
+              text run at (0,0) width 24: "A. "
           RenderBlock (anonymous) at (0,0) size 729x15
             RenderText {#text} at (0,0) size 118x15
               text run at (0,0) width 118: "Background Area"
           RenderBlock {OL} at (0,15) size 729x90
             RenderListItem {LI} at (40,0) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "1"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "1. "
               RenderInline {A} at (0,0) size 164x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 164x15
                   text run at (0,0) width 164: "Background on 'table'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,15) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "2"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "2. "
               RenderInline {A} at (0,0) size 242x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 242x15
                   text run at (0,0) width 242: "Background on 'table-row-group'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,30) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "3"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "3. "
               RenderInline {A} at (0,0) size 266x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 266x15
                   text run at (0,0) width 266: "Background on 'table-column-group'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,45) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "4"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "4. "
               RenderInline {A} at (0,0) size 196x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 196x15
                   text run at (0,0) width 196: "Background on 'table-row'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,60) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "5"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "5. "
               RenderInline {A} at (0,0) size 219x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 219x15
                   text run at (0,0) width 219: "Background on 'table-column'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,75) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "6"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "6. "
               RenderInline {A} at (0,0) size 203x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 203x15
                   text run at (0,0) width 203: "Background on 'table-cell'"
               RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,105) size 729x105
-          RenderListMarker at (-24,0) size 24x15: "B"
+          RenderBlock (generated) at (-24,0) size 24x15
+            RenderText at (0,0) size 24x15
+              text run at (0,0) width 24: "B. "
           RenderBlock (anonymous) at (0,0) size 729x15
             RenderText {#text} at (0,0) size 149x15
               text run at (0,0) width 149: "Background Position"
           RenderBlock {OL} at (0,15) size 729x90
             RenderListItem {LI} at (40,0) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "1"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "1. "
               RenderInline {A} at (0,0) size 164x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 164x15
                   text run at (0,0) width 164: "Background on 'table'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,15) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "2"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "2. "
               RenderInline {A} at (0,0) size 242x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 242x15
                   text run at (0,0) width 242: "Background on 'table-row-group'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,30) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "3"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "3. "
               RenderInline {A} at (0,0) size 266x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 266x15
                   text run at (0,0) width 266: "Background on 'table-column-group'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,45) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "4"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "4. "
               RenderInline {A} at (0,0) size 196x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 196x15
                   text run at (0,0) width 196: "Background on 'table-row'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,60) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "5"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "5. "
               RenderInline {A} at (0,0) size 219x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 219x15
                   text run at (0,0) width 219: "Background on 'table-column'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,75) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "6"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "6. "
               RenderInline {A} at (0,0) size 203x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 203x15
                   text run at (0,0) width 203: "Background on 'table-cell'"
               RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,210) size 729x45
-          RenderListMarker at (-24,0) size 24x15: "C"
+          RenderBlock (generated) at (-24,0) size 24x15
+            RenderText at (0,0) size 24x15
+              text run at (0,0) width 24: "C. "
           RenderBlock (anonymous) at (0,0) size 729x15
             RenderText {#text} at (0,0) size 133x15
               text run at (0,0) width 133: "Background Layers"
           RenderBlock {OL} at (0,15) size 729x30
             RenderListItem {LI} at (40,0) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "1"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "1. "
               RenderInline {A} at (0,0) size 133x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 133x15
                   text run at (0,0) width 133: "empty-cells: show"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,15) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "2"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "2. "
               RenderInline {A} at (0,0) size 133x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 133x15
                   text run at (0,0) width 133: "empty-cells: hide"
               RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,255) size 729x200
-          RenderListMarker at (-24,0) size 24x15: "D"
+          RenderBlock (generated) at (-24,0) size 24x15
+            RenderText at (0,0) size 24x15
+              text run at (0,0) width 24: "D. "
           RenderBlock (anonymous) at (0,0) size 729x15
             RenderText {#text} at (0,0) size 180x15
               text run at (0,0) width 180: "Background with Borders"
           RenderBlock {OL} at (0,15) size 729x135
             RenderListItem {LI} at (40,0) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "1"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "1. "
               RenderInline {A} at (0,0) size 164x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 164x15
                   text run at (0,0) width 164: "Background on 'table'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,15) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "2"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "2. "
               RenderInline {A} at (0,0) size 242x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 242x15
                   text run at (0,0) width 242: "Background on 'table-row-group'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,30) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "3"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "3. "
               RenderInline {A} at (0,0) size 266x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 266x15
                   text run at (0,0) width 266: "Background on 'table-column-group'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,45) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "4"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "4. "
               RenderInline {A} at (0,0) size 196x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 196x15
                   text run at (0,0) width 196: "Background on 'table-row'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,60) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "5"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "5. "
               RenderInline {A} at (0,0) size 219x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 219x15
                   text run at (0,0) width 219: "Background on 'table-column'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,75) size 689x15
-              RenderListMarker at (-24,0) size 24x15: "6"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "6. "
               RenderInline {A} at (0,0) size 203x15 [color=#FFFF00]
                 RenderText {#text} at (0,0) size 203x15
                   text run at (0,0) width 203: "Background on 'table-cell'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,90) size 689x45
-              RenderListMarker at (-24,0) size 24x15: "7"
+              RenderBlock (generated) at (-24,0) size 24x15
+                RenderText at (0,0) size 24x15
+                  text run at (0,0) width 24: "7. "
               RenderBlock (anonymous) at (0,0) size 689x15
                 RenderText {#text} at (0,0) size 102x15
                   text run at (0,0) width 102: "Special Tests"
               RenderBlock {OL} at (0,15) size 689x30
                 RenderListItem {LI} at (40,0) size 649x15
-                  RenderListMarker at (-24,0) size 24x15: "1"
+                  RenderBlock (generated) at (-24,0) size 24x15
+                    RenderText at (0,0) size 24x15
+                      text run at (0,0) width 24: "1. "
                   RenderInline {A} at (0,0) size 55x15 [color=#FFFF00]
                     RenderText {#text} at (0,0) size 55x15
                       text run at (0,0) width 55: "Opacity"
                   RenderText {#text} at (0,0) size 0x0
                 RenderListItem {LI} at (40,15) size 649x15
-                  RenderListMarker at (-24,0) size 24x15: "2"
+                  RenderBlock (generated) at (-24,0) size 24x15
+                    RenderText at (0,0) size 24x15
+                      text run at (0,0) width 24: "2. "
                   RenderInline {A} at (0,0) size 133x15 [color=#FFFF00]
                     RenderText {#text} at (0,0) size 133x15
                       text run at (0,0) width 133: "Fixed Backgrounds"
