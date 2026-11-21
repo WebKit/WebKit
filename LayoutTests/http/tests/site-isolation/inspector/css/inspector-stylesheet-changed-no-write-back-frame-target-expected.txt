@@ -1,0 +1,10 @@
+Test that the frontend does not write an inspector style sheet's text back to a frame target after re-fetching it for CSS.styleSheetChanged. That stale write could land after a later edit, undo or redo and revert it.
+
+
+
+== Running test suite: SiteIsolation.CSS.InspectorStyleSheetChangedNoWriteBack.FrameTarget
+-- Running test case: SiteIsolation.CSS.InspectorStyleSheetChangedNoWriteBack.FrameTarget.AddRule
+PASS: Should find a child frame target.
+PASS: Refreshed content should contain the added rule.
+PASS: Refreshing the content should not call CSS.setStyleSheetText.
+

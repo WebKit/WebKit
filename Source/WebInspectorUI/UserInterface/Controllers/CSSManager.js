@@ -879,15 +879,16 @@ WI.CSSManager = class CSSManager extends WI.Object
                 return;
             }
 
-            this._ignoreResourceContentDidChangeEventForResource = representedObject;
-
-            let revision = representedObject.editableRevision;
             if (styleSheet.isInspectorStyleSheet()) {
-                revision.updateRevisionContent(representedObject.content);
+                // `requestContent` already stored the fetched text in the current revision. Updating the revision
+                // again would make `handleCurrentRevisionContentChange` send that text back to the backend, where
+                // it can land after a later edit, undo, or redo and silently revert it.
                 styleSheet.dispatchEventToListeners(WI.SourceCode.Event.ContentDidChange);
-            } else
-                revision.updateRevisionContent(parameters.content);
+                return;
+            }
 
+            this._ignoreResourceContentDidChangeEventForResource = representedObject;
+            representedObject.editableRevision.updateRevisionContent(parameters.content);
             this._ignoreResourceContentDidChangeEventForResource = null;
         }
 
