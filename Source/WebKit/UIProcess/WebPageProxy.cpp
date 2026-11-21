@@ -6125,6 +6125,15 @@ void WebPageProxy::processNextQueuedTouchEvent()
     ASSERT(!internals().touchEventQueue.isEmpty());
 
     auto& queuedEvent = internals().touchEventQueue.first();
+
+    // Once a touch pan has started, the page can't stop it, so the web process doesn't need to wait
+    // for its main thread. Check it when the event is sent rather than when it is queued: the older
+    // events have reached the gesture controller by now. A touchstart can still stop a new gesture.
+    if (queuedEvent.forwardedEvent->type() != WebEventType::TouchStart) {
+        if (RefPtr pageClient = this->pageClient(); pageClient && pageClient->isTouchScrollInProgress())
+            queuedEvent.forwardedEvent->setCanPreventNativeGestures(false);
+    }
+
     protect(legacyMainFrameProcess())->startResponsivenessTimer();
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, queuedEvent.forwardedEvent.copyRef()), [this, protectedThis = Ref { *this }] (IPC::Connection* connection, WebKit::WebEventType eventType, bool handled) mutable {
         RefPtr pageClient = this->pageClient();
@@ -6152,6 +6161,9 @@ void WebPageProxy::processNextQueuedTouchEvent()
 
         MESSAGE_CHECK_BASE(eventType == queuedEvents.forwardedEvent->type(), connection);
         protect(legacyMainFrameProcess())->stopResponsivenessTimer();
+
+        if (!queuedEvents.forwardedEvent->canPreventNativeGestures())
+            handled = false;
 
         doneWithTouchEvents(queuedEvents, handled);
 
