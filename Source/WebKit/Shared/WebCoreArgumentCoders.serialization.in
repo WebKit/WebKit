@@ -6250,7 +6250,7 @@ header: <WebCore/ImageBitmap.h>
 };
 
 [RefCounted] class WebCore::SerializedScriptValue {
-    std::unique_ptr<WebCore::SerializedScriptValueInternals> m_internals;
+    [Validator='!!*m_internals'] std::unique_ptr<WebCore::SerializedScriptValueInternals> m_internals;
 };
 
 header: <WebCore/SharedBuffer.h>
