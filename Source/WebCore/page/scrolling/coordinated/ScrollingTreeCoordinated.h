@@ -59,13 +59,14 @@ private:
     OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const final;
 #endif
 #if ENABLE(COORDINATED_TOUCH_EVENTS)
-    TrackingType eventTrackingTypeForTouchEvent(const PlatformTouchEvent&) final;
+    TouchEventTrackingResult trackTouchEvent(const PlatformTouchEvent&) final;
 
     struct TouchEventTracking {
         TrackingType touchForceChangedTracking { TrackingType::NotTracking };
         TrackingType touchStartTracking { TrackingType::NotTracking };
         TrackingType touchMoveTracking { TrackingType::NotTracking };
         TrackingType touchEndTracking { TrackingType::NotTracking };
+        OptionSet<TouchAction> touchActions { TouchAction::Auto };
 
         bool isTrackingAnything() const
         {
@@ -81,6 +82,7 @@ private:
             touchStartTracking = TrackingType::NotTracking;
             touchMoveTracking = TrackingType::NotTracking;
             touchEndTracking = TrackingType::NotTracking;
+            touchActions = { TouchAction::Auto };
         }
     };
     TouchEventTracking m_touchEventTracking;

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    height: 5000px;
+}
+
+.box {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    height: 100px;
+}
+
+#none {
+    top: 0;
+    touch-action: none;
+}
+
+#pan-x {
+    top: 100px;
+    touch-action: pan-x;
+}
+
+#pan-y {
+    top: 200px;
+    touch-action: pan-y;
+}
+
+#none-parent {
+    top: 300px;
+    touch-action: none;
+}
+
+#none-parent > div {
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+<button id="none" class="box"></button>
+<div id="pan-x" class="box"></div>
+<div id="pan-y" class="box"></div>
+<div id="none-parent" class="box"><div></div></div>
+<div id="console"></div>
+<script>
+description("Tests that touch-action stops touch drags from panning in the directions it doesn't allow, and that a tap on an element with touch-action: none still clicks.");
+window.jsTestIsAsync = true;
+
+let scrollAfterDrag;
+let clickCount = 0;
+document.getElementById("none").addEventListener("click", () => clickCount++);
+
+async function drag(x, y)
+{
+    window.scrollTo(0, 0);
+    await UIHelper.renderingComplete();
+
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(x, y);
+    await eventSender.asyncTouchStart();
+    // Each step is longer than the drag threshold, so the drag pans from the first move if it can.
+    for (let i = 1; i <= 4; ++i) {
+        eventSender.updateTouchPoint(0, x, y - 20 * i);
+        await eventSender.asyncTouchMove();
+    }
+    // Read the scroll position before the release, which can start a fling.
+    await UIHelper.renderingComplete();
+    scrollAfterDrag = window.scrollY;
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+    await UIHelper.renderingComplete();
+}
+
+async function tap(x, y)
+{
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(x, y);
+    await eventSender.asyncTouchStart();
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+}
+
+window.addEventListener("load", async () => {
+    if (!window.eventSender) {
+        debug("This test requires WebKitTestRunner.");
+        finishJSTest();
+        return;
+    }
+
+    // Touch action regions must reach the scrolling tree before touch events are dispatched.
+    await UIHelper.renderingComplete();
+
+    debug("A drag that starts outside of the boxes pans:");
+    await drag(300, 90);
+    shouldBeTrue("scrollAfterDrag > 20");
+
+    debug("");
+    debug("touch-action: none");
+    await drag(100, 90);
+    shouldBe("scrollAfterDrag", "0");
+
+    debug("");
+    debug("touch-action: pan-x, with a vertical drag");
+    await drag(100, 190);
+    shouldBe("scrollAfterDrag", "0");
+
+    debug("");
+    debug("touch-action: pan-y, with a vertical drag");
+    await drag(100, 290);
+    shouldBeTrue("scrollAfterDrag > 20");
+
+    debug("");
+    debug("touch-action: none on the parent of the touched element");
+    await drag(100, 390);
+    shouldBe("scrollAfterDrag", "0");
+
+    debug("");
+    debug("A tap on an element with touch-action: none clicks:");
+    window.scrollTo(0, 0);
+    await UIHelper.renderingComplete();
+    await tap(100, 50);
+    await UIHelper.waitForCondition(() => clickCount);
+    shouldBe("clickCount", "1");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

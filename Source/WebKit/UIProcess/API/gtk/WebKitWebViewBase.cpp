@@ -78,6 +78,7 @@
 #include <WebCore/Scrollbar.h>
 #include <WebCore/SkiaUtilities.h>
 #include <WebCore/SystemSettings.h>
+#include <WebCore/TouchAction.h>
 #include <cmath>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
@@ -383,6 +384,9 @@ struct _WebKitWebViewBasePrivate {
     bool isLongPressed;
     bool isBeingDragged;
     bool pageGrabbedTouch;
+    // The touch actions of the current touch sequence. They come from the web process after the
+    // gestures have started, so until then, the gestures behave as with touch-action: auto.
+    OptionSet<TouchAction> touchActions { TouchAction::Auto };
 
     // Synthesized touches bypass the GTK gestures, so their taps are recognized separately.
     struct SyntheticTap {
@@ -1929,8 +1933,10 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     GdkEventType type = gdk_event_get_event_type(touchEvent);
     switch (type) {
     case GDK_TOUCH_BEGIN: {
-        if (priv->touchEvents.isEmpty())
+        if (priv->touchEvents.isEmpty()) {
             priv->pageGrabbedTouch = false;
+            priv->touchActions = TouchAction::Auto;
+        }
         ASSERT(!priv->touchEvents.contains(sequence));
 #if USE(GTK4)
         GRefPtr<GdkEvent> event = touchEvent;
@@ -2160,7 +2166,7 @@ static void webkitWebViewBaseStyleUpdated(GtkWidget* widget)
 static void webkitWebViewBaseZoomBegin(WebKitWebViewBase* webViewBase, GdkEventSequence* sequence, GtkGesture* gesture)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->pageGrabbedTouch)
+    if (priv->pageGrabbedTouch || !touchActionsAllowPinchZoom(priv->touchActions))
         return;
 
     double x, y;
@@ -2179,7 +2185,7 @@ static void webkitWebViewBaseZoomBegin(WebKitWebViewBase* webViewBase, GdkEventS
 static void webkitWebViewBaseZoomChanged(WebKitWebViewBase* webViewBase, gdouble scale, GtkGesture* gesture)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->pageGrabbedTouch)
+    if (priv->pageGrabbedTouch || !touchActionsAllowPinchZoom(priv->touchActions))
         return;
 
     gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_CLAIMED);
@@ -2316,6 +2322,9 @@ static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, dou
         double deltaX = priv->dragOffset.x() - offsetX;
         double deltaY = priv->dragOffset.y() - offsetY;
         priv->dragOffset.set(offsetX, offsetY);
+        // A drag that can't pan is still claimed above, so that it doesn't end in a tap.
+        if (!constrainPanToTouchActions(priv->touchActions, deltaX, deltaY))
+            return;
 
         ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
         if (controller && controller->isSwipeGestureEnabled()) {
@@ -2355,6 +2364,8 @@ static void webkitWebViewBaseTouchSwipe(WebKitWebViewBase* webViewBase, gdouble 
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->pageGrabbedTouch || !priv->isBeingDragged || priv->isLongPressed)
         return;
+
+    constrainPanToTouchActions(priv->touchActions, velocityX, velocityY);
 
     double x, y;
     if (gtk_gesture_get_point(gesture, gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture)), &x, &y)) {
@@ -3556,6 +3567,13 @@ void webkitWebViewBaseMakeBlank(WebKitWebViewBase* webViewBase, bool makeBlank)
     priv->isBlank = makeBlank;
     gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
 }
+
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+void webkitWebViewBaseSetTouchActions(WebKitWebViewBase* webViewBase, OptionSet<TouchAction> touchActions)
+{
+    webViewBase->priv->touchActions = touchActions;
+}
+#endif
 
 void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase* webViewBase)
 {
