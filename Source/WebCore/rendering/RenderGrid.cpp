@@ -598,7 +598,6 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
-        updateOutOfFlowDescendantTransformsAfterLayout();
         addOverflowFromOutOfFlowBoxes();
 
         m_trackSizingAlgorithm.reset();
@@ -810,7 +809,6 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
-        updateOutOfFlowDescendantTransformsAfterLayout();
         addOverflowFromOutOfFlowBoxes();
 
         m_trackSizingAlgorithm.reset();
