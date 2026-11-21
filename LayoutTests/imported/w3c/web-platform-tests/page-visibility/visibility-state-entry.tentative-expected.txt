@@ -1,4 +1,6 @@
 
-Harness Error (FAIL), message = Error: assert_implements: VisibilityStateEntry is not supported. undefined
-
+PASS Hiding/showing the page should create visibility-state entries
+PASS If a page starts as hidden, the first visibility-state entry should be hidden
+PASS Visibility state entries should be queued to performance observers
+PASS Visibility state observers should respect the buffered flag
 
