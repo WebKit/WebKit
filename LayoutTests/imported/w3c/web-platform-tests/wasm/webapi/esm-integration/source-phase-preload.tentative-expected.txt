@@ -1,11 +1,4 @@
 
-Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'exportedNamesSource'. Expected 'from' before imported module name.
-
-TIMEOUT Static source phase import. Test timed out
-NOTRUN Dynamic source phase import.
-
-Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'exportedNamesSource'. Expected 'from' before imported module name.
-
-TIMEOUT Static source phase import. Test timed out
-NOTRUN Dynamic source phase import.
+PASS Static source phase import.
+PASS Dynamic source phase import.
 
