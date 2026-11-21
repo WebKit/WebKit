@@ -93,7 +93,7 @@ FontCascade::FontCascade(FontCascadeDescription&& description, const FontCascade
 
 FontCascade::FontCascade(const FontCascade& other)
     : CanMakeWeakPtr<FontCascade>()
-    , CanMakeCheckedPtr<FontCascade, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes>()
+    , CanMakeCheckedPtr<FontCascade>()
     , m_fontDescription(other.m_fontDescription)
     , m_spacing(other.m_spacing)
     , m_fonts(other.m_fonts)
@@ -118,6 +118,17 @@ FontCascade& FontCascade::operator=(const FontCascade& other)
     m_requiresShaping = other.m_requiresShaping;
     m_fontSelector = other.m_fontSelector;
     return *this;
+}
+
+void FontCascade::setFontDescription(FontCascadeDescription&& description)
+{
+    m_fontDescription = WTF::move(description);
+    m_fonts = nullptr;
+    m_fontSelector = nullptr;
+    m_generation = ++lastFontCascadeGeneration;
+    m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
+    m_enableKerning = computeEnableKerning();
+    m_requiresShaping = computeRequiresShaping();
 }
 
 bool FontCascade::operator==(const FontCascade& other) const

@@ -50,13 +50,13 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
 
     int itemCount = m_popupClient->listSize();
 
-    auto font = m_popupClient->menuStyle().font();
+    UniqueRef font = m_popupClient->menuStyle().font().clone();
 
     data.m_clientPaddingLeft = m_popupClient->clientPaddingLeft();
     data.m_clientPaddingRight = m_popupClient->clientPaddingRight();
     data.m_clientInsetLeft = m_popupClient->clientInsetLeft();
     data.m_clientInsetRight = m_popupClient->clientInsetRight();
-    data.m_itemHeight = ceil((font.metricsOfPrimaryFont().intHeight() + 1) * deviceScaleFactor) / deviceScaleFactor;
+    data.m_itemHeight = ceil((font->metricsOfPrimaryFont().intHeight() + 1) * deviceScaleFactor) / deviceScaleFactor;
 
     int popupWidth = 0;
     for (size_t i = 0; i < itemCount; ++i) {
@@ -64,15 +64,15 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
         if (text.isEmpty())
             continue;
 
-        auto itemFontCascade = font;
+        UniqueRef itemFontCascade = font->clone();
         if (m_popupClient->itemIsLabel(i)) {
-            auto d = itemFontCascade.fontDescription();
+            auto d = itemFontCascade->fontDescription();
             d.setWeight(boldWeightValue());
-            itemFontCascade = FontCascade(WTF::move(d), itemFontCascade);
-            itemFontCascade.update(m_popupClient->fontSelector());
+            itemFontCascade->setFontDescription(WTF::move(d));
+            itemFontCascade->update(m_popupClient->fontSelector());
         }
 
-        popupWidth = std::max<float>(popupWidth, ceilf(itemFontCascade.width(text)));
+        popupWidth = std::max<float>(popupWidth, ceilf(itemFontCascade->width(text)));
     }
 
     // FIXME: popupWidth should probably take into account monitor constraints as is done with WebPopupMenuProxyWin::calculatePositionAndSize.
@@ -130,12 +130,12 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
         notSelectedBackingStoreContext->setFillColor(optionTextColor);
         selectedBackingStoreContext->setFillColor(activeOptionTextColor);
 
-        auto itemFontCascade = font;
+        UniqueRef itemFontCascade = font->clone();
         if (m_popupClient->itemIsLabel(index)) {
-            auto d = itemFontCascade.fontDescription();
+            auto d = itemFontCascade->fontDescription();
             d.setWeight(boldWeightValue());
-            itemFontCascade = FontCascade(WTF::move(d), itemFontCascade);
-            itemFontCascade.update(m_popupClient->fontSelector());
+            itemFontCascade->setFontDescription(WTF::move(d));
+            itemFontCascade->update(m_popupClient->fontSelector());
         }
 
         // Draw the item text
@@ -147,7 +147,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
                 textX = itemRect.width() - m_popupClient->menuStyle().font().width(textRun);
                 textX = std::min<float>(textX, textX - m_popupClient->clientPaddingRight() + m_popupClient->clientInsetRight());
             }
-            float textY = itemRect.y() + itemFontCascade.metricsOfPrimaryFont().intAscent() + (itemRect.height() - itemFontCascade.metricsOfPrimaryFont().intHeight()) / 2;
+            float textY = itemRect.y() + itemFontCascade->metricsOfPrimaryFont().intAscent() + (itemRect.height() - itemFontCascade->metricsOfPrimaryFont().intHeight()) / 2;
 
             FloatPoint textPoint = { textX, textY };
             notSelectedBackingStoreContext->drawBidiText(itemFontCascade, textRun, textPoint);

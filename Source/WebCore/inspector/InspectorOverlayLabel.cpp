@@ -63,15 +63,15 @@ InspectorOverlayLabel::InspectorOverlayLabel(const String& text, FloatPoint loca
 {
 }
 
-static FontCascade systemFont()
+static UniqueRef<FontCascade> systemFont()
 {
     FontCascadeDescription fontDescription;
     fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
     fontDescription.setWeight(FontSelectionValue(500));
     fontDescription.setUsedSize(12);
 
-    FontCascade font(WTF::move(fontDescription));
-    font.update(nullptr);
+    UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+    font->update(nullptr);
     return font;
 }
 
@@ -215,9 +215,9 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
 {
     constexpr char16_t ellipsis = 0x2026;
 
-    auto font = systemFont();
-    float lineHeight = font.metricsOfPrimaryFont().height();
-    float lineDescent = font.metricsOfPrimaryFont().descent();
+    UniqueRef font = systemFont();
+    float lineHeight = font->metricsOfPrimaryFont().height();
+    float lineDescent = font->metricsOfPrimaryFont().descent();
 
     Vector<ComputedContentRun> computedContentRuns;
 
@@ -239,7 +239,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
 
             auto text = lines[i];
             auto textRun = TextRun(text);
-            float textWidth = font.width(textRun);
+            float textWidth = font->width(textRun);
 
             // FIXME: This looks very inefficient.
             if (maximumLineWidth && currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth) {
@@ -248,7 +248,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
                     // Remove the second from last character (the character before the ellipsis) and remeasure.
                     text = makeStringByRemoving(text, text.length() - 2, 1);
                     TextRun truncatedTextRun(text);
-                    textWidth = font.width(truncatedTextRun);
+                    textWidth = font->width(truncatedTextRun);
                     textRun = truncatedTextRun;
                 }
             }
@@ -382,8 +382,8 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
 
 FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, Arrow::Direction direction)
 {
-    auto font = systemFont();
-    float lineHeight = font.metricsOfPrimaryFont().height();
+    UniqueRef font = systemFont();
+    float lineHeight = font->metricsOfPrimaryFont().height();
 
     float longestLineWidth = 0;
     int currentLine = 0;
@@ -401,7 +401,7 @@ FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, A
             if (text.isEmpty())
                 continue;
 
-            currentLineWidth += font.width(text);
+            currentLineWidth += font->width(text);
             if (currentLineWidth > longestLineWidth)
                 longestLineWidth = currentLineWidth;
         }

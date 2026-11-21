@@ -60,7 +60,7 @@ public:
     float scalingFactor() const { return m_scalingFactor; }
     const FontCascade& scaledFont() const { return m_scaledFont; }
     void updateScaledFont();
-    static void computeNewScaledFontForStyle(const RenderObject&, const Style::ComputedStyle&, float& scalingFactor, FontCascade& scaledFont);
+    static void computeNewScaledFontForStyle(const RenderObject&, const Style::ComputedStyle&, float& scalingFactor, std::unique_ptr<FontCascade>& scaledFont);
 
     // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
     FloatRect floatLinesBoundingBox() const;
@@ -80,7 +80,7 @@ private:
     void setRenderedText(const String&) final;
 
     float m_scalingFactor;
-    FontCascade m_scaledFont;
+    const UniqueRef<FontCascade> m_scaledFont { FontCascade::create() };
     Vector<SVGTextMetrics> m_textMetrics;
     SVGTextShapingRuns m_shapingRuns;
     bool m_hasValidTextMetrics { false };

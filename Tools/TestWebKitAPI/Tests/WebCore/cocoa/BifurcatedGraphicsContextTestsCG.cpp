@@ -92,8 +92,8 @@ TEST(BifurcatedGraphicsContextTests, Text)
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
     description.setUsedSize(80);
-    FontCascade font(WTF::move(description));
-    font.update();
+    UniqueRef font = FontCascade::create(WTF::move(description));
+    font->update();
 
     String string = "Hello!"_s;
     TextRun run(string);

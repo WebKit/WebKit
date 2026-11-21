@@ -280,7 +280,7 @@ public:
 
         virtual ~FontProxy();
 
-        bool realized() const { return m_font.hasFontSelector(); }
+        bool realized() const { return m_font->hasFontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
         const FontMetrics& metricsOfPrimaryFont() const LIFETIME_BOUND;
         NODELETE const FontCascadeDescription& fontDescription() const LIFETIME_BOUND;
@@ -288,16 +288,16 @@ public:
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
 
 #if ASSERT_ENABLED
-        bool isPopulated() const { return m_font.fonts(); }
+        bool isPopulated() const { return m_font->fonts(); }
 #endif
 
         const FontCascade& fontCascade() const LIFETIME_BOUND { return m_font; }
 
-        float letterSpacing() const { return m_font.letterSpacing(); }
-        void setLetterSpacing(float letterSpacing) { m_font.setLetterSpacing(letterSpacing); }
+        float letterSpacing() const { return m_font->letterSpacing(); }
+        void setLetterSpacing(float letterSpacing) { m_font->setLetterSpacing(letterSpacing); }
 
-        float wordSpacing() const { return m_font.wordSpacing(); }
-        void setWordSpacing(float wordSpacing) { m_font.setWordSpacing(wordSpacing); }
+        float wordSpacing() const { return m_font->wordSpacing(); }
+        void setWordSpacing(float wordSpacing) { m_font->setWordSpacing(wordSpacing); }
 
         void update(NOESCAPE const ScopedLambda<void(FontCascadeDescription&)>&);
 
@@ -311,7 +311,7 @@ public:
         void update(FontSelector&);
         void fontsNeedUpdate(FontSelector&) final;
 
-        FontCascade m_font;
+        const UniqueRef<FontCascade> m_font { FontCascade::create() };
     };
 
     struct State final {

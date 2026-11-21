@@ -83,7 +83,7 @@ void PopupMenuMac::populate()
 
         WebCore::PopupMenuStyle style = protect(m_client)->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
-        if (style.font() != WebCore::FontCascade()) {
+        if (style.font() != WebCore::FontCascade::create().get()) {
             RetainPtr font = protect(style.font())->primaryFont().ctFont();
             if (!font) {
                 CGFloat size = protect(style.font())->primaryFont().platformData().size();

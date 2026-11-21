@@ -42,6 +42,8 @@ public:
     static Ref<FontData> create() { return adoptRef(*new FontData); }
     Ref<FontData> copy() const;
 
+    void operator delete(FontData*, std::destroying_delete_t, size_t);
+
     bool operator==(const FontData&) const;
 
 #if !LOG_DISABLED

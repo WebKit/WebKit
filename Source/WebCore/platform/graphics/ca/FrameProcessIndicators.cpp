@@ -116,23 +116,23 @@ Color FrameProcessIndicators::borderColor()
     return SRGBA<uint8_t> { r, g, b }.colorWithAlphaByte(192);
 }
 
-FontCascade FrameProcessIndicators::makeFont()
+UniqueRef<FontCascade> FrameProcessIndicators::makeFont()
 {
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily("Helvetica"_s);
     fontDescription.setComputedSize(fontSize);
     fontDescription.setUsedSize(fontSize);
 
-    FontCascade font(WTF::move(fontDescription));
-    font.update(nullptr);
+    UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+    font->update(nullptr);
     return font;
 }
 
 FloatSize FrameProcessIndicators::size() const
 {
-    auto font = makeFont();
+    UniqueRef font = makeFont();
     auto [textTop, textBottom] = textVerticalBounds(font);
-    return { 2 * padding + font.width(m_text), 2 * padding + textBottom - textTop };
+    return { 2 * padding + font->width(m_text), 2 * padding + textBottom - textTop };
 }
 
 std::pair<float, float> FrameProcessIndicators::textVerticalBounds(const FontCascade& font) const
@@ -143,7 +143,7 @@ std::pair<float, float> FrameProcessIndicators::textVerticalBounds(const FontCas
 
 void FrameProcessIndicators::platformCALayerPaintContents(PlatformCALayer* layer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)
 {
-    auto font = makeFont();
+    UniqueRef font = makeFont();
     auto textTop = textVerticalBounds(font).first;
     auto textColor = m_backgroundColor.luminance() > 0.5 ? Color::black : Color::white;
     auto indicatorSize = layer->bounds().size();

@@ -190,7 +190,7 @@ FontCascade& ComputedStyleBase::mutableFontCascadeWithoutUpdate()
     return m_inheritedData.access().fontData.access().fontCascade;
 }
 
-void ComputedStyleBase::setFontCascade(FontCascade&& fontCascade)
+void ComputedStyleBase::setFontCascade(const FontCascade& fontCascade)
 {
     if (fontCascade == this->fontCascade())
         return;
@@ -215,12 +215,10 @@ void ComputedStyleBase::setFontDescription(FontCascadeDescription&& description)
     if (fontDescription() == description)
         return;
 
-    auto existingFontCascade = this->fontCascade();
-    RefPtr fontSelector = existingFontCascade.fontSelector();
-
-    auto newCascade = FontCascade { WTF::move(description), existingFontCascade };
-    newCascade.update(WTF::move(fontSelector));
-    setFontCascade(WTF::move(newCascade));
+    auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
+    RefPtr fontSelector = cascade.fontSelector();
+    cascade.setFontDescription(WTF::move(description));
+    cascade.update(WTF::move(fontSelector));
 }
 
 bool ComputedStyleBase::setFontDescriptionWithoutUpdate(FontCascadeDescription&& description)
@@ -228,8 +226,7 @@ bool ComputedStyleBase::setFontDescriptionWithoutUpdate(FontCascadeDescription&&
     if (fontDescription() == description)
         return false;
 
-    auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
-    cascade = { WTF::move(description), cascade };
+    m_inheritedData.access().fontData.access().fontCascade.setFontDescription(WTF::move(description));
     return true;
 }
 

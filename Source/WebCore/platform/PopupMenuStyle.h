@@ -44,7 +44,7 @@ public:
     PopupMenuStyle(const Color& foreground, const Color& background, const FontCascade& font, const String& language, bool visible, bool isDisplayNone, bool hasDefaultAppearance, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, Size menuSize = Size::Normal)
         : m_foregroundColor(foreground)
         , m_backgroundColor(background)
-        , m_font(font)
+        , m_font(font.clone())
         , m_language(language)
         , m_visible(visible)
         , m_isDisplayNone(isDisplayNone)
@@ -73,7 +73,7 @@ public:
 private:
     Color m_foregroundColor;
     Color m_backgroundColor;
-    FontCascade m_font;
+    UniqueRef<FontCascade> m_font;
     String m_language;
     bool m_visible;
     bool m_isDisplayNone;

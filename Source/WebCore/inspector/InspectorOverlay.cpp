@@ -1082,8 +1082,8 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { page->settings().sansSerifFontFamily() });
         fontDescription.setUsedSize(10);
 
-        FontCascade font(WTF::move(fontDescription));
-        font.update(nullptr);
+        UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+        font->update(nullptr);
 
         GraphicsContextStateSaver lineStateSaver(context);
 
@@ -1123,7 +1123,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
                 GraphicsContextStateSaver verticalLabelStateSaver(context);
                 context.translate(zoom(x) + 0.5f, scrollY);
-                context.drawText(font, TextRun { String::number(x) }, { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.metricsOfPrimaryFont().intHeight() - 1.0f });
+                context.drawText(font, TextRun { String::number(x) }, { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font->metricsOfPrimaryFont().intHeight() - 1.0f });
             }
         }
 
@@ -1172,8 +1172,8 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { page->settings().sansSerifFontFamily() });
         fontDescription.setUsedSize(12);
 
-        FontCascade font(WTF::move(fontDescription));
-        font.update(nullptr);
+        UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+        font->update(nullptr);
 
         auto viewportRect = pageView->visualViewportRect();
         TextRun viewportTextRun(makeString(viewportRect.width() / pageZoomFactor, "px"_s, ' ', multiplicationSign, ' ', viewportRect.height() / pageZoomFactor, "px"_s));
@@ -1181,8 +1181,8 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         const float margin = 4;
         const float padding = 2;
         const float radius = 4;
-        float fontWidth = font.width(viewportTextRun);
-        float fontHeight = font.metricsOfPrimaryFont().height();
+        float fontWidth = font->width(viewportTextRun);
+        float fontHeight = font->metricsOfPrimaryFont().height();
         FloatRect viewportTextRect(margin, margin, (padding * 2.0f) + fontWidth, (padding * 2.0f) + fontHeight);
         const auto viewportTextRectCenter = viewportTextRect.center();
 
@@ -1220,7 +1220,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         context.fillRoundedRect(FloatRoundedRect(viewportTextRect, CornerRadii(radius)), rulerBackgroundColor);
 
         context.setFillColor(Color::black);
-        context.drawText(font, viewportTextRun, { margin +  padding, margin + padding + fontHeight - font.metricsOfPrimaryFont().intDescent() });
+        context.drawText(font, viewportTextRun, { margin +  padding, margin + padding + fontHeight - font->metricsOfPrimaryFont().intDescent() });
     }
 }
 
