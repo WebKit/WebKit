@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "WKIdentityDocumentRawRequestValidator.h"
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/ConsoleTypes.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/DigitalCredentialsProtocols.h>
 #import <WebCore/ExceptionData.h>
@@ -41,6 +42,7 @@
 #import <WebCore/X509SubjectKeyIdentifier.h>
 #import <WebKit/WKIdentityDocumentPresentmentMobileDocumentRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentOpenID4VPRequest.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import "WebKitSwiftSoftLink.h"
@@ -291,7 +293,7 @@ static std::optional<std::pair<DigitalCredentialPresentationProtocol, RetainPtr<
 }
 #endif // HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
 
-static void reportValidationFailure(NOESCAPE const Function<void(const String&)>& reportFailure, const String &protocolName, NSError *error)
+static void reportValidationFailure(NOESCAPE const Function<void(JSC::MessageLevel, const String&)>& reportFailure, const String &protocolName, NSError *error)
 {
     RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
     String errorMessage = makeString("An error occurred validating the incoming '"_s, protocolName, "' request. The request will be ignored."_s);
@@ -300,12 +302,12 @@ static void reportValidationFailure(NOESCAPE const Function<void(const String&)>
         errorMessage = makeString(errorMessage, " ("_s, String(debugDescription.get()), ")"_s);
 
     if (reportFailure)
-        reportFailure(errorMessage);
+        reportFailure(JSC::MessageLevel::Warning, errorMessage);
 
     LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - Validation failed for request: %@", error);
 }
 
-static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest(WKIdentityDocumentRawRequestValidator *validator, NSURL *topOrigin, NOESCAPE const Function<void(const String&)>& reportFailure, const WebCore::UnvalidatedDigitalCredentialRequest &unvalidatedRequest)
+static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest(WKIdentityDocumentRawRequestValidator *validator, NSURL *topOrigin, NOESCAPE const Function<void(JSC::MessageLevel, const String&)>& reportFailure, const WebCore::UnvalidatedDigitalCredentialRequest &unvalidatedRequest)
 {
     auto* mobileDocumentRequest = std::get_if<WebCore::MobileDocumentRequest>(&unvalidatedRequest);
     if (!mobileDocumentRequest) {
@@ -351,10 +353,20 @@ static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest
     return std::nullopt;
 }
 
-Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentials::validateRequests(const SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>& unvalidatedRequests, NOESCAPE const Function<void(const String&)>& reportFailure)
+Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentials::validateRequests(const SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>& unvalidatedRequests, NOESCAPE const Function<void(JSC::MessageLevel, const String&)>& reportFailure)
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
     RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
+
+    if (!validator) {
+        RELEASE_LOG_ERROR(DigitalCredentials, "DigitalCredentials::validateRequests: WKIdentityDocumentRawRequestValidator is unavailable, probably because libWebKitSwift failed to load. WebKit requires libWebKitSwift outside the base system.");
+        RELEASE_ASSERT(isInBaseSystem());
+        if (reportFailure)
+            reportFailure(JSC::MessageLevel::Error, "Digital credential requests cannot be validated because a required WebKit component failed to load. The requests will be ignored."_s);
+        return unvalidatedRequests.map([](auto&) -> std::optional<WebCore::ValidatedDigitalCredentialRequest> {
+            return std::nullopt;
+        });
+    }
 
     auto validatedRequests = unvalidatedRequests.map([&](auto& unvalidatedRequest) {
         return validateRequest(validator.get(), convertedTopOrigin.get(), reportFailure, unvalidatedRequest);

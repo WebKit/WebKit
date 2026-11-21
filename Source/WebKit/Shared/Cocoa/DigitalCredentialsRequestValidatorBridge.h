@@ -35,6 +35,10 @@
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
+namespace JSC {
+enum class MessageLevel : uint8_t;
+}
+
 namespace WebCore {
 class SecurityOriginData;
 struct ValidatedMobileDocumentRequest;
@@ -43,7 +47,7 @@ struct ValidatedMobileDocumentRequest;
 namespace WebKit {
 namespace DigitalCredentials {
 
-Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> validateRequests(const WebCore::SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&, NOESCAPE const Function<void(const String&)>& reportFailure = { });
+Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> validateRequests(const WebCore::SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&, NOESCAPE const Function<void(JSC::MessageLevel, const String&)>& reportFailure = { });
 
 } // namespace DigitalCredentials
 } // namespace WebKit
