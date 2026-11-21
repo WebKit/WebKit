@@ -1,0 +1,25 @@
+Test that under Site Isolation, the objects of an iframe's earlier documents appear in the right heap snapshots after the iframe navigates, and can be previewed only if their document can access the iframe's current window.
+
+
+
+== Running test suite: SiteIsolation.Heap.NavigatedFrameSnapshot
+-- Running test case: SiteIsolation.Heap.NavigatedFrameSnapshot.SameProcess
+PASS: The same-origin iframe should be in the main frame's process.
+PASS: The iframe should keep its frame target after navigating in its process.
+PASS: The iframe's snapshot should include the marker of the document it navigated away from.
+PASS: The iframe's target should preview that marker.
+PASS: The iframe's target should get a remote object for that marker.
+PASS: The main frame's snapshot should not include the marker of the document the iframe navigated away from.
+
+-- Running test case: SiteIsolation.Heap.NavigatedFrameSnapshot.OtherProcess
+PASS: The iframe should be in another process after navigating to another site.
+PASS: The main frame's snapshot should include the marker of the document that the iframe navigated away from.
+PASS: Previewing that marker should fail.
+PASS: Getting a remote object for that marker should fail.
+
+-- Running test case: SiteIsolation.Heap.NavigatedFrameSnapshot.SameProcessCrossOrigin
+PASS: The second iframe should keep its frame target after navigating to another origin in its process.
+PASS: The second iframe's snapshot should include the marker of its old document.
+PASS: Previewing that marker should fail.
+PASS: Getting a remote object for that marker should fail.
+

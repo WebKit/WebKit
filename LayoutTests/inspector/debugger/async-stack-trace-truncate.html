@@ -117,7 +117,7 @@ function test()
 
             InspectorTest.log("Running GC.")
             let garbageCollectedEvent = WI.heapManager.awaitEvent(WI.HeapManager.Event.GarbageCollected);
-            HeapAgent.gc();
+            InspectorTest.mainFrameTarget.HeapAgent.gc();
             await garbageCollectedEvent;
         },
     });

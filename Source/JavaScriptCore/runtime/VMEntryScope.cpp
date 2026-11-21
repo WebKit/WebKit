@@ -40,6 +40,7 @@ namespace JSC {
 void VMEntryScope::setUpSlow()
 {
     m_vm.entryScope = this;
+    ++m_vm.m_outermostEntryCount;
     if (Options::useSharedHelperThreadPool())
         HelperThreadPool::didEnterVM();
 

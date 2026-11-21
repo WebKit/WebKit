@@ -32,17 +32,22 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace JSC {
+class JSCell;
+class JSGlobalObject;
 struct HeapSnapshotNode;
 }
 
 namespace Inspector {
 
 class InjectedScriptManager;
+class InspectorEnvironment;
 
 class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver, public JSC::HeapSnapshotBuilder::Client {
     WTF_MAKE_NONCOPYABLE(InspectorHeapAgent);
@@ -81,7 +86,25 @@ protected:
 
     virtual void dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime);
 
+    InspectorEnvironment& environment() const;
+
+    // Whether this agent's snapshots and heap object lookups include the cells of the given realm. Cells that
+    // belong to no realm are always included.
+    virtual bool includesGlobalObject(JSC::JSGlobalObject&) const;
+
+    virtual bool observesGarbageCollections() const { return true; }
+
+    // Whether an injected script can describe the objects of the given realm. Injecting fails fatally if the realm
+    // cannot access what its globalThis currently stands for.
+    virtual bool canCreateInjectedScript(JSC::JSGlobalObject&) const { return true; }
+
+    // Whether this agent may answer a snapshot request with a build that another agent of its VM just made, if the heap
+    // has not changed since, instead of running its own full garbage collection. Only agents on the main thread may
+    // allow it, because a shared build expires through a task on the main RunLoop.
+    virtual bool canShareSnapshotBuilds() const { return false; }
+
 private:
+    bool includesCell(JSC::JSCell&) const;
     std::optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(Protocol::ErrorString&, unsigned heapObjectIdentifier);
 
     const CheckedRef<InjectedScriptManager> m_injectedScriptManager;
@@ -93,6 +116,12 @@ private:
     bool m_tracking { false };
     bool m_usesSnapshots { false };
     Seconds m_gcStartTime { Seconds::nan() };
+
+    // The shared build that this agent last serialized, so that it never serializes one build twice.
+    uint64_t m_lastSharedSnapshotBuildIdentifier { 0 };
+
+    // Filled while serializing a snapshot, which asks about every cell of the VM's snapshots.
+    HashMap<JSC::JSGlobalObject*, bool> m_includedGlobalObjectsForSerialization;
 };
 
 } // namespace Inspector
