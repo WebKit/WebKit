@@ -38,9 +38,12 @@
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RuleFeatureSelectors);
 
 NODELETE static bool isSiblingOrSubject(MatchElement::Relation relation)
 {

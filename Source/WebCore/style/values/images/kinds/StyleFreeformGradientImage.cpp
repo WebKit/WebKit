@@ -29,9 +29,12 @@
 #include "CSSFreeformGradientValue.h"
 #include "DeprecatedCSSOMValue.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FreeformGradientImage);
 
 FreeformGradientImage::FreeformGradientImage(Gradient&& gradient)
     : GeneratedImage { Type::FreeformGradientImage }

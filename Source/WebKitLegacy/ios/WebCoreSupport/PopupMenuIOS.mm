@@ -25,9 +25,13 @@
 
 #import "PopupMenuIOS.h"
 
+#import <wtf/TZoneMallocInlines.h>
+
 #if PLATFORM(IOS_FAMILY)
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PopupMenuIOS);
 
 PopupMenuIOS::PopupMenuIOS(PopupMenuClient* client)
     : m_popupClient(client)

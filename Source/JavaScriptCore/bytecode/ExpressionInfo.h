@@ -31,6 +31,7 @@
 #include <wtf/MallocPtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -43,7 +44,7 @@ class ConcurrentJSLocker;
 
 class ExpressionInfo {
     WTF_MAKE_NONCOPYABLE(ExpressionInfo);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ExpressionInfo);
+    WTF_MAKE_TZONE_ALLOCATED(ExpressionInfo);
 public:
     enum class FieldID : uint8_t { InstPC, Divot, Start, End };
 

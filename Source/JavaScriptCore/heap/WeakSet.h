@@ -28,6 +28,7 @@
 #include <JavaScriptCore/CellContainer.h>
 #include <JavaScriptCore/WeakBlock.h>
 #include <wtf/SentinelLinkedList.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -41,6 +42,7 @@ class Analyzer;
 class WTF_CAPABILITY("mutator read or weak block lock") MutatorReadOrWeakBlockLock { };
 
 class WeakSet : public BasicRawSentinelNode<WeakSet> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WeakSet, JS_EXPORT_PRIVATE);
     friend class LLIntOffsetsExtractor;
     friend class Integrity::Analyzer;
     friend class WeakBlock;

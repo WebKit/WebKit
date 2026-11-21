@@ -25,6 +25,7 @@
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
@@ -56,7 +57,7 @@ DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 // Don't go making it virtual again unless you know exactly what you're doing!
 class CSSValue : public NoVirtualDestructorBase {
     WTF_MAKE_NONCOPYABLE(CSSValue);
-    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue, CSSValue);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue, CSSValue);
 public:
     static constexpr unsigned refCountFlagIsStatic = 0x1;
     static constexpr unsigned refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static CSSValue flag.

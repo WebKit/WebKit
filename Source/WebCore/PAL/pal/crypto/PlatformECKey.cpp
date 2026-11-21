@@ -28,8 +28,11 @@
 
 #include "PALSwift-Generated.h"
 #include <wtf/EscapableByteSpan.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace PAL::Crypto {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformECKey);
 
 PlatformECKey::PlatformECKey(NamedCurve curve)
     : PlatformECKey(pal::ECKey::init(curve))

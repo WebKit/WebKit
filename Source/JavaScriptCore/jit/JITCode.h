@@ -33,6 +33,7 @@
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
 #include <JavaScriptCore/RegisterAtOffsetList.h>
 #include <JavaScriptCore/RegisterSet.h>
+#include <wtf/TZoneMalloc.h>
 
 
 namespace JSC {
@@ -111,6 +112,7 @@ public:
 #endif // ENABLE(JIT)
 
 class JITCode : public ThreadSafeRefCounted<JSC::JITCode> {
+    WTF_MAKE_TZONE_ALLOCATED(JITCode);
 public:
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
@@ -282,6 +284,7 @@ protected:
 };
 
 class JITCodeWithCodeRef : public JSC::JITCode {
+    WTF_MAKE_TZONE_ALLOCATED(JITCodeWithCodeRef);
 protected:
     JITCodeWithCodeRef(JITType);
     JITCodeWithCodeRef(CodeRef<JSEntryPtrTag>, JITType, JITCode::ShareAttribute);
@@ -301,7 +304,7 @@ protected:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DirectJITCode);
 class DirectJITCode : public JITCodeWithCodeRef {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DirectJITCode, DirectJITCode);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(DirectJITCode, DirectJITCode);
 public:
     DirectJITCode(JITType);
     DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
@@ -331,6 +334,7 @@ public:
 };
 
 class NativeDOMJITCode final : public NativeJITCode {
+    WTF_MAKE_TZONE_ALLOCATED(NativeDOMJITCode);
 public:
     NativeDOMJITCode(CodeRef<JSEntryPtrTag>, JITType, Intrinsic, const DOMJIT::Signature*);
     ~NativeDOMJITCode() final = default;

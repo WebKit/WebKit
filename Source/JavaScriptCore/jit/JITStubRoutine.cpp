@@ -30,8 +30,11 @@
 #include "CallLinkInfo.h"
 #include "GCAwareJITStubRoutine.h"
 #include "PolymorphicCallStubRoutine.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITStubRoutine);
 
 void JITStubRoutine::observeZeroRefCountImpl()
 {

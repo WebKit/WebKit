@@ -27,6 +27,7 @@
 
 #include <wtf/Hasher.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ struct TextBoxSelectableRange;
 enum class DocumentMarkerType : uint32_t;
 
 struct MarkedText {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MarkedText);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(MarkedText);
 
     // Sorted by paint order
     enum class Type : uint8_t {

@@ -27,8 +27,11 @@
 #include "EdenGCActivityCallback.h"
 
 #include "VM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EdenGCActivityCallback);
 
 EdenGCActivityCallback::EdenGCActivityCallback(JSC::Heap& heap, Synchronousness synchronousness)
     : GCActivityCallback(heap, synchronousness)

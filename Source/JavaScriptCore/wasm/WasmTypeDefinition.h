@@ -1051,6 +1051,7 @@ private:
 // surviving the group via an external Ref is correctly reported as
 // "ungrouped" by canonicalGroup() == nullptr.
 class RTTGroup final : public ThreadSafeRefCounted<RTTGroup> {
+    WTF_MAKE_TZONE_ALLOCATED(RTTGroup);
 public:
     static Ref<const RTTGroup> create(Vector<Ref<const RTT>>&& rtts) { return adoptRef(*new RTTGroup(WTF::move(rtts))); }
 

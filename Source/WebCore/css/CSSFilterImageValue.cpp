@@ -32,9 +32,12 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "StyleBuilderState.h"
 #include "StyleFilterImage.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilterImageValue);
 
 CSSFilterImageValue::CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, CSS::Filter&& filter)
     : CSSValue { ClassType::FilterImage }

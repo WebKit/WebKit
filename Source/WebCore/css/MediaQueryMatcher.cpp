@@ -34,9 +34,12 @@
 #include "ResolvedStyle.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaQueryMatcher);
 
 MediaQueryMatcher::MediaQueryMatcher(Document& document)
     : m_document(document)

@@ -29,6 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Markable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -45,6 +46,7 @@ struct RuleFeatureScopeSelector {
 };
 
 struct RuleFeatureSelectors : RefCounted<RuleFeatureSelectors> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RuleFeatureSelectors);
     static Ref<RuleFeatureSelectors> create(CSSSelectorList&& invalidationSelector, CSSSelectorList&& scopeSelector);
 
     CSSSelectorList invalidationSelector;

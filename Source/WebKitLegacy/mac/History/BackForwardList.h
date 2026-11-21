@@ -32,6 +32,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -40,6 +41,7 @@ OBJC_CLASS WebView;
 typedef HashSet<RefPtr<WebCore::HistoryItem>> HistoryItemHashSet;
 
 class BackForwardList : public WebCore::BackForwardClient, public CanMakeWeakPtr<BackForwardList> {
+    WTF_MAKE_TZONE_ALLOCATED(BackForwardList);
 public: 
     static Ref<BackForwardList> create(WebView *webView) { return adoptRef(*new BackForwardList(webView)); }
     virtual ~BackForwardList();

@@ -36,6 +36,7 @@
 #include <wtf/Bag.h>
 #include <wtf/Function.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -51,6 +52,7 @@ class CalleeGroup;
 class JSToWasmCallee;
 
 class BBQPlan final : public Plan {
+    WTF_MAKE_TZONE_ALLOCATED(BBQPlan);
 public:
     using Base = Plan;
 

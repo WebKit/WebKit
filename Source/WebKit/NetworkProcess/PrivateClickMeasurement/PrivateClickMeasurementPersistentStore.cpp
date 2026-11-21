@@ -32,8 +32,11 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SuspendableWorkQueue.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::PCM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PersistentStore);
 
 static Ref<SuspendableWorkQueue> sharedWorkQueue()
 {

@@ -32,6 +32,7 @@
 #include "CCallHelpers.h"
 #include "FTLOSRExitHandle.h"
 #include <wtf/Box.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC { namespace FTL {
@@ -39,6 +40,7 @@ namespace JSC { namespace FTL {
 class State;
 
 class ExceptionTarget : public ThreadSafeRefCounted<ExceptionTarget> {
+    WTF_MAKE_TZONE_ALLOCATED(ExceptionTarget);
 public:
     ~ExceptionTarget();
 

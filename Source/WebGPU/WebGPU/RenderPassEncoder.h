@@ -272,6 +272,7 @@ private:
     // Scratch records whose lostOrOOBRead flag the pass checks once, from a single completion handler,
     // rather than one handler per clamping indirect draw. Shared with that handler, hence thread-safe.
     struct IndirectDeviceLostChecks : public ThreadSafeRefCounted<IndirectDeviceLostChecks> {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(IndirectDeviceLostChecks);
         struct Entry {
             RetainPtr<id<MTLBuffer>> scratch;
             uint64_t offset { 0 };

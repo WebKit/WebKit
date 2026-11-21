@@ -29,6 +29,7 @@
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/StyleAnimations.h>
 #include <WebCore/WebAnimationTypes.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -44,7 +45,7 @@ struct ResolutionContext;
 }
 
 class KeyframeEffectStack {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(KeyframeEffectStack, Animation);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(KeyframeEffectStack, Animation);
 public:
     explicit KeyframeEffectStack();
     ~KeyframeEffectStack();

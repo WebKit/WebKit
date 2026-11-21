@@ -27,9 +27,13 @@
 #include "config.h"
 #include "WasmValueLocation.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ValueLocation);
 
 void ValueLocation::dump(PrintStream& out) const
 {

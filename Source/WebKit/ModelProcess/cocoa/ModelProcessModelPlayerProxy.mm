@@ -118,6 +118,7 @@ static constexpr auto usdzMIMEType = "model/vnd.usdz+zip"_s;
 
 #if HAVE(CORE_RE)
 class RKModelUSD final : public WebCore::REModel {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RKModelUSD);
 public:
     static Ref<RKModelUSD> create(Ref<Model> model, RetainPtr<WKRKEntity> entity)
     {
@@ -154,6 +155,7 @@ private:
 };
 
 class RKModelLoaderUSD final : public WebCore::REModelLoader, public CanMakeWeakPtr<RKModelLoaderUSD> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RKModelLoaderUSD);
 public:
     static Ref<RKModelLoaderUSD> create(Model& model, const std::optional<String>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient& client)
     {
@@ -1146,6 +1148,7 @@ int ModelProcessModelPlayerProxy::entityMemoryLimit(bool isForImmersive) const
 }
 
 class SimpleModelLoader final : public WebCore::REModelLoader {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SimpleModelLoader);
 public:
     static Ref<SimpleModelLoader> create() { return adoptRef(*new SimpleModelLoader); }
     bool isCanceled() const { return m_canceled; }
@@ -1156,6 +1159,7 @@ private:
 
 #if !HAVE(CORE_RE)
 class SimpleREModel final : public WebCore::REModel {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SimpleREModel);
 public:
     static Ref<SimpleREModel> create(RetainPtr<WKRKEntity>&& entity) { return adoptRef(*new SimpleREModel(WTF::move(entity))); }
     RetainPtr<WKRKEntity> rootRKEntity() const final { return m_entity; }

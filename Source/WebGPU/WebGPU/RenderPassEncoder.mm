@@ -46,6 +46,8 @@
 
 namespace WebGPU::Metal {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RenderPassEncoder::IndirectDeviceLostChecks);
+
 #define RETURN_IF_FINISHED() \
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
     protect(m_device)->generateAValidationError([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]); \

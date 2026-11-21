@@ -26,12 +26,14 @@
 #pragma once
 
 #include "JSRunLoopTimer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class Heap;
 
 class StopIfNecessaryTimer final : public JSRunLoopTimer {
+    WTF_MAKE_TZONE_ALLOCATED(StopIfNecessaryTimer);
 public:
     using Base = JSRunLoopTimer;
     explicit StopIfNecessaryTimer(VM&);

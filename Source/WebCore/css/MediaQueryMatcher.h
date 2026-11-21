@@ -22,6 +22,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,6 +42,7 @@ using MediaQueryList = Vector<MediaQuery>;
 // query has changed. MediaQueryLists are invoked in the order in which they were added.
 
 class MediaQueryMatcher final : public RefCounted<MediaQueryMatcher> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaQueryMatcher);
 public:
     static Ref<MediaQueryMatcher> create(Document& document) { return adoptRef(*new MediaQueryMatcher(document)); }
     ~MediaQueryMatcher();

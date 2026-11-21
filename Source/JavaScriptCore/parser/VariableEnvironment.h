@@ -435,6 +435,7 @@ template<> struct HashTraits<JSC::CompactTDZEnvironmentKey> : GenericHashTraits<
 namespace JSC {
 
 class CompactTDZEnvironmentMap : public RefCounted<CompactTDZEnvironmentMap> {
+    WTF_MAKE_TZONE_ALLOCATED(CompactTDZEnvironmentMap);
 public:
     class Handle {
         friend class CachedCompactTDZEnvironmentMapHandle;

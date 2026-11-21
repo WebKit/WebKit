@@ -22,7 +22,10 @@
 
 #import "PopupMenuMac.h"
 #import <wtf/FileSystem.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/AtomString.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SearchPopupMenuMac);
 
 static String defaultSearchFieldRecentSearchesStorageDirectory()
 {

@@ -32,6 +32,7 @@
 #include <WebCore/StyleSingleTransitionDuration.h>
 #include <WebCore/StyleSingleTransitionProperty.h>
 #include <WebCore/StyleValueTypes.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -92,6 +93,7 @@ struct Transition {
 
 private:
     struct Data : public RefCounted<Data> {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(Data, WEBCORE_EXPORT);
         static Ref<Data> create() { return adoptRef(*new Data()); }
         static Ref<Data> create(const Data& other) { return adoptRef(*new Data(other)); }
 

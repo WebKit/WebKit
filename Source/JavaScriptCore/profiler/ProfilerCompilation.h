@@ -39,6 +39,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SegmentedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -54,6 +55,7 @@ class Dumper;
 // all of the counting for those executions.
 
 class Compilation : public RefCounted<Compilation> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Compilation, JS_EXPORT_PRIVATE);
 public:
     Compilation(Bytecodes*, CompilationKind);
     ~Compilation();

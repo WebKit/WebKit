@@ -121,6 +121,7 @@ static inline void writeUnalignedValue(uint8_t* p, V value)
 }
 
 class Writer : public RefCountedAndCanMakeWeakPtr<Writer> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Writer);
 public:
     NODELETE static Ref<Writer> create(DebugObject* obj)
     {
@@ -261,6 +262,7 @@ private:
 };
 
 class CodeDescription : public RefCounted<CodeDescription> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CodeDescription);
 public:
     NODELETE const UTF8CString& name() const LIFETIME_BOUND { return m_name; }
 
@@ -366,6 +368,7 @@ struct MachOSectionHeader {
 } __attribute__((packed,aligned(1)));
 
 class MachOSection : public DebugSectionBase<MachOSectionHeader> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MachOSection);
 public:
     enum Type {
         Regular = 0x0u,
@@ -438,6 +441,7 @@ struct ELFsectionHeader {
 
 #if OS(LINUX)
 class ELFSection : public DebugSectionBase<ELFsectionHeader> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ELFSection);
 public:
     enum Type {
         TypeNull = 0,
@@ -518,6 +522,7 @@ private:
 
 #if OS(DARWIN)
 class MachOTextSection : public MachOSection {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MachOTextSection);
 public:
     MachOTextSection(uint32_t align, const void* codeAddr, uintptr_t codeSize)
         : MachOSection("__text"_s, "__TEXT"_s, align, codeAddr, codeSize, MachOSection::Regular | MachOSection::AttrSomeInstructions | MachOSection::AttrPureInstructions)
@@ -541,6 +546,7 @@ private:
 
 #if OS(LINUX)
 class FullHeaderELFSection : public ELFSection {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FullHeaderELFSection);
 public:
     FullHeaderELFSection(const ASCIICString& name, Type type, uintptr_t align, const void* addr, uintptr_t offset, uintptr_t size, uintptr_t flags)
         : ELFSection(name, type, align)
@@ -569,6 +575,7 @@ private:
 };
 
 class ELFStringTable : public ELFSection {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ELFStringTable);
 public:
     explicit ELFStringTable(const ASCIICString& name)
         : ELFSection(name, TypeStrTab, 1)
@@ -634,7 +641,7 @@ void ELFSection::populateHeader(Writer::Slot<ELFSection::Header> header, ELFStri
 
 #if OS(DARWIN)
 class MachO {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachO);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MachO);
 
 public:
     size_t addSection(std::unique_ptr<MachOSection> section)
@@ -1000,6 +1007,7 @@ private:
 };
 
 class ELFSymbolTable : public ELFSection {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ELFSymbolTable);
 public:
     ELFSymbolTable(const ASCIICString& name)
         : ELFSection(name, TypeSymTab, sizeof(uintptr_t))

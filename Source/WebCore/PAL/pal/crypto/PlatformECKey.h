@@ -26,6 +26,7 @@
 #pragma once
 
 #include <pal/crypto/CryptoTypes.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace pal {
@@ -35,7 +36,7 @@ class ECKey;
 namespace PAL::Crypto {
 
 class PlatformECKey {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlatformECKey);
+    WTF_MAKE_TZONE_ALLOCATED(PlatformECKey);
     WTF_MAKE_NONCOPYABLE(PlatformECKey);
 public:
     using NamedCurve = ECNamedCurve;

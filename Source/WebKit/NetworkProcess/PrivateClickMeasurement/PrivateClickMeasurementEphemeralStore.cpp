@@ -29,8 +29,11 @@
 #include "PrivateClickMeasurementDebugInfo.h"
 #include "PrivateClickMeasurementManagerInterface.h"
 #include <WebCore/PrivateClickMeasurement.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::PCM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EphemeralStore);
 
 EphemeralStore::EphemeralStore() = default;
 EphemeralStore::~EphemeralStore() = default;

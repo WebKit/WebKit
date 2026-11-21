@@ -28,10 +28,12 @@
 #if ENABLE(JIT)
 
 #include "AccessCase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class InstanceOfAccessCase final : public AccessCase {
+    WTF_MAKE_TZONE_ALLOCATED(InstanceOfAccessCase);
 public:
     using Base = AccessCase;
     friend class AccessCase;

@@ -629,7 +629,7 @@ inline ASCIILiteral makeString(ExternalKind kind)
 }
 
 struct Import {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Import);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Import);
     const Name module;
     const Name field;
     ExternalKind kind;
@@ -637,7 +637,7 @@ struct Import {
 };
 
 struct Export {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Export);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Export);
     const Name field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
@@ -646,7 +646,7 @@ struct Export {
 String makeString(const Name& characters);
 
 struct GlobalInformation {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(GlobalInformation);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(GlobalInformation);
 
     enum InitializationType : uint8_t {
         IsImport,
@@ -673,7 +673,7 @@ struct GlobalInformation {
 };
 
 struct FunctionData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FunctionData);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(FunctionData);
     size_t start;
     size_t end;
     Vector<uint8_t> data;
@@ -770,7 +770,7 @@ private:
 };
 
 struct Element {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Element);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Element);
 
     enum class Kind : uint8_t {
         Active,
@@ -865,7 +865,7 @@ private:
 };
     
 struct CustomSection {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CustomSection);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CustomSection);
     Name name;
     Vector<uint8_t> payload;
 };
@@ -942,7 +942,7 @@ private:
 };
 
 struct UnlinkedWasmToWasmCall {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UnlinkedWasmToWasmCall);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(UnlinkedWasmToWasmCall);
     CodeLocationNearCall<WasmEntryPtrTag> callLocation;
     FunctionSpaceIndex functionIndexSpace;
 
@@ -950,7 +950,7 @@ struct UnlinkedWasmToWasmCall {
 
 #if ENABLE(JIT)
 struct Entrypoint {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Entrypoint);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Entrypoint);
     std::unique_ptr<Compilation> compilation;
     RegisterAtOffsetList calleeSaveRegisters;
 };
@@ -961,7 +961,7 @@ using StackMap = FixedVector<OSREntryValue>;
 using StackMaps = HashMap<CallSiteIndex, StackMap>;
 
 struct InternalFunction {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InternalFunction);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(InternalFunction);
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     StackMaps stackmaps;
 #endif
@@ -1014,7 +1014,7 @@ struct WasmOrJSImportableFunction : public WasmToWasmImportableFunction {
 };
 
 struct WasmOrJSImportableFunctionCallLinkInfo final : public WasmOrJSImportableFunction {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmOrJSImportableFunctionCallLinkInfo);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(WasmOrJSImportableFunctionCallLinkInfo);
     static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(WasmOrJSImportableFunctionCallLinkInfo, callLinkInfo); }
 
     std::unique_ptr<DataOnlyCallLinkInfo> callLinkInfo { };

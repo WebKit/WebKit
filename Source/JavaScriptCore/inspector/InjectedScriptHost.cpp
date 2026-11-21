@@ -28,8 +28,11 @@
 
 #include "JSInjectedScriptHost.h"
 #include "JSObjectInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedScriptHost);
 
 using namespace JSC;
 

@@ -33,6 +33,7 @@
 #include <WebCore/StyleViewFunction.h>
 #include <WebCore/Styleable.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -71,6 +72,7 @@ struct StickinessAdjustmentData {
 };
 
 class ViewTimeline final : public ScrollTimeline {
+    WTF_MAKE_TZONE_ALLOCATED(ViewTimeline);
 public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&&);
     NODELETE static Ref<ViewTimeline> create(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);

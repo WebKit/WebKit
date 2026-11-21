@@ -27,6 +27,7 @@
 
 #include "CSSMeshGradient.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class Image;
 }
 
 class CSSMeshGradientValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSMeshGradientValue);
 public:
     using Gradient = FunctionNotation<CSSValueID::MeshGradient, CSS::MeshGradient>;
 

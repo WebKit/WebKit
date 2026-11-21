@@ -40,9 +40,12 @@
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OSREntryPlan);
 
 namespace WasmOSREntryPlanInternal {
 static constexpr bool verbose = false;

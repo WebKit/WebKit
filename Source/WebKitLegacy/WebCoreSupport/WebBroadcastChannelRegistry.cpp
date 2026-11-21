@@ -31,6 +31,9 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBroadcastChannelRegistry);
 
 Ref<WebBroadcastChannelRegistry> WebBroadcastChannelRegistry::getOrCreate(bool privateSession)
 {

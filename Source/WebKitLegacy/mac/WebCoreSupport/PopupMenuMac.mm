@@ -38,7 +38,9 @@
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/system/mac/PopupMenu.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PopupMenuMac);
 
 PopupMenuMac::PopupMenuMac(WebCore::PopupMenuClient* client)
     : m_client(client)

@@ -30,6 +30,7 @@
 #include <cstdint>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 
@@ -37,6 +38,7 @@ class ScriptCallFrame;
 class ScriptCallStack;
 
 class AsyncStackTrace : public RefCounted<AsyncStackTrace> {
+    WTF_MAKE_TZONE_ALLOCATED(AsyncStackTrace);
 public:
     enum class State : uint8_t {
         Pending,

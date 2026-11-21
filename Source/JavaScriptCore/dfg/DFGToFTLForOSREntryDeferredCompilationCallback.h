@@ -30,6 +30,7 @@
 #include "DFGJITCode.h"
 #include "DeferredCompilationCallback.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -38,6 +39,7 @@ class ScriptExecutable;
 namespace DFG {
 
 class ToFTLForOSREntryDeferredCompilationCallback final : public DeferredCompilationCallback {
+    WTF_MAKE_TZONE_ALLOCATED(ToFTLForOSREntryDeferredCompilationCallback);
 public:
     ~ToFTLForOSREntryDeferredCompilationCallback() final;
 

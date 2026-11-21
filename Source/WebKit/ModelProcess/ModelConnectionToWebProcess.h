@@ -41,6 +41,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Logger.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -69,7 +70,7 @@ class ModelConnectionToWebProcess
     , public CanMakeWeakPtr<ModelConnectionToWebProcess>
     , IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(ModelConnectionToWebProcess);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ModelConnectionToWebProcess);
+    WTF_MAKE_TZONE_ALLOCATED(ModelConnectionToWebProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelConnectionToWebProcess);
 public:
     static Ref<ModelConnectionToWebProcess> create(ModelProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<String>&);

@@ -29,9 +29,13 @@
 #include "SourceCode.h"
 #include <algorithm>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImportMap);
+
 namespace ImportMapInternal {
 static constexpr bool verbose = false;
 

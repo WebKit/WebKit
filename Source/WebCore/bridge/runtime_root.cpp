@@ -37,8 +37,11 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC::Bindings {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RootObject);
 
 // This code attempts to solve two problems: (1) plug-ins leaking references to 
 // JS and the DOM; (2) plug-ins holding stale references to JS and the DOM. Previous 

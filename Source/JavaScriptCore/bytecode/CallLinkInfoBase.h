@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSCPtrTag.h>
 #include <wtf/CodePtr.h>
 #include <wtf/SentinelLinkedList.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -54,6 +55,7 @@ public:
 static_assert(sizeof(CallSlot) <= 32, "This should be small enough to keep iteration of vector in polymorphic call fast");
 
 class CallLinkInfoBase : public BasicRawSentinelNode<CallLinkInfoBase> {
+    WTF_MAKE_TZONE_ALLOCATED(CallLinkInfoBase);
 public:
     enum class CallSiteType : uint8_t {
         CallLinkInfo,

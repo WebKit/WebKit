@@ -30,8 +30,11 @@
 
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ToFTLDeferredCompilationCallback);
 
 ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback() = default;
 

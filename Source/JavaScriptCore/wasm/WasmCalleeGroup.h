@@ -39,6 +39,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -54,6 +55,7 @@ struct ModuleInformation;
 struct UnlinkedWasmToWasmCall;
 
 class CalleeGroup final : public ThreadSafeRefCounted<CalleeGroup> {
+    WTF_MAKE_TZONE_ALLOCATED(CalleeGroup);
 public:
     typedef void CallbackType(Ref<CalleeGroup>&&, bool);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;

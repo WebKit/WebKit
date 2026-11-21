@@ -26,11 +26,15 @@
 #include "config.h"
 #include "GigacageAlignedMemoryAllocator.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 #include <wtf/text/MakeString.h>
 #endif
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GigacageAlignedMemoryAllocator);
 
 GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator(Gigacage::Kind kind)
     : m_kind(kind)

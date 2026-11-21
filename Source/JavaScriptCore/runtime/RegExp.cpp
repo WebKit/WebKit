@@ -32,9 +32,12 @@
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RegExp::RareData);
 
 const ClassInfo RegExp::s_info = { "RegExp"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(RegExp) };
 

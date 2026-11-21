@@ -26,8 +26,11 @@
 #include "DeprecatedCSSOMCustomValue.h"
 
 #include "CSSSerializationContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecatedCSSOMCustomValue);
 
 Ref<DeprecatedCSSOMCustomValue> DeprecatedCSSOMCustomValue::create(SerializationFunctor&& functor, CSSStyleDeclaration& owner)
 {

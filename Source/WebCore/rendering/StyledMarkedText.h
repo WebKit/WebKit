@@ -29,6 +29,7 @@
 #include "PaintTextStyle.h"
 #include "StyleTextShadow.h"
 #include "TextDecorationPainter.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class ComputedStyle;
 }
 
 struct StyledMarkedText final : MarkedText {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(StyledMarkedText);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(StyledMarkedText);
 
     struct Style {
         Color backgroundColor;

@@ -164,6 +164,7 @@
 #include <wtf/StackTrace.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomStringTable.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -193,6 +194,8 @@
 #include <span>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(VM);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
 

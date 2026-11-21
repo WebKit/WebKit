@@ -22,6 +22,7 @@
 
 #include "LayoutUnit.h"
 #include "TableLayout.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -33,6 +34,7 @@ struct PreferredSize;
 class RenderTable;
 
 class FixedTableLayout final : public TableLayout {
+    WTF_MAKE_TZONE_ALLOCATED(FixedTableLayout);
 public:
     explicit FixedTableLayout(RenderTable*);
 

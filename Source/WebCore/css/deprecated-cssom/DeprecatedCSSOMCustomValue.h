@@ -26,6 +26,7 @@
 
 #include "DeprecatedCSSOMValue.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ struct SerializationContext;
 }
 
 class DeprecatedCSSOMCustomValue final : public DeprecatedCSSOMValue {
+    WTF_MAKE_TZONE_ALLOCATED(DeprecatedCSSOMCustomValue);
 public:
     using SerializationFunctor = Function<String(const CSS::SerializationContext&)>;
 

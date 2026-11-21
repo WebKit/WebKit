@@ -40,6 +40,7 @@
 #include "VariableEnvironment.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SmallSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -137,7 +138,7 @@ namespace JSC {
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
     class ParserArenaRoot {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ParserArenaRoot, ParserArenaRoot);
+        WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ParserArenaRoot, ParserArenaRoot);
     protected:
         ParserArenaRoot(ParserArena&);
 

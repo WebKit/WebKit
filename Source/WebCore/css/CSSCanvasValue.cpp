@@ -27,9 +27,12 @@
 #include "CSSCanvasValue.h"
 
 #include "StyleCanvasImage.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSCanvasValue);
 
 CSSCanvasValue::CSSCanvasValue(CSS::CustomIdent&& name)
     : CSSValue { ClassType::Canvas }

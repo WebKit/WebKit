@@ -34,8 +34,11 @@
 #include "StyleSingleAnimationRange.h"
 #include "Styleable.h"
 #include "WebAnimationUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AnimationTimeline);
 
 AnimationTimeline::AnimationTimeline(std::optional<WebAnimationTime> duration)
 #if ENABLE(THREADED_ANIMATIONS)

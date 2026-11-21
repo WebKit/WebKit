@@ -31,6 +31,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakHashSet.h>
@@ -61,6 +62,7 @@ class Scope;
 }
 
 class CSSStyleSheet final : public StyleSheet, public CanMakeSingleThreadWeakPtr<CSSStyleSheet> {
+    WTF_MAKE_TZONE_ALLOCATED(CSSStyleSheet);
 public:
     struct Init {
         String baseURL;

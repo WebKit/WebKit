@@ -28,9 +28,12 @@
 
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Transition::Data);
 
 Transition::Transition()
     : m_data { Data::create() }

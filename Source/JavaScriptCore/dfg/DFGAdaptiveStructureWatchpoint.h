@@ -31,10 +31,12 @@
 #include "ObjectPropertyCondition.h"
 #include "PackedCellPtr.h"
 #include "Watchpoint.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
 class AdaptiveStructureWatchpoint final : public Watchpoint {
+    WTF_MAKE_TZONE_ALLOCATED(AdaptiveStructureWatchpoint);
 public:
     AdaptiveStructureWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
     AdaptiveStructureWatchpoint();

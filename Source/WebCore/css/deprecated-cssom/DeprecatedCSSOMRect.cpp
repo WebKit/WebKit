@@ -27,8 +27,11 @@
 
 #include "CSSClip.h"
 #include "CSSPrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecatedCSSOMRect);
 
 static Ref<DeprecatedCSSOMPrimitiveValue> makeDeprecatedCSSOMPrimitiveValueForClipEdge(const CSS::ClipEdge& edge, CSSStyleDeclaration& owner)
 {

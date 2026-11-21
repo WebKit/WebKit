@@ -112,12 +112,15 @@
 #include "DeprecatedCSSOMCustomValue.h"
 #include "EventTarget.h"
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(SPATIAL_PORTAL)
 #include "CSSPinnedAnchorNameValue.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CSSValue);
 
 struct SameSizeAsCSSValue {
     uint32_t refCount;

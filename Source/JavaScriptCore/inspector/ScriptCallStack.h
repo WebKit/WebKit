@@ -35,6 +35,7 @@
 #include <JavaScriptCore/ScriptCallFrame.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -42,6 +43,7 @@ namespace Inspector {
 class AsyncStackTrace;
 
 class ScriptCallStack : public RefCounted<ScriptCallStack> {
+    WTF_MAKE_TZONE_ALLOCATED(ScriptCallStack);
 public:
     static constexpr size_t maxCallStackSizeToCapture = 200;
     

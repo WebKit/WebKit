@@ -69,6 +69,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SHA1.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 
 #if ENABLE(IPC_TESTING_API)
@@ -164,7 +165,7 @@ class NetworkConnectionToWebProcess final
     , public WebCore::CookiesEnabledStateObserver
     , public StorageAccessPermissionChangeObserver
     , public IPC::Connection::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkConnectionToWebProcess);
+    WTF_MAKE_TZONE_ALLOCATED(NetworkConnectionToWebProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkConnectionToWebProcess);
 public:
     USING_CAN_MAKE_WEAKPTR(MessageReceiver);

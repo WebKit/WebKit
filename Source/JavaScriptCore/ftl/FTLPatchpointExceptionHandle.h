@@ -34,6 +34,7 @@
 #include "ExitKind.h"
 #include "HandlerInfo.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -50,6 +51,7 @@ struct OSRExitDescriptor;
 struct OSRExitHandle;
 
 class PatchpointExceptionHandle : public ThreadSafeRefCounted<PatchpointExceptionHandle> {
+    WTF_MAKE_TZONE_ALLOCATED(PatchpointExceptionHandle);
 public:
     static Ref<PatchpointExceptionHandle> create(
         State&, OSRExitDescriptor*, DFG::NodeOrigin, unsigned dfgNodeIndex, unsigned offset, const HandlerInfo&);

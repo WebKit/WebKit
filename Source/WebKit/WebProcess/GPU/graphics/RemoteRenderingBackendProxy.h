@@ -53,6 +53,7 @@
 #include <span>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
@@ -95,7 +96,7 @@ class RemoteFaceDetectorProxy;
 
 class RemoteRenderingBackendProxy
     : public IPC::Connection::Client, public RefCounted<RemoteRenderingBackendProxy>, SerialFunctionDispatcher {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteRenderingBackendProxy);
+    WTF_MAKE_TZONE_ALLOCATED(RemoteRenderingBackendProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteRenderingBackendProxy);
 public:
     static Ref<RemoteRenderingBackendProxy> create(WebPage&);

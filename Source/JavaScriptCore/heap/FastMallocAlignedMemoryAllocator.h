@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/AlignedMemoryAllocator.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 #include <wtf/DebugHeap.h>
@@ -34,6 +35,7 @@
 namespace JSC {
 
 class FastMallocAlignedMemoryAllocator final : public AlignedMemoryAllocator {
+    WTF_MAKE_TZONE_ALLOCATED(FastMallocAlignedMemoryAllocator);
 public:
     FastMallocAlignedMemoryAllocator();
     ~FastMallocAlignedMemoryAllocator() final;

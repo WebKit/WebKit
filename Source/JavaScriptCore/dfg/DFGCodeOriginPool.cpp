@@ -26,9 +26,13 @@
 #include "config.h"
 #include "DFGCodeOriginPool.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CodeOriginPool);
 
 CodeOriginPool::CodeOriginPool()
 {

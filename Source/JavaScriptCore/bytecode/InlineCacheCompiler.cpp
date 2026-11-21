@@ -72,10 +72,13 @@
 #include "WebAssemblyModuleRecord.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(PolymorphicAccess);
 
 namespace InlineCacheCompilerInternal {
 static constexpr bool verbose = false;

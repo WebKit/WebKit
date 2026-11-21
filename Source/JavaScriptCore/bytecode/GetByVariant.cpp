@@ -29,8 +29,11 @@
 #include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
 #include "JSFunctionInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GetByVariant);
 
 GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, bool viaGlobalProxy, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus, JSFunction* intrinsicFunction, CodePtr<CustomAccessorPtrTag> customAccessorGetter, std::unique_ptr<DOMAttributeAnnotation> domAttribute)
     : m_structureSet(structureSet)

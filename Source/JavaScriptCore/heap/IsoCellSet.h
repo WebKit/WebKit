@@ -34,6 +34,7 @@
 #include <wtf/Nonmovable.h>
 #include <wtf/SentinelLinkedList.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -44,6 +45,7 @@ class IsoSubspace;
 // removal. Each such set should be thought of as a 0.8% increase in object size for objects in that
 // IsoSubspace (it's like adding 1 bit every 16 bytes, or 1 bit every 128 bits).
 class IsoCellSet final : public BasicRawSentinelNode<IsoCellSet> {
+    WTF_MAKE_TZONE_ALLOCATED(IsoCellSet);
     WTF_MAKE_NONCOPYABLE(IsoCellSet);
     WTF_MAKE_NONMOVABLE(IsoCellSet);
 public:

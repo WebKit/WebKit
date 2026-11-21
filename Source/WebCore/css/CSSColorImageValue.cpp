@@ -29,8 +29,11 @@
 #include "StyleBuilderState.h"
 #include "StyleColor.h"
 #include "StyleColorImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSColorImageValue);
 
 Ref<CSSColorImageValue> CSSColorImageValue::create(CSS::Color&& color)
 {

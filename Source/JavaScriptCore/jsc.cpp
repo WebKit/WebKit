@@ -230,6 +230,7 @@ int runJSC(const CommandLine&, bool isWorker, NOESCAPE const Func&);
 static void checkException(GlobalObject*, bool isLastFile, bool hasException, JSValue, const CommandLine&, bool& success);
 
 class Message : public ThreadSafeRefCounted<Message> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Message);
 public:
     static Ref<Message> create(Vector<uint8_t>&& data, CloneSerializationSideChannels&& sideChannels, int32_t index)
     {
@@ -268,6 +269,7 @@ private:
 };
 
 class Worker : public BasicRawSentinelNode<Worker> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Worker);
 public:
     Worker(Workers&, bool isMain);
     ~Worker();
@@ -679,7 +681,7 @@ private:
     static constexpr unsigned DontEnum = 0 | PropertyAttribute::DontEnum;
 
     class PropertyFilter : public SideDataRepository::SideData {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PropertyFilter);
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PropertyFilter);
     public:
         void add(UniquedStringImpl* uid)
         {
@@ -1384,6 +1386,7 @@ static bool fetchScriptFromLocalFileSystem(const String& fileName, Vector<char>&
 }
 
 class ShellSourceProvider final : public StringSourceProvider {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ShellSourceProvider);
 public:
     static Ref<ShellSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
     {

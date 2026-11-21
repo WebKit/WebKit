@@ -47,8 +47,11 @@
 #include <ranges>
 #include <wtf/OptionSet.h>
 #include <wtf/PointerComparison.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(KeyframeEffectStack);
 
 KeyframeEffectStack::KeyframeEffectStack() = default;
 

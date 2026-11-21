@@ -28,6 +28,7 @@
 #include <JavaScriptCore/MarkedBlock.h>
 #include <JavaScriptCore/WeakSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -42,6 +43,7 @@ class SlotVisitor;
 // when a HeapCell* is a PreciseAllocation because it will have the MarkedBlock::atomSize / 2 bit set.
 
 class PreciseAllocation : public BasicRawSentinelNode<PreciseAllocation> {
+    WTF_MAKE_TZONE_ALLOCATED(PreciseAllocation);
 public:
     friend class LLIntOffsetsExtractor;
     friend class MarkedSpace;

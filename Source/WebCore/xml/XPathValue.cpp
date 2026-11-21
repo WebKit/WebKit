@@ -34,8 +34,11 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::XPath {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Value::NodeSetHolder);
 
 const NodeSet& Value::toNodeSet() const
 {

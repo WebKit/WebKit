@@ -53,8 +53,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #include <wtf/OSAllocator.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureAlignedMemoryAllocator);
 
 StructureAlignedMemoryAllocator::StructureAlignedMemoryAllocator() = default;
 StructureAlignedMemoryAllocator::~StructureAlignedMemoryAllocator() = default;

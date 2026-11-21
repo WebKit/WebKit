@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -40,6 +41,7 @@ class CallLinkInfo;
 namespace Wasm {
 
 class StreamingPlan final : public Plan {
+    WTF_MAKE_TZONE_ALLOCATED(StreamingPlan);
 public:
     using Base = Plan;
 

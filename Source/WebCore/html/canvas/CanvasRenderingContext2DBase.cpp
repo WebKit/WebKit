@@ -118,6 +118,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasRenderingContext2DBase::FontProxy);
+
 using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasRenderingContext2DBase);

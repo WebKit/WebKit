@@ -37,8 +37,11 @@
 #include "ProxyObject.h"
 #include "StrongInlines.h"
 #include "TopExceptionScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptArguments);
 
 static inline String argumentAsString(JSC::JSGlobalObject* globalObject, JSC::JSValue argument)
 {

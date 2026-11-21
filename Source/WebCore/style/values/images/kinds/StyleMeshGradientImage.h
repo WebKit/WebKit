@@ -28,6 +28,7 @@
 #include "StyleGeneratedImage.h"
 #include "StyleGeneratedImageCache.h"
 #include "StyleMeshGradient.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class MeshGradient;
 namespace Style {
 
 class MeshGradientImage final : public GeneratedImage {
+    WTF_MAKE_TZONE_ALLOCATED(MeshGradientImage);
 public:
     using Gradient = FunctionNotation<CSSValueID::MeshGradient, MeshGradient>;
 

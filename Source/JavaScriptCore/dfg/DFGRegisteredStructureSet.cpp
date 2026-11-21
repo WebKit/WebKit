@@ -30,8 +30,11 @@
 
 #include "DFGAbstractValue.h"
 #include "TrackedReferences.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RegisteredStructureSet);
 
 void RegisteredStructureSet::filter(const DFG::StructureAbstractValue& other)
 {

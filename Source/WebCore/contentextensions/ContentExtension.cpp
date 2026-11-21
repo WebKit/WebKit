@@ -32,11 +32,14 @@
 #include "ContentExtensionsBackend.h"
 #include "ProcessWarming.h"
 #include "StyleSheetContents.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
 namespace WebCore::ContentExtensions {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentExtension);
 
 Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
 {

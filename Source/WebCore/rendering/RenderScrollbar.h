@@ -29,6 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "Scrollbar.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,6 +43,7 @@ class ComputedStyle;
 }
 
 class RenderScrollbar final : public Scrollbar {
+    WTF_MAKE_TZONE_ALLOCATED(RenderScrollbar);
 public:
     friend class Scrollbar;
     static Ref<Scrollbar> createCustomScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, LocalFrame* owningFrame = nullptr);

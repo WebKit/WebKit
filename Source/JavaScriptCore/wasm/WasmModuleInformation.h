@@ -36,6 +36,7 @@
 
 #include <wtf/FixedBitVector.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -47,6 +48,7 @@ struct ModuleDebugInfo;
 struct FunctionDebugInfo;
 
 struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ModuleInformation);
 
     using BranchHints = HashMap<uint32_t, BranchHintMap>;
 

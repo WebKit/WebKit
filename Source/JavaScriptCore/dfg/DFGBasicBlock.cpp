@@ -33,6 +33,8 @@
 
 namespace JSC { namespace DFG {
 
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(BasicBlock);
+
 using BasicBlockSSAData = BasicBlock::SSAData;
 
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(BasicBlockSSAData);

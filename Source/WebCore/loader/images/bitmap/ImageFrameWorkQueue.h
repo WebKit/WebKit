@@ -29,6 +29,7 @@
 #include "ImageTypes.h"
 #include <wtf/Seconds.h>
 #include <wtf/SynchronizedFixedQueue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 
@@ -39,6 +40,7 @@ class ImageDecoder;
 class NativeImage;
 
 class ImageFrameWorkQueue : public ThreadSafeRefCounted<ImageFrameWorkQueue> {
+    WTF_MAKE_TZONE_ALLOCATED(ImageFrameWorkQueue);
 public:
     struct Request {
         Ref<BitmapImageSource> source;

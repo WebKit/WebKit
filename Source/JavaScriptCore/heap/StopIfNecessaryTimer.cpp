@@ -28,8 +28,11 @@
 
 #include "HeapInlines.h"
 #include "VM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StopIfNecessaryTimer);
 
 StopIfNecessaryTimer::StopIfNecessaryTimer(VM& vm)
     : Base(vm)

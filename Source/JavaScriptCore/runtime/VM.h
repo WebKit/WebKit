@@ -58,6 +58,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/Lock.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCountedWithSuppressingSaferCPPChecking.h>
 #include <wtf/text/AdaptiveStringSearcher.h>
 
@@ -236,7 +237,7 @@ enum VMIdentifierType { };
 using VMIdentifier = AtomicObjectIdentifier<VMIdentifierType>;
 
 class VM : public ThreadSafeRefCountedWithSuppressingSaferCPPChecking<VM> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VM, VM);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(VM, VM, JS_EXPORT_PRIVATE);
 public:
     // WebCore has a one-to-one mapping of threads to VMs;
     // create() should only be called once

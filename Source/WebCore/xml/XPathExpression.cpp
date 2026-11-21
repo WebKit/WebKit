@@ -34,8 +34,11 @@
 #include "XPathParser.h"
 #include "XPathResult.h"
 #include "XPathUtil.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XPathExpression);
     
 inline XPathExpression::XPathExpression(std::unique_ptr<XPath::Expression> expression)
     : m_topExpression(WTF::move(expression))

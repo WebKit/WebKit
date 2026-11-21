@@ -29,11 +29,13 @@
 #include "JSCJSValue.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/TextPosition.h>
 
 namespace Inspector {
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
+    WTF_MAKE_TZONE_ALLOCATED(JavaScriptCallFrame);
 public:
     static Ref<JavaScriptCallFrame> create(Ref<JSC::DebuggerCallFrame>&& debuggerCallFrame)
     {

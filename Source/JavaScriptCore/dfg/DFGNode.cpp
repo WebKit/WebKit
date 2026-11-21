@@ -34,10 +34,13 @@
 #include "DOMJITSignature.h"
 #include "JSBigInt.h"
 #include "JSCellButterfly.h"
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(Node);
 
 const char Node::HashSetTemplateInstantiationString[] = "::JSC::DFG::Node*";
 

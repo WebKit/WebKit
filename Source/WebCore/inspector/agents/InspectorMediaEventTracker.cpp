@@ -76,6 +76,7 @@ static void forEachInspectedNodeEventName(Node& node, const Function<void(const 
 }
 
 class EventFiredCallback final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EventFiredCallback);
 public:
     NODELETE static Ref<EventFiredCallback> create(InspectorMediaEventTracker& tracker)
     {

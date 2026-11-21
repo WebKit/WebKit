@@ -34,6 +34,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "OperationsInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 
@@ -85,6 +86,8 @@
 */
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAssemblyArrayMutI16TypeExpectation);
 
 JSFunction* WebAssemblyBuiltin::jsWrapper(JSGlobalObject* globalObject) const
 {

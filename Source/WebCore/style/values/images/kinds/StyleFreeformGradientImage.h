@@ -27,11 +27,13 @@
 
 #include "StyleFreeformGradient.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 class FreeformGradientImage final : public GeneratedImage {
+    WTF_MAKE_TZONE_ALLOCATED(FreeformGradientImage);
 public:
     using Gradient = FunctionNotation<CSSValueID::FreeformGradient, FreeformGradient>;
 

@@ -37,8 +37,11 @@
 #include "PropertyInlineCacheClearingWatchpoint.h"
 #include "SharedJITStubSet.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GCAwareJITStubRoutine);
 
 GCAwareJITStubRoutine::GCAwareJITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, JSCell* owner, bool isCodeImmutable)
     : JITStubRoutine(type, code)

@@ -36,12 +36,15 @@
 #include "SourceProvider.h"
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace JSC;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 struct OpaqueJSScript final : public SourceProvider {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OpaqueJSScript);
+public:
 public:
     static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, String filename, int startingLineNumber, const String& source)
     {

@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <wtf/ApproximateTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -34,6 +35,7 @@ class Heap;
 class BlockDirectory;
 
 class IncrementalSweeper final : public JSRunLoopTimer {
+    WTF_MAKE_TZONE_ALLOCATED(IncrementalSweeper);
 public:
     using Base = JSRunLoopTimer;
     JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);

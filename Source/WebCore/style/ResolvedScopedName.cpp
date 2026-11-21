@@ -27,8 +27,11 @@
 
 #include "ScopedName.h"
 #include "StyleScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResolvedScopedName);
 
 ResolvedScopedName::ResolvedScopedName(AtomString name, ScopeIdentifier scopeIdentifier)
     : m_name(name)

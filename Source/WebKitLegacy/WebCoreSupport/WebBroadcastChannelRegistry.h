@@ -26,11 +26,13 @@
 #include <WebCore/BroadcastChannelRegistry.h>
 #include <WebCore/PartitionedSecurityOrigin.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #pragma once
 
 class WebBroadcastChannelRegistry : public WebCore::BroadcastChannelRegistry, public CanMakeWeakPtr<WebBroadcastChannelRegistry> {
+    WTF_MAKE_TZONE_ALLOCATED(WebBroadcastChannelRegistry);
 public:
     static Ref<WebBroadcastChannelRegistry> getOrCreate(bool privateSession);
 

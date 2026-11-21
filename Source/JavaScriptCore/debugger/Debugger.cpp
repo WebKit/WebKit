@@ -51,6 +51,8 @@
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Debugger::AbandonPauseInAwaitTimer);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Debugger);
 
 class DebuggerPausedScope {

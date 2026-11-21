@@ -29,10 +29,12 @@
 
 #include "MacroAssemblerCodeRef.h"
 #include "ProxyableAccessCase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class GetterSetterAccessCase final : public ProxyableAccessCase {
+    WTF_MAKE_TZONE_ALLOCATED(GetterSetterAccessCase);
 public:
     using Base = ProxyableAccessCase;
     friend class AccessCase;

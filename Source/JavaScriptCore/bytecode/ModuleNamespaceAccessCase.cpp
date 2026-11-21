@@ -34,8 +34,11 @@
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "PropertyInlineCache.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleNamespaceAccessCase);
 
 ModuleNamespaceAccessCase::ModuleNamespaceAccessCase(VM& vm, JSCell* owner, CacheableIdentifier identifier, JSModuleNamespaceObject* moduleNamespaceObject, JSModuleEnvironment* moduleEnvironment, ScopeOffset scopeOffset)
     : Base(vm, owner, AccessType::ModuleNamespaceLoad, identifier, invalidOffset, nullptr, ObjectPropertyConditionSet(), nullptr)

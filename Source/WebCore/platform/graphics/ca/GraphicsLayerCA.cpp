@@ -93,6 +93,10 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsLayerCA);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(GraphicsLayerCA::CommitState);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(GraphicsLayerCA::VisibleAndCoverageRects);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(GraphicsLayerCA::ReplicaState);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(GraphicsLayerCA::LayerClones);
 
 // The threshold width or height above which a tiled layer will be used. This should be
 // large enough to avoid tiled layers for most GraphicsLayers, but less than the OpenGL

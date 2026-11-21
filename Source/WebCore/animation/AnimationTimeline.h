@@ -29,6 +29,7 @@
 #include <WebCore/WebAnimationTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -46,6 +47,7 @@ struct SingleAnimationRange;
 }
 
 class AnimationTimeline : public RefCountedAndCanMakeWeakPtr<AnimationTimeline> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AnimationTimeline, WEBCORE_EXPORT);
 public:
     virtual ~AnimationTimeline();
 

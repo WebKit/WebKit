@@ -31,12 +31,17 @@
 #include <array>
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackendDispatcher);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackendDispatcher::CallbackBase);
 
 SupplementalBackendDispatcher::SupplementalBackendDispatcher(BackendDispatcher& backendDispatcher)
     : m_backendDispatcher(backendDispatcher)

@@ -35,12 +35,15 @@
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UnalignedAccess.h>
 #include <wtf/text/MakeString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamingParser);
 
 namespace WasmStreamingParserInternal {
 static constexpr bool verbose = false;

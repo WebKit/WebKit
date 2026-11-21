@@ -19,11 +19,14 @@
 
 #include "SearchPopupMenuIOS.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 #if PLATFORM(IOS_FAMILY)
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SearchPopupMenuIOS);
 
 SearchPopupMenuIOS::SearchPopupMenuIOS(PopupMenuClient* client)
     : m_popup(adoptRef(*new PopupMenuIOS(client)))

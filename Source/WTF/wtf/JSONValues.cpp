@@ -37,12 +37,21 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ZippedRange.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF::JSONImpl {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ObjectBase);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Object);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ArrayBase);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Array);
 
 namespace {
 

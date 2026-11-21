@@ -39,6 +39,7 @@
 #include <JavaScriptCore/Printer.h>
 #include <JavaScriptCore/ScriptExecutable.h>
 #include <JavaScriptCore/UnlinkedCodeBlock.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(DFG_JIT)
 #include <JavaScriptCore/DFGCodeOriginPool.h>
@@ -820,7 +821,7 @@ public:
     NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
 
     struct RareData {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RareData, CodeBlockRareData);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(RareData, CodeBlockRareData);
     public:
         Vector<HandlerInfo> m_exceptionHandlers;
 

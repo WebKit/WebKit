@@ -38,8 +38,11 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(StyledMarkedText);
 
 static void computeDecorationStylesForPseudoElementStyle(StyledMarkedText::Style& style, const Style::ComputedStyle& pseudoElementStyle, const PaintInfo& paintInfo)
 {

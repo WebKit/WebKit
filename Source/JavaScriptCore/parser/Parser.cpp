@@ -191,6 +191,8 @@ private:
 };
 
 struct DepthManager : private SetForScope<int> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DepthManager);
+public:
 public:
     DepthManager(int* depth)
         : SetForScope(*depth, *depth)

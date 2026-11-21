@@ -28,6 +28,7 @@
 #include <JavaScriptCore/WasmStreamingParser.h>
 #include <JavaScriptCore/WebAssemblyCompileOptions.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -48,6 +49,7 @@ class EntryPlan;
 class StreamingPlan;
 
 class StreamingCompiler final : public StreamingParserClient, public ThreadSafeRefCounted<StreamingCompiler> {
+    WTF_MAKE_TZONE_ALLOCATED(StreamingCompiler);
 public:
     JS_EXPORT_PRIVATE static Ref<StreamingCompiler> create(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&, String wasmSourceURL = { }, uint64_t requestIdentifier = 0);
 

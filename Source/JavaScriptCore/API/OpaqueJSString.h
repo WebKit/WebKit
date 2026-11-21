@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSExportMacros.h>
 #include <JavaScriptCore/JSStringRefPtr.h>
 #include <atomic>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,6 +38,8 @@ namespace JSC {
 }
 
 struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(OpaqueJSString, JS_EXPORT_PRIVATE);
+
     static Ref<OpaqueJSString> create()
     {
         return adoptRef(*new OpaqueJSString);

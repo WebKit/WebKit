@@ -42,9 +42,12 @@
 #include <wtf/Locker.h>
 #include <wtf/ScopedPrintStream.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OMGPlan);
 
 namespace WasmOMGPlanInternal {
 static constexpr bool verbose = false;

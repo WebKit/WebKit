@@ -27,6 +27,7 @@
 #define WebMediaSessionManagerMac_h
 
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include <WebCore/WebMediaSessionManager.h>
@@ -34,6 +35,7 @@
 namespace WebCore {
 
 class WebMediaSessionManagerMac : public WebMediaSessionManager {
+    WTF_MAKE_TZONE_ALLOCATED(WebMediaSessionManagerMac);
     friend class NeverDestroyed<WebMediaSessionManagerMac>;
 public:
 

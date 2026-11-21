@@ -41,8 +41,13 @@
 #include "Repatch.h"
 #include "ThunkGenerators.h"
 #include <wtf/ListDump.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallLinkInfo);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DataOnlyCallLinkInfo);
 
 CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
 {
@@ -322,6 +327,9 @@ void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
 }
 
 #if ENABLE(JIT)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DirectCallLinkInfo);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OptimizingCallLinkInfo);
 
 void CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkInfo, CCallHelpers& jit, bool isTailCall, NOESCAPE const ScopedLambda<void()>& prepareForTailCall)
 {

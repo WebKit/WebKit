@@ -37,6 +37,7 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/darwin/DispatchExtras.h>
@@ -74,6 +75,7 @@ static bool hasVersion(CFHTTPMessageRef message, CFStringRef version)
 }
 
 class HTTPConnection : public RefCountedAndCanMakeWeakPtr<HTTPConnection> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HTTPConnection);
 public:
     static Ref<HTTPConnection> create(nw_connection_t connection, HTTPRequestHandler& requestHandler)
     {

@@ -44,6 +44,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TranslatedProcess.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -83,7 +84,8 @@ namespace OptionsHelper {
 struct Metadata {
     // This struct does not need to be TZONE_ALLOCATED because it is only used for transient memory
     // during Options initialization, and will not be re-allocated thereafter. See comment above.
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Metadata);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Metadata);
+public:
 public:
     OptionsStorage defaults;
 };

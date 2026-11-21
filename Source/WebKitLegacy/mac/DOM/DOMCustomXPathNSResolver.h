@@ -28,8 +28,10 @@
 #include <WebCore/XPathNSResolver.h>
 #include "DOMXPathNSResolver.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 class DOMCustomXPathNSResolver : public WebCore::XPathNSResolver {
+    WTF_MAKE_TZONE_ALLOCATED(DOMCustomXPathNSResolver);
 public:
     static Ref<DOMCustomXPathNSResolver> create(id <DOMXPathNSResolver> customResolver) { return adoptRef(*new DOMCustomXPathNSResolver(customResolver)); }
     virtual ~DOMCustomXPathNSResolver();

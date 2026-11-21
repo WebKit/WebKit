@@ -40,8 +40,11 @@
 #include "TextBoxSelectableRange.h"
 #include <algorithm>
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(MarkedText);
 
 Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, OverlapStrategy overlapStrategy)
 {

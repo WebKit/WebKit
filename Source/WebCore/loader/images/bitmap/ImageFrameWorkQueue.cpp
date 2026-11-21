@@ -31,9 +31,12 @@
 #include "ImageFrameWorkQueuePool.h"
 #include "Logging.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageFrameWorkQueue);
 
 Ref<ImageFrameWorkQueue> ImageFrameWorkQueue::create()
 {

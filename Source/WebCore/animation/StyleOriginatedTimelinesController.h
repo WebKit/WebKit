@@ -31,6 +31,7 @@
 #include "StyleNameScope.h"
 #include "Styleable.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -59,7 +60,7 @@ struct ViewTimelineInsetItem;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleOriginatedTimelinesController);
 class StyleOriginatedTimelinesController final : public CanMakeCheckedPtr<StyleOriginatedTimelinesController> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleOriginatedTimelinesController, StyleOriginatedTimelinesController);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleOriginatedTimelinesController, StyleOriginatedTimelinesController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleOriginatedTimelinesController);
 public:
     explicit StyleOriginatedTimelinesController() = default;

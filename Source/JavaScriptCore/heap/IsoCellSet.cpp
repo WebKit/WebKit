@@ -27,8 +27,11 @@
 #include "IsoCellSet.h"
 
 #include "MarkedBlockInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IsoCellSet);
 
 IsoCellSet::IsoCellSet(IsoSubspace& subspace)
     : m_subspace(subspace)

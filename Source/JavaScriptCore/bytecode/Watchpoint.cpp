@@ -38,8 +38,13 @@
 #include "PropertyInlineCacheClearingWatchpoint.h"
 #include "StructureRareDataInlines.h"
 #include "VM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(Watchpoint);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(WatchpointSet);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Watchpoint);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WatchpointSet);

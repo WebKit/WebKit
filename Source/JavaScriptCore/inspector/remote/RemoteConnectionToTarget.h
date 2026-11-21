@@ -32,6 +32,7 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/RemoteControllableTarget.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -51,6 +52,7 @@ typedef Vector<Function<void ()>> RemoteTargetQueue;
 #endif
 
 class RemoteConnectionToTarget final : public ThreadSafeRefCounted<RemoteConnectionToTarget>, public FrontendChannel {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteConnectionToTarget);
 public:
 #if PLATFORM(COCOA)
     RemoteConnectionToTarget(RemoteControllableTarget*, NSString* connectionIdentifier, NSString* destination);

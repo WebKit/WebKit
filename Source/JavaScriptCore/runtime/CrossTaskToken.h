@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -35,6 +36,7 @@ class MicrotaskDispatcher;
 class VM;
 
 class CrossTaskToken : public RefCountedAndCanMakeWeakPtr<CrossTaskToken> {
+    WTF_MAKE_TZONE_ALLOCATED(CrossTaskToken);
 public:
     JS_EXPORT_PRIVATE CrossTaskToken();
     JS_EXPORT_PRIVATE virtual ~CrossTaskToken();

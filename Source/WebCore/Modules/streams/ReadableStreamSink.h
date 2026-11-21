@@ -31,6 +31,7 @@
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -48,6 +49,7 @@ public:
 };
 
 class ReadableStreamToSharedBufferSink final : public ReadableStreamSink {
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStreamToSharedBufferSink);
 public:
     using Callback = Function<void(ExceptionOr<std::span<const uint8_t>*>&&)>;
     static Ref<ReadableStreamToSharedBufferSink> create(Callback&& callback) { return adoptRef(*new ReadableStreamToSharedBufferSink(WTF::move(callback))); }

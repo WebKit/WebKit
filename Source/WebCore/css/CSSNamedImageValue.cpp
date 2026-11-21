@@ -27,9 +27,12 @@
 #include "CSSNamedImageValue.h"
 
 #include "StyleNamedImage.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSNamedImageValue);
 
 CSSNamedImageValue::CSSNamedImageValue(CSS::CustomIdent&& name)
     : CSSValue { ClassType::NamedImage }

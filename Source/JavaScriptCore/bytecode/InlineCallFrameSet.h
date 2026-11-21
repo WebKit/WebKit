@@ -29,10 +29,12 @@
 
 #include <wtf/Bag.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class InlineCallFrameSet : public RefCounted<InlineCallFrameSet> {
+    WTF_MAKE_TZONE_ALLOCATED(InlineCallFrameSet);
 public:
     InlineCallFrameSet();
     ~InlineCallFrameSet();

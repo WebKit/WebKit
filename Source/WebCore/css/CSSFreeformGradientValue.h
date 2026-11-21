@@ -27,6 +27,7 @@
 
 #include "CSSFreeformGradient.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class Image;
 }
 
 class CSSFreeformGradientValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFreeformGradientValue);
 public:
     using Gradient = FunctionNotation<CSSValueID::FreeformGradient, CSS::FreeformGradient>;
 

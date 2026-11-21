@@ -26,7 +26,10 @@
 #import "DOMCustomXPathNSResolver.h"
 
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/WTFString.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMCustomXPathNSResolver);
 
 DOMCustomXPathNSResolver::DOMCustomXPathNSResolver(id <DOMXPathNSResolver> customResolver)
     : m_customResolver(customResolver)

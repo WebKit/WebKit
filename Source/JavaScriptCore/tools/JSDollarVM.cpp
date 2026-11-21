@@ -1673,6 +1673,7 @@ JSC_DEFINE_JIT_OPERATION(domJITGetterBaseJSObjectSlowCall, EncodedJSValue, (JSGl
 }
 
 class Message : public ThreadSafeRefCounted<Message> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Message);
 public:
     Message(ArrayBufferContents&&, int32_t);
     ~Message();

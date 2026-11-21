@@ -53,6 +53,7 @@
 #include <WebCore/PixelFormat.h>
 #include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if HAVE(IOSURFACE)
@@ -60,6 +61,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderingBackendProxy);
 
 using namespace WebCore;
 

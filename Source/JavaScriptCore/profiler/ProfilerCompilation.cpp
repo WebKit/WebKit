@@ -31,8 +31,11 @@
 #include "ProfilerDatabase.h"
 #include "ProfilerDumper.h"
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Profiler {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Compilation);
 
 Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
     : m_kind(kind)

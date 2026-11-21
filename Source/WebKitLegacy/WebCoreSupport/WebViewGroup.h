@@ -27,6 +27,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ class WebVisitedLinkStore;
 OBJC_CLASS WebView;
 
 class WebViewGroup : public RefCounted<WebViewGroup> {
+    WTF_MAKE_TZONE_ALLOCATED(WebViewGroup);
 public:
     static Ref<WebViewGroup> getOrCreate(const String& name, const String& localStorageDatabasePath);
     ~WebViewGroup();

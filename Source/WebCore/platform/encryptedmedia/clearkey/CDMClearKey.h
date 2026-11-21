@@ -118,6 +118,7 @@ private:
 };
 
 class CDMInstanceSessionClearKey final : public CDMInstanceSessionProxy {
+    WTF_MAKE_TZONE_ALLOCATED(CDMInstanceSessionClearKey);
 public:
     CDMInstanceSessionClearKey(CDMInstanceClearKey& parent)
         : CDMInstanceSessionProxy(parent) { }

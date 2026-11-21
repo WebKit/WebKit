@@ -30,10 +30,13 @@
 #include <numeric>
 #include <wtf/DataLog.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExpressionInfo);
 
 /*
     ExpressionInfo maps bytecode to source positions for error messages, stack traces and

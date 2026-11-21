@@ -31,8 +31,11 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "FTLForOSREntryJITCode.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ToFTLForOSREntryDeferredCompilationCallback);
 
 ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback(JITCode::TriggerReason* forcedOSREntryTrigger)
     : m_forcedOSREntryTrigger(forcedOSREntryTrigger)

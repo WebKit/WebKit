@@ -27,6 +27,7 @@
 
 #include "CSSGradient.h"
 #include "StyleImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class BuilderState;
 }
 
 class CSSGradientValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGradientValue);
 public:
     static Ref<CSSGradientValue> create(CSS::Gradient&& gradient)
     {

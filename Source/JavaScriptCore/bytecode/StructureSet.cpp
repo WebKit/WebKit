@@ -28,8 +28,11 @@
 
 #include "HeapInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureSet);
 
 template<typename Visitor>
 void StructureSet::markIfCheap(Visitor& visitor) const

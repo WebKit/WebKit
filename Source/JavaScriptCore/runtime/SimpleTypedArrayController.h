@@ -28,6 +28,7 @@
 #include <JavaScriptCore/Handle.h>
 #include <JavaScriptCore/TypedArrayController.h>
 #include <JavaScriptCore/WeakHandleOwner.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -47,6 +48,7 @@ namespace JSC {
 //   one.
 
 class SimpleTypedArrayController final : public TypedArrayController {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SimpleTypedArrayController, JS_EXPORT_PRIVATE);
 public:
     JS_EXPORT_PRIVATE SimpleTypedArrayController(bool allowAtomicsWait = true);
     ~SimpleTypedArrayController() final;

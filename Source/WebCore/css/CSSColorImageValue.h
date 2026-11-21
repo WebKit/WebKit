@@ -27,6 +27,7 @@
 
 #include "CSSColor.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class Image;
 }
 
 class CSSColorImageValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSColorImageValue);
 public:
     NODELETE static Ref<CSSColorImageValue> create(CSS::Color&&);
     ~CSSColorImageValue();

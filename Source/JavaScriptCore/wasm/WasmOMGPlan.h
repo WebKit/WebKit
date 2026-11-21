@@ -31,6 +31,7 @@
 #include "WasmModule.h"
 #include "WasmPlan.h"
 #include "tools/FunctionAllowlist.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -39,6 +40,7 @@ class CallLinkInfo;
 namespace Wasm {
 
 class OMGPlan final : public Plan {
+    WTF_MAKE_TZONE_ALLOCATED(OMGPlan);
 public:
     using Base = Plan;
 

@@ -26,10 +26,12 @@
 #pragma once
 
 #include <JavaScriptCore/GCActivityCallback.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class FullGCActivityCallback : public GCActivityCallback {
+    WTF_MAKE_TZONE_ALLOCATED(FullGCActivityCallback);
 public:
     static RefPtr<FullGCActivityCallback> tryCreate(JSC::Heap& heap, Synchronousness synchronousness = Synchronousness::Async)
     {

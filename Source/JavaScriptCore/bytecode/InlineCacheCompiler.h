@@ -34,6 +34,7 @@
 #include "MacroAssembler.h"
 #include "PropertyInlineCache.h"
 #include "ScratchRegisterAllocator.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -111,7 +112,7 @@ private:
 
 class PolymorphicAccess {
     WTF_MAKE_NONCOPYABLE(PolymorphicAccess);
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PolymorphicAccess, PolymorphicAccess);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(PolymorphicAccess, PolymorphicAccess);
 public:
     friend class InlineCacheCompiler;
 

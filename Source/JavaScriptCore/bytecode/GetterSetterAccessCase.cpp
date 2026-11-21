@@ -29,8 +29,11 @@
 #if ENABLE(JIT)
 
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GetterSetterAccessCase);
 
 GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType accessType, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaGlobalProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
     : Base(vm, owner, accessType, identifier, offset, structure, conditionSet, viaGlobalProxy, additionalSet, WTF::move(prototypeAccessChain))

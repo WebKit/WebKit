@@ -29,8 +29,11 @@
 #if ENABLE(FTL_JIT)
 
 #include "LinkBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace FTL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExceptionTarget);
 
 ExceptionTarget::~ExceptionTarget() = default;
 
