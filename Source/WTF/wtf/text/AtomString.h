@@ -158,8 +158,22 @@ NODELETE bool equalIgnoringASCIICase(const AtomString&, ASCIILiteral);
 bool equalLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 bool startsWithLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 
-WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&&);
-WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
+WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacterIn16BitString(AtomString&&);
+WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacterIn16BitString(String&&);
+
+inline AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&& string)
+{
+    if (string.is8Bit()) [[likely]]
+        return WTF::move(string);
+    return replaceUnpairedSurrogatesWithReplacementCharacterIn16BitString(WTF::move(string));
+}
+
+inline String replaceUnpairedSurrogatesWithReplacementCharacter(String&& string)
+{
+    if (string.is8Bit()) [[likely]]
+        return WTF::move(string);
+    return replaceUnpairedSurrogatesWithReplacementCharacterIn16BitString(WTF::move(string));
+}
 
 inline AtomString::AtomString()
 {
