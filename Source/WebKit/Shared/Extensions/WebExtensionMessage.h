@@ -35,6 +35,10 @@
 
 namespace WebKit {
 
+inline constexpr auto messageSerializationJSON = "json"_s;
+inline constexpr auto manifestMessageSerializationStructuredClone = "structured_clone"_s;
+inline constexpr auto apiMessageSerializationStructuredClone = "structured-clone"_s;
+
 // A message is either a JSON string or a structured clone.
 struct WebExtensionMessage {
     WebExtensionMessage() = default;

@@ -169,8 +169,8 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
 
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
-    // Replies to a web page stay JSON, like the page's own messages.
-    bool useStructuredCloneForReply = usesStructuredCloneMessageSerialization() && sourceContentWorldType != WebExtensionContentWorldType::WebPage;
+    // A reply uses the format the sender chose.
+    bool useStructuredCloneForReply = !!message.structuredClone();
 
     auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTF::move(completionHandler), useStructuredCloneForReply](JSValue *replyMessage, IsDefaultReply defaultReply) mutable {
         // A missing reply to the completionHandler means no listeners replied.

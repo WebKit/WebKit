@@ -148,7 +148,7 @@ messages -> WebExtensionContext {
     [Validator=isLoaded] RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeSendNativeMessage(String applicationID, String messageJSON) -> (std::expected<String, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeConnectNative(String applicationID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, WebKit::WebPageProxyIdentifier pageProxyIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] RuntimeWebPageSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoaded] RuntimeWebPageSendMessage(String extensionID, struct WebKit::WebExtensionMessage message, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::expected<WebKit::WebExtensionMessage, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeWebPageConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::expected<void, WebKit::WebExtensionError> result)
 
     // Scripting APIs

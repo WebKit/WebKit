@@ -38,6 +38,7 @@
 #include "WebExtensionConstants.h"
 #include "WebExtensionContextMessages.h"
 #include "WebExtensionControllerProxy.h"
+#include "WebExtensionMessage.h"
 #include "WebExtensionMessageSenderParameters.h"
 #include "WebExtensionMessageTargetParameters.h"
 #include "WebExtensionUtilities.h"
@@ -115,13 +116,14 @@ JSValueRef WebExtensionAPIRuntimeBase::reportError(const String& errorMessage, W
     });
 }
 
-bool WebExtensionAPIRuntime::parseConnectOptions(RefPtr<JSON::Value> options, std::optional<String>& name, const String& sourceKey, String& outExceptionString)
+bool WebExtensionAPIRuntime::parseConnectOptions(RefPtr<JSON::Value> options, std::optional<String>& name, bool& usesStructuredClone, const String& sourceKey, String& outExceptionString)
 {
     if (!options)
         return true;
 
     if (!validateDictionary(options, sourceKey, { }, {
-        { nameKey, JSON::Value::Type::String }
+        { nameKey, JSON::Value::Type::String },
+        { serializationKey, JSON::Value::Type::String }
     }, outExceptionString))
         return false;
 
@@ -133,7 +135,24 @@ bool WebExtensionAPIRuntime::parseConnectOptions(RefPtr<JSON::Value> options, st
     if (!nameString.isEmpty())
         name = nameString;
 
-    return true;
+    return parseMessageSerializationOption(runtimeObject->getString(serializationKey), makeString(sourceKey, ".serialization"_s), usesStructuredClone, outExceptionString);
+}
+
+bool WebExtensionAPIRuntime::parseMessageSerialization(RefPtr<JSON::Value> options, bool& usesStructuredClone, const String& sourceKey, String& outExceptionString)
+{
+    if (!options)
+        return true;
+
+    if (!validateDictionary(options, sourceKey, { }, {
+        { serializationKey, JSON::Value::Type::String }
+    }, outExceptionString))
+        return false;
+
+    auto runtimeObject = options->asObject();
+    if (!runtimeObject)
+        return true;
+
+    return parseMessageSerializationOption(runtimeObject->getString(serializationKey), makeString(sourceKey, ".serialization"_s), usesStructuredClone, outExceptionString);
 }
 
 bool WebExtensionAPIRuntime::isPropertyAllowed(const ASCIILiteral& name, WebPage*)
@@ -342,11 +361,29 @@ JSValueRef WebExtensionAPIRuntime::platformOS(JSContextRef context)
     });
 }
 
-void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, const String& extensionID, const WebExtensionMessage& message, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+JSValueRef WebExtensionAPIRuntimeBase::messageSerialization(JSContextRef context)
+{
+    // Documentation: https://github.com/w3c/webextensions/issues/931
+
+    return makeEnumObject(context, {
+        { "JSON"_s, messageSerializationJSON },
+        { "STRUCTURED_CLONE"_s, apiMessageSerializationStructuredClone },
+    });
+}
+
+void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, JSContextRef context, const String& extensionID, JSValueRef serializableMessage, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
-    if (message.length() > webExtensionMaxMessageLength) {
+    bool usesStructuredClone = usesStructuredCloneMessageSerialization();
+    if (!parseMessageSerialization(options, usesStructuredClone, "options"_s, outExceptionString))
+        return;
+
+    auto message = serializeMessage(context, serializableMessage, usesStructuredClone, outExceptionString);
+    if (!message)
+        return;
+
+    if (message->length() > webExtensionMaxMessageLength) {
         outExceptionString = toErrorString(nullString(), "message"_s, "it exceeded the maximum allowed length"_s);
         return;
     }
@@ -357,8 +394,6 @@ void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIden
         return;
     }
 
-    // No options are supported currently.
-
     WebExtensionMessageSenderParameters senderParameters {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
@@ -368,12 +403,13 @@ void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIden
         frame.url(),
         documentIdentifier.value(),
         std::nullopt, // windowIdentifier
+        usesStructuredClone,
     };
 
 #if PLATFORM(COCOA)
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
     // The message keeps any Blob it references alive, so hold it until the receiver replies.
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, message, senderParameters, userGesture), [protectedThis = Ref { *this }, callback = WTF::move(callback), message](std::expected<WebExtensionMessage, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, *message, senderParameters, userGesture), [protectedThis = Ref { *this }, callback = WTF::move(callback), message = *message](std::expected<WebExtensionMessage, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -395,7 +431,8 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifi
     }
 
     std::optional<String> name;
-    if (!parseConnectOptions(options, name, "options"_s, outExceptionString))
+    bool usesStructuredClone = usesStructuredCloneMessageSerialization();
+    if (!parseConnectOptions(options, name, usesStructuredClone, "options"_s, outExceptionString))
         return nullptr;
 
     String resolvedName = name.value_or(nullString());
@@ -409,9 +446,11 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifi
         frame.url(),
         documentIdentifier.value(),
         std::nullopt, // windowIdentifier
+        usesStructuredClone,
     };
 
     Ref port = WebExtensionAPIPort::create(*this, webPageProxyIdentifier, WebExtensionContentWorldType::Main, resolvedName);
+    port->setUsesStructuredCloneMessageSerialization(usesStructuredClone);
 
 #if PLATFORM(COCOA)
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
@@ -462,11 +501,20 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebPageProxyId
     return port;
 }
 
-void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, JSContextRef context, const String& extensionID, JSValueRef serializableMessage, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
-    if (messageJSON.length() > webExtensionMaxMessageLength) {
+    // A web page has no manifest, so it sends JSON unless it asks for structured clone.
+    bool usesStructuredClone = false;
+    if (!WebExtensionAPIRuntime::parseMessageSerialization(options, usesStructuredClone, "options"_s, outExceptionString))
+        return;
+
+    auto message = serializeMessage(context, serializableMessage, usesStructuredClone, outExceptionString);
+    if (!message)
+        return;
+
+    if (message->length() > webExtensionMaxMessageLength) {
         outExceptionString = toErrorString(nullString(), "message"_s, "it exceeded the maximum allowed length"_s);
         return;
     }
@@ -486,6 +534,7 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
         frame.url(),
         documentIdentifier.value(),
         std::nullopt, // windowIdentifier
+        usesStructuredClone,
     };
 
     RefPtr destinationExtensionContext = page.webExtensionControllerProxy()->extensionContext(extensionID);
@@ -499,13 +548,13 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
     }
 
 #if PLATFORM(COCOA)
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageSendMessage(extensionID, *message, senderParameters), [protectedThis = Ref { *this }, callback = WTF::move(callback), message = *message](std::expected<WebExtensionMessage, WebExtensionError>&& result) {
         if (!result) {
             callback->call();
             return;
         }
 
-        callback->call(fromJSON(callback->globalContext(), JSON::Value::parseJSON(result.value())));
+        callback->call(result->toJSValue(callback->globalContext()));
     }, destinationExtensionContext->identifier());
 #endif
 }
@@ -515,7 +564,8 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
 
     std::optional<String> name;
-    if (!WebExtensionAPIRuntime::parseConnectOptions(options, name, "options"_s, outExceptionString))
+    bool usesStructuredClone = false;
+    if (!WebExtensionAPIRuntime::parseConnectOptions(options, name, usesStructuredClone, "options"_s, outExceptionString))
         return nullptr;
 
     auto documentIdentifier = toDocumentIdentifier(frame);
@@ -535,6 +585,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
         frame.url(),
         documentIdentifier.value(),
         std::nullopt, // windowIdentifier
+        usesStructuredClone,
     };
 
     RefPtr destinationExtensionContext = page.webExtensionControllerProxy()->extensionContext(extensionID);
@@ -552,6 +603,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
     }
 
     Ref port = WebExtensionAPIPort::create(contentWorldType(), protect(runtime()), *destinationExtensionContext, page.webPageProxyIdentifier(), WebExtensionContentWorldType::Main, resolvedName);
+    port->setUsesStructuredCloneMessageSerialization(usesStructuredClone);
 
 #if PLATFORM(COCOA)
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](std::expected<void, WebExtensionError>&& result) {

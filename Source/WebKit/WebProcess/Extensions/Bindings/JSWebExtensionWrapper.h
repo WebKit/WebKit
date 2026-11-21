@@ -203,6 +203,7 @@ String serializeJSObject(JSContextRef, JSValueRef, JSValueRef* exception);
 // Serializes with structured clone when requested, otherwise as JSON. Returns nothing when the value
 // cannot be serialized, and structured clone also sets the exception.
 std::optional<WebExtensionMessage> serializeMessage(JSContextRef, JSValueRef, bool useStructuredClone, JSValueRef* exception);
+std::optional<WebExtensionMessage> serializeMessage(JSContextRef, JSValueRef, bool useStructuredClone, String& outExceptionString);
 
 String toJSONString(JSContextRef, JSValueRef);
 String toSortedJSONString(JSContextRef, JSValueRef);
