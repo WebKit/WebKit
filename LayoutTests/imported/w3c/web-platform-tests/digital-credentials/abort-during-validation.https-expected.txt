@@ -1,0 +1,5 @@
+
+PASS Aborting the signal and then throwing while the request data is serialized rejects with the thrown error.
+PASS Throwing null while the request data is serialized rejects with null.
+PASS Aborting the signal while the request data is serialized rejects with the abort reason.
+

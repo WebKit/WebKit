@@ -70,6 +70,7 @@ public:
 
 private:
     void rejectTheCredentialRequestWith(Exception&&);
+    void rejectTheCredentialRequestWith(ExceptionOr<JSC::JSValue>&&);
 
     enum class InteractionState : uint8_t {
         Idle,
