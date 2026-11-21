@@ -326,6 +326,13 @@ static NSData *testJPEGData()
     return [NSData dataWithContentsOfURL:testJPEGFileURL()];
 }
 
+#if PLATFORM(MAC)
+static NSData *testHEIFData()
+{
+    return [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
+}
+#endif
+
 @implementation TestWKWebView (AttachmentTesting)
 
 - (_WKAttachment *)synchronouslyInsertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType
@@ -729,6 +736,15 @@ void platformCopyJPEG()
     pasteboard.itemProviders = @[ item.get() ];
 #endif
 }
+
+#if PLATFORM(MAC)
+static void platformCopyHEIF()
+{
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard declareTypes:@[UTTypeHEIF.identifier] owner:nil];
+    [pasteboard setData:testHEIFData() forType:UTTypeHEIF.identifier];
+}
+#endif
 
 #if PLATFORM(MAC)
 typedef NSImage PlatformImage;
@@ -1842,6 +1858,16 @@ TEST(WKAttachmentTests, PastingPreservesImageFormat)
         _WKAttachment *attachment = observer.observer().inserted[0];
         EXPECT_WK_STREQ("image/jpeg", attachment.info.contentType);
     }
+#if PLATFORM(MAC)
+    {
+        platformCopyHEIF();
+        ObserveAttachmentUpdatesForScope observer(webView);
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        _WKAttachment *attachment = observer.observer().inserted[0];
+        EXPECT_WK_STREQ("image/heif", attachment.info.contentType);
+    }
+#endif
 }
 
 TEST(WKAttachmentTests, CopyAndPasteRemoteImages)
