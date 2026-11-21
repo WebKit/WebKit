@@ -7406,7 +7406,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 
     UniqueRef assertionScope = _page->createTextExtractionAssertionScope();
     if (protect(_page->preferences())->textExtractionFilterEnabled() && (configuration.filterOptions & _WKTextExtractionFilterRules)) {
-        [self _ensureTextExtractionFilterRulesWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), assertionScope = WTF::move(assertionScope), configuration = RetainPtr { configuration }, completionHandler = makeBlockPtr(completionHandler)]() mutable {
+        [self _fetchTextExtractionFilterRulesIfNeededWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), assertionScope = WTF::move(assertionScope), configuration = RetainPtr { configuration }, completionHandler = makeBlockPtr(completionHandler)] mutable {
             RetainPtr strongSelf = weakSelf.get();
             if (!strongSelf)
                 return completionHandler(WebKit::createEmptyTextExtractionResult().get());
@@ -7488,7 +7488,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
         WebKit::TextExtractionFilter::singleton().prewarm();
 
     if (filterUsingRules) {
-        [self _ensureTextExtractionFilterRulesWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), string = checked_objc_cast<NSString>(adoptNS([string copy])), completionHandler = makeBlockPtr(completionHandler), options]() mutable {
+        [self _fetchTextExtractionFilterRulesIfNeededWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), string = checked_objc_cast<NSString>(adoptNS([string copy])), completionHandler = makeBlockPtr(completionHandler), options]() mutable {
             RetainPtr strongSelf = weakSelf.get();
             if (!strongSelf)
                 return completionHandler(string.get());

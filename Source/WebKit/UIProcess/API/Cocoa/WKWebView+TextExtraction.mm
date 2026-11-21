@@ -69,6 +69,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 constexpr Seconds defaultInteractionPresentationUpdateTimeout = 100_ms;
+constexpr Seconds filterRulesRequestTimeout = 1_s;
 
 constexpr auto staleNodeIdentifierGuidance = " The page changed since this uid was last observed; re-extract the page and retry with a current uid."_s;
 
@@ -292,16 +293,22 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     }
 }
 
-- (void)_ensureTextExtractionFilterRulesWithCompletionHandler:(CompletionHandler<void()>&&)completionHandler
+- (void)_fetchTextExtractionFilterRulesIfNeededWithCompletionHandler:(CompletionHandler<void()>&&)completionHandler
 {
     _page->hasTextExtractionFilterRules([completionHandler = WTF::move(completionHandler), weakSelf = WeakObjCPtr<WKWebView>(self)](bool hasRules) mutable {
         if (hasRules)
             return completionHandler();
 
-        WebKit::requestTextExtractionFilterRuleData([completionHandler = WTF::move(completionHandler), weakSelf](auto&& data) mutable {
+        Ref aggregator = EagerCallbackAggregator<void()>::create(WTF::move(completionHandler));
+
+        WebKit::requestTextExtractionFilterRuleData([aggregator, weakSelf](auto&& data) {
             if (RetainPtr strongSelf = weakSelf.get())
                 strongSelf->_page->updateTextExtractionFilterRules(WTF::move(data));
-            completionHandler();
+            aggregator.get()();
+        });
+
+        RunLoop::mainSingleton().dispatchAfter(filterRulesRequestTimeout, [aggregator] {
+            aggregator.get()();
         });
     });
 }
