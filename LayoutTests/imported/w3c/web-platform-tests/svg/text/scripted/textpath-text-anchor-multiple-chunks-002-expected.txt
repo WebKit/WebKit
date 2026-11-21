@@ -1,0 +1,12 @@
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+
+PASS rtl, text-anchor=start
+PASS rtl, text-anchor=middle
+PASS rtl, text-anchor=end
+PASS vertical, text-anchor=middle
+PASS vertical, text-anchor=end
+

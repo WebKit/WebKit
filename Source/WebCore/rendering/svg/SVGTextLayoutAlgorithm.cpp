@@ -878,7 +878,12 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
         auto isReversed = textPathRenderer->isLayoutPathReversed();
 
         // Text-anchor and textLength use the anchored chunks of the path content as laid out on a line.
-        auto totalAnchorShift = 0.f;
+        struct AnchoredChunk {
+            std::span<const unsigned> characters;
+            float length;
+            float anchorShift;
+        };
+        Vector<AnchoredChunk> anchoredChunks;
         auto totalLength = 0.f;
         size_t chunkStart = 0;
         for (size_t i = 1; i <= range.size(); ++i) {
@@ -886,8 +891,8 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
                 continue;
             auto chunk = range.subspan(chunkStart, i - chunkStart);
             chunkStart = i;
-            totalAnchorShift += anchorShift(chunk);
             auto [start, end] = extent(chunk);
+            anchoredChunks.append({ chunk, end - start, anchorShift(chunk) });
             totalLength += end - start;
         }
 
@@ -904,21 +909,36 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
                 scaling = elementTextLength->length / totalLength;
                 advanceIsAdjusted = true;
             }
-            if (advanceIsAdjusted && totalLength)
-                totalAnchorShift *= elementTextLength->length / totalLength;
+            if (advanceIsAdjusted) {
+                for (auto& anchoredChunk : anchoredChunks) {
+                    if (!anchoredChunk.length)
+                        continue;
+                    auto adjustedLength = anchoredChunk.length * scaling;
+                    if (auto characterCount = typographicCharacterCount(anchoredChunk.characters); pathSpacing && characterCount > 1)
+                        adjustedLength += pathSpacing * (characterCount - 1);
+                    anchoredChunk.anchorShift *= adjustedLength / anchoredChunk.length;
+                }
+            }
         }
         textPath.scaling = scaling;
 
         // "Let offset be the value of the 'textPath' element's 'startOffset' attribute, adjusted due to any 'pathLength' attribute on
         // the referenced element."
-        auto startOffset = computeTextPathStartOffset(textPathRenderer, pathLength) + totalAnchorShift;
+        auto startOffset = computeTextPathStartOffset(textPathRenderer, pathLength);
         auto currentOffset = startOffset;
+        auto chunkAnchorShift = 0.f;
+        size_t nextAnchoredChunk = 0;
         auto perpendicularShift = 0.f;
         auto textPositionAfterPath = std::optional<FloatPoint> { };
         auto linePositionAfterPath = std::optional<FloatPoint> { };
 
         for (auto index : range) {
             auto& character = m_characters[index];
+            if (nextAnchoredChunk < anchoredChunks.size() && index == anchoredChunks[nextAnchoredChunk].characters.front()) {
+                currentOffset += anchoredChunks[nextAnchoredChunk].anchorShift - chunkAnchorShift;
+                chunkAnchorShift = anchoredChunks[nextAnchoredChunk].anchorShift;
+                ++nextAnchoredChunk;
+            }
             if (!character.hasMetrics())
                 continue;
 
@@ -929,7 +949,7 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
 
             // An absolute inline position marks the beginning of a new position along the path.
             if (!isUnspecified(inlinePosition))
-                currentOffset = inlinePosition + startOffset;
+                currentOffset = inlinePosition + startOffset + chunkAnchorShift;
             if (!isUnspecified(inlineShift))
                 currentOffset += inlineShift;
             if (!isUnspecified(blockShift))
