@@ -103,6 +103,7 @@ public:
 
     // FIXME: Condense these into fewer concrete categories of sizing algorithms once we know all the different sizing rules needed.
     ConcreteObjectSize concreteObjectSizeForPainting() const;
+    static ConcreteObjectSize concreteObjectSizeForPainting(const LayoutRect& replacedContentRect);
     ConcreteObjectSize concreteObjectSizeForInteractionRegion() const;
     WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForPasteboard() const;
     ConcreteObjectSize concreteObjectSizeForAccessibility() const;
@@ -143,6 +144,7 @@ protected:
     void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
 
     ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&);
+    ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&, const ConcreteObjectSize&);
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() override;
 
