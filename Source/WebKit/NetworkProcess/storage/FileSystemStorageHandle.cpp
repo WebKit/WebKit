@@ -32,16 +32,22 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemWriteCloseReason.h>
 #include <WebCore/FileSystemWriteCommandType.h>
+#include <mutex>
 #include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
 constexpr uint64_t defaultInitialCapacity = 1 * MB;
 constexpr uint64_t defaultMaxCapacityForExponentialGrowth = 256 * MB;
 constexpr uint64_t defaultCapacityStep = 128 * MB;
+static constexpr auto writableStreamFilePrefix = "FileSystemWritableStream"_s;
+// A stream's temporary file is written whenever the stream is, so one left
+// untouched this long belongs to no live stream.
+static constexpr Seconds staleWritableStreamFileAge = Seconds::fromHours(1);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageHandle);
 
@@ -110,6 +116,27 @@ bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier id
         return false;
 
     return m_path == path;
+}
+
+// Temporary files of streams that were never closed (for example because the
+// process exited) are never removed by anything else, so remove them here.
+static void removeStaleWritableStreamFiles(const String& directory, const String& currentPath)
+{
+    auto now = WallTime::now();
+    for (auto& fileName : FileSystem::listDirectory(directory)) {
+        if (!fileName.startsWith(writableStreamFilePrefix))
+            continue;
+
+        auto filePath = FileSystem::pathByAppendingComponent(directory, fileName);
+        if (filePath == currentPath || FileSystem::fileType(filePath) != FileSystem::FileType::Regular)
+            continue;
+
+        auto modificationTime = FileSystem::fileModificationTime(filePath);
+        if (!modificationTime || now - *modificationTime < staleWritableStreamFileAge)
+            continue;
+
+        FileSystem::deleteFile(filePath);
+    }
 }
 
 static bool isValidFileName(const String& directory, const String& name)
@@ -278,7 +305,15 @@ std::expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorage
             manager->releaseLockForFile(m_path);
     });
 
-    auto path = FileSystem::createTemporaryFile("FileSystemWritableStream"_s);
+    auto path = FileSystem::createTemporaryFile(writableStreamFilePrefix);
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&path] {
+        if (path.isEmpty())
+            return;
+        WorkQueue::create("com.apple.WebKit.FileSystemWritableStreamCleanup"_s, WorkQueue::QOS::Utility)->dispatch([directory = FileSystem::parentPath(path).isolatedCopy(), path = path.isolatedCopy()] {
+            removeStaleWritableStreamFiles(directory, path);
+        });
+    });
     if (keepExistingData)
         FileSystem::copyFile(path, m_path);
 
