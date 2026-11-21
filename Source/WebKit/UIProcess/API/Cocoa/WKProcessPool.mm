@@ -154,7 +154,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([coder decodeBoolForKey:@"isSharedProcessPool"]) {
         [self release];
 
-        return [[WKProcessPool _sharedProcessPool] retain];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT return retainPtr([WKProcessPool _sharedProcessPool]).leakRef();
     }
 
     return self;

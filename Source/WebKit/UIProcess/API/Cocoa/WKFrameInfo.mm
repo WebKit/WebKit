@@ -79,7 +79,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return retainPtr(self).leakRef();
 }
 
 #pragma mark WKObject protocol implementation

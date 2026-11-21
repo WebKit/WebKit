@@ -28,6 +28,7 @@
 
 #import "_WKTextInputContextInternal.h"
 #import <WebCore/ElementContext.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation _WKTextInputContext {
@@ -79,7 +80,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return retainPtr(self).leakRef();
 }
 
 @end

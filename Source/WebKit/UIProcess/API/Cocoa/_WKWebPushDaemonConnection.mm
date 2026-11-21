@@ -195,7 +195,7 @@ NODELETE static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPerm
         if (result) {
             NSMutableArray<_WKNotificationData *> *nsResult = [NSMutableArray arrayWithCapacity:result.value().size()];
             for (auto& data : borrow(result.value()))
-                [nsResult addObject:[[[_WKNotificationData alloc] _initWithCoreData:data] autorelease]];
+                [nsResult addObject:adoptNS([[_WKNotificationData alloc] _initWithCoreData:data]).get()];
 
             return completionHandlerCopy(nsResult, nil);
         }

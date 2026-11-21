@@ -117,7 +117,7 @@ IGNORE_WARNINGS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return retainPtr(self).leakRef();
 }
 
 #pragma mark WKObject protocol implementation

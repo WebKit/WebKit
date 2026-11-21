@@ -105,12 +105,14 @@ UIDelegate::~UIDelegate() = default;
 
 void UIDelegate::ref() const
 {
-    SUPPRESS_UNRETAINED_ARG [m_webView retain];
+    if (RetainPtr webView = m_webView.get())
+        CFRetain((__bridge CFTypeRef)webView.get());
 }
 
 void UIDelegate::deref() const
 {
-    SUPPRESS_UNRETAINED_ARG [m_webView release];
+    if (RetainPtr webView = m_webView.get())
+        CFRelease((__bridge CFTypeRef)webView.get());
 }
 
 #if ENABLE(CONTEXT_MENUS)
