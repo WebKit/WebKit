@@ -33,11 +33,10 @@
     AlignedStorage<API::Array> _array;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKNSArray);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNSArray.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _array->~Array();
 
     [super dealloc];

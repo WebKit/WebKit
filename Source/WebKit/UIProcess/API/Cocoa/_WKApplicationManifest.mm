@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKApplicationManifestInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/ApplicationManifest.h>
 #import <WebCore/ApplicationManifestParser.h>
 #import <WebCore/Color.h>
@@ -159,11 +160,10 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     return _purposes.get();
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKApplicationManifestIcon);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestIcon.class, self))
-        return;
-
     [super dealloc];
 }
 
@@ -230,11 +230,10 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     [coder encodeObject:_icons.get() forKey:@"icons"];
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKApplicationManifestShortcut);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestShortcut.class, self))
-        return;
-
     [super dealloc];
 }
 
@@ -321,11 +320,10 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKApplicationManifest);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifest.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _applicationManifest->~ApplicationManifest();
 
     [super dealloc];

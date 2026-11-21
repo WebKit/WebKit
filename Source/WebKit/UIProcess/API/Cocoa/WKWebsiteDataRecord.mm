@@ -65,11 +65,10 @@ NSString* const _WKWebsiteDataTypeIsolatedSiteRecord = @"_WKWebsiteDataTypeIsola
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebsiteDataRecord);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebsiteDataRecord.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _websiteDataRecord->API::WebsiteDataRecord::~WebsiteDataRecord();
 
     [super dealloc];

@@ -32,6 +32,7 @@
 #import "InspectorExtensionTypes.h"
 #import "JavaScriptEvaluationResult.h"
 #import "WKError.h"
+#import "WKObject.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/ExceptionDetails.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -40,11 +41,10 @@
 
 @implementation _WKInspectorExtension
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKInspectorExtension);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInspectorExtension.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _extension->API::InspectorExtension::~InspectorExtension();
 
     [super dealloc];

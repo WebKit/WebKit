@@ -34,11 +34,10 @@
     AlignedStorage<API::Dictionary> _dictionary;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKNSDictionary);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNSDictionary.class, self))
-        return;
-
     protect(*_dictionary)->~Dictionary();
 
     [super dealloc];

@@ -59,11 +59,10 @@ NODELETE static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKContentRuleListStore);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContentRuleListStore.class, self))
-        return;
-
     protect(*_contentRuleListStore)->~ContentRuleListStore();
 
     [super dealloc];

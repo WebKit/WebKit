@@ -148,10 +148,10 @@ private:
     protect(*_dataTask)->setClient(WKDataTaskClient::create(delegate));
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKDataTask);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKDataTask.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _dataTask->~DataTask();
     [super dealloc];
 }

@@ -38,11 +38,10 @@
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKFrameInfo);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKFrameInfo.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG protect(*_frameInfo)->~FrameInfo();
 
     [super dealloc];

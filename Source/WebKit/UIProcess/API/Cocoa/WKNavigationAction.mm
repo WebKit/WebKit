@@ -30,6 +30,7 @@
 #import "NavigationActionData.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationInternal.h"
+#import "WKObject.h"
 #import "WebEventFactory.h"
 #import "WebsiteDataStore.h"
 #import "_WKHitTestResultInternal.h"
@@ -81,11 +82,10 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 }
 #endif
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKNavigationAction);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigationAction.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _navigationAction->~NavigationAction();
 
     [super dealloc];

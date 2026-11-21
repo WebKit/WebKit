@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKNotificationDataInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/NotificationData.h>
 #import <WebCore/NotificationDirection.h>
 #import <WebCore/SecurityOriginData.h>
@@ -228,10 +229,10 @@
     return [self userInfo];
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKNotificationData);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKNotificationData.class, self))
-        return;
     [super dealloc];
 }
 

@@ -28,6 +28,7 @@
 
 #import "APIAttachment.h"
 #import "WKErrorPrivate.h"
+#import "WKObject.h"
 #import "_WKAttachmentInternal.h"
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SharedBuffer.h>
@@ -117,11 +118,10 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 
 @implementation _WKAttachment
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKAttachment);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKAttachment.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _attachment->~Attachment();
 
     [super dealloc];

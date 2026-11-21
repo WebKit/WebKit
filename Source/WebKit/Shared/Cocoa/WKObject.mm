@@ -50,11 +50,10 @@
     RetainPtr<NSObject> _target;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKObject);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKObject.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG API::Object::fromWKObjectExtraSpace(self).~Object();
 
     [super dealloc];

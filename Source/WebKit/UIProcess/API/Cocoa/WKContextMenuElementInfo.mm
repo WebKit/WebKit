@@ -34,10 +34,10 @@
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKContextMenuElementInfo);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContextMenuElementInfo.class, self))
-        return;
     SUPPRESS_UNCOUNTED_ARG _elementInfo->API::ContextMenuElementInfo::~ContextMenuElementInfo();
     [super dealloc];
 }

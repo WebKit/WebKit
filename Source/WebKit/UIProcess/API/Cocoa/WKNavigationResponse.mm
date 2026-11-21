@@ -28,17 +28,17 @@
 
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationInternal.h"
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKNavigationResponse
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKNavigationResponse);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigationResponse.class, self))
-        return;
-
     RefPtr { _navigationResponse.get() }->~NavigationResponse();
 
     [super dealloc];

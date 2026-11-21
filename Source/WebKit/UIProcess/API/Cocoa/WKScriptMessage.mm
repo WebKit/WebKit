@@ -28,16 +28,16 @@
 
 #import "WKContentWorldInternal.h"
 #import "WKFrameInfoInternal.h"
+#import "WKObject.h"
 #import "WebPageProxy.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKScriptMessage
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKScriptMessage);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKScriptMessage.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _scriptMessage->~ScriptMessage();
 
     [super dealloc];
