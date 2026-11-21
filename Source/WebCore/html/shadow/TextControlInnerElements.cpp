@@ -130,6 +130,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
     newStyle->setLogicalMinWidth(0_css_px);
 
     newStyle->setDisplay(Style::DisplayType::BlockFlow);
+    newStyle->setPosition(PositionType::Relative);
     newStyle->setDirection(TextDirection::LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
     newStyle->setUserModify(UserModify::ReadOnly);
@@ -247,6 +248,17 @@ std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCust
             styleStyle->setTextOverflow(CSS::Keyword::Clip { });
         styleStyle->setPaddingTop(0_css_px);
         styleStyle->setPaddingBottom(0_css_px);
+
+        if (inputElement->innerBlockElement() && parentNode() == inputElement->innerBlockElement()) {
+            styleStyle->setPosition(PositionType::Absolute);
+            styleStyle->setTop(Style::InsetEdge::Fixed { 0 });
+            styleStyle->setRight(Style::InsetEdge::Fixed { 0 });
+            styleStyle->setBottom(Style::InsetEdge::Fixed { 0 });
+            styleStyle->setLeft(Style::InsetEdge::Fixed { 0 });
+            styleStyle->setAlignSelf(CSS::Keyword::Center { });
+            if (shadowHostStyle)
+                styleStyle->setDirection(shadowHostStyle->writingMode().bidiDirection());
+        }
     }
 
     if (shadowHostStyle)

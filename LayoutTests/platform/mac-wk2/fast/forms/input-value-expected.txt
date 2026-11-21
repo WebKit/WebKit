@@ -46,7 +46,6 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (395,25) size 241x23 [r=1 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (1,1) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                   RenderFlexibleBox {DIV} at (7,4) size 142x13
-                    RenderBlock {DIV} at (0,0) size 142x13
               RenderTableCell {TD} at (637,26) size 63x21 [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,2) size 30x19
                   text run at (1,1) width 30: "after"
@@ -207,10 +206,6 @@ layer at (411,133) size 142x13
   RenderBlock {DIV} at (7,4) size 142x13
     RenderText {#text} at (0,0) size 34x13
       text run at (0,0) width 34: "before"
-layer at (411,158) size 142x13
-  RenderBlock {DIV} at (0,0) size 142x13
-    RenderText {#text} at (0,0) size 42x13
-      text run at (0,0) width 42: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"
 layer at (411,293) size 142x13
   RenderBlock {DIV} at (7,4) size 142x13
     RenderText {#text} at (0,0) size 25x13
@@ -223,3 +218,9 @@ layer at (411,409) size 142x13
   RenderBlock {DIV} at (7,4) size 142x13
     RenderText {#text} at (0,0) size 25x13
       text run at (0,0) width 25: "after"
+layer at (411,158) size 142x13
+  RenderBlock (relative positioned) {DIV} at (0,0) size 142x13
+layer at (411,158) size 142x13
+  RenderBlock {DIV} at (0,0) size 142x13
+    RenderText {#text} at (0,0) size 42x13
+      text run at (0,0) width 42: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"

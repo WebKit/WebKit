@@ -44,12 +44,10 @@ layer at (0,0) size 800x600
           text run at (357,1) width 8: "a"
         RenderTextControl {INPUT} at (1,22) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (7,4) size 142x13
-            RenderBlock {DIV} at (0,0) size 142x13
         RenderText {#text} at (156,22) size 66x19
           text run at (156,22) width 66: "password "
         RenderTextControl {INPUT} at (221,22) size 155x21 [color=oklab(0.34 0 0)] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (7,4) size 140x13
-            RenderBlock {DIV} at (0,0) size 140x13
         RenderText {#text} at (375,22) size 9x19
           text run at (375,22) width 9: "b"
       RenderBlock {DIV} at (10,370) size 450x21 [border: (1px solid #FF0000)]
@@ -79,9 +77,13 @@ layer at (217,329) size 140x13
     RenderText {#text} at (0,0) size 17x13
       text run at (0,0) width 17: "foo"
 layer at (26,350) size 142x13
+  RenderBlock (relative positioned) {DIV} at (0,0) size 142x13
+layer at (26,350) size 142x13
   RenderBlock {DIV} at (0,0) size 142x13
     RenderText {#text} at (0,0) size 21x13
       text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"
+layer at (246,350) size 140x13
+  RenderBlock (relative positioned) {DIV} at (0,0) size 140x13
 layer at (246,350) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (0,0) size 21x13
