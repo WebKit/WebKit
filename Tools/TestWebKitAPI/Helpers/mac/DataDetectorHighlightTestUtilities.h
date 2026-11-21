@@ -37,7 +37,6 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
-#import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -82,7 +81,8 @@ public:
     static String nestedFrameHTML(const String& url, int width, int height);
     static HTTPResponse html(const String& body);
 
-    void setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure = [](WKWebViewConfiguration *) { });
+    virtual void adjustConfiguration(WKWebViewConfiguration *) { }
+    void setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes);
     void load(NSString *path);
     RetainPtr<WKFrameInfo> nestedFrame();
     static CGRect rectInWebView(NSArray *rectInFrame, CGPoint frameContentOrigin);
