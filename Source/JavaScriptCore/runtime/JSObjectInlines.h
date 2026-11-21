@@ -1644,7 +1644,7 @@ ALWAYS_INLINE bool JSObject::putDirectIndex(JSGlobalObject* globalObject, uint64
 inline void JSObject::ensureWritable(VM& vm)
 {
     if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+        convertFromCopyOnWrite(vm, /* additionalLength */ 0);
 }
 
 } // namespace JSC

@@ -1257,7 +1257,7 @@ JSC_DEFINE_JIT_OPERATION(operationArrayPushDoubleMultiple, EncodedJSValue, (JSGl
     // If it can cause any JS interactions, we can call the caller JS function of this function and overwrite the
     // content of ScratchBuffer. If the IndexingType is now ArrayWithDouble, we can ensure
     // that there is no indexed accessors in this object and its prototype chain.
-    ASSERT(array->indexingMode() == ArrayWithDouble);
+    ASSERT(array->indexingType() == ArrayWithDouble);
 
     for (int32_t i = 0; i < elementCount; ++i) {
         array->pushInline(globalObject, JSValue(JSValue::EncodeAsDouble, buffer[i]));
