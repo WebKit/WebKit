@@ -144,6 +144,29 @@ static RetainPtr<NSArray<NSString *>> triggerTimeBasedEviction(_WKWebsiteDataSto
     return [delegate.get().lastEvictedDomains sortedArrayUsingSelector:@selector(compare:)];
 }
 
+constexpr NSTimeInterval timeBasedEvictionThreshold = 60 * 60;
+
+static void backdateWebsiteData(_WKWebsiteDataStoreConfiguration *configuration)
+{
+    NSDate *staleDate = [NSDate dateWithTimeIntervalSinceNow:-2 * timeBasedEvictionThreshold];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    for (NSURL *url in [fileManager enumeratorAtURL:configuration.generalStorageDirectory includingPropertiesForKeys:nil options:0 errorHandler:nil])
+        [fileManager setAttributes:@{ NSFileModificationDate: staleDate } ofItemAtPath:url.path error:nil];
+}
+
+static void waitForWebsiteDataRecords(WKWebsiteDataStore *dataStore, NSString *dataType, NSUInteger count)
+{
+    __block NSUInteger recordCount = 0;
+    while (recordCount < count) {
+        __block bool fetched = false;
+        [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:dataType] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+            recordCount = records.count;
+            fetched = true;
+        }];
+        TestWebKitAPI::Util::run(&fetched);
+    }
+}
+
 TEST(WKWebsiteDataStore, RemoveAndFetchData)
 {
     RetainPtr defaultDataStore = [WKWebsiteDataStore defaultDataStore];
@@ -1541,7 +1564,7 @@ TEST(TimeBasedEviction, Basic)
 
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     [websiteDataStoreConfiguration setTimeBasedEvictionMode:_WKTimeBasedEvictionModeAllTypes];
-    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:2.0];
+    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:timeBasedEvictionThreshold];
     [websiteDataStoreConfiguration setTimeBasedEvictionIntervalOverride:@0];
     [websiteDataStoreConfiguration setDefaultTrackingPreventionEnabledOverride:@NO];
 
@@ -1571,8 +1594,7 @@ TEST(TimeBasedEviction, Basic)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ(@"done", [lastScriptMessage body]);
 
-        // Wait so example1.com data becomes stale.
-        TestWebKitAPI::Util::runFor(2_s);
+        backdateWebsiteData(websiteDataStoreConfiguration.get());
 
         // Load example2.com — its data will be fresh.
         receivedScriptMessage = false;
@@ -1609,7 +1631,7 @@ TEST(TimeBasedEviction, IndexedDBReadUpdatesTimestamp)
 
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     [websiteDataStoreConfiguration setTimeBasedEvictionMode:_WKTimeBasedEvictionModeAllTypes];
-    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:2.0];
+    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:timeBasedEvictionThreshold];
     [websiteDataStoreConfiguration setTimeBasedEvictionIntervalOverride:@0];
     [websiteDataStoreConfiguration setDefaultTrackingPreventionEnabledOverride:@NO];
     [websiteDataStoreConfiguration setLastModificationTimeUpdateIntervalOverride:@0];
@@ -1657,8 +1679,7 @@ TEST(TimeBasedEviction, IndexedDBReadUpdatesTimestamp)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ(@"done", [lastScriptMessage body]);
 
-        // Wait so both origins' data becomes stale.
-        TestWebKitAPI::Util::runFor(2_s);
+        backdateWebsiteData(websiteDataStoreConfiguration.get());
 
         // Read from example1.com — this should update its modification timestamp.
         receivedScriptMessage = false;
@@ -1691,7 +1712,7 @@ TEST(TimeBasedEviction, LocalStorageReadUpdatesTimestamp)
 
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     [websiteDataStoreConfiguration setTimeBasedEvictionMode:_WKTimeBasedEvictionModeAllTypes];
-    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:2.0];
+    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:timeBasedEvictionThreshold];
     [websiteDataStoreConfiguration setTimeBasedEvictionIntervalOverride:@0];
     [websiteDataStoreConfiguration setDefaultTrackingPreventionEnabledOverride:@NO];
     [websiteDataStoreConfiguration setLastModificationTimeUpdateIntervalOverride:@0];
@@ -1725,8 +1746,8 @@ TEST(TimeBasedEviction, LocalStorageReadUpdatesTimestamp)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ(@"done", [lastScriptMessage body]);
 
-        // Wait so both origins' data becomes stale.
-        TestWebKitAPI::Util::runFor(2_s);
+        waitForWebsiteDataRecords(websiteDataStore.get(), WKWebsiteDataTypeLocalStorage, 2);
+        backdateWebsiteData(websiteDataStoreConfiguration.get());
 
         // Read from example1.com — this should update its modification timestamp.
         receivedScriptMessage = false;
@@ -1759,7 +1780,7 @@ TEST(TimeBasedEviction, CacheStorageReadUpdatesTimestamp)
 
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     [websiteDataStoreConfiguration setTimeBasedEvictionMode:_WKTimeBasedEvictionModeAllTypes];
-    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:2.0];
+    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:timeBasedEvictionThreshold];
     [websiteDataStoreConfiguration setTimeBasedEvictionIntervalOverride:@0];
     [websiteDataStoreConfiguration setDefaultTrackingPreventionEnabledOverride:@NO];
     [websiteDataStoreConfiguration setLastModificationTimeUpdateIntervalOverride:@0];
@@ -1803,8 +1824,7 @@ TEST(TimeBasedEviction, CacheStorageReadUpdatesTimestamp)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ(@"done", [lastScriptMessage body]);
 
-        // Wait so both origins' data becomes stale.
-        TestWebKitAPI::Util::runFor(2_s);
+        backdateWebsiteData(websiteDataStoreConfiguration.get());
 
         // Read from example1.com — this should update its modification timestamp.
         receivedScriptMessage = false;
@@ -1837,7 +1857,7 @@ TEST(TimeBasedEviction, FileSystemAPIReadUpdatesTimestamp)
 
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     [websiteDataStoreConfiguration setTimeBasedEvictionMode:_WKTimeBasedEvictionModeAllTypes];
-    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:2.0];
+    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:timeBasedEvictionThreshold];
     [websiteDataStoreConfiguration setTimeBasedEvictionIntervalOverride:@0];
     [websiteDataStoreConfiguration setDefaultTrackingPreventionEnabledOverride:@NO];
     [websiteDataStoreConfiguration setLastModificationTimeUpdateIntervalOverride:@0];
@@ -1890,8 +1910,7 @@ TEST(TimeBasedEviction, FileSystemAPIReadUpdatesTimestamp)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ(@"done", [lastScriptMessage body]);
 
-        // Wait so both origins' data becomes stale.
-        TestWebKitAPI::Util::runFor(2_s);
+        backdateWebsiteData(websiteDataStoreConfiguration.get());
 
         // Read from example1.com — this should update its modification timestamp.
         receivedScriptMessage = false;
@@ -1929,7 +1948,7 @@ TEST(TimeBasedEviction, DiskCacheAccessUpdatesTimestamp)
 
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     [websiteDataStoreConfiguration setTimeBasedEvictionMode:_WKTimeBasedEvictionModeAllTypes];
-    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:2.0];
+    [websiteDataStoreConfiguration setTimeBasedEvictionThreshold:timeBasedEvictionThreshold];
     [websiteDataStoreConfiguration setTimeBasedEvictionIntervalOverride:@0];
     [websiteDataStoreConfiguration setDefaultTrackingPreventionEnabledOverride:@NO];
     [websiteDataStoreConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
@@ -1970,8 +1989,7 @@ TEST(TimeBasedEviction, DiskCacheAccessUpdatesTimestamp)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ(@"done", [lastScriptMessage body]);
 
-        // Wait so both origins become stale.
-        TestWebKitAPI::Util::runFor(2_s);
+        backdateWebsiteData(websiteDataStoreConfiguration.get());
 
         // Update disk cache for example1.com.
         receivedScriptMessage = false;
@@ -1979,9 +1997,7 @@ TEST(TimeBasedEviction, DiskCacheAccessUpdatesTimestamp)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ(@"done", [lastScriptMessage body]);
 
-        // Wait for the disk cache write to flush (NetworkCacheStorage has a 1-second initial write delay).
-        // FIXME: Add an SPI to configure the write delay or to get notification when the write finishes.
-        TestWebKitAPI::Util::runFor(1.5_s);
+        waitForWebsiteDataRecords(websiteDataStore.get(), WKWebsiteDataTypeDiskCache, 1);
     }
 
     // example2.com should be evicted (stale), example1.com should remain (disk cache access refreshed its timestamp).
