@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import <Carbon/Carbon.h>
@@ -39,12 +38,22 @@ static bool didClose = false;
 static RetainPtr<WebView> webView;
 
 @interface DeallocWebViewInEventListenerLoadDelegate : NSObject <WebFrameLoadDelegate>
+- (void)waitForDidFinishLoad;
 @end
 
-@implementation DeallocWebViewInEventListenerLoadDelegate
+@implementation DeallocWebViewInEventListenerLoadDelegate {
+    bool _didFinishLoad;
+}
+
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
+}
+
+- (void)waitForDidFinishLoad
+{
+    EXPECT_FALSE(_didFinishLoad);
+    TestWebKitAPI::Util::run(&_didFinishLoad);
 }
 @end
 
@@ -75,7 +84,7 @@ TEST(WebKitLegacy, DeallocWebViewInEventListener)
         webView.get().frameLoadDelegate = loadDelegate.get();
 
         [[webView mainFrame] loadHTMLString:@"<html><body></body></html>" baseURL:nil];
-        Util::run(&didFinishLoad);
+        [loadDelegate waitForDidFinishLoad];
 
         RetainPtr listener = adoptNS([[DeallocWebViewInEventListener alloc] init]);
         [[[webView mainFrameDocument] body] addEventListener:@"keypress" listener:listener.get() useCapture:NO];

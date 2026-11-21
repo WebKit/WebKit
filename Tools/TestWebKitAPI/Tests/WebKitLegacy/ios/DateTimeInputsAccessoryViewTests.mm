@@ -29,7 +29,6 @@
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "UIKitSPIForTesting.h"
@@ -38,13 +37,22 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <wtf/RetainPtr.h>
 
 @interface DateTimeInputsTestsLoadingDelegate : NSObject <UIWebViewDelegate>
+- (void)waitForDidFinishLoad;
 @end
 
-@implementation DateTimeInputsTestsLoadingDelegate
+@implementation DateTimeInputsTestsLoadingDelegate {
+    bool _didFinishLoad;
+}
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
+}
+
+- (void)waitForDidFinishLoad
+{
+    EXPECT_FALSE(_didFinishLoad);
+    TestWebKitAPI::Util::run(&_didFinishLoad);
 }
 
 @end
@@ -73,7 +81,7 @@ static void runTestWithInputType(NSString *type)
 
     NSString *elementString = [NSString stringWithFormat:@"<input type='%@'>", type];
     [uiWebView loadHTMLString:elementString baseURL:nil];
-    TestWebKitAPI::Util::run(&didFinishLoad);
+    [delegate waitForDidFinishLoad];
 
     [uiWindow makeKeyWindow];
     [uiWebView becomeFirstResponder];

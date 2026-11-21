@@ -27,7 +27,6 @@
 
 #if HAVE(UIWEBVIEW)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import <JavaScriptCore/JSVirtualMachine.h>
 #import <JavaScriptCore/JSVirtualMachineInternal.h>
@@ -40,14 +39,17 @@ static bool didFinishPainting = false;
 static bool isReady = false;
 
 @interface WebGLPrepareDisplayOnWebThreadDelegate : NSObject <UIWebViewDelegate>
+- (void)waitForDidFinishLoad;
 @end
 
-@implementation WebGLPrepareDisplayOnWebThreadDelegate
+@implementation WebGLPrepareDisplayOnWebThreadDelegate {
+    bool _didFinishLoad;
+}
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
@@ -66,6 +68,12 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 }
 IGNORE_WARNINGS_END
 
+- (void)waitForDidFinishLoad
+{
+    EXPECT_FALSE(_didFinishLoad);
+    TestWebKitAPI::Util::run(&_didFinishLoad);
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -83,7 +91,7 @@ TEST(WebKitLegacy, WebGLPrepareDisplayOnWebThread)
     NSLog(@"Loading %@", url);
     [uiWebView loadRequest:[NSURLRequest requestWithURL:url]];
 
-    Util::run(&didFinishLoad);
+    [uiDelegate waitForDidFinishLoad];
     Util::run(&isReady);
 
     WebThreadLock();

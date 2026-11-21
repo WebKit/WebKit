@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import <WebCore/SecurityPolicy.h>
@@ -40,13 +39,22 @@
 #endif
 
 @interface SubstituteDataLocalResourceAccessFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
+- (void)waitForDidFinishLoad;
 @end
 
-@implementation SubstituteDataLocalResourceAccessFrameLoadDelegate
+@implementation SubstituteDataLocalResourceAccessFrameLoadDelegate {
+    bool _didFinishLoad;
+}
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
+}
+
+- (void)waitForDidFinishLoad
+{
+    EXPECT_FALSE(_didFinishLoad);
+    TestWebKitAPI::Util::run(&_didFinishLoad);
 }
 
 @end
@@ -66,8 +74,6 @@ namespace TestWebKitAPI {
 // callback bridge installed through -webView:didCreateJavaScriptContext:forFrame:.
 TEST(WebKitLegacy, SubstituteDataDocumentCanLoadLocalResource)
 {
-    didFinishLoad = false;
-
     auto [tempFilePath, tempFileHandle] = FileSystem::openTemporaryFile("SubstituteDataLocalResourceAccess"_s, ".js"_s);
     ASCIILiteral scriptContents = "window.testResult = 'local file contents'"_s;
     tempFileHandle.write(byteCast<uint8_t>(scriptContents.span8()));
@@ -100,7 +106,7 @@ TEST(WebKitLegacy, SubstituteDataDocumentCanLoadLocalResource)
 
     RetainPtr html = adoptNS([[NSString alloc] initWithFormat:@"<script>window.onerror = () => window.testResult = 'script failed'</script><script src=\"%s\" onerror=\"window.testResult = 'script failed'\"></script>", nsTempFileURL.get().absoluteString.UTF8String]);
     [[webView mainFrame] loadHTMLString:html.get() baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    Util::run(&didFinishLoad);
+    [delegate waitForDidFinishLoad];
 
     WebCore::SecurityPolicy::setLocalLoadPolicy(WebCore::SecurityPolicy::AllowLocalLoadsForLocalOnly);
 

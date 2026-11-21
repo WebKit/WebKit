@@ -27,7 +27,6 @@
 
 #if HAVE(UIWEBVIEW)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import <UIKit/UIKit.h>
 #import <WebKit/DOMHTMLMediaElement.h>
@@ -45,15 +44,25 @@ static int fullscreenEnd = 0;
 static bool doneTest = false;
 
 @interface PreemptVideoFullscreenUIWebViewDelegate : NSObject <UIWebViewDelegate, DOMEventListener>
+- (void)waitForDidFinishLoad;
 @end
 
-@implementation PreemptVideoFullscreenUIWebViewDelegate
+@implementation PreemptVideoFullscreenUIWebViewDelegate {
+    bool _didFinishLoad;
+}
+
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
 }
 IGNORE_WARNINGS_END
+
+- (void)waitForDidFinishLoad
+{
+    EXPECT_FALSE(_didFinishLoad);
+    TestWebKitAPI::Util::run(&_didFinishLoad);
+}
 
 - (void)uiWebView:(UIWebView *)sender didCommitLoadForFrame:(WebFrame *)frame
 {
@@ -103,7 +112,7 @@ TEST(WebKitLegacy, PreemptVideoFullscreen)
 
     [uiWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"two-videos" withExtension:@"html"]]];
 
-    Util::run(&didFinishLoad);
+    [uiDelegate waitForDidFinishLoad];
     Util::run(&gotMainFrame);
 
     callOnMainThread([&] () mutable {

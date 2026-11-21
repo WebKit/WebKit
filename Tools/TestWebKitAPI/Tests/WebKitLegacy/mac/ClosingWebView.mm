@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import <Carbon/Carbon.h>
@@ -39,12 +38,22 @@
 static RetainPtr<WebView> webView;
 
 @interface ClosingWebViewThenSendingItAKeyDownEventLoadDelegate : NSObject <WebFrameLoadDelegate>
+- (void)waitForDidFinishLoad;
 @end
 
-@implementation ClosingWebViewThenSendingItAKeyDownEventLoadDelegate
+@implementation ClosingWebViewThenSendingItAKeyDownEventLoadDelegate {
+    bool _didFinishLoad;
+}
+
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
+}
+
+- (void)waitForDidFinishLoad
+{
+    EXPECT_FALSE(_didFinishLoad);
+    TestWebKitAPI::Util::run(&_didFinishLoad);
 }
 @end
 
@@ -75,7 +84,7 @@ TEST(WebKitLegacy, ClosingWebViewThenSendingItAKeyDownEvent)
     
     [[webView mainFrame] loadHTMLString:@"<html><body contenteditable><script>function addKeyPressHandler() { document.body.addEventListener('keypress', function(event) { event.preventDefault(); }, true) }; document.body.focus();</script></body></html>" baseURL:nil];
 
-    Util::run(&didFinishLoad);
+    [loadDelegate waitForDidFinishLoad];
 
     // First, add a native event listener that closes the WebView.
     RetainPtr listener = adoptNS([[KeyboardEventListener alloc] init]);

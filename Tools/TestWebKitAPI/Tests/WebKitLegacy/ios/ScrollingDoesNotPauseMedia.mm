@@ -27,7 +27,6 @@
 
 #if HAVE(UIWEBVIEW)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import <WebKit/DOMHTMLMediaElement.h>
 #import <WebKit/WebFramePrivate.h>
@@ -36,7 +35,9 @@
 #import <wtf/RetainPtr.h>
 
 @interface ScrollingDoesNotPauseMediaDelegate : NSObject <UIWebViewDelegate, DOMEventListener> {
+    bool _didFinishLoad;
 }
+- (void)waitForDidFinishLoad;
 @end
 
 static bool gotMainFrame = false;
@@ -52,7 +53,13 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 IGNORE_WARNINGS_END
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
+}
+
+- (void)waitForDidFinishLoad
+{
+    EXPECT_FALSE(_didFinishLoad);
+    TestWebKitAPI::Util::run(&_didFinishLoad);
 }
 
 - (void)uiWebView:(UIWebView *)sender didCommitLoadForFrame:(WebFrame *)frame
@@ -95,7 +102,7 @@ TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)
 
     [uiWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"one-video" withExtension:@"html"]]];
 
-    Util::run(&didFinishLoad);
+    [testController waitForDidFinishLoad];
     Util::run(&gotMainFrame);
 
     callOnMainThread([&] () mutable {
