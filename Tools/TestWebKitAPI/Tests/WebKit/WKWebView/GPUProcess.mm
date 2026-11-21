@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/UserMediaCaptureUIDelegate.h"
@@ -567,6 +568,109 @@ TEST(GPUProcess, ReuseBetweenProcessPools)
     }
 
     EXPECT_EQ(firstGPUProcessPID, secondGPUProcessPID);
+}
+
+} // namespace TestWebKitAPI
+
+@interface GPUProcessLaunchObserver : NSObject
+@property (nonatomic, copy) void (^gpuProcessDidLaunch)(void);
+@end
+
+@implementation GPUProcessLaunchObserver
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (_gpuProcessDidLaunch)
+        _gpuProcessDidLaunch();
+}
+@end
+
+namespace TestWebKitAPI {
+
+TEST(GPUProcess, NotTerminatedWhenSlowToInitialize)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto* processPool = [webView configuration].processPool;
+    ASSERT_EQ([processPool _gpuProcessIdentifier], 0);
+
+    // The notification is sent as soon as the GPU process has launched, before it had a chance to
+    // handle the initialization message. Stopping the process here makes its initialization slow.
+    __block pid_t gpuProcessPID = 0;
+    __block bool didStopGPUProcess = false;
+    RetainPtr observer = adoptNS([[GPUProcessLaunchObserver alloc] init]);
+    [observer setGpuProcessDidLaunch:^{
+        if (gpuProcessPID)
+            return;
+        gpuProcessPID = [webView _gpuProcessIdentifier];
+        if (!gpuProcessPID)
+            return;
+        kill(gpuProcessPID, SIGSTOP);
+        didStopGPUProcess = true;
+    }];
+    [webView addObserver:observer.get() forKeyPath:@"_gpuProcessIdentifier" options:0 context:nullptr];
+
+    [webView loadHTMLString:@"<canvas id='canvas' width='100' height='100'></canvas><script>canvas.getContext('2d').fillRect(0, 0, 50, 50);</script>" baseURL:nil];
+    Util::run(&didStopGPUProcess);
+
+    // Longer than the responsiveness timeout.
+    Util::runFor(4_s);
+    kill(gpuProcessPID, SIGCONT);
+
+    __block bool done = false;
+    [webView callAsyncJavaScript:@"return new Promise(resolve => requestAnimationFrame(() => resolve(canvas.getContext('2d').getImageData(10, 10, 1, 1).data[3])))" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ([result intValue], 255);
+        done = true;
+    }];
+    Util::run(&done);
+
+    // A GPU process which is slow to start is not unresponsive and must not have been terminated.
+    EXPECT_EQ([processPool _gpuProcessIdentifier], gpuProcessPID);
+
+    [webView removeObserver:observer.get() forKeyPath:@"_gpuProcessIdentifier"];
+}
+
+TEST(GPUProcess, TerminatedWhenHungBeforeInitialization)
+{
+    constexpr Seconds gpuProcessTimeout = 1_s;
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetDoubleValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], gpuProcessTimeout.seconds(), WKStringCreateWithUTF8CString("WebProcessGPUProcessTimeoutForTesting"));
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    auto* processPool = [webView configuration].processPool;
+    ASSERT_EQ([processPool _gpuProcessIdentifier], 0);
+
+    // Stop the GPU process as soon as it has launched and never resume it.
+    __block pid_t gpuProcessPID = 0;
+    __block bool didStopGPUProcess = false;
+    RetainPtr observer = adoptNS([[GPUProcessLaunchObserver alloc] init]);
+    [observer setGpuProcessDidLaunch:^{
+        if (gpuProcessPID)
+            return;
+        gpuProcessPID = [webView _gpuProcessIdentifier];
+        if (!gpuProcessPID)
+            return;
+        kill(gpuProcessPID, SIGSTOP);
+        didStopGPUProcess = true;
+    }];
+    [webView addObserver:observer.get() forKeyPath:@"_gpuProcessIdentifier" options:0 context:nullptr];
+
+    [webView loadHTMLString:@"<canvas id='canvas' width='100' height='100'></canvas><script>canvas.getContext('2d').fillRect(0, 0, 50, 50);</script>" baseURL:nil];
+    Util::run(&didStopGPUProcess);
+    [webView _test_waitForDidFinishNavigation];
+
+    // The responsiveness checks have not begun, but the web process times out waiting for the GPU
+    // process and reports it, which terminates the process.
+    __block bool done = false;
+    [webView callAsyncJavaScript:@"return new Promise(resolve => requestAnimationFrame(() => resolve(canvas.getContext('2d').getImageData(10, 10, 1, 1).data[3])))" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    Util::run(&done);
+
+    auto newGPUProcessPID = [processPool _gpuProcessIdentifier];
+    EXPECT_NE(newGPUProcessPID, 0);
+    EXPECT_NE(newGPUProcessPID, gpuProcessPID);
+
+    [webView removeObserver:observer.get() forKeyPath:@"_gpuProcessIdentifier"];
 }
 
 } // namespace TestWebKitAPI
