@@ -77,6 +77,7 @@ GUniquePtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 #endif
 
 void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase*, std::optional<WebKit::InputMethodState>&&);
+void webkitWebViewBaseDiscardComposition(WebKitWebViewBase*);
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase*);
 void webkitWebViewBaseSetContentsSize(WebKitWebViewBase*, const WebCore::IntSize&);
 

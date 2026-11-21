@@ -116,6 +116,11 @@ void View::setInputMethodState(std::optional<InputMethodState>&& state)
     m_inputMethodFilter.setState(WTF::move(state));
 }
 
+void View::discardComposition()
+{
+    m_inputMethodFilter.discardComposition();
+}
+
 void View::selectionDidChange()
 {
     const auto& editorState = m_pageProxy->editorState();
