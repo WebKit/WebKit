@@ -48,6 +48,28 @@ extension NSEdgeInsets {
 }
 #endif
 
+extension WKRectEdge {
+    init(_ edges: Edge.Set, layoutDirection: LayoutDirection) {
+        self = []
+
+        if edges.contains(.top) {
+            insert(.top)
+        }
+
+        if edges.contains(.bottom) {
+            insert(.bottom)
+        }
+
+        if edges.contains(.leading) {
+            insert(layoutDirection == .rightToLeft ? .right : .left)
+        }
+
+        if edges.contains(.trailing) {
+            insert(layoutDirection == .rightToLeft ? .left : .right)
+        }
+    }
+}
+
 extension ScrollGeometry {
     init(_ geometry: WKScrollGeometryAdapter) {
         self = ScrollGeometry(

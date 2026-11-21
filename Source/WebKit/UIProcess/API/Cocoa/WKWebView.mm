@@ -666,11 +666,6 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     [self _setupPageConfiguration:pageConfiguration withPool:processPool.get()];
 
     _usePlatformFindUI = YES;
-    _enabledSystemBackgroundColorExtensionEdges = _WKRectEdgeLeft | _WKRectEdgeRight;
-
-#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::EnabledIfHorizontalBannerViewPresent;
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     _obscuredInsetEdgesAffectedBySafeArea = UIRectEdgeTop | UIRectEdgeLeft | UIRectEdgeRight;
@@ -3905,11 +3900,12 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 
 - (BOOL)_isSystemBackgroundColorExtensionEnabledForSide:(WebCore::BoxSide)side
 {
+    auto enabledEdges = self.systemBackgroundColorExtensionEnabledEdges;
     switch (side) {
     case WebCore::BoxSide::Left:
-        return !!(_enabledSystemBackgroundColorExtensionEdges & _WKRectEdgeLeft);
+        return !!(enabledEdges & WKRectEdgeLeft);
     case WebCore::BoxSide::Right:
-        return !!(_enabledSystemBackgroundColorExtensionEdges & _WKRectEdgeRight);
+        return !!(enabledEdges & WKRectEdgeRight);
     case WebCore::BoxSide::Top:
     case WebCore::BoxSide::Bottom:
         return NO;
@@ -4040,23 +4036,10 @@ static ASCIILiteral descriptionForReason(WebKit::HideScrollPocketReason reason)
 #if !ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     return NO;
 #else
-    switch (_adjustedColorExtensionsForBannerViewOverlaysEnablement) {
-    case WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOnForTesting:
-        return YES;
-    case WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOffForTesting:
-        return NO;
-    case WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::EnabledIfHorizontalBannerViewPresent:
-        break;
-    }
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 270000
-    return NO;
-#else
     return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AdjustColorExtensionsForHorizontalBannerViewOverlays)
         && _page
         && protect(_page->preferences())->horizontalBannerViewOverlaysEnabled()
         && protect(_page->preferences())->contentInsetBackgroundFillEnabled();
-#endif
 #endif
 }
 
@@ -4094,6 +4077,63 @@ static ASCIILiteral descriptionForReason(WebKit::HideScrollPocketReason reason)
 
     self._automaticallyAdjustsContentInsets = NO;
     [self _setObscuredContentInsets:insets immediate:NO];
+#endif
+}
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
+static WKRectEdge defaultSystemBackgroundColorExtensionEnabledEdges()
+{
+#if PLATFORM(MAC)
+    return WKRectEdgeLeft | WKRectEdgeRight;
+#else
+    switch (PAL::currentUserInterfaceIdiom()) {
+    case PAL::UserInterfaceIdiom::Desktop:
+    case PAL::UserInterfaceIdiom::Vision:
+        return WKRectEdgeLeft | WKRectEdgeRight;
+    case PAL::UserInterfaceIdiom::Default:
+    case PAL::UserInterfaceIdiom::SmallScreen:
+        return WKRectEdgeNone;
+    }
+    ASSERT_NOT_REACHED();
+    return WKRectEdgeNone;
+#endif
+}
+
+- (void)_systemBackgroundColorExtensionEnabledEdgesDidChange
+{
+    [self _doAfterAdjustingColorForTopContentInsetFromUIDelegate:[strongSelf = RetainPtr { self }] {
+        [strongSelf _updateFixedColorExtensionViews];
+    }];
+}
+
+#endif // ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
+- (WKRectEdge)systemBackgroundColorExtensionEnabledEdges
+{
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if (_enabledSystemBackgroundColorExtensionEdgesSetByClient)
+        return _enabledSystemBackgroundColorExtensionEdges;
+
+    return defaultSystemBackgroundColorExtensionEnabledEdges();
+#else
+    return WKRectEdgeNone;
+#endif
+}
+
+- (void)setSystemBackgroundColorExtensionEnabledEdges:(WKRectEdge)edges
+{
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    // System background color extensions are only supported on the left and right edges.
+    edges &= WKRectEdgeLeft | WKRectEdgeRight;
+
+    auto previousEdges = self.systemBackgroundColorExtensionEnabledEdges;
+    _enabledSystemBackgroundColorExtensionEdgesSetByClient = YES;
+    _enabledSystemBackgroundColorExtensionEdges = edges;
+    if (previousEdges != edges)
+        [self _systemBackgroundColorExtensionEnabledEdgesDidChange];
+#else
+    UNUSED_PARAM(edges);
 #endif
 }
 
@@ -7278,24 +7318,32 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 #endif
 }
 
+static_assert(static_cast<NSUInteger>(_WKRectEdgeNone) == static_cast<NSUInteger>(WKRectEdgeNone));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeLeft) == static_cast<NSUInteger>(WKRectEdgeLeft));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeTop) == static_cast<NSUInteger>(WKRectEdgeTop));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeRight) == static_cast<NSUInteger>(WKRectEdgeRight));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeBottom) == static_cast<NSUInteger>(WKRectEdgeBottom));
+
 - (_WKRectEdge)_systemBackgroundColorExtensionEnabledEdges
 {
-    return _enabledSystemBackgroundColorExtensionEdges;
+    return self.systemBackgroundColorExtensionEnabledEdges;
 }
 
 - (void)_setSystemBackgroundColorExtensionEnabledEdges:(_WKRectEdge)edges
 {
-    // System background color extensions are only supported on the left and right edges.
-    edges &= _WKRectEdgeLeft | _WKRectEdgeRight;
-    if (_enabledSystemBackgroundColorExtensionEdges == edges)
+    self.systemBackgroundColorExtensionEnabledEdges = edges;
+}
+
+- (void)_resetSystemBackgroundColorExtensionEnabledEdges
+{
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if (!_enabledSystemBackgroundColorExtensionEdgesSetByClient)
         return;
 
-    _enabledSystemBackgroundColorExtensionEdges = edges;
-
-#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-    [self _doAfterAdjustingColorForTopContentInsetFromUIDelegate:[strongSelf = RetainPtr { self }] {
-        [strongSelf _updateFixedColorExtensionViews];
-    }];
+    auto previousEdges = self.systemBackgroundColorExtensionEnabledEdges;
+    _enabledSystemBackgroundColorExtensionEdgesSetByClient = NO;
+    if (previousEdges != self.systemBackgroundColorExtensionEnabledEdges)
+        [self _systemBackgroundColorExtensionEnabledEdgesDidChange];
 #endif
 }
 

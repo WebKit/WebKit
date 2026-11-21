@@ -234,7 +234,11 @@ NODELETE bool defaultUnifiedPDFEnabled()
 
 NODELETE bool defaultHorizontalBannerViewOverlaysEnabled()
 {
+#if HAVE(LIQUID_GLASS_ADJUSTMENTS)
+    return true;
+#else
     return false;
+#endif
 }
 
 #endif
