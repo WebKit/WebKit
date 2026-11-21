@@ -2309,6 +2309,9 @@ webkit.org/b/292182 [ x86_64 ] webgl/1.0.x/conformance/textures/misc/texture-srg
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Pass ImageOnlyFailure Failure ]
 imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]
+# OpenID4VP is off by default on the OS version the bots run. Remove these two lines once the bots run a version that turns it on.
+webkit.org/b/332651 imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-openid4vp.https.html [ Failure ]
+webkit.org/b/332651 imported/w3c/web-platform-tests/digital-credentials/webdriver/get-openid4vp.https.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Pass Failure ]
 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
 http/tests/inspector/network/xhr-response-body.html [ Pass Failure ]
