@@ -32,7 +32,7 @@
 
 NODELETE void wgpuInstanceAddRef(WGPUInstance instance)
 {
-    WebGPU::CAPI::metalFromAPI(instance).ref();
+    WebGPU::CAPI::fromAPI(instance).ref();
 }
 
 void wgpuInstanceRelease(WGPUInstance instance)
@@ -66,7 +66,7 @@ WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDe
             if (CAMetalLayer *layer = (__bridge CAMetalLayer *)metalLayerSource->layer)
                 return WebGPU::CAPI::releaseToAPI(WebGPU::Metal::PresentationContextCoreAnimation::create(layer));
         }
-        return WebGPU::CAPI::releaseToAPIAs<WebGPU::Metal::PresentationContext>(protect(WebGPU::CAPI::metalFromAPI(instance))->createPresentationContext({ }));
+        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(instance))->createPresentationContext({ }));
     }
 }
 
@@ -97,7 +97,7 @@ WGPUFuture wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAd
         protectedInstance->requestAdapter(*apiOptions, [callback = WTF::move(callback)](RefPtr<WebGPU::Adapter>&& adapter) {
             if (!adapter)
                 return callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present"_s);
-            callback(WGPURequestAdapterStatus_Success, WebGPU::CAPI::releaseToAPIAs<WebGPU::Metal::Adapter>(WTF::move(adapter)), ""_s);
+            callback(WGPURequestAdapterStatus_Success, WebGPU::CAPI::releaseToAPI(WTF::move(adapter)), ""_s);
         });
         return future.future();
     }

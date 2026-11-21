@@ -39,13 +39,13 @@ WGPUInstance wgpuAdapterGetInstance(WGPUAdapter adapter)
 
 NODELETE void wgpuAdapterAddRef(WGPUAdapter adapter)
 {
-    WebGPU::CAPI::metalFromAPI(adapter).ref();
+    WebGPU::CAPI::fromAPI(adapter).ref();
 }
 
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(adapter).deref();
+        WebGPU::CAPI::fromAPI(adapter).deref();
     }
 }
 
@@ -54,7 +54,7 @@ WGPUStatus wgpuAdapterGetLimits(WGPUAdapter adapter, WGPULimits* limits)
 {
     @autoreleasepool {
         auto* nextInChain = limits->nextInChain;
-        *limits = WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::metalFromAPI(adapter))->limits());
+        *limits = WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::fromAPI(adapter))->limits());
         limits->nextInChain = nextInChain;
         return WGPUStatus_Success;
     }
@@ -96,7 +96,7 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
     @autoreleasepool {
         auto apiFeature = WebGPU::CAPI::fromAPI(feature);
-        return apiFeature && protect(WebGPU::CAPI::metalFromAPI(adapter))->hasFeature(*apiFeature);
+        return apiFeature && protect(WebGPU::CAPI::fromAPI(adapter))->features().contains(*apiFeature);
     }
 }
 
@@ -126,7 +126,7 @@ static void listenForUncapturedErrors(WebGPU::Metal::Device& device, const WGPUU
 void wgpuAdapterGetFeatures(WGPUAdapter adapter, WGPUSupportedFeatures* features)
 {
     @autoreleasepool {
-        *features = WebGPU::CAPI::toAPIAllocated(protect(WebGPU::CAPI::metalFromAPI(adapter))->features());
+        *features = WebGPU::CAPI::toAPIAllocated(protect(WebGPU::CAPI::fromAPI(adapter))->features());
     }
 }
 

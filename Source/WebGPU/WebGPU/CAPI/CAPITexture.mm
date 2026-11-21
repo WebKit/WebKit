@@ -30,13 +30,13 @@
 
 NODELETE void wgpuTextureAddRef(WGPUTexture texture)
 {
-    WebGPU::CAPI::metalFromAPI(texture).ref();
+    WebGPU::CAPI::fromAPI(texture).ref();
 }
 
 void wgpuTextureRelease(WGPUTexture texture)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(texture).deref();
+        WebGPU::CAPI::fromAPI(texture).deref();
     }
 }
 
@@ -54,23 +54,21 @@ WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureView
                 return WebGPU::CAPI::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
             }
         }
-        // Every WebGPU::TextureView that a WebGPU::Metal::Texture creates is a WebGPU::Metal::TextureView.
-        Ref view = downcast<WebGPU::Metal::TextureView>(*protectedTexture->createView(apiDescriptor));
-        return WebGPU::CAPI::releaseToAPI(WTF::move(view));
+        return WebGPU::CAPI::releaseToAPI(protectedTexture->createView(apiDescriptor));
     }
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(texture))->destroy();
+        protect(WebGPU::CAPI::fromAPI(texture))->destroy();
     }
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(texture))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(texture))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }
 

@@ -30,27 +30,27 @@
 
 NODELETE void wgpuQuerySetAddRef(WGPUQuerySet querySet)
 {
-    WebGPU::CAPI::metalFromAPI(querySet).ref();
+    WebGPU::CAPI::fromAPI(querySet).ref();
 }
 
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(querySet).deref();
+        WebGPU::CAPI::fromAPI(querySet).deref();
     }
 }
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(querySet))->destroy();
+        protect(WebGPU::CAPI::fromAPI(querySet))->destroy();
     }
 }
 
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(querySet))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(querySet))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }
 

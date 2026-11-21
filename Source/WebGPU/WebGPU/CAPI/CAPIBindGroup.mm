@@ -30,19 +30,19 @@
 
 NODELETE void wgpuBindGroupAddRef(WGPUBindGroup bindGroup)
 {
-    WebGPU::CAPI::metalFromAPI(bindGroup).ref();
+    WebGPU::CAPI::fromAPI(bindGroup).ref();
 }
 
 void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(bindGroup).deref();
+        WebGPU::CAPI::fromAPI(bindGroup).deref();
     }
 }
 
 void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(bindGroup))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(bindGroup))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

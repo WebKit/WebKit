@@ -30,19 +30,19 @@
 
 NODELETE void wgpuPipelineLayoutAddRef(WGPUPipelineLayout pipelineLayout)
 {
-    WebGPU::CAPI::metalFromAPI(pipelineLayout).ref();
+    WebGPU::CAPI::fromAPI(pipelineLayout).ref();
 }
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(pipelineLayout).deref();
+        WebGPU::CAPI::fromAPI(pipelineLayout).deref();
     }
 }
 
 void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, WGPUStringView label)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(pipelineLayout).setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(pipelineLayout))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }
