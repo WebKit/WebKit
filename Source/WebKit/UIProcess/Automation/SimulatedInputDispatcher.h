@@ -157,6 +157,7 @@ struct SimulatedInputRunOptions {
     std::optional<SimulatedInputViewport> viewport;
     bool interpolatePointerMoves { false };
     NodeHandleKind elementOriginHandleKind { };
+    bool scrollDeltasArePerAction { false };
 };
 
 class SimulatedInputDispatcher : public RefCountedAndCanMakeWeakPtr<SimulatedInputDispatcher> {

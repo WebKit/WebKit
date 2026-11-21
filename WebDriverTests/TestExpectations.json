@@ -4053,10 +4053,36 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/wheel_origin.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}}
+        "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}}
     },
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/wheel.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}}
+        "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
+        "subtests": {
+            "test_scroll_direction[delta-x]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            },
+            "test_scroll_direction[delta-y]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            },
+            "test_scroll_direction[delta-x-and-y]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            },
+            "test_scroll_element_in_shadow_tree[open]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            },
+            "test_scroll_element_in_shadow_tree[closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            },
+            "test_scroll_position_for_scaled_layout_viewport[0.5]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            },
+            "test_scroll_position_for_scaled_layout_viewport[1.0]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            },
+            "test_scroll_position_for_scaled_layout_viewport[1.5]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/input/release_actions/context.py": {
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/287928"}}
@@ -6254,19 +6280,19 @@
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/wheel_events.py": {
         "subtests": {
             "test_scroll_emits_scrollend_event": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
+                "expected": {"mac": {"status": ["FAIL", "PASS"], "note": "Flaky on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
             },
             "test_scroll_more_than_a_page": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
+                "expected": {"mac": {"status": ["FAIL", "PASS"], "note": "Flaky on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
             },
             "test_scroll_on_element_with_overflow_scroll": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
+                "expected": {"mac": {"status": ["FAIL", "PASS"], "note": "Flaky on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
             },
             "test_scroll_on_not_scrollable_element": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
             },
             "test_scroll_with_key_pressed": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/332429"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
             }
         }
     },
