@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<title>Changing the 'begin' attribute to an earlier time takes effect before the previous begin time</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/animations/#BeginAttribute">
+<link rel="help" href="https://www.w3.org/TR/SMIL3/smil-timing.html#q86">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<svg>
+  <rect width="100" height="100" fill="green">
+    <set attributeName="fill" to="red" begin="5s" dur="1s"/>
+  </rect>
+</svg>
+<script>
+  document.querySelector('set').setAttribute('begin', '1s');
+
+  promise_test(async () => {
+    await new Promise(resolve => window.addEventListener('load', resolve));
+    const svg = document.querySelector('svg');
+    svg.pauseAnimations();
+    svg.setCurrentTime(1.5);
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    assert_equals(getComputedStyle(document.querySelector('rect')).fill, 'rgb(255, 0, 0)');
+  }, "Changing 'begin' to an earlier time starts the animation at the new time");
+</script>
