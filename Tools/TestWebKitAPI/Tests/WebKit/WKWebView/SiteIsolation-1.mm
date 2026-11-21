@@ -2439,6 +2439,29 @@ TEST(SiteIsolation, EditMenuAvoidsControlsInCrossOriginSiblingFrameInItsOwnProce
 
 #endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
+TEST(SiteIsolation, CORSDisablingPatternsApplyInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } },
+        { "/resource"_s, { "hello"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView _setCORSDisablingPatterns:@[ @"*://apple.com/*" ]];
+
+    [webView objectByEvaluatingJavaScript:@"window.fetchResult = 'pending';"
+        "fetch('https://apple.com/resource').then(response => response.text()).then(() => { window.fetchResult = 'ok'; }, () => { window.fetchResult = 'fail'; }); true" inFrame:childFrame.get()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.fetchResult" inFrame:childFrame.get()] isEqualToString:@"ok"];
+    }));
+}
+
 TEST(SiteIsolation, AccessibilityRectsAtSelectionOffsetInCrossOriginIframe)
 {
     HTTPServer server({
