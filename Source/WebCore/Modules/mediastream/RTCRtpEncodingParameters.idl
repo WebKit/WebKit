@@ -37,6 +37,7 @@
     unsigned long maxBitrate;
     double maxFramerate;
     double scaleResolutionDownBy;
+    DOMString scalabilityMode;
 
     RTCPriorityType priority = "low";
     RTCPriorityType networkPriority;

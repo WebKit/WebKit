@@ -26,9 +26,14 @@
 #include "WebKitEncoder.h"
 
 #include "WebKitUtilities.h"
+#include "absl/strings/match.h"
 #include "api/video/video_frame.h"
 #include "components/video_codec/RTCCodecSpecificInfoH264+Private.h"
+#include "media/base/media_constants.h"
 #include "media/engine/simulcast_encoder_adapter.h"
+#include "modules/video_coding/codecs/av1/av1_svc_config.h"
+#include "modules/video_coding/codecs/vp8/vp8_scalability.h"
+#include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "webkit_sdk/objc/api/peerconnection/RTCEncodedImage+Private.h"
 #include "webkit_sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
@@ -159,11 +164,43 @@ public:
     }
 
     std::unique_ptr<VideoEncoder> Create(const Environment&, const SdpVideoFormat& format) final;
-    std::vector<SdpVideoFormat> GetSupportedFormats() const final { return m_internalEncoderFactory->GetSupportedFormats(); }
+    std::vector<SdpVideoFormat> GetSupportedFormats() const final;
 
 private:
     const std::unique_ptr<VideoEncoderFactory> m_internalEncoderFactory;
 };
+
+static absl::InlinedVector<ScalabilityMode, kScalabilityModeCount> supportedScalabilityModes(const SdpVideoFormat& format)
+{
+    if (absl::EqualsIgnoreCase(format.name, kVp8CodecName)) {
+        absl::InlinedVector<ScalabilityMode, kScalabilityModeCount> scalabilityModes;
+        for (auto scalabilityMode : kVP8SupportedScalabilityModes)
+            scalabilityModes.push_back(scalabilityMode);
+        return scalabilityModes;
+    }
+
+    if (absl::EqualsIgnoreCase(format.name, kVp9CodecName)) {
+        auto vp9Formats = SupportedVP9Codecs();
+        if (!vp9Formats.empty())
+            return vp9Formats[0].scalability_modes;
+    }
+
+    if (absl::EqualsIgnoreCase(format.name, kAv1CodecName))
+        return LibaomAv1EncoderSupportedScalabilityModes();
+
+    // FIXME: Expose L1T2 once the WebRTC H264 encoder path configures it and reports temporal layer information.
+    return { ScalabilityMode::kL1T1 };
+}
+
+std::vector<SdpVideoFormat> VideoEncoderFactoryWithSimulcast::GetSupportedFormats() const
+{
+    auto formats = m_internalEncoderFactory->GetSupportedFormats();
+    for (auto& format : formats) {
+        if (format.scalability_modes.empty())
+            format.scalability_modes = supportedScalabilityModes(format);
+    }
+    return formats;
+}
 
 std::unique_ptr<VideoEncoder> VideoEncoderFactoryWithSimulcast::Create(const webrtc::Environment& environment, const SdpVideoFormat& format)
 {
