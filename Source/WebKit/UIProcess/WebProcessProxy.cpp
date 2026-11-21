@@ -1346,6 +1346,8 @@ void WebProcessProxy::didCommitStorageClientOrigin(WebCore::ClientOrigin&& clien
 void WebProcessProxy::didBecomeRemoteWorkerHostForSite(const WebCore::Site& site)
 {
     m_remoteWorkerDomains.add(site.domain());
+    // Workers are placed by top site, so this process now also runs third-party workers from sites it has no record of.
+    setMayHostAnySite();
 }
 
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
