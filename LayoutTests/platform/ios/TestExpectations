@@ -10397,3 +10397,6 @@ imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-
 imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-without-overflow.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=2.3&border-radius=40% [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=squircle&border-radius=50% [ ImageOnlyFailure ]
+
+# Legacy SVG engine: textPath resolves transform-box: fill-box before the referenced path, which follows the text, is laid out.
+webkit.org/b/332613 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-after-text.html [ ImageOnlyFailure ]
