@@ -2397,7 +2397,7 @@ RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustment
     CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
     bool hasUniformPageLogicalHeight = !fragmentedFlow || fragmentedFlow->fragmentsHaveUniformLogicalHeight();
 
-    if (hasUniformPageLogicalHeight && logicalOverflowHeight > pageLogicalHeight) {
+    if (logicalOverflowHeight > pageLogicalHeight) {
         // We are so tall that we are bigger than a page. Before we give up and just leave the line where it is, try drilling into the
         // line and computing a new height that excludes anything we consider "blank space". We will discard margins, descent, and even overflow. If we are
         // able to fit with the blank space and overflow excluded, we will give the line its own page with the highest non-blank element being aligned with the
@@ -2406,7 +2406,8 @@ RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustment
         // this will be a real-world issue. For now we don't try to deal with this problem.
         std::tie(logicalOffset, logicalBottom) = computeLeafBoxTopAndBottom();
         lineHeight = logicalBottom - logicalOffset;
-        if (logicalOffset == LayoutUnit::max() || lineHeight > pageLogicalHeight) {
+        // With non-uniform page heights, a later page may still be tall enough. pushToNextPageWithMinimumLogicalHeight() checks that below.
+        if (logicalOffset == LayoutUnit::max() || (hasUniformPageLogicalHeight && lineHeight > pageLogicalHeight)) {
             // Give up. We're genuinely too big even after excluding blank space and overflow.
             clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
             return { };
