@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<input type="range" id="range">
+<script>
+function container() {
+    return internals.shadowRoot(range).querySelector("div");
+}
+
+function track() {
+    return container().firstElementChild.getBoundingClientRect();
+}
+
+test(() => {
+    assert_equals(getComputedStyle(container()).flexDirection, "row");
+    range.style.appearance = "slider-vertical";
+    range.offsetWidth;
+    assert_equals(getComputedStyle(container()).flexDirection, "column");
+    assert_greater_than(track().height, track().width);
+    range.style.appearance = "";
+    range.offsetWidth;
+    assert_equals(getComputedStyle(container()).flexDirection, "row");
+    assert_greater_than(track().width, track().height);
+}, "Changing appearance to slider-vertical updates the slider container's flex-direction");
+</script>
