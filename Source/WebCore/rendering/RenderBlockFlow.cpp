@@ -2901,16 +2901,6 @@ void RenderBlockFlow::createFloatingObjects()
     m_floatingObjects = makeUnique<FloatingObjects>(*this);
 }
 
-void RenderBlockFlow::removeFloatingObjects()
-{
-    if (!m_floatingObjects)
-        return;
-
-    markSiblingsWithFloatsForLayout();
-
-    m_floatingObjects->clear();
-}
-
 void RenderBlockFlow::insertFloatingBoxAndMarkForLayout(RenderBox& floatBox)
 {
     // Our location is irrelevant if we're unsplittable or no pagination is in effect. Just lay out the float.
@@ -3166,7 +3156,6 @@ bool RenderBlockFlow::positionNewFloats()
             }
             
             if (newLogicalTop != logicalTop) {
-                floatingObject.setPaginationStrut(newLogicalTop - logicalTop);
                 computeLogicalLocationForFloat(floatingObject, newLogicalTop);
                 if (childBlock)
                     childBlock->setChildNeedsLayout(MarkingBehavior::OnlyThis);
@@ -3193,30 +3182,6 @@ bool RenderBlockFlow::positionNewFloats()
     return true;
 }
 
-void RenderBlockFlow::clearFloats(UsedClear usedClear)
-{
-    positionNewFloats();
-    // set y position
-    LayoutUnit newY;
-    switch (usedClear) {
-    case UsedClear::Left:
-        newY = lowestFloatLogicalBottom(FloatingObject::FloatLeft);
-        break;
-    case UsedClear::Right:
-        newY = lowestFloatLogicalBottom(FloatingObject::FloatRight);
-        break;
-    case UsedClear::Both:
-        newY = lowestFloatLogicalBottom();
-        break;
-    case UsedClear::None:
-        break;
-    }
-    // FIXME: The float search tree has floored float box position (see FloatingObjects::intervalForFloatingObject).
-    newY = newY.floor();
-    if (borderBoxHeight() < newY)
-        setLogicalHeight(newY);
-}
-
 LayoutUnit RenderBlockFlow::logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const
 {
     if (m_floatingObjects && m_floatingObjects->hasLeftObjects())
@@ -3231,14 +3196,6 @@ LayoutUnit RenderBlockFlow::logicalRightFloatOffsetForLine(LayoutUnit logicalTop
         return m_floatingObjects->logicalRightOffset(fixedOffset, logicalTop, logicalHeight);
 
     return fixedOffset;
-}
-
-LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelow(LayoutUnit logicalHeight) const
-{
-    if (!m_floatingObjects)
-        return logicalHeight;
-
-    return m_floatingObjects->findNextFloatLogicalBottomBelow(logicalHeight);
 }
 
 LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight) const
