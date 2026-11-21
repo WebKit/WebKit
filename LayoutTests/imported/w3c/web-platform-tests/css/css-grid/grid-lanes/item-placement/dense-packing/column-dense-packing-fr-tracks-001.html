@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: dense packing with 1fr columns that don't divide the width evenly</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#grid-lanes-dense-packing">
+  <link rel="match" href="column-dense-packing-fr-tracks-001-ref.html">
+  <meta name="assert" content="Test passes if the orange item moves up into the empty space in the first column. 100px doesn't divide evenly into three 1fr columns, so the columns can differ by a fraction of a pixel, and dense packing still treats them as the same size.">
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      grid-auto-flow: dense;
+      grid-lanes-pack: dense;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lanes">
+    <div style="height: 10px; background: blue"></div>
+    <div style="height: 50px; background: green"></div>
+    <div style="height: 50px; background: green"></div>
+    <div style="height: 10px; grid-column: span 2; background: purple"></div>
+    <div style="height: 20px; background: orange"></div>
+  </div>
+</body>
+</html>
