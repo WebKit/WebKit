@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <numbers>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
 namespace TestWebKitAPI {
@@ -119,6 +120,49 @@ TEST(WTF, AtomStringNumberDouble)
     EXPECT_EQ("110000000000000000000"_s, testAtomStringNumber(1.1e20));
     EXPECT_EQ("1.1e+21"_s, testAtomStringNumber(1.1e21));
     EXPECT_EQ("1.1e+30"_s, testAtomStringNumber(1.1e30));
+}
+
+static String string16(std::initializer_list<char16_t> characters)
+{
+    return String { std::span { characters.begin(), characters.size() } };
+}
+
+static String replace(const String& string)
+{
+    return replaceUnpairedSurrogatesWithReplacementCharacter(String { string });
+}
+
+TEST(WTF, ReplaceUnpairedSurrogatesWithReplacementCharacter)
+{
+    EXPECT_TRUE(replace(String { }).isNull());
+
+    String latin1 = "abc"_s;
+    EXPECT_EQ(latin1.impl(), replace(latin1).impl());
+
+    String wellFormed = string16({ 'a', 0x4E00, 0xD83D, 0xDE00, 'b' });
+    EXPECT_EQ(wellFormed.impl(), replace(wellFormed).impl());
+
+    EXPECT_EQ(string16({ 'a', 0xFFFD }), replace(string16({ 'a', 0xD800 })));
+    EXPECT_EQ(string16({ 0xFFFD, 'a' }), replace(string16({ 0xDC00, 'a' })));
+    EXPECT_EQ(string16({ 0xFFFD, 0xFFFD }), replace(string16({ 0xDC00, 0xD800 })));
+    EXPECT_EQ(string16({ 0xFFFD, 0xD800, 0xDC00 }), replace(string16({ 0xD800, 0xD800, 0xDC00 })));
+
+    Vector<char16_t> longString(FillWith { }, 100, char16_t('a'));
+    longString[0] = 0x4E00;
+    longString[70] = 0xDBFF;
+    auto expected = longString;
+    expected[70] = 0xFFFD;
+    EXPECT_EQ(String { expected.span() }, replace(String { longString.span() }));
+}
+
+TEST(WTF, ReplaceUnpairedSurrogatesWithReplacementCharacterAtomString)
+{
+    AtomString wellFormed { string16({ 'a', 0xD83D, 0xDE00 }) };
+    EXPECT_EQ(wellFormed.impl(), replaceUnpairedSurrogatesWithReplacementCharacter(AtomString { wellFormed }).impl());
+
+    auto replaced = replaceUnpairedSurrogatesWithReplacementCharacter(AtomString { string16({ 'a', 0xD800 }) });
+    EXPECT_TRUE(replaced.impl()->isAtom());
+    EXPECT_EQ(AtomString { string16({ 'a', 0xFFFD }) }, replaced);
 }
 
 } // namespace TestWebKitAPI
