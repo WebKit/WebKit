@@ -200,7 +200,7 @@ void Connection::platformOpen()
     // Change the message queue length for the receive port.
     setMachPortQueueLength(m_receivePort, largeOutgoingMessageQueueCountThreshold);
 
-    OSObjectPtr receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, protect(m_connectionQueue->dispatchQueue()).get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, protect(m_connectionQueue->dispatchQueue()).get()));
     m_receiveSource = receiveSource;
     dispatch_source_set_event_handler(receiveSource, [this, protectedThis = Ref { *this }] {
         receiveSourceEventHandler();
@@ -307,7 +307,7 @@ void Connection::initializeSendSource()
     }
     RELEASE_ASSERT(m_sendPort != MACH_PORT_NULL);
 
-    OSObjectPtr sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, protect(m_connectionQueue->dispatchQueue()).get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, protect(m_connectionQueue->dispatchQueue()).get()));
     m_sendSource = sendSource;
     // Messages queued before the source was registered get no send-possible notification, so send
     // them once the source is registered.

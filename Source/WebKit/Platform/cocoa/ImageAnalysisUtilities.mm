@@ -438,7 +438,7 @@ void recognizeText(CGImageRef image, std::optional<TextRecognitionLevel> level, 
                 return;
             }
 
-            RetainPtr resultBuffer = adoptNS([NSMutableString new]);
+            SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr resultBuffer = adoptNS([NSMutableString new]);
             for (VNRecognizedTextObservation *observation in observations.get()) {
                 RetainPtr best = [[observation topCandidates:1] firstObject];
                 if (!best)

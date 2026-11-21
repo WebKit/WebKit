@@ -80,7 +80,7 @@ IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue:
     }
 
     int fd = posixOpen(path, oflag, mode);
-    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, globalDispatchQueueSingleton(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, globalDispatchQueueSingleton(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());

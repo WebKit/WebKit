@@ -120,7 +120,7 @@ void NetworkTransportStream::start(NetworkTransportStreamReadyHandler&& readyHan
 
 void NetworkTransportStream::initializeReadyConnection()
 {
-    RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(MAYBE_SOFT_LINK(nw_protocol_copy_webtransport_definition)()).get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(MAYBE_SOFT_LINK(nw_protocol_copy_webtransport_definition)()).get()));
 
     bool isPeerInitiated = MAYBE_SOFT_LINK(nw_webtransport_metadata_get_is_peer_initiated)(metadata.get());
     bool isUnidirectional = MAYBE_SOFT_LINK(nw_webtransport_metadata_get_is_unidirectional)(metadata.get());

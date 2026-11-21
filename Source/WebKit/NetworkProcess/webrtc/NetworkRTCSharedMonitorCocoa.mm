@@ -37,7 +37,7 @@ namespace WebKit {
 
 static RetainPtr<nw_path_monitor_t> createNWPathMonitor()
 {
-    RetainPtr nwMonitor = adoptNS(nw_path_monitor_create());
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr nwMonitor = adoptNS(nw_path_monitor_create());
     nw_path_monitor_set_queue(nwMonitor.get(), mainDispatchQueueSingleton());
     nw_path_monitor_set_update_handler(nwMonitor.get(), makeBlockPtr([](nw_path_t path) {
         NetworkRTCSharedMonitor::singleton().updateNetworksFromPath(path);

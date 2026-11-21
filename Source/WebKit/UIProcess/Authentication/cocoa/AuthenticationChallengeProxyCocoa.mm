@@ -40,15 +40,15 @@ void AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc(IPC::C
 {
     ASSERT(secKeyProxyStore.isInitialized());
 
-    OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), ClientCertificateAuthentication::XPCMessageNameKey, ClientCertificateAuthentication::XPCMessageNameValue);
     xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCChallengeIDKey, challengeID.toUInt64());
     xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, OSObjectPtr<xpc_endpoint_t> { protect(RetainPtr { secKeyProxyStore.get() }.get().endpoint).get()._endpoint }.get());
-    OSObjectPtr certificateDataArray = adoptOSObject(xpc_array_create(nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr certificateDataArray = adoptOSObject(xpc_array_create(nullptr, 0));
     RetainPtr nsCredential = credential.nsCredential();
     for (id certificate in nsCredential.get().certificates) {
         auto data = adoptCF(SecCertificateCopyData((SecCertificateRef)certificate));
-        xpc_array_append_value(certificateDataArray.get(), adoptOSObject(xpc_data_create(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()))).get());
+        SUPPRESS_RETAINPTR_CTOR_ADOPT xpc_array_append_value(certificateDataArray.get(), adoptOSObject(xpc_data_create(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()))).get());
     }
     xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCCertificatesKey, certificateDataArray.get());
     xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCPersistenceKey, static_cast<uint64_t>(nsCredential.get().persistence));
