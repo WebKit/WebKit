@@ -153,7 +153,7 @@ size_t storageSizeOf(const String& keyOrValue)
     // The size of a key is the length of the key string.
     // The size of a value is the length of the JSON representation of the value.
     // If keyOrValue represents a value we assume that the string is the JSON representation.
-    return keyOrValue.utf8().length();
+    return utf8Length(keyOrValue);
 }
 
 size_t storageSizeOf(RefPtr<JSON::Object> keysAndValues)
