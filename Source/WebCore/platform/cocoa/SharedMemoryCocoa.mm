@@ -33,13 +33,20 @@
 #import <mach/mach_init.h>
 #import <mach/mach_port.h>
 #import <mach/vm_map.h>
+#import <mach/vm_purgable.h>
+#import <mach/vm_region.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RefPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/cocoa/MachVMSPI.h>
 
 #if HAVE(MACH_MEMORY_ENTRY)
 #import <mach/memory_entry.h>
+#endif
+
+#if HAVE(SAFE_MEMORY_TRANSFER) && !defined(VM_REGION_FLAG_EXCL_WRITE_ACCESS)
+#error "HAVE(SAFE_MEMORY_TRANSFER) requires an SDK defining VM_REGION_FLAG_EXCL_WRITE_ACCESS"
 #endif
 
 namespace WebCore {
@@ -259,6 +266,44 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 RetainPtr<NSData> SharedMemory::toNSData() const
 {
     return WTF::toNSData(span());
+}
+
+bool SharedMemory::isExclusive() const
+{
+#if HAVE(SAFE_MEMORY_TRANSFER)
+    if (!m_isTransferred || !m_data || !m_size)
+        return false;
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+    // The iOS content process sandbox reports every mach_vm_region_recurse call with a backtrace.
+    if (isInWebProcess())
+        return false;
+#endif
+
+    // Memory from SharedMemory::allocate() always maps as a single region; anything else reads as not exclusive.
+    mach_vm_address_t start = toVMAddress(m_data);
+    mach_vm_address_t regionStart = start;
+    mach_vm_size_t regionSize = 0;
+    uint32_t depth = 0;
+    vm_region_submap_short_info_data_64_t info { };
+    mach_msg_type_number_t count = VM_REGION_SUBMAP_SHORT_INFO_COUNT_64;
+    if (mach_vm_region_recurse(mach_task_self(), &regionStart, &regionSize, &depth, reinterpret_cast<vm_region_recurse_info_t>(&info), &count) != KERN_SUCCESS)
+        return false;
+    if (regionStart > start || regionStart + regionSize < start + m_size)
+        return false;
+    if (info.is_submap || !(info.flags & VM_REGION_FLAG_EXCL_WRITE_ACCESS))
+        return false;
+
+    // The flag ignores purgeable state, and volatile memory can be emptied under us.
+    // KERN_INVALID_ARGUMENT means the memory isn't purgeable.
+    int state = 0;
+    kern_return_t kr = mach_vm_purgable_control(mach_task_self(), start, VM_PURGABLE_GET_STATE, &state);
+    if (kr == KERN_INVALID_ARGUMENT)
+        return true;
+    return kr == KERN_SUCCESS && (state & VM_PURGABLE_STATE_MASK) == VM_PURGABLE_NONVOLATILE;
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore

@@ -77,7 +77,27 @@ Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
     });
 }
 
+RefPtr<SharedMemory> SharedMemory::mapTransfer(Handle&& handle)
+{
+    RefPtr memory = map(Handle { WTF::move(handle) }, Protection::ReadOnly);
+    if (memory)
+        memory->m_isTransferred = true;
+    return memory;
+}
+
+Ref<SharedBuffer> SharedMemory::createIsolatedSharedBuffer(size_t dataSize) const
+{
+    if (isExclusive())
+        return createSharedBuffer(dataSize);
+    return SharedBuffer::create(span().first(dataSize));
+}
+
 #if !PLATFORM(COCOA)
+bool SharedMemory::isExclusive() const
+{
+    return false;
+}
+
 void SharedMemoryHandle::takeOwnershipOfMemory(MemoryLedger) const
 {
 }
