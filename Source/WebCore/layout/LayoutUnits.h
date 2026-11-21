@@ -50,54 +50,91 @@ using InlineLayoutSize = LayoutSize;
 using InlineLayoutRect = LayoutRect;
 #endif
 
-struct Position {
-    operator LayoutUnit() const { return value; }
-    friend auto operator<=>(Position, Position) = default;
+// The roots that float layout positions boxes relative to (their logical top/left): the root of the formatting context, and
+// the root of its parent formatting context, which PlacedFloats are relative to. The two are the same box when the root
+// establishes the block formatting context of the placed floats. FloatingContext maps between them.
+struct FormattingContextRoot;
+struct ParentFormattingContextRoot;
 
-    LayoutUnit value;
+template<typename Root>
+class AxisPosition {
+public:
+    AxisPosition() = default;
+    explicit AxisPosition(LayoutUnit value)
+        : m_value(value)
+    {
+    }
+
+    LayoutUnit value() const { return m_value; }
+
+    friend auto operator<=>(AxisPosition, AxisPosition) = default;
+
+    AxisPosition operator+(LayoutUnit offset) const { return AxisPosition { m_value + offset }; }
+    AxisPosition operator-(LayoutUnit offset) const { return AxisPosition { m_value - offset }; }
+    LayoutUnit operator-(AxisPosition other) const { return m_value - other.m_value; }
+    AxisPosition& operator+=(LayoutUnit);
+    AxisPosition& operator-=(LayoutUnit);
+
+private:
+    LayoutUnit m_value;
 };
 
-struct Point {
-    // FIXME: Use Position<Horizontal>, Position<Vertical> to avoid top/left vs. x/y confusion.
-    LayoutUnit x; // left
-    LayoutUnit y; // top
-
+template<typename Root>
+class Point {
+public:
     Point() = default;
-    Point(LayoutUnit, LayoutUnit);
-    Point(LayoutPoint);
-    static Point max() { return { LayoutUnit::max(), LayoutUnit::max() }; }
+    Point(AxisPosition<Root> x, AxisPosition<Root> y)
+        : m_x(x)
+        , m_y(y)
+    {
+    }
+    explicit Point(LayoutPoint point)
+        : m_x(point.x())
+        , m_y(point.y())
+    {
+    }
 
-    void move(LayoutSize);
-    void moveBy(LayoutPoint);
-    operator LayoutPoint() const { return { x, y }; }
+    // FIXME: Use AxisPosition<Horizontal>, AxisPosition<Vertical> to avoid top/left vs. x/y confusion.
+    AxisPosition<Root> x() const { return m_x; } // left
+    AxisPosition<Root> y() const { return m_y; } // top
+
+    void setX(AxisPosition<Root> x) { m_x = x; }
+    void setY(AxisPosition<Root> y) { m_y = y; }
+
+private:
+    AxisPosition<Root> m_x;
+    AxisPosition<Root> m_y;
 };
 
-// FIXME: Wrap these into structs.
-using PointInContextRoot = Point;
-using PositionInContextRoot = Position;
+template<typename Root>
+class AxisRange {
+public:
+    AxisRange(AxisPosition<Root> start, AxisPosition<Root> end)
+        : m_start(start)
+        , m_end(end)
+    {
+    }
 
-inline Point::Point(LayoutPoint point)
-    : x(point.x())
-    , y(point.y())
+    AxisPosition<Root> start() const { return m_start; }
+    AxisPosition<Root> end() const { return m_end; }
+
+private:
+    AxisPosition<Root> m_start;
+    AxisPosition<Root> m_end;
+};
+
+template<typename Root>
+inline AxisPosition<Root>& AxisPosition<Root>::operator+=(LayoutUnit offset)
 {
+    m_value += offset;
+    return *this;
 }
 
-inline Point::Point(LayoutUnit x, LayoutUnit y)
-    : x(x)
-    , y(y)
+template<typename Root>
+inline AxisPosition<Root>& AxisPosition<Root>::operator-=(LayoutUnit offset)
 {
-}
-
-inline void Point::move(LayoutSize offset)
-{
-    x += offset.width();
-    y += offset.height();
-}
-
-inline void Point::moveBy(LayoutPoint offset)
-{
-    x += offset.x();
-    y += offset.y();
+    m_value -= offset;
+    return *this;
 }
 
 struct ContentWidthAndMargin {
