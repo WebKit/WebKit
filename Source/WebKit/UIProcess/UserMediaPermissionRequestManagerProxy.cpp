@@ -67,6 +67,10 @@
 #include <WebCore/ScreenCaptureKitCaptureSource.h>
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "VirtualAudioDevicesWPE.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1179,6 +1183,39 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
                 break;
             }
         }
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+        // Audio outputs implemented by the embedder don't require microphone access, the embedder
+        // providing them counts as the user's consent. Only the devices registered in the process
+        // of the frame work there. The first speaker is the one exposed as the default device: a
+        // virtual default device comes before the system speakers, the other virtual devices after
+        // them, since "default" is the system default output when there's no virtual default.
+        RefPtr page = protectedThis->m_page;
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        if (page && frame) {
+            Ref process = frame->process();
+            auto embedderDevices = virtualAudioOutputCaptureDevices(page->identifier(), page->configuration());
+            embedderDevices.removeAllMatching([&](auto& device) {
+                return !process->hasRegisteredVirtualAudioDevice(page->identifier(), device.persistentId());
+            });
+            auto isSpeaker = [](auto& deviceWithCapabilities) {
+                return deviceWithCapabilities.device.type() == WebCore::CaptureDevice::DeviceType::Speaker;
+            };
+            for (auto& device : embedderDevices) {
+                size_t insertionIndex;
+                if (device.isDefault())
+                    insertionIndex = filteredDevices.findIf(isSpeaker);
+                else if (auto lastSpeakerIndex = filteredDevices.reverseFindIf(isSpeaker); lastSpeakerIndex != notFound)
+                    insertionIndex = lastSpeakerIndex + 1;
+                else
+                    insertionIndex = notFound;
+                if (insertionIndex == notFound)
+                    insertionIndex = filteredDevices.size();
+                speakerCount++;
+                filteredDevices.insert(insertionIndex, { WTF::move(device), { } });
+            }
+        }
+#endif
 
         ALWAYS_LOG_WITH_THIS(protectedThis, logIdentifier, "exposing ", cameraCount, " camera(s) filtering = ", shouldRestrictCamera, ", ", microphoneCount, " microphone(s) filtering = ", shouldRestrictMicrophone, ", ", speakerCount, " speaker(s) filtering = ", shouldRestrictSpeaker);
 

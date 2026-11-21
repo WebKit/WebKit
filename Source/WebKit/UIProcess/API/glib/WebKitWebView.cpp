@@ -129,6 +129,9 @@
 #if ENABLE(WPE_PLATFORM)
 #include "WebKitInputMethodContextImplWPE.h"
 #endif
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "WPEVirtualAudioDevicePrivate.h"
+#endif
 #include "WebKitColor.h"
 #endif
 
@@ -277,6 +280,10 @@ enum {
     PROP_WEB_EXTENSION_CONTEXT,
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    PROP_VIRTUAL_AUDIO_DEVICES,
+#endif
+
     N_PROPERTIES,
 };
 
@@ -387,6 +394,9 @@ struct _WebKitWebViewPrivate {
 #endif
 #if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEDisplay> display;
+#endif
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    GRefPtr<GListModel> virtualAudioDevices;
 #endif
     RefPtr<WKWPE::View> view;
     Vector<FrameDisplayedCallback> frameDisplayedCallbacks;
@@ -1069,6 +1079,46 @@ static void webkitWebViewConstructed(GObject* object)
         priv->websitePolicies = adoptGRef(webkit_website_policies_new());
 
     Ref configuration = priv->relatedView && priv->relatedView->priv->configurationForNextRelatedView ? priv->relatedView->priv->configurationForNextRelatedView.releaseNonNull() : webkitWebViewCreatePageConfiguration(webView);
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    if (priv->virtualAudioDevices) {
+        Vector<GRefPtr<WPEVirtualAudioDevice>> virtualAudioDevices;
+        HashSet<String> names;
+        // Every device adds a file descriptor to the web page creation message, and IPC messages
+        // can only carry a limited number of them.
+        static constexpr unsigned maximumVirtualAudioDevices = 32;
+        auto itemCount = g_list_model_get_n_items(priv->virtualAudioDevices.get());
+        for (unsigned i = 0; i < itemCount; ++i) {
+            if (virtualAudioDevices.size() == maximumVirtualAudioDevices) {
+                SAFE_G_WARNING("WebKitWebView virtual-audio-devices contains more than %u devices, ignoring items from %u.", maximumVirtualAudioDevices, i);
+                break;
+            }
+            GRefPtr<GObject> item = adoptGRef(G_OBJECT(g_list_model_get_item(priv->virtualAudioDevices.get(), i)));
+            if (!WPE_IS_VIRTUAL_AUDIO_DEVICE(item.get())) {
+                SAFE_G_WARNING("WebKitWebView virtual-audio-devices must only contain WPEVirtualAudioDevice objects, ignoring item %u.", i);
+                continue;
+            }
+            auto* device = WPE_VIRTUAL_AUDIO_DEVICE(item.get());
+            if (!wpeVirtualAudioDeviceIsValid(device)) {
+                SAFE_G_WARNING("WebKitWebView virtual-audio-devices contains a device with an invalid configuration, ignoring item %u.", i);
+                continue;
+            }
+            auto name = UTF8CStringView::unsafeFromUTF8(wpe_virtual_audio_device_get_name(device));
+            auto nameString = String::fromUTF8(name.span());
+            if (!names.add(WTF::move(nameString)).isNewEntry) {
+                SAFE_G_WARNING("WebKitWebView virtual-audio-devices contains more than one device named '%s', ignoring item %u.", name, i);
+                continue;
+            }
+            if (!wpeVirtualAudioDeviceSetOwner(device, G_OBJECT(webView)))
+                SAFE_G_WARNING("WebKitWebView virtual-audio-devices device '%s' is already used by another web view, its callback will receive the audio of both views.", name);
+            virtualAudioDevices.append(device);
+        }
+        configuration->setVirtualAudioDevices(WTF::move(virtualAudioDevices));
+    } else {
+        // The configuration of a web view created for a popup is copied from its opener: virtual
+        // devices belong to a single web view, so they are only used if explicitly set.
+        configuration->setVirtualAudioDevices({ });
+    }
+#endif
     webkitWebViewCreatePage(webView, WTF::move(configuration));
     webkitWebContextWebViewCreated(priv->context.get(), webView);
 
@@ -1205,6 +1255,11 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
         webView->priv->defaultContentSecurityPolicy = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    case PROP_VIRTUAL_AUDIO_DEVICES:
+        webView->priv->virtualAudioDevices = G_LIST_MODEL(g_value_get_object(value));
+        break;
+#endif
 #if ENABLE(WK_WEB_EXTENSIONS)
     case PROP_WEB_EXTENSION_CONTEXT:
         webView->priv->webExtensionContext.reset(static_cast<WebKitWebExtensionContext*>(g_value_get_object(value)));
@@ -1320,6 +1375,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
         g_value_set_string(value, webkit_web_view_get_default_content_security_policy(webView));
         break;
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    case PROP_VIRTUAL_AUDIO_DEVICES:
+        g_value_set_object(value, webView->priv->virtualAudioDevices.get());
+        break;
+#endif
     case PROP_THEME_COLOR: {
 #if PLATFORM(GTK)
         GdkRGBA color;
@@ -1978,6 +2038,55 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         nullptr, nullptr,
         WEBKIT_TYPE_WEB_EXTENSION_CONTEXT,
         static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+#endif
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    /**
+     * WebKitWebView:virtual-audio-devices:
+     *
+     * A #GListModel of #WPEVirtualAudioDevice exposed to the web content as audio output devices.
+     *
+     * The device marked as default, if any, replaces the default audio output device of media
+     * elements and audio contexts (speech synthesis keeps using the system audio output).
+     *
+     * Each device is listed by `navigator.mediaDevices.enumerateDevices()` as an `audiooutput`
+     * device whose `label` is the device description, or the device name if it has no
+     * description, and whose `deviceId` is an opaque identifier, like for any other device.
+     * Web content can render audio on a device with `HTMLMediaElement.setSinkId()` or
+     * `AudioContext.setSinkId()`. Setting this property counts as the user's consent to expose
+     * the devices: unlike the system audio outputs, they are listed without microphone access.
+     * Listing audio output devices requires the `ExposeSpeakers` and
+     * `ExposeSpeakersWithoutMicrophone` features to be enabled, see
+     * webkit_settings_set_feature_enabled(), the default device is used even when they are
+     * disabled. The `speaker-selection` permissions policy applies to virtual devices too.
+     *
+     * If more than one device is marked as default, only the first one in the list is used as the
+     * default device. Device names must be unique: a device whose name is already used by a
+     * previous device of the list is ignored. Devices with an invalid configuration are ignored.
+     * At most 32 devices are used, the following ones are ignored. All the audio rendered on a
+     * device is mixed and delivered to the callback set with
+     * wpe_virtual_audio_device_set_buffer_callback().
+     *
+     * A device belongs to a single web view: using it in more than one web view is a programming
+     * error, its callback would receive the unmixed audio of all of them. Web views created for
+     * popups (see #WebKitWebView::create) don't inherit the devices of their opener, set this
+     * property on them to expose virtual devices to them too.
+     *
+     * Virtual devices are not supported when media is played in the GPU process (the
+     * `UseGPUProcessForMediaEnabled` feature): the audio played in the GPU process is rendered
+     * on the system audio output instead.
+     *
+     * The list is only read when the web view is created, changes made to it later are ignored.
+     * Reading the property returns the list given at construction, which can contain devices
+     * that are not used, as described above.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_VIRTUAL_AUDIO_DEVICES] = g_param_spec_object(
+        "virtual-audio-devices",
+        nullptr, nullptr,
+        G_TYPE_LIST_MODEL,
+        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 #endif
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());

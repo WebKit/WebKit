@@ -17590,6 +17590,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.preferredBufferFormats = preferredBufferFormats();
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    parameters.virtualAudioDevices = virtualAudioDeviceParameters();
+#endif
+
 #if HAVE(AUDIT_TOKEN)
     parameters.presentingApplicationAuditToken = presentingApplicationAuditToken();
 #endif

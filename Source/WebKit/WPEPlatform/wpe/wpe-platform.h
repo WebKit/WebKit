@@ -56,6 +56,7 @@
 #include <wpe/WPEVersion.h>
 #include <wpe/WPEView.h>
 #include <wpe/WPEViewAccessible.h>
+#include <wpe/WPEVirtualAudioDevice.h>
 
 #ifdef WPE_PLATFORM_BUFFER_ANDROID
 #include <wpe/WPEBufferAndroid.h>

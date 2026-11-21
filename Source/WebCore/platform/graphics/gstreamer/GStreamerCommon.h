@@ -325,7 +325,11 @@ bool isGStreamerPluginAvailable(ASCIILiteral name);
 bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);
 
 GstElement* createAutoAudioSink(const String& role);
-GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+
+// Whether an audio sink must render through the GStreamerAudioMixer. The mixer is otherwise only
+// used when requested with the WEBKIT_GST_ENABLE_AUDIO_MIXER environment variable.
+enum class AudioMixerUsage : bool { Optional, Required };
+GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { }, AudioMixerUsage = AudioMixerUsage::Optional);
 
 #if ENABLE(MEDIA_STREAM)
 // Resolves an audio output device ID ("default" or an existing persistent ID)

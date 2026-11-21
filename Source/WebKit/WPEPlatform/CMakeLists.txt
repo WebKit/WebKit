@@ -42,6 +42,7 @@ set(WPEPlatform_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEVersion.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEView.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEViewAccessible.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEVirtualAudioDevice.cpp
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/WPEEnumTypes.cpp
 )
 
@@ -73,6 +74,7 @@ set(WPEPlatform_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEToplevel.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEView.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEViewAccessible.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEVirtualAudioDevice.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wpe-platform.h
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/WPEConfig.h
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/WPEEnumTypes.h

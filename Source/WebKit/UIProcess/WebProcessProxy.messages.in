@@ -147,4 +147,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
     [EnabledBy=RemoteSnapshottingEnabled] ReleaseDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier)
 #endif
     EnsureMediaKeysStorageDirectory(WebCore::FrameIdentifier frameID)
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    DidRegisterVirtualAudioDevices(WebKit::WebPageProxyIdentifier pageID, Vector<String> persistentIds)
+#endif
 }

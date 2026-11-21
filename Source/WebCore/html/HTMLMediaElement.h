@@ -823,8 +823,9 @@ protected:
 
     SecurityOriginData documentSecurityOrigin() const final;
 
-    String audioOutputDeviceId() const final { return m_audioOutputPersistentDeviceId; }
+    String audioOutputDeviceId() const final;
     String audioOutputDeviceIdOverride() const final { return m_audioOutputPersistentDeviceId; }
+    bool mediaPlayerUsesEmbedderAudioOutputs() const final;
 
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }
     void setMediaControlsDependOnPageScaleFactor(bool);

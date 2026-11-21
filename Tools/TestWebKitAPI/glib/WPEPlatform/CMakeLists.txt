@@ -113,6 +113,7 @@ ADD_WPE_PLATFORM_TEST(TestDisplay ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebV
 ADD_WPE_PLATFORM_TEST(TestDisplayDefault ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestDisplayDefault.cpp)
 ADD_WPE_PLATFORM_TEST(TestSettings ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestSettings.cpp)
 ADD_WPE_PLATFORM_TEST(TestView ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestView.cpp)
+ADD_WPE_PLATFORM_TEST(TestVirtualAudioDevice ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestVirtualAudioDevice.cpp)
 
 if (ENABLE_WPE_PLATFORM_HEADLESS)
     ADD_WPE_PLATFORM_TEST(TestDisplayHeadless ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestDisplayHeadless.cpp)

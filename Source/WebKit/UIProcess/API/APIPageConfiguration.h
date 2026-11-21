@@ -66,6 +66,11 @@ OBJC_PROTOCOL(_UIClickInteractionDriving);
 #include <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include <wtf/glib/GRefPtr.h>
+typedef struct _WPEVirtualAudioDevice WPEVirtualAudioDevice;
+#endif
+
 namespace WebCore {
 enum class SandboxFlag : uint16_t;
 using SandboxFlags = OptionSet<SandboxFlag>;
@@ -502,6 +507,11 @@ public:
 
 #endif // PLATFORM(VISION)
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    const Vector<GRefPtr<WPEVirtualAudioDevice>>& virtualAudioDevices() const LIFETIME_BOUND { return m_data.virtualAudioDevices; }
+    void setVirtualAudioDevices(Vector<GRefPtr<WPEVirtualAudioDevice>>&& devices) { m_data.virtualAudioDevices = WTF::move(devices); }
+#endif
+
 private:
     bool defaultDelaysWebProcessLaunchUntilFirstLoad() const;
     struct Data {
@@ -704,6 +714,10 @@ private:
 #endif
 
         WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+        Vector<GRefPtr<WPEVirtualAudioDevice>> virtualAudioDevices;
+#endif
     };
 
     // All data members should be added to the Data structure to avoid breaking PageConfiguration::copy().

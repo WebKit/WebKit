@@ -27,5 +27,9 @@ if (ENABLE_WPE_PLATFORM)
     add_subdirectory(WPEPlatform)
 
     ADD_WK2_TEST(TestWebViewEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/TestWebViewEditor.cpp)
+
+    if (ENABLE_MEDIA_STREAM AND USE_GSTREAMER)
+        ADD_WK2_TEST(TestVirtualAudioDevices ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/TestVirtualAudioDevices.cpp)
+    endif ()
 endif ()
 

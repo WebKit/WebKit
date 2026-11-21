@@ -20,7 +20,10 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/audio/VirtualAudioDevice.h
+
         platform/audio/gstreamer/AudioDestinationGStreamer.h
+        platform/audio/gstreamer/GStreamerVirtualAudioDeviceManager.h
 
         platform/gstreamer/GStreamerCodecUtilities.h
         platform/gstreamer/GStreamerElementHarness.h
