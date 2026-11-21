@@ -179,6 +179,7 @@ class SpatialVideoSupport extends MediaControllerSupport
 
         this._installInteraction(canvas);
         this._active = true;
+        this._reportRendererActive(true);
         this._resize();
         this._startRenderLoops();
     }
@@ -570,9 +571,18 @@ class SpatialVideoSupport extends MediaControllerSupport
         host.spatialCameraDidMove(this._yaw * 180 / Math.PI, this._pitch * 180 / Math.PI, this._cameraFieldOfView);
     }
 
+    _reportRendererActive(active)
+    {
+        const host = this.mediaController.host;
+        if (!host || typeof host.setSpatialVideoRendererActive !== "function")
+            return;
+        host.setSpatialVideoRendererActive(active);
+    }
+
     _teardown()
     {
         this._active = false;
+        this._reportRendererActive(false);
         if (this._animationFrame)
             cancelAnimationFrame(this._animationFrame);
         const media = this.mediaController.media;

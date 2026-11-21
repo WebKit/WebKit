@@ -270,6 +270,7 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     m_isVideoElement = mediaDetails.type == FullScreenMediaDetails::Type::Video;
 #endif
+    m_isProjectedVideo = mediaDetails.isProjectedVideo;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     m_mediaDetails = WTF::move(mediaDetails);
     m_launchInImmersive = mediaDetails.launchInImmersive;

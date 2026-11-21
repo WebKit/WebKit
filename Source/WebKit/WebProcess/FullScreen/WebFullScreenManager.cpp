@@ -484,6 +484,9 @@ void WebFullScreenManager::performEnterFullScreen()
     }
 #endif // ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
 
+    if (RefPtr mainVideoElement = m_mainVideoElement)
+        mediaDetails.isProjectedVideo = mainVideoElement->isSpatialVideoRendererActive();
+
     m_page->prepareToEnterElementFullScreen();
 
     if (RefPtr page = m_page->corePage()) {

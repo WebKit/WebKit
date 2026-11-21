@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ SpatialVideoRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" projection="equirectangular"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing that <code>SpatialVideoSupport</code> reports whether it is rendering, which is how fullscreen learns that a drag belongs to the projection's camera rather than to the dismissal gesture.");
+
+window.jsTestIsAsync = true;
+
+const media = document.querySelector("video");
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const container = shadowRoot.appendChild(document.createElement("div"));
+
+window.reported = [];
+
+media.addEventListener("loadedmetadata", () => {
+    window.support = new SpatialVideoSupport({
+        media,
+        host: {
+            spatialVideoRenderingEnabled: true,
+            setSpatialVideoRendererActive: active => reported.push(active),
+        },
+        shadowRoot,
+        container,
+    });
+
+    debug("Enabling the renderer reports that it is active:");
+    shouldBeTrue("support._active");
+    shouldBe("reported", "[true]");
+
+    debug("");
+    debug("Tearing it down reports that it is not:");
+    support.disable();
+    shouldBeFalse("support._active");
+    shouldBe("reported", "[true, false]");
+
+    debug("");
+    debug("Re-enabling reports again, so the state cannot be left stale across a fullscreen transition:");
+    support.enable();
+    shouldBeTrue("support._active");
+    shouldBe("reported", "[true, false, true]");
+
+    debug("");
+    debug("A video that opts out never reports itself active:");
+    const optedOut = document.createElement("video");
+    optedOut.src = "../../content/test.mp4";
+    optedOut.setAttribute("projection", "rectilinear");
+    document.body.appendChild(optedOut);
+    optedOut.addEventListener("loadedmetadata", () => {
+        window.optedOutReported = [];
+        const optedOutShadow = document.body.appendChild(document.createElement("div")).attachShadow({ mode: "open" });
+        window.optedOutSupport = new SpatialVideoSupport({
+            media: optedOut,
+            host: {
+                spatialVideoRenderingEnabled: true,
+                setSpatialVideoRendererActive: active => optedOutReported.push(active),
+            },
+            shadowRoot: optedOutShadow,
+            container: optedOutShadow.appendChild(document.createElement("div")),
+        });
+        shouldBeFalse("optedOutSupport._active");
+        shouldBe("optedOutReported", "[]");
+
+        media.remove();
+        optedOut.remove();
+        shadowRoot.host.remove();
+        finishJSTest();
+    }, { once: true });
+}, { once: true });
+
+</script>
+</body>

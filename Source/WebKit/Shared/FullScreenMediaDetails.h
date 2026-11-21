@@ -39,6 +39,7 @@ struct FullScreenMediaDetails {
 
     Type type { Type::None };
     WebCore::FloatSize mediaDimensions { };
+    bool isProjectedVideo { false };
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     using ImageData = Variant<std::monostate, WebCore::ShareableBitmap::Handle, WebCore::ShareableSpatialImage>;

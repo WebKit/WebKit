@@ -31,6 +31,7 @@
 [RValue] struct WebKit::FullScreenMediaDetails {
     WebKit::FullScreenMediaDetails::Type type;
     WebCore::FloatSize mediaDimensions;
+    bool isProjectedVideo;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     WebKit::FullScreenMediaDetails::ImageData imageData;
     bool launchInImmersive;

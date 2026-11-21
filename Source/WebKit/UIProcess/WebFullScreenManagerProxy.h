@@ -102,6 +102,7 @@ public:
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     bool isVideoElement() const { return m_isVideoElement; }
 #endif
+    bool isProjectedVideo() const { return m_isProjectedVideo; }
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool isImageElement() const { return m_mediaDetails && m_mediaDetails->type == FullScreenMediaDetails::Type::Image; }
     void prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&&) const;
@@ -172,6 +173,7 @@ private:
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     bool m_isVideoElement { false };
 #endif
+    bool m_isProjectedVideo { false };
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     std::optional<FullScreenMediaDetails> m_mediaDetails;
     bool m_launchInImmersive { false };

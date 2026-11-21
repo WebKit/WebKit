@@ -114,6 +114,7 @@ public:
     String spatialVideoProjectionKind() const;
     std::optional<int32_t> spatialVideoHorizontalFieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
+    void setSpatialVideoRendererActive(bool);
     NODELETE bool isAVExperienceControllerFullscreenEnabled() const;
 
     void captionPreferencesChanged();

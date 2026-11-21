@@ -411,6 +411,12 @@ void MediaControlsHost::spatialCameraDidMove(double yaw, double pitch, double fi
         videoElement->spatialCameraDidMove(yaw, pitch, fieldOfView);
 }
 
+void MediaControlsHost::setSpatialVideoRendererActive(bool active)
+{
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement))
+        videoElement->setSpatialVideoRendererActive(active);
+}
+
 bool MediaControlsHost::isAVExperienceControllerFullscreenEnabled() const
 {
 #if HAVE(AVEXPERIENCECONTROLLER)

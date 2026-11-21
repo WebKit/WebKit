@@ -871,6 +871,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<UISwipeGestureRecognizer> _startDismissGestureRecognizer;
     RetainPtr<UIPanGestureRecognizer> _interactivePanDismissGestureRecognizer;
     RetainPtr<WKFullScreenInteractiveTransition> _interactiveDismissTransitionCoordinator;
+    BOOL _suppressDismissalGestures;
 #endif
 #if PLATFORM(VISION)
     RetainPtr<UIWindow> _lastKnownParentWindow;
@@ -1184,9 +1185,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _updateLocationInfo];
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+    // A projected video uses drag to aim its camera, and this recognizer cancels touches in the
+    // view, so a downward drag would exit fullscreen instead of tilting the view.
+    _suppressDismissalGestures = manager->isProjectedVideo();
+
     _startDismissGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_startToDismissFullscreenChanged:)]);
     [_startDismissGestureRecognizer setDelegate:self];
-    [_startDismissGestureRecognizer setCancelsTouchesInView:YES];
+    [_startDismissGestureRecognizer setEnabled:!_suppressDismissalGestures];
+    [_startDismissGestureRecognizer setCancelsTouchesInView:!_suppressDismissalGestures];
     [_startDismissGestureRecognizer setNumberOfTouchesRequired:1];
     [_startDismissGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
     [_fullscreenViewController.get().view addGestureRecognizer:_startDismissGestureRecognizer.get()];
