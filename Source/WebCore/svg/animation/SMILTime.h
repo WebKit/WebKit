@@ -66,6 +66,7 @@ private:
 class SMILTimeWithOrigin {
 public:
     enum Origin {
+        AttributeOrigin,
         ParserOrigin,
         ScriptOrigin
     };
@@ -82,6 +83,7 @@ public:
     }
 
     const SMILTime& time() const LIFETIME_BOUND { return m_time; }
+    Origin origin() const { return m_origin; }
     bool originIsScript() const { return m_origin == ScriptOrigin; }
 
 private:
