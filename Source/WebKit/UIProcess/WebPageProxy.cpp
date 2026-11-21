@@ -5947,13 +5947,13 @@ void WebPageProxy::sendPreventableTouchEvent(WebCore::FrameIdentifier frameID, R
             frame->notifyActivated(internals().lastActivationTimestamp);
     }
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, event.copyRef()), [this, weakThis = WeakPtr { *this }, event = event.copyRef()] (IPC::Connection* connection, bool handled, std::optional<RemoteWebTouchEvent> remoteWebTouchEvent) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, event.copyRef()), [this, weakThis = WeakPtr { *this }, frameID, event = event.copyRef()](IPC::Connection* connection, bool handled, std::optional<RemoteWebTouchEvent> remoteWebTouchEvent) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
-        if (remoteWebTouchEvent)
-            return sendPreventableTouchEvent(remoteWebTouchEvent->targetFrameID, WTF::move(remoteWebTouchEvent->transformedEvent));
+        if (RefPtr targetFrame = remoteWebTouchEvent ? frameForRemoteUserInputEventRedispatch(connection, frameID, remoteWebTouchEvent->targetFrameID) : nullptr)
+            return sendPreventableTouchEvent(targetFrame->frameID(), WTF::move(remoteWebTouchEvent->transformedEvent));
 
         bool didFinishDeferringTouchStart = false;
         ASSERT_IMPLIES(event->type() == WebEventType::TouchStart, m_handlingPreventableTouchStartCount);
@@ -6084,10 +6084,9 @@ void WebPageProxy::sendUnpreventableTouchEvent(WebCore::FrameIdentifier frameID,
             frame->notifyActivated(internals().lastActivationTimestamp);
     }
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, WTF::move(event)), [protectedThis = Ref { *this }] (bool, std::optional<RemoteWebTouchEvent> remoteWebTouchEvent) mutable {
-        if (!remoteWebTouchEvent)
-            return;
-        protectedThis->sendUnpreventableTouchEvent(remoteWebTouchEvent->targetFrameID, WTF::move(remoteWebTouchEvent->transformedEvent));
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, WTF::move(event)), [protectedThis = Ref { *this }, frameID](IPC::Connection* connection, bool, std::optional<RemoteWebTouchEvent> remoteWebTouchEvent) mutable {
+        if (RefPtr targetFrame = remoteWebTouchEvent ? protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteWebTouchEvent->targetFrameID) : nullptr)
+            protectedThis->sendUnpreventableTouchEvent(targetFrame->frameID(), WTF::move(remoteWebTouchEvent->transformedEvent));
     });
 }
 
@@ -22643,8 +22642,8 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(We
 #endif
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectPositionAtBoundaryWithDirection);
 #if ENABLE(DRAG_SUPPORT)
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::RequestDragStart);
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::RequestAdditionalItemsForDragSession);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::RequestDragStart);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::RequestAdditionalItemsForDragSession);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::InsertDroppedImagePlaceholders);
 #endif
 #endif

@@ -1,0 +1,100 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true dragInteractionPolicy=always-enable useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+#draggable {
+    width: 200px;
+    height: 200px;
+    background-color: blue;
+}
+</style>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<!-- Cancelling dragstart keeps this process from starting a drag that the UI process never finishes or cancels. -->
+<div id="draggable" draggable="true" ondragstart="event.preventDefault()">drag me</div>
+<pre id="result"></pre>
+<script>
+// The IPC testing API exists only in debug and ASan builds; this test passes either way.
+const summary = "Tests that the UI process rejects a drag start reply that sends the request back to the frame it was sent to.";
+
+let finished = false;
+let dragStartRequestCount = 0;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.getElementById("result").textContent = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function takeInvalidMessageString()
+{
+    const reply = IPC.sendSyncMessage("UI", 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply?.arguments?.[0]?.value ?? "";
+}
+
+addEventListener("load", async () => {
+    if (!window.IPC || !window.testRunner) {
+        finish("PASS");
+        return;
+    }
+
+    // Answer every drag start request as if the drag began over a cross-site frame, naming this frame. Following that
+    // reply would send the same request back to this process, forever.
+    const requestName = IPC.messages.WebPage_RequestDragStart.name;
+    const replyName = IPC.messages.WebPage_RequestDragStartReply.name;
+    IPC.addIncomingMessageListener("UI", message => {
+        if (message.name !== requestName)
+            return;
+        ++dragStartRequestCount;
+        if (message.listenerID === undefined)
+            return;
+        // DragInitiationResult's RemoteFrameData (variant index 1): the target frame, then the client and global positions.
+        IPC.sendMessage("UI", message.listenerID, replyName, [
+            { type: "uint8_t", value: 1 },
+            { type: "FrameID", value: [IPC.frameID[0]] },
+            { type: "int32_t", value: 10 },
+            { type: "int32_t", value: 10 },
+            { type: "int32_t", value: 10 },
+            { type: "int32_t", value: 10 },
+        ]);
+    });
+
+    const rect = document.getElementById("draggable").getBoundingClientRect();
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(rect.left + rect.width / 2, rect.top + rect.height / 2)
+        .wait(1.5)
+        .move(rect.left + rect.width / 2, rect.top + rect.height + 200, 0.5)
+        .end()
+        .takeResult());
+
+    // Give a looping request time to show up.
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    if (!dragStartRequestCount)
+        finish("FAIL: the drag never asked this process to start.");
+    else if (dragStartRequestCount > 1)
+        finish("FAIL: the request was re-sent " + (dragStartRequestCount - 1) + " times.");
+    else if (!takeInvalidMessageString().includes("Message check failed"))
+        finish("FAIL: the reply wasn't rejected as invalid.");
+    else
+        finish("PASS");
+});
+
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>

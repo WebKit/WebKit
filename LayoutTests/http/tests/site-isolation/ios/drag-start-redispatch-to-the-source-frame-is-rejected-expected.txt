@@ -1,0 +1,3 @@
+drag me
+Tests that the UI process rejects a drag start reply that sends the request back to the frame it was sent to.
+PASS
