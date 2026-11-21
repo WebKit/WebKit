@@ -55,7 +55,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
         auto hasDecoration = false;
         for (auto& inlineItem : m_inlineItemList) {
             ASSERT(inlineItem.isInlineBoxStartOrEnd());
-            inlineBoxRuns.append({ Line::Run(inlineItem, protect(inlineItem.firstLineStyle()), { }) });
+            inlineBoxRuns.append({ Line::Run(inlineItem, IsFirstFormattedLine::Yes, { }) });
             if (inlineItem.isInlineBoxStart())
                 hasDecoration |= !!formattingContext().geometryForBox(protect(inlineItem.layoutBox())).marginBorderAndPaddingStart();
         }
@@ -107,12 +107,12 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
 
         if (isFirstFormattedLineCandidate) {
             ASSERT(!previousLine);
-            lineLayoutResult.runs.insert(0, { leadingInlineItem, protect(leadingInlineItem.firstLineStyle()), { } });
+            lineLayoutResult.runs.insert(0, { leadingInlineItem, IsFirstFormattedLine::Yes, { } });
             lineLayoutResult.inlineItemRange.start = lineInput.needsLayoutRange.start;
             return;
         }
         // Subsequent lines need leading spanning inline box run.
-        lineLayoutResult.runs.insert(0, { leadingInlineItem, { }, { } });
+        lineLayoutResult.runs.insert(0, { leadingInlineItem, 0.f, 0.f });
     };
     insertLeadingInlineBoxRun();
 
@@ -120,7 +120,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
         if (lineLayoutResult.inlineItemRange.end != needsLayoutRange.end)
             return;
         auto& trailingInlineItem = m_inlineItemList.back();
-        lineLayoutResult.runs.append({ trailingInlineItem, protect(isFirstFormattedLineCandidate ? trailingInlineItem.firstLineStyle() : trailingInlineItem.style()), lineLayoutResult.contentGeometry.logicalWidth });
+        lineLayoutResult.runs.append({ trailingInlineItem, isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, lineLayoutResult.contentGeometry.logicalWidth });
         lineLayoutResult.inlineItemRange.end = lineInput.needsLayoutRange.end;
     };
     appendTrailingInlineBoxRunIfNeeded();

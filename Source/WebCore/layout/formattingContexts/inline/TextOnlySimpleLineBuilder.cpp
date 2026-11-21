@@ -90,7 +90,7 @@ static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakR
         return false;
     auto& trailingLineBreak = inlineItemList[trailingInlineItemIndex];
     ASSERT(trailingLineBreak.isLineBreak());
-    line.appendLineBreak(trailingLineBreak, protect(trailingLineBreak.style()));
+    line.appendLineBreak(trailingLineBreak);
     return true;
 }
 
@@ -174,7 +174,7 @@ std::optional<LineLayoutResult> TextOnlySimpleLineBuilder::placeSingleCharacterC
     auto lineRect = lineInput.initialLogicalRect;
     auto contentWidth = inlineTextItem->width().value_or(0.f);
     Line::RunList singleRun;
-    singleRun.append({ Line::Run(*inlineTextItem, protect(inlineTextItem->style()), { }, contentWidth) });
+    singleRun.append({ Line::Run(*inlineTextItem, isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, { }, contentWidth) });
 
     auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(protect(rootStyle()), contentWidth, lineRect.width(), { }, true);
     auto contentRight = contentLeft + contentWidth;
@@ -297,7 +297,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
     }
 
     if (trailingLineBreakIndex && candidateContent.startIndex == candidateContent.endIndex) {
-        m_line.appendLineBreak(m_inlineItemList[*trailingLineBreakIndex], protect(m_inlineItemList[*trailingLineBreakIndex].style()));
+        m_line.appendLineBreak(m_inlineItemList[*trailingLineBreakIndex]);
         return { *trailingLineBreakIndex + 1, { } };
     }
 
