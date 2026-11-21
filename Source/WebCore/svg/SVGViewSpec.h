@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "SVGFitToViewBox.h"
 #include "SVGZoomAndPan.h"
 #include <wtf/TZoneMalloc.h>
@@ -45,6 +46,9 @@ public:
 
     String transformString() const { return protect(m_transform)->valueAsString(); }
     Ref<SVGTransformList>& transform() { return m_transform; }
+
+    using SVGZoomAndPan::setZoomAndPan;
+    ExceptionOr<void> setZoomAndPan(unsigned short) { return Exception { ExceptionCode::NoModificationAllowedError }; }
 
     SVGElement* contextElementConcurrently() const { return m_contextElement; }
 
