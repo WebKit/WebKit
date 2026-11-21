@@ -1,0 +1,240 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptionConfig");
+
+    // The interception commands are declared `targetTypes: ["page"]`, so they are not exposed on
+    // the web-page target's NetworkAgent. Invoke them directly against the backend connection.
+    function invokeInterceptionCommand(name, parameters) {
+        return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters);
+    }
+
+    // Witness the interception configuration held by a specific WebContent process. `internals`
+    // runs per-process, so evaluating it inside the cross-origin iframe's target reads that
+    // process's own copy of the configuration -- not the UI process's authoritative copy.
+    async function isInterceptionConfiguredInTarget(target, url) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({
+            expression: `internals.isNetworkInterceptionConfiguredForTesting("${url}")`,
+            objectGroup: "test",
+            returnByValue: true,
+        });
+        return result.value;
+    }
+
+    async function addIFrameAndGetTarget() {
+        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await targetAddedPromise;
+        return event.data.target;
+    }
+
+    // Captured by the first test case and reused, so the later cases do not race the
+    // frame target's document URL becoming observable.
+    let crossOriginFrameTarget = null;
+
+    const interceptedURL = "http://localhost:8000/site-isolation/inspector/network/resources/data.json";
+    const otherInterceptedURL = "http://localhost:8000/site-isolation/inspector/network/resources/other-data.json";
+
+    // The late-joiner case runs FIRST, while the page has no cross-origin child at all: any
+    // configuration the child's process ends up holding must have arrived through its creation
+    // parameters, because that process was not hosting the page when the configuration was written.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.ConfigurationReachesLateJoiningProcess",
+        description: "A cross-origin iframe process that joins the page after the configuration was written should receive the configuration when it is created.",
+        async test() {
+            await invokeInterceptionCommand("setInterceptionEnabled", {enabled: true});
+            await invokeInterceptionCommand("addInterception", {url: interceptedURL, stage: "response", caseSensitive: true, isRegex: false});
+
+            let frameTarget = await addIFrameAndGetTarget();
+            crossOriginFrameTarget = frameTarget;
+            InspectorTest.expectThat(frameTarget instanceof WI.FrameTarget, "Added target should be a FrameTarget, proving a separate-process OOPIF.");
+            await waitForExpressionInTarget(frameTarget, "typeof internals !== 'undefined'");
+
+            let configured = await isInterceptionConfiguredInTarget(frameTarget, interceptedURL);
+            InspectorTest.expectTrue(configured, "The late-joining cross-origin iframe's process should hold the interception configuration.");
+        }
+    });
+
+    // With the cross-origin child already hosting a frame of the page, a further configuration
+    // write must reach it through the broadcast path.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.BroadcastToExistingProcess",
+        description: "A configuration write should be broadcast to every WebContent process already hosting a frame of the page.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            let configuredBefore = await isInterceptionConfiguredInTarget(frameTarget, otherInterceptedURL);
+            InspectorTest.expectFalse(configuredBefore, "The cross-origin iframe's process should not yet match the second pattern.");
+
+            await invokeInterceptionCommand("addInterception", {url: otherInterceptedURL, stage: "response", caseSensitive: true, isRegex: false});
+
+            let configuredAfter = await isInterceptionConfiguredInTarget(frameTarget, otherInterceptedURL);
+            InspectorTest.expectTrue(configuredAfter, "The cross-origin iframe's process should hold the newly added pattern.");
+        }
+    });
+
+    // Removing a pattern must reach the child's process too, otherwise the child would keep
+    // matching URLs the client has stopped asking about.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.RemovalReachesExistingProcess",
+        description: "Removing a pattern should be broadcast to every WebContent process hosting a frame of the page.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            await invokeInterceptionCommand("removeInterception", {url: otherInterceptedURL, stage: "response", caseSensitive: true, isRegex: false});
+
+            let configured = await isInterceptionConfiguredInTarget(frameTarget, otherInterceptedURL);
+            InspectorTest.expectFalse(configured, "The cross-origin iframe's process should no longer match the removed pattern.");
+
+            let stillConfigured = await isInterceptionConfiguredInTarget(frameTarget, interceptedURL);
+            InspectorTest.expectTrue(stillConfigured, "The cross-origin iframe's process should still match the pattern that was not removed.");
+        }
+    });
+
+    // Like the Network agent without Site Isolation, a configuration command that would change
+    // nothing returns an error. The logged messages are the ones the commands return.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.CommandErrors",
+        description: "A duplicate addInterception, a missing removeInterception and a redundant setInterceptionEnabled should return errors and leave the configuration unchanged.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            InspectorTest.log("Adding a pattern that is configured...");
+            await InspectorTest.expectException(() => invokeInterceptionCommand("addInterception", {url: interceptedURL, stage: "response", caseSensitive: true, isRegex: false}));
+
+            InspectorTest.log("Removing a pattern that is not configured...");
+            await InspectorTest.expectException(() => invokeInterceptionCommand("removeInterception", {url: otherInterceptedURL, stage: "response", caseSensitive: true, isRegex: false}));
+
+            InspectorTest.log("Enabling interception while it is enabled...");
+            await InspectorTest.expectException(() => invokeInterceptionCommand("setInterceptionEnabled", {enabled: true}));
+
+            let configured = await isInterceptionConfiguredInTarget(frameTarget, interceptedURL);
+            InspectorTest.expectTrue(configured, "The cross-origin iframe's process should still match the configured pattern.");
+
+            let otherConfigured = await isInterceptionConfiguredInTarget(frameTarget, otherInterceptedURL);
+            InspectorTest.expectFalse(otherConfigured, "The cross-origin iframe's process should still not match the removed pattern.");
+        }
+    });
+
+    // Web Inspector's patterns only count while it has interception enabled, so disabling it must
+    // reach the child's process even though no pattern was removed.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.DisableReachesExistingProcess",
+        description: "Disabling interception should be broadcast to every WebContent process hosting a frame of the page.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            await invokeInterceptionCommand("setInterceptionEnabled", {enabled: false});
+
+            let configured = await isInterceptionConfiguredInTarget(frameTarget, interceptedURL);
+            InspectorTest.expectFalse(configured, "The cross-origin iframe's process should no longer match a pattern while interception is disabled.");
+        }
+    });
+
+    // A pattern added while interception is disabled is kept, and takes effect once it is enabled.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.AddWhileDisabled",
+        description: "A pattern added while interception is disabled should only reach the cross-origin iframe's process once interception is enabled.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            await invokeInterceptionCommand("addInterception", {url: otherInterceptedURL, stage: "response", caseSensitive: true, isRegex: false});
+
+            let configuredWhileDisabled = await isInterceptionConfiguredInTarget(frameTarget, otherInterceptedURL);
+            InspectorTest.expectFalse(configuredWhileDisabled, "The cross-origin iframe's process should not match a pattern added while interception is disabled.");
+
+            await invokeInterceptionCommand("setInterceptionEnabled", {enabled: true});
+
+            let configuredAfterEnable = await isInterceptionConfiguredInTarget(frameTarget, otherInterceptedURL);
+            InspectorTest.expectTrue(configuredAfterEnable, "The cross-origin iframe's process should match the pattern once interception is enabled.");
+
+            let firstConfiguredAfterEnable = await isInterceptionConfiguredInTarget(frameTarget, interceptedURL);
+            InspectorTest.expectTrue(firstConfiguredAfterEnable, "The cross-origin iframe's process should match the pattern added before interception was disabled.");
+        }
+    });
+
+    // The matcher ignores the fragment of the request URL, so a regular expression anchored at the
+    // end of the URL still matches a URL that carries a fragment.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.FragmentIgnored",
+        description: "A pattern should match a request URL in the cross-origin iframe's process regardless of the URL's fragment.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            const anchoredPattern = "fragment-data\\.json$";
+            const urlWithFragment = "http://localhost:8000/site-isolation/inspector/network/resources/fragment-data.json#section";
+
+            let configuredBefore = await isInterceptionConfiguredInTarget(frameTarget, urlWithFragment);
+            InspectorTest.expectFalse(configuredBefore, "The cross-origin iframe's process should not match the URL before the anchored pattern is added.");
+
+            await invokeInterceptionCommand("addInterception", {url: anchoredPattern, stage: "response", caseSensitive: true, isRegex: true});
+
+            let configured = await isInterceptionConfiguredInTarget(frameTarget, urlWithFragment);
+            InspectorTest.expectTrue(configured, "The cross-origin iframe's process should match a URL with a fragment against a pattern anchored at the end of the URL.");
+
+            await invokeInterceptionCommand("removeInterception", {url: anchoredPattern, stage: "response", caseSensitive: true, isRegex: true});
+        }
+    });
+
+    // A pattern with an empty URL matches every request URL, but an empty request URL never matches.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.EmptyURLNeverMatches",
+        description: "An empty request URL should not match in the cross-origin iframe's process, even against a pattern that matches every URL.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            const unrelatedURL = "http://localhost:8000/site-isolation/inspector/network/resources/unrelated.json";
+
+            await invokeInterceptionCommand("addInterception", {url: "", stage: "response", caseSensitive: true, isRegex: false});
+
+            let configured = await isInterceptionConfiguredInTarget(frameTarget, unrelatedURL);
+            InspectorTest.expectTrue(configured, "The cross-origin iframe's process should match any URL against a pattern with an empty URL.");
+
+            let emptyConfigured = await isInterceptionConfiguredInTarget(frameTarget, "");
+            InspectorTest.expectFalse(emptyConfigured, "The cross-origin iframe's process should not match an empty URL.");
+
+            await invokeInterceptionCommand("removeInterception", {url: "", stage: "response", caseSensitive: true, isRegex: false});
+        }
+    });
+
+    // Network.disable drops Web Inspector's patterns. This runs last: it tears down the domain.
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionConfig.NetworkDisableClearsPatterns",
+        description: "Network.disable should clear Web Inspector's patterns in every WebContent process hosting a frame of the page.",
+        async test() {
+            let frameTarget = crossOriginFrameTarget;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            await invokeInterceptionCommand("disable", {});
+
+            let configured = await isInterceptionConfiguredInTarget(frameTarget, interceptedURL);
+            InspectorTest.expectFalse(configured, "The cross-origin iframe's process should no longer match the first pattern after Network.disable.");
+
+            let otherConfigured = await isInterceptionConfiguredInTarget(frameTarget, otherInterceptedURL);
+            InspectorTest.expectFalse(otherConfigured, "The cross-origin iframe's process should no longer match the second pattern after Network.disable.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that the Network interception configuration is forwarded to every WebContent process hosting a frame of the page, including processes that join the page later.</p>
+</body>

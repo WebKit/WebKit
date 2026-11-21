@@ -44,6 +44,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorResourceUtilities.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
 #include <optional>
@@ -286,6 +287,11 @@ CommandResult<void> ProxyingNetworkAgent::enable()
 
 CommandResult<void> ProxyingNetworkAgent::disable()
 {
+    // Web Inspector's interception patterns go away with the domain. Other consumers keep theirs. This
+    // comes before the early return because the interception commands do not require Network.enable, so
+    // patterns can be in place while the domain is not enabled.
+    protect(m_inspectedPage)->clearInspectorNetworkInterception();
+
     if (!m_enabled)
         return { };
 
@@ -535,18 +541,52 @@ void ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& 
 
 // FIXME: Forward interception to the WebContent processes. https://bugs.webkit.org/show_bug.cgi?id=324383
 
-CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool)
+static NetworkInterceptionPhase toInterceptionPhase(Protocol::Network::NetworkStage stage)
 {
+    switch (stage) {
+    case Protocol::Network::NetworkStage::Request:
+        return NetworkInterceptionPhase::BeforeRequestSent;
+    case Protocol::Network::NetworkStage::Response:
+        return NetworkInterceptionPhase::ResponseStarted;
+    }
+    ASSERT_NOT_REACHED();
+    return NetworkInterceptionPhase::ResponseStarted;
+}
+
+static InterceptPattern toInterceptPattern(const String& url, Protocol::Network::NetworkStage stage, const std::optional<bool>& caseSensitive, const std::optional<bool>& isRegex)
+{
+    return InterceptPattern {
+        NetworkInterceptOwner::Inspector,
+        toInterceptionPhase(stage),
+        InspectorURLPattern { url, caseSensitive.value_or(true), isRegex.value_or(false) },
+    };
+}
+
+CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool enabled)
+{
+    Ref inspectedPage = m_inspectedPage;
+
+    // Like InspectorNetworkAgent, a command that would change nothing is an error.
+    if (!inspectedPage->setInspectorNetworkInterceptionEnabled(enabled))
+        return makeUnexpected(enabled ? "Interception already enabled"_s : "Interception already disabled"_s);
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::addInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> ProxyingNetworkAgent::addInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
+    Ref inspectedPage = m_inspectedPage;
+
+    if (!inspectedPage->addInspectorNetworkInterceptPattern(toInterceptPattern(url, stage, caseSensitive, isRegex)))
+        return makeUnexpected("Intercept for given url, given isRegex, and given stage already exists"_s);
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::removeInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> ProxyingNetworkAgent::removeInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
+    Ref inspectedPage = m_inspectedPage;
+
+    if (!inspectedPage->removeInspectorNetworkInterceptPattern(toInterceptPattern(url, stage, caseSensitive, isRegex)))
+        return makeUnexpected("Missing intercept for given url, given isRegex, and given stage"_s);
     return { };
 }
 

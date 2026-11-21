@@ -65,6 +65,7 @@
 #include <JavaScriptCore/MathCommon.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/PointerEventTypeNames.h>
 #include <algorithm>
 #include <cmath>
@@ -342,6 +343,8 @@ void WebAutomationSession::terminate()
         callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
     }
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+
+    clearNetworkInterceptionForAllPages();
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (Inspector::FrontendChannel* channel = m_remoteChannel) {
@@ -1998,6 +2001,21 @@ void WebAutomationSession::setViewportForPage(WebPageProxy& page, std::optional<
 }
 
 #endif
+
+void WebAutomationSession::clearNetworkInterceptionForAllPages()
+{
+    // The intercepts of a session end with it. Other consumers, such as Web Inspector, keep theirs.
+    RefPtr processPool = m_processPool;
+    if (!processPool)
+        return;
+
+    for (Ref process : borrow(processPool->processes()).get()) {
+        for (Ref page : process->pages()) {
+            if (page->isControlledByAutomation())
+                page->setNetworkInterceptPatterns(Inspector::NetworkInterceptOwner::Automation, { }, [] { });
+        }
+    }
+}
 
 void WebAutomationSession::willClosePage(const WebPageProxy& page)
 {

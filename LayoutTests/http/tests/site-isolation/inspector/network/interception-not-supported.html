@@ -1,0 +1,77 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // Configuring interception is proxied across processes (see
+    // interception-config-cross-origin-iframe.html), but no load is paused yet, so the verbs that
+    // resume a paused load must fail explicitly with the legacy "missing pending intercept" errors
+    // instead of silently succeeding.
+    const missingRequestError = "Missing pending intercept request for given requestId";
+    const missingResponseError = "Missing pending intercept response for given requestId";
+
+    // The interception commands are declared `targetTypes: ["page"]`, so they are not exposed on
+    // the web-page target's NetworkAgent. Invoke them directly against the backend connection.
+    function invokeInterceptionCommand(name, parameters) {
+        return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters);
+    }
+
+    async function expectRejection(name, parameters, expectedError) {
+        let resolvedValue;
+        try {
+            resolvedValue = await invokeInterceptionCommand(name, parameters);
+        } catch (e) {
+            let message = e.message || String(e);
+            InspectorTest.expectEqual(message, expectedError, `Network.${name} should fail with "${expectedError}".`);
+            return;
+        }
+        InspectorTest.expectThat(false, `Network.${name} should have failed, but it resolved with ${JSON.stringify(resolvedValue)}.`);
+    }
+
+    async function addIFrameAndGetTarget() {
+        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await targetAddedPromise;
+        return event.data.target;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptionNotSupported");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionNotSupported.CrossOriginIFrameTargetExists",
+        description: "A genuine separate-process cross-origin iframe target must exist before driving the interception commands.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+            InspectorTest.expectThat(target instanceof WI.FrameTarget, "Added target should be a FrameTarget, proving a separate-process OOPIF.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionNotSupported.PausedRequestCommands",
+        description: "The commands that act on a paused intercepted request should fail under Site Isolation.",
+        async test() {
+            const requestId = "request-1.1";
+            await expectRejection("interceptContinue", {requestId, stage: "request"}, missingRequestError);
+            await expectRejection("interceptWithRequest", {requestId, method: "GET"}, missingRequestError);
+            await expectRejection("interceptWithResponse", {requestId, content: "intercepted", base64Encoded: false}, missingResponseError);
+            await expectRejection("interceptRequestWithResponse", {requestId, content: "intercepted", base64Encoded: false, mimeType: "text/plain", status: 200, statusText: "OK", headers: {}}, missingRequestError);
+            await expectRejection("interceptRequestWithError", {requestId, errorType: "General"}, missingRequestError);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that the Network interception commands fail explicitly instead of silently succeeding under Site Isolation.</p>
+</body>

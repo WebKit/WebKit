@@ -1276,6 +1276,7 @@ webkit.org/b/327258 fast/css-grid-layout/grid-auto-columns-rows-get-set.html [ F
 webkit.org/b/327677 media/video-page-visibility-restriction.html [ Pass Timeout ]
 
 webkit.org/b/329155 http/tests/IndexedDB/transaction-stop-during-request-dispatch.html [ Failure Pass ]
+webkit.org/b/328270 http/tests/IndexedDB/transaction-abort-pending-requests-stop.html [ Pass Failure ]
 webkit.org/b/329156 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.https.html [ Failure Pass ]
 
 # Remaining failures after unskipping directories in platform/glib.

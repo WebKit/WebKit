@@ -1,0 +1,49 @@
+Test that the Network interception configuration is forwarded to every WebContent process hosting a frame of the page, including processes that join the page later.
+
+
+== Running test suite: SiteIsolation.Network.InterceptionConfig
+-- Running test case: SiteIsolation.Network.InterceptionConfig.ConfigurationReachesLateJoiningProcess
+PASS: Added target should be a FrameTarget, proving a separate-process OOPIF.
+PASS: The late-joining cross-origin iframe's process should hold the interception configuration.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.BroadcastToExistingProcess
+PASS: The cross-origin iframe's process should not yet match the second pattern.
+PASS: The cross-origin iframe's process should hold the newly added pattern.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.RemovalReachesExistingProcess
+PASS: The cross-origin iframe's process should no longer match the removed pattern.
+PASS: The cross-origin iframe's process should still match the pattern that was not removed.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.CommandErrors
+Adding a pattern that is configured...
+PASS: Should produce an exception.
+Error: Intercept for given url, given isRegex, and given stage already exists
+Removing a pattern that is not configured...
+PASS: Should produce an exception.
+Error: Missing intercept for given url, given isRegex, and given stage
+Enabling interception while it is enabled...
+PASS: Should produce an exception.
+Error: Interception already enabled
+PASS: The cross-origin iframe's process should still match the configured pattern.
+PASS: The cross-origin iframe's process should still not match the removed pattern.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.DisableReachesExistingProcess
+PASS: The cross-origin iframe's process should no longer match a pattern while interception is disabled.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.AddWhileDisabled
+PASS: The cross-origin iframe's process should not match a pattern added while interception is disabled.
+PASS: The cross-origin iframe's process should match the pattern once interception is enabled.
+PASS: The cross-origin iframe's process should match the pattern added before interception was disabled.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.FragmentIgnored
+PASS: The cross-origin iframe's process should not match the URL before the anchored pattern is added.
+PASS: The cross-origin iframe's process should match a URL with a fragment against a pattern anchored at the end of the URL.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.EmptyURLNeverMatches
+PASS: The cross-origin iframe's process should match any URL against a pattern with an empty URL.
+PASS: The cross-origin iframe's process should not match an empty URL.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.NetworkDisableClearsPatterns
+PASS: The cross-origin iframe's process should no longer match the first pattern after Network.disable.
+PASS: The cross-origin iframe's process should no longer match the second pattern after Network.disable.
+
