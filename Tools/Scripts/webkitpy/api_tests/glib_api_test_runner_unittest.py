@@ -53,7 +53,13 @@ class StubTestRunner(TestRunner):
         return os.path.basename(test_program) == "TestWTF"
 
     def is_glib_test(self, test_program):
-        return os.path.basename(os.path.dirname(test_program)) in ("WPE", "WebKitGTK")
+        return os.path.basename(os.path.dirname(test_program)) in ("WPE", "WebKitGTK", "WPEPlatform")
+
+    def is_wpe_platform_test(self, test_program):
+        return os.path.basename(os.path.dirname(test_program)) == "WPEPlatform"
+
+    def is_wpe_platform_wayland_test(self, test_program):
+        return self.is_wpe_platform_test(test_program) and "Wayland" in os.path.basename(test_program)
 
 
 class ChangedTestsStubTestRunner(StubTestRunner):
@@ -72,6 +78,17 @@ class ChangedTestsStubTestRunner(StubTestRunner):
 
     def _get_tests_from_glib_test_program(self, test_program):
         return self._available_glib_test_cases
+
+
+class ListingChangedTestsStubTestRunner(ChangedTestsStubTestRunner):
+    # Lists the subtests by running the test programs with -l, like the real runner, but without the
+    # environments of Monado and Weston, which run_tests() only sets up after finding the tests to run.
+    _get_tests_from_glib_test_program = TestRunner._get_tests_from_glib_test_program
+
+    def __init__(self, base_directory, source_directory):
+        super().__init__(base_directory, source_directory)
+        self._options = optparse.Values({})
+        self._test_env = {"PATH": os.environ.get("PATH", "")}
 
 
 class StubExpectations(object):
@@ -303,6 +320,26 @@ class GLibAPITestRunnerTest(unittest.TestCase):
         self._write_sources({path: json.dumps({})})
 
         self.assertEqual(["TestDownloads:/webkit/Downloads/built"], self._changed_tests(glib_test_cases=["/webkit/Downloads/built"]))
+
+    def _assert_changed_expectation_is_listed(self, directory, test_program, subtest):
+        # A test program that lists its subtests like a GLib one does with -l.
+        os.makedirs(directory, exist_ok=True)
+        with open(os.path.join(directory, test_program), "w") as fd:
+            fd.write(f"#!/bin/sh\necho '# {subtest}'\n")
+        os.chmod(os.path.join(directory, test_program), 0o755)
+        path = "Tools/TestWebKitAPI/glib/TestExpectations.json"
+        self._create_source_repository({path: json.dumps({test_program: {"subtests": {subtest: {"expected": {"all": {"status": ["TIMEOUT", "PASS"]}}}}}})})
+        self._write_sources({path: json.dumps({})})
+
+        runner = ListingChangedTestsStubTestRunner(self._base_directory, self._source_directory)
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual([f"{test_program}:{subtest}"], runner._changed_tests("base"))
+
+    def test_changed_expectations_list_the_subtests_of_webxr_tests(self):
+        self._assert_changed_expectation_is_listed(self._wpe_directory, "TestWebKitWebXR", "/webkit/WebKitWebXR/leave-immersive-mode")
+
+    def test_changed_expectations_list_the_subtests_of_wpe_platform_wayland_tests(self):
+        self._assert_changed_expectation_is_listed(os.path.join(self._base_directory, "WPEPlatform"), "TestDisplayWayland", "/wpe-platform/DisplayWayland/connect")
 
     def test_an_expectation_change_is_reported_over_a_source_change(self):
         expectations = "Tools/TestWebKitAPI/glib/TestExpectations.json"
