@@ -44,6 +44,7 @@ struct CSSSelectorParserContext {
     bool cssPickerPseudoElementEnabled : 1 { false };
     bool htmlEnhancedSelectEnabled : 1 { false };
     bool targetTextPseudoElementEnabled : 1 { false };
+    bool scopedViewTransitionsEnabled : 1 { false };
     bool cssAppearanceBaseEnabled : 1 { false };
     bool openPseudoClassEnabled : 1 { false };
 

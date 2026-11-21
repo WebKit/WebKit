@@ -87,7 +87,6 @@ public:
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet* userAgentMediaQueryStyle() const;
-    NODELETE RuleSet* dynamicViewTransitionsStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
     RuleSet* quirkStyle() const;
@@ -121,11 +120,6 @@ public:
 
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 
-    void setDynamicViewTransitionsStyle(RuleSet* ruleSet)
-    {
-        m_dynamicViewTransitionsStyle = ruleSet;
-    }
-
     bool& isInvalidatingStyleWithRuleSets() LIFETIME_BOUND { return m_isInvalidatingStyleWithRuleSets; }
 
     bool hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bool(RuleSet&)>&);
@@ -137,7 +131,6 @@ private:
 
     RefPtr<RuleSet> m_authorStyle;
     mutable RefPtr<RuleSet> m_userAgentMediaQueryStyle;
-    mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
     RefPtr<RuleSet> m_userStyle;
     RefPtr<RuleSet> m_quirkStyle;
 

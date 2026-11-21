@@ -1,0 +1,7 @@
+
+FAIL moving scope element to new document via appendChild skips transition and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL adopting scope element to new document via adoptNode skips transition and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL moving ancestor of scope element to new document skips transition and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL removing scope element from document skips transition and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL removing ancestor of scope element from document skips transition and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+

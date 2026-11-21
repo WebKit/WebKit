@@ -107,6 +107,7 @@ enum class DominantBaseline : uint8_t;
 enum class EmptyCell : bool;
 enum class EventListenerRegionType : uint64_t;
 enum class FieldSizing : bool;
+enum class ViewTransitionScope : bool;
 enum class FillAttachment : uint8_t;
 enum class FillBox : uint8_t;
 enum class FillSizeType : uint8_t;
@@ -391,6 +392,7 @@ struct UsedOutlineOffset;
 struct VerticalAlign;
 struct ViewTimeline;
 struct ViewTransitionClasses;
+struct ViewTransitionGroup;
 struct ViewTransitionName;
 struct WebkitBoxReflect;
 struct WebkitInitialLetter;
@@ -790,7 +792,7 @@ public:
     inline void setPageSize(PageSize&&);
 
     static constexpr auto PseudoElementTypeBits = 5;
-    static constexpr auto PublicPseudoIDBits = 19;
+    static constexpr auto PublicPseudoIDBits = 20;
     static constexpr auto TextTransformBits = 6;
     static constexpr auto TextDecorationLineBits = 5;
 

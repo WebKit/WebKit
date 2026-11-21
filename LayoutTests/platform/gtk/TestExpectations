@@ -1012,6 +1012,8 @@ webkit.org/b/309572 compositing/video/video-object-view-box-no-poster.html [ Fai
 webkit.org/b/309572 compositing/video/video-object-view-box-object-position-no-poster.html [ Failure ]
 webkit.org/b/309572 compositing/video/video-object-view-box-writing-mode-no-poster.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+# The snapshot of a fractionally positioned border rasterizes one pixel off from the live rendering.
+imported/w3c/web-platform-tests/css/css-view-transitions/scoped/fractional-border-shift.html [ ImageOnlyFailure ]
 
 webkit.org/b/278719 fast/events/touch/emulate-touch-events.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-event-frames.html [ Failure ]

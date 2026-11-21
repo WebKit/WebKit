@@ -34,6 +34,7 @@
 #include "MutableStyleProperties.h"
 #include "NativeImage.h"
 #include "Styleable.h"
+#include "TransformationMatrix.h"
 #include "ViewTransitionUpdateCallback.h"
 #include "VisibilityChangeClient.h"
 #include <wtf/CheckedRef.h>
@@ -55,10 +56,21 @@ namespace WebCore {
 
 class DOMPromise;
 class DeferredPromise;
+class GraphicsContext;
+class ImageBuffer;
+class RenderLayer;
+class RenderBlockFlow;
+class RenderBox;
 class RenderLayerModelObject;
+class ShadowRoot;
 class RenderViewTransitionCapture;
 class ViewTransitionTypeSet;
 template<typename> class ExceptionOr;
+
+namespace Style {
+class RuleSet;
+class Scope;
+}
 
 enum class ViewTransitionPhase : uint8_t {
     PendingCapture,
@@ -77,8 +89,15 @@ public:
         LayoutSize size;
         LayoutSize subpixelOffset;
         RefPtr<MutableStyleProperties> properties;
+        // Maps the element's border box to the snapshot containing block, used to
+        // re-express nested group transforms relative to their containing group.
+        std::optional<TransformationMatrix> snapshotMatrix;
+        // Border widths offset nested group geometry: child transforms are
+        // relative to this group's padding box edge.
+        LayoutSize borderOffset;
         bool intersectsViewport { false };
         bool isRootElement { false };
+        bool hasNonInvertibleTransform { false };
     };
 
     // std::nullopt represents an non-capturable element.
@@ -93,7 +112,11 @@ public:
     State newState;
 
     Vector<AtomString> classList;
+    AtomString containingGroupName;
     RefPtr<MutableStyleProperties> groupStyleProperties;
+    // A generated name derived from a shadow tree element must not leak its id;
+    // script-facing serialization uses "match-element" instead.
+    bool generatedNameFromShadowTree { false };
 };
 
 struct OrderedNamedElementsMap {
@@ -179,7 +202,7 @@ public:
 class ViewTransition : public RefCounted<ViewTransition>, public VisibilityChangeClient, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
-    static Ref<ViewTransition> createSamePage(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
+    static Ref<ViewTransition> createSamePage(Document&, Element* scopeElement, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&, Vector<Ref<ShadowRoot>>&& = { });
     static RefPtr<ViewTransition> resolveInboundCrossDocumentViewTransition(Document&, std::unique_ptr<ViewTransitionParams>);
     // Given the old document's params once its state has been captured, or null if the transition was
     // skipped. Proceeds with the navigation, which must not happen before then.
@@ -202,6 +225,10 @@ public:
 
     LayoutRect containingBlockRect();
 
+    // Paints the frozen scope snapshot in place of the scope's layer while the
+    // update callback runs; returns false once rendering is no longer suppressed.
+    bool paintFrozenScopeSnapshot(GraphicsContext&, RenderLayer&, const RenderLayer* rootLayer, const LayoutSize& subpixelOffset);
+
     NODELETE DOMPromise& ready();
     NODELETE DOMPromise& updateCallbackDone();
     NODELETE DOMPromise& finished();
@@ -210,6 +237,32 @@ public:
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
     NODELETE Document* document() const;
+
+    NODELETE Element* scopeElement() const { return m_scopeElement.get(); }
+    NODELETE Element* transitionRoot() const;
+    NODELETE Style::Scope* transitionStyleScope() const;
+
+    bool hasPseudoElementTree() const { return m_hasPseudoElementTree; }
+
+    // Renderers of the pseudo element tree hosted on the scope element. The
+    // document transition uses the equivalent storage on RenderView instead.
+    NODELETE RenderBlockFlow* scopedViewTransitionContainingBlock() const;
+    void setScopedViewTransitionContainingBlock(RenderBlockFlow&);
+    void addScopedViewTransitionGroup(const AtomString&, RenderBox&);
+    void removeScopedViewTransitionGroup(const AtomString&);
+    NODELETE RenderBox* scopedViewTransitionGroupForName(const AtomString&) const;
+
+    void reinstallDynamicStyles();
+
+    // UA rules generated for this transition's pseudo-elements; matched only when
+    // resolving pseudos hosted on this transition's scope, so concurrent scoped
+    // transitions with equal participant names stay independent.
+    NODELETE Style::RuleSet* dynamicStyleRules() const;
+
+    // Content box size of the scope element when the transition started; used as
+    // its intrinsic size while the transition's internal size containment applies.
+    std::optional<LayoutSize> scopeRememberedInnerSize() const { return m_scopeRememberedInnerSize; }
+    void setScopeRememberedInnerSize(LayoutSize size) { m_scopeRememberedInnerSize = size; }
 
     NODELETE bool documentElementIsCaptured() const;
 
@@ -221,10 +274,11 @@ public:
     static constexpr Seconds defaultTimeout = 4_s;
 
 private:
-    ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
+    ViewTransition(Document&, Element* scopeElement, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&, Vector<Ref<ShadowRoot>>&&);
     ViewTransition(Document&, Vector<AtomString>&&);
 
     void copyElementBaseProperties(RenderLayerModelObject&, CapturedElement::State&);
+    void adjustTransformForContainingGroup(CapturedElement::State&, const CapturedElement::State&);
     bool updatePropertiesForGroupPseudo(CapturedElement&, const AtomString&);
     LayoutRect captureOverflowRect(RenderLayerModelObject& renderer);
 
@@ -244,6 +298,8 @@ private:
     ExceptionOr<void> checkForViewportSizeChange();
 
     void clearViewTransition();
+    bool isActiveTransition() const;
+    bool isInTransitionScope(Element&) const;
 
     void whenPendingCapturesComplete(Function<void()>&&);
     void didCompletePendingCapture(const AtomString& name, RefPtr<NativeImage>&&);
@@ -267,7 +323,26 @@ private:
     float m_initialPageZoom { 1 };
 
     const RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
+    // Null for a document-scoped transition.
+    const RefPtr<Element> m_scopeElement;
+    const Vector<Ref<ShadowRoot>> m_includedShadowRoots;
     bool m_isCrossDocument { false };
+    bool m_hasPseudoElementTree { false };
+
+    void freezeScopeRendering();
+    void unfreezeScopeRendering();
+
+    Ref<Style::RuleSet> ensureDynamicStyleRules();
+    AtomString groupKeyframesName(const AtomString&) const;
+
+    RefPtr<Style::RuleSet> m_dynamicStyleRules;
+
+    RefPtr<ImageBuffer> m_frozenScopeSnapshot;
+    LayoutRect m_frozenScopeSnapshotRect;
+
+    std::optional<LayoutSize> m_scopeRememberedInnerSize;
+    SingleThreadWeakPtr<RenderBlockFlow> m_scopedContainingBlockRenderer;
+    HashMap<AtomString, SingleThreadWeakPtr<RenderBox>> m_scopedGroupRenderers;
 
     EventLoopTimerHandle m_pendingCapturesTimeout;
     Function<void()> m_whenPendingCapturesComplete;

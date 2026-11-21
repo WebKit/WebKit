@@ -898,6 +898,8 @@ media/adopt-node-after-showing-picker-crash.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/table-caption.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure  Pass ]
+# The snapshot of a fractionally positioned border rasterizes one pixel off from the live rendering.
+imported/w3c/web-platform-tests/css/css-view-transitions/scoped/fractional-border-shift.html [ Pass ImageOnlyFailure ]
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-1.html [ Skip ]
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-2.html [ Skip ]
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-3.html [ Skip ]

@@ -90,11 +90,6 @@ void DocumentScope::createDocumentResolver()
     Ref resolver = Resolver::create(m_document, Resolver::ScopeType::Document);
     m_resolver = resolver.copyRef();
 
-    if (!m_dynamicViewTransitionsStyle)
-        m_dynamicViewTransitionsStyle = RuleSet::create();
-
-    resolver->ruleSets().setDynamicViewTransitionsStyle(m_dynamicViewTransitionsStyle.get());
-
     for (auto& keyframes : m_viewTransitionKeyframes)
         resolver->addKeyframeStyle(keyframes.copyRef());
 
@@ -105,23 +100,6 @@ void DocumentScope::createDocumentResolver()
     resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 
     protect(m_document->fontSelector())->buildCompleted();
-}
-
-void DocumentScope::clearViewTransitionStyles()
-{
-    clearResolver();
-    m_dynamicViewTransitionsStyle = nullptr;
-    m_viewTransitionKeyframes.clear();
-}
-
-void DocumentScope::addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&& rule)
-{
-    // Add to the existing resolver, if any, and retain the keyframes so they can be
-    // re-established when the resolver is recreated (e.g. by a stylesheet mutation)
-    // during the transition.
-    if (RefPtr resolver = resolverIfExists())
-        resolver->addKeyframeStyle(rule.copyRef());
-    m_viewTransitionKeyframes.append(WTF::move(rule));
 }
 
 void DocumentScope::releaseMemory()

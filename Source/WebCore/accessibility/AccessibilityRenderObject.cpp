@@ -1487,6 +1487,7 @@ NODELETE static bool shouldExcludeTextRunsForPseudoElement(std::optional<PseudoE
     case PseudoElementType::WebKitResizer:
     case PseudoElementType::ViewTransition:
     case PseudoElementType::ViewTransitionGroup:
+    case PseudoElementType::ViewTransitionGroupChildren:
     case PseudoElementType::ViewTransitionImagePair:
     case PseudoElementType::ViewTransitionOld:
     case PseudoElementType::ViewTransitionNew:

@@ -837,15 +837,13 @@ void RenderLayerBacking::updateTransform(const Style::ComputedStyle& style)
     TransformationMatrix t;
     CheckedRef renderer = this->renderer();
     if (renderer->effectiveCapturedInViewTransition()) {
-        if (RefPtr activeViewTransition = renderer->document().activeViewTransition()) {
-            if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(renderer)) {
-                t.scaleNonUniform(viewTransitionCapture->scale().width(), viewTransitionCapture->scale().height());
-                t.translateRight(viewTransitionCapture->captureContentInset().x(), viewTransitionCapture->captureContentInset().y());
-            }
-            if (m_owningLayer.isRenderViewLayer()) {
-                auto scrollPosition = protect(renderer->view().frameView())->scrollPosition();
-                t.translate(-scrollPosition.x(), -scrollPosition.y());
-            }
+        if (CheckedPtr viewTransitionCapture = protect(renderer->document())->viewTransitionNewPseudoForCapturedElement(renderer)) {
+            t.scaleNonUniform(viewTransitionCapture->scale().width(), viewTransitionCapture->scale().height());
+            t.translateRight(viewTransitionCapture->captureContentInset().x(), viewTransitionCapture->captureContentInset().y());
+        }
+        if (m_owningLayer.isRenderViewLayer()) {
+            auto scrollPosition = protect(renderer->view().frameView())->scrollPosition();
+            t.translate(-scrollPosition.x(), -scrollPosition.y());
         }
     } else if (m_owningLayer.isTransformed())
         protect(m_owningLayer)->updateTransformFromStyle(t, style, Style::TransformResolver::individualTransformOperations);
@@ -1483,7 +1481,12 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
 
     ASSERT(compositingAncestor == m_owningLayer.ancestorCompositingLayer());
-    if (updateAncestorClipping(compositor->clippedByAncestor(owningLayer, compositingAncestor), compositingAncestor))
+    // A scoped view transition containing block escapes the scope's own clip, so
+    // its ancestor clipping resolves against the scope's compositing ancestor.
+    const RenderLayer* ancestorForClipping = compositingAncestor;
+    if (renderer->isViewTransitionContainingBlock() && compositingAncestor && !compositingAncestor->isRenderViewLayer() && compositingAncestor->renderer().capturedInViewTransition())
+        ancestorForClipping = compositingAncestor->ancestorCompositingLayer();
+    if (updateAncestorClipping(compositor->clippedByAncestor(owningLayer, ancestorForClipping), ancestorForClipping))
         layerConfigChanged = true;
 
     if (updateOverflowControlsLayers(requiresHorizontalScrollbarLayer(), requiresVerticalScrollbarLayer(), requiresScrollCornerLayer()))
@@ -1862,26 +1865,38 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 #endif
 
     ASSERT(compositedAncestor == m_owningLayer.ancestorCompositingLayer());
-    LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(compositedAncestor);
+
+    // A scoped view transition containing block is attached to the graphics layer
+    // tree where its captured scope would attach, so its geometry is relative to
+    // the scope's compositing ancestor. It also stays pinned to the scope's
+    // border box, unaffected by the scope's own scroll offset.
+    CheckedPtr<const RenderLayer> scopeLayerForContainingBlock;
+    CheckedPtr<const RenderLayer> ancestorLayer = compositedAncestor;
+    if (renderer->isViewTransitionContainingBlock() && compositedAncestor && !compositedAncestor->isRenderViewLayer() && compositedAncestor->renderer().capturedInViewTransition()) {
+        scopeLayerForContainingBlock = compositedAncestor;
+        ancestorLayer = compositedAncestor->ancestorCompositingLayer();
+    }
+
+    LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(ancestorLayer.get());
+    if (scopeLayerForContainingBlock && scopeLayerForContainingBlock->scrollableArea())
+        parentGraphicsLayerRect.move(-toLayoutSize(scopeLayerForContainingBlock->scrollableArea()->scrollPosition()));
 
     // If our content is being used in a view-transition, then all positioning is handled using a synthesized 'transform' property on the wrapping
     // ::view-transition-new element. Set the parent graphics layer rect to that of the pseudo, adjusted into coordinates of the parent layer.
     if (renderer->effectiveCapturedInViewTransition() && renderer->element()) {
-        if (RefPtr activeViewTransition = renderer->document().activeViewTransition()) {
-            if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(renderer)) {
-                ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, viewTransitionCapture->captureOverflowRect(), { }, { });
-                parentGraphicsLayerRect = LayoutRect(snapRectToDevicePixelsIfNeeded(LayoutRect(toLayoutPoint(computedOffsets.fromParentGraphicsLayer()), viewTransitionCapture->captureOverflowRect().size()), renderer));
-            }
+        if (CheckedPtr viewTransitionCapture = protect(renderer->document())->viewTransitionNewPseudoForCapturedElement(renderer)) {
+            ComputedOffsets computedOffsets(m_owningLayer, ancestorLayer.get(), viewTransitionCapture->captureOverflowRect(), { }, { });
+            parentGraphicsLayerRect = LayoutRect(snapRectToDevicePixelsIfNeeded(LayoutRect(toLayoutPoint(computedOffsets.fromParentGraphicsLayer()), viewTransitionCapture->captureOverflowRect().size()), renderer));
         }
     }
 
     if (m_ancestorClippingStack)
-        updateClippingStackLayerGeometry(*m_ancestorClippingStack, compositedAncestor, parentGraphicsLayerRect);
+        updateClippingStackLayerGeometry(*m_ancestorClippingStack, ancestorLayer.get(), parentGraphicsLayerRect);
 
-    LayoutRect primaryGraphicsLayerRect = computePrimaryGraphicsLayerRect(compositedAncestor, parentGraphicsLayerRect);
+    LayoutRect primaryGraphicsLayerRect = computePrimaryGraphicsLayerRect(ancestorLayer.get(), parentGraphicsLayerRect);
 
-    ComputedOffsets compositedBoundsOffset(m_owningLayer, compositedAncestor, compositedBounds(), parentGraphicsLayerRect, primaryGraphicsLayerRect);
-    ComputedOffsets rendererOffset(m_owningLayer, compositedAncestor, { }, parentGraphicsLayerRect, primaryGraphicsLayerRect);
+    ComputedOffsets compositedBoundsOffset(m_owningLayer, ancestorLayer.get(), compositedBounds(), parentGraphicsLayerRect, primaryGraphicsLayerRect);
+    ComputedOffsets rendererOffset(m_owningLayer, ancestorLayer.get(), { }, parentGraphicsLayerRect, primaryGraphicsLayerRect);
 
     m_compositedBoundsOffsetFromGraphicsLayer = compositedBoundsOffset.fromPrimaryGraphicsLayer();
 
@@ -1892,7 +1907,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     if (RefPtr viewportAnchorLayer = m_viewportAnchorLayer) {
         if (RefPtr viewportClippingLayer = m_viewportClippingLayer) {
-            ASSERT(compositedAncestor == renderer->view().layer());
+            ASSERT(ancestorLayer == renderer->view().layer());
             auto fixedPositionRect = protect(renderer->view().frameView())->rectForFixedPositionLayout();
             if (m_ancestorClippingStack) {
                 for (auto& entry : m_ancestorClippingStack->stack()) {
@@ -2120,8 +2135,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     }
 
     // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.
-    LayoutRect ancestorCompositedBounds = compositedAncestor ? compositedAncestor->backing()->compositedBounds() : LayoutRect();
-    setRequiresOwnBackingStore(protect(compositor())->requiresOwnBackingStore(owningLayer, compositedAncestor,
+    LayoutRect ancestorCompositedBounds = ancestorLayer ? ancestorLayer->backing()->compositedBounds() : LayoutRect();
+    setRequiresOwnBackingStore(protect(compositor())->requiresOwnBackingStore(owningLayer, ancestorLayer.get(),
         LayoutRect(toLayoutPoint(compositedBoundsOffset.fromParentGraphicsLayer()), compositedBounds().size()), ancestorCompositedBounds));
     updateBackdropFiltersGeometry();
     updateAfterWidgetResize();
@@ -4576,6 +4591,16 @@ GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
         if (protect(m_owningLayer.renderer().document())->activeViewTransitionCapturedDocumentElement()) {
             if (WeakPtr viewTransitionContainingBlock = m_owningLayer.renderer().view().viewTransitionContainingBlock(); viewTransitionContainingBlock && viewTransitionContainingBlock->hasLayer() && viewTransitionContainingBlock->layer()->backing())
                 return viewTransitionContainingBlock->layer()->backing()->childForSuperlayers();
+        }
+    } else if (m_owningLayer.renderer().capturedInViewTransition()) {
+        // A scope element captured in the transition it hosts attaches its pseudo-element
+        // tree where it would attach itself; its own content is reparented into the
+        // ::view-transition-new pseudo in collectViewTransitionNewContentLayers.
+        if (RefPtr element = m_owningLayer.renderer().element()) {
+            if (RefPtr transition = protect(m_owningLayer.renderer().document())->viewTransitionHostedOn(*element)) {
+                if (CheckedPtr containingBlock = transition->scopedViewTransitionContainingBlock(); containingBlock && containingBlock->hasLayer() && containingBlock->layer()->backing())
+                    return containingBlock->layer()->backing()->childForSuperlayers();
+            }
         }
     }
     return childForSuperlayersExcludingViewTransitions();

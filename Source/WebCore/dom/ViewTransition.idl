@@ -31,5 +31,6 @@ interface ViewTransition {
     readonly attribute Promise<undefined> updateCallbackDone;
     readonly attribute Promise<undefined> ready;
     readonly attribute Promise<undefined> finished;
+    [EnabledBySetting=ScopedViewTransitionsEnabled] readonly attribute Element? transitionRoot;
     undefined skipTransition();
 };

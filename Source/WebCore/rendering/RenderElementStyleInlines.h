@@ -193,6 +193,7 @@ inline bool RenderElement::isViewTransitionContainer() const
 {
     return style().pseudoElementType() == PseudoElementType::ViewTransition
         || style().pseudoElementType() == PseudoElementType::ViewTransitionGroup
+        || style().pseudoElementType() == PseudoElementType::ViewTransitionGroupChildren
         || style().pseudoElementType() == PseudoElementType::ViewTransitionImagePair;
 }
 

@@ -168,7 +168,7 @@ private:
     void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
     NODELETE ResolutionContext makeResolutionContext();
-    ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, const PseudoElementIdentifier&);
+    ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, const PseudoElementIdentifier&, const Element&);
     NODELETE std::optional<ResolutionContext> makeResolutionContextForInheritedFirstLine(const ElementUpdate&, const Style::ComputedStyle& inheritStyle);
     NODELETE const Parent* boxGeneratingParent() const LIFETIME_BOUND;
     NODELETE const Style::ComputedStyle* parentBoxStyle() const LIFETIME_BOUND;

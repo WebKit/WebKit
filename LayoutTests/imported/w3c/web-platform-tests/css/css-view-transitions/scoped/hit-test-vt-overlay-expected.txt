@@ -1,0 +1,3 @@
+
+FAIL hit-test-vt-overlay assert_equals: at (25, 30) expected "scope" but got ""
+

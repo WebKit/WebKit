@@ -1,0 +1,5 @@
+
+PASS view-transition-scope updated to all during transition and reset after finishing the transition
+PASS view-transition-scope updated to all during transition and reset after aborting the transition
+PASS Auto-reset of "view-transition-scope: all" does not clobber an explicitly set value
+

@@ -2118,6 +2118,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     dom/Element+PointerEvents.idl
     dom/Element+PointerLock.idl
     dom/Element+Typedom.idl
+    dom/Element+ViewTransition.idl
     dom/Element+VolumetricScene.idl
     dom/ElementContentEditable.idl
     dom/GlobalEventHandlers+PointerEvents.idl

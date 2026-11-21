@@ -28,12 +28,22 @@
     view-transition-name: root;
 }
 
-:root::view-transition {
+/* https://drafts.csswg.org/css-view-transitions-2/ scoped transitions: the
+   scope element participates in its own transition under the root name. */
+:active-view-transition {
+    view-transition-name: root;
+}
+
+:active-view-transition:not(:root) {
+    view-transition-group: contain;
+}
+
+::view-transition {
     position: absolute;
     inset: 0;
 }
 
-:root::view-transition-group(*) {
+::view-transition-group(*) {
     position: absolute;
     top: 0;
     left: 0;
@@ -42,22 +52,32 @@
     animation-fill-mode: both;
 }
 
-:root::view-transition-image-pair(*) {
+::view-transition-image-pair(*) {
     position: absolute;
     inset: 0;
 }
 
-:root::view-transition-old(*),
-:root::view-transition-new(*) {
+::view-transition-old(*),
+::view-transition-new(*) {
+    display: block;
     position: absolute;
     inset-block-start: 0;
     inline-size: 100%;
     block-size: auto;
 }
 
-:root::view-transition-image-pair(*),
-:root::view-transition-old(*),
-:root::view-transition-new(*) {
+::view-transition-group-children(*) {
+    position: absolute;
+    inset: 0;
+    border-style: solid;
+    border-width: 0;
+    border-color: transparent;
+}
+
+::view-transition-image-pair(*),
+::view-transition-old(*),
+::view-transition-new(*),
+::view-transition-group-children(*) {
     animation-duration: inherit;
     animation-fill-mode: inherit;
     animation-delay: inherit;
