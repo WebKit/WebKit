@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class ContainerNode;
+class Document;
 class Element;
 class FloatRect;
 class LocalFrame;
@@ -69,6 +70,7 @@ struct RenderedText {
 };
 
 RenderedText extractRenderedText(Element&);
+RenderedText extractRenderedTextPerFrame(Document&);
 
 Vector<IntSize> extractLargestReplacedContentSizes(ContainerNode&);
 bool isLargeReplacedContent(IntSize, FloatSize elementSizeInDocument);

@@ -99,6 +99,8 @@ struct TargetedFrameContent {
     bool hasAudibleMedia { false };
     Vector<IntSize> largestReplacedContentSizes;
     HashSet<URL> mediaAndLinkURLs;
+    String renderedText;
+    String screenReaderText;
 };
 
 WEBCORE_EXPORT void mergeRemoteFrameContent(TargetedElementInfo&, const TargetedFrameContent&);

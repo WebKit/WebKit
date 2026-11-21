@@ -4194,6 +4194,44 @@ TEST(SiteIsolation, TargetedElementInfoOfCrossOriginIframeIgnoresMediaAndLinkURL
     EXPECT_FALSE([[target mediaAndLinkURLs] containsObject:[NSURL URLWithString:@"https://apple.com/video-with-audio.mp4"]]);
 }
 
+TEST(SiteIsolation, TargetedElementInfoOfCrossOriginIframeIncludesRenderedTextAndScreenReaderText)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<p>main frame text</p><iframe id='iframe' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<p>iframe text</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    waitForFrameText(webView, { 0 }, @"iframe text");
+
+    RetainPtr targets = synchronouslyRequestTargetedElementInfoWithSelectors(webView.get(), @[ [NSSet setWithObject:@"#iframe"] ]);
+    EXPECT_EQ(1UL, [targets count]);
+    EXPECT_WK_STREQ([[targets firstObject] renderedText], "iframe text");
+    EXPECT_WK_STREQ([[targets firstObject] screenReaderText], "iframe text");
+}
+
+TEST(SiteIsolation, TargetedElementInfoOfCrossOriginIframeMergesRenderedTextAndScreenReaderTextFromNestedIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<p>main frame text</p><iframe id='iframeWebKit' src='https://webkit.org/iframeWebKit'></iframe>"_s } },
+        { "/iframeWebKit"_s, { "<p>webkit iframe text</p><iframe src='https://apple.com/nestedInWebKit'></iframe>"_s } },
+        { "/nestedInWebKit"_s, { "<p>apple nested in webkit text</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    waitForFrameText(webView, { 0 }, @"webkit iframe text");
+    waitForFrameText(webView, { 0, 0 }, @"apple nested in webkit text");
+
+    RetainPtr targets = synchronouslyRequestTargetedElementInfoWithSelectors(webView.get(), @[ [NSSet setWithObject:@"#iframeWebKit"] ]);
+    EXPECT_EQ(1UL, [targets count]);
+    EXPECT_WK_STREQ([[targets firstObject] renderedText], "webkit iframe text apple nested in webkit text");
+    EXPECT_WK_STREQ([[targets firstObject] screenReaderText], "webkit iframe text apple nested in webkit text");
+}
+
 #if PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 static WebAVPlayerLayer *findWebAVPlayerLayerInLayerTree(CALayer *layer)

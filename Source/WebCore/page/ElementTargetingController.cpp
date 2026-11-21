@@ -1212,10 +1212,13 @@ static TargetedFrameContent targetedFrameContent(Document& document)
     document.updateLayoutIgnorePendingStylesheets();
 
     RefPtr documentElement = document.documentElement();
+    auto text = TextExtraction::extractRenderedTextPerFrame(document);
     return {
         .hasAudibleMedia = documentElement && hasAudibleMedia(*documentElement),
         .largestReplacedContentSizes = TextExtraction::extractLargestReplacedContentSizes(document),
         .mediaAndLinkURLs = documentElement ? collectMediaAndLinkURLs(*documentElement) : HashSet<URL> { },
+        .renderedText = WTF::move(text.textWithReplacedContent),
+        .screenReaderText = WTF::move(text.textWithoutReplacedContent),
     };
 }
 
