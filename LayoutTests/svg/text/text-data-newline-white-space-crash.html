@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<svg width="200" height="220">
+    <text x="10" y="20" style="white-space: pre-line">x</text>
+    <text x="10" y="50" style="white-space: break-spaces">x</text>
+    <text x="10" y="80" style="white-space-collapse: preserve-breaks">x</text>
+    <text x="10" y="110" style="white-space: pre-line"><tspan>x</tspan></text>
+    <text x="10" y="140" style="white-space: pre-line"><textPath href="#path">x</textPath></text>
+    <text id="styleChange" x="10" y="200">x</text>
+    <path id="path" d="M 10 170 L 190 170"/>
+</svg>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+for (const text of document.querySelectorAll("text")) {
+    let node = text;
+    while (node.firstChild)
+        node = node.firstChild;
+    node.data = "a\nb";
+    document.body.offsetHeight;
+    node.data = "a\r\nb\n";
+    document.body.offsetHeight;
+}
+const styleChange = document.getElementById("styleChange");
+styleChange.firstChild.data = "a\nb";
+document.body.offsetHeight;
+styleChange.style.whiteSpace = "pre-line";
+document.body.offsetHeight;
+styleChange.style.whiteSpace = "break-spaces";
+document.body.offsetHeight;
+styleChange.style.whiteSpace = "normal";
+document.body.offsetHeight;
+</script>

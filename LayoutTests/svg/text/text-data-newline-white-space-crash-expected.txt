@@ -1,0 +1,7 @@
+a b
+a  b
+a b
+a b
+a b
+ab
+This test passes if it does not crash.

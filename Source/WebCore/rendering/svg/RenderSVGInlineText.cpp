@@ -77,6 +77,11 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
     return newString;
 }
 
+static bool preservesSegmentBreaks(const Style::ComputedStyle& style)
+{
+    return style.whiteSpaceCollapse() != WhiteSpaceCollapse::Collapse;
+}
+
 RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     : RenderText(Type::SVGInlineText, textNode, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
@@ -103,8 +108,7 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
 
 void RenderSVGInlineText::setRenderedText(const String& text)
 {
-    bool preservesWhiteSpace = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
-    RenderText::setRenderedText(preservesWhiteSpace ? applySVGWhitespaceRules(text, true) : text);
+    RenderText::setRenderedText(preservesSegmentBreaks(style()) ? applySVGWhitespaceRules(text, true) : text);
 }
 
 void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
@@ -114,8 +118,8 @@ void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::Co
     if (oldStyle && (oldStyle->writingMode() != style().writingMode() || oldStyle->unicodeBidi() != style().unicodeBidi()))
         m_hasValidTextMetrics = false;
 
-    bool newPreserves = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
-    bool oldPreserves = oldStyle && oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
+    bool newPreserves = preservesSegmentBreaks(style());
+    bool oldPreserves = oldStyle && preservesSegmentBreaks(*oldStyle);
     if (oldPreserves && !newPreserves) {
         setText(applySVGWhitespaceRules(originalText(), false), true);
         return;
