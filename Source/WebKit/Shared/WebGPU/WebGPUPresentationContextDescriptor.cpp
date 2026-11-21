@@ -29,17 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUPresentationContextDescriptor.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<PresentationContextDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPUPresentationContextDescriptor& presentationContextDescriptor)
-{
-    auto identifier = convertToBacking(protect(presentationContextDescriptor.compositorIntegration));
-
-    return { { identifier } };
-}
 
 std::optional<WebCore::WebGPUPresentationContextDescriptor> ConvertFromBackingContext::convertFromBacking(const PresentationContextDescriptor& presentationContextDescriptor)
 {

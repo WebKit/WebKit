@@ -34,21 +34,21 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
 class RemoteTextureProxy;
 
 class RemoteXRSubImageProxy final : public ::WebGPU::XRSubImage {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImageProxy);
 public:
-    static Ref<RemoteXRSubImageProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRSubImageIdentifier identifier)
+    static Ref<RemoteXRSubImageProxy> create(Ref<RemoteGPUProxy>&& parent, WebGPUXRSubImageIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRSubImageProxy(WTF::move(parent), convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRSubImageProxy(WTF::move(parent), identifier));
     }
 
     virtual ~RemoteXRSubImageProxy();
 
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent; }
+    WebGPUXRSubImageIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::Texture> colorTexture() final;
     RefPtr<::WebGPU::Texture> depthStencilTexture() final;
@@ -56,16 +56,12 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUXRSubImageIdentifier);
+    RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&&, WebGPUXRSubImageIdentifier);
 
     RemoteXRSubImageProxy(const RemoteXRSubImageProxy&) = delete;
     RemoteXRSubImageProxy(RemoteXRSubImageProxy&&) = delete;
     RemoteXRSubImageProxy& operator=(const RemoteXRSubImageProxy&) = delete;
     RemoteXRSubImageProxy& operator=(RemoteXRSubImageProxy&&) = delete;
-
-    WebGPUXRSubImageIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -79,7 +75,6 @@ private:
     }
 
     WebGPUXRSubImageIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
 
     const RefPtr<RemoteTextureProxy> m_currentTexture;

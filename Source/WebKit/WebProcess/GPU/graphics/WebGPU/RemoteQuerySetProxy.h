@@ -34,20 +34,19 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteQuerySetProxy final : public ::WebGPU::QuerySet {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQuerySetProxy);
 public:
-    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier)
+    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, WebGPUQuerySetIdentifier identifier)
     {
-        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteQuerySetProxy(parent, identifier));
     }
 
     virtual ~RemoteQuerySetProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUQuerySetIdentifier backing() const { return m_backing; }
 
     void destroy() final;
 
@@ -55,17 +54,13 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUQuerySetIdentifier);
+    RemoteQuerySetProxy(RemoteDeviceProxy&, WebGPUQuerySetIdentifier);
 
     RemoteQuerySetProxy(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy(RemoteQuerySetProxy&&) = delete;
     RemoteQuerySetProxy& operator=(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy& operator=(RemoteQuerySetProxy&&) = delete;
 
-    WebGPUQuerySetIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -73,7 +68,6 @@ private:
     }
 
     WebGPUQuerySetIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };
 

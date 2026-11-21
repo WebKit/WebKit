@@ -31,7 +31,6 @@
 #include "RemoteCompositorIntegrationMessages.h"
 #include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -40,9 +39,8 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCompositorIntegrationProxy);
 
-RemoteCompositorIntegrationProxy::RemoteCompositorIntegrationProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUCompositorIntegrationIdentifier identifier)
+RemoteCompositorIntegrationProxy::RemoteCompositorIntegrationProxy(RemoteGPUProxy& parent, WebGPUCompositorIntegrationIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }

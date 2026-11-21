@@ -29,15 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUDeviceDescriptor.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<DeviceDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::DeviceDescriptor& deviceDescriptor)
-{
-    return { { { deviceDescriptor.label }, Vector<::WebGPU::FeatureName> { deviceDescriptor.requiredFeatures }, deviceDescriptor.requiredLimits } };
-}
 
 std::optional<::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertFromBacking(const DeviceDescriptor& deviceDescriptor)
 {

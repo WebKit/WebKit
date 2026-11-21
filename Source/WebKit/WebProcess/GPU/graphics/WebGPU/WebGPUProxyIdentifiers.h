@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUDowncastConvertToBackingContext.h"
+#pragma once
 
 #if ENABLE(GPU_PROCESS)
 
@@ -56,152 +55,153 @@
 #include "RemoteXRProjectionLayerProxy.h"
 #include "RemoteXRSubImageProxy.h"
 #include "RemoteXRViewProxy.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
+// In the Web Process, every WebGPU object is a Remote*Proxy, whose backing is its identifier in the GPU Process.
 
-WebGPUAdapterIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::Adapter& adapter)
+inline WebGPUAdapterIdentifier identifier(const ::WebGPU::Adapter& adapter)
 {
     return downcast<RemoteAdapterProxy>(adapter).backing();
 }
 
-WebGPUBindGroupIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::BindGroup& bindGroup)
+inline WebGPUBindGroupIdentifier identifier(const ::WebGPU::BindGroup& bindGroup)
 {
     return downcast<RemoteBindGroupProxy>(bindGroup).backing();
 }
 
-WebGPUBindGroupLayoutIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::BindGroupLayout& bindGroupLayout)
+inline WebGPUBindGroupLayoutIdentifier identifier(const ::WebGPU::BindGroupLayout& bindGroupLayout)
 {
     return downcast<RemoteBindGroupLayoutProxy>(bindGroupLayout).backing();
 }
 
-WebGPUBufferIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::Buffer& buffer)
+inline WebGPUBufferIdentifier identifier(const ::WebGPU::Buffer& buffer)
 {
     return downcast<RemoteBufferProxy>(buffer).backing();
 }
 
-WebGPUCommandBufferIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::CommandBuffer& commandBuffer)
+inline WebGPUCommandBufferIdentifier identifier(const ::WebGPU::CommandBuffer& commandBuffer)
 {
     return downcast<RemoteCommandBufferProxy>(commandBuffer).backing();
 }
 
-WebGPUCommandEncoderIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::CommandEncoder& commandEncoder)
+inline WebGPUCommandEncoderIdentifier identifier(const ::WebGPU::CommandEncoder& commandEncoder)
 {
     return downcast<RemoteCommandEncoderProxy>(commandEncoder).backing();
 }
 
-WebGPUCompositorIntegrationIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPUCompositorIntegration& compositorIntegration)
+inline WebGPUCompositorIntegrationIdentifier identifier(const WebCore::WebGPUCompositorIntegration& compositorIntegration)
 {
     return downcast<RemoteCompositorIntegrationProxy>(compositorIntegration).backing();
 }
 
-WebGPUComputePassEncoderIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::ComputePassEncoder& computePassEncoder)
+inline WebGPUComputePassEncoderIdentifier identifier(const ::WebGPU::ComputePassEncoder& computePassEncoder)
 {
     return downcast<RemoteComputePassEncoderProxy>(computePassEncoder).backing();
 }
 
-WebGPUComputePipelineIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::ComputePipeline& computePipeline)
+inline WebGPUComputePipelineIdentifier identifier(const ::WebGPU::ComputePipeline& computePipeline)
 {
     return downcast<RemoteComputePipelineProxy>(computePipeline).backing();
 }
 
-WebGPUDeviceIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::Device& device)
+inline WebGPUDeviceIdentifier identifier(const ::WebGPU::Device& device)
 {
     return downcast<RemoteDeviceProxy>(device).backing();
 }
 
-WebGPUExternalTextureIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::ExternalTexture& externalTexture)
+inline WebGPUExternalTextureIdentifier identifier(const ::WebGPU::ExternalTexture& externalTexture)
 {
     return downcast<RemoteExternalTextureProxy>(externalTexture).backing();
 }
 
-RemoteGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPUIntegration& gpu)
+inline RemoteGPUIdentifier identifier(const WebCore::WebGPUIntegration& gpu)
 {
     return downcast<RemoteGPUProxy>(gpu).backing();
 }
 
-WebGPUPipelineLayoutIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::PipelineLayout& pipelineLayout)
+inline WebGPUPipelineLayoutIdentifier identifier(const ::WebGPU::PipelineLayout& pipelineLayout)
 {
     return downcast<RemotePipelineLayoutProxy>(pipelineLayout).backing();
 }
 
-WebGPUPresentationContextIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::PresentationContext& presentationContext)
+inline WebGPUPresentationContextIdentifier identifier(const ::WebGPU::PresentationContext& presentationContext)
 {
     return downcast<RemotePresentationContextProxy>(presentationContext).backing();
 }
 
-WebGPUQuerySetIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::QuerySet& querySet)
+inline WebGPUQuerySetIdentifier identifier(const ::WebGPU::QuerySet& querySet)
 {
     return downcast<RemoteQuerySetProxy>(querySet).backing();
 }
 
-WebGPUQueueIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::Queue& queue)
+inline WebGPUQueueIdentifier identifier(const ::WebGPU::Queue& queue)
 {
     return downcast<RemoteQueueProxy>(queue).backing();
 }
 
-WebGPURenderBundleEncoderIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::RenderBundleEncoder& renderBundleEncoder)
+inline WebGPURenderBundleEncoderIdentifier identifier(const ::WebGPU::RenderBundleEncoder& renderBundleEncoder)
 {
     return downcast<RemoteRenderBundleEncoderProxy>(renderBundleEncoder).backing();
 }
 
-WebGPURenderBundleIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::RenderBundle& renderBundle)
+inline WebGPURenderBundleIdentifier identifier(const ::WebGPU::RenderBundle& renderBundle)
 {
     return downcast<RemoteRenderBundleProxy>(renderBundle).backing();
 }
 
-WebGPURenderPassEncoderIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPassEncoder& renderPassEncoder)
+inline WebGPURenderPassEncoderIdentifier identifier(const ::WebGPU::RenderPassEncoder& renderPassEncoder)
 {
     return downcast<RemoteRenderPassEncoderProxy>(renderPassEncoder).backing();
 }
 
-WebGPURenderPipelineIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPipeline& renderPipeline)
+inline WebGPURenderPipelineIdentifier identifier(const ::WebGPU::RenderPipeline& renderPipeline)
 {
     return downcast<RemoteRenderPipelineProxy>(renderPipeline).backing();
 }
 
-WebGPUSamplerIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::Sampler& sampler)
+inline WebGPUSamplerIdentifier identifier(const ::WebGPU::Sampler& sampler)
 {
     return downcast<RemoteSamplerProxy>(sampler).backing();
 }
 
-WebGPUShaderModuleIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::ShaderModule& shaderModule)
+inline WebGPUShaderModuleIdentifier identifier(const ::WebGPU::ShaderModule& shaderModule)
 {
     return downcast<RemoteShaderModuleProxy>(shaderModule).backing();
 }
 
-WebGPUTextureIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::Texture& texture)
+inline WebGPUTextureIdentifier identifier(const ::WebGPU::Texture& texture)
 {
     return downcast<RemoteTextureProxy>(texture).backing();
 }
 
-WebGPUTextureViewIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::TextureView& textureView)
+inline WebGPUTextureViewIdentifier identifier(const ::WebGPU::TextureView& textureView)
 {
     return downcast<RemoteTextureViewProxy>(textureView).backing();
 }
 
-WebGPUXRBindingIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::XRBinding& xrBinding)
+inline WebGPUXRBindingIdentifier identifier(const ::WebGPU::XRBinding& xrBinding)
 {
     return downcast<RemoteXRBindingProxy>(xrBinding).backing();
 }
 
-WebGPUXRProjectionLayerIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::XRProjectionLayer& layer)
+inline WebGPUXRProjectionLayerIdentifier identifier(const ::WebGPU::XRProjectionLayer& layer)
 {
     return downcast<RemoteXRProjectionLayerProxy>(layer).backing();
 }
 
-WebGPUXRSubImageIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::XRSubImage& subImage)
+inline WebGPUXRSubImageIdentifier identifier(const ::WebGPU::XRSubImage& subImage)
 {
     return downcast<RemoteXRSubImageProxy>(subImage).backing();
 }
 
-WebGPUXRViewIdentifier DowncastConvertToBackingContext::convertToBacking(const ::WebGPU::XRView& view)
+inline WebGPUXRViewIdentifier identifier(const ::WebGPU::XRView& view)
 {
     return downcast<RemoteXRViewProxy>(view).backing();
 }
 
 } // namespace WebKit::WebGPU
 
-#endif // HAVE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS)

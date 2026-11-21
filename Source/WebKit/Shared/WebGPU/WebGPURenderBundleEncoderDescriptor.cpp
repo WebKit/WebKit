@@ -29,15 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPURenderBundleEncoderDescriptor.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<RenderBundleEncoderDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
-{
-    return { { { { renderBundleEncoderDescriptor.label }, Vector<std::optional<::WebGPU::TextureFormat>> { renderBundleEncoderDescriptor.colorFormats }, renderBundleEncoderDescriptor.depthStencilFormat, renderBundleEncoderDescriptor.sampleCount }, renderBundleEncoderDescriptor.depthReadOnly, renderBundleEncoderDescriptor.stencilReadOnly } };
-}
 
 std::optional<::WebGPU::RenderBundleEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
 {

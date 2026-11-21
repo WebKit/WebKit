@@ -643,7 +643,6 @@
 		1CAECB6A27465AE400AB78D0 /* UnifiedSource105.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6227465AE400AB78D0 /* UnifiedSource105.cpp */; };
 		1CAECB6B27465AE400AB78D0 /* UnifiedSource106.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6327465AE400AB78D0 /* UnifiedSource106.cpp */; };
 		1CAECB6C27465AE400AB78D0 /* UnifiedSource107.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6427465AE400AB78D0 /* UnifiedSource107.cpp */; };
-		1CB7464D274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB7464B274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h */; };
 		1CB913852E8C5DA10002BCB7 /* UnifiedSource12-ARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CB913842E8C5DA10002BCB7 /* UnifiedSource12-ARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1CB913872E8C5DAD0002BCB7 /* UnifiedSource13-ARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CB913862E8C5DAD0002BCB7 /* UnifiedSource13-ARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1CB913892E8C5DB70002BCB7 /* UnifiedSource14-ARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CB913882E8C5DB70002BCB7 /* UnifiedSource14-ARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -4749,10 +4748,10 @@
 		1CB7464127436EEA00F19874 /* RemoteRenderBundleProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderBundleProxy.cpp; sourceTree = "<group>"; };
 		1CB7464227436EEB00F19874 /* RemoteRenderPipelineProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPipelineProxy.h; sourceTree = "<group>"; };
 		1CB7464327436EEB00F19874 /* RemoteTextureProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextureProxy.cpp; sourceTree = "<group>"; };
-		1CB7464727437A7F00F19874 /* WebGPUConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUConvertToBackingContext.h; sourceTree = "<group>"; };
 		1CB7464927437FC500F19874 /* WebGPUIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUIdentifier.h; sourceTree = "<group>"; };
-		1CB7464A274380C800F19874 /* WebGPUDowncastConvertToBackingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDowncastConvertToBackingContext.cpp; sourceTree = "<group>"; };
-		1CB7464B274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDowncastConvertToBackingContext.h; sourceTree = "<group>"; };
+		467E2A63630C8E804E2AF2E5 /* WebGPUDescriptorSerializers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDescriptorSerializers.cpp; sourceTree = "<group>"; };
+		0AC670123F07F53D76A86DD3 /* WebGPUDescriptorSerializers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDescriptorSerializers.h; sourceTree = "<group>"; };
+		BF0F87732662E1763962108D /* WebGPUProxyIdentifiers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUProxyIdentifiers.h; sourceTree = "<group>"; };
 		1CB7466227439A1A00F19874 /* RemoteGPUProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGPUProxy.cpp; sourceTree = "<group>"; };
 		1CB7466327439A1A00F19874 /* RemoteGPUProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGPUProxy.h; sourceTree = "<group>"; };
 		1CB7466627439CAE00F19874 /* WebGPUBufferDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBufferDescriptor.h; sourceTree = "<group>"; };
@@ -11789,8 +11788,9 @@
 				0D943C092C65560E00D33BA5 /* RemoteXRSubImageProxy.h */,
 				0D6D0AB12C6BA0B10073F63D /* RemoteXRViewProxy.cpp */,
 				0D6D0AB02C6BA0B10073F63D /* RemoteXRViewProxy.h */,
-				1CB7464A274380C800F19874 /* WebGPUDowncastConvertToBackingContext.cpp */,
-				1CB7464B274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h */,
+				467E2A63630C8E804E2AF2E5 /* WebGPUDescriptorSerializers.cpp */,
+				0AC670123F07F53D76A86DD3 /* WebGPUDescriptorSerializers.h */,
+				BF0F87732662E1763962108D /* WebGPUProxyIdentifiers.h */,
 			);
 			path = WebGPU;
 			sourceTree = "<group>";
@@ -11842,7 +11842,6 @@
 				1CB7467627439CB100F19874 /* WebGPUComputePipelineDescriptor.h */,
 				5CBA4AC129020A4000F70CCD /* WebGPUComputePipelineDescriptor.serialization.in */,
 				1CB746A42743ADBA00F19874 /* WebGPUConvertFromBackingContext.h */,
-				1CB7464727437A7F00F19874 /* WebGPUConvertToBackingContext.h */,
 				1CB7467127439CB000F19874 /* WebGPUDepthStencilState.h */,
 				5CBA4AC729020A4100F70CCD /* WebGPUDepthStencilState.serialization.in */,
 				1C98C0D727462682002CCB78 /* WebGPUDeviceDescriptor.cpp */,
@@ -19547,7 +19546,6 @@
 				BC0E607312D6BC200012A72A /* WebGeolocationPosition.h in Headers */,
 				BC1BE1F212D54DBD0004A228 /* WebGeolocationProvider.h in Headers */,
 				2D5036761BCED19F00E20BB3 /* WebGestureEvent.h in Headers */,
-				1CB7464D274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h in Headers */,
 				93A88B331BC6E9CD00ABA5C2 /* WebHitTestResultData.h in Headers */,
 				F44DFEB21E9E752F0038D196 /* WebIconUtilities.h in Headers */,
 				514129941C6428BB0059E714 /* WebIDBConnectionToServer.h in Headers */,

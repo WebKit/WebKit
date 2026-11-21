@@ -30,7 +30,6 @@
 
 #include "RemoteGPUProxy.h"
 #include "RemoteXRViewMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/WebGPUCppAPI.h>
 
@@ -38,9 +37,8 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRViewProxy);
 
-RemoteXRViewProxy::RemoteXRViewProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRViewIdentifier identifier)
+RemoteXRViewProxy::RemoteXRViewProxy(RemoteDeviceProxy& parent, WebGPUXRViewIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }

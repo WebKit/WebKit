@@ -65,7 +65,6 @@
 #include "WebExtensionControllerProxy.h"
 #include "WebFrame.h"
 #include "WebFullScreenManager.h"
-#include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebHitTestResultData.h"
 #include "WebImage.h"
 #include "WebLocalFrameLoaderClient.h"
@@ -1349,7 +1348,7 @@ RefPtr<WebCore::WebGPUIntegration> WebChromeClient::createGPUForWebGPU() const
     RefPtr page = m_page.get();
     if (!page)
         return nullptr;
-    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), ModelDowncastConvertToBackingContext::create(), page.releaseNonNull());
+    return RemoteGPUProxy::create(ModelDowncastConvertToBackingContext::create(), page.releaseNonNull());
 #else
     return WebCore::createWebGPUIntegration([](Function<void()>&& workItem) {
         callOnMainRunLoop(WTF::move(workItem));

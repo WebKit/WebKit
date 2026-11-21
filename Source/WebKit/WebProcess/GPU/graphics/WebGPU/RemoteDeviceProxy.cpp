@@ -46,7 +46,8 @@
 #include "RemoteXRBindingProxy.h"
 #include "SharedVideoFrame.h"
 #include "WebGPUCommandEncoderDescriptor.h"
-#include "WebGPUConvertToBackingContext.h"
+#include "WebGPUDescriptorSerializers.h"
+#include "WebGPUProxyIdentifiers.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -59,13 +60,12 @@ static ::WebGPU::PipelineError invalidDescriptorError(String&& message)
     return { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(message) };
 }
 
-RemoteDeviceProxy::RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
+RemoteDeviceProxy::RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
     : m_backing(identifier)
     , m_features(WTF::move(features))
     , m_limits(limits)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
-    , m_queue(RemoteQueueProxy::create(parent, convertToBackingContext, queueIdentifier))
+    , m_queue(RemoteQueueProxy::create(parent, queueIdentifier))
 {
 }
 
@@ -93,7 +93,7 @@ RefPtr<::WebGPU::XRBinding> RemoteDeviceProxy::createXRBinding()
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    return RemoteXRBindingProxy::create(*this, m_convertToBackingContext, identifier);
+    return RemoteXRBindingProxy::create(*this, identifier);
 }
 
 RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const ::WebGPU::BufferDescriptor& descriptor)
@@ -103,14 +103,14 @@ RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const ::WebGPU::BufferD
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier, descriptor.mappedAtCreation);
+    auto result = RemoteBufferProxy::create(*this, identifier, descriptor.mappedAtCreation);
     result->setLabel(String { descriptor.label });
     return result;
 }
 
 RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createTexture(const ::WebGPU::TextureDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -119,7 +119,7 @@ RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createTexture(const ::WebGPU::Textu
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier);
+    auto result = RemoteTextureProxy::create(protect(root()), identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -131,7 +131,7 @@ RefPtr<::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const ::WebGPU::Sampl
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteSamplerProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteSamplerProxy::create(*this, identifier);
     result->setLabel(String { descriptor.label });
     return result;
 }
@@ -140,7 +140,7 @@ RefPtr<::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const
 {
     auto identifier = WebGPUExternalTextureIdentifier::generate();
 
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -164,7 +164,7 @@ RefPtr<::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const
         return nullptr;
 #endif
 
-    auto result = RemoteExternalTextureProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteExternalTextureProxy::create(*this, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -181,14 +181,14 @@ RefPtr<::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 void RemoteDeviceProxy::updateExternalTexture(const ::WebGPU::ExternalTexture& externalTexture, const WebCore::MediaPlayerIdentifier& mediaPlayerIdentifier)
 {
-    auto sendResult = send(Messages::RemoteDevice::UpdateExternalTexture(m_convertToBackingContext->convertToBacking(externalTexture), mediaPlayerIdentifier));
+    auto sendResult = send(Messages::RemoteDevice::UpdateExternalTexture(identifier(externalTexture), mediaPlayerIdentifier));
     UNUSED_PARAM(sendResult);
 }
 #endif
 
 RefPtr<::WebGPU::BindGroupLayout> RemoteDeviceProxy::createBindGroupLayout(const ::WebGPU::BindGroupLayoutDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -197,14 +197,14 @@ RefPtr<::WebGPU::BindGroupLayout> RemoteDeviceProxy::createBindGroupLayout(const
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteBindGroupLayoutProxy::create(protect(root()), m_convertToBackingContext, identifier);
+    auto result = RemoteBindGroupLayoutProxy::create(protect(root()), identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
 RefPtr<::WebGPU::PipelineLayout> RemoteDeviceProxy::createPipelineLayout(const ::WebGPU::PipelineLayoutDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -213,14 +213,14 @@ RefPtr<::WebGPU::PipelineLayout> RemoteDeviceProxy::createPipelineLayout(const :
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemotePipelineLayoutProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemotePipelineLayoutProxy::create(*this, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
 RefPtr<::WebGPU::BindGroup> RemoteDeviceProxy::createBindGroup(const ::WebGPU::BindGroupDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -229,14 +229,14 @@ RefPtr<::WebGPU::BindGroup> RemoteDeviceProxy::createBindGroup(const ::WebGPU::B
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteBindGroupProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteBindGroupProxy::create(*this, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
 RefPtr<::WebGPU::ShaderModule> RemoteDeviceProxy::createShaderModule(const ::WebGPU::ShaderModuleDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -245,14 +245,14 @@ RefPtr<::WebGPU::ShaderModule> RemoteDeviceProxy::createShaderModule(const ::Web
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteShaderModuleProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteShaderModuleProxy::create(*this, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
 RefPtr<::WebGPU::ComputePipeline> RemoteDeviceProxy::createComputePipeline(const ::WebGPU::ComputePipelineDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -261,14 +261,14 @@ RefPtr<::WebGPU::ComputePipeline> RemoteDeviceProxy::createComputePipeline(const
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteComputePipelineProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteComputePipelineProxy::create(*this, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
 RefPtr<::WebGPU::RenderPipeline> RemoteDeviceProxy::createRenderPipeline(const ::WebGPU::RenderPipelineDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -277,14 +277,14 @@ RefPtr<::WebGPU::RenderPipeline> RemoteDeviceProxy::createRenderPipeline(const :
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteRenderPipelineProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteRenderPipelineProxy::create(*this, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
 void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&& callback)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
         callback(makeUnexpected(invalidDescriptorError("GPUDevice.createComputePipelineAsync() descriptor is invalid"_s)));
@@ -298,7 +298,7 @@ void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipeli
             return;
         }
 
-        auto computePipelineResult = RemoteComputePipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
+        auto computePipelineResult = RemoteComputePipelineProxy::create(protectedThis, identifier);
         computePipelineResult->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::ComputePipeline> { WTF::move(computePipelineResult) });
     });
@@ -307,7 +307,7 @@ void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipeli
 
 void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&&)>&& callback)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s)));
 
@@ -318,7 +318,7 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipeline
             return;
         }
 
-        auto renderPipelineResult = RemoteRenderPipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
+        auto renderPipelineResult = RemoteRenderPipelineProxy::create(protectedThis, identifier);
         renderPipelineResult->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::RenderPipeline> { WTF::move(renderPipelineResult) });
     });
@@ -327,21 +327,21 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipeline
 
 void RemoteDeviceProxy::createComputePipelineWithPipelineLayoutFromPipelineAsync(const ::WebGPU::ComputePipelineDescriptor& descriptor, const ::WebGPU::ComputePipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&&)>&& callback)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor) {
         callback(makeUnexpected(invalidDescriptorError({ })));
         return;
     }
 
     auto identifier = WebGPUComputePipelineIdentifier::generate();
-    auto pipelineToReplaceIdentifier = m_convertToBackingContext->convertToBacking(pipelineToReplace);
+    auto pipelineToReplaceIdentifier = WebGPU::identifier(pipelineToReplace);
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineWithPipelineLayoutFromPipeline(*convertedDescriptor, identifier, pipelineToReplaceIdentifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](bool success) mutable {
         if (!success) {
             callback(makeUnexpected(invalidDescriptorError({ })));
             return;
         }
 
-        Ref result = RemoteComputePipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
+        Ref result = RemoteComputePipelineProxy::create(protectedThis, identifier);
         result->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::ComputePipeline> { WTF::move(result) });
     });
@@ -350,21 +350,21 @@ void RemoteDeviceProxy::createComputePipelineWithPipelineLayoutFromPipelineAsync
 
 void RemoteDeviceProxy::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const ::WebGPU::RenderPipelineDescriptor& descriptor, const ::WebGPU::RenderPipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&&)>&& callback)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor) {
         callback(makeUnexpected(invalidDescriptorError({ })));
         return;
     }
 
     auto identifier = WebGPURenderPipelineIdentifier::generate();
-    auto pipelineToReplaceIdentifier = m_convertToBackingContext->convertToBacking(pipelineToReplace);
+    auto pipelineToReplaceIdentifier = WebGPU::identifier(pipelineToReplace);
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineWithPipelineLayoutFromPipeline(*convertedDescriptor, identifier, pipelineToReplaceIdentifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](bool success) mutable {
         if (!success) {
             callback(makeUnexpected(invalidDescriptorError({ })));
             return;
         }
 
-        Ref result = RemoteRenderPipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
+        Ref result = RemoteRenderPipelineProxy::create(protectedThis, identifier);
         result->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::RenderPipeline> { WTF::move(result) });
     });
@@ -378,14 +378,14 @@ RefPtr<::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(const :
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteCommandEncoderProxy::create(protect(root()), m_convertToBackingContext, identifier);
+    auto result = RemoteCommandEncoderProxy::create(protect(root()), identifier);
     result->setLabel(String { descriptor.label });
     return result;
 }
 
 RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createRenderBundleEncoder(const ::WebGPU::RenderBundleEncoderDescriptor& descriptor)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
@@ -394,7 +394,7 @@ RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createRenderBundleEncod
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteRenderBundleEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteRenderBundleEncoderProxy::create(*this, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -406,7 +406,7 @@ RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createQuerySet(const ::WebGPU::Que
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteQuerySetProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteQuerySetProxy::create(*this, identifier);
     result->setLabel(String { descriptor.label });
     return result;
 }

@@ -29,43 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPassDescriptor& renderPassDescriptor)
-{
-    Vector<std::optional<RenderPassColorAttachment>> colorAttachments(ReserveCapacityTag { }, renderPassDescriptor.colorAttachments.size());
-    for (const auto& colorAttachment : renderPassDescriptor.colorAttachments) {
-        if (colorAttachment) {
-            auto backingColorAttachment = convertToBacking(*colorAttachment);
-            if (!backingColorAttachment)
-                return std::nullopt;
-            colorAttachments.append(WTF::move(*backingColorAttachment));
-        } else
-            colorAttachments.append(std::nullopt);
-    }
-
-    std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
-    if (renderPassDescriptor.depthStencilAttachment) {
-        depthStencilAttachment = convertToBacking(*renderPassDescriptor.depthStencilAttachment);
-        if (!depthStencilAttachment)
-            return std::nullopt;
-    }
-
-    std::optional<WebGPUQuerySetIdentifier> occlusionQuerySet;
-    if (renderPassDescriptor.occlusionQuerySet) {
-        occlusionQuerySet = convertToBacking(*protect(renderPassDescriptor.occlusionQuerySet));
-        if (!occlusionQuerySet)
-            return std::nullopt;
-    }
-
-    auto timestampWrites = renderPassDescriptor.timestampWrites ? convertToBacking(*renderPassDescriptor.timestampWrites) : std::nullopt;
-
-    return { { { renderPassDescriptor.label }, WTF::move(colorAttachments), WTF::move(depthStencilAttachment), occlusionQuerySet, WTF::move(timestampWrites), renderPassDescriptor.maxDrawCount } };
-}
 
 // The descriptor borrows the color attachments from colorAttachments.
 std::optional<::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPassDescriptor& renderPassDescriptor, Vector<std::optional<::WebGPU::RenderPassColorAttachment>>& colorAttachments)

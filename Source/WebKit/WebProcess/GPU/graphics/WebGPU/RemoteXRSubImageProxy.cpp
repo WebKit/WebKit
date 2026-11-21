@@ -31,16 +31,14 @@
 #include "RemoteGPUProxy.h"
 #include "RemoteTextureProxy.h"
 #include "RemoteXRSubImageMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRSubImageProxy);
 
-RemoteXRSubImageProxy::RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRSubImageIdentifier identifier)
+RemoteXRSubImageProxy::RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&& parent, WebGPUXRSubImageIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(WTF::move(parent))
 {
 }
@@ -61,7 +59,7 @@ RefPtr<::WebGPU::Texture> RemoteXRSubImageProxy::colorTexture()
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    lazyInitialize(m_currentTexture, RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier));
+    lazyInitialize(m_currentTexture, RemoteTextureProxy::create(protect(root()), identifier));
     return m_currentTexture;
 }
 
@@ -75,7 +73,7 @@ RefPtr<::WebGPU::Texture> RemoteXRSubImageProxy::depthStencilTexture()
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    lazyInitialize(m_currentDepthTexture, RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier));
+    lazyInitialize(m_currentDepthTexture, RemoteTextureProxy::create(protect(root()), identifier));
     return m_currentDepthTexture;
 }
 

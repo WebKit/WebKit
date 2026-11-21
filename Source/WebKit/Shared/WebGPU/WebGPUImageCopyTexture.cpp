@@ -29,17 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<ImageCopyTexture> ConvertToBackingContext::convertToBacking(const ::WebGPU::TexelCopyTextureInfo& imageCopyTexture)
-{
-    auto texture = convertToBacking(protect(imageCopyTexture.texture).get());
-
-    return { { texture, imageCopyTexture.mipLevel, imageCopyTexture.origin, imageCopyTexture.aspect } };
-}
 
 std::optional<::WebGPU::TexelCopyTextureInfo> ConvertFromBackingContext::convertFromBacking(const ImageCopyTexture& imageCopyTexture)
 {

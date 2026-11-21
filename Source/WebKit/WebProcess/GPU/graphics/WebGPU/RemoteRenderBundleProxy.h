@@ -34,36 +34,31 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteRenderBundleProxy final : public ::WebGPU::RenderBundle {
     WTF_MAKE_TZONE_ALLOCATED(RemoteRenderBundleProxy);
 public:
-    static Ref<RemoteRenderBundleProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPURenderBundleIdentifier identifier)
+    static Ref<RemoteRenderBundleProxy> create(RemoteDeviceProxy& parent, WebGPURenderBundleIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderBundleProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteRenderBundleProxy(parent, identifier));
     }
 
     virtual ~RemoteRenderBundleProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPURenderBundleIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteRenderBundleProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPURenderBundleIdentifier);
+    RemoteRenderBundleProxy(RemoteDeviceProxy&, WebGPURenderBundleIdentifier);
 
     RemoteRenderBundleProxy(const RemoteRenderBundleProxy&) = delete;
     RemoteRenderBundleProxy(RemoteRenderBundleProxy&&) = delete;
     RemoteRenderBundleProxy& operator=(const RemoteRenderBundleProxy&) = delete;
     RemoteRenderBundleProxy& operator=(RemoteRenderBundleProxy&&) = delete;
 
-    WebGPURenderBundleIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -71,7 +66,6 @@ private:
     }
 
     WebGPURenderBundleIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };
 

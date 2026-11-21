@@ -29,28 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
-
-static WebGPURenderPassAttachmentViewIdentifier colorAttachmentViewIdentifier(ConvertToBackingContext& convertToBacking, const ::WebGPU::RenderPassAttachmentView& view)
-{
-    // RenderPassAttachmentView is a std::variant, see WebGPUCpp.h.
-    if (auto* textureView = std::get_if<Ref<::WebGPU::TextureView>>(&view))
-        return convertToBacking.convertToBacking(textureView->get());
-    return convertToBacking.convertToBacking(std::get_if<Ref<::WebGPU::Texture>>(&view)->get());
-}
-std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPassColorAttachment& renderPassColorAttachment)
-{
-    auto identifier = colorAttachmentViewIdentifier(*this, renderPassColorAttachment.view);
-
-    std::optional<WebGPURenderPassAttachmentViewIdentifier> resolveTarget;
-    if (renderPassColorAttachment.resolveTarget)
-        resolveTarget = colorAttachmentViewIdentifier(*this, *renderPassColorAttachment.resolveTarget);
-
-    return { { identifier, renderPassColorAttachment.depthSlice, resolveTarget, renderPassColorAttachment.clearValue, renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
-}
 
 static std::optional<::WebGPU::RenderPassAttachmentView> colorAttachmentViewFromBacking(ConvertFromBackingContext& convertFromBacking, const WebGPURenderPassAttachmentViewIdentifier& view)
 {

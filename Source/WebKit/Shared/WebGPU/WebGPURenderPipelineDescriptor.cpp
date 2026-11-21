@@ -29,31 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPURenderPipelineDescriptor.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPipelineDescriptor& renderPipelineDescriptor)
-{
-    std::optional<WebGPUPipelineLayoutIdentifier> layout;
-    if (renderPipelineDescriptor.layout)
-        layout = convertToBacking(*protect(renderPipelineDescriptor.layout));
-
-    auto vertex = convertToBacking(renderPipelineDescriptor.vertex);
-    if (!vertex)
-        return std::nullopt;
-
-
-    std::optional<FragmentState> fragment;
-    if (renderPipelineDescriptor.fragment) {
-        fragment = convertToBacking(*renderPipelineDescriptor.fragment);
-        if (!fragment)
-            return std::nullopt;
-    }
-
-    return { { { { renderPipelineDescriptor.label }, layout }, WTF::move(*vertex), renderPipelineDescriptor.primitive, renderPipelineDescriptor.depthStencil, renderPipelineDescriptor.multisample, WTF::move(fragment) } };
-}
 
 std::optional<::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor, RenderPipelineDescriptorStorage& storage, bool allowMissingPipelineLayout)
 {
