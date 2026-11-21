@@ -252,6 +252,7 @@ inline bool Heap::currentThreadIsConductor() const
 
 inline void Heap::noteAccessAcquired()
 {
+    m_mutatorHadAccessSinceLastStop = true;
 #if ASSERT_ENABLED
     m_accessHolderThreadUID.storeRelaxed(Thread::currentSingleton().uid());
     m_accessHolderCount.exchangeAdd(1);
@@ -260,6 +261,7 @@ inline void Heap::noteAccessAcquired()
 
 inline void Heap::noteAccessReleased()
 {
+    ASSERT(m_mutatorHadAccessSinceLastStop);
 #if ASSERT_ENABLED
     m_accessHolderThreadUID.storeRelaxed(0);
     m_accessHolderCount.exchangeSub(1);
@@ -271,6 +273,7 @@ inline void Heap::stopIfNecessary()
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
 
+    ASSERT(m_mutatorHadAccessSinceLastStop);
     if (mayNeedToStop())
         stopIfNecessarySlow();
 }

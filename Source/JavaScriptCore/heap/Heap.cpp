@@ -1406,10 +1406,10 @@ void Heap::stopThePeriphery()
 {
     RELEASE_ASSERT(!m_worldIsStopped);
     
-    if (m_mutatorDidRun)
+    if (m_mutatorHadAccessSinceLastStop)
         m_mutatorExecutionVersion++;
     
-    m_mutatorDidRun = false;
+    m_mutatorHadAccessSinceLastStop = false;
 
     m_worldIsStopped = true;
 
@@ -1496,7 +1496,6 @@ void Heap::stopIfNecessarySlow()
 
     assertIsAccessHolder();
     stopIfNecessarySlow(m_worldState.load());
-    m_mutatorDidRun = true;
 }
 
 void Heap::stopIfNecessarySlow(unsigned oldState)
@@ -1521,6 +1520,7 @@ void Heap::stopIfNecessarySlow(unsigned oldState)
         RELEASE_ASSERT(state & hasAccessBit, state);
         RELEASE_ASSERT(!(state & stoppedBit), state);
         RELEASE_ASSERT(!(state & needCollectionEpilogueBit), state);
+        m_mutatorHadAccessSinceLastStop = true;
     }
 }
 
@@ -1544,7 +1544,6 @@ void Heap::waitForCollector(NOESCAPE const ConstInvocable<bool()> auto& isDone)
         unsigned oldState = m_worldState.load();
         stopIfNecessarySlow(oldState);
 
-        m_mutatorDidRun = true;
         // Give the conn back so the collector thread can carry the collection forward, since we won't poll while parked.
         // FIXME: Could conduct the whole collection here instead, since this thread has nothing else to do.
         relinquishConn();
@@ -1581,7 +1580,6 @@ void Heap::acquireAccessSlow()
             noteAccessAcquired();
             assertIsAccessHolder();
             handleNeedCollectionEpilogue();
-            m_mutatorDidRun = true;
             stopIfNecessary();
             return;
         }

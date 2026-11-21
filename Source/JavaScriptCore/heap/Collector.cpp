@@ -608,7 +608,7 @@ NEVER_INLINE bool Collector::runFixpointPhase(GCConductor conn)
 
         assertMarkStacksEmpty();
 
-        // FIXME: Take m_mutatorDidRun into account when scheduling constraints. Most likely,
+        // FIXME: Take m_mutatorHadAccessSinceLastStop into account when scheduling constraints. Most likely,
         // we don't have to execute root constraints again unless the mutator did run. At a
         // minimum, we could use this for work estimates - but it's probably more than just an
         // estimate.

@@ -978,7 +978,7 @@ private:
 #endif
     bool m_worldIsStopped { false };
 
-    bool m_mutatorDidRun { true };
+    bool m_mutatorHadAccessSinceLastStop { true };
     bool m_didDeferGCWork { false };
 
     uint64_t m_mutatorExecutionVersion { 0 };
