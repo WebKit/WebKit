@@ -41,9 +41,10 @@
 PAS_BEGIN_EXTERN_C;
 
 /* Bmalloc has a SystemHeap singleton that can be used to divert bmalloc calls to system malloc.
-   When libpas is used in bmalloc, we use this to glue libpas into that mechanism. */
+   When libpas is used in bmalloc, we use this to glue libpas into that mechanism. bmalloc provides
+   these only when it builds libpas, so other configurations take the inline fallbacks below. */
 
-#if PAS_BMALLOC
+#if PAS_BMALLOC && LIBPAS_ENABLED
 
 
 /* The implementations are provided by bmalloc. */
@@ -57,7 +58,7 @@ BEXPORT extern void* pas_system_heap_memalign_untagged(size_t alignment, size_t)
 BEXPORT extern void* pas_system_heap_realloc_untagged(void* ptr, size_t);
 BEXPORT extern void pas_system_heap_free(void* ptr);
 
-#else /* PAS_BMALLOC -> so !PAS_BMALLOC */
+#else /* PAS_BMALLOC && LIBPAS_ENABLED -> so !(PAS_BMALLOC && LIBPAS_ENABLED) */
 
 static inline bool pas_system_heap_is_enabled(pas_heap_config_kind kind)
 {
@@ -172,7 +173,7 @@ static inline void pas_system_heap_free(void* ptr)
 
 #endif /* PAS_ENABLE_TESTING && !PAS_OS(WINDOWS) */
 
-#endif /* PAS_BMALLOC -> so end of !PAS_BMALLOC */
+#endif /* PAS_BMALLOC && LIBPAS_ENABLED -> so end of !(PAS_BMALLOC && LIBPAS_ENABLED) */
 
 static inline pas_allocation_result pas_system_heap_allocate(size_t size, size_t alignment, bool may_be_mte_tagged)
 {

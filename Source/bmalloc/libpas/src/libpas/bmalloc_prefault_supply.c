@@ -32,18 +32,15 @@
 #if PAS_ENABLE_BMALLOC
 
 #include "bmalloc_heap_inlines.h"
+#include "pas_condition.h"
 #include "pas_dyld_state.h"
 #include "pas_heap_lock.h"
 #include "pas_large_map.h"
+#include "pas_lock.h"
 #include "pas_page_malloc.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_system_heap.h"
 #include "pas_thread.h"
-#if PAS_OS(WINDOWS)
-#include "pas_monotonic_time.h"
-#else
-#include <sys/time.h>
-#endif
 #if PAS_OS(DARWIN)
 #include <sys/qos.h>
 #endif
@@ -54,8 +51,8 @@ unsigned bmalloc_prefault_supply_target;
 double bmalloc_prefault_supply_idle_timeout_in_milliseconds = 10. * 1000.;
 bool bmalloc_prefault_supply_allocation_should_fail_for_testing;
 
-static pthread_mutex_t supply_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t supply_cond = PTHREAD_COND_INITIALIZER;
+static pas_lock supply_lock = PAS_LOCK_INITIALIZER;
+static pas_condition supply_cond = PAS_CONDITION_INITIALIZER;
 
 /* Read on every take and written only while configuring, so it is kept clear of the line the take
    path writes: otherwise recording demand evicts it from every other core on every take. */
@@ -235,11 +232,12 @@ static bool clear_fault_in_request(fault_in_request* request, uintptr_t allocati
     return true;
 }
 
-/* Caller holds supply_lock. */
 static fault_in_request* newest_fault_in_request(void)
 {
     fault_in_request* result;
     unsigned index;
+
+    pas_lock_testing_assert_held(&supply_lock);
 
     result = NULL;
     for (index = 0; index < MAX_FAULT_IN_REQUESTS; ++index) {
@@ -252,13 +250,14 @@ static fault_in_request* newest_fault_in_request(void)
     return result;
 }
 
-/* Caller holds supply_lock. Returns a free slot, making one by evicting the oldest fault-in if
-   every slot is taken. */
+/* Returns a free slot, making one by evicting the oldest fault-in if every slot is taken. */
 static fault_in_request* free_fault_in_request(void)
 {
     fault_in_request* oldest;
     uintptr_t oldest_allocation;
     unsigned index;
+
+    pas_lock_testing_assert_held(&supply_lock);
 
     oldest = NULL;
     oldest_allocation = 0;
@@ -278,10 +277,11 @@ static fault_in_request* free_fault_in_request(void)
     return oldest;
 }
 
-/* Caller holds supply_lock. */
 static void clear_all_fault_in_requests(void)
 {
     unsigned index;
+
+    pas_lock_testing_assert_held(&supply_lock);
 
     for (index = 0; index < MAX_FAULT_IN_REQUESTS; ++index) {
         fault_in_request* request = fault_in_requests + index;
@@ -310,9 +310,10 @@ typedef struct {
     supply_blocks_mode blocks_mode;
 } supply_thread_state;
 
-/* Caller holds supply_lock. */
 static void resume_refilling_if_a_take_found_supply_low(supply_thread_state* state)
 {
+    pas_lock_testing_assert_held(&supply_lock);
+
     if (!supply_state.take_found_supply_low)
         return;
     supply_state.take_found_supply_low = false;
@@ -328,9 +329,9 @@ static void refill_if_needed(supply_thread_state* state)
         state->blocks_mode = supply_blocks_mode_backing_off;
 }
 
-/* Caller holds supply_lock. */
 static bool blocks_were_wanted_this_interval(const supply_thread_state* state, unsigned demand)
 {
+    pas_lock_testing_assert_held(&supply_lock);
     return demand != state->demand_at_start || supply_state.take_found_supply_low;
 }
 
@@ -345,11 +346,11 @@ static bool serve_fault_in_chunk(supply_thread_state* state)
     uintptr_t end;
     bool is_supported;
 
-    pthread_mutex_lock(&supply_lock);
+    pas_lock_lock(&supply_lock);
     resume_refilling_if_a_take_found_supply_low(state);
     request = newest_fault_in_request();
     if (!request) {
-        pthread_mutex_unlock(&supply_lock);
+        pas_lock_unlock(&supply_lock);
         return false;
     }
     begin = request->begin;
@@ -370,13 +371,13 @@ static bool serve_fault_in_chunk(supply_thread_state* state)
         __atomic_store_n(&fault_in_chunk_state.allocation_being_faulted_in, 0, __ATOMIC_RELEASE);
         __atomic_fetch_sub(&bmalloc_prefault_supply_num_active_fault_ins.value, 1, __ATOMIC_RELEASE);
         pas_lock_unlock(&fault_in_chunk_state.chunk_lock);
-        pthread_mutex_unlock(&supply_lock);
+        pas_lock_unlock(&supply_lock);
         return true;
     }
     request->begin = end;
     if (end == request->end)
         clear_fault_in_request(request, allocation);
-    pthread_mutex_unlock(&supply_lock);
+    pas_lock_unlock(&supply_lock);
 
     is_supported = pas_page_malloc_fault_in_without_writing((void*)begin, end - begin, bmalloc_heap_config.memory_flavor);
 
@@ -385,55 +386,40 @@ static bool serve_fault_in_chunk(supply_thread_state* state)
     pas_lock_unlock(&fault_in_chunk_state.chunk_lock);
 
     if (!is_supported) {
-        pthread_mutex_lock(&supply_lock);
+        pas_lock_lock(&supply_lock);
         __atomic_store_n(&fault_in_is_unsupported, true, __ATOMIC_RELAXED);
         clear_all_fault_in_requests();
-        pthread_mutex_unlock(&supply_lock);
+        pas_lock_unlock(&supply_lock);
     }
     return true;
-}
-
-static uint64_t now_in_nanoseconds(void)
-{
-#if PAS_OS(WINDOWS)
-    /* The deadline pthread_cond_timedwait takes is measured against QueryPerformanceCounter there,
-       which is the clock this reads. */
-    return pas_get_current_monotonic_time_nanoseconds();
-#else
-    struct timeval now;
-
-    /* pthread_cond_timedwait measures its deadline against the realtime clock. */
-    gettimeofday(&now, NULL);
-    return (uint64_t)now.tv_sec * 1000000000ULL + (uint64_t)now.tv_usec * 1000ULL;
-#endif
 }
 
 static uint64_t compute_idle_deadline(void)
 {
     double milliseconds;
 
-    /* Clamped rather than trusted: an interval that lands outside what a timespec can hold makes
-       pthread_cond_timedwait fail rather than wait, which would spin the filling thread. */
+    /* Clamped rather than trusted: an out-of-range interval could either overflow the deadline or
+       return without waiting and spin the filling thread. */
     milliseconds = bmalloc_prefault_supply_idle_timeout_in_milliseconds;
     if (!(milliseconds > MIN_IDLE_TIMEOUT_IN_MILLISECONDS))
         milliseconds = MIN_IDLE_TIMEOUT_IN_MILLISECONDS;
     else if (milliseconds > MAX_IDLE_TIMEOUT_IN_MILLISECONDS)
         milliseconds = MAX_IDLE_TIMEOUT_IN_MILLISECONDS;
 
-    return now_in_nanoseconds() + (uint64_t)(milliseconds * 1000000.);
+    return pas_condition_get_time_in_nanoseconds() + (uint64_t)(milliseconds * 1000000.);
 }
 
-/* Caller holds supply_lock. */
 static void start_idle_interval(supply_thread_state* state, unsigned demand)
 {
+    pas_lock_testing_assert_held(&supply_lock);
     state->demand_at_start = demand;
     state->fault_in_requests_at_start = fault_in_request_count;
     state->deadline = compute_idle_deadline();
 }
 
-/* Caller holds supply_lock. */
 static bool has_work(const supply_thread_state* state)
 {
+    pas_lock_testing_assert_held(&supply_lock);
     if (newest_fault_in_request())
         return true;
     switch (state->blocks_mode) {
@@ -449,23 +435,18 @@ static bool has_work(const supply_thread_state* state)
 }
 
 /* Waits, with supply_lock held, until there is work or the interval is over. Returns whether the
-   interval is over. Any error from the wait is treated as the interval being over, for the same
-   reason as a failed refill. */
+   interval is over. */
 static bool wait_for_work(supply_thread_state* state)
 {
     for (;;) {
-        struct timespec deadline;
-
         /* Checked first, so that a thread kept busy by fault-ins still notices that the blocks
            have gone unwanted. */
-        if (now_in_nanoseconds() >= state->deadline)
+        if (pas_condition_get_time_in_nanoseconds() >= state->deadline)
             return true;
         if (has_work(state))
             return false;
 
-        deadline.tv_sec = (time_t)(state->deadline / 1000000000ULL);
-        deadline.tv_nsec = (long)(state->deadline % 1000000000ULL);
-        if (pthread_cond_timedwait(&supply_cond, &supply_lock, &deadline))
+        if (!pas_condition_timed_wait_until(&supply_cond, &supply_lock, state->deadline))
             return true;
     }
 }
@@ -504,10 +485,10 @@ static void* supply_thread_main(void* arg)
 
     /* Snapshotted with the lock, so that a take landing while this pass refills, or while it
        waits to acquire the lock, still counts towards this interval. */
-    pthread_mutex_lock(&supply_lock);
+    pas_lock_lock(&supply_lock);
     start_idle_interval(&state, __atomic_load_n(&supply_state.demand_count, __ATOMIC_RELAXED));
     resume_refilling_if_a_take_found_supply_low(&state);
-    pthread_mutex_unlock(&supply_lock);
+    pas_lock_unlock(&supply_lock);
 
     for (;;) {
         unsigned demand;
@@ -518,21 +499,21 @@ static void* supply_thread_main(void* arg)
         while (serve_fault_in_chunk(&state))
             refill_if_needed(&state);
 
-        pthread_mutex_lock(&supply_lock);
+        pas_lock_lock(&supply_lock);
         if (!wait_for_work(&state)) {
             resume_refilling_if_a_take_found_supply_low(&state);
-            pthread_mutex_unlock(&supply_lock);
+            pas_lock_unlock(&supply_lock);
             continue;
         }
         has_block_demand = blocks_were_wanted_this_interval(&state, __atomic_load_n(&supply_state.demand_count, __ATOMIC_RELAXED));
-        pthread_mutex_unlock(&supply_lock);
+        pas_lock_unlock(&supply_lock);
 
         /* An interval without a take means the blocks are being held on the chance that somebody
            will want them. Give them back; a later take asks for them again. */
         if (!has_block_demand && state.blocks_mode != supply_blocks_mode_released)
             bmalloc_prefault_supply_scavenge();
 
-        pthread_mutex_lock(&supply_lock);
+        pas_lock_lock(&supply_lock);
         /* thread_is_running stays set until the blocks are gone, so that a replacement filler
            cannot install a block this one is about to free. Demand that arrived in the meantime
            therefore started nobody, and has to be picked up here. */
@@ -541,22 +522,22 @@ static void* supply_thread_main(void* arg)
         has_fault_in_demand = newest_fault_in_request() || fault_in_request_count != state.fault_in_requests_at_start;
         if (!has_block_demand && !has_fault_in_demand) {
             supply_state.thread_is_running = false;
-            pthread_mutex_unlock(&supply_lock);
+            pas_lock_unlock(&supply_lock);
             return SUPPLY_THREAD_RESULT_NULL;
         }
         state.blocks_mode = has_block_demand ? supply_blocks_mode_refilling : supply_blocks_mode_released;
         start_idle_interval(&state, demand);
         resume_refilling_if_a_take_found_supply_low(&state);
-        pthread_mutex_unlock(&supply_lock);
+        pas_lock_unlock(&supply_lock);
     }
 }
 
 /* Reserves the right to be the one that creates the filling thread. Claiming and creating are split
    so that pthread_create runs with supply_lock dropped: it allocates, and holding a lock across an
-   allocation is how a lock cycle gets built once this entrypoint sits on an allocation path.
-   Caller holds supply_lock. */
+   allocation is how a lock cycle gets built once this entrypoint sits on an allocation path. */
 static bool claim_filling_thread(void)
 {
+    pas_lock_testing_assert_held(&supply_lock);
     if (supply_state.thread_is_running)
         return false;
     if (!pas_dyld_is_libsystem_initialized())
@@ -573,10 +554,10 @@ static void create_filling_thread(void)
     pthread_t thread;
 
     if (pthread_create(&thread, NULL, supply_thread_main, NULL)) {
-        pthread_mutex_lock(&supply_lock);
+        pas_lock_lock(&supply_lock);
         supply_state.thread_is_running = false;
         clear_all_fault_in_requests();
-        pthread_mutex_unlock(&supply_lock);
+        pas_lock_unlock(&supply_lock);
         return;
     }
     pthread_detach(thread);
@@ -619,11 +600,11 @@ void* bmalloc_prefault_supply_try_allocate(void)
         if (!result || __atomic_load_n(&supply_state.num_blocks, __ATOMIC_RELAXED) * 4 < target) {
             bool should_create;
 
-            pthread_mutex_lock(&supply_lock);
+            pas_lock_lock(&supply_lock);
             supply_state.take_found_supply_low = true;
             should_create = claim_filling_thread();
-            pthread_cond_broadcast(&supply_cond);
-            pthread_mutex_unlock(&supply_lock);
+            pas_condition_broadcast(&supply_cond);
+            pas_lock_unlock(&supply_lock);
 
             if (should_create)
                 create_filling_thread();
@@ -660,7 +641,7 @@ static void request_fault_in(uintptr_t allocation, size_t size)
     if (end <= begin)
         return;
 
-    pthread_mutex_lock(&supply_lock);
+    pas_lock_lock(&supply_lock);
     request = free_fault_in_request();
     request->begin = begin;
     request->end = end;
@@ -670,8 +651,8 @@ static void request_fault_in(uintptr_t allocation, size_t size)
     __atomic_store_n(&request->allocation, allocation, __ATOMIC_RELEASE);
     fault_in_request_count++;
     should_create = claim_filling_thread();
-    pthread_cond_broadcast(&supply_cond);
-    pthread_mutex_unlock(&supply_lock);
+    pas_condition_broadcast(&supply_cond);
+    pas_lock_unlock(&supply_lock);
 
     if (should_create)
         create_filling_thread();
