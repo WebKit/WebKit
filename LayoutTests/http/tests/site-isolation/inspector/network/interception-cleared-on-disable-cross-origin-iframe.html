@@ -1,0 +1,84 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptionClearedOnDisable");
+
+    // Invoke the commands directly against the backend connection, which hosts the Network domain
+    // under Site Isolation.
+    function invokeNetworkCommand(name, parameters) {
+        return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters || {});
+    }
+
+    // Witness the interception configuration held by the cross-origin iframe's WebContent process.
+    async function isInterceptionConfiguredInTarget(target, url) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({
+            expression: `internals.isNetworkInterceptionConfiguredForTesting("${url}")`,
+            objectGroup: "test",
+            returnByValue: true,
+        });
+        return result.value;
+    }
+
+    let crossOriginFrameTarget = null;
+
+    const interceptedURL = "http://localhost:8000/site-isolation/inspector/network/resources/data.json";
+    const interceptionParameters = {url: interceptedURL, stage: "request", caseSensitive: true, isRegex: false};
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionClearedOnDisable.CrossOriginIFrameTargetExists",
+        description: "A separate-process cross-origin iframe should exist before interception is configured.",
+        async test() {
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            crossOriginFrameTarget = await waitForFrameTargetForURLContaining("iframe-with-fetch.html");
+            InspectorTest.expectThat(crossOriginFrameTarget instanceof WI.FrameTarget, "Added target should be a FrameTarget, proving a separate-process OOPIF.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptionClearedOnDisable.WhileNotEnabled",
+        description: "Network.disable should clear Web Inspector's interception patterns even when the Network domain is not enabled.",
+        async test() {
+            InspectorTest.log("Disabling the Network domain...");
+            await invokeNetworkCommand("disable");
+
+            InspectorTest.log("Adding an interception pattern while the Network domain is not enabled...");
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: true});
+            await invokeNetworkCommand("addInterception", interceptionParameters);
+
+            let configuredBefore = await isInterceptionConfiguredInTarget(crossOriginFrameTarget, interceptedURL);
+            InspectorTest.expectTrue(configuredBefore, "The cross-origin iframe's process should hold the interception pattern.");
+
+            InspectorTest.log("Disabling the Network domain again...");
+            await invokeNetworkCommand("disable");
+
+            let configuredAfter = await isInterceptionConfiguredInTarget(crossOriginFrameTarget, interceptedURL);
+            InspectorTest.expectFalse(configuredAfter, "The cross-origin iframe's process should no longer hold the interception pattern, so no load pauses.");
+
+            InspectorTest.log("Re-enabling the Network domain...");
+            await invokeNetworkCommand("enable");
+
+            let configuredAfterEnable = await isInterceptionConfiguredInTarget(crossOriginFrameTarget, interceptedURL);
+            InspectorTest.expectFalse(configuredAfterEnable, "Re-enabling the Network domain should not bring back the interception pattern.");
+
+            await invokeNetworkCommand("addInterception", interceptionParameters);
+            InspectorTest.pass("Adding the same interception pattern again should not report a duplicate.");
+            await invokeNetworkCommand("removeInterception", interceptionParameters);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that disabling the Network domain clears Web Inspector's interception patterns even if the domain was not enabled.</p>
+</body>

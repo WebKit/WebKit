@@ -1,0 +1,36 @@
+<p>Cross-origin iframe that fetches a resource when its parent asks, aborts that fetch when its parent asks, and reports the result.</p>
+
+<script>
+let currentController = null;
+
+window.addEventListener("message", async (event) => {
+    if (event.data.type === "Abort") {
+        currentController?.abort();
+        return;
+    }
+
+    if (event.data.type !== "Fetch")
+        return;
+
+    let controller = new AbortController;
+    currentController = controller;
+    try {
+        let response = await fetch(event.data.url, {cache: "no-store", signal: controller.signal});
+        let text = await response.text();
+        window.parent.postMessage({
+            type: "FetchResult",
+            status: response.status,
+            statusText: response.statusText,
+            contentType: response.headers.get("Content-Type"),
+            text: text.trim(),
+        }, "*");
+    } catch (error) {
+        window.parent.postMessage({type: "FetchResult", error: error.name}, "*");
+    } finally {
+        if (currentController === controller)
+            currentController = null;
+    }
+});
+
+window.parent.postMessage({type: "Ready"}, "*");
+</script>
