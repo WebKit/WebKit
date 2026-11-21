@@ -398,9 +398,7 @@ struct ActionKey {
         , actionsLength(actionsLength)
         , state(Valid)
     {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        hash = SuperFastHash::computeHash(std::span { reinterpret_cast<const char16_t*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(char16_t) });
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        hash = SuperFastHash::computeHash(spanReinterpretCast<const char16_t>(dfa->actions.subspan(actionsStart, actionsLength)));
     }
 
     NODELETE bool isEmptyValue() const { return state == Empty; }
