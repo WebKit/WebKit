@@ -73,6 +73,8 @@ OSStatus AudioSampleDataSource::setInputFormat(const CAAudioStreamDescription& f
 {
     ASSERT(format.sampleRate() >= 0);
 
+    Locker locker { m_ringBufferLock };
+
     m_inputDescription = CAAudioStreamDescription { format };
     if (m_outputDescription)
         return setupConverter();
@@ -82,6 +84,12 @@ OSStatus AudioSampleDataSource::setInputFormat(const CAAudioStreamDescription& f
 
 OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& format)
 {
+    // Let's release the being-replaced buffers after the lock has been dropped.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    RefPtr<AudioSampleBufferList> previousScratchBuffer;
+    std::unique_ptr<InProcessCARingBuffer> previousRingBuffer;
+    Locker locker { m_ringBufferLock };
+
     ASSERT(m_inputDescription);
     ASSERT(format.sampleRate() >= 0);
 
@@ -89,6 +97,10 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
         return noErr;
 
     m_outputDescription = CAAudioStreamDescription { format };
+
+    previousRingBuffer = std::exchange(m_ringBuffer, { });
+    previousScratchBuffer = std::exchange(m_scratchBuffer, { });
+    ++m_ringBufferGenerationCount;
 
     {
         // Heap allocations are forbidden on the audio thread for performance reasons so we need to
@@ -101,6 +113,18 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
     }
 
     return setupConverter();
+}
+
+std::optional<CAAudioStreamDescription> AudioSampleDataSource::inputDescription() const
+{
+    Locker locker { m_ringBufferLock };
+    return m_inputDescription;
+}
+
+std::optional<CAAudioStreamDescription> AudioSampleDataSource::outputDescription() const
+{
+    Locker locker { m_ringBufferLock };
+    return m_outputDescription;
 }
 
 MediaTime AudioSampleDataSource::hostTime() const
@@ -179,6 +203,10 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 
 void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampleDescription, CMSampleBufferRef sampleBuffer)
 {
+    Locker locker { m_ringBufferLock };
+    if (!m_ringBuffer || !m_inputDescription)
+        return;
+
     ASSERT_UNUSED(sampleDescription, *m_inputDescription == sampleDescription);
 
     WebAudioBufferList list(*m_inputDescription, sampleBuffer);
@@ -187,11 +215,20 @@ void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampl
 
 void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, size_t sampleCount, NeedsFlush needsFlush)
 {
+    Locker locker { m_ringBufferLock };
+    if (!m_ringBuffer)
+        return;
+
     pushSamplesInternal(*downcast<WebAudioBufferList>(audioData).list(), sampleTime, sampleCount, needsFlush);
 }
 
 bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
 {
+    Locker locker { m_ringBufferLock };
+
+    if (!m_ringBuffer || !m_outputDescription)
+        return false;
+
     size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
@@ -276,6 +313,11 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
 bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, PullMode mode)
 {
+    Locker locker { m_ringBufferLock };
+
+    if (!m_ringBuffer || !m_outputDescription)
+        return false;
+
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
@@ -295,6 +337,11 @@ bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, si
 
 bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, NOESCAPE const Function<void()>& consumeFilledBuffer)
 {
+    Locker locker { m_ringBufferLock };
+
+    if (!m_ringBuffer || !m_outputDescription)
+        return false;
+
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
@@ -316,10 +363,21 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
     if (endFrame < startFrame)
         return false;
 
+    auto consumeFilledBufferWithoutHoldingLock = [&] {
+        assertIsHeld(m_ringBufferLock);
+        auto generationCount = m_ringBufferGenerationCount;
+        {
+            DropLockForScope unlocker { locker };
+            consumeFilledBuffer();
+        }
+        return m_ringBuffer && m_ringBufferGenerationCount == generationCount;
+    };
+
     if (m_muted) {
         AudioSampleBufferList::zeroABL(buffer, sampleCountPerChunk * m_outputDescription->bytesPerFrame());
         while (endFrame - startFrame >= sampleCountPerChunk) {
-            consumeFilledBuffer();
+            if (!consumeFilledBufferWithoutHoldingLock())
+                return true;
             startFrame += sampleCountPerChunk;
         }
         return true;
@@ -327,7 +385,8 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
 
     while (endFrame - startFrame >= sampleCountPerChunk) {
         m_ringBuffer->fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy);
-        consumeFilledBuffer();
+        if (!consumeFilledBufferWithoutHoldingLock())
+            return true;
         startFrame += sampleCountPerChunk;
     }
     return true;
