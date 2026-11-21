@@ -1,0 +1,4 @@
+
+PASS Query in a nested shadow tree matches name set by :host of an outer host
+PASS Query in the shadow tree of a slotted element matches name set by :host of the slot's host
+

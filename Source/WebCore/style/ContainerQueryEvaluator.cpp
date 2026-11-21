@@ -187,14 +187,12 @@ RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequ
         return style->containerNames().containsIf([&](auto& scopedName) {
             auto isNameFromAllowedScope = [&](auto& scopedName) {
                 // Names from :host rules are allowed when the candidate is the host element.
-                RefPtr host = originatingElement ? originatingElement->shadowHost() : element.shadowHost();
-                auto isHost = host == &candidateElement;
-                if (scopedName.scopeOrdinal == ScopeOrdinal::Shadow && isHost)
+                if (scopedName.scopeOrdinal == ScopeOrdinal::Shadow && &candidateElement != (originatingElement ? originatingElement : &element))
                     return true;
                 // Otherwise names from the inner scopes are ignored.
                 return scopedName.scopeOrdinal <= ScopeOrdinal::Element;
             };
-            return isNameFromAllowedScope(scopedName) && scopedName.name == name;
+            return scopedName.name == name && isNameFromAllowedScope(scopedName);
         });
     };
 
