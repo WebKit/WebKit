@@ -106,6 +106,36 @@ class TestBuildRelevance(RelevanceTestCase):
         self.assertRelevant('+++ docs/other.md', '--- docs/moved.md')
 
 
+class TestAPITestsRelevance(RelevanceTestCase):
+    rule = relevance.API_TESTS
+
+    def test_changes_without_api_test_inputs_are_skipped(self):
+        for files in [
+            ('+++ LayoutTests/fast/dom/foo.html',),
+            ('+++ LayoutTests/fast/dom/foo.html', '+++ LayoutTests/fast/dom/foo-expected.txt'),
+            ('+++ LayoutTests/platform/mac/TestExpectations',),
+            ('+++ LayoutTests/imported/w3c/web-platform-tests/dom/foo.html', '+++ docs/bar.md'),
+            ('+++ docs/porting-webkit.md',),
+            ('+++ metadata/contributors.json',),
+        ]:
+            self.assertIrrelevant(*files)
+
+    def test_changes_with_api_test_inputs_run_api_tests(self):
+        for files in [
+            ('+++ Source/WebCore/dom/Node.cpp',),
+            ('+++ LayoutTests/fast/dom/foo.html', '+++ Source/WebCore/dom/Node.cpp'),
+            ('+++ LayoutTests/fast/dom/foo.html', '+++ Tools/TestWebKitAPI/Tests/WebKit/Foo.mm'),
+            ('+++ Tools/Scripts/webkitpy/api_tests/runner.py',),
+            ('+++ JSTests/stress/foo.js',),
+            ('+++ SomeNewTopLevelDir/LayoutTests/foo.html',),
+        ]:
+            self.assertRelevant(*files)
+
+    def test_removed_or_renamed_files_run_api_tests(self):
+        self.assertRelevant('--- LayoutTests/fast/dom/old.html')
+        self.assertRelevant('+++ LayoutTests/fast/dom/new.html', '--- LayoutTests/fast/dom/moved.html')
+
+
 class TestJSCRelevance(RelevanceTestCase):
     rule = relevance.JSC
 
