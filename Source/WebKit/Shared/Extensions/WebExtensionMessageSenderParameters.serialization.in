@@ -31,6 +31,7 @@ struct WebKit::WebExtensionMessageSenderParameters {
     URL url;
     Markable<WTF::UUID> documentIdentifier;
     std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier;
+    bool usesStructuredCloneMessageSerialization;
 };
 
 #endif

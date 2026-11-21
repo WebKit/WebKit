@@ -44,6 +44,8 @@ public:
     JSValueRef reportError(String errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
     JSValueRef reportError(const String& errorMessage, WebExtensionCallbackHandler&);
 
+    JSValueRef messageSerialization(JSContextRef);
+
 private:
     friend class WebExtensionAPIRuntime;
 
@@ -81,7 +83,7 @@ public:
     JSValueRef platformArch(JSContextRef);
     JSValueRef platformOS(JSContextRef);
 
-    void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const WebExtensionMessage&, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void sendMessage(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, JSValueRef message, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
 
     void sendNativeMessage(WebFrame&, const String& applicationID, const String& messageJSON, Ref<WebExtensionCallbackHandler>&&);
@@ -97,7 +99,8 @@ public:
 private:
     friend class WebExtensionAPIWebPageRuntime;
 
-    static bool parseConnectOptions(RefPtr<JSON::Value>, std::optional<String>& name, const String& sourceKey, String& outExceptionString);
+    static bool parseConnectOptions(RefPtr<JSON::Value>, std::optional<String>& name, bool& usesStructuredClone, const String& sourceKey, String& outExceptionString);
+    static bool parseMessageSerialization(RefPtr<JSON::Value>, bool& usesStructuredClone, const String& sourceKey, String& outExceptionString);
 
     const RefPtr<WebExtensionAPIEvent> m_onConnect;
     const RefPtr<WebExtensionAPIEvent> m_onInstalled;
@@ -113,7 +116,7 @@ class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebEx
 public:
     WebExtensionAPIWebPageRuntime& runtime() final { return *this; }
 
-    void sendMessage(WebPage&, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void sendMessage(WebPage&, WebFrame&, JSContextRef, const String& extensionID, JSValueRef message, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebPage&, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
 };
 

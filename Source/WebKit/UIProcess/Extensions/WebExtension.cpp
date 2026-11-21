@@ -32,6 +32,7 @@
 #include "Logging.h"
 
 #include "WebExtensionConstants.h"
+#include "WebExtensionMessage.h"
 #include "WebExtensionPermission.h"
 #include "WebExtensionUtilities.h"
 #include <WebCore/LocalizedStrings.h>
@@ -1057,12 +1058,12 @@ void WebExtension::populateMessageSerializationIfNeeded()
         return;
 
     auto messageSerialization = manifestObject->getString(messageSerializationManifestKey);
-    if (messageSerialization == "structured_clone"_s) {
+    if (messageSerialization == manifestMessageSerializationStructuredClone) {
         m_usesStructuredCloneMessageSerialization = true;
         return;
     }
 
-    if (messageSerialization != "json"_s)
+    if (messageSerialization != messageSerializationJSON)
         recordError(createError(Error::InvalidMessageSerialization));
 }
 

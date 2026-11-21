@@ -1327,6 +1327,389 @@ TEST(WKWebExtensionAPIRuntime, PortPostMessageWithStructuredClone)
     [manager run];
 }
 
+static void runContentScriptTest(NSDictionary *manifest, NSString *backgroundScript, NSString *contentScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithJSONOptionOverridesStructuredCloneManifest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.date, '2023-11-14T22:13:20.000Z', 'Date should arrive as an ISO string')",
+
+        @"  sendResponse({ reply: new Map([[ 'Via', '1.1 proxy-a' ]]) })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ date: new Date(1700000000000) }, { serialization: 'json' })",
+
+        @"  browser.test.assertFalse(response.reply instanceof Map, 'A JSON sender should not receive a Map')",
+        @"  browser.test.assertDeepEq(response.reply, { }, 'The reply should use the format the sender chose')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    runContentScriptTest(structuredCloneContentScriptManifest(), backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithStructuredCloneOptionOverridesJSONManifest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertTrue(message.map instanceof Map, 'Map should arrive as a Map')",
+        @"  browser.test.assertEq(message.map.get('Content-Language'), 'en', 'Map should keep its entries')",
+
+        @"  sendResponse({ reply: new Map([[ 'Via', '1.1 proxy-a' ]]) })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ map: new Map([[ 'Content-Language', 'en' ]]) }, { serialization: 'structured-clone' })",
+
+        @"  browser.test.assertTrue(response.reply instanceof Map, 'Reply Map should arrive as a Map')",
+        @"  browser.test.assertEq(response.reply.get('Via'), '1.1 proxy-a', 'Reply Map should keep its entries')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    runContentScriptTest(runtimeContentScriptManifest, backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithInvalidSerializationOption)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  for (const serialization of [ 'structured_clone', 'xml', '' ]) {",
+        @"    let error",
+        @"    try {",
+        @"      await browser.runtime.sendMessage({ content: 'Hello' }, { serialization })",
+        @"    } catch (caughtError) {",
+        @"      error = caughtError",
+        @"    }",
+
+        @"    browser.test.assertTrue(!!error, `Serialization '${serialization}' should be rejected`)",
+        @"    browser.test.assertTrue(error?.message?.includes('structured-clone'), 'The error should list the valid values')",
+        @"  }",
+
+        @"  let typeError",
+        @"  try {",
+        @"    await browser.runtime.sendMessage({ content: 'Hello' }, { serialization: 1 })",
+        @"  } catch (caughtError) {",
+        @"    typeError = caughtError",
+        @"  }",
+
+        @"  browser.test.assertTrue(!!typeError, 'A non-string serialization should be rejected')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    runContentScriptTest(runtimeContentScriptManifest, backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithPrimitiveValues)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  sendResponse(message)",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const send = (message, options) => options ? browser.runtime.sendMessage(browser.runtime.id, message, options) : browser.runtime.sendMessage(browser.runtime.id, message)",
+
+        @"  for (const options of [ null, { serialization: 'json' }, { serialization: 'structured-clone' } ]) {",
+        @"    browser.test.assertEq(await send('Content-Language: en', options), 'Content-Language: en', 'A string should round trip')",
+        @"    browser.test.assertEq(await send(42, options), 42, 'A number should round trip')",
+        @"    browser.test.assertEq(await send(true, options), true, 'A boolean should round trip')",
+        @"    browser.test.assertDeepEq(await send([ 'Via', '1.1 proxy-a' ], options), [ 'Via', '1.1 proxy-a' ], 'An array should round trip')",
+        @"  }",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    runContentScriptTest(runtimeContentScriptManifest, backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageRejectsNullUndefinedAndFunctions)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  for (const serialization of [ 'json', 'structured-clone' ]) {",
+        @"    for (const message of [ null, undefined, () => { } ]) {",
+        @"      let error",
+        @"      try {",
+        @"        await browser.runtime.sendMessage(browser.runtime.id, message, { serialization })",
+        @"      } catch (caughtError) {",
+        @"        error = caughtError",
+        @"      }",
+
+        @"      browser.test.assertTrue(!!error, `${typeof message} message with ${serialization} should be rejected`)",
+        @"    }",
+        @"  }",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    runContentScriptTest(runtimeContentScriptManifest, backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, MessageSerializationEnum)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.runtime.MessageSerialization.JSON, 'json')",
+        @"browser.test.assertEq(browser.runtime.MessageSerialization.STRUCTURED_CLONE, 'structured-clone')",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.runtime.MessageSerialization.JSON, 'json', 'JSON should be available in content scripts')",
+        @"browser.test.assertEq(browser.runtime.MessageSerialization.STRUCTURED_CLONE, 'structured-clone', 'STRUCTURED_CLONE should be available in content scripts')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    runContentScriptTest(runtimeContentScriptManifest, backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectWithStructuredCloneOption)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertTrue(message.map instanceof Map, 'Map should arrive as a Map')",
+
+        @"    port.postMessage({ date: new Date(1700000000000) })",
+        @"  })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const port = browser.runtime.connect({ name: 'Content-Language', serialization: 'structured-clone' })",
+
+        @"port.onMessage.addListener((message) => {",
+        @"  browser.test.assertTrue(message.date instanceof Date, 'The receiver should post in the format the opener chose')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"port.postMessage({ map: new Map([[ 'Content-Language', 'en' ]]) })"
+    ]);
+
+    runContentScriptTest(runtimeContentScriptManifest, backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectWithJSONOptionOverridesStructuredCloneManifest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message.date, '2023-11-14T22:13:20.000Z', 'Date should arrive as an ISO string')",
+
+        @"    port.postMessage({ map: new Map([[ 'Via', '1.1 proxy-a' ]]) })",
+        @"  })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const port = browser.runtime.connect({ serialization: 'json' })",
+
+        @"port.onMessage.addListener((message) => {",
+        @"  browser.test.assertFalse(message.map instanceof Map, 'A JSON opener should not receive a Map')",
+        @"  browser.test.assertDeepEq(message.map, { }, 'The receiver should post JSON to a JSON opener')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"port.postMessage({ date: new Date(1700000000000) })"
+    ]);
+
+    runContentScriptTest(structuredCloneContentScriptManifest(), backgroundScript, contentScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectWithInvalidSerializationOption)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"let error",
+        @"try {",
+        @"  browser.runtime.connect({ serialization: 'structured_clone' })",
+        @"} catch (caughtError) {",
+        @"  error = caughtError",
+        @"}",
+
+        @"browser.test.assertTrue(!!error, 'The manifest spelling should be rejected as an API value')",
+        @"browser.test.assertTrue(error?.message?.includes('structured-clone'), 'The error should list the valid values')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    runContentScriptTest(runtimeContentScriptManifest, backgroundScript, contentScript);
+}
+
+static NSDictionary *webPageMessageManifest(bool usesStructuredCloneManifestKey)
+{
+    NSMutableDictionary *manifest = [@{
+        @"manifest_version": @3,
+
+        @"name": @"Runtime Test",
+        @"description": @"Runtime Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"externally_connectable": @{
+            @"matches": @[ @"*://localhost/*" ]
+        },
+    } mutableCopy];
+
+    if (usesStructuredCloneManifestKey)
+        manifest[@"message_serialization"] = @"structured_clone";
+
+    return manifest;
+}
+
+static void runWebPageMessageTest(NSDictionary *manifest, NSString *backgroundScript, NSString *webPageScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webPageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto manager = Util::parseExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    // Set an uniqueIdentifier so it is a known value and not the default random one.
+    manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (SerializationTest)";
+
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageUsesJSONByDefault)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.date, '2023-11-14T22:13:20.000Z', 'A web page message should be JSON even when the manifest uses structured clone')",
+
+        @"  sendResponse({ reply: new Map([[ 'Via', '1.1 proxy-a' ]]) })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *webPageScript = Util::constructScript(@[
+        @"<script>",
+        @"browser.runtime.sendMessage('org.webkit.test.extension (SerializationTest)', { date: new Date(1700000000000) }, (response) => {",
+        @"  browser.test.assertDeepEq(response?.reply, { }, 'A web page should receive a JSON reply by default')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+        @"</script>"
+    ]);
+
+    runWebPageMessageTest(webPageMessageManifest(true), backgroundScript, webPageScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, MessageSerializationEnumInWebPage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *webPageScript = Util::constructScript(@[
+        @"<script>",
+        @"browser.test.assertEq(browser.runtime.MessageSerialization?.JSON, 'json', 'JSON should be available to a web page')",
+        @"browser.test.assertEq(browser.runtime.MessageSerialization?.STRUCTURED_CLONE, 'structured-clone', 'STRUCTURED_CLONE should be available to a web page')",
+
+        @"browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    runWebPageMessageTest(webPageMessageManifest(false), backgroundScript, webPageScript);
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithStructuredCloneOption)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertTrue(message.map instanceof Map, 'Map should arrive as a Map')",
+        @"  browser.test.assertEq(message.map.get('Content-Language'), 'en', 'Map should keep its entries')",
+
+        @"  sendResponse({ reply: new Map([[ 'Via', '1.1 proxy-a' ]]) })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *webPageScript = Util::constructScript(@[
+        @"<script>",
+        @"browser.runtime.sendMessage('org.webkit.test.extension (SerializationTest)', { map: new Map([[ 'Content-Language', 'en' ]]) }, { serialization: 'structured-clone' }, (response) => {",
+        @"  browser.test.assertTrue(response?.reply instanceof Map, 'The reply should use the format the web page chose')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+        @"</script>"
+    ]);
+
+    runWebPageMessageTest(webPageMessageManifest(false), backgroundScript, webPageScript);
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWhileBackgroundIsLoading)
 {
     // A content script sends runtime.sendMessage while the non-persistent background content

@@ -28,6 +28,7 @@
 
 #include "JSWebExtensionWrapper.h"
 #include "WebExtensionConstants.h"
+#include "WebExtensionMessage.h"
 #include "WebFrame.h"
 #include <WebCore/Document.h>
 #include <WebCore/LocalFrameInlines.h>
@@ -227,6 +228,25 @@ String toErrorString(const String& callingAPIName, const String& sourceKey, cons
         return makeString("Invalid call to "_s, callingAPIName, ". "_s, uppercaseFirst(formattedUnderlyingErrorString), "."_s);
 
     return formattedUnderlyingErrorString;
+}
+
+bool parseMessageSerializationOption(const String& value, const String& sourceKey, bool& usesStructuredClone, String& outExceptionString)
+{
+    if (value.isNull())
+        return true;
+
+    if (value == apiMessageSerializationStructuredClone) {
+        usesStructuredClone = true;
+        return true;
+    }
+
+    if (value == messageSerializationJSON) {
+        usesStructuredClone = false;
+        return true;
+    }
+
+    outExceptionString = toErrorString(nullString(), sourceKey, makeString("it must be either '"_s, messageSerializationJSON, "' or '"_s, apiMessageSerializationStructuredClone, '\''));
+    return false;
 }
 
 JSObjectRef toJSError(JSContextRef context, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
