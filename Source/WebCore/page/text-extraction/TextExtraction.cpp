@@ -2130,7 +2130,7 @@ NODELETE static IntSize reducePrecision(FloatSize size)
     };
 }
 
-static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets, ContainerNode& node, FlowDirection direction)
+static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets, ContainerNode& node, FlowDirection direction, bool shouldTraverseSubframes)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer)
@@ -2169,8 +2169,8 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
     };
 
     if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(*renderer)) {
-        if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument())
-            extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
+        if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument(); contentDocument && shouldTraverseSubframes)
+            extractRenderedTokens(tokensAndOffsets, *contentDocument, direction, shouldTraverseSubframes);
         return;
     }
 
@@ -2214,8 +2214,8 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
         }
 
         if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(descendant)) {
-            if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument())
-                extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
+            if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument(); contentDocument && shouldTraverseSubframes)
+                extractRenderedTokens(tokensAndOffsets, *contentDocument, direction, shouldTraverseSubframes);
             continue;
         }
 
@@ -2223,18 +2223,10 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
     }
 }
 
-RenderedText extractRenderedText(Element& element)
+static RenderedText extractRenderedText(ContainerNode& container, FlowDirection direction, FloatSize elementSizeInDocument, bool shouldTraverseSubframes)
 {
-    CheckedPtr renderer = element.renderer();
-    if (!renderer)
-        return { };
-
-    RefPtr frameView = renderer->view().frameView();
-    auto direction = renderer->writingMode().blockDirection();
-    auto elementSizeInDocument = frameView->absoluteToDocumentRect(renderer->absoluteBoundingBoxRect()).size();
-
     Vector<TokenAndBlockOffset> allTokensAndOffsets;
-    extractRenderedTokens(allTokensAndOffsets, element, direction);
+    extractRenderedTokens(allTokensAndOffsets, container, direction, shouldTraverseSubframes);
 
     bool ascendingOrder = [&] {
         switch (direction) {
@@ -2279,10 +2271,29 @@ RenderedText extractRenderedText(Element& element)
     return { textWithReplacedContent.toString(), textWithoutReplacedContent.toString(), hasLargeReplacedDescendant, elementSizeInDocument };
 }
 
+RenderedText extractRenderedText(Element& element)
+{
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return { };
+
+    RefPtr frameView = renderer->view().frameView();
+    auto elementSizeInDocument = frameView->absoluteToDocumentRect(renderer->absoluteBoundingBoxRect()).size();
+    bool shouldTraverseSubframes = true;
+    return extractRenderedText(element, renderer->writingMode().blockDirection(), elementSizeInDocument, shouldTraverseSubframes);
+}
+
+RenderedText extractRenderedTextPerFrame(Document& frameDocument)
+{
+    bool shouldTraverseSubframes = false;
+    return extractRenderedText(frameDocument, FlowDirection::TopToBottom, { }, shouldTraverseSubframes);
+}
+
 Vector<IntSize> extractLargestReplacedContentSizes(ContainerNode& container)
 {
     Vector<TokenAndBlockOffset> tokensAndOffsets;
-    extractRenderedTokens(tokensAndOffsets, container, FlowDirection::TopToBottom);
+    bool shouldTraverseSubframes = true;
+    extractRenderedTokens(tokensAndOffsets, container, FlowDirection::TopToBottom, shouldTraverseSubframes);
 
     Vector<IntSize> sizes;
     for (auto& [tokens, offset] : tokensAndOffsets) {
