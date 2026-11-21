@@ -172,8 +172,8 @@ GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const T
     // https://drafts.csswg.org/css-grid-1/#alignment
     // After a grid container’s grid tracks have been sized, and the dimensions of all grid items
     // are finalized, grid items can be aligned within their grid areas.
-    auto usedInlineMarginsForAlignment = computeMarginsForAlignment(placedGridItems, LogicalBoxAxis::Inline, usedInlineSizes, gridAreaSizes.inlineSizes);
-    auto usedBlockMarginsForAlignment = computeMarginsForAlignment(placedGridItems, LogicalBoxAxis::Block, usedBlockSizes, gridAreaSizes.blockSizes);
+    auto usedInlineMarginsForAlignment = computeMarginsForAlignment(placedGridItems, LogicalBoxAxis::Inline, usedInlineSizes, gridAreaSizes);
+    auto usedBlockMarginsForAlignment = computeMarginsForAlignment(placedGridItems, LogicalBoxAxis::Block, usedBlockSizes, gridAreaSizes);
 
     auto inlineAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Inline, usedInlineMarginsForAlignment, usedInlineSizes,
         gridAreaSizes.inlineSizes, usedTrackSizes.columnSizes, gridLayoutState.collapsedColumnTracksList, gridLayoutState.usedColumnGap, formattingContext.integrationUtils());
@@ -237,12 +237,13 @@ BorderBoxPositions GridLayout::performSelfAlignment(const PlacedGridItems& place
 }
 
 // https://drafts.csswg.org/css-grid-1/#auto-margins
-Vector<UsedMargins> GridLayout::computeMarginsForAlignment(const PlacedGridItems& placedGridItems, LogicalBoxAxis alignmentAxis, const Vector<LayoutUnit>& borderBoxSizes, const Vector<LayoutUnit>& gridAreaSizes)
+Vector<UsedMargins> GridLayout::computeMarginsForAlignment(const PlacedGridItems& placedGridItems, LogicalBoxAxis alignmentAxis, const Vector<LayoutUnit>& borderBoxSizes, const GridAreaSizes& gridAreaSizes)
 {
+    auto& alignmentAxisGridAreaSizes = alignmentAxis == LogicalBoxAxis::Inline ? gridAreaSizes.inlineSizes : gridAreaSizes.blockSizes;
     return Vector<UsedMargins>(placedGridItems.size(), [&](size_t gridItemIndex) {
         auto& placedGridItem = placedGridItems[gridItemIndex];
         auto& axisSizes = alignmentAxis == LogicalBoxAxis::Inline ? placedGridItem.inlineAxisSizes() : placedGridItem.blockAxisSizes();
-        return GridLayoutUtils::usedMarginsForAlignment(placedGridItem, axisSizes, borderBoxSizes[gridItemIndex], gridAreaSizes[gridItemIndex]);
+        return GridLayoutUtils::usedMarginsForAlignment(placedGridItem, axisSizes, borderBoxSizes[gridItemIndex], alignmentAxisGridAreaSizes[gridItemIndex], gridAreaSizes.inlineSizes[gridItemIndex]);
     });
 }
 

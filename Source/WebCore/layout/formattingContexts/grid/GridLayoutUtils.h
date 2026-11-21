@@ -75,9 +75,18 @@ std::optional<LayoutUnit> gridAreaMaximumSize(size_t startLine, size_t endLine, 
 // https://drafts.csswg.org/css-grid-1/#track-sizes
 Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize&);
 
-UsedMargins usedMarginsForTrackSizing(const PlacedGridItem&, const ComputedSizes&);
-UsedMargins usedMarginsForStretchFit(const PlacedGridItem&, const ComputedSizes&);
-UsedMargins usedMarginsForAlignment(const PlacedGridItem&, const ComputedSizes&, LayoutUnit borderBoxSize, LayoutUnit gridAreaSize);
+// The grid area's inline size, which percentage margins in both axes resolve against, is absent while the columns are being sized.
+// https://drafts.csswg.org/css-sizing-3/#min-percentage-contribution
+// "For the min size properties, as well as for margins and paddings (and gutters), a cyclic percentage is resolved
+// against zero for determining intrinsic size contributions."
+UsedMargins usedMarginsForTrackSizing(const PlacedGridItem&, const ComputedSizes&, std::optional<LayoutUnit> gridAreaInlineSize);
+UsedMargins usedMarginsForStretchFit(const PlacedGridItem&, const ComputedSizes&, std::optional<LayoutUnit> gridAreaInlineSize);
+
+// https://drafts.csswg.org/css-grid-1/#layout-algorithm
+// "Lay out the grid items into their respective containing blocks. Each grid area’s width and height are considered
+// definite for this purpose."
+UsedMargins usedMarginsForAlignment(const PlacedGridItem&, const ComputedSizes&, LayoutUnit borderBoxSize, LayoutUnit alignmentAxisGridAreaSize, LayoutUnit gridAreaInlineSize);
+
 bool hasAutoMarginsForAxis(const ComputedSizes&);
 
 // The border box size of a specified width, height, minimum or maximum size, honoring box-sizing.
