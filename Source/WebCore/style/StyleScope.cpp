@@ -503,6 +503,14 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
     return { WTF::move(sheets), WTF::move(styleSheetsForStyleSheetsList) };
 }
 
+// A reset keeps the resolver's keyframes and the document's font faces, so only a sheet of style rules may leave without a reconstruct.
+static bool hasOnlyStyleRules(const StyleSheetContents& sheet)
+{
+    return sheet.layerRulesBeforeImportRules().isEmpty() && !sheet.traverseRules([](auto& rule) {
+        return !rule.isStyleRule() && !rule.isMediaRule();
+    });
+}
+
 Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<Ref<CSSStyleSheet>>& newStylesheets)
 {
     unsigned newStylesheetCount = newStylesheets.size();
@@ -514,34 +522,33 @@ Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<Ref<CSSStyle
     if (resolver->isSharedBetweenShadowTrees())
         return { ResolverUpdateType::Reconstruct };
 
-    // Find out which stylesheets are new.
-    unsigned oldStylesheetCount = m_activeStyleSheets.size();
-    if (newStylesheetCount < oldStylesheetCount)
-        return { ResolverUpdateType::Reconstruct };
-
-    Vector<Ref<StyleSheetContents>> addedSheets;
+    // Sheets added, removed or moved are the change: only the elements their rules match need a new style.
+    Vector<Ref<StyleSheetContents>> changedSheets;
+    bool hasInsertionsOrRemovals = false;
     unsigned newIndex = 0;
-    for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
-        if (newIndex >= newStylesheetCount)
-            return { ResolverUpdateType::Reconstruct };
-
-        while (m_activeStyleSheets[oldIndex] != newStylesheets[newIndex]) {
-            addedSheets.append(protect(newStylesheets[newIndex]->contents()));
-            ++newIndex;
-            if (newIndex == newStylesheetCount)
+    for (auto& oldSheet : m_activeStyleSheets) {
+        unsigned keptIndex = newIndex;
+        while (keptIndex < newStylesheetCount && newStylesheets[keptIndex] != oldSheet)
+            ++keptIndex;
+        if (keptIndex == newStylesheetCount) {
+            Ref contents = oldSheet->contents();
+            if (!hasOnlyStyleRules(contents))
                 return { ResolverUpdateType::Reconstruct };
+            changedSheets.append(WTF::move(contents));
+            hasInsertionsOrRemovals = true;
+            continue;
         }
+        for (; newIndex < keptIndex; ++newIndex)
+            changedSheets.append(protect(newStylesheets[newIndex]->contents()));
+        hasInsertionsOrRemovals |= !changedSheets.isEmpty();
         ++newIndex;
     }
-    bool hasInsertions = !addedSheets.isEmpty();
-    while (newIndex < newStylesheetCount) {
-        addedSheets.append(protect(newStylesheets[newIndex]->contents()));
-        ++newIndex;
-    }
+    for (; newIndex < newStylesheetCount; ++newIndex)
+        changedSheets.append(protect(newStylesheets[newIndex]->contents()));
 
     // If all new sheets were added at the end of the list we can just add them to existing Resolver.
-    // If there were insertions we need to re-add all the stylesheets so rules are ordered correctly.
-    return { hasInsertions ? ResolverUpdateType::Reset : ResolverUpdateType::Additive, WTF::move(addedSheets) };
+    // Otherwise we need to re-add all the stylesheets so rules are ordered correctly.
+    return { hasInsertionsOrRemovals ? ResolverUpdateType::Reset : ResolverUpdateType::Additive, WTF::move(changedSheets) };
 }
 
 static void filterEnabledNonemptyCSSStyleSheets(Vector<Ref<CSSStyleSheet>>& result, const Vector<Ref<StyleSheet>>& sheets)
@@ -626,7 +633,7 @@ void Scope::invalidateStyleAfterStyleSheetChange(const StyleSheetChange& styleSh
         return;
     }
 
-    Invalidator invalidator(styleSheetChange.addedSheets, m_resolver->mediaQueryEvaluator());
+    Invalidator invalidator(styleSheetChange.changedSheets, m_resolver->mediaQueryEvaluator());
     invalidator.invalidateStyle(*this);
 }
 

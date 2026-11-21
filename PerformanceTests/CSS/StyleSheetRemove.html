@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+<iframe></iframe>
+</body>
+<script>
+
+const frame = document.getElementsByTagName("iframe")[0];
+const testDoc = frame.contentDocument;
+const className = i => "c" + (i * 2654435761 % 4096).toString(36);
+
+for (let s = 0; s < 8; ++s) {
+    let css = "";
+    for (let r = 0; r < 3750; ++r) {
+        const i = s * 3750 + r;
+        css += `.${className(i)} .${className(i + 1)} { margin-left: ${i % 7}px; }\n`;
+    }
+    const style = testDoc.createElement("style");
+    style.textContent = css;
+    testDoc.head.appendChild(style);
+}
+
+let docText = "";
+for (let i = 0; i < 3000; ++i)
+    docText += `<div class='${className(i)} ${className(i * 7)}'>Foo</div>`;
+testDoc.body.innerHTML = docText;
+
+PerfTestRunner.measureTime({run:function() {
+    const start = PerfTestRunner.now();
+    for (let i = 0; i < 20; ++i) {
+        const styleElem = testDoc.createElement("style");
+        styleElem.textContent = ".probe" + i + " { color: green; }";
+        testDoc.head.insertBefore(styleElem, testDoc.head.children[4]);
+        testDoc.body.offsetTop;
+        styleElem.remove();
+        testDoc.body.offsetTop;
+    }
+    return PerfTestRunner.now() - start;
+}});
+</script>
+</html>
