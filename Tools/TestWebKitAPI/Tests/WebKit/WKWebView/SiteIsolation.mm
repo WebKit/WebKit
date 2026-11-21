@@ -25218,6 +25218,130 @@ TEST(SiteIsolation, CloseWhileDispatchingNavigateEventBeforeProcessSwap)
     Util::runFor(0.5_s);
 }
 
+#if ENABLE(IPC_TESTING_API)
+
+// acceptsFirstMouse asks the main frame's process, then each process that answers with a frame hosted by another
+// process, in a loop that blocks the UI process. A web process controls those answers, so the UI process must only
+// follow one to a frame inside the part of this page that the answering process hosts, and must kill a process that
+// sends any other.
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> loadedViewForAcceptsFirstMouseRedispatch(WKWebViewConfiguration *configuration, NSString *url)
+{
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    return { webView, navigationDelegate };
+}
+
+static RetainPtr<WKWebViewConfiguration> acceptsFirstMouseRedispatchConfiguration(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    return configuration;
+}
+
+// AppKit only asks a view in an inactive window whether it accepts the first mouse, and WebKit only says yes over a
+// range selection. TestWKWebView's own window is always key.
+static RetainPtr<NSWindow> moveToInactiveWindowWithSelection(TestWKWebView *webView)
+{
+    [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body.firstChild, 0, document.body.firstChild, 4); true"];
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([window isKeyWindow]);
+    return window;
+}
+
+static void sendAcceptsFirstMouseOverMainFrameText(TestWKWebView *webView, NSWindow *window)
+{
+    // The window's coordinates are flipped.
+    NSPoint location = NSMakePoint(10, NSHeight([webView frame]) - 10);
+    [webView acceptsFirstMouse:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:location modifierFlags:0 timestamp:0 windowNumber:window.windowNumber context:nil eventNumber:1 clickCount:1 pressure:1]];
+}
+
+static RetainPtr<NSString> acceptsFirstMouseFrameIdentifier(TestWKWebView *webView)
+{
+    return [webView stringByEvaluatingJavaScript:@"IPC.frameID[0].toString()"];
+}
+
+// Counts the RequestAcceptsFirstMouse messages the web view's main frame process receives. If a target frame is given,
+// answers the first few as if the mouse were over that frame, hosted by another process. Stopping after a few keeps a
+// UI process that follows every answer from looping forever.
+static void countAcceptsFirstMouseRequestsAndForgeRedispatch(TestWKWebView *webView, NSString *forgedTargetFrameID = nil)
+{
+    // The forged answer has to arrive within the UI process's 250 ms wait, so look up the message names up front.
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.acceptsFirstMouseRequestCount = 0;"
+        "const requestName = IPC.messages.WebPage_RequestAcceptsFirstMouse.name;"
+        "const answerName = IPC.messages.WebPageProxy_HandleAcceptsFirstMouse.name;"
+        "IPC.addIncomingMessageListener('UI', message => {"
+        "    if (message.name !== requestName)"
+        "        return;"
+        "    ++window.acceptsFirstMouseRequestCount;"
+        "    const target = '%@';"
+        "    if (!target || window.acceptsFirstMouseRequestCount > 3)"
+        "        return;"
+        "    IPC.sendMessage('UI', IPC.pageID, answerName, ["
+        "        { type: 'uint8_t', value: 1 },"
+        "        { type: 'FrameID', value: [BigInt(target)] },"
+        "        { type: 'double', value: 10 },"
+        "        { type: 'double', value: 10 },"
+        "    ]);"
+        "}); true", forgedTargetFrameID ?: @""]];
+}
+
+static int acceptsFirstMouseRequestCount(TestWKWebView *webView)
+{
+    return [[webView objectByEvaluatingJavaScript:@"window.acceptsFirstMouseRequestCount"] intValue];
+}
+
+TEST(SiteIsolation, AcceptsFirstMouseRedispatchToTheSourceFrameIsRejected)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = loadedViewForAcceptsFirstMouseRedispatch(acceptsFirstMouseRedispatchConfiguration(server).get(), @"https://example.com/mainframe");
+    RetainPtr window = moveToInactiveWindowWithSelection(webView.get());
+    __block bool didTerminate = false;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        didTerminate = true;
+    };
+
+    // Following this answer would send the same request back to the same process, so the process that sent it is killed.
+    countAcceptsFirstMouseRequestsAndForgeRedispatch(webView.get(), acceptsFirstMouseFrameIdentifier(webView.get()).get());
+    sendAcceptsFirstMouseOverMainFrameText(webView.get(), window.get());
+    EXPECT_TRUE(Util::runFor(&didTerminate, 5_s));
+}
+
+TEST(SiteIsolation, AcceptsFirstMouseRedispatchToFrameInAnotherPageIsRejected)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } },
+        { "/other"_s, { "<body>another page</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = acceptsFirstMouseRedispatchConfiguration(server);
+    auto [webView, navigationDelegate] = loadedViewForAcceptsFirstMouseRedispatch(configuration.get(), @"https://example.com/mainframe");
+    auto [otherWebView, otherNavigationDelegate] = loadedViewForAcceptsFirstMouseRedispatch(configuration.get(), @"https://apple.com/other");
+    EXPECT_NE([webView _webProcessIdentifier], [otherWebView _webProcessIdentifier]);
+    RetainPtr window = moveToInactiveWindowWithSelection(webView.get());
+    __block bool didTerminate = false;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        didTerminate = true;
+    };
+
+    // Following this answer would send the request into the other page's process, so the process that sent it is killed.
+    countAcceptsFirstMouseRequestsAndForgeRedispatch(otherWebView.get());
+    countAcceptsFirstMouseRequestsAndForgeRedispatch(webView.get(), acceptsFirstMouseFrameIdentifier(otherWebView.get()).get());
+    sendAcceptsFirstMouseOverMainFrameText(webView.get(), window.get());
+    EXPECT_TRUE(Util::runFor(&didTerminate, 5_s));
+    EXPECT_EQ(0, acceptsFirstMouseRequestCount(otherWebView.get()));
+}
+
+#endif // ENABLE(IPC_TESTING_API)
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)

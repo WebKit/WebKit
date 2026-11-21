@@ -22421,15 +22421,12 @@ RefPtr<WebFrameProxy> WebPageProxy::frameForRemoteUserInputEventRedispatch(IPC::
     if (&sourceFrame->process() != replyingProcess.ptr())
         return nullptr;
 
-    Ref sourceLocalRoot = sourceFrame->rootFrame();
-    bool targetIsBelowSourceLocalRoot = false;
-    for (RefPtr ancestor = targetFrame->parentFrame(); ancestor; ancestor = ancestor->parentFrame()) {
-        if (ancestor == sourceLocalRoot.ptr()) {
-            targetIsBelowSourceLocalRoot = true;
-            break;
-        }
-    }
-    MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(targetIsBelowSourceLocalRoot, *replyingConnection, nullptr);
+    MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(targetFrame != sourceFrame, *replyingConnection, nullptr);
+
+    // The target's parent may have committed a load in another process while the reply was in flight.
+    RefPtr targetParent = targetFrame->parentFrame();
+    if (!targetParent || targetParent->rootFrame().ptr() != sourceFrame->rootFrame().ptr())
+        return nullptr;
 
     if (&targetFrame->process() == replyingProcess.ptr())
         return nullptr;

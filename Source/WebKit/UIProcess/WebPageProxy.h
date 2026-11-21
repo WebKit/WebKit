@@ -3785,6 +3785,7 @@ private:
     void setFocusedElementInputType(InputType);
 
     void handleAcceptsFirstMouse(Variant<bool, WebCore::RemoteUserInputEventData>&&);
+    bool askFramesUnderMouseEvent(WebMouseEvent&, IPC::MessageName, NOESCAPE const Function<std::optional<Variant<bool, WebCore::RemoteUserInputEventData>>(WebProcessProxy&, std::optional<WebCore::FrameIdentifier>)>&);
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
