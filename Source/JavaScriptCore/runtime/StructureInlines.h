@@ -278,6 +278,9 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     ASSERT_UNUSED(result, result);
     ASSERT_UNUSED(offset, offset == newOffset);
     UNUSED_VARIABLE(attribute);
+    // visitChildren marks the Symbol of a symbol key, so revisit this Structure.
+    if (propertyName.isSymbol())
+        vm.writeBarrier(this);
     auto newMaxOffset = std::max(newOffset, maxOffset());
     
     func(locker, newOffset, newMaxOffset);
