@@ -1,0 +1,25 @@
+<style>
+body {
+    margin: 0;
+}
+#container {
+    font: 20px/0 Ahem;
+    height: 200px;
+}
+#shifted {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-top: 80px;
+    margin-bottom: -100px;
+}
+</style>
+<div id="container">X<br><div id="shifted"></div></div>
+<div>PASS if no crash or assert.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+document.elementFromPoint(10, 50);
+document.elementFromPoint(10, 150);
+</script>
