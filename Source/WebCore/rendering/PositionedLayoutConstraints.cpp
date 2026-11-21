@@ -557,8 +557,14 @@ ItemPosition PositionedLayoutConstraints::resolveAlignmentValue() const
         // At the static position an explicit justify-self aligns the box within its
         // static-position rectangle, resolving against the parent (the static-position
         // containing block); auto resolves to the parent's justify-items.
-        if (shouldAlignStaticPositionInInlineAxis())
-            return m_style.justifySelf().resolve(m_renderer->parentStyle()).position();
+        if (shouldAlignStaticPositionInInlineAxis()) {
+            auto alignmentPosition = m_style.justifySelf().resolve(m_renderer->parentStyle()).position();
+            // https://drafts.csswg.org/css-anchor-position-1/#anchor-center
+            // "If the box is not absolutely positioned, or does not have a default anchor box, this value behaves as center"
+            // captureInsets() only uses the static position when there is no default anchor box.
+            ASSERT(!m_defaultAnchorBox);
+            return alignmentPosition == ItemPosition::AnchorCenter ? ItemPosition::Center : alignmentPosition;
+        }
 #if ASSERT_ENABLED
         ASSERT(m_isEligibleForStaticRangeAlignment);
 #endif

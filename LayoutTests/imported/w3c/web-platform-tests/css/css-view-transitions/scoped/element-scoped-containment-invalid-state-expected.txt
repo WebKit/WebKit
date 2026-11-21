@@ -1,0 +1,10 @@
+Non-atomic inline Contents
+Cell
+Valid Div
+
+FAIL startViewTransition on non-atomic inline (span) rejects ready with InvalidStateError assert_unreached: Should have rejected: startViewTransition on non-atomic inline (span) must reject ready with InvalidStateError Reached unreachable code
+FAIL startViewTransition on display: contents rejects ready with InvalidStateError assert_unreached: Should have rejected: startViewTransition on display: contents must reject ready with InvalidStateError Reached unreachable code
+FAIL startViewTransition on display: none rejects ready with InvalidStateError assert_unreached: Should have rejected: startViewTransition on display: none must reject ready with InvalidStateError Reached unreachable code
+FAIL startViewTransition on table row (internal table element) rejects ready with InvalidStateError assert_unreached: Should have rejected: startViewTransition on table row (internal table element) must reject ready with InvalidStateError Reached unreachable code
+FAIL Element-scoped view transition is aborted if style changes to preclude layout containment assert_unreached: Should have rejected: vt.ready should be rejected with InvalidStateError when style changes to precluding type during the transition. Reached unreachable code
+

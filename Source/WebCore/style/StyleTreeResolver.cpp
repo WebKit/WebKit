@@ -425,13 +425,12 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
     resolveAndAddPseudoElementStyle({ PseudoElementType::Checkmark });
     resolveAndAddPseudoElementStyle({ PseudoElementType::PickerIcon });
 
-    if (isDocumentElement && m_document->hasViewTransitionPseudoElementTree()) {
+    if (RefPtr activeViewTransition = m_document->viewTransitionHostedOn(element)) {
         resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransition });
 
-        RefPtr activeViewTransition = m_document->activeViewTransition();
-        ASSERT(activeViewTransition);
         for (auto& name : activeViewTransition->namedElements().keys()) {
             resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransitionGroup, name });
+            resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransitionGroupChildren, name });
             resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransitionImagePair, name });
             resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransitionNew, name });
             resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransitionOld, name });
@@ -562,10 +561,11 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
 
     ASSERT_IMPLIES(pseudoElementIdentifier.type == PseudoElementType::ViewTransition
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionGroup
+        || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionGroupChildren
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionImagePair
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionNew
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionOld,
-        m_document->hasViewTransitionPseudoElementTree() && &element == m_document->documentElement());
+        !!m_document->viewTransitionHostedOn(element));
 
     if (!elementUpdate.style->hasPseudoStyle(pseudoElementIdentifier.type))
         return resolveAncestorPseudoElement(element, pseudoElementIdentifier, elementUpdate);
@@ -577,7 +577,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if ((pseudoElementIdentifier.type == PseudoElementType::FirstLine || pseudoElementIdentifier.type == PseudoElementType::FirstLetter) && !supportsFirstLineAndLetterPseudoElement(*elementUpdate.style))
         return { };
 
-    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier);
+    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier, element);
 
     bool pseudoSupportsPositionTry = pseudoElementIdentifier.type == PseudoElementType::Before || pseudoElementIdentifier.type == PseudoElementType::After || pseudoElementIdentifier.type == PseudoElementType::Backdrop;
 
@@ -621,7 +621,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             }
         }
         if (scope().resolver->usesFirstLetterRules()) {
-            auto beforeAfterContext = makeResolutionContextForPseudoElement(animatedUpdate, { PseudoElementType::FirstLetter });
+            auto beforeAfterContext = makeResolutionContextForPseudoElement(animatedUpdate, { PseudoElementType::FirstLetter }, element);
             if (auto firstLetterStyle = resolveAncestorFirstLetterPseudoElement(element, elementUpdate, beforeAfterContext))
                 protect(*animatedUpdate.style)->addPseudoElementStyle(WTF::move(firstLetterStyle->style));
         }
@@ -639,7 +639,7 @@ std::optional<ElementUpdate> TreeResolver::resolveAncestorPseudoElement(Element&
         if (pseudoElementIdentifier.type == PseudoElementType::FirstLine)
             return resolveAncestorFirstLinePseudoElement(element, elementUpdate);
         if (pseudoElementIdentifier.type == PseudoElementType::FirstLetter) {
-            auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, { PseudoElementType::FirstLetter });
+            auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, { PseudoElementType::FirstLetter }, element);
             return resolveAncestorFirstLetterPseudoElement(element, elementUpdate, resolutionContext);
         }
         return { };
@@ -650,7 +650,7 @@ std::optional<ElementUpdate> TreeResolver::resolveAncestorPseudoElement(Element&
 
     CheckedPtr oldStyle = element.renderOrDisplayContentsStyle(pseudoElementIdentifier);
     auto changes = oldStyle ? determineChanges(*oldStyle, protect(*pseudoElementStyle->style)) : Change::Renderer;
-    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier);
+    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier, element);
 
     return createAnimatedElementUpdate(WTF::move(*pseudoElementStyle), { element, pseudoElementIdentifier }, changes, resolutionContext);
 }
@@ -711,7 +711,7 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement
     if (!firstLineElement)
         return { };
 
-    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, { PseudoElementType::FirstLine });
+    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, { PseudoElementType::FirstLine }, element);
     // Can't use the cached state since the element being resolved is not the current one.
     resolutionContext.selectorMatchingState = nullptr;
 
@@ -770,9 +770,19 @@ ResolutionContext TreeResolver::makeResolutionContext()
     };
 }
 
-ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const ElementUpdate& elementUpdate, const PseudoElementIdentifier& pseudoElementIdentifier)
+ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const ElementUpdate& elementUpdate, const PseudoElementIdentifier& pseudoElementIdentifier, const Element& element)
 {
     auto parentStyle = [&]() -> const Style::ComputedStyle* {
+        // A nested ::view-transition-group() inherits from its containing group's
+        // ::view-transition-group-children(), not from ::view-transition.
+        if (pseudoElementIdentifier.type == PseudoElementType::ViewTransitionGroup) {
+            if (RefPtr activeViewTransition = m_document->viewTransitionHostedOn(element)) {
+                if (auto* capturedElement = activeViewTransition->namedElements().find(pseudoElementIdentifier.nameOrPart); capturedElement && !capturedElement->containingGroupName.isNull()) {
+                    if (auto* parentPseudoStyle = elementUpdate.style->pseudoElementStyle({ PseudoElementType::ViewTransitionGroupChildren, capturedElement->containingGroupName }))
+                        return parentPseudoStyle;
+                }
+            }
+        }
         if (auto parentPseudoId = parentPseudoElement(pseudoElementIdentifier.type)) {
             if (auto* parentPseudoStyle = elementUpdate.style->pseudoElementStyle({ *parentPseudoId, (*parentPseudoId == PseudoElementType::ViewTransitionGroup || *parentPseudoId == PseudoElementType::ViewTransitionImagePair) ? pseudoElementIdentifier.nameOrPart : nullAtom() }))
                 return parentPseudoStyle;

@@ -41,14 +41,30 @@ inline ContainmentChecker::ContainmentChecker(const Style::ComputedStyle& style,
 
 inline ContainmentChecker::~ContainmentChecker() = default;
 
+inline bool ContainmentChecker::generatesAtomicInlineLevelBox() const
+{
+    // The MathML root computes to display: inline because `display: math` is
+    // unimplemented (webkit.org/b/278533), but it generates an atomic
+    // inline-level box.
+#if ENABLE(MATHML)
+    if (m_element->elementName() == ElementNames::MathML::math)
+        return true;
+#endif
+    return m_element->isReplaced(m_style.ptr());
+}
+
 inline bool ContainmentChecker::shouldApplyLayoutContainment() const
 {
     // https://drafts.csswg.org/css-contain/#containment-layout
 
-    // content-visibility hidden and auto turns on layout containment.
+    // content-visibility hidden and auto turns on layout containment. A scoped
+    // view transition gives its scope element layout containment without
+    // affecting the computed value of contain.
+    // https://drafts.csswg.org/css-view-transitions-2/#scoped-view-transitions
     auto hasContainment = m_style->usedContain().contains(ContainValue::Layout)
         || m_style->contentVisibility() == ContentVisibility::Hidden
-        || m_style->contentVisibility() == ContentVisibility::Auto;
+        || m_style->contentVisibility() == ContentVisibility::Auto
+        || m_element->hasActiveScopedViewTransition();
     if (!hasContainment)
         return false;
 
@@ -62,7 +78,7 @@ inline bool ContainmentChecker::shouldApplyLayoutContainment() const
         return false;
     if (m_style->display().isInternalTableBox() && m_style->display() != DisplayType::TableCell)
         return false;
-    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !m_element->isReplaced(m_style.ptr())))
+    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !generatesAtomicInlineLevelBox()))
         return false;
     return true;
 }
@@ -73,7 +89,8 @@ inline bool ContainmentChecker::shouldApplySizeContainment() const
 
     auto hasContainment = m_style->usedContain().contains(ContainValue::Size)
         || m_style->contentVisibility() == ContentVisibility::Hidden
-        || (m_style->contentVisibility() == ContentVisibility::Auto && !m_element->isRelevantToUser());
+        || (m_style->contentVisibility() == ContentVisibility::Auto && !m_element->isRelevantToUser())
+        || m_element->hasActiveScopedViewTransition();
     if (!hasContainment)
         return false;
 
@@ -89,7 +106,7 @@ inline bool ContainmentChecker::shouldApplySizeContainment() const
         return false;
     if (m_style->display().isInternalTableBox())
         return false;
-    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !m_element->isReplaced(m_style.ptr())))
+    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !generatesAtomicInlineLevelBox()))
         return false;
 
     // https://drafts.csswg.org/css-conditional-5/#size-container
@@ -119,7 +136,7 @@ inline bool ContainmentChecker::shouldApplyInlineSizeContainment() const
         return false;
     if (m_style->display().isInternalTableBox())
         return false;
-    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !m_element->isReplaced(m_style.ptr())))
+    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !generatesAtomicInlineLevelBox()))
         return false;
 
     // https://drafts.csswg.org/css-conditional-5/#size-container
@@ -160,7 +177,7 @@ inline bool ContainmentChecker::shouldApplyPaintContainment() const
         return false;
     if (m_style->display().isInternalTableBox() && m_style->display() != DisplayType::TableCell)
         return false;
-    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !m_element->isReplaced(m_style.ptr())))
+    if (m_style->display().isRubyContainerOrInternalRubyBox() || (m_style->display() == DisplayType::InlineFlow && !generatesAtomicInlineLevelBox()))
         return false;
     return true;
 }

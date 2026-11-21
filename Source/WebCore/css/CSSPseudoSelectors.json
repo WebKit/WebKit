@@ -628,6 +628,10 @@
         "view-transition-group": {
             "argument": "required"
         },
+        "view-transition-group-children": {
+            "argument": "required",
+            "settings-flag": "scopedViewTransitionsEnabled"
+        },
         "view-transition-image-pair": {
             "argument": "required"
         },

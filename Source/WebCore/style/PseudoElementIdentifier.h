@@ -62,6 +62,7 @@ inline bool isNamedViewTransitionPseudoElement(const std::optional<Style::Pseudo
 
     switch (pseudoElementIdentifier->type) {
     case PseudoElementType::ViewTransitionGroup:
+    case PseudoElementType::ViewTransitionGroupChildren:
     case PseudoElementType::ViewTransitionImagePair:
     case PseudoElementType::ViewTransitionOld:
     case PseudoElementType::ViewTransitionNew:

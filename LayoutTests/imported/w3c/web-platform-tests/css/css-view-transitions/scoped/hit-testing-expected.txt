@@ -1,0 +1,3 @@
+
+PASS A view-transition participant is not a valid target for hit testing
+

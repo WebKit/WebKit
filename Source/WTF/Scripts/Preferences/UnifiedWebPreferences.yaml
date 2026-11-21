@@ -5573,6 +5573,14 @@ ScopedCustomElementRegistryEnabled:
     "PLATFORM(COCOA)": true
     default: false
 
+ScopedViewTransitionsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "Scoped View Transitions"
+  humanReadableDescription: "Enable Element.startViewTransition() and scoped view transitions"
+  defaultValue: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 # FIXME: This should have it's own ENABLE.
 ScreenCaptureEnabled:

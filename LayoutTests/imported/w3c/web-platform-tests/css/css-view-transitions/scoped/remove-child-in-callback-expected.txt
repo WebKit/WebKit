@@ -1,0 +1,4 @@
+
+PASS Removing a named child in updateCallback does not reject ready
+PASS Removing a named child in async updateCallback across rAF does not reject ready
+

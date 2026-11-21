@@ -30,12 +30,16 @@
 #pragma once
 
 #include "ViewTransitionUpdateCallback.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+class ShadowRoot;
 
 struct StartViewTransitionOptions {
     RefPtr<ViewTransitionUpdateCallback> update;
     std::optional<Vector<AtomString>> types;
+    Vector<Ref<ShadowRoot>> shadowRoots;
 };
 
 } // namespace WebCore

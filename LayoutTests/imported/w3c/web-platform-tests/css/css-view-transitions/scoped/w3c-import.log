@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/WEB_FEATURES.yml
@@ -53,6 +51,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/display-none-during-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/document-element-start-view-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/element-active-view-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/element-moved-to-new-document.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/element-scoped-containment-invalid-state.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/empty-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/fill-forwards.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/fractional-border-shift-expected.html
@@ -61,6 +61,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/from-scale-zero-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/from-scale-zero-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/from-scale-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/hit-test-captured-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/hit-test-overflow-clipped-scope.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/hit-test-vt-overlay.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/hit-testing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/implicit-contain-expected.html
@@ -69,6 +71,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/ink-overflow-on-target-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/ink-overflow-on-target-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/ink-overflow-on-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/mask-image-capture-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/mask-image-capture-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/mask-image-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/mask-image-overlay-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/mask-image-overlay-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/mask-image-overlay.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/missing-view-transition-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/negative-playback-rate.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/nested-scope-expected.html
@@ -76,6 +84,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/nested-scope.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/new-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/new-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/occlusion-zero-opacity-scope.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/old-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/old-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/overflow-excludes-pseudo-expected.html
@@ -90,14 +99,32 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/pause-rendering-resize-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/pause-rendering-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/pause-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/remove-child-in-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/rotation-on-scoped-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/rotation-on-scoped-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/rotation-on-scoped-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/run_in_parallel.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-becomes-document-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-containment-during-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-containment-keeps-author-remembered-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-containment-pseudo-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-containment-pseudo-border-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-containment-pseudo-border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-containment-remembered-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-containment-sibling-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-during-transition-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-during-transition-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-during-transition-2-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-during-transition-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-green-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-mathml-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-mathml-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-replaced-elements-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-replaced-elements-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-replaced-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-svg-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scope-svg-root.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scrolled-target-position-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scrolled-target-position-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/scrolled-target-position-rtl-expected.html
@@ -110,6 +137,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-dom-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-dom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-auto-and-match-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-classes-groups-scopes.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-cross-tree-morph-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-cross-tree-morph.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-cross-tree-morph.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-discovery.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-flat-tree-descendants.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-nested-groups-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-nested-groups.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-nested-groups.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-options.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/shadow-roots-pairing-and-collisions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/start-view-transition-on-disconnected-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/start-view-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/target-in-scrolled-container-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/target-in-scrolled-container-ref.html

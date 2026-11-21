@@ -34,6 +34,7 @@
 #include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "ViewTransition.h"
 #include "EditingInlines.h"
 #include "EventHandler.h"
 #include "FlexFormattingUtils.h"
@@ -5566,9 +5567,23 @@ bool RenderBox::shouldIgnoreLogicalMinMaxHeightSizes() const
     return false;
 }
 
+std::optional<LayoutSize> RenderBox::scopedViewTransitionRememberedInnerSize() const
+{
+    RefPtr element = this->element();
+    if (!element)
+        return { };
+    RefPtr viewTransition = element->document().activeViewTransitionForScope(*element);
+    if (!viewTransition)
+        return { };
+    return viewTransition->scopeRememberedInnerSize();
+}
+
 std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
 {
     ASSERT(isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment());
+
+    if (auto rememberedSize = scopedViewTransitionRememberedInnerSize())
+        return isHorizontalWritingMode() ? rememberedSize->width() : rememberedSize->height();
 
     auto& style = this->style();
     auto& containIntrinsicWidth = style.containIntrinsicWidth();
@@ -5593,6 +5608,9 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
 std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
 {
     ASSERT(isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment());
+
+    if (auto rememberedSize = scopedViewTransitionRememberedInnerSize())
+        return isHorizontalWritingMode() ? rememberedSize->height() : rememberedSize->width();
 
     auto& style = this->style();
     auto& containIntrinsicHeight = style.containIntrinsicHeight();

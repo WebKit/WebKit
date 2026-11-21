@@ -78,6 +78,7 @@ enum class PseudoElementType : uint8_t {
     ViewTransitionImagePair,
     ViewTransitionOld,
     ViewTransitionNew,
+    ViewTransitionGroupChildren,
 
     // Special: This is only used for getComputedStyle(), and primarily in the event there's no
     // concrete backing element and we have to look up the matching style rules. It is also limited
@@ -115,7 +116,8 @@ constexpr auto allPublicPseudoElementTypes = EnumSet {
     PseudoElementType::ViewTransitionGroup,
     PseudoElementType::ViewTransitionImagePair,
     PseudoElementType::ViewTransitionOld,
-    PseudoElementType::ViewTransitionNew
+    PseudoElementType::ViewTransitionNew,
+    PseudoElementType::ViewTransitionGroupChildren
 };
 
 constexpr auto allHighlightPseudoElementTypes = EnumSet {
@@ -148,6 +150,7 @@ inline std::optional<PseudoElementType> parentPseudoElement(PseudoElementType ps
     case PseudoElementType::ViewTransitionImagePair: return PseudoElementType::ViewTransitionGroup;
     case PseudoElementType::ViewTransitionNew: return PseudoElementType::ViewTransitionImagePair;
     case PseudoElementType::ViewTransitionOld: return PseudoElementType::ViewTransitionImagePair;
+    case PseudoElementType::ViewTransitionGroupChildren: return PseudoElementType::ViewTransitionGroup;
     default: return std::nullopt;
     }
 }
@@ -1082,6 +1085,11 @@ enum class FieldSizing : bool {
     Content
 };
 
+enum class ViewTransitionScope : bool {
+    None,
+    All
+};
+
 enum class BaselineSource : uint8_t {
     Auto,
     First,
@@ -1313,6 +1321,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, MathShift);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FieldSizing);
+WTF::TextStream& operator<<(WTF::TextStream&, ViewTransitionScope);
 WTF::TextStream& operator<<(WTF::TextStream&, BaselineSource);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowContinue);
 

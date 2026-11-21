@@ -56,9 +56,6 @@ public:
     // This is called when extension stylesheets change.
     void didChangeExtensionStyleSheets();
 
-    void clearViewTransitionStyles();
-    void addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&&);
-
     MatchResultCache& matchResultCache() LIFETIME_BOUND;
 
     EnvironmentVariables& environmentVariables() const LIFETIME_BOUND;
@@ -119,8 +116,6 @@ private:
 
     WTF::String m_preferredStylesheetSetName;
 
-    RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
-    Vector<Ref<StyleRuleKeyframes>> m_viewTransitionKeyframes;
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
     WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerDimensionsOnLastUpdate;

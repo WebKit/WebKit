@@ -1,0 +1,5 @@
+
+
+FAIL A scope becoming the document element before capture skips the transition assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL A scope becoming the document element during the update callback skips the transition assert_unreached: Should have rejected: undefined Reached unreachable code
+

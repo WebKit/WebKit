@@ -73,11 +73,13 @@ enum class VisitedMatchType : unsigned char {
 
 static bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<AtomString>& types)
 {
-    // This pseudo class only matches the root element.
-    if (&element != element.document().documentElement())
-        return false;
+    RefPtr<ViewTransition> viewTransition;
+    if (&element == element.document().documentElement())
+        viewTransition = element.document().activeViewTransition();
+    else
+        viewTransition = element.document().activeViewTransitionForScope(element);
 
-    if (const RefPtr viewTransition = element.document().activeViewTransition()) {
+    if (viewTransition) {
         Ref activeTypes = viewTransition->types();
 
         for (const auto& type : types) {
@@ -283,6 +285,7 @@ inline static bool hasViewTransitionPseudoElement(EnumSet<PseudoElementType> col
     auto functionalPseudoElementSet = EnumSet {
         PseudoElementType::ViewTransition,
         PseudoElementType::ViewTransitionGroup,
+        PseudoElementType::ViewTransitionGroupChildren,
         PseudoElementType::ViewTransitionImagePair,
         PseudoElementType::ViewTransitionNew,
         PseudoElementType::ViewTransitionOld,
@@ -1493,6 +1496,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
 
         case CSSSelector::PseudoElement::Highlight:
         case CSSSelector::PseudoElement::ViewTransitionGroup:
+        case CSSSelector::PseudoElement::ViewTransitionGroupChildren:
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionOld:
         case CSSSelector::PseudoElement::ViewTransitionNew: {

@@ -83,6 +83,7 @@ void RenderIFrame::layout()
     addVisualEffectOverflow();
     updateLayerTransform();
 
+    layoutViewTransitionContainingBlock();
     clearNeedsLayout();
 }
 

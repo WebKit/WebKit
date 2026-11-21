@@ -120,6 +120,8 @@ NODELETE static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueF
         return Inspector::Protocol::CSS::PseudoId::ViewTransition;
     case PseudoElementType::ViewTransitionGroup:
         return Inspector::Protocol::CSS::PseudoId::ViewTransitionGroup;
+    case PseudoElementType::ViewTransitionGroupChildren:
+        return Inspector::Protocol::CSS::PseudoId::ViewTransitionGroupChildren;
     case PseudoElementType::ViewTransitionImagePair:
         return Inspector::Protocol::CSS::PseudoId::ViewTransitionImagePair;
     case PseudoElementType::ViewTransitionOld:

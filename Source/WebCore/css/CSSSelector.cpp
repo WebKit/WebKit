@@ -218,6 +218,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector,
             return maxSpecificity(simpleSelector.selectorList());
         case CSSSelector::PseudoElement::Highlight:
         case CSSSelector::PseudoElement::ViewTransitionGroup:
+        case CSSSelector::PseudoElement::ViewTransitionGroupChildren:
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionNew:
         case CSSSelector::PseudoElement::ViewTransitionOld:
@@ -333,6 +334,8 @@ std::optional<PseudoElementType> CSSSelector::stylePseudoElementTypeFor(PseudoEl
         return PseudoElementType::ViewTransitionOld;
     case PseudoElement::ViewTransitionNew:
         return PseudoElementType::ViewTransitionNew;
+    case PseudoElement::ViewTransitionGroupChildren:
+        return PseudoElementType::ViewTransitionGroupChildren;
     case PseudoElement::InternalWritingSuggestions:
         return PseudoElementType::InternalWritingSuggestions;
 #if ENABLE(VIDEO)
@@ -596,6 +599,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 break;
             case PseudoElement::Highlight:
             case PseudoElement::ViewTransitionGroup:
+            case PseudoElement::ViewTransitionGroupChildren:
             case PseudoElement::ViewTransitionImagePair:
             case PseudoElement::ViewTransitionOld:
             case PseudoElement::ViewTransitionNew:

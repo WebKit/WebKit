@@ -1,0 +1,6 @@
+
+FAIL startViewTransition without callback on disconnected element immediately skips and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL startViewTransition with callback on disconnected element runs callback, resolves finished, and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL startViewTransition with failing callback on disconnected element rejects finished with callback error promise_rejects_dom: function "function() { throw e; }" threw object "Error: callback failure" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL startViewTransition on element in disconnected subtree immediately skips and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+
