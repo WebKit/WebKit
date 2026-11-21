@@ -797,6 +797,7 @@ WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteWebGPUInstanceProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteXRBindingProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteXRProjectionLayerProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteXRSubImageProxy.cpp

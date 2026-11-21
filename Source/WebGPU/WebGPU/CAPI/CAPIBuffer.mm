@@ -30,37 +30,33 @@
 
 NODELETE void wgpuBufferAddRef(WGPUBuffer buffer)
 {
-    WebGPU::CAPI::metalFromAPI(buffer).ref();
+    WebGPU::CAPI::fromAPI(buffer).ref();
 }
 
 void wgpuBufferRelease(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(buffer).deref();
+        WebGPU::CAPI::fromAPI(buffer).deref();
     }
 }
 
 void wgpuBufferDestroy(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(buffer))->destroy();
+        protect(WebGPU::CAPI::fromAPI(buffer))->destroy();
     }
 }
 
 WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        switch (protect(WebGPU::CAPI::metalFromAPI(buffer))->state()) {
-        case WebGPU::Metal::Buffer::State::Mapped:
-            return WGPUBufferMapState_Mapped;
-        case WebGPU::Metal::Buffer::State::MappedAtCreation:
-            return WGPUBufferMapState_Mapped;
-        case WebGPU::Metal::Buffer::State::MappingPending:
+        switch (protect(WebGPU::CAPI::fromAPI(buffer))->mapState()) {
+        case WebGPU::BufferMapState::Unmapped:
+            return WGPUBufferMapState_Unmapped;
+        case WebGPU::BufferMapState::Pending:
             return WGPUBufferMapState_Pending;
-        case WebGPU::Metal::Buffer::State::Unmapped:
-            return WGPUBufferMapState_Unmapped;
-        case WebGPU::Metal::Buffer::State::Destroyed:
-            return WGPUBufferMapState_Unmapped;
+        case WebGPU::BufferMapState::Mapped:
+            return WGPUBufferMapState_Mapped;
         }
     }
 }
@@ -68,7 +64,7 @@ WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
     @autoreleasepool {
-        return protect(WebGPU::CAPI::metalFromAPI(buffer))->mappedRangeForCAPI(offset, WebGPU::CAPI::mapSizeFromAPI(size)).data();
+        return protect(WebGPU::CAPI::fromAPI(buffer))->persistentMappedRange(offset, WebGPU::CAPI::mapSizeFromAPI(size)).data();
     }
 }
 
@@ -105,14 +101,14 @@ WGPUFuture wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset
 void wgpuBufferUnmap(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(buffer))->unmap();
+        protect(WebGPU::CAPI::fromAPI(buffer))->unmap();
     }
 }
 
 void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(buffer))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(buffer))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }
 
@@ -120,13 +116,13 @@ void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label)
 uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::metalFromAPI(buffer).initialSize();
+        return protect(WebGPU::CAPI::fromAPI(buffer))->size();
     }
 }
 
 WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::toAPI(WebGPU::CAPI::metalFromAPI(buffer).usage());
+        return WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::fromAPI(buffer))->usage());
     }
 }

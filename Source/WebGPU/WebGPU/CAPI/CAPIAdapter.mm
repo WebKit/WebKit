@@ -29,23 +29,24 @@
 #import "WebGPUCppConversions.h"
 #import <wtf/text/MakeString.h>
 
-// The caller owns the reference to the instance. Null when the instance is gone.
+// The caller owns the reference to the instance. Null when the instance is gone. The wgpuInstance*
+// functions use the instance as a Metal instance, which it is: only Metal objects reach the C API.
 WGPUInstance wgpuAdapterGetInstance(WGPUAdapter adapter)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::metalFromAPI(adapter))->instance());
+        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(adapter))->instance());
     }
 }
 
 NODELETE void wgpuAdapterAddRef(WGPUAdapter adapter)
 {
-    WebGPU::CAPI::metalFromAPI(adapter).ref();
+    WebGPU::CAPI::fromAPI(adapter).ref();
 }
 
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(adapter).deref();
+        WebGPU::CAPI::fromAPI(adapter).deref();
     }
 }
 
@@ -54,7 +55,7 @@ WGPUStatus wgpuAdapterGetLimits(WGPUAdapter adapter, WGPULimits* limits)
 {
     @autoreleasepool {
         auto* nextInChain = limits->nextInChain;
-        *limits = WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::metalFromAPI(adapter))->limits());
+        *limits = WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::fromAPI(adapter))->limits());
         limits->nextInChain = nextInChain;
         return WGPUStatus_Success;
     }
@@ -64,16 +65,14 @@ WGPUStatus wgpuAdapterGetLimits(WGPUAdapter adapter, WGPULimits* limits)
 WGPUStatus wgpuAdapterGetInfo(WGPUAdapter adapter, WGPUAdapterInfo* info)
 {
     @autoreleasepool {
-        Ref protectedAdapter = WebGPU::CAPI::metalFromAPI(adapter);
-        auto apiInfo = protectedAdapter->info();
-        id<MTLDevice> device = protectedAdapter->device();
+        auto apiInfo = protect(WebGPU::CAPI::fromAPI(adapter))->info();
         // FIXME: What should the vendorID and deviceID be?
         info->vendor = WebGPU::CAPI::toAPIAllocated(emptyString());
         info->architecture = WebGPU::CAPI::toAPIAllocated(emptyString());
         info->device = WebGPU::CAPI::toAPIAllocated(apiInfo.name);
         info->description = WebGPU::CAPI::toAPIAllocated(emptyString());
         info->backendType = WGPUBackendType_Metal;
-        info->adapterType = device.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
+        info->adapterType = apiInfo.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
         info->vendorID = 0;
         info->deviceID = 0;
         info->subgroupMinSize = apiInfo.subgroupMinSize;
@@ -96,7 +95,7 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
     @autoreleasepool {
         auto apiFeature = WebGPU::CAPI::fromAPI(feature);
-        return apiFeature && protect(WebGPU::CAPI::metalFromAPI(adapter))->hasFeature(*apiFeature);
+        return apiFeature && protect(WebGPU::CAPI::fromAPI(adapter))->features().contains(*apiFeature);
     }
 }
 
@@ -126,7 +125,7 @@ static void listenForUncapturedErrors(WebGPU::Metal::Device& device, const WGPUU
 void wgpuAdapterGetFeatures(WGPUAdapter adapter, WGPUSupportedFeatures* features)
 {
     @autoreleasepool {
-        *features = WebGPU::CAPI::toAPIAllocated(protect(WebGPU::CAPI::metalFromAPI(adapter))->features());
+        *features = WebGPU::CAPI::toAPIAllocated(protect(WebGPU::CAPI::fromAPI(adapter))->features());
     }
 }
 
@@ -143,7 +142,7 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
 {
     @autoreleasepool {
         Ref protectedAdapter = WebGPU::CAPI::metalFromAPI(adapter);
-        WebGPU::CAPI::Future future { protectedAdapter->instance() };
+        WebGPU::CAPI::Future future { protectedAdapter->weakInstance().get() };
         auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
             callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();

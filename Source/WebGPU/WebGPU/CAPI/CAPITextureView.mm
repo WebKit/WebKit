@@ -30,19 +30,19 @@
 
 NODELETE void wgpuTextureViewAddRef(WGPUTextureView textureView)
 {
-    WebGPU::CAPI::metalFromAPI(textureView).ref();
+    WebGPU::CAPI::fromAPI(textureView).ref();
 }
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(textureView).deref();
+        WebGPU::CAPI::fromAPI(textureView).deref();
     }
 }
 
 void wgpuTextureViewSetLabel(WGPUTextureView textureView, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(textureView))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(textureView))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

@@ -50,6 +50,7 @@ messages -> RemoteRenderPassEncoder Stream {
     void EndOcclusionQuery()
     void ExecuteBundles(Vector<WebKit::WebGPUIdentifier> bundles)
     void End()
+    void MakeInvalid(String error)
     void SetLabel(String label)
 }
 

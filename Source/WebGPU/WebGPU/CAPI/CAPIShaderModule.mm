@@ -30,19 +30,19 @@
 
 NODELETE void wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)
 {
-    WebGPU::CAPI::metalFromAPI(shaderModule).ref();
+    WebGPU::CAPI::fromAPI(shaderModule).ref();
 }
 
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(shaderModule).deref();
+        WebGPU::CAPI::fromAPI(shaderModule).deref();
     }
 }
 
 static void getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
 {
-    Ref protectedShaderModule = WebGPU::CAPI::metalFromAPI(shaderModule);
+    Ref protectedShaderModule = WebGPU::CAPI::fromAPI(shaderModule);
     // WGPUCompilationInfoRequestStatus has no error value: the messages of a shader module that
     // did not compile are reported with WGPUCompilationInfoRequestStatus_Success.
     protectedShaderModule->compilationInfo([callback = WTF::move(callback)](WebGPU::CompilationInfo&& compilationInfo) mutable {
@@ -71,6 +71,6 @@ WGPUFuture wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGP
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(shaderModule))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(shaderModule))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

@@ -73,7 +73,7 @@ RefPtr<::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(::WebGPU::XRP
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteXRSubImageProxy::create(protect(root()), m_convertToBackingContext, identifier);
+    auto result = RemoteXRSubImageProxy::create(m_parent, m_convertToBackingContext, identifier);
     return result;
 }
 

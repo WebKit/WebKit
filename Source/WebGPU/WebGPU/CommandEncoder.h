@@ -102,6 +102,8 @@ public:
     // std::nullopt is the rest of the buffer after the offset.
     void clearBuffer(Buffer&, uint64_t offset, std::optional<uint64_t> size);
     RefPtr<WebGPU::CommandBuffer> finish(const WebGPU::CommandBufferDescriptor&) final;
+    RefPtr<WebGPU::RenderPassEncoder> beginInvalidRenderPass(String&& error) final;
+    RefPtr<WebGPU::ComputePassEncoder> beginInvalidComputePass(String&& error) final;
     void insertDebugMarker(String&& markerLabel) final;
     void popDebugGroup() final;
     void pushDebugGroup(String&& groupLabel) final;
@@ -136,6 +138,7 @@ public:
     static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, const Device&, id<MTLBlitCommandEncoder>, const CommandEncoder* _Nullable owningCommandEncoder = nullptr);
     void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger);
     void makeInvalid(NSString*);
+    void makeInvalid(String&& error) final;
     void makeSubmitInvalid(NSString* = nil);
     void incrementBufferMapCount();
     void decrementBufferMapCount();

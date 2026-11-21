@@ -31,62 +31,62 @@
 
 NODELETE void wgpuRenderPassEncoderAddRef(WGPURenderPassEncoder renderPassEncoder)
 {
-    WebGPU::CAPI::metalFromAPI(renderPassEncoder).ref();
+    WebGPU::CAPI::fromAPI(renderPassEncoder).ref();
 }
 
 void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(renderPassEncoder).deref();
+        WebGPU::CAPI::fromAPI(renderPassEncoder).deref();
     }
 }
 
 void wgpuRenderPassEncoderBeginOcclusionQuery(WGPURenderPassEncoder renderPassEncoder, uint32_t queryIndex)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->beginOcclusionQuery(queryIndex);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->beginOcclusionQuery(queryIndex);
     }
 }
 
 void wgpuRenderPassEncoderDraw(WGPURenderPassEncoder renderPassEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->draw(vertexCount, instanceCount, firstVertex, firstInstance);
     }
 }
 
 void wgpuRenderPassEncoderDrawIndexed(WGPURenderPassEncoder renderPassEncoder, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
     }
 }
 
 void wgpuRenderPassEncoderDrawIndexedIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->drawIndexedIndirect(protect(WebGPU::CAPI::metalFromAPI(indirectBuffer)), indirectOffset);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->drawIndexedIndirect(protect(WebGPU::CAPI::fromAPI(indirectBuffer)), indirectOffset);
     }
 }
 
 void wgpuRenderPassEncoderDrawIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->drawIndirect(protect(WebGPU::CAPI::metalFromAPI(indirectBuffer)), indirectOffset);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->drawIndirect(protect(WebGPU::CAPI::fromAPI(indirectBuffer)), indirectOffset);
     }
 }
 
 void wgpuRenderPassEncoderEndOcclusionQuery(WGPURenderPassEncoder renderPassEncoder)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->endOcclusionQuery();
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->endOcclusionQuery();
     }
 }
 
 void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->endPass();
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->end();
     }
 }
 
@@ -96,28 +96,28 @@ void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder
         auto apiBundles = WTF::map(unsafeMakeSpan(bundles, bundlesCount), [](auto bundle) {
             return Ref { WebGPU::CAPI::fromAPI(bundle) };
         });
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->executeBundles(borrow(apiBundles)->span());
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->executeBundles(borrow(apiBundles)->span());
     }
 }
 
 void wgpuRenderPassEncoderInsertDebugMarker(WGPURenderPassEncoder renderPassEncoder, WGPUStringView markerLabel)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->insertDebugMarker(WebGPU::CAPI::fromAPI(markerLabel));
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->insertDebugMarker(WebGPU::CAPI::fromAPI(markerLabel));
     }
 }
 
 void wgpuRenderPassEncoderPopDebugGroup(WGPURenderPassEncoder renderPassEncoder)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->popDebugGroup();
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->popDebugGroup();
     }
 }
 
 void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder, WGPUStringView groupLabel)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->pushDebugGroup(WebGPU::CAPI::fromAPI(groupLabel));
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->pushDebugGroup(WebGPU::CAPI::fromAPI(groupLabel));
     }
 }
 
@@ -126,69 +126,69 @@ void wgpuRenderPassEncoderSetBindGroup(WGPURenderPassEncoder renderPassEncoder, 
 {
     @autoreleasepool {
         auto offsets = dynamicOffsetCount ? std::optional { unsafeMakeSpan(dynamicOffsets, dynamicOffsetCount) } : std::nullopt;
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::CAPI::metalFromAPI(group)).ptr() : nullptr, offsets);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::CAPI::fromAPI(group)).ptr() : nullptr, offsets);
     }
 }
 
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, const WGPUColor* color)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setBlendConstant(WebGPU::CAPI::fromAPI(*color));
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setBlendConstant(WebGPU::CAPI::fromAPI(*color));
     }
 }
 
 void wgpuRenderPassEncoderSetIndexBuffer(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
     @autoreleasepool {
-        Ref protectedRenderPassEncoder = WebGPU::CAPI::metalFromAPI(renderPassEncoder);
+        Ref protectedRenderPassEncoder = WebGPU::CAPI::fromAPI(renderPassEncoder);
         auto apiFormat = WebGPU::CAPI::fromAPI(format);
         if (!apiFormat)
-            return protectedRenderPassEncoder->makeInvalid(@"setIndexBuffer: invalid index format");
-        protectedRenderPassEncoder->setIndexBuffer(protect(WebGPU::CAPI::metalFromAPI(buffer)), *apiFormat, offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
+            return protectedRenderPassEncoder->makeInvalid("setIndexBuffer: invalid index format"_s);
+        protectedRenderPassEncoder->setIndexBuffer(protect(WebGPU::CAPI::fromAPI(buffer)), *apiFormat, offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
     }
 }
 
 void wgpuRenderPassEncoderSetPipeline(WGPURenderPassEncoder renderPassEncoder, WGPURenderPipeline pipeline)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setPipeline(protect(WebGPU::CAPI::metalFromAPI(pipeline)));
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setPipeline(protect(WebGPU::CAPI::fromAPI(pipeline)));
     }
 }
 
 void wgpuRenderPassEncoderSetScissorRect(WGPURenderPassEncoder renderPassEncoder, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setScissorRect(x, y, width, height);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setScissorRect(x, y, width, height);
     }
 }
 
 void wgpuRenderPassEncoderSetStencilReference(WGPURenderPassEncoder renderPassEncoder, uint32_t reference)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setStencilReference(reference);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setStencilReference(reference);
     }
 }
 
 void wgpuRenderPassEncoderSetVertexBuffer(WGPURenderPassEncoder renderPassEncoder, uint32_t slot, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
     @autoreleasepool {
-        RefPtr<WebGPU::Metal::Buffer> optionalBuffer;
+        RefPtr<WebGPU::Buffer> optionalBuffer;
         if (buffer)
-            optionalBuffer = protect(WebGPU::CAPI::metalFromAPI(buffer)).ptr();
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setVertexBuffer(slot, optionalBuffer.get(), offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
+            optionalBuffer = protect(WebGPU::CAPI::fromAPI(buffer)).ptr();
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setVertexBuffer(slot, optionalBuffer.get(), offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
     }
 }
 
 void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, float x, float y, float width, float height, float minDepth, float maxDepth)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setViewport(x, y, width, height, minDepth, maxDepth);
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setViewport(x, y, width, height, minDepth, maxDepth);
     }
 }
 
 void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderPassEncoder))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(renderPassEncoder))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

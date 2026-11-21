@@ -237,6 +237,11 @@ void RenderBundleEncoder::makeInvalid(NSString* errorString)
         renderPassEncoder->makeInvalid(errorString);
 }
 
+void RenderBundleEncoder::makeInvalid(String&& error)
+{
+    makeInvalid(error.createNSString().get());
+}
+
 RenderBundleEncoder::~RenderBundleEncoder() = default;
 
 bool RenderBundleEncoder::replayingCommands() const

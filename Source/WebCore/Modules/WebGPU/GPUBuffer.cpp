@@ -78,7 +78,8 @@ void GPUBuffer::setLabel(String&& label)
 void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
 {
     if (m_mapState != GPUBufferMapState::Unmapped) {
-        m_backing->generateAValidationError();
+        if (RefPtr device = m_device)
+            protect(device->backing())->generateAValidationError("Buffer state was not unmapped"_s);
         promise.reject(Exception { ExceptionCode::OperationError, "pendingMapPromise"_s });
         return;
     }
