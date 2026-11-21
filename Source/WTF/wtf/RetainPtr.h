@@ -43,8 +43,7 @@ template<typename T> [[nodiscard]] constexpr RetainPtr<RetainPtrType<T>> adoptNS
  * RetainPtr<AVPlayer>) or CF types (e.g., RetainPtr<CFDictionaryRef>). CF types include not only Core
  * Foundation types, but also types from other Apple frameworks that follow CF-style reference counting,
  * such as Core Graphics (CGImageRef), Core Text (CTFontRef), Core Media (CMSampleBufferRef), Core Video
- * (CVPixelBufferRef), IOSurface, Security (SecAccessControlRef), and others. For Objective-C types, it
- * uses retain and release; for CF types, it uses CFRetain/CFRelease.
+ * (CVPixelBufferRef), IOSurface, Security (SecAccessControlRef), and others.
  *
  * To create a RetainPtr, use one of the following:
  * @code
@@ -98,6 +97,10 @@ public:
 
     void clear();
 
+    // Pair NS_RETURNS_RETAINED with id and CF_RETURNS_RETAINED with CFTypeRef.
+    // Also use a templated return type to defer instantiation because merely
+    // declaring the wrong combination can trigger a warning (even if `requires`
+    // prevents calling it).
     template<typename U = StorageType>
         requires (std::same_as<U, StorageType> && NSType<U>)
     [[nodiscard]] U leakRef() NS_RETURNS_RETAINED {
@@ -157,17 +160,7 @@ private:
         requires (std::same_as<U, PtrType> && !NSType<U>)
     constexpr RetainPtr(U CF_RELEASES_ARGUMENT ptr, AdoptTag) : m_ptr(ptr) { }
 
-    static inline void retainFoundationPtr(CFTypeRef ptr) { CFRetain(ptr); }
-    static inline void releaseFoundationPtr(CFTypeRef ptr) { CFRelease(ptr); }
-    static inline void autoreleaseFoundationPtr(CFTypeRef ptr) { CFAutorelease(ptr); }
-
     static constexpr bool storageIsManagedByARC = __has_feature(objc_arc) && IsNSType<PtrType>;
-
-#if defined(__OBJC__) && !__has_feature(objc_arc)
-    static inline void retainFoundationPtr(id ptr) { [ptr retain]; }
-    static inline void releaseFoundationPtr(id ptr) { [ptr release]; }
-    static inline void autoreleaseFoundationPtr(id ptr) { [ptr autorelease]; }
-#endif
 
     StorageType m_ptr { nullptr };
 };
@@ -182,7 +175,7 @@ template<typename T> inline RetainPtr<T>::~RetainPtr()
 {
     SUPPRESS_UNRETAINED_LOCAL if (auto ptr = std::exchange(m_ptr, nullptr)) {
         if constexpr (!storageIsManagedByARC)
-            releaseFoundationPtr(ptr);
+            CFRelease(ptr);
     }
 }
 
@@ -191,7 +184,7 @@ template<typename T> inline RetainPtr<T>::RetainPtr(PtrType ptr)
 {
     if constexpr (!storageIsManagedByARC) {
         if (m_ptr)
-            SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+            SUPPRESS_UNRETAINED_ARG CFRetain(m_ptr);
     }
 }
 
@@ -200,7 +193,7 @@ template<typename T> inline RetainPtr<T>::RetainPtr(const RetainPtr& o)
 {
     if constexpr (!storageIsManagedByARC) {
         if (m_ptr)
-            SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+            SUPPRESS_UNRETAINED_ARG CFRetain(m_ptr);
     }
 }
 
@@ -213,7 +206,7 @@ template<typename T> inline void RetainPtr<T>::clear()
 {
     if (auto ptr = std::exchange(m_ptr, nullptr)) {
         if constexpr (!storageIsManagedByARC)
-            releaseFoundationPtr(ptr);
+            CFRelease(ptr);
     }
 }
 
@@ -222,7 +215,7 @@ template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
     auto ptr = std::exchange(m_ptr, nullptr);
     if constexpr (!storageIsManagedByARC) {
         if (ptr)
-            autoreleaseFoundationPtr(ptr);
+            CFAutorelease(ptr);
     }
     return ptr;
 }

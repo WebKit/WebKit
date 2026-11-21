@@ -123,6 +123,10 @@ public:
 
     ~RetainRef();
 
+    // Pair NS_RETURNS_RETAINED with id and CF_RETURNS_RETAINED with CFTypeRef.
+    // Also use a templated return type to defer instantiation because merely
+    // declaring the wrong combination can trigger a warning (even if `requires`
+    // prevents calling it).
     template<typename U = StorageType>
         requires (std::same_as<U, StorageType> && NSType<U>)
     [[nodiscard]] U leakRef() NS_RETURNS_RETAINED RETURNS_NONNULL {
@@ -175,17 +179,7 @@ private:
         requires (std::same_as<U, PtrType> && !NSType<U>)
     constexpr RetainRef(U CF_RELEASES_ARGUMENT ptr, AdoptTag) : m_ptr(ptr) { ASSERT(m_ptr); }
 
-    static inline void retainFoundationPtr(CFTypeRef ptr) { CFRetain(ptr); }
-    static inline void releaseFoundationPtr(CFTypeRef ptr) { CFRelease(ptr); }
-    static inline void autoreleaseFoundationPtr(CFTypeRef ptr) { CFAutorelease(ptr); }
-
     static constexpr bool storageIsManagedByARC = __has_feature(objc_arc) && IsNSType<PtrType>;
-
-#if defined(__OBJC__) && !__has_feature(objc_arc)
-    static inline void retainFoundationPtr(id ptr) { [ptr retain]; }
-    static inline void releaseFoundationPtr(id ptr) { [ptr release]; }
-    static inline void autoreleaseFoundationPtr(id ptr) { [ptr autorelease]; }
-#endif
 
     StorageType m_ptr;
 };
@@ -199,7 +193,7 @@ template<typename T> inline RetainRef<T>::~RetainRef()
 {
     SUPPRESS_UNRETAINED_LOCAL if (auto ptr = std::exchange(m_ptr, nullptr)) {
         if constexpr (!storageIsManagedByARC)
-            releaseFoundationPtr(ptr);
+            CFRelease(ptr);
     }
 }
 
@@ -208,7 +202,7 @@ template<typename T> inline RetainRef<T>::RetainRef(PtrType ptr)
 {
     ASSERT(m_ptr);
     if constexpr (!storageIsManagedByARC)
-        SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+        SUPPRESS_UNRETAINED_ARG CFRetain(m_ptr);
 }
 
 template<typename T> inline RetainRef<T>::RetainRef(const RetainRef& o)
@@ -216,7 +210,7 @@ template<typename T> inline RetainRef<T>::RetainRef(const RetainRef& o)
 {
     ASSERT(m_ptr);
     if constexpr (!storageIsManagedByARC)
-        SUPPRESS_UNRETAINED_ARG retainFoundationPtr(m_ptr);
+        SUPPRESS_UNRETAINED_ARG CFRetain(m_ptr);
 }
 
 template<typename T> template<typename U> inline RetainRef<T>::RetainRef(const RetainRef<U>& o)
@@ -229,7 +223,7 @@ template<typename T> inline auto RetainRef<T>::autorelease() -> PtrType
     ASSERT(m_ptr);
     auto ptr = std::exchange(m_ptr, nullptr);
     if constexpr (!storageIsManagedByARC)
-        autoreleaseFoundationPtr(ptr);
+        CFAutorelease(ptr);
     return ptr;
 }
 
