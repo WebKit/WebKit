@@ -26,7 +26,9 @@
 #include "config.h"
 #include "JSONCache.h"
 
+#include "JSArray.h"
 #include "JSONCacheInlines.h"
+#include "JSObjectInlines.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -147,6 +149,74 @@ void JSONCache::addPrefixedName(Structure* from, Structure* to, PropertyOffset o
     unsigned textLength = makeText(text, name);
     ASSERT(WTF::unalignedLoad<uint32_t>(text.data()) == prefix);
     m_prefixedNames.insert<prefixedNameWays>(set, from, to, offset, text, textLength);
+}
+
+static bool hasInlineValuesOnly(JSObject* object)
+{
+    Structure* structure = object->structure();
+    ASSERT(structure->inlineCapacity() == JSONCache::maxObjectTemplateProperties);
+    return object->type() == FinalObjectType && !structure->outOfLineCapacity() && !structure->isDictionary() && !object->butterfly();
+}
+
+void JSONCache::addObjectTemplate(std::span<const Latin1Character> source, unsigned textLength, JSObject* object, uint64_t owner)
+{
+    static_assert(maxObjectTemplateProperties == JSFinalObject::defaultInlineCapacity);
+    ASSERT(source.size() >= objectTemplateLookAhead && textLength <= source.size());
+    if (textLength > maxObjectTemplateTextLength || !hasInlineValuesOnly(object))
+        return;
+    std::array<JSValue, maxObjectTemplateProperties> values;
+    std::array<ObjectTemplateValue, maxObjectTemplateObjectValues> objectValues { };
+    unsigned objectValueCount = 0;
+    for (unsigned offset = 0; offset < maxObjectTemplateProperties; ++offset) {
+        JSValue value = object->getDirect(offset);
+        // A number that is not an int32 is usually a measurement, such as a timestamp, which makes the object unique,
+        // and its template would only replace one that is used. The same goes for the values of object values.
+        if (value && value.isDouble())
+            return;
+        if (!value || !value.isObject()) {
+            values[offset] = value;
+            continue;
+        }
+        values[offset] = JSValue();
+        if (objectValueCount == maxObjectTemplateObjectValues)
+            return;
+        auto& objectValue = objectValues[objectValueCount++];
+        objectValue.offset = offset;
+        JSObject* valueObject = asObject(value);
+        if (isJSArray(valueObject)) {
+            if (asArray(valueObject)->length() || valueObject->structure()->maxOffset() != invalidOffset)
+                return;
+            continue;
+        }
+        if (!hasInlineValuesOnly(valueObject))
+            return;
+        objectValue.structure.setWithoutWriteBarrier(valueObject->structure());
+        for (unsigned valueOffset = 0; valueOffset < maxObjectTemplateProperties; ++valueOffset) {
+            JSValue innerValue = valueObject->getDirect(valueOffset);
+            if (innerValue && (innerValue.isObject() || innerValue.isDouble()))
+                return;
+            objectValue.values[valueOffset].setWithoutWriteBarrier(innerValue);
+        }
+    }
+
+    debitObjectTemplates(objectTemplateRecordCost);
+    if (!m_objectTemplates)
+        m_objectTemplates = makeUnique<ObjectTemplates>();
+    uint64_t hash = objectTemplateHash(source);
+    unsigned set = objectTemplateIndex(hash);
+    auto& recentWay = m_objectTemplates->m_recentWays[set / objectTemplateWays];
+    recentWay = !recentWay;
+    auto& entry = m_objectTemplates->m_entries[set + recentWay];
+    entry.hash = hash;
+    entry.owner = owner;
+    entry.structure.setWithoutWriteBarrier(object->structure());
+    entry.textLength = textLength;
+    entry.objectValueCount = objectValueCount;
+    for (auto [offset, value] : indexedRange(values))
+        entry.values[offset].setWithoutWriteBarrier(value);
+    for (auto [index, objectValue] : indexedRange(std::span { objectValues }.first(objectValueCount)))
+        entry.objectValues[index] = objectValue;
+    WTF::copyElements(std::span { entry.text }.first(textLength), source.first(textLength));
 }
 
 void JSONCache::addName(Structure* from, Structure* to, PropertyOffset offset)
