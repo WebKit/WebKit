@@ -1,0 +1,184 @@
+Each line is 20px thick in the block direction. The float has a 60px block-start margin, so its border box covers line 4 only. Shapes referencing the border box must shorten line 4 only; shapes referencing the margin box must shorten lines 1-4.
+
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+
+PASS shape-outside: border-box in horizontal-tb
+PASS shape-outside: inset(0) border-box in horizontal-tb
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box in horizontal-tb
+PASS shape-outside: margin-box in horizontal-tb
+PASS shape-outside: inset(0) in horizontal-tb
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) in horizontal-tb
+PASS shape-outside: border-box in vertical-rl
+PASS shape-outside: inset(0) border-box in vertical-rl
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box in vertical-rl
+PASS shape-outside: margin-box in vertical-rl
+PASS shape-outside: inset(0) in vertical-rl
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) in vertical-rl
+PASS shape-outside: border-box in vertical-lr
+PASS shape-outside: inset(0) border-box in vertical-lr
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box in vertical-lr
+PASS shape-outside: margin-box in vertical-lr
+PASS shape-outside: inset(0) in vertical-lr
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) in vertical-lr
+PASS shape-outside: border-box in sideways-rl
+PASS shape-outside: inset(0) border-box in sideways-rl
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box in sideways-rl
+PASS shape-outside: margin-box in sideways-rl
+PASS shape-outside: inset(0) in sideways-rl
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) in sideways-rl
+PASS shape-outside: border-box in sideways-lr
+PASS shape-outside: inset(0) border-box in sideways-lr
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box in sideways-lr
+PASS shape-outside: margin-box in sideways-lr
+PASS shape-outside: inset(0) in sideways-lr
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) in sideways-lr
+
