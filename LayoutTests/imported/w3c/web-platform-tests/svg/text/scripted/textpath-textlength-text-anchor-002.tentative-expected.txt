@@ -1,0 +1,9 @@
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+
+PASS 'textLength' on <textPath> with 'text-anchor' adjustments, right-to-left
+

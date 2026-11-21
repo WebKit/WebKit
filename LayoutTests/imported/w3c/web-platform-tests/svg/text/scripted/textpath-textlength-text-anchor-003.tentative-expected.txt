@@ -1,0 +1,5 @@
+X
+X
+
+PASS 'textLength' on <textPath> with 'text-anchor' adjustments, single character, lengthAdjust=spacing
+

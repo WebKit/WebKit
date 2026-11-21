@@ -894,11 +894,18 @@ void SVGTextLayoutAlgorithm::positionOnPaths()
         auto pathSpacing = 0.f;
         auto scaling = 1.f;
         if (auto elementTextLength = textLength(protect(*m_elements[textPath.elementIndex].element))) {
+            auto advanceIsAdjusted = false;
             if (elementTextLength->lengthAdjust == SVGLengthAdjustSpacing) {
-                if (auto characterCount = typographicCharacterCount(range); characterCount > 1)
+                if (auto characterCount = typographicCharacterCount(range); characterCount > 1) {
                     pathSpacing = (elementTextLength->length - totalLength) / (characterCount - 1);
-            } else if (totalLength)
+                    advanceIsAdjusted = true;
+                }
+            } else if (totalLength) {
                 scaling = elementTextLength->length / totalLength;
+                advanceIsAdjusted = true;
+            }
+            if (advanceIsAdjusted && totalLength)
+                totalAnchorShift *= elementTextLength->length / totalLength;
         }
         textPath.scaling = scaling;
 
