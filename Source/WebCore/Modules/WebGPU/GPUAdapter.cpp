@@ -50,7 +50,7 @@ GPUAdapter::GPUAdapter(Ref<WebGPU::Adapter>&& backing, Ref<WebGPUIntegration>&& 
     , m_adapterInfo(m_backing->info())
     , m_features(GPUSupportedFeatures::create(m_backing->features()))
     , m_limits(GPUSupportedLimits::create(WebGPUSupportedLimits::create(m_backing->limits())))
-    , m_info(GPUAdapterInfo::create(name(), m_adapterInfo.subgroupMinSize, m_adapterInfo.subgroupMaxSize))
+    , m_info(GPUAdapterInfo::create(name(), m_adapterInfo.isFallbackAdapter, m_adapterInfo.subgroupMinSize, m_adapterInfo.subgroupMaxSize))
 {
 }
 
@@ -291,7 +291,7 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
             promise.reject(Exception(ExceptionCode::OperationError));
         else {
             auto queueLabel = deviceDescriptor->defaultQueue.label;
-            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), protectedThis->m_gpu.copyRef(), WTF::move(label), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), protectedThis->m_gpu.copyRef(), WTF::move(label), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->isFallbackAdapter(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
             gpuDevice->suspendIfNeeded();
             promise.resolve(WTF::move(gpuDevice));
         }
