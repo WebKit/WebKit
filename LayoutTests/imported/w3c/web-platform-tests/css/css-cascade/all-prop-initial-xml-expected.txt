@@ -135,6 +135,7 @@ PASS cy
 PASS d
 PASS direction
 PASS display
+PASS display-visibility
 PASS dominant-baseline
 PASS dynamic-range-limit
 PASS empty-cells

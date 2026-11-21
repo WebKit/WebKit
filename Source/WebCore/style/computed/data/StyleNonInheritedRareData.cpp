@@ -147,6 +147,7 @@ NonInheritedRareData::NonInheritedRareData()
 #endif
     , fieldSizing(static_cast<unsigned>(ComputedStyle::initialFieldSizing()))
     , nativeAppearanceDisabled(static_cast<unsigned>(false))
+    , displayVisibility(static_cast<unsigned>(ComputedStyle::initialDisplayVisibility()))
     , positionTryOrder(static_cast<unsigned>(ComputedStyle::initialPositionTryOrder()))
     , positionVisibility(ComputedStyle::initialPositionVisibility().toRaw())
     , usesAnchorFunctions(false)
@@ -268,6 +269,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
 #endif
     , fieldSizing(o.fieldSizing)
     , nativeAppearanceDisabled(o.nativeAppearanceDisabled)
+    , displayVisibility(o.displayVisibility)
     , positionTryOrder(o.positionTryOrder)
     , positionVisibility(o.positionVisibility)
     , usesAnchorFunctions(o.usesAnchorFunctions)
@@ -396,6 +398,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
 #endif
         && fieldSizing == o.fieldSizing
         && nativeAppearanceDisabled == o.nativeAppearanceDisabled
+        && displayVisibility == o.displayVisibility
         && positionTryOrder == o.positionTryOrder
         && positionVisibility == o.positionVisibility
         && usesAnchorFunctions == o.usesAnchorFunctions
@@ -566,6 +569,8 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 
     LOG_IF_DIFFERENT_WITH_CAST(FieldSizing, fieldSizing);
     LOG_IF_DIFFERENT_WITH_CAST(bool, nativeAppearanceDisabled);
+
+    LOG_IF_DIFFERENT_WITH_CAST(DisplayVisibility, displayVisibility);
 
     LOG_IF_DIFFERENT_WITH_CAST(PositionTryOrder, positionTryOrder);
     LOG_IF_DIFFERENT(positionVisibility);

@@ -1,0 +1,26 @@
+
+PASS Sanity check: the default display of a div is block
+PASS display-visibility: normal does not affect display
+PASS display-visibility: discard computes display: inline to none
+PASS display-visibility: discard computes display: block to none
+PASS display-visibility: discard computes display: flow-root to none
+PASS display-visibility: discard computes display: list-item to none
+PASS display-visibility: discard computes display: inline-block to none
+PASS display-visibility: discard computes display: table to none
+PASS display-visibility: discard computes display: inline-table to none
+PASS display-visibility: discard computes display: table-cell to none
+PASS display-visibility: discard computes display: flex to none
+PASS display-visibility: discard computes display: inline-flex to none
+PASS display-visibility: discard computes display: grid to none
+PASS display-visibility: discard computes display: inline-grid to none
+PASS display-visibility: discard computes display: contents to none
+PASS display-visibility: discard computes display: none to none
+PASS display-visibility: discard wins over display: block !important
+PASS display-visibility: discard wins over blockification from float/position
+PASS display-visibility: discard applies to elements that default to display: inline
+PASS display-visibility: discard is not inherited by children
+PASS display-visibility: discard generates no boxes
+PASS Dynamically toggling display-visibility restores the specified display
+PASS Removing a rule that sets display-visibility: discard restores display
+PASS Changing the specified display does not override display-visibility: discard
+

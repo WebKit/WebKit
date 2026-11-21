@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Display: display-visibility: discard forces display to compute to none</title>
+<link rel="help" href="https://drafts.csswg.org/css-display-4/#display-visibility">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<meta name="assert" content="display-visibility: discard forces the computed value of display to none, regardless of the specified display value.">
+<style>
+  .discard { display-visibility: discard; }
+  #important { display: block !important; }
+  #restore { display: block; }
+</style>
+<body>
+<div id="container"></div>
+<script>
+'use strict';
+
+function computedDisplay(element) {
+  return getComputedStyle(element).display;
+}
+
+function create(markup) {
+  const container = document.getElementById('container');
+  container.innerHTML = markup;
+  return container.firstElementChild;
+}
+
+test(() => {
+  const e = create('<div></div>');
+  assert_equals(computedDisplay(e), 'block');
+}, 'Sanity check: the default display of a div is block');
+
+test(() => {
+  const e = create('<div></div>');
+  assert_equals(getComputedStyle(e).displayVisibility, 'normal');
+  assert_equals(computedDisplay(e), 'block');
+}, 'display-visibility: normal does not affect display');
+
+for (const display of ['inline', 'block', 'flow-root', 'list-item', 'inline-block',
+                       'table', 'inline-table', 'table-cell', 'flex', 'inline-flex',
+                       'grid', 'inline-grid', 'contents', 'none']) {
+  test(() => {
+    const e = create(`<div class="discard" style="display: ${display}"></div>`);
+    assert_equals(computedDisplay(e), 'none');
+  }, `display-visibility: discard computes display: ${display} to none`);
+}
+
+test(() => {
+  const e = create('<div id="important" class="discard"></div>');
+  assert_equals(computedDisplay(e), 'none');
+}, 'display-visibility: discard wins over display: block !important');
+
+test(() => {
+  const e = create('<div class="discard" style="position: absolute; float: left"></div>');
+  assert_equals(computedDisplay(e), 'none');
+}, 'display-visibility: discard wins over blockification from float/position');
+
+test(() => {
+  const e = create('<span class="discard"></span>');
+  assert_equals(computedDisplay(e), 'none');
+}, 'display-visibility: discard applies to elements that default to display: inline');
+
+test(() => {
+  const e = create('<div class="discard"><span id="child">text</span></div>');
+  const child = e.firstElementChild;
+  assert_equals(computedDisplay(e), 'none');
+  assert_equals(getComputedStyle(child).displayVisibility, 'normal',
+                'display-visibility is not inherited');
+  assert_equals(computedDisplay(child), 'inline',
+                'child display is unaffected by the parent');
+}, 'display-visibility: discard is not inherited by children');
+
+test(() => {
+  const e = create('<div style="width: 100px; height: 100px"></div>');
+  assert_equals(e.offsetWidth, 100);
+  e.style.displayVisibility = 'discard';
+  assert_equals(computedDisplay(e), 'none');
+  assert_equals(e.offsetWidth, 0);
+  assert_equals(e.getClientRects().length, 0, 'no boxes are generated');
+}, 'display-visibility: discard generates no boxes');
+
+test(() => {
+  const e = create('<div style="display: flex; width: 100px; height: 100px"></div>');
+  e.style.displayVisibility = 'discard';
+  assert_equals(computedDisplay(e), 'none');
+  e.style.displayVisibility = 'normal';
+  assert_equals(computedDisplay(e), 'flex',
+                'the specified display value is restored');
+  assert_equals(e.offsetWidth, 100);
+}, 'Dynamically toggling display-visibility restores the specified display');
+
+test(() => {
+  const e = create('<div id="restore" class="discard"></div>');
+  assert_equals(computedDisplay(e), 'none');
+  e.classList.remove('discard');
+  assert_equals(computedDisplay(e), 'block');
+}, 'Removing a rule that sets display-visibility: discard restores display');
+
+test(() => {
+  const e = create('<div class="discard" style="display: block"></div>');
+  e.style.display = 'flex';
+  assert_equals(computedDisplay(e), 'none');
+}, 'Changing the specified display does not override display-visibility: discard');
+</script>
+</body>

@@ -558,6 +558,15 @@ TextStream& operator<<(TextStream& ts, FieldSizing sizing)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, DisplayVisibility visibility)
+{
+    switch (visibility) {
+    case DisplayVisibility::Normal: ts << "normal"_s; break;
+    case DisplayVisibility::Discard: ts << "discard"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, BaselineSource source)
 {
     switch (source) {
