@@ -40,10 +40,10 @@
 
 @implementation _WKTargetedElementInfo
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKTargetedElementInfo);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKTargetedElementInfo.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _info->API::TargetedElementInfo::~TargetedElementInfo();
     [super dealloc];
 }

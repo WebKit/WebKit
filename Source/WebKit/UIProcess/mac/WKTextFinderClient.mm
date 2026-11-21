@@ -238,11 +238,9 @@ private:
     }
 
     RetainPtr progress = [NSProgress progressWithTotalUnitCount:1];
-    auto copiedResultCollector = Block_copy(resultCollector);
-    _findReplyCallbacks.append([progress, copiedResultCollector] (NSArray *matches, bool didWrap) {
+    _findReplyCallbacks.append([progress, resultCollector = makeBlockPtr(resultCollector)](NSArray *matches, bool didWrap) {
         [progress setCompletedUnitCount:1];
-        copiedResultCollector(matches, didWrap);
-        Block_release(copiedResultCollector);
+        resultCollector(matches, didWrap);
     });
 
     if (maxResults == 1)
@@ -253,11 +251,8 @@ private:
 
 - (void)getSelectedText:(void (^)(NSString *selectedTextString))completionHandler
 {
-    void (^copiedCompletionHandler)(NSString *) = Block_copy(completionHandler);
-
-    protect(_page)->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string) {
-        copiedCompletionHandler(string.createNSString().get());
-        Block_release(copiedCompletionHandler);
+    protect(_page)->getSelectionOrContentsAsString([completionHandler = makeBlockPtr(completionHandler)](const String& string) {
+        completionHandler(string.createNSString().get());
     });
 }
 
@@ -331,10 +326,8 @@ private:
 
     RetainPtr textFinderMatch = static_cast<WKTextFinderMatch *>(findMatch);
 
-    auto copiedImageCallback = Block_copy(completionHandler);
-    _imageReplyCallbacks.append([copiedImageCallback] (NSImage *image) {
-        copiedImageCallback(image);
-        Block_release(copiedImageCallback);
+    _imageReplyCallbacks.append([completionHandler = makeBlockPtr(completionHandler)](NSImage *image) {
+        completionHandler(image);
     });
 
     // FIXME: There is no guarantee that this will ever result in didGetImageForMatchResult

@@ -34,10 +34,10 @@
     AlignedStorage<WebKit::InjectedBundleCSSStyleDeclarationHandle> _cssStyleDeclarationHandle;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebProcessPlugInCSSStyleDeclarationHandle);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInCSSStyleDeclarationHandle.class, self))
-        return;
     SUPPRESS_UNCOUNTED_ARG _cssStyleDeclarationHandle->~InjectedBundleCSSStyleDeclarationHandle();
     [super dealloc];
 }

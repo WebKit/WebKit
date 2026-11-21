@@ -1044,9 +1044,9 @@ static RetainPtr<CAAnimation> fadeAnimation(CFTimeInterval duration, AnimationDi
 {
     RetainPtr fadeAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
     if (direction == AnimateIn)
-        fadeAnimation.get().toValue = static_cast<id>(RetainPtr<CGColorRef>(CGColorGetConstantColor(kCGColorBlack)).get());
+        fadeAnimation.get().toValue = (__bridge id)RetainPtr<CGColorRef>(CGColorGetConstantColor(kCGColorBlack)).get();
     else
-        fadeAnimation.get().fromValue = static_cast<id>(RetainPtr<CGColorRef>(CGColorGetConstantColor(kCGColorBlack)).get());
+        fadeAnimation.get().fromValue = (__bridge id)RetainPtr<CGColorRef>(CGColorGetConstantColor(kCGColorBlack)).get();
     fadeAnimation.get().duration = duration;
     fadeAnimation.get().removedOnCompletion = NO;
     fadeAnimation.get().fillMode = kCAFillModeBoth;

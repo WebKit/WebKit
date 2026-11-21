@@ -54,6 +54,7 @@
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/AlignedStorage.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKWebProcessPlugInFrame {
@@ -83,10 +84,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebProcessPlugInFrame);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInFrame.class, self))
-        return;
     SUPPRESS_UNCOUNTED_ARG _frame->~WebFrame();
     [super dealloc];
 }
@@ -213,7 +214,7 @@ static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<Web
 
 - (NSArray *)_certificateChain
 {
-    return (NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(protect(*_frame)->certificateInfo().trust().get()).autorelease();
+    return bridge_cast(WebCore::CertificateInfo::certificateChainFromSecTrust(protect(*_frame)->certificateInfo().trust().get())).autorelease();
 }
 
 - (SecTrustRef)_serverTrust

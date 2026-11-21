@@ -128,7 +128,7 @@ RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *
         return nullptr;
 
     RetainPtr addQuery = @{
-        (id)kSecValueRef: (id)key.get(),
+        (id)kSecValueRef: bridge_id_cast(key.get()),
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: secAttrLabel.createNSString().get(),
         (id)kSecAttrApplicationTag: secAttrApplicationTag,

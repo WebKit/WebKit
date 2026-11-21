@@ -26,16 +26,16 @@
 #import "config.h"
 #import "_WKWebPushMessageInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 @implementation _WKWebPushMessage
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKWebPushMessage);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushMessage.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _message->API::WebPushMessage::~WebPushMessage();
     [super dealloc];
 }

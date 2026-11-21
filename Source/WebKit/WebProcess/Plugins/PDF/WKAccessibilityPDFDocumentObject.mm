@@ -145,8 +145,10 @@
 - (BOOL)accessibilityScroll:(UIAccessibilityScrollDirection)direction
 {
     if (RefPtr plugin = _pdfPlugin.get()) {
-        if (RefPtr coreObject = plugin->accessibilityCoreObject())
-            [protect(coreObject->wrapper()) accessibilityScroll:direction];
+        if (RefPtr coreObject = plugin->accessibilityCoreObject()) {
+            RetainPtr<id> wrapper = coreObject->wrapper();
+            [wrapper accessibilityScroll:direction];
+        }
     }
     return YES;
 }

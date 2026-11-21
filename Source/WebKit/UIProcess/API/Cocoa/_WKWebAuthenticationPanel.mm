@@ -31,6 +31,7 @@
 #import "LocalService.h"
 #import "Logging.h"
 #import "WKError.h"
+#import "WKObject.h"
 #import "WebAuthenticationPanelClient.h"
 #import "_WKAuthenticationExtensionsClientInputs.h"
 #import "_WKAuthenticationExtensionsClientOutputsInternal.h"
@@ -172,11 +173,10 @@ NSString * const _WKLocalAuthenticatorCredentialLastUsedDateKey = @"_WKLocalAuth
 
 #if ENABLE(WEB_AUTHN)
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKWebAuthenticationPanel);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebAuthenticationPanel.class, self))
-        return;
-
     protect(*_panel)->~WebAuthenticationPanel();
 
     [super dealloc];
@@ -317,7 +317,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     auto retainAttributesArray = adoptCF(attributesArrayRef);
 
     auto result = adoptNS([[NSMutableArray alloc] init]);
-    for (NSDictionary *attributes in (NSArray *)attributesArrayRef) {
+    for (NSDictionary *attributes in bridge_id_cast(attributesArrayRef)) {
         auto decodedResponse = cbor::CBORReader::read(makeVector(protect(dynamic_objc_cast<NSData>(attributes[bridge_id_cast(kSecAttrApplicationTag)]))));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
@@ -699,7 +699,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     updateQueryIfNecessary(query.get());
 
     CFStringRef credentialIdKey = useAlternateKeychainAttribute ? kSecAttrAlias : kSecAttrApplicationLabel;
-    [query setObject:nsCredentialId.get() forKey:(id)credentialIdKey];
+    [query setObject:nsCredentialId.get() forKey:bridge_cast(credentialIdKey)];
 
     if (accessGroup != nil)
         [query setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
@@ -720,7 +720,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     RetainPtr secAttrApplicationTag = toNSData(keyTag->span());
 
     auto addQuery = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
-        (id)key.get(), (id)kSecValueRef,
+        bridge_id_cast(key.get()), (id)kSecValueRef,
         (id)kSecAttrKeyClassPrivate, (id)kSecAttrKeyClass,
         (id)rp.createNSString().get(), (id)kSecAttrLabel,
         secAttrApplicationTag.get(), (id)kSecAttrApplicationTag,
@@ -764,7 +764,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     updateQueryForGroupIfNecessary(query.get(), group);
 
     CFStringRef credentialIdKey = useAlternateKeychainAttribute ? kSecAttrAlias : kSecAttrApplicationLabel;
-    [query setObject:credentialID forKey:(id)credentialIdKey];
+    [query setObject:credentialID forKey:bridge_cast(credentialIdKey)];
 
     CFTypeRef privateKeyRef = nullptr;
     OSStatus status = SecItemCopyMatching(bridge_cast(query.get()), &privateKeyRef);
@@ -781,7 +781,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 
     auto privateKey = adoptCF(privateKeyRef);
     CFErrorRef errorRef = nullptr;
-    auto privateKeyRep = adoptCF(SecKeyCopyExternalRepresentation((__bridge SecKeyRef)((id)privateKeyRef), &errorRef));
+    RetainPtr privateKeyRep = adoptCF(SecKeyCopyExternalRepresentation(static_cast<SecKeyRef>(const_cast<void*>(privateKeyRef)), &errorRef));
     // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
     SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr adoptedErrorRef = adoptCF(errorRef)) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorCredentialNotFound);

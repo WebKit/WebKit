@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKUserInitiatedActionInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKUserInitiatedAction
@@ -38,11 +39,10 @@
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKUserInitiatedAction);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKUserInitiatedAction.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _userInitiatedAction->~UserInitiatedAction();
 
     [super dealloc];

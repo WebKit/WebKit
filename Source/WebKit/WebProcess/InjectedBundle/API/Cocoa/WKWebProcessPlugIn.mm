@@ -29,6 +29,7 @@
 #import "APIArray.h"
 #import "WKBundle.h"
 #import "WKBundleAPICast.h"
+#import "WKObject.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -42,11 +43,10 @@
     RetainPtr<id<WKWebProcessPlugIn>> _principalClassInstance;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebProcessPlugInController);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInController.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _bundle->~InjectedBundle();
 
     [super dealloc];

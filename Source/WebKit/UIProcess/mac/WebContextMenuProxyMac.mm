@@ -869,7 +869,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = WeakPtr { page() }, imageURL = WTF::move(imageURL), imageBitmap = WTF::move(imageBitmap), lookUpImageItem = WTF::move(lookUpImageItem), copySubjectItem = WTF::move(copySubjectItem), completionHandler = WTF::move(completionHandler), itemsRemaining = filteredItems.size(), menu = WTF::move(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
         ASSERT(![sparseMenuItems pointerAtIndex:index]);
-        [sparseMenuItems replacePointerAtIndex:index withPointer:item];
+        [sparseMenuItems replacePointerAtIndex:index withPointer:(__bridge void *)item];
         if (--itemsRemaining)
             return;
 
