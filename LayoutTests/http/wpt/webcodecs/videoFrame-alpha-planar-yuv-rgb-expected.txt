@@ -1,0 +1,110 @@
+
+PASS I420A video range: copyTo() RGBA
+PASS I420A video range: copyTo() BGRA
+PASS I420A video range: copyTo() RGBX
+PASS I420A video range: copyTo() BGRX
+PASS I420A video range: copyTo() RGBA after alpha "discard"
+PASS I420A video range: drawImage()
+PASS I420A full range: copyTo() RGBA
+PASS I420A full range: copyTo() BGRA
+PASS I420A full range: copyTo() RGBX
+PASS I420A full range: copyTo() BGRX
+PASS I420A full range: copyTo() RGBA after alpha "discard"
+PASS I420A full range: drawImage()
+PASS I420AP10 video range: copyTo() RGBA
+PASS I420AP10 video range: copyTo() BGRA
+PASS I420AP10 video range: copyTo() RGBX
+PASS I420AP10 video range: copyTo() BGRX
+PASS I420AP10 video range: copyTo() RGBA after alpha "discard"
+PASS I420AP10 video range: drawImage()
+PASS I420AP10 full range: copyTo() RGBA
+PASS I420AP10 full range: copyTo() BGRA
+PASS I420AP10 full range: copyTo() RGBX
+PASS I420AP10 full range: copyTo() BGRX
+PASS I420AP10 full range: copyTo() RGBA after alpha "discard"
+PASS I420AP10 full range: drawImage()
+PASS I420AP12 video range: copyTo() RGBA
+PASS I420AP12 video range: copyTo() BGRA
+PASS I420AP12 video range: copyTo() RGBX
+PASS I420AP12 video range: copyTo() BGRX
+PASS I420AP12 video range: copyTo() RGBA after alpha "discard"
+PASS I420AP12 video range: drawImage()
+PASS I420AP12 full range: copyTo() RGBA
+PASS I420AP12 full range: copyTo() BGRA
+PASS I420AP12 full range: copyTo() RGBX
+PASS I420AP12 full range: copyTo() BGRX
+PASS I420AP12 full range: copyTo() RGBA after alpha "discard"
+PASS I420AP12 full range: drawImage()
+PASS I422A video range: copyTo() RGBA
+PASS I422A video range: copyTo() BGRA
+PASS I422A video range: copyTo() RGBX
+PASS I422A video range: copyTo() BGRX
+PASS I422A video range: copyTo() RGBA after alpha "discard"
+PASS I422A video range: drawImage()
+PASS I422A full range: copyTo() RGBA
+PASS I422A full range: copyTo() BGRA
+PASS I422A full range: copyTo() RGBX
+PASS I422A full range: copyTo() BGRX
+PASS I422A full range: copyTo() RGBA after alpha "discard"
+PASS I422A full range: drawImage()
+PASS I422AP10 video range: copyTo() RGBA
+PASS I422AP10 video range: copyTo() BGRA
+PASS I422AP10 video range: copyTo() RGBX
+PASS I422AP10 video range: copyTo() BGRX
+PASS I422AP10 video range: copyTo() RGBA after alpha "discard"
+PASS I422AP10 video range: drawImage()
+PASS I422AP10 full range: copyTo() RGBA
+PASS I422AP10 full range: copyTo() BGRA
+PASS I422AP10 full range: copyTo() RGBX
+PASS I422AP10 full range: copyTo() BGRX
+PASS I422AP10 full range: copyTo() RGBA after alpha "discard"
+PASS I422AP10 full range: drawImage()
+PASS I422AP12 video range: copyTo() RGBA
+PASS I422AP12 video range: copyTo() BGRA
+PASS I422AP12 video range: copyTo() RGBX
+PASS I422AP12 video range: copyTo() BGRX
+PASS I422AP12 video range: copyTo() RGBA after alpha "discard"
+PASS I422AP12 video range: drawImage()
+PASS I422AP12 full range: copyTo() RGBA
+PASS I422AP12 full range: copyTo() BGRA
+PASS I422AP12 full range: copyTo() RGBX
+PASS I422AP12 full range: copyTo() BGRX
+PASS I422AP12 full range: copyTo() RGBA after alpha "discard"
+PASS I422AP12 full range: drawImage()
+PASS I444A video range: copyTo() RGBA
+PASS I444A video range: copyTo() BGRA
+PASS I444A video range: copyTo() RGBX
+PASS I444A video range: copyTo() BGRX
+PASS I444A video range: copyTo() RGBA after alpha "discard"
+PASS I444A video range: drawImage()
+PASS I444A full range: copyTo() RGBA
+PASS I444A full range: copyTo() BGRA
+PASS I444A full range: copyTo() RGBX
+PASS I444A full range: copyTo() BGRX
+PASS I444A full range: copyTo() RGBA after alpha "discard"
+PASS I444A full range: drawImage()
+PASS I444AP10 video range: copyTo() RGBA
+PASS I444AP10 video range: copyTo() BGRA
+PASS I444AP10 video range: copyTo() RGBX
+PASS I444AP10 video range: copyTo() BGRX
+PASS I444AP10 video range: copyTo() RGBA after alpha "discard"
+PASS I444AP10 video range: drawImage()
+PASS I444AP10 full range: copyTo() RGBA
+PASS I444AP10 full range: copyTo() BGRA
+PASS I444AP10 full range: copyTo() RGBX
+PASS I444AP10 full range: copyTo() BGRX
+PASS I444AP10 full range: copyTo() RGBA after alpha "discard"
+PASS I444AP10 full range: drawImage()
+PASS I444AP12 video range: copyTo() RGBA
+PASS I444AP12 video range: copyTo() BGRA
+PASS I444AP12 video range: copyTo() RGBX
+PASS I444AP12 video range: copyTo() BGRX
+PASS I444AP12 video range: copyTo() RGBA after alpha "discard"
+PASS I444AP12 video range: drawImage()
+PASS I444AP12 full range: copyTo() RGBA
+PASS I444AP12 full range: copyTo() BGRA
+PASS I444AP12 full range: copyTo() RGBX
+PASS I444AP12 full range: copyTo() BGRX
+PASS I444AP12 full range: copyTo() RGBA after alpha "discard"
+PASS I444AP12 full range: drawImage()
+

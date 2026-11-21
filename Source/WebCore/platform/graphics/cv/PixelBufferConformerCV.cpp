@@ -58,14 +58,26 @@ RetainPtr<CVPixelBufferRef> PixelBufferConformerCV::convert(CVPixelBufferRef raw
 {
     RetainPtr<CVPixelBufferRef> buffer { rawBuffer };
 
-    if (!VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer.get(), buffer.get())) {
-        CVPixelBufferRef outputBuffer = nullptr;
-        OSStatus status = VTPixelBufferConformerCopyConformedPixelBuffer(m_pixelConformer.get(), buffer.get(), false, &outputBuffer);
-        if (status != noErr || !outputBuffer)
-            return nullptr;
-        return adoptCF(outputBuffer);
-    }
-    return nullptr;
+    bool hasAlphaPlane = isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(buffer));
+    if (hasAlphaPlane) {
+        // VTPixelBufferConformer miscolours 10-bit Y'CbCr with an alpha plane, and rounds alpha down (rdar://192100290).
+        buffer = createBiPlanarPixelBufferFromColorPlanes(rawBuffer);
+        if (!buffer || VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer, buffer))
+            return buffer;
+    } else if (VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer, buffer))
+        return nullptr;
+
+    CVPixelBufferRef outputBuffer = nullptr;
+    OSStatus status = VTPixelBufferConformerCopyConformedPixelBuffer(m_pixelConformer, buffer, false, &outputBuffer);
+    if (status != noErr || !outputBuffer)
+        return nullptr;
+    RetainPtr output = adoptCF(outputBuffer);
+
+    auto outputFormat = CVPixelBufferGetPixelFormatType(output);
+    bool hasAlphaChannel = outputFormat == kCVPixelFormatType_32BGRA || outputFormat == kCVPixelFormatType_32ARGB;
+    if (hasAlphaPlane && hasAlphaChannel && !copyAlphaPlaneToPackedPixelBuffer(rawBuffer, output))
+        return nullptr;
+    return output;
 }
 
 RefPtr<NativeImage> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixelBufferRef rawBuffer)
