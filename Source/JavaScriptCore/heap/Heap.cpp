@@ -1752,8 +1752,13 @@ void Heap::runCollectionEpilogue()
 
     vm().immutableButterflyToStringCache.clear();
     
-    for (const GCCompletionCallback& callback : m_gcCompletionCallbacks)
+    // A callback may add or remove callbacks, so index into the vector rather than iterating it.
+    for (size_t i = 0; i < m_gcCompletionCallbacks.size();) {
+        GCCompletionCallback callback = m_gcCompletionCallbacks[i];
         callback.run(vm());
+        if (i < m_gcCompletionCallbacks.size() && m_gcCompletionCallbacks[i] == callback)
+            ++i;
+    }
     
     if (shouldSweepSynchronously())
         sweepSynchronously();

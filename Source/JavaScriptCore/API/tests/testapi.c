@@ -1445,6 +1445,85 @@ static void testMarkingConstraintsAndHeapFinalizers(void)
     printf("PASS: Marking Constraints and Heap Finalizers.\n");
 }
 
+// Heap finalizers that add and remove heap finalizers while the finalizers run.
+static unsigned removesItselfCount;
+static unsigned removesLaterAndAddsCount;
+static unsigned removedBeforeItsTurnCount;
+static unsigned addedCount;
+static unsigned removesEarlierCount;
+
+static void removedBeforeItsTurnFinalizer(JSContextGroupRef group, void* userData)
+{
+    UNUSED_PARAM(group);
+    UNUSED_PARAM(userData);
+    removedBeforeItsTurnCount++;
+}
+
+static void addedFinalizer(JSContextGroupRef group, void* userData)
+{
+    UNUSED_PARAM(group);
+    UNUSED_PARAM(userData);
+    addedCount++;
+}
+
+static void removesItselfFinalizer(JSContextGroupRef group, void* userData)
+{
+    removesItselfCount++;
+    JSContextGroupRemoveHeapFinalizer(group, removesItselfFinalizer, userData);
+}
+
+static void removesLaterAndAddsFinalizer(JSContextGroupRef group, void* userData)
+{
+    if (!removesLaterAndAddsCount++) {
+        JSContextGroupRemoveHeapFinalizer(group, removedBeforeItsTurnFinalizer, userData);
+        JSContextGroupAddHeapFinalizer(group, addedFinalizer, userData);
+    }
+}
+
+static void removesEarlierFinalizer(JSContextGroupRef group, void* userData)
+{
+    if (!removesEarlierCount++)
+        JSContextGroupRemoveHeapFinalizer(group, removesLaterAndAddsFinalizer, userData);
+}
+
+static void testHeapFinalizersThatChangeTheFinalizerList(void)
+{
+    JSContextGroupRef group;
+    JSGlobalContextRef context;
+
+    printf("Testing Heap Finalizers that change the finalizer list.\n");
+
+    group = JSContextGroupCreate();
+    context = JSGlobalContextCreateInGroup(group, NULL);
+
+    JSContextGroupAddHeapFinalizer(group, removesItselfFinalizer, NULL);
+    JSContextGroupAddHeapFinalizer(group, removesLaterAndAddsFinalizer, NULL);
+    JSContextGroupAddHeapFinalizer(group, removedBeforeItsTurnFinalizer, NULL);
+    JSContextGroupAddHeapFinalizer(group, removesEarlierFinalizer, NULL);
+
+    JSSynchronousGarbageCollectForDebugging(context);
+    assertTrue(removesItselfCount == 1, "A finalizer that removes itself ran");
+    assertTrue(removesLaterAndAddsCount == 1, "The finalizer after one that removed itself ran");
+    assertTrue(!removedBeforeItsTurnCount, "A finalizer removed before its turn did not run");
+    assertTrue(removesEarlierCount == 1, "A finalizer that removes an earlier one ran");
+    assertTrue(addedCount == 1, "A finalizer added by a finalizer ran in the same collection");
+
+    JSSynchronousGarbageCollectForDebugging(context);
+    assertTrue(removesItselfCount == 1, "A finalizer that removed itself did not run again");
+    assertTrue(removesLaterAndAddsCount == 1, "A finalizer removed by an earlier one did not run again");
+    assertTrue(!removedBeforeItsTurnCount, "A removed finalizer did not run");
+    assertTrue(removesEarlierCount == 2, "A remaining finalizer ran again");
+    assertTrue(addedCount == 2, "An added finalizer ran again");
+
+    JSContextGroupRemoveHeapFinalizer(group, removesEarlierFinalizer, NULL);
+    JSContextGroupRemoveHeapFinalizer(group, addedFinalizer, NULL);
+
+    JSGlobalContextRelease(context);
+    JSContextGroupRelease(group);
+
+    printf("PASS: Heap Finalizers that change the finalizer list.\n");
+}
+
 #if USE(CF)
 static void testCFStrings(void)
 {
@@ -1648,6 +1727,7 @@ int main(int argc, char* argv[])
     ASSERT(Base_didFinalize);
 
     testMarkingConstraintsAndHeapFinalizers();
+    testHeapFinalizersThatChangeTheFinalizerList();
 
 #if USE(CF)
     testCFStrings();
