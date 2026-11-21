@@ -721,6 +721,7 @@ elseif (APPLE)
         cf/TypeCastsCF.h
         cf/VectorCF.h
 
+        cocoa/ASRCapability.h
         cocoa/AuditToken.h
         cocoa/CrashReporter.h
         cocoa/Entitlements.h

@@ -22,6 +22,7 @@ list(APPEND WTF_SOURCES
     cf/SchedulePairCF.cpp
     cf/URLCF.cpp
 
+    cocoa/ASRCapability.mm
     cocoa/AuditToken.mm
     cocoa/AutodrainedPool.cpp
     cocoa/CrashReporter.cpp

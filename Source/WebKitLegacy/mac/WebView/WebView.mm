@@ -295,6 +295,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/ASRCapability.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -1446,6 +1447,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     WebCoreThreadViolationCheckRoundTwo();
 
     WebPreferences *standardPreferences = [WebPreferences standardPreferences];
@@ -1777,6 +1780,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (id)initSimpleHTMLDocumentWithStyle:(NSString *)style frame:(CGRect)frame preferences:(WebPreferences *)preferences groupName:(NSString *)groupName
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
@@ -3319,6 +3324,8 @@ IGNORE_WARNINGS_END
 
 + (NSString *)_decodeData:(NSData *)data
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     WebCore::HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
     return WebCore::TextResourceDecoder::create(WebCore::TextResourceDecoder::ContentType::HTML)->decodeAndFlush(span(data)).createNSString().autorelease(); // bookmark files are HTML
 }

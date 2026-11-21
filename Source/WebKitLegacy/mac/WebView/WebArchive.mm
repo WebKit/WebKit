@@ -41,6 +41,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/ASRCapability.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 
@@ -181,6 +182,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (instancetype)initWithData:(NSData *)data
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     WebCoreThreadViolationCheckRoundTwo();
 
     self = [super init];
@@ -211,6 +214,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (instancetype)initWithCoder:(NSCoder *)decoder
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     RetainPtr<WebResource> mainResource;
     RetainPtr<NSArray> subresources;
     RetainPtr<NSArray> subframeArchives;

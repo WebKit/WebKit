@@ -37,6 +37,7 @@
 #import <numeric>
 #import <pal/spi/cocoa/NSCalendarDateSPI.h>
 #import <ranges>
+#import <wtf/cocoa/ASRCapability.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -522,6 +523,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)loadHistoryGutsFromURL:(NSURL *)URL savedItemsCount:(int *)numberOfItemsLoaded collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error
 {
+    requireASRCapability(asrCapabilityInProcessWebKit);
+
     *numberOfItemsLoaded = 0;
     NSDictionary *dictionary = nil;
 
