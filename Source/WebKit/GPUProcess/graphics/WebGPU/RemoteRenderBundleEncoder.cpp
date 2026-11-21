@@ -175,6 +175,11 @@ void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& des
     objectHeap->addObject(identifier, remoteRenderBundle);
 }
 
+void RemoteRenderBundleEncoder::makeInvalid(String&& error)
+{
+    protect(m_backing)->makeInvalid(WTF::move(error));
+}
+
 void RemoteRenderBundleEncoder::setLabel(String&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));

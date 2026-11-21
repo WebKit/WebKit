@@ -38,10 +38,12 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureProxy);
 
-RemoteTextureProxy::RemoteTextureProxy(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool isCanvasBacking)
+RemoteTextureProxy::RemoteTextureProxy(RemoteDeviceProxy& device, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, const Properties& properties, bool isCanvasBacking)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_root(WTF::move(root))
+    , m_root(device.root())
+    , m_device(device)
+    , m_properties(properties)
     , m_isCanvasBacking(isCanvasBacking)
 {
 }
@@ -90,6 +92,16 @@ RefPtr<::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional
     m_lastCreatedView = WTF::move(result);
     m_lastCreatedViewDescriptor = descriptor;
     return m_lastCreatedView;
+}
+
+RefPtr<::WebGPU::TextureView> RemoteTextureProxy::createInvalidView()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteTexture::CreateInvalidView(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
 void RemoteTextureProxy::destroy()

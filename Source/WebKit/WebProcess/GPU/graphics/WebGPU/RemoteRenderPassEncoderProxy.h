@@ -75,6 +75,7 @@ public:
     void executeBundles(std::span<const Ref<::WebGPU::RenderBundle>>) final;
     void end() final;
 
+    void makeInvalid(String&& error) final;
     void setLabel(String&&) final;
     bool isValid() const final;
 

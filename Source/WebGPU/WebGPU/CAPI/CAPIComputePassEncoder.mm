@@ -30,55 +30,55 @@
 
 NODELETE void wgpuComputePassEncoderAddRef(WGPUComputePassEncoder computePassEncoder)
 {
-    WebGPU::CAPI::metalFromAPI(computePassEncoder).ref();
+    WebGPU::CAPI::fromAPI(computePassEncoder).ref();
 }
 
 void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(computePassEncoder).deref();
+        WebGPU::CAPI::fromAPI(computePassEncoder).deref();
     }
 }
 
 void wgpuComputePassEncoderDispatchWorkgroups(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->dispatch(x, y, z);
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->dispatch(x, y, z);
     }
 }
 
 void wgpuComputePassEncoderDispatchWorkgroupsIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->dispatchIndirect(protect(WebGPU::CAPI::metalFromAPI(indirectBuffer)), indirectOffset);
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->dispatchIndirect(protect(WebGPU::CAPI::fromAPI(indirectBuffer)), indirectOffset);
     }
 }
 
 void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->endPass();
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->end();
     }
 }
 
 void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, WGPUStringView markerLabel)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->insertDebugMarker(WebGPU::CAPI::fromAPI(markerLabel));
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->insertDebugMarker(WebGPU::CAPI::fromAPI(markerLabel));
     }
 }
 
 void wgpuComputePassEncoderPopDebugGroup(WGPUComputePassEncoder computePassEncoder)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->popDebugGroup();
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->popDebugGroup();
     }
 }
 
 void wgpuComputePassEncoderPushDebugGroup(WGPUComputePassEncoder computePassEncoder, WGPUStringView groupLabel)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->pushDebugGroup(WebGPU::CAPI::fromAPI(groupLabel));
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->pushDebugGroup(WebGPU::CAPI::fromAPI(groupLabel));
     }
 }
 
@@ -87,20 +87,20 @@ void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncode
 {
     @autoreleasepool {
         auto offsets = dynamicOffsetCount ? std::optional { unsafeMakeSpan(dynamicOffsets, dynamicOffsetCount) } : std::nullopt;
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::CAPI::metalFromAPI(group)).ptr() : nullptr, offsets);
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::CAPI::fromAPI(group)).ptr() : nullptr, offsets);
     }
 }
 
 void wgpuComputePassEncoderSetPipeline(WGPUComputePassEncoder computePassEncoder, WGPUComputePipeline pipeline)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->setPipeline(protect(WebGPU::CAPI::metalFromAPI(pipeline)));
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->setPipeline(protect(WebGPU::CAPI::fromAPI(pipeline)));
     }
 }
 
 void wgpuComputePassEncoderSetLabel(WGPUComputePassEncoder computePassEncoder, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(computePassEncoder))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(computePassEncoder))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

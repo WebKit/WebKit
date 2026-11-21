@@ -286,12 +286,12 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
     }
 
     auto features = requiredFeatures(descriptor);
-    m_backing->requestDevice({ .label = descriptor.label, .requiredFeatures = features.span(), .requiredLimits = *limits }, [protectedThis = protect(*this), label = descriptor.label, deviceDescriptor, promise = WTF::move(promise), scriptExecutionContextRef = protect(scriptExecutionContext)](RefPtr<WebGPU::Device>&& device) mutable {
+    m_backing->requestDevice({ .label = descriptor.label, .requiredFeatures = features.span(), .requiredLimits = *limits }, [protectedThis = protect(*this), label = descriptor.label, deviceDescriptor, promise = WTF::move(promise), scriptExecutionContextRef = protect(scriptExecutionContext)](std::expected<Ref<WebGPU::Device>, String>&& device) mutable {
         if (!device)
             promise.reject(Exception(ExceptionCode::OperationError));
         else {
             auto queueLabel = deviceDescriptor->defaultQueue.label;
-            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), protectedThis->m_gpu.copyRef(), WTF::move(label), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), WTF::move(*device), protectedThis->m_gpu.copyRef(), WTF::move(label), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
             gpuDevice->suspendIfNeeded();
             promise.resolve(WTF::move(gpuDevice));
         }

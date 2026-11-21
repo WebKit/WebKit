@@ -30,28 +30,26 @@
 
 NODELETE void wgpuRenderPipelineAddRef(WGPURenderPipeline renderPipeline)
 {
-    WebGPU::CAPI::metalFromAPI(renderPipeline).ref();
+    WebGPU::CAPI::fromAPI(renderPipeline).ref();
 }
 
 void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(renderPipeline).deref();
+        WebGPU::CAPI::fromAPI(renderPipeline).deref();
     }
 }
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
     @autoreleasepool {
-        // Every WebGPU::BindGroupLayout that a WebGPU::Metal::RenderPipeline returns is a WebGPU::Metal::BindGroupLayout.
-        Ref bindGroupLayout = downcast<WebGPU::Metal::BindGroupLayout>(protect(WebGPU::CAPI::metalFromAPI(renderPipeline))->getBindGroupLayout(groupIndex).get());
-        return WebGPU::CAPI::releaseToAPI(WTF::move(bindGroupLayout));
+        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(renderPipeline))->getBindGroupLayout(groupIndex));
     }
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, WGPUStringView label)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(renderPipeline).setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(renderPipeline))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

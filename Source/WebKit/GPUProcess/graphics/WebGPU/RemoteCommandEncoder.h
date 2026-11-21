@@ -85,6 +85,8 @@ private:
 
     void beginRenderPass(const WebGPU::RenderPassDescriptor&, WebGPUIdentifier);
     void beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>&, WebGPUIdentifier);
+    void beginInvalidRenderPass(String&& error, WebGPUIdentifier);
+    void beginInvalidComputePass(String&& error, WebGPUIdentifier);
 
     void copyBufferToBuffer(
         WebGPUIdentifier source,
@@ -128,6 +130,7 @@ private:
 
     void finish(const WebGPU::CommandBufferDescriptor&, WebGPUIdentifier);
 
+    void makeInvalid(String&& error);
     void setLabel(String&&);
     void destruct();
 

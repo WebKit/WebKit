@@ -32,6 +32,7 @@
 #include "RemoteBindGroup.h"
 #include "RemoteBindGroupLayout.h"
 #include "RemoteBuffer.h"
+#include "RemoteCommandBuffer.h"
 #include "RemoteCommandEncoder.h"
 #include "RemoteComputePipeline.h"
 #include "RemoteDeviceMessages.h"
@@ -164,6 +165,128 @@ void RemoteDevice::setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&& han
 void RemoteDevice::pauseAllErrorReporting(bool pauseErrorReporting)
 {
     m_backing->pauseAllErrorReporting(pauseErrorReporting);
+}
+
+void RemoteDevice::createInvalidBindGroup(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr bindGroup = m_backing->createInvalidBindGroup();
+    MESSAGE_CHECK(bindGroup);
+    auto remoteBindGroup = RemoteBindGroup::create(*bindGroup, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteBindGroup);
+}
+
+void RemoteDevice::createInvalidBindGroupLayout(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr bindGroupLayout = m_backing->createInvalidBindGroupLayout();
+    MESSAGE_CHECK(bindGroupLayout);
+    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(*bindGroupLayout, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteBindGroupLayout);
+}
+
+void RemoteDevice::createInvalidBuffer(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr buffer = m_backing->createInvalidBuffer();
+    MESSAGE_CHECK(buffer);
+    auto remoteBuffer = RemoteBuffer::create(*buffer, objectHeap, protect(m_streamConnection), protect(m_gpu), false, identifier);
+    objectHeap->addObject(identifier, remoteBuffer);
+}
+
+void RemoteDevice::createInvalidCommandBuffer(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr commandBuffer = m_backing->createInvalidCommandBuffer();
+    MESSAGE_CHECK(commandBuffer);
+    auto remoteCommandBuffer = RemoteCommandBuffer::create(*commandBuffer, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteCommandBuffer);
+}
+
+void RemoteDevice::createInvalidCommandEncoder(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr commandEncoder = m_backing->createInvalidCommandEncoder();
+    MESSAGE_CHECK(commandEncoder);
+    auto remoteCommandEncoder = RemoteCommandEncoder::create(*m_gpuConnectionToWebProcess.get(), protect(m_gpu), *commandEncoder, objectHeap, protect(m_streamConnection), identifier);
+    objectHeap->addObject(identifier, remoteCommandEncoder);
+}
+
+void RemoteDevice::createInvalidComputePipeline(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr computePipeline = m_backing->createInvalidComputePipeline();
+    MESSAGE_CHECK(computePipeline);
+    auto remoteComputePipeline = RemoteComputePipeline::create(*computePipeline, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteComputePipeline);
+}
+
+void RemoteDevice::createInvalidPipelineLayout(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr pipelineLayout = m_backing->createInvalidPipelineLayout();
+    MESSAGE_CHECK(pipelineLayout);
+    auto remotePipelineLayout = RemotePipelineLayout::create(*pipelineLayout, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remotePipelineLayout);
+}
+
+void RemoteDevice::createInvalidQuerySet(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr querySet = m_backing->createInvalidQuerySet();
+    MESSAGE_CHECK(querySet);
+    auto remoteQuerySet = RemoteQuerySet::create(*querySet, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteQuerySet);
+}
+
+void RemoteDevice::createInvalidRenderBundleEncoder(String&& error, WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr renderBundleEncoder = m_backing->createInvalidRenderBundleEncoder(WTF::move(error));
+    MESSAGE_CHECK(renderBundleEncoder);
+    auto remoteRenderBundleEncoder = RemoteRenderBundleEncoder::create(*m_gpuConnectionToWebProcess.get(), protect(m_gpu), *renderBundleEncoder, objectHeap, protect(m_streamConnection), identifier);
+    objectHeap->addObject(identifier, remoteRenderBundleEncoder);
+}
+
+void RemoteDevice::createInvalidRenderPipeline(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr renderPipeline = m_backing->createInvalidRenderPipeline();
+    MESSAGE_CHECK(renderPipeline);
+    auto remoteRenderPipeline = RemoteRenderPipeline::create(*renderPipeline, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteRenderPipeline);
+}
+
+void RemoteDevice::createInvalidSampler(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr sampler = m_backing->createInvalidSampler();
+    MESSAGE_CHECK(sampler);
+    auto remoteSampler = RemoteSampler::create(*sampler, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteSampler);
+}
+
+void RemoteDevice::createInvalidShaderModule(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr shaderModule = m_backing->createInvalidShaderModule();
+    MESSAGE_CHECK(shaderModule);
+    auto remoteShaderModule = RemoteShaderModule::create(*shaderModule, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteShaderModule);
+}
+
+void RemoteDevice::createInvalidTexture(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr texture = m_backing->createInvalidTexture();
+    MESSAGE_CHECK(texture);
+    auto remoteTexture = RemoteTexture::create(*m_gpuConnectionToWebProcess.get(), protect(m_gpu), texture.releaseNonNull(), objectHeap, protect(m_streamConnection), identifier);
+    objectHeap->addObject(identifier, remoteTexture);
+}
+
+void RemoteDevice::generateAValidationError(String&& message)
+{
+    m_backing->generateAValidationError(WTF::move(message));
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)

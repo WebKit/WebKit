@@ -30,19 +30,19 @@
 
 NODELETE void wgpuSamplerAddRef(WGPUSampler sampler)
 {
-    WebGPU::CAPI::metalFromAPI(sampler).ref();
+    WebGPU::CAPI::fromAPI(sampler).ref();
 }
 
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(sampler).deref();
+        WebGPU::CAPI::fromAPI(sampler).deref();
     }
 }
 
 void wgpuSamplerSetLabel(WGPUSampler sampler, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(sampler))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(sampler))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

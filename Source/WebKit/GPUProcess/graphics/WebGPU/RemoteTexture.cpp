@@ -71,6 +71,15 @@ void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor
     objectHeap->addObject(identifier, remoteTextureView);
 }
 
+void RemoteTexture::createInvalidView(WebGPUIdentifier identifier)
+{
+    Ref objectHeap = m_objectHeap;
+    RefPtr textureView = protect(m_backing)->createInvalidView();
+    MESSAGE_CHECK(textureView);
+    auto remoteTextureView = RemoteTextureView::create(textureView.releaseNonNull(), objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
+    objectHeap->addObject(identifier, remoteTextureView);
+}
+
 void RemoteTexture::destroy()
 {
     protect(m_backing)->destroy();

@@ -103,6 +103,7 @@ private:
 
     void finish(const WebGPU::RenderBundleDescriptor&, WebGPUIdentifier);
 
+    void makeInvalid(String&& error);
     void setLabel(String&&);
     void destruct();
 

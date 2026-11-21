@@ -152,6 +152,12 @@ RefPtr<::WebGPU::RenderBundle> RemoteRenderBundleEncoderProxy::finish(const ::We
     return RemoteRenderBundleProxy::create(m_parent, convertToBackingContext, identifier);
 }
 
+void RemoteRenderBundleEncoderProxy::makeInvalid(String&& error)
+{
+    auto sendResult = send(Messages::RemoteRenderBundleEncoder::MakeInvalid(WTF::move(error)));
+    UNUSED_VARIABLE(sendResult);
+}
+
 void RemoteRenderBundleEncoderProxy::setLabel(String&& label)
 {
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::SetLabel(WTF::move(label)));

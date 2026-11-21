@@ -83,8 +83,9 @@ public:
         ASSERT_TRUE(adapter);
 
         done = false;
-        adapter->requestDevice({ }, [&](RefPtr<::WebGPU::Device>&& result) {
-            m_device = WTF::move(result);
+        adapter->requestDevice({ }, [&](std::expected<Ref<::WebGPU::Device>, String>&& result) {
+            if (result)
+                m_device = WTF::move(*result);
             done = true;
         });
         Util::run(&done);

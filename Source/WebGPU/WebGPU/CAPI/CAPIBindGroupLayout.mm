@@ -30,19 +30,19 @@
 
 NODELETE void wgpuBindGroupLayoutAddRef(WGPUBindGroupLayout bindGroupLayout)
 {
-    WebGPU::CAPI::metalFromAPI(bindGroupLayout).ref();
+    WebGPU::CAPI::fromAPI(bindGroupLayout).ref();
 }
 
 void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(bindGroupLayout).deref();
+        WebGPU::CAPI::fromAPI(bindGroupLayout).deref();
     }
 }
 
 void wgpuBindGroupLayoutSetLabel(WGPUBindGroupLayout bindGroupLayout, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(bindGroupLayout))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(bindGroupLayout))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

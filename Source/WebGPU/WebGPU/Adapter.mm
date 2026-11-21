@@ -53,6 +53,11 @@ Adapter::Adapter(Instance& instance)
 
 Adapter::~Adapter() = default;
 
+RefPtr<WebGPU::Instance> Adapter::instance() const
+{
+    return m_instance.get();
+}
+
 Vector<WebGPU::FeatureName> Adapter::features() const
 {
     return m_capabilities.features;
@@ -88,6 +93,7 @@ WebGPU::AdapterInfo Adapter::info()
         .name = m_device.name,
         // A Metal device is never a fallback (software) adapter.
         .isFallbackAdapter = false,
+        .hasUnifiedMemory = static_cast<bool>(m_device.hasUnifiedMemory),
     };
     if (hasFeature(WebGPU::FeatureName::Subgroups)) {
         // Metal exposes a single SIMD-group (subgroup) width per device, so
@@ -109,14 +115,7 @@ bool Adapter::hasFeature(WebGPU::FeatureName feature)
     return m_capabilities.features.contains(feature);
 }
 
-void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<WebGPU::Device>&&)>&& callback)
-{
-    requestDeviceOrError(descriptor, [callback = WTF::move(callback)](std::expected<Ref<Device>, String>&& device) mutable {
-        callback(device ? RefPtr<WebGPU::Device> { WTF::move(*device) } : nullptr);
-    });
-}
-
-void Adapter::requestDeviceOrError(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&& callback)
+void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::Device>, String>&&)>&& callback)
 {
     if (m_deviceRequested) {
         callback(makeUnexpected("Adapter can only request one device"_s));

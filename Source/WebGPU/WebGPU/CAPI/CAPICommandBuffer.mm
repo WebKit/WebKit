@@ -30,19 +30,19 @@
 
 NODELETE void wgpuCommandBufferAddRef(WGPUCommandBuffer commandBuffer)
 {
-    WebGPU::CAPI::metalFromAPI(commandBuffer).ref();
+    WebGPU::CAPI::fromAPI(commandBuffer).ref();
 }
 
 void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(commandBuffer).deref();
+        WebGPU::CAPI::fromAPI(commandBuffer).deref();
     }
 }
 
 void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(commandBuffer))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(commandBuffer))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

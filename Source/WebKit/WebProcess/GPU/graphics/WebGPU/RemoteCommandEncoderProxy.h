@@ -50,6 +50,8 @@ public:
 
     RefPtr<::WebGPU::RenderPassEncoder> beginRenderPass(const ::WebGPU::RenderPassDescriptor&) final;
     RefPtr<::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<::WebGPU::ComputePassDescriptor>&) final;
+    RefPtr<::WebGPU::RenderPassEncoder> beginInvalidRenderPass(String&& error) final;
+    RefPtr<::WebGPU::ComputePassEncoder> beginInvalidComputePass(String&& error) final;
     void copyBufferToBuffer(
         const ::WebGPU::Buffer& source,
         uint64_t sourceOffset,
@@ -84,6 +86,7 @@ public:
         uint64_t destinationOffset) final;
     RefPtr<::WebGPU::CommandBuffer> finish(const ::WebGPU::CommandBufferDescriptor&) final;
 
+    void makeInvalid(String&& error) final;
     void setLabel(String&&) final;
     bool isValid() const final;
 

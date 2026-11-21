@@ -31,7 +31,6 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
 #include "ModelConvertToBackingContext.h"
-#include "RemoteAdapterProxy.h"
 #include "RemoteCompositorIntegrationProxy.h"
 #include "RemoteDeviceProxy.h"
 #include "RemoteGPU.h"
@@ -41,6 +40,7 @@
 #include "RemotePresentationContextProxy.h"
 #include "RemoteQueueProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "RemoteWebGPUInstanceProxy.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -180,33 +180,20 @@ void RemoteGPUProxy::waitUntilInitialized()
     gpuProcessConnectionDidClose();
 }
 
+Ref<WebGPU::RemoteWebGPUInstanceProxy> RemoteGPUProxy::ensureInstance()
+{
+    // Only the dispatcher thread creates and replaces the instance, so it needs no lock.
+    assertIsCurrent(*this);
+    if (RefPtr instance = m_instance)
+        return instance.releaseNonNull();
+    Ref instance = WebGPU::RemoteWebGPUInstanceProxy::create(*this, m_convertToBackingContext);
+    m_instance = instance.get();
+    return instance;
+}
+
 void RemoteGPUProxy::requestAdapter(const ::WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&& callback)
 {
-    if (m_lost) {
-        callback(nullptr);
-        return;
-    }
-
-    auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendSync(Messages::RemoteGPU::RequestAdapter(options, identifier));
-    if (!sendResult.succeeded()) {
-        gpuProcessConnectionDidClose();
-        callback(nullptr);
-        return;
-    }
-    auto [response] = sendResult.takeReply();
-    if (!response) {
-        callback(nullptr);
-        return;
-    }
-
-    ::WebGPU::AdapterInfo info {
-        .name = WTF::move(response->name),
-        .isFallbackAdapter = response->isFallbackAdapter,
-        .subgroupMinSize = response->subgroupMinSize,
-        .subgroupMaxSize = response->subgroupMaxSize,
-    };
-    callback(WebGPU::RemoteAdapterProxy::create(WTF::move(response->features), response->limits, WTF::move(info), options.xrCompatible, *this, m_convertToBackingContext, identifier));
+    ensureInstance()->requestAdapter(options, WTF::move(callback));
 }
 
 RefPtr<WebKit::Mesh> RemoteGPUProxy::createModelBacking(unsigned width, unsigned height, WebModel::ImageAsset&& diffuseTexture, WebModel::ImageAsset&& specularTexture, bool standardDynamicRange, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
