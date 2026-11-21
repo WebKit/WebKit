@@ -122,3 +122,52 @@ async def test_navigating_away_removes_child_frames(
         context=top_context["context"], url=test_page, wait="complete"
     )
     assert await get_child_ids(bidi_session, top_context["context"]) == []
+
+
+async def test_back_forward_cache_restore_keeps_ids(
+    bidi_session, top_context, test_page, test_page_multiple_frames
+):
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"], url=test_page_multiple_frames, wait="complete"
+    )
+    child_ids = await get_child_ids(bidi_session, top_context["context"])
+    assert len(child_ids) == 2
+
+    await bidi_session.script.evaluate(
+        expression="""
+            window.restoredFromBackForwardCache = false;
+            addEventListener("pageshow", event => {
+                if (event.persisted)
+                    window.restoredFromBackForwardCache = true;
+            });""",
+        target=ContextTarget(top_context["context"]),
+        await_promise=False,
+    )
+
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"], url=test_page, wait="complete"
+    )
+    await bidi_session.browsing_context.traverse_history(
+        context=top_context["context"], delta=-1
+    )
+
+    result = await bidi_session.script.evaluate(
+        expression="window.restoredFromBackForwardCache === true",
+        target=ContextTarget(top_context["context"]),
+        await_promise=False,
+    )
+    if not result["value"]:
+        pytest.skip("The document was not restored from the back/forward cache")
+
+    # The child navigables of a document in the back/forward cache are not
+    # destroyed, so they come back with the same ids, each still addressing
+    # its own frame.
+    assert await get_child_ids(bidi_session, top_context["context"]) == child_ids
+
+    for child_id, text in zip(child_ids, ["foo", "bar"]):
+        result = await bidi_session.script.evaluate(
+            expression="document.body.textContent",
+            target=ContextTarget(child_id),
+            await_promise=False,
+        )
+        assert result == {"type": "string", "value": text}

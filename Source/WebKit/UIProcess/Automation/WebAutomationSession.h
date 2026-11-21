@@ -381,6 +381,7 @@ public:
 
     RefPtr<WebPageProxy> webPageProxyForHandle(const String&);
     std::optional<WebCore::FrameIdentifier> webFrameIDForHandle(const String&, bool& frameNotFound);
+    static bool isInFrameTreeOfItsPage(const WebFrameProxy&);
     String effectiveHandleForWebFrameProxy(const WebFrameProxy&);
 #if ENABLE(WEBDRIVER_BIDI)
     HashSet<String> bidiSubscriptionScopeForFrame(const WebFrameProxy&) const;
@@ -414,7 +415,7 @@ private:
     };
     enum class UnboundWaits : bool { Keep, Complete };
     void forgetFrameHandles(NOESCAPE const Function<bool(const WebFrameProxy*)>&);
-    void forgetFramesOutsideFrameTree(const WebPageProxy&);
+    void forgetDestroyedFrames();
     Vector<Inspector::CommandCallback<void>> takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&, const WebPageProxy&, API::Navigation* finishedNavigation, UnboundWaits, NavigationNotification = NavigationNotification::LoadEnded);
     enum class SameDocumentNavigation : bool { No, Yes };
     enum class UserPromptEndsEvaluation : bool { No, Yes };
