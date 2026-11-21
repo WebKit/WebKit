@@ -1202,6 +1202,7 @@ static ALWAYS_INLINE bool eightByteRangeNeedsJSONEscape(uint64_t word)
     return hasControl || hasQuote || hasBackslash;
 }
 
+// FIXME: WTF::appendEscapedJSONStringContent now has a SIMD fast path, so this prepass is redundant for strings with escapes.
 template<typename CharType>
 static ALWAYS_INLINE uint64_t copyEightBytesAndLoad(const CharType* source, CharType* destination)
 {
