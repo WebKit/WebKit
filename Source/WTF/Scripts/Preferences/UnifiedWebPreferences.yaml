@@ -5036,7 +5036,9 @@ PhoneNumberPossessionEnabled:
   humanReadableName: "Phone Number Possession credentials"
   humanReadableDescription: "Enable requesting phone number possession credentials with navigator.credentials.get()"
   condition: ENABLE(PHONE_NUMBER_POSSESSION)
-  defaultValue: false
+  defaultValue:
+    default: false
+    WebKit: WebKit::defaultPhoneNumberPossessionEnabled()
   sharedPreferenceForWebProcess: true
   disableInLockdownMode: true
   richJavaScript: true

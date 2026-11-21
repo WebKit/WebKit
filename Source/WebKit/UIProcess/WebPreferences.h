@@ -102,6 +102,8 @@ public:
     NODELETE void startBatchingUpdates();
     void endBatchingUpdates();
 
+    void removeOverriddenDefaultValueForKey(const String&);
+
     NODELETE static void forceSiteIsolationAlwaysOnForTesting();
     NODELETE static bool forcedSiteIsolationAlwaysOnForTesting();
 

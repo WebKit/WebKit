@@ -63,6 +63,15 @@ NODELETE bool defaultCaptionDisplaySettingsEnabled()
 
 #endif
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+
+NODELETE bool defaultPhoneNumberPossessionEnabled()
+{
+    return false;
+}
+
+#endif
+
 #if PLATFORM(MAC)
 
 NODELETE bool defaultTextInputClientSelectionUpdatesEnabled()

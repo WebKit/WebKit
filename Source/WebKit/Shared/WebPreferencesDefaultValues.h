@@ -260,6 +260,10 @@ NODELETE bool defaultAllowMultipleCommitLayerTreePending();
 bool defaultCaptionDisplaySettingsEnabled();
 #endif
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+bool defaultPhoneNumberPossessionEnabled();
+#endif
+
 #if ENABLE(MEDIA_STREAM)
 NODELETE bool defaultShouldEnableScreenCapture();
 #endif
