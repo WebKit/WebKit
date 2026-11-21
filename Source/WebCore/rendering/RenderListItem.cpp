@@ -31,6 +31,7 @@
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
+#include "HTMLMenuElement.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
@@ -230,6 +231,11 @@ bool isHTMLListElement(const Node& node)
     return isAnyOf<HTMLUListElement, HTMLOListElement>(node);
 }
 
+static bool isListOwnerElement(const Element& element)
+{
+    return isHTMLListElement(element) || is<HTMLMenuElement>(element);
+}
+
 // Returns the enclosing list with respect to the DOM order.
 static Element* enclosingList(const RenderListItem& listItem)
 {
@@ -237,7 +243,9 @@ static Element* enclosingList(const RenderListItem& listItem)
     SUPPRESS_UNCOUNTED_LOCAL auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
     SUPPRESS_UNCOUNTED_LOCAL auto* parent = pseudoElement ? pseudoElement->hostElement() : element->parentElement();
     for (SUPPRESS_UNCOUNTED_LOCAL auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
-        if (isHTMLListElement(*ancestor) || (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment()))
+        if (isListOwnerElement(*ancestor) && ancestor->renderer())
+            return ancestor;
+        if (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment())
             return ancestor;
     }
 
