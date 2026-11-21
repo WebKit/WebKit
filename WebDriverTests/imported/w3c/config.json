@@ -6,6 +6,10 @@
            "wss": [null]
           },
  "doc_root": "%DOC_ROOT%",
+ "aliases": [
+          {"url-path": "/_pdf_js/pdf.js", "local-dir": "tools/third_party/pdf_js/"},
+          {"url-path": "/_pdf_js/pdf.worker.js", "local-dir": "tools/third_party/pdf_js/"},
+          {"url-path": "/print_pdf_runner.html", "local-dir": "../../../../WebDriverTests/imported/w3c/tools/wptrunner/wptrunner/"}],
  "check_subdomains": false,
  "logging": { "level": "debug" },
  "bind_address": true,

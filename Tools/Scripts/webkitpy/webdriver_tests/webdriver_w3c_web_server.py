@@ -100,6 +100,7 @@ class WebDriverW3CWebServer(object):
         self._wpt_certs_dir = os.path.join(self._runtime_path, '_wpt_certs')
         self._wpt_certs_cacert_pem = os.path.join(self._wpt_certs_dir, 'cacert.pem')
         config['ssl']['openssl']['base_path'] = self._wpt_certs_dir
+        self._serve_file_aliases_from_runtime_path(config)
         self._port.host.filesystem.write_text_file(os.path.join(self._layout_doc_root, 'config.json'), json.dumps(config))
         self._server_host = config['browser_host']
         self._server_http_port = config['ports']['http'][0]
@@ -121,6 +122,26 @@ class WebDriverW3CWebServer(object):
             raise RuntimeError
 
         _log.info('WebDriver WPT server listening at http://%s:%s/ and https://%s:%s/' % (self._server_host, self._server_http_port, self._server_host, self._server_https_port))
+
+    def _serve_file_aliases_from_runtime_path(self, config):
+        # wptrunner serves its static routes, such as the pdf.js scripts the print tests load, with
+        # Cache-Control: max-age=3600. Aliases can't set headers, and wptserve reads them from a
+        # .headers file next to the served path, so serve each file alias from a symlink in the
+        # runtime directory with a .headers file beside it, keeping the source tree untouched.
+        filesystem = self._port.host.filesystem
+        aliases_dir = os.path.join(self._runtime_path, '_aliases')
+        if filesystem.exists(aliases_dir):
+            filesystem.rmtree(aliases_dir)
+        filesystem.maybe_make_directory(aliases_dir)
+        for alias in config.get('aliases', []):
+            url_path = alias['url-path']
+            if url_path.endswith('/'):
+                continue
+            file_name = url_path.rsplit('/', 1)[-1]
+            source = os.path.normpath(os.path.join(self._layout_doc_root, alias['local-dir'], file_name))
+            filesystem.symlink(source, os.path.join(aliases_dir, file_name))
+            filesystem.write_text_file(os.path.join(aliases_dir, file_name + '.headers'), 'Cache-Control: max-age=3600\n')
+            alias['local-dir'] = aliases_dir
 
     def stop(self):
         _log.debug('Cleaning WebDriver WPT server config.json')
