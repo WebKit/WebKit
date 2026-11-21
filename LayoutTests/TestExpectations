@@ -7953,7 +7953,6 @@ imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-008.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline-vert-rl-export.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline-vert-rl-synthesis.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-010.html [ ImageOnlyFailure ]

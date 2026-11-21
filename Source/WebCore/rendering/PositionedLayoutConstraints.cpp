@@ -425,6 +425,52 @@ WritingMode PositionedLayoutConstraints::staticPositionContainingBlockWritingMod
     return m_parentWritingMode;
 }
 
+void PositionedLayoutConstraints::resolveAutoInsetsFromAlignment(LayoutUnit staticDistance)
+{
+    ASSERT(shouldAlignStaticPositionInInlineAxis());
+
+    // https://drafts.csswg.org/css-position-3/#staticpos-rect
+    // "The static-position rectangle is a zero-thickness rectangle spanning between the inline-axis sides of the box's static-position containing block"
+    CheckedRef staticPositionContainingBlock = downcast<RenderBox>(*m_renderer->parent());
+    auto rectangleSize = staticPositionContainingBlock->contentBoxLogicalWidth();
+    bool startIsLeftOrTop = m_parentWritingMode.isLogicalLeftInlineStart();
+    auto distanceFromStartEdgeToRectangleStart = startIsLeftOrTop ? staticDistance : containingSize() - staticDistance;
+    auto& startEdgeInset = startIsLeftOrTop ? m_insetBefore : m_insetAfter;
+    auto& endEdgeInset = startIsLeftOrTop ? m_insetAfter : m_insetBefore;
+    auto fixedInset = [&](LayoutUnit inset) -> Style::InsetEdge {
+        return Style::InsetEdge::Fixed { inset / m_style.usedZoomForLength().value };
+    };
+
+    // https://drafts.csswg.org/css-position-3/#resolving-inset-auto
+    // "If both inset properties in a given axis are auto, then, depending on the box's self-alignment property in the relevant axis:"
+    // "For the rules above, ignore overflow alignment, and treat normal as start and any baseline or stretch alignment value as its fallback alignment."
+    // FIXME: css-align-3 gives first baseline a self-start fallback and last baseline a self-end one.
+    switch (StyleSelfAlignmentData::resolvePositionalAlignment(resolveAlignmentValue(), LogicalBoxAxis::Inline, m_parentWritingMode, m_writingMode)) {
+    case ItemPosition::Start:
+        // "for self-start alignment or its equivalent: Set its start-edge inset property to the static position, and its end-edge inset property to zero."
+        startEdgeInset = fixedInset(distanceFromStartEdgeToRectangleStart);
+        return;
+    case ItemPosition::End:
+        // "for self-end alignment or its equivalent: Set its end-edge inset property to the static position, and its start-edge inset property to zero."
+        endEdgeInset = fixedInset(containingSize() - distanceFromStartEdgeToRectangleStart - rectangleSize);
+        return;
+    case ItemPosition::Center: {
+        // "for center alignment: Let start distance be the distance from the center of its static-position rectangle to the start edge of its containing block, and end distance be the distance from the center of its static-position rectangle to the end edge of its containing block. If start distance is less than or equal to end distance, then set the start-edge inset property to zero, and set the end-edge inset property to (containing block size - 2 x |start distance|); otherwise, set the end-edge inset property to zero and the start-edge inset property to (containing block size - 2 x |end distance|)."
+        auto startDistance = distanceFromStartEdgeToRectangleStart + rectangleSize / 2;
+        auto endDistance = containingSize() - startDistance;
+        if (startDistance <= endDistance) {
+            endEdgeInset = fixedInset(containingSize() - 2 * startDistance.abs());
+            return;
+        }
+        startEdgeInset = fixedInset(containingSize() - 2 * endDistance.abs());
+        return;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+}
+
 // See CSS2 § 10.3.7-8 and 10.6.4-5.
 void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComputedValues& computedValues) const
 {
@@ -708,6 +754,11 @@ void PositionedLayoutConstraints::computeStaticPosition()
         // A box in the top layer is laid out as if it were a sibling of the root element, so its containing block is the initial containing block,
         // or the viewport, which has the same size, when it's fixed positioned. Both insets are zero, so the box aligns within all of it.
         m_insetBefore = 0_css_px;
+        return;
+    }
+    if (shouldAlignStaticPositionInInlineAxis() && !m_style.originalDisplay().isInlineType() && !m_parentWritingMode.isOrthogonal(m_writingMode)) {
+        // FIXME: Implement the static-position rectangle for originally inline-level boxes and for boxes orthogonal to their parent.
+        resolveAutoInsetsFromAlignment(staticDistance);
         return;
     }
     // Since the static position is computed during in flow layout, the computed

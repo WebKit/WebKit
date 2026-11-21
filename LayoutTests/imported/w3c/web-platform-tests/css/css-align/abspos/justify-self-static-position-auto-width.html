@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>justify-self on a statically-positioned abspos box sets the space its automatic width fills</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#resolving-inset-auto">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#abspos-sizing">
+<link rel="match" href="justify-self-static-position-auto-width-ref.html">
+<meta name="assert" content="With both inline insets auto, start, center and end alignment resolve the insets from the parent's content box, and an auto or stretch width fills the resulting inset-modified containing block.">
+<style>
+.containing-block {
+  position: relative;
+  width: 400px;
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.parent {
+  width: 100px;
+  margin-left: 80px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.rtl {
+  direction: rtl;
+}
+
+.box {
+  position: absolute;
+  font-size: 0;
+  background-color: green;
+}
+
+.item {
+  display: inline-block;
+  width: 50px;
+  height: 10px;
+}
+</style>
+<div class="containing-block"><div class="parent"><div class="box" style="justify-self: start"><span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span></div></div></div>
+<div class="containing-block"><div class="parent"><div class="box" style="justify-self: center"><span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span></div></div></div>
+<div class="containing-block"><div class="parent"><div class="box" style="justify-self: end"><span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span></div></div></div>
+<div class="containing-block"><div class="parent rtl"><div class="box" style="justify-self: start"><span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span></div></div></div>
+<div class="containing-block"><div class="parent rtl"><div class="box" style="justify-self: center"><span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span></div></div></div>
+<div class="containing-block"><div class="parent rtl"><div class="box" style="justify-self: end"><span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span> <span class="item"></span></div></div></div>
+<div class="containing-block"><div class="parent"><div class="box" style="justify-self: center; width: stretch; height: 10px"></div></div></div>
+<div class="containing-block"><div class="parent"><div class="box" style="justify-self: end; width: stretch; height: 10px"></div></div></div>

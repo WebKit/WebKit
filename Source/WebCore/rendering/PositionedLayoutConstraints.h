@@ -112,6 +112,7 @@ private:
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     bool shouldAlignStaticPositionInInlineAxis() const;
     WritingMode staticPositionContainingBlockWritingMode() const;
+    void resolveAutoInsetsFromAlignment(LayoutUnit staticDistance);
     void computeStaticPosition();
     LayoutUnit computedBlockStaticDistance() const;
 
