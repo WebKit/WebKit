@@ -24,6 +24,8 @@ import logging
 import shutil
 import sys
 
+from unittest.mock import patch
+
 from webkitbugspy import github
 from webkitcorepy import OutputCapture, testing, run
 from webkitcorepy.mocks import Terminal as MockTerminal
@@ -157,6 +159,34 @@ class TestReview(testing.PathTestCase):
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(captured.root.log.getvalue().splitlines(), [])
+
+    def test_review_by_branch_and_head(self):
+        with mocks.remote.GitHub() as remote_repo, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote_repo.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote_repo.hosts[0])),
+            editor=lambda path: None,
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            with patch('webkitscmpy.program.Review.invoke_wizard', return_value={}):
+                with OutputCapture(level=logging.INFO) as captured:
+                    self.assertEqual(0, program.main(
+                        args=('review', 'eng/pr-branch', '--dry-run'),
+                        path=self.path,
+                    ))
+                self.assertNotIn('NameError', captured.stderr.getvalue())
+
+                with OutputCapture(level=logging.INFO) as captured:
+                    self.assertEqual(0, program.main(
+                        args=('review', 'HEAD', '--dry-run'),
+                        path=self.path,
+                    ))
+                self.assertNotIn('NameError', captured.stderr.getvalue())
 
     def test_help(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path):
