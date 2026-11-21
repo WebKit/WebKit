@@ -1300,6 +1300,7 @@ enum LayerType {
     DOMString resourceLoadStatisticsForURL(DOMURL url);
     undefined setTrackingPreventionEnabled(boolean enable);
     boolean isPrevalentDomainScriptOnStack();
+    boolean isThirdPartyScriptOnStack();
 
     undefined setCanShowModalDialogOverride(boolean allow);
 

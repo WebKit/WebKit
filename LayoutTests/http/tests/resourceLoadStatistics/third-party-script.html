@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/load-script.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+description("Tests that code from a third-party script, and code that such a script creates, counts as third-party script code, even when first-party script runs it later.");
+jsTestIsAsync = true;
+
+function check(caller, actual, expected)
+{
+    if (actual === expected)
+        testPassed(`${caller}: ${actual}`);
+    else
+        testFailed(`${caller}: ${actual}, expected ${expected}`);
+}
+
+function isThirdPartyScriptOnStackFromFirstPartyFunction()
+{
+    return internals.isThirdPartyScriptOnStack();
+}
+
+loadScriptFromOtherSite("create-third-party-code.js").then(() => {
+    setTimeout(() => {
+        check("Third-party script", resultsFromThirdPartyScript.direct, true);
+        check("First-party function called by third-party script", resultsFromThirdPartyScript.firstPartyFunction, true);
+        check("First-party script", internals.isThirdPartyScriptOnStack(), false);
+        check("Third-party script is not a prevalent domain script", internals.isPrevalentDomainScriptOnStack(), false);
+
+        check("Function defined by third-party script", thirdPartyFunction(), true);
+        check("Function created with eval() by third-party script", functionCreatedWithEval(), true);
+        check("Function created with the Function constructor by third-party script", functionCreatedWithFunctionConstructor(), true);
+        document.body.appendChild(thirdPartyScriptElement);
+        check("Script element created by third-party script", resultFromScriptElement, true);
+        document.getElementById("target").dispatchEvent(new Event("click"));
+        check("Event handler attribute set by third-party script", resultFromEventHandlerAttribute, true);
+        check("String passed to setTimeout() by third-party script", resultFromTimerString, true);
+        check("First-party script after running code created by third-party script", internals.isThirdPartyScriptOnStack(), false);
+
+        Promise.resolve().then(internals.isThirdPartyScriptOnStack.bind(internals)).then((result) => {
+            check("Native function called by the Promise machinery", result, true);
+            finishJSTest();
+        });
+    }, 0);
+});
+</script>
+</body>
+</html>

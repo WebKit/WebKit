@@ -7017,7 +7017,16 @@ bool Internals::isPrevalentDomainScriptOnStack() const
     if (!document)
         return false;
     Ref vm = document->vm();
-    return JSC::isPrevalentDomainTaintedCodeOnStack(vm, vm->topCallFrame);
+    return JSC::isTaintedCodeOnStack(vm, vm->topCallFrame, JSC::SourceTaintKind::PrevalentDomain);
+}
+
+bool Internals::isThirdPartyScriptOnStack() const
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return false;
+    Ref vm = document->vm();
+    return JSC::isTaintedCodeOnStack(vm, vm->topCallFrame, JSC::SourceTaintKind::ThirdParty);
 }
 
 String Internals::composedTreeAsText(Node& node)
