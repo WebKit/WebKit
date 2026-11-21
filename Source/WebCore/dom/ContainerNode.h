@@ -77,7 +77,8 @@ public:
 
     void takeAllChildrenFrom(ContainerNode*);
 
-    void cloneChildNodes(Document&, CustomElementRegistry*, ContainerNode& clone, size_t currentDepth = 0) const;
+    void cloneChildNodes(Document&, CustomElementRegistry*, ContainerNode& clone) const;
+    void cloneChildNodes(Document&, CustomElementRegistry*, ContainerNode& clone, ShouldCloneChild) const;
     void cloneSubtreeForFastParser(Document&, CustomElementRegistry*, ContainerNode& clone, size_t currentDepth = 0) const;
     Vector<SerializedNode> serializeChildNodes(size_t currentDepth = 0) const;
 
@@ -189,6 +190,8 @@ private:
 
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
     ExceptionOr<void> appendChildWithoutPreInsertionValidityCheck(Node&);
+
+    template<typename ShouldCloneChildFunction> void cloneChildNodesImpl(Document&, CustomElementRegistry*, ContainerNode& clone, ShouldCloneChildFunction, size_t currentDepth) const;
 
     NODELETE void insertBeforeCommon(Node& nextChild, Node& oldChild);
     NODELETE void appendChildCommon(Node&);

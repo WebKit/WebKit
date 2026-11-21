@@ -1224,7 +1224,7 @@ void ContainerNode::cloneSubtreeForFastParser(Document& document, CustomElementR
         return;
 
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
-        Ref clonedChild = child->cloneNodeInternal(document, CloningOperation::SelfOnly, fallbackRegistry);
+        Ref clonedChild = child->cloneNodeInternal(document, CloningOperation::SelfWithShadowTree, fallbackRegistry);
         executeParserNodeInsertionIntoIsolatedTreeWithoutNotifyingParent(clone, clonedChild.get(), [&] {
             clone.appendChildCommon(clonedChild);
             clonedChild->setTreeScopeRecursivelyToMatch(clone);
@@ -1237,15 +1237,31 @@ void ContainerNode::cloneSubtreeForFastParser(Document& document, CustomElementR
     clone.parserNotifyChildrenChanged();
 }
 
-void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* fallbackRegistry, ContainerNode& clone, size_t currentDepth) const
+template<typename ShouldCloneChildFunction>
+void ContainerNode::cloneChildNodesImpl(Document& document, CustomElementRegistry* fallbackRegistry, ContainerNode& clone, ShouldCloneChildFunction shouldCloneChild, size_t currentDepth) const
 {
+    constexpr bool hasFilter = !std::is_same_v<ShouldCloneChildFunction, std::nullptr_t>;
+    static_assert(!hasFilter || std::is_same_v<ShouldCloneChildFunction, ShouldCloneChild>);
+
     if (currentDepth >= cloneMaxDepth)
         return;
 
     NodeVector postInsertionNotificationTargets;
     bool hadElement = false;
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
+        if constexpr (hasFilter) {
+            if (!shouldCloneChild(*child))
+                continue;
+        }
+        bool childIsElement = is<Element>(*child);
         Ref clonedChild = child->cloneNodeInternal(document, CloningOperation::SelfWithTemplateContent, fallbackRegistry);
+        if (childIsElement) {
+            ScriptDisallowedScope::EventAllowedScope eventAllowedScope { uncheckedDowncast<Element>(clonedChild) };
+            if constexpr (hasFilter)
+                uncheckedDowncast<Element>(*child).cloneShadowTreeIfPossible(uncheckedDowncast<Element>(clonedChild), shouldCloneChild);
+            else
+                uncheckedDowncast<Element>(*child).cloneShadowTreeIfPossible(uncheckedDowncast<Element>(clonedChild));
+        }
         {
             WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -1255,15 +1271,26 @@ void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* f
             clone.appendChildCommon(clonedChild);
             notifyChildNodeInserted(clone, clonedChild, postInsertionNotificationTargets);
 
-            hadElement = hadElement || is<Element>(clonedChild);
+            hadElement = hadElement || childIsElement;
         }
         if (RefPtr childAsContainerNode = dynamicDowncast<ContainerNode>(*child))
-            childAsContainerNode->cloneChildNodes(document, fallbackRegistry, downcast<ContainerNode>(clonedChild), currentDepth + 1);
+            childAsContainerNode->cloneChildNodesImpl(document, fallbackRegistry, downcast<ContainerNode>(clonedChild), shouldCloneChild, currentDepth + 1);
     }
     clone.childrenChanged(makeChildChangeForCloneInsertion(hadElement ? ClonedChildIncludesElements::Yes : ClonedChildIncludesElements::No));
 
     for (auto& target : postInsertionNotificationTargets)
         target->postConnectionSteps();
+}
+
+void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* fallbackRegistry, ContainerNode& clone) const
+{
+    cloneChildNodesImpl(document, fallbackRegistry, clone, nullptr, 0);
+}
+
+void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* fallbackRegistry, ContainerNode& clone, ShouldCloneChild shouldCloneChild) const
+{
+    ASSERT(shouldCloneChild);
+    cloneChildNodesImpl(document, fallbackRegistry, clone, shouldCloneChild, 0);
 }
 
 Vector<SerializedNode> ContainerNode::serializeChildNodes(size_t currentDepth) const
@@ -1277,7 +1304,10 @@ Vector<SerializedNode> ContainerNode::serializeChildNodes(size_t currentDepth) c
         RefPtr childAsContainerNode = dynamicDowncast<ContainerNode>(*child);
         if (!childAsContainerNode)
             continue;
-        WTF::switchOn(result.last().data, [&] (SerializedNode::ContainerNode& node) {
+        WTF::switchOn(result.last().data, [&](SerializedNode::Element& element) {
+            element.shadowRoot = downcast<Element>(*child).serializeShadowRoot<SerializedNode::ShadowRoot>();
+            element.children = childAsContainerNode->serializeChildNodes(currentDepth + 1);
+        }, [&](SerializedNode::ContainerNode& node) {
             node.children = childAsContainerNode->serializeChildNodes(currentDepth + 1);
         }, []<typename T>(const T&) requires (!std::derived_from<T, SerializedNode::ContainerNode>) {
             RELEASE_ASSERT_NOT_REACHED();

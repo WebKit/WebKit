@@ -118,7 +118,7 @@ Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOper
 {
     RefPtr<Node> clone;
     switch (type) {
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
         return cloneElementWithoutChildren(document, registry);
     case CloningOperation::SelfWithTemplateContent:
         clone = cloneElementWithoutChildren(document, registry);
@@ -138,16 +138,20 @@ Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOper
 SerializedNode HTMLTemplateElement::serializeNode(CloningOperation type) const
 {
     Vector<SerializedNode> children;
+    std::optional<SerializedNode::ShadowRoot> shadowRoot;
     switch (type) {
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
+        shadowRoot = serializeShadowRoot<SerializedNode::ShadowRoot>();
+        break;
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
+        shadowRoot = serializeShadowRoot<SerializedNode::ShadowRoot>();
         children = serializeChildNodes();
         break;
     }
 
-    auto contentChildren = m_content && type != CloningOperation::SelfOnly
+    auto contentChildren = m_content && type != CloningOperation::SelfWithShadowTree
         ? std::optional(SerializedNode::DocumentFragment { m_content->serializeChildNodes() })
         : std::nullopt;
 
@@ -156,7 +160,7 @@ SerializedNode HTMLTemplateElement::serializeNode(CloningOperation type) const
             { WTF::move(children) },
             { tagQName() },
             serializeAttributes<SerializedNode::Element::Attribute>(),
-            serializeShadowRoot<SerializedNode::ShadowRoot>()
+            WTF::move(shadowRoot)
         }, WTF::move(contentChildren)
     } };
 }

@@ -403,56 +403,32 @@ RenderElement* SVGUseElement::rendererClipChild() const
     return targetClone->renderer();
 }
 
-static inline void disassociateAndRemoveClones(const Vector<Ref<Element>>& clones)
+// Elements that aren't cloned into the shadow tree. Symbol elements inside the subtree are left out for two reasons:
+// 1) They are invisible and don't need to be cloned to get correct rendering. 2) expandSymbolElementsInShadowTree
+// will turn them into <svg> elements, which is correct for symbol elements directly referenced by use elements,
+// but incorrect for ones that just happen to be in a subtree.
+static bool shouldCloneChild(const Node& node)
 {
-    for (Ref clone : clones) {
-        for (Ref descendant : descendantsOfType<SVGElement>(clone.get()))
-            descendant->setCorrespondingElement(nullptr);
-        if (RefPtr svgClone = dynamicDowncast<SVGElement>(clone.get()))
-            svgClone->setCorrespondingElement(nullptr);
-        clone->remove();
-    }
+    auto* element = dynamicDowncast<Element>(node);
+    return !element || !(isDisallowedElement(*element) || is<SVGSymbolElement>(*element));
 }
 
-static void removeDisallowedElementsFromSubtree(SVGElement& subtree)
+static void associateClonesWithOriginals(ContainerNode& clone, const ContainerNode& original)
 {
-    // Remove disallowed elements after the fact rather than not cloning them in the first place.
-    // This optimizes for the normal case where none of those elements are present.
-
-    // This function is used only on elements in subtrees that are not yet in documents, so
-    // mutation events are not a factor; there are no event listeners to handle those events.
-    // Assert that it's not in a document to make sure callers are still using it this way.
-    ASSERT(!subtree.isConnected());
-
-    Vector<Ref<Element>> disallowedElements;
-    for (auto it = descendantsOfType<Element>(subtree).begin(); it; ) {
-        if (isDisallowedElement(*it)) {
-            disallowedElements.append(protect(*it));
-            it.traverseNextSkippingChildren();
+    // The clone was made with the same shouldCloneChild filter, so skipping the original's filtered children
+    // keeps the two child lists aligned.
+    RefPtr cloneChild = clone.firstChild();
+    for (RefPtr originalChild = original.firstChild(); originalChild && cloneChild; originalChild = originalChild->nextSibling()) {
+        if (!shouldCloneChild(*originalChild))
             continue;
+        if (RefPtr svgClone = dynamicDowncast<SVGElement>(*cloneChild)) {
+            svgClone->setCorrespondingElement(downcast<SVGElement>(originalChild));
+            ASSERT(!svgClone->shadowRoot() || svgClone->shadowRoot()->mode() == ShadowRootMode::UserAgent);
         }
-        ++it;
+        if (RefPtr cloneContainer = dynamicDowncast<ContainerNode>(*cloneChild))
+            associateClonesWithOriginals(*cloneContainer, downcast<ContainerNode>(*originalChild));
+        cloneChild = cloneChild->nextSibling();
     }
-
-    disassociateAndRemoveClones(disallowedElements);
-}
-
-static void removeSymbolElementsFromSubtree(SVGElement& subtree)
-{
-    // Symbol elements inside the subtree should not be cloned for two reasons: 1) They are invisible and
-    // don't need to be cloned to get correct rendering. 2) expandSymbolElementsInShadowTree will turn them
-    // into <svg> elements, which is correct for symbol elements directly referenced by use elements,
-    // but incorrect for ones that just happen to be in a subtree.
-    Vector<Ref<Element>> symbolElements;
-    for (auto it = descendantsOfType<Element>(subtree).begin(); it; ) {
-        if (is<SVGSymbolElement>(*it)) {
-            symbolElements.append(protect(*it));
-            it.traverseNextSkippingChildren();
-            continue;
-        }
-        ++it;
-    }
-    disassociateAndRemoveClones(symbolElements);
 }
 
 static void associateClonesWithOriginals(SVGElement& clone, SVGElement& original)
@@ -461,11 +437,8 @@ static void associateClonesWithOriginals(SVGElement& clone, SVGElement& original
     // The clone is new and so it's not installed in a parent yet.
     ASSERT(!clone.parentNode());
 
-    // The loop below works because we are associating these clones immediately, before
-    // doing transformations like removing disallowed elements or expanding elements.
     clone.setCorrespondingElement(&original);
-    for (auto pair : descendantsOfType<SVGElement>(clone, original))
-        protect(pair.first)->setCorrespondingElement(Ref { pair.second }.ptr());
+    associateClonesWithOriginals(static_cast<ContainerNode&>(clone), original);
 }
 
 static void associateReplacementCloneWithOriginal(SVGElement& replacementClone, SVGElement& originalClone)
@@ -528,11 +501,10 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
 
 void SVGUseElement::cloneTarget(ContainerNode& container, SVGElement& target) const
 {
-    Ref targetClone = downcast<SVGElement>(target.cloneElementWithChildren(protect(document()), nullptr));
+    Ref targetClone = downcast<SVGElement>(target.cloneElementWithoutChildren(protect(document()), nullptr));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { targetClone };
+    target.cloneChildNodes(protect(document()), nullptr, targetClone, shouldCloneChild);
     associateClonesWithOriginals(targetClone.get(), target);
-    removeDisallowedElementsFromSubtree(targetClone.get());
-    removeSymbolElementsFromSubtree(targetClone.get());
     transferSizeAttributesToTargetClone(targetClone.get());
     container.appendChild(targetClone);
 }
@@ -546,7 +518,6 @@ static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& origi
     replacementClone.cloneDataFromElement(originalClone);
     originalClone.cloneChildNodes(protect(replacementClone.document()), nullptr, replacementClone);
     associateReplacementClonesWithOriginals(replacementClone, originalClone);
-    removeDisallowedElementsFromSubtree(replacementClone);
 }
 
 void SVGUseElement::expandUseElementsInShadowTree() const

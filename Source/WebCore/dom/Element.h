@@ -413,6 +413,8 @@ public:
 
     Ref<Element> cloneElementWithChildren(Document&, CustomElementRegistry*) const;
     Ref<Element> cloneElementWithoutChildren(Document&, CustomElementRegistry*) const;
+    void cloneShadowTreeIfPossible(Element& newHost, ShouldCloneChild = nullptr) const;
+    template<typename ShadowRoot> std::optional<ShadowRoot> serializeShadowRoot() const;
 
     void normalizeAttributes();
 
@@ -979,7 +981,6 @@ protected:
     void disconnectFromIntersectionObservers();
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
 
-    template<typename ShadowRoot> std::optional<ShadowRoot> serializeShadowRoot() const;
     template<typename Attribute> Vector<Attribute> serializeAttributes() const;
 
 private:
@@ -1058,7 +1059,6 @@ private:
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
-    void cloneShadowTreeIfPossible(Element& newHost) const;
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const;
 
     inline void removeShadowRoot();

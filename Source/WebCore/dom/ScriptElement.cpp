@@ -682,7 +682,7 @@ void ScriptElement::setTrustedScriptText(const String& text)
     m_trustedScriptText = text;
 }
 
-bool isScriptElement(Node& node)
+bool isScriptElement(const Node& node)
 {
     return isAnyOf<HTMLScriptElement, SVGScriptElement>(node);
 }

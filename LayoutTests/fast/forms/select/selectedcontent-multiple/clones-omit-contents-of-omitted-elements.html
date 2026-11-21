@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>The option clones in the selectedcontent of a select with the multiple attribute do not clone the contents of omitted elements</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script>
+const constructed = [];
+customElements.define("x-tracked", class extends HTMLElement {
+  constructor() {
+    super();
+    constructed.push(this);
+  }
+});
+</script>
+
+<div id="container">
+<select multiple size="1">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected><object><x-tracked id="in-object"></x-tracked></object></option>
+  <option><div><template shadowrootmode="open" shadowrootclonable><object><x-tracked id="in-shadow-tree"></x-tracked></object></template></div></option>
+</select>
+</div>
+
+<script>
+add_completion_callback(() => document.getElementById("container").remove());
+
+promise_test(async () => {
+  await new Promise(resolve => setTimeout(resolve, 0));
+  const select = document.querySelector("select");
+  assert_array_equals(constructed.filter(element => element.id === "in-object"), [select.options[0].querySelector("#in-object")],
+                      "Only the original should be constructed");
+}, "Option clones in selectedcontent do not clone the contents of omitted elements");
+
+promise_test(async () => {
+  await new Promise(resolve => setTimeout(resolve, 0));
+  const select = document.querySelector("select");
+  assert_array_equals(constructed.filter(element => element.id === "in-shadow-tree"), [select.options[1].querySelector("div").shadowRoot.querySelector("#in-shadow-tree")],
+                      "Only the original should be constructed");
+}, "Option clones in selectedcontent do not clone the contents of omitted elements in a shadow tree");
+</script>

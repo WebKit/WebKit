@@ -806,7 +806,25 @@ Ref<Node> Node::cloneNode(CloneSubtree subtree) const
 {
     ASSERT(!isShadowRoot());
     RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
-    return cloneNodeInternal(protect(document()), subtree == CloneSubtree::Yes ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
+    return cloneNodeInternal(protect(document()), subtree == CloneSubtree::Yes ? CloningOperation::Everything : CloningOperation::SelfWithShadowTree, registry.get());
+}
+
+Ref<Node> Node::cloneNodeWithSubtree(ShouldCloneChild shouldCloneChild) const
+{
+    ASSERT(!isShadowRoot());
+    ASSERT(!isDocumentNode());
+    ASSERT(shouldCloneChild);
+    Ref document = this->document();
+    RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
+    Ref clone = cloneNodeInternal(document, CloningOperation::SelfWithTemplateContent, registry.get());
+    if (RefPtr element = dynamicDowncast<Element>(*this)) {
+        Ref clonedElement = downcast<Element>(clone);
+        ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clonedElement };
+        element->cloneShadowTreeIfPossible(clonedElement, shouldCloneChild);
+        element->cloneChildNodes(document, registry.get(), clonedElement, shouldCloneChild);
+    } else if (RefPtr container = dynamicDowncast<ContainerNode>(*this))
+        container->cloneChildNodes(document, registry.get(), downcast<ContainerNode>(clone), shouldCloneChild);
+    return clone;
 }
 
 ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool subtree) const

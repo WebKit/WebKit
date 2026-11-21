@@ -31,7 +31,7 @@
 namespace WebCore {
 
 WebKitNodeSnapshot::WebKitNodeSnapshot(const Node& node, bool deep)
-    : m_serializedNode(node.serializeNode(deep ? Node::CloningOperation::Everything : Node::CloningOperation::SelfOnly))
+    : m_serializedNode(node.serializeNode(deep ? Node::CloningOperation::Everything : Node::CloningOperation::SelfWithShadowTree))
 {
 }
 

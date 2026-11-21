@@ -81,7 +81,7 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& document, CloningOperati
 {
     Ref clone = create(document);
     switch (type) {
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
@@ -138,7 +138,7 @@ SerializedNode DocumentFragment::serializeNode(CloningOperation type) const
 {
     Vector<SerializedNode> children;
     switch (type) {
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:

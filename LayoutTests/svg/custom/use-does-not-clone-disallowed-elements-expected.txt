@@ -1,0 +1,3 @@
+
+PASS <use> doesn't clone the elements it doesn't instance, such as HTML elements and nested <symbol> elements
+

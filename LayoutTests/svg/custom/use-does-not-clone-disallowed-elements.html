@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<svg>
+    <use id="use"></use>
+    <g id="target">
+        <rect id="rect" width="10" height="10"/>
+        <foreignObject>
+            <x-element></x-element>
+        </foreignObject>
+        <symbol id="nestedSymbol">
+            <rect width="10" height="10"/>
+        </symbol>
+        <circle id="circle" r="5"/>
+    </g>
+</svg>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+let constructorCalls = [];
+customElements.define("x-element", class extends HTMLElement {
+    constructor() {
+        super();
+        constructorCalls.push(this.isConnected);
+    }
+});
+
+promise_test(async () => {
+    assert_array_equals(constructorCalls, [true], "the original is upgraded when the element is defined");
+
+    const use = document.getElementById("use");
+    const clicked = [];
+    for (const id of ["rect", "circle"])
+        document.getElementById(id).addEventListener("click", () => clicked.push(id));
+    use.setAttribute("href", "#target");
+    document.body.offsetTop;
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    assert_array_equals(constructorCalls, [true], "the shadow tree update doesn't construct a clone of the custom element");
+
+    if (window.internals) {
+        const shadowRoot = internals.shadowRoot(use);
+        assert_array_equals([...shadowRoot.querySelectorAll("*")].map(element => element.localName), ["g", "rect", "circle"]);
+
+        // The instances are associated with the right originals even though elements were skipped in between.
+        for (const element of shadowRoot.querySelectorAll("rect, circle"))
+            element.dispatchEvent(new MouseEvent("click"));
+        assert_array_equals(clicked, ["rect", "circle"]);
+    }
+}, "<use> doesn't clone the elements it doesn't instance, such as HTML elements and nested <symbol> elements");
+</script>
+</body>
+</html>
