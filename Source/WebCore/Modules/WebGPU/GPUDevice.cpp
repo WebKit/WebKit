@@ -131,17 +131,22 @@ GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU:
     , m_adapterInfo(adapterInfo)
     , m_owningThreadUID(currentThreadID())
 {
+    // The stand-ins for the encoders are in the state of the ones they replace: the command encoder
+    // is finished and its passes are ended, so that using them generates a validation error.
+    // Finishing an invalid encoder and ending a pass of a finished one generate errors too, which are
+    // not the page's.
+    static constexpr auto finishedEncoderError = "GPUCommandEncoder.finish() has been called"_s;
     m_backing->pauseAllErrorReporting(true);
-    RefPtr invalidCommandEncoder = m_backing->createCommandEncoder({ });
+    RefPtr invalidCommandEncoder = m_backing->createInvalidCommandEncoder();
     RELEASE_ASSERT(invalidCommandEncoder);
-    RefPtr invalidRenderPassEncoder = invalidCommandEncoder->beginRenderPass(WebGPU::RenderPassDescriptor { });
-    RefPtr invalidComputePassEncoder = invalidCommandEncoder->beginComputePass(std::nullopt);
-    RefPtr invalidCommandBuffer = invalidCommandEncoder->finish({ });
+    RefPtr invalidRenderPassEncoder = invalidCommandEncoder->beginInvalidRenderPass(finishedEncoderError);
+    RefPtr invalidComputePassEncoder = invalidCommandEncoder->beginInvalidComputePass(finishedEncoderError);
+    RefPtr invalidCommandBuffer = m_backing->createInvalidCommandBuffer();
     RefPtr emptyBindGroupLayout = m_backing->createBindGroupLayout({ });
     RELEASE_ASSERT(invalidRenderPassEncoder && invalidComputePassEncoder && invalidCommandBuffer && emptyBindGroupLayout);
+    invalidCommandEncoder->finish({ });
     invalidRenderPassEncoder->end();
     invalidComputePassEncoder->end();
-    m_queue->backing().submit({ Ref { *invalidCommandBuffer } });
     m_backing->pauseAllErrorReporting(false);
     m_invalidCommandEncoder = WTF::move(invalidCommandEncoder);
     m_invalidRenderPassEncoder = WTF::move(invalidRenderPassEncoder);

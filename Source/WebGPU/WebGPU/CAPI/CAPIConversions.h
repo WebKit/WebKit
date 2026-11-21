@@ -295,24 +295,9 @@ inline Metal::Adapter& metalFromAPI(WGPUAdapter handle)
     return downcast<Metal::Adapter>(fromAPI(handle));
 }
 
-inline Metal::BindGroup& metalFromAPI(WGPUBindGroup handle)
-{
-    return downcast<Metal::BindGroup>(fromAPI(handle));
-}
-
-inline Metal::BindGroupLayout& metalFromAPI(WGPUBindGroupLayout handle)
-{
-    return downcast<Metal::BindGroupLayout>(fromAPI(handle));
-}
-
 inline Metal::Buffer& metalFromAPI(WGPUBuffer handle)
 {
     return downcast<Metal::Buffer>(fromAPI(handle));
-}
-
-inline Metal::CommandBuffer& metalFromAPI(WGPUCommandBuffer handle)
-{
-    return downcast<Metal::CommandBuffer>(fromAPI(handle));
 }
 
 inline Metal::CommandEncoder& metalFromAPI(WGPUCommandEncoder handle)
@@ -320,24 +305,9 @@ inline Metal::CommandEncoder& metalFromAPI(WGPUCommandEncoder handle)
     return downcast<Metal::CommandEncoder>(fromAPI(handle));
 }
 
-inline Metal::ComputePassEncoder& metalFromAPI(WGPUComputePassEncoder handle)
-{
-    return downcast<Metal::ComputePassEncoder>(fromAPI(handle));
-}
-
-inline Metal::ComputePipeline& metalFromAPI(WGPUComputePipeline handle)
-{
-    return downcast<Metal::ComputePipeline>(fromAPI(handle));
-}
-
 inline Metal::Device& metalFromAPI(WGPUDevice handle)
 {
     return downcast<Metal::Device>(fromAPI(handle));
-}
-
-inline Metal::ExternalTexture& metalFromAPI(WGPUExternalTexture handle)
-{
-    return downcast<Metal::ExternalTexture>(fromAPI(handle));
 }
 
 inline Metal::Instance& metalFromAPI(WGPUInstance handle)
@@ -345,29 +315,9 @@ inline Metal::Instance& metalFromAPI(WGPUInstance handle)
     return downcast<Metal::Instance>(fromAPI(handle));
 }
 
-inline Metal::PipelineLayout& metalFromAPI(WGPUPipelineLayout handle)
-{
-    return downcast<Metal::PipelineLayout>(fromAPI(handle));
-}
-
-inline Metal::PresentationContext& metalFromAPI(WGPUSurface handle)
-{
-    return downcast<Metal::PresentationContext>(fromAPI(handle));
-}
-
-inline Metal::QuerySet& metalFromAPI(WGPUQuerySet handle)
-{
-    return downcast<Metal::QuerySet>(fromAPI(handle));
-}
-
 inline Metal::Queue& metalFromAPI(WGPUQueue handle)
 {
     return downcast<Metal::Queue>(fromAPI(handle));
-}
-
-inline Metal::RenderBundle& metalFromAPI(WGPURenderBundle handle)
-{
-    return downcast<Metal::RenderBundle>(fromAPI(handle));
 }
 
 inline Metal::RenderBundleEncoder& metalFromAPI(WGPURenderBundleEncoder handle)
@@ -380,42 +330,9 @@ inline Metal::RenderPassEncoder& metalFromAPI(WGPURenderPassEncoder handle)
     return downcast<Metal::RenderPassEncoder>(fromAPI(handle));
 }
 
-inline Metal::RenderPipeline& metalFromAPI(WGPURenderPipeline handle)
-{
-    return downcast<Metal::RenderPipeline>(fromAPI(handle));
-}
-
-inline Metal::Sampler& metalFromAPI(WGPUSampler handle)
-{
-    return downcast<Metal::Sampler>(fromAPI(handle));
-}
-
 inline Metal::ShaderModule& metalFromAPI(WGPUShaderModule handle)
 {
     return downcast<Metal::ShaderModule>(fromAPI(handle));
-}
-
-inline Metal::Texture& metalFromAPI(WGPUTexture handle)
-{
-    return downcast<Metal::Texture>(fromAPI(handle));
-}
-
-inline Metal::TextureView& metalFromAPI(WGPUTextureView handle)
-{
-    return downcast<Metal::TextureView>(fromAPI(handle));
-}
-
-// For the WebGPU::X objects that a WebGPU::Metal object creates, which are WebGPU::Metal::X objects.
-template <typename T, typename U>
-inline auto releaseToAPIAs(RefPtr<U>&& pointer)
-{
-    return releaseToAPI(WTF::move(pointer));
-}
-
-template <typename T, typename U>
-inline auto releaseToAPIAs(Ref<U>&& pointer)
-{
-    return releaseToAPI(WTF::move(pointer));
 }
 
 // A future of the C API on an instance. complete() is called after the callback it stands for

@@ -29,6 +29,7 @@
     bool isFallbackAdapter;
     uint32_t subgroupMinSize;
     uint32_t subgroupMaxSize;
+    bool hasUnifiedMemory;
 }
 
 #endif // ENABLE(GPU_PROCESS)

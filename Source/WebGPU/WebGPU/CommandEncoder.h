@@ -102,6 +102,8 @@ public:
     // std::nullopt is the rest of the buffer after the offset.
     void clearBuffer(Buffer&, uint64_t offset, std::optional<uint64_t> size);
     RefPtr<WebGPU::CommandBuffer> finish(const WebGPU::CommandBufferDescriptor&) final;
+    RefPtr<WebGPU::RenderPassEncoder> beginInvalidRenderPass(String&& error) final;
+    RefPtr<WebGPU::ComputePassEncoder> beginInvalidComputePass(String&& error) final;
     void insertDebugMarker(String&& markerLabel) final;
     void popDebugGroup() final;
     void pushDebugGroup(String&& groupLabel) final;
