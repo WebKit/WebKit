@@ -410,6 +410,21 @@ static bool usesInitialContainingBlockAsStaticPositionRectangle(const RenderBox&
     return element && element->isInTopLayer();
 }
 
+WritingMode PositionedLayoutConstraints::staticPositionContainingBlockWritingMode() const
+{
+    ASSERT(shouldAlignStaticPositionInInlineAxis());
+    // https://drafts.csswg.org/css-position-3/#staticpos-rect
+    // "To the extent the box alignment properties have an effect, they use the static-position containing block as the effective containing block, including using its writing mode for resolving alignment axes and directions."
+    // A box in the top layer is laid out as if it were a sibling of the root element, so its static-position containing block is the initial containing block.
+    if (usesInitialContainingBlockAsStaticPositionRectangle(m_renderer))
+        return m_containingWritingMode;
+    // FIXME: The inline axis of a parent orthogonal to the box is the box's block axis, so its writing mode can't resolve justify-self here.
+    if (m_parentWritingMode.isOrthogonal(m_writingMode))
+        return m_containingWritingMode;
+    // shouldAlignStaticPositionInInlineAxis() requires the parent to be a block container, which makes it the static-position containing block.
+    return m_parentWritingMode;
+}
+
 // See CSS2 § 10.3.7-8 and 10.6.4-5.
 void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComputedValues& computedValues) const
 {
@@ -449,16 +464,16 @@ void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComput
             usedMarginAfter = remainingSpace;
     } else {
         if (auto staticRemainingSpace = remainingSpaceForStaticAlignment(outerSize))
-            alignmentShift = resolveAlignmentShift(*staticRemainingSpace, outerSize);
+            alignmentShift = resolveAlignmentShift(*staticRemainingSpace, outerSize, m_containingWritingMode);
         else if (shouldAlignStaticPositionInInlineAxis()) {
             // Both insets were auto (static position) and an explicit justify-self was specified:
             // align the box's margin box within its static-position rectangle.
             // https://drafts.csswg.org/css-align-3/#justify-abspos
-            alignmentShift = resolveAlignmentShift(remainingSpace, outerSize);
+            alignmentShift = resolveAlignmentShift(remainingSpace, outerSize, staticPositionContainingBlockWritingMode());
         } else if (hasAutoBeforeInset != hasAutoAfterInset)
             alignmentShift = hasAutoAfterInset ? 0_lu : remainingSpace;
         else // Align into remaining space.
-            alignmentShift = resolveAlignmentShift(remainingSpace, outerSize);
+            alignmentShift = resolveAlignmentShift(remainingSpace, outerSize, m_containingWritingMode);
     };
 
     auto position = m_insetModifiedContainingRange.min() + usedMarginBefore + alignmentShift;
@@ -481,9 +496,9 @@ void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComput
     }
 }
 
-LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedSpace, LayoutUnit itemSize) const
+LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedSpace, LayoutUnit itemSize, WritingMode alignmentWritingMode) const
 {
-    bool startIsBefore = this->startIsBefore();
+    bool startIsBefore = m_containingAxis == LogicalBoxAxis::Block || alignmentWritingMode.isLogicalLeftInlineStart();
     bool isOverflowing = unusedSpace < 0_lu;
 
     ItemPosition resolvedAlignment = resolveAlignmentValue();
@@ -510,7 +525,7 @@ LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedS
                 shift = unusedSpace;
         }
     } else {
-        auto alignmentSpace = StyleSelfAlignmentData::adjustmentFromStartEdge(unusedSpace, resolvedAlignment, m_containingAxis, m_containingWritingMode, m_writingMode);
+        auto alignmentSpace = StyleSelfAlignmentData::adjustmentFromStartEdge(unusedSpace, resolvedAlignment, m_containingAxis, alignmentWritingMode, m_writingMode);
         shift = startIsBefore ? alignmentSpace : unusedSpace - alignmentSpace;
     }
 

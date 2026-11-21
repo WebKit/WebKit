@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>justify-self on a statically-positioned abspos box resolves start and end against its parent's direction</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#staticpos-rect">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#justify-abspos">
+<link rel="match" href="justify-self-static-position-parent-direction-ref.html">
+<meta name="assert" content="justify-self uses the writing mode of the static-position containing block, here the parent, whose direction differs from the containing block's.">
+<style>
+.containing-block {
+  position: relative;
+  width: 200px;
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.box {
+  position: absolute;
+  width: 50px;
+  height: 20px;
+  background: green;
+}
+
+.ltr {
+  direction: ltr;
+}
+
+.rtl {
+  direction: rtl;
+}
+</style>
+<div class="containing-block ltr"><div class="rtl"><div class="box" style="justify-self: start"></div></div></div>
+<div class="containing-block ltr"><div class="rtl"><div class="box" style="justify-self: end"></div></div></div>
+<div class="containing-block rtl"><div class="ltr"><div class="box" style="justify-self: start"></div></div></div>
+<div class="containing-block rtl"><div class="ltr"><div class="box" style="justify-self: end"></div></div></div>

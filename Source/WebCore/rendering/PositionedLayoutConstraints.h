@@ -89,7 +89,7 @@ public:
     LayoutUnit availableContentSpace() const { return std::max(0_lu, insetModifiedContainingSize() - marginBeforeValue() - bordersPlusPadding() - marginAfterValue()); }
 
     void resolvePosition(RenderBox::LogicalExtentComputedValues&) const;
-    LayoutUnit resolveAlignmentShift(const LayoutUnit unusedSpace, const LayoutUnit itemSize) const;
+    LayoutUnit resolveAlignmentShift(const LayoutUnit unusedSpace, const LayoutUnit itemSize, const WritingMode alignmentWritingMode) const;
 
     void fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues&) const;
     NODELETE void adjustLogicalTopWithLogicalHeightIfNeeded(RenderBox::LogicalExtentComputedValues&) const;
@@ -111,6 +111,7 @@ private:
     NODELETE bool needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     bool shouldAlignStaticPositionInInlineAxis() const;
+    WritingMode staticPositionContainingBlockWritingMode() const;
     void computeStaticPosition();
     LayoutUnit computedBlockStaticDistance() const;
 
