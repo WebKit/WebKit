@@ -6,6 +6,7 @@
 
 # Wireless Playback Media Player is enabled starting in iOS 27
 platform/ios/media/media-element-does-not-eagerly-create-media-session-helper.html [ Skip ]
+media/wireless-playback-media-player [ Skip ]
 
 # -- The below has different, expected behavior on iOS 27 than iOS 26 --
 # -- Please put new failure expectations at the bottom of the file. --

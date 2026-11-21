@@ -71,6 +71,8 @@ typedef NSInteger MPRouteDiscoveryMode;
 @end
 
 @interface MPMediaControlsConfiguration : NSObject <NSSecureCoding, NSCopying>
+@property (nonatomic, copy, nullable) NSString *presentingAppBundleID;
+@property (nonatomic) pid_t presentingAppProcessIdentifier;
 @end
 #endif
 
