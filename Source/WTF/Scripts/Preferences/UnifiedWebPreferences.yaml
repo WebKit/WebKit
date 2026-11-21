@@ -6124,11 +6124,11 @@ SiteIsolationEnabled:
 
 SiteIsolationHighValueFraudTargetDomainsEnabled:
   type: bool
-  status: unstable
+  status: internal
   category: security
   humanReadableName: "High-value fraud target domains for Site Isolation"
   humanReadableDescription: "Exclude sites on the high-value fraud target domains list from the shared web process"
-  defaultValue: false
+  defaultValue: true
 
 SiteIsolationInPlaceBackForwardCacheEnabled:
   type: bool

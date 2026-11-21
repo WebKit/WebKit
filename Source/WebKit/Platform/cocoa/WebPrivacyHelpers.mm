@@ -338,7 +338,12 @@ HighValueFraudTargetDomainsController& HighValueFraudTargetDomainsController::si
     return sharedInstance.get();
 }
 
+static constexpr Seconds highValueFraudTargetDomainsInitialRetryDelay = 1_min;
+static constexpr Seconds highValueFraudTargetDomainsMaximumRetryDelay = 30_min;
+
 HighValueFraudTargetDomainsController::HighValueFraudTargetDomainsController()
+    : m_retryTimer(RunLoop::mainSingleton(), "HighValueFraudTargetDomainsController::RetryTimer"_s, [this] { update(); })
+    , m_nextRetryDelay(highValueFraudTargetDomainsInitialRetryDelay)
 {
     scheduleNextUpdate(ContinuousApproximateTime::now());
     update();
@@ -346,6 +351,17 @@ HighValueFraudTargetDomainsController::HighValueFraudTargetDomainsController()
     lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeHighValueFraudTargetDomains) callback:^{
         update();
     }]));
+}
+
+void HighValueFraudTargetDomainsController::scheduleRetryAfterFailure(NSError *error)
+{
+    ASSERT(RunLoop::isMain());
+    if (m_retryTimer.isActive())
+        return;
+
+    RELEASE_LOG_ERROR(SiteIsolation, "HighValueFraudTargetDomainsController::scheduleRetryAfterFailure: Request failed (domain: %{public}@, code: %ld), retrying in %.0f seconds.", error.domain, static_cast<long>(error.code), m_nextRetryDelay.seconds());
+    m_retryTimer.startOneShot(m_nextRetryDelay);
+    m_nextRetryDelay = std::min(m_nextRetryDelay * 2, highValueFraudTargetDomainsMaximumRetryDelay);
 }
 
 void HighValueFraudTargetDomainsController::scheduleNextUpdate(ContinuousApproximateTime now)
@@ -368,15 +384,24 @@ void HighValueFraudTargetDomainsController::update()
     [options setAfterUpdates:NO];
 
     auto requestStartTime = MonotonicTime::now();
+    if (!m_didReceiveInitialData) {
+        if (!m_initialRequestStartTime)
+            m_initialRequestStartTime = requestStartTime;
+        ++m_initialRequestCount;
+    }
     [[PAL::getWPResourcesClassSingleton() sharedInstance] requestHighValueFraudTargetDomains:options.get() completionHandler:^(NSArray<WPHighValueFraudTargetDomain *> *domains, NSError *error) {
         if (m_hasInjectedDomainsForTesting)
             return;
 
         auto elapsed = MonotonicTime::now() - requestStartTime;
         if (error) {
-            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request high-value fraud target domains from WebPrivacy after %.1f ms: %@", elapsed.milliseconds(), error);
+            RELEASE_LOG_ERROR(SiteIsolation, "Failed to request high-value fraud target domains from WebPrivacy after %.1f ms: %@", elapsed.milliseconds(), error);
+            scheduleRetryAfterFailure(error);
             return;
         }
+
+        m_retryTimer.stop();
+        m_nextRetryDelay = highValueFraudTargetDomainsInitialRetryDelay;
 
         HashSet<WebCore::RegistrableDomain> highValueDomains;
         highValueDomains.reserveInitialCapacity(domains.count);
@@ -391,9 +416,9 @@ void HighValueFraudTargetDomainsController::update()
         m_domains = WTF::move(highValueDomains);
 
         if (std::exchange(m_didReceiveInitialData, true))
-            RELEASE_LOG(ResourceLoadStatistics, "HighValueFraudTargetDomainsController::update: Reloaded %u high-value fraud target domain(s) from WebPrivacy in %.1f ms.", m_domains.size(), elapsed.milliseconds());
+            RELEASE_LOG(SiteIsolation, "HighValueFraudTargetDomainsController::update: Reloaded %u high-value fraud target domain(s) from WebPrivacy in %.1f ms.", m_domains.size(), elapsed.milliseconds());
         else
-            RELEASE_LOG(ResourceLoadStatistics, "HighValueFraudTargetDomainsController::update: Loaded initial %u high-value fraud target domain(s) from WebPrivacy in %.1f ms.", m_domains.size(), elapsed.milliseconds());
+            RELEASE_LOG(SiteIsolation, "HighValueFraudTargetDomainsController::update: Loaded initial %u high-value fraud target domain(s) from WebPrivacy in %.1f ms (%.1f ms and %u request(s) since the first request).", m_domains.size(), elapsed.milliseconds(), (MonotonicTime::now() - m_initialRequestStartTime.value_or(requestStartTime)).milliseconds(), m_initialRequestCount);
     }];
 }
 
@@ -416,6 +441,7 @@ void HighValueFraudTargetDomainsController::setDomainsForTesting(HashSet<WebCore
     m_didReceiveInitialData = true;
     // Keep update() from replacing the injected list with real data from WebPrivacy.
     m_hasInjectedDomainsForTesting = true;
+    m_retryTimer.stop();
 }
 
 ResourceMonitorURLsController& ResourceMonitorURLsController::singleton()

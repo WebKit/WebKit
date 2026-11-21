@@ -31,6 +31,7 @@
 #import <wtf/ContinuousApproximateTime.h>
 #import <wtf/Function.h>
 #import <wtf/HashSet.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
@@ -44,6 +45,7 @@
 #import <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #endif
 
+OBJC_CLASS NSError;
 OBJC_CLASS WKWebPrivacyNotificationListener;
 OBJC_CLASS NSURLSession;
 OBJC_CLASS WKContentRuleList;
@@ -173,10 +175,15 @@ private:
     HighValueFraudTargetDomainsController();
     void scheduleNextUpdate(ContinuousApproximateTime);
     void update();
+    void scheduleRetryAfterFailure(NSError *);
 
     const RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     HashSet<WebCore::RegistrableDomain> m_domains;
     ContinuousApproximateTime m_nextScheduledUpdateTime;
+    RunLoop::Timer m_retryTimer;
+    Seconds m_nextRetryDelay;
+    std::optional<MonotonicTime> m_initialRequestStartTime;
+    unsigned m_initialRequestCount { 0 };
     bool m_didReceiveInitialData { false };
     bool m_hasInjectedDomainsForTesting { false };
 };

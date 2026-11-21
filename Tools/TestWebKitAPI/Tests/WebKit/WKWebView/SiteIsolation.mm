@@ -23180,8 +23180,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     [viewConfiguration setWebsiteDataStore:dataStore.get()];
     enableSiteIsolation(viewConfiguration.get());
     setFeatureEnabled(viewConfiguration.get(), @"SiteIsolationSharedProcessEnabled", true);
-    if (enabled == SiteIsolationHighValueFraudTargetDomainsEnabled::Yes)
-        setFeatureEnabled(viewConfiguration.get(), @"SiteIsolationHighValueFraudTargetDomainsEnabled", true);
+    setFeatureEnabled(viewConfiguration.get(), @"SiteIsolationHighValueFraudTargetDomainsEnabled", enabled == SiteIsolationHighValueFraudTargetDomainsEnabled::Yes);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:viewConfiguration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
