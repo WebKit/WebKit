@@ -63,6 +63,9 @@ RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object>, RefPtr<JSON::Object>);
 /// Returns a concatenated error string that combines the provided information into a single, descriptive message.
 String toErrorString(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
 
+/// Parses the "serialization" option of a messaging call. An empty value keeps the default.
+bool parseMessageSerializationOption(const String& value, const String& sourceKey, bool& usesStructuredClone, String& outExceptionString);
+
 /// Returns an error for Expected results in CompletionHandler.
 inline std::unexpected<WebExtensionError> toWebExtensionError(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
 {

@@ -29,7 +29,9 @@
     UseCPPAPI
 ] interface WebExtensionAPIWebPageRuntime {
 
-    [RaisesStringException, NeedsPage, NeedsFrame, ProcessArgumentsLeftToRight] void sendMessage(DOMString extensionId, [Serialization=JSON] any message, [Optional, JSONValue] any options, [Optional, CallbackHandler] function callback);
+    [NeedsScriptContext, ImplementedAs=messageSerialization] readonly attribute any MessageSerialization;
+
+    [RaisesStringException, NeedsPage, NeedsFrame, NeedsScriptContext, ProcessArgumentsLeftToRight] void sendMessage(DOMString extensionId, [ValuesAllowed] any message, [Optional, JSONValue] any options, [Optional, CallbackHandler] function callback);
     [RaisesStringException, NeedsPage, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect(DOMString extensionId, [Optional, JSONValue] any options);
 
 };

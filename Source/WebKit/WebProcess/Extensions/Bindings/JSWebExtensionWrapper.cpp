@@ -31,6 +31,7 @@
 #include "JSWebExtensionWrappable.h"
 #include "Logging.h"
 #include "WebExtensionAPIRuntime.h"
+#include "WebExtensionUtilities.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include <JavaScriptCore/APICast.h>
@@ -416,6 +417,21 @@ std::optional<WebExtensionMessage> serializeMessage(JSContextRef context, JSValu
     if (!serialized)
         return std::nullopt;
     return WebExtensionMessage { serialized.releaseNonNull() };
+}
+
+std::optional<WebExtensionMessage> serializeMessage(JSContextRef context, JSValueRef value, bool useStructuredClone, String& outExceptionString)
+{
+    JSValueRef exception = nullptr;
+
+    bool isUnsupportedValue = JSValueIsNull(context, value) || JSValueIsUndefined(context, value) || (JSValueIsObject(context, value) && JSObjectIsFunction(context, JSValueToObject(context, value, nullptr)));
+    if (!isUnsupportedValue) {
+        auto message = serializeMessage(context, value, useStructuredClone, &exception);
+        if (message && !exception)
+            return message;
+    }
+
+    outExceptionString = toErrorString(nullString(), "message"_s, useStructuredClone ? "a serializable value is expected"_s : "a JSON serializable value is expected"_s);
+    return std::nullopt;
 }
 
 JSValueRef WebExtensionMessage::toJSValue(JSContextRef context) const

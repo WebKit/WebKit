@@ -2681,6 +2681,150 @@ struct WKWebExtensionAPITabsTests {
     }
 
     @Test
+    func sendMessageWithStructuredCloneOptionOverridesJSONManifest() async throws {
+        let backgroundScript = """
+            browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+              const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+
+              const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabs[0].id, {
+                map: new Map([[ 'Content-Language', 'en' ]])
+              }, { serialization: 'structured-clone' }))
+
+              browser.test.assertTrue(response?.date instanceof Date, 'Reply Date should arrive as a Date')
+
+              browser.test.notifyPass()
+            })
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let contentScript = """
+            browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+              browser.test.assertTrue(message.map instanceof Map, 'Map should arrive as a Map')
+
+              sendResponse({ date: new Date(1700000000000) })
+            })
+
+            browser.runtime.sendMessage('Ready')
+            """
+
+        try await loadAndRunWithEmptyPage(
+            manifest: tabsContentScriptManifest,
+            resources: ["background.js": backgroundScript, "content.js": contentScript]
+        )
+    }
+
+    @Test
+    func sendMessageWithJSONOptionOverridesStructuredCloneManifest() async throws {
+        let backgroundScript = """
+            browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+              const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+
+              const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabs[0].id, {
+                date: new Date(1700000000000)
+              }, { serialization: 'json' }))
+
+              browser.test.assertFalse(response?.reply instanceof Map, 'A JSON sender should not receive a Map')
+              browser.test.assertDeepEq(response?.reply, { }, 'The reply should use the format the sender chose')
+
+              browser.test.notifyPass()
+            })
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let contentScript = """
+            browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+              browser.test.assertEq(message.date, '2023-11-14T22:13:20.000Z', 'Date should arrive as an ISO string')
+
+              sendResponse({ reply: new Map([[ 'Via', '1.1 proxy-a' ]]) })
+            })
+
+            browser.runtime.sendMessage('Ready')
+            """
+
+        var manifest = tabsContentScriptManifest
+        manifest["message_serialization"] = "structured_clone"
+
+        try await loadAndRunWithEmptyPage(
+            manifest: manifest,
+            resources: ["background.js": backgroundScript, "content.js": contentScript]
+        )
+    }
+
+    @Test
+    func sendMessageWithInvalidSerializationOption() async throws {
+        let backgroundScript = """
+            browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+              const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+
+              for (const serialization of [ 'structured_clone', 'xml', '' ]) {
+                let error
+                try {
+                  await browser.tabs.sendMessage(tabs[0].id, { content: 'Hello' }, { serialization })
+                } catch (caughtError) {
+                  error = caughtError
+                }
+
+                browser.test.assertTrue(!!error, `Serialization '${serialization}' should be rejected`)
+                browser.test.assertTrue(error?.message?.includes('structured-clone'), 'The error should list the valid values')
+              }
+
+              browser.test.notifyPass()
+            })
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let contentScript = """
+            browser.runtime.sendMessage('Ready')
+            """
+
+        try await loadAndRunWithEmptyPage(
+            manifest: tabsContentScriptManifest,
+            resources: ["background.js": backgroundScript, "content.js": contentScript]
+        )
+    }
+
+    @Test
+    func connectWithStructuredCloneOption() async throws {
+        let backgroundScript = """
+            browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+              const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+
+              const port = browser.tabs.connect(tabs[0].id, { name: 'Content-Language', serialization: 'structured-clone' })
+
+              port.onMessage.addListener((reply) => {
+                browser.test.assertTrue(reply.date instanceof Date, 'The receiver should post in the format the opener chose')
+
+                browser.test.notifyPass()
+              })
+
+              port.postMessage({ map: new Map([[ 'Content-Language', 'en' ]]) })
+            })
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let contentScript = """
+            browser.runtime.onConnect.addListener((port) => {
+              port.onMessage.addListener((message) => {
+                browser.test.assertTrue(message.map instanceof Map, 'Map should arrive as a Map')
+
+                port.postMessage({ date: new Date(1700000000000) })
+              })
+            })
+
+            browser.runtime.sendMessage('Ready')
+            """
+
+        try await loadAndRunWithEmptyPage(
+            manifest: tabsContentScriptManifest,
+            resources: ["background.js": backgroundScript, "content.js": contentScript]
+        )
+    }
+
+    @Test
     func sendMessageWithAsyncReply() async throws {
         let backgroundScript = """
             browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
