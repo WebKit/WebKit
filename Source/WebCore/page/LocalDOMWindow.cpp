@@ -59,6 +59,7 @@
 #include "DeviceOrientationController.h"
 #include "Document.h"
 #include "DocumentEventLoop.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
@@ -1277,7 +1278,12 @@ void LocalDOMWindow::alert(const String& message)
     page->pointerLockController().requestPointerUnlock();
 #endif
 
-    page->chrome().runJavaScriptAlert(*frame, message);
+    if (RefPtr documentFullscreen = document->fullscreenIfExists(); documentFullscreen && documentFullscreen->fullscreenElement()) {
+        documentFullscreen->exitFullscreen([page, frame, message](auto) {
+            page->chrome().runJavaScriptAlert(*frame, message);
+        });
+    } else
+        page->chrome().runJavaScriptAlert(*frame, message);
 }
 
 bool LocalDOMWindow::confirmForBindings(const String& message)
