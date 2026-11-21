@@ -913,7 +913,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDoWhileStatem
     handleProductionOrFail(WHILE, "while", "end", "do-while loop");
     handleProductionOrFail(OPENPAREN, "(", "start", "do-while loop condition");
     semanticFailIfTrue(match(CLOSEPAREN), "Must provide an expression as a do-while loop condition");
-    TreeExpression expr = parseExpression(context);
+
+    TreeExpression expr = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        expr = parseExpression(context);
+    }
+
     failIfFalse(expr, "Unable to parse do-while loop condition");
     recordPauseLocation(context.breakpointLocation(expr));
     handleProductionOrFail(CLOSEPAREN, ")", "end", "do-while loop condition");
@@ -930,7 +936,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
     
     handleProductionOrFail(OPENPAREN, "(", "start", "while loop condition");
     semanticFailIfTrue(match(CLOSEPAREN), "Must provide an expression as a while loop condition");
-    TreeExpression expr = parseExpression(context);
+
+    TreeExpression expr = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        expr = parseExpression(context);
+    }
+
     failIfFalse(expr, "Unable to parse while loop condition");
     recordPauseLocation(context.breakpointLocation(expr));
     handleProductionOrFail(CLOSEPAREN, ")", "end", "while loop condition");
@@ -1848,7 +1860,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseReturnStateme
 
     if (autoSemiColon())
         return context.createReturnStatement(location, 0, start, end);
-    TreeExpression expr = parseExpression(context);
+
+    TreeExpression expr = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        expr = parseExpression(context);
+    }
+
     failIfFalse(expr, "Cannot parse the return expression");
     end = lastTokenEndPosition();
     if (match(SEMICOLON))
@@ -1867,7 +1885,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseThrowStatemen
     failIfTrue(match(SEMICOLON), "Expected expression after 'throw'");
     semanticFailIfTrue(autoSemiColon(), "Cannot have a newline after 'throw'");
     
-    TreeExpression expr = parseExpression(context);
+
+    TreeExpression expr = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        expr = parseExpression(context);
+    }
+
     failIfFalse(expr, "Cannot parse expression for throw statement");
     JSTextPosition end = lastTokenEndPosition();
     failIfFalse(autoSemiColon(), "Expected a ';' after a throw statement");
@@ -1886,7 +1910,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement
 
     handleProductionOrFail(OPENPAREN, "(", "start", "subject of a 'with' statement");
     int start = tokenStart();
-    TreeExpression expr = parseExpression(context);
+
+    TreeExpression expr = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        expr = parseExpression(context);
+    }
+
     failIfFalse(expr, "Cannot parse 'with' subject expression");
     recordPauseLocation(context.breakpointLocation(expr));
     JSTextPosition end = lastTokenEndPosition();
@@ -1912,7 +1942,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseSwitchStateme
     JSTokenLocation location(tokenLocation());
     next();
     handleProductionOrFail(OPENPAREN, "(", "start", "subject of a 'switch'");
-    TreeExpression expr = parseExpression(context);
+
+    TreeExpression expr = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        expr = parseExpression(context);
+    }
+
     failIfFalse(expr, "Cannot parse switch subject expression");
     recordPauseLocation(context.breakpointLocation(expr));
     
@@ -1944,7 +1980,13 @@ template <class TreeBuilder> TreeClauseList Parser<LexerType>::parseSwitchClause
         return 0;
     unsigned startOffset = tokenStart();
     next();
-    TreeExpression condition = parseExpression(context);
+
+    TreeExpression condition = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        condition = parseExpression(context);
+    }
+
     failIfFalse(condition, "Cannot parse switch clause");
     consumeOrFail(COLON, "Expected a ':' after switch clause expression");
     TreeSourceElements statements = parseSourceElements(context, DontCheckForStrictMode);
@@ -3598,7 +3640,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     next();
     handleProductionOrFail2(OPENPAREN, "(", "start", "'if' condition");
 
-    TreeExpression condition = parseExpression(context);
+    TreeExpression condition = 0;
+    {
+        AllowInOverride allowInOverride(this);
+        condition = parseExpression(context);
+    }
+
     failIfFalse(condition, "Expected an expression as the condition for an if statement");
     recordPauseLocation(context.breakpointLocation(condition));
     handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
