@@ -64,9 +64,9 @@ using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 // parseLocalValue validates the complete LocalValue tree and produces a deserialized value when
 // deserializedValue is non-null. The validation-only path avoids constructing a discarded JSON tree.
-static bool parseLocalValue(const JSON::Value&, RefPtr<JSON::Value>* deserializedValue, bool* usesUnsupportedType);
+static bool parseLocalValue(const JSON::Value&, RefPtr<JSON::Value>* deserializedValue, bool* usesUnsupportedType, bool* usesHandle);
 static RefPtr<JSON::Value> deserializeLocalValue(const JSON::Value&, bool* usesUnsupportedType = nullptr);
-static bool validateLocalValue(const JSON::Value&, bool* usesUnsupportedType = nullptr);
+static bool validateLocalValue(const JSON::Value&, bool* usesUnsupportedType = nullptr, bool* usesHandle = nullptr);
 
 static Inspector::CommandResult<void> updateValidatedDepthParameter(const JSON::Object& options, ASCIILiteral key, std::optional<double>& depth)
 {
@@ -185,7 +185,7 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
     return remoteValue;
 }
 
-static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* deserializedValue, bool* usesUnsupportedType)
+static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* deserializedValue, bool* usesUnsupportedType, bool* usesHandle)
 {
     // FIXME: Implement RemoteReference and Channel types instead of using null placeholders.
     // https://bugs.webkit.org/show_bug.cgi?id=288058
@@ -198,10 +198,13 @@ static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* d
 
     // RemoteReference alternatives take precedence over the other union members.
     if (object->getValue("sharedId"_s) || object->getValue("handle"_s)) {
-        if (!WebDriverBidiProcessor::parseRemoteReference(*object))
+        auto remoteReference = WebDriverBidiProcessor::parseRemoteReference(*object);
+        if (!remoteReference)
             return false;
         if (usesUnsupportedType)
             *usesUnsupportedType = true;
+        if (usesHandle && remoteReference->sharedId.isNull())
+            *usesHandle = true;
         if (deserializedValue)
             *deserializedValue = JSON::Value::null();
         return true;
@@ -317,7 +320,7 @@ static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* d
         for (unsigned i = 0; i < valueArray->length(); ++i) {
             Ref element = valueArray->get(i);
             RefPtr<JSON::Value> deserializedElement;
-            if (!parseLocalValue(element.get(), deserializedValue ? &deserializedElement : nullptr, usesUnsupportedType))
+            if (!parseLocalValue(element.get(), deserializedValue ? &deserializedElement : nullptr, usesUnsupportedType, usesHandle))
                 return false;
             if (deserializedValue)
                 resultArray->pushValue(deserializedElement.releaseNonNull());
@@ -342,14 +345,14 @@ static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* d
 
             Ref valueElement = pairArray->get(1);
             RefPtr<JSON::Value> deserializedEntryValue;
-            if (!parseLocalValue(valueElement.get(), deserializedValue ? &deserializedEntryValue : nullptr, usesUnsupportedType))
+            if (!parseLocalValue(valueElement.get(), deserializedValue ? &deserializedEntryValue : nullptr, usesUnsupportedType, usesHandle))
                 return false;
 
             String key;
             Ref keyValue = pairArray->get(0);
             if (!keyValue->asString(key)) {
                 RefPtr<JSON::Value> deserializedKey;
-                if (!parseLocalValue(keyValue.get(), deserializedValue ? &deserializedKey : nullptr, usesUnsupportedType))
+                if (!parseLocalValue(keyValue.get(), deserializedValue ? &deserializedKey : nullptr, usesUnsupportedType, usesHandle))
                     return false;
                 if (deserializedValue && !deserializedKey->asString(key))
                     continue;
@@ -386,7 +389,7 @@ static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* d
                     entryArray->pushValue(JSON::Value::create(key));
             } else {
                 RefPtr<JSON::Value> deserializedKey;
-                if (!parseLocalValue(keyElement.get(), deserializedValue ? &deserializedKey : nullptr, usesUnsupportedType))
+                if (!parseLocalValue(keyElement.get(), deserializedValue ? &deserializedKey : nullptr, usesUnsupportedType, usesHandle))
                     return false;
                 if (deserializedValue)
                     entryArray->pushValue(deserializedKey.releaseNonNull());
@@ -394,7 +397,7 @@ static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* d
 
             Ref valueElement = pairArray->get(1);
             RefPtr<JSON::Value> deserializedEntryValue;
-            if (!parseLocalValue(valueElement.get(), deserializedValue ? &deserializedEntryValue : nullptr, usesUnsupportedType))
+            if (!parseLocalValue(valueElement.get(), deserializedValue ? &deserializedEntryValue : nullptr, usesUnsupportedType, usesHandle))
                 return false;
             if (deserializedValue) {
                 entryArray->pushValue(deserializedEntryValue.releaseNonNull());
@@ -409,15 +412,15 @@ static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* d
     return false;
 }
 
-static bool validateLocalValue(const JSON::Value& jsonValue, bool* usesUnsupportedType)
+static bool validateLocalValue(const JSON::Value& jsonValue, bool* usesUnsupportedType, bool* usesHandle)
 {
-    return parseLocalValue(jsonValue, nullptr, usesUnsupportedType);
+    return parseLocalValue(jsonValue, nullptr, usesUnsupportedType, usesHandle);
 }
 
 static RefPtr<JSON::Value> deserializeLocalValue(const JSON::Value& jsonValue, bool* usesUnsupportedType)
 {
     RefPtr<JSON::Value> deserializedValue;
-    if (!parseLocalValue(jsonValue, &deserializedValue, usesUnsupportedType))
+    if (!parseLocalValue(jsonValue, &deserializedValue, usesUnsupportedType, nullptr))
         return nullptr;
     ASSERT(deserializedValue);
     return deserializedValue;
@@ -445,12 +448,13 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
 
     bool argumentsUseUnsupportedType = false;
+    bool argumentsUseHandle = false;
     auto argumentsArray = JSON::Array::create();
     if (arguments) {
         for (size_t i = 0; i < arguments->length(); ++i) {
-            auto parsedArgument = deserializeLocalValue(arguments->get(i).get(), &argumentsUseUnsupportedType);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedArgument, InvalidParameter);
-            argumentsArray->pushValue(parsedArgument.releaseNonNull());
+            Ref argument = arguments->get(i);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validateLocalValue(argument.get(), &argumentsUseUnsupportedType, &argumentsUseHandle), InvalidParameter);
+            argumentsArray->pushValue(WTF::move(argument));
         }
     }
 
@@ -464,14 +468,15 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     }
 
     BrowsingContext browsingContext;
+    std::optional<RealmIdentifier> targetRealmIdentifier;
     if (!contextTarget.isNull()) {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(contextTarget.isEmpty(), FrameNotFound);
         browsingContext = contextTarget;
     } else {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(realmTarget.isEmpty(), FrameNotFound);
-        auto realmIdentifier = parseRealmIdentifier(realmTarget);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmIdentifier, FrameNotFound);
-        auto realmBrowsingContext = browsingContextForRealm(*realmIdentifier);
+        targetRealmIdentifier = parseRealmIdentifier(realmTarget);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetRealmIdentifier, FrameNotFound);
+        auto realmBrowsingContext = browsingContextForRealm(*targetRealmIdentifier);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmBrowsingContext, FrameNotFound);
         browsingContext = *realmBrowsingContext;
     }
@@ -480,57 +485,39 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
+    std::optional<double> maxObjectDepth;
+    if (optionalSerializationOptions) {
+        if (auto depth = optionalSerializationOptions->getDouble("maxObjectDepth"_s))
+            maxObjectDepth = *depth;
+    }
+
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!sandbox.isEmpty(), NotImplemented, "Sandbox targets are not supported yet."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(argumentsUseHandle, NoSuchHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(argumentsUseUnsupportedType, NotImplemented, "Remote references and channels are not supported yet."_s);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(optionalThis, NotImplemented, "Custom this values are not supported yet."_s);
 
+    // FIXME: Apply `maxDomDepth` and `includeShadowTree` during result serialization.
+    // https://bugs.webkit.org/show_bug.cgi?id=313658
     // FIXME: Handle the `resultOwnership` option.
     // https://bugs.webkit.org/show_bug.cgi?id=328254
     // FIXME: Handle the custom `this` option.
     // https://bugs.webkit.org/show_bug.cgi?id=328207
-    // FIXME: Route script.callFunction through the BiDi evaluation path.
-    // https://bugs.webkit.org/show_bug.cgi?id=313658
-    session->evaluateJavaScriptFunctionForBidi(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), optionalUserActivation.value_or(false), [weakThis = WeakPtr { *this }, callback = WTF::move(callback), browsingContext = browsingContext.isolatedCopy()](Inspector::CommandResult<String>&& stringResult) mutable {
-        CheckedPtr protectedThis = weakThis;
-        if (!protectedThis) {
-            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
-            return;
-        }
 
-        String realmID = protectedThis->generateRealmIdForBrowsingContext(browsingContext);
-        // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
-        // https://bugs.webkit.org/show_bug.cgi?id=301159
-
-        // FIXME: Properly fill ExceptionDetails remaining fields once we have a way to get them instead of just the error message.
-        // https://bugs.webkit.org/show_bug.cgi?id=288058
-        if (!stringResult) {
-            if (stringResult.error().startsWith("JavaScriptError"_s)) {
-                String errorMessage = stringResult.error().substring("JavaScriptError;"_s.length());
-                auto exceptionValue = Inspector::Protocol::BidiScript::RemoteValue::create()
-                    .setType(Inspector::Protocol::BidiScript::RemoteValueType::Error)
-                    .release();
-                auto errorObject = JSON::Object::create();
-                errorObject->setString("message"_s, errorMessage);
-                exceptionValue->setValue(WTF::move(errorObject));
-                callback({ { EvaluateResultType::Exception, realmID, nullptr, createExceptionDetails(errorMessage, WTF::move(exceptionValue)) } });
+    session->evaluateBidiCallFunction(topLevelContextHandle, frameHandle, targetRealmIdentifier, functionDeclaration, WTF::move(argumentsArray), awaitPromise, maxObjectDepth, optionalUserActivation.value_or(false), std::nullopt,
+        [weakThis = WeakPtr { *this }, callback = WTF::move(callback), functionDeclaration = functionDeclaration.isolatedCopy()](Inspector::CommandResultOf<String, RealmIdentifier>&& result) mutable {
+            CheckedPtr protectedThis = weakThis;
+            if (!protectedThis) {
+                callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                return;
+            }
+            if (!result) {
+                callback(makeUnexpected(result.error()));
                 return;
             }
 
-            callback(makeUnexpected(stringResult.error()));
-            return;
-        }
-
-        auto resultValue = JSON::Value::parseJSON(stringResult.value());
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultValue, InternalError, "Failed to parse callFunction result as JSON"_s);
-
-        auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
-            .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)
-            .release();
-
-        resultObject->setValue(resultValue.releaseNonNull());
-
-        callback({ { EvaluateResultType::Success, realmID, WTF::move(resultObject), nullptr } });
-    });
+            auto [serializedResult, executionRealmIdentifier] = WTF::move(result.value());
+            protectedThis->finishEvaluateBidiScriptResult(protocolRealmIdentifierString(executionRealmIdentifier), functionDeclaration, WTF::move(serializedResult), WTF::move(callback));
+        });
 }
 
 void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& target, CommandCallback<void>&& callback)
@@ -1077,7 +1064,7 @@ bool BidiScriptAgent::isFrameExecutionReady(const FrameInfoData& frameInfo)
 
 std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData& frameInfo)
 {
-    RefPtr session = m_session.get();
+    RefPtr session = m_session;
     if (!session)
         return std::nullopt;
 
