@@ -4511,9 +4511,29 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
     auto *backgroundScript = Util::constructScript(@[
         @"const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })",
         @"let updateCount = 0",
+        @"let nextPageURL",
+        @"let nextPageTitle",
 
         @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
         @"  browser.test.assertEq(tabId, currentTab.id, 'Only the tab we expect should be changing')",
+
+        @"  if (updateCount === 2) {",
+        @"    if ('url' in changeInfo)",
+        @"      nextPageURL = changeInfo.url",
+        @"    if (changeInfo.title)",
+        @"      nextPageTitle = changeInfo.title",
+
+        @"    if (!nextPageURL || !nextPageTitle)",
+        @"      return",
+
+        @"    ++updateCount",
+
+        @"    browser.test.assertTrue(nextPageURL.includes('localhost'), 'URL should be localhost after same site navigation')",
+        @"    browser.test.assertEq(nextPageTitle, 'Next Title', 'Title should be provided after same site navigation')",
+
+        @"    browser.test.sendMessage('Load IP Address')",
+        @"    return",
+        @"  }",
 
         @"  if ('url' in changeInfo && 'title' in changeInfo) {",
         @"    ++updateCount",
@@ -4528,11 +4548,6 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
         @"      browser.test.assertEq(changeInfo.title, 'Test Title', 'Title should be provided after user gesture')",
 
         @"      browser.test.sendMessage('Load Next Page')",
-        @"    } else if (updateCount === 3) {",
-        @"      browser.test.assertTrue(changeInfo.url.includes('localhost'), 'URL should be localhost after same site navigation')",
-        @"      browser.test.assertEq(changeInfo.title, 'Next Title', 'Title should be provided after same site navigation')",
-
-        @"      browser.test.sendMessage('Load IP Address')",
         @"    } else {",
         @"      browser.test.assertEq(updateCount, 4, 'Update count should be')",
         @"      browser.test.assertEq(changeInfo.url, '', 'URL should be empty after navigation without permission')",
@@ -4580,6 +4595,12 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
     EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost("/next.html"_s)];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [manager.get().defaultTab.webView.title isEqualToString:@"Next Title"];
+    }));
+
+    [manager.get().controller didChangeTabProperties:WKWebExtensionTabChangedPropertiesTitle forTab:manager.get().defaultTab];
 
     [manager runUntilTestMessage:@"Load IP Address"];
 

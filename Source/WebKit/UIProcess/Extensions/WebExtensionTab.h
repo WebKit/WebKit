@@ -134,6 +134,7 @@ public:
     void setTemporaryPermissionMatchPattern(RefPtr<WebExtensionMatchPattern>&& matchPattern) { m_temporaryPermissionMatchPattern = WTF::move(matchPattern); }
 
     OptionSet<ChangedProperties> changedProperties() const { return m_changedProperties; }
+    uint64_t changedPropertiesBatch() const { return m_changedPropertiesBatch; }
     void addChangedProperties(OptionSet<ChangedProperties>);
     void clearChangedProperties();
 
@@ -237,6 +238,7 @@ private:
     OptionSet<ChangedProperties> m_changedProperties;
     WebExtensionTabParameters m_pendingChangedParameters;
     WebExtensionTabParameters m_reportedParameters;
+    uint64_t m_changedPropertiesBatch { 0 };
     bool m_activeUserGesture : 1 { false };
     bool m_isOpen : 1 { false };
     mutable bool m_private : 1 { false };

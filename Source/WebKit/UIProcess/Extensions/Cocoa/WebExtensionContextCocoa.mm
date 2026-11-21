@@ -1707,7 +1707,7 @@ void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet
     constexpr auto updatedEventDelay = 25_ms;
 
     // Fire the updated event after a small delay to coalesce relevant changes together.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, updatedEventDelay.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, tabIdentifier = tab.identifier()] {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, updatedEventDelay.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, tabIdentifier = tab.identifier(), batch = tab.changedPropertiesBatch()] {
         if (!isLoaded())
             return;
 
@@ -1716,8 +1716,7 @@ void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet
         if (!tab)
             return;
 
-        // The pending changes were already fired early if a repeated change flushed them.
-        if (tab->changedProperties().isEmpty())
+        if (tab->changedPropertiesBatch() != batch || tab->changedProperties().isEmpty())
             return;
 
         firePendingTabsUpdatedEvent(*tab, WebExtensionTab::ValueSource::Live);
