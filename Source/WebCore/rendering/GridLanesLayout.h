@@ -118,6 +118,7 @@ private:
     ItemPlacement placeItemDensely(SkippedSpaces&, const GridTrackSizingAlgorithm&, const GridArea& normalPlacementArea, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis, ResolvedFitTolerance);
     std::optional<ItemPlacement> placeIntoSkippedSpace(SkippedSpaces&, const GridTrackSizingAlgorithm&, const GridArea& normalPlacementArea, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis, ResolvedFitTolerance);
     Vector<std::optional<LayoutUnit>> skippedSpacePositions(const SkippedSpaces&, const GridTrackSizingAlgorithm&, const GridSpan& normalPlacementTracks, LayoutUnit spaceNeeded, bool isAutoPlacedInGridAxis) const;
+    void fillBelowRunningPosition(SkippedSpaces&, unsigned track, LayoutUnit position, LayoutUnit marginBoxSize);
     LayoutUnit usedSizeOfTracks(const GridTrackSizingAlgorithm&, unsigned startLine, unsigned trackCount) const;
     void recordSkippedSpaces(SkippedSpaces&, const GridSpan&) const;
     NODELETE LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
