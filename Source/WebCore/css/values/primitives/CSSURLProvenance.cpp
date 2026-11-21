@@ -33,7 +33,7 @@ namespace WebCore::CSS {
 
 void add(Hasher& hasher, const URLProvenance& provenance)
 {
-    add(hasher, provenance.loadedFromOpaqueSource);
+    add(hasher, provenance.styleSheetURL, provenance.loadedFromOpaqueSource);
 }
 
 } // namespace WebCore::CSS

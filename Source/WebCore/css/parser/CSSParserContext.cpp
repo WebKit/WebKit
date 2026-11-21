@@ -80,11 +80,12 @@ CSSParserContext::CSSParserContext(const Document& document)
     *this = document.cssParserContext();
 }
 
-CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, ASCIILiteral charset)
+CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, ASCIILiteral charset, IsExternalStyleSheet isExternalStyleSheet)
     : CSSParserContext(document.settings())
 {
     baseURL = sheetBaseURL.isNull() ? document.baseURL() : sheetBaseURL;
     this->charset = charset;
+    this->isExternalStyleSheet = isExternalStyleSheet == IsExternalStyleSheet::Yes;
     mode = document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode;
     isHTMLDocument = document.isHTMLDocument();
     hasDocumentSecurityOrigin = sheetBaseURL.isNull() || protect(document.securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
@@ -155,6 +156,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.isHTMLDocument,
         context.hasDocumentSecurityOrigin,
         static_cast<bool>(context.loadedFromOpaqueSource),
+        context.isExternalStyleSheet,
         context.useSystemAppearance,
         context.shouldIgnoreImportRules,
         context.counterStyleAtRuleImageSymbolsEnabled,

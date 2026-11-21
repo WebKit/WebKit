@@ -1,5 +1,5 @@
 Check that child css are loaded with the referrer and referrer policy from the external stylesheet.
 
 
-FAIL Child css from external stylesheet. assert_equals: expected (undefined) undefined but got (string) "http://web-platform.test:8800/"
+FAIL Child css from external stylesheet. assert_equals: expected (undefined) undefined but got (string) "http://www1.web-platform.test:8800/"
 

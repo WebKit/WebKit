@@ -39,6 +39,8 @@ namespace WebCore {
 class Document;
 class Settings;
 
+enum class IsExternalStyleSheet : bool { No, Yes };
+
 struct CSSParserContext {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CSSParserContext);
 
@@ -52,6 +54,7 @@ struct CSSParserContext {
     bool hasDocumentSecurityOrigin : 1 { false };
 
     LoadedFromOpaqueSource loadedFromOpaqueSource : 1 { LoadedFromOpaqueSource::No };
+    bool isExternalStyleSheet : 1 { false };
     bool useSystemAppearance : 1 { false };
     bool shouldIgnoreImportRules : 1 { false };
 
@@ -115,7 +118,7 @@ struct CSSParserContext {
 
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&);
-    CSSParserContext(const Document&, const URL& baseURL, ASCIILiteral charset = ""_s);
+    CSSParserContext(const Document&, const URL& baseURL, ASCIILiteral charset = ""_s, IsExternalStyleSheet = IsExternalStyleSheet::No);
     CSSParserContext(const Settings&);
 
     NODELETE void setUASheetMode();

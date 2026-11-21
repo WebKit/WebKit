@@ -86,7 +86,10 @@ CachedResourceRequest createStyleResourceRequest(Document& document, const WTF::
 
     // 6. If req's mode is "cors", and sheet is not null, then set req's referrer to the style resource base URL
     //    given cssRuleOrDeclaration.
-    // FIXME: Implement this step. It needs the URL of the stylesheet a url() is from.
+    //
+    // FIXME: This sets the referrer in every mode (and not just in the "cors" mode like the spec requires) to match other engines and WPT.
+    if (!provenance.styleSheetURL.isNull())
+        request.resourceRequest().setHTTPReferrer(provenance.styleSheetURL.string());
 
     // 7. If sheet's origin-clean flag is set, set req's initiator type to "css".
     //

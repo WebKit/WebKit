@@ -526,7 +526,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
 
     Ref document = this->document();
     ASSERT(m_isCSS);
-    CSSParserContext parserContext(document, baseURL, charset);
+    CSSParserContext parserContext(document, baseURL, charset, IsExternalStyleSheet::Yes);
 
     Ref cssSheet = CSSStyleSheet::create(StyleSheetContents::create(href, parserContext), *this, sheet.isCORSSameOrigin());
     cssSheet->setDisabled(m_alternate);

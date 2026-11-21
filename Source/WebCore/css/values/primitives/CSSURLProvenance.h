@@ -26,12 +26,17 @@
 
 #include <WebCore/LoadedFromOpaqueSource.h>
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 
 namespace WebCore::CSS {
 
 // Implicit information from the context a url() was parsed with.
 // https://drafts.csswg.org/css-values-4/#fetch-a-style-resource
 struct URLProvenance {
+    // The location of the style sheet containing the url().
+    // https://drafts.csswg.org/cssom/#concept-css-style-sheet-location
+    WTF::URL styleSheetURL { };
+
     LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 
     bool operator==(const URLProvenance&) const = default;
