@@ -70,15 +70,14 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
         auto placedByLine = floatBox.placedByLine();
         if (!placedByLine) {
             if (isUnsplittable) {
-                auto rect = floatBox.absoluteRectWithMargin();
-                flow.updateMinimumPageHeight(rect.top(), rect.height());
+                flow.updateMinimumPageHeight(floatBox.marginBoxTop().value(), floatBox.marginBoxSize().height());
             }
             continue;
         }
 
         auto floatMinimumBottom = [&] {
             if (isUnsplittable)
-                return floatBox.absoluteRectWithMargin().bottom();
+                return floatBox.marginBoxBottom().value();
 
             if (CheckedPtr block = dynamicDowncast<RenderBlockFlow>(renderer)) {
                 if (auto firstLine = InlineIterator::firstLineBoxFor(*block))

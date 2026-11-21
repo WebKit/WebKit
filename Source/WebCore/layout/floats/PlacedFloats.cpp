@@ -98,12 +98,12 @@ void PlacedFloats::add(Item newFloatItem)
             continue;
 
         auto isInlineAxisOrdered = [&] {
-            if (newFloatItem.absoluteRectWithMargin().top() > floatItem.absoluteRectWithMargin().top()) {
+            if (newFloatItem.marginBoxTop() > floatItem.marginBoxTop()) {
                 // There's no more floats on this block axis position.
                 return true;
             }
-            return (isStartPositioned && newFloatItem.absoluteRectWithMargin().right() >= floatItem.absoluteRectWithMargin().right())
-                || (!isStartPositioned && newFloatItem.absoluteRectWithMargin().left() <= floatItem.absoluteRectWithMargin().left());
+            return (isStartPositioned && newFloatItem.marginBoxRight() >= floatItem.marginBoxRight())
+                || (!isStartPositioned && newFloatItem.marginBoxLeft() <= floatItem.marginBoxLeft());
         };
         if (isInlineAxisOrdered())
             return m_list.insert(i + 1, newFloatItem);
@@ -133,23 +133,23 @@ void PlacedFloats::clear()
     m_positionTypes = { };
 }
 
-std::optional<LayoutUnit> PlacedFloats::highestPositionOnBlockAxis() const
+std::optional<AxisPosition<ParentFormattingContextRoot>> PlacedFloats::highestPositionOnBlockAxis() const
 {
-    auto highestBlockAxisPosition = std::optional<LayoutUnit> { };
+    auto highestBlockAxisPosition = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
     for (auto& floatItem : m_list)
-        highestBlockAxisPosition = !highestBlockAxisPosition ? floatItem.absoluteRectWithMargin().top() : std::min(*highestBlockAxisPosition, floatItem.absoluteRectWithMargin().top());
+        highestBlockAxisPosition = !highestBlockAxisPosition ? floatItem.marginBoxTop() : std::min(*highestBlockAxisPosition, floatItem.marginBoxTop());
     return highestBlockAxisPosition;
 }
 
-std::optional<LayoutUnit> PlacedFloats::lowestPositionOnBlockAxis(Clear type) const
+std::optional<AxisPosition<ParentFormattingContextRoot>> PlacedFloats::lowestPositionOnBlockAxis(Clear type) const
 {
     // TODO: Currently this is only called once for each formatting context root with floats per layout.
     // Cache the value if we end up calling it more frequently (and update it at append/remove).
-    auto lowestBlockAxisPosition = std::optional<LayoutUnit> { };
+    auto lowestBlockAxisPosition = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
     for (auto& floatItem : m_list) {
         if ((type == Clear::InlineStart && !floatItem.isStartPositioned()) || (type == Clear::InlineEnd && floatItem.isStartPositioned()))
             continue;
-        lowestBlockAxisPosition = !lowestBlockAxisPosition ? floatItem.absoluteRectWithMargin().bottom() : std::max(*lowestBlockAxisPosition, floatItem.absoluteRectWithMargin().bottom());
+        lowestBlockAxisPosition = !lowestBlockAxisPosition ? floatItem.marginBoxBottom() : std::max(*lowestBlockAxisPosition, floatItem.marginBoxBottom());
     }
     return lowestBlockAxisPosition;
 }
