@@ -1,0 +1,3 @@
+
+PASS Root re-snap after scroll-snap-align change animates with scroll-behavior: smooth
+

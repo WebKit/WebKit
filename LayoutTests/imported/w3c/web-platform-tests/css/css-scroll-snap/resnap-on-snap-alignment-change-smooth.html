@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>Resnap after a snap alignment change respects scroll-behavior</title>
+<link rel="help" href="https://drafts.csswg.org/css-scroll-snap-1/#re-snap">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#scroll-behavior">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  body {
+    margin: 0;
+  }
+  .scroller {
+    width: 300px;
+    height: 300px;
+    overflow: auto;
+  }
+  .scroller.x {
+    scroll-snap-type: x mandatory;
+  }
+  .scroller.y {
+    scroll-snap-type: y mandatory;
+  }
+  .scroller.smooth {
+    scroll-behavior: smooth;
+  }
+  .scroller.auto {
+    scroll-behavior: auto;
+  }
+  .content {
+    display: flex;
+  }
+  .x .content {
+    width: 600px;
+    height: 50px;
+  }
+  .y .content {
+    flex-direction: column;
+    width: 50px;
+    height: 600px;
+  }
+  .content > div {
+    flex: 1;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
+</style>
+<body>
+<script>
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => resolve()));
+
+function createScroller(t, axis, behavior) {
+  const scroller = document.createElement("div");
+  scroller.className = `scroller ${axis} ${behavior}`;
+  scroller.innerHTML = '<div class="content"><div class="start"></div><div class="end"></div></div>';
+  document.body.appendChild(scroller);
+  t.add_cleanup(() => scroller.remove());
+  return scroller;
+}
+
+const scrollPosition = (scroller, axis) => axis == "x" ? scroller.scrollLeft : scroller.scrollTop;
+const maxScrollPosition = (scroller, axis) => axis == "x"
+    ? scroller.scrollWidth - scroller.clientWidth
+    : scroller.scrollHeight - scroller.clientHeight;
+
+async function resnapAndObserve(t, axis, behavior) {
+  const scroller = createScroller(t, axis, behavior);
+  await nextFrame();
+  assert_equals(scrollPosition(scroller, axis), 0, "Initially at the start");
+
+  const max = maxScrollPosition(scroller, axis);
+  assert_greater_than(max, 0, "Scroller is scrollable");
+
+  scroller.querySelector(".end").classList.add("snap-start");
+
+  let sawIntermediatePosition = false;
+  for (let i = 0; i < 300 && scrollPosition(scroller, axis) < max; ++i) {
+    await nextFrame();
+    const position = scrollPosition(scroller, axis);
+    if (position > 0 && position < max)
+      sawIntermediatePosition = true;
+  }
+  assert_equals(scrollPosition(scroller, axis), max, "Ends at the new snap position");
+  return sawIntermediatePosition;
+}
+
+promise_test(async t => {
+  assert_true(await resnapAndObserve(t, "x", "smooth"), "Re-snap should animate through intermediate positions");
+}, "Re-snap after scroll-snap-align change animates with scroll-behavior: smooth (inline axis)");
+
+promise_test(async t => {
+  assert_true(await resnapAndObserve(t, "y", "smooth"), "Re-snap should animate through intermediate positions");
+}, "Re-snap after scroll-snap-align change animates with scroll-behavior: smooth (block axis)");
+
+promise_test(async t => {
+  assert_false(await resnapAndObserve(t, "x", "auto"), "Re-snap should jump straight to the snap position");
+}, "Re-snap after scroll-snap-align change is immediate with scroll-behavior: auto");
+</script>
+</html>
