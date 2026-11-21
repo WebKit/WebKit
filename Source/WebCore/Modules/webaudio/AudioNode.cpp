@@ -624,8 +624,12 @@ void AudioNode::decrementConnectionCountWithLock()
     fprintf(stderr, "%p: %d: AudioNode::decrementConnectionCountWithLock() %d %d\n", this, nodeType(), m_normalRefCount.load(), m_connectionRefCount.load());
 #endif
 
-    if (!m_connectionRefCount && m_normalRefCount)
-        disableOutputsIfNecessary();
+    if (!m_connectionRefCount) {
+        if (m_normalRefCount)
+            disableOutputsIfNecessary();
+        else if (!m_isDisabled && requiresTailProcessing() && context().isInitialized() && !context().isAudioThreadFinished())
+            protect(context())->addTailProcessingNode(*this);
+    }
 
     markNodeForDeletionIfNecessary();
 }

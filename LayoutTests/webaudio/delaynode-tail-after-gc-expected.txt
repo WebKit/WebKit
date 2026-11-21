@@ -1,0 +1,20 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "delay-tail-after-disconnect"
+PASS Executing "biquad-tail-after-disconnect"
+PASS Executing "never-connected-delay"
+PASS Audit report
+PASS > [delay-tail-after-disconnect] DelayNode plays its tail after its input disconnects
+PASS   output[0:delay) contains only the constant 0.
+PASS   output[delay:disconnect) contains only the constant 1.
+PASS   output[disconnect:disconnect+delay) contains only the constant 1.
+PASS   output[disconnect+delay:) contains only the constant 0.
+PASS < [delay-tail-after-disconnect] All assertions passed. (total 4 assertions)
+PASS > [biquad-tail-after-disconnect] BiquadFilterNode keeps its tail after its input disconnects
+PASS   biquad sample magnitude after disconnect is greater than 0.05.
+PASS < [biquad-tail-after-disconnect] All assertions passed. (total 1 assertions)
+PASS > [never-connected-delay] A DelayNode that was never connected can be collected
+PASS   never-connected DelayNode wrapper is equal to undefined.
+PASS < [never-connected-delay] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
+
