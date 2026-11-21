@@ -33,6 +33,7 @@
 #import <numbers>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Borrow.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/NeverDestroyed.h>
@@ -222,7 +223,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 - (BOOL)_sendMarkerHIDEventInWindow:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
 {
     auto callbackID = [_WKTouchEventGenerator nextEventCallbackID];
-    SUPPRESS_UNRETAINED_ARG [protect(_eventCallbacks) setObject:Block_copy(completionBlock) forKey:@(callbackID)];
+    SUPPRESS_UNRETAINED_ARG [protect(_eventCallbacks) setObject:makeBlockPtr(completionBlock).get() forKey:@(callbackID)];
 
     auto markerEvent = adoptCF(IOHIDEventCreateVendorDefinedEvent(kCFAllocatorDefault,
         mach_absolute_time(),
@@ -389,11 +390,10 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     CFIndex callbackID = IOHIDEventGetIntegerValue(event, kIOHIDEventFieldVendorDefinedData);
     RetainPtr key = @(callbackID);
     RetainPtr eventCallbacks = _eventCallbacks;
-    void (^completionBlock)() = [eventCallbacks objectForKey:key.get()];
+    BlockPtr<void()> completionBlock = [eventCallbacks objectForKey:key.get()];
     if (completionBlock) {
         [eventCallbacks removeObjectForKey:key.get()];
         completionBlock();
-        Block_release(completionBlock);
     }
 }
 

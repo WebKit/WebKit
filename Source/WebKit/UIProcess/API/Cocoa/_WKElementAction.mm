@@ -34,6 +34,7 @@
 #import "WKContentViewInteraction.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import <WebCore/LocalizedStrings.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
@@ -77,7 +78,7 @@ static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"
 
 @implementation _WKElementAction  {
     RetainPtr<NSString> _title;
-    WKElementActionHandlerInternal _actionHandler;
+    BlockPtr<void(WKActionSheetAssistant *, _WKActivatedElementInfo *)> _actionHandler;
     WKElementActionDismissalHandler _dismissalHandler;
     WeakObjCPtr<WKActionSheetAssistant> _defaultActionSheetAssistant;
 }
@@ -94,7 +95,7 @@ static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"
 
     _title = adoptNS([title copy]);
     _type = type;
-    _actionHandler = [handler copy];
+    _actionHandler = makeBlockPtr(handler);
     _disabled = disabled;
     _defaultActionSheetAssistant = assistant;
     return self;
@@ -102,7 +103,6 @@ static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"
 
 - (void)dealloc
 {
-    [_actionHandler release];
     [_dismissalHandler release];
 
     [super dealloc];
