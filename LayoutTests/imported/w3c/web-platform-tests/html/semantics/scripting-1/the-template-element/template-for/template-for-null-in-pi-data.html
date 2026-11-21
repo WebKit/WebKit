@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - U+0000 in processing instruction data</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/parsing.html#processing-instruction-data-state">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+  <script>
+    test((t) => {
+      const outerIframe = document.createElement("iframe");
+      document.body.appendChild(outerIframe);
+      t.add_cleanup(() => outerIframe.remove());
+
+      const doc = outerIframe.contentDocument;
+      doc.open();
+      doc.write(`<div id="target"><?marker name="a\u0000b">old</div>`);
+      doc.write(`<template for="a\uFFFDb">new</template>`);
+      doc.close();
+
+      assert_equals(doc.querySelector("#target").textContent, "newold",
+        "U+0000 in the marker name should tokenize as U+FFFD and match");
+    }, "A NULL character in processing instruction data becomes U+FFFD");
+
+    test((t) => {
+      const outerIframe = document.createElement("iframe");
+      document.body.appendChild(outerIframe);
+      t.add_cleanup(() => outerIframe.remove());
+
+      const doc = outerIframe.contentDocument;
+      doc.open();
+      doc.write(`<div id="target"><?marker name="plain">old</div>`);
+      doc.write(`<template for="pl\u0000ain">new</template>`);
+      doc.close();
+
+      assert_equals(doc.querySelector("#target").textContent, "old",
+        "a for value with U+0000 should not match a plain marker name");
+      assert_not_equals(doc.querySelector("template"), null,
+        "the non-matching template should stay in the tree");
+    }, "A NULL character in the for attribute does not match a plain marker name");
+  </script>
+</body>

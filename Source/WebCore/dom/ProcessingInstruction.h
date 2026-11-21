@@ -67,9 +67,16 @@ public:
     bool isXSL() const { return m_isXSL; }
 #endif
 
+    // A <?marker?> or <?start?> that <template for> resolves against; Document
+    // indexes them by name so target resolution does not walk the tree.
+    bool isPatchMarker() const { return m_target == "marker"_s || m_target == "start"_s; }
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument);
+
 private:
     friend class CharacterData;
     ProcessingInstruction(Document&, AtomString target, String data);
+
+    static OptionSet<TypeFlag> typeFlagsForTarget(const AtomString&);
 
     String nodeName() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
@@ -78,6 +85,9 @@ private:
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void postConnectionSteps() override;
     void removingSteps(RemovalType, ContainerNode&) override;
+
+    void registerPatchMarkerIfNeeded();
+    void unregisterPatchMarker(Document&);
 
     void checkStyleSheet();
     void setSheet(RefPtr<StyleSheet>&&);
@@ -106,6 +116,7 @@ private:
     bool m_updatingDataFromAttributes { false };
 
     String m_target;
+    AtomString m_registeredPatchMarkerName;
     String m_localHref;
     String m_title;
     String m_media;

@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - sibling and positional styles update while a patch streams</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-template-for">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  #list li:first-child { color: rgb(0, 128, 0); }
+  #list li:last-child { background-color: rgb(0, 0, 255); }
+</style>
+<body>
+  <ul id="list"><?marker name="m"><li id="l1">A</li></ul>
+  <script>
+    // Force style so a stale value, if any, is one that was already resolved.
+    getComputedStyle(document.getElementById("l1")).color;
+  </script>
+  <template for="m"><li id="l0">Z</li><script>
+    window.midPatch = {
+      l0Color: getComputedStyle(document.getElementById("l0")).color,
+      l1Color: getComputedStyle(document.getElementById("l1")).color,
+    };
+  </script><li id="l2">B</li></template>
+  <script>
+    test(() => {
+      assert_equals(window.midPatch.l0Color, "rgb(0, 128, 0)",
+        ":first-child should match the newly inserted first item mid-patch");
+      assert_not_equals(window.midPatch.l1Color, "rgb(0, 128, 0)",
+        ":first-child should stop matching the old first item mid-patch");
+    }, "Positional styles are correct for a script running inside a streaming patch");
+
+    test(() => {
+      const l0 = document.getElementById("l0");
+      const l1 = document.getElementById("l1");
+      const l2 = document.getElementById("l2");
+      assert_equals(getComputedStyle(l0).color, "rgb(0, 128, 0)", ":first-child after the patch");
+      assert_not_equals(getComputedStyle(l1).color, "rgb(0, 128, 0)");
+      assert_equals(getComputedStyle(l1).backgroundColor, "rgb(0, 0, 255)",
+        ":last-child should match the item after the insertion point");
+      assert_not_equals(getComputedStyle(l2).backgroundColor, "rgb(0, 0, 255)",
+        ":last-child should not match the last patched item, the marker inserts before existing children");
+    }, "Positional styles are correct after the patch finishes");
+  </script>
+</body>

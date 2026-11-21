@@ -1,0 +1,36 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - duplicate marker names resolve in tree order</title>
+<link rel="help" href="https://github.com/WICG/declarative-partial-updates" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="first"><?marker name="dup"?></div>
+<div id="second"><?marker name="dup"?></div>
+<template for="dup">first patch</template>
+<script>
+  test(() => {
+    assert_equals(document.querySelector("#first").textContent, "first patch", "the first marker in tree order is patched");
+    assert_equals(document.querySelector("#second").textContent, "", "the second marker is untouched");
+  }, "A patch targets the first of two markers with the same name");
+
+  // The first marker was consumed by the patch above, so the next patch
+  // should fall through to the remaining one.
+</script>
+<template for="dup">second patch</template>
+<script>
+  test(() => {
+    assert_equals(document.querySelector("#first").textContent, "first patch");
+    assert_equals(document.querySelector("#second").textContent, "second patch", "the remaining marker is patched");
+  }, "After the first marker is consumed, the next patch targets the remaining one");
+</script>
+<div id="third"><?marker name="gone"?></div>
+<script>
+  window.goneMarker = Array.from(document.querySelector("#third").childNodes).find((node) => node.nodeType === Node.PROCESSING_INSTRUCTION_NODE);
+  goneMarker.remove();
+</script>
+<template for="gone">should not appear</template>
+<script>
+  test(() => {
+    assert_equals(document.querySelector("#third").textContent, "", "a removed marker is not a patch target");
+  }, "A patch whose marker was removed does nothing");
+</script>

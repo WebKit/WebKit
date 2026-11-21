@@ -1,0 +1,7 @@
+first patch
+second patch
+
+PASS A patch targets the first of two markers with the same name
+PASS After the first marker is consumed, the next patch targets the remaining one
+PASS A patch whose marker was removed does nothing
+

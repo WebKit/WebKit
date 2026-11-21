@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - dynamic markup insertion in pagehide after the patch target moved cross-document throws</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#prepare-content-patching">
+<link rel="help" href="https://github.com/whatwg/html/issues/13317">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+  <script>
+    for (const [name, fn] of [
+      ["document.open()", (doc) => doc.open()],
+      ["document.write()", (doc) => doc.write("<p>Hi")],
+      ["document.writeln()", (doc) => doc.writeln("<p>Hi")],
+      ["document.close()", (doc) => doc.close()],
+    ]) {
+      test((t) => {
+        const outerIframe = document.createElement("iframe");
+        document.body.appendChild(outerIframe);
+        t.add_cleanup(() => outerIframe.remove());
+
+        const doc = outerIframe.contentDocument;
+        doc.open();
+        doc.write(`<div id="target"><?start name="outer">old<?end></div>`);
+        doc.write(`<template for="outer">before<?start name="inner"><iframe></iframe><?end>after`);
+
+        // The scope now lives in this document, while `doc` is still parsing.
+        const target = doc.getElementById("target");
+        document.body.append(target);
+        t.add_cleanup(() => target.remove());
+
+        let pagehideRan = false;
+        document.querySelector("#target iframe").contentWindow.onpagehide = t.step_func(() => {
+          pagehideRan = true;
+          assert_throws_dom("InvalidStateError", outerIframe.contentWindow.DOMException, () => {
+            fn(doc);
+          });
+        });
+
+        doc.write(`<template for="inner">New</template></template>`);
+        doc.close();
+
+        assert_true(pagehideRan, "pagehide should have fired");
+        assert_equals(target.textContent, "beforeNewafter",
+          "the nested patch should still apply in the moved target");
+      }, `${name} in pagehide throws InvalidStateError when the patch target moved to another document`);
+    }
+  </script>
+</body>

@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] -->
+<!DOCTYPE html>
+<title>template for: mutation events during patching do not re-enter the parser</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+test((t) => {
+  const outerIframe = document.createElement("iframe");
+  document.body.appendChild(outerIframe);
+  t.add_cleanup(() => outerIframe.remove());
+
+  const doc = outerIframe.contentDocument;
+  doc.open();
+  doc.write(`<div id="target"><?marker name="m">old</div>`);
+
+  let sawRemoval = false;
+  doc.addEventListener("DOMNodeRemoved", t.step_func((event) => {
+    if (event.target.nodeType !== Node.PROCESSING_INSTRUCTION_NODE)
+      return;
+    sawRemoval = true;
+    assert_throws_dom("InvalidStateError", outerIframe.contentWindow.DOMException, () => {
+      doc.write("<p>Hi");
+    });
+  }));
+
+  doc.write(`<template for="m">new</template>`);
+  doc.close();
+
+  assert_true(sawRemoval, "DOMNodeRemoved should have fired for the marker");
+  assert_equals(doc.querySelector("#target").textContent, "newold");
+}, "document.write() from DOMNodeRemoved for the marker throws InvalidStateError");
+
+test((t) => {
+  const outerIframe = document.createElement("iframe");
+  document.body.appendChild(outerIframe);
+  t.add_cleanup(() => outerIframe.remove());
+
+  const doc = outerIframe.contentDocument;
+  doc.open();
+  doc.write(`<div id="target"><?start name="s">old<?end></div>`);
+
+  let sawRemoval = false;
+  doc.addEventListener("DOMNodeRemoved", t.step_func((event) => {
+    if (event.target.nodeType !== Node.TEXT_NODE)
+      return;
+    sawRemoval = true;
+    assert_throws_dom("InvalidStateError", outerIframe.contentWindow.DOMException, () => {
+      doc.write("<p>Hi");
+    });
+  }));
+
+  doc.write(`<template for="s">new</template>`);
+  doc.close();
+
+  assert_true(sawRemoval, "DOMNodeRemoved should have fired for the replaced content");
+  assert_equals(doc.querySelector("#target").textContent, "new");
+}, "document.write() from DOMNodeRemoved for replaced content throws InvalidStateError");
+</script>
+</body>

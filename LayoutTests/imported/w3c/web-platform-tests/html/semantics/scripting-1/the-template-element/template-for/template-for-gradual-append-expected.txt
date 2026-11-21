@@ -1,4 +1,4 @@
-Loading...
+ABCD
 
-FAIL Multiple <template for> assert_array_equals: expected property 1 to be "A" but got "Loading..." (expected array ["Loading...", "A", "AB", "ABC", "ABD", "ABCD"] got ["Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading..."])
+PASS Multiple <template for>
 

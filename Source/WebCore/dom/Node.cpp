@@ -2393,6 +2393,8 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
 
     if (auto* element = dynamicDowncast<Element>(*this))
         element->didMoveToNewDocument(oldDocument, newDocument);
+    else if (auto* instruction = dynamicDowncast<ProcessingInstruction>(*this))
+        instruction->didMoveToNewDocument(oldDocument, newDocument);
 }
 
 void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDocument, CustomElementRegistry* scopedRegistryOfOldTreeScope)
@@ -2521,6 +2523,8 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
 
     if (auto* element = dynamicDowncast<Element>(*this))
         element->didMoveToNewDocument(oldDocument, newDocument);
+    else if (auto* instruction = dynamicDowncast<ProcessingInstruction>(*this))
+        instruction->didMoveToNewDocument(oldDocument, newDocument);
 }
 
 bool isTouchRelatedEventType(const EventTypeInfo& eventType, const EventTarget& target)

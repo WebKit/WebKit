@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<title>template for: `for` applies whenever no declarative shadow root gets attached</title>
+<link rel="help" href="https://github.com/whatwg/html/issues/13075">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+test(() => {
+  const div = document.createElement("div");
+  div.innerHTML = `<?start name="z">old<?end><template shadowrootmode="open" for="z">new</template>`;
+  assert_equals(div.shadowRoot, null, "innerHTML does not attach declarative shadow roots");
+  assert_equals(div.querySelector("template"), null, "the template should patch, not stay in the tree");
+  assert_equals(div.textContent, "new");
+}, "for applies where declarative shadow roots are disallowed (innerHTML)");
+
+test(() => {
+  const doc = new DOMParser().parseFromString(
+    `<div id="host"><?start name="z">old<?end><template shadowrootmode="open" for="z">new</template></div>`,
+    "text/html");
+  const host = doc.getElementById("host");
+  assert_equals(host.shadowRoot, null, "DOMParser does not attach declarative shadow roots");
+  assert_equals(host.querySelector("template"), null);
+  assert_equals(host.textContent, "new");
+}, "for applies where declarative shadow roots are disallowed (DOMParser)");
+
+test((t) => {
+  const iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+  t.add_cleanup(() => iframe.remove());
+
+  const doc = iframe.contentDocument;
+  doc.open();
+  doc.write(`<div id="host"><template shadowrootmode="open">first</template>`);
+  doc.write(`<?start name="z">old<?end><template shadowrootmode="open" for="z">new</template></div>`);
+  doc.close();
+
+  const host = doc.getElementById("host");
+  assert_not_equals(host.shadowRoot, null, "the first declarative shadow root is attached");
+  assert_equals(host.shadowRoot.textContent, "first");
+  assert_equals(host.querySelector("template"), null, "the template should patch, not stay in the tree");
+  assert_equals(host.textContent, "new");
+}, "for applies when the host already has a shadow root");
+
+test((t) => {
+  const iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+  t.add_cleanup(() => iframe.remove());
+
+  const doc = iframe.contentDocument;
+  doc.open();
+  doc.write(`<a id="host"><?start name="z">old<?end>`);
+  doc.write(`<template shadowrootmode="open" for="z">new</template></a>`);
+  doc.close();
+
+  const host = doc.getElementById("host");
+  assert_equals(host.shadowRoot, null, "an anchor cannot be a shadow host");
+  assert_equals(host.querySelector("template"), null);
+  assert_equals(host.textContent, "new");
+}, "for applies when the host cannot have a shadow root");
+</script>
+</body>

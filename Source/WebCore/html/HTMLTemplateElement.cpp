@@ -38,12 +38,14 @@
 #include "ElementRareData.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
+#include "ProcessingInstruction.h"
 #include "SerializedNode.h"
 #include "ShadowRoot.h"
 #include "ShadowRootInit.h"
 #include "ShadowRootMode.h"
 #include "SlotAssignmentMode.h"
 #include "TemplateContentDocumentFragment.h"
+#include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
 #include "markup.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -81,6 +83,79 @@ DocumentFragment& HTMLTemplateElement::fragmentForInsertion() const
     return content();
 }
 
+ContainerNode& HTMLTemplateElement::insertionTarget() const
+{
+    if (m_insertionTarget)
+        return *m_insertionTarget;
+    return fragmentForInsertion();
+}
+
+Node* HTMLTemplateElement::insertionNextChild() const
+{
+    if (m_insertionEndMarker && m_insertionEndMarker->parentNode() == m_insertionTarget)
+        return m_insertionEndMarker.get();
+    return nullptr;
+}
+
+bool HTMLTemplateElement::prepareContentPatching(ContainerNode& scope, Document& parserDocument)
+{
+    auto markerName = attributeWithoutSynchronization(forAttr);
+    if (markerName.isEmpty())
+        return false;
+
+    m_patchParserDocument = parserDocument;
+
+    RefPtr instruction = protect(scope.document())->firstPatchMarkerInScope(markerName, scope);
+    if (!instruction)
+        return false;
+
+    if (instruction->target() == "marker"_s) {
+        m_insertionTarget = instruction->parentNode();
+        m_insertionStartMarker = instruction;
+        m_insertionEndMarker = instruction;
+        return true;
+    }
+
+    RefPtr parent = instruction->parentNode();
+    ASSERT(parent);
+
+    unsigned nestingLevel = 0;
+    Vector<Ref<Node>> nodesToRemove;
+    RefPtr<ProcessingInstruction> endMarker;
+    for (RefPtr sibling = instruction->nextSibling(); sibling; sibling = sibling->nextSibling()) {
+        if (RefPtr siblingInstruction = dynamicDowncast<ProcessingInstruction>(*sibling)) {
+            if (siblingInstruction->target() == "start"_s)
+                ++nestingLevel;
+            else if (siblingInstruction->target() == "end"_s) {
+                if (!nestingLevel) {
+                    endMarker = WTF::move(siblingInstruction);
+                    break;
+                }
+                --nestingLevel;
+            }
+        }
+        nodesToRemove.append(*sibling);
+    }
+
+    m_insertionTarget = WTF::move(parent);
+    m_insertionStartMarker = WTF::move(instruction);
+    m_insertionEndMarker = WTF::move(endMarker);
+
+    {
+        // These removals fire pagehide and mutation event handlers, which must not
+        // re-enter the tree builder via document.write(). Script can move the scope
+        // into another document mid-parse, so the parser's document needs the guard
+        // in addition to the scope's.
+        ThrowOnDynamicMarkupInsertionCountIncrementer parserGuard(parserDocument);
+        std::optional<ThrowOnDynamicMarkupInsertionCountIncrementer> scopeGuard;
+        if (&scope.document() != &parserDocument)
+            scopeGuard.emplace(protect(scope.document()));
+        for (Ref nodeToRemove : nodesToRemove)
+            nodeToRemove->remove();
+    }
+    return true;
+}
+
 DocumentFragment& HTMLTemplateElement::content() const
 {
     ASSERT(!m_declarativeShadowRoot);
@@ -112,6 +187,31 @@ const AtomString& HTMLTemplateElement::shadowRootSlotAssignment() const
 void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
 {
     m_declarativeShadowRoot = shadowRoot;
+}
+
+void HTMLTemplateElement::finishParsingChildren()
+{
+    HTMLElement::finishParsingChildren();
+
+    RefPtr insertionTarget = std::exchange(m_insertionTarget, nullptr);
+    RefPtr startMarker = std::exchange(m_insertionStartMarker, nullptr);
+    RefPtr endMarker = std::exchange(m_insertionEndMarker, nullptr);
+    RefPtr parserDocument = std::exchange(m_patchParserDocument, nullptr);
+    if (!insertionTarget || !startMarker)
+        return;
+
+    // A processing instruction has no subframes, so remove() is safe here;
+    // parserRemoveChild() would disconnect every subframe under the parent,
+    // including iframes in the patched content.
+    {
+        ThrowOnDynamicMarkupInsertionCountIncrementer parserGuard(*parserDocument);
+        std::optional<ThrowOnDynamicMarkupInsertionCountIncrementer> targetGuard;
+        if (&insertionTarget->document() != parserDocument.get())
+            targetGuard.emplace(protect(insertionTarget->document()));
+        startMarker->remove();
+        if (endMarker && endMarker != startMarker)
+            endMarker->remove();
+    }
 }
 
 Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const
