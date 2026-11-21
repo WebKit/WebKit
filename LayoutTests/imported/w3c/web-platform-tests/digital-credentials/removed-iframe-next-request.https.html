@@ -1,0 +1,87 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Digital Credential: removing the requesting iframe lets the next request start</title>
+<link rel="help" href="https://w3c-fedid.github.io/digital-credentials/" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js?feature=bidi"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+
+<body></body>
+<script type="module">
+  import { makeGetOptions } from "./support/helper.js";
+
+  promise_test(async (t) => {
+    await test_driver.set_virtual_wallet_behavior("wait");
+    t.add_cleanup(() => test_driver.set_virtual_wallet_behavior("clear"));
+
+    const iframe = document.createElement("iframe");
+    await new Promise((resolve) => {
+      iframe.addEventListener("load", resolve, { once: true });
+      iframe.src = "about:blank";
+      document.body.appendChild(iframe);
+    });
+    t.add_cleanup(() => iframe.remove());
+    await test_driver.bless(
+      "user activation for the iframe's request",
+      null,
+      iframe.contentWindow,
+    );
+    const firstRequest = iframe.contentWindow.navigator.credentials.get(makeGetOptions());
+    let firstSettled = false;
+    firstRequest.then(
+      () => (firstSettled = true),
+      () => (firstSettled = true),
+    );
+    await new Promise((resolve) => t.step_timeout(resolve, 100));
+    assert_false(firstSettled, "The iframe's request should still be pending before the iframe is removed");
+
+    iframe.remove();
+    await new Promise((resolve) => t.step_timeout(resolve, 100));
+
+    await test_driver.set_virtual_wallet_behavior("respond", "openid4vp-v1-unsigned", { value: "second-response" });
+    await test_driver.bless("user activation for the second request");
+    const credential = await navigator.credentials.get(makeGetOptions({ protocol: "openid4vp-v1-unsigned" }));
+    assert_equals(credential.protocol, "openid4vp-v1-unsigned");
+    assert_equals(credential.data.value, "second-response");
+  }, "Removing the requesting iframe lets the next request start.");
+
+  promise_test(async (t) => {
+    await test_driver.set_virtual_wallet_behavior("wait");
+    t.add_cleanup(() => test_driver.set_virtual_wallet_behavior("clear"));
+
+    const iframe = document.createElement("iframe");
+    await new Promise((resolve) => {
+      iframe.addEventListener("load", resolve, { once: true });
+      iframe.src = "about:blank";
+      document.body.appendChild(iframe);
+    });
+    t.add_cleanup(() => iframe.remove());
+
+    const options = makeGetOptions();
+    const request = options.digital.requests[0];
+    const data = request.data;
+    let toJSONCalls = 0;
+    request.data = {
+      toJSON() {
+        toJSONCalls++;
+        iframe.remove();
+        return data;
+      },
+    };
+    await test_driver.bless(
+      "user activation for the iframe's request",
+      null,
+      iframe.contentWindow,
+    );
+    iframe.contentWindow.navigator.credentials.get(options).catch(() => {});
+    await t.step_wait(() => toJSONCalls > 0, "The browser should have serialized the request data");
+    await new Promise((resolve) => t.step_timeout(resolve, 100));
+
+    await test_driver.set_virtual_wallet_behavior("respond", "openid4vp-v1-unsigned", { value: "second-response" });
+    await test_driver.bless("user activation for the second request");
+    const credential = await navigator.credentials.get(makeGetOptions({ protocol: "openid4vp-v1-unsigned" }));
+    assert_equals(credential.protocol, "openid4vp-v1-unsigned");
+    assert_equals(credential.data.value, "second-response");
+  }, "Removing the requesting iframe while its request data is serialized lets the next request start.");
+</script>

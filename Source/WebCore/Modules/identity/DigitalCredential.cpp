@@ -115,8 +115,11 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
     if (!protocol)
         return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt }; // Skip requests with an unsupported protocol.
 
-    auto scope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
     auto* globalObject = document.globalObject();
+    if (!globalObject)
+        return Exception { ExceptionCode::AbortError, "The document is no longer active."_s };
+
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
 
     // Check that the object is JSON stringifiable.
     auto jsonString = JSC::JSONStringify(globalObject, request.data.get(), 0);
