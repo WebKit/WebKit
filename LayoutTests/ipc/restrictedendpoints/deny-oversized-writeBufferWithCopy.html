@@ -31,7 +31,7 @@ async function run()
     if (!window.IPC)
         return finish('PASS');
 
-    const { CoreIPC, ArgumentSerializer } = await import('../../../ipc/coreipc.js');
+    const { CoreIPC, ArgumentSerializer } = await import('../../ipc/coreipc.js');
     CoreIPC.default_timeout = 30;
 
     if (!await navigator.gpu?.requestAdapter())
@@ -55,7 +55,7 @@ async function run()
     const gpuStream = CoreIPC.newStreamConnection();
     // CoreIPC.newStreamConnection()'s 100ms default local wait timeout is too short for constructing and
     // sending a 32MiB+ Vector<uint8_t>; swap in a longer one the same way the (now-removed)
-    // sar3/ipc/webgpu-queue-writebufferwithcopy-large-payload.html did.
+    // ipc/webgpu-queue-writebufferwithcopy-large-payload.html did.
     {
         const [longTimeoutConnection, longTimeoutHandle] = IPC.createStreamClientConnection(14, 30);
         longTimeoutConnection.open();

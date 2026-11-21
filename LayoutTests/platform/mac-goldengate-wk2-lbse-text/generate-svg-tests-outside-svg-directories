@@ -30,7 +30,6 @@ imported/blink/css3
 dom/svg
 fast/svg
 http/tests/svg
-sar3/svg
 imported/w3c/web-platform-tests/svg-aam
 imported/w3c/web-platform-tests/content-security-policy/svg
 imported/w3c/web-platform-tests/css/css-masking
