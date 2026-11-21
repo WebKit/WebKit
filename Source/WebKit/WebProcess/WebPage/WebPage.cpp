@@ -8946,29 +8946,31 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     RefPtr coreFrame = frame->coreLocalFrame();
 #if ENABLE(META_VIEWPORT)
-    m_isMobileDoctype = false;
-    resetViewportDefaultConfiguration(frame);
+    if (frame->isMainFrame()) {
+        m_isMobileDoctype = false;
+        resetViewportDefaultConfiguration(frame);
 
-    bool viewportChanged = false;
+        bool viewportChanged = false;
 
-    setCanIgnoreViewportArgumentsToAvoidExcessiveZoomIfNeeded(m_viewportConfiguration, coreFrame.get(), shouldIgnoreMetaViewport());
-    setCanIgnoreViewportArgumentsToAvoidEnlargedViewIfNeeded(m_viewportConfiguration, coreFrame.get());
-    setUseDynamicViewportUnitsAsDefaultIfNeeded(coreFrame.get());
+        setCanIgnoreViewportArgumentsToAvoidExcessiveZoomIfNeeded(m_viewportConfiguration, coreFrame.get(), shouldIgnoreMetaViewport());
+        setCanIgnoreViewportArgumentsToAvoidEnlargedViewIfNeeded(m_viewportConfiguration, coreFrame.get());
+        setUseDynamicViewportUnitsAsDefaultIfNeeded(coreFrame.get());
 
-    m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(shouldEnableViewportBehaviorsForResizableWindows());
+        m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(shouldEnableViewportBehaviorsForResizableWindows());
 
-    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier.toUInt64() << " didCommitLoad setting content size to " << coreFrame->view()->contentsSize());
-    if (m_viewportConfiguration.setContentsSize(protect(coreFrame->view())->contentsSize()))
-        viewportChanged = true;
+        LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier.toUInt64() << " didCommitLoad setting content size to " << coreFrame->view()->contentsSize());
+        if (m_viewportConfiguration.setContentsSize(protect(coreFrame->view())->contentsSize()))
+            viewportChanged = true;
 
-    if (m_viewportConfiguration.setViewportArguments(protect(coreFrame->document())->viewportArguments()))
-        viewportChanged = true;
+        if (m_viewportConfiguration.setViewportArguments(protect(coreFrame->document())->viewportArguments()))
+            viewportChanged = true;
 
-    if (m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false))
-        viewportChanged = true;
+        if (m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false))
+            viewportChanged = true;
 
-    if (viewportChanged)
-        viewportConfigurationChanged();
+        if (viewportChanged)
+            viewportConfigurationChanged();
+    }
 #endif // ENABLE(META_VIEWPORT)
 
     m_textAutoSizingAdjustmentTimer.stop();

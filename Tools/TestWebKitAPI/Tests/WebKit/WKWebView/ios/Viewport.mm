@@ -27,15 +27,18 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/ios/UserInterfaceSwizzler.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/MakeString.h>
@@ -99,6 +102,38 @@ TEST(Viewport, RespectInitialScaleExceptOnWikipediaDomain)
     runTest("https://webkit.org/path2"_s, [] (float actualViewportScale, float expectedViewportScale) {
         EXPECT_EQ(actualViewportScale, expectedViewportScale);
     });
+}
+
+TEST(Viewport, SiteIsolationGrandchildFrameInMainFrameProcessDoesNotResetViewportConfiguration)
+{
+    HTTPServer server({
+        { "/main"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'>"
+            "<iframe src='https://webkit.org/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<body style='margin: 0'><iframe src='https://example.com/grandchild'></iframe></body>"_s } },
+        { "/grandchild"_s, { "<body>No viewport meta tag here</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 390, 844));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ(dynamic_objc_cast<NSNumber>([webView objectByEvaluatingJavaScript:@"window.innerWidth"]).floatValue, 390);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr<_WKFrameTreeNode> mainFrameNode = [webView frameTree];
+        for (_WKFrameTreeNode *middle in [mainFrameNode.get() childFrames]) {
+            for (_WKFrameTreeNode *grandchild in middle.childFrames) {
+                if ([grandchild.info.request.URL.path isEqualToString:@"/grandchild"] && !grandchild.info.isMainFrame)
+                    return true;
+            }
+        }
+        return false;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(dynamic_objc_cast<NSNumber>([webView objectByEvaluatingJavaScript:@"window.innerWidth"]).floatValue, 390);
+    EXPECT_EQ(dynamic_objc_cast<NSNumber>([webView objectByEvaluatingJavaScript:@"visualViewport.scale"]).floatValue, 1);
 }
 
 }
