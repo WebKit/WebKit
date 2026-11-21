@@ -1,0 +1,3 @@
+
+PASS A track disabled while loading must not crash
+
