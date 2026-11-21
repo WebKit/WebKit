@@ -92,6 +92,7 @@
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/SourceTaintedness.h>
+#include <JavaScriptCore/StackFrame.h>
 #include <JavaScriptCore/StackVisitor.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
@@ -557,14 +558,14 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
 
     // First report the original exception and only then all the nested ones.
     if (!dispatchErrorEvent(errorMessage, lineNumber, columnNumber, sourceURL, exception, cachedScript, fromModule))
-        logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack.copyRef());
+        logExceptionToConsole(errorMessage, JSC::truncateSourceURLForStackTrace(sourceURL), lineNumber, columnNumber, callStack.copyRef());
 
     if (!m_pendingExceptions)
         return;
 
     auto pendingExceptions = WTF::move(m_pendingExceptions);
     for (auto& exception : *pendingExceptions)
-        logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, WTF::move(exception->m_callStack));
+        logExceptionToConsole(exception->m_errorMessage, JSC::truncateSourceURLForStackTrace(exception->m_sourceURL), exception->m_lineNumber, exception->m_columnNumber, WTF::move(exception->m_callStack));
 }
 
 void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack, const String& unmaskedSourceURL)
@@ -642,9 +643,10 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
         return false;
 
     RefPtr<ErrorEvent> errorEvent;
-    if (canIncludeErrorDetails(cachedScript, sourceURL, fromModule))
-        errorEvent = ErrorEvent::create(*jsGlobalObject, errorMessage, sourceURL, lineNumber, columnNumber, { vm(), exception ? exception->value() : JSC::jsNull() });
-    else
+    if (canIncludeErrorDetails(cachedScript, sourceURL, fromModule)) {
+        auto filename = JSC::truncateSourceURLForStackTrace(sourceURL);
+        errorEvent = ErrorEvent::create(*jsGlobalObject, errorMessage, filename, lineNumber, columnNumber, { vm(), exception ? exception->value() : JSC::jsNull() });
+    } else
         errorEvent = ErrorEvent::create(*jsGlobalObject, "Script error."_s, { }, 0, 0, { });
 
     ASSERT(!m_inDispatchErrorEvent);

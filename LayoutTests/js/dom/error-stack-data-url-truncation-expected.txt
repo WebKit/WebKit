@@ -1,13 +1,20 @@
-Tests that a data: URL over 1024 characters is cut down in a stack frame, that the cut avoids %XX escapes, and that short URLs and other schemes are left alone.
+Tests that a source URL over 1024 characters is cut down in Error.stack, error.sourceURL, and ErrorEvent.filename, that the cut avoids %XX escapes, and that a short URL is left alone.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS plainLength is 1024
+PASS plainSourceLength is 1024
 PASS escapeAtEndLength is 1023
+PASS escapeAtEndSourceLength is 1023
 PASS escapeStraddlingLength is 1022
+PASS escapeStraddlingSourceLength is 1022
+PASS escapeFitsLength is 1024
+PASS escapeFitsSourceLength is 1024
 PASS shortLength is 500
+PASS shortSourceLength is 500
 PASS ordinaryFrameSurvives is true
+PASS filenameLength is 1024
 PASS successfullyParsed is true
 
 TEST COMPLETE

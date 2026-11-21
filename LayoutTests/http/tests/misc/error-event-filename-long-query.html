@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests that a long query string is cut to 1024 characters in ErrorEvent.filename.");
+
+window.jsTestIsAsync = true;
+
+async function runTests()
+{
+    try {
+        // Error.stack and error.sourceURL drop the query, so only filename shows it.
+        const filename = await new Promise(function (resolve) {
+            window.addEventListener("error", function (event) {
+                event.preventDefault();
+                resolve(event.filename);
+            }, { once: true });
+            window.expectingError = true;
+            const script = document.createElement("script");
+            script.type = "module";
+            script.src = "resources/throw.js?" + "a".repeat(2000);
+            document.body.appendChild(script);
+        });
+        window.filenameLength = filename.length;
+        window.filenameHasQuery = filename.indexOf("throw.js?") !== -1;
+        shouldBe("filenameLength", "1024");
+        shouldBeTrue("filenameHasQuery");
+    } catch (exception) {
+        testFailed("threw " + exception);
+    }
+    finishJSTest();
+}
+
+runTests();
+</script>
+</body>
+</html>
