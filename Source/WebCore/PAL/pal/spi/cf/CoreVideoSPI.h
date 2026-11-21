@@ -48,6 +48,16 @@ enum {
     kCVPixelFormatType_96BayerPacked12_BGGR = 'bgp2', // Bayer 12-bit little-endian, packed 12-bits per component in 96-bits, ordered B G G R.
 };
 
+enum {
+    kCVPixelFormatType_422YpCbCr8VideoRange_8A_TriPlanar = 'v2a8',
+    kCVPixelFormatType_444YpCbCr8VideoRange_8A_TriPlanar = 'v4a8',
+    kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar = 'x0a8',
+    kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar = 'x2a8',
+    kCVPixelFormatType_444YpCbCr10VideoRange_8A_TriPlanar = 'x4a8',
+    kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar = 'x2as',
+    kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar = 'x4as',
+};
+
 #if !HAVE(CVPIXELFORMATTYPE_30RGBLE_8A_BIPLANAR)
 enum {
     kCVPixelFormatType_30RGBLE_8A_BiPlanar = 'b3a8',

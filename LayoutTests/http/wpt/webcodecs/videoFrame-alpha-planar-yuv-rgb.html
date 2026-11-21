@@ -1,0 +1,165 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsHighBitDepthEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// Planar Y'CbCr VideoFrames with alpha convert to RGB with the colour of the equivalent opaque frame, and keep their alpha:
+// copyTo() writes the top 8 bits of each alpha sample, drawImage() draws them.
+
+const formats = [
+    { format: "I420A", opaqueFormat: "I420", bitDepth: 8, subsampleX: 2, subsampleY: 2 },
+    { format: "I420AP10", opaqueFormat: "I420P10", bitDepth: 10, subsampleX: 2, subsampleY: 2 },
+    { format: "I420AP12", opaqueFormat: "I420P12", bitDepth: 12, subsampleX: 2, subsampleY: 2 },
+    { format: "I422A", opaqueFormat: "I422", bitDepth: 8, subsampleX: 2, subsampleY: 1 },
+    { format: "I422AP10", opaqueFormat: "I422P10", bitDepth: 10, subsampleX: 2, subsampleY: 1 },
+    { format: "I422AP12", opaqueFormat: "I422P12", bitDepth: 12, subsampleX: 2, subsampleY: 1 },
+    { format: "I444A", opaqueFormat: "I444", bitDepth: 8, subsampleX: 1, subsampleY: 1 },
+    { format: "I444AP10", opaqueFormat: "I444P10", bitDepth: 10, subsampleX: 1, subsampleY: 1 },
+    { format: "I444AP12", opaqueFormat: "I444P12", bitDepth: 12, subsampleX: 1, subsampleY: 1 },
+];
+
+const ranges = [
+    { name: "video range", colorSpace: { primaries: "bt709", transfer: "bt709", matrix: "bt709", fullRange: false } },
+    { name: "full range", colorSpace: { primaries: "bt709", transfer: "bt709", matrix: "bt709", fullRange: true } },
+];
+
+const width = 16;
+const height = 8;
+const colorTolerance = 2;
+
+// The 8-bit alpha of each pixel. The first two pixels are opaque and transparent.
+function alphaAt(x, y)
+{
+    if (!y && x < 2)
+        return x ? 0 : 255;
+    return (x * 16 + y * 29 + 7) & 255;
+}
+
+// Normalised Y', Cb and Cr of the frame's single colour.
+const color = [0.55, 0.40, 0.62];
+
+function colorSample(info, range, plane)
+{
+    const value = color[plane];
+    if (range.colorSpace.fullRange)
+        return Math.round(value * ((1 << info.bitDepth) - 1));
+    const scale = 1 << (info.bitDepth - 8);
+    return Math.round((16 + (plane ? 224 : 219) * value) * scale);
+}
+
+function makePlanes(info, range, withAlpha)
+{
+    const chromaWidth = Math.ceil(width / info.subsampleX);
+    const chromaHeight = Math.ceil(height / info.subsampleY);
+    const planes = [0, 1, 2].map(plane => {
+        const size = plane ? { width: chromaWidth, height: chromaHeight } : { width, height };
+        return { ...size, samples: new Array(size.width * size.height).fill(colorSample(info, range, plane)) };
+    });
+    if (withAlpha) {
+        const lowBitsMask = (1 << (info.bitDepth - 8)) - 1;
+        const samples = [];
+        for (let y = 0; y < height; ++y) {
+            for (let x = 0; x < width; ++x)
+                samples.push((alphaAt(x, y) << (info.bitDepth - 8)) | ((x + y) & lowBitsMask));
+        }
+        planes.push({ width, height, samples });
+    }
+    return planes;
+}
+
+function makeFrame(info, range, format, withAlpha)
+{
+    const sampleSize = info.bitDepth > 8 ? 2 : 1;
+    const planes = makePlanes(info, range, withAlpha);
+    const layout = [];
+    let offset = 0;
+    for (const plane of planes) {
+        layout.push({ offset, stride: plane.width * sampleSize });
+        offset += plane.width * plane.height * sampleSize;
+    }
+    const bytes = new Uint8Array(offset);
+    planes.forEach((plane, index) => {
+        plane.samples.forEach((value, sample) => {
+            const position = layout[index].offset + sample * sampleSize;
+            bytes[position] = value & 0xff;
+            if (sampleSize == 2)
+                bytes[position + 1] = value >> 8;
+        });
+    });
+    return new VideoFrame(bytes, { format, codedWidth: width, codedHeight: height, timestamp: 0, layout, colorSpace: range.colorSpace });
+}
+
+async function copyToRGB(frame, format)
+{
+    const bytes = new Uint8Array(width * height * 4);
+    await frame.copyTo(bytes, { format });
+    return bytes;
+}
+
+// The colour bytes of a pixel in RGBA order, whatever the byte order of the format.
+function colorBytes(bytes, index, format)
+{
+    const pixel = bytes.subarray(index * 4, index * 4 + 3);
+    return format.startsWith("BGR") ? [pixel[2], pixel[1], pixel[0]] : [...pixel];
+}
+
+function assertColorsClose(actual, expected, description)
+{
+    for (let channel = 0; channel < 3; ++channel)
+        assert_approx_equals(actual[channel], expected[channel], colorTolerance, `${description} channel ${channel}`);
+}
+
+for (const info of formats) {
+    for (const range of ranges) {
+        const name = `${info.format} ${range.name}`;
+
+        for (const format of ["RGBA", "BGRA", "RGBX", "BGRX"]) {
+            promise_test(async () => {
+                const frame = makeFrame(info, range, info.format, true);
+                const opaque = makeFrame(info, range, info.opaqueFormat, false);
+                const actual = await copyToRGB(frame, format);
+                const expected = await copyToRGB(opaque, format);
+                frame.close();
+                opaque.close();
+
+                const keepsAlpha = format.endsWith("A");
+                for (let y = 0; y < height; ++y) {
+                    for (let x = 0; x < width; ++x) {
+                        const index = y * width + x;
+                        assert_equals(actual[index * 4 + 3], keepsAlpha ? alphaAt(x, y) : 255, `alpha at ${x},${y}`);
+                    }
+                }
+                assertColorsClose(colorBytes(actual, 0, format), colorBytes(expected, 0, format), `colour of ${info.opaqueFormat}`);
+            }, `${name}: copyTo() ${format}`);
+        }
+
+        promise_test(async () => {
+            const frame = makeFrame(info, range, info.format, true);
+            const discarded = new VideoFrame(frame, { alpha: "discard" });
+            frame.close();
+            const actual = await copyToRGB(discarded, "RGBA");
+            discarded.close();
+            for (let index = 0; index < width * height; ++index)
+                assert_equals(actual[index * 4 + 3], 255, `alpha of pixel ${index}`);
+        }, `${name}: copyTo() RGBA after alpha "discard"`);
+
+        promise_test(async () => {
+            const frame = makeFrame(info, range, info.format, true);
+            const opaque = makeFrame(info, range, info.opaqueFormat, false);
+            const expected = await copyToRGB(opaque, "RGBA");
+            opaque.close();
+
+            const canvas = new OffscreenCanvas(width, height);
+            const context = canvas.getContext("2d");
+            context.drawImage(frame, 0, 0);
+            frame.close();
+            const actual = context.getImageData(0, 0, width, height).data;
+
+            for (let y = 0; y < height; ++y) {
+                for (let x = 0; x < width; ++x)
+                    assert_equals(actual[(y * width + x) * 4 + 3], alphaAt(x, y), `alpha at ${x},${y}`);
+            }
+            assertColorsClose(colorBytes(actual, 0, "RGBA"), colorBytes(expected, 0, "RGBA"), `colour of ${info.opaqueFormat} at the opaque pixel`);
+        }, `${name}: drawImage()`);
+    }
+}
+</script>

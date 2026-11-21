@@ -1,0 +1,98 @@
+
+PASS I420AP10 video range: tightly packed round trip
+PASS I420AP10 video range: padded source, misaligned destination
+PASS I420AP10 video range: misaligned source, tightly packed destination
+PASS I420AP10 video range: copyTo() with a rect
+PASS I420AP10 video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I420AP10 video range: alpha "discard" gives the opaque format
+PASS I420AP10 full range: tightly packed round trip
+PASS I420AP10 full range: padded source, misaligned destination
+PASS I420AP10 full range: misaligned source, tightly packed destination
+PASS I420AP10 full range: copyTo() with a rect
+PASS I420AP10 full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I420AP10 full range: alpha "discard" gives the opaque format
+PASS I420AP12 video range: tightly packed round trip
+PASS I420AP12 video range: padded source, misaligned destination
+PASS I420AP12 video range: misaligned source, tightly packed destination
+PASS I420AP12 video range: copyTo() with a rect
+PASS I420AP12 video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I420AP12 video range: alpha "discard" gives the opaque format
+PASS I420AP12 full range: tightly packed round trip
+PASS I420AP12 full range: padded source, misaligned destination
+PASS I420AP12 full range: misaligned source, tightly packed destination
+PASS I420AP12 full range: copyTo() with a rect
+PASS I420AP12 full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I420AP12 full range: alpha "discard" gives the opaque format
+PASS I422A video range: tightly packed round trip
+PASS I422A video range: padded source, misaligned destination
+PASS I422A video range: misaligned source, tightly packed destination
+PASS I422A video range: copyTo() with a rect
+PASS I422A video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I422A video range: alpha "discard" gives the opaque format
+PASS I422A full range: tightly packed round trip
+PASS I422A full range: padded source, misaligned destination
+PASS I422A full range: misaligned source, tightly packed destination
+PASS I422A full range: copyTo() with a rect
+PASS I422A full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I422A full range: alpha "discard" gives the opaque format
+PASS I422AP10 video range: tightly packed round trip
+PASS I422AP10 video range: padded source, misaligned destination
+PASS I422AP10 video range: misaligned source, tightly packed destination
+PASS I422AP10 video range: copyTo() with a rect
+PASS I422AP10 video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I422AP10 video range: alpha "discard" gives the opaque format
+PASS I422AP10 full range: tightly packed round trip
+PASS I422AP10 full range: padded source, misaligned destination
+PASS I422AP10 full range: misaligned source, tightly packed destination
+PASS I422AP10 full range: copyTo() with a rect
+PASS I422AP10 full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I422AP10 full range: alpha "discard" gives the opaque format
+PASS I422AP12 video range: tightly packed round trip
+PASS I422AP12 video range: padded source, misaligned destination
+PASS I422AP12 video range: misaligned source, tightly packed destination
+PASS I422AP12 video range: copyTo() with a rect
+PASS I422AP12 video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I422AP12 video range: alpha "discard" gives the opaque format
+PASS I422AP12 full range: tightly packed round trip
+PASS I422AP12 full range: padded source, misaligned destination
+PASS I422AP12 full range: misaligned source, tightly packed destination
+PASS I422AP12 full range: copyTo() with a rect
+PASS I422AP12 full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I422AP12 full range: alpha "discard" gives the opaque format
+PASS I444A video range: tightly packed round trip
+PASS I444A video range: padded source, misaligned destination
+PASS I444A video range: misaligned source, tightly packed destination
+PASS I444A video range: copyTo() with a rect
+PASS I444A video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I444A video range: alpha "discard" gives the opaque format
+PASS I444A full range: tightly packed round trip
+PASS I444A full range: padded source, misaligned destination
+PASS I444A full range: misaligned source, tightly packed destination
+PASS I444A full range: copyTo() with a rect
+PASS I444A full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I444A full range: alpha "discard" gives the opaque format
+PASS I444AP10 video range: tightly packed round trip
+PASS I444AP10 video range: padded source, misaligned destination
+PASS I444AP10 video range: misaligned source, tightly packed destination
+PASS I444AP10 video range: copyTo() with a rect
+PASS I444AP10 video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I444AP10 video range: alpha "discard" gives the opaque format
+PASS I444AP10 full range: tightly packed round trip
+PASS I444AP10 full range: padded source, misaligned destination
+PASS I444AP10 full range: misaligned source, tightly packed destination
+PASS I444AP10 full range: copyTo() with a rect
+PASS I444AP10 full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I444AP10 full range: alpha "discard" gives the opaque format
+PASS I444AP12 video range: tightly packed round trip
+PASS I444AP12 video range: padded source, misaligned destination
+PASS I444AP12 video range: misaligned source, tightly packed destination
+PASS I444AP12 video range: copyTo() with a rect
+PASS I444AP12 video range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I444AP12 video range: alpha "discard" gives the opaque format
+PASS I444AP12 full range: tightly packed round trip
+PASS I444AP12 full range: padded source, misaligned destination
+PASS I444AP12 full range: misaligned source, tightly packed destination
+PASS I444AP12 full range: copyTo() with a rect
+PASS I444AP12 full range: clone() and new VideoFrame(frame) keep the alpha plane
+PASS I444AP12 full range: alpha "discard" gives the opaque format
+
