@@ -315,6 +315,10 @@ static String mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
         { span8("\x52\x49\x46\x46\x00\x00\x00\x00\x57\x41\x56\x45"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "audio/wave"_s },
         // Out of W3C spec, fLaC signature
         { span8("\x66\x4C\x61\x43"), span8("\xFF\xFF\xFF\xFF"), "audio/flac"_s },
+        // Audible, .aa: 0x57907536 four bytes from the start of the file
+        { span8("\x00\x00\x00\x00\x57\x90\x75\x36"), span8("\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "audio/audible"_s },
+        // Audible, .aax: `ftyp` box followed by `aax `.
+        { span8("\x00\x00\x00\x00\x66\x74\x79\x70\x61\x61\x78\x20"), span8("\x00\x00\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"), "audio/vnd.audible.aax"_s },
     });
 
     // 1. Execute the following steps for each row row in the following table:
