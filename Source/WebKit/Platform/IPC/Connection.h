@@ -711,7 +711,7 @@ private:
         ReceiverIsGone, // Receiver is gone; queued messages are dropped and the connection closes.
     };
 
-    static std::optional<OutgoingMessage> platformCreateOutgoingMessage(UniqueRef<Encoder>&&);
+    static Vector<OutgoingMessage, 1> platformCreateOutgoingMessages(UniqueRef<Encoder>&&);
 #if PLATFORM(COCOA)
     PlatformSendResult platformSendOutgoingMessage(OutgoingMessage&) WTF_REQUIRES_LOCK(m_sendLock);
     PlatformSendResult didSendMachMessage(MachMessageSendResult) WTF_REQUIRES_LOCK(m_sendLock);
@@ -724,8 +724,7 @@ private:
     NODELETE bool platformHasMessageInFlight() const;
 
 #if PLATFORM(COCOA)
-    bool canSendOnCallingThread(std::optional<ThreadQOS>) const;
-    bool trySendOnCallingThread(OutgoingMessage&) WTF_REQUIRES_LOCK(m_sendLock);
+    bool canSendOnCallingThread(std::optional<ThreadQOS>) const WTF_REQUIRES_LOCK(m_sendLock);
 #endif
 
     void sendOutgoingMessages() WTF_EXCLUDES_LOCK(m_sendLock);
@@ -947,6 +946,8 @@ private:
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_receiveSource;
+
+    Vector<Attachment> m_receivedPendingAttachments;
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };

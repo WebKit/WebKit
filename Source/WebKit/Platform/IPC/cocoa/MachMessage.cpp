@@ -48,6 +48,10 @@ namespace {
 // An arbitrary message ID that does not collide with Mach notification messages.
 static constexpr mach_msg_id_t webkitMachMessageID = 0xdba0dba;
 
+// Message ID for a "pending attachments" message carrying a batch of inline port descriptors that would not
+// fit in the message they belong to. See MachMessage::createPendingAttachments().
+static constexpr mach_msg_id_t webkitMachMessageAddPendingAttachmentsID = 0xdba3dba;
+
 static constexpr size_t typicalMaximumAttachmentCount = 16;
 
 // Sized to fit the largest inline body plus a typical number of attachments without a heap
@@ -55,8 +59,13 @@ static constexpr size_t typicalMaximumAttachmentCount = 16;
 static constexpr size_t messageStorageSize = round_msg(sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t)
     + typicalMaximumAttachmentCount * sizeof(mach_msg_port_descriptor_t) + Encoder::maximumInlineBodySize);
 
+// The Mach IPC layer restricts how many inline port descriptors a single message from certain callers may
+// carry (see IPC_KMSG_INLINE_PORT_DESCRIPTOR_LIMIT in XNU). Every message stays strictly below that limit:
+// createMessages() splits a larger attachment set across preceding pending attachments messages.
+static constexpr size_t maxInlinePortDescriptorsPerMessage = 127;
+
 static constexpr size_t maxMessageSize = sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t)
-    + MachMessage::maxAttachmentCount * sizeof(mach_msg_port_descriptor_t) + std::max(sizeof(mach_msg_ool_descriptor_t), Encoder::maximumInlineBodySize);
+    + maxInlinePortDescriptorsPerMessage * sizeof(mach_msg_port_descriptor_t) + std::max(sizeof(mach_msg_ool_descriptor_t), Encoder::maximumInlineBodySize);
 static_assert(maxMessageSize <= std::numeric_limits<mach_msg_size_t>::max());
 
 // Storage for one received message. The messages that fit messageStorageSize, plus the trailer a received
@@ -150,14 +159,12 @@ MachMessage::~MachMessage()
 // message within messageStorageSize: the kernel refuses a mach_msg_ool_ports_descriptor_t sent to an
 // ordinary connection port with a fatal EXC_GUARD, see IPC_SEC_POLICY_RESTRICT_OOL_PORT_ARRAYS.
 
-std::unique_ptr<MachMessage> MachMessage::create(UniqueRef<Encoder>&& encoderIn)
+UniqueRef<MachMessage> MachMessage::createBody(UniqueRef<Encoder>&& encoderIn)
 {
     auto encoder = WTF::move(encoderIn);
 
-    // To optimize the base-case, encoder does not record validity during encoding.
     size_t attachmentCount = encoder->attachmentCount();
-    if (attachmentCount > maxAttachmentCount) [[unlikely]]
-        return nullptr;
+    RELEASE_ASSERT(attachmentCount <= maxInlinePortDescriptorsPerMessage);
 
     auto body = encoder->span();
     auto outOfLineBuffer = encoder->releaseOutOfLineBuffer();
@@ -175,7 +182,7 @@ std::unique_ptr<MachMessage> MachMessage::create(UniqueRef<Encoder>&& encoderIn)
 
     // Every byte of the trailing messageSize storage is initialized below (including padding).
     void* memory = fastMalloc(sizeof(MachMessage) + messageSize);
-    std::unique_ptr<MachMessage> result { new (NotNull, memory) MachMessage { encoder->messageName(), WTF::move(outOfLineBuffer) } };
+    auto result = makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { encoder->messageName(), WTF::move(outOfLineBuffer) } });
 
     size_t descriptorCount = attachmentCount + bodyIsOutOfLine;
     auto remaining = unsafeMakeSpan(reinterpret_cast<std::byte*>(result->m_messageHeader), messageSize);
@@ -224,6 +231,75 @@ std::unique_ptr<MachMessage> MachMessage::create(UniqueRef<Encoder>&& encoderIn)
     return result;
 }
 
+UniqueRef<MachMessage> MachMessage::createPendingAttachments(Vector<Attachment>&& attachments)
+{
+    size_t attachmentCount = attachments.size();
+    ASSERT(attachmentCount && attachmentCount <= maxInlinePortDescriptorsPerMessage);
+    // Header, body, and one inline port descriptor per attachment; never out-of-line, always well
+    // under maxMessageSize because attachmentCount <= maxInlinePortDescriptorsPerMessage.
+    size_t messageSize = round_msg(sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t)
+        + attachmentCount * sizeof(mach_msg_port_descriptor_t));
+    ASSERT(messageSize <= maxMessageSize);
+
+    void* memory = fastMalloc(sizeof(MachMessage) + messageSize);
+    auto result = makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { } });
+
+    auto remaining = unsafeMakeSpan(reinterpret_cast<std::byte*>(result->m_messageHeader), messageSize);
+    consumeAndReinterpretCastTo<mach_msg_header_t>(remaining) = {
+        .msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0) | MACH_MSGH_BITS_COMPLEX,
+        .msgh_size = static_cast<mach_msg_size_t>(messageSize),
+        .msgh_remote_port = MACH_PORT_NULL,
+        .msgh_local_port = MACH_PORT_NULL,
+        .msgh_voucher_port = MACH_PORT_NULL,
+        .msgh_id = webkitMachMessageAddPendingAttachmentsID
+    };
+    consumeAndReinterpretCastTo<mach_msg_body_t>(remaining) = {
+        .msgh_descriptor_count = static_cast<mach_msg_size_t>(attachmentCount)
+    };
+
+    // Written in the order given, the last encoded first, which is the order that receiveDecoder() collects
+    // them in and adds them to the following message in.
+    for (auto& attachment : attachments) {
+        mach_msg_port_descriptor_t descriptor { };
+        descriptor.name = attachment.leakSendRight();
+        descriptor.disposition = MACH_MSG_TYPE_MOVE_SEND;
+        descriptor.type = MACH_MSG_PORT_DESCRIPTOR;
+        consumeAndReinterpretCastTo<mach_msg_port_descriptor_t>(remaining) = descriptor;
+    }
+
+    // round_msg() rounded the size up, so zero any padding after the descriptors.
+    if (!remaining.empty())
+        zeroSpan(remaining);
+
+    return result;
+}
+
+Vector<UniqueRef<MachMessage>, 1> MachMessage::createMessages(UniqueRef<Encoder>&& encoderIn)
+{
+    // Take the encoder, so that a refused one is released with its attachments here.
+    auto encoder = WTF::move(encoderIn);
+    Vector<UniqueRef<MachMessage>, 1> messages;
+
+    // Reject an over-large attachment set up front, so that a sender cannot expand an arbitrarily large
+    // attachment vector into many pending attachments messages instead of being dropped.
+    if (encoder->attachmentCount() > maxAttachmentCount)
+        return messages;
+
+    // While the attachments exceed what one message may carry inline, peel batches off the end into
+    // pending attachments messages, sent before the message that carries the remaining, leading attachments.
+    while (encoder->attachmentCount() > maxInlinePortDescriptorsPerMessage) {
+        Vector<Attachment> batch;
+        batch.reserveInitialCapacity(maxInlinePortDescriptorsPerMessage);
+        for (size_t i = 0; i < maxInlinePortDescriptorsPerMessage; ++i)
+            batch.append(encoder->takeLastAttachment());
+
+        messages.append(createPendingAttachments(WTF::move(batch)));
+    }
+
+    messages.append(createBody(WTF::move(encoder)));
+    return messages;
+}
+
 MachMessage::SendResult MachMessage::send(mach_port_t destination, Timeout timeout)
 {
     RELEASE_ASSERT(m_state != State::Sent);
@@ -260,9 +336,13 @@ MachMessage::SendResult MachMessage::send(mach_port_t destination, Timeout timeo
     return result;
 }
 
-std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::receiveDecoder(mach_port_t port, Timeout timeout)
+std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::receiveDecoder(mach_port_t port, Vector<Attachment>& pendingAttachments, Timeout timeout)
 {
     ASSERT(MACH_PORT_VALID(port));
+    ASSERT(pendingAttachments.size() <= maxAttachmentCount);
+    if (pendingAttachments.size() > maxAttachmentCount)
+        return makeUnexpected(ReceiveResult::InvalidMessage);
+
     MessageBuffer buffer;
     auto message = buffer.allocate(MessageBuffer::inlineStorageSize);
     auto* header = &reinterpretCastSpanStartTo<mach_msg_header_t>(message);
@@ -311,6 +391,44 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
     case webkitMachMessageID:
         break;
 
+    case webkitMachMessageAddPendingAttachmentsID: {
+        // A pending attachments message carries only inline port descriptors.
+        if (header->msgh_size > message.size() || header->msgh_size < sizeof(mach_msg_header_t)) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+        if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+
+        auto remaining = message.subspan(sizeof(mach_msg_header_t), header->msgh_size - sizeof(mach_msg_header_t));
+        // Cast ok: MACH_MSGH_BITS_COMPLEX -> kernel guarantees remaining at least mach_msg_body_t.
+        auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(remaining);
+        mach_msg_size_t descriptorCount = body.msgh_descriptor_count;
+        if (!descriptorCount || descriptorCount > maxInlinePortDescriptorsPerMessage) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+
+        // A compromised sender can send pending attachments messages and never send the message they belong to,
+        // making this (possibly privileged) receiver hold attacker-controlled send rights without bound.
+        // Cap them at the most attachments a message may have: a real message never exceeds that.
+        if (descriptorCount > maxAttachmentCount - pendingAttachments.size()) [[unlikely]] {
+            pendingAttachments.clear();
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+        }
+
+        auto declaredSize = checkedSum<size_t>(sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t), static_cast<size_t>(descriptorCount) * sizeof(mach_msg_port_descriptor_t));
+        if (declaredSize.hasOverflowed() || declaredSize > header->msgh_size) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+
+        for (; descriptorCount; --descriptorCount) {
+            // Cast ok: bounds checked by declaredSize above.
+            if (reinterpretCastSpanStartTo<const mach_msg_type_descriptor_t>(remaining).type != MACH_MSG_PORT_DESCRIPTOR) [[unlikely]]
+                return makeUnexpected(ReceiveResult::InvalidMessage);
+            auto& descriptor = consumeAndReinterpretCastTo<mach_msg_port_descriptor_t>(remaining);
+            if (descriptor.disposition != MACH_MSG_TYPE_PORT_SEND) [[unlikely]]
+                return makeUnexpected(ReceiveResult::InvalidMessage);
+            pendingAttachments.append(Attachment { MachSendRight::adopt(std::exchange(descriptor.name, MACH_PORT_NULL)) });
+        }
+        return makeUnexpected(ReceiveResult::PendingAttachments);
+    }
+
     case MACH_NOTIFY_SEND_ONCE:
     default:
         return makeUnexpected(ReceiveResult::Notification);
@@ -323,13 +441,18 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
     auto remaining = message.subspan(sizeof(mach_msg_header_t), header->msgh_size - sizeof(mach_msg_header_t));
 
     std::unique_ptr<Decoder> decoder;
-    if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX))
+    if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
+        // The message that follows pending attachments messages carries the rest of the attachments, at least one.
+        if (!pendingAttachments.isEmpty()) [[unlikely]] {
+            pendingAttachments.clear();
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+        }
         decoder = Decoder::create(spanReinterpretCast<const uint8_t>(remaining), { });
-    else {
+    } else {
         // Cast ok: MACH_MSGH_BITS_COMPLEX -> kernel guarantees remaining at least mach_msg_body_t.
         auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(remaining);
         mach_msg_size_t descriptorCount = body.msgh_descriptor_count;
-        if (!descriptorCount || descriptorCount > maxAttachmentCount + 1) [[unlikely]]
+        if (!descriptorCount || descriptorCount > maxInlinePortDescriptorsPerMessage + 1) [[unlikely]]
             return makeUnexpected(ReceiveResult::InvalidMessage);
 
         // A port descriptor each, up to the descriptor of an out-of-line body. An out-of-line array of port
@@ -345,6 +468,17 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
             if (descriptor.disposition != MACH_MSG_TYPE_PORT_SEND) [[unlikely]]
                 return makeUnexpected(ReceiveResult::InvalidMessage);
             attachments.append(Attachment { MachSendRight::adopt(std::exchange(descriptor.name, MACH_PORT_NULL)) });
+        }
+
+        if (!pendingAttachments.isEmpty()) {
+            if (attachments.isEmpty()) [[unlikely]] {
+                pendingAttachments.clear();
+                return makeUnexpected(ReceiveResult::InvalidMessage);
+            }
+            // The pending attachments are the trailing attachments of this message, the last encoded first.
+            // The decoder takes attachments from the end, so the ones decoded last go first.
+            pendingAttachments.appendVector(WTF::move(attachments));
+            attachments = std::exchange(pendingAttachments, { });
         }
 
         if (descriptorCount) {
@@ -374,6 +508,16 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
 #endif
 
     return makeUniqueRefFromNonNullUniquePtr(WTF::move(decoder));
+}
+
+std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::receiveDecoder(mach_port_t port, Timeout timeout)
+{
+    Vector<Attachment> pendingAttachments;
+    while (true) {
+        auto result = receiveDecoder(port, pendingAttachments, timeout);
+        if (result || result.error() != ReceiveResult::PendingAttachments)
+            return result;
+    }
 }
 
 } // namespace IPC

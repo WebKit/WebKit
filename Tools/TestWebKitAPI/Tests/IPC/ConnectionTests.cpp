@@ -119,6 +119,23 @@ struct MockTestMessageWithDataAndAttachments {
     Vector<IPC::Attachment> attachments;
 };
 
+struct MockTestMessageWithDataAndSendRights {
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessage; }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << data;
+        encoder << WTF::move(sendRights);
+    }
+
+    std::span<const uint8_t> data;
+    Vector<MachSendRight> sendRights;
+};
+
 static Vector<uint8_t> testDataOfSize(size_t size)
 {
     return Vector<uint8_t>(size, [size](size_t i) {
@@ -359,11 +376,6 @@ TEST_P(ConnectionTestABBA, SendMessagesAroundEncoderBufferSizes)
 {
     ASSERT_TRUE(openBoth());
 
-    mach_port_t port = MACH_PORT_NULL;
-    ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
-    auto sendRight = MachSendRight::createFromReceiveRight(port);
-    ASSERT_TRUE(!!sendRight);
-
     struct TestCase {
         size_t dataSize;
         size_t attachmentCount;
@@ -371,11 +383,22 @@ TEST_P(ConnectionTestABBA, SendMessagesAroundEncoderBufferSizes)
     Vector<size_t> dataSizes { 0, 400, 470, 480, 488, 490, 992, 1000, 2016, 2024, 3000, 4065, 4095, 4096, 4097, 8000, 16000, 16384, 16500, 40000 };
     for (size_t dataSize = 3980; dataSize <= 4080; dataSize += 4)
         dataSizes.append(dataSize);
+    // Past 127 attachments, the attachments do not fit in one Mach message, and are sent in pending attachments messages
+    // followed by the message with the rest of them.
+    Vector<size_t> attachmentCounts { 0, 1, 5, 16, 17, 40, 126, 127, 128, 254, 255, 300, 1000 };
     Vector<TestCase> testCases;
     for (auto dataSize : dataSizes) {
-        for (size_t attachmentCount : { 0u, 1u, 5u, 16u, 17u, 40u })
+        for (auto attachmentCount : attachmentCounts)
             testCases.append({ dataSize, attachmentCount });
     }
+
+    // A send right to a port of its own for each attachment index, so that the received attachments can be checked to
+    // be the ones sent, in the order they were encoded.
+    Vector<MachSendRight> sendRights(std::ranges::max(attachmentCounts), [](size_t) {
+        mach_port_t port = MACH_PORT_NULL;
+        EXPECT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+        return MachSendRight::createFromReceiveRight(port);
+    });
 
     bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
         auto index = decoder.destinationID();
@@ -386,35 +409,40 @@ TEST_P(ConnectionTestABBA, SendMessagesAroundEncoderBufferSizes)
         SCOPED_TRACE(testCase.attachmentCount);
 
         auto data = decoder.decode<std::span<const uint8_t>>();
-        auto attachmentCount = decoder.decode<uint64_t>();
-        EXPECT_TRUE(data && attachmentCount);
-        if (!data || !attachmentCount)
+        auto receivedSendRights = decoder.decode<Vector<MachSendRight>>();
+        EXPECT_TRUE(data && receivedSendRights);
+        if (!data || !receivedSendRights)
             return false;
         EXPECT_TRUE(equalSpans(*data, testDataOfSize(testCase.dataSize).span()));
-        EXPECT_EQ(*attachmentCount, testCase.attachmentCount);
-        for (uint64_t i = 0; i < *attachmentCount; ++i) {
-            auto attachment = decoder.decode<IPC::Attachment>();
-            EXPECT_TRUE(attachment && attachment->sendRight() == port);
+        EXPECT_EQ(receivedSendRights->size(), testCase.attachmentCount);
+        for (size_t i = 0; i < std::min(receivedSendRights->size(), testCase.attachmentCount); ++i) {
+            if ((*receivedSendRights)[i].sendRight() != sendRights[i].sendRight()) {
+                ADD_FAILURE() << "attachment " << i << " is not the one sent";
+                break;
+            }
         }
         return false; // Record the message.
     });
 
     for (size_t i = 0; i < testCases.size(); ++i) {
         auto data = testDataOfSize(testCases[i].dataSize);
-        Vector<IPC::Attachment> attachments(testCases[i].attachmentCount, [&](size_t) {
-            return MachSendRight { sendRight };
+        Vector<MachSendRight> messageSendRights(testCases[i].attachmentCount, [&](size_t j) {
+            return MachSendRight { sendRights[j] };
         });
-        auto result = a()->send(MockTestMessageWithDataAndAttachments { data.span(), WTF::move(attachments) }, i);
+        auto result = a()->send(MockTestMessageWithDataAndSendRights { data.span(), WTF::move(messageSendRights) }, i);
         EXPECT_TRUE(result == IPC::Error::NoError);
     }
     for (size_t i = 0; i < testCases.size(); ++i) {
         auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
-        EXPECT_EQ(message.messageName, MockTestMessageWithDataAndAttachments::name());
+        EXPECT_EQ(message.messageName, MockTestMessageWithDataAndSendRights::name());
         EXPECT_EQ(message.destinationID, i);
     }
 
-    sendRight = { };
-    mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+    for (auto& sendRight : sendRights) {
+        auto port = sendRight.sendRight();
+        sendRight = { };
+        mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+    }
 }
 
 // Sends one message at a time while B doesn't receive, until a message can't be sent because B's port is full. That

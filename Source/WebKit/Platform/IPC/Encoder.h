@@ -94,6 +94,7 @@ public:
 
     void addAttachment(Attachment&&);
     size_t attachmentCount() const { return m_attachments.size(); }
+    Attachment takeLastAttachment() { return m_attachments.takeLast(); }
     Vector<Attachment> releaseAttachments();
 #if PLATFORM(COCOA)
     MmapSpan<uint8_t> releaseOutOfLineBuffer();

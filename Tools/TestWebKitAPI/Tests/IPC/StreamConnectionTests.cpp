@@ -40,6 +40,10 @@
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
+#endif
+
 namespace TestWebKitAPI {
 
 namespace {
@@ -1170,6 +1174,87 @@ struct MockStreamTestMessageWithValueAndAttachment {
     uint64_t value;
     IPC::Semaphore semaphore;
 };
+
+#if PLATFORM(COCOA)
+// Sent out of stream, since it has attachments.
+struct MockStreamTestMessageWithValueAndSendRights {
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << value;
+        encoder << WTF::move(sendRights);
+    }
+    uint64_t value;
+    Vector<MachSendRight> sendRights;
+};
+
+// A message with attachments is sent out of stream. Past 127 attachments, they do not fit in one Mach message, and are
+// sent in pending attachments messages followed by the message with the rest of them. The attachments arrive in the order
+// they were encoded, and the message is dispatched in order with the stream messages around it.
+TEST_P(StreamMessageTest, SendWithManyAttachments)
+{
+    auto cleanup = localReferenceBarrier();
+    Vector<size_t> attachmentCounts { 0, 1, 126, 127, 128, 254, 255, 300, 1000 };
+
+    // A send right to a port of its own for each attachment index, so that the received attachments can be checked to
+    // be the ones sent, in the order they were encoded.
+    Vector<MachSendRight> sendRights(std::ranges::max(attachmentCounts), [](size_t) {
+        mach_port_t port = MACH_PORT_NULL;
+        EXPECT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+        return MachSendRight::createFromReceiveRight(port);
+    });
+
+    // Message 2 * i is a stream message, and message 2 * i + 1 the one with attachmentCounts[i] attachments.
+    uint64_t nextValue = 0;
+    m_mockServerReceiver->setAsyncMessageHandler([&](IPC::StreamServerConnection&, IPC::Decoder& decoder) {
+        auto value = decoder.decode<uint64_t>();
+        EXPECT_TRUE(value);
+        if (!value)
+            return false;
+        EXPECT_EQ(*value, nextValue);
+        nextValue = *value + 1;
+        if (!(*value % 2))
+            return false; // Record the message.
+        size_t attachmentCount = attachmentCounts[*value / 2];
+        SCOPED_TRACE(attachmentCount);
+        auto receivedSendRights = decoder.decode<Vector<MachSendRight>>();
+        EXPECT_TRUE(receivedSendRights);
+        if (!receivedSendRights)
+            return false;
+        EXPECT_EQ(receivedSendRights->size(), attachmentCount);
+        for (size_t i = 0; i < std::min(receivedSendRights->size(), attachmentCount); ++i) {
+            if ((*receivedSendRights)[i].sendRight() != sendRights[i].sendRight()) {
+                ADD_FAILURE() << "attachment " << i << " is not the one sent";
+                break;
+            }
+        }
+        return false; // Record the message.
+    });
+
+    for (size_t i = 0; i < attachmentCounts.size(); ++i) {
+        EXPECT_EQ(m_clientConnection->send(MockStreamTestMessageWithValue { 2 * i }, defaultDestinationID()), IPC::Error::NoError);
+        Vector<MachSendRight> messageSendRights(attachmentCounts[i], [&](size_t j) {
+            return MachSendRight { sendRights[j] };
+        });
+        EXPECT_EQ(m_clientConnection->send(MockStreamTestMessageWithValueAndSendRights { 2 * i + 1, WTF::move(messageSendRights) }, defaultDestinationID()), IPC::Error::NoError);
+    }
+    for (size_t i = 0; i < 2 * attachmentCounts.size(); ++i) {
+        auto message = m_mockServerReceiver->waitForMessage(defaultTimeout);
+        EXPECT_EQ(message.messageName, MockStreamTestMessageWithValueAndSendRights::name());
+        EXPECT_EQ(message.destinationID, defaultDestinationID().toUInt64());
+    }
+    m_mockServerReceiver->setAsyncMessageHandler({ });
+
+    for (auto& sendRight : sendRights) {
+        auto port = sendRight.sendRight();
+        sendRight = { };
+        mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+    }
+}
+#endif // PLATFORM(COCOA)
 
 enum class WaitedObjectIdentifierType { };
 using WaitedObjectIdentifier = AtomicObjectIdentifier<WaitedObjectIdentifierType>;
