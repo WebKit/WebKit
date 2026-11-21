@@ -30,19 +30,19 @@
 
 NODELETE void wgpuRenderBundleAddRef(WGPURenderBundle renderBundle)
 {
-    WebGPU::CAPI::metalFromAPI(renderBundle).ref();
+    WebGPU::CAPI::fromAPI(renderBundle).ref();
 }
 
 void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 {
     @autoreleasepool {
-        WebGPU::CAPI::metalFromAPI(renderBundle).deref();
+        WebGPU::CAPI::fromAPI(renderBundle).deref();
     }
 }
 
 void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(renderBundle))->setLabel(WebGPU::CAPI::fromAPI(label));
+        protect(WebGPU::CAPI::fromAPI(renderBundle))->setLabel(WebGPU::CAPI::fromAPI(label));
     }
 }

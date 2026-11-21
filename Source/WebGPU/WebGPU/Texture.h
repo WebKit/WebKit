@@ -126,17 +126,17 @@ public:
     NODELETE id<MTLTexture> sampledTexture() const { return m_texture; }
     bool hasSwizzle() const { return false; }
 
-    uint32_t width() const { return m_width; }
-    uint32_t height() const { return m_height; }
-    uint32_t depthOrArrayLayers() const { return m_depthOrArrayLayers; }
-    uint32_t mipLevelCount() const { return m_mipLevelCount; }
-    uint32_t sampleCount() const { return m_sampleCount; }
-    NODELETE WebGPU::TextureDimension dimension() const;
+    uint32_t width() const final { return m_width; }
+    uint32_t height() const final { return m_height; }
+    uint32_t depthOrArrayLayers() const final { return m_depthOrArrayLayers; }
+    NODELETE uint32_t mipLevelCount() const final { return m_mipLevelCount; }
+    NODELETE uint32_t sampleCount() const final { return m_sampleCount; }
+    NODELETE WebGPU::TextureDimension dimension() const final;
     // Invalid textures may have no format. format() then reports an arbitrary one, which only the
     // validation that rejects the texture sees.
     NODELETE WebGPU::TextureFormat format() const;
-    const std::optional<WebGPU::TextureFormat>& optionalFormat() const { return m_format; }
-    OptionSet<WebGPU::TextureUsage> usage() const { return m_usage; }
+    std::optional<WebGPU::TextureFormat> optionalFormat() const final { return m_format; }
+    NODELETE OptionSet<WebGPU::TextureUsage> usage() const final { return m_usage; }
 
     Device& device() const { return m_device; }
 

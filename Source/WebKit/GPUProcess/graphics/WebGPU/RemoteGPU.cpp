@@ -184,7 +184,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
         objectHeap->addObject(identifier, remoteAdapter);
 
         auto info = adapter->info();
-        callback({ { WTF::move(info.name), adapter->features(), adapter->limits(), info.isFallbackAdapter, info.subgroupMinSize, info.subgroupMaxSize } });
+        callback({ { WTF::move(info.name), adapter->features(), adapter->limits(), info.isFallbackAdapter, info.subgroupMinSize, info.subgroupMaxSize, info.hasUnifiedMemory } });
     });
 }
 
