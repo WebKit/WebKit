@@ -1,0 +1,5 @@
+PASS: antialiased text is recorded as antialiased.
+PASS: text that differs only in color reuses the display list.
+PASS: a new text box reuses the display list.
+PASS: unsmoothed text is recorded as unsmoothed.
+PASS: text painted at a different scale gets its own display list.
