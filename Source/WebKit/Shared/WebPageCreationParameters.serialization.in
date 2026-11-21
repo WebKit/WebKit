@@ -89,6 +89,8 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     bool mayStartMediaWhenInWindow;
     bool mediaPlaybackIsSuspended;
     bool areActiveDOMObjectsAndAnimationsSuspended;
+    bool shouldSuppressHDR;
+    bool isTakingSnapshotsForApplicationSuspension;
 
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::IntSize sizeToContentAutoSizeMaximumSize;

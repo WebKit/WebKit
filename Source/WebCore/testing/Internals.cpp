@@ -5493,6 +5493,13 @@ ExceptionOr<void> Internals::setPageShouldSuppressHDR(bool shouldSuppressHDR)
     return { };
 }
 
+bool Internals::pageIsTakingSnapshotsForApplicationSuspension()
+{
+    RefPtr document = contextDocument();
+    RefPtr page = document ? document->page() : nullptr;
+    return page && page->isTakingSnapshotsForApplicationSuspension();
+}
+
 bool Internals::isSelectPopupVisible(HTMLSelectElement& element)
 {
     protect(element.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);

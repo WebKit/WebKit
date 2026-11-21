@@ -181,6 +181,8 @@ struct WebPageCreationParameters {
     bool mayStartMediaWhenInWindow { false };
     bool mediaPlaybackIsSuspended { false };
     bool areActiveDOMObjectsAndAnimationsSuspended { false };
+    bool shouldSuppressHDR { false };
+    bool isTakingSnapshotsForApplicationSuspension { false };
 
     WebCore::IntSize minimumSizeForAutoLayout { };
     WebCore::IntSize sizeToContentAutoSizeMaximumSize { };

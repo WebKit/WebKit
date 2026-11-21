@@ -4274,6 +4274,7 @@ private:
 #endif
 
     bool m_isTakingSnapshotsForApplicationSuspension { false };
+    bool m_shouldSuppressHDR { false };
 
 #if PLATFORM(MAC)
     bool m_acceptsFirstMouse { false };

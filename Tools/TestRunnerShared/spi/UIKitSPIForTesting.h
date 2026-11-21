@@ -535,6 +535,11 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionShouldBeginResult) {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+WTF_EXTERN_C_BEGIN
+extern NSNotificationName const _UISceneWillBeginSystemSnapshotSequence;
+extern NSNotificationName const _UISceneDidCompleteSystemSnapshotSequence;
+WTF_EXTERN_C_END
+
 // Start of UIKit IPI
 
 @interface UITextChecker (TestingSupport2)

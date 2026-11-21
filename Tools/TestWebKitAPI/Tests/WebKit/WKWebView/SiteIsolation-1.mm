@@ -2202,6 +2202,119 @@ TEST(SiteIsolation, ContextMenuQuickNoteInCrossOriginIframe)
 
 #endif // ENABLE(APP_HIGHLIGHTS)
 
+#if PLATFORM(MAC) && HAVE(SUPPORT_HDR_DISPLAY_APIS)
+
+TEST(SiteIsolation, HDRSuppressionReachesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body><video></video><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body><video></video></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = configurationWithInternals(server);
+    setFeatureEnabled(configuration.get(), @"SupportHDRDisplayEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    auto setApplicationSuppressesHDR = [](bool suppress) {
+        [NSNotificationCenter.defaultCenter postNotificationName:suppress ? NSApplicationShouldBeginSuppressingHighDynamicRangeContentNotification : NSApplicationShouldEndSuppressingHighDynamicRangeContentNotification object:NSApp];
+    };
+    auto dynamicRangeLimit = [&](WKFrameInfo *frame) {
+        return [[webView objectByEvaluatingJavaScript:@"internals.effectiveDynamicRangeLimitValue(document.querySelector('video'))" inFrame:frame] doubleValue];
+    };
+
+    // The iframe's process is created after HDR is suppressed, so it has to learn it when it's created.
+    setApplicationSuppressesHDR(true);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+    auto suppressedLimit = dynamicRangeLimit(nil);
+    EXPECT_EQ(dynamicRangeLimit(childFrame.get()), suppressedLimit);
+
+    // Changes made after that have to reach the iframe's process too.
+    setApplicationSuppressesHDR(false);
+    double unsuppressedLimit = 0;
+    EXPECT_TRUE(Util::waitFor([&] {
+        unsuppressedLimit = dynamicRangeLimit(nil);
+        return unsuppressedLimit != suppressedLimit;
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return dynamicRangeLimit(childFrame.get()) == unsuppressedLimit;
+    }));
+
+    setApplicationSuppressesHDR(true);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return dynamicRangeLimit(nil) == suppressedLimit;
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return dynamicRangeLimit(childFrame.get()) == suppressedLimit;
+    }));
+
+    setApplicationSuppressesHDR(false);
+}
+
+#endif // PLATFORM(MAC) && HAVE(SUPPORT_HDR_DISPLAY_APIS)
+
+#if PLATFORM(IOS_FAMILY)
+
+TEST(SiteIsolation, SnapshotSequenceForApplicationSuspensionReachesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body>subframe</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // Give each site its own process, so the iframe added below needs a new one.
+    RetainPtr configuration = configurationWithInternals(server);
+    setFeatureEnabled(configuration.get(), @"SiteIsolationSharedProcessEnabled", false);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    auto isTakingSnapshots = [&](WKFrameInfo *frame) {
+        return [[webView objectByEvaluatingJavaScript:@"internals.pageIsTakingSnapshotsForApplicationSuspension()" inFrame:frame] boolValue];
+    };
+    EXPECT_FALSE(isTakingSnapshots(nil));
+    EXPECT_FALSE(isTakingSnapshots(childFrame.get()));
+
+    UIWindowScene *scene = [webView window].windowScene;
+    [NSNotificationCenter.defaultCenter postNotificationName:_UISceneWillBeginSystemSnapshotSequence object:scene];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return isTakingSnapshots(nil);
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return isTakingSnapshots(childFrame.get());
+    }));
+
+    // A process created during the snapshot sequence has to learn about it when it's created.
+    [webView evaluateJavaScript:@"let iframe = document.createElement('iframe'); iframe.src = 'https://apple.com/iframe'; document.body.appendChild(iframe)" completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        if ([webView mainFrame].childFrames.count < 2)
+            return false;
+        RetainPtr frame = [webView secondChildFrame];
+        return [frame.get().request.URL.host isEqualToString:@"apple.com"] && frame.get()._processIdentifier != [webView _webProcessIdentifier];
+    }));
+    RetainPtr newChildFrame = [webView secondChildFrame];
+    EXPECT_NE(newChildFrame.get()._processIdentifier, childFrame.get()._processIdentifier);
+    EXPECT_NE(newChildFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+    EXPECT_TRUE(isTakingSnapshots(newChildFrame.get()));
+
+    [NSNotificationCenter.defaultCenter postNotificationName:_UISceneDidCompleteSystemSnapshotSequence object:scene];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !isTakingSnapshots(nil);
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !isTakingSnapshots(childFrame.get());
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !isTakingSnapshots(newChildFrame.get());
+    }));
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 #if PLATFORM(IOS_FAMILY)
 
 // UIKit reads text and geometry around the insertion point to drive autocorrection, predictive text, and

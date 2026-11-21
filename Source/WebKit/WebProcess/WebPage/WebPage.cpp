@@ -1113,6 +1113,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         page->suspendAllMediaPlayback();
     if (parameters.areActiveDOMObjectsAndAnimationsSuspended)
         page->suspendActiveDOMObjectsAndAnimations();
+    page->setShouldSuppressHDR(parameters.shouldSuppressHDR);
+    page->setIsTakingSnapshotsForApplicationSuspension(parameters.isTakingSnapshotsForApplicationSuspension);
 
     if (parameters.openedByDOM)
         page->setOpenedByDOM();

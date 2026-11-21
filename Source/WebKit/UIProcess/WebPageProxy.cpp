@@ -3691,8 +3691,10 @@ void WebPageProxy::setShouldSuppressHDR(bool shouldSuppressHDR)
     Ref processPool = m_configuration->processPool();
     processPool->suppressEDR(shouldSuppressHDR);
 #endif
-    if (hasRunningProcess())
-        send(Messages::WebPage::SetShouldSuppressHDR(shouldSuppressHDR));
+    m_shouldSuppressHDR = shouldSuppressHDR;
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetShouldSuppressHDR(shouldSuppressHDR), pageID);
+    });
 }
 
 void WebPageProxy::setUnderlayColor(const Color& color)
@@ -17329,6 +17331,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         .webPageProxyIdentifier = identifier(),
         .pageGroupData = m_pageGroup->data(),
         .visitedLinkTableID = m_visitedLinkStore->identifier(),
+        .shouldSuppressHDR = m_shouldSuppressHDR,
+        .isTakingSnapshotsForApplicationSuspension = m_isTakingSnapshotsForApplicationSuspension,
         .userContentControllerParameters = m_userContentController->parametersForProcess(process),
         .mainFrameIdentifier = mainFrameIdentifier,
         .openedMainFrameName = m_openedMainFrameName,
@@ -21636,7 +21640,9 @@ void WebPageProxy::setOverriddenMediaType(const String& mediaType)
 void WebPageProxy::setIsTakingSnapshotsForApplicationSuspension(bool isTakingSnapshotsForApplicationSuspension)
 {
     m_isTakingSnapshotsForApplicationSuspension = isTakingSnapshotsForApplicationSuspension;
-    send(Messages::WebPage::SetIsTakingSnapshotsForApplicationSuspension(isTakingSnapshotsForApplicationSuspension));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetIsTakingSnapshotsForApplicationSuspension(isTakingSnapshotsForApplicationSuspension), pageID);
+    });
 }
 
 void WebPageProxy::setNeedsDOMWindowResizeEvent()

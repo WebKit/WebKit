@@ -942,6 +942,7 @@ public:
     ExceptionOr<bool> isCanvasContextHDR(const HTMLCanvasElement&);
 
     ExceptionOr<void> setPageShouldSuppressHDR(bool);
+    bool pageIsTakingSnapshotsForApplicationSuspension();
 
     ExceptionOr<void> setIsPlayingToBluetoothOverride(std::optional<bool>);
 

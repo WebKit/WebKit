@@ -1133,6 +1133,7 @@ enum LayerType {
     double getContextEffectiveDynamicRangeLimitValue(HTMLCanvasElement canvas);
     boolean isCanvasContextHDR(HTMLCanvasElement canvas);
     undefined setPageShouldSuppressHDR(boolean shouldSuppressHDR);
+    boolean pageIsTakingSnapshotsForApplicationSuspension();
 
     [Conditional=VIDEO&FULLSCREEN_API] boolean isChildOfElementFullscreen(HTMLMediaElement media);
 
