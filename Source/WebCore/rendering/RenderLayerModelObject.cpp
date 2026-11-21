@@ -354,7 +354,7 @@ void RenderLayerModelObject::updateTransform()
 
 void RenderLayerModelObject::updateLayerTransform()
 {
-    if (auto* box = dynamicDowncast<RenderBox>(this); box && MotionPath::needsUpdateAfterContainingBlockLayout(style().offsetPath())) {
+    if (auto* box = dynamicDowncast<RenderBox>(this); box && !box->isOutOfFlowPositioned() && MotionPath::needsUpdateAfterContainingBlockLayout(style().offsetPath())) {
         if (auto* containingBlock = this->containingBlock()) {
             view().frameView().layoutContext().setBoxNeedsTransformUpdateAfterContainerLayout(*box, *containingBlock);
             return;
