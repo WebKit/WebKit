@@ -24,7 +24,7 @@
 #if HAVE_DIGITAL_CREDENTIALS_UI
 
 import IdentityDocumentServices
-import IdentityDocumentServicesUI
+@_weakLinked import IdentityDocumentServicesUI
 
 extension WKIdentityDocumentPresentmentMobileDocumentElementInfo {
     convenience init(_ source: ISO18013MobileDocumentRequest.ElementInfo) {

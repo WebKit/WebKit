@@ -130,6 +130,8 @@
 #endif
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
+#include "CodeSigning.h"
+#include "NetworkDigitalCredentialsPresentment.h"
 #include <WebCore/DigitalCredentialsRequestData.h>
 #include <WebCore/DigitalCredentialsResponseData.h>
 #include <WebCore/ExceptionData.h>
@@ -710,20 +712,34 @@ void NetworkConnectionToWebProcess::completeQueuedExistingLoaderResume(Ref<Netwo
 }
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
-void NetworkConnectionToWebProcess::presentDigitalCredentialRequest(WebPageProxyIdentifier webPageProxyID, WebCore::DigitalCredentialsRequestData&& requestData, Vector<WebCore::UnvalidatedDigitalCredentialRequest>&& rawRequests, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::presentDigitalCredentialRequest(WebPageProxyIdentifier webPageProxyID, uint64_t requestIdentifier, WebCore::SecurityOriginData&& topOrigin, Vector<WebCore::UnvalidatedDigitalCredentialRequest>&& rawRequests, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     auto notAllowed = [&] {
         completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Digital credentials request is not allowed."_s }));
     };
     MESSAGE_CHECK_COMPLETION(m_sharedPreferencesForWebProcess.digitalCredentialsEnabled, notAllowed());
-    MESSAGE_CHECK_COMPLETION(rawRequests.size() == requestData.requests.size(), notAllowed());
+    MESSAGE_CHECK_COMPLETION(!rawRequests.isEmpty(), notAllowed());
+    MESSAGE_CHECK_COMPLETION(!topOrigin.isNull(), notAllowed());
     MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID), notAllowed());
-    MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain { requestData.topOrigin }), notAllowed());
+    MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain { topOrigin }), notAllowed());
+    if (topOrigin.isOpaque())
+        return notAllowed();
+    bool hasOpenID4VPRequest = rawRequests.containsIf([](auto& request) {
+        return !std::holds_alternative<WebCore::MobileDocumentRequest>(request);
+    });
+    MESSAGE_CHECK_COMPLETION(!hasOpenID4VPRequest || m_sharedPreferencesForWebProcess.digitalCredentialsOpenID4VPEnabled, notAllowed());
 
-    CONNECTION_RELEASE_LOG(Loading, "presentDigitalCredentialRequest: %zu requests", requestData.requests.size());
+    CONNECTION_RELEASE_LOG(Loading, "presentDigitalCredentialRequest: %zu requests", rawRequests.size());
 
-    // FIXME: Present the request once there is platform support.
-    completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials are not available in this app."_s }));
+    bool useMockPlatformWallet = !currentProcessIsPlatformBinary() && m_sharedPreferencesForWebProcess.digitalCredentialsUseMockPlatformWalletForTesting;
+    presentDigitalCredentialRequestFromNetworkProcess(webPageProxyID, { m_webProcessIdentifier, requestIdentifier }, topOrigin, rawRequests, useMockPlatformWallet ? UseMockPlatformWallet::Yes : UseMockPlatformWallet::No, WTF::move(completionHandler));
+}
+
+void NetworkConnectionToWebProcess::cancelDigitalCredentialRequest(WebPageProxyIdentifier webPageProxyID, uint64_t requestIdentifier)
+{
+    MESSAGE_CHECK(NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID));
+    CONNECTION_RELEASE_LOG(Loading, "cancelDigitalCredentialRequest");
+    cancelDigitalCredentialRequestFromNetworkProcess(webPageProxyID, { m_webProcessIdentifier, requestIdentifier });
 }
 #endif
 

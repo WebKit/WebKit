@@ -574,6 +574,7 @@ set(WebKit_PROJECT_HEADERS
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentRequest.h
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentResponse.h
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentRawRequestValidator.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentSystemPresentmentController.h
 
     WebKitSwift/LinearMediaKit/WKSLinearMediaPlayer.h
     WebKitSwift/LinearMediaKit/WKSLinearMediaTypes.h

@@ -635,6 +635,7 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.private.webkit.webpush bool YES
     plistbuddy Add :com.apple.multitasking.systemappassertions bool YES
     plistbuddy Add :com.apple.payment.all-access bool YES
+    plistbuddy Add :com.apple.private.identity-document-services.web-presentment.host bool YES
     plistbuddy Add :com.apple.private.accounts.bundleidspoofing bool YES
     plistbuddy Add :com.apple.private.ciphermld.allow bool YES
     plistbuddy Add :com.apple.private.dmd.policy bool YES

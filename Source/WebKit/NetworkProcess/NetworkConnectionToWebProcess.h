@@ -91,7 +91,6 @@ namespace WebCore {
 class BlobDataFileReference;
 class BlobPart;
 class BlobRegistryImpl;
-struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct ExceptionData;
 class LoginStatus;
@@ -318,7 +317,8 @@ public:
     void completeQueuedExistingLoaderResume(Ref<NetworkResourceLoader>&&, NetworkResourceLoadParameters&&);
     void terminateForInvalidLoaderResumeClaim();
 #if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
-    void presentDigitalCredentialRequest(WebPageProxyIdentifier, WebCore::DigitalCredentialsRequestData&&, Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
+    void presentDigitalCredentialRequest(WebPageProxyIdentifier, uint64_t requestIdentifier, WebCore::SecurityOriginData&& topOrigin, Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
+    void cancelDigitalCredentialRequest(WebPageProxyIdentifier, uint64_t requestIdentifier);
 #endif
 
 private:
