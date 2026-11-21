@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<title>A SerializedScriptValue with null internals must not crash the network process</title>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+</script>
+<script type="module">
+if (!window.IPC) {
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import('./coreipc.js');
+
+// An empty m_internals encodes as a disengaged std::unique_ptr, which used to be dereferenced
+// while decoding the SerializedScriptValue.
+CoreIPC.Networking.NetworkBroadcastChannelRegistry.PostMessage(0, {
+    origin: {
+        topOrigin: {
+            data: {
+                variantType: 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                variant: { object: 262144, processIdentifier: 262145 }
+            }
+        },
+        clientOrigin: {
+            data: {
+                variantType: 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                variant: { object: 262146, processIdentifier: 262145 }
+            }
+        }
+    },
+    name: 'channel',
+    message: { message: { optionalValue: { m_internals: { } } }, transferredPorts: [] },
+    blobURLs: []
+});
+
+// The network process handles this connection's messages in order, so once this synchronous
+// message returns, the malformed message above has already been decoded.
+CoreIPC.Networking.NetworkConnectionToWebProcess.BlobSize(0, { url: { string: 'blob:null/barrier' } });
+testRunner?.notifyDone();
+
+}
+</script>
