@@ -640,17 +640,17 @@ TestWebKitAPI.WKWebExtensionAPILocalization.i18nSwedishDefaultToEnglish
 TestWebKitAPI.WKWebExtensionAPILocalization.i18nWithFallback
 TestWebKitAPI.WKWebExtensionAPILocalization.i18nWithoutDefaultLocale
 TestWebKitAPI.WKWebExtensionAPILocalization.i18nWithoutMessages
-TestWebKitAPI.WKWebExtensionAPIMenus.ClickedMenuItemAndPermissionsRequest
-TestWebKitAPI.WKWebExtensionAPIMenus.MacActiveTabContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacAudioContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacEditableContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacFrameContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacImageContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacLinkContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacSelectionContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacURLPatternContextMenuItems
-TestWebKitAPI.WKWebExtensionAPIMenus.MacVideoContextMenuItems
+TestWebKitAPI.WKWebExtensionAPIMenusTests/clickedMenuItemAndPermissionsRequest()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macActiveTabContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macAudioContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macEditableContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macFrameContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macImageContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macLinkContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macSelectionContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macURLPatternContextMenuItems()
+TestWebKitAPI.WKWebExtensionAPIMenusTests/macVideoContextMenuItems()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/iframeInOffscreenDocumentCannotReachExtensionWhenURLDoesNotMatchExternallyConnectable()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/iframeInOffscreenDocumentWakesServiceWorkerWithExternalMessage()
 TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab
@@ -1146,18 +1146,18 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ mac ] TestWebKitAPI.WKWebExtensionAPIExtensionTypesTests/executionWorld()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIExtensionTypesTests/imageFormat()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIExtensionTypesTests/runAt()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionMenus
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionMenusWithActiveTab
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionSubmenus
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ClearMenuItemIconVariantsWithEmpty
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ContextType
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithIconVariants
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.OnClick
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.Remove
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.RemoveAfterBackgroundPageReload
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.RemoveAll
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.RemoveWithSubmenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.TabMenus
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/actionMenus()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/actionMenusWithActiveTab()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/actionSubmenus()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/clearMenuItemIconVariantsWithEmpty()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/contextType()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/menuItemWithIconVariants()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/onClick()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/remove()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/removeAfterBackgroundPageReload()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/removeAll()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/removeWithSubmenuItems()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenusTests/tabMenus()
 [ mac ] TestWebKitAPI.WKWebExtensionAPINotificationsTests/buttonClickedEvent()
 [ mac ] TestWebKitAPI.WKWebExtensionAPINotificationsTests/clearRejectsWhenBrowserReportsError()
 [ mac ] TestWebKitAPI.WKWebExtensionAPINotificationsTests/clearRemovesNotificationThroughDelegate()
@@ -1232,43 +1232,43 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.StartupEvent
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.TabsConnectSenderWindowIdFromPopup
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.TabsSendMessageSenderWindowIdFromPopup
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabAndHostGrantInjectContentScriptsOnce
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabContentKeptWhenInjectedContentIsUpdated
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabContentRemovedAfterCrossHostNavigation
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabContentRemovedWhenGestureCleared
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabDoesNotHideRequestedPermissionStatus
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabFiresPermissionsEvents
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabInjectsContentScriptsOnlyInGrantedTab
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabInjectsRegisteredContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ActiveTabNotificationsIncludeTab
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.CSSAuthorOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.CSSUserOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ContentScriptsRespectDeniedMatchPatterns
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ErrorsExecuteScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptJSONTypes
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptResultDoesNotAliasEmptyContainers
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithDocumentIds
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithFrameIds
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithoutUserGesture
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.GetContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InjectExtensionScriptElementWithStrictDynamicReportOnlyCSP
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InsertAndRemoveCSS
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InsertAndRemoveCSSWithFrameIds
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InsertCSSInAllFramesWithCrossSiteFrame
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.MigrateScriptDataToNewFormat
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.PersistentRegisteredScriptIsInjectedAfterContextReloads
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScriptsMatchOriginAsFallback
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScriptsWithCSSAuthorOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScriptsWithCSSUserOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisteredScriptExcludeMatches
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisteredScriptIsInjectedAfterContextReloads
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RemoveAllUserScriptsDoesNotRemoveWebExtensionScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RemoveAllUserStyleSheetsDoesNotRemoveWebExtensionStyleSheets
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.UnregisterContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.UpdateContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.World
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabAndHostGrantInjectContentScriptsOnce()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabContentKeptWhenInjectedContentIsUpdated()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabContentRemovedAfterCrossHostNavigation()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabContentRemovedWhenGestureCleared()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabDoesNotHideRequestedPermissionStatus()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabFiresPermissionsEvents()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabInjectsContentScriptsOnlyInGrantedTab()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabInjectsRegisteredContentScripts()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/activeTabNotificationsIncludeTab()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/contentScriptsRespectDeniedMatchPatterns()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/cssAuthorOrigin()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/cssUserOrigin()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/errorsExecuteScript()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/executeScript()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/executeScriptJSONTypes()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/executeScriptResultDoesNotAliasEmptyContainers()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/executeScriptWithDocumentIds()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/executeScriptWithFrameIds()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/executeScriptWithoutUserGesture()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/getContentScripts()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/injectExtensionScriptElementWithStrictDynamicReportOnlyCSP()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/insertAndRemoveCSS()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/insertAndRemoveCSSWithFrameIds()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/insertCSSInAllFramesWithCrossSiteFrame()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/migrateScriptDataToNewFormat()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/persistentRegisteredScriptIsInjectedAfterContextReloads()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/registerContentScripts()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/registerContentScriptsMatchOriginAsFallback()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/registerContentScriptsWithCSSAuthorOrigin()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/registerContentScriptsWithCSSUserOrigin()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/registeredScriptExcludeMatches()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/registeredScriptIsInjectedAfterContextReloads()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/removeAllUserScriptsDoesNotRemoveWebExtensionScripts()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/removeAllUserStyleSheetsDoesNotRemoveWebExtensionStyleSheets()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/unregisterContentScripts()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/updateContentScripts()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScriptingTests/world()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIStorageTests/defaultAccessLevels()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIStorageTests/getBytesInUse()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIStorageTests/migratesLegacySessionStorageAllowedInUntrusedContextsState()

@@ -874,10 +874,12 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtensionAPIExtension.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIExtensionTypes.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPILocalization.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIMenus.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPINamespace.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPINotifications.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIOffscreen.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIPermissions.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPITest.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIWebNavigation.swift
