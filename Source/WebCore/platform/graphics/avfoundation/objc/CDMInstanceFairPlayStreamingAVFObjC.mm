@@ -1077,6 +1077,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, Clo
     m_currentRequest = std::nullopt;
     m_pendingRequests.clear();
     m_requests.clear();
+    updateKeyStatuses();
     callback();
 }
 

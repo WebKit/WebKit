@@ -119,8 +119,11 @@ AudioVideoRendererAVFObjC::AudioVideoRendererAVFObjC(const Logger& originalLogge
     , m_sharedTimebase(WTF::move(sharedTimebase))
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     , m_keyStatusesChangedObserver(Observer<void()>::create([weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->tryToEnqueueBlockedSamples();
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        protectedThis->m_currentTrackIds.clear();
+        protectedThis->tryToEnqueueBlockedSamples();
     }))
 #endif
 {
