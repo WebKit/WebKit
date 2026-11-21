@@ -195,12 +195,7 @@ enum class ScrollingStateNodeProperty : uint64_t {
     FooterHeight                                = HeaderHeight << 1,
     BehaviorForFixedElements                    = FooterHeight << 1,
     ObscuredContentInsets                       = BehaviorForFixedElements << 1,
-#if HAVE(NSREFRESHCONTROLLER)
-    TopScrollStretchForRefreshController        = ObscuredContentInsets << 1,
-    VisualViewportIsSmallerThanLayoutViewport   = TopScrollStretchForRefreshController << 1,
-#else
     VisualViewportIsSmallerThanLayoutViewport   = ObscuredContentInsets << 1,
-#endif
     AsyncFrameOrOverflowScrollingEnabled        = VisualViewportIsSmallerThanLayoutViewport << 1,
     WheelEventGesturesBecomeNonBlocking         = AsyncFrameOrOverflowScrollingEnabled << 1,
     ScrollingPerformanceTestingEnabled          = WheelEventGesturesBecomeNonBlocking << 1,

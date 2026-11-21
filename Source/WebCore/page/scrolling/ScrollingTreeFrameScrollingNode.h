@@ -74,9 +74,6 @@ public:
     NODELETE int insetForLeftScrollbarSpace() const;
     // The view size less the scrollbars, in view coordinates, so unlike the layout viewport it doesn't zoom.
     NODELETE FloatSize sizeForVisibleContent() const;
-#if HAVE(NSREFRESHCONTROLLER)
-    float topScrollStretchForRefreshController() const { return m_topScrollStretchForRefreshController; }
-#endif
     virtual void viewWillStartLiveResize() { }
     virtual void viewWillEndLiveResize() { }
     virtual void viewSizeDidChange() { }
@@ -111,9 +108,6 @@ private:
     float m_frameScaleFactor { 1 };
     float m_delegatedPageScaleFactor { 1 };
     FloatBoxExtent m_obscuredContentInsets;
-#if HAVE(NSREFRESHCONTROLLER)
-    float m_topScrollStretchForRefreshController { 0 };
-#endif
 
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
