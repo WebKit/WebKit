@@ -34,9 +34,13 @@ class WebDriverMacTest(unittest.TestCase):
         return create_driver(port).capabilities()['webkit:browserOptions']
 
     def test_site_isolation(self):
-        self.assertEqual(self.browser_options(site_isolation=True), {'args': ['--force-site-isolation', 'YES']})
+        self.assertEqual(self.browser_options(site_isolation=True)['args'][:2], ['--force-site-isolation', 'YES'])
 
     def test_no_site_isolation(self):
         # Turned off explicitly, whatever WebKit's default is.
-        self.assertEqual(self.browser_options(site_isolation=False), {'args': ['--force-site-isolation', 'NO']})
-        self.assertEqual(self.browser_options(), {'args': ['--force-site-isolation', 'NO']})
+        self.assertEqual(self.browser_options(site_isolation=False)['args'][:2], ['--force-site-isolation', 'NO'])
+        self.assertEqual(self.browser_options()['args'][:2], ['--force-site-isolation', 'NO'])
+
+    def test_classic_scrollbars(self):
+        self.assertEqual(self.browser_options(), {'args': ['--force-site-isolation', 'NO', '-AppleShowScrollBars', 'Always']})
+        self.assertEqual(self.browser_options(site_isolation=True), {'args': ['--force-site-isolation', 'YES', '-AppleShowScrollBars', 'Always']})

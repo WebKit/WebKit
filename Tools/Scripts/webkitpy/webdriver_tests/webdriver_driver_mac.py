@@ -36,7 +36,9 @@ class WebDriverMac(WebDriver):
 
     def browser_args(self):
         # Always say whether to use Site Isolation, so that a run doesn't change with WebKit's default.
-        return ['--force-site-isolation', 'YES' if self._port.get_option('site_isolation') else 'NO']
+        args = ['--force-site-isolation', 'YES' if self._port.get_option('site_isolation') else 'NO']
+        args += ['-AppleShowScrollBars', 'Always']
+        return args
 
     def capabilities(self):
         # minidriver always launches the MiniBrowser in its own build directory, and doesn't accept a binary.
