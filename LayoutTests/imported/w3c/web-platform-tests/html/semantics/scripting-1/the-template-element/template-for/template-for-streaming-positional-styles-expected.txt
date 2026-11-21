@@ -1,0 +1,7 @@
+Z
+B
+A
+
+PASS Positional styles are correct for a script running inside a streaming patch
+PASS Positional styles are correct after the patch finishes
+

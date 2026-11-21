@@ -1,0 +1,4 @@
+
+PASS document.write() from DOMNodeRemoved for the marker throws InvalidStateError
+PASS document.write() from DOMNodeRemoved for replaced content throws InvalidStateError
+

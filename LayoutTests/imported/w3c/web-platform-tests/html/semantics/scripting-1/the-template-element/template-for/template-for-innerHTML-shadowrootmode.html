@@ -1,0 +1,26 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - shadowrootmode precedence when declarative shadow roots are disallowed</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inhead">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-template-shadowrootmode">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+  <script>
+    test(() => {
+      const div = document.createElement("div");
+      div.innerHTML = `<?start name="z">old<?end><template shadowrootmode="open" for="z">new</template>`;
+      const template = div.querySelector("template");
+      assert_not_equals(template, null, "the template should stay in the tree as an ordinary template");
+      assert_equals(div.textContent, "old", "for should be ignored");
+      assert_equals(template.content.textContent, "new");
+    }, "A valid shadowrootmode makes for inert even where declarative shadow roots are disallowed");
+
+    test(() => {
+      const div = document.createElement("div");
+      div.innerHTML = `<?start name="z">old<?end><template shadowrootmode="bogus" for="z">new</template>`;
+      assert_equals(div.querySelector("template"), null, "the template should patch, not stay in the tree");
+      assert_equals(div.textContent, "new", "an invalid shadowrootmode does not supersede for");
+    }, "An invalid shadowrootmode does not make for inert");
+  </script>
+</body>

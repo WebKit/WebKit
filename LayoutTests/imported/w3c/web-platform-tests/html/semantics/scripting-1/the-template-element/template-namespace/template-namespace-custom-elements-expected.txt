@@ -1,0 +1,3 @@
+
+FAIL Customized built-in <template is='...'> synchronous attribute mutations and re-entrant document.write during parsing assert_equals: expected "http://www.w3.org/1999/xhtml" but got "http://www.w3.org/2000/svg"
+

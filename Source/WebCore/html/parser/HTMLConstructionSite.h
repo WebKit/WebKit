@@ -119,7 +119,7 @@ public:
     void insertCommentOnDocument(AtomHTMLToken&&);
     void insertCommentOnHTMLHtmlElement(AtomHTMLToken&&);
     void insertHTMLElement(AtomHTMLToken&&);
-    void insertHTMLTemplateElement(AtomHTMLToken&&);
+    void insertHTMLTemplateElement(AtomHTMLToken&&, const AtomString& fallbackNamespace, const AtomString& fragmentRootNamespace);
     std::unique_ptr<CustomElementConstructionData> insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&&);
     void insertCustomElement(Ref<Element>&&, Vector<Attribute>&&);
     void insertSelfClosingHTMLElement(AtomHTMLToken&&);

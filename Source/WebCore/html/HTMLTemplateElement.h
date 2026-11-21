@@ -31,11 +31,14 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
 
+class ContainerNode;
 class DocumentFragment;
+class ProcessingInstruction;
 class TemplateContentDocumentFragment;
 
 class HTMLTemplateElement final : public HTMLElement {
@@ -46,8 +49,20 @@ public:
     virtual ~HTMLTemplateElement();
 
     DocumentFragment& fragmentForInsertion() const;
+    ContainerNode& insertionTarget() const;
+    NODELETE Node* insertionNextChild() const;
     DocumentFragment& content() const;
     NODELETE DocumentFragment* contentIfAvailable() const;
+
+    bool prepareContentPatching(ContainerNode&, const AtomString& fragmentRootNamespace);
+
+    const AtomString& contentNamespace() const { return m_contentNamespace; }
+    ExceptionOr<void> setContentNamespace(const AtomString&);
+    void setContentNamespaceFromParser(const AtomString&);
+    // Returns the contentnamespace attribute's state, or fallbackNamespace when the
+    // attribute is missing or invalid.
+    const AtomString& resolveContentNamespace(const AtomString& fallbackNamespace) const;
+    static const AtomString& resolveParserContextNamespace(ContainerNode&, const AtomString& fragmentRootNamespace);
 
     const AtomString& shadowRootMode() const;
     const AtomString& shadowRootSlotAssignment() const;
@@ -62,9 +77,14 @@ private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
     SerializedNode serializeNode(CloningOperation) const final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+    void finishParsingChildren() final;
 
     const RefPtr<TemplateContentDocumentFragment> m_content;
+    AtomString m_contentNamespace;
     WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData> m_declarativeShadowRoot;
+    RefPtr<ContainerNode> m_insertionTarget;
+    RefPtr<ProcessingInstruction> m_insertionStartMarker;
+    RefPtr<ProcessingInstruction> m_insertionEndMarker;
 };
 
 } // namespace WebCore

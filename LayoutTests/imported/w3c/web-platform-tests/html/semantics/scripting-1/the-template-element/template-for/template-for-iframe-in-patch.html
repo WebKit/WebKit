@@ -1,0 +1,29 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - iframes in and beside a patch keep their browsing context</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#prepare-content-patching">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+  <div id="iframeTarget"><?start name="iframe-case">Loading...<?end></div>
+  <template for="iframe-case"><iframe id="patchedFrame" srcdoc="hi"></iframe></template>
+
+  <div id="siblingTarget"><iframe id="existingFrame" srcdoc="hi"></iframe><?start name="sibling-case">x<?end></div>
+  <template for="sibling-case">patched</template>
+
+  <script>
+    test(() => {
+      const frame = document.getElementById("patchedFrame");
+      assert_not_equals(frame, null, "the patched iframe should be in the tree");
+      assert_not_equals(frame.contentWindow, null,
+        "an iframe inside the patch keeps its browsing context after the markers are removed");
+    }, "Removing the markers does not disconnect an iframe inside the patch");
+
+    test(() => {
+      const frame = document.getElementById("existingFrame");
+      assert_not_equals(frame, null, "the pre-existing iframe should still be in the tree");
+      assert_not_equals(frame.contentWindow, null,
+        "an iframe that is a sibling of the markers keeps its browsing context");
+    }, "Removing the markers does not disconnect an iframe beside the patch");
+  </script>
+</body>

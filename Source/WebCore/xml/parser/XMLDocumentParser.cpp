@@ -37,6 +37,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
+#include "HTMLTemplateElement.h"
 #include "ImageLoader.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
@@ -51,6 +52,7 @@
 #include "SVGStyleElement.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
+#include "Settings.h"
 #include "StyleDocumentScope.h"
 #include "TextResourceDecoder.h"
 #include "XMLNSNames.h"
@@ -340,6 +342,10 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     }
 
     auto namespaces = findXMLParsingNamespaces(contextElement);
+    // https://whatpr.org/html/13100/scripting.html#template-content-namespace: template contents
+    // are parsed in the template's content namespace.
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(contextElement); templateElement && templateElement->document().settings().htmlTemplateContentNamespaceEnabled())
+        namespaces.defaultNamespace = templateElement->contentNamespace();
     auto parser = XMLDocumentParser::create(fragment, WTF::move(namespaces.prefixNamespaces), namespaces.defaultNamespace, parserContentPolicy);
     bool wellFormed = parser->appendFragmentSource(chunk);
     // Do not call finish(). The finish() and doEnd() implementations touch the main document and loader and can cause crashes in the fragment case.
