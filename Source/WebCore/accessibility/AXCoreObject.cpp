@@ -1952,7 +1952,8 @@ String AXCoreObject::helpTextAttributeValue() const
     // Determine if any descriptive text is available, which influences our usage of title tag.
     bool descriptiveTextAvailable = false;
     for (const auto& text : textOrder) {
-        if (isDescriptiveText(text.textSource) && !text.text.isEmpty()) {
+        if (isDescriptiveText(text.textSource)
+            && (!text.text.isEmpty() || text.textSource == AccessibilityTextSource::Alternative)) {
             descriptiveTextAvailable = true;
             break;
         }
