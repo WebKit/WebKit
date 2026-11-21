@@ -266,7 +266,7 @@
                   },
                   { "name": "Apple-Tahoe-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "deployment_target": "26.0",
+                  "deployment_target": "26.4",
                   "triggers": [
                       "tahoe-release-tests-wk2",
                       "tahoe-release-applesilicon-tests-wk2"
@@ -286,7 +286,7 @@
                   { "name": "Apple-Tahoe-Debug-Build", "factory": "BuildFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--cmake"],
-                  "deployment_target": "26.0",
+                  "deployment_target": "26.4",
                   "triggers": [
                       "tahoe-debug-tests-wk2",
                       "tahoe-debug-applesilicon-tests-wk2",
