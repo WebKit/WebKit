@@ -200,8 +200,12 @@ async function run()
     const remoteReadback = iface('RemoteBuffer', readback);
     if ((await awaitReply(remoteReadback, 'MapAsync', { mapModeFlags: alias('WebCore::WebGPU::MapModeFlags', 1) /* Read */, offset: size64(0), size: {} }))?.success !== true)
         return 'FAIL: MapAsync did not succeed';
+    // The parsed reply turns a Vector into a plain object keyed by element index, so it has no length.
     let mapped = null;
-    remoteReadback.GetMappedRange({ offset: size64(0), size: {} }, (reply) => { mapped = reply?.data?.optionalValue; });
+    remoteReadback.GetMappedRange({ offset: size64(0), size: {} }, (reply) => {
+        if (reply?.data?.optionalValue)
+            mapped = Object.values(reply.data.optionalValue);
+    });
     if (mapped?.length !== IMAGE_SIZE)
         return `FAIL: GetMappedRange returned ${mapped?.length} bytes`;
 
