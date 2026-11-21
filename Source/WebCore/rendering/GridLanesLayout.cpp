@@ -42,20 +42,39 @@ static bool isWithinFitTolerance(LayoutUnit position, LayoutUnit highestPosition
     return WTF::holdsAlternative<CSS::Keyword::Infinite>(fitTolerance) || position <= highestPosition + std::get<LayoutUnit>(fitTolerance);
 }
 
-// The start of the highest skipped space in the track that starts above the item's normal placement and has room for it.
-static std::optional<LayoutUnit> highestSkippedSpaceWithRoom(const Vector<GridLanesLayout::SkippedSpace>& trackSkippedSpaces, LayoutUnit normalPlacementPosition, LayoutUnit spaceNeeded)
+// The skipped space in the track that has room for the item at the position.
+static std::optional<size_t> skippedSpaceWithRoom(const Vector<GridLanesLayout::SkippedSpace>& trackSkippedSpaces, LayoutUnit position, LayoutUnit spaceNeeded)
 {
-    for (auto skippedSpace : trackSkippedSpaces) {
-        if (skippedSpace.start >= normalPlacementPosition)
-            break;
-        if (skippedSpace.start + spaceNeeded <= skippedSpace.end)
-            return skippedSpace.start;
+    for (size_t index = 0; index < trackSkippedSpaces.size(); ++index) {
+        auto skippedSpace = trackSkippedSpaces[index];
+        if (skippedSpace.start <= position && position + spaceNeeded <= skippedSpace.end)
+            return index;
     }
     return std::nullopt;
 }
 
+// The highest position above the item's normal placement where each of the item's tracks has a skipped space with room for it.
+// The highest such position is always where one of these skipped spaces starts.
+static std::optional<LayoutUnit> highestSkippedSpaceWithRoom(std::span<const Vector<GridLanesLayout::SkippedSpace>> itemTracksSkippedSpaces, LayoutUnit normalPlacementPosition, LayoutUnit spaceNeeded)
+{
+    std::optional<LayoutUnit> highestPosition;
+    for (size_t track = 0; track < itemTracksSkippedSpaces.size(); ++track) {
+        for (auto skippedSpace : itemTracksSkippedSpaces[track]) {
+            auto position = skippedSpace.start;
+            if (position >= normalPlacementPosition || (highestPosition && position >= *highestPosition))
+                continue;
+            bool hasRoomInEveryTrack = true;
+            for (size_t otherTrack = 0; otherTrack < itemTracksSkippedSpaces.size() && hasRoomInEveryTrack; ++otherTrack)
+                hasRoomInEveryTrack = skippedSpaceWithRoom(itemTracksSkippedSpaces[otherTrack], position, spaceNeeded).has_value();
+            if (hasRoomInEveryTrack)
+                highestPosition = position;
+        }
+    }
+    return highestPosition;
+}
+
 // "If there are multiple valid spaces within the tie threshold of the highest space, place it in the start-most of them."
-static std::optional<unsigned> startMostTrackWithinTieThreshold(const Vector<std::optional<LayoutUnit>>& skippedSpacePositions, GridLanesLayout::ResolvedFitTolerance fitTolerance)
+static std::optional<unsigned> startMostLineWithinTieThreshold(const Vector<std::optional<LayoutUnit>>& skippedSpacePositions, GridLanesLayout::ResolvedFitTolerance fitTolerance)
 {
     std::optional<LayoutUnit> highestPosition;
     for (auto position : skippedSpacePositions) {
@@ -65,29 +84,29 @@ static std::optional<unsigned> startMostTrackWithinTieThreshold(const Vector<std
     if (!highestPosition)
         return std::nullopt;
 
-    for (unsigned track = 0; track < skippedSpacePositions.size(); ++track) {
-        auto position = skippedSpacePositions[track];
+    for (unsigned startLine = 0; startLine < skippedSpacePositions.size(); ++startLine) {
+        auto position = skippedSpacePositions[startLine];
         if (position && isWithinFitTolerance(*position, *highestPosition, fitTolerance))
-            return track;
+            return startLine;
     }
     ASSERT_NOT_REACHED();
     return std::nullopt;
 }
 
-// The item fills the top of the skipped space, and the rest of the space stays skipped.
+// The item fills part of the skipped space, and the parts above and below it stay skipped.
 static void fillSkippedSpace(Vector<GridLanesLayout::SkippedSpace>& trackSkippedSpaces, LayoutUnit position, LayoutUnit spaceNeeded)
 {
-    for (size_t index = 0; index < trackSkippedSpaces.size(); ++index) {
-        auto skippedSpace = trackSkippedSpaces[index];
-        if (skippedSpace.start != position)
-            continue;
-        if (position + spaceNeeded < skippedSpace.end)
-            borrow(trackSkippedSpaces)[index].start = position + spaceNeeded;
-        else
-            trackSkippedSpaces.removeAt(index);
+    auto index = skippedSpaceWithRoom(trackSkippedSpaces, position, spaceNeeded);
+    if (!index) {
+        ASSERT_NOT_REACHED();
         return;
     }
-    ASSERT_NOT_REACHED();
+    auto skippedSpace = trackSkippedSpaces[*index];
+    trackSkippedSpaces.removeAt(*index);
+    if (position + spaceNeeded < skippedSpace.end)
+        trackSkippedSpaces.insert(*index, { position + spaceNeeded, skippedSpace.end });
+    if (skippedSpace.start < position)
+        trackSkippedSpaces.insert(*index, { skippedSpace.start, position });
 }
 
 GridLanesLayout::GridLanesLayout(RenderGrid& renderGrid, unsigned gridAxisTracksCount, Style::GridTrackSizingDirection stackingAxisDirection)
@@ -308,43 +327,51 @@ GridLanesLayout::ItemPlacement GridLanesLayout::placeItemDensely(SkippedSpaces& 
 std::optional<GridLanesLayout::ItemPlacement> GridLanesLayout::placeIntoSkippedSpace(SkippedSpaces& skippedSpaces, const GridTrackSizingAlgorithm& algorithm, const GridArea& normalPlacementArea, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis, ResolvedFitTolerance fitTolerance)
 {
     auto normalPlacementTracks = clampedGridAxisTracks(normalPlacementArea);
-    // FIXME: Place items that span several tracks into skipped spaces.
-    if (normalPlacementTracks.integerSpan() != 1)
-        return std::nullopt;
-
+    auto trackCount = normalPlacementTracks.integerSpan();
     auto spaceNeeded = std::max(0_lu, marginBoxSize + m_stackingAxisGridGap);
     const auto positions = skippedSpacePositions(skippedSpaces, algorithm, normalPlacementTracks, spaceNeeded, isAutoPlacedInGridAxis);
-    auto track = startMostTrackWithinTieThreshold(positions, fitTolerance);
-    if (!track)
+    auto startLine = startMostLineWithinTieThreshold(positions, fitTolerance);
+    if (!startLine)
         return std::nullopt;
 
-    auto position = *positions[*track];
-    fillSkippedSpace(borrow(skippedSpaces)[*track], position, spaceNeeded);
+    auto position = *positions[*startLine];
+    for (auto track = *startLine; track < *startLine + trackCount; ++track)
+        fillSkippedSpace(borrow(skippedSpaces)[track], position, spaceNeeded);
     return ItemPlacement {
-        gridAreaFromGridAxisSpan(GridSpan::translatedDefiniteGridSpan(*track, *track + 1)),
+        gridAreaFromGridAxisSpan(GridSpan::translatedDefiniteGridSpan(*startLine, *startLine + trackCount)),
         { position, position + marginBoxSize }
     };
 }
 
-// For each track the item could move to, the highest skipped space with room for it. The track needs the same used size as the
-// item's normal placement. An item with a definite position can only move within its own track.
+// For each start line the item could move to, the highest position where its tracks have skipped spaces with room for it. The
+// tracks need the same total used size as the item's normal placement. An item with a definite position can only move within its
+// own tracks.
 Vector<std::optional<LayoutUnit>> GridLanesLayout::skippedSpacePositions(const SkippedSpaces& skippedSpaces, const GridTrackSizingAlgorithm& algorithm, const GridSpan& normalPlacementTracks, LayoutUnit spaceNeeded, bool isAutoPlacedInGridAxis) const
 {
-    auto& tracks = algorithm.tracks(gridAxisDirection());
-    auto normalPlacementTrack = normalPlacementTracks.startLine();
+    auto trackCount = normalPlacementTracks.integerSpan();
+    auto normalPlacementLine = normalPlacementTracks.startLine();
     // FIXME: The intrinsic width pass sizes these tracks without the container's definite height, so it can backfill differently than layout.
-    auto usedSize = tracks[normalPlacementTrack]->baseSize();
-    auto normalPlacementPosition = m_runningPositions[normalPlacementTrack];
+    auto usedSize = usedSizeOfTracks(algorithm, normalPlacementLine, trackCount);
+    auto normalPlacementPosition = maxRunningPositionForSpan(normalPlacementLine, trackCount);
 
     Vector<std::optional<LayoutUnit>> positions;
-    for (unsigned track = 0; track < gridAxisTracksCount(); ++track) {
-        bool canMoveToTrack = isAutoPlacedInGridAxis ? tracksAcceptAutoPlacedItem(track, 1) : track == normalPlacementTrack;
-        if (canMoveToTrack && tracks[track]->baseSize() == usedSize)
-            positions.append(highestSkippedSpaceWithRoom(skippedSpaces[track], normalPlacementPosition, spaceNeeded));
+    for (unsigned startLine = 0; startLine + trackCount <= gridAxisTracksCount(); ++startLine) {
+        bool canMoveToTracks = isAutoPlacedInGridAxis ? tracksAcceptAutoPlacedItem(startLine, trackCount) : startLine == normalPlacementLine;
+        if (canMoveToTracks && usedSizeOfTracks(algorithm, startLine, trackCount) == usedSize)
+            positions.append(highestSkippedSpaceWithRoom(skippedSpaces.subspan(startLine, trackCount), normalPlacementPosition, spaceNeeded));
         else
             positions.append(std::nullopt);
     }
     return positions;
+}
+
+LayoutUnit GridLanesLayout::usedSizeOfTracks(const GridTrackSizingAlgorithm& algorithm, unsigned startLine, unsigned trackCount) const
+{
+    auto& tracks = algorithm.tracks(gridAxisDirection());
+    LayoutUnit usedSize;
+    for (auto track = startLine; track < startLine + trackCount; ++track)
+        usedSize += tracks[track]->baseSize();
+    return usedSize;
 }
 
 // A spanning item skips the space above itself in each of its tracks whose running position is above the item.
