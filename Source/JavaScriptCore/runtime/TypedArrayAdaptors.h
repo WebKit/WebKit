@@ -157,7 +157,7 @@ struct FloatTypedArrayAdaptor {
 
     static std::optional<Type> toNativeFromInt32WithoutCoercion(int32_t value)
     {
-        return static_cast<Type>(value);
+        return toNativeFromDoubleWithoutCoercion(value);
     }
 
     static std::optional<Type> toNativeFromDoubleWithoutCoercion(double value)
@@ -385,7 +385,7 @@ struct Float16Adaptor {
 
     static std::optional<Type> toNativeFromInt32WithoutCoercion(int32_t value)
     {
-        return static_cast<double>(value);
+        return toNativeFromDoubleWithoutCoercion(value);
     }
 
     static std::optional<Type> toNativeFromDoubleWithoutCoercion(double value)
