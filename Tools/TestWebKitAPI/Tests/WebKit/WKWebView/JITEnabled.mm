@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -49,8 +50,12 @@ TEST(WebKit, JITEnabled)
     RetainPtr processPoolConfiguration = adoptNS([_WKProcessPoolConfiguration new]);
     [processPoolConfiguration setJITEnabled:NO];
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    TestWebKitAPI::setFeatureEnabled(configuration.get(), @"EnhancedSecurityEnabledByDefault", false);
     [configuration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).get()];
     RetainPtr webViewNoJIT = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     checkJITEnabled(WTF::move(webViewNoJIT), NO);
-    checkJITEnabled(adoptNS([WKWebView new]), YES);
+
+    RetainPtr standardConfiguration = adoptNS([WKWebViewConfiguration new]);
+    TestWebKitAPI::setFeatureEnabled(standardConfiguration.get(), @"EnhancedSecurityEnabledByDefault", false);
+    checkJITEnabled(adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:standardConfiguration.get()]), YES);
 }
