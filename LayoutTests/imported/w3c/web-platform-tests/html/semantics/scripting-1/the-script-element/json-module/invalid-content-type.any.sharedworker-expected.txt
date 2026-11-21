@@ -101,4 +101,10 @@ PASS Try importing JSON module with MIME type application/vnd.api+json"
 PASS Try importing JSON module with MIME type "application"/"vnd.api"+json
 PASS Try importing JSON module with MIME type app(lic)ation/vnd(api)+json
 PASS Try importing JSON module with MIME type application\0/\0vnd.api+json
+PASS Try importing JSON module as JavaScript with MIME type application/ecmascript
+PASS Try importing JSON module as JavaScript with MIME type application/javascript
+PASS Try importing JSON module as JavaScript with MIME type application/x-ecmascript
+PASS Try importing JSON module as JavaScript with MIME type application/x-javascript
+PASS Try importing JSON module as JavaScript with MIME type text/ecmascript
+PASS Try importing JSON module as JavaScript with MIME type text/javascript
 
