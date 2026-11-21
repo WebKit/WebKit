@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CPUTimeline = class CPUTimeline extends WI.Timeline
+WI.CPUTimeline = class CPUTimeline extends WI.ProcessSampleTimeline
 {
     // Public
 
@@ -38,5 +38,65 @@ WI.CPUTimeline = class CPUTimeline extends WI.Timeline
         }
 
         super.addRecord(record, options);
+    }
+
+    // Protected
+
+    createAggregateRecord(startTime, endTime, recordsForProcess, liveProcessKeys)
+    {
+        const samplingInterval = WI.CPUTimelineRecord.samplingRatePerSecond;
+        if (isNaN(startTime))
+            startTime = endTime - samplingInterval;
+
+        // Usage is a rate, and processes sample at different times. A sample covers the time since the previous sample
+        // of its process, so weigh it by how much of the bin it covers.
+        let duration = endTime - startTime;
+        let weightedRecordsForProcess = new Map;
+        for (let [processKey, records] of recordsForProcess) {
+            let weightedRecords = [];
+            for (let i = records.upperBound(startTime, (time, record) => time - record.timestamp); i < records.length; ++i) {
+                let record = records[i];
+                let recordStartTime = i ? records[i - 1].timestamp : record.timestamp - samplingInterval;
+                if (recordStartTime >= endTime)
+                    break;
+
+                let weight = (Math.min(record.timestamp, endTime) - Math.max(recordStartTime, startTime)) / duration;
+                weightedRecords.push({record, weight});
+            }
+            if (weightedRecords.length)
+                weightedRecordsForProcess.set(processKey, weightedRecords);
+        }
+
+        // A single sample covers the bin, as always with one process.
+        if (weightedRecordsForProcess.size === 1) {
+            let [weightedRecords] = weightedRecordsForProcess.values();
+            if (weightedRecords.length === 1 && weightedRecords[0].weight === 1) {
+                let {timestamp, usage, threads} = weightedRecords[0].record;
+                return new WI.CPUTimelineRecord({timestamp, usage, threads});
+            }
+        }
+
+        let usage = 0;
+        let threads = [];
+        for (let [processKey, weightedRecords] of weightedRecordsForProcess) {
+            let threadForKey = new Map;
+            for (let {record, weight} of weightedRecords) {
+                usage += record.usage * weight;
+
+                // Threads have no identifier, so match them across samples by type, name and order.
+                let countForKey = new Map;
+                for (let thread of record.threads) {
+                    let key = thread.type + ":" + (thread.targetId || thread.name);
+                    let count = countForKey.get(key) || 0;
+                    countForKey.set(key, count + 1);
+
+                    let aggregateThread = threadForKey.getOrInsertComputed(key + ":" + count, () => ({...thread, usage: 0, processKey}));
+                    aggregateThread.usage += thread.usage * weight;
+                }
+            }
+            threads.pushAll(threadForKey.values());
+        }
+
+        return new WI.CPUTimelineRecord({timestamp: endTime, usage, threads});
     }
 };
