@@ -155,7 +155,7 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
     if (!previousPageBreakIndex)
         return { };
 
-    return { adjustments, layoutRestartLine };
+    return { WTF::move(adjustments), layoutRestartLine };
 }
 
 void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector<LineAdjustment>& adjustments)

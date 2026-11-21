@@ -1334,7 +1334,7 @@ Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::Bloc
             m_lineDamage = { };
     }
 
-    return adjustments;
+    return WTF::move(adjustments);
 }
 
 void LineLayout::collectOverflow()
