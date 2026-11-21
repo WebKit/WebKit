@@ -220,6 +220,16 @@ inline bool ComputedStyle::hasBackground() const
         || Style::hasImageInAnyLayer(backgroundLayers());
 }
 
+inline bool ComputedStyle::hasBorderShape() const
+{
+    return !borderShape().isNone();
+}
+
+inline bool ComputedStyle::hasBorderRadiusOrBorderShape() const
+{
+    return border().hasBorderRadius() || hasBorderShape();
+}
+
 inline bool ComputedStyle::hasBorderImageOutsets() const
 {
     return !borderImageSource().isNone() && !borderImageOutset().isZero();

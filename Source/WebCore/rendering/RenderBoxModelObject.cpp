@@ -250,6 +250,7 @@ bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
 {
     return hasBackground()
         || style().border().hasVisibleBorderDecoration()
+        || style().hasBorderShape()
         || style().hasUsedAppearance()
         || !style().boxShadow().isNone();
 }

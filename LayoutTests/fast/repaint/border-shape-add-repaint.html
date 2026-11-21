@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<title>Repaint when border-shape is added</title>
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-2">
+<style>
+    body { margin: 0; }
+    #target {
+        width: 150px;
+        height: 150px;
+        margin: 20px;
+        border: 20px solid blue;
+        background: lightgreen;
+    }
+    body.changed #target {
+        border-shape: circle(50%);
+    }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+}
+
+window.addEventListener('load', async () => {
+    await UIHelper.renderingUpdate();
+
+    document.body.classList.add('changed');
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<div id="target"></div>
+</body>
+</html>

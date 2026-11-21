@@ -31,10 +31,12 @@
 
 #include "FloatRoundedRect.h"
 #include "LayoutRoundedRect.h"
+#include "PathOperation.h"
 #include "PathUtilities.h"
 #include "RectCorners.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
+#include "StyleZoomPrimitives.h"
 #include <optional>
 #include <wtf/Vector.h>
 
@@ -67,6 +69,17 @@ public:
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&, const RectCorners<float>& cornerCurvatures);
 
     BorderShape(const BorderShape&) = default;
+
+    // Applies the `border-shape` property; subsequent painting and clipping uses its path(s) instead of the rounded rect.
+    void setBorderShapePathOperations(RefPtr<PathOperation>&& outer, RefPtr<PathOperation>&& inner, Style::ZoomFactor);
+
+    // Takes the border-shape (but not the radii or corner shapes) from `other`.
+    void copyBorderShapeFrom(const BorderShape& other) { m_outerPathOperation = other.m_outerPathOperation; m_innerPathOperation = other.m_innerPathOperation; m_zoom = other.m_zoom; }
+
+    // True when `border-shape` is not `none`.
+    bool requiresPathBasedRendering() const { return !!m_outerPathOperation; }
+    // True for the single-shape ("stroke") form of `border-shape`.
+    bool hasSingleBorderShape() const { return m_outerPathOperation && !m_innerPathOperation; }
 
     BorderShape shapeWithBorderWidths(const RectEdges<LayoutUnit>&) const;
 
@@ -133,7 +146,8 @@ public:
     void addOuterShapeToPath(Path&, float deviceScaleFactor) const;
     void addInnerShapeToPath(Path&, float deviceScaleFactor) const;
 
-    Path pathForBorderArea(float deviceScaleFactor) const;
+    // Returns nullopt for a single `border-shape`, which has no well-defined border area path.
+    std::optional<Path> pathForBorderArea(float deviceScaleFactor) const;
 
     void clipToOuterShape(GraphicsContext&, float deviceScaleFactor) const;
     void clipToInnerShape(GraphicsContext&, float deviceScaleFactor) const;
@@ -168,6 +182,15 @@ private:
     RectCorners<float> m_cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
 
     std::optional<LayoutRoundedRect> m_offsetReferenceRect;
+
+    void applyBorderShapeStyle(const Style::ComputedStyle&);
+    FloatRect borderShapeReferenceRect(const PathOperation&, bool isInnerShape, float deviceScaleFactor) const;
+    Path pathForBorderShape(const PathOperation&, bool isInnerShape, float deviceScaleFactor) const;
+
+    // From the `border-shape` property. Both null when the property is `none`; the inner one is only set for the two-shape form.
+    RefPtr<PathOperation> m_outerPathOperation;
+    RefPtr<PathOperation> m_innerPathOperation;
+    Style::ZoomFactor m_zoom { Style::ZoomFactor::none() };
 };
 
 } // namespace WebCore

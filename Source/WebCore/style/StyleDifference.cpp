@@ -88,6 +88,12 @@ public:
                 }
             }
 
+            // A border-shape can paint outside the border box, so changing it requires recomputing visual overflow (which also repaints).
+            // FIXME: Make border-shape contribute to visual overflow (webkit.org/b/332330).
+            if (a.nonInheritedData().rareData.ptr() != b.nonInheritedData().rareData.ptr()
+                && a.nonInheritedData().rareData->borderShape != b.nonInheritedData().rareData->borderShape)
+                return true;
+
             if (a.nonInheritedData().backgroundData.ptr() != b.nonInheritedData().backgroundData.ptr()) {
                 auto aHasOutlineInVisualOverflow = a.hasOutlineInVisualOverflow();
                 auto bHasOutlineInVisualOverflow = b.hasOutlineInVisualOverflow();

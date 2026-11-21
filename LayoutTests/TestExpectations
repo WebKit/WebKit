@@ -5993,8 +5993,6 @@ imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-multi-layer-while-loading.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-multi-layer-while-loading.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-borders/border-image-color-scheme.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-ellipse.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shape-arc-miter-limit.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-with-zoom-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-with-transform-and-zoom.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/animation/css-backdrop-filters-animation-displacement.html [ ImageOnlyFailure ]
@@ -6146,6 +6144,8 @@ imported/w3c/web-platform-tests/css/css-scroll-anchoring/multicol-fragmented-anc
 webkit.org/b/310409 imported/w3c/web-platform-tests/css/css-scroll-anchoring/ignore-adjustments-while-scrolling-to-anchor.tentative.html [ Failure Pass ]
 
 fast/repaint/absolute-position-changed.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/332330 fast/repaint/border-shape-change-repaint.html [ ImageOnlyFailure ]
 
 webkit.org/b/307272 fast/events/no-scroll-on-input-text-selection.html [ Failure ]
 webkit.org/b/307519 imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scrolling-004.tentative.html [ ImageOnlyFailure ]
@@ -6522,22 +6522,16 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/border-radiu
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/tentative/border-radius-side-shorthands/border-radius-side-shorthands-001.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/tentative/border-radius-side-shorthands/border-radius-side-shorthands-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape-absolute-coords-shape.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-background-origin-border-box.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-polygon-miter-limit.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-blur.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-circle.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-inset-blur.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-transparent.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-stroke-from-border.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-two-shapes-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-outline-double.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-video-overflow.html [ ImageOnlyFailure Pass ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-clips-background.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-collapsed-shape-clips-background.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-geometry-box.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-ignore-radius.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-inner-outer.html [ ImageOnlyFailure ]
+webkit.org/b/331532 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow-child-clip.html [ ImageOnlyFailure ]
+webkit.org/b/331532 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow-replaced-canvas.html [ ImageOnlyFailure ]
+webkit.org/b/331532 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow-replaced-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/331532 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow-replaced-img.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-inset-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-outline-auto-forms.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-outline-auto-with-border.html [ ImageOnlyFailure ]
@@ -6550,7 +6544,6 @@ webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-outline-with-border.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-outline.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow-solid-background.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img-border.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-overflow-clip-margin.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-svg-border.html [ ImageOnlyFailure ]
@@ -6564,6 +6557,12 @@ webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-top-left-shape=0.5&border-radius=40 [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-top-left-shape=-0.5&border-radius=40 [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?border-top-left-radius=50%&corner-shape=0.7&border-left-width=30&border-top-width=30 [ ImageOnlyFailure ]
+
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape.html [ ImageOnlyFailure ]
+
+webkit.org/b/332330 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-polygon-miter-limit.html [ Pass ImageOnlyFailure ]
+webkit.org/b/332330 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-stroke-from-border.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/316474 imported/w3c/web-platform-tests/css/css-borders/border-width-rounding.tentative.html [ Pass Failure ]
 
@@ -6580,6 +6579,7 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-complex-color.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-corner-shape.html [ ImageOnlyFailure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape-background-position.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-shape-table-part-background.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-background-table-cell.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-blend-mode.html [ ImageOnlyFailure ]

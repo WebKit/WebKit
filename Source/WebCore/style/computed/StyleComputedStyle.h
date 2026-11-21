@@ -174,6 +174,9 @@ public:
     // MARK: - has*()
 
     inline bool hasBackground() const;
+    inline bool hasBorderShape() const;
+    // True if the border box is clipped to something other than a rect: border-radius or border-shape.
+    inline bool hasBorderRadiusOrBorderShape() const;
     inline bool hasInlineColumnAxis() const;
     inline bool hasMarkers() const;
     inline bool hasMask() const;

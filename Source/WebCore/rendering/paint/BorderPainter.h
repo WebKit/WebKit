@@ -62,8 +62,10 @@ private:
         BleedAvoidance bleedAvoidance { BleedAvoidance::None };
         RectEdges<bool> closedEdges = { true };
         bool appliedClipAlready { false };
+        BoxSide relevantSideForBorderShape { BoxSide::Top };
     };
     void paintSides(const BorderShape&, const Sides&) const;
+    void paintBorderShape(const BorderShape&, const Sides&) const;
 
     template<typename T>
     bool paintNinePieceImageImpl(const LayoutRect&, const UsedStyle&, const T&, CompositeOperator = CompositeOperator::SourceOver) const;

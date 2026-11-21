@@ -248,8 +248,9 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
     auto& style = m_renderer.style();
     auto layerClip = m_overrideClip.value_or(layer.layer.clip());
 
-    bool hasRoundedBorder = m_renderer.usedStyle().hasBorderRadius()
-        && (closedEdges.start(style.writingMode()) || closedEdges.end(style.writingMode()));
+    bool hasRoundedBorder = (m_renderer.usedStyle().hasBorderRadius()
+        && (closedEdges.start(style.writingMode()) || closedEdges.end(style.writingMode())))
+        || style.hasBorderShape();
     bool clippedWithLocalScrolling = m_renderer.hasNonVisibleOverflow() && layer.layer.attachment() == FillAttachment::LocalBackground;
     bool isBorderFill = layerClip == FillBox::BorderBox;
     bool isRoot = m_renderer.isDocumentElementRenderer();
@@ -994,7 +995,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const UsedSt
 
     const auto borderShape = BorderShape::shapeForBorderRect(usedStyle, paintRect, closedEdges);
 
-    bool hasBorderRadius = usedStyle.hasBorderRadius();
+    bool hasBorderRadius = usedStyle.hasBorderRadius() || style.hasBorderShape();
     float snappingScaleFactor = document().pixelSnappingScaleFactor();
 
     bool hasOpaqueBackground = style.visitedDependentUsedBackgroundColorApplyingColorFilter(m_paintInfo.paintBehavior).isOpaque();
@@ -1100,7 +1101,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const UsedSt
                 influenceRadii.expand(2 * shadowPaintingExtent + shadowSpread);
                 influenceShape.setRadii(influenceRadii);
 
-                if (!shadowShape.hasNonRoundCornerShape() && influenceShape.outerShapeContains(m_paintInfo.rect))
+                if (!shadowShape.requiresPathBasedRendering() && !shadowShape.hasNonRoundCornerShape() && influenceShape.outerShapeContains(m_paintInfo.rect))
                     context.fillRect(shadowShape.snappedOuterRect(snappingScaleFactor), Color::black);
                 else
                     shadowShape.fillOuterShape(context, Color::black, snappingScaleFactor);
@@ -1123,6 +1124,8 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const UsedSt
                 outerRectExpandedToObscureOpenEdges.setHeight(outerRectExpandedToObscureOpenEdges.height() - std::min<LayoutUnit>(shadowOffset.height(), 0) + shadowInfluence);
 
             auto shapeForInnerHole = BorderShape(outerRectExpandedToObscureOpenEdges, borderWidthsWithSpread, borderShape.radii(), borderShape.cornerCurvatures());
+            // The shadow is cast by everything outside the inner border-shape path.
+            shapeForInnerHole.copyBorderShapeFrom(borderShape);
             if (shapeForInnerHole.snappedInnerRect(snappingScaleFactor).isEmpty()) {
                 borderShape.fillInnerShape(context, shadowColor, snappingScaleFactor);
                 continue;

@@ -153,7 +153,7 @@ void BoxDecorationPainter::paintBoxDecorations()
                 paintCSSBorder = theme.paintBorderOnly(m_renderer, m_paintInfo);
         }
 
-        if (paintCSSBorder && style->border().hasVisibleBorderDecoration())
+        if (paintCSSBorder && (style->border().hasVisibleBorderDecoration() || style->hasBorderShape()))
             borderPainter.paintBorder(paintRect, m_renderer->usedStyle(), bleedAvoidance);
     }
 

@@ -210,6 +210,18 @@ bool BorderPainter::decorationHasAllSolidEdges(const RectEdges<BorderEdge>& edge
     return true;
 }
 
+// https://drafts.csswg.org/css-borders-4/#border-shape-relevant-side
+static BoxSide relevantSideForBorderShape(const BorderEdges& edges, WritingMode writingMode)
+{
+    for (auto logicalSide : { LogicalBoxSide::BlockStart, LogicalBoxSide::InlineStart, LogicalBoxSide::BlockEnd, LogicalBoxSide::InlineEnd }) {
+        auto side = mapSideLogicalToPhysical(writingMode, logicalSide);
+        if (edges.at(side).style() != BorderStyle::None)
+            return side;
+    }
+
+    return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart);
+}
+
 void BorderPainter::paintBorder(const LayoutRect& rect, const UsedStyle& usedStyle, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
 {
     auto& style = usedStyle.computedStyle();
@@ -290,7 +302,41 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const UsedStyle& usedSty
         bleedAvoidance,
         closedEdges,
         appliedClipAlready,
+        relevantSideForBorderShape(edges, style.writingMode()),
     });
+}
+
+// https://drafts.csswg.org/css-borders-4/#border-shape-syntax
+void BorderPainter::paintBorderShape(const BorderShape& borderShape, const Sides& sides) const
+{
+    auto& edge = sides.edges.at(sides.relevantSideForBorderShape);
+    if (!edge.color().isVisible())
+        return;
+
+    auto& graphicsContext = m_paintInfo.context();
+    auto deviceScaleFactor = document().deviceScaleFactor();
+
+    if (borderShape.hasSingleBorderShape()) {
+        // Stroke mode: stroke the path using the relevant side's width and color.
+        if (!edge.width())
+            return;
+
+        GraphicsContextStateSaver stateSaver(graphicsContext);
+        graphicsContext.setStrokeStyle(StrokeStyle::SolidStroke);
+        graphicsContext.setStrokeThickness(edge.width().toFloat());
+        graphicsContext.setStrokeColor(edge.color());
+        graphicsContext.strokePath(borderShape.pathForOuterShape(deviceScaleFactor));
+        return;
+    }
+
+    // Fill mode: fill the area between the outer and inner shapes with the relevant side's color.
+    auto path = borderShape.pathForOuterShape(deviceScaleFactor);
+    borderShape.addInnerShapeToPath(path, deviceScaleFactor);
+
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    graphicsContext.setFillColor(edge.color());
+    graphicsContext.fillPath(path);
 }
 
 void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& sides) const
@@ -298,6 +344,11 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
     GraphicsContext& graphicsContext = m_paintInfo.context();
 
     ASSERT(!graphicsContext.paintingDisabled());
+
+    if (borderShape.requiresPathBasedRendering()) {
+        paintBorderShape(borderShape, sides);
+        return;
+    }
 
     // If no borders intersects with the dirty area, we can skip the painting.
     if (borderShape.innerShapeContains(m_paintInfo.rect))
