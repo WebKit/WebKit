@@ -113,6 +113,7 @@ WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String&
 WTF_EXPORT_PRIVATE void removeTrailingSlash(String& path);
 WTF_EXPORT_PRIVATE bool makeAllDirectories(const String& path);
 WTF_EXPORT_PRIVATE String pathFileName(const String&);
+WTF_EXPORT_PRIVATE StringView pathExtension(StringView path LIFETIME_BOUND);
 WTF_EXPORT_PRIVATE String parentPath(const String&);
 WTF_EXPORT_PRIVATE String lexicallyNormal(const String&);
 WTF_EXPORT_PRIVATE bool isAncestor(const String& first, const String& second);

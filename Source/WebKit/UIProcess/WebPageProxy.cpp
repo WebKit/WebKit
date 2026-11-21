@@ -20710,7 +20710,7 @@ void WebPageProxy::writePromisedAttachmentToPasteboard(IPC::Connection& connecti
 }
 #endif
 
-void WebPageProxy::requestAttachmentIcon(IPC::Connection& connection, const String& identifier, const String& contentType, const String& fileName, const String& title, const FloatSize& requestedSize)
+void WebPageProxy::requestAttachmentIcon(IPC::Connection& connection, const String& identifier, const String& contentType, const String& fileExtension, const String& title, const FloatSize& requestedSize)
 {
     MESSAGE_CHECK_BASE(protect(preferences())->attachmentElementEnabled(), connection);
 
@@ -20723,7 +20723,7 @@ void WebPageProxy::requestAttachmentIcon(IPC::Connection& connection, const Stri
         std::optional<ShareableBitmap::Handle> handle;
 
 #if PLATFORM(COCOA)
-        if (RefPtr icon = iconForAttachment(fileName, contentType, title, size)) {
+        if (RefPtr icon = iconForAttachment(fileExtension, contentType, title, size)) {
             if (auto iconHandle = icon->createHandle())
                 handle = WTF::move(*iconHandle);
         }

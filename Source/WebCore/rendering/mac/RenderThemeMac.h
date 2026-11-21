@@ -101,7 +101,7 @@ public:
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     NODELETE bool usesTestModeFocusRingColor() const;
 
-    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
+    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title);
     WEBCORE_EXPORT Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
     Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
     bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }

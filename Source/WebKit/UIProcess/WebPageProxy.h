@@ -3903,9 +3903,9 @@ private:
     void writePromisedAttachmentToPasteboard(IPC::Connection&, WebCore::PromisedAttachmentInfo&&, const String& authorizationToken);
 #endif
 
-    void requestAttachmentIcon(IPC::Connection&, const String& identifier, const String& type, const String& path, const String& title, const WebCore::FloatSize&);
+    void requestAttachmentIcon(IPC::Connection&, const String& identifier, const String& type, const String& fileExtension, const String& title, const WebCore::FloatSize&);
 
-    RefPtr<WebCore::ShareableBitmap> iconForAttachment(const String& fileName, const String& contentType, const String& title, WebCore::FloatSize&);
+    RefPtr<WebCore::ShareableBitmap> iconForAttachment(const String& fileExtension, const String& contentType, const String& title, WebCore::FloatSize&);
 #endif
 
     void reportPageLoadResult(const WebCore::ResourceError&);

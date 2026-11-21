@@ -793,6 +793,22 @@ TEST_F(FileSystemTest, updateFileModificationTime)
     EXPECT_FALSE(FileSystem::updateFileModificationTime(doesNotExistPath));
 }
 
+TEST_F(FileSystemTest, pathExtension)
+{
+    EXPECT_EQ("txt"_s, FileSystem::pathExtension("filename.txt"_s));
+    EXPECT_EQ("gz"_s, FileSystem::pathExtension("archive.tar.gz"_s));
+    EXPECT_EQ("bashrc"_s, FileSystem::pathExtension(".bashrc"_s));
+    EXPECT_TRUE(FileSystem::pathExtension("filename"_s).isEmpty());
+    EXPECT_TRUE(FileSystem::pathExtension("filename."_s).isEmpty());
+    EXPECT_TRUE(FileSystem::pathExtension(""_s).isEmpty());
+    EXPECT_TRUE(FileSystem::pathExtension(StringView { }).isEmpty());
+
+    auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), std::initializer_list<StringView>({ "sub.folder"_s, "filename.txt"_s }));
+    EXPECT_EQ("txt"_s, FileSystem::pathExtension(testPath));
+    auto pathWithoutExtension = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), std::initializer_list<StringView>({ "sub.folder"_s, "filename"_s }));
+    EXPECT_TRUE(FileSystem::pathExtension(pathWithoutExtension).isEmpty());
+}
+
 TEST_F(FileSystemTest, pathFileName)
 {
     auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), std::initializer_list<StringView>({ "subfolder"_s, "filename.txt"_s }));

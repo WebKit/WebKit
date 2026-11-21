@@ -30,6 +30,7 @@
 
 #import "ColorMac.h"
 #import "NativeImage.h"
+#import <wtf/FileSystem.h>
 
 namespace WebCore {
 
@@ -110,16 +111,9 @@ DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float de
     
 static RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filename)
 {
-    RetainPtr<NSString> extension;
-    size_t dotIndex = filename.reverseFind('.');
-    
-    if (dotIndex != notFound && dotIndex < (filename.length() - 1)) // require that a . exists after the first character and before the last
-        extension = StringView(filename).substring(dotIndex + 1).createNSString();
-    else {
-        // It might be worth doing a further lookup to pull the extension from the MIME type.
-        extension = @"";
-    }
-    
+    // It might be worth doing a further lookup to pull the extension from the MIME type when there isn't one.
+    RetainPtr extension = FileSystem::pathExtension(filename).createNSString();
+
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [[NSWorkspace sharedWorkspace] iconForFileType:extension.get()];
 ALLOW_DEPRECATED_DECLARATIONS_END

@@ -89,7 +89,7 @@ public:
     static bool shouldReplaceFile(const String& path);
 #endif
 
-    bool isDirectory() const;
+    WEBCORE_EXPORT bool isDirectory() const;
 
 private:
     WEBCORE_EXPORT File(ScriptExecutionContext*, const String& path);

@@ -707,6 +707,16 @@ String pathFileName(const String& path)
     return fromStdFileSystemPath(toStdFileSystemPath(path).filename());
 }
 
+StringView pathExtension(StringView path)
+{
+    if (auto separator = path.reverseFind(pathSeparator); separator != notFound)
+        path = path.substring(separator + 1);
+    auto dot = path.reverseFind('.');
+    if (dot == notFound)
+        return { };
+    return path.substring(dot + 1);
+}
+
 String parentPath(const String& path)
 {
     return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());

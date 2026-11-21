@@ -574,7 +574,7 @@ messages -> WebPageProxy {
 #if PLATFORM(IOS_FAMILY)
     [EnabledBy=AttachmentElementEnabled] WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info, String authorizationToken)
 #endif
-    [EnabledBy=AttachmentElementEnabled] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
+    [EnabledBy=AttachmentElementEnabled] RequestAttachmentIcon(String identifier, String contentType, String fileExtension, String title, WebCore::FloatSize size)
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)

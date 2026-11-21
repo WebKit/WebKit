@@ -1810,7 +1810,7 @@ LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attac
     return LayoutSize(layout.attachmentRect.size());
 }
 
-static RefPtr<Icon> iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
+static RefPtr<Icon> iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title)
 {
 // FIXME: Remove after rdar://136373445 is fixed.
 #define LOG_ATTACHMENT(fmt, ...) RELEASE_LOG(Editing, "iconForAttachment(type='%s') " fmt, attachmentType.utf8(), ##__VA_ARGS__);
@@ -1821,7 +1821,7 @@ static RefPtr<Icon> iconForAttachment(const String& fileName, const String& atta
                 LOG_ATTACHMENT("-> Got icon for UTTypeFolder");
                 return icon;
             }
-            LOG_ATTACHMENT("-> No icon for UTTypeFolder! Will fallback to filename or title...");
+            LOG_ATTACHMENT("-> No icon for UTTypeFolder! Will fallback to file extension or title...");
         } else {
             String type;
             if (isDeclaredUTI(attachmentType))
@@ -1833,16 +1833,16 @@ static RefPtr<Icon> iconForAttachment(const String& fileName, const String& atta
                 LOG_ATTACHMENT("-> Got icon for %s '%s'", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8());
                 return icon;
             }
-            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to filename or title...", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8());
+            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to file extension or title...", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8());
         }
     }
 
-    if (!fileName.isEmpty()) {
-        if (auto icon = Icon::createIconForFiles({ fileName })) {
-            LOG_ATTACHMENT("-> Got icon for filename");
+    if (!fileExtension.isEmpty()) {
+        if (auto icon = Icon::createIconForFileExtension(fileExtension)) {
+            LOG_ATTACHMENT("-> Got icon for file extension '%s'", fileExtension.utf8());
             return icon;
         }
-        LOG_ATTACHMENT("-> No icon for filename! Will fallback to title...");
+        LOG_ATTACHMENT("-> No icon for file extension '%s'! Will fallback to title...", fileExtension.utf8());
     }
 
     RetainPtr nsTitle = title.createNSString();
@@ -1859,12 +1859,12 @@ static RefPtr<Icon> iconForAttachment(const String& fileName, const String& atta
 #undef LOG_ATTACHMENT
 }
 
-RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
+RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title)
 {
-    if (fileName.isNull() && attachmentType.isNull() && title.isNull())
+    if (fileExtension.isNull() && attachmentType.isNull() && title.isNull())
         return IconAndSize { nil, FloatSize() };
 
-    if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title)) {
+    if (auto icon = WebCore::iconForAttachment(fileExtension, attachmentType, title)) {
         RetainPtr image = icon->image();
         auto size = [image size];
         return IconAndSize { WTF::move(image), FloatSize(size) };

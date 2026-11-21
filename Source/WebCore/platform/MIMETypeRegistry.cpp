@@ -32,6 +32,7 @@
 #include "MediaPlayer.h"
 #include "ThreadGlobalData.h"
 #include <ranges>
+#include <wtf/FileSystem.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
@@ -418,9 +419,8 @@ String MIMETypeRegistry::mediaMIMETypeForExtension(StringView extension)
 
 String MIMETypeRegistry::mimeTypeForPath(StringView path)
 {
-    auto position = path.reverseFind('.');
-    if (position != notFound) {
-        auto result = mimeTypeForExtension(path.substring(position + 1));
+    if (auto extension = FileSystem::pathExtension(path); !extension.isEmpty()) {
+        auto result = mimeTypeForExtension(extension);
         if (result.length())
             return result;
     }

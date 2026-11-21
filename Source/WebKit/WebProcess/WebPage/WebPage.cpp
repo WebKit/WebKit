@@ -373,6 +373,7 @@
 #include <ranges>
 #include <wtf/Borrow.h>
 #include <wtf/CoroutineUtilities.h>
+#include <wtf/FileSystem.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SaturatingArithmetic.h>
@@ -10046,10 +10047,14 @@ void WebPage::updateAttachmentIcon(const String& identifier, std::optional<Share
 void WebPage::requestAttachmentIcon(const String& identifier, const WebCore::FloatSize& size)
 {
     if (RefPtr attachment = attachmentElementWithIdentifier(identifier)) {
-        String fileName;
-        if (RefPtr file = attachment->file())
-            fileName = file->path();
-        send(Messages::WebPageProxy::RequestAttachmentIcon(identifier, attachment->attachmentType(), fileName, attachment->attachmentTitle(), size));
+        String type = attachment->attachmentType();
+        String fileExtension;
+        if (RefPtr file = attachment->file()) {
+            fileExtension = FileSystem::pathExtension(file->name()).toString();
+            if (type.isEmpty() && file->isDirectory())
+                type = "public.folder"_s;
+        }
+        send(Messages::WebPageProxy::RequestAttachmentIcon(identifier, type, fileExtension, attachment->attachmentTitle(), size));
     }
 }
 

@@ -64,7 +64,7 @@ public:
 
     WEBCORE_EXPORT static Color systemFocusRingColor();
 
-    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
+    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title);
 
     bool canCreateControlPartForRenderer(const RenderElement&) const final;
 

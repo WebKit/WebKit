@@ -101,6 +101,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #import <pal/ios/UIKitSoftLink.h>
 
@@ -1287,13 +1288,13 @@ Color RenderThemeIOS::pictureFrameColor(const RenderElement& buttonRenderer)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-RenderThemeCocoa::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
+RenderThemeCocoa::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstance() init]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [documentInteractionController setName:fileName.isEmpty() ? title.createNSString().get() : fileName.createNSString().get()];
+    [documentInteractionController setName:fileExtension.isEmpty() ? title.createNSString().get() : makeString("attachment."_s, fileExtension).createNSString().get()];
 
     if (!attachmentType.isEmpty()) {
         String UTI;
