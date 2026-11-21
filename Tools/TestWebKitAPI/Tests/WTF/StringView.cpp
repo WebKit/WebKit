@@ -1174,4 +1174,37 @@ TEST(WTF, StringViewPrecomposedCharacterNone)
     EXPECT_EQ(StringView { std::span<const char16_t> { threeLetters } }.precomposedCharacter(), std::nullopt);
 }
 
+TEST(WTF, StringViewUTF8Length)
+{
+    EXPECT_EQ(0u, utf8Length({ }));
+    EXPECT_EQ(0u, utf8Length(emptyStringView()));
+    EXPECT_EQ(3u, utf8Length("abc"_s));
+
+    std::array<Latin1Character, 4> latin1 { 'a', 0x80, 0xB6, 0xFF };
+    StringView latin1View { std::span<const Latin1Character> { latin1 } };
+    EXPECT_EQ(7u, utf8Length(latin1View));
+    EXPECT_EQ(latin1View.utf8().length(), utf8Length(latin1View));
+
+    // A surrogate pair, then unpaired surrogates, which each become a three-byte U+FFFD.
+    std::array<char16_t, 9> utf16 { u'a', 0xB6, 0x2603, 0xD83D, 0xDE00, 0xD800, u'b', 0xDC00, 0xD800 };
+    StringView utf16View { std::span<const char16_t> { utf16 } };
+    EXPECT_EQ(20u, utf8Length(utf16View));
+    for (unsigned start = 0; start <= utf16View.length(); ++start) {
+        for (unsigned length = 0; start + length <= utf16View.length(); ++length) {
+            auto substring = utf16View.substring(start, length);
+            EXPECT_EQ(substring.utf8().length(), utf8Length(substring));
+        }
+    }
+
+    // Long enough for simdutf's vectorized paths, with the interesting character around their block boundaries.
+    for (size_t position : { 0, 15, 16, 17, 31, 32, 63, 64, 99 }) {
+        for (char16_t character : { 0xB6, 0x2603, 0xD800, 0xDC00 }) {
+            Vector<char16_t> characters(FillWith { }, 100, u'a');
+            characters[position] = character;
+            StringView view { characters.span() };
+            EXPECT_EQ(view.utf8().length(), utf8Length(view));
+        }
+    }
+}
+
 } // namespace TestWebKitAPI

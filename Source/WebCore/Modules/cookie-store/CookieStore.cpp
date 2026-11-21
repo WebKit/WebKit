@@ -386,8 +386,8 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             return;
     }
 
-    // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
-    if (cookie.name.utf8().length() + cookie.value.utf8().length() > maximumNameValuePairSize) {
+    size_t nameAndValueLength;
+    if (!WTF::safeAdd(utf8Length(cookie.name), utf8Length(cookie.value), nameAndValueLength) || nameAndValueLength > maximumNameValuePairSize) {
         promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the cookie name and value must not be greater than "_s, maximumNameValuePairSize, " bytes"_s) });
         return;
     }
@@ -415,8 +415,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             return;
         }
 
-        // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
-        if (cookie.domain.utf8().length() > maximumAttributeValueSize) {
+        if (utf8Length(cookie.domain) > maximumAttributeValueSize) {
             promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the domain must not be greater than "_s, maximumAttributeValueSize, " bytes"_s) });
             return;
         }
@@ -443,8 +442,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
-    if (cookie.path.utf8().length() > maximumAttributeValueSize) {
+    if (utf8Length(cookie.path) > maximumAttributeValueSize) {
         promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the path must not be greater than "_s, maximumAttributeValueSize, " bytes"_s) });
         return;
     }

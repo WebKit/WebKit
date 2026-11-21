@@ -302,6 +302,8 @@ NODELETE inline bool codePointCompareLessThan(StringView a, StringView b)
     return codePointCompare(a, b) < 0;
 }
 
+WTF_EXPORT_PRIVATE size_t utf8Length(StringView);
+
 } // namespace WTF
 
 #include <wtf/ValueOrReference.h>
@@ -1611,6 +1613,7 @@ using WTF::makeStringBySimplifyingNewLines;
 using WTF::StringView;
 using WTF::StringViewWithUnderlyingString;
 using WTF::hasUnpairedSurrogate;
+using WTF::utf8Length;
 using WTF::nullStringView;
 using WTF::emptyStringView;
 using WTF::codePointCompare;

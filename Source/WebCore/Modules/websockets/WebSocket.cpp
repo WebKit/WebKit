@@ -451,8 +451,7 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
         LOG_WITH_STREAM(Network, stream << "WebSocket "_s << this << " close() code="_s << code << " reason='"_s << reason << "'"_s);
         if (!(code == ThreadableWebSocketChannel::CloseEventCodeNormalClosure || (ThreadableWebSocketChannel::CloseEventCodeMinimumUserDefined <= code && code <= ThreadableWebSocketChannel::CloseEventCodeMaximumUserDefined)))
             return Exception { ExceptionCode::InvalidAccessError };
-        auto utf8 = reason.utf8();
-        if (utf8.length() > maxReasonSizeInBytes) {
+        if (utf8Length(reason) > maxReasonSizeInBytes) {
             protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
             return Exception { ExceptionCode::SyntaxError };
         }

@@ -453,6 +453,13 @@ String normalizedNFC(const String& string)
     return result.underlyingString;
 }
 
+size_t utf8Length(StringView string)
+{
+    if (string.is8Bit())
+        return simdutf::utf8_length_from_latin1(byteCast<uint8_t>(string.span8()));
+    return StringImpl::utf8LengthFromUTF16ReplacingUnpairedSurrogates(string.span16());
+}
+
 bool equalRespectingNullity(StringView a, StringView b)
 {
     if (a.m_characters == b.m_characters) {
