@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: scrollable overflow follows the stacking range, the end padding and item margins</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-overflow-3/#scrollable-overflow-calculation">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-2/#overflow">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#stacking-content-alignment">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#abspos">
+  <meta name="assert" content="Test passes if the scrollable overflow of a grid lanes container covers its stacking range as placed by content alignment, the end padding after it and the margin boxes of its items, and if a track template in the stacking axis moves neither the end of the scrollable overflow nor stacking axis line -1.">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <style>
+    .container {
+      display: grid-lanes;
+      overflow: hidden;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .container > div {
+      background: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="stacking-template" style="width: 100px; height: 100px; grid-template-columns: 45px 45px; grid-template-rows: repeat(auto-fit, 5px); gap: 10px">
+    <div style="height: 45px"></div>
+    <div style="height: 100px"></div>
+    <div style="height: 45px"></div>
+  </div>
+  <div class="container" id="stacking-template-lines" style="position: relative; width: 100px; height: 100px; grid-template-columns: 45px 45px; grid-template-rows: repeat(auto-fit, 5px); gap: 10px">
+    <div style="height: 45px"></div>
+    <div style="height: 100px"></div>
+    <div style="height: 45px"></div>
+    <div id="out-of-flow" style="position: absolute; grid-column: 1; grid-row: 1 / -1; inset: 0"></div>
+  </div>
+  <div class="container" id="row-end" style="width: 100px; height: 60px; grid-template-rows: 30px 30px; justify-content: end">
+    <div style="width: 40px"></div>
+    <div style="width: 20px"></div>
+  </div>
+  <div class="container" id="margin" style="width: 100px; height: 100px; padding-bottom: 0; grid-template-rows: 100px">
+    <div style="width: 50px; height: 100px; margin-bottom: 50px"></div>
+  </div>
+  <div class="container" id="rtl" style="direction: rtl; width: 100px; height: 50px; grid-template-rows: 50px">
+    <div style="width: 150px"></div>
+  </div>
+  <div class="container" id="vertical-rl" style="writing-mode: vertical-rl; width: 100px; height: 100px; grid-template-columns: 45px 45px; column-gap: 10px; align-content: end">
+    <div style="width: 30px"></div>
+    <div style="width: 60px"></div>
+  </div>
+  <script>
+    function checkScrollableOverflow(id, width, height, description) {
+      test(() => {
+        const container = document.getElementById(id);
+        assert_equals(container.scrollWidth, width, "scrollWidth");
+        assert_equals(container.scrollHeight, height, "scrollHeight");
+      }, description);
+    }
+    checkScrollableOverflow("stacking-template", 120, 120, "A track template in the stacking axis does not extend the scrollable overflow");
+    test(() => {
+      const outOfFlow = document.getElementById("out-of-flow");
+      assert_equals(outOfFlow.offsetTop, 10, "offsetTop");
+      assert_equals(outOfFlow.offsetHeight, 100, "offsetHeight");
+    }, "Stacking axis lines 1 and -1 are the edges of the stacking range when the stacking axis has a track template");
+    checkScrollableOverflow("row-end", 120, 80, "justify-content: end keeps the stacking range of a row grid lanes container inside its content box");
+    checkScrollableOverflow("margin", 120, 160, "The margin box of a grid lanes item extends the scrollable overflow");
+    checkScrollableOverflow("rtl", 170, 70, "The end padding follows the stacking range of an overflowing rtl row grid lanes container");
+    checkScrollableOverflow("vertical-rl", 120, 120, "align-content: end keeps the stacking range of a vertical-rl column grid lanes container inside its content box");
+  </script>
+</body>
+</html>
