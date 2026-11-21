@@ -167,12 +167,12 @@ std::optional<LineLayoutResult> TextOnlySimpleLineBuilder::placeSingleCharacterC
     if (m_inlineItemList.size() != 1)
         return { };
     auto* inlineTextItem = dynamicDowncast<InlineTextItem>(m_inlineItemList[0]);
-    if (!inlineTextItem || inlineTextItem->length() > 1 || inlineTextItem->isWhitespace())
+    if (!inlineTextItem || inlineTextItem->length() > 1 || inlineTextItem->isWhitespace() || !inlineTextItem->width())
         return { };
     ASSERT(lineInput.needsLayoutRange.start.index + 1 == lineInput.needsLayoutRange.end.index && !lineInput.needsLayoutRange.start.offset && !lineInput.needsLayoutRange.end.offset);
 
     auto lineRect = lineInput.initialLogicalRect;
-    auto contentWidth = inlineTextItem->width().value_or(0.f);
+    auto contentWidth = *inlineTextItem->width();
     Line::RunList singleRun;
     singleRun.append({ Line::Run(*inlineTextItem, protect(inlineTextItem->style()), { }, contentWidth) });
 
