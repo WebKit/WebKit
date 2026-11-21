@@ -50,7 +50,7 @@ public:
     {
         if (!encodeDisplayList(displayList))
             return std::nullopt;
-        return DisplayListData { WTF::move(m_customFonts), WTF::move(m_fonts), WTF::move(m_nativeImages), WTF::move(m_imageBuffers), WTF::move(m_bottomUpDisplayLists) };
+        return DisplayListData { WTF::move(m_customFonts), WTF::move(m_fonts), WTF::move(m_nativeImages), WTF::move(m_imageBuffers), WTF::move(m_pdfDocuments), WTF::move(m_bottomUpDisplayLists) };
     }
 
 private:
@@ -148,6 +148,13 @@ private:
             [&](const DisplayList::DrawPatternImageBuffer& item) {
                 return appendItemWithImage(item, protect(item.imageBuffer()), result);
             },
+            [&](const DisplayList::DrawPDFPage& item) {
+                Ref document = item.document();
+                if (m_pdfDocumentIdentifiers.add(document->renderingResourceIdentifier()).isNewEntry)
+                    m_pdfDocuments.append({ document->renderingResourceIdentifier(), Ref { document->data() } });
+                result.append(item);
+                return true;
+            },
 #if USE(SKIA)
             [](const DisplayList::DrawTextBlob&) { return false; },
 #endif
@@ -241,10 +248,12 @@ private:
     Vector<DisplayListDataFont> m_fonts;
     Vector<DisplayListDataNativeImage> m_nativeImages;
     Vector<DisplayListDataImageBuffer> m_imageBuffers;
+    Vector<DisplayListDataPDFDocument> m_pdfDocuments;
     Vector<Vector<DisplayListDataItem>> m_bottomUpDisplayLists;
     HashMap<Ref<const FontCustomPlatformData>, uint64_t> m_customFontIndices;
     HashMap<Ref<const FontBase>, uint64_t> m_fontIndices;
     HashSet<RenderingResourceIdentifier> m_imageIdentifiers;
+    HashSet<RenderingResourceIdentifier> m_pdfDocumentIdentifiers;
     HashMap<Ref<const DisplayList::DisplayList>, uint64_t> m_indices;
     HashSet<Ref<const DisplayList::DisplayList>> m_displayListsBeingEncoded;
 };
@@ -316,11 +325,12 @@ std::optional<DisplayListData> DisplayListData::create(const DisplayList::Displa
     return DisplayListDataEncoder { }.encode(displayList);
 }
 
-DisplayListData::DisplayListData(Vector<FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&& fonts, Vector<DisplayListDataNativeImage>&& nativeImages, Vector<DisplayListDataImageBuffer>&& imageBuffers, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists)
+DisplayListData::DisplayListData(Vector<FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&& fonts, Vector<DisplayListDataNativeImage>&& nativeImages, Vector<DisplayListDataImageBuffer>&& imageBuffers, Vector<DisplayListDataPDFDocument>&& pdfDocuments, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists)
     : m_customFonts(WTF::move(customFonts))
     , m_fonts(WTF::move(fonts))
     , m_nativeImages(WTF::move(nativeImages))
     , m_imageBuffers(WTF::move(imageBuffers))
+    , m_pdfDocuments(WTF::move(pdfDocuments))
     , m_bottomUpDisplayLists(WTF::move(bottomUpDisplayLists))
 {
 }
@@ -333,7 +343,7 @@ void DisplayListData::setOwnershipOfMemory(const ProcessIdentity& processIdentit
         imageBuffer.handle.setOwnershipOfMemory(processIdentity, MemoryLedger::Graphics);
 }
 
-RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool shouldUseLockdownFontParser) &&
+RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool shouldUseLockdownFontParser, NOESCAPE const PDFDocumentFactory& createPDFDocument) &&
 {
     DisplayList::ResourceCache resourceCache;
     if (!cacheFonts(resourceCache, m_customFonts, m_fonts, shouldUseLockdownFontParser))
@@ -341,6 +351,11 @@ RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool s
 
     if (!cacheNativeImages(resourceCache, WTF::move(m_nativeImages)) || !cacheImageBuffers(resourceCache, WTF::move(m_imageBuffers)))
         return nullptr;
+
+    for (auto& pdfDocument : borrow(m_pdfDocuments)) {
+        if (!resourceCache.cachePDFDocument(pdfDocument.identifier, createPDFDocument(pdfDocument.data.copyRef())))
+            return nullptr;
+    }
 
     RefPtr<const DisplayList::DisplayList> displayList;
     for (auto& dataItems : borrow(m_bottomUpDisplayLists)) {

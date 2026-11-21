@@ -112,6 +112,10 @@
 #include "AudioSessionRoutingArbitrator.h"
 #endif
 
+#if ENABLE(UNIFIED_PDF)
+#include <WebCore/PDFKitDocument.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -389,7 +393,13 @@ void GPUProcessConnection::drawDisplayListToPDF(DisplayListData&& displayListDat
         return;
     }
 
-    RefPtr displayList = WTF::move(displayListData).createDisplayList(webProcess->isLockdownModeEnabled());
+    RefPtr displayList = WTF::move(displayListData).createDisplayList(webProcess->isLockdownModeEnabled(), [](Ref<SharedBuffer>&& data) -> Ref<SharedPDFDocument> {
+#if ENABLE(UNIFIED_PDF)
+        return PDFKitDocument::create(WTF::move(data));
+#else
+        return SharedPDFDocument::create(WTF::move(data));
+#endif
+    });
     if (!displayList) {
         completionHandler(nullptr);
         return;

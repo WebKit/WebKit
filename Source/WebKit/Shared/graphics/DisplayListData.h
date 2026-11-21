@@ -54,6 +54,11 @@ struct DisplayListDataImageBuffer {
     WebCore::ImageBufferParameters parameters;
 };
 
+struct DisplayListDataPDFDocument {
+    WebCore::RenderingResourceIdentifier identifier;
+    Ref<WebCore::SharedBuffer> data;
+};
+
 using DisplayListDataItem = Variant
     < WebCore::DisplayList::ApplyDeviceScaleFactor
     , WebCore::DisplayList::BeginTransparencyLayer
@@ -81,6 +86,7 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::DrawLinesForText
     , WebCore::DisplayList::DrawMeshGradient
     , WebCore::DisplayList::DrawNativeImage
+    , WebCore::DisplayList::DrawPDFPage
     , WebCore::DisplayList::DrawPath
     , WebCore::DisplayList::DrawPatternNativeImage
     , WebCore::DisplayList::DrawPatternImageBuffer
@@ -126,17 +132,20 @@ public:
     // Placeholders are drawn into the result, so whatever they draw has to be ready.
     static std::optional<DisplayListData> create(const WebCore::DisplayList::DisplayList&);
 
-    DisplayListData(Vector<WebCore::FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&&, Vector<DisplayListDataNativeImage>&&, Vector<DisplayListDataImageBuffer>&&, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists);
+    DisplayListData(Vector<WebCore::FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&&, Vector<DisplayListDataNativeImage>&&, Vector<DisplayListDataImageBuffer>&&, Vector<DisplayListDataPDFDocument>&&, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists);
 
     const Vector<WebCore::FontCustomPlatformSerializedData>& customFonts() const LIFETIME_BOUND { return m_customFonts; }
     const Vector<DisplayListDataFont>& fonts() const LIFETIME_BOUND { return m_fonts; }
     const Vector<DisplayListDataNativeImage>& nativeImages() const LIFETIME_BOUND { return m_nativeImages; }
     const Vector<DisplayListDataImageBuffer>& imageBuffers() const LIFETIME_BOUND { return m_imageBuffers; }
+    const Vector<DisplayListDataPDFDocument>& pdfDocuments() const LIFETIME_BOUND { return m_pdfDocuments; }
     const Vector<Vector<DisplayListDataItem>>& bottomUpDisplayLists() const LIFETIME_BOUND { return m_bottomUpDisplayLists; }
 
     void setOwnershipOfMemory(const WebCore::ProcessIdentity&) const;
 
-    RefPtr<const WebCore::DisplayList::DisplayList> createDisplayList(bool shouldUseLockdownFontParser) &&;
+    // The GPU process must not parse PDF data, so only the print process passes a factory whose documents draw.
+    using PDFDocumentFactory = Function<Ref<WebCore::SharedPDFDocument>(Ref<WebCore::SharedBuffer>&&)>;
+    RefPtr<const WebCore::DisplayList::DisplayList> createDisplayList(bool shouldUseLockdownFontParser, NOESCAPE const PDFDocumentFactory&) &&;
 
 private:
     friend struct IPC::ArgumentCoder<DisplayListData>;
@@ -145,6 +154,7 @@ private:
     Vector<DisplayListDataFont> m_fonts;
     Vector<DisplayListDataNativeImage> m_nativeImages;
     Vector<DisplayListDataImageBuffer> m_imageBuffers;
+    Vector<DisplayListDataPDFDocument> m_pdfDocuments;
     Vector<Vector<DisplayListDataItem>> m_bottomUpDisplayLists;
 };
 

@@ -486,6 +486,7 @@ platform/graphics/cocoa/MediaPlayerPrivateWebM.mm @nonARC @no-unify-when(bundle<
 platform/graphics/cocoa/MeshGradientRendererMetal.mm @nonARC
 platform/graphics/cocoa/MetalColorConversion.mm @nonARC
 platform/graphics/cocoa/NativeImageCocoa.mm @nonARC
+platform/graphics/cocoa/PDFKitDocument.mm @nonARC
 platform/graphics/cocoa/PeriodicSharedTimer.mm @nonARC
 platform/graphics/cocoa/PlatformMediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/PlatformTimeRangesCocoa.mm @nonARC @no-unify-when(bundle<=8)

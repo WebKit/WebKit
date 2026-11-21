@@ -494,6 +494,7 @@ private:
     float pageScaleFactor() const override;
 
     void paintPDFContent(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const std::optional<PDFLayoutRow>& = { }, AsyncPDFRenderer* = nullptr);
+    void drawPageIntoRecordingContext(WebCore::GraphicsContext&, PDFPage *, PDFDocumentLayout::PageIndex, const WebCore::FloatRect& pageRect, PDFAccessibilityDisplayMode);
     void paintPDFSelection(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, std::optional<PDFLayoutRow> = { });
 
     void willChangeVisibleRow();
