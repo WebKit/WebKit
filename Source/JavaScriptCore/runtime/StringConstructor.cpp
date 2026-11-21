@@ -25,6 +25,7 @@
 #include "JSCInlines.h"
 #include "SparseArrayValueMap.h"
 #include "StringPrototype.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -77,39 +78,77 @@ StringConstructor* StringConstructor::create(VM& vm, Structure* structure, Strin
 
 // ------------------------------ Functions --------------------------------
 
+enum class CharCodesKind : uint8_t {
+    AllInt32With8BitChar,
+    AllInt32With16BitChar,
+    NotAllInt32,
+};
+
+static ALWAYS_INLINE CharCodesKind classifyCharCodes(std::span<const JSValue> charCodes)
+{
+    if (!charCodes.front().isInt32())
+        return CharCodesKind::NotAllInt32;
+
+    EncodedJSValue commonBits = -1;
+    EncodedJSValue mergedBits = 0;
+    for (JSValue charCode : charCodes) {
+        commonBits &= JSValue::encode(charCode);
+        mergedBits |= JSValue::encode(charCode);
+    }
+    if (!JSValue::decode(commonBits).isInt32())
+        return CharCodesKind::NotAllInt32;
+    return isLatin1(static_cast<char16_t>(mergedBits)) ? CharCodesKind::AllInt32With8BitChar : CharCodesKind::AllInt32With16BitChar;
+}
+
+template<typename CharacterType>
+static ALWAYS_INLINE Ref<StringImpl> createStringImplFromInt32CharCodes(std::span<const JSValue> charCodes)
+{
+    ASSERT(std::ranges::all_of(charCodes, &JSValue::isInt32));
+
+    std::span<CharacterType> characters;
+    Ref impl = StringImpl::createUninitialized(charCodes.size(), characters);
+    WTF::copyElements(spanReinterpretCast<SameSizeUnsignedInteger<CharacterType>>(characters), spanReinterpretCast<const uint64_t>(charCodes));
+    return impl;
+}
+
+static NEVER_INLINE JSString* stringFromCharCodesSlow(JSGlobalObject* globalObject, std::span<const JSValue> charCodes)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Vector<char16_t, 32> buffer(charCodes.size());
+    for (size_t i = 0; i < charCodes.size(); ++i) {
+        buffer[i] = static_cast<char16_t>(charCodes[i].toInt32(globalObject));
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+    return jsNontrivialString(vm, StringImpl::create8BitIfPossible(borrow(buffer)->span()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length = callFrame->argumentCount();
-    if (length == 1) [[likely]] {
+    std::span<const JSValue> arguments = callFrame->argumentsSpan();
+    if (arguments.size() == 1) {
         scope.release();
-        char16_t code = callFrame->uncheckedArgument(0).toUInt32(globalObject);
+        char16_t code = arguments.front().toUInt32(globalObject);
         // Not checking for an exception here is ok because jsSingleCharacterString will just fetch an unused string if there's an exception.
         return JSValue::encode(jsSingleCharacterString(vm, code));
     }
 
-    std::span<Latin1Character> buf8Bit;
-    auto impl8Bit = StringImpl::createUninitialized(length, buf8Bit);
-    for (unsigned i = 0; i < length; ++i) {
-        char16_t character = static_cast<char16_t>(callFrame->uncheckedArgument(i).toUInt32(globalObject));
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (!isLatin1(character)) [[unlikely]] {
-            std::span<char16_t> buf16Bit;
-            auto impl16Bit = StringImpl::createUninitialized(length, buf16Bit);
-            StringImpl::copyCharacters(buf16Bit, buf8Bit.first(i));
-            buf16Bit[i] = character;
-            ++i;
-            for (; i < length; ++i) {
-                buf16Bit[i] = static_cast<char16_t>(callFrame->uncheckedArgument(i).toUInt32(globalObject));
-                RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            }
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(impl16Bit))));
-        }
-        buf8Bit[i] = static_cast<Latin1Character>(character);
+    if (arguments.empty()) [[unlikely]]
+        return JSValue::encode(jsEmptyString(vm));
+
+    switch (classifyCharCodes(arguments)) {
+    case CharCodesKind::AllInt32With8BitChar:
+        return JSValue::encode(jsNontrivialString(vm, createStringImplFromInt32CharCodes<Latin1Character>(arguments)));
+    case CharCodesKind::AllInt32With16BitChar:
+        return JSValue::encode(jsNontrivialString(vm, createStringImplFromInt32CharCodes<char16_t>(arguments)));
+    case CharCodesKind::NotAllInt32:
+        RELEASE_AND_RETURN(scope, JSValue::encode(stringFromCharCodesSlow(globalObject, arguments)));
     }
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(impl8Bit))));
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 JSString* stringFromCharCode(JSGlobalObject* globalObject, int32_t arg)
