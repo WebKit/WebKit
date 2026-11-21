@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ SpatialVideoRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing the keywords of the <code>projection</code> attribute. <code>auto</code> is both the missing value default and the invalid value default, so an absent, empty or unrecognized attribute all defer to the container's own declaration, while <code>rectilinear</code> overrides it.");
+
+const media = document.querySelector("video");
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const container = shadowRoot.appendChild(document.createElement("div"));
+
+const support = new SpatialVideoSupport({
+    media,
+    host: { spatialVideoRenderingEnabled: true },
+    shadowRoot,
+    container,
+});
+
+// Resolution depends only on the attribute and the container's metadata, so both are supplied
+// directly rather than by loading a file per projection.
+function resolve(attributeValue, containerKind)
+{
+    const resolved = support._resolveProjection({ getAttribute: () => attributeValue }, containerKind ? { spatialVideoProjectionKind: containerKind } : { });
+    return resolved ? resolved.projection : null;
+}
+
+debug("Each keyword names a projection:");
+shouldBeEqualToString("resolve('equirectangular')", "equirect360");
+shouldBeEqualToString("resolve('half-equirectangular')", "equirect180");
+shouldBeEqualToString("resolve('fisheye')", "fisheye");
+shouldBeEqualToString("resolve('parametric')", "wideFOV");
+shouldBeEqualToString("resolve('equiangular-cubemap')", "equiAngularCubemap");
+
+debug("");
+debug("Keywords are matched ASCII case-insensitively, ignoring surrounding whitespace:");
+shouldBeEqualToString("resolve('  EquiRectangular ')", "equirect360");
+shouldBeEqualToString("resolve('EQUIANGULAR-CUBEMAP')", "equiAngularCubemap");
+
+debug("");
+debug("<code>rectilinear</code> presents the frames flat even when the container declares a projection:");
+shouldBeNull("resolve('rectilinear')");
+shouldBeNull("resolve('rectilinear', 'Equirectangular')");
+
+debug("");
+debug("<code>auto</code>, an absent attribute, an empty attribute and an unrecognized keyword all defer to the container:");
+shouldBeEqualToString("resolve('auto', 'Equirectangular')", "equirect360");
+shouldBeEqualToString("resolve(null, 'Equirectangular')", "equirect360");
+shouldBeEqualToString("resolve('', 'Equirectangular')", "equirect360");
+shouldBeEqualToString("resolve('not-a-projection', 'Equirectangular')", "equirect360");
+
+debug("");
+debug("...and a container that declares nothing is presented flat:");
+shouldBeNull("resolve('auto')");
+shouldBeNull("resolve(null)");
+shouldBeNull("resolve('')");
+shouldBeNull("resolve('not-a-projection')");
+
+debug("");
+debug("The short aliases are not keywords, so they defer to the container rather than naming a projection:");
+shouldBeEqualToString("resolve('360', 'Equirectangular')", "equirect360");
+shouldBeNull("resolve('360')");
+shouldBeNull("resolve('180')");
+shouldBeNull("resolve('wfov')");
+shouldBeNull("resolve('eac')");
+shouldBeNull("resolve('halfequirectangular')");
+shouldBeNull("resolve('equiangularcubemap')");
+
+media.remove();
+shadowRoot.host.remove();
+
+</script>
+</body>
