@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Failed to construct internal AudioBuffer with 1 channel(s), a sample rate of 8000 and a length of 4294967295.
 Tests that we do not crash when trying to suspend an OfflineAudioContext with a bad buffer.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
