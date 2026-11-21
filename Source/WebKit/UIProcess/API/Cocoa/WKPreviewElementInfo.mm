@@ -44,7 +44,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return retainPtr(self).leakRef();
 }
 
 - (NSURL *)linkURL

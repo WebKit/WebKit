@@ -150,12 +150,14 @@ NavigationState::~NavigationState()
 
 void NavigationState::ref() const
 {
-    [m_webView.get() retain];
+    if (RetainPtr webView = m_webView.get())
+        CFRetain((__bridge CFTypeRef)webView.get());
 }
 
 void NavigationState::deref() const
 {
-    [m_webView.get() release];
+    if (RetainPtr webView = m_webView.get())
+        CFRelease((__bridge CFTypeRef)webView.get());
 }
 
 NavigationState* NavigationState::fromWebPage(WebPageProxy& webPageProxy)
