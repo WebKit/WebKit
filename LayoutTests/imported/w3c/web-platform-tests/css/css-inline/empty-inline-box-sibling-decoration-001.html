@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<title>CSS Inline: margin, border and padding on an empty inline box that follows an undecorated empty sibling</title>
+<link rel="help" href="https://www.w3.org/TR/CSS2/visuren.html#inline-formatting">
+<link rel="help" href="https://drafts.csswg.org/css-inline-3/#invisible-line-boxes">
+<meta name="assert" content="Margins, borders and padding of an empty inline box are honored regardless of whether it is the first inline box in the line.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+div { font-size: 10px; line-height: 20px; width: 200px; margin-left: 50px; }
+.border { border-left: 10px solid green; }
+.padding { padding-left: 30px; }
+</style>
+
+<!-- Control: the decorated box is the first inline box. -->
+<div id="control"><span id="control-target" class="border padding"></span><span id="control-after"></span></div>
+
+<div id="border-padding"><span></span><span id="border-padding-target" class="border padding"></span><span id="border-padding-after"></span></div>
+
+<div id="margin"><span></span><span id="margin-target" class="border" style="margin-left: 40px"></span><span id="margin-after"></span></div>
+
+<div id="negative-margin"><span></span><span id="negative-margin-target" class="border" style="margin-left: -20px"></span></div>
+
+<div id="end-decoration"><span></span><span style="border-right: 10px solid green; padding-right: 5px"></span><span id="end-decoration-after"></span></div>
+
+<div id="several-siblings"><span></span><span></span><span id="several-siblings-target" class="padding"></span><span></span><span id="several-siblings-after"></span></div>
+
+<div id="nested"><span><span></span><span id="nested-target" class="border padding"></span></span><span id="nested-after"></span></div>
+
+<div id="nested-sibling"><span></span><span><span id="nested-sibling-target" class="border padding"></span></span><span id="nested-sibling-after"></span></div>
+
+<script>
+function left(id, containerId) {
+  return document.getElementById(id).getBoundingClientRect().left - document.getElementById(containerId).getBoundingClientRect().left;
+}
+
+function width(id) {
+  return document.getElementById(id).getBoundingClientRect().width;
+}
+
+function height(id) {
+  return document.getElementById(id).getBoundingClientRect().height;
+}
+
+test(() => {
+  assert_equals(left("control-target", "control"), 0, "left");
+  assert_equals(width("control-target"), 40, "width");
+  assert_equals(left("control-after", "control"), 40, "following sibling left");
+  assert_equals(height("control"), 20, "line box is not empty");
+}, "Border and padding on the first empty inline box");
+
+test(() => {
+  assert_equals(left("border-padding-target", "border-padding"), 0, "left");
+  assert_equals(width("border-padding-target"), 40, "width");
+  assert_equals(left("border-padding-after", "border-padding"), 40, "following sibling left");
+  assert_equals(height("border-padding"), 20, "line box is not empty");
+}, "Border and padding on an empty inline box after an undecorated empty sibling");
+
+test(() => {
+  assert_equals(left("margin-target", "margin"), 40, "left");
+  assert_equals(width("margin-target"), 10, "width");
+  assert_equals(left("margin-after", "margin"), 50, "following sibling left");
+}, "Positive margin on an empty inline box after an undecorated empty sibling");
+
+test(() => {
+  assert_equals(left("negative-margin-target", "negative-margin"), -20, "left");
+  assert_equals(width("negative-margin-target"), 10, "width");
+}, "Negative margin on an empty inline box after an undecorated empty sibling");
+
+test(() => {
+  assert_equals(left("end-decoration-after", "end-decoration"), 15, "following sibling left");
+  assert_equals(height("end-decoration"), 20, "line box is not empty");
+}, "End border and padding on an empty inline box after an undecorated empty sibling");
+
+test(() => {
+  assert_equals(left("several-siblings-target", "several-siblings"), 0, "left");
+  assert_equals(width("several-siblings-target"), 30, "width");
+  assert_equals(left("several-siblings-after", "several-siblings"), 30, "following sibling left");
+  assert_equals(height("several-siblings"), 20, "line box is not empty");
+}, "Padding on an empty inline box in the middle of several empty siblings");
+
+test(() => {
+  assert_equals(left("nested-target", "nested"), 0, "left");
+  assert_equals(width("nested-target"), 40, "width");
+  assert_equals(left("nested-after", "nested"), 40, "following sibling left");
+  assert_equals(height("nested"), 20, "line box is not empty");
+}, "Border and padding on a nested empty inline box after an undecorated empty sibling");
+
+test(() => {
+  assert_equals(left("nested-sibling-target", "nested-sibling"), 0, "left");
+  assert_equals(width("nested-sibling-target"), 40, "width");
+  assert_equals(left("nested-sibling-after", "nested-sibling"), 40, "following sibling left");
+  assert_equals(height("nested-sibling"), 20, "line box is not empty");
+}, "Border and padding on an empty inline box nested in a sibling of an undecorated empty inline box");
+</script>

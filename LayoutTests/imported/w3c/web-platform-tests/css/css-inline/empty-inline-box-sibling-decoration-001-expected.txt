@@ -1,0 +1,10 @@
+
+PASS Border and padding on the first empty inline box
+PASS Border and padding on an empty inline box after an undecorated empty sibling
+PASS Positive margin on an empty inline box after an undecorated empty sibling
+PASS Negative margin on an empty inline box after an undecorated empty sibling
+PASS End border and padding on an empty inline box after an undecorated empty sibling
+PASS Padding on an empty inline box in the middle of several empty siblings
+PASS Border and padding on a nested empty inline box after an undecorated empty sibling
+PASS Border and padding on an empty inline box nested in a sibling of an undecorated empty inline box
+

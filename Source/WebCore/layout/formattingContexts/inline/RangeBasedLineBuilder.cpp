@@ -62,13 +62,14 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
 
         auto lineRect = lineInput.initialLogicalRect;
         auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(protect(rootStyle()), { }, lineRect.width(), { }, true);
+        auto inlineBaseDirection = rootStyle().unicodeBidi() == UnicodeBidi::Plaintext ? TextDirection::LTR : rootStyle().writingMode().bidiDirection();
         return LineLayoutResult { lineInput.needsLayoutRange
             , WTF::move(inlineBoxRuns)
             , { }
             , { contentLeft, { }, contentLeft, std::max(0.f, contentLeft - lineRect.right()) }
             , { lineRect.topLeft(), lineRect.width(), lineRect.topLeft() }
             , { }
-            , { }
+            , { { }, inlineBaseDirection }
             , { isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, { } }
             , { }
             , { hasDecoration ? std::optional(LineLayoutResult::InlineContentEnding::Generic) : std::nullopt }
@@ -145,18 +146,20 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
         return false;
 
     auto hasDecorationOrBreak = [&] {
-        for (auto& inlineItem : inlineItemList) {
-            if (!inlineItem.isInlineBoxStart())
-                return false;
+        auto inlineBoxHasDecorationOrBreak = [&](const InlineItem& inlineItem) {
             CheckedRef inlineBox = inlineItem.layoutBox();
             auto& inlineBoxGeometry = inlineFormattingContext.geometryForBox(inlineBox);
             if (inlineBoxGeometry.horizontalMarginBorderAndPadding() || inlineBoxGeometry.marginStart() < 0 || inlineBoxGeometry.marginEnd() < 0)
                 return true;
-            if (inlineBox->style().boxDecorationBreak() != Style::ComputedStyle::initialBoxDecorationBreak())
+            return inlineBox->style().boxDecorationBreak() != Style::ComputedStyle::initialBoxDecorationBreak();
+        };
+        if (isFullyNestedContent)
+            return inlineBoxHasDecorationOrBreak(inlineItemList.first());
+        for (auto& inlineItem : inlineItemList) {
+            if (inlineItem.isInlineBoxStart() && inlineBoxHasDecorationOrBreak(inlineItem))
                 return true;
         }
-        ASSERT_NOT_REACHED();
-        return true;
+        return false;
     };
 
     if (hasDecorationOrBreak()) {

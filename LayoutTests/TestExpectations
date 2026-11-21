@@ -7042,7 +7042,6 @@ imported/w3c/web-platform-tests/css/css-inline/dominant-baseline/dominant-baseli
 imported/w3c/web-platform-tests/css/css-inline/br-font-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/br-line-height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/empty-span-size-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-inline/empty-span-size-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/initial-letter/initial-letter-block-position-fractional-drop-vlr.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/initial-letter/initial-letter-block-position-fractional-drop-vrl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/initial-letter/initial-letter-block-position-fractional-drop.html [ ImageOnlyFailure ]
