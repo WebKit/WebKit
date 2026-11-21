@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+.pill {
+    display: block;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: rgb(212, 212, 212);
+    cursor: pointer;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div class="pill"><button>Remind me next time</button></div>
+<div class="pill market-button"><button>Not now</button></div>
+<div class="pill"><a href="https://example.com/later">Maybe later</a></div>
+<custom-button class="pill">
+    <template shadowrootmode="open"><button><span><slot></slot></span></button></template>
+    Send code
+</custom-button>
+<div class="pill">Not now? <button>Skip</button></div>
+<div class="pill"><button>First</button><button>Second</button></div>
+<div class="pill"><span>Continue</span></div>
+
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        includeURLs: true,
+        shortenURLs: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

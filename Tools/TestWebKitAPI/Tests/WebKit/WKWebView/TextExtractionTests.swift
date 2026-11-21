@@ -728,7 +728,9 @@ struct TextExtractionTests {
                 """
         )
 
-        let debugText = try await webView.debugText()
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.nodeIdentifierInclusion = .allContainers
+        let debugText = try await webView.debugText(configuration)
 
         func clickDescription(_ className: String, _ searchText: String) async throws -> String {
             let nodeIdentifier = try #require(extractNodeIdentifier(debugText, className))

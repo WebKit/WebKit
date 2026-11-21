@@ -1,0 +1,16 @@
+root
+    clickable
+        button uid=… 'Remind me next time'
+    class=market-button clickable
+        button uid=… 'Not now'
+    clickable
+        link uid=… url=example.com/later 'Maybe later'
+    clickable
+        button uid=… 'Send code'
+    uid=… clickable
+        'Not now?'
+        button uid=… 'Skip'
+    uid=… clickable
+        button uid=… 'First'
+        button uid=… 'Second'
+    uid=… clickable 'Continue'
