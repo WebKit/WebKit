@@ -363,7 +363,6 @@ workers:
       - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
       - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 5}
       - {template: mac-golden-gate-aws, prefix: ews, first: 3005, count: 37}
-      - {template: mac-golden-gate-aws, prefix: ews, first: 3042, count: 2, tag: webdriver}
     each(w):
       $if: "'template' in w"
       then:
@@ -513,7 +512,7 @@ builders:
     configuration: debug
     triggered_by: [macos-golden-gate-debug-build-ews]
     additionalArguments: [--site-isolation]
-    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webdriver'", then: {$eval: w.name}}}
+    workernames: {$map: {$eval: "range(0, 2)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
   - name: macOS-Sequoia-Release-Build-EWS
     shortname: mac
     icon: buildOnly
@@ -608,7 +607,7 @@ builders:
     platform: tvos-27
     configuration: release
     architectures: [arm64]
-    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
   - name: tvOS-27-Simulator-Build-EWS
     shortname: tv-sim
     icon: buildOnly
@@ -616,7 +615,7 @@ builders:
     platform: tvos-simulator-27
     configuration: release
     architectures: [arm64]
-    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
   - name: visionOS-27-Build-EWS
     shortname: vision
     icon: buildOnly
