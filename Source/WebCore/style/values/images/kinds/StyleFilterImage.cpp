@@ -147,6 +147,7 @@ RefPtr<ImageBuffer> FilterImage::resolvedImage(const RenderElement& renderElemen
     auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(renderer.get()), m_filter, {
             .referenceBox = sourceImageRect,
             .filterRegion = sourceImageRect,
+            .primitiveUserSpaceOffset = { },
             .scale = { 1, 1 },
         }, preferredFilterRenderingModes, renderingOptions, NullGraphicsContext());
     if (!cssFilter)

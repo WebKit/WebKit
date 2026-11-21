@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+    body {
+        margin: 0;
+    }
+    .container {
+        margin: 50px;
+        width: 12em;
+        font: 50px/50px Ahem;
+        line-height: 2em;
+        color: #EEE;
+    }
+
+    .filtered {
+        color: transparent;
+    }
+
+    svg {
+        position: absolute;
+        top: 75px;
+        left: 50px;
+    }
+</style>
+</head>
+<body>
+  <svg width="550" height="150">
+    <filter id="test" color-interpolation-filters="sRGB" x="0" y="0" width="550" height="150" primitiveUnits="userSpaceOnUse" filterUnits="userSpaceOnUse">
+      <feFlood flood-color="blue" flood-opacity="0.2" result="wash"/>
+      <feFlood x="0" y="0" width="40" height="40" flood-color="orange" flood-opacity="0.5" result="topleft"/>
+      <feFlood x="160" y="80" width="40" height="40" flood-color="orange" flood-opacity="0.5" result="bottomRight"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic" />
+        <feMergeNode in="wash" />
+        <feMergeNode in="topleft" />
+        <feMergeNode in="bottomRight" />
+      </feMerge>
+    </filter>
+    <g filter="url(#test)" fill="black">
+      <rect x="200" y="0" width="150" height="50"></rect>
+      <rect x="400" y="0" width="150" height="50"></rect>
+      <rect x="0" y="100" width="150" height="50"></rect>
+    </g>
+  </svg>
+  <div class="container">XXX <span class="filtered">XXX XXX XXX</span>XXXX</div>
+</body>
+</html>

@@ -550,7 +550,7 @@ static void testSystemImages(Tester& tester)
 
 static FilterGeometry testFilterGeometry()
 {
-    return { { 0, 0, 100, 100 }, { 10, 10, 60, 60 }, { 1, 1 } };
+    return { { 0, 0, 100, 100 }, { 10, 10, 60, 60 }, { }, { 1, 1 } };
 }
 
 static Ref<Filter> filterWithEffect(Ref<FilterEffect>&& effect)

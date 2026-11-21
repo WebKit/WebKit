@@ -130,9 +130,10 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     auto renderingOptions(renderer.settings().showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
 
     // Create the SVGFilterRenderer object.
-    filterData->filter = SVGFilterRenderer::create(contextElement.get(), filterElement, {
+    filterData->filter = SVGFilterRenderer::create(contextElement.get(), filterElement, FilterGeometry {
         .referenceBox = targetBoundingBox,
         .filterRegion = filterRegion,
+        .primitiveUserSpaceOffset = { },
         .scale = filterScale,
     }, preferredFilterModes, renderingOptions, *context, RenderingResourceIdentifier::generate());
 
