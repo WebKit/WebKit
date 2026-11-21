@@ -80,7 +80,9 @@ enum class TextIteratorBehavior : uint32_t {
     // elements: <p> gets unconditional blank lines (not margin-dependent),
     // <h1>-<h6> do not get extra blank lines, and trailing block newlines are
     // stripped. Without this flag, the original margin-based heuristic is used.
-    EmitsNewlinesPerInnerTextSpec = 1 << 16
+    EmitsNewlinesPerInnerTextSpec = 1 << 16,
+
+    IgnoresInertNodes = 1 << 17,
 };
 
 using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;
