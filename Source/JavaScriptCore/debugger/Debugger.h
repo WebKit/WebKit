@@ -122,11 +122,21 @@ public:
     ReasonForPause reasonForPause() const { return m_reasonForPause; }
     BreakpointID pausingBreakpointID() const { return m_pausingBreakpointID; }
 
+    // Opaque to the debugger. A client passes one when it arms a special breakpoint, and gets it back from
+    // `pausingContext()` only while paused because of that breakpoint. A breakpoint that does not pause drops it.
+    class PauseContext : public RefCounted<PauseContext> {
+    public:
+        virtual ~PauseContext() = default;
+
+        virtual bool isInspectorDebuggerAgentPauseContext() const { return false; }
+    };
+    PauseContext* pausingContext() const { return m_pausingContext.get(); }
+
     void schedulePauseAtNextOpportunity();
     NODELETE void cancelPauseAtNextOpportunity();
-    bool schedulePauseForSpecialBreakpoint(Breakpoint&);
+    bool schedulePauseForSpecialBreakpoint(Breakpoint&, RefPtr<PauseContext>&& = nullptr);
     bool cancelPauseForSpecialBreakpoint(Breakpoint&);
-    void breakProgram(RefPtr<Breakpoint>&& specialBreakpoint = nullptr);
+    void breakProgram(RefPtr<Breakpoint>&& specialBreakpoint = nullptr, RefPtr<PauseContext>&& = nullptr);
     void continueProgram();
     void stepNextExpression();
     void stepIntoStatement();
@@ -372,6 +382,7 @@ private:
     unsigned m_lastExecutedLine;
     SourceID m_lastExecutedSourceID;
     bool m_afterBlackboxedScript { false };
+    bool m_isBreakingForSpecialBreakpoint { false };
 
     class AbandonPauseInAwaitTimer final : public JSRunLoopTimer {
     public:
@@ -386,8 +397,12 @@ private:
     HashMap<SourceID, LineToBreakpointsMap> m_breakpointsForSourceID;
     HashSet<Ref<Breakpoint>> m_breakpoints;
     RefPtr<Breakpoint> m_specialBreakpoint;
+    RefPtr<PauseContext> m_specialBreakpointPauseContext;
     ListHashSet<Ref<Breakpoint>> m_deferredBreakpoints;
+    HashMap<Ref<Breakpoint>, RefPtr<PauseContext>> m_deferredBreakpointPauseContexts;
     BreakpointID m_pausingBreakpointID;
+    RefPtr<PauseContext> m_pausingContext;
+    RefPtr<PauseContext> m_afterBlackboxedScriptPauseContext;
 
     RefPtr<Breakpoint> m_pauseOnAllExceptionsBreakpoint;
     RefPtr<Breakpoint> m_pauseOnUncaughtExceptionsBreakpoint;
