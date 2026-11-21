@@ -459,6 +459,15 @@ void ThreadedCompositor::renderLayerTree()
     if (m_suspendedCount > 0)
         return;
 
+    // Retrieve the scene attributes in a thread-safe manner.
+    IntSize viewportSize;
+    float deviceScaleFactor;
+    {
+        Locker locker { m_attributes.lock };
+        viewportSize = m_attributes.viewportSize;
+        deviceScaleFactor = m_attributes.deviceScaleFactor;
+    }
+
     OptionSet<CompositionReason> reasons;
     bool shouldNotifiyDidComposite = false;
     {
@@ -472,6 +481,15 @@ void ThreadedCompositor::renderLayerTree()
             return;
 
         m_state.isRenderTimerActive = false;
+
+        // When the compositor was created before the page had a size, the viewport stays empty until
+        // a rendering update applies the page size. Nothing can be rendered until then. Stay scheduled
+        // with the pending reasons kept, so that the next request starts the render timer again.
+        // Moving to InProgress here would never be followed by frameComplete(), leaving every later
+        // request, including that rendering update, pending forever.
+        if (viewportSize.isEmpty())
+            return;
+
         reasons = std::exchange(m_state.reasons, { });
         if (reasons.contains(CompositionReason::RenderingUpdate)) {
             if (m_state.isWaitingForTiles) {
@@ -484,18 +502,6 @@ void ThreadedCompositor::renderLayerTree()
         ASSERT(m_state.state == State::Scheduled);
         m_state.state = State::InProgress;
     }
-
-    // Retrieve the scene attributes in a thread-safe manner.
-    IntSize viewportSize;
-    float deviceScaleFactor;
-    {
-        Locker locker { m_attributes.lock };
-        viewportSize = m_attributes.viewportSize;
-        deviceScaleFactor = m_attributes.deviceScaleFactor;
-    }
-
-    if (viewportSize.isEmpty())
-        return;
 
     TransformationMatrix viewportTransform;
     viewportTransform.scale(deviceScaleFactor);
