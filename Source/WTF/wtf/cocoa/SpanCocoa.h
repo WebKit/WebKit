@@ -28,6 +28,7 @@
 #import <dispatch/dispatch.h>
 #import <span>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WTF {
 
@@ -37,7 +38,7 @@ inline std::span<const uint8_t> span(NSData *data LIFETIME_BOUND)
     if (!data)
         return { };
 
-    return unsafeMakeSpan(static_cast<const uint8_t*>(data.bytes), data.length);
+    return unsafeMakeSpan(CFDataGetBytePtr(bridge_cast(data)), static_cast<size_t>(CFDataGetLength(bridge_cast(data))));
 }
 
 inline RetainPtr<NSData> toNSData(std::span<const uint8_t> span)
