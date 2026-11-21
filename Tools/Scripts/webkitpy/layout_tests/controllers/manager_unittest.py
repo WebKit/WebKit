@@ -31,13 +31,14 @@
 
 from collections import OrderedDict
 from io import StringIO
+import json
 import sys
 import time
 import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.manager import Manager
-from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models import test_expectations, test_failures, test_results
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
@@ -175,3 +176,86 @@ passes/text.html                       ['PASS']
 
         self.assertEqual(collect_tests('DumpRenderTree'), ([other_test], {print_reftest}))
         self.assertEqual(collect_tests('WebKitTestRunner'), ([print_reftest, other_test], set()))
+
+    DIFF = (
+        '--- /Volumes/Data/worker/Apple-Tahoe-Release-WK2-Tests/build/layout-test-results/fast/css/text-expected.txt\n'
+        '+++ /Volumes/Data/worker/Apple-Tahoe-Release-WK2-Tests/build/layout-test-results/fast/css/text-actual.txt\n'
+        '@@ -1,2 +1,2 @@\n'
+        ' PASS successfullyParsed is true\n'
+        '-PASS The initiator type for \'@font-face\' resources must be \'css\'\n'
+        '+FAIL The initiator type for \'@font-face\' resources must be \'css\' promise_test: Unhandled rejection\n'
+    )
+    STDERR = 'ASSERTION FAILED: m_absCaretBounds == m_selection.visibleStart().absoluteCaretBounds()\nSource/WebCore/editing/FrameSelection.cpp(1948) : bool WebCore::FrameSelection::recomputeCaretRect()\n'
+    CRASH_REPORT = '{"app_name":"WebKitTestRunner"}\n' + json.dumps({
+        'procName': 'WebKitTestRunner',
+        'exception': {'type': 'EXC_CRASH', 'signal': 'SIGABRT'},
+        'faultingThread': 0,
+        'threads': [{'triggered': True, 'queue': 'com.apple.main-thread', 'frames': [{'imageOffset': 38480, 'symbol': '__pthread_kill', 'imageIndex': 0}]}],
+        'usedImages': [{'name': 'libsystem_kernel.dylib'}],
+    })
+
+    def _upload_logs(self, files, failures_by_test, expected_tests=()):
+        manager = self._get_manager()
+        manager._results_directory = '/test.checkout/layout-test-results'
+        for name, contents in files.items():
+            manager._filesystem.write_binary_file(manager._filesystem.join(manager._results_directory, name), contents)
+        expectations = test_expectations.TestExpectations(manager._port, list(failures_by_test))
+        expectations.parse_all_expectations()
+        run_results = TestRunResults(expectations, len(failures_by_test))
+        for test_name, failures in failures_by_test.items():
+            run_results.add(test_results.TestResult(test_name, failures=failures), expected=test_name in expected_tests)
+        return manager._logs_to_upload(run_results)
+
+    def test_upload_log_for_text_failure_is_its_diff(self):
+        logs = self._upload_logs({'fast/css/text-diff.txt': self.DIFF}, {'fast/css/text.html': [test_failures.FailureTextMismatch()]})
+        self.assertEqual(logs, {'fast/css/text.html': self.DIFF.split('\n', 2)[2]})
+
+    def test_upload_log_for_diff_without_file_names(self):
+        logs = self._upload_logs({'webaudio/gain-diff.txt': 'Audio sample mismatch at 1024\n'}, {'webaudio/gain.html': [test_failures.FailureAudioMismatch()]})
+        self.assertEqual(logs, {'webaudio/gain.html': 'Audio sample mismatch at 1024\n'})
+
+    def test_upload_log_for_timeout_without_diff_is_its_stderr(self):
+        logs = self._upload_logs({'fast/css/timeout-stderr.txt': 'Timed out waiting for rendering of window.\n'}, {'fast/css/timeout.html': [test_failures.FailureTimeout()]})
+        self.assertEqual(logs, {'fast/css/timeout.html': 'Timed out waiting for rendering of window.\n'})
+
+    def test_upload_log_for_crash_is_its_stderr_and_crashed_thread(self):
+        logs = self._upload_logs({
+            'editing/crash-stderr.txt': self.STDERR,
+            'editing/crash-crash-log.txt': self.CRASH_REPORT,
+        }, {'editing/crash.html': [test_failures.FailureCrash()]})
+        self.assertEqual(logs, {'editing/crash.html': (
+            self.STDERR + '\n'
+            'WebKitTestRunner: EXC_CRASH (SIGABRT)\n'
+            'Thread 0 crashed: com.apple.main-thread\n'
+            '0   libsystem_kernel.dylib  __pthread_kill'
+        )})
+
+    def test_upload_log_for_crash_without_crash_report_is_its_stderr(self):
+        logs = self._upload_logs({
+            'editing/crash-stderr.txt': self.STDERR,
+            'editing/crash-crash-log.txt': 'No crash log found for WebKitTestRunner:4496.\n\nstdout:\n\nstderr:\n' + self.STDERR,
+        }, {'editing/crash.html': [test_failures.FailureCrash()]})
+        self.assertEqual(logs, {'editing/crash.html': self.STDERR})
+
+    def test_upload_log_for_crash_without_stderr_is_its_crashed_thread(self):
+        self.assertEqual(self._upload_logs({'editing/crash-crash-log.txt': self.CRASH_REPORT}, {'editing/crash.html': [test_failures.FailureCrash()]}), {'editing/crash.html': (
+            'WebKitTestRunner: EXC_CRASH (SIGABRT)\n'
+            'Thread 0 crashed: com.apple.main-thread\n'
+            '0   libsystem_kernel.dylib  __pthread_kill'
+        )})
+
+    def test_no_upload_log_for_failure_without_output(self):
+        self.assertEqual(self._upload_logs({}, {'fast/images/image.html': [test_failures.FailureImageHashMismatch()]}), {})
+
+    def test_no_upload_log_for_unexpected_pass(self):
+        self.assertEqual(self._upload_logs({'fast/css/pass-stderr.txt': self.STDERR}, {'fast/css/pass.html': []}), {})
+
+    def test_no_upload_log_for_expected_failure(self):
+        logs = self._upload_logs({'fast/css/text-diff.txt': self.DIFF}, {'fast/css/text.html': [test_failures.FailureTextMismatch()]}, expected_tests={'fast/css/text.html'})
+        self.assertEqual(logs, {})
+
+    def test_upload_log_for_every_failure(self):
+        tests = [f'fast/css/text-{index:02}' for index in range(40)]
+        logs = self._upload_logs({f'{test}-stderr.txt': 'x' * 14610 for test in tests}, {f'{test}.html': [test_failures.FailureTimeout()] for test in tests})
+        self.assertEqual(sorted(logs), [f'{test}.html' for test in tests])
+        self.assertEqual({len(log) for log in logs.values()}, {8191})

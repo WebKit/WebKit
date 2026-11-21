@@ -461,6 +461,22 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(mock_upload.called)
         self.assertIsNotNone(details.initial_results)
 
+    def test_report_uploads_failure_output(self):
+        uploads = []
+
+        def capture_upload(upload, hostname, log_line_func=None):
+            uploads.append(upload)
+            return False
+
+        extra_args = ['--report', 'http://example.invalid/', 'failures/unexpected/text.html', 'failures/unexpected/crash-with-stderr.html', 'passes/text.html']
+        with patch.object(Upload, 'upload', autospec=True, side_effect=capture_upload):
+            logging_run(extra_args=extra_args, tests_included=True)
+
+        results = uploads[0].results
+        self.assertEqual('@@ -1 +1 @@\n-text-txt\n No newline at end of file\n+text_fail-txt\n No newline at end of file\n', results['failures']['unexpected']['text.html']['log'])
+        self.assertEqual('mock-std-error-output', results['failures']['unexpected']['crash-with-stderr.html']['log'])
+        self.assertNotIn('log', results['passes']['text.html'])
+
     def test_natural_order(self):
         tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']
         tests_run = get_tests_run(['--order=natural'] + tests_to_run)
