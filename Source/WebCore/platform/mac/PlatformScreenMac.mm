@@ -33,6 +33,7 @@
 #import "FloatRect.h"
 #import "HostWindow.h"
 #import "LocalFrameView.h"
+#import "Logging.h"
 #import "ScreenProperties.h"
 #import "ThermalMitigationNotifier.h"
 #import <ColorSync/ColorSync.h>
@@ -87,10 +88,12 @@ static PlatformDisplayID displayID(Widget* widget)
 static NSScreen *firstScreen()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    NSArray *screens = [NSScreen screens];
-    if (![screens count])
-        return nil;
-    return [screens objectAtIndex:0];
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    // Unlike the callers in the UI process, this can be reached from the Web Content process, which has no
+    // WindowServer session, so log rather than assert and let callers keep degrading gracefully.
+    if (!firstScreen) [[unlikely]]
+        RELEASE_LOG_ERROR(Layout, "firstScreen: No screens found, possibly due to no WindowServer session.");
+    return firstScreen;
 }
 
 static NSWindow *window(Widget* widget)
