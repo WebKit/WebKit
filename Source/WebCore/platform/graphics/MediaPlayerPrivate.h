@@ -115,6 +115,9 @@ public:
     virtual void pause() = 0;
     virtual void setBufferingPolicy(MediaPlayer::BufferingPolicy) { }
 
+    virtual void didRemovingSteps() { }
+    virtual void didPostConnectionSteps() { }
+
     virtual bool supportsPictureInPicture() const { return false; }
     virtual bool supportsFullscreen() const { return false; }
     virtual bool supportsScanning() const { return false; }
