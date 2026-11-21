@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/defer-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/defer.js
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/ellipse-hittest.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/embedded-document-root-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-events.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-tabindex-default-value.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-tabindex-invalid-value.svg

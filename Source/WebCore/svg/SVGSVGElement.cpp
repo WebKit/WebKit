@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2019 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2022 Google Inc. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
@@ -1048,6 +1048,17 @@ RefPtr<Element> SVGSVGElement::getElementById(const AtomString& id)
 bool SVGSVGElement::isValid() const
 {
     return SVGTests::isValid();
+}
+
+bool SVGSVGElement::supportsFocus() const
+{
+    // Per the SVG focus model, the document root element of an interactive document is
+    // focusable and has its tabindex focus flag set, even without an explicit tabindex
+    // attribute. SVG images are not interactive documents.
+    // https://w3c.github.io/svgwg/svg2-draft/interact.html#Focus
+    if (document().documentElement() == this && !isInSVGImage(this))
+        return true;
+    return SVGGraphicsElement::supportsFocus();
 }
 
 }

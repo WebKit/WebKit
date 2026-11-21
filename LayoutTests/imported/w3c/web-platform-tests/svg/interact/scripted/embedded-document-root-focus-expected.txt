@@ -1,0 +1,7 @@
+
+
+PASS Nested svg element without tabindex is not focusable in an SVG document in <iframe>
+PASS Root svg element is focusable in an SVG document in <iframe>
+PASS Nested svg element without tabindex is not focusable in an SVG document in <object>
+PASS Root svg element is focusable in an SVG document in <object>
+
