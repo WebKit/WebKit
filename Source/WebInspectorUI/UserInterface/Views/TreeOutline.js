@@ -391,9 +391,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         this.children = [];
 
-        if (this.virtualized) {
-            this._virtualizedVisibleTreeElements.clear();
-            this._virtualizedDebouncer.delayForFrame();
+        if (this.treeOutline?.virtualized) {
+            this.treeOutline._virtualizedVisibleTreeElements.clear();
+            this.treeOutline._virtualizedDebouncer.delayForFrame();
         }
     }
 
@@ -995,8 +995,21 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 // Redraw if all of the previously centered `WI.TreeElement` are no longer centered.
                 if (!visibleTreeElements.isDisjointFrom(this._virtualizedVisibleTreeElements)) {
                     // Redraw if there is a `WI.TreeElement` that should be shown that isn't attached.
-                    if (visibleTreeElements.isSubsetOf(this._virtualizedAttachedTreeElements))
-                        return;
+                    if (visibleTreeElements.isSubsetOf(this._virtualizedAttachedTreeElements)) {
+                        let shouldAttach = false;
+                        for (let treeElement of visibleTreeElements) {
+                            if (!treeElement._listItemNode.isConnected) {
+                                shouldAttach = true;
+                                break;
+                            }
+                            if (treeElement._childrenListNode && !treeElement._childrenListNode.isConnected) {
+                                shouldAttach = true;
+                                break;
+                            }
+                        }
+                        if (!shouldAttach)
+                            return;
+                    }
                 }
             }
         }
