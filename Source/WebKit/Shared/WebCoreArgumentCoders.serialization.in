@@ -2995,9 +2995,6 @@ header: <WebCore/ScrollingStateNode.h>
     FooterLayer
     BehaviorForFixedElements
     ObscuredContentInsets
-#if HAVE(NSREFRESHCONTROLLER)
-    TopScrollStretchForRefreshController
-#endif
     VisualViewportIsSmallerThanLayoutViewport
     AsyncFrameOrOverflowScrollingEnabled
     WheelEventGesturesBecomeNonBlocking

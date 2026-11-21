@@ -85,13 +85,6 @@ public:
     int insetForLeftScrollbarSpace() const { return m_insetForLeftScrollbarSpace; }
     WEBCORE_EXPORT void setInsetForLeftScrollbarSpace(int);
 
-    // The target offset for rubber band animations when refresh controller is present.
-    // When non-zero, rubber banding will snap to this offset instead of the edge.
-#if HAVE(NSREFRESHCONTROLLER)
-    float topScrollStretchForRefreshController() const { return m_topScrollStretchForRefreshController; }
-    WEBCORE_EXPORT void setTopScrollStretchForRefreshController(float);
-#endif
-
     const LayerRepresentation& rootContentsLayer() const LIFETIME_BOUND { return m_rootContentsLayer; }
     WEBCORE_EXPORT void setRootContentsLayer(const LayerRepresentation&);
 
@@ -181,9 +174,6 @@ private:
         int footerHeight,
         ScrollBehaviorForFixedElements&&,
         FloatBoxExtent&& obscuredContentInsets,
-#if HAVE(NSREFRESHCONTROLLER)
-        float topScrollStretchForRefreshController,
-#endif
         bool visualViewportIsSmallerThanLayoutViewport,
         bool asyncFrameOrOverflowScrollingEnabled,
         bool wheelEventGesturesBecomeNonBlocking,
@@ -219,9 +209,6 @@ private:
 
     float m_frameScaleFactor { 1 };
     FloatBoxExtent m_obscuredContentInsets;
-#if HAVE(NSREFRESHCONTROLLER)
-    float m_topScrollStretchForRefreshController { 0 };
-#endif
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
     int m_insetForLeftScrollbarSpace { 0 };
