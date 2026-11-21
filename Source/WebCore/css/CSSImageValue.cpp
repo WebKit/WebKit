@@ -92,11 +92,6 @@ Ref<CSSImageValue> CSSImageValue::copyForComputedStyle(const CSS::URL& resolvedU
     return result;
 }
 
-bool CSSImageValue::isLoadedFromOpaqueSource() const
-{
-    return m_location.provenance.loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes;
-}
-
 bool CSSImageValue::isPending() const
 {
     return !m_cachedImage;

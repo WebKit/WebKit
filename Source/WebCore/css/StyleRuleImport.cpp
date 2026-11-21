@@ -81,6 +81,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, A
     if (!baseURL.isNull()) {
         context.baseURL = baseURL;
         context.isExternalStyleSheet = true;
+        context.referrerPolicy = cachedStyleSheet.referrerPolicy();
     }
 
     CheckedPtr<Document> document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : nullptr;
@@ -161,11 +162,7 @@ void StyleRuleImport::requestStyleSheet()
     } else {
         RefPtr ownerNode = rootSheet->singleOwnerNode();
         auto options = CSS::styleResourceLoaderOptions(ownerNode && ownerNode->isInUserAgentShadowTree());
-        CSS::URLProvenance provenance {
-            .styleSheetURL = m_parentStyleSheet->parserContext().isExternalStyleSheet ? m_parentStyleSheet->baseURL() : URL { },
-            .loadedFromOpaqueSource = m_parentStyleSheet->loadedFromOpaqueSource(),
-        };
-        auto request = CSS::createStyleResourceRequest(*document, absURL, m_url.modifiers, provenance, FetchOptions::Mode::NoCors, options);
+        auto request = CSS::createStyleResourceRequest(*document, absURL, m_url.modifiers, m_parentStyleSheet->parserContext().provenance(), FetchOptions::Mode::NoCors, options);
         request.setCharset(m_parentStyleSheet->charset());
         if (auto result = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)))
             m_cachedSheet = WTF::move(result.value());

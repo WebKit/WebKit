@@ -526,7 +526,8 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
 
     Ref document = this->document();
     ASSERT(m_isCSS);
-    CSSParserContext parserContext(document, baseURL, charset, IsExternalStyleSheet::Yes);
+    // FIXME: This should probably pass LoadedFromOpaqueSource::Yes when the sheet is not CORS same-origin like HTMLLinkElement does.
+    CSSParserContext parserContext(document, baseURL, charset, IsExternalStyleSheet::Yes, sheet.referrerPolicy());
 
     Ref cssSheet = CSSStyleSheet::create(StyleSheetContents::create(href, parserContext), *this, sheet.isCORSSameOrigin());
     cssSheet->setDisabled(m_alternate);
