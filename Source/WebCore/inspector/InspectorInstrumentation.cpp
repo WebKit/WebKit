@@ -72,6 +72,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "NetworkAgentInstrumentation.h"
+#include "Page.h"
 #include "PageAgentInstrumentation.h"
 #include "PageCanvasAgent.h"
 #include "PageDOMDebuggerAgent.h"
@@ -88,6 +89,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "Settings.h"
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
 #include "WebGLRenderingContextBase.h"
@@ -1119,6 +1121,13 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
 
         if (CheckedPtr domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
             domDebuggerAgent->mainFrameNavigated();
+
+        // Under Site Isolation, the main frame's own agent may also use the snapshots, and it stays across a
+        // navigation within its process. Without Site Isolation, this slot would return the page's agent.
+        if (page->settings().siteIsolationEnabled()) {
+            if (CheckedPtr frameHeapAgent = instrumentingAgents.persistentWebHeapAgent())
+                frameHeapAgent->mainFrameNavigated();
+        }
 
         if (CheckedPtr enabledPageHeapAgent = instrumentingAgents.enabledPageHeapAgent())
             enabledPageHeapAgent->mainFrameNavigated();

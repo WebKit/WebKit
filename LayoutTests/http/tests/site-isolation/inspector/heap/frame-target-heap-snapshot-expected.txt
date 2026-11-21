@@ -1,0 +1,24 @@
+Test that under Site Isolation, a cross-origin iframe's frame target takes heap snapshots of its own frame.
+
+
+
+== Running test suite: SiteIsolation.Heap.FrameTargetSnapshot
+-- Running test case: SiteIsolation.Heap.FrameTargetSnapshot.Domain
+PASS: The cross-origin iframe should be in another process than the main frame.
+PASS: The main frame's target should have the Heap domain.
+PASS: The cross-origin iframe's target should have the Heap domain.
+
+-- Running test case: SiteIsolation.Heap.FrameTargetSnapshot.Snapshot
+PASS: The iframe's snapshot should include the iframe's marker.
+PASS: The iframe's snapshot should not include the main frame's marker.
+PASS: The iframe's target should preview the iframe's marker.
+PASS: The iframe's target should create a remote object for the iframe's marker.
+PASS: The main frame's snapshot should include the main frame's marker.
+PASS: The main frame's snapshot should not include the iframe's marker.
+
+-- Running test case: SiteIsolation.Heap.FrameTargetSnapshot.ConsoleTakeHeapSnapshot
+PASS: The snapshot should come from the iframe's target.
+PASS: The snapshot should include the iframe's marker.
+PASS: Getting a preview of the iframe's marker should not fail.
+PASS: The preview should describe the iframe's marker.
+
