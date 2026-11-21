@@ -37,14 +37,25 @@
 
 namespace WebCore {
 
+// JPEG stores 8 bits per component. Extended-range color spaces cannot be used with 8 bits per component, and linear ones would
+// lose too much precision, so extended-range images are encoded in the standard-range, non-linear version of their color space.
+static ColorSpace colorSpaceForJPEGEncoding(const ColorSpace& colorSpace)
+{
+    if (!colorSpace.usesExtendedRange())
+        return colorSpace.supportsOutput() ? colorSpace : ColorSpace::SRGB();
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    if (colorSpace == ColorSpace::ExtendedDisplayP3() || colorSpace == ColorSpace::ExtendedLinearDisplayP3())
+        return ColorSpace::DisplayP3();
+#endif
+    return ColorSpace::SRGB();
+}
+
 Vector<uint8_t> encodeData(const NativeImage& source, const String& mimeType, std::optional<double> quality)
 {
     RefPtr<const NativeImage> image;
-    if (source.hasAlpha() && MIMETypeRegistry::isJPEGMIMEType(mimeType)) {
+    if ((source.hasAlpha() || source.colorSpace().usesExtendedRange()) && MIMETypeRegistry::isJPEGMIMEType(mimeType)) {
         // FIXME(https://bugs.webkit.org/show_bug.cgi?id=308704): The encoding should take in background color and not use drawing.
-        auto colorSpace = source.colorSpace();
-        if (!colorSpace.supportsOutput())
-            colorSpace = ColorSpace::SRGB();
+        auto colorSpace = colorSpaceForJPEGEncoding(source.colorSpace());
         RefPtr buffer = ImageBuffer::create(source.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
         if (!buffer)
             return { };
