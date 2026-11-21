@@ -1,0 +1,3 @@
+
+PASS A custom element in a patch is constructed by the parser, not upgraded after insertion
+
