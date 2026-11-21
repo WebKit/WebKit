@@ -881,41 +881,11 @@ private:
     void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
 #endif
 
-    enum class IsWeak : bool { No, Yes };
-    template<typename T> class WeakOrStrongPtr {
-    public:
-        WeakOrStrongPtr(T& object, IsWeak isWeak)
-            : m_isWeak(isWeak)
-            , m_weakObject(object)
-        {
-            updateStrongReference();
-        }
-
-        void setIsWeak(IsWeak isWeak)
-        {
-            m_isWeak = isWeak;
-            updateStrongReference();
-        }
-
-        T* get() const { return m_weakObject.get(); }
-        T* operator->() const { return m_weakObject.get(); }
-        T& operator*() const { return *m_weakObject; }
-        explicit operator bool() const { return !!m_weakObject; }
-
-    private:
-        void updateStrongReference()
-        {
-            m_strongObject = m_isWeak == IsWeak::Yes ? nullptr : m_weakObject.get();
-        }
-
-        IsWeak m_isWeak;
-        WeakPtr<T> m_weakObject;
-        RefPtr<T> m_strongObject;
-    };
-
     const UniqueRef<BackgroundProcessResponsivenessTimer> m_backgroundResponsivenessTimer;
     
-    WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.
+    const WeakPtr<WebProcessPool> m_processPool;
+    // Keeps m_processPool alive. Null for pre-warmed and cached processes, since they must not keep their pool alive.
+    RefPtr<WebProcessPool> m_processPoolKeepAlive;
 
     bool m_mayHaveUniversalFileReadSandboxExtension { false }; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;

@@ -44,29 +44,30 @@ using namespace WebCore;
 
 void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    launchOptions.extraInitializationData.set("enable-sandbox"_s, m_processPool->sandboxEnabled() ? "true"_s : "false"_s);
+    Ref processPool = this->processPool();
+    launchOptions.extraInitializationData.set("enable-sandbox"_s, processPool->sandboxEnabled() ? "true"_s : "false"_s);
 
 #if USE(ATSPI)
-    launchOptions.extraInitializationData.set("accessibilityBusAddress"_s, m_processPool->accessibilityBusAddress());
-    launchOptions.extraInitializationData.set("accessibilityBusName"_s, m_processPool->generateNextAccessibilityBusName());
+    launchOptions.extraInitializationData.set("accessibilityBusAddress"_s, processPool->accessibilityBusAddress());
+    launchOptions.extraInitializationData.set("accessibilityBusName"_s, processPool->generateNextAccessibilityBusName());
 #endif
 
-    if (m_processPool->sandboxEnabled()) {
+    if (processPool->sandboxEnabled()) {
         RefPtr dataStore = websiteDataStore();
         ASSERT(dataStore);
         launchOptions.extraInitializationData.set("mediaKeysDirectory"_s, dataStore->resolvedDirectories().mediaKeysStorageDirectory);
 
-        launchOptions.extraSandboxPaths = m_processPool->sandboxPaths();
+        launchOptions.extraSandboxPaths = processPool->sandboxPaths();
 #if USE(ATSPI)
         if (shouldUseBubblewrap())
-            launchOptions.extraInitializationData.set("sandboxedAccessibilityBusAddress"_s, m_processPool->sandboxedAccessibilityBusAddress());
+            launchOptions.extraInitializationData.set("sandboxedAccessibilityBusAddress"_s, processPool->sandboxedAccessibilityBusAddress());
 #endif
     }
 }
 
 void WebProcessProxy::sendMessageToWebContextWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
-    if (const auto& userMessageHandler = m_processPool->userMessageHandler()) {
+    if (const auto& userMessageHandler = processPool().userMessageHandler()) {
         userMessageHandler(WTF::move(message), WTF::move(completionHandler));
         return;
     }

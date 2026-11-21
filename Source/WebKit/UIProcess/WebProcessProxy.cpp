@@ -508,7 +508,8 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     : AuxiliaryProcessProxy("WebProcess"_s, processPool.shouldTakeUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , processPool.alwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No)
     , m_backgroundResponsivenessTimer(makeUniqueRef<BackgroundProcessResponsivenessTimer>(*this))
-    , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
+    , m_processPool(processPool)
+    , m_processPoolKeepAlive(isPrewarmed == IsPrewarmed::Yes ? nullptr : &processPool)
 #if HAVE(DISPLAY_LINK)
     , m_displayLinkClient(makeUniqueRef<DisplayLinkProcessProxyClient>())
 #endif
@@ -700,7 +701,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     if (m_isInProcessCache) {
         // WebProcessProxy objects normally keep the process pool alive but we do not want this to be the case
         // for cached processes or it would leak the pool.
-        m_processPool.setIsWeak(IsWeak::Yes);
+        m_processPoolKeepAlive = nullptr;
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
         // Destroy the debuggable so LLDB detaches cleanly. It will be recreated when the
         // process exits cache via wasmDebugServerReady(). Also send ResetServer to the
@@ -712,7 +713,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
 #endif
     } else {
         RELEASE_ASSERT(m_processPool);
-        m_processPool.setIsWeak(IsWeak::No);
+        m_processPoolKeepAlive = m_processPool.get();
     }
 
     updateRuntimeStatistics();
@@ -852,8 +853,9 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("is-prewarmed"_s, "1"_s);
 
 #if PLATFORM(PLAYSTATION)
-    launchOptions.processPath = m_processPool->webProcessPath();
-    launchOptions.userId = m_processPool->userId();
+    Ref processPool = this->processPool();
+    launchOptions.processPath = processPool->webProcessPath();
+    launchOptions.userId = processPool->userId();
 #endif
 
     if (processPool().shouldMakeNextWebProcessLaunchFailForTesting()) {
@@ -1201,7 +1203,7 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
 
     m_isPrewarmed = false;
     RELEASE_ASSERT(m_processPool);
-    m_processPool.setIsWeak(IsWeak::No);
+    m_processPoolKeepAlive = m_processPool.get();
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     setJetsamBoostEnabled(true);

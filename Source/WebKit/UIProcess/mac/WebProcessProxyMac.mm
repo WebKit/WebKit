@@ -52,7 +52,7 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
     if (isPlatformBinary)
         return false;
 
-    const String& path = m_processPool->configuration().injectedBundlePath();
+    auto path = protect(processPool())->configuration().injectedBundlePath();
     return !path.isEmpty() && !path.startsWith("/System/"_s);
 }
 
