@@ -102,6 +102,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (void)_setUserAgentStringQuirkForTesting:(NSString *)domain withUserAgent:(NSString *)userAgent completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 - (void)_setPrivateTokenIPCForTesting:(bool)enabled WK_API_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2));
 - (void)_setLinkDecorationFilteringDataForTesting:(NSArray<NSString *> *)queryParameters completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_setLinkComponentFilteringDataForTesting:(NSString *)json completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nullable, nonatomic, weak) id <_WKWebsiteDataStoreDelegate> _delegate WK_API_AVAILABLE(macos(10.15), ios(13.0));
 @property (nonatomic, readonly, copy) _WKWebsiteDataStoreConfiguration *_configuration;

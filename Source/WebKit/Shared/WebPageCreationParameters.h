@@ -74,6 +74,7 @@
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+#include <WebCore/LinkComponentFilteringData.h>
 #include <WebCore/LinkDecorationFilteringData.h>
 #endif
 
@@ -357,6 +358,7 @@ struct WebPageCreationParameters {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData { };
     Vector<WebCore::LinkDecorationFilteringData> allowedQueryParametersForAdvancedPrivacyProtections { };
+    Vector<WebCore::LinkComponentFilteringData> linkComponentFilteringData { };
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)

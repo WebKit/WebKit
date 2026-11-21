@@ -42,15 +42,18 @@
 #import <time.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Borrow.h>
+#import <wtf/JSONValues.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Scope.h>
 #import <wtf/WeakRandom.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/posix/SocketPOSIX.h>
 #import <wtf/text/MakeString.h>
+#import <wtf/text/StringToIntegerConversion.h>
 #import <pal/cocoa/WebPrivacySoftLink.h>
 
 @interface WKWebPrivacyNotificationListener : NSObject
@@ -173,6 +176,165 @@ void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& c
             completionHandler();
     }];
 
+}
+
+static bool isValidLinkComponentPattern(const String& pattern)
+{
+    return !![NSRegularExpression regularExpressionWithPattern:pattern.createNSString().get() options:0 error:nil];
+}
+
+// Parses "<name>[N]" where N is a 1-based index, e.g. "path[4]".
+static std::optional<unsigned> linkComponentIndexFromKey(StringView key, ASCIILiteral name)
+{
+    if (!key.startsWith(name) || !key.substring(name.length()).startsWith('[') || !key.endsWith(']'))
+        return std::nullopt;
+
+    auto digits = key.substring(name.length() + 1, key.length() - name.length() - 2);
+    if (digits.isEmpty() || !digits.containsOnly<isASCIIDigit>())
+        return std::nullopt;
+
+    auto index = parseInteger<unsigned>(digits);
+    if (!index || !*index)
+        return std::nullopt;
+    return index;
+}
+
+Vector<WebCore::LinkComponentFilteringData> parseLinkComponentFilteringData(StringView json)
+{
+    RefPtr root = JSON::Value::parseJSON(json);
+    RefPtr entries = root ? root->asArray() : nullptr;
+    if (!entries) {
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to parse link component filtering data: expected a JSON array.");
+        return { };
+    }
+
+    // An absent or null field and "*" both mean "no constraint". Any other non-string value is malformed.
+    auto optionalString = [](const JSON::Object& object, const String& name, String& output) {
+        RefPtr<JSON::Value> value;
+        if (!object.getValue(name, value) || value->isNull())
+            return true;
+        if (!value->asString(output))
+            return false;
+        if (output == "*"_s)
+            output = String { };
+        return true;
+    };
+
+    Vector<WebCore::LinkComponentFilteringData> result;
+    Vector<String> ignoredEntries;
+    for (size_t i = 0; i < entries->length(); ++i) {
+        RefPtr object = entries->get(i)->asObject();
+        if (!object) {
+            ignoredEntries.append(makeString("entry "_s, i, ": not an object."_s));
+            continue;
+        }
+
+        WebCore::LinkComponentFilteringData rule;
+
+        auto componentName = object->getString("component"_s);
+        auto key = object->getString("key"_s);
+        bool isValid = true;
+        if (componentName == "query"_s) {
+            rule.component = WebCore::LinkComponent::Query;
+            rule.queryParameter = key;
+            isValid = !key.isEmpty();
+        } else if (componentName == "path"_s) {
+            rule.component = WebCore::LinkComponent::Path;
+            auto index = linkComponentIndexFromKey(key, "path"_s);
+            isValid = !!index;
+            rule.index = index.value_or(0);
+        } else if (componentName == "subdomain"_s) {
+            rule.component = WebCore::LinkComponent::Subdomain;
+            auto index = linkComponentIndexFromKey(key, "subdomain"_s);
+            isValid = !!index;
+            rule.index = index.value_or(0);
+        } else if (componentName == "fragment"_s) {
+            rule.component = WebCore::LinkComponent::Fragment;
+            isValid = key == "fragment"_s;
+        } else
+            isValid = false;
+
+        if (!isValid) {
+            ignoredEntries.append(makeString("entry "_s, i, ": invalid component or key."_s));
+            continue;
+        }
+
+        // The domain is optional for query rules, where "*" means any domain. It is required for every other
+        // component, and must name a specific domain.
+        String domain;
+        if (RefPtr<JSON::Value> domainValue; object->getValue("domain"_s, domainValue) && !domainValue->isNull()) {
+            if (!domainValue->asString(domain)) {
+                ignoredEntries.append(makeString("entry "_s, i, ": expected a string domain."_s));
+                continue;
+            }
+        }
+        if (rule.component != WebCore::LinkComponent::Query && (domain.isEmpty() || domain == "*"_s)) {
+            ignoredEntries.append(makeString("entry "_s, i, ": a specific domain is required."_s));
+            continue;
+        }
+        if (!domain.isEmpty() && domain != "*"_s) {
+            WebCore::RegistrableDomain registrableDomain { URL { makeString("http://"_s, domain) } };
+            if (registrableDomain.isEmpty()) {
+                ignoredEntries.append(makeString("entry "_s, i, ": invalid domain."_s));
+                continue;
+            }
+            rule.domain = WTF::move(registrableDomain);
+        }
+
+        if (!optionalString(*object, "subdomain"_s, rule.subdomain) || !optionalString(*object, "path"_s, rule.path) || !optionalString(*object, "pattern"_s, rule.pattern)) {
+            ignoredEntries.append(makeString("entry "_s, i, ": expected a string."_s));
+            continue;
+        }
+
+        if (!rule.pattern.isEmpty() && !isValidLinkComponentPattern(rule.pattern)) {
+            ignoredEntries.append(makeString("entry "_s, i, ": invalid pattern."_s));
+            continue;
+        }
+
+        result.append(WTF::move(rule));
+    }
+    if (!ignoredEntries.isEmpty())
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Ignoring %zu invalid link component filtering entries: %{public}s", ignoredEntries.size(), makeString(interleave(ignoredEntries, "; "_s)).utf8());
+    return result;
+}
+
+unsigned LinkComponentFilteringController::resourceTypeValue() const
+{
+    return WPResourceTypeLinkComponentFilteringRules;
+}
+
+void LinkComponentFilteringController::updateList(CompletionHandler<void()>&& completion)
+{
+    ASSERT(RunLoop::isMain());
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestLinkComponentFilteringRules:completionHandler:)]) {
+        RELEASE_LOG(ResourceLoadStatistics, "WebPrivacy does not provide link component filtering rules.");
+        RunLoop::mainSingleton().dispatch(WTF::move(completion));
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void()>, 1>> pendingCompletionHandlers;
+    pendingCompletionHandlers->append(WTF::move(completion));
+    if (pendingCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestLinkComponentFilteringRules:options.get() completionHandler:^(NSData *data, NSError *error) {
+        auto callCompletionHandlers = makeScopeExit([&] {
+            for (auto& completionHandler : std::exchange(pendingCompletionHandlers.get(), { }))
+                completionHandler();
+        });
+
+        if (error || !data) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request link component filtering data from WebPrivacy.");
+            return;
+        }
+
+        auto rules = parseLinkComponentFilteringData(String::fromUTF8(span(data)));
+        RELEASE_LOG(ResourceLoadStatistics, "Loaded %zu link component filtering rules from WebPrivacy.", rules.size());
+        setCachedListData(WTF::move(rules));
+    }];
 }
 
 using LinkFilteringRulesCallback = CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>;

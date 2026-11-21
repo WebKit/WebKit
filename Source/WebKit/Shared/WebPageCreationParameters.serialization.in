@@ -265,6 +265,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;
     Vector<WebCore::LinkDecorationFilteringData> allowedQueryParametersForAdvancedPrivacyProtections;
+    Vector<WebCore::LinkComponentFilteringData> linkComponentFilteringData;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
