@@ -27,8 +27,6 @@
 #include "CertificateInfo.h"
 
 #include "CertificateSummary.h"
-#include <wtf/persistence/PersistentDecoder.h>
-#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {
 
@@ -96,30 +94,18 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     if (!chain || !CFArrayGetCount(chain.get()))
         return std::nullopt;
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     RetainPtr leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
     RetainPtr subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate.get()));
     summaryInfo.subject = subjectCF.get();
-#endif
+
+    if (RetainPtr validNotBefore = adoptCF(SecCertificateCopyNotValidBeforeDate(leafCertificate.get())))
+        summaryInfo.validFrom = Seconds(kCFAbsoluteTimeIntervalSince1970 + CFDateGetAbsoluteTime(validNotBefore.get()));
+
+    if (RetainPtr validNotAfter = adoptCF(SecCertificateCopyNotValidAfterDate(leafCertificate.get())))
+        summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + CFDateGetAbsoluteTime(validNotAfter.get()));
 
 #if PLATFORM(MAC)
-    if (auto certificateDictionary = adoptCF(SecCertificateCopyValues(leafCertificate.get(), nullptr, nullptr))) {
-        if (RetainPtr validNotBefore = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotBefore))) {
-            if (RetainPtr number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotBefore.get(), CFSTR("value")))) {
-                double numberValue;
-                if (CFNumberGetValue(number.get(), kCFNumberDoubleType, &numberValue))
-                    summaryInfo.validFrom = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
-            }
-        }
-
-        if (RetainPtr validNotAfter = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotAfter))) {
-            if (RetainPtr number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotAfter.get(), CFSTR("value")))) {
-                double numberValue;
-                if (CFNumberGetValue(number.get(), kCFNumberDoubleType, &numberValue))
-                    summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
-            }
-        }
-
+    if (RetainPtr certificateDictionary = adoptCF(SecCertificateCopyValues(leafCertificate.get(), nullptr, nullptr))) {
         if (RetainPtr dnsNames = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), CFSTR("DNSNAMES")))) {
             if (RetainPtr dnsNamesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(dnsNames.get(), CFSTR("value")))) {
                 for (CFIndex i = 0, count = CFArrayGetCount(dnsNamesArray.get()); i < count; ++i) {
@@ -142,4 +128,4 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     return summaryInfo;
 }
 
-} // namespace WTF::Persistence
+} // namespace WebCore

@@ -861,6 +861,7 @@
 				WebCore/cocoa/AVFoundationSoftLinkTest.mm,
 				WebCore/cocoa/BifurcatedGraphicsContextTestsCG.cpp,
 				WebCore/cocoa/CaptionPreferencesTests.mm,
+				WebCore/cocoa/CertificateInfoCocoa.mm,
 				WebCore/cocoa/CoreMediaUtilities.mm,
 				WebCore/cocoa/DatabaseTrackerTest.mm,
 				WebCore/cocoa/DecodedMediaSamplesBlockTests.mm,
