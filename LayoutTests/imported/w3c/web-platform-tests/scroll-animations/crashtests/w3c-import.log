@@ -19,7 +19,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/invalid-animation-range.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/keyframe-offset-out-of-range-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/remove-pseudo-element-subject.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-and-view-timeline-same-name-same-element-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-becomes-scrollable-after-sampling.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-completion-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-resize.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-with-long-duration.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/view-timeline-on-view-transition-pseudo-element-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/viewport-100vh.html

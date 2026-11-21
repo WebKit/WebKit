@@ -1,0 +1,8 @@
+Test
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT timeline-scope on ::before does not hide timelines in the originating element's subtree Test timed out
+NOTRUN timeline-scope on ::before does not replace the originating element's own timeline-scope
+NOTRUN timeline-scope on ::before is honoured when the pseudo-element starts animating later
+

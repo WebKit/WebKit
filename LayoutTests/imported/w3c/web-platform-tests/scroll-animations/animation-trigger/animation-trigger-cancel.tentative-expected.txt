@@ -1,0 +1,6 @@
+
+FAIL cancel() detaches a CSS animation from its trigger assert_equals: animation is paused until its trigger activates. expected "paused" but got "running"
+FAIL Style changes don't attach a cancelled CSS animation to its trigger again assert_equals: animation is paused until its trigger activates. expected "paused" but got "running"
+FAIL Changing animation-trigger doesn't attach a cancelled CSS animation to a trigger assert_equals: animation is paused until its trigger activates. expected "paused" but got "running"
+FAIL A CSS animation that replaces a cancelled one is attached to the trigger assert_equals: animation is paused until its trigger activates. expected "paused" but got "running"
+

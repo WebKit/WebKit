@@ -1,0 +1,4 @@
+
+FAIL timeline-trigger shorthand initially serialized for single value lists assert_not_equals: got disallowed value ""
+PASS timeline-trigger shorthand serializes as an empty string when list lengths no longer match
+

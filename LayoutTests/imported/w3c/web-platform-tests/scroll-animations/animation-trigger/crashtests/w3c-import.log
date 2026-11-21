@@ -13,3 +13,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/crashtests/selection-pseudo-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/crashtests/starting-style-declares-timeline-trigger.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/crashtests/starting-style-omits-timeline-trigger.html

@@ -1,0 +1,6 @@
+
+PASS Moving back and forth between scroll timeline and the unresolved timeline preserves the playing state
+PASS Moving back and forth between scroll timeline and the unresolved timeline preserves the paused state
+PASS Scroll timeline becoming unresolved preserves the playing state
+PASS Scroll timeline becoming unresolved preserves the paused state
+

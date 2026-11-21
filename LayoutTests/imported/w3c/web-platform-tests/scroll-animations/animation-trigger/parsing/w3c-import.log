@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/parsing/timeline-trigger-active-range-start-computed.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/parsing/timeline-trigger-active-range-start-invalid.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/parsing/timeline-trigger-active-range-start-valid.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/parsing/timeline-trigger-empty-shorthand.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/parsing/timeline-trigger-entry-range-end-computed.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/parsing/timeline-trigger-entry-range-end-invalid.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/parsing/timeline-trigger-entry-range-end-valid.tentative.html

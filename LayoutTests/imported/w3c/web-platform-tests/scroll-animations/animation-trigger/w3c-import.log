@@ -16,6 +16,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-alternate.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-animation-target-removed-listener.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-calc-with-zoom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-cancel.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-disarmed-by-apis.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-both-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-both.tentative-expected.html
@@ -31,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-play-forwards-backwards.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-play.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-range-px-roundtrip.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-removed-during-snapshot.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-repeat.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-replay.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-state.tentative.html

@@ -1,0 +1,4 @@
+
+PASS Replacing the element defining a scoped named timeline attaches the animation to the new element's timeline
+PASS Removing the element defining a global named timeline makes the animation's timeline inactive
+

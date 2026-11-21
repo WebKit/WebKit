@@ -7113,6 +7113,10 @@ webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-lo
 webkit.org/b/283702 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/constructor-no-document.html [ Skip ]
 webkit.org/b/283107 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
 
+# scroll-animations crashes
+webkit.org/b/332538 imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-with-long-duration.html [ Crash Pass ]
+webkit.org/b/332538 imported/w3c/web-platform-tests/scroll-animations/crashtests/view-timeline-on-view-transition-pseudo-element-crash.html [ Crash Pass ]
+
 # webkit.org/b/263872 [scroll-animations] some WPT tests are ImageOnlyFailure
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.tentative.html [ ImageOnlyFailure ]
 
@@ -8371,7 +8375,7 @@ webkit.org/b/314100 imported/w3c/web-platform-tests/css/selectors/has-specificit
 imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-both.tentative.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-none.tentative.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/animation-trigger/timeline-trigger-source-starts-in-trigger-range.tentative.html [ Pass Failure ]
-
+imported/w3c/web-platform-tests/scroll-animations/responsive/repaint-after-finished.html [ Skip ]
 
 webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/multiple-redirects-TAO.html [ Pass Failure ]
 webkit.org/b/????? imported/w3c/web-platform-tests/largest-contentful-paint/larger-image.html [ Pass Failure ]

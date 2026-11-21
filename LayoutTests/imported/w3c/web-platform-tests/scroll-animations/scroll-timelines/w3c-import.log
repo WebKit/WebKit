@@ -47,6 +47,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/null-scroll-source-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/pause-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/play-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/play-state-unresolved-timeline.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay.tentative.html
