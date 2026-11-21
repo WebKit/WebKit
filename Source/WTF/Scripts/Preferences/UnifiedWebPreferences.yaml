@@ -66,6 +66,13 @@
 #  defaults may override a default value at runtime, using the preference
 #  name prefixed with "WebKitDebug".
 #
+# == Security Overridable ==
+#  Whether this preference may be overridden from a remotely updatable source,
+#  and to what. "securityOverridableValues" lists the only values an override
+#  may set, e.g. "securityOverridableValues: [ true ]". A preference without it
+#  cannot be overridden, and an override to any other value is ignored. This is
+#  opt-in, and should only list values that harden rather than weaken security.
+#
 # == Default Values ==
 #  A preference is in WebKitLegacy, WebKit and WebCore unless "excludeFrom"
 #  names the ones it is not in, in that order. That is about whether a frontend
@@ -2641,6 +2648,7 @@ ForceEnhancedSecurity:
   type: bool
   status: internal
   defaultsOverridable: true
+  securityOverridableValues: [ true ]
   humanReadableName: "Force Enhanced Security Mode"
   humanReadableDescription: "Force all navigations to use Enhanced Security"
   webKitLegacyExposed: false
@@ -5761,6 +5769,18 @@ SecureContextChecksEnabled:
   humanReadableName: "Secure Context Checks"
   humanReadableDescription: "Allow access to HTTPS-only Web APIs over HTTP"
   defaultValue: true
+
+SecurityOverridesEnabled:
+  type: bool
+  status: internal
+  category: security
+  condition: HAVE(SECURITY_OVERRIDES)
+  defaultsOverridable: true
+  humanReadableName: "Security Overrides"
+  humanReadableDescription: "Applies preference overrides when available"
+  defaultValue:
+    "PLATFORM(COCOA)": true
+    default: false
 
 SelectShowPickerEnabled:
   type: bool

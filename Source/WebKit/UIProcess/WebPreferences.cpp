@@ -27,6 +27,7 @@
 #include "WebPreferences.h"
 
 #include "APIPageConfiguration.h"
+#include "GlobalPreferenceOverridesController.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
@@ -67,28 +68,42 @@ Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& ident
     return preferences;
 }
 
+WeakHashSet<WebPreferences>& WebPreferences::allPreferences()
+{
+    assertIsMainRunLoop();
+    static NeverDestroyed<WeakHashSet<WebPreferences>> preferences;
+    return preferences;
+}
+
 WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
     : m_identifier(identifier)
     , m_keyPrefix(keyPrefix)
     , m_globalDebugKeyPrefix(globalDebugKeyPrefix)
 {
+    allPreferences().add(*this);
+
     // Set this before platformInitializeStore() so debug defaults can override it. The copy constructor
     // does not set it, so that a copy keeps the value the client set on the original.
     m_store.setBoolValueForKey(WebPreferencesKey::siteIsolationEnabledKey(), defaultSiteIsolationEnabled());
 
     platformInitializeStore();
+    applyGlobalOverrides();
 
     if (WebKit::forceSiteIsolationAlwaysOnForTesting)
         setSiteIsolationEnabled(true);
 }
 
 WebPreferences::WebPreferences(const WebPreferences& other)
-    : m_identifier()
+    : CanMakeWeakPtr<WebPreferences>()
+    , m_identifier()
     , m_keyPrefix(other.m_keyPrefix)
     , m_globalDebugKeyPrefix(other.m_globalDebugKeyPrefix)
     , m_store(other.m_store)
 {
+    allPreferences().add(*this);
+
     platformInitializeStore();
+    applyGlobalOverrides();
 
     if (WebKit::forceSiteIsolationAlwaysOnForTesting)
         setSiteIsolationEnabled(true);
@@ -97,6 +112,26 @@ WebPreferences::WebPreferences(const WebPreferences& other)
 WebPreferences::~WebPreferences()
 {
     ASSERT(m_pages.computeIsEmpty());
+
+    allPreferences().remove(*this);
+}
+
+void WebPreferences::applyGlobalOverrides()
+{
+    m_store.setOverriddenValues(WebPreferencesStore::ValueMap { GlobalPreferenceOverridesController::singleton().overrides() });
+}
+
+void WebPreferences::applyGlobalOverridesAndUpdate()
+{
+    applyGlobalOverrides();
+    update();
+}
+
+void WebPreferences::globalOverridesDidChange()
+{
+    // Updating can run client code that releases a WebPreferences, so hold references.
+    for (auto& preferences : copyToVectorOf<Ref<WebPreferences>>(allPreferences()))
+        preferences->applyGlobalOverridesAndUpdate();
 }
 
 void WebPreferences::forceSiteIsolationAlwaysOnForTesting()
