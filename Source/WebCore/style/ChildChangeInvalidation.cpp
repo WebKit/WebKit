@@ -329,7 +329,7 @@ void ChildChangeInvalidation::traverseAddedElements(NOESCAPE const Function& fun
     }
 }
 
-static void invalidateForSiblingCombinators(Element* sibling)
+void invalidateForSiblingCombinators(Element* sibling)
 {
     for (RefPtr element = sibling; element; element = element->nextElementSibling()) {
         if (element->styleIsAffectedByPreviousSibling())

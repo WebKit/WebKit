@@ -40,6 +40,7 @@
 #include "HTMLMeterElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
 #include "LocalFrameInlines.h"
 #include "Page.h"
@@ -122,6 +123,20 @@ ALWAYS_INLINE bool matchesEnabledPseudoClass(const Element& element)
 ALWAYS_INLINE bool isDefinedElement(const Element& element)
 {
     return element.isDefinedCustomElement() || element.isUncustomizedCustomElement();
+}
+
+// https://drafts.csswg.org/css-shadow-1/#has-slotted-pseudo
+ALWAYS_INLINE bool matchesHasSlottedPseudoClass(const Element& element)
+{
+    auto* slot = dynamicDowncast<HTMLSlotElement>(element);
+    if (!slot)
+        return false;
+    slot->setStyleAffectedByHasSlotted();
+    // A slot rendering its own fallback content does not match.
+    auto* assigned = slot->assignedNodes();
+    if (!assigned || assigned->isEmpty())
+        return false;
+    return !slot->assignedNodes({ true }).isEmpty();
 }
 
 ALWAYS_INLINE bool isMediaDocument(const Element& element)
