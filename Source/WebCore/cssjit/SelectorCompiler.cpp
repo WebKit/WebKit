@@ -2473,7 +2473,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
         m_assembler.storePtr(Assembler::TrustedImmPtr(nullptr), m_stackAllocator.addressOf(m_lastVisitedElement));
     }
 
-    m_backtrackingStack = temporaryStack;
+    m_backtrackingStack = WTF::move(temporaryStack);
 
     Assembler::JumpList failureCases;
     generateSelectorCheckerExcludingPseudoElements(failureCases, m_selectorFragments);
