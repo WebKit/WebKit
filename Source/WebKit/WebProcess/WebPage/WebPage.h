@@ -2366,6 +2366,10 @@ public:
 
     RefPtr<WebCore::Element> focusedElement() const { return m_focusedElement; }
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+    static void setHasLaunchedWebContentProcess();
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2958,10 +2962,6 @@ private:
     void hasTextExtractionFilterRules(CompletionHandler<void(bool)>&&);
     void updateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData>&&);
     void applyTextExtractionFilter(const String& input, CompletionHandler<void(const String&)>&&);
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-    static void setHasLaunchedWebContentProcess();
-#endif
 
     template<typename T> T contentsToRootView(WebCore::FrameIdentifier, T);
     template<typename T> T rootViewToContents(WebCore::FrameIdentifier, T);
