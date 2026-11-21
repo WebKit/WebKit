@@ -28,6 +28,7 @@
 #include <WebCore/GlyphPage.h>
 #include <WebCore/TextMeasurementCache.h>
 #include <WebCore/TextRun.h>
+#include <wtf/BitSet.h>
 #include <wtf/CurrentThread.h>
 #include <wtf/EnumeratedArray.h>
 #include <wtf/Forward.h>
@@ -74,6 +75,15 @@ struct GlyphGeometryCacheEntry {
     Markable<float> width;
     Markable<GlyphOverflow> glyphOverflow;
     bool usedFallbackFonts { false };
+};
+
+struct CharacterAdvancesCacheEntry {
+    static constexpr unsigned maxLength = 16;
+    static constexpr unsigned maxCacheSize = 4096;
+
+    std::array<float, maxLength> advances { };
+    WTF::BitSet<maxLength, uint16_t> codeUnitsWithGlyph; // Bit i is set when code unit i has a glyph of its own.
+    bool isComputed { false };
 };
 
 namespace ShapedTextCacheDefaults {
@@ -152,6 +162,17 @@ public:
 
     TextShapingResultAndDisplayList* getOrCreateCachedShapedText(const TextRun&, const FontCascade&, unsigned from, std::optional<unsigned> to, ForTextEmphasis);
 
+    using CharacterAdvancesCache = TextMeasurementCache<
+        CharacterAdvancesCacheEntry,
+        TextMeasurementCacheDefaults::minInterval,
+        TextMeasurementCacheDefaults::minInterval,
+        TextMeasurementCacheDefaults::minInterval,
+        CharacterAdvancesCacheEntry::maxLength,
+        CharacterAdvancesCacheEntry::maxLength,
+        CharacterAdvancesCacheEntry::maxCacheSize
+    >;
+    CharacterAdvancesCache& characterAdvancesCache() LIFETIME_BOUND { return m_characterAdvancesCache; }
+
     const Font& primaryFont(const FontCascadeDescription&, FontSelector*);
     NODELETE const Font* cachedPrimaryFont() const { return m_cachedPrimaryFont.get(); }
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, FontSelector*, unsigned fallbackIndex);
@@ -211,6 +232,7 @@ private:
 
     GlyphGeometryCache m_glyphGeometryCache;
     ShapedTextCache m_shapedTextCache;
+    CharacterAdvancesCache m_characterAdvancesCache;
 
     unsigned short m_generation { 0 };
     PitchType m_pitch { PitchType::Unknown };
