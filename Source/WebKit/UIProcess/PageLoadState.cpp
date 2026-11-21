@@ -179,6 +179,7 @@ void PageLoadState::reset(const Transaction::Token& token)
 
     m_uncommittedState.unreachableURL = { };
     m_lastUnreachableURL = { };
+    m_uncommittedState.baseURL = { };
 
     m_uncommittedState.title = String();
     m_uncommittedState.titleFromBrowsingWarning = { };
@@ -361,6 +362,13 @@ void PageLoadState::setUnreachableURL(const Transaction::Token& token, const URL
 
     m_lastUnreachableURL = m_uncommittedState.unreachableURL;
     m_uncommittedState.unreachableURL = unreachableURL;
+}
+
+void PageLoadState::setBaseURL(const Transaction::Token& token, const URL& baseURL)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+
+    m_uncommittedState.baseURL = baseURL;
 }
 
 const String& PageLoadState::title() const
