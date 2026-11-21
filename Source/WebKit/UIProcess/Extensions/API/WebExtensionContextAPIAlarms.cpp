@@ -46,7 +46,7 @@ void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterv
 {
     static constexpr auto apiName = "alarms.create()"_s;
 
-    if (name.utf8().length() > webExtensionMaximumAlarmNameLength) {
+    if (utf8Length(name) > webExtensionMaximumAlarmNameLength) {
         completionHandler(toWebExtensionError(apiName, nullString(), makeString("the alarm name exceeds the limit of "_s, webExtensionMaximumAlarmNameLength, " bytes"_s)));
         return;
     }

@@ -291,10 +291,10 @@ void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPos
     m_surrounding.selectionPosition = selectionPosition;
 
     auto textUTF8 = m_surrounding.text.utf8();
-    auto cursorPositionUTF8 = cursorPosition != text.length() ? StringView(text).left(cursorPosition).utf8().length() : textUTF8.length();
+    auto cursorPositionUTF8 = cursorPosition != text.length() ? utf8Length(StringView(text).left(cursorPosition)) : textUTF8.length();
     auto selectionPositionUTF8 = cursorPositionUTF8;
     if (cursorPosition != selectionPosition)
-        selectionPositionUTF8 = selectionPosition != text.length() ? StringView(text).left(selectionPosition).utf8().length() : textUTF8.length();
+        selectionPositionUTF8 = selectionPosition != text.length() ? utf8Length(StringView(text).left(selectionPosition)) : textUTF8.length();
     auto textCharacters = byteCast<char>(textUTF8.span());
     webkit_input_method_context_notify_surrounding(m_context.get(), textCharacters.data(), textCharacters.size(), cursorPositionUTF8, selectionPositionUTF8);
 }
