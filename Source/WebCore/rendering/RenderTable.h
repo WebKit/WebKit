@@ -268,8 +268,13 @@ protected:
     mutable Vector<SingleThreadWeakPtr<RenderTableCaption>> m_captions;
     mutable Vector<SingleThreadWeakPtr<RenderTableCol>> m_columnRenderers;
 
+    struct EffectiveColumnRange {
+        unsigned firstEffectiveColumnIndex;
+        unsigned lastEffectiveColumnIndex;
+    };
+    EffectiveColumnRange effectiveColumnRange(const RenderTableCol&) const;
     unsigned effectiveIndexOfColumn(const RenderTableCol&) const;
-    using EffectiveColumnIndexMap = HashMap<SingleThreadWeakRef<const RenderTableCol>, unsigned>;
+    using EffectiveColumnIndexMap = HashMap<SingleThreadWeakRef<const RenderTableCol>, EffectiveColumnRange>;
     mutable EffectiveColumnIndexMap m_effectiveColumnIndexMap;
 
     mutable SingleThreadWeakPtr<RenderTableSection> m_head;

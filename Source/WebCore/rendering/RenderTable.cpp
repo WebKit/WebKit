@@ -1156,24 +1156,40 @@ void RenderTable::updateColumnCache() const
         m_columnRenderers.append(columnRenderer.get());
         // FIXME: We should look to compute the effective column index successively from previous values instead of
         // calling colToEffCol(), which is in O(numEffCols()). Although it's unlikely that this is a hot function.
-        m_effectiveColumnIndexMap.add(*columnRenderer, colToEffCol(columnIndex));
-        columnIndex += columnRenderer->span();
+        unsigned span = columnRenderer->span();
+        m_effectiveColumnIndexMap.add(*columnRenderer, EffectiveColumnRange { colToEffCol(columnIndex), colToEffCol(columnIndex + span - 1) });
+        columnIndex += span;
     }
     m_columnRenderersValid = true;
 }
 
-unsigned RenderTable::effectiveIndexOfColumn(const RenderTableCol& column) const
+auto RenderTable::effectiveColumnRange(const RenderTableCol& column) const -> EffectiveColumnRange
 {
     if (!m_columnRenderersValid)
         updateColumnCache();
-    const RenderTableCol* columnToUse = &column;
-    if (columnToUse->isTableColumnGroupWithColumnChildren())
-        columnToUse = columnToUse->nextColumn(); // First column in column-group
-    auto it = m_effectiveColumnIndexMap.find(columnToUse);
-    ASSERT(it != m_effectiveColumnIndexMap.end());
-    if (it == m_effectiveColumnIndexMap.end())
-        return std::numeric_limits<unsigned>::max();
-    return it->value;
+
+    auto rangeOf = [this](const RenderTableCol& columnToUse) -> EffectiveColumnRange {
+        auto it = m_effectiveColumnIndexMap.find(columnToUse);
+        ASSERT(it != m_effectiveColumnIndexMap.end());
+        if (it == m_effectiveColumnIndexMap.end())
+            return { std::numeric_limits<unsigned>::max(), std::numeric_limits<unsigned>::max() };
+        return it->value;
+    };
+
+    if (!column.isTableColumnGroupWithColumnChildren())
+        return rangeOf(column);
+
+    // A column-group with column children covers its first child column through its last child column.
+    CheckedPtr firstChild = column.nextColumn();
+    CheckedPtr lastChild = firstChild;
+    for (CheckedPtr child = firstChild->nextColumn(); child && !child->isTableColumnGroup(); child = child->nextColumn())
+        lastChild = child;
+    return { rangeOf(*firstChild).firstEffectiveColumnIndex, rangeOf(*lastChild).lastEffectiveColumnIndex };
+}
+
+unsigned RenderTable::effectiveIndexOfColumn(const RenderTableCol& column) const
+{
+    return effectiveColumnRange(column).firstEffectiveColumnIndex;
 }
 
 LayoutUnit RenderTable::offsetTopForColumn(const RenderTableCol& column) const
@@ -1198,32 +1214,14 @@ LayoutUnit RenderTable::offsetLeftForColumn(const RenderTableCol& column) const
 
 LayoutUnit RenderTable::offsetWidthForColumn(const RenderTableCol& column) const
 {
-    CheckedPtr<const RenderTableCol> currentColumn = &column;
-    bool hasColumnChildren = currentColumn->isTableColumnGroupWithColumnChildren();
-    if (hasColumnChildren)
-        currentColumn = currentColumn->nextColumn(); // First column in column-group
+    auto range = effectiveColumnRange(column);
     unsigned numberOfEffectiveColumns = numEffCols();
+    if (range.firstEffectiveColumnIndex >= numberOfEffectiveColumns)
+        return 0;
     ASSERT_WITH_SECURITY_IMPLICATION(m_columnPos.size() >= numberOfEffectiveColumns + 1);
-    LayoutUnit width;
-    LayoutUnit spacing = m_hSpacing;
-    while (currentColumn) {
-        unsigned columnIndex = effectiveIndexOfColumn(*currentColumn);
-        unsigned span = currentColumn->span();
-        while (span && columnIndex < numberOfEffectiveColumns) {
-            width += m_columnPos[columnIndex + 1] - m_columnPos[columnIndex] - spacing;
-            span -= m_columns[columnIndex].span;
-            ++columnIndex;
-            if (span)
-                width += spacing;
-        }
-        if (!hasColumnChildren)
-            break;
-        currentColumn = currentColumn->nextColumn();
-        if (!currentColumn || currentColumn->isTableColumnGroup())
-            break;
-        width += spacing;
-    }
-    return width;
+    // A column can span past the last effective column, or end inside an effective column that a cell spans.
+    unsigned lastEffectiveColumnIndex = std::min(range.lastEffectiveColumnIndex, numberOfEffectiveColumns - 1);
+    return m_columnPos[lastEffectiveColumnIndex + 1] - m_columnPos[range.firstEffectiveColumnIndex] - m_hSpacing;
 }
 
 LayoutUnit RenderTable::offsetHeightForColumn(const RenderTableCol& column) const

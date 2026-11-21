@@ -1,0 +1,8 @@
+
+PASS First col is not wider than the cell spanning its column
+PASS First col does not overlap the last col
+PASS Last col is as wide as the cell in its column
+PASS First colgroup is not wider than the cell spanning its column
+PASS First colgroup does not overlap the last colgroup
+PASS Last colgroup is as wide as the cell in its column
+
