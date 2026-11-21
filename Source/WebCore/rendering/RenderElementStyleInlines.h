@@ -27,6 +27,7 @@
 
 #include <WebCore/ElementInlines.h>
 #include <WebCore/RenderElementInlines.h>
+#include <WebCore/RenderHTMLCanvas.h>
 #include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/StyleContainmentCheckerInlines.h>
 
@@ -87,6 +88,7 @@ inline bool RenderElement::mayContainOutOfFlowPositionedObjects(const Style::Com
         || (appleVisualEffectNeedsBackdrop(style.appleVisualEffect()) && !isDocumentElementRenderer())
 #endif
         || isRenderOrLegacyRenderSVGForeignObject()
+        || (isRenderHTMLCanvas() && downcast<RenderHTMLCanvas>(*this).hasDrawableContent())
         || shouldApplyLayoutOrPaintContainment(style)
         || isViewTransitionContainingBlock();
 }

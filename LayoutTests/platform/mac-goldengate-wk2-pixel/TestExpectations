@@ -56,7 +56,6 @@ http/tests/misc/slow-loading-image-in-pattern.html [ Failure ImageOnlyFailure ]
 
 # Marked as failing in the shared TestExpectations (for the Golden Gate bots, Tahoe+ or generically),
 # but they pass in these runs.
-fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html                                    [ Pass ]
 fast/hidpi/filters-blur.html                                                                            [ Pass ]
 fast/hidpi/filters-hue-rotate.html                                                                      [ Pass ]
 fast/hidpi/filters-invert.html                                                                          [ Pass ]

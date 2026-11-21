@@ -1,12 +1,10 @@
-X X XXX
+XX XXX
 
-FAIL updateElementGeometry() affects getBoundingClientRect() on canvas child The operation is not supported.
-FAIL updateElementGeometry() affects getBoundingClientRect() on an inline nested drawable The operation is not supported.
-FAIL updateElementGeometry() affects getBoundingClientRect() on a fragmented inline nested drawable The operation is not supported.
-FAIL updateElementGeometry() on ancestor and nested drawable The operation is not supported.
-FAIL updateElementGeometry() affects getBoundingClientRect() on a block nested drawable assert_equals: expected 20 but got 70
-FAIL A non-drawable descendant inherits its ancestor's canvas transform The operation is not supported.
-FAIL updateElementGeometry() does not affect getBoundingClientRect() outside canvas subtree assert_throws_dom: function "() => {
-          canvas.updateElementGeometry(outside, {canvasTransform: new DOMMatrix().translate(50, 50)});
-        }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
+PASS updateElementGeometry() affects getBoundingClientRect() on canvas child
+FAIL updateElementGeometry() affects getBoundingClientRect() on an inline nested drawable assert_equals: expected 60 but got 72
+FAIL updateElementGeometry() affects getBoundingClientRect() on a fragmented inline nested drawable assert_equals: expected 75 but got 100
+FAIL updateElementGeometry() on ancestor and nested drawable assert_equals: expected 10 but got 110
+FAIL updateElementGeometry() affects getBoundingClientRect() on a block nested drawable assert_equals: expected 10 but got 110
+FAIL A non-drawable descendant inherits its ancestor's canvas transform assert_equals: expected 210 but got 110
+PASS updateElementGeometry() does not affect getBoundingClientRect() outside canvas subtree
 

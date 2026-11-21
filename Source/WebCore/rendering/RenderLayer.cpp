@@ -1856,6 +1856,11 @@ void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, cons
     if (m_anchorScrollAdjustment)
         transform.translate(m_anchorScrollAdjustment->width(), m_anchorScrollAdjustment->height());
 
+    // The canvas transform positions a canvas drawable element within its canvas,
+    // so it is applied outside of the element's own CSS transforms.
+    if (auto canvasTransform = renderer().canvasTransform())
+        transform.multiply(*canvasTransform);
+
     auto referenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().transformReferenceBoxRect(style), renderer());
     renderer().applyTransform(transform, style, referenceBoxRect, options);
 
@@ -3529,8 +3534,23 @@ static inline DisplayList::RecorderImpl* canvasDrawableRecorder(const RenderLaye
     if (!canvasRenderer)
         return nullptr;
 
-    auto elementRelativeBounds = enclosingIntRect(LayoutRect { LayoutPoint { layer.offsetFromAncestor(rootLayer) }, layer.renderer().absoluteBoundingBoxRect().size() });
-    return canvasRenderer->canvasDrawableRecorder(layer.renderer(), context, elementRelativeBounds);
+    auto snapshotSize = FloatSize { layer.renderer().absoluteBoundingBoxRect().size() };
+    auto recorder = canvasRenderer->canvasDrawableRecorder(layer.renderer(), context, snapshotSize);
+    if (!recorder)
+        return nullptr;
+
+    if (auto canvasTransform = layer.renderer().canvasTransform()) {
+        if (auto inverse = canvasTransform->inverse()) {
+            // The layer transform includes the canvasTransform, which positions the element in the canvas.
+            // drawElementImage() draws the snapshot under the canvas context transform. So cancel the canvas
+            // transform here to avoid applying it twice.
+            recorder->concatCTM(inverse->toAffineTransform());
+        }
+    }
+
+    auto offset = FloatPoint { layer.offsetFromAncestor(rootLayer) };
+    recorder->translate(-offset.x(), -offset.y());
+    return recorder;
 }
 
 void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)

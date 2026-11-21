@@ -28,13 +28,14 @@
 
 namespace WebCore {
 
-Ref<CanvasElementImage> CanvasElementImage::create(CanvasElementSnapshot&& snapshot)
+Ref<CanvasElementImage> CanvasElementImage::create(CanvasElementSnapshot&& snapshot, Ref<Element>&& element)
 {
-    return adoptRef(*new CanvasElementImage(WTF::move(snapshot)));
+    return adoptRef(*new CanvasElementImage(WTF::move(snapshot), WTF::move(element)));
 }
 
-CanvasElementImage::CanvasElementImage(CanvasElementSnapshot&& snapshot)
+CanvasElementImage::CanvasElementImage(CanvasElementSnapshot&& snapshot, Ref<Element>&& element)
     : m_snapshot(WTF::move(snapshot))
+    , m_element(WTF::move(element))
 {
 }
 
