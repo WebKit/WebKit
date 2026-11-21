@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body style="margin: 0">
+<div draggable="true" style="width: 100px; height: 100px; background-color: blue">Drag me</div>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/100x100-blue-box-green-background.html" style="position: absolute; left: 300px; top: 300px; width: 200px; height: 200px; border: none" onload="runTest()"></iframe>
+<pre id="result"></pre>
+<script src="resources/redispatch-to-itself.js"></script>
+<script>
+// The IPC testing API exists only in debug and ASan builds; this test passes either way.
+const summary = "Tests that the UI process rejects a drag's redispatch to the frame it was sent to.";
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result)
+{
+    document.getElementById("result").textContent = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function runTest()
+{
+    if (!window.IPC || !window.eventSender) {
+        finish("PASS");
+        return;
+    }
+
+    // std::optional<DragOperation>, DragHandlingMethod, bool, unsigned, two IntRects, then std::optional<RemoteUserInputEventData>.
+    const requestCount = forgeRedispatchToItself('WebPage_PerformDragControllerAction', [
+        { type: 'bool', value: 0 }, { type: 'uint8_t', value: 0 }, { type: 'bool', value: 0 }, { type: 'uint32_t', value: 0 },
+        { type: 'int32_t', value: 0 }, { type: 'int32_t', value: 0 }, { type: 'int32_t', value: 0 }, { type: 'int32_t', value: 0 },
+        { type: 'int32_t', value: 0 }, { type: 'int32_t', value: 0 }, { type: 'int32_t', value: 0 }, { type: 'int32_t', value: 0 },
+        { type: 'bool', value: 1 }, ...remoteUserInputEventDataForThisFrame(),
+    ]);
+
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(100, 100);
+    eventSender.mouseMoveTo(150, 150);
+    eventSender.mouseUp();
+
+    // A drag sends a varying number of legitimate updates, so this checks only that the forged answer is rejected.
+    const invalidMessage = await waitForInvalidMessageString();
+    if (!requestCount())
+        finish("FAIL: the drag sent no PerformDragControllerAction to this process.");
+    else if (!invalidMessage.includes("Message check failed"))
+        finish("FAIL: the UI process accepted the redispatch. Invalid message: '" + invalidMessage + "'");
+    else
+        finish("PASS");
+}
+</script>
+</body>
+</html>

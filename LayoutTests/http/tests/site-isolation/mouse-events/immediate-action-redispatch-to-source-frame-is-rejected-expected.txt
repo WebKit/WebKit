@@ -1,0 +1,5 @@
+main frame text
+
+
+Tests that the UI process rejects an immediate action hit test's redispatch to the frame it was sent to.
+PASS

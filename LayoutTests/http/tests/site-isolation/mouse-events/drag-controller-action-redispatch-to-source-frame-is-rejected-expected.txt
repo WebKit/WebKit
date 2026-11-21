@@ -1,0 +1,4 @@
+Drag me
+
+Tests that the UI process rejects a drag's redispatch to the frame it was sent to.
+PASS

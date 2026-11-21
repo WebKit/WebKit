@@ -16016,6 +16016,122 @@ TEST(SiteIsolation, DragSourceEndedAtCoordinateTransformation)
     }
 }
 
+#if ENABLE(IPC_TESTING_API)
+
+// When a web process's hit test for a drag, an immediate action or a dictionary lookup reaches a frame hosted by another
+// process, it replies with that frame and the point in its coordinates, and the UI process re-sends the request there.
+// A web process controls that reply, so the UI process must only follow it to a frame inside the part of this page it
+// hosts. Each test below answers with the frame the request was sent to; following that would loop.
+
+static RetainPtr<WKWebViewConfiguration> redispatchToItselfConfiguration(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    setFeatureEnabled(configuration.get(), @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+    return configuration;
+}
+
+static void loadForRedispatchToItself(TestWKWebView *webView, TestNavigationDelegate *navigationDelegate)
+{
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+}
+
+// Counts the requests with the given message name that the main frame's process receives, and answers the first few as if
+// the hit test had found the main frame itself, hosted by another process. Stopping after a few keeps a UI process that
+// follows every answer from looping forever. In the reply arguments, `remote` stands for the encoded
+// RemoteUserInputEventData.
+static void countRequestsAndForgeRedispatchToItself(TestWKWebView *webView, NSString *messageName, NSString *replyArguments)
+{
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+        "    window.redispatchToItselfCounts = window.redispatchToItselfCounts ?? { };"
+        "    window.redispatchToItselfCounts['%1$@'] = 0;"
+        "    const requestName = IPC.messages['%1$@'].name;"
+        "    const replyName = IPC.messages['%1$@Reply'].name;"
+        "    const remote = ["
+        "        { type: 'FrameID', value: [BigInt(IPC.frameID[0])] },"
+        "        { type: 'double', value: 10 },"
+        "        { type: 'double', value: 10 },"
+        "    ];"
+        "    IPC.addIncomingMessageListener('UI', message => {"
+        "        if (message.name !== requestName || message.listenerID === undefined)"
+        "            return;"
+        "        if (++window.redispatchToItselfCounts['%1$@'] > 3)"
+        "            return;"
+        "        IPC.sendMessage('UI', message.listenerID, replyName, %2$@);"
+        "    });"
+        "})(); true", messageName, replyArguments]];
+}
+
+static int redispatchToItselfRequestCount(TestWKWebView *webView, NSString *messageName)
+{
+    return [[webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.redispatchToItselfCounts['%@']", messageName]] intValue];
+}
+
+static RetainPtr<NSString> takeInvalidMessageStringAfterRedispatchToItself(TestWKWebView *webView)
+{
+    return [webView stringByEvaluatingJavaScript:@"(() => {"
+        "const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);"
+        "return reply?.arguments?.[0]?.value ?? '';"
+        "})()"];
+}
+
+static constexpr auto draggableMainFrameWithCrossOriginIframe = "<body style='margin: 0'><div draggable='true' style='width: 100px; height: 100px; background-color: blue;'>Drag me</div>"
+    "<iframe src='https://webkit.org/iframe' style='position: absolute; left: 300px; top: 300px; width: 200px; height: 200px; border: none'></iframe></body>"_s;
+
+TEST(SiteIsolation, DragEndedRedispatchToTheSourceFrameIsRejected)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { draggableMainFrameWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 600, 600) configuration:redispatchToItselfConfiguration(server).get()]);
+    RetainPtr webView = [simulator webView];
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    loadForRedispatchToItself(webView.get(), navigationDelegate.get());
+
+    // std::optional<RemoteUserInputEventData>.
+    countRequestsAndForgeRedispatchToItself(webView.get(), @"WebPage_DragEnded", @"[{ type: 'bool', value: 1 }, ...remote]");
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 150)];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return redispatchToItselfRequestCount(webView.get(), @"WebPage_DragEnded") >= 1;
+    }));
+    Util::runFor(0.5_s);
+    EXPECT_EQ(1, redispatchToItselfRequestCount(webView.get(), @"WebPage_DragEnded"));
+    EXPECT_TRUE([takeInvalidMessageStringAfterRedispatchToItself(webView.get()) containsString:@"Message check failed"]);
+}
+
+TEST(SiteIsolation, DictionaryLookupRedispatchToTheSourceFrameIsRejected)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:redispatchToItselfConfiguration(server).get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    loadForRedispatchToItself(webView.get(), navigationDelegate.get());
+
+    // std::optional<RemoteUserInputEventData>.
+    countRequestsAndForgeRedispatchToItself(webView.get(), @"WebPage_PerformDictionaryLookupAtLocation", @"[{ type: 'bool', value: 1 }, ...remote]");
+    [webView _performDictionaryLookupAtLocationForTesting:CGPointMake(10, 10)];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return redispatchToItselfRequestCount(webView.get(), @"WebPage_PerformDictionaryLookupAtLocation") >= 1;
+    }));
+    Util::runFor(0.5_s);
+    EXPECT_EQ(1, redispatchToItselfRequestCount(webView.get(), @"WebPage_PerformDictionaryLookupAtLocation"));
+    EXPECT_TRUE([takeInvalidMessageStringAfterRedispatchToItself(webView.get()) containsString:@"Message check failed"]);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
+
 TEST(SiteIsolation, DragSourceEndedAtCoordinateTransformationNested)
 {
     static constexpr ASCIILiteral mainframeHTML =

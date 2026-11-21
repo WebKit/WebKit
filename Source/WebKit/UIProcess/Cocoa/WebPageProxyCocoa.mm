@@ -724,11 +724,14 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& 
 
 void WebPageProxy::performDictionaryLookupAtLocationInFrame(WebCore::FrameIdentifier frameID, const WebCore::FloatPoint& point)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDictionaryLookupAtLocation(frameID, point), Messages::WebPage::PerformDictionaryLookupAtLocation::Reply { [weakThis = WeakPtr { *this }](std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDictionaryLookupAtLocation(frameID, point), ReplyWithConnection<Messages::WebPage::PerformDictionaryLookupAtLocation> { [weakThis = WeakPtr { *this }, frameID](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !remoteUserInputEventData)
             return;
-        protectedThis->performDictionaryLookupAtLocationInFrame(remoteUserInputEventData->targetFrameID, WebCore::FloatPoint(remoteUserInputEventData->transformedPoint));
+        RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID);
+        if (!targetFrame)
+            return;
+        protectedThis->performDictionaryLookupAtLocationInFrame(targetFrame->frameID(), WebCore::FloatPoint(remoteUserInputEventData->transformedPoint));
     } });
 }
 

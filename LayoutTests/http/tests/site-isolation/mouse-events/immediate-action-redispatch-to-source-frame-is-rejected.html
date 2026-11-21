@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body style="margin: 0">
+<p>main frame text</p>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/100x100-blue-box-green-background.html" style="position: absolute; left: 300px; top: 300px; width: 200px; height: 200px; border: none" onload="runTest()"></iframe>
+<pre id="result"></pre>
+<script src="resources/redispatch-to-itself.js"></script>
+<script>
+// The IPC testing API exists only in debug and ASan builds; this test passes either way.
+const summary = "Tests that the UI process rejects an immediate action hit test's redispatch to the frame it was sent to.";
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result)
+{
+    document.getElementById("result").textContent = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function runTest()
+{
+    if (!window.IPC || !window.eventSender) {
+        finish("PASS");
+        return;
+    }
+
+    // Variant<WebHitTestResultData, RemoteUserInputEventData>, bool contentPreventsDefault, then an empty UserData.
+    const requestCount = forgeRedispatchToItself('WebPage_PerformImmediateActionHitTestAtLocation', [
+        { type: 'uint8_t', value: 1 }, ...remoteUserInputEventDataForThisFrame(), { type: 'bool', value: 0 }, { type: 'bool', value: 0 },
+    ]);
+
+    // A force click starts the immediate action gesture, which hit-tests the main frame first.
+    eventSender.mouseMoveTo(20, 20);
+    eventSender.mouseForceClick();
+
+    const invalidMessage = await waitForInvalidMessageString();
+    // Give a redispatch that was wrongly followed time to arrive.
+    await new Promise(resolve => setTimeout(resolve, 200));
+    if (!requestCount())
+        finish("FAIL: the force click sent no PerformImmediateActionHitTestAtLocation to this process.");
+    else if (requestCount() != 1)
+        finish("FAIL: the UI process followed the redispatch; this process got " + requestCount() + " requests.");
+    else if (!invalidMessage.includes("Message check failed"))
+        finish("FAIL: the UI process didn't flag the redispatch. Invalid message: '" + invalidMessage + "'");
+    else
+        finish("PASS");
+}
+</script>
+</body>
+</html>

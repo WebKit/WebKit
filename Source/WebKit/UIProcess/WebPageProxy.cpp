@@ -4799,11 +4799,12 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
     if (!hasRunningProcess())
         return;
 
-    auto completionHandler = [this, protectedThis = Ref { *this }, action, dragData, dragEventNumber, frameID](std::optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+    auto completionHandler = [this, protectedThis = Ref { *this }, action, dragData, dragEventNumber, frameID](IPC::Connection* connection, std::optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
         if (!m_pageClient)
             return;
 
-        if (!remoteUserInputEventData) {
+        RefPtr targetFrame = remoteUserInputEventData ? frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID) : nullptr;
+        if (!targetFrame) {
             internals().currentDragTargetFrameID = frameID;
             if (action == DragControllerAction::Entered || action == DragControllerAction::Updated)
                 dragWasHandledInFrame(dragEventNumber, frameID, dragData);
@@ -4811,7 +4812,7 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
             return;
         }
         dragData.setClientPosition(roundedIntPoint(remoteUserInputEventData->transformedPoint));
-        performDragControllerAction(action, dragData, dragEventNumber, remoteUserInputEventData->targetFrameID);
+        performDragControllerAction(action, dragData, dragEventNumber, targetFrame->frameID());
     };
 #if PLATFORM(GTK) || PLATFORM(WPE)
     ASSERT(dragData.platformData());
@@ -4940,13 +4941,14 @@ void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& glo
 
 void WebPageProxy::dragEndedInFrame(const std::optional<FrameIdentifier>& frameID, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask, CompletionHandler<void(std::optional<FrameIdentifier>)>&& completionHandler)
 {
-    auto replyHandler = [this, protectedThis = Ref { *this }, frameID, globalPosition, dragOperationMask, completionHandler = WTF::move(completionHandler)] (std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
-        if (!remoteUserInputEventData) {
+    auto replyHandler = [this, protectedThis = Ref { *this }, frameID, globalPosition, dragOperationMask, completionHandler = WTF::move(completionHandler)](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+        RefPtr targetFrame = remoteUserInputEventData ? frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID) : nullptr;
+        if (!targetFrame) {
             resetCurrentDragInformation();
             completionHandler(frameID);
             return;
         }
-        dragEndedInFrame(remoteUserInputEventData->targetFrameID, roundedIntPoint(remoteUserInputEventData->transformedPoint), globalPosition, dragOperationMask, WTF::move(completionHandler));
+        dragEndedInFrame(targetFrame->frameID(), roundedIntPoint(remoteUserInputEventData->transformedPoint), globalPosition, dragOperationMask, WTF::move(completionHandler));
     };
 
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DragEnded(frameID, clientPosition, globalPosition, dragOperationMask), WTF::move(replyHandler));
@@ -20182,7 +20184,7 @@ void WebPageProxy::performImmediateActionHitTestAtLocation(WebCore::FrameIdentif
 {
     m_immediateActionHitTestFrameID = frameID;
     Ref process = processContainingFrame(frameID);
-    auto replyID = process->sendWithAsyncReply(Messages::WebPage::PerformImmediateActionHitTestAtLocation(frameID, point), [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, completionHandler = WTF::move(completionHandler)] (Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, bool contentPreventsDefault, UserData&& userData) mutable {
+    auto replyID = process->sendWithAsyncReply(Messages::WebPage::PerformImmediateActionHitTestAtLocation(frameID, point), [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, frameID, completionHandler = WTF::move(completionHandler)](IPC::Connection* connection, Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, bool contentPreventsDefault, UserData&& userData) mutable {
         RefPtr protectedThis = weakThis.get();
         RefPtr process = weakProcess.get();
         if (!protectedThis || !process)
@@ -20193,8 +20195,11 @@ void WebPageProxy::performImmediateActionHitTestAtLocation(WebCore::FrameIdentif
         WTF::switchOn(WTF::move(resultOrRemoteData), [&] (WebHitTestResultData&& result) {
             completionHandler(result, contentPreventsDefault, process->transformHandlesToObjects(protect(userData.object()).get()).get());
         }, [&] (RemoteUserInputEventData&& remoteUserInputEventData) {
+            RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData.targetFrameID);
+            if (!targetFrame)
+                return completionHandler({ }, false, nullptr);
             // The hit test landed on a cross-origin frame; re-dispatch it into that frame's process.
-            protectedThis->performImmediateActionHitTestAtLocation(remoteUserInputEventData.targetFrameID, FloatPoint(remoteUserInputEventData.transformedPoint), WTF::move(completionHandler));
+            protectedThis->performImmediateActionHitTestAtLocation(targetFrame->frameID(), FloatPoint(remoteUserInputEventData.transformedPoint), WTF::move(completionHandler));
         });
     }, webPageIDInProcessForFrame(frameID));
 
@@ -22606,7 +22611,7 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::Potential
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::HandleDoubleTapForDoubleClickAtPoint);
 #endif
 #if PLATFORM(COCOA)
-INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::PerformDictionaryLookupAtLocation);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::PerformDictionaryLookupAtLocation);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectWithGesture);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectPositionAtPoint);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_WITH_CONNECTION_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectTextWithGranularityAtPoint);
