@@ -6644,6 +6644,14 @@
         }
     },
 
+    "imported/w3c/webdriver/tests/classic/perform_actions/wheel_new_listener.py": {
+        "subtests": {
+            "test_listener_added_right_before_action": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
+            }
+        }
+    },
+
     "imported/w3c/webdriver/tests/classic/release_actions/iframe.py": {
         "subtests": {
             "test_release_actions_in_frame[cross_origin]": {

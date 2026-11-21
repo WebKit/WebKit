@@ -482,6 +482,7 @@ private:
     void platformSimulateKeySequence(WebPageProxy&, const String&);
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    void dispatchWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta, AutomationCompletionHandler&&);
     void platformSimulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta);
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
