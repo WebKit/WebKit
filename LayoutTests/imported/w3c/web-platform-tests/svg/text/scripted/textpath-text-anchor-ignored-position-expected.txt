@@ -1,0 +1,8 @@
+XXXX
+XXXX
+XXXX
+
+PASS text-anchor=middle
+PASS text-anchor=end
+PASS vertical, text-anchor=middle
+

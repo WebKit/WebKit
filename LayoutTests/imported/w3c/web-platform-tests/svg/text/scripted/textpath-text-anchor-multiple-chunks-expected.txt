@@ -1,0 +1,12 @@
+XXXX
+XXXX
+XXXX
+XXXXXX
+XXXX
+
+PASS text-anchor=start, XXXX
+PASS text-anchor=middle, XXXX
+PASS text-anchor=end, XXXX
+PASS text-anchor=middle, XXXXXX
+PASS text-anchor=middle, XXXX, dx=10
+
