@@ -292,6 +292,31 @@ void DocumentLoader::setMainDocumentError(const ResourceError& error)
     protect(frameLoader()->client())->setMainDocumentError(this, error);
 }
 
+// A navigation whose response is a network error gets an error document. As with other documents, its load
+// event fires at the frame's owner.
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#attempt-to-populate-the-history-entry's-document
+NODELETE static bool shouldLoadErrorDocument(DocumentLoader& documentLoader, const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+{
+    // A cancelled load, such as a download or a load stopped by a policy decision, keeps the current document.
+    if (error.isCancellation() || loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::Yes)
+        return false;
+
+    // The response already created a document. For instance, a media document's media element took over the load.
+    if (documentLoader.isCommitted())
+        return false;
+
+    auto* frame = documentLoader.frame();
+    if (!frame || frame->loader().provisionalDocumentLoader() != &documentLoader)
+        return false;
+
+    // The client handles errors in the main frame, e.g., by showing an error page of its own.
+    if (frame->isMainFrame())
+        return false;
+
+    // Object and embed elements handle failures themselves, e.g., by rendering fallback content.
+    return !is<HTMLPlugInElement>(frame->ownerElement());
+}
+
 void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(!error.isNull());
@@ -478,10 +503,29 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
         return;
     }
 
-    if (!m_mainResource->resourceError().isNull())
-        DOCUMENTLOADER_RELEASE_LOG_FORWARDABLE(DocumentLoaderNotifyFinishedCancelingLoad, static_cast<int>(m_mainResource->resourceError().type()), m_mainResource->resourceError().errorCode());
+    // Copy the error, as loading an error document can release the main resource.
+    ResourceError error = m_mainResource->resourceError();
+    if (!error.isNull())
+        DOCUMENTLOADER_RELEASE_LOG_FORWARDABLE(DocumentLoaderNotifyFinishedCancelingLoad, static_cast<int>(error.type()), error.errorCode());
 
-    mainReceivedError(m_mainResource->resourceError(), loadWillContinueInAnotherProcess);
+    bool loadsErrorDocument = shouldLoadErrorDocument(*this, error, loadWillContinueInAnotherProcess);
+#if ENABLE(CONTENT_FILTERING)
+    // The content filter loads a page of its own, saying why it blocked the load.
+    if (loadsErrorDocument && contentFilterWillHandleProvisionalLoadFailure(error))
+        loadsErrorDocument = false;
+#endif
+
+    // Loading an error document runs the frame owner's load event handlers, which can release this.
+    Ref protectedThis { *this };
+    if (loadsErrorDocument) {
+        DOCUMENTLOADER_RELEASE_LOG("notifyFinished: loading error document");
+        loadErrorDocument();
+        // The load event might have detached the frame, which also stopped the load.
+        if (!frameLoader())
+            return;
+    }
+
+    mainReceivedError(error, loadWillContinueInAnotherProcess);
 }
 
 void DocumentLoader::finishedLoading()

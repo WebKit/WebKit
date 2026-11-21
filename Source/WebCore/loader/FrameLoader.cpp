@@ -3358,9 +3358,10 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
         auto loadingEvent = AXLoadingEvent::Failed;
         if (!error.isNull()) {
             FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Finished frame load with error (isTimeout = %d, isCancellation = %d, errorCode = %d)", error.isTimeout(), error.isCancellation(), error.errorCode());
+            // Set before notifying the client, as dispatchDidFailProvisionalLoad() does, so the frame's info reports the error.
+            m_errorOccurredInLoading = true;
             m_client->dispatchDidFailLoad(error);
             loadingEvent = AXLoadingEvent::Failed;
-            m_errorOccurredInLoading = true;
         } else {
             FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderCheckLoadCompleteForThisFrame);
 #if ENABLE(DATA_DETECTION)

@@ -746,6 +746,15 @@ void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& 
     checkFrameTreesInProcesses(frameTrees(webView).get(), WTF::move(expectedFrameTrees));
 }
 
+// Like checkFrameTreesInProcesses(), but first waits a while for the frame trees to match, as processes can take a moment to go away.
+static void waitForFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
+{
+    Util::waitFor([&] {
+        return frameTreesMatch(frameTrees(webView).get(), Vector<ExpectedFrameTree> { expectedFrameTrees });
+    });
+    checkFrameTreesInProcesses(webView, WTF::move(expectedFrameTrees));
+}
+
 static unsigned countWebPages(const RetainPtr<WKWebView>& webView)
 {
     __block bool done { false };
@@ -3332,23 +3341,25 @@ TEST(SiteIsolation, ProvisionalLoadFailure)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
-    checkFrameTreesInProcesses(webView.get(), {
-        { "https://example.com"_s, { { "https://example.com"_s } } }
+    // The iframe's navigation failed, so it shows an error document, in the process that made the load.
+    waitForFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
     });
 
     [webView evaluateJavaScript:@"var iframe = document.createElement('iframe');document.body.appendChild(iframe);iframe.src = 'https://apple.com/apple'" completionHandler:nil];
-    Vector<ExpectedFrameTree> expectedFrameTreesAfterAddingApple { {
-        "https://example.com"_s, { { "https://example.com"_s }, { RemoteFrame } }
-    }, {
-        RemoteFrame, { { RemoteFrame }, { "https://apple.com"_s } }
-    } };
-    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedFrameTreesAfterAddingApple }))
-        Util::spinRunLoop();
+    waitForFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame }, { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s }, { "https://apple.com"_s } } }
+    });
 
-    [webView evaluateJavaScript:@"iframe.onload = alert('done');iframe.src = 'https://webkit.org/webkit'" completionHandler:nil];
+    [webView evaluateJavaScript:@"iframe.onload = () => alert('done');iframe.src = 'https://webkit.org/webkit'" completionHandler:nil];
 
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
-    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedFrameTreesAfterAddingApple));
+    waitForFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame }, { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s }, { "https://webkit.org"_s } } }
+    });
 }
 
 TEST(SiteIsolation, MultipleReloads)
@@ -6586,43 +6597,47 @@ TEST(SiteIsolation, NavigateIframeToProvisionalNavigationFailure)
         },
     });
 
-    __block bool provisionalLoadFailed { false };
-    navigationDelegate.get().didFailProvisionalLoadWithRequestInFrameWithError = ^(WKWebView *, NSURLRequest *, WKFrameInfo *frameInfo, NSError *error) {
+    __block bool loadFailed { false };
+    navigationDelegate.get().didFailLoadWithRequestInFrameWithError = ^(WKWebView *, NSURLRequest *, WKFrameInfo *frameInfo, NSError *error) {
         EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
         EXPECT_EQ(error.code, NSURLErrorNetworkConnectionLost);
         EXPECT_FALSE(frameInfo.isMainFrame);
-        provisionalLoadFailed = true;
+        loadFailed = true;
     };
 
+    // The failed navigation commits an error document, in the process for the site whose load failed.
     __block RetainPtr blockScopeWebView { webView };
-    auto checkProvisionalLoadFailure = ^(NSString *url) {
-        provisionalLoadFailed = false;
+    auto checkLoadFailure = ^(NSString *url, NSString *failedOrigin) {
+        loadFailed = false;
         [blockScopeWebView evaluateJavaScript:[NSString stringWithFormat:@"document.getElementById('testiframe').src = '%@'", url] completionHandler:nil];
-        while (!provisionalLoadFailed)
+        while (!loadFailed)
             Util::spinRunLoop();
-        checkFrameTreesInProcesses(blockScopeWebView.get(), {
-            { "https://webkit.org"_s,
-                { { RemoteFrame } }
-            }, { RemoteFrame,
-                { { "https://example.com"_s } }
-            },
+        if ([failedOrigin isEqualToString:@"https://webkit.org"]) {
+            waitForFrameTreesInProcesses(blockScopeWebView.get(), {
+                { "https://webkit.org"_s, { { "https://webkit.org"_s } } }
+            });
+            return;
+        }
+        waitForFrameTreesInProcesses(blockScopeWebView.get(), {
+            { "https://webkit.org"_s, { { RemoteFrame } } },
+            { RemoteFrame, { { String(failedOrigin) } } }
         });
     };
-    checkProvisionalLoadFailure(@"https://example.com/terminate");
-    checkProvisionalLoadFailure(@"https://webkit.org/terminate");
-    checkProvisionalLoadFailure(@"https://apple.com/terminate");
+    checkLoadFailure(@"https://example.com/terminate", @"https://example.com");
+    checkLoadFailure(@"https://webkit.org/terminate", @"https://webkit.org");
+    checkLoadFailure(@"https://apple.com/terminate", @"https://apple.com");
 
-    checkProvisionalLoadFailure(@"https://example.com/redirect_to_example_terminate");
-    checkProvisionalLoadFailure(@"https://webkit.org/redirect_to_example_terminate");
-    checkProvisionalLoadFailure(@"https://apple.com/redirect_to_example_terminate");
+    checkLoadFailure(@"https://example.com/redirect_to_example_terminate", @"https://example.com");
+    checkLoadFailure(@"https://webkit.org/redirect_to_example_terminate", @"https://example.com");
+    checkLoadFailure(@"https://apple.com/redirect_to_example_terminate", @"https://example.com");
 
-    checkProvisionalLoadFailure(@"https://example.com/redirect_to_webkit_terminate");
-    checkProvisionalLoadFailure(@"https://webkit.org/redirect_to_webkit_terminate");
-    checkProvisionalLoadFailure(@"https://apple.com/redirect_to_webkit_terminate");
+    checkLoadFailure(@"https://example.com/redirect_to_webkit_terminate", @"https://webkit.org");
+    checkLoadFailure(@"https://webkit.org/redirect_to_webkit_terminate", @"https://webkit.org");
+    checkLoadFailure(@"https://apple.com/redirect_to_webkit_terminate", @"https://webkit.org");
 
-    checkProvisionalLoadFailure(@"https://example.com/redirect_to_apple_terminate");
-    checkProvisionalLoadFailure(@"https://webkit.org/redirect_to_apple_terminate");
-    checkProvisionalLoadFailure(@"https://apple.com/redirect_to_apple_terminate");
+    checkLoadFailure(@"https://example.com/redirect_to_apple_terminate", @"https://apple.com");
+    checkLoadFailure(@"https://webkit.org/redirect_to_apple_terminate", @"https://apple.com");
+    checkLoadFailure(@"https://apple.com/redirect_to_apple_terminate", @"https://apple.com");
 }
 
 TEST(SiteIsolation, DrawAfterNavigateToDomainAgain)
@@ -7777,12 +7792,17 @@ TEST(SiteIsolation, ProvisionalLoadFailureOnCrossSiteRedirect)
     [navigationDelegate waitForDidFinishNavigation];
 
     __block bool done = false;
-    navigationDelegate.get().didFailProvisionalLoadWithRequestInFrameWithError = ^(WKWebView *, NSURLRequest *request, WKFrameInfo *, NSError *) {
+    navigationDelegate.get().didFailLoadWithRequestInFrameWithError = ^(WKWebView *, NSURLRequest *request, WKFrameInfo *, NSError *) {
         EXPECT_WK_STREQ(request.URL.absoluteString, "https://example.com/terminate");
         done = true;
     };
     [webView evaluateJavaScript:@"location.href = 'https://webkit.org/redirect'" inFrame:[webView firstChildFrame] inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
     Util::run(&done);
+
+    // The error document is in the process for the site whose load failed.
+    waitForFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { "https://example.com"_s } } }
+    });
 }
 
 TEST(SiteIsolation, SynchronouslyExecuteEditCommandSelectAll)
