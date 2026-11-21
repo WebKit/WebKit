@@ -1,0 +1,137 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>HTML Templates: &lt;template for&gt; and template contents namespace</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-template-element">
+<link rel="help" href="https://github.com/whatwg/html/pull/13100">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg><?marker name="svg-slot"><g><?start name="svg-range"><text>old</text><?end></g></svg>
+<template for="svg-slot"><circle id="patched-circle" cx="5" cy="5" r="2" /></template>
+<template for="svg-range"><rect id="patched-rect" width="5" height="5" /><clippath id="patched-cp" /></template>
+
+<math><?marker name="math-slot"></math>
+<template for="math-slot"><msup id="patched-msup"><mi>x</mi><mn>2</mn></msup></template>
+
+<svg><?marker name="svg-html-slot"></svg>
+<template id="failed-for-svg-html" for="svg-html-slot" contentnamespace="html"><a id="patched-html-in-svg" href="#">html</a></template>
+
+<div id="html-svg-host"><?start name="html-svg-slot">old<?end></div>
+<template id="failed-for-html-svg" for="html-svg-slot" contentnamespace="svg"><circle id="patched-svg-in-html" /></template>
+
+<svg><?marker name="svg-match-slot"></svg>
+<template for="svg-match-slot" contentnamespace="svg"><circle id="patched-svg-match" /></template>
+
+<svg><?marker name="svg-invalid-slot"></svg>
+<template for="svg-invalid-slot" contentnamespace="invalid"><circle id="patched-svg-invalid" /></template>
+
+<svg><foreignObject id="fo-patch-host"><?marker name="fo-slot"></foreignObject></svg>
+<template for="fo-slot"><a id="patched-in-fo" href="#">fo-html</a></template>
+
+<template id="outer-patch-tpl" contentnamespace="svg"><?marker name="tpl-svg-slot"><template for="tpl-svg-slot"><circle id="patched-in-tpl-svg" /></template></template>
+
+<template id="failed-for-in-body" for="nonexistent-slot"><circle /></template>
+
+<script>
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+const SVG_NS = "http://www.w3.org/2000/svg";
+const MATHML_NS = "http://www.w3.org/1998/Math/MathML";
+
+test(() => {
+  const circle = document.getElementById("patched-circle");
+  assert_not_equals(circle, null);
+  assert_equals(circle.namespaceURI, SVG_NS);
+
+  const rect = document.getElementById("patched-rect");
+  assert_not_equals(rect, null);
+  assert_equals(rect.namespaceURI, SVG_NS);
+
+  const cp = document.getElementById("patched-cp");
+  assert_not_equals(cp, null);
+  assert_equals(cp.namespaceURI, SVG_NS);
+  assert_equals(cp.localName, "clipPath");
+
+  const msup = document.getElementById("patched-msup");
+  assert_not_equals(msup, null);
+  assert_equals(msup.namespaceURI, MATHML_NS);
+
+  // Explicit contentnamespace that mismatches the patch target errors the patch.
+  assert_equals(document.getElementById("patched-html-in-svg"), null);
+  const failedSvgHtml = document.getElementById("failed-for-svg-html");
+  assert_not_equals(failedSvgHtml, null);
+  assert_equals(failedSvgHtml.contentNamespace, HTML_NS);
+  assert_equals(failedSvgHtml.content.querySelector("#patched-html-in-svg").namespaceURI, HTML_NS);
+
+  const htmlSvgHost = document.getElementById("html-svg-host");
+  assert_equals(htmlSvgHost.textContent, "old");
+  const failedHtmlSvg = document.getElementById("failed-for-html-svg");
+  assert_not_equals(failedHtmlSvg, null);
+  assert_equals(failedHtmlSvg.contentNamespace, SVG_NS);
+  assert_equals(failedHtmlSvg.content.querySelector("#patched-svg-in-html").namespaceURI, SVG_NS);
+
+  // Matching explicit contentnamespace and invalid contentnamespace both succeed.
+  assert_equals(document.getElementById("patched-svg-match").namespaceURI, SVG_NS);
+  assert_equals(document.getElementById("patched-svg-invalid").namespaceURI, SVG_NS);
+
+  // Patching into an HTML integration point or an outer <template contentnamespace="svg">.
+  assert_equals(document.getElementById("patched-in-fo").namespaceURI, HTML_NS);
+  const outerPatchTpl = document.getElementById("outer-patch-tpl");
+  assert_equals(outerPatchTpl.content.getElementById("patched-in-tpl-svg").namespaceURI, SVG_NS);
+
+  const failedTemplate = document.getElementById("failed-for-in-body");
+  assert_not_equals(failedTemplate, null);
+  assert_equals(failedTemplate.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const svgPatch = document.createElementNS(SVG_NS, "svg");
+  svgPatch.innerHTML = "<?marker name='frag-svg-slot'><template for='frag-svg-slot'><circle/></template>";
+  assert_equals(svgPatch.firstElementChild.namespaceURI, SVG_NS);
+
+  const tplPatch = document.createElement("template");
+  tplPatch.contentNamespace = SVG_NS;
+  tplPatch.innerHTML =
+    "<?marker name='tpl-frag-slot'>" +
+    "<template for='tpl-frag-slot'><circle id='patched-in-tpl-frag'/></template>" +
+    "<?marker name='tpl-frag-mismatch'>" +
+    "<template for='tpl-frag-mismatch' contentnamespace='html'><div id='mismatched-in-tpl-frag'></div></template>";
+  assert_equals(tplPatch.content.getElementById("patched-in-tpl-frag").namespaceURI, SVG_NS);
+  assert_equals(tplPatch.content.getElementById("mismatched-in-tpl-frag"), null);
+}, "<template for> inherits from target unless explicit contentnamespace mismatches (which errors the patch)");
+
+test(t => {
+  const nullNs = document.createElementNS(null, "foo");
+  const t1 = document.createElement("template");
+  nullNs.appendChild(t1);
+  const c1 = t1.cloneNode(false);
+  t1.innerHTML = "<a href='#'>in null ns parent</a>";
+  assert_equals(t1.content.firstElementChild.namespaceURI, HTML_NS);
+  c1.innerHTML = "<a href='#'>in cloned null ns parent</a>";
+  assert_equals(c1.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const customNs = document.createElementNS("http://example.com/custom", "bar");
+  const t2 = document.createElement("template");
+  customNs.appendChild(t2);
+  t2.innerHTML = "<a href='#'>in custom xml ns parent</a>";
+  assert_equals(t2.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+  t.add_cleanup(() => iframe.remove());
+  const win = iframe.contentWindow;
+  const doc = iframe.contentDocument;
+  doc.open();
+  doc.write("<!doctype html><body><svg id='s'>");
+  win.customElements.define("self-marker-tpl", class extends win.HTMLTemplateElement {
+    constructor() {
+      super();
+      this.appendChild(doc.createProcessingInstruction("marker", 'name="self-m"'));
+      doc.getElementById("s").appendChild(this);
+    }
+  }, { extends: "template" });
+  doc.write('<template is="self-marker-tpl" id="self-tpl" for="self-m"><circle/></template></svg>');
+  doc.close();
+  const selfTpl = doc.getElementById("self-tpl");
+  assert_equals(selfTpl.namespaceURI, HTML_NS);
+  assert_equals(selfTpl.content.childElementCount, 0);
+  assert_equals(selfTpl.firstElementChild.namespaceURI, SVG_NS);
+}, "Self-referential <template for> terminates without cycle and null/custom XML parent namespaces fall back to HTML");
+</script>

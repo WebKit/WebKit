@@ -1551,13 +1551,15 @@ bad eof
 #errors
 no doctype
 eof in template
+eof in template
 #document
 | <html>
 |   <head>
 |     <template>
 |       content
 |         <svg svg>
-|           <svg template>
+|           <template>
+|             content
 |   <body>
 
 #data
@@ -1565,7 +1567,8 @@ eof in template
 #errors
 no doctype
 ugly template closure
-bad eof
+bad div in svg
+eof in template
 #document
 | <html>
 |   <head>
@@ -1573,11 +1576,12 @@ bad eof
 |       content
 |         <svg svg>
 |           <svg foo>
-|             <svg template>
-|               <svg foreignObject>
-|                 <div>
+|             <template>
+|               content
+|                 <svg foreignObject>
+|                   <div>
+|         <div>
 |   <body>
-|     <div>
 
 #data
 <dummy><template><span></dummy>

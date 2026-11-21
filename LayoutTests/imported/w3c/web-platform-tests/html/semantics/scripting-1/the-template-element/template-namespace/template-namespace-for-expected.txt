@@ -1,0 +1,11 @@
+
+𝑥
+2
+
+old
+
+fo-html
+
+PASS <template for> inherits from target unless explicit contentnamespace mismatches (which errors the patch)
+FAIL Self-referential <template for> terminates without cycle and null/custom XML parent namespaces fall back to HTML assert_equals: expected 0 but got 1
+

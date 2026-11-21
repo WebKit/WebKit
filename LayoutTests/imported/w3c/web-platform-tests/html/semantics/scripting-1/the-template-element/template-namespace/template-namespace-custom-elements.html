@@ -1,0 +1,77 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>HTML Templates: customized built-in &lt;template is&gt; and template contents namespace</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-template-element">
+<link rel="help" href="https://github.com/whatwg/html/pull/13100">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+test(t => {
+  const iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+  t.add_cleanup(() => iframe.remove());
+  const win = iframe.contentWindow;
+  const doc = iframe.contentDocument;
+  doc.open();
+  doc.write("<!doctype html><body>");
+  win.customElements.define("set-svg-tpl", class extends win.HTMLTemplateElement {
+    constructor() {
+      super();
+      this.contentNamespace = SVG_NS;
+    }
+  }, { extends: "template" });
+  // The parser appends attributes after the constructor has run, so attributeChangedCallback is
+  // the only place to remove the attribute before the template is opened.
+  win.customElements.define("clear-svg-tpl", class extends win.HTMLTemplateElement {
+    static observedAttributes = ["contentnamespace"];
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (newValue !== null)
+        this.removeAttribute("contentnamespace");
+    }
+  }, { extends: "template" });
+  // The namespace is fixed when the template is opened, which is before it is inserted.
+  win.customElements.define("late-svg-tpl", class extends win.HTMLTemplateElement {
+    connectedCallback() {
+      this.contentNamespace = SVG_NS;
+    }
+  }, { extends: "template" });
+  win.customElements.define("set-srm-tpl", class extends win.HTMLTemplateElement {
+    constructor() {
+      super();
+      this.shadowRootMode = "open";
+    }
+  }, { extends: "template" });
+  doc.write(
+    '<template is="set-svg-tpl" id="t-set-svg"><circle/></template>' +
+    '<template is="clear-svg-tpl" id="t-clear-svg" contentnamespace="svg"><a href="#">x</a></template>' +
+    '<svg><template is="set-srm-tpl" id="t-srm-in-svg" contentnamespace="html"><circle/></template></svg>' +
+    '<template is="late-svg-tpl" id="t-late-svg"><circle/></template>'
+  );
+  doc.close();
+
+  // Parser's resolve a template contents namespace falls back to HTML when contentnamespace is not set.
+  assert_equals(doc.getElementById("t-set-svg").content.firstElementChild.namespaceURI, HTML_NS);
+  assert_equals(doc.getElementById("t-clear-svg").content.firstElementChild.namespaceURI, HTML_NS);
+  assert_equals(doc.getElementById("t-srm-in-svg").content.firstElementChild.namespaceURI, HTML_NS);
+  assert_equals(doc.getElementById("t-late-svg").contentNamespace, SVG_NS);
+  assert_equals(doc.getElementById("t-late-svg").content.firstElementChild.namespaceURI, HTML_NS);
+
+  win.customElements.define("reentrant-svg-tpl", class extends win.HTMLTemplateElement {
+    connectedCallback() {
+      doc.write("<circle/></template><p id='after-reentrant'>ok</p>");
+    }
+  }, { extends: "template" });
+
+  doc.open();
+  doc.write("<!doctype html><body>");
+  doc.write('<template is="reentrant-svg-tpl" id="t-reentrant" contentnamespace="svg">');
+  doc.close();
+
+  assert_equals(doc.getElementById("t-reentrant").content.firstElementChild.namespaceURI, SVG_NS);
+  assert_not_equals(doc.getElementById("after-reentrant"), null);
+}, "Customized built-in <template is='...'> synchronous attribute mutations and re-entrant document.write during parsing");
+</script>

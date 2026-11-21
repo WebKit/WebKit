@@ -596,7 +596,7 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
     m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
 }
 
-void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
+void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token, const AtomString& fallbackNamespace, const AtomString& fragmentRootNamespace)
 {
     if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
         std::optional<ShadowRootMode> mode;
@@ -634,8 +634,11 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
         }
     }
 
+    auto element = downcast<HTMLTemplateElement>(createHTMLElement(token));
+    if (document().settings().htmlTemplateContentNamespaceEnabled())
+        element->setContentNamespaceFromParser(element->resolveContentNamespace(fallbackNamespace));
+
     if (document().settings().htmlTemplateForEnabled()) {
-        auto element = downcast<HTMLTemplateElement>(createHTMLElement(token));
         // A valid shadowrootmode takes precedence over `for`: either a declarative
         // shadow root was attached above, or declarative shadow roots are disallowed
         // or the attach failed, and the element becomes an ordinary template.
@@ -650,18 +653,16 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
                     scope = parent.releaseNonNull();
             }
 
-            if (element->prepareContentPatching(scope)) {
+            if (element->prepareContentPatching(scope, fragmentRootNamespace)) {
                 element->beginParsingChildren();
                 m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
                 return;
             }
         }
-        attachLater(protect(currentNode()), element.copyRef());
-        m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
-        return;
     }
 
-    insertHTMLElement(WTF::move(token));
+    attachLater(protect(currentNode()), element.copyRef());
+    m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
 }
 
 std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&& token)
