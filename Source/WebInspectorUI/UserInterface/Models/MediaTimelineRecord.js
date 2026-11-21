@@ -97,6 +97,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
                     }
                 }
                 record._timestamps.push(item);
+                record._updateTimes();
             }
         }
 
@@ -106,6 +107,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
     toJSON()
     {
         let json = {
+            type: this.type,
             eventType: this._eventType,
             domNodeDisplayName: this._domNodeDisplayName,
             domNodeCSSPath: this._domNodeCSSPath,
@@ -119,8 +121,11 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
 
         if (this._timestamps.length) {
             json.timestamps = this._timestamps.map((item) => {
-                if (item.type === MediaTimelineRecord.TimestampType.MediaElementDOMEvent && item.originator instanceof WI.DOMNode)
-                    delete item.originator;
+                if (item.type === MediaTimelineRecord.TimestampType.MediaElementDOMEvent && item.originator instanceof WI.DOMNode) {
+                    let itemWithoutOriginator = {...item};
+                    delete itemWithoutOriginator.originator;
+                    return itemWithoutOriginator;
+                }
                 return item;
             });
         }

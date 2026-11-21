@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Timeline.MediaRecordExportRoundtrip");
+
+    suite.addTestCase({
+        name: "Timeline.MediaRecordExportRoundtrip.CSSAnimation",
+        description: "A WI.MediaTimelineRecord should keep its type, startTime, endTime and activeStartTime through toJSON and fromJSON.",
+        async test() {
+            let originalRecord = new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.CSSAnimation, {displayName: "test", cssPath: "div#test"});
+            originalRecord.updateAnimationState(10, InspectorBackend.Enum.Animation.AnimationState.Active);
+            originalRecord.updateAnimationState(12, InspectorBackend.Enum.Animation.AnimationState.Done);
+
+            let json = originalRecord.toJSON();
+            InspectorTest.expectEqual(json.type, WI.TimelineRecord.Type.Media, "Exported Media record should carry its type.");
+
+            let importedRecord = await WI.TimelineRecord.fromJSON(json);
+            InspectorTest.expectThat(importedRecord instanceof WI.MediaTimelineRecord, "The record should import as a WI.MediaTimelineRecord.");
+            InspectorTest.expectEqual(importedRecord.startTime, originalRecord.startTime, "Imported record should import the same startTime.");
+            InspectorTest.expectEqual(importedRecord.endTime, originalRecord.endTime, "Imported record should import the same endTime.");
+            InspectorTest.expectEqual(importedRecord.activeStartTime, originalRecord.activeStartTime, "Imported record should import the same activeStartTime.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MediaRecordExportRoundtrip.MediaElement",
+        description: "A Media Element record should import the same start and end times as the live record for a page load sequence of DOM events.",
+        async test() {
+            let originalRecord = new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.MediaElement, {displayName: "test", cssPath: "video#test"});
+
+            // A normal <video> page load, with the "suspend" event that ends the first load phase.
+            let eventNames = ["loadstart", "suspend", "loadedmetadata", "loadeddata", "canplay", "canplaythrough"];
+            eventNames.forEach((eventName, index) => originalRecord.addDOMEvent(index + 1, {eventName}));
+
+            InspectorTest.expectFalse(isNaN(originalRecord.endTime), "The live record should have an end time after the \"suspend\" event.");
+
+            let json = originalRecord.toJSON();
+            InspectorTest.expectEqual(json.type, WI.TimelineRecord.Type.Media, "Exported Media record should carry its type.");
+
+            let importedRecord = await WI.TimelineRecord.fromJSON(json);
+            InspectorTest.expectThat(importedRecord instanceof WI.MediaTimelineRecord, "The record should import as a WI.MediaTimelineRecord.");
+            InspectorTest.expectEqual(importedRecord.startTime, originalRecord.startTime, "Imported record should import the same startTime.");
+            InspectorTest.expectEqual(importedRecord.endTime, originalRecord.endTime, "Imported record should import the same endTime, which only replaying each DOM event computes.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MediaRecordExportRoundtrip.ExportShouldNotChangeLiveRecord",
+        description: "Exporting a WI.MediaTimelineRecord should copy its timestamps, not strip the originator from the live record.",
+        async test() {
+            let originator = new WI.DOMNode(WI.domManager, null, false, {nodeId: 1234567, nodeType: Node.ELEMENT_NODE, nodeName: "VIDEO"});
+            let originalRecord = new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.MediaElement, {displayName: "test", cssPath: "video#test"});
+            originalRecord.addDOMEvent(10, {eventName: "play", originator});
+
+            InspectorTest.expectThat(originalRecord.timestamps[0].originator === originator, "Live record should have the originator before export.");
+
+            let json = originalRecord.toJSON();
+
+            InspectorTest.expectThat(originalRecord.timestamps[0].originator === originator, "Live record should keep the originator after export.");
+            InspectorTest.expectFalse("originator" in json.timestamps[0], "Exported timestamp should not carry the originator.");
+            InspectorTest.expectEqual(json.timestamps[0].originatorDisplayName, originator.displayName, "Exported timestamp should keep the originator display name.");
+            InspectorTest.expectEqual(json.timestamps[0].originatorCSSPath, WI.cssPath(originator, {full: true}), "Exported timestamp should keep the originator CSS path.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that WI.MediaTimelineRecord round-trips its type and timestamps through toJSON and fromJSON, and that export does not change the live record.</p>
+</body>
+</html>
