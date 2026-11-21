@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+.container {
+    writing-mode: vertical-lr;
+    text-orientation: sideways;
+    font: 20px/1 Ahem;
+    height: 200px;
+    padding-top: 100px;
+}
+.item {
+    display: list-item;
+    margin-right: 20px;
+}
+/* An inside marker on the line, moved back to where the outside one hangs: "1. " is 3em, the image is 10px plus its 7px gap. */
+.decimal {
+    list-style: decimal inside;
+    margin-top: -3em;
+}
+.image {
+    list-style: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2210%22%20height%3D%2210%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22green%22/%3E%3C/svg%3E) inside;
+    margin-top: -17px;
+}
+</style>
+<div class="container">
+    <div class="item decimal">X</div>
+    <div class="item image">X</div>
+</div>

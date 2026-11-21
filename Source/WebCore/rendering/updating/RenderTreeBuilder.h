@@ -33,7 +33,6 @@ namespace WebCore {
 
 class RenderGrid;
 class RenderListItem;
-class RenderListOutsideMarker;
 class RenderTreeUpdater;
 
 class RenderTreeBuilder {
