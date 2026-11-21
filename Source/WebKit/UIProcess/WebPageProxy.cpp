@@ -2184,6 +2184,8 @@ void WebPageProxy::close()
     internals().mouseEventsForPausedProcess.clear();
     internals().processAwaitingMouseEventReply = std::nullopt;
     flushPendingMouseEventCallbacks();
+    internals().keyEventQueue.clear();
+    flushPendingKeyEventCallbacks();
 
     Ref process = m_legacyMainFrameProcess;
     Ref processPool = m_configuration->processPool();
@@ -5322,7 +5324,7 @@ void WebPageProxy::processNextQueuedGestureEvent()
 }
 #endif
 
-void WebPageProxy::doAfterProcessingAllPendingMouseEvents(WTF::Function<void ()>&& action)
+void WebPageProxy::doAfterProcessingAllPendingMouseEvents(CompletionHandler<void()>&& action)
 {
     if (!isProcessingMouseEvents()) {
         action();
@@ -5343,7 +5345,7 @@ void WebPageProxy::flushPendingMouseEventCallbacks()
         callback();
 }
 
-void WebPageProxy::doAfterProcessingAllPendingKeyEvents(WTF::Function<void ()>&& action)
+void WebPageProxy::doAfterProcessingAllPendingKeyEvents(CompletionHandler<void()>&& action)
 {
     if (!isProcessingKeyboardEvents()) {
         action();
@@ -17213,6 +17215,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     internals().lastFrameHandlingMouseMove = std::nullopt;
     flushPendingMouseEventCallbacks();
     internals().keyEventQueue.clear();
+    flushPendingKeyEventCallbacks();
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();
 

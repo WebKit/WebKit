@@ -33,6 +33,7 @@
 #import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
@@ -144,6 +145,38 @@ TEST(KeyboardEventTests, TerminateWebContentProcessDuringKeyEventHandling)
         Util::runFor(1_ms);
     }
     Util::runFor(25_ms);
+}
+
+TEST(KeyboardEventTests, PendingKeyEventCallbacksRunOnClose)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+
+    __block bool didRunCallback = false;
+    [webView typeCharacter:'a'];
+    [webView _doAfterProcessingAllPendingKeyEvents:^{
+        didRunCallback = true;
+    }];
+    EXPECT_FALSE(didRunCallback);
+
+    [webView _close];
+    EXPECT_TRUE(didRunCallback);
+}
+
+TEST(KeyboardEventTests, PendingKeyEventCallbacksRunOnWebProcessTermination)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+
+    __block bool didRunCallback = false;
+    [webView typeCharacter:'a'];
+    [webView _doAfterProcessingAllPendingKeyEvents:^{
+        didRunCallback = true;
+    }];
+    EXPECT_FALSE(didRunCallback);
+
+    [webView _killWebContentProcessAndResetState];
+    EXPECT_TRUE(didRunCallback);
 }
 
 // FIXME when rdar://168322007 is resolved.

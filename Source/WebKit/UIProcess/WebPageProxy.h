@@ -1617,11 +1617,11 @@ public:
     void recordUIProcessUserActivation(const WebEvent&);
     void dispatchMouseDidMoveOverElementForModifierFlagsChange(Ref<NativeWebMouseEvent>&&);
 
-    void doAfterProcessingAllPendingMouseEvents(Function<void()>&&);
+    void doAfterProcessingAllPendingMouseEvents(CompletionHandler<void()>&&);
     void didFinishProcessingAllPendingMouseEvents();
     void flushPendingMouseEventCallbacks();
 
-    void doAfterProcessingAllPendingKeyEvents(Function<void()>&&);
+    void doAfterProcessingAllPendingKeyEvents(CompletionHandler<void()>&&);
     void didFinishProcessingAllPendingKeyEvents();
     void flushPendingKeyEventCallbacks();
 

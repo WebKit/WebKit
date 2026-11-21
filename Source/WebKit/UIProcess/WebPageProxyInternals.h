@@ -272,8 +272,8 @@ public:
     std::optional<WebCore::Color> backgroundColor;
     WebCore::LayoutSize baseLayoutViewportSize;
     std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart;
-    Vector<Function<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
-    Vector<Function<void()>> callbackHandlersAfterProcessingPendingKeyEvents;
+    Vector<CompletionHandler<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
+    Vector<CompletionHandler<void()>> callbackHandlersAfterProcessingPendingKeyEvents;
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingWheelEvents;
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingTouchEvents;
