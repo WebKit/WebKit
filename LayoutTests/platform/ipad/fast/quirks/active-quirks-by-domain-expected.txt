@@ -168,6 +168,8 @@ https://www.goodreads.com/
 https://www.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/search
@@ -175,16 +177,22 @@ https://www.google.com/search
         elementSelector: [data-expc], [data-expc] *
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/search/howsearchworks
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.co.jp/search
     NeedsAnchorToBeMouseFocusableQuirk
         elementSelector: [data-expc], [data-expc] *
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/maps
@@ -192,6 +200,8 @@ https://www.google.com/maps
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     NeedsStyleSheetInjectedQuirk
         styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
@@ -203,6 +213,8 @@ https://www.google.com/maps/
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     NeedsStyleSheetInjectedQuirk
         styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
@@ -214,6 +226,8 @@ https://www.google.com/maps/@37.33,-122.01,15z
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     NeedsStyleSheetInjectedQuirk
         styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
@@ -223,6 +237,8 @@ https://www.google.com/maps/@37.33,-122.01,15z
 https://www.google.com/mapsearch
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://maps.google.com/maps/
@@ -230,6 +246,8 @@ https://maps.google.com/maps/
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     NeedsStyleSheetInjectedQuirk
         styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
@@ -242,6 +260,8 @@ https://docs.google.com/
         elementSelector: .navigation-item-list, .navigation-item-list *
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
     ShouldOpenAsAboutBlankQuirk
@@ -254,17 +274,23 @@ https://translate.google.com/
         script: (function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://mail.google.com/
     NeedsGMailOverflowScrollQuirk
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://sites.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
     ShouldPreventTouchEndDispatchQuirk
@@ -272,10 +298,14 @@ https://sites.google.com/
 https://meet.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
     ShouldEnableCameraBackgroundPlayback
 https://www.google.co.uk/
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.hbomax.com/
@@ -338,6 +368,25 @@ https://www.iheart.com/
         script: document.cookie = 'app=listen:60; path=/; domain=.iheart.com';
 https://www.imdb.com/
     NeedsChromeMediaControlsPseudoElementQuirk
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: (function() {
+        let advertisement = document.getElementById('inline50_responsive_wrapper');
+        let observed = Symbol.for('WebKitIMDbStaleAdQuirk');
+        if (!advertisement || advertisement[observed] || window.__webkitIMDbStaleAdQuirk !== undefined)
+            return;
+        advertisement[observed] = true;
+        new ResizeObserver(() => {
+            let api = window.ad_utils?.responsiveAdAPI;
+            if (window.__webkitIMDbStaleAdQuirk !== undefined || !api || api.previousWindowWidth === Infinity)
+                return;
+            if (api.getLastAdResponse()?.slots?.inline50?.creativeMetadata?.creativeWidth > document.documentElement.clientWidth) {
+                api.previousWindowWidth = Infinity;
+                dispatchEvent(new Event('resize'));
+            }
+        }).observe(advertisement);
+    })();
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: #inline50_wrapper, #inline50_wrapper * { max-width: 100%; }
     NeedsZeroMaxTouchPointsQuirk
 https://www.instagram.com/
     NeedsInstagramResizingReelsQuirk
@@ -471,6 +520,8 @@ https://www.reddit.com/
         documentSelector: #sink-it-back-to-top
 https://routine.co/
     ShouldDisableCSSSizeShorthandQuirk
+https://satechi.com/
+    NeedsAnchorToBeMouseFocusableQuirk
 https://www.scribd.com/
     NeedsReuseLiveRangeForSelectionUpdateQuirk
 https://www.sfusd.edu/
@@ -623,7 +674,8 @@ https://www.yahoo.com/
         styleSheet: div.vjs-volume-control { min-height: 100%; align-items: center; }
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
 https://news.yahoo.co.jp/
-    NeedsYahooVolumeSliderQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: div.vjs-volume-control { min-height: 100%; align-items: center; }
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDisableCSSSizeShorthandQuirk
 https://news.ycombinator.com/

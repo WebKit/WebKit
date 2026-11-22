@@ -178,6 +178,7 @@ NeedsFacebookStoriesCreationFormQuirk:
 
 # thesaurus.com, dictionary.com https://bugs.webkit.org/show_bug.cgi?id=312692 rdar://174959285
 # google.com https://bugs.webkit.org/show_bug.cgi?id=323851 rdar://181740296
+# satechi.com https://bugs.webkit.org/show_bug.cgi?id=332753 rdar://193429681
 NeedsAnchorToBeMouseFocusableQuirk:
   available: cocoa
   conditions: [ElementSelector]

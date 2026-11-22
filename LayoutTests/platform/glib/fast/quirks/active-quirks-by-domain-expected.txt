@@ -437,6 +437,8 @@ https://www.reddit.com/
     (none)
 https://routine.co/
     ShouldDisableCSSSizeShorthandQuirk
+https://satechi.com/
+    (none)
 https://www.scribd.com/
     NeedsReuseLiveRangeForSelectionUpdateQuirk
 https://www.sfusd.edu/
