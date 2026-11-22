@@ -260,6 +260,7 @@
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerModelObject.h"
 #include "RenderLayoutState.h"
@@ -12802,10 +12803,21 @@ void Document::addActiveScopedViewTransition(ViewTransition& viewTransition)
     activeViewTransitionInvalidation.emplace(*scopeElement, CSSSelector::PseudoClass::ActiveViewTransition, true);
     activeViewTransitionTypeInvalidation.emplace(*scopeElement, CSSSelector::PseudoClass::ActiveViewTransitionType, Style::PseudoClassChangeInvalidation::AnyValue);
     m_activeScopedViewTransitions.append(viewTransition);
-    if (CheckedPtr renderer = scopeElement->renderer()) {
-        renderer->invalidateContentLogicalWidths();
-        renderer->setNeedsLayout();
-    }
+    invalidateRenderingForScopedViewTransition(*scopeElement);
+}
+
+// An active scoped view transition gives the scope layout containment
+// (ContainmentChecker), so caches derived from canContainFixedPositionObjects()
+// must be dirtied when one starts or ends.
+void Document::invalidateRenderingForScopedViewTransition(Element& scopeElement)
+{
+    CheckedPtr renderer = scopeElement.renderer();
+    if (!renderer)
+        return;
+    renderer->invalidateContentLogicalWidths();
+    renderer->setNeedsLayout();
+    if (CheckedPtr modelObject = dynamicDowncast<RenderLayerModelObject>(*renderer); modelObject && modelObject->hasLayer())
+        modelObject->layer()->setSelfAndDescendantsNeedPositionUpdate();
 }
 
 void Document::removeActiveScopedViewTransition(ViewTransition& viewTransition)
@@ -12820,12 +12832,8 @@ void Document::removeActiveScopedViewTransition(ViewTransition& viewTransition)
     m_activeScopedViewTransitions.removeFirstMatching([&](auto& entry) {
         return entry.ptr() == &viewTransition;
     });
-    if (scopeElement) {
-        if (CheckedPtr renderer = scopeElement->renderer()) {
-            renderer->invalidateContentLogicalWidths();
-            renderer->setNeedsLayout();
-        }
-    }
+    if (scopeElement)
+        invalidateRenderingForScopedViewTransition(*scopeElement);
 }
 
 ViewTransition* Document::viewTransitionHostedOn(const Element& element) const

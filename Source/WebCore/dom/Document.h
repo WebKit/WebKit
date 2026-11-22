@@ -1901,6 +1901,7 @@ public:
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
     void addActiveScopedViewTransition(ViewTransition&);
     void removeActiveScopedViewTransition(ViewTransition&);
+    void invalidateRenderingForScopedViewTransition(Element&);
     NODELETE ViewTransition* viewTransitionHostedOn(const Element&) const;
     void registerViewTransitionPseudoTreeHost(Element&);
     void unregisterViewTransitionPseudoTreeHost(Element&);
