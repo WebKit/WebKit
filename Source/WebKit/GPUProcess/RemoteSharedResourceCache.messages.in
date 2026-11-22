@@ -30,6 +30,10 @@
 messages -> RemoteSharedResourceCache {
     void ReleaseSerializedImageBuffer(WebKit::RemoteSerializedImageBufferIdentifier identifier)
     void ReleaseNativeImage(WebKit::RemoteNativeImageWriteReference reference)
+
+    # These are only sent when the thumbnail strip cache is turned on.
+    void CacheEncodedThumbnailStrip(WebCore::RenderingResourceIdentifier identifier, WebCore::IntSize tileSize, uint32_t tileCount, Vector<uint8_t> encodedData)
+    TakeThumbnailTile(WebCore::RenderingResourceIdentifier identifier, uint32_t tileIndex) -> (std::optional<WebCore::ShareableBitmap::Handle> handle) Synchronous
 }
 
 #endif
