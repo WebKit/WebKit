@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<title>CSS Containment Test: contents are painted during a content-visibility transition to hidden</title>
+<link rel="help" href="https://drafts.csswg.org/css-contain-2/#content-visibility-animation">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/8627">
+<link rel="match" href="content-visibility-transition-to-hidden-ref.html">
+<meta name="assert" content="While content-visibility transitions from visible to hidden, the value is visible, so the contents are not skipped.">
+<script src="/common/reftest-wait.js"></script>
+<style>
+.green {
+  width: 100px;
+  height: 100px;
+  background: green;
+}
+#target {
+  width: 100px;
+  height: 100px;
+  transition: content-visibility 1000s allow-discrete;
+}
+#target.hidden {
+  content-visibility: hidden;
+}
+details::details-content {
+  transition: content-visibility 1000s allow-discrete;
+}
+summary {
+  display: none;
+}
+</style>
+<p>Test passes if there are two green squares below.</p>
+<div id="target"><div class="green"></div></div>
+<details id="details" open><summary></summary><div class="green"></div></details>
+<script>
+onload = () => requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.getElementById("target").classList.add("hidden");
+  document.getElementById("details").open = false;
+  requestAnimationFrame(() => requestAnimationFrame(takeScreenshot));
+}));
+</script>
+</html>
