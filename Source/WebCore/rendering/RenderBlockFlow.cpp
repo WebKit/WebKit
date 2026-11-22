@@ -4907,8 +4907,9 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
     auto intrinsicLogicalWidths = const_cast<RenderBlockFlow&>(*this).ensureInlineLayout().computeIntrinsicWidthConstraints();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto* renderer = walker.current();
-        if (renderer->isOutOfFlowPositioned()) {
-            // Out-of-flow boxes take no part in this computation, so their own content widths are still to be computed.
+        if (renderer->isOutOfFlowPositioned() || renderer->isOutsideListMarker()) {
+            // Out-of-flow boxes and an outside list marker take no part in this computation, so their own content
+            // widths are still to be computed.
             continue;
         }
         renderer->clearContentLogicalWidthsInvalidation();

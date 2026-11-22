@@ -116,7 +116,6 @@
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderMathMLBlock.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInlineText.h"
@@ -414,7 +413,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
     if (CheckedPtr fileUpload = dynamicDowncast<RenderFileUploadControl>(*m_renderer))
         return fileUpload->buttonValue();
 
-    if (CheckedPtr markerInlineBox = m_renderer->parent(); is<RenderText>(*m_renderer) && markerInlineBox && markerInlineBox->style().isListMarkerStyle()) {
+    if (CheckedPtr markerInlineBox = m_renderer->parent(); is<RenderText>(*m_renderer) && markerInlineBox && markerInlineBox->isInlineBox() && markerInlineBox->style().isListMarkerStyle()) {
         if (mode.includeListMarkers == IncludeListMarkerText::Yes)
             return downcast<RenderText>(*m_renderer).text();
         return { };
@@ -1571,14 +1570,6 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
     if (CheckedPtr parent = renderText->parent()) {
         if (shouldExcludeTextRunsForPseudoElement(parent->style().pseudoElementType()))
-            return { };
-    }
-
-    for (CheckedPtr ancestor = renderText->parent(); ancestor && !ancestor->element(); ancestor = ancestor->parent()) {
-        // A marker that needs renderers for its content (a synthesized glyph, bidi text, or a `content`
-        // value) puts them in an anonymous inline-block inside the outside marker, and that anonymous
-        // style carries no pseudo type for the ::marker case above to catch. We do so here instead.
-        if (ancestor->isOutsideListMarker())
             return { };
     }
 
