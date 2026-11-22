@@ -973,6 +973,9 @@ protected:
     NODELETE StylePropertyMap* attributeStyleMap();
     void initializeAttributeStyleMap(Ref<StylePropertyMap>&&);
 
+    NODELETE Vector<QualifiedName>* dirtyPresentationalHintAttributes() const LIFETIME_BOUND;
+    Vector<QualifiedName>& ensureDirtyPresentationalHintAttributes() LIFETIME_BOUND;
+
     NODELETE FormAssociatedCustomElement& formAssociatedCustomElementUnsafe() const;
     void ensureFormAssociatedCustomElement();
 

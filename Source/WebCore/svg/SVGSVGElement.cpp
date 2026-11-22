@@ -242,7 +242,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::transformAttr && isOutermostSVGSVGElement()) {
         InstanceInvalidationGuard guard(*this);
         invalidateConcatenatedTransformCache();
-        setPresentationalHintStyleIsDirty();
+        invalidatePresentationalHintStyle();
         return;
     }
 
@@ -258,7 +258,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        setPresentationalHintStyleIsDirty();
+        invalidatePresentationalHintStyle();
 
         if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
             // FIXME: try to get rid of this custom handling of embedded SVG invalidation, maybe through abstraction.
@@ -615,7 +615,7 @@ Node::NeedsPostConnectionSteps SVGSVGElement::insertionSteps(InsertionType inser
     }
 
     if (!transform().isEmpty())
-        setPresentationalHintStyleIsDirty();
+        invalidatePresentationalHintStyle();
 
     return SVGGraphicsElement::insertionSteps(insertionType, parentOfInsertedTree);
 }
@@ -629,7 +629,7 @@ void SVGSVGElement::removingSteps(RemovalType removalType, ContainerNode& oldPar
     }
 
     if (!transform().isEmpty())
-        setPresentationalHintStyleIsDirty();
+        invalidatePresentationalHintStyle();
 
     SVGGraphicsElement::removingSteps(removalType, oldParentOfRemovedTree);
 }

@@ -322,7 +322,7 @@ UnadjustedStyle Resolver::unadjustedStyleForElement(Element& element, const Reso
 
     auto elementStyleRelations = commitRelationsToRenderStyle(style, element, collector.styleRelations());
 
-    applyMatchedProperties(state, collector.matchResult(), PropertyCascade::normalProperties());
+    applyMatchedProperties(state, collector.matchResult());
 
     return {
         .style = state.takeStyle(),
@@ -360,12 +360,14 @@ UnadjustedStyle Resolver::unadjustedStyleForCachedMatchResult(Element& element, 
     bool applyPartially = !cachedResult.changedProperties.ids.isEmpty();
 
     auto state = initializeStateAndStyle(element, context, applyPartially ? WTF::move(unadjustedStyle.style) : nullptr);
-    if (!applyPartially) {
+    if (applyPartially)
+        applyChangedProperties(state, protect(*unadjustedStyle.matchResult), WTF::move(cachedResult.changedProperties.ids));
+    else {
+        ASSERT(cachedResult.changedProperties.types == PropertyCascade::normalPropertyTypes());
         state.style()->copyPseudoElementBitsFrom(*unadjustedStyle.style);
         copyRelations(*state.style(), *unadjustedStyle.style);
+        applyMatchedProperties(state, protect(*unadjustedStyle.matchResult));
     }
-
-    applyMatchedProperties(state, protect(*unadjustedStyle.matchResult), WTF::move(cachedResult.changedProperties));
 
     return {
         .style = state.takeStyle(),
@@ -668,7 +670,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
 
     state.style()->setPseudoElementIdentifier(pseudoElementRequest.identifier());
 
-    applyMatchedProperties(state, collector.matchResult(), PropertyCascade::normalProperties());
+    applyMatchedProperties(state, collector.matchResult());
 
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
     adjuster.adjust(*state.style());
@@ -768,11 +770,13 @@ void Resolver::clearCachedDeclarationsAffectedByViewportUnits()
     protect(m_matchedDeclarationsCache)->clearEntriesAffectedByViewportUnits();
 }
 
-void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties)
+void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult)
 {
     auto& style = *state.style();
     auto& parentStyle = *state.parentStyle();
     Ref element = *state.element();
+
+    auto includedProperties = PropertyCascade::normalProperties();
 
     unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult, parentStyle.inheritedCustomProperties());
 
@@ -827,7 +831,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     if (hasUsableEntry && !cacheResult->entry.isUsableAfterHighPriorityProperties(style)) {
         // High-priority properties may affect resolution of other properties. Kick out the existing cache entry and try again.
         m_matchedDeclarationsCache.remove(cacheHash);
-        applyMatchedProperties(state, matchResult, PropertyCascade::normalProperties());
+        applyMatchedProperties(state, matchResult);
         return;
     }
 
@@ -838,6 +842,19 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 
     if (((cacheHash && !cacheResult) || (cacheResult && !cacheResult->inheritedEqual)) && MatchedDeclarationsCache::isCacheable(element, style, parentStyle))
         m_matchedDeclarationsCache.add(style, parentStyle, cacheHash, matchResult);
+}
+
+void Resolver::applyChangedProperties(State& state, const MatchResult& matchResult, Vector<CSSPropertyID, 4>&& changedProperties)
+{
+    ASSERT(!changedProperties.isEmpty());
+
+    Builder builder(*state.style(), builderContext(state), matchResult, PropertyCascade::IncludedProperties { .types = { }, .ids = WTF::move(changedProperties) });
+    ASSERT(!builder.state().isBuildingHighlightStyle());
+
+    builder.applyNonHighPriorityProperties();
+    builder.adjustAfterApplying();
+
+    setGlobalStateAfterApplyingProperties(builder.state());
 }
 
 void Resolver::setGlobalStateAfterApplyingProperties(const BuilderState& builderState)

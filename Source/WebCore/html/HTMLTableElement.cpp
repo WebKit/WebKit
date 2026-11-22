@@ -37,11 +37,13 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableRowsCollection.h"
 #include "HTMLTableSectionElement.h"
+#include "ImmutableStyleProperties.h"
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
 #include "NodeRareData.h"
 #include "RenderTable.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -457,17 +459,25 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
     }
 }
 
-static Ref<MutableStyleProperties> createBorderStyle(CSSValueID value)
+static Ref<ImmutableStyleProperties> createImmutableStyle(std::initializer_list<std::pair<CSSPropertyID, CSSValueID>> declarations)
 {
-    Ref style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyID::BorderTopStyle, value);
-    style->setProperty(CSSPropertyID::BorderBottomStyle, value);
-    style->setProperty(CSSPropertyID::BorderLeftStyle, value);
-    style->setProperty(CSSPropertyID::BorderRightStyle, value);
-    return style;
+    Vector<CSSProperty, 4> properties;
+    for (auto& [propertyID, valueID] : declarations)
+        properties.append(CSSProperty { propertyID, CSSKeywordValue::create(valueID) });
+    return ImmutableStyleProperties::create(borrow(properties)->span(), HTMLQuirksMode);
 }
 
-const MutableStyleProperties* HTMLTableElement::additionalPresentationalHintStyle() const
+static Ref<ImmutableStyleProperties> createBorderStyle(CSSValueID value)
+{
+    return createImmutableStyle({
+        { CSSPropertyID::BorderTopStyle, value },
+        { CSSPropertyID::BorderBottomStyle, value },
+        { CSSPropertyID::BorderLeftStyle, value },
+        { CSSPropertyID::BorderRightStyle, value },
+    });
+}
+
+const ImmutableStyleProperties* HTMLTableElement::additionalPresentationalHintStyle() const
 {
     if (m_frameAttr)
         return nullptr;
@@ -476,13 +486,13 @@ const MutableStyleProperties* HTMLTableElement::additionalPresentationalHintStyl
         // Setting the border to 'hidden' allows it to win over any border
         // set on the table's cells during border-conflict resolution.
         if (m_rulesAttr != TableRules::Unset) {
-            static NeverDestroyed<Ref<MutableStyleProperties>> solidBorderStyle = createBorderStyle(CSSValueID::Hidden);
+            static NeverDestroyed<Ref<ImmutableStyleProperties>> solidBorderStyle = createBorderStyle(CSSValueID::Hidden);
             return solidBorderStyle.get().ptr();
         }
         return nullptr;
     }
 
-    static NeverDestroyed<Ref<MutableStyleProperties>> outsetBorderStyle = createBorderStyle(CSSValueID::Outset);
+    static NeverDestroyed<Ref<ImmutableStyleProperties>> outsetBorderStyle = createBorderStyle(CSSValueID::Outset);
     return outsetBorderStyle.get().ptr();
 }
 
@@ -507,7 +517,7 @@ HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
     return CellBorders::None;
 }
 
-Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
+Ref<ImmutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
 {
     auto style = MutableStyleProperties::create();
 
@@ -544,62 +554,63 @@ Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
     if (m_padding)
         style->setProperty(CSSPropertyID::Padding, CSSPrimitiveValue::create(m_padding, CSSUnitType::Px));
 
-    return style;
+    return style->immutableCopy();
 }
 
-const MutableStyleProperties* HTMLTableElement::additionalCellStyle() const
+const ImmutableStyleProperties* HTMLTableElement::additionalCellStyle() const
 {
     if (!m_sharedCellStyle)
         m_sharedCellStyle = createSharedCellStyle();
     return m_sharedCellStyle.get();
 }
 
-static Ref<MutableStyleProperties> makeGroupBorderStyle(bool rows)
+static Ref<ImmutableStyleProperties> makeGroupBorderStyle(bool rows)
 {
-    auto style = MutableStyleProperties::create();
     if (rows) {
-        style->setProperty(CSSPropertyID::BorderTopWidth, CSSValueID::Thin);
-        style->setProperty(CSSPropertyID::BorderBottomWidth, CSSValueID::Thin);
-        style->setProperty(CSSPropertyID::BorderTopStyle, CSSValueID::Solid);
-        style->setProperty(CSSPropertyID::BorderBottomStyle, CSSValueID::Solid);
-    } else {
-        style->setProperty(CSSPropertyID::BorderLeftWidth, CSSValueID::Thin);
-        style->setProperty(CSSPropertyID::BorderRightWidth, CSSValueID::Thin);
-        style->setProperty(CSSPropertyID::BorderLeftStyle, CSSValueID::Solid);
-        style->setProperty(CSSPropertyID::BorderRightStyle, CSSValueID::Solid);
+        return createImmutableStyle({
+            { CSSPropertyID::BorderTopWidth, CSSValueID::Thin },
+            { CSSPropertyID::BorderBottomWidth, CSSValueID::Thin },
+            { CSSPropertyID::BorderTopStyle, CSSValueID::Solid },
+            { CSSPropertyID::BorderBottomStyle, CSSValueID::Solid },
+        });
     }
-    return style;
+    return createImmutableStyle({
+        { CSSPropertyID::BorderLeftWidth, CSSValueID::Thin },
+        { CSSPropertyID::BorderRightWidth, CSSValueID::Thin },
+        { CSSPropertyID::BorderLeftStyle, CSSValueID::Solid },
+        { CSSPropertyID::BorderRightStyle, CSSValueID::Solid },
+    });
 }
 
-const MutableStyleProperties* HTMLTableElement::additionalGroupStyle(bool rows) const
+const ImmutableStyleProperties* HTMLTableElement::additionalGroupStyle(bool rows) const
 {
     if (m_rulesAttr != TableRules::Groups)
         return nullptr;
     if (rows) {
-        static NeverDestroyed<Ref<MutableStyleProperties>> rowBorderStyle = makeGroupBorderStyle(true);
+        static NeverDestroyed<Ref<ImmutableStyleProperties>> rowBorderStyle = makeGroupBorderStyle(true);
         return rowBorderStyle->ptr();
     }
-    static NeverDestroyed<Ref<MutableStyleProperties>> columnBorderStyle = makeGroupBorderStyle(false);
+    static NeverDestroyed<Ref<ImmutableStyleProperties>> columnBorderStyle = makeGroupBorderStyle(false);
     return columnBorderStyle->ptr();
 }
 
-static Ref<MutableStyleProperties> makeRowsRuleStyle()
+static Ref<ImmutableStyleProperties> makeRowsRuleStyle()
 {
     // https://html.spec.whatwg.org/multipage/rendering.html#tables-2
     // table[rules=rows i] > tr { border-block-width: 1px; border-block-style: solid; }
-    auto style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyID::BorderBlockStartWidth, CSSValueID::Thin);
-    style->setProperty(CSSPropertyID::BorderBlockEndWidth, CSSValueID::Thin);
-    style->setProperty(CSSPropertyID::BorderBlockStartStyle, CSSValueID::Solid);
-    style->setProperty(CSSPropertyID::BorderBlockEndStyle, CSSValueID::Solid);
-    return style;
+    return createImmutableStyle({
+        { CSSPropertyID::BorderBlockStartWidth, CSSValueID::Thin },
+        { CSSPropertyID::BorderBlockEndWidth, CSSValueID::Thin },
+        { CSSPropertyID::BorderBlockStartStyle, CSSValueID::Solid },
+        { CSSPropertyID::BorderBlockEndStyle, CSSValueID::Solid },
+    });
 }
 
-const MutableStyleProperties* HTMLTableElement::additionalRowStyle() const
+const ImmutableStyleProperties* HTMLTableElement::additionalRowStyle() const
 {
     if (m_rulesAttr != TableRules::Rows)
         return nullptr;
-    static NeverDestroyed<Ref<MutableStyleProperties>> rowsRuleStyle = makeRowsRuleStyle();
+    static NeverDestroyed<Ref<ImmutableStyleProperties>> rowsRuleStyle = makeRowsRuleStyle();
     return rowsRuleStyle->ptr();
 }
 

@@ -59,7 +59,7 @@ public:
     void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
-    const ImmutableStyleProperties* presentationalHintStyle() const;
+    const StyleProperties* presentationalHintStyle() const;
 
     unsigned length() const;
     bool isEmpty() const { return !length(); }
@@ -184,7 +184,7 @@ public:
 
     static constexpr ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
 
-    mutable RefPtr<ImmutableStyleProperties> m_presentationalHintStyle;
+    mutable RefPtr<StyleProperties> m_presentationalHintStyle;
     typedef Vector<Attribute, 4> AttributeVector;
     AttributeVector m_attributeVector;
 };
@@ -210,7 +210,7 @@ inline const Attribute* ElementData::attributeBase() const
     return uncheckedDowncast<ShareableElementData>(*this).m_attributeArray;
 }
 
-inline const ImmutableStyleProperties* ElementData::presentationalHintStyle() const
+inline const StyleProperties* ElementData::presentationalHintStyle() const
 {
     if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this))
         return uniqueData->m_presentationalHintStyle.get();

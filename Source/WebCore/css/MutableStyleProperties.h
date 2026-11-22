@@ -55,8 +55,8 @@ public:
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned index) const;
 
-    Iterator<MutableStyleProperties> begin() const LIFETIME_BOUND { return { *this }; }
-    static constexpr std::nullptr_t end() { return nullptr; }
+    Iterator<MutableStyleProperties> begin() const LIFETIME_BOUND { return { *this, 0 }; }
+    Iterator<MutableStyleProperties> end() const LIFETIME_BOUND { return { *this, propertyCount() }; }
     unsigned size() const { return propertyCount(); }
 
     NODELETE CSSStyleProperties* cssStyleProperties();

@@ -209,6 +209,8 @@ static ASCIILiteral stringForRareDataUseType(NodeRareData::UseType useType)
         return "UserInfo"_s;
     case NodeRareData::UseType::InvokedPopover:
         return "InvokedPopover"_s;
+    case NodeRareData::UseType::DirtyPresentationalHintAttributes:
+        return "DirtyPresentationalHintAttributes"_s;
     }
     return { };
 }

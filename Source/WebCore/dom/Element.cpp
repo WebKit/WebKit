@@ -348,6 +348,16 @@ inline ElementRareData& Element::ensureElementRareData()
     return uncheckedDowncast<ElementRareData>(ensureRareData());
 }
 
+Vector<QualifiedName>* Element::dirtyPresentationalHintAttributes() const
+{
+    return hasRareData() ? &elementRareData()->dirtyPresentationalHintAttributes() : nullptr;
+}
+
+Vector<QualifiedName>& Element::ensureDirtyPresentationalHintAttributes()
+{
+    return ensureElementRareData().dirtyPresentationalHintAttributes();
+}
+
 void Element::setTabIndexExplicitly(std::optional<int> tabIndex)
 {
     if (!tabIndex) {

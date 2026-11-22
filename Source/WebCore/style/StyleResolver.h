@@ -172,7 +172,8 @@ private:
     State initializeStateAndStyle(const Element&, const ResolutionContext&, std::unique_ptr<Style::ComputedStyle>&& initialStyle = { });
     NODELETE BuilderContext builderContext(State&) const;
 
-    void applyMatchedProperties(State&, const MatchResult&, PropertyCascade::IncludedProperties&&);
+    void applyMatchedProperties(State&, const MatchResult&);
+    void applyChangedProperties(State&, const MatchResult&, Vector<CSSPropertyID, 4>&& changedProperties);
     void setGlobalStateAfterApplyingProperties(const BuilderState&);
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;

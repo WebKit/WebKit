@@ -59,6 +59,16 @@ inline unsigned StyleProperties::propertyCount() const
     return uncheckedDowncast<ImmutableStyleProperties>(*this).propertyCount();
 }
 
+inline StyleProperties::Iterator<StyleProperties> StyleProperties::begin() const LIFETIME_BOUND
+{
+    return { *this, 0 };
+}
+
+inline StyleProperties::Iterator<StyleProperties> StyleProperties::end() const LIFETIME_BOUND
+{
+    return { *this, propertyCount() };
+}
+
 inline void StyleProperties::deref() const
 {
     if (!derefBase())
