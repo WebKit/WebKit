@@ -12,8 +12,8 @@ function addCrossOriginIFrame() {
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptionConfig");
 
-    // The interception commands are declared `targetTypes: ["page"]`, so they are not exposed on
-    // the web-page target's NetworkAgent. Invoke them directly against the backend connection.
+    // Invoke the commands directly against the backend connection, which hosts the Network domain
+    // under Site Isolation.
     function invokeInterceptionCommand(name, parameters) {
         return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters);
     }
@@ -30,11 +30,12 @@ function test() {
         return result.value;
     }
 
+    // The first frame target to appear can be the iframe's initial document in the parent's process,
+    // which a provisional target in the cross-origin process later replaces. Wait for the committed
+    // target of the cross-origin document so the later cases do not talk to a replaced target.
     async function addIFrameAndGetTarget() {
-        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
         InspectorTest.evaluateInPage("addCrossOriginIFrame()");
-        let event = await targetAddedPromise;
-        return event.data.target;
+        return waitForFrameTargetForURLContaining("iframe-with-fetch.html");
     }
 
     // Captured by the first test case and reused, so the later cases do not race the
@@ -102,11 +103,13 @@ function test() {
         }
     });
 
-    // Like the Network agent without Site Isolation, a configuration command that would change
-    // nothing returns an error. The logged messages are the ones the commands return.
+    // Like the Network agent without Site Isolation, adding a pattern that is configured or removing
+    // one that is not returns an error; the logged messages are the ones the commands return. Setting
+    // the current enabled state again is not an error under Site Isolation: the frontend enables
+    // interception on the backend target once the first frame target appears.
     suite.addTestCase({
         name: "SiteIsolation.Network.InterceptionConfig.CommandErrors",
-        description: "A duplicate addInterception, a missing removeInterception and a redundant setInterceptionEnabled should return errors and leave the configuration unchanged.",
+        description: "A duplicate addInterception and a missing removeInterception should return errors, a redundant setInterceptionEnabled should succeed, and none should change the configuration.",
         async test() {
             let frameTarget = crossOriginFrameTarget;
             InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
@@ -118,7 +121,8 @@ function test() {
             await InspectorTest.expectException(() => invokeInterceptionCommand("removeInterception", {url: otherInterceptedURL, stage: "response", caseSensitive: true, isRegex: false}));
 
             InspectorTest.log("Enabling interception while it is enabled...");
-            await InspectorTest.expectException(() => invokeInterceptionCommand("setInterceptionEnabled", {enabled: true}));
+            await invokeInterceptionCommand("setInterceptionEnabled", {enabled: true});
+            InspectorTest.pass("Setting the current enabled state again should succeed.");
 
             let configured = await isInterceptionConfiguredInTarget(frameTarget, interceptedURL);
             InspectorTest.expectTrue(configured, "The cross-origin iframe's process should still match the configured pattern.");

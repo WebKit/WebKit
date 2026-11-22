@@ -1,0 +1,28 @@
+Test that a request or response paused by Web Inspector interception in a cross-origin iframe's process is no longer paused once its load is aborted, and that later paused loads still resolve.
+
+
+== Running test suite: SiteIsolation.Network.InterceptFailedLoad
+-- Running test case: SiteIsolation.Network.InterceptFailedLoad.CrossOriginIFrameTargetExists
+PASS: Added target should be a FrameTarget, proving a separate-process OOPIF.
+PASS: Network should be enabled on the backend target.
+
+-- Running test case: SiteIsolation.Network.InterceptFailedLoad.AbortPausedRequest
+PASS: Network.requestIntercepted should be dispatched for the cross-origin iframe's fetch.
+Aborting the paused fetch...
+PASS: The aborted load should fail in the Network domain.
+PASS: The fetch should reject with an AbortError.
+Network.interceptContinue failed: Missing pending intercept request for given requestId
+
+-- Running test case: SiteIsolation.Network.InterceptFailedLoad.AbortPausedResponse
+PASS: Network.responseIntercepted should be dispatched for the cross-origin iframe's fetch.
+Aborting the paused fetch...
+PASS: The aborted load should fail in the Network domain.
+PASS: The fetch should reject with an AbortError.
+Network.interceptContinue failed: Missing pending intercept response for given requestId
+
+-- Running test case: SiteIsolation.Network.InterceptFailedLoad.LaterLoadAfterAbort
+PASS: Network.responseIntercepted should be dispatched for the cross-origin iframe's fetch.
+Continuing the paused response...
+PASS: A later paused response should load after Network.interceptContinue.
+Disabling and enabling the Network domain...
+

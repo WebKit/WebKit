@@ -22,8 +22,7 @@ Removing a pattern that is not configured...
 PASS: Should produce an exception.
 Error: Missing intercept for given url, given isRegex, and given stage
 Enabling interception while it is enabled...
-PASS: Should produce an exception.
-Error: Interception already enabled
+PASS: Setting the current enabled state again should succeed.
 PASS: The cross-origin iframe's process should still match the configured pattern.
 PASS: The cross-origin iframe's process should still not match the removed pattern.
 

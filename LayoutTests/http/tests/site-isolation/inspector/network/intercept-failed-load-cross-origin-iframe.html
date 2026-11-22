@@ -1,0 +1,171 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+let fetchCount = 0;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/intercept-abortable-fetch-iframe.html`;
+    document.body.appendChild(iframe);
+}
+
+function fetchInIFrame() {
+    iframe.contentWindow.postMessage({type: "Fetch", url: "intercepted-data.txt?failed-load-" + (++fetchCount)}, "*");
+}
+
+function abortFetchInIFrame() {
+    iframe.contentWindow.postMessage({type: "Abort"}, "*");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "Ready")
+        TestPage.dispatchEventToFrontend("IFrameReady");
+    else if (event.data.type === "FetchResult")
+        TestPage.dispatchEventToFrontend("FetchResult", event.data);
+});
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptFailedLoad");
+
+    const urlPattern = "intercepted-data\\.txt";
+    const requestInterceptionParameters = {url: urlPattern, stage: "request", isRegex: true};
+    const responseInterceptionParameters = {url: urlPattern, stage: "response", isRegex: true};
+
+    // Leave every intercepted request and response paused instead of letting the frontend resolve
+    // it, so each test case decides what happens to the load.
+    let pausedRequestResolver = null;
+    WI.networkManager.requestIntercepted = function(target, requestId, request) {
+        pausedRequestResolver?.(requestId);
+        pausedRequestResolver = null;
+    };
+
+    let pausedResponseResolver = null;
+    WI.networkManager.responseIntercepted = function(target, requestId, response) {
+        pausedResponseResolver?.(requestId);
+        pausedResponseResolver = null;
+    };
+
+    let failedLoadResolvers = new Map;
+    let originalResourceRequestDidFailLoading = WI.NetworkManager.prototype.resourceRequestDidFailLoading;
+    WI.networkManager.resourceRequestDidFailLoading = function(requestIdentifier, canceled, timestamp, errorText) {
+        let resolver = failedLoadResolvers.get(requestIdentifier);
+        if (resolver) {
+            failedLoadResolvers.delete(requestIdentifier);
+            resolver();
+        }
+        return originalResourceRequestDidFailLoading.apply(this, arguments);
+    };
+
+    // Invoke the commands directly against the backend connection, which hosts the Network domain
+    // under Site Isolation.
+    function invokeNetworkCommand(name, parameters) {
+        return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters || {});
+    }
+
+    // Start a fetch in the cross-origin iframe and wait until it is paused at the stage. Returns the
+    // paused load's id and a promise for the fetch result.
+    async function fetchAndAwaitPause(stage) {
+        let fetchResultPromise = InspectorTest.awaitEvent("FetchResult").then((event) => event.data);
+        let pausedPromise = new Promise((resolve) => {
+            if (stage === "request")
+                pausedRequestResolver = resolve;
+            else
+                pausedResponseResolver = resolve;
+        });
+
+        InspectorTest.evaluateInPage("fetchInIFrame()");
+        let requestId = await pausedPromise;
+        let eventName = stage === "request" ? "requestIntercepted" : "responseIntercepted";
+        InspectorTest.pass(`Network.${eventName} should be dispatched for the cross-origin iframe's fetch.`);
+        return {requestId, fetchResultPromise};
+    }
+
+    async function abortPausedLoad(stage, interceptionParameters) {
+        await invokeNetworkCommand("setInterceptionEnabled", {enabled: true});
+        await invokeNetworkCommand("addInterception", interceptionParameters);
+
+        let {requestId, fetchResultPromise} = await fetchAndAwaitPause(stage);
+        let failedLoadPromise = new Promise((resolve) => { failedLoadResolvers.set(requestId, resolve); });
+
+        InspectorTest.log("Aborting the paused fetch...");
+        InspectorTest.evaluateInPage("abortFetchInIFrame()");
+
+        await failedLoadPromise;
+        InspectorTest.pass("The aborted load should fail in the Network domain.");
+
+        let result = await fetchResultPromise;
+        InspectorTest.expectEqual(result.error, "AbortError", "The fetch should reject with an AbortError.");
+
+        try {
+            await invokeNetworkCommand("interceptContinue", {requestId, stage});
+            InspectorTest.fail("Network.interceptContinue should fail for a load that was aborted.");
+        } catch (e) {
+            InspectorTest.log(`Network.interceptContinue failed: ${e.message || String(e)}`);
+        }
+
+        await invokeNetworkCommand("removeInterception", interceptionParameters);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptFailedLoad.CrossOriginIFrameTargetExists",
+        description: "A separate-process cross-origin iframe should exist before interception is configured.",
+        async test() {
+            let [targetAddedEvent] = await Promise.all([
+                WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded),
+                InspectorTest.awaitEvent("IFrameReady"),
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()"),
+            ]);
+            InspectorTest.expectThat(targetAddedEvent.data.target instanceof WI.FrameTarget, "Added target should be a FrameTarget, proving a separate-process OOPIF.");
+            InspectorTest.expectThat(WI.networkManager.networkTargetForCommand(WI.mainTarget, "Network.interceptContinue") === WI.backendTarget, "Network should be enabled on the backend target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptFailedLoad.AbortPausedRequest",
+        description: "A request paused in the cross-origin iframe's process whose load is aborted should no longer be paused.",
+        async test() {
+            await abortPausedLoad("request", requestInterceptionParameters);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptFailedLoad.AbortPausedResponse",
+        description: "A response paused in the cross-origin iframe's process whose load is aborted should no longer be paused.",
+        async test() {
+            await abortPausedLoad("response", responseInterceptionParameters);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptFailedLoad.LaterLoadAfterAbort",
+        description: "After aborted paused loads, a later paused response should still load, and disabling the Network domain should succeed.",
+        async test() {
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: false});
+            await invokeNetworkCommand("setInterceptionEnabled", {enabled: true});
+            await invokeNetworkCommand("addInterception", responseInterceptionParameters);
+
+            let {requestId, fetchResultPromise} = await fetchAndAwaitPause("response");
+
+            InspectorTest.log("Continuing the paused response...");
+            await invokeNetworkCommand("interceptContinue", {requestId, stage: "response"});
+
+            let result = await fetchResultPromise;
+            InspectorTest.expectThat(result.status === 200 && result.text === "original content", "A later paused response should load after Network.interceptContinue.");
+
+            await invokeNetworkCommand("removeInterception", responseInterceptionParameters);
+
+            InspectorTest.log("Disabling and enabling the Network domain...");
+            await invokeNetworkCommand("disable");
+            await invokeNetworkCommand("enable");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a request or response paused by Web Inspector interception in a cross-origin iframe's process is no longer paused once its load is aborted, and that later paused loads still resolve.</p>
+</body>

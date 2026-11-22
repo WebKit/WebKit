@@ -32,6 +32,7 @@
 #include "config.h"
 #include "FrameNetworkAgentProxy.h"
 
+#include "NetworkInterceptionSink.h"
 #include "ProxyingNetworkAgentMessages.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -50,6 +51,7 @@
 #include <WebCore/InstrumentingAgents.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
@@ -391,6 +393,8 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
 
 void FrameNetworkAgentProxy::didFailLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const ResourceError& error)
 {
+    protect(m_page)->networkInterceptionSink().removeInspectorPause(resourceID);
+
     if (m_hiddenRequestIdentifiers.remove(resourceID))
         return;
 
@@ -584,30 +588,85 @@ void FrameNetworkAgentProxy::didReceiveWebSocketFrameError(WebSocketChannelIdent
         page->identifier());
 }
 
-bool FrameNetworkAgentProxy::willIntercept(const ResourceRequest&)
+// Under Site Isolation, Web Inspector's interception patterns live in the page's interception
+// authority in the UI process (WebPageProxy::setNetworkInterceptPatterns), which pushes them to
+// every process hosting a frame of the page. A load in this process that an Inspector-owned
+// pattern matches pauses in the page's NetworkInterceptionSink and is reported to
+// ProxyingNetworkAgent, which resolves it from the Network.intercept* commands.
+
+bool FrameNetworkAgentProxy::willIntercept(const ResourceRequest& request)
 {
-    return false;
+    if (!m_enabled)
+        return false;
+
+    Ref page = m_page;
+
+    auto& sink = page->networkInterceptionSink();
+    return sink.matches(request.url(), NetworkInterceptionPhase::BeforeRequestSent, NetworkInterceptOwner::Inspector)
+        || sink.matches(request.url(), NetworkInterceptionPhase::ResponseStarted, NetworkInterceptOwner::Inspector);
 }
 
-bool FrameNetworkAgentProxy::shouldInterceptRequest(const ResourceLoader&)
+bool FrameNetworkAgentProxy::shouldInterceptRequest(const ResourceLoader& loader)
 {
-    return false;
+    if (!m_enabled)
+        return false;
+
+    Ref page = m_page;
+
+    if (loader.options().serviceWorkerRegistrationIdentifier)
+        return false;
+
+    return page->networkInterceptionSink().matches(loader.url(), NetworkInterceptionPhase::BeforeRequestSent, NetworkInterceptOwner::Inspector);
 }
 
-bool FrameNetworkAgentProxy::shouldInterceptResponse(const ResourceResponse&)
+bool FrameNetworkAgentProxy::shouldInterceptResponse(const ResourceResponse& response)
 {
-    return false;
+    if (!m_enabled)
+        return false;
+
+    Ref page = m_page;
+
+    return page->networkInterceptionSink().matches(response.url(), NetworkInterceptionPhase::ResponseStarted, NetworkInterceptOwner::Inspector);
 }
 
-// interceptRequest and interceptResponse are unreachable while the predicates above decline; both resume the load rather than dropping the handler.
 void FrameNetworkAgentProxy::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
-    handler(loader.request());
+    auto identifier = loader.identifier();
+    if (!identifier) {
+        handler(loader.request());
+        return;
+    }
+
+    Ref page = m_page;
+
+    // Keep the request to report before the continuation moves into the sink.
+    ResourceRequest request = loader.request();
+    // The sink takes the continuation only if it pauses the load. A load that is already paused
+    // goes on, like in the single-process agent.
+    if (!page->networkInterceptionSink().pauseRequestForInspector(loader, WTF::move(handler))) {
+        handler(request);
+        return;
+    }
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::RequestIntercepted(qualifyResourceID(*identifier), request),
+        page->identifier());
 }
 
-void FrameNetworkAgentProxy::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
+void FrameNetworkAgentProxy::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
 {
-    handler(response, nullptr);
+    Ref page = m_page;
+
+    // The sink takes the continuation only if it pauses the response.
+    if (!page->networkInterceptionSink().pauseResponseForInspector(identifier, response, WTF::move(handler))) {
+        ASSERT_NOT_REACHED();
+        handler(response, nullptr);
+        return;
+    }
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::ResponseIntercepted(qualifyResourceID(identifier), response),
+        page->identifier());
 }
 
 } // namespace WebKit

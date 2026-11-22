@@ -11,15 +11,15 @@ function addCrossOriginIFrame() {
 }
 
 function test() {
-    // Configuring interception is proxied across processes (see
-    // interception-config-cross-origin-iframe.html), but no load is paused yet, so the verbs that
-    // resume a paused load must fail explicitly with the legacy "missing pending intercept" errors
-    // instead of silently succeeding.
+    // No load is paused for this requestId, so the verbs that resume a paused load must fail with
+    // the same "missing pending intercept" errors as the single-process agent instead of silently
+    // succeeding. Loads that are paused are covered by intercept-request-cross-origin-iframe.html
+    // and intercept-response-cross-origin-iframe.html.
     const missingRequestError = "Missing pending intercept request for given requestId";
     const missingResponseError = "Missing pending intercept response for given requestId";
 
-    // The interception commands are declared `targetTypes: ["page"]`, so they are not exposed on
-    // the web-page target's NetworkAgent. Invoke them directly against the backend connection.
+    // Invoke the commands directly against the backend connection, which hosts the Network domain
+    // under Site Isolation.
     function invokeInterceptionCommand(name, parameters) {
         return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters);
     }
@@ -43,10 +43,10 @@ function test() {
         return event.data.target;
     }
 
-    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptionNotSupported");
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptionUnknownRequestId");
 
     suite.addTestCase({
-        name: "SiteIsolation.Network.InterceptionNotSupported.CrossOriginIFrameTargetExists",
+        name: "SiteIsolation.Network.InterceptionUnknownRequestId.CrossOriginIFrameTargetExists",
         description: "A genuine separate-process cross-origin iframe target must exist before driving the interception commands.",
         async test() {
             let target = await addIFrameAndGetTarget();
@@ -56,8 +56,8 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "SiteIsolation.Network.InterceptionNotSupported.PausedRequestCommands",
-        description: "The commands that act on a paused intercepted request should fail under Site Isolation.",
+        name: "SiteIsolation.Network.InterceptionUnknownRequestId.PausedRequestCommands",
+        description: "The commands that act on a paused intercepted request should fail for a requestId that is not paused.",
         async test() {
             const requestId = "request-1.1";
             await expectRejection("interceptContinue", {requestId, stage: "request"}, missingRequestError);
@@ -73,5 +73,5 @@ function test() {
 </script>
 
 <body onload="runTest()">
-<p>Test that the Network interception commands fail explicitly instead of silently succeeding under Site Isolation.</p>
+<p>Test that the Network interception commands that resolve a paused load fail for a requestId that is not paused under Site Isolation.</p>
 </body>

@@ -48,6 +48,8 @@ class SharedBuffer;
 class WebSocketChannel;
 struct WebSocketFrame;
 using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
+
+inline constexpr ASCIILiteral errorDomainInspectorNetworkAgent { "InspectorNetworkAgent"_s };
 }
 
 namespace Inspector {
