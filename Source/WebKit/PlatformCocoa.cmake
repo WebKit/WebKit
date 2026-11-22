@@ -849,6 +849,7 @@ set(WebKitSwift_SOURCES
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentRequest.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentResponse.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentRawRequestValidator.swift
+    ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentSystemPresentmentController.swift
     ${_wks_dir}/LinearMediaKit/LinearMediaPlayer.swift
     ${_wks_dir}/LinearMediaKit/LinearMediaTypes.swift
     ${_wks_dir}/MarketplaceKit/WKMarketplaceKit.swift

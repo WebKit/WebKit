@@ -28,6 +28,7 @@ NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm @nonARC
 
 NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkDataTaskCocoa.mm @nonARC
+NetworkProcess/cocoa/NetworkDigitalCredentialsPresentment.mm @nonARC
 NetworkProcess/cocoa/NetworkProcessCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkSessionCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkStorageSessionCocoa.mm @nonARC

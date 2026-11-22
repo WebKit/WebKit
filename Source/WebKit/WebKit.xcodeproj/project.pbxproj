@@ -1526,6 +1526,7 @@
 		579F1BFC23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */; };
 		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
+		D9B238542620272298DF52E7 /* NetworkDigitalCredentialsPresentment.h in Headers */ = {isa = PBXBuildFile; fileRef = D54AA04FCAC2BB6BE670013E /* NetworkDigitalCredentialsPresentment.h */; };
 		0F705D09EF998FC186CA19AB /* DigitalCredentialsPresentment.h in Headers */ = {isa = PBXBuildFile; fileRef = A10B52D125BBDAC46B45DB39 /* DigitalCredentialsPresentment.h */; };
 		57B826412304EB3E00B72EB0 /* NearFieldSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826402304EB3E00B72EB0 /* NearFieldSPI.h */; };
 		57B826442304F14000B72EB0 /* NearFieldSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826422304F14000B72EB0 /* NearFieldSoftLink.h */; };
@@ -2755,6 +2756,7 @@
 		F4D59BFC2DCBDC9F004492FB /* WKIdentityDocumentPresentmentMobileDocumentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E08FDE2D84B55600322226 /* WKIdentityDocumentPresentmentMobileDocumentRequest.h */; };
 		F4D59BFD2DCBDC9F004492FB /* WKISO18013Request.h in Headers */ = {isa = PBXBuildFile; fileRef = E88885662DC914C400C572B8 /* WKISO18013Request.h */; };
 		F4D59BFE2DCBDC9F004492FB /* WKIdentityDocumentRawRequestValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F94ADE2D91B2A80087FE6F /* WKIdentityDocumentRawRequestValidator.h */; };
+		3912F48B27DFD5AE3D08C6C3 /* WKIdentityDocumentSystemPresentmentController.h in Headers */ = {isa = PBXBuildFile; fileRef = E27C2A13EFE6F1DDAB2A1381 /* WKIdentityDocumentSystemPresentmentController.h */; };
 		F4D59BFF2DCBDC9F004492FB /* WKIdentityDocumentPresentmentError.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EE79472D9D92A500628E3B /* WKIdentityDocumentPresentmentError.h */; };
 		F4D59C002DCBDC9F004492FB /* WKIdentityDocumentPresentmentController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E07AC52D84701600322226 /* WKIdentityDocumentPresentmentController.h */; };
 		F4D59C012DCBDC9F004492FB /* WKIdentityDocumentPresentmentRawRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E090962D88A66F00322226 /* WKIdentityDocumentPresentmentRawRequest.h */; };
@@ -2763,6 +2765,7 @@
 		F4D59C042DCBDC9F004492FB /* WKIdentityDocumentPresentmentDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E090942D889CB800322226 /* WKIdentityDocumentPresentmentDelegate.h */; };
 		F4D59C122DCC0292004492FB /* WKIdentityDocumentPresentmentError.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07B2E4182DC1890E00A0155E /* WKIdentityDocumentPresentmentError.mm */; };
 		F4D59C192DCD2F60004492FB /* WKIdentityDocumentRawRequestValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D59C182DCD2F60004492FB /* WKIdentityDocumentRawRequestValidator.swift */; };
+		7FCF611F62DFE441CB9DCF97 /* WKIdentityDocumentSystemPresentmentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C427CA7431F1D6A8EF8C70A3 /* WKIdentityDocumentSystemPresentmentController.swift */; };
 		F4D59C1B2DCD30FE004492FB /* WKIdentityDocumentPresentmentMobileDocumentRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D59C1A2DCD30FE004492FB /* WKIdentityDocumentPresentmentMobileDocumentRequest.swift */; };
 		F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */; };
 		F4D5F51F206087A10038BBA8 /* WKQuickboardViewControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D5F51B206087A10038BBA8 /* WKQuickboardViewControllerDelegate.h */; };
@@ -2807,6 +2810,7 @@
 		F4F7A4042E22F99C0029BCF2 /* WKUIScrollEdgeEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F7A4022E22F99C0029BCF2 /* WKUIScrollEdgeEffect.h */; };
 		F4F94AD92D8E05DB0087FE6F /* DigitalCredentialsRequestValidatorBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F94AD82D8E05DB0087FE6F /* DigitalCredentialsRequestValidatorBridge.h */; };
 		F4F94AE02D91B2A80087FE6F /* WKIdentityDocumentRawRequestValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F94ADE2D91B2A80087FE6F /* WKIdentityDocumentRawRequestValidator.h */; };
+		78C7AC8411AA31D6D47B576B /* WKIdentityDocumentSystemPresentmentController.h in Headers */ = {isa = PBXBuildFile; fileRef = E27C2A13EFE6F1DDAB2A1381 /* WKIdentityDocumentSystemPresentmentController.h */; };
 		F4FE87B72E2F25030065A3F5 /* _WKTextExtractionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F4FE87B62E2F25030065A3F5 /* _WKTextExtractionInternal.h */; };
 		F4FE87B82E2F25030065A3F5 /* _WKTextExtraction.h in Headers */ = {isa = PBXBuildFile; fileRef = F4FE87B42E2F25030065A3F5 /* _WKTextExtraction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3301EE8BFCE435D21C69C6F /* _WKViewportFitEdges.swift in Sources */ = {isa = PBXBuildFile; fileRef = C964F5FE36A6586549C122E4 /* _WKViewportFitEdges.swift */; };
@@ -3454,6 +3458,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AC22174265628F674803F55F /* NetworkDigitalCredentialsPresentment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDigitalCredentialsPresentment.mm; sourceTree = "<group>"; };
+		D54AA04FCAC2BB6BE670013E /* NetworkDigitalCredentialsPresentment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkDigitalCredentialsPresentment.h; sourceTree = "<group>"; };
+		C427CA7431F1D6A8EF8C70A3 /* WKIdentityDocumentSystemPresentmentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKIdentityDocumentSystemPresentmentController.swift; sourceTree = "<group>"; };
+		E27C2A13EFE6F1DDAB2A1381 /* WKIdentityDocumentSystemPresentmentController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKIdentityDocumentSystemPresentmentController.h; sourceTree = "<group>"; };
 		D7FECB1B1877C086A5A1AA74 /* DigitalCredentialsPresentment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DigitalCredentialsPresentment.mm; sourceTree = "<group>"; };
 		A10B52D125BBDAC46B45DB39 /* DigitalCredentialsPresentment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsPresentment.h; sourceTree = "<group>"; };
 		5FB49B9D646A0CCC11FB4739 /* WKDocumentPictureInPictureWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDocumentPictureInPictureWindowController.mm; sourceTree = "<group>"; };
@@ -15521,6 +15529,8 @@
 				5315876B2076B713004BF9F3 /* NetworkActivityTrackerCocoa.mm */,
 				5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */,
 				5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */,
+				D54AA04FCAC2BB6BE670013E /* NetworkDigitalCredentialsPresentment.h */,
+				AC22174265628F674803F55F /* NetworkDigitalCredentialsPresentment.mm */,
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
 				532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */,
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
@@ -18132,6 +18142,8 @@
 				F46C342E2DCD367600B476F8 /* WKIdentityDocumentPresentmentResponse.swift */,
 				F4F94ADE2D91B2A80087FE6F /* WKIdentityDocumentRawRequestValidator.h */,
 				F4D59C182DCD2F60004492FB /* WKIdentityDocumentRawRequestValidator.swift */,
+				E27C2A13EFE6F1DDAB2A1381 /* WKIdentityDocumentSystemPresentmentController.h */,
+				C427CA7431F1D6A8EF8C70A3 /* WKIdentityDocumentSystemPresentmentController.swift */,
 				E88885662DC914C400C572B8 /* WKISO18013Request.h */,
 			);
 			path = IdentityDocumentServices;
@@ -19000,6 +19012,7 @@
 				5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */,
 				53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */,
 				532159561DBAE72D0054AA3C /* NetworkDataTaskCocoa.h in Headers */,
+				D9B238542620272298DF52E7 /* NetworkDigitalCredentialsPresentment.h in Headers */,
 				F433C0A72958C22F00E771C2 /* NetworkIssueReporter.h in Headers */,
 				839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */,
 				83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */,
@@ -19927,6 +19940,7 @@
 				F4E08FDD2D84B27E00322226 /* WKIdentityDocumentPresentmentRequest.h in Headers */,
 				F4E08FE92D8894D600322226 /* WKIdentityDocumentPresentmentResponse.h in Headers */,
 				F4F94AE02D91B2A80087FE6F /* WKIdentityDocumentRawRequestValidator.h in Headers */,
+				78C7AC8411AA31D6D47B576B /* WKIdentityDocumentSystemPresentmentController.h in Headers */,
 				BCCF6AC312C91F34008F9C35 /* WKImage.h in Headers */,
 				F4BA33F225757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h in Headers */,
 				BCCF6ACA12C91F59008F9C35 /* WKImageCG.h in Headers */,
@@ -20284,6 +20298,7 @@
 				F4D59C032DCBDC9F004492FB /* WKIdentityDocumentPresentmentRequest.h in Headers */,
 				F4D59C022DCBDC9F004492FB /* WKIdentityDocumentPresentmentResponse.h in Headers */,
 				F4D59BFE2DCBDC9F004492FB /* WKIdentityDocumentRawRequestValidator.h in Headers */,
+				3912F48B27DFD5AE3D08C6C3 /* WKIdentityDocumentSystemPresentmentController.h in Headers */,
 				0735F3202D3761A10003D029 /* WKIntelligenceReplacementTextEffectCoordinator.h in Headers */,
 				0735F3242D38C7790003D029 /* WKIntelligenceSmartReplyTextEffectCoordinator.h in Headers */,
 				074F34812CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h in Headers */,
@@ -23051,6 +23066,7 @@
 				F46C34312DCD368400B476F8 /* WKIdentityDocumentPresentmentRequest.swift in Sources */,
 				F46C342F2DCD367600B476F8 /* WKIdentityDocumentPresentmentResponse.swift in Sources */,
 				F4D59C192DCD2F60004492FB /* WKIdentityDocumentRawRequestValidator.swift in Sources */,
+				7FCF611F62DFE441CB9DCF97 /* WKIdentityDocumentSystemPresentmentController.swift in Sources */,
 				077FD1A02CC7569200C5D9E0 /* WKIntelligenceReplacementTextEffectCoordinator.swift in Sources */,
 				0735F3222D38B09E0003D029 /* WKIntelligenceSmartReplyTextEffectCoordinator.swift in Sources */,
 				EB0FBFA72B66C61E00269CC1 /* WKMarketplaceKit.swift in Sources */,

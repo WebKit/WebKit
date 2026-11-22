@@ -75,6 +75,17 @@ private:
     WeakPtr<WebPage> m_page;
     const WebCore::PageIdentifier m_pageIdentifier;
     WebCore::DigitalCredentialsRawRequests m_rawRequests;
+#if PLATFORM(COCOA)
+    struct NetworkProcessRequest {
+        enum class State : bool { CheckingForVirtualWallet, Presenting };
+        uint64_t identifier;
+        State state;
+    };
+    bool isCurrentNetworkProcessRequest(uint64_t requestIdentifier) const;
+
+    std::optional<NetworkProcessRequest> m_networkProcessRequest;
+    uint64_t m_lastNetworkProcessRequestIdentifier { 0 };
+#endif
 };
 
 } // namespace WebKit
