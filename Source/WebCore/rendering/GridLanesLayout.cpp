@@ -58,7 +58,12 @@ GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgori
     if (!gridAxisTracksCount())
         return { };
 
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> stackingAxisOffsets;
+    struct PlacedItem {
+        CheckedRef<const RenderBox> gridItem;
+        GridSpan gridAxisTracks;
+        LayoutUnit marginBoxStart;
+    };
+    Vector<PlacedItem> placedItems;
     LayoutUnit gridContentSize;
 
     auto& grid = m_renderGrid->currentGrid();
@@ -72,11 +77,29 @@ GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgori
             m_autoFlowNextCursor = gridAxisSpanFromArea(gridArea).endLine() % gridAxisTracksCount();
         grid.insert(gridItem, gridArea);
 
-        stackingAxisOffsets.set(gridItem.get(), placement.marginBoxStart);
+        auto gridAxisTracks = gridAxisSpanFromArea(gridArea);
+        gridAxisTracks.clamp(gridAxisTracksCount());
+        placedItems.append({ gridItem, gridAxisTracks, placement.marginBoxStart });
         gridContentSize = std::max(gridContentSize, placement.marginBoxEnd);
     }
 
-    return { WTF::move(stackingAxisOffsets), gridContentSize };
+    // "For the last item in a track, the alignment container extends to the lowest bottom outer edge among all the last items in all tracks."
+    auto lowestLastItemEdge = std::ranges::max(m_runningPositions) - m_stackingAxisGridGap;
+    Vector<LayoutUnit> alignmentContainerEnds(FillWith { }, gridAxisTracksCount(), lowestLastItemEdge);
+    HashMap<SingleThreadWeakRef<const RenderBox>, GridLanesResult::StackingAxisAlignmentContainer> stackingAxisAlignmentContainers;
+    // "In the stacking axis, the self-alignment properties only apply to items that are adjacent to a “gap” in the layout,
+    // i.e. placed in their grid track(s) either immediately before a spanning item or as the last item."
+    for (auto placedItem : std::views::reverse(placedItems)) {
+        auto alignmentContainerEnd = lowestLastItemEdge;
+        // Walking backwards, alignmentContainerEnds[track] is where the next item placed in the track starts, less the gap.
+        for (auto track : placedItem.gridAxisTracks) {
+            alignmentContainerEnd = std::min(alignmentContainerEnd, alignmentContainerEnds[track]);
+            alignmentContainerEnds[track] = placedItem.marginBoxStart - m_stackingAxisGridGap;
+        }
+        stackingAxisAlignmentContainers.set(placedItem.gridItem.get(), GridLanesResult::StackingAxisAlignmentContainer { placedItem.marginBoxStart, alignmentContainerEnd - placedItem.marginBoxStart });
+    }
+
+    return { WTF::move(stackingAxisAlignmentContainers), gridContentSize };
 }
 
 GridArea GridLanesLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridItem) const
@@ -264,9 +287,9 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     return gridAreaFromGridAxisSpan(gridAxisPosition);
 }
 
-LayoutUnit GridLanesResult::stackingAxisOffsetForGridItem(const RenderBox& gridItem) const
+GridLanesResult::StackingAxisAlignmentContainer GridLanesResult::stackingAxisAlignmentContainerForGridItem(const RenderBox& gridItem) const
 {
-    return m_stackingAxisOffsets.getOptional(gridItem).value_or(0_lu);
+    return m_stackingAxisAlignmentContainers.getOptional(gridItem).value_or(StackingAxisAlignmentContainer { });
 }
 
 inline Style::GridTrackSizingDirection GridLanesLayout::gridAxisDirection() const

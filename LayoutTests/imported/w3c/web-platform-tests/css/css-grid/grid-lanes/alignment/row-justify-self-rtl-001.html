@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: justify-self in the stacking axis of a right-to-left row grid lanes container</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#stacking-self-alignment">
+  <link rel="match" href="row-justify-self-rtl-001-ref.html">
+  <meta name="assert" content="Test passes if, in a right-to-left row grid lanes container, justify-self: end aligns the last item of a track to the left edge of its alignment container and justify-self: start to its right edge.">
+  <style>
+    .grid-lanes {
+      direction: rtl;
+      display: grid-lanes;
+      gap: 10px;
+      grid-template-rows: repeat(2, 50px);
+      margin-bottom: 20px;
+      width: 300px;
+    }
+    item {
+      background: green;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lanes">
+    <item style="width: 20px; justify-self: end"></item>
+    <item style="width: 100px"></item>
+  </div>
+  <div class="grid-lanes">
+    <item style="width: 20px; justify-self: start"></item>
+    <item style="width: 100px"></item>
+  </div>
+</body>
+</html>
