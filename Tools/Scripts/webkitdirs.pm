@@ -1439,16 +1439,25 @@ sub jscProductDir
     return executableProductDir();
 }
 
+sub machOArchitectures($)
+{
+    my ($path) = @_;
+    return () unless -f $path;
+    open(my $lipo, "-|", "/usr/bin/lipo", "-archs", $path) or return ();
+    my $output = <$lipo>;
+    close($lipo);
+    return () unless $? == 0 && defined($output);
+    chomp $output;
+    return split(' ', $output);
+}
+
 sub architecturesForProducts
 {
     # Most ports don't have emulation, assume that the user gave us an accurate architecture
     if (!isAppleCocoaWebKit()) {
         return architecture();
     }
-    my $webkitBinary = File::Spec->catdir(executableProductDir(), "JavaScriptCore.framework", "JavaScriptCore");
-    my $architectures = `/usr/bin/lipo -archs $webkitBinary`;
-    chomp($architectures);
-    return $architectures;
+    return join(" ", machOArchitectures(File::Spec->catdir(executableProductDir(), "JavaScriptCore.framework", "JavaScriptCore")));
 }
 
 sub configuration()
@@ -4165,6 +4174,36 @@ sub dyldFrameworkPathsForMacWebKitApp($)
     return @paths;
 }
 
+# architecture() assumes an arm64e slice whenever an internal SDK is detected,
+# even if WebKit was built against the public SDK. This method instead picks a
+# slice of the app to be launched that can load the built WebKit.framework.
+sub architectureForMacWebKitApp($@)
+{
+    my ($appPath, @frameworkPaths) = @_;
+    my $defaultArchitecture = architecture();
+    return $defaultArchitecture if $didUserSpecifyArchitecture;
+
+    my @webKitArchitectures;
+    foreach my $frameworkPath (@frameworkPaths) {
+        @webKitArchitectures = machOArchitectures("$frameworkPath/WebKit.framework/WebKit");
+        last if @webKitArchitectures;
+    }
+    my @appArchitectures = machOArchitectures($appPath);
+    return $defaultArchitecture unless @webKitArchitectures && @appArchitectures;
+
+    my %canLoadWebKit = map { $_ => 1 } @webKitArchitectures;
+    # An arm64 process loads arm64e code too, as it does the arm64e shared cache.
+    $canLoadWebKit{"arm64"} = 1 if $canLoadWebKit{"arm64e"};
+    my %isAppArchitecture = map { $_ => 1 } @appArchitectures;
+    my @candidates = grep { defined($_) } ($defaultArchitecture, "arm64e", "arm64", "x86_64");
+    foreach my $candidate (@candidates) {
+        return $candidate if $canLoadWebKit{$candidate} && $isAppArchitecture{$candidate};
+    }
+
+    # dyld would silently skip the built WebKit and load the system one.
+    die "No slice of @{[basename($appPath)]} (@appArchitectures) can load the built WebKit (@webKitArchitectures).\n";
+}
+
 sub runMacWebKitApp($;$$)
 {
     my ($appPath, $useOpenCommand, $openDocumentPath) = @_;
@@ -4191,8 +4230,9 @@ sub runMacWebKitApp($;$$)
         return system(@openCommand);
     }
     my $result;
-    if (architecture()) {
-        $result = system "arch", "-" . architecture(), commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
+    my $launchArchitecture = architectureForMacWebKitApp($appPath, @frameworkPaths);
+    if ($launchArchitecture) {
+        $result = system "arch", "-" . $launchArchitecture, commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
     } else {
         $result = system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
     }
@@ -4243,7 +4283,7 @@ sub execMacWebKitAppForDebugging($)
     my @frameworkPaths = dyldFrameworkPathsForMacWebKitApp($appPath);
     setupMacWebKitEnvironment(@frameworkPaths);
 
-    my @architectureFlags = ($architectureSwitch, architecture());
+    my @architectureFlags = ($architectureSwitch, architectureForMacWebKitApp($appPath, @frameworkPaths));
     print "Starting @{[basename($appPath)]} under lldb with DYLD_FRAMEWORK_PATH set to point to built WebKit in @{[join(', ', @frameworkPaths)]}.\n";
     exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
