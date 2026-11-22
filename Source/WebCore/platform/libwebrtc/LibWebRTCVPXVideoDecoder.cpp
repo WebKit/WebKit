@@ -168,6 +168,7 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoE
 
     if (isVPx()) {
         if (auto record = vpCodecConfigurationRecordFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data)) {
+            // FIXME: decode 12-bit frames to 10 bits.
             if (record->bitDepth > 10)
                 return VideoDecoder::DecodePromise::createAndReject("VPx decoding of 12-bit content is not supported"_s);
             m_videoInfo = createVideoInfoFromVPCodecConfigurationRecord(*record);

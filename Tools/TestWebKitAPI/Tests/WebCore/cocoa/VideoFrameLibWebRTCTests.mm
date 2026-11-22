@@ -138,8 +138,11 @@ TEST(VideoFrameLibWebRTC, CopyI422)
     fillPlane(buffer->MutableDataV(), buffer->StrideV(), chromaWidth, frameHeight, 6, 255);
     RefPtr frame = createFrame(webrtc::scoped_refptr<webrtc::VideoFrameBuffer> { buffer });
     ASSERT_TRUE(frame);
+    EXPECT_EQ(frame->pixelFormat(), static_cast<uint32_t>(kCVPixelFormatType_422YpCbCr8BiPlanarFullRange));
 
     expectPlanes(copyToPlanarBuffer(*frame, VideoPixelFormat::I422), VideoPixelFormat::I422, *buffer, frameHeight, 1, 0);
+    // 4:2:2 is not downsampled to 4:2:0.
+    EXPECT_FALSE(copyToPlanarBuffer(*frame, VideoPixelFormat::I420).has_value());
 }
 
 TEST(VideoFrameLibWebRTC, CopyI210)

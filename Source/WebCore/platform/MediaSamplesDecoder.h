@@ -78,7 +78,7 @@ public:
     WEBCORE_EXPORT Ref<MediaPromise> flush();
 
 private:
-    MediaSamplesDecoder(Ref<const TrackInfo>&& inputInfo, Ref<const TrackInfo>&& outputInfo, Filters);
+    MediaSamplesDecoder(Ref<const TrackInfo>&& inputInfo, Filters);
 
     template<typename PromiseType> Ref<PromiseType> enqueueOperation(Function<Ref<PromiseType>()>&&);
     static Ref<CreatePromise> createAudio(const AudioInfo&, Filters);
@@ -99,7 +99,7 @@ private:
 
     const Ref<WorkQueue> m_queue;
     const Ref<const TrackInfo> m_inputInfo;
-    Ref<const TrackInfo> m_outputInfo WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    RefPtr<const TrackInfo> m_outputInfo WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     const Filters m_filters;
     RefPtr<AudioDecoder> m_audioDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     RefPtr<VideoDecoder> m_videoDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());

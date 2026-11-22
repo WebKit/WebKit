@@ -41,8 +41,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(COCOA)
-static std::optional<VideoPixelFormat> planarYUVVideoPixelFormat(PlanarImageConverter::ChromaSubsampling subsampling, uint8_t bitDepth, bool hasAlpha)
+std::optional<VideoPixelFormat> planarYUVVideoPixelFormat(PlanarImageConverter::ChromaSubsampling subsampling, uint8_t bitDepth, bool hasAlpha)
 {
     if (subsampling == PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical && bitDepth == 8 && hasAlpha)
         return VideoPixelFormat::I420A;
@@ -59,7 +58,6 @@ static std::optional<VideoPixelFormat> planarYUVVideoPixelFormat(PlanarImageConv
     }
     return { };
 }
-#endif
 
 std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bool shouldDiscardAlpha)
 {
