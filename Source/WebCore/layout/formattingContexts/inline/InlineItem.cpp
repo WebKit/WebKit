@@ -38,7 +38,7 @@ struct SameSizeAsInlineItem {
     unsigned length;
     unsigned start;
     uint8_t bidiLevel;
-    uint8_t type : 3;
+    uint8_t type : 4;
     uint8_t textItemType : 2;
     bool widthBool : 1;
     bool softHyphenBool : 1;
