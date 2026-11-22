@@ -8,7 +8,7 @@ PASS angle.valueAsString = null threw exception SyntaxError: The string did not 
 PASS angle.valueAsString is "0"
 PASS angle.valueAsString = '10' did not throw exception.
 PASS angle.valueAsString is "10"
-FAIL angle.valueAsString = '' should throw an exception. Was .
+PASS angle.valueAsString = '' threw exception SyntaxError: The string did not match the expected pattern..
 PASS angle.valueAsString is "10"
 
 PASS length.valueAsString is "0"

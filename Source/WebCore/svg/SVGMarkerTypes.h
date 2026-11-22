@@ -104,11 +104,8 @@ struct SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>> {
     {
         SVGAngleValue angle;
         SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(targetElement, string);
-        if (orientType == SVGMarkerOrientUnknown) {
-            auto result = angle.setValueAsString(string);
-            if (!result.hasException())
-                orientType = SVGMarkerOrientAngle;
-        }
+        if (orientType == SVGMarkerOrientUnknown && (string.isEmpty() || !angle.setValueAsString(string).hasException()))
+            orientType = SVGMarkerOrientAngle;
         return std::make_pair(angle, orientType);
     }
 };

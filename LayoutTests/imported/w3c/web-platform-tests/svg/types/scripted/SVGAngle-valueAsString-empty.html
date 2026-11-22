@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>SVGAngle.valueAsString setter throws a SyntaxError for an empty string</title>
+<link rel="help" href="https://svgwg.org/svg2-draft/types.html#__svg__SVGAngle__valueAsString">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function assertSetterThrows(angle, value) {
+  angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 45);
+  assert_throws_dom("SyntaxError", () => { angle.valueAsString = value; });
+  assert_equals(angle.unitType, SVGAngle.SVG_ANGLETYPE_DEG, "unitType is unchanged");
+  assert_equals(angle.valueInSpecifiedUnits, 45, "valueInSpecifiedUnits is unchanged");
+  assert_equals(angle.valueAsString, "45deg", "valueAsString is unchanged");
+}
+
+test(() => {
+  const angle = document.createElementNS(SVG_NS, "svg").createSVGAngle();
+  assertSetterThrows(angle, "");
+}, "Setting valueAsString to the empty string on a detached SVGAngle throws a SyntaxError");
+
+test(() => {
+  const angle = document.createElementNS(SVG_NS, "svg").createSVGAngle();
+  assertSetterThrows(angle, " ");
+}, "Setting valueAsString to a whitespace-only string on a detached SVGAngle throws a SyntaxError");
+
+test(() => {
+  const marker = document.createElementNS(SVG_NS, "marker");
+  const angle = marker.orientAngle.baseVal;
+  assertSetterThrows(angle, "");
+  assert_equals(marker.getAttribute("orient"), "45deg", "orient attribute is unchanged");
+}, "Setting valueAsString to the empty string on a reflected marker orientAngle throws a SyntaxError");
+</script>

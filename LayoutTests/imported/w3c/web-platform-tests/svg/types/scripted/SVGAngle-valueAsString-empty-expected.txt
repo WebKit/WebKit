@@ -1,0 +1,5 @@
+
+PASS Setting valueAsString to the empty string on a detached SVGAngle throws a SyntaxError
+PASS Setting valueAsString to a whitespace-only string on a detached SVGAngle throws a SyntaxError
+PASS Setting valueAsString to the empty string on a reflected marker orientAngle throws a SyntaxError
+
