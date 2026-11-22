@@ -121,7 +121,7 @@ public:
     std::unique_ptr<Style::ComputedStyle> styleForKeyframe(Element&, const Style::ComputedStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&) const;
     NODELETE bool isAnimationNameValid(const AtomString&) const;
 
-    void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>);
+    void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>, RuleSet&);
 
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
     enum CSSRuleFilter {

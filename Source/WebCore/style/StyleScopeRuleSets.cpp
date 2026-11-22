@@ -91,10 +91,6 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
     SUPPRESS_UNCOUNTED_ARG builder.addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet);
 }
 
-RuleSet* ScopeRuleSets::dynamicViewTransitionsStyle() const
-{
-    return m_dynamicViewTransitionsStyle.get();
-}
 
 RuleSet* ScopeRuleSets::userStyle() const
 {

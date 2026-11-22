@@ -1218,6 +1218,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Element+PointerEvents.idl \
     $(WebCore)/dom/Element+PointerLock.idl \
     $(WebCore)/dom/Element+Typedom.idl \
+    $(WebCore)/dom/Element+ViewTransition.idl \
     $(WebCore)/dom/Element+VolumetricScene.idl \
     $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/ElementContentEditable.idl \

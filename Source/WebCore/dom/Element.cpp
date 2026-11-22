@@ -154,6 +154,7 @@
 #include "ShadowRootInit.h"
 #include "SimulatedClick.h"
 #include "SlotAssignment.h"
+#include "StartViewTransitionOptions.h"
 #include "StyleDocumentScope.h"
 #include "StyleableInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
@@ -167,6 +168,7 @@
 #include "TouchAction.h"
 #include "TrustedType.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "ViewTransition.h"
 #include "VisibilityAdjustment.h"
 #include "VoidCallback.h"
 #include "WebAnimation.h"
@@ -5389,6 +5391,24 @@ bool Element::childShouldCreateRenderer(const Node& child) const
         return is<SVGSVGElement>(*childElement) && childElement->isValid();
     }
     return true;
+}
+
+// https://drafts.csswg.org/css-view-transitions-2/#dom-element-startviewtransition
+RefPtr<ViewTransition> Element::startViewTransition(StartViewTransitionCallbackOptions&& callbackOptions)
+{
+    return protect(document())->startViewTransition(WTF::move(callbackOptions), this);
+}
+
+bool Element::hasActiveScopedViewTransition() const
+{
+    return !!document().activeViewTransitionForScope(*this);
+}
+
+ViewTransition* Element::activeViewTransition() const
+{
+    if (this == document().documentElement())
+        return document().activeViewTransition();
+    return document().activeViewTransitionForScope(*this);
 }
 
 #if ENABLE(FULLSCREEN_API)

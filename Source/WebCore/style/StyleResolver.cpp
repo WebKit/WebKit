@@ -894,11 +894,6 @@ static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element
 {
     MutableCSSSelectorList selectorList;
 
-    auto rootSelector = makeUnique<MutableCSSSelector>();
-    rootSelector->setMatch(CSSSelector::Match::PseudoClass);
-    rootSelector->setPseudoClass(CSSSelector::PseudoClass::Root);
-    selectorList.append(WTF::move(rootSelector));
-
     auto groupSelector = makeUnique<MutableCSSSelector>();
     groupSelector->setMatch(CSSSelector::Match::PseudoElement);
     groupSelector->setPseudoElement(element);
@@ -925,7 +920,10 @@ static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element
     groupSelector->setValue(selectorName);
     groupSelector->setStringList({ { name } });
 
-    selectorList.first()->prependInComplexSelector(CSSSelector::Relation::Subselector, WTF::move(groupSelector));
+    // No originating element selector: the pseudo-element tree is hosted on the
+    // document element for a document transition and on the scope element for a
+    // scoped one.
+    selectorList.append(WTF::move(groupSelector));
 
     return CSSSelectorList(WTF::move(selectorList));
 }
@@ -935,15 +933,14 @@ RefPtr<StyleRuleViewTransition> Resolver::viewTransitionRule() const
     return m_ruleSets.viewTransitionRule();
 }
 
-void Resolver::setViewTransitionStyles(CSSSelector::PseudoElement element, const AtomString& name, Ref<MutableStyleProperties> properties)
+void Resolver::setViewTransitionStyles(CSSSelector::PseudoElement element, const AtomString& name, Ref<MutableStyleProperties> properties, RuleSet& ruleSet)
 {
     if (!m_document)
         return;
 
     auto styleRule = StyleRule::create(WTF::move(properties), true, viewTransitionSelector(element, name));
 
-    RefPtr viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
-    RuleSetBuilder builder(*viewTransitionsStyle, mediaQueryEvaluator(), this);
+    RuleSetBuilder builder(ruleSet, mediaQueryEvaluator(), this);
     builder.addStyleRule(styleRule);
 }
 
