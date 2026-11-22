@@ -1887,7 +1887,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320956"}}
             },
             "test_pretty_print_xml": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "Fails with developer extras on, as in every MiniBrowser: WebKit replaces a top-level XML document with its tree view"}}
             },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
@@ -2634,6 +2634,9 @@
             "test_early_same_document_navigation": {
                 "expected": {"all": {"status": ["PASS"]}}
             },
+            "test_iframe": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_page_with_base_tag": {
                 "expected": {"all": {"status": ["PASS"]}}
             },
@@ -2848,6 +2851,9 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/load/load.py": {
         "subtests": {
             "test_early_same_document_navigation": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_iframe": {
                 "expected": {"all": {"status": ["PASS"]}}
             },
             "test_page_with_base_tag": {
@@ -3161,7 +3167,13 @@
             "test_basic_auth": {
                 "expected": {"all": {"status": ["PASS"]}}
             },
+            "test_iframe": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_navigate_history_pushstate": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_nested_iframes": {
                 "expected": {"all": {"status": ["PASS"]}}
             },
             "test_redirect_http_equiv": {
@@ -3309,6 +3321,12 @@
             },
             "test_close_iframe": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/330715", "note": "WebKit commits a navigation when the first bytes of the body arrive, not when the response starts as in HTML, so wait none waits out the 10 seconds the page delays its body"}}
+            },
+            "test_with_x_frame_options_header[DENY]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_with_x_frame_options_header[SAMEORIGIN]": {
+                "expected": {"mac": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287933"}}
@@ -4938,7 +4956,7 @@
         "expected": { "all": { "status": ["PASS"] }},
         "subtests": {
             "test_cdata_node[basic]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "Fails with developer extras on, as in every MiniBrowser: WebKit replaces a top-level XML document with its tree view"}}
             }
         }
     },
