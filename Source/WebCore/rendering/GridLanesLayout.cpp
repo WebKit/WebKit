@@ -42,6 +42,13 @@ static bool isWithinFitTolerance(LayoutUnit position, LayoutUnit highestPosition
     return WTF::holdsAlternative<CSS::Keyword::Infinite>(fitTolerance) || position <= highestPosition + std::get<LayoutUnit>(fitTolerance);
 }
 
+// Track sizes are whole LayoutUnits of 1/64px, so tracks of the same size can still differ by one LayoutUnit. For example,
+// three 1fr tracks in a 100px container are 2133, 2133 and 2134 LayoutUnits wide.
+static bool haveSameUsedSize(LayoutUnit usedSize, LayoutUnit otherUsedSize)
+{
+    return (usedSize - otherUsedSize).abs() <= LayoutUnit::fromRawValue(1);
+}
+
 // The start of the highest skipped space in the track that starts above the item's normal placement and has room for it.
 static std::optional<LayoutUnit> highestSkippedSpaceWithRoom(const Vector<GridLanesLayout::SkippedSpace>& trackSkippedSpaces, LayoutUnit normalPlacementPosition, LayoutUnit spaceNeeded)
 {
@@ -313,7 +320,7 @@ Vector<std::optional<LayoutUnit>> GridLanesLayout::skippedSpacePositions(const S
     Vector<std::optional<LayoutUnit>> positions;
     for (unsigned track = 0; track < gridAxisTracksCount(); ++track) {
         bool canMoveToTrack = isAutoPlacedInGridAxis ? tracksAcceptAutoPlacedItem(track, 1) : track == normalPlacementTrack;
-        if (canMoveToTrack && tracks[track]->baseSize() == usedSize)
+        if (canMoveToTrack && haveSameUsedSize(tracks[track]->baseSize(), usedSize))
             positions.append(highestSkippedSpaceWithRoom(skippedSpaces[track], normalPlacementPosition, spaceNeeded));
         else
             positions.append(std::nullopt);

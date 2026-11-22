@@ -5733,6 +5733,7 @@
         "web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/column-dense-packing-fit-tolerance-001-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/column-dense-packing-fit-tolerance-002-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/column-dense-packing-fit-tolerance-003-ref.html",
+        "web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/column-dense-packing-fr-tracks-001-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/column-dense-packing-multi-span-001-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/column-dense-packing-multi-span-002-ref.html",
         "web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/column-dense-packing-multi-span-003-ref.html",
