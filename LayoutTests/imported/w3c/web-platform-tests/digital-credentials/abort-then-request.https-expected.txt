@@ -1,0 +1,3 @@
+
+PASS A request aborted as soon as it's made doesn't affect the next request.
+
