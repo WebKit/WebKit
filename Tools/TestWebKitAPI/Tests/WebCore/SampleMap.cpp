@@ -48,9 +48,9 @@ namespace TestWebKitAPI {
 
 class TestSample : public MediaSample {
 public:
-    static Ref<TestSample> create(const MediaTime& presentationTime, const MediaTime& decodeTime, const MediaTime& duration, SampleFlags flags)
+    static Ref<TestSample> create(const MediaTime& presentationTime, const MediaTime& decodeTime, const MediaTime& duration, SampleFlags flags, size_t sizeInBytes = 0)
     {
-        return adoptRef(*new TestSample(presentationTime, decodeTime, duration, flags));
+        return adoptRef(*new TestSample(presentationTime, decodeTime, duration, flags, sizeInBytes));
     }
 
     MediaTime presentationTime() const final { return m_presentationTime; }
@@ -74,10 +74,11 @@ public:
     void dump(PrintStream&) const final { }
 
 private:
-    TestSample(const MediaTime& presentationTime, const MediaTime& decodeTime, const MediaTime& duration, SampleFlags flags)
+    TestSample(const MediaTime& presentationTime, const MediaTime& decodeTime, const MediaTime& duration, SampleFlags flags, size_t sizeInBytes)
         : m_presentationTime(presentationTime)
         , m_decodeTime(decodeTime)
         , m_duration(duration)
+        , m_sizeInBytes(sizeInBytes)
         , m_flags(flags)
     {
     }
@@ -373,6 +374,39 @@ TEST_F(SampleMapTest, findSamplesBetweenDecodeKeysWithNaN)
 
     auto samplesWithHigherDecodeTimes = decodeMap.findSamplesBetweenDecodeKeys(decodeKey, mapWithNan.decodeOrder().rbegin()->first);
     EXPECT_TRUE(samplesWithHigherDecodeTimes.isEmpty());
+}
+
+TEST_F(SampleMapTest, addSampleRejectsDuplicatePresentationTime)
+{
+    SampleMap localMap;
+    localMap.addSample(TestSample::create(MediaTime(0, 1), MediaTime(0, 1), MediaTime(1, 1), MediaSample::IsSync, 100));
+    localMap.addSample(TestSample::create(MediaTime(1, 1), MediaTime(1, 1), MediaTime(1, 1), MediaSample::None, 200));
+
+    EXPECT_EQ(2u, localMap.size());
+    EXPECT_EQ(2u, localMap.presentationOrder().size());
+    EXPECT_EQ(2u, localMap.decodeOrder().size());
+    EXPECT_EQ(300u, localMap.sizeInBytes());
+
+    // A second sample sharing an existing presentation time must be rejected
+    // wholesale: neither map may grow and the byte total must not drift.
+    localMap.addSample(TestSample::create(MediaTime(1, 1), MediaTime(5, 1), MediaTime(1, 1), MediaSample::None, 999));
+
+    EXPECT_EQ(2u, localMap.size());
+    EXPECT_EQ(2u, localMap.presentationOrder().size());
+    EXPECT_EQ(2u, localMap.decodeOrder().size());
+    EXPECT_EQ(300u, localMap.sizeInBytes());
+
+    // The originally-stored sample (decode time 1) must be the one retained.
+    auto iterator = localMap.presentationOrder().findSampleWithPresentationTime(MediaTime(1, 1));
+    ASSERT_TRUE(localMap.presentationOrder().end() != iterator);
+    EXPECT_EQ(MediaTime(1, 1), iterator->second->decodeTime());
+
+    // Removing a stored sample balances the accounting back out; no residual drift.
+    localMap.removeSample(iterator->second.get());
+    EXPECT_EQ(1u, localMap.size());
+    EXPECT_EQ(1u, localMap.presentationOrder().size());
+    EXPECT_EQ(1u, localMap.decodeOrder().size());
+    EXPECT_EQ(100u, localMap.sizeInBytes());
 }
 
 }
