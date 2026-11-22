@@ -146,6 +146,7 @@ NonInheritedRareData::NonInheritedRareData()
     , appleVisualEffect(static_cast<unsigned>(ComputedStyle::initialAppleVisualEffect()))
 #endif
     , fieldSizing(static_cast<unsigned>(ComputedStyle::initialFieldSizing()))
+    , viewTransitionScope(static_cast<unsigned>(ComputedStyle::initialViewTransitionScope()))
     , nativeAppearanceDisabled(static_cast<unsigned>(false))
     , positionTryOrder(static_cast<unsigned>(ComputedStyle::initialPositionTryOrder()))
     , positionVisibility(ComputedStyle::initialPositionVisibility().toRaw())
@@ -267,6 +268,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , appleVisualEffect(o.appleVisualEffect)
 #endif
     , fieldSizing(o.fieldSizing)
+    , viewTransitionScope(o.viewTransitionScope)
     , nativeAppearanceDisabled(o.nativeAppearanceDisabled)
     , positionTryOrder(o.positionTryOrder)
     , positionVisibility(o.positionVisibility)
@@ -395,6 +397,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && appleVisualEffect == o.appleVisualEffect
 #endif
         && fieldSizing == o.fieldSizing
+        && viewTransitionScope == o.viewTransitionScope
         && nativeAppearanceDisabled == o.nativeAppearanceDisabled
         && positionTryOrder == o.positionTryOrder
         && positionVisibility == o.positionVisibility
@@ -565,6 +568,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 #endif
 
     LOG_IF_DIFFERENT_WITH_CAST(FieldSizing, fieldSizing);
+    LOG_IF_DIFFERENT_WITH_CAST(ViewTransitionScope, viewTransitionScope);
     LOG_IF_DIFFERENT_WITH_CAST(bool, nativeAppearanceDisabled);
 
     LOG_IF_DIFFERENT_WITH_CAST(PositionTryOrder, positionTryOrder);
