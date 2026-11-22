@@ -75,11 +75,6 @@ bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (state->hasChangedProperty(ScrollingStateNode::Property::InsetForLeftScrollbarSpace))
         m_insetForLeftScrollbarSpace = state->insetForLeftScrollbarSpace();
 
-#if HAVE(NSREFRESHCONTROLLER)
-    if (state->hasChangedProperty(ScrollingStateNode::Property::TopScrollStretchForRefreshController))
-        m_topScrollStretchForRefreshController = state->topScrollStretchForRefreshController();
-#endif
-
     if (state->hasChangedProperty(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport))
         m_visualViewportIsSmallerThanLayoutViewport = state->visualViewportIsSmallerThanLayoutViewport();
 
@@ -216,10 +211,6 @@ void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<S
         ts.dumpProperty("left content inset"_s, m_obscuredContentInsets.left());
     if (m_obscuredContentInsets.right())
         ts.dumpProperty("right content inset"_s, m_obscuredContentInsets.right());
-#if HAVE(NSREFRESHCONTROLLER)
-    if (m_topScrollStretchForRefreshController)
-        ts.dumpProperty("top scroll stretch for refresh controller"_s, m_topScrollStretchForRefreshController);
-#endif
 
     if (m_headerHeight)
         ts.dumpProperty("header height"_s, m_headerHeight);
