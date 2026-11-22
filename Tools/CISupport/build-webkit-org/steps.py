@@ -914,6 +914,7 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin, ShellMixin):
                "--no-show-results",
                "--no-new-test-results",
                "--clobber-old-results",
+               "--no-cache-references",
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
                "--buildbot-worker", WithProperties("%(workername)s"),
@@ -1081,6 +1082,7 @@ class RunWorldLeaksTests(RunWebKitTests):
                "--no-show-results",
                "--no-new-test-results",
                "--clobber-old-results",
+               "--no-cache-references",
                "--exit-after-n-crashes-or-timeouts", "50",
                "--exit-after-n-failures", "500",
                WithProperties("--%(configuration)s")]
