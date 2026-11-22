@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import "PlanarImageConverterCV.h"
 #import "RealtimeVideoUtilities.h"
+#import "VideoFrame.h"
 #import <array>
 #import <pal/spi/cf/CoreVideoSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -246,7 +247,7 @@ std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat)
 }
 
 // pixelFormatWithAlpha() widens 8-bit full range samples to the 10-bit alpha formats.
-static bool shouldTreatI420AsFullRange(OSType destinationFormat)
+static bool shouldTreatPlanarYUVAsFullRange(OSType destinationFormat)
 {
     auto description = PlanarImageConverter::pixelFormatDescription(destinationFormat);
     return description && (description->isFullRange || (description->alpha && description->color.bitDepth > 8));
@@ -300,30 +301,29 @@ std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(
     return output;
 }
 
-bool copyI420ToPixelBuffer(std::span<const uint8_t> source, size_t width, size_t height, CVPixelBufferRef destination)
+bool copyPlanarYUVToPixelBuffer(std::span<const uint8_t> source, VideoPixelFormat format, CVPixelBufferRef destination)
 {
-    auto format = CVPixelBufferGetPixelFormatType(destination);
-    bool hasAlpha = format == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar || format == kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar;
-    if (!hasAlpha && format != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && format != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
+    bool hasAlpha = pixelFormatHasAlpha(format);
+    auto layout = planarYUVFormatLayout(pixelFormatWithoutAlpha(format));
+    IntSize size { static_cast<int>(CVPixelBufferGetWidth(destination)), static_cast<int>(CVPixelBufferGetHeight(destination)) };
+    auto byteSize = VideoFrame::planarBufferSize(size, format);
+    if (!layout || !byteSize || source.size() != *byteSize)
         return false;
 
-    size_t chromaWidth = (width + 1) / 2;
-    size_t chromaHeight = (height + 1) / 2;
-    size_t lumaSize = width * height;
-    size_t chromaSize = chromaWidth * chromaHeight;
-    if (!width || !height || source.size() != lumaSize + 2 * chromaSize + (hasAlpha ? lumaSize : 0))
-        return false;
-
-    auto y = PlanarImageConverter::makePlane(source, 0, width, width, height, PlanarImageConverter::eightBit);
-    auto u = PlanarImageConverter::makePlane(source, lumaSize, chromaWidth, chromaWidth, chromaHeight, PlanarImageConverter::eightBit);
-    auto v = PlanarImageConverter::makePlane(source, lumaSize + chromaSize, chromaWidth, chromaWidth, chromaHeight, PlanarImageConverter::eightBit);
+    auto planeLayouts = VideoFrame::planarBufferLayout(size, format);
+    auto plane = [&](const ComputedPlaneLayout& planeLayout) {
+        return PlanarImageConverter::makePlane(source, planeLayout.destinationOffset, planeLayout.destinationStride, planeLayout.sourceWidthBytes / layout->format.sampleSize(), planeLayout.sourceHeight, layout->format);
+    };
+    auto y = plane(planeLayouts[0]);
+    auto u = plane(planeLayouts[1]);
+    auto v = plane(planeLayouts[2]);
     std::optional<PlanarImageConverter::SourcePlane> alpha;
     if (hasAlpha)
-        alpha = PlanarImageConverter::makePlane(source, lumaSize + 2 * chromaSize, width, width, height, PlanarImageConverter::eightBit);
+        alpha = plane(planeLayouts[3]);
     if (!y || !u || !v || (hasAlpha && !alpha))
         return false;
 
-    if (!PlanarImageConverter::copyFrame({ PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical, shouldTreatI420AsFullRange(format), *y, *u, *v, alpha }, destination))
+    if (!PlanarImageConverter::copyFrame({ layout->subsampling, shouldTreatPlanarYUVAsFullRange(CVPixelBufferGetPixelFormatType(destination)), *y, *u, *v, alpha }, destination))
         return false;
 
     if (hasAlpha)

@@ -404,11 +404,93 @@ TEST(DecodedMediaSamplesBlock, VideoRejectsInvalidData)
     wrongSize.append(makeI420Item(MediaTime::zeroTime(), 8, 8, 0, 0, 0));
     EXPECT_FALSE(!!toCMSampleBuffer(MediaSamplesBlock { info.ptr(), WTF::move(wrongSize) }));
 
-    // Only 8-bit 4:2:0 is supported.
-    Ref unsupported = makeDecodedVideoInfo(FloatSize(16, 16), VideoPixelFormat::I444);
+    Ref unsupported = makeDecodedVideoInfo(FloatSize(16, 16), VideoPixelFormat::NV12);
     MediaSamplesBlock::SamplesVector items;
     items.append(makeI420Item(MediaTime::zeroTime(), 16, 16, 0, 0, 0));
     EXPECT_FALSE(!!toCMSampleBuffer(MediaSamplesBlock { unsupported.ptr(), WTF::move(items) }));
+
+    // The data size must match the frame size of the pixel format.
+    Ref tenBit = makeDecodedVideoInfo(FloatSize(16, 16), VideoPixelFormat::I420P10);
+    MediaSamplesBlock::SamplesVector eightBitItems;
+    eightBitItems.append(makeI420Item(MediaTime::zeroTime(), 16, 16, 0, 0, 0));
+    EXPECT_FALSE(!!toCMSampleBuffer(MediaSamplesBlock { tenBit.ptr(), WTF::move(eightBitItems) }));
+}
+
+// The samples are stored in the low bits: luma is y, and the chroma planes are u and v plus a pattern.
+static MediaSamplesBlock::MediaSampleItem makeTenBitItem(size_t width, size_t height, size_t chromaWidth, size_t chromaHeight, uint16_t y, uint16_t u, uint16_t v)
+{
+    Vector<uint16_t> samples(FillWith { }, width * height, y);
+    samples.appendUsingFunctor(chromaWidth * chromaHeight, [&](size_t i) {
+        return static_cast<uint16_t>(u + i % 16);
+    });
+    samples.appendUsingFunctor(chromaWidth * chromaHeight, [&](size_t i) {
+        return static_cast<uint16_t>(v + i % 16);
+    });
+    return {
+        .presentationTime = MediaTime::zeroTime(),
+        .duration = MediaTime(1, 30),
+        .data = SharedBuffer::create(Vector<uint8_t>(asByteSpan(samples.span()))),
+        .flags = MediaSample::IsSync
+    };
+}
+
+static uint16_t sixteenBitSample(const uint8_t* row, size_t index)
+{
+    return row[2 * index] | (row[2 * index + 1] << 8);
+}
+
+static void checkTenBitFrame(VideoPixelFormat format, size_t width, size_t height, bool isFullRange, OSType expectedPixelFormat)
+{
+    size_t chromaWidth = (width + 1) / 2;
+    size_t chromaHeight = format == VideoPixelFormat::I422P10 ? height : (height + 1) / 2;
+    Ref info = makeDecodedVideoInfo(FloatSize(static_cast<float>(width), static_cast<float>(height)), format, isFullRange);
+    MediaSamplesBlock::SamplesVector items;
+    items.append(makeTenBitItem(width, height, chromaWidth, chromaHeight, 700, 300, 800));
+    auto result = toCMSampleBuffer(MediaSamplesBlock { info.ptr(), WTF::move(items) });
+    ASSERT_TRUE(!!result);
+    RetainPtr sampleBuffer = *result;
+
+    CVImageBufferRef imageBuffer = PAL::CMSampleBufferGetImageBuffer(sampleBuffer);
+    ASSERT_NE(nullptr, imageBuffer);
+    EXPECT_EQ(width, CVPixelBufferGetWidth(imageBuffer));
+    EXPECT_EQ(height, CVPixelBufferGetHeight(imageBuffer));
+    EXPECT_EQ(expectedPixelFormat, CVPixelBufferGetPixelFormatType(imageBuffer));
+
+    CMVideoFormatDescriptionRef description = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
+    ASSERT_NE(nullptr, description);
+    EXPECT_EQ(expectedPixelFormat, PAL::CMFormatDescriptionGetMediaSubType(description));
+
+    ASSERT_EQ(kCVReturnSuccess, CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly));
+    auto unlock = makeScopeExit([&] {
+        CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+    });
+
+    // The pixel buffer stores the samples in the high bits.
+    auto* luma = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0));
+    size_t lumaStride = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0);
+    for (size_t row = 0; row < height; ++row) {
+        for (size_t column = 0; column < width; ++column)
+            ASSERT_EQ(static_cast<uint16_t>(700 << 6), sixteenBitSample(luma + row * lumaStride, column));
+    }
+
+    auto* chroma = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1));
+    size_t chromaStride = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 1);
+    for (size_t row = 0; row < chromaHeight; ++row) {
+        for (size_t column = 0; column < chromaWidth; ++column) {
+            size_t index = row * chromaWidth + column;
+            ASSERT_EQ(static_cast<uint16_t>((300 + index % 16) << 6), sixteenBitSample(chroma + row * chromaStride, 2 * column));
+            ASSERT_EQ(static_cast<uint16_t>((800 + index % 16) << 6), sixteenBitSample(chroma + row * chromaStride, 2 * column + 1));
+        }
+    }
+}
+
+TEST(DecodedMediaSamplesBlock, TenBitVideoToCMSampleBuffer)
+{
+    checkTenBitFrame(VideoPixelFormat::I420P10, 64, 48, false, kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange);
+    checkTenBitFrame(VideoPixelFormat::I420P10, 33, 17, false, kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange);
+    checkTenBitFrame(VideoPixelFormat::I420P10, 64, 48, true, kCVPixelFormatType_420YpCbCr10BiPlanarFullRange);
+    checkTenBitFrame(VideoPixelFormat::I422P10, 64, 48, false, kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange);
+    checkTenBitFrame(VideoPixelFormat::I422P10, 33, 17, false, kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange);
 }
 
 static uint8_t alphaPattern(size_t column, size_t row)
@@ -527,7 +609,21 @@ TEST(DecodedMediaSamplesBlock, VideoFormatDescriptionFromTrackInfo)
     ASSERT_NE(nullptr, description.get());
     EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange), PAL::CMFormatDescriptionGetMediaSubType(description.get()));
 
-    EXPECT_EQ(nullptr, createFormatDescriptionFromTrackInfo(makeDecodedVideoInfo(FloatSize(64, 48), VideoPixelFormat::I422).get()).get());
+    auto subType = [](VideoPixelFormat format, bool isFullRange) -> FourCharCode {
+        RetainPtr description = createFormatDescriptionFromTrackInfo(makeDecodedVideoInfo(FloatSize(64, 48), format, isFullRange));
+        return description ? PAL::CMFormatDescriptionGetMediaSubType(description) : 0;
+    };
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange), subType(VideoPixelFormat::I420P10, false));
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr10BiPlanarFullRange), subType(VideoPixelFormat::I420P10, true));
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange), subType(VideoPixelFormat::I422P10, false));
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange), subType(VideoPixelFormat::I422, false));
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_444YpCbCr8BiPlanarFullRange), subType(VideoPixelFormat::I444, true));
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange), subType(VideoPixelFormat::I444P10, false));
+    // 12-bit samples go into the 10-bit formats.
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange), subType(VideoPixelFormat::I420P12, false));
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_422YpCbCr10BiPlanarFullRange), subType(VideoPixelFormat::I422P12, true));
+    EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange), subType(VideoPixelFormat::I444P12, false));
+    EXPECT_EQ(0u, subType(VideoPixelFormat::NV12, false));
 }
 
 TEST(DecodedMediaSamplesBlock, VideoWithAlphaFormatDescriptionFromTrackInfo)

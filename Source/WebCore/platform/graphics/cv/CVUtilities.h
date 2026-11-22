@@ -38,6 +38,7 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 class ProcessIdentity;
+enum class VideoPixelFormat;
 
 // Creates CVPixelBufferPool that creates CVPixelBuffers backed by IOSurfaces.
 // These buffers can be for example sent through IPC.
@@ -63,7 +64,8 @@ std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat);
 std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CVPixelBufferPoolRef);
 bool copyAlphaIntoAlphaPlane(CVPixelBufferRef destination, CVPixelBufferRef alphaBuffer);
 bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> destination, size_t destinationBytesPerRow);
-bool copyI420ToPixelBuffer(std::span<const uint8_t> source, size_t width, size_t height, CVPixelBufferRef destination);
+// The source is laid out by VideoFrame::planarBufferLayout() for the pixel buffer's size.
+bool copyPlanarYUVToPixelBuffer(std::span<const uint8_t> source, VideoPixelFormat, CVPixelBufferRef destination);
 RetainPtr<CVPixelBufferRef> createBiPlanarPixelBufferFromColorPlanes(CVPixelBufferRef);
 bool copyAlphaPlaneToBGRAPixelBuffer(CVPixelBufferRef source, CVPixelBufferRef destination);
 
