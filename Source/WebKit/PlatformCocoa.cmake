@@ -173,6 +173,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKViewportFitEdges.swift
 
     UIProcess/Cocoa/PreferenceObserver.mm
+    UIProcess/Cocoa/WKLocalNetworkAccessAlert.mm
     UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKStorageAccessAlert.mm
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm

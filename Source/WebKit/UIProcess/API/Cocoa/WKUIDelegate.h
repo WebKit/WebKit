@@ -62,6 +62,16 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
     WKMediaCaptureTypeCameraAndMicrophone,
 } WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
+/*! @enum WKLocalNetworkAccessType
+ @abstract The address space a local network request reaches.
+ @constant WKLocalNetworkAccessTypeLocal Devices on the user's local network.
+ @constant WKLocalNetworkAccessTypeLoopback Software running on the user's device.
+ */
+typedef NS_ENUM(NSInteger, WKLocalNetworkAccessType) {
+    WKLocalNetworkAccessTypeLocal,
+    WKLocalNetworkAccessTypeLoopback,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 /*! @enum WKDialogResult
 @abstract Constants returned by showLockdownModeFirstUseMessage to indicate how WebKit should treat first use.
 @constant WKDialogResultShowDefault Indicates that the client did not display a first use message. WebKit should show the default.
@@ -169,6 +179,16 @@ WK_SWIFT_UI_ACTOR
  @param frame The frame that initiated the request.
  @param decisionHandler The decision handler to call once the app has made its decision.
  */
+/*! @abstract A delegate to request permission for a page to make requests to the local network or to this device.
+ @param webView The web view invoking the delegate method.
+ @param origin The origin that made the request.
+ @param topLevelOrigin The origin of the top-level page.
+ @param type The address space the request reaches.
+ @param decisionHandler The completion handler to call once the decision is made.
+ @discussion A grant applies to every device in the address space, not to a single device or port. If not implemented, the result is the same as calling the decisionHandler with WKPermissionDecisionPrompt.
+ */
+- (void)webView:(WKWebView *)webView requestLocalNetworkAccessPermissionForOrigin:(WKSecurityOrigin *)origin topLevelOrigin:(WKSecurityOrigin *)topLevelOrigin type:(WKLocalNetworkAccessType)type decisionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler NS_SWIFT_ASYNC_NAME(webView(_:decideLocalNetworkAccessPermissionFor:topLevelOrigin:type:)) NS_SWIFT_ASYNC(5) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 - (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(ios(15.0)) WK_API_UNAVAILABLE(macos);
 
 #if TARGET_OS_IPHONE
