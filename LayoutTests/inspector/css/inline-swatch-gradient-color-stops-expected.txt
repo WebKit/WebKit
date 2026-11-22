@@ -1,0 +1,28 @@
+Testing that gradient functions show an inline color swatch before every <color> stop, matching the behavior of color-mix().
+
+
+== Running test suite: InlineSwatch.GradientColorStops
+-- Running test case: InlineSwatch.GradientColorStops.Linear
+PASS: "background-image" should have 2 color swatch(es), one before each <color>.
+PASS: "background-image" should have 1 gradient swatch(es).
+
+-- Running test case: InlineSwatch.GradientColorStops.CustomPropertyRadial
+PASS: "--radial" should have 2 color swatch(es), one before each <color>.
+PASS: "--radial" should have 1 gradient swatch(es).
+
+-- Running test case: InlineSwatch.GradientColorStops.CustomPropertyConic
+PASS: "--conic" should have 2 color swatch(es), one before each <color>.
+PASS: "--conic" should have 1 gradient swatch(es).
+
+-- Running test case: InlineSwatch.GradientColorStops.MaskRadialLengthStop
+PASS: "mask" should have 2 color swatch(es), one before each <color>.
+PASS: "mask" should have 1 gradient swatch(es).
+
+-- Running test case: InlineSwatch.GradientColorStops.BorderImageConicAngleStop
+PASS: "border-image" should have 2 color swatch(es), one before each <color>.
+PASS: "border-image" should have 1 gradient swatch(es).
+
+-- Running test case: InlineSwatch.GradientColorStops.ColorMix
+PASS: "background-color" should have 2 color swatch(es), one before each <color>.
+PASS: "background-color" should have 0 gradient swatch(es).
+
