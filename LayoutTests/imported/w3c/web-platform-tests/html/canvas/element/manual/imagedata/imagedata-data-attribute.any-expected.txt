@@ -1,0 +1,5 @@
+
+PASS ImageData instances have no own properties
+PASS ImageData.prototype.data is a readonly accessor property
+PASS ImageData's data getter returns the same Uint8ClampedArray each time
+
