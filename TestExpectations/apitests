@@ -464,7 +464,6 @@ rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevToolsTests/createPane
 rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevToolsTests/inspectedWindowEval() [ Skip ]
 rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevToolsTests/inspectedWindowReloadIgnoringCache() [ Skip ]
 rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevToolsTests/portMessagePassingToBackground() [ Skip ]
-webkit.org/b/329142 [ mac release ] TestWebKitAPI.WKWebExtensionAPIExtensionTests/getViewsForMultipleTabs() [ Pass Crash ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noNotificationsObjectWithoutPermission() [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noWebNavigationObjectWithoutPermission() [ Pass Timeout ]
 webkit.org/b/328511 TestWebKitAPI.WKWebExtensionAPITabs.ActiveTab [ Pass Timeout Failure ]
