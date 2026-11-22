@@ -1441,7 +1441,7 @@ namespace JSC {
         int m_nextConstantOffset { 0 };
         
         // Constant pool
-        IdentifierMap m_identifierMap;
+        BorrowedIdentifierMap m_identifierMap;
 
         typedef HashMap<EncodedJSValueWithRepresentation, unsigned, EncodedJSValueWithRepresentationHash, EncodedJSValueWithRepresentationHashTraits> JSValueMap;
         JSValueMap m_jsValueMap;

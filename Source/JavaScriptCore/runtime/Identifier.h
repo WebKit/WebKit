@@ -242,7 +242,6 @@ struct IdentifierMapIndexHashTraits : HashTraits<int> {
 };
 
 typedef HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
-typedef HashMap<RefPtr<UniquedStringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, IdentifierMapIndexHashTraits> IdentifierMap;
 typedef HashMap<UniquedStringImpl*, int, IdentifierRepHash, HashTraits<UniquedStringImpl*>, IdentifierMapIndexHashTraits> BorrowedIdentifierMap;
 
 } // namespace JSC

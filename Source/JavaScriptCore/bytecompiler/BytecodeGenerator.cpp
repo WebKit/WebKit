@@ -1695,10 +1695,11 @@ bool BytecodeGenerator::hasConstant(const Identifier& ident) const
 unsigned BytecodeGenerator::addConstant(const Identifier& ident)
 {
     UniquedStringImpl* rep = ident.impl();
-    IdentifierMap::AddResult result = m_identifierMap.add(rep, m_codeBlock->numberOfIdentifiers());
+    BorrowedIdentifierMap::AddResult result = m_identifierMap.add(rep, m_codeBlock->numberOfIdentifiers());
     if (result.isNewEntry)
         m_codeBlock->addIdentifier(ident);
 
+    ASSERT(m_codeBlock->identifier(result.iterator->value).impl() == rep);
     return result.iterator->value;
 }
 
