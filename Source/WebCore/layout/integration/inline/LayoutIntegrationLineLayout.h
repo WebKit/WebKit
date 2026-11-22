@@ -210,10 +210,10 @@ private:
 
     NODELETE bool isContentConsideredStale() const;
 
-    // The list items whose excluded marker aligns with our first formatted line.
-    using ExcludedMarkerList = Vector<CheckedPtr<RenderListItem>>;
-    ExcludedMarkerList excludedMarkersForFirstFormattedLine(Layout::InlineLayoutState&);
-    void setExcludedMarkerPositions(const ExcludedMarkerList&);
+    // The list items whose outside marker aligns with our first formatted line.
+    using OutsideMarkerList = Vector<CheckedPtr<RenderListItem>>;
+    OutsideMarkerList outsideMarkersForFirstFormattedLine(Layout::InlineLayoutState&);
+    void setOutsideMarkerPositions(const OutsideMarkerList&);
 
 private:
     CheckedPtr<Layout::ElementBox> m_rootLayoutBox;

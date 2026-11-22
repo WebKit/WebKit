@@ -82,10 +82,10 @@ public:
     void setShouldUseAlignmentBaseline() { m_shouldUseAlignmentBaseline = true; }
     bool shouldUseAlignmentBaseline() const { return m_shouldUseAlignmentBaseline; }
 
-    // Excluded list markers belonging to ancestor list items, which are aligned with this formatting context's first formatted line but are no part of its content.
+    // Outside list markers belonging to ancestor list items, which are aligned with this formatting context's first formatted line but are no part of its content.
     using AscentAndDescent = std::pair<InlineLayoutUnit, InlineLayoutUnit>;
-    void setExcludedMarkerLayoutBounds(Vector<AscentAndDescent>&& layoutBounds) { m_excludedMarkerLayoutBounds = WTF::move(layoutBounds); }
-    const Vector<AscentAndDescent>& excludedMarkerLayoutBounds() const LIFETIME_BOUND { return m_excludedMarkerLayoutBounds; }
+    void setOutsideMarkerLayoutBounds(Vector<AscentAndDescent>&& layoutBounds) { m_outsideMarkerLayoutBounds = WTF::move(layoutBounds); }
+    const Vector<AscentAndDescent>& outsideMarkerLayoutBounds() const LIFETIME_BOUND { return m_outsideMarkerLayoutBounds; }
 
     void setShouldNotSynthesizeInlineBlockBaseline() { m_shouldNotSynthesizeInlineBlockBaseline = true; }
     bool shouldNotSynthesizeInlineBlockBaseline() const { return m_shouldNotSynthesizeInlineBlockBaseline; }
@@ -104,7 +104,7 @@ private:
     size_t m_lineCount { 0 }; // Note that this does not include lines from nested blocks and it does not include lines with no content either.
     size_t m_lineCountWithInlineContentIncludingNestedBlocks { 0 };
     // FIXME: This is required by the integaration codepath.
-    Vector<AscentAndDescent> m_excludedMarkerLayoutBounds;
+    Vector<AscentAndDescent> m_outsideMarkerLayoutBounds;
     AvailableLineWidthOverride m_availableLineWidthOverride;
     bool m_contentFitsWithinMaximumLinesWithoutLineWidthOverride { false };
     bool m_contentMayHaveInkOverflow { false };
