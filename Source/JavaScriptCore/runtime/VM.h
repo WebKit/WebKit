@@ -1038,11 +1038,15 @@ public:
 
     DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
     JS_EXPORT_PRIVATE void drainMicrotasks();
-    void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTF::move(func); }
-    void callOnEachMicrotaskTick()
+    void setMicrotaskTickCallback(WTF::Function<void(VM&)>&& func) { m_microtaskTickCallback = WTF::move(func); }
+    CONCURRENT_SAFE void requestMicrotaskTickCallback() { m_isMicrotaskTickCallbackRequested.store(true, std::memory_order_release); }
+    bool isMicrotaskTickCallbackRequested() const { return m_isMicrotaskTickCallbackRequested.load(std::memory_order_relaxed); }
+    void callMicrotaskTickCallback()
     {
-        if (m_onEachMicrotaskTick)
-            m_onEachMicrotaskTick(*this);
+        if (!m_isMicrotaskTickCallbackRequested.exchange(false, std::memory_order_acquire))
+            return;
+        if (m_microtaskTickCallback)
+            m_microtaskTickCallback(*this);
     }
     void finalizeSynchronousJSExecution()
     {
@@ -1282,7 +1286,8 @@ private:
     // FIXME: We should remove handled promises from this list at GC flip. <https://webkit.org/b/201005>
     Vector<Strong<JSPromise>> m_aboutToBeNotifiedRejectedPromises;
 
-    WTF::Function<void(VM&)> m_onEachMicrotaskTick;
+    WTF::Function<void(VM&)> m_microtaskTickCallback;
+    std::atomic<bool> m_isMicrotaskTickCallbackRequested { false };
     uintptr_t m_currentWeakRefVersion { 0 };
 
     int64_t m_moduleAsyncEvaluationCount { 0 };

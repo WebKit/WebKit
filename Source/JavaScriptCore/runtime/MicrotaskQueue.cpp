@@ -231,10 +231,12 @@ ALWAYS_INLINE std::pair<JSGlobalObject*, bool> MicrotaskQueue::drainImpl(JSGloba
         }
 
         if constexpr (useCallOnEachMicrotask) {
-            vm.callOnEachMicrotaskTick();
-            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
-                clear();
-                return { nullptr, true };
+            if (vm.isMicrotaskTickCallbackRequested()) [[unlikely]] {
+                vm.callMicrotaskTickCallback();
+                if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                    clear();
+                    return { nullptr, true };
+                }
             }
         }
     }

@@ -4816,11 +4816,15 @@ int jscmain(int argc, char** argv)
         // We set these racily with respect to reading them from the JS execution thread.
         *memoryPressureCriticalState = critical;
         *memoryPressureSynchronousState = synchronous;
+        VMManager::forEachVM([](VM& vm) {
+            vm.requestMicrotaskTickCallback();
+            return IterationStatus::Continue;
+        });
     });
     memoryPressureHandler.setShouldLogMemoryMemoryPressureEvents(false);
     memoryPressureHandler.install();
 
-    auto onEachMicrotaskTick = [&] (VM& vm) {
+    auto onMicrotaskTick = [&](VM& vm) {
         if (*memoryPressureCriticalState == Critical::No)
             return;
 
@@ -4845,7 +4849,7 @@ int jscmain(int argc, char** argv)
         [&] (VM& vm, GlobalObject* globalObject, bool& success) {
             UNUSED_PARAM(vm);
 #if PLATFORM(COCOA)
-            vm.setOnEachMicrotaskTick(WTF::move(onEachMicrotaskTick));
+            vm.setMicrotaskTickCallback(WTF::move(onMicrotaskTick));
 #endif
             runWithOptions(globalObject, mainCommandLine.get(), success);
         });
