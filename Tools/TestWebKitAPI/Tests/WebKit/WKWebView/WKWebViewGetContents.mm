@@ -177,6 +177,46 @@ TEST(WKWebView, GetContentsShouldReturnAttributedString)
     Util::run(&finished);
 }
 
+TEST(WKWebView, GetContentsOfBoldDisplayContentsElementShouldReturnBoldFont)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@"Hello <span style='display: contents; font-weight: bold'>World!</span>"];
+
+    __block bool finished = false;
+
+    [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
+        EXPECT_NOT_NULL(attributedString);
+        EXPECT_NULL(error);
+
+        __block size_t i = 0;
+        [attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
+            auto *substring = [attributedString attributedSubstringFromRange:attributeRange];
+#if USE(APPKIT)
+            bool isBold = dynamic_objc_cast<NSFont>(attributes[NSFontAttributeName]).fontDescriptor.symbolicTraits & NSFontDescriptorTraitBold;
+#else
+            bool isBold = dynamic_objc_cast<UIFont>(attributes[NSFontAttributeName]).fontDescriptor.symbolicTraits & UIFontDescriptorTraitBold;
+#endif
+            if (!i) {
+                EXPECT_WK_STREQ(@"Hello ", substring.string);
+                EXPECT_FALSE(isBold);
+            } else if (i == 1) {
+                EXPECT_WK_STREQ(@"World!", substring.string);
+                EXPECT_TRUE(isBold);
+            } else
+                ADD_FAILURE() << "Unexpected attribute run: " << substring.string.UTF8String;
+
+            ++i;
+        }];
+
+        EXPECT_EQ(i, 2UL);
+
+        finished = true;
+    }];
+
+    Util::run(&finished);
+}
+
 TEST(WKWebView, GetContentsWithOpticallySizedFontShouldReturnAttributedString)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
