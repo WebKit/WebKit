@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("WI.LogContentView.prototype._mousemove");
+
+    suite.addTestCase({
+        name: "LogContentView.mousemove.SelectionFocusNodeIsDocument",
+        description: "Ensure that _mousemove does not throw when the selection's focus node has no parentElement (e.g. the Document node, which the selection can be extended to when dragging above the topmost console message).",
+        test(resolve, reject) {
+            let textNode = document.createTextNode("test message text");
+            document.body.appendChild(textNode);
+
+            let selection = window.getSelection();
+            selection.setBaseAndExtent(textNode, 0, document, 1);
+
+            InspectorTest.expectFalse(selection.isCollapsed, "Selection should not be collapsed.");
+            InspectorTest.expectThat(selection.focusNode === document, "Selection's focusNode should be the Document.");
+
+            let caughtException = null;
+            try {
+                WI.LogContentView.prototype._mousemove.call({}, {target: document.body});
+            } catch (e) {
+                caughtException = e;
+            }
+
+            InspectorTest.expectNull(caughtException, "Should not throw when focusNode is a Document node with no parentElement.");
+
+            selection.removeAllRanges();
+            textNode.remove();
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that WI.LogContentView.prototype._mousemove does not throw when the selection's focus node has no parentElement.</p>
+</body>
+</html>
