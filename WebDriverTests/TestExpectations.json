@@ -3818,31 +3818,31 @@
         "expected": { "all": { "status": ["SKIP"], "bug": ["webkit.org/b/288333", "webkit.org/b/288057"]}}
     },
 
-    "imported/w3c/webdriver/tests/bidi/log/entry_added/console_args.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
-    },
     "imported/w3c/webdriver/tests/bidi/log/entry_added/console.py": {
         "subtests": {
             "test_method_timeEnd": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/283784"}}
+                "expected": { "all": { "status": ["TIMEOUT"], "note": "console.timeEnd() isn't reported"}}
+            },
+            "test_new_context_with_refresh": {
+                "expected": { "all": { "status": ["FAIL"], "note": "browsingContext.getTree reports an empty URL for the initial about:blank document, and browsingContext.navigate rejects it"}}
             }
-        },
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
+        }
     },
     "imported/w3c/webdriver/tests/bidi/log/entry_added/event_buffer.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
-    },
-    "imported/w3c/webdriver/tests/bidi/log/entry_added/javascript.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
-    },
-    "imported/w3c/webdriver/tests/bidi/log/entry_added/realm.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/282980"}}
     },
     "imported/w3c/webdriver/tests/bidi/log/entry_added/stacktrace.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/282979", "note": "JSC reports the column of a call's opening parenthesis, and other browsers the start of the function name"}}
     },
     "imported/w3c/webdriver/tests/bidi/log/entry_added/subscription.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
+        "subtests": {
+            "test_subscribe_unsubscribe[console_api_log]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/282980"}}
+            },
+            "test_subscribe_unsubscribe[javascript_error]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/282980"}}
+            }
+        }
     },
 
     "imported/w3c/webdriver/tests/bidi/network/add_data_collector/add_data_collector.py": {
@@ -5121,7 +5121,7 @@
             "test_params_events_value_invalid_event_name[]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_value_invalid_event_name[foo]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_value_invalid_event_name[foo.bar]": {"expected": {"all": {"status": ["PASS"]}}},
-            "test_params_events_value_valid_and_invalid_event_name": {"expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/282977"}}},
+            "test_params_events_value_valid_and_invalid_event_name": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_unsubscribe_globally_without_subscription": {"expected": {"all": {"status": ["PASS"]}}},
             "test_unsubscribe_with_subscription_id_twice": {"expected": {"all": {"status": ["PASS"]}}}
         }
@@ -5728,7 +5728,7 @@
     "imported/w3c/webdriver/tests/bidi/emulation/set_scrollbar_type_override/rendering.py": {
         "subtests": {
             "test_rendering": {
-                "expected": {"all": {"status": ["FAIL"], "bug": ["webkit.org/b/288058", "webkit.org/b/282977"], "note": "compare_png_bidi passes string and number arguments to script.callFunction, and reads an object back"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058", "note": "compare_png_bidi passes string and number arguments to script.callFunction, and reads an object back"}}
             }
         },
         "expected": {"glib": {"status": ["SKIP"], "note": "Not run on GLib ports yet"}}
@@ -6017,60 +6017,36 @@
     "imported/w3c/webdriver/tests/bidi/log/entry_added/text_tentative.py": {
         "subtests": {
             "test_text[console.count(\"test\")-test: 1]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             },
             "test_text[console.count()-default: 1]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
-            },
-            "test_text[console.log([1])-Array(1)]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
-            },
-            "test_text[console.log(new Map([[\"a\", 1]]))-Map(1)]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
-            },
-            "test_text[console.log(new Set([1]))-Set(1)]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
-            },
-            "test_text[console.log({a: 1})-Object(1)]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
-            },
-            "test_text_error[console.log(new Error('err'))-Error: err]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
-            },
-            "test_text_error[console.log(new SyntaxError('s'))-SyntaxError: s]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
-            },
-            "test_text_error[console.log(new TypeError('t'))-TypeError: t]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             },
             "test_text_time": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             },
             "test_text_timelog_with_extra_args": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             },
             "test_text_warn[console.countReset(\"nonexistent\")-nonexistent]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             },
             "test_text_warn[console.time(); console.time();-default]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             },
             "test_text_warn[console.timeEnd(\"nonexistent\")-nonexistent]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             },
             "test_text_warn[console.timeLog(\"nonexistent\")-nonexistent]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "log.entryAdded text differs from other browsers"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "console.count() and console.time() aren't reported"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288068"}}
             }
         }
     },
 
     "imported/w3c/webdriver/tests/bidi/log/entry_added/user_context_tentative.py": {
         "subtests": {
-            "test_user_context[default]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/282978"}}
-            },
             "test_user_context[new]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/282978"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/288104"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/327241"}}
             }
         }
     },

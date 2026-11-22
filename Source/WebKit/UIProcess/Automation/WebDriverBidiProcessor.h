@@ -82,6 +82,8 @@ public:
     Inspector::BidiScriptFrontendDispatcher& scriptDomainNotifier() const LIFETIME_BOUND { return m_scriptDomainNotifier; }
 
     bool eventIsEnabled(const String& eventName, const HashSet<String>& contexts);
+    // Whether a subscription includes the event, in any browsing context.
+    bool hasSubscriptionToEvent(const String& eventName) const;
     void emitEventIfEnabled(const String& eventName, const HashSet<String>& browsingContexts, NOESCAPE const Function<void()>&);
 
     // Shared parsing and validation helpers for the BiDi protocol.

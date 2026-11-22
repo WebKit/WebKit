@@ -63,7 +63,7 @@ void AutomationInstrumentation::addMessageToConsole(FrameIdentifier frameID, con
 {
     RELEASE_ASSERT(isMainThread());
     if (RefPtr client = automationClient()) [[unlikely]]
-        client->addMessageToConsole(frameID, message->source(), message->level(), message->message(), message->type(), message->timestamp());
+        client->addMessageToConsole(frameID, *message);
 }
 
 void AutomationInstrumentation::scriptRealmCreated(FrameIdentifier frameID, const SecurityOriginData& origin, DOMWrapperWorld& world)

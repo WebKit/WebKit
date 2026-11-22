@@ -135,6 +135,7 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
 
     LOG_WITH_STREAM(Automation, stream << "BidiSessionAgent::subscribe: adding subscriptionID="_s << subscriptionID << ", events="_s << events->toJSONString());
     m_eventSubscriptions.add(subscriptionID, BidiEventSubscription { subscriptionID, WTF::move(atomEventNames), WTF::move(browsingContextIDs), { } });
+    subscriptionsDidChange();
 
     if (shouldReplayRealmCreatedEvents(m_eventSubscriptions.get(subscriptionID).events)) {
         RefPtr session = m_session.get();
@@ -195,6 +196,7 @@ IGNORE_GCC_WARNINGS_END
                 addResult.iterator->value++;
         }
     }
+    subscriptionsDidChange();
 
     callback({ });
 }
@@ -230,8 +232,15 @@ IGNORE_GCC_WARNINGS_END
         }
         m_eventSubscriptions.remove(id);
     }
+    subscriptionsDidChange();
 
     callback({ });
+}
+
+void BidiSessionAgent::subscriptionsDidChange()
+{
+    if (RefPtr session = m_session)
+        session->bidiSubscriptionsDidChange();
 }
 
 bool BidiSessionAgent::eventIsEnabled(const String& eventName, const HashSet<String>& browsingContexts)

@@ -98,6 +98,12 @@ public:
     // Lookup RealmIdentifier from browsing context (for UIProcess-initiated realm destruction).
     std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(const String& browsingContext) const;
 
+    // The script.Source of an event that comes from the frame's window realm, or null if the frame has no realm.
+    RefPtr<Inspector::Protocol::BidiScript::Source> sourceForFrame(const WebFrameProxy&) const;
+
+    // Converts a remote value that the WebProcess serialized, which isn't trusted.
+    Ref<Inspector::Protocol::BidiScript::RemoteValue> remoteValueFromSerializedValue(JSON::Value&) const;
+
     // Emit events for all currently active realms (called when subscribing to script.realmCreated).
     void emitEventsForActiveRealms(const HashSet<String>& contextFilter = { });
 

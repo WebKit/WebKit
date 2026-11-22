@@ -136,13 +136,15 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     std::optional<RealmIdentifier> realmIdentifierForFrame(WebCore::FrameIdentifier) const;
     void getBidiRealmInfo(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
-    void addMessageToConsole(WebCore::FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
+    void addMessageToConsole(WebCore::FrameIdentifier, const Inspector::ConsoleMessage&) override;
+    std::optional<String> serializeConsoleArguments(WebFrame&, Inspector::ScriptArguments&);
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
     void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
     void reloadFrame(WebCore::FrameIdentifier, OptionSet<WebCore::ReloadOption>);
+    void setLogEntriesEnabled(bool enabled) { m_logEntriesEnabled = enabled; }
 #endif
 
     String m_sessionIdentifier;
@@ -171,6 +173,11 @@ private:
 
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
     HashMap<DedicatedWorkerRealmKey, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealmInfo;
+
+    // Whether a BiDi session is subscribed to log.entryAdded in any browsing context. Serializing console
+    // arguments runs page getters, so it only happens when someone listens.
+    bool m_logEntriesEnabled { false };
+    bool m_isSerializingConsoleArguments { false };
 #endif
 };
 

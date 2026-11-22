@@ -63,5 +63,6 @@ messages -> WebAutomationSessionProxy {
     GetBidiRealmInfo(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID) -> (std::optional<WebKit::RealmIdentifier> realmIdentifier)
     EnsureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
     ReloadFrame(WebCore::FrameIdentifier frameID, OptionSet<WebCore::ReloadOption> reloadOptions)
+    SetLogEntriesEnabled(bool enabled)
 #endif
 }

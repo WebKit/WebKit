@@ -55,7 +55,7 @@ public:
     JSC::SourceID sourceID() const { return m_sourceID; }
 
     NODELETE JS_EXPORT_PRIVATE bool isEqual(const ScriptCallFrame&) const;
-    bool isNative() const;
+    JS_EXPORT_PRIVATE bool isNative() const;
 
     bool operator==(const ScriptCallFrame& other) const { return isEqual(other); }
 

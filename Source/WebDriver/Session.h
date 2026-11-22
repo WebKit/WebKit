@@ -276,9 +276,6 @@ private:
     bool m_hasBiDiEnabled { false };
 
     WeakPtr<WebSocketServer> m_bidiServer;
-
-    // Actual event handlers
-    RefPtr<JSON::Object> processLogEntryAdded(RefPtr<JSON::Object>&&);
 #endif
 };
 

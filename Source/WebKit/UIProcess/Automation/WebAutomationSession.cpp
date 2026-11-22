@@ -64,6 +64,7 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/MathCommon.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkInterception.h>
 #include <WebCore/PointerEventTypeNames.h>
@@ -4106,37 +4107,91 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-static String logEntryLevelForMessage(const JSC::MessageType& messageType, const MessageLevel& messageLevel)
+// The name of the console method that reported a message, or that would have reported it for messages that don't come
+// from the console API.
+static String logEntryMethodForMessage(JSC::MessageType messageType, JSC::MessageLevel messageLevel)
 {
-    if (messageType == JSC::MessageType::Assert || messageLevel == JSC::MessageLevel::Error)
-        return "error"_s;
-    if (messageType == JSC::MessageType::Trace || messageLevel == JSC::MessageLevel::Debug)
-        return "debug"_s;
-    if (messageLevel == MessageLevel::Warning)
-        return "warn"_s;
-    return "info"_s;
-}
-
-static String logEntryMethodNameForMessage(const JSC::MessageType& messageType, const MessageLevel& messageLevel)
-{
-    if (messageType == JSC::MessageType::Assert)
-        return "assert"_s;
-    if (messageType == JSC::MessageType::Trace)
+    switch (messageType) {
+    case JSC::MessageType::Dir:
+        return "dir"_s;
+    case JSC::MessageType::DirXML:
+        return "dirxml"_s;
+    case JSC::MessageType::Table:
+        return "table"_s;
+    case JSC::MessageType::Trace:
         return "trace"_s;
-    if (messageLevel == JSC::MessageLevel::Warning)
+    case JSC::MessageType::StartGroup:
+        return "group"_s;
+    case JSC::MessageType::StartGroupCollapsed:
+        return "groupCollapsed"_s;
+    case JSC::MessageType::EndGroup:
+        return "groupEnd"_s;
+    case JSC::MessageType::Clear:
+        return "clear"_s;
+    case JSC::MessageType::Assert:
+        return "assert"_s;
+    case JSC::MessageType::Image:
+        return "screenshot"_s;
+    case JSC::MessageType::Log:
+        break;
+    // Only Web Inspector's console agent makes these, for console.time() and the profiling methods, so they don't get
+    // here. See FrameConsoleClient::count().
+    case JSC::MessageType::Timing:
+    case JSC::MessageType::Profile:
+    case JSC::MessageType::ProfileEnd:
+        break;
+    }
+
+    switch (messageLevel) {
+    case JSC::MessageLevel::Log:
+        return "log"_s;
+    case JSC::MessageLevel::Warning:
         return "warn"_s;
-    if (messageLevel == JSC::MessageLevel::Error)
+    case JSC::MessageLevel::Error:
         return "error"_s;
-    if (messageLevel == JSC::MessageLevel::Debug)
+    case JSC::MessageLevel::Debug:
         return "debug"_s;
+    case JSC::MessageLevel::Info:
+        return "info"_s;
+    }
+
+    ASSERT_NOT_REACHED();
     return "log"_s;
 }
 
-static String logEntryTypeForMessage(const JSC::MessageSource& messageSource)
+static Inspector::Protocol::BidiLog::Level logEntryLevelForMethod(const String& method)
 {
-    if (messageSource == JSC::MessageSource::JS)
-        return "javascript"_s;
-    return "console"_s;
+    if (method == "error"_s || method == "assert"_s)
+        return Inspector::Protocol::BidiLog::Level::Error;
+    if (method == "debug"_s || method == "trace"_s)
+        return Inspector::Protocol::BidiLog::Level::Debug;
+    if (method == "warn"_s)
+        return Inspector::Protocol::BidiLog::Level::Warn;
+    return Inspector::Protocol::BidiLog::Level::Info;
+}
+
+static Ref<Inspector::Protocol::BidiScript::StackTrace> logEntryStackTrace(const Vector<Inspector::InitiatorCallFrame>& stackFrames)
+{
+    using namespace Inspector::Protocol;
+
+    auto callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
+    for (auto& [functionName, url, sourceID, lineNumber, columnNumber] : borrow(stackFrames)) {
+        // JSC names the code that isn't in a function, and the spec leaves it unnamed.
+        bool isFunction = !functionName.isNull() && functionName != "global code"_s && functionName != "eval code"_s && functionName != "module code"_s;
+        callFrames->addItem(BidiScript::StackFrame::create()
+            // JSC counts lines and columns from 1, and the spec from 0.
+            // FIXME: <https://webkit.org/b/282979> For a call, JSC reports the column of the opening parenthesis, and
+            // other browsers the start of the function name.
+            .setLineNumber(lineNumber ? lineNumber - 1 : 0)
+            .setColumnNumber(columnNumber ? columnNumber - 1 : 0)
+            .setFunctionName(isFunction ? functionName : emptyString())
+            .setUrl(url.isNull() ? emptyString() : url)
+            .release());
+    }
+
+    return BidiScript::StackTrace::create()
+        .setCallFrames(WTF::move(callFrames))
+        .release();
 }
 #endif // ENABLE(WEBDRIVER_BIDI)
 
@@ -4196,41 +4251,83 @@ static RefPtr<WebFrameProxy> frameControlledBySession(const WebAutomationSession
 
     return frame;
 }
-#endif
 
-void WebAutomationSession::logEntryAdded(IPC::Connection& connection, WebCore::FrameIdentifier frameID, const JSC::MessageSource& messageSource, const JSC::MessageLevel& messageLevel, const String& messageText, const JSC::MessageType& messageType, const WallTime& timestamp)
+void WebAutomationSession::logEntryAdded(IPC::Connection& connection, WebCore::FrameIdentifier frameID, JSC::MessageSource messageSource, JSC::MessageLevel messageLevel, JSC::MessageType messageType, const String& messageText, WallTime timestamp, std::optional<String>&& serializedConsoleArguments, Vector<Inspector::InitiatorCallFrame>&& stackFrames)
 {
-#if ENABLE(WEBDRIVER_BIDI)
+    using namespace Inspector::Protocol;
+
     RefPtr frame = frameControlledBySession(*this, connection, frameID);
     if (!frame)
         return;
 
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::Log::EntryAdded, bidiSubscriptionScopeForFrame(*frame), [&] {
-        // FIXME Support getting source information
-        // https://bugs.webkit.org/show_bug.cgi?id=282978
-        String sourceString;
+        CheckedRef scriptAgent = m_bidiProcessor->scriptAgent();
+        RefPtr source = scriptAgent->sourceForFrame(*frame);
+        if (!source)
+            return;
 
-        auto level = logEntryLevelForMessage(messageType, messageLevel);
-        auto method = logEntryMethodNameForMessage(messageType, messageLevel);
-        auto type = logEntryTypeForMessage(messageSource);
-        auto milliseconds = timestamp.secondsSinceEpoch().milliseconds();
+        auto method = logEntryMethodForMessage(messageType, messageLevel);
+        auto level = logEntryLevelForMethod(method);
+        // Time values are whole milliseconds.
+        auto milliseconds = std::floor(timestamp.secondsSinceEpoch().milliseconds());
 
-        // FIXME Get browsing context handle and source info
-        // https://bugs.webkit.org/show_bug.cgi?id=282981
-        m_bidiProcessor->logDomainNotifier().entryAdded(level, sourceString, messageText, milliseconds, type, method);
+        if (messageSource == JSC::MessageSource::JS) {
+            m_bidiProcessor->logDomainNotifier().entryAdded("javascript"_s, level, source.releaseNonNull(), messageText, milliseconds, logEntryStackTrace(stackFrames), { }, nullptr);
+            return;
+        }
+
+        String text;
+        auto args = JSON::ArrayOf<BidiScript::RemoteValue>::create();
+        if (serializedConsoleArguments) {
+            auto parsedConsoleArguments = JSON::Value::parseJSON(*serializedConsoleArguments);
+            auto consoleArguments = parsedConsoleArguments ? parsedConsoleArguments->asObject() : nullptr;
+            auto serializedArgs = consoleArguments ? consoleArguments->getArray("args"_s) : nullptr;
+            text = consoleArguments ? consoleArguments->getString("text"_s) : String();
+            if (!serializedArgs || text.isNull())
+                return;
+
+            for (auto& serializedArg : *serializedArgs)
+                args->addItem(scriptAgent->remoteValueFromSerializedValue(serializedArg));
+        } else {
+            // Messages that WebKit reports itself, such as failed loads, are reported like console methods that were
+            // called with the message.
+            // FIXME: These aren't console method calls. Report them as another type of log entry, which the spec
+            // allows, or not at all, as Chromium does.
+            text = messageText;
+            auto textArgument = BidiScript::RemoteValue::create()
+                .setType(BidiScript::RemoteValueType::String)
+                .release();
+            textArgument->setValue(JSON::Value::create(messageText));
+            args->addItem(WTF::move(textArgument));
+        }
+
+        m_bidiProcessor->logDomainNotifier().entryAdded("console"_s, level, source.releaseNonNull(), text, milliseconds, logEntryStackTrace(stackFrames), method, WTF::move(args));
     });
+}
+#endif // ENABLE(WEBDRIVER_BIDI)
+
+void WebAutomationSession::didEnsureAutomationSessionProxy(WebProcessProxy& process)
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    if (m_logEntriesEnabled)
+        process.send(Messages::WebAutomationSessionProxy::SetLogEntriesEnabled(true), 0);
 #else
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(messageSource);
-    UNUSED_PARAM(messageLevel);
-    UNUSED_PARAM(messageText);
-    UNUSED_PARAM(messageType);
-    UNUSED_PARAM(timestamp);
+    UNUSED_PARAM(process);
 #endif
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::bidiSubscriptionsDidChange()
+{
+    bool logEntriesEnabled = m_bidiProcessor->hasSubscriptionToEvent(BidiEventNames::Log::EntryAdded);
+    if (logEntriesEnabled == m_logEntriesEnabled)
+        return;
+
+    m_logEntriesEnabled = logEntriesEnabled;
+    if (RefPtr processPool = m_processPool)
+        processPool->sendToAllProcesses(Messages::WebAutomationSessionProxy::SetLogEntriesEnabled(logEntriesEnabled));
+}
+
 void WebAutomationSession::scriptRealmCreated(IPC::Connection& connection, WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
