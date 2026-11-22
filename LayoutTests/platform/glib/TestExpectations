@@ -5230,27 +5230,6 @@ webkit.org/b/297001 http/tests/local/blob/navigate-blob.html [ Crash Failure Pas
 
 webkit.org/b/332135 [ Debug ] inspector/layers/layerTreeDidChange.html [ Failure Pass ]
 
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/fetch.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/sharedworker-classic.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/sharedworker-module.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worker-import-data.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worker-import.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worklet-audio.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worklet-audio-import-data.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/xhr.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/fetch.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/sharedworker-classic.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/sharedworker-module.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worker-import-data.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worker-import.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worklet-audio.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worklet-audio-import-data.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/xhr.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/fetch.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/xhr.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/fetch.https.html [ Failure Pass ]
-webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/xhr.https.html [ Failure Pass ]
-
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -517,6 +517,33 @@ imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/script-
 imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/worker-messaging.html [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/xhr-messaging.html [ Skip ]
 
+# These leave upgrade-insecure-requests behind, so later tests on the same worker that load from the same origin fail.
+webkit.org/b/332751 imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-cross-origin.sub.html [ Skip ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-same-origin.sub.https.html [ Skip ]
+
+# These expect requests to http://localhost:9443 to be blocked, but the requests are upgraded when an earlier
+# test on the same worker used upgrade-insecure-requests.
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/sharedworker-classic.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/sharedworker-module.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worker-import-data.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worker-import.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worklet-audio.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worklet-audio-import-data.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/xhr.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/sharedworker-classic.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/sharedworker-module.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worker-import-data.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worker-import.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worklet-audio.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worklet-audio-import-data.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/xhr.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/xhr.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/xhr.https.html [ Failure Pass ]
+
 imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/filter-no-referrer.html [ ImageOnlyFailure ]
 
 # These tests times out. We should fix that.
