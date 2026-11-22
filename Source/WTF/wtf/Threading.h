@@ -202,6 +202,7 @@ public:
 #if OS(LINUX)
     WTF_EXPORT_PRIVATE static ThreadIdentifier currentID();
     ThreadIdentifier id() const { return m_id; }
+    WTF_EXPORT_PRIVATE static bool mayLowerNiceLevelToZero();
 #endif
     WTF_EXPORT_PRIVATE bool signal(int signalNumber);
 #endif
