@@ -121,3 +121,84 @@ EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } ca
   }
 }
 
+-----------------------------------------------------
+EXPRESSION: Error.prototype
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Error",
+  "_preview": {
+    "_type": "object",
+    "_description": "Error",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "name",
+        "_type": "string",
+        "_value": "Error"
+      },
+      {
+        "_name": "message",
+        "_type": "string",
+        "_value": ""
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: TypeError.prototype
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "TypeError",
+  "_preview": {
+    "_type": "object",
+    "_description": "TypeError",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "name",
+        "_type": "string",
+        "_value": "TypeError"
+      },
+      {
+        "_name": "message",
+        "_type": "string",
+        "_value": ""
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: RangeError.prototype
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "RangeError",
+  "_preview": {
+    "_type": "object",
+    "_description": "RangeError",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "name",
+        "_type": "string",
+        "_value": "RangeError"
+      },
+      {
+        "_name": "message",
+        "_type": "string",
+        "_value": ""
+      }
+    ],
+    "_entries": null
+  }
+}
+
