@@ -564,6 +564,8 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
     if (locatorType.isEmpty())
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Locator type cannot be empty"_s);
 
+    String childContextForContextLocator;
+
     if (locatorType == "css"_s || locatorType == "xpath"_s || locatorType == "innerText"_s) {
         String selector;
         if (!locatorValue->asString(selector))
@@ -587,8 +589,15 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
         }
         if (!hasAccessibilityAttribute)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidSelector, "accessibility locator must have a role or a name"_s);
+    } else if (locatorType == "context"_s) {
+        auto selector = locatorValue->asObject();
+        if (!selector)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "context locator value must be an object"_s);
+
+        auto childContextValue = selector->getValue("context"_s);
+        if (!childContextValue || !childContextValue->asString(childContextForContextLocator))
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "context locator context must be a string"_s);
     } else {
-        // FIXME: Implement the context locator. https://bugs.webkit.org/show_bug.cgi?id=332540
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, makeString("Invalid locator type: '"_s, locatorType, "'"_s));
     }
 
@@ -613,7 +622,41 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
-    session->locateNodesForBidi(topLevelContextHandle, frameHandle, locator->toJSONString(), WTF::move(startNodeIdentifiers), maxNodeCount, maxObjectDepth, maxDomDepth, includeShadowTree, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& result) mutable {
+    // The context locator finds the container element of a child navigable. The web process that has the
+    // browsing context's document also has the element, so resolve the child to its frame here. With
+    // startNodes the command fails once the web process has checked them, so the child isn't looked at.
+    std::optional<WebCore::FrameIdentifier> containerFrameID;
+    if (locatorType == "context"_s && !startNodeIdentifiers) {
+        // https://w3c.github.io/webdriver-bidi/#get-a-navigable: no navigable has an empty id, so it is "no such frame".
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(childContextForContextLocator.isEmpty(), FrameNotFound);
+
+        auto childHandles = session->extractBrowsingContextHandles(childContextForContextLocator);
+        ASYNC_FAIL_IF_UNEXPECTED_RESULT(childHandles);
+
+        // A top-level context has no frame handle and no parent.
+        bool childFrameNotFound = false;
+        auto childFrameID = session->webFrameIDForHandle(childHandles.value().second, childFrameNotFound);
+        ASSERT(!childFrameNotFound);
+        RefPtr childFrame = childFrameID ? WebFrameProxy::webFrame(*childFrameID) : nullptr;
+        RefPtr parentFrame = childFrame ? childFrame->parentFrame() : nullptr;
+
+        // Compare frames rather than handles, since asking for a frame's handle creates one.
+        bool isChildOfBrowsingContext = false;
+        if (parentFrame && frameHandle.isEmpty()) {
+            RefPtr page = session->webPageProxyForHandle(topLevelContextHandle);
+            isChildOfBrowsingContext = page && parentFrame->isMainFrame() && parentFrame->page() == page.get();
+        } else if (parentFrame) {
+            bool frameNotFound = false;
+            auto frameID = session->webFrameIDForHandle(frameHandle, frameNotFound);
+            isChildOfBrowsingContext = frameID && parentFrame->frameID() == *frameID;
+        }
+        if (!isChildOfBrowsingContext)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "context locator context must be a child of the browsing context"_s);
+
+        containerFrameID = childFrameID;
+    }
+
+    session->locateNodesForBidi(topLevelContextHandle, frameHandle, locator->toJSONString(), WTF::move(startNodeIdentifiers), maxNodeCount, maxObjectDepth, maxDomDepth, includeShadowTree, containerFrameID, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;

@@ -62,6 +62,8 @@
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/HTMLDataListElement.h>
@@ -905,7 +907,7 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
 }
 
-void WebAutomationSessionProxy::locateNodesForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+void WebAutomationSessionProxy::locateNodesForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, CompletionHandler<void(String&&, String&&)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
@@ -928,13 +930,31 @@ void WebAutomationSessionProxy::locateNodesForBidi(WebCore::PageIdentifier pageI
     JSValueRef exception = nullptr;
     JSValueRef startNodes = startNodeIdentifiers ? toJSArray(context, *startNodeIdentifiers, toJSValue, &exception) : JSValueMakeNull(context);
 
+    // https://w3c.github.io/webdriver-bidi/#locate-the-container-element
+    // The context locator names a child frame, which may be in another process. Its owner element is in this frame's
+    // document, possibly in a closed shadow tree that script can't reach.
+    JSValueRef containerElement = JSValueMakeNull(context);
+    if (containerFrameID) {
+        RefPtr childFrame = WebProcess::singleton().webFrame(*containerFrameID);
+        RefPtr coreChildFrame = childFrame ? childFrame->coreFrame() : nullptr;
+        RefPtr ownerElement = coreChildFrame ? coreChildFrame->ownerElement() : nullptr;
+        if (ownerElement && ownerElement->document().frame() == coreLocalFrame.get()) {
+            if (auto* globalObject = dynamicDowncast<WebCore::JSDOMGlobalObject>(toJS(context))) {
+                SUPPRESS_UNCOUNTED_LOCAL JSC::VM& vm = globalObject->vm();
+                JSC::JSLockHolder locker(vm);
+                containerElement = toRef(globalObject, WebCore::toJS(globalObject, globalObject, static_cast<WebCore::Node&>(*ownerElement)));
+            }
+        }
+    }
+
     JSValueRef functionArguments[] = {
         toJSValue(context, locator),
         startNodes,
         maxNodeCount ? JSValueMakeNumber(context, *maxNodeCount) : JSValueMakeNull(context),
         maxObjectDepth ? JSValueMakeNumber(context, *maxObjectDepth) : JSValueMakeNull(context),
         maxDomDepth ? JSValueMakeNumber(context, *maxDomDepth) : JSValueMakeNull(context),
-        toJSValue(context, includeShadowTree)
+        toJSValue(context, includeShadowTree),
+        containerElement
     };
 
     JSValueRef result = callPropertyFunction(context, scriptObject, "locateNodesForBidi"_s, std::size(functionArguments), functionArguments, &exception);

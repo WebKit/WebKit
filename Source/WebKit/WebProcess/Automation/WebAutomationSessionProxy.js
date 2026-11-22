@@ -141,7 +141,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes
     // The UI process validates the parameters. Returns a JSON string, either { nodes } with each node serialized
     // as a remote value, or { error, message } where error names an ErrorMessage value.
-    locateNodesForBidi(locatorString, startNodeIdentifiers, maxNodeCount, maxObjectDepth, maxDomDepth, includeShadowTree)
+    locateNodesForBidi(locatorString, startNodeIdentifiers, maxNodeCount, maxObjectDepth, maxDomDepth, includeShadowTree, containerElement)
     {
         try {
             // Check the type of each start node before clearing stale nodes, since a node that isn't in the document, such as an
@@ -153,7 +153,14 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
             let locator = JSON.parse(locatorString);
             let contextNodes = startNodeIdentifiers ? startNodeIdentifiers.map(identifier => this._bidiLocateNodesStartNode(identifier)) : [document];
-            let nodes = this._bidiLocateNodes(locator, contextNodes, maxNodeCount);
+            let nodes;
+            if (locator.type === "context") {
+                // The UI process checked that the context is a child of this one, and the web process found its container element.
+                if (startNodeIdentifiers)
+                    throw { name: "InvalidParameter", message: "The context locator can't be used with startNodes." };
+                nodes = containerElement ? [containerElement] : [];
+            } else
+                nodes = this._bidiLocateNodes(locator, contextNodes, maxNodeCount);
 
             // Each node gets its own serialization internal map.
             let serializedNodes = nodes.map(node => this.serializeBidiRemoteValue(node, maxObjectDepth, maxDomDepth, includeShadowTree, new Map));
