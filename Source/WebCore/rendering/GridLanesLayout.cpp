@@ -36,6 +36,11 @@
 
 namespace WebCore {
 
+static bool isWithinFitTolerance(LayoutUnit position, LayoutUnit highestPosition, GridLanesLayout::ResolvedFitTolerance fitTolerance)
+{
+    return WTF::holdsAlternative<CSS::Keyword::Infinite>(fitTolerance) || position <= highestPosition + std::get<LayoutUnit>(fitTolerance);
+}
+
 GridLanesLayout::GridLanesLayout(RenderGrid& renderGrid, unsigned gridAxisTracksCount, Style::GridTrackSizingDirection stackingAxisDirection)
     : m_runningPositions(gridAxisTracksCount)
     , m_renderGrid(renderGrid)
@@ -66,14 +71,13 @@ GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgori
         bool isAutoPlacedInGridAxis = !hasDefiniteGridAxisPosition(gridItem, gridAxisDirection());
         auto gridArea = isAutoPlacedInGridAxis ? gridAreaForIndefiniteGridAxisItem(gridItem, fitTolerance) : gridAreaForDefiniteGridAxisItem(gridItem);
         layoutGridItem(algorithm, gridItem, gridArea, layoutPhase);
-        auto placement = updateRunningPositions(gridArea, stackingAxisMarginBoxForItem(gridItem));
+        auto marginBoxSize = stackingAxisMarginBoxForItem(gridItem);
 
-        if (isAutoPlacedInGridAxis)
-            m_autoFlowNextCursor = gridAxisSpanFromArea(gridArea).endLine() % gridAxisTracksCount();
-        grid.insert(gridItem, gridArea);
+        auto itemPlacement = placeItemSparsely(gridArea, marginBoxSize, isAutoPlacedInGridAxis);
+        grid.insert(gridItem, itemPlacement.area);
 
-        stackingAxisOffsets.set(gridItem.get(), placement.marginBoxStart);
-        gridContentSize = std::max(gridContentSize, placement.marginBoxEnd);
+        stackingAxisOffsets.set(gridItem.get(), itemPlacement.placement.marginBoxStart);
+        gridContentSize = std::max(gridContentSize, itemPlacement.placement.marginBoxEnd);
     }
 
     return { WTF::move(stackingAxisOffsets), gridContentSize };
@@ -174,11 +178,17 @@ LayoutUnit GridLanesLayout::stackingAxisMarginBoxForItem(const RenderBox& gridIt
     return marginBoxSize;
 }
 
+GridSpan GridLanesLayout::clampedGridAxisTracks(const GridArea& area) const
+{
+    auto gridAxisTracks = gridAxisSpanFromArea(area);
+    ASSERT(gridAxisTracks.startLine() < m_runningPositions.size() && gridAxisTracks.endLine() <= m_runningPositions.size());
+    gridAxisTracks.clamp(m_runningPositions.size());
+    return gridAxisTracks;
+}
+
 GridLanesLayout::StackingAxisPlacement GridLanesLayout::updateRunningPositions(const GridArea& area, LayoutUnit marginBoxSize)
 {
-    auto gridAxisSpan = gridAxisSpanFromArea(area);
-    ASSERT(gridAxisSpan.startLine() < m_runningPositions.size() && gridAxisSpan.endLine() <= m_runningPositions.size());
-    gridAxisSpan.clamp(m_runningPositions.size());
+    auto gridAxisSpan = clampedGridAxisTracks(area);
 
     LayoutUnit previousRunningPosition;
     for (auto track : gridAxisSpan)
@@ -193,6 +203,15 @@ GridLanesLayout::StackingAxisPlacement GridLanesLayout::updateRunningPositions(c
         m_runningPositions[track] = runningPosition;
 
     return { previousRunningPosition, marginBoxEnd };
+}
+
+// Sparse packing places the item at the running position of its tracks.
+GridLanesLayout::ItemPlacement GridLanesLayout::placeItemSparsely(const GridArea& area, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis)
+{
+    auto placement = updateRunningPositions(area, marginBoxSize);
+    if (isAutoPlacedInGridAxis)
+        m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % gridAxisTracksCount();
+    return { area, placement };
 }
 
 // "A collapsed grid track cannot accept placement of auto-placed items."
@@ -233,7 +252,6 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     }
 
     // For normal and length-percentage tolerances, find positions within tolerance of the shortest track
-    auto toleranceValue = std::get<LayoutUnit>(fitTolerance);
 
     // Step 1: Find the absolute shortest position across all tracks
     auto maxStartingLine = gridAxisLines - itemSpanLength;
@@ -254,7 +272,7 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
         auto maxPosForCurrentStartingLine = maxRunningPositionForSpan(startingLine, itemSpanLength);
 
         // Accept first position within tolerance of the absolute shortest
-        if (maxPosForCurrentStartingLine <= absoluteShortest + toleranceValue) {
+        if (isWithinFitTolerance(maxPosForCurrentStartingLine, absoluteShortest, fitTolerance)) {
             smallestMaxPosLine = startingLine;
             break;
         }

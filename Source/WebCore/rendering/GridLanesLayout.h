@@ -81,13 +81,21 @@ private:
         LayoutUnit marginBoxEnd;
     };
 
+    struct ItemPlacement {
+        GridArea area;
+        StackingAxisPlacement placement;
+    };
+
     GridLanesResult placeGridLanesItems(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
     void setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
     void layoutGridItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
     LayoutUnit calculateGridLanesIntrinsicLogicalWidth(RenderBox&, Phase);
 
     LayoutUnit stackingAxisMarginBoxForItem(const RenderBox& gridItem);
+    GridSpan clampedGridAxisTracks(const GridArea&) const;
     StackingAxisPlacement updateRunningPositions(const GridArea&, LayoutUnit marginBoxSize);
+
+    ItemPlacement placeItemSparsely(const GridArea&, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis);
     NODELETE LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
     bool tracksAcceptAutoPlacedItem(unsigned startLine, unsigned trackCount) const;
     NODELETE inline Style::GridTrackSizingDirection gridAxisDirection() const;
