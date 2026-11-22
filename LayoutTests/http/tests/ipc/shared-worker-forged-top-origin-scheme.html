@@ -63,7 +63,7 @@ if (window.IPC) {
         try {
             capturedRequests.push({
                 objectIdentifier: trailingWords(message.arguments[1], objectIdentifierWordCount),
-                port: trailingWords(message.arguments[2], transferredPortWordCount)
+                port: trailingWords(message.arguments[3], transferredPortWordCount)
             });
         } catch (error) {
             failures.push("FAIL: could not read the identifiers out of RequestSharedWorker: " + error.message);
@@ -134,6 +134,7 @@ function requestSharedWorker(harvested, topOriginProtocol, name)
     IPC.sendMessage("Networking", 0, requestSharedWorkerMessageName, [
         sharedWorkerKey,
         harvested.objectIdentifier.map(word => ({ type: "uint64_t", value: word })),
+        { type: "bool", value: 0 }, // No frame identifier.
         harvested.port.map(word => ({ type: "uint64_t", value: word })),
         workerOptions
     ]);

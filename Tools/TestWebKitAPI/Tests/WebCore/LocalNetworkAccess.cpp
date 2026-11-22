@@ -53,7 +53,7 @@ static std::optional<ResourceError> checkSynchronouslyWithOriginPair(const Resou
         return requirement.error();
     if (*requirement == LocalNetworkAccessRequirement::None)
         return std::nullopt;
-    return localNetworkAccessPermissionError(request.url(), permissionCheck(clientOrigin, connectionAddressSpace));
+    return localNetworkAccessErrorIfNotGranted(request.url(), permissionCheck(clientOrigin, connectionAddressSpace));
 }
 
 static std::optional<ResourceError> checkSynchronously(const ResourceRequest& request, IPAddressSpace connectionAddressSpace, IPAddressSpace clientAddressSpace, bool clientIsSecureContext, const SecurityOriginData& clientOrigin, const PermissionAnswer& permissionCheck, const URL& currentURL = { }, bool localNetworkAllowedByPermissionsPolicy = true, bool loopbackNetworkAllowedByPermissionsPolicy = true)
@@ -389,8 +389,8 @@ TEST(LocalNetworkAccess, AGatedRequestDefersToThePermissionAnswer)
     ASSERT_TRUE(requirement.has_value());
     EXPECT_EQ(LocalNetworkAccessRequirement::Permission, *requirement);
 
-    EXPECT_FALSE(localNetworkAccessPermissionError(request.url(), PermissionState::Granted).has_value());
-    auto denied = localNetworkAccessPermissionError(request.url(), PermissionState::Denied);
+    EXPECT_FALSE(localNetworkAccessErrorIfNotGranted(request.url(), PermissionState::Granted).has_value());
+    auto denied = localNetworkAccessErrorIfNotGranted(request.url(), PermissionState::Denied);
     ASSERT_TRUE(denied.has_value());
     EXPECT_TRUE(denied->isAccessControl());
     EXPECT_TRUE(denied->localizedDescription().contains("was denied"_s));
