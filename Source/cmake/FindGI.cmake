@@ -327,6 +327,7 @@ function(GI_INTROSPECT namespace nsversion header)
         string(JOIN " " sanitizer_flags ${ENABLED_COMPILER_SANITIZERS})
         set(scanner_env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS} ${sanitizer_flags}" "LDFLAGS=${sanitizer_flags}")
     endif ()
+    list(APPEND scanner_env "GI_SCANNER_DISABLE_CACHE=1")
     add_custom_command(
         OUTPUT "${gir_path}"
         COMMENT "Generating ${gir_name}.gir"
