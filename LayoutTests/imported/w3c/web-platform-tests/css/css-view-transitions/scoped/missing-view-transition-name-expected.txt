@@ -1,0 +1,3 @@
+
+PASS Scoped view transition excludes animations for root element
+

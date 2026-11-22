@@ -1619,6 +1619,9 @@ imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-compo
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-with-offset-from-containing-block.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/input-pointer-capture-while-render-blocked.html [ Failure ]
 
+imported/w3c/web-platform-tests/css/css-view-transitions/scoped/hit-testing.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/scoped/mask-image-capture.html [ ImageOnlyFailure ]
+
 # Needs special fuzziness on iOS.
 imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
 

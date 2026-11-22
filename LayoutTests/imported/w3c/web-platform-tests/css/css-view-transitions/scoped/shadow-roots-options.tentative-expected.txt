@@ -1,0 +1,7 @@
+
+PASS Default empty shadowRoots does not expose shadow tree view-transition-names
+PASS shadowRoots accepts Array, Set, and custom iterables with open and closed ShadowRoots
+PASS Duplicate ShadowRoots in shadowRoots sequence are deduplicated without collision
+PASS Mutating the passed shadowRoots array after startViewTransition() has no effect
+PASS Invalid shadowRoots values throw TypeError on both Document and Element
+

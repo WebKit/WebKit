@@ -1,0 +1,6 @@
+
+FAIL Scope with named child becoming display: none during update callback skips transition and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Scope with named child becoming display: none during animation skips transition
+FAIL Named scope becoming display: none during update callback skips transition and rejects ready assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Named scope becoming display: none during animation skips transition
+

@@ -1,0 +1,6 @@
+
+FAIL Hit testing a captured scope with transform: none, transform-style: flat assert_equals: The captured scope still exposes its overlay expected Element node <div id="scope" style="transform: none; transform-style: ... but got Element node <div id="behind"></div>
+FAIL Hit testing a captured scope with transform: translate(10px, 5px), transform-style: flat assert_equals: The captured scope still exposes its overlay expected Element node <div id="scope" style="transform: translate(10px, 5px); t... but got Element node <div id="behind"></div>
+FAIL Hit testing a captured scope with transform: none, transform-style: preserve-3d assert_equals: The captured scope still exposes its overlay expected Element node <div id="scope" style="transform: none; transform-style: ... but got Element node <div id="behind"></div>
+FAIL Hit testing a captured scope with transform: translate(10px, 5px), transform-style: preserve-3d assert_equals: The captured scope still exposes its overlay expected Element node <div id="scope" style="transform: translate(10px, 5px); t... but got Element node <div id="behind"></div>
+

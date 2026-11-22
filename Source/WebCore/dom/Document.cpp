@@ -12756,6 +12756,14 @@ RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallback
 
         updateLayoutIgnorePendingStylesheets();
         addActiveScopedViewTransition(viewTransition);
+
+        // The scope element sizes as if it had `contain-intrinsic-size: auto` for the
+        // duration of the transition, so its pre-transition content box becomes its
+        // last remembered size. https://drafts.csswg.org/css-sizing-4/#last-remembered
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(scopeElement->renderer())) {
+            scopeElement->setLastRememberedLogicalWidth(box->contentBoxLogicalWidth());
+            scopeElement->setLastRememberedLogicalHeight(box->contentBoxLogicalHeight());
+        }
         scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
         return viewTransition;
     }

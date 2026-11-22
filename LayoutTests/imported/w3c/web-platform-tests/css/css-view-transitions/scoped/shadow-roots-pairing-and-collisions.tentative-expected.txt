@@ -1,0 +1,7 @@
+
+PASS Light DOM outgoing element pairs with ShadowRoot incoming element
+PASS ShadowRoot sr1 outgoing element pairs with ShadowRoot sr2 incoming element
+PASS Duplicate view-transition-name between Document and opted-in ShadowRoot in old phase skips transition with InvalidStateError
+PASS Duplicate view-transition-name across two opted-in ShadowRoots in new phase skips transition with InvalidStateError
+PASS Same view-transition-name in an unopted-in ShadowRoot does not collide with participating trees
+

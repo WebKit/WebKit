@@ -1,0 +1,6 @@
+
+PASS Sibling, disconnected, and cross-document ShadowRoots do not throw and their non-descendant elements are ignored
+PASS Ancestor ShadowRoot in shadowRoots does not capture shadow ancestors or siblings outside transitionRoot
+PASS Slotted transitionRoot ignores shadow ancestors/siblings and unslotted light-DOM children are skipped
+PASS Nested ShadowRoots participate independently based on explicit membership in shadowRoots
+

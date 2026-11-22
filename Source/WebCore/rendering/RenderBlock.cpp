@@ -671,6 +671,10 @@ void RenderBlock::addOverflowFromOutOfFlowBoxes()
         return;
 
     for (auto& outOfFlowBox : *outOfFlowDescendants) {
+        // The view transition pseudo-element tree is an overlay; it never contributes
+        // scrollable overflow to the scope that hosts it.
+        if (outOfFlowBox.isViewTransitionContainingBlock())
+            continue;
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (outOfFlowBox.isAbsolutelyPositioned())
             addOverflowWithRendererOffset(outOfFlowBox, offsetFromBlock(*this, outOfFlowBox));

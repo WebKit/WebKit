@@ -34,6 +34,7 @@
 #include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "ViewTransition.h"
 #include "EditingInlines.h"
 #include "EventHandler.h"
 #include "FlexFormattingUtils.h"
@@ -5562,6 +5563,13 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
 {
     ASSERT(isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment());
 
+    // The scope of a scoped view transition sizes as if it had `contain-intrinsic-size: auto`.
+    // https://drafts.csswg.org/css-view-transitions-2/#scoped-view-transitions
+    if (RefPtr element = this->element(); element && element->hasActiveScopedViewTransition()) {
+        if (auto width = isHorizontalWritingMode() ? element->lastRememberedLogicalWidth() : element->lastRememberedLogicalHeight())
+            return width;
+    }
+
     auto& style = this->style();
     auto& containIntrinsicWidth = style.containIntrinsicWidth();
     if (containIntrinsicWidth.isNone())
@@ -5585,6 +5593,13 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
 std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
 {
     ASSERT(isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment());
+
+    // The scope of a scoped view transition sizes as if it had `contain-intrinsic-size: auto`.
+    // https://drafts.csswg.org/css-view-transitions-2/#scoped-view-transitions
+    if (RefPtr element = this->element(); element && element->hasActiveScopedViewTransition()) {
+        if (auto height = isHorizontalWritingMode() ? element->lastRememberedLogicalHeight() : element->lastRememberedLogicalWidth())
+            return height;
+    }
 
     auto& style = this->style();
     auto& containIntrinsicHeight = style.containIntrinsicHeight();

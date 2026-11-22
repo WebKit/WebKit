@@ -124,7 +124,7 @@ bool compareStyleablePositionsInDocumentTreeOrder(const Styleable& a, const Styl
 
     if (aReferenceElement.ptr() == bReferenceElement.ptr()) {
         if (isNamedViewTransitionPseudoElement(a.pseudoElementIdentifier) && isNamedViewTransitionPseudoElement(b.pseudoElementIdentifier) && a.pseudoElementIdentifier->nameOrPart != b.pseudoElementIdentifier->nameOrPart) {
-            RefPtr activeViewTransition = aReferenceElement->document().activeViewTransition();
+            RefPtr activeViewTransition = aReferenceElement->activeViewTransition();
             ASSERT(activeViewTransition);
             if (!activeViewTransition)
                 return false;

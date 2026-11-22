@@ -1,0 +1,3 @@
+
+FAIL Scoped view transition on an opacity: 0 scope occludes underlying target assert_implements: IntersectionObserverV2 isVisible is required undefined
+

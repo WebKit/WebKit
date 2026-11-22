@@ -113,6 +113,7 @@ protected:
     NODELETE LayoutRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
     virtual void layoutShadowContent(const LayoutSize&);
+    void layoutViewTransitionContainingBlock();
 
     LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, IsComputingIntrinsicSize = IsComputingIntrinsicSize::No) const;
     template<typename T> LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(T logicalWidth, IsComputingIntrinsicSize isComputingIntrinsicSize = IsComputingIntrinsicSize::No) const { return computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit(logicalWidth), isComputingIntrinsicSize); }
@@ -135,6 +136,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderReplaced"_s; }
 
     bool canHaveChildren() const override { return false; }
+    bool canHaveGeneratedChildren() const override;
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     void constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const final;

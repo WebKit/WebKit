@@ -32,17 +32,18 @@
 namespace WebCore {
 
 class Element;
+class ViewTransition;
 
 class RenderTreeUpdater::ViewTransition {
     WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
     NODELETE ViewTransition(RenderTreeUpdater&);
 
-    void updatePseudoElementTree(RenderElement*, Style::DifferenceResult minimalStyleDifference);
+    void updatePseudoElementTree(Element& host, RenderElement* hostRenderer, Style::DifferenceResult minimalStyleDifference);
 
 private:
-    void buildPseudoElementGroup(RenderBlockFlow& viewTransitionRoot, const AtomString&, RenderElement&, RenderObject* = nullptr);
-    void updatePseudoElementGroup(const Style::ComputedStyle&, RenderBox&, RenderElement&, Style::DifferenceResult minimalStyleDifference);
+    void buildPseudoElementGroup(WebCore::ViewTransition&, RenderElement& parent, const AtomString&, RenderElement&, RenderObject* = nullptr);
+    void updatePseudoElementGroup(WebCore::ViewTransition&, const Style::ComputedStyle&, RenderBox&, RenderElement&, Style::DifferenceResult minimalStyleDifference);
     RenderTreeUpdater& m_updater;
 };
 

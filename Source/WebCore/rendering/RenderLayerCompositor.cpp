@@ -1715,7 +1715,19 @@ void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& l
     if (!downcast<RenderViewTransitionCapture>(layer.renderer()).canUseExistingLayers())
         return;
 
-    RefPtr activeViewTransition = layer.renderer().document().activeViewTransition();
+    // The capture may belong to a scoped transition; the host is the element of
+    // the renderer the enclosing view transition containing block is attached to.
+    RefPtr<ViewTransition> activeViewTransition;
+    for (CheckedPtr ancestor = layer.renderer().parent(); ancestor; ancestor = ancestor->parent()) {
+        if (!ancestor->isViewTransitionContainingBlock())
+            continue;
+        CheckedPtr containingBlockParent = ancestor->parent();
+        if (containingBlockParent && containingBlockParent->element())
+            activeViewTransition = layer.renderer().document().viewTransitionHostedOn(*containingBlockParent->element());
+        else
+            activeViewTransition = layer.renderer().document().activeViewTransition();
+        break;
+    }
     if (!activeViewTransition)
         return;
 
@@ -1905,10 +1917,20 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         }
 
         // Layers that are captured in a view transition get manually parented to their pseudo in collectViewTransitionNewContentLayers.
-        // The view transition root (when the document element is captured) gets parented in RenderLayerBacking::childForSuperlayers.
-        bool skipAddToEnclosing = layer.renderer().capturedInViewTransition() && !layer.renderer().isDocumentElementRenderer();
-        if (layer.renderer().isViewTransitionContainingBlock() && protect(layer.renderer().document())->activeViewTransitionCapturedDocumentElement())
-            skipAddToEnclosing = true;
+        // The view transition root (when the document element or a scope element is captured)
+        // gets parented in RenderLayerBacking::childForSuperlayers.
+        auto hostsTransitionCapturingSelf = [](const RenderLayerModelObject& renderer) {
+            if (!renderer.capturedInViewTransition() || !renderer.element())
+                return false;
+            return !!protect(renderer.document())->viewTransitionHostedOn(*renderer.element());
+        };
+        bool skipAddToEnclosing = layer.renderer().capturedInViewTransition() && !layer.renderer().isDocumentElementRenderer() && !hostsTransitionCapturingSelf(layer.renderer());
+        if (layer.renderer().isViewTransitionContainingBlock()) {
+            if (protect(layer.renderer().document())->activeViewTransitionCapturedDocumentElement())
+                skipAddToEnclosing = true;
+            else if (CheckedPtr containingBlockParent = dynamicDowncast<RenderLayerModelObject>(layer.renderer().parent()); containingBlockParent && hostsTransitionCapturingSelf(*containingBlockParent))
+                skipAddToEnclosing = true;
+        }
 
         if (!skipAddToEnclosing)
             childLayersOfEnclosingLayer.append(Ref { *layerBacking->childForSuperlayers() });
@@ -3759,6 +3781,10 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
     };
 
     traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool /*isPaintOrderAncestor*/) {
+        // A scoped view transition containing block escapes the clip and scroll
+        // offset of the scope that hosts it; ancestors above the scope still apply.
+        if (&ancestorLayer != compositingAncestor && layer.renderer().isViewTransitionContainingBlock() && &ancestorLayer == layer.parent())
+            return AncestorTraversal::Continue;
         if (&ancestorLayer == compositingAncestor) {
             bool canUseDescendantClip = canUseDescendantClippingLayer(ancestorLayer);
             if (haveNonScrollableClippingIntermediateLayer)
@@ -3920,6 +3946,12 @@ bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer& layer
         return true;
 
     if (!(layer.hasCompositingDescendant() && layer.renderer().hasClipOrNonVisibleOverflow()))
+        return false;
+
+    // A scoped view transition pseudo-element tree escapes the scope's overflow
+    // clip, so the scope cannot clip composited descendants with a single
+    // containment layer.
+    if (layer.renderer().element() && protect(layer.renderer().document())->viewTransitionHostedOn(*layer.renderer().element()))
         return false;
 
     if (layer.hasCompositedNonContainedDescendants())

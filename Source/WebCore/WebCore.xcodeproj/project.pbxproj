@@ -14865,6 +14865,7 @@
 		7A6D3C8328A4056300C5C6EC /* NotificationResourcesLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationResourcesLoader.h; sourceTree = "<group>"; };
 		7A7946642978815C00750A1B /* Settings.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = Settings.yaml; sourceTree = "<group>"; };
 		7A7C8B5427F32D2B0008E234 /* Element+Typedom.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+Typedom.idl"; sourceTree = "<group>"; };
+		8C3CA7F81B1EAA73B5408DF6 /* Element+ViewTransition.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+ViewTransition.idl"; sourceTree = "<group>"; };
 		7A7C8B5627F32E690008E234 /* ComputedStylePropertyMapReadOnly.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ComputedStylePropertyMapReadOnly.cpp; sourceTree = "<group>"; };
 		7A7C8B5727F32E7D0008E234 /* ComputedStylePropertyMapReadOnly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputedStylePropertyMapReadOnly.h; sourceTree = "<group>"; };
 		7A81DB9728F82C4800F66898 /* ScrollingTreePositionedNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreePositionedNode.cpp; sourceTree = "<group>"; };
@@ -43139,6 +43140,7 @@
 				7C6771242527D22200FDEF00 /* Element+PointerEvents.idl */,
 				7C6771222527D22100FDEF00 /* Element+PointerLock.idl */,
 				7A7C8B5427F32D2B0008E234 /* Element+Typedom.idl */,
+				8C3CA7F81B1EAA73B5408DF6 /* Element+ViewTransition.idl */,
 				3B7C4D1E5F60718293A4B5C6 /* Element+VolumetricScene.idl */,
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,

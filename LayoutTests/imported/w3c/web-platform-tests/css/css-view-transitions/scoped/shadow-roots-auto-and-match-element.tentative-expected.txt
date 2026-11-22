@@ -1,0 +1,6 @@
+
+PASS view-transition-name: match-element in ShadowRoot works via <style>, inline style, and CSS Typed OM
+PASS view-transition-name: auto inside opted-in ShadowRoot pairs replaced elements by id
+PASS Cross-tree auto pairs by id across participating trees and collides when active simultaneously
+PASS ::part() rule with view-transition-name: auto does not use shadow element id even when ShadowRoot is in shadowRoots
+
