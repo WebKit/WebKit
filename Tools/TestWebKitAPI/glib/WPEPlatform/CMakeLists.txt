@@ -119,7 +119,12 @@ if (ENABLE_WPE_PLATFORM_HEADLESS)
 endif ()
 
 if (ENABLE_WPE_PLATFORM_WAYLAND)
-    ADD_WPE_PLATFORM_TEST(TestDisplayWayland ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestDisplayWayland.cpp)
+    # The test compositor needs the text-input-v1 interface definitions. They are generated
+    # as private code for WPEPlatform and are not exported, so build them into the test too.
+    ADD_WPE_PLATFORM_TEST(TestDisplayWayland
+        ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestDisplayWayland.cpp
+        ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-protocol.c
+    )
     target_include_directories(TestDisplayWayland SYSTEM PRIVATE ${WAYLAND_INCLUDE_DIRS})
     target_link_libraries(TestDisplayWayland ${WAYLAND_LIBRARIES})
 endif ()
