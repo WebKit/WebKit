@@ -1,0 +1,13 @@
+
+FAIL feFlood with :visited color taints 2D canvas assert_array_equals: Untainted feFlood filter should draw green without tainting expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL feDropShadow with :visited color taints 2D canvas assert_array_equals: Untainted feDropShadow filter should draw green without tainting expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL feDiffuseLighting with :visited color taints 2D canvas assert_array_equals: Untainted feDiffuseLighting filter should draw green without tainting expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL feSpecularLighting with :visited color taints 2D canvas assert_array_equals: Untainted feSpecularLighting filter should draw green without tainting expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL Filters inside a link whose :visited color matches unvisited do not taint assert_array_equals: feFlood inside link with identical :visited flood-color should not taint expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL Dynamically turning an ancestor <a> into a visited link causes feFlood to taint 2D canvas assert_array_equals: Initially non-link feFlood filter should not taint expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL Dynamically turning an ancestor <a> into an unvisited link causes feFlood to taint 2D canvas assert_array_equals: Initially non-link feFlood filter should not taint expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL Dynamically turning an ancestor <a> into a visited link causes feDiffuseLighting to taint 2D canvas assert_array_equals: Initially non-link feDiffuseLighting filter should not taint expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL Dynamically turning an ancestor <a> into an unvisited link causes feDiffuseLighting to taint 2D canvas assert_array_equals: Initially non-link feDiffuseLighting filter should not taint expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+FAIL Dynamically turning an ancestor <a> into a visited link taints immediate canvas draw assert_array_equals: expected property 1 to be 255 but got 0 (expected array [0, 255, 0, 255] got object "0,0,0,255")
+PASS feFlood inside a display:none <svg> after getComputedStyle does not leak :visited color to canvas
+

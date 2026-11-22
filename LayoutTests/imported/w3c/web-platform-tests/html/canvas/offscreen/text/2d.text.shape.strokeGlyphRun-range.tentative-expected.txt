@@ -1,0 +1,7 @@
+2d.text.shape.strokeGlyphRun-range.tentative
+
+Test that glyphClusters(start, end) and strokeGlyphRuns() correctly render different ranges of the input text.
+
+
+FAIL Test that glyphClusters(start, end) and strokeGlyphRuns() correctly render different ranges of the input text. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+

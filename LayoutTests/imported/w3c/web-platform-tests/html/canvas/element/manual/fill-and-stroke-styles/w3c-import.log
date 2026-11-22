@@ -10,11 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/2d.fillStyle.parse.current.notrendered.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/canvas_colorsandstyles_createlineargradient_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-expected.html
@@ -22,3 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-rotation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-rotation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/pattern-from-canvas-cross-origin-taint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/pattern-from-image-cross-origin-taint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/pattern-from-img-cross-origin-taint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/pattern-from-video-cross-origin-taint.https.sub.html

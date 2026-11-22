@@ -1,0 +1,14 @@
+2d.text.shape.advance-to-position-edges.tentative
+
+
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction ltr and text align left. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction rtl and text align left. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction ltr and text align center. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction rtl and text align center. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction ltr and text align right. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction rtl and text align right. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction ltr and text align start. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction rtl and text align start. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction ltr and text align end. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Check that ShapedText::advanceToPosition() gives correct edges when the requested point is outside the range, with direction rtl and text align end. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+

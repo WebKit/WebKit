@@ -1,0 +1,6 @@
+2d.canvas.host.readonly
+Canvas objects are readonly
+Actual output:
+
+PASS Canvas objects are readonly
+

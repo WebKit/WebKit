@@ -1,0 +1,3 @@
+
+PASS line caps should not be drawn on closed arcs
+

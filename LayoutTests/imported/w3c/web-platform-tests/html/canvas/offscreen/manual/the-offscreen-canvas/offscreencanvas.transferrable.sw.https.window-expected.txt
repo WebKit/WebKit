@@ -1,0 +1,3 @@
+
+PASS Sending and receiving OffscreenCanvas between window and service worker
+

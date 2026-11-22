@@ -10,8 +10,7 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/WEB_FEATURES.yml

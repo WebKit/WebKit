@@ -1,0 +1,4 @@
+
+
+PASS Tainting check for a tainted canvas in canvas pattern
+

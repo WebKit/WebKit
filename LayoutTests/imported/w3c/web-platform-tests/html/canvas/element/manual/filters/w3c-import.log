@@ -10,10 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/2d.filter.function-then-svg-reference.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-fillStyle-opacity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-fillStyle-opacity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-opacity-alpha-and-fillStyle-expected.html
@@ -36,3 +36,20 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-blend-modes-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-blend-modes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-diffuse-filter-visited-color-taints.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-displacement-filter-tainted-fillpaint.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-displacement-filter-tainted-fillpaint.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-displacement-filter-tainted-sourcealpha.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-displacement-filter-tainted-sourcealpha.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-displacement-filter-tainted-strokepaint.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-displacement-filter-tainted-strokepaint.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-drop-shadow-filter-visited-color-taints.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-feImage-cross-origin-taint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-lh-rlh-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-lh-rlh-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-lh-rlh.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-visited-link-color-taints.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-flood-filter-visited-color-taints.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-specular-filter-visited-color-taints.html

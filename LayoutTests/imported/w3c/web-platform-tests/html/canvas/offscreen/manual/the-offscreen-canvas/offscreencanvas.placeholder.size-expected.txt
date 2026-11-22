@@ -1,0 +1,6 @@
+
+PASS Setting width or height on a placeholder canvas throws
+PASS The width and height content attributes do not resize a placeholder canvas
+PASS Transferring the OffscreenCanvas preserves the placeholder size
+PASS The width and height content attributes do not change the aspect ratio of a placeholder canvas
+

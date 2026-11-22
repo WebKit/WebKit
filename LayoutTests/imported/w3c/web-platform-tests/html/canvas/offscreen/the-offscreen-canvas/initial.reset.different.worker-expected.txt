@@ -1,3 +1,0 @@
-
-PASS Changing size resets canvas to transparent black
-

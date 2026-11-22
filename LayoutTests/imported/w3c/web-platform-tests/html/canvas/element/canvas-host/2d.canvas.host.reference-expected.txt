@@ -1,0 +1,6 @@
+2d.canvas.host.reference
+canvas refers back to its canvas
+Actual output:
+
+PASS canvas refers back to its canvas
+

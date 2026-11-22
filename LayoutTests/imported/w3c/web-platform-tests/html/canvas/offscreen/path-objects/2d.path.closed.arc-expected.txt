@@ -1,0 +1,7 @@
+2d.path.closed.arc
+
+line caps should not be drawn on closed arcs
+
+
+PASS line caps should not be drawn on closed arcs
+

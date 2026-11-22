@@ -1,0 +1,3 @@
+
+PASS OffscreenCanvas ctx.font should ignore element-dependent calc and preserve previous value
+

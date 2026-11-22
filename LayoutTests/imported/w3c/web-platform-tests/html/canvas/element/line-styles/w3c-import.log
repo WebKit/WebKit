@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.cap.butt.html
@@ -47,3 +45,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.scaledefault.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.transformed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/WEB_FEATURES.yml

@@ -1,3 +1,0 @@
-
-FAIL Test pixels on CanvasFilter() componentTransfer with linear type Can't find variable: CanvasFilter
-

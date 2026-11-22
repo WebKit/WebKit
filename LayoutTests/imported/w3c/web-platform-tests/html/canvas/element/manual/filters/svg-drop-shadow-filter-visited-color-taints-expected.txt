@@ -1,0 +1,4 @@
+
+
+FAIL Tainting check for visited link in SVG drop shadowfilter assert_throws_dom: canvas.toDataURL should throw SecurityError for SVG using visited color. function "function () { canvas.toDataURL() }" did not throw
+

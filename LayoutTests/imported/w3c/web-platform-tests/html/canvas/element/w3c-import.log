@@ -10,14 +10,17 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.conformance.requirements.basics.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.conformance.requirements.delete.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.conformance.requirements.drawings.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.conformance.requirements.missingargs.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.putImageData-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.putImageData-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.putImageData.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.text-outside-of-the-flat-tree-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.text-outside-of-the-flat-tree-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.text-outside-of-the-flat-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/2d.text-root-font-relative-units.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/WEB_FEATURES.yml

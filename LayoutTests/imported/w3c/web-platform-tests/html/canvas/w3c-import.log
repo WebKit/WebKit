@@ -10,9 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/canvas-css-random.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/canvas-sibling-index-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/color.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/historical.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/historical.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/text-metrics-for-unpaintable-crash.html

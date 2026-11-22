@@ -1,0 +1,6 @@
+2d.text.shape.selection-rects-baselines.tentative
+Check that ShapedText::selectionRects() works correctly with textBaseline.
+Actual output:
+
+FAIL Check that ShapedText::selectionRects() works correctly with textBaseline. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+

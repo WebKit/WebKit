@@ -1,0 +1,7 @@
+2d.gradient.relativecolor
+
+Relative color works as CanvasGradient color input
+
+
+FAIL Relative color works as CanvasGradient color input assert_approx_equals: Red channel of the pixel at (25, 25) expected 236 +/- 3 but got 190
+

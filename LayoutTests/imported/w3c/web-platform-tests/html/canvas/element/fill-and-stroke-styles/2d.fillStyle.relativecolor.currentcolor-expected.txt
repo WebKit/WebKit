@@ -1,0 +1,6 @@
+2d.fillStyle.relativecolor.currentcolor
+Relative color works as color input with currentcolor
+Actual output:
+
+PASS Relative color works as color input with currentcolor
+

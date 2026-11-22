@@ -10,10 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/desynchronized-crossorigin-snapshot-isolation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas_self-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas_self.html
@@ -21,4 +21,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_crossorigin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_html_image.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_svg_image_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_svg_image_nonuniform_scale.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_svg_image_with_foreign_object_does_not_taint.html

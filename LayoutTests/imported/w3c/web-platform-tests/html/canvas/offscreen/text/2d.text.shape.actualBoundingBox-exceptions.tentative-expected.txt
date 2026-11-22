@@ -1,0 +1,7 @@
+2d.text.shape.actualBoundingBox-exceptions.tentative
+
+Check that ShapedText::actualBoundingBox() throws when using invalid indexes.
+
+
+FAIL Check that ShapedText::actualBoundingBox() throws when using invalid indexes. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+

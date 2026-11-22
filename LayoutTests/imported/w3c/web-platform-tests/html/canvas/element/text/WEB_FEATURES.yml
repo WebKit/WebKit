@@ -1,4 +1,2 @@
-features:
-- name: canvas-text-baselines
-  files:
-  - 2d.text.measure.baselines.*
+rules:
+- "**": [canvas-2d]

@@ -1,0 +1,6 @@
+
+FAIL drawImage() of a bitmap cropped entirely outside its source (OffscreenCanvas) assert_equals: width expected 8 but got 1
+PASS createPattern() of a bitmap cropped entirely outside its source (OffscreenCanvas)
+FAIL drawImage() of a bitmap cropped entirely outside its source (ImageBitmap) assert_equals: width expected 8 but got 1
+PASS createPattern() of a bitmap cropped entirely outside its source (ImageBitmap)
+

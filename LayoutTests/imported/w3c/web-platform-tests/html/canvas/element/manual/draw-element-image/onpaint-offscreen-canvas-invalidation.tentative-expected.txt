@@ -1,0 +1,5 @@
+
+
+PASS commits from a main-thread OffscreenCanvas in a drawable element should fire paint on the ancestor canvas
+PASS commits from a worker OffscreenCanvas in a drawable element should fire paint on the ancestor canvas
+

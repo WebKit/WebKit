@@ -1,0 +1,9 @@
+2d.text.shape.actualBoundingBox.tentative
+
+FAIL Test ShapedText::actualBoundingBox(), with text align left , and 0px letter spacing. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+FAIL Test ShapedText::actualBoundingBox(), with text align center , and 0px letter spacing. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+FAIL Test ShapedText::actualBoundingBox(), with text align right , and 0px letter spacing. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+FAIL Test ShapedText::actualBoundingBox(), with text align left , and 10px letter spacing. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+FAIL Test ShapedText::actualBoundingBox(), with text align center , and 10px letter spacing. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+FAIL Test ShapedText::actualBoundingBox(), with text align right , and 10px letter spacing. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+

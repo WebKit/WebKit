@@ -1,0 +1,8 @@
+
+PASS 5-argument drawImage with a non-uniform scale (viewBox)
+PASS 9-argument drawImage with a source rectangle and a non-uniform scale (viewBox)
+PASS 5-argument drawImage with a non-uniform scale (no viewBox)
+PASS 9-argument drawImage with a source rectangle and a non-uniform scale (no viewBox)
+PASS drawImage with a uniform scale keeps the preserveAspectRatio of the SVG image
+PASS drawImage applies the preserveAspectRatio of the SVG image at its natural size, then stretches it
+

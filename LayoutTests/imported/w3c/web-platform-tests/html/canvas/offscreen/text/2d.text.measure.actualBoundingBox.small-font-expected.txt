@@ -1,0 +1,7 @@
+2d.text.measure.actualBoundingBox.small-font
+
+Testing that actualBoundingBox metrics are precise at small font sizes
+
+
+PASS Testing that actualBoundingBox metrics are precise at small font sizes
+

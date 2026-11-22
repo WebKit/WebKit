@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_002-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_002-ref.htm

@@ -1,0 +1,6 @@
+2d.text.measure.width.nullCharacter
+Null character does not take up space
+Actual output:
+
+PASS Null character does not take up space
+

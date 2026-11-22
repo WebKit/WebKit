@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.1.html
@@ -20,6 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.5.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.6.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.7.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.8.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.end.html
@@ -39,6 +39,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.twopie.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.twopie.3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.twopie.4.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.twopie.5.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.twopie.6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.zero.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.zero.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.zeroradius.html
@@ -49,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arcTo.collinear.3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arcTo.ensuresubpath.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arcTo.ensuresubpath.2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arcTo.ensuresubpath.3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arcTo.negative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arcTo.nonfinite.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arcTo.scale.html
@@ -70,18 +73,26 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.basic.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.intersect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.scale.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.unaffected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.winding.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.winding.2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.winding.evenodd.1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.clip.winding.evenodd.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.closePath.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.closePath.newline.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.closePath.nextpoint.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.closed.arc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.ellipse.basics.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.closed.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.closed.unaffected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.overlap.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.overlap.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.winding.add.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.winding.evenodd.1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.winding.evenodd.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.winding.subtract.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.winding.subtract.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.winding.subtract.3.html
@@ -94,6 +105,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.bigarc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.edge.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.nobitmap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.nobitmap.path2d.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.nobitmap.transform.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.nobitmap.winding.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.nonfinite.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.outside.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.subpath.html
@@ -103,6 +118,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.transform.4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.unclosed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInPath.winding.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInStroke.nobitmap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInStroke.nobitmap.path2d.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInStroke.nobitmap.transform.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInStroke.scaleddashes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInpath.invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInpath.multi.path.html
@@ -116,6 +134,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.moveTo.multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.moveTo.newsubpath.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.moveTo.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.open.arc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.quadraticCurveTo.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.quadraticCurveTo.ensuresubpath.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.quadraticCurveTo.ensuresubpath.2.html
@@ -138,7 +157,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.rect.zero.5.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.rect.zero.6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.single argument.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.single.argument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit.single.argument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.double.html
@@ -183,7 +202,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.intersecting.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.negative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.noargument.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.noarugment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.none.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.toomany.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.selfintersect.html
@@ -211,3 +229,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.transformation.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.transformation.changing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.transformation.multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/WEB_FEATURES.yml

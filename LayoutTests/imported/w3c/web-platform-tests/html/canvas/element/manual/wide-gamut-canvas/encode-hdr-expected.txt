@@ -1,0 +1,20 @@
+
+PASS toDataURL image/png toneMapping=standard
+FAIL toDataURL image/png toneMapping=extended assert_approx_equals: channel=0 expected 16 +/- 1 but got 1
+PASS toBlob image/png toneMapping=standard
+FAIL toBlob image/png toneMapping=extended assert_approx_equals: channel=0 expected 16 +/- 1 but got 1
+PASS convertToBlob image/png toneMapping=standard
+FAIL convertToBlob image/png toneMapping=extended assert_approx_equals: channel=0 expected 16 +/- 1 but got 1
+FAIL toDataURL image/jpeg toneMapping=standard promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL toDataURL image/jpeg toneMapping=extended promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL toBlob image/jpeg toneMapping=standard promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL toBlob image/jpeg toneMapping=extended promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL convertToBlob image/jpeg toneMapping=standard promise_test: Unhandled rejection with value: object "EncodingError: The encoding operation (either encoded or decoding) failed."
+FAIL convertToBlob image/jpeg toneMapping=extended promise_test: Unhandled rejection with value: object "EncodingError: The encoding operation (either encoded or decoding) failed."
+PASS toDataURL image/webp toneMapping=standard
+FAIL toDataURL image/webp toneMapping=extended assert_approx_equals: channel=0 expected 16 +/- 1 but got 1
+PASS toBlob image/webp toneMapping=standard
+FAIL toBlob image/webp toneMapping=extended assert_approx_equals: channel=0 expected 16 +/- 1 but got 1
+PASS convertToBlob image/webp toneMapping=standard
+FAIL convertToBlob image/webp toneMapping=extended assert_approx_equals: channel=0 expected 16 +/- 1 but got 1
+

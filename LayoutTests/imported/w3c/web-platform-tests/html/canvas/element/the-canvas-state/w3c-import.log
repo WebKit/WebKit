@@ -10,11 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.bitmap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.clip.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.clip.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.fillStyle.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.font.html
@@ -36,3 +35,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.textBaseline.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.transformation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.underflow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/WEB_FEATURES.yml

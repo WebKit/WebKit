@@ -1,0 +1,4 @@
+
+PASS Removing an animating iframe from inside its own canvas paint event does not crash
+PASS Removing a child iframe from inside a parent canvas paint event does not crash
+

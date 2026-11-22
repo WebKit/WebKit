@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.clear.html
@@ -231,3 +229,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.uncovered.pattern.source-in.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.uncovered.pattern.source-out.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.uncovered.pattern.source-out.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/WEB_FEATURES.yml

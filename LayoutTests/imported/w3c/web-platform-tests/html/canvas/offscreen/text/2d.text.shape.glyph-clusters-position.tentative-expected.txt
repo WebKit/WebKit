@@ -1,0 +1,7 @@
+2d.text.shape.glyph-clusters-position.tentative
+
+Test that ShapedText::glyphClusters() and ShapedText::glyphRuns() return GlyphRun objects positioned according to the context textAlign and textBaseline at shapeText() time, and expose per-run TextMetrics.
+
+
+FAIL Test that ShapedText::glyphClusters() and ShapedText::glyphRuns() return GlyphRun objects positioned according to the context textAlign and textBaseline at shapeText() time, and expose per-run TextMetrics. promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+

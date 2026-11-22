@@ -1,0 +1,3 @@
+
+PASS Relative color works as color input
+
