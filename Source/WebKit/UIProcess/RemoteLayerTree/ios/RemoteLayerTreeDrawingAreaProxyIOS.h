@@ -43,10 +43,7 @@ public:
 
     bool isRemoteLayerTreeDrawingAreaProxyIOS() const final { return true; }
 
-    void scheduleDisplayRefreshCallbacksForMonotonicAnimations();
-    void pauseDisplayRefreshCallbacksForMonotonicAnimations();
-    void highImpactMonotonicAnimationsWereRemoved();
-    void updateHighImpactMonotonicAnimations();
+    void updateDisplayRefreshCallbacksForMonotonicAnimations();
 
     void startForcedDisplayRefreshWindow(Seconds interval, Seconds duration);
 

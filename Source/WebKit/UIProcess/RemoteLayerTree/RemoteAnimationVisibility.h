@@ -30,7 +30,9 @@
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 OBJC_CLASS CALayer;
 
@@ -43,11 +45,34 @@ class RemoteLayerTreeNode;
 class RemoteAnimationVisibility {
 public:
     using AnimationStackForNode = Function<RefPtr<const RemoteAnimationStack>(const RemoteLayerTreeNode&)>;
-    using VisibilityCache = HashMap<WebCore::PlatformLayerIdentifier, bool>;
-    static bool animatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
+
+    struct AnimatedLayer {
+        WebCore::PlatformLayerIdentifier layerID;
+        RefPtr<RemoteLayerTreeNode> node;
+        Ref<const RemoteAnimationStack> animationStack;
+    };
+
+    void setNeedsUpdate() { m_needsUpdate = true; }
+    bool needsUpdate() const { return m_needsUpdate; }
+
+    // Determines which of the provided animated layers may be visible and returns those targeted
+    // by monotonic animations that may be newly visible.
+    Vector<AnimatedLayer> update(CALayer *webViewLayer, const Vector<AnimatedLayer>&, NOESCAPE const AnimationStackForNode&);
+
+    bool mayBeVisible(WebCore::PlatformLayerIdentifier layerID) const { return m_layerIDsThatMayBeVisible.contains(layerID); }
+    bool hasMonotonicAnimationsThatMayBeVisible() const { return m_hasMonotonicAnimationsThatMayBeVisible; }
+    bool hasHighImpactMonotonicAnimationsThatMayBeVisible() const { return m_hasHighImpactMonotonicAnimationsThatMayBeVisible; }
+    void remove(WebCore::PlatformLayerIdentifier layerID) { m_layerIDsThatMayBeVisible.remove(layerID); }
 
 private:
+    using VisibilityCache = HashMap<WebCore::PlatformLayerIdentifier, bool>;
+    static bool animatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
     static bool computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
+
+    HashSet<WebCore::PlatformLayerIdentifier> m_layerIDsThatMayBeVisible;
+    bool m_hasMonotonicAnimationsThatMayBeVisible { true };
+    bool m_hasHighImpactMonotonicAnimationsThatMayBeVisible { true };
+    bool m_needsUpdate { false };
 };
 
 } // namespace WebKit
