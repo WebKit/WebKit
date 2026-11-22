@@ -449,8 +449,6 @@ webkit.org/b/293286 TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTP
 webkit.org/b/330994 [ mac debug siteisolation ] TestWebKitAPI.WKNavigation.ReloadRelatedViewsInProcessDidTerminate [ Crash ]
 webkit.org/b/330972 [ iOS27 ] TestWebKitAPI.WKScrollViewTests.FixedLayerPositionDoesNotFreezeDuringInteractiveObscuredInsetsChange [ Failure ]
 webkit.org/b/299810 [ ios ] TestWebKitAPI.WKWebExtensionAPIActionTests/clearTabSpecificActionPropertiesOnNavigation() [ Failure ]
-rdar://174495016 [ mac ] TestWebKitAPI.WKWebExtensionAPIAlarms.DelaySingleShot [ Skip ]
-webkit.org/b/311933 [ mac ] TestWebKitAPI.WKWebExtensionAPIAlarms.WhenSingleShot [ Skip ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPICookies.ChangedEvent [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllCookieStoresWithPrivateAccess [ Pass Timeout ]
 webkit.org/b/330828 [ ios release ] TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllAfterNetworkProcessTermination() [ Pass Timeout ]
