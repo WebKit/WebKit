@@ -4165,6 +4165,26 @@ sub dyldFrameworkPathsForMacWebKitApp($)
     return @paths;
 }
 
+sub executableArchitectures($)
+{
+    my ($executablePath) = @_;
+    chomp(my $architectures = `/usr/bin/lipo -archs '$executablePath' 2> /dev/null`);
+    return split(' ', $architectures);
+}
+
+sub architectureForMacWebKitApp($)
+{
+    my ($appPath) = @_;
+    my $architecture = architecture();
+    return $architecture unless defined $architecture && $architecture eq "arm64e";
+
+    my $executablePath = -d $appPath ? appExecutablePathFromBundle($appPath) : $appPath;
+    my %appArchitectures = map { $_ => 1 } executableArchitectures($executablePath);
+    # An arm64 process can load arm64e frameworks, so launch the arm64 slice of an app built without arm64e.
+    return "arm64" if !$appArchitectures{"arm64e"} && $appArchitectures{"arm64"};
+    return $architecture;
+}
+
 sub runMacWebKitApp($;$$)
 {
     my ($appPath, $useOpenCommand, $openDocumentPath) = @_;
@@ -4191,8 +4211,8 @@ sub runMacWebKitApp($;$$)
         return system(@openCommand);
     }
     my $result;
-    if (architecture()) {
-        $result = system "arch", "-" . architecture(), commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
+    if (my $architecture = architectureForMacWebKitApp($appPath)) {
+        $result = system "arch", "-" . $architecture, commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
     } else {
         $result = system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
     }
@@ -4243,7 +4263,7 @@ sub execMacWebKitAppForDebugging($)
     my @frameworkPaths = dyldFrameworkPathsForMacWebKitApp($appPath);
     setupMacWebKitEnvironment(@frameworkPaths);
 
-    my @architectureFlags = ($architectureSwitch, architecture());
+    my @architectureFlags = ($architectureSwitch, architectureForMacWebKitApp($appPath));
     print "Starting @{[basename($appPath)]} under lldb with DYLD_FRAMEWORK_PATH set to point to built WebKit in @{[join(', ', @frameworkPaths)]}.\n";
     exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
