@@ -3144,6 +3144,10 @@ webkit.org/b/158923 media/modern-media-controls/placard-support/placard-support-
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback [ Skip ]
 media/media-source/media-managedmse-airplay.html [ Skip ]
 media/media-source/media-managedmse-airplay-withsrc.html [ Skip ]
+
+media/media-source/media-source-generated-captions.html [ Skip ]
+media/media-source/media-source-generated-captions-disabled.html [ Skip ]
+media/media-source/media-source-generated-captions-unknown-language.html [ Skip ]
 media/adopt-node-after-showing-picker-crash.html [ Skip ]
 
 # LEGACY_ENCRYPTED_MEDIA is deprecated

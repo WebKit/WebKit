@@ -1,0 +1,30 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+
+EXPECTED (video.textTracks.length == '0') OK
+RUN(video.volume = 0.001)
+RUN(internals.withUserGesture(() => video.play()))
+EVENT(playing)
+EXPECTED (nowPlaying == 'true') OK
+
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (track.kind == 'captions') OK
+EXPECTED (track.language == 'eng') OK
+RUN(track.mode = "showing")
+EXPECTED (track.cues.length == '0') OK
+
+RUN(source.endOfStream())
+EXPECTED (track.cues.length >= 2) OK
+EXPECTED (track.cues[0].text === "Mock caption " + track.cues[0].startTime == 'true') OK
+EXPECTED (track.cues[0].endTime - track.cues[0].startTime == '1') OK
+EXPECTED (track.cues[1].text === "Mock caption " + track.cues[1].startTime == 'true') OK
+EXPECTED (track.cues[1].startTime - track.cues[0].startTime == '1') OK
+
+EXPECTED (track.activeCues && track.activeCues.length > 0) OK
+EXPECTED (track.activeCues[0].text.startsWith("Mock caption ") == 'true') OK
+END OF TEST
+

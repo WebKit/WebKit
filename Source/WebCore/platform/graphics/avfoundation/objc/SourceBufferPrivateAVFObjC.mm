@@ -575,8 +575,12 @@ void SourceBufferPrivateAVFObjC::audioTrackDidChangeEnabled(TrackID trackId, boo
         });
     });
 
-    callOnMainThreadWithPlayer([trackIdentifier = *trackIdentifier](auto& player) {
-        player.addAudioTrack(trackIdentifier);
+    String language;
+    if (auto audioTrack = m_audioTracks.find(trackId); audioTrack != m_audioTracks.end() && audioTrack->second)
+        language = audioTrack->second->language().isolatedCopy();
+
+    callOnMainThreadWithPlayer([trackIdentifier = *trackIdentifier, language = WTF::move(language)](auto& player) {
+        player.addAudioTrack(trackIdentifier, language);
     });
 }
 

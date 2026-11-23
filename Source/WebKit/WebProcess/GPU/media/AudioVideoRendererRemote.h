@@ -99,6 +99,10 @@ public:
         void readyForMoreMediaData(WebCore::SamplesRendererTrackIdentifier);
         void stateUpdate(RemoteAudioVideoRendererState);
         void updatePlaybackQualityMetrics(WebCore::VideoPlaybackQualityMetrics);
+#if HAVE(AVCAPTIONTRANSCRIBER)
+        void newTranscribedCuesAvailable(Vector<WebCore::GenericCueData>);
+        void captionTranscriptionAvailabilityChanged(bool);
+#endif
 
 #if PLATFORM(COCOA)
         void layerHostingContextChanged(RemoteAudioVideoRendererState, WebCore::HostingContext&&, const WebCore::FloatSize&);
@@ -130,6 +134,12 @@ private:
     void notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&&) final;
     void notifyWhenRequiresFlushToResume(Function<void()>&&) final;
     void notifyRenderingModeChanged(Function<void()>&&) final;
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    void notifyNewTranscribedCuesAvailable(Function<void(Vector<WebCore::GenericCueData>)>&&) final;
+    void notifyCaptionTranscriptionAvailabilityChanged(Function<void(bool)>&&) final;
+    void setMediaSessionIdentifier(WebCore::MediaSessionIdentifier) final;
+    void setCaptionAudioLanguage(const String&) final;
+#endif
     void expectMinimumUpcomingPresentationTime(const MediaTime&) final;
     void notifySizeChanged(Function<void(const MediaTime&, WebCore::FloatSize)>&&) final;
     void setShouldDisableHDR(bool) final;
@@ -343,6 +353,10 @@ private:
 
     Function<void(WebCore::PlatformMediaError)> m_errorCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void()> m_firstFrameAvailableCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    Function<void(Vector<WebCore::GenericCueData>)> m_notifyNewTranscribedCuesAvailableCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void(bool)> m_captionTranscriptionAvailabilityCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+#endif
     Function<void(const MediaTime&, double)> m_hasAvailableVideoFrameCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void()> m_notifyWhenRequiresFlushToResumeCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void()> m_renderingModeChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());

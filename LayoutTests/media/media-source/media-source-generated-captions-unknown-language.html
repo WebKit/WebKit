@@ -1,0 +1,86 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true MediaGeneratedCaptionsEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+    <title>media-source-generated-captions-unknown-language</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var nowPlaying;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            if (!window.internals) {
+                failTest("This test requires the Internals API");
+                return;
+            }
+
+            await internals.setMockCaptionTranscriptionEnabled(true);
+
+            let manifests = [ 'content/test-xhe-aac-manifest.json', 'content/test-spatial-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (MediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            source = new MediaSource();
+            const sourceOpen = waitFor(source, 'sourceopen');
+            run('video.src = URL.createObjectURL(source)');
+            await sourceOpen;
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            for (let i = 0; i < loader.mediaSegmentsLength(); ++i) {
+                sourceBuffer.appendBuffer(loader.mediaSegment(i));
+                await waitFor(sourceBuffer, 'update', true);
+            }
+            run('source.endOfStream()');
+
+            consoleWrite('');
+            testExpected('video.audioTracks.length', 1);
+            testExpected('video.audioTracks[0].language === "" || video.audioTracks[0].language === "und"', true);
+
+            run('video.volume = 0.001');
+            run('internals.withUserGesture(() => video.play())');
+            await waitFor(video, 'playing');
+
+            nowPlaying = false;
+            for (let i = 0; i < 100 && !nowPlaying; ++i) {
+                nowPlaying = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+                if (!nowPlaying)
+                    await sleepFor(50);
+            }
+            testExpected('nowPlaying', true);
+
+            await sleepFor(1500);
+            consoleWrite('');
+            testExpected('video.textTracks.length', 0);
+
+            await internals.setMockCaptionTranscriptionEnabled(false);
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

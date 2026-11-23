@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "CaptionTranscriberManager.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcess.h"
 #include "GPUProcessConnectionInfo.h"
@@ -933,6 +934,14 @@ void GPUConnectionToWebProcess::isRemoteCommandTargetSessionForTesting(WebCore::
 {
     completion(gpuProcess().isRemoteCommandTargetSession(webProcessIdentifier(), identifier));
 }
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+void GPUConnectionToWebProcess::setMockCaptionTranscriptionEnabledForTesting(bool enabled, CompletionHandler<void()>&& completion)
+{
+    gpuProcess().captionTranscriberManager().setMockEnabledForTesting(enabled);
+    completion();
+}
+#endif
 
 void GPUConnectionToWebProcess::postNowPlayingRemoteControlCommandForTesting(WebCore::PlatformMediaSessionRemoteControlCommandType type, const WebCore::PlatformMediaSessionRemoteCommandArgument& argument)
 {

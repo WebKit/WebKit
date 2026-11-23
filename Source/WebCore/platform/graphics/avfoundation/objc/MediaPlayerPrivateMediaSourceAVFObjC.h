@@ -59,7 +59,9 @@ class AudioTrackPrivate;
 class AudioVideoRenderer;
 class CDMSessionAVContentKeySession;
 class EffectiveRateChangedListener;
+struct GenericCueData;
 class InbandTextTrackPrivate;
+class InbandTextTrackPrivateGenerated;
 class MediaSourcePrivateAVFObjC;
 class VideoFrameCV;
 class VideoLayerManagerObjC;
@@ -89,7 +91,7 @@ public:
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
 
     using TrackIdentifier = AudioVideoRenderer::TrackIdentifier;
-    void addAudioTrack(TrackIdentifier);
+    void addAudioTrack(TrackIdentifier, const String& language);
     void removeAudioTrack(TrackIdentifier);
 
     void removeAudioTrack(AudioTrackPrivate&);
@@ -405,6 +407,16 @@ private:
 
     const MediaPlayerIdentifier m_playerIdentifier;
     const Ref<AudioVideoRenderer> m_renderer;
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    void setCaptionAudioLanguage(const String&);
+    void setCaptionTranscriptionAvailable(bool);
+    void updateGeneratedCaptionsTrack();
+    void didReceiveGeneratedCues(Vector<GenericCueData>&&);
+    RefPtr<InbandTextTrackPrivateGenerated> m_generatedCaptionsTrack;
+    String m_captionAudioLanguage;
+    bool m_captionTranscriptionAvailable { false };
+    std::optional<TrackIdentifier> m_captionAudioTrackIdentifier;
+#endif
 };
 
 }

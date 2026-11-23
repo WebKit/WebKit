@@ -31,6 +31,7 @@
 #include "ArgumentCoders.h"
 #include "Attachment.h"
 #include "AuxiliaryProcessMessages.h"
+#include "CaptionTranscriberManager.h"
 #include "DisplayListDataTester.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnectionParameters.h"
@@ -522,6 +523,7 @@ void GPUProcess::recomputeNowPlayingOwner()
         return QualifiedPageIdentifier { m_activeNowPlayingOwner->page, m_activeNowPlayingOwner->process };
     }();
 
+    auto previousOwner = m_activeNowPlayingOwner;
     m_activeNowPlayingOwner = eligibleOwner;
     m_remoteCommandTarget = commandTarget;
 
@@ -534,6 +536,12 @@ void GPUProcess::recomputeNowPlayingOwner()
     UNUSED_VARIABLE(ownerPage);
     UNUSED_VARIABLE(previousOwnerPage);
 #endif
+
+    if (previousOwner != m_activeNowPlayingOwner) {
+        m_nowPlayingOwnerObservers.forEach([&](auto& observer) {
+            observer.nowPlayingOwnerDidChange(m_activeNowPlayingOwner);
+        });
+    }
 }
 
 void GPUProcess::setNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier> session)
@@ -1190,6 +1198,25 @@ WebCore::NowPlayingManager& GPUProcess::nowPlayingManager()
         lazyInitialize(m_nowPlayingManager, makeUnique<WebCore::NowPlayingManager>());
     return *m_nowPlayingManager;
 }
+
+void GPUProcess::registerForNowPlayingOwnerChanges(NowPlayingOwnerObserver& observer)
+{
+    m_nowPlayingOwnerObservers.add(observer);
+}
+
+void GPUProcess::unregisterForNowPlayingOwnerChanges(NowPlayingOwnerObserver& observer)
+{
+    m_nowPlayingOwnerObservers.remove(observer);
+}
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+CaptionTranscriberManager& GPUProcess::captionTranscriberManager()
+{
+    if (!m_captionTranscriberManager)
+        m_captionTranscriberManager = makeUnique<CaptionTranscriberManager>(*this);
+    return *m_captionTranscriberManager;
+}
+#endif
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager()

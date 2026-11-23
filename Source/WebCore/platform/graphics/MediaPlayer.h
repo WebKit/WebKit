@@ -38,6 +38,7 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaPromiseTypes.h>
+#include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PlatformDynamicRangeLimit.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformMediaDecodingType.h>
@@ -350,6 +351,12 @@ public:
     virtual PlatformVideoTarget mediaPlayerVideoTarget() const { return nullptr; }
 
     virtual MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const = 0;
+
+    virtual std::optional<MediaSessionIdentifier> mediaPlayerMediaSessionIdentifier() const;
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    virtual bool mediaPlayerGeneratedCaptionsEnabled() const;
+#endif
 
     virtual MediaPlayerSoundStageSize mediaPlayerSoundStageSize() const { return MediaPlayerSoundStageSize::Auto; }
 
@@ -810,6 +817,10 @@ public:
 
     PlatformVideoTarget videoTarget() const { return protect(client())->mediaPlayerVideoTarget(); }
     MediaPlayerClientIdentifier clientIdentifier() const { return protect(client())->mediaPlayerClientIdentifier(); }
+    std::optional<MediaSessionIdentifier> mediaSessionIdentifier() const;
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    bool generatedCaptionsEnabled() const;
+#endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const;

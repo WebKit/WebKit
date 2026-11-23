@@ -42,6 +42,7 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/MediaSampleConverter.h>
+#include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/ShareableBitmapHandle.h>
 #include <WebCore/SharedTimebase.h>
 #include <wtf/Forward.h>
@@ -55,6 +56,7 @@
 
 namespace WebCore {
 class AudioVideoRenderer;
+struct GenericCueData;
 struct MediaPlayerIdentifierType;
 using MediaPlayerIdentifier = ObjectIdentifier<MediaPlayerIdentifierType>;
 class TextTrackRepresentation;
@@ -93,6 +95,16 @@ public:
     std::optional<WebCore::FloatRect> hostedVideoLayerBoundsForTesting(WebCore::HTMLMediaElementIdentifier) const;
 #endif
 
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    struct RendererForMediaSession {
+        RemoteAudioVideoRendererIdentifier identifier;
+        Ref<WebCore::AudioVideoRenderer> renderer;
+        String language;
+    };
+    std::optional<RendererForMediaSession> rendererForMediaSession(WebCore::MediaSessionIdentifier) const;
+    void sendTranscribedCues(RemoteAudioVideoRendererIdentifier, Vector<WebCore::GenericCueData>&&);
+    void sendCaptionTranscriptionAvailability(RemoteAudioVideoRendererIdentifier, bool available);
+#endif
 private:
     explicit RemoteAudioVideoRendererProxyManager(GPUConnectionToWebProcess&);
 
@@ -100,6 +112,11 @@ private:
     void createManager(RemoteAudioVideoRendererIdentifier, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&&);
     void shutdown(RemoteAudioVideoRendererIdentifier);
     void destroy(RemoteAudioVideoRendererIdentifier);
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    void setMediaSessionIdentifier(RemoteAudioVideoRendererIdentifier, WebCore::MediaSessionIdentifier);
+    void setCaptionAudioLanguage(RemoteAudioVideoRendererIdentifier, const String&);
+    void captionRendererSessionsDidChange(bool createManagerIfNeeded = false);
+#endif
 
     void setPreferences(RemoteAudioVideoRendererIdentifier, WebCore::VideoRendererPreferences);
     void setHasProtectedVideoContent(RemoteAudioVideoRendererIdentifier, bool);
@@ -180,6 +197,10 @@ private:
         RefPtr<WebCore::AudioVideoRenderer> renderer;
         Markable<WebCore::HTMLMediaElementIdentifier> mediaElementIdentifier;
         Markable<WebCore::MediaPlayerIdentifier> playerIdentifier;
+#if HAVE(AVCAPTIONTRANSCRIBER)
+        Markable<WebCore::MediaSessionIdentifier> mediaSessionIdentifier;
+        String captionAudioLanguage;
+#endif
 #if PLATFORM(COCOA)
         LayerHostingContextManager layerHostingContextManager;
 #endif

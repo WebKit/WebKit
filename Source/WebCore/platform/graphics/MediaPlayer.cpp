@@ -261,6 +261,18 @@ Ref<PlatformMediaResourceLoader> MediaPlayerClient::mediaPlayerCreateResourceLoa
     return *new NullMediaResourceLoader;
 }
 
+std::optional<MediaSessionIdentifier> MediaPlayerClient::mediaPlayerMediaSessionIdentifier() const
+{
+    return std::nullopt;
+}
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+bool MediaPlayerClient::mediaPlayerGeneratedCaptionsEnabled() const
+{
+    return false;
+}
+#endif
+
 class NullMediaPlayerClient final
     : public MediaPlayerClient
     , public RefCounted<NullMediaPlayerClient>
@@ -2206,6 +2218,18 @@ bool MediaPlayer::isInFullscreenOrPictureInPicture() const
 {
     return m_isInFullscreenOrPictureInPicture;
 }
+
+std::optional<MediaSessionIdentifier> MediaPlayer::mediaSessionIdentifier() const
+{
+    return protect(client())->mediaPlayerMediaSessionIdentifier();
+}
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+bool MediaPlayer::generatedCaptionsEnabled() const
+{
+    return protect(client())->mediaPlayerGeneratedCaptionsEnabled();
+}
+#endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 bool MediaPlayer::supportsLinearMediaPlayer() const

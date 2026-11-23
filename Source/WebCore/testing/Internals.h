@@ -1422,6 +1422,7 @@ public:
     void elementIsActiveNowPlayingSessionInGPUProcess(HTMLMediaElement&, DOMPromiseDeferred<IDLBoolean>&&);
     void elementIsRemoteCommandTargetInGPUProcess(HTMLMediaElement&, DOMPromiseDeferred<IDLBoolean>&&);
     void hostedVideoLayerBoundsInGPUProcess(HTMLMediaElement&, DOMPromiseDeferred<IDLInterface<DOMRect>>&&);
+    void setMockCaptionTranscriptionEnabled(bool, DOMPromiseDeferred<void>&&);
 
 #endif // ENABLE(VIDEO)
 
