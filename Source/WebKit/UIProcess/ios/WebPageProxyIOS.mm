@@ -1444,9 +1444,9 @@ void WebPageProxy::didReceiveEditDragSnapshot(RefPtr<WebCore::TextIndicator>&& t
 
 void WebPageProxy::didConcludeDrop()
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::DidConcludeDrop(), webPageIDInMainFrameProcess());
+    sendToProcessContainingFrame(internals().currentDragTargetFrameID, Messages::WebPage::DidConcludeDrop());
 }
-#endif
+#endif // ENABLE(DRAG_SUPPORT)
 
 #if ENABLE(MODEL_PROCESS)
 void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::NodeIdentifier> nodeID)
