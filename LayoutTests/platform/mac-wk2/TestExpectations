@@ -2293,6 +2293,12 @@ webkit.org/b/314746 [ Release ] fast/images/decode-render-animated-image.html [ 
 
 webkit.org/b/315225 http/tests/site-isolation/inspector/network/cross-origin-iframe-request-id-uniqueness.html [ Skip ]
 
+webkit.org/b/332772 http/tests/site-isolation/inspector/layers/layers-frame-target-node-scope.html [ Failure ]
+
+webkit.org/b/332767 http/tests/site-isolation/inspector/cpu-profiler/same-process-frame-targets.html [ Failure ]
+
+webkit.org/b/332773 [ Release ] http/tests/site-isolation/inspector/page/resources-finish-loading-after-reload.html [ Failure ]
+
 # Skipped on mac-wk2-stress in site-isolation mode: stress parallelism races with
 # BackendResourceDataStore lifecycle / event ordering. Tests pass cleanly on the
 # mac-site-isolation queue. Re-enable when b/315308 is fixed.
