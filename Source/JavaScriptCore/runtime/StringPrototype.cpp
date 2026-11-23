@@ -1097,13 +1097,23 @@ JSCell* stringSplitFast(JSGlobalObject* globalObject, JSString* thisString, JSSt
                 JSString* string = nullptr;
                 const bool isPotentiallyIdentifier = start < end && isASCIIIdentifierStart(view->codeUnitAt(start));
                 if (makeAtomStringsArray && isPotentiallyIdentifier) {
-                    auto subView = view->substring(start, end - start);
-                    auto identifier = subView.is8Bit() ? Identifier::fromString(vm, subView.span8()) : Identifier::fromString(vm, subView.span16());
+                    if (!start && end == view->length()) {
+                        // The whole subject, which already holds an atom.
+                        ASSERT(subjectIsAtom);
+                        if (!thisString->isDefinitelyAtom()) [[unlikely]]
+                            thisString->markAsAtom();
+                        string = vm.atomStringToJSStringMap.ensureValue(input->impl(), [&] {
+                            return thisString;
+                        });
+                    } else {
+                        auto subView = view->substring(start, end - start);
+                        auto identifier = subView.is8Bit() ? Identifier::fromString(vm, subView.span8()) : Identifier::fromString(vm, subView.span16());
 
-                    DeferGC defer(vm);
-                    string = vm.atomStringToJSStringMap.ensureValue(identifier.impl(), [&] {
-                        return jsString(vm, identifier.string());
-                    });
+                        DeferGC defer(vm);
+                        string = vm.atomStringToJSStringMap.ensureValue(identifier.impl(), [&] {
+                            return jsString(vm, identifier.string());
+                        });
+                    }
                 } else {
                     string = jsSubstring(globalObject, thisString, start, end - start);
                     RETURN_IF_EXCEPTION(scope, { });
