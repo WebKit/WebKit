@@ -149,6 +149,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-parameters-toString.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-referer.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-send-during-abort.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/open-send-during-error.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-send-open.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-sync-open-send.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-url-about-blank-window.htm

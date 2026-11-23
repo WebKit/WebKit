@@ -11,9 +11,9 @@ PASS xhrSync.send() threw exception NetworkError:  A network error occurred..
 PASS xhrAsync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true) did not throw exception.
 PASS xhrAsync.send() did not throw exception.
 PASS xhrAsyncAbort.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true) did not throw exception.
+PASS An abort event was received for the aborted asynchronous call.
 PASS xhrAsyncAbort.send();xhrAsyncAbort.abort();  did not throw exception.
 PASS An error event was received for the asynchronous call.
-PASS An error event was received for the aborted asynchronous call.
 PASS successfullyParsed is true
 
 TEST COMPLETE
