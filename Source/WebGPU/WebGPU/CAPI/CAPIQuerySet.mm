@@ -57,14 +57,14 @@ void wgpuQuerySetSetLabel(WGPUQuerySet querySet, WGPUStringView label)
 uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::metalFromAPI(querySet).count();
+        return protect(WebGPU::CAPI::fromAPI(querySet))->count();
     }
 }
 
 WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
 {
     @autoreleasepool {
-        auto type = WebGPU::CAPI::metalFromAPI(querySet).type();
+        auto type = protect(WebGPU::CAPI::fromAPI(querySet))->type();
         return type ? WebGPU::CAPI::toAPI(*type) : WGPUQueryType_Force32;
     }
 }

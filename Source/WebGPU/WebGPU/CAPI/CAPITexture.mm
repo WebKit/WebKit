@@ -75,21 +75,21 @@ void wgpuTextureSetLabel(WGPUTexture texture, WGPUStringView label)
 uint32_t wgpuTextureGetDepthOrArrayLayers(WGPUTexture texture)
 {
     @autoreleasepool {
-        return protect(WebGPU::CAPI::metalFromAPI(texture))->depthOrArrayLayers();
+        return protect(WebGPU::CAPI::fromAPI(texture))->depthOrArrayLayers();
     }
 }
 
 WGPUTextureDimension wgpuTextureGetDimension(WGPUTexture texture)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::metalFromAPI(texture))->dimension());
+        return WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::fromAPI(texture))->dimension());
     }
 }
 
 WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
 {
     @autoreleasepool {
-        auto format = protect(WebGPU::CAPI::metalFromAPI(texture))->optionalFormat();
+        auto format = protect(WebGPU::CAPI::fromAPI(texture))->optionalFormat();
         return format ? WebGPU::CAPI::toAPI(*format) : WGPUTextureFormat_Undefined;
     }
 }
@@ -97,34 +97,34 @@ WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
 uint32_t wgpuTextureGetHeight(WGPUTexture texture)
 {
     @autoreleasepool {
-        return protect(WebGPU::CAPI::metalFromAPI(texture))->height();
+        return protect(WebGPU::CAPI::fromAPI(texture))->height();
     }
 }
 
 uint32_t wgpuTextureGetWidth(WGPUTexture texture)
 {
     @autoreleasepool {
-        return protect(WebGPU::CAPI::metalFromAPI(texture))->width();
+        return protect(WebGPU::CAPI::fromAPI(texture))->width();
     }
 }
 
 uint32_t wgpuTextureGetMipLevelCount(WGPUTexture texture)
 {
     @autoreleasepool {
-        return protect(WebGPU::CAPI::metalFromAPI(texture))->mipLevelCount();
+        return protect(WebGPU::CAPI::fromAPI(texture))->mipLevelCount();
     }
 }
 
 uint32_t wgpuTextureGetSampleCount(WGPUTexture texture)
 {
     @autoreleasepool {
-        return protect(WebGPU::CAPI::metalFromAPI(texture))->sampleCount();
+        return protect(WebGPU::CAPI::fromAPI(texture))->sampleCount();
     }
 }
 
 WGPUTextureUsage wgpuTextureGetUsage(WGPUTexture texture)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::metalFromAPI(texture))->usage());
+        return WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::fromAPI(texture))->usage());
     }
 }

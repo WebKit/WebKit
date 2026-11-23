@@ -362,7 +362,7 @@ std::span<uint8_t> Buffer::getMappedRangeSpan(uint64_t apiOffset, std::optional<
     return getBufferContents().subspan(offset);
 }
 
-std::span<uint8_t> Buffer::mappedRangeForCAPI(uint64_t offset, std::optional<uint64_t> size)
+std::span<uint8_t> Buffer::persistentMappedRange(uint64_t offset, std::optional<uint64_t> size)
 {
     size_t rangeSize = size ? *size : computeRangeSize(initialSize(), offset);
     if (!isValid() || !validateMappedRangeBounds(offset, rangeSize) || !m_buffer.contents)
@@ -506,6 +506,22 @@ void Buffer::generateAValidationError(String&& message)
 uint64_t Buffer::initialSize() const
 {
     return m_initialSize;
+}
+
+WebGPU::BufferMapState Buffer::mapState() const
+{
+    // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-mapstate
+    switch (m_state) {
+    case State::Mapped:
+    case State::MappedAtCreation:
+        return WebGPU::BufferMapState::Mapped;
+    case State::MappingPending:
+        return WebGPU::BufferMapState::Pending;
+    case State::Unmapped:
+    case State::Destroyed:
+        return WebGPU::BufferMapState::Unmapped;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 uint64_t Buffer::currentSize() const

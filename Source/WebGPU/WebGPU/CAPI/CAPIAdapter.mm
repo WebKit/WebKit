@@ -64,16 +64,14 @@ WGPUStatus wgpuAdapterGetLimits(WGPUAdapter adapter, WGPULimits* limits)
 WGPUStatus wgpuAdapterGetInfo(WGPUAdapter adapter, WGPUAdapterInfo* info)
 {
     @autoreleasepool {
-        Ref protectedAdapter = WebGPU::CAPI::metalFromAPI(adapter);
-        auto apiInfo = protectedAdapter->info();
-        id<MTLDevice> device = protectedAdapter->device();
+        auto apiInfo = protect(WebGPU::CAPI::fromAPI(adapter))->info();
         // FIXME: What should the vendorID and deviceID be?
         info->vendor = WebGPU::CAPI::toAPIAllocated(emptyString());
         info->architecture = WebGPU::CAPI::toAPIAllocated(emptyString());
         info->device = WebGPU::CAPI::toAPIAllocated(apiInfo.name);
         info->description = WebGPU::CAPI::toAPIAllocated(emptyString());
         info->backendType = WGPUBackendType_Metal;
-        info->adapterType = device.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
+        info->adapterType = apiInfo.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
         info->vendorID = 0;
         info->deviceID = 0;
         info->subgroupMinSize = apiInfo.subgroupMinSize;

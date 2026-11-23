@@ -205,6 +205,7 @@ void RemoteGPUProxy::requestAdapter(const ::WebGPU::RequestAdapterOptions& optio
         .isFallbackAdapter = response->isFallbackAdapter,
         .subgroupMinSize = response->subgroupMinSize,
         .subgroupMaxSize = response->subgroupMaxSize,
+        .hasUnifiedMemory = response->hasUnifiedMemory,
     };
     callback(WebGPU::RemoteAdapterProxy::create(WTF::move(response->features), response->limits, WTF::move(info), options.xrCompatible, *this, m_convertToBackingContext, identifier));
 }

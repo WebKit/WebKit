@@ -103,7 +103,7 @@ RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const ::WebGPU::BufferD
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier, descriptor.mappedAtCreation);
+    auto result = RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier, descriptor);
     result->setLabel(String { descriptor.label });
     return result;
 }
@@ -119,7 +119,14 @@ RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createTexture(const ::WebGPU::Textu
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier);
+    auto result = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier, {
+        .size = descriptor.size,
+        .mipLevelCount = descriptor.mipLevelCount,
+        .sampleCount = descriptor.sampleCount,
+        .dimension = descriptor.dimension,
+        .format = descriptor.format,
+        .usage = descriptor.usage,
+    });
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -406,7 +413,7 @@ RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createQuerySet(const ::WebGPU::Que
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteQuerySetProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteQuerySetProxy::create(*this, m_convertToBackingContext, identifier, descriptor);
     result->setLabel(String { descriptor.label });
     return result;
 }

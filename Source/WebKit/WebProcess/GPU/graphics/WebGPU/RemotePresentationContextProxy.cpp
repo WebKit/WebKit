@@ -55,6 +55,15 @@ void RemotePresentationContextProxy::configure(const ::WebGPU::CanvasConfigurati
 
     auto sendResult = send(Messages::RemotePresentationContext::Configure(*convertedConfiguration));
     UNUSED_VARIABLE(sendResult);
+
+    m_textureProperties = {
+        .size = { canvasConfiguration.width, canvasConfiguration.height, 1 },
+        .mipLevelCount = 1,
+        .sampleCount = 1,
+        .dimension = ::WebGPU::TextureDimension::_2d,
+        .format = canvasConfiguration.format,
+        .usage = canvasConfiguration.usage,
+    };
 }
 
 void RemotePresentationContextProxy::unconfigure()
@@ -77,7 +86,7 @@ RefPtr<::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture(uint
         if (sendResult != IPC::Error::NoError)
             return nullptr;
 
-        m_currentTexture[frameIndex] = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier, true);
+        m_currentTexture[frameIndex] = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier, m_textureProperties, true);
     } else
         protect(m_currentTexture[frameIndex])->undestroy();
 

@@ -50,17 +50,13 @@ void wgpuBufferDestroy(WGPUBuffer buffer)
 WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        switch (protect(WebGPU::CAPI::metalFromAPI(buffer))->state()) {
-        case WebGPU::Metal::Buffer::State::Mapped:
-            return WGPUBufferMapState_Mapped;
-        case WebGPU::Metal::Buffer::State::MappedAtCreation:
-            return WGPUBufferMapState_Mapped;
-        case WebGPU::Metal::Buffer::State::MappingPending:
+        switch (protect(WebGPU::CAPI::fromAPI(buffer))->mapState()) {
+        case WebGPU::BufferMapState::Unmapped:
+            return WGPUBufferMapState_Unmapped;
+        case WebGPU::BufferMapState::Pending:
             return WGPUBufferMapState_Pending;
-        case WebGPU::Metal::Buffer::State::Unmapped:
-            return WGPUBufferMapState_Unmapped;
-        case WebGPU::Metal::Buffer::State::Destroyed:
-            return WGPUBufferMapState_Unmapped;
+        case WebGPU::BufferMapState::Mapped:
+            return WGPUBufferMapState_Mapped;
         }
     }
 }
@@ -68,7 +64,7 @@ WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
     @autoreleasepool {
-        return protect(WebGPU::CAPI::metalFromAPI(buffer))->mappedRangeForCAPI(offset, WebGPU::CAPI::mapSizeFromAPI(size)).data();
+        return protect(WebGPU::CAPI::fromAPI(buffer))->persistentMappedRange(offset, WebGPU::CAPI::mapSizeFromAPI(size)).data();
     }
 }
 
@@ -120,13 +116,13 @@ void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label)
 uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::metalFromAPI(buffer).initialSize();
+        return protect(WebGPU::CAPI::fromAPI(buffer))->size();
     }
 }
 
 WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::toAPI(WebGPU::CAPI::metalFromAPI(buffer).usage());
+        return WebGPU::CAPI::toAPI(protect(WebGPU::CAPI::fromAPI(buffer))->usage());
     }
 }

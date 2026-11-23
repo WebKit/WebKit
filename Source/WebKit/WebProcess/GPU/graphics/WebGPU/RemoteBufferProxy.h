@@ -40,9 +40,9 @@ static constexpr size_t maxCrossProcessResourceCopySize = 16 * MB;
 class RemoteBufferProxy final : public ::WebGPU::Buffer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBufferProxy);
 public:
-    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBufferIdentifier identifier, bool mappedAtCreation)
+    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBufferIdentifier identifier, const ::WebGPU::BufferDescriptor& descriptor)
     {
-        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier, mappedAtCreation));
+        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier, descriptor));
     }
 
     virtual ~RemoteBufferProxy();
@@ -52,6 +52,7 @@ public:
 
     void mapAsync(OptionSet<::WebGPU::MapMode>, uint64_t offset, std::optional<uint64_t> sizeForMap, CompletionHandler<void(bool)>&&) final;
     void getMappedRange(uint64_t offset, std::optional<uint64_t>, NOESCAPE const Function<void(std::span<uint8_t>)>&) final;
+    std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) final;
     std::span<uint8_t> getBufferContents() final;
     void unmap() final;
     void copyFrom(std::span<const uint8_t>, size_t offset) final;
@@ -59,13 +60,17 @@ public:
     void destroy() final;
     void generateAValidationError() final;
 
+    uint64_t size() const final { return m_size; }
+    OptionSet<::WebGPU::BufferUsage> usage() const final { return m_usage; }
+    ::WebGPU::BufferMapState mapState() const final;
+
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUBufferIdentifier, bool mappedAtCreation);
+    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUBufferIdentifier, const ::WebGPU::BufferDescriptor&);
 
     RemoteBufferProxy(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy(RemoteBufferProxy&&) = delete;
@@ -93,7 +98,19 @@ private:
     WebGPUBufferIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
+    const uint64_t m_size;
+    const OptionSet<::WebGPU::BufferUsage> m_usage;
     OptionSet<::WebGPU::MapMode> m_mapModeFlags;
+    bool m_isMapPending { false };
+    // Bumped by unmap() and destroy(), so that the reply to a mapAsync() that they aborted does not
+    // map the buffer: the GPU Process completes such a call with success too.
+    uint64_t m_mapGeneration { 0 };
+    // The range of the current mapping, as it was requested.
+    uint64_t m_mappedOffset { 0 };
+    std::optional<uint64_t> m_mappedSize;
+    // The contents of the mapped range, which persistentMappedRange() fetches once per mapping and
+    // unmap() writes back, so that its spans stay valid until unmap().
+    std::optional<Vector<uint8_t>> m_persistentMappedRange;
 };
 
 } // namespace WebKit::WebGPU
