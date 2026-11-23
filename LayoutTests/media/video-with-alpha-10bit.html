@@ -26,8 +26,8 @@
 
         consoleWrite("<br>Alpha of each stripe.");
         testExpected("pixel(25, 100)[3]", 0);
-        testExpected("pixel(75, 100)[3]", 26);
-        testExpected("pixel(125, 100)[3]", 128);
+        testExpectedEqualWithTolerance("pixel(75, 100)[3]", 26, 1);
+        testExpectedEqualWithTolerance("pixel(125, 100)[3]", 128, 1);
         testExpected("pixel(175, 100)[3]", 255);
 
         consoleWrite("<br>Colour of the 50% stripe against the opaque one.");

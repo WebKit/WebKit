@@ -154,6 +154,10 @@ const TestFeatures& TestOptions::defaults()
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
             { "VP9DecoderEnabled", false },
 #endif
+#if PLATFORM(MAC) && CPU(X86_64)
+            // FIXME: Video other than 8-bit I420 can't be decoded in the content process (webkit.org/b/332732).
+            { "VideoSoftwareDecodingInContentProcessEnabled", false },
+#endif
 #if ENABLE(GPU_PROCESS) && !PLATFORM(COCOA)
             { "UseGPUProcessForDOMRenderingEnabled", false },
 #endif
