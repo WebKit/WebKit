@@ -1096,6 +1096,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.h
     Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.h
 
+    Modules/WebGPU/GraphicsContextGLANGLEWebGPU.h
+
     Modules/airplay/WebMediaSessionManager.h
     Modules/airplay/WebMediaSessionManagerClient.h
 

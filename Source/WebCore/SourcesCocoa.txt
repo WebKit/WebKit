@@ -756,5 +756,6 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm @nonARC
 // The following files aren't unified with others to prevent them from being merged
 // with files that include system headers that include system OpenGL headers.
 
+Modules/WebGPU/GraphicsContextGLANGLEWebGPU.cpp @no-unify // ANGLE headers redefine GL types/macros that collide with system OpenGL.
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify // ANGLE headers redefine GL types/macros that collide with system OpenGL.
 platform/graphics/cocoa/GraphicsContextGLCocoa.mm @nonARC @no-unify // ANGLE headers redefine GL types/macros that collide with system OpenGL.
