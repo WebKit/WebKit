@@ -114,6 +114,11 @@ RefPtr<const Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& co
 
     auto tileImageSize = tileImage->logicalSize();
 
+    // The tile is not drawn again, so keep it as an image.
+    RefPtr tileNativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(tileImage));
+    if (!tileNativeImage)
+        return nullptr;
+
     // Compute pattern space transformation.
     AffineTransform transform;
     transform.translate(tileBoundaries.location());
@@ -123,7 +128,7 @@ RefPtr<const Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& co
     if (!patternTransform.isIdentity())
         transform = patternTransform * transform;
 
-    Ref image = tileImage.releaseNonNull();
+    Ref image = tileNativeImage.releaseNonNull();
     auto pattern = Pattern::create({ image.copyRef() }, { true, true, transform });
 
     auto& cachedTiles = m_tiles.ensure(renderer, [&] {
