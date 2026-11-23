@@ -28,8 +28,7 @@
 #include <WebCore/CSSValueTypes.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // https://drafts.csswg.org/css-values-4/#strings
 struct String {
@@ -53,8 +52,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const String&);
 
 NODELETE void add(Hasher&, const String&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 namespace WTF {
 

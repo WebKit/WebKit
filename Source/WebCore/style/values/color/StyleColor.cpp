@@ -56,8 +56,7 @@
 #include "StyleRelativeColor.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Color::Color(Color::ColorKind&& color)
     : value { WTF::move(color) }
@@ -468,5 +467,4 @@ auto Blending<Color>::blend(const Color& a, const Color& b, const Style::Compute
     return WebCore::blend(aColorResolver.colorResolvingCurrentColor(a), bColorResolver.colorResolvingCurrentColor(b), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

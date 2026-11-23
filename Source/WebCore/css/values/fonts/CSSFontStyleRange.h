@@ -28,8 +28,7 @@
 #include "CSSKeyword.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'font-style'> auto | normal | italic | oblique [ <angle [-90deg,90deg]>{1,2} ]?
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-style
@@ -66,8 +65,7 @@ template<> struct CSSValueCreation<FontStyleRange> { Ref<CSSValue> operator()(CS
 
 template<> struct Serialize<FontStyleRange::Oblique> { void operator()(StringBuilder&, const SerializationContext&, const FontStyleRange::Oblique&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::FontStyleRange::Oblique)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::FontStyleRange)

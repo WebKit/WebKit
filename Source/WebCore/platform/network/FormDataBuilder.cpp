@@ -34,9 +34,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 
-namespace WebCore {
-
-namespace FormDataBuilder {
+namespace WebCore::FormDataBuilder {
 
 static inline void append(Vector<uint8_t>& buffer, char string)
 {
@@ -213,8 +211,6 @@ void addKeyValuePairAsFormData(Vector<uint8_t>& buffer, const Vector<uint8_t>& k
 void encodeStringAsFormData(Vector<uint8_t>& buffer, const UTF8CString& string)
 {
     appendFormURLEncoded(buffer, byteCast<char>(string.span()));
-}
-
 }
 
 }

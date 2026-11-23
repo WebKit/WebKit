@@ -30,8 +30,7 @@
 #include "TimingFunction.h"
 #include <wtf/IndexedRange.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 CSS::LinearEasingFunction toCSSLinearEasingFunction(const LinearTimingFunction& function, const Style::ComputedStyle& style)
 {
@@ -171,5 +170,4 @@ Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::LinearEasingFuncti
     });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

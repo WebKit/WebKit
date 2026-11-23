@@ -35,8 +35,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static const SVGData& defaultSVGData()
 {
@@ -186,5 +185,4 @@ void SVGData::dumpDifferences(TextStream& ts, const SVGData& other) const
 }
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

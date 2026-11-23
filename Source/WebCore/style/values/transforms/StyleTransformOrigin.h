@@ -27,8 +27,7 @@
 #include <WebCore/StylePosition.h>
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using TransformOriginX = PositionX;
 using TransformOriginY = PositionY;
@@ -61,7 +60,6 @@ template<size_t I> const auto& get(const TransformOrigin& value)
         return value.z;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TransformOrigin, 3);

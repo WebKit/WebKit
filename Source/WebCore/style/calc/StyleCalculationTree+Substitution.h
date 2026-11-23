@@ -26,9 +26,7 @@
 
 #include <optional>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 struct Child;
 struct Tree;
@@ -48,6 +46,4 @@ Tree dePercentify(const Tree&);
 bool containsSize(const Tree&);
 bool containsPercentage(const Tree&);
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

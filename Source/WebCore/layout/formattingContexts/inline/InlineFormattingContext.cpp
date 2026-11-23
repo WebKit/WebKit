@@ -60,8 +60,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineContentCache);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineFormattingContext);
@@ -677,5 +676,3 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDa
 }
 
 }
-}
-

@@ -30,8 +30,7 @@
 #include "ElementRareData.h"
 #include "StyleInvalidationFunctions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 void IdChangeInvalidation::invalidateStyle(const AtomString& changedId)
 {
@@ -91,5 +90,4 @@ void IdChangeInvalidation::invalidateStyleWithRuleSets()
     Invalidator::invalidateWithMatchElementRuleSets(m_element, m_matchElementRuleSets);
 }
 
-}
 }

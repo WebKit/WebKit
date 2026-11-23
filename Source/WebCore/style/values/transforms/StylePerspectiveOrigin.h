@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePosition.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'perspective-origin'> = <position>
 // https://www.w3.org/TR/css-transforms-2/#propdef-perspective-origin
@@ -35,5 +34,4 @@ using PerspectiveOrigin = Position;
 using PerspectiveOriginX = typename PerspectiveOrigin::X;
 using PerspectiveOriginY = typename PerspectiveOrigin::Y;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

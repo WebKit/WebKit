@@ -30,8 +30,7 @@
 #include "StyleCustomIdent.h"
 #include "StyleGeneratedImage.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class NamedImage final : public GeneratedImage {
 public:
@@ -61,8 +60,7 @@ private:
     CustomIdent m_name;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(NamedImage, isNamedImage)
 

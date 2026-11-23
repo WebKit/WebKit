@@ -27,9 +27,7 @@
 #include "StyleCalculationTree.h"
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 // MARK: - forAllChildren
 
@@ -90,6 +88,4 @@ template<typename F> void forAllChildren(const Child& root, NOESCAPE const F& fu
     );
 }
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

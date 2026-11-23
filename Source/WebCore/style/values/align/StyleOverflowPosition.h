@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <overflow-position> = unsafe | safe
 // https://drafts.csswg.org/css-align/#typedef-overflow-position
@@ -63,5 +62,4 @@ constexpr decltype(auto) visitOverflowPosition(auto&& primaryKeyword, OverflowPo
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

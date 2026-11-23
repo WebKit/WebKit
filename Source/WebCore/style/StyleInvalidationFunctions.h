@@ -31,8 +31,7 @@
 #include "StyleScope.h"
 #include "StyleScopeRuleSets.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template <typename TraverseFunction>
 inline void traverseRuleFeaturesInShadowTree(Element& element, NOESCAPE const TraverseFunction& function)
@@ -94,5 +93,3 @@ inline void traverseRuleFeatures(Element& element, NOESCAPE const TraverseFuncti
 }
 
 }
-}
-

@@ -37,8 +37,7 @@
 #include "Text.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Update);
 
@@ -159,5 +158,4 @@ void Update::addPossibleRebuildRoot(Element& element, Element* parent)
     m_rebuildRoots.add(element);
 }
 
-}
 }

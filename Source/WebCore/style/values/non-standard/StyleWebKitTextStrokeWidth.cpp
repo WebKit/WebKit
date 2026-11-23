@@ -31,8 +31,7 @@
 #include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -62,5 +61,4 @@ auto CSSValueConversion<WebkitTextStrokeWidth>::operator()(BuilderState& state, 
     return toStyleFromCSSValue<WebkitTextStrokeWidth::Length>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

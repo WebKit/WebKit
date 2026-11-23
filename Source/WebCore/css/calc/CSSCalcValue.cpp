@@ -33,8 +33,7 @@
 #include "config.h"
 #include "CSSCalcValue.h"
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 Ref<Value> Value::create(CSS::Category category, CSS::Range range, CSSCalc::Tree&& tree)
 {
@@ -50,5 +49,4 @@ Value::Value(CSS::Category category, CSS::Range range, CSSCalc::Tree&& tree)
 
 Value::~Value() = default;
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

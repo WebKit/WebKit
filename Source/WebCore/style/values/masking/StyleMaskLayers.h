@@ -27,10 +27,8 @@
 #include <WebCore/StyleCoordinatedValueList.h>
 #include <WebCore/StyleMaskLayer.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using MaskLayers = CoordinatedValueList<MaskLayer>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

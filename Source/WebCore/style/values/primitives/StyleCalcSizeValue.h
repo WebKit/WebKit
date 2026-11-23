@@ -29,8 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // calc-size() as it appears in a computed value. The function survives to used value time because
 // that is when `size` resolves, and because the basis decides how the value behaves for everything
@@ -87,5 +86,4 @@ private:
 
 WTF::TextStream& operator<<(WTF::TextStream&, const CalcSizeValue&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

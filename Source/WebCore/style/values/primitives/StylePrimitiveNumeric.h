@@ -36,8 +36,7 @@
 #include <wtf/CompactVariant.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename> struct DimensionPercentageMapping;
 enum class CalcSizeSupport : bool;
@@ -668,8 +667,7 @@ template<typename T> concept IsPercentageOrCalc = IsPercentage<T> || IsCalc<T>;
 template<typename T> concept PrimitiveNumericWrapperBaseDerived = WTF::IsBaseOfTemplate<PrimitiveNumericWrapperBase, T>::value && TupleLike<T>;
 template<typename T, auto category> concept SpecificPrimitiveNumericWrapperBaseDerived = WTF::IsBaseOfTemplate<PrimitiveNumericWrapperBase, T>::value && TupleLike<T> && T::Wrapped::category == category;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 template<WebCore::Style::DimensionPercentageNumeric T>
 struct WTF::FlatteningVariantTraits<T> {

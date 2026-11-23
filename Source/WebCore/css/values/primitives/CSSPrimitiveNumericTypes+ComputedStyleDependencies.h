@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Computed Style Dependencies
 
@@ -62,5 +61,4 @@ template<NumericRaw RawType> struct ComputedStyleDependenciesCollector<RawType> 
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

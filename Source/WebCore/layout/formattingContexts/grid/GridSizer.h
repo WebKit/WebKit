@@ -29,8 +29,7 @@
 #include "GridTypeAliases.h"
 #include "UsedTrackSizes.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct GridLayoutState;
 
@@ -57,5 +56,4 @@ private:
     const GridLayoutState& m_gridLayoutState;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

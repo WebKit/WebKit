@@ -41,8 +41,7 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: <url>
 // https://drafts.csswg.org/css-values/#urls
@@ -189,5 +188,4 @@ RefPtr<CSSValue> consumeURL(CSSParserTokenRange& range, CSS::PropertyParserState
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

@@ -31,9 +31,7 @@
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 class WEBCORE_EXPORT DFACombiner {
 public:
@@ -50,7 +48,6 @@ inline void DFACombiner::addDFA(DFA&& dfa)
     m_dfas.append(WTF::move(dfa));
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

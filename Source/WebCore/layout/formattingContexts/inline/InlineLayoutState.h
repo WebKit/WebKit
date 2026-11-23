@@ -28,8 +28,7 @@
 #include <WebCore/AvailableLineWidthOverride.h>
 #include <WebCore/BlockLayoutState.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineLayoutState {
 public:
@@ -126,5 +125,4 @@ inline void InlineLayoutState::setClearGapAfterLastLine(InlineLayoutUnit vertica
     m_clearGapAfterLastLine = verticalGap;
 }
 
-}
 }

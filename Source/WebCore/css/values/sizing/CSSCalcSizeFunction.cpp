@@ -33,8 +33,7 @@
 #include "CSSValueKeywords.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 CalcSizeParameters::CalcSizeParameters(CalcSizeBasis&& basis, CalcSizeCalculation&& calculation)
     : basis(WTF::move(basis))
@@ -110,5 +109,4 @@ void Serialize<CalcSizeParameters>::operator()(StringBuilder& builder, const Ser
     serializeCalcSum(builder, context, value.calculation);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

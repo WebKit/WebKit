@@ -27,8 +27,7 @@
 #include "CSSCalcTree.h"
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 // MARK: Traversal
 
@@ -128,5 +127,4 @@ template<typename F> void forAllChildNodes(const Child& root, NOESCAPE const F& 
     WTF::switchOn(root, [&](const auto& root) { forAllChildNodes(*root, functor); });
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

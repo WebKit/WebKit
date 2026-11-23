@@ -45,8 +45,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace IDBClient {
+namespace WebCore::IDBClient {
 
 template<typename T, typename... Parameters, typename... Arguments>
 static void performCallbackOnOriginThread(Locker<Lock>& locker, Ref<T>&& object, void (T::*method)(Parameters...), Arguments&&... arguments) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
@@ -690,5 +689,4 @@ void IDBConnectionProxy::setContextSuspended(ScriptExecutionContext& currentCont
     }
 }
 
-} // namesapce IDBClient
-} // namespace WebCore
+} // namespace WebCore::IDBClient

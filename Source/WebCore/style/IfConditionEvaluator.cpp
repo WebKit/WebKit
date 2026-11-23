@@ -39,8 +39,7 @@
 #include "StyleBuilder.h"
 #include "StyleCustomProperty.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto IfConditionEvaluator::evaluate(CSSParserTokenRange branchCondition) -> Result
 {
@@ -121,5 +120,4 @@ MQ::EvaluationResult IfConditionEvaluator::evaluateFeature(const MQ::Feature& fe
     return feature.schema->evaluate(feature, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 #include "StyleKeyword+CSSValueConversion.h"
 #include "StyleTextEdge.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<TextEdgeDerived T> struct CSSValueConversion<T> {
     auto operator()(BuilderState& state, const CSSValue& value) -> T
@@ -68,5 +67,4 @@ template<TextEdgeDerived T> struct CSSValueConversion<T> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

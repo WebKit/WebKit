@@ -31,8 +31,7 @@
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - CSSValue Creation
 
@@ -66,5 +65,4 @@ template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Slash>(CSS
     return CSSValueList::createSlashSeparated(WTF::move(builder));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

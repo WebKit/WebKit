@@ -47,8 +47,7 @@
 #include "ViewportSegments.h"
 #include <wtf/Function.h>
 
-namespace WebCore::MQ {
-namespace Features {
+namespace WebCore::MQ::Features {
 
 struct BooleanSchema : public FeatureSchema {
     using ValueFunction = Function<bool(const FeatureEvaluationContext&)>;
@@ -1166,5 +1165,4 @@ Vector<const FeatureSchema*> allSchemas()
     };
 }
 
-} // namespace Features
-} // namespace WebCore::MQ
+} // namespace WebCore::MQ::Features

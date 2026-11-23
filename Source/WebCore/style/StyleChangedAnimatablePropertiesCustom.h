@@ -28,8 +28,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "WebAnimationTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ChangedAnimatablePropertiesCustom final {
 public:
@@ -50,5 +49,4 @@ inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnima
         changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::ZIndex));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

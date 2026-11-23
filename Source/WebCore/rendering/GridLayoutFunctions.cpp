@@ -35,9 +35,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleGridTrackSizingDirection.h"
 
-namespace WebCore {
-
-namespace GridLayoutFunctions {
+namespace WebCore::GridLayoutFunctions {
 
 NODELETE static inline bool marginStartIsAuto(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
 {
@@ -415,6 +413,4 @@ const Style::GridTrackSize& rawGridTrackSize(const Style::ComputedStyle& renderS
     return trackStyles[untranslatedIndex - autoRepeatTracksCount];
 }
 
-} // namespace GridLayoutFunctions
-
-} // namespace WebCore
+} // namespace WebCore::GridLayoutFunctions

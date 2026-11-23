@@ -30,8 +30,7 @@
 #include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/StyleContainmentChecker.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 inline ContainmentChecker::ContainmentChecker(const Style::ComputedStyle& style, const Element& element)
     : m_style { style }
@@ -183,5 +182,4 @@ inline bool ContainmentChecker::isSkippedContentRoot() const
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -31,8 +31,7 @@
 #include "CSSMaskBorderSourceValue.h"
 #include "StyleBuilderState.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -108,5 +107,4 @@ auto Blending<MaskBorderSource>::blend(const MaskBorderSource& a, const MaskBord
     return Style::blend(*a.tryImage(), *b.tryImage(), aStyle, bStyle, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

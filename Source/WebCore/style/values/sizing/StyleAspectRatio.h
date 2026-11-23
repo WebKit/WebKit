@@ -27,8 +27,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleRatio.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -112,7 +111,6 @@ template<> struct Blending<AspectRatio> {
     auto blend(const AspectRatio&, const AspectRatio&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> AspectRatio;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::AspectRatio);

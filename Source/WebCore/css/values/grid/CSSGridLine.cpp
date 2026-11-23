@@ -28,8 +28,7 @@
 #include "CSSGridLineValue.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<GridLineSpan>::operator()(StringBuilder& builder, const SerializationContext& context, const GridLineSpan& value)
 {
@@ -45,5 +44,4 @@ Ref<CSSValue> CSSValueCreation<GridLine>::operator()(CSSValuePool&, const GridLi
     return CSSGridLineValue::create(value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

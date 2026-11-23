@@ -29,8 +29,7 @@
 #include <WebCore/StyleScopeOrdinal.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'view-transition-name> = none | auto | match-element | <custom-ident excluding=none,auto,match-element>
 // https://www.w3.org/TR/css-view-transitions-1/#propdef-view-transition-name
@@ -81,7 +80,6 @@ private:
 
 template<> struct CSSValueConversion<ViewTransitionName> { auto operator()(BuilderState&, const CSSValue&) -> ViewTransitionName; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ViewTransitionName)

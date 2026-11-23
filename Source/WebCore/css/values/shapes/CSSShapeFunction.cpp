@@ -28,8 +28,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<ToPosition>::operator()(StringBuilder& builder, const SerializationContext& context, const ToPosition& value)
 {
@@ -255,5 +254,4 @@ void Serialize<Shape>::operator()(StringBuilder& builder, const SerializationCon
     serializationForCSS(builder, context, value.commands);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

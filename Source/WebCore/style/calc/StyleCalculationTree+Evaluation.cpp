@@ -30,9 +30,7 @@
 #include "StyleZoomPrimitives.h"
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 NODELETE static CSS::Keyword::None evaluate(const CSS::Keyword::None&, const EvaluationOptions&);
 static auto evaluate(const ChildOrNone&, const EvaluationOptions&) -> Variant<double, CSS::Keyword::None>;
@@ -172,7 +170,4 @@ double evaluate(const Tree& tree, const EvaluationOptions& options)
     return evaluate(tree.root, options);
 }
 
-
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

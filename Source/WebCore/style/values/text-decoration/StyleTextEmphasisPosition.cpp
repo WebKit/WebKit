@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<TextEmphasisPosition>::operator()(BuilderState& state, const CSSValue& value) -> TextEmphasisPosition
 {
@@ -99,5 +98,4 @@ auto CSSValueConversion<TextEmphasisPosition>::operator()(BuilderState& state, c
     return result;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

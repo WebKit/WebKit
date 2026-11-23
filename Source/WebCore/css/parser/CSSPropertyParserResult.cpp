@@ -31,8 +31,7 @@
 #include "StylePropertyShorthand.h"
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void PropertyParserResult::addProperty(CSSProperty&& property)
 {
@@ -81,5 +80,4 @@ void PropertyParserResult::addPropertyForAllLonghandsOfCurrentShorthand(CSS::Pro
     addPropertyForAllLonghandsOfShorthand(state, state.currentProperty, WTF::move(value), state.important, implicit);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

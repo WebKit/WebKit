@@ -28,11 +28,9 @@
 #include <WebCore/CSSGradientColorInterpolationMethod.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using GradientColorInterpolationMethod = CSS::GradientColorInterpolationMethod;
 template<> inline constexpr bool TreatAsNonConverting<GradientColorInterpolationMethod> = true;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

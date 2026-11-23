@@ -35,8 +35,7 @@
 #include "CSSPropertyParserState.h"
 #include "CSSValueKeywords.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 #if ENABLE(DARK_MODE_CSS)
 
@@ -140,5 +139,4 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range, CSS::PropertyPar
 
 #endif // ENABLE(DARK_MODE_CSS)
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

@@ -29,8 +29,7 @@
 #include "CSSValueKeywords.h"
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 SingleAnimationRangeName convertCSSValueIDToSingleAnimationRangeName(CSSValueID valueID)
 {
@@ -129,5 +128,4 @@ SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(const WTF::
     return Style::SingleAnimationRangeName::Normal;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

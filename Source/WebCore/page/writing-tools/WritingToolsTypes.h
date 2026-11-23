@@ -31,8 +31,7 @@
 #include <WebCore/CharacterRange.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace WritingTools {
+namespace WebCore::WritingTools {
 
 enum class Behavior : uint8_t {
     None,
@@ -119,7 +118,6 @@ struct TextSuggestion {
     State state;
 };
 
-} // namespace WritingTools
-} // namespace WebCore
+} // namespace WebCore::WritingTools
 
 #endif

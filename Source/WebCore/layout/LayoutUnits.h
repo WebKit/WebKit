@@ -32,9 +32,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 
-namespace WebCore {
-
-namespace Layout {
+namespace WebCore::Layout {
 
 #define USE_FLOAT_AS_INLINE_LAYOUT_UNIT 1
 
@@ -182,7 +180,6 @@ inline SlotPosition::SlotPosition(size_t column, size_t row)
 {
 }
 
-}
 }
 
 namespace WTF {

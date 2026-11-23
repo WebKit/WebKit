@@ -28,8 +28,7 @@
 #include <WebCore/FontTaggedSettings.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <opentype-tag> = <string>
 // https://drafts.csswg.org/css-fonts-4/#typedef-opentype-tag
@@ -48,6 +47,4 @@ template<> struct Serialize<FontOpentypeTag> {
     }
 };
 
-
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

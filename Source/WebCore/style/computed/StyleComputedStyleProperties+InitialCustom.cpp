@@ -27,8 +27,7 @@
 
 #include "RenderTheme.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 #if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
 
@@ -39,5 +38,4 @@ Color ComputedStyleProperties::initialTapHighlightColor()
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

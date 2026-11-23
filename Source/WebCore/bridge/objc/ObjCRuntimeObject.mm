@@ -30,8 +30,7 @@
 #import "objc_instance.h"
 #import <JavaScriptCore/ObjectPrototype.h>
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 const ClassInfo ObjCRuntimeObject::s_info = { "ObjCRuntimeObject"_s, &RuntimeObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjCRuntimeObject) };
 
@@ -51,6 +50,4 @@ ObjcInstance* ObjCRuntimeObject::getInternalObjCInstance() const
     return downcast<ObjcInstance>(getInternalInstance());
 }
 
-
-}
 }

@@ -30,8 +30,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'block-ellipsis'> = no-ellipsis | ellipsis | <string>
 // https://www.w3.org/TR/css-overflow-4/#propdef-block-ellipsis
@@ -83,7 +82,6 @@ private:
 
 template<> struct CSSValueConversion<BlockEllipsis> { auto operator()(BuilderState&, const CSSValue&) -> BlockEllipsis; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::BlockEllipsis)

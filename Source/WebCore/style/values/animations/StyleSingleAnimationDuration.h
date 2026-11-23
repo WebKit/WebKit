@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-animation-duration> = auto | <time [0s,∞]>
 // https://www.w3.org/TR/css-animations-2/#propdef-animation-duration
@@ -45,7 +44,6 @@ struct SingleAnimationDuration : ValueOrKeyword<Time<CSS::Nonnegative>, CSS::Key
     std::optional<Time> tryTime() const { return tryValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationDuration)

@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'zoom'> = <number [0,∞]> | <percentage [0,∞]> | normal
 // NOTE: `normal` is non-standard and gets resolved to `1` at style building time.
@@ -58,7 +57,6 @@ struct Zoom {
 };
 DEFINE_TYPE_WRAPPER_GET(Zoom, value)
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::Zoom)

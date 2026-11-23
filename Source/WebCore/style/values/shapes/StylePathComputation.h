@@ -29,8 +29,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/StyleZoomPrimitives.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // All types that want to expose a generated WebCore::Path must specialize PathComputation the following member function:
 //
@@ -56,5 +55,4 @@ template<CSSValueID Name, typename StyleType> struct PathComputation<FunctionNot
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

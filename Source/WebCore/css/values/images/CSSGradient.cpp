@@ -38,8 +38,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Gradient Color Stop
 
@@ -387,5 +386,4 @@ void Serialize<ConicGradient>::operator()(StringBuilder& builder, const Serializ
     serializationForCSS(builder, context, gradient.stops);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -33,8 +33,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<CustomIdent>::operator()(StringBuilder& builder, const SerializationContext&, const CustomIdent& value)
 {
@@ -65,5 +64,4 @@ void add(Hasher& hasher, const CustomIdent& value)
     add(hasher, value.value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -32,8 +32,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -308,5 +307,4 @@ auto Evaluation<Position, FloatPoint>::operator()(const Position& position, Floa
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 #include <WebCore/StyleScopeOrdinal.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <name-scope> = none | all | <dashed-ident>#
 // Used by:
@@ -98,7 +97,6 @@ template<typename... F> constexpr decltype(auto) NameScope::switchOn(NOESCAPE F&
 
 template<> struct CSSValueConversion<NameScope> { auto operator()(BuilderState&, const CSSValue&) -> NameScope; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::NameScope)

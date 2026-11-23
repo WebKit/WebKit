@@ -30,8 +30,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -60,5 +59,4 @@ auto CSSValueConversion<ScrollbarGutter>::operator()(BuilderState& state, const 
     return CSS::Keyword::Auto { };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

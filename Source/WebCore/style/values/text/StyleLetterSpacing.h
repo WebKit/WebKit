@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'letter-spacing'> = normal | <length-percentage>
 // NOTE: Computed value resolves `normal` to 0px.
@@ -45,7 +44,6 @@ struct LetterSpacing : PrimitiveNumericWrapperBase<LengthPercentage<CSS::AllLayo
 
 template<> struct CSSValueConversion<LetterSpacing> { auto operator()(BuilderState&, const CSSValue&) -> LetterSpacing; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::LetterSpacing);

@@ -32,8 +32,7 @@
 #include "CSSUnitValue.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename StyleType> struct AbsoluteCSSNumericValueConversion;
 
@@ -76,5 +75,4 @@ template<auto R, typename T> struct AbsoluteCSSNumericValueConversion<LengthPerc
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -35,8 +35,7 @@
 #include "UserAgentStyle.h"
 #include <ranges>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 NODELETE static inline bool comparePageRules(const StyleRulePage& r1, const StyleRulePage& r2)
 {
@@ -127,5 +126,4 @@ void PageRuleCollector::matchPageRulesForList(Vector<Ref<StyleRulePage>>& matche
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

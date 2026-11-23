@@ -29,8 +29,7 @@
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSEvent.h>
 
-namespace JSC {
-namespace JSCastingHelpers {
+namespace JSC::JSCastingHelpers {
 
 template<>
 struct InheritsTraits<WebCore::JSEvent> {
@@ -42,5 +41,4 @@ struct InheritsTraits<WebCore::JSEvent> {
     }
 };
 
-} // namespace JSCastingHelpers
-} // namespace JSC
+} // namespace JSC::JSCastingHelpers

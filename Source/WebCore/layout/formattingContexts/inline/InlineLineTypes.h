@@ -28,8 +28,7 @@
 #include <WebCore/LayoutUnits.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineItem;
 
@@ -112,5 +111,4 @@ inline InlineItemRange::InlineItemRange(size_t startIndex, size_t endIndex)
 {
 }
 
-}
 }

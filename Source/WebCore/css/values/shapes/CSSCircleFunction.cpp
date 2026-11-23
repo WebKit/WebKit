@@ -28,8 +28,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 static bool hasDefaultValueForCircleRadius(Circle::RadialSize radius)
 {
@@ -61,5 +60,4 @@ void Serialize<Circle>::operator()(StringBuilder& builder, const SerializationCo
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

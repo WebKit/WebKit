@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 SkewTransformFunction::SkewTransformFunction(Angle<> angleX, Angle<> angleY, TransformFunctionBase::Type type)
     : TransformFunctionBase(type)
@@ -89,5 +88,4 @@ void SkewTransformFunction::dump(TextStream& ts) const
     ts << type() << '(' << m_angleX << ", "_s << m_angleY << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

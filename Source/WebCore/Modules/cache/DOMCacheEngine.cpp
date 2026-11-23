@@ -35,9 +35,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-
-namespace DOMCacheEngine {
+namespace WebCore::DOMCacheEngine {
 
 Exception convertToException(Error error)
 {
@@ -203,7 +201,4 @@ CrossThreadRecord CrossThreadRecord::isolatedCopy() &&
     };
 }
 
-} // namespace DOMCacheEngine
-
-} // namespace WebCore
-
+} // namespace WebCore::DOMCacheEngine

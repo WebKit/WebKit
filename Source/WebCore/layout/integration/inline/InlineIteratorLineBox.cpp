@@ -34,8 +34,7 @@
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 static_assert(std::ranges::bidirectional_range<LineBoxRange> && std::ranges::common_range<LineBoxRange> && std::ranges::view<LineBoxRange> && std::ranges::borrowed_range<LineBoxRange>);
 
@@ -166,5 +165,3 @@ LeafBoxIterator LineBox::blockLevelBox() const
 }
 
 }
-}
-

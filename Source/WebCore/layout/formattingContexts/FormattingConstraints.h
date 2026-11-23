@@ -28,8 +28,7 @@
 #include <WebCore/LayoutUnit.h>
 #include <wtf/EnumSet.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct HorizontalConstraints {
     LayoutUnit logicalRight() const { return logicalLeft + logicalWidth; }
@@ -133,7 +132,6 @@ inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator-=(LayoutUn
     return *this;
 }
 
-}
 }
 
 #define SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONSTRAINTS(ToValueTypeName, predicate) \

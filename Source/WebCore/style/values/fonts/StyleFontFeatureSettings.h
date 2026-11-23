@@ -28,8 +28,7 @@
 #include <WebCore/FontTaggedSettings.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <feature-tag-value> = <opentype-tag> [ <integer [0,∞]> | on | off ]?
 // <'font-feature-settings'> = normal | <feature-tag-value>#
@@ -63,5 +62,4 @@ template<> struct Serialize<FontFeatureSettings> { void operator()(StringBuilder
 
 TextStream& operator<<(TextStream&, const FontFeatureSettings&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

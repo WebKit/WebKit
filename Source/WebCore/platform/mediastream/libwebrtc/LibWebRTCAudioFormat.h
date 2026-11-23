@@ -27,9 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
-namespace WebCore {
-
-namespace LibWebRTCAudioFormat {
+namespace WebCore::LibWebRTCAudioFormat {
 
 static const size_t sampleRate = 48000;
 static const size_t chunkSampleCount = 480;
@@ -40,8 +38,6 @@ static const bool isFloat = false;
 static const bool isBigEndian = false;
 static const bool isNonInterleaved = false;
 
-}
-
-} // namespace WebCore
+} // namespace WebCore::LibWebRTCAudioFormat
 
 #endif // USE(LIBWEBRTC)

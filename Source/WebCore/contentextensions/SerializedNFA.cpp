@@ -33,8 +33,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 template<typename T>
 bool writeAllToFile(FileSystem::FileHandle& file, const T& container)
@@ -133,7 +132,6 @@ auto SerializedNFA::actions() const -> const Range<uint64_t>
     return spanAtOffsetInFile<uint64_t>(m_metadata.actionsOffset, m_metadata.actionsSize);
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

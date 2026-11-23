@@ -29,8 +29,7 @@
 #include "AnimationUtilities.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 const Color& AccentColor::colorOrDefaultColor() const
 {
@@ -72,5 +71,4 @@ auto Blending<AccentColor>::blend(const AccentColor& a, const AccentColor& b, co
     return Style::blend(*a.tryColor(), *b.tryColor(), aStyle, bStyle, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -30,8 +30,7 @@
 #include <wtf/Brigand.h>
 #include <wtf/EnumTraits.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Concepts
 
@@ -81,5 +80,4 @@ template<> struct KeywordList<> {
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

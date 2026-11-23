@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <algorithm>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Matrix3DTransformFunction::Matrix3DTransformFunction(const TransformationMatrix& matrix)
     : TransformFunctionBase(TransformFunctionBase::Type::Matrix3D)
@@ -99,5 +98,4 @@ void Matrix3DTransformFunction::dump(TextStream& ts) const
     ts << type() << '(' << m_matrix << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

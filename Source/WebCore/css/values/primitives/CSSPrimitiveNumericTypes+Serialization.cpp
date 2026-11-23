@@ -28,8 +28,7 @@
 #include <limits>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 static NEVER_INLINE ASCIILiteral formatNonfiniteCSSNumberValuePrefix(double number)
 {
@@ -70,5 +69,4 @@ void Serialize<SerializableNumber>::operator()(StringBuilder& builder, const Ser
     formatCSSNumberValue(builder, number);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

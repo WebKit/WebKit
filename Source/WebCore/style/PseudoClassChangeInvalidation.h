@@ -30,8 +30,7 @@
 #include "StyleInvalidator.h"
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class PseudoClassChangeInvalidation {
 public:
@@ -115,5 +114,4 @@ inline PseudoClassChangeInvalidation::~PseudoClassChangeInvalidation()
     invalidateAfterChange();
 }
 
-}
 }

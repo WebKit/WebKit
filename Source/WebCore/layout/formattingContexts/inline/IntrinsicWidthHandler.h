@@ -28,8 +28,7 @@
 #include "InlineContentCache.h"
 #include <WebCore/LineLayoutResult.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class AbstractLineBuilder;
 class InlineFormattingContext;
@@ -69,5 +68,3 @@ private:
 };
 
 }
-}
-

@@ -29,8 +29,7 @@
 #include <WebCore/StyleOverflowPosition.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'justify-content'> = normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ]
 // https://drafts.csswg.org/css-align/#propdef-justify-content
@@ -250,7 +249,6 @@ template<typename... F> constexpr decltype(auto) JustifyContent::switchOn(NOESCA
 
 template<> struct CSSValueConversion<JustifyContent> { auto operator()(BuilderState&, const CSSValue&) -> JustifyContent; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::JustifyContent)

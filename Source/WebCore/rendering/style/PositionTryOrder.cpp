@@ -26,8 +26,7 @@
 #include "config.h"
 #include "PositionTryOrder.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 LogicalBoxAxis selfAxisForPositionTryOrder(PositionTryOrder order, WritingMode selfWritingMode, WritingMode containingBlockWritingMode)
 {
@@ -66,5 +65,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, PositionTryOrder order)
     return ts;
 }
 
-}
 }

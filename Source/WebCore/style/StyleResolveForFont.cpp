@@ -61,8 +61,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WebKitFontFamilyNames.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace WebKitFontFamilyNames;
 
@@ -449,5 +448,4 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
     return fontCascade;
 }
 
-}
 }

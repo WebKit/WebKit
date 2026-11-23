@@ -37,8 +37,7 @@
 #include "StyleResolvedColor.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -115,5 +114,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const RelativeAlphaColor& value
     return ts << "alpha(from "_s << value.origin << " / "_s << value.alpha << ")"_s;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

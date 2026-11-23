@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <baseline-position-preference> = first | last
 // https://drafts.csswg.org/css-align/#baseline-alignment-preference
@@ -60,5 +59,4 @@ constexpr decltype(auto) visitBaselineAlignmentPreference(auto&& primaryKeyword,
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

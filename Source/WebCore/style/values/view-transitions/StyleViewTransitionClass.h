@@ -27,8 +27,7 @@
 #include <WebCore/ScopedName.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-view-transition-class> = <custom-ident excluding=none>
 // https://drafts.csswg.org/css-view-transitions-2/#valdef-view-transition-class-custom-ident
@@ -41,7 +40,6 @@ using ViewTransitionClassList = SpaceSeparatedFixedVector<ViewTransitionClass>;
 // https://drafts.csswg.org/css-view-transitions-2/#propdef-view-transition-class
 struct ViewTransitionClasses : ListOrNone<ViewTransitionClassList> { using ListOrNone<ViewTransitionClassList>::ListOrNone; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ViewTransitionClasses)

@@ -28,8 +28,7 @@
 #include <WebCore/StyleUnevaluatedCalcSize.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Resolves the basis, substitutes it for the `size` keyword, then resolves the calculation, clamping
 // to the property's range as Calculation::Value::evaluate() does for a calc().
@@ -52,5 +51,4 @@ template<typename Result> struct Evaluation<UnevaluatedCalcSize, Result> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

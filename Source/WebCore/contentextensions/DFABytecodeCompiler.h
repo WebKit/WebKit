@@ -30,9 +30,7 @@
 #include <WebCore/DFABytecode.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct DFA;
 class DFANode;
@@ -114,7 +112,6 @@ private:
     Vector<LinkRecord> m_linkRecords;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

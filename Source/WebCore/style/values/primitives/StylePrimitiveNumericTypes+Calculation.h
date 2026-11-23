@@ -28,8 +28,7 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion to `Calculation::Child`.
 
@@ -68,5 +67,4 @@ inline Calculation::Child copyCalculation(DimensionPercentageNumeric auto const&
     return WTF::switchOn(value, [](const auto& value) { return copyCalculation(value); });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

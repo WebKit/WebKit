@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 std::span<const PaintType, 3> SVGPaintOrder::paintTypes() const
 {
@@ -122,5 +121,4 @@ auto CSSValueConversion<SVGPaintOrder>::operator()(BuilderState& state, const CS
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

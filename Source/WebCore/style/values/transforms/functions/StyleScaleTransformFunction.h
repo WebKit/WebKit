@@ -28,8 +28,7 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleTransformFunctionBase.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // scale() = scale( [ <number> | <percentage> ]#{1,2} )
 // https://drafts.csswg.org/css-transforms-2/#funcdef-scale
@@ -75,7 +74,6 @@ private:
     NumberOrPercentageResolvedToNumber<> m_z;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::ScaleTransformFunction, WebCore::Style::TransformFunctionBase::isScaleTransformFunctionType)

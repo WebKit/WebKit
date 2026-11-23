@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleZoomPrimitives.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // https://drafts.csswg.org/css-grid-2/#typedef-track-size
 // fit-content() is only ever a max track sizing function.
@@ -110,5 +109,4 @@ struct TrackSizingFunctions {
     Style::ZoomFactor zoom;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

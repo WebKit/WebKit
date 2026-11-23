@@ -31,9 +31,7 @@
 #include "LayoutUnits.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-
-namespace Layout {
+namespace WebCore::Layout {
 
 class FloatAvoider {
     WTF_MAKE_TZONE_ALLOCATED(FloatAvoider);
@@ -99,5 +97,4 @@ inline LayoutUnit FloatAvoider::inlineEnd() const
     return inlineStart() + borderBoxWidth();
 }
 
-}
 }

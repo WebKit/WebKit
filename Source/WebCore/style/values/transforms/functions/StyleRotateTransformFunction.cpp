@@ -31,8 +31,7 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 RotateTransformFunction::RotateTransformFunction(Number<> x, Number<> y, Number<> z, Angle<> angle, TransformFunctionBase::Type type)
     : TransformFunctionBase(type)
@@ -168,5 +167,4 @@ void RotateTransformFunction::dump(TextStream& ts) const
     ts << type() << '(' << m_x << ", "_s << m_y << ", "_s << m_z << ", "_s << m_angle << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <border-image-outset-value> = <length [0,∞]> | <number [0,∞]>
 struct BorderImageOutsetValue {
@@ -77,8 +76,7 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageOutset, values);
 
 template<> struct CSSValueCreation<BorderImageOutset> { auto operator()(CSSValuePool&, const BorderImageOutset&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::BorderImageOutset)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::BorderImageOutsetValue)

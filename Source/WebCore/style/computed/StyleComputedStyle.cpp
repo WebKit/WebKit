@@ -42,8 +42,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct SameSizeAsBorderValue {
     Color m_color;
@@ -713,5 +712,4 @@ const BorderValue& ComputedStyle::borderEnd(const WritingMode writingMode) const
     return writingMode.isInlineTopToBottom() ? borderBottom() : borderTop();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

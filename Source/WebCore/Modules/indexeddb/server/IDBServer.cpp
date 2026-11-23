@@ -41,8 +41,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBBackingStore);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBServer);
@@ -788,5 +787,4 @@ String IDBServer::upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier
     return newDatabaseDirectory;
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

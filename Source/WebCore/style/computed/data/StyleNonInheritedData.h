@@ -31,8 +31,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class BackgroundData;
 class BoxData;
@@ -64,5 +63,4 @@ private:
     NonInheritedData(const NonInheritedData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

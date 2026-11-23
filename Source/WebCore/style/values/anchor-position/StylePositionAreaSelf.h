@@ -26,8 +26,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // When the span refers to a logical axis that needs to be resolved to physical
 // axis, this determines whether to use the writing mode of the element's
@@ -44,5 +43,4 @@ enum class PositionAreaSelf : bool {
 
 WTF::TextStream& operator<<(WTF::TextStream&, PositionAreaSelf);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

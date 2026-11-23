@@ -31,8 +31,7 @@
 #include "StyleZoomPrimitives.h"
 #include <concepts>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename T>
 T unapplyingZoom(T value, const ComputedStyle& style)
@@ -75,5 +74,4 @@ inline T applyingZoom(T value, const RenderElement& renderer)
     return Style::applyingZoom<T>(value, renderer.style());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

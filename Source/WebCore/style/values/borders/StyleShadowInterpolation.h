@@ -27,8 +27,7 @@
 #include <WebCore/AnimationUtilities.h>
 #include <WebCore/StyleShadow.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Generic implementation of interpolation for shadow lists for use by both `Style::BoxShadow` and `Style::TextShadow`.
 // https://www.w3.org/TR/web-animations-1/#animating-shadow-lists
@@ -134,5 +133,4 @@ struct ShadowInterpolation {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

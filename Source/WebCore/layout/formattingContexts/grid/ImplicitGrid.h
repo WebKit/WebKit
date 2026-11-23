@@ -30,9 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace Layout {
+namespace WebCore::Layout {
 
 struct GridAutoFlowOptions;
 struct LeadingImplicitTracks;
@@ -84,6 +82,4 @@ private:
     size_t m_autoPlacementCursorColumn { 0 };
 };
 
-} // namespace Layout
-
-} // namespace WebCore
+} // namespace WebCore::Layout

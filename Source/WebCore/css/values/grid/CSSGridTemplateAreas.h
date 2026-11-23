@@ -27,8 +27,7 @@
 #include <WebCore/CSSGridNamedAreaMap.h>
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'grid-template-areas'> = none | <string>+
 // https://drafts.csswg.org/css-grid/#propdef-grid-template-areas
@@ -64,7 +63,6 @@ struct GridTemplateAreas {
     bool operator==(const GridTemplateAreas&) const = default;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::GridTemplateAreas);

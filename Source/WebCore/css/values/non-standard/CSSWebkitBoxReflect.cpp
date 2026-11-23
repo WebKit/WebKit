@@ -30,8 +30,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSWebkitBoxReflectValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Serialization
 
@@ -47,5 +46,4 @@ void Serialize<WebkitBoxReflection>::operator()(StringBuilder& builder, const CS
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

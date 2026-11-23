@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -96,5 +95,4 @@ auto Blending<ObjectViewBox>::blend(const ObjectViewBox& from, const ObjectViewB
     return { Style::blend(*from.tryRect(), *to.tryRect(), context) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

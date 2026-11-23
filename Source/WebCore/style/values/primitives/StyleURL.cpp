@@ -32,8 +32,7 @@
 #include "StyleBuilderState.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Possible states/transitions:
 //
@@ -165,5 +164,4 @@ TextStream& operator<<(TextStream& ts, const URL& value)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

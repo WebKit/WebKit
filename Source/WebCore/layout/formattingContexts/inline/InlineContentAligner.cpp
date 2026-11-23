@@ -31,8 +31,7 @@
 #include "LayoutBoxInlines.h"
 #include "TextUtil.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 static inline void shiftDisplayBox(InlineDisplay::Box& displayBox, InlineLayoutUnit offset, InlineFormattingContext& inlineFormattingContext)
 {
@@ -345,5 +344,3 @@ void InlineContentAligner::adjustAnnotationContentWithAlignmentOffset(std::span<
 }
 
 }
-}
-

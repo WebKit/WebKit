@@ -34,8 +34,7 @@
 #include "StyleSpringEasingFunction.h"
 #include "StyleStepsEasingFunction.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static CSS::EasingFunction toCSSEasingFunction(const TimingFunction& function, const Style::ComputedStyle& style)
 {
@@ -239,5 +238,4 @@ TextStream& operator<<(TextStream& ts, const EasingFunction& value)
     return ts << value.value.get();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

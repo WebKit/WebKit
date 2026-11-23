@@ -36,8 +36,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleDynamicRangeLimitMix.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Keep these out of line to work around a clang crash (rdar://178383013).
 DynamicRangeLimit::Kind DynamicRangeLimit::copyKind(const Kind& other)
@@ -166,5 +165,4 @@ PlatformDynamicRangeLimit DynamicRangeLimit::toPlatformDynamicRangeLimit() const
     });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

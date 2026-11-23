@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Generic implementation of conversion for numeric types.
 
@@ -179,5 +178,4 @@ template<auto nR, auto pR, typename V> struct CSSValueConversion<NumberOrPercent
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

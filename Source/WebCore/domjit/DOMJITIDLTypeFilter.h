@@ -28,7 +28,7 @@
 #include "IDLTypes.h"
 #include <JavaScriptCore/SpeculatedType.h>
 
-namespace WebCore { namespace DOMJIT {
+namespace WebCore::DOMJIT {
 
 template<typename IDLType>
 struct IDLArgumentTypeFilter;
@@ -73,4 +73,4 @@ struct IDLResultTypeFilter<IDLNullable<T>> {
     static const constexpr JSC::SpeculatedType value = JSC::SpecOther | IDLResultTypeFilter<T>::value;
 };
 
-} }
+}

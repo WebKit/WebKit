@@ -33,8 +33,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 std::optional<float> TextSizeAdjust::usedFontSizeMultiplier(const Document& document) const
 {
@@ -67,5 +66,4 @@ auto CSSValueConversion<TextSizeAdjust>::operator()(BuilderState& state, const C
     return toStyleFromCSSValue<Percentage<CSS::Nonnegative, float>>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

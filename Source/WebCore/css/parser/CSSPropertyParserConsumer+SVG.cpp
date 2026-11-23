@@ -40,8 +40,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
@@ -118,5 +117,4 @@ RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range, CSS::Propert
     return CSSValueList::createCommaSeparated(WTF::move(dashes));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

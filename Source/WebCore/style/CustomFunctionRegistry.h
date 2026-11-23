@@ -26,8 +26,7 @@
 
 #include "StyleRuleFunction.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // CustomFunction registration represents @function after things like @media and cascade layers have
 // been resolved.
@@ -65,7 +64,5 @@ public:
 private:
     HashMap<AtomString, UniqueRef<const CustomFunction>> m_functions;
 };
-
-}
 
 }

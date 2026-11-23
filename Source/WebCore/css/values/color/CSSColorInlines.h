@@ -27,8 +27,7 @@
 
 #include "CSSColor.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 template<typename... F> decltype(auto) Color::switchOn(NOESCAPE F&&... f) const
 {
@@ -48,5 +47,4 @@ template<typename... F> decltype(auto) Color::switchOn(NOESCAPE F&&... f) const
     );
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

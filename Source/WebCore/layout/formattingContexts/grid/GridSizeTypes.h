@@ -27,8 +27,7 @@
 
 #include "LayoutUnit.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct ContentBoxSize {
     friend auto operator<=>(ContentBoxSize, ContentBoxSize) = default;
@@ -68,5 +67,4 @@ private:
         : value(v) { }
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -90,5 +89,4 @@ AcceleratedEffectClipPath Evaluation<ClipPath, AcceleratedEffectClipPath>::opera
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

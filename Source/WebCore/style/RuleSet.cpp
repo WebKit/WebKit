@@ -54,8 +54,7 @@
 #include <ranges>
 #include <wtf/MainThread.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace HTMLNames;
 
@@ -755,5 +754,4 @@ WTF::String RuleSet::selectorsForDebugging() const
     return ts.release();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

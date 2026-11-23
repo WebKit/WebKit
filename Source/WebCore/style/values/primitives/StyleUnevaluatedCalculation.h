@@ -28,8 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 namespace Calculation {
 class Value;
@@ -115,8 +114,7 @@ template<CSS::Numeric CSSType> struct UnevaluatedCalculation : UnevaluatedCalcul
 
 WTF::TextStream& operator<<(WTF::TextStream&, const UnevaluatedCalculationBase&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 namespace WTF {
 template<WebCore::CSS::Numeric CSSType> struct IsSmartPtr<WebCore::Style::UnevaluatedCalculation<CSSType>> {

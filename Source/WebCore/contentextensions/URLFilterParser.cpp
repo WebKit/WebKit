@@ -34,9 +34,7 @@
 #include <wtf/Deque.h>
 #include <wtf/text/CString.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 class PatternParser {
 public:
@@ -456,8 +454,7 @@ ASCIILiteral URLFilterParser::statusString(ParseStatus status)
 
     RELEASE_ASSERT_NOT_REACHED();
 }
-    
-} // namespace ContentExtensions
-} // namespace WebCore
+
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

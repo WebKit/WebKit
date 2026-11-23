@@ -28,8 +28,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomStringHash.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Lightweight property registration for custom function evaluation.
 // Unlike CustomPropertyRegistry, this has no association with a Style::Scope
@@ -56,5 +55,4 @@ private:
     HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_properties;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

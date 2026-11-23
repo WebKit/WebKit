@@ -28,8 +28,7 @@
 #include "CSSMaskBorder.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct WebkitBoxReflection {
     using Direction = Variant<Keyword::Above, Keyword::Below, Keyword::Left, Keyword::Right>;
@@ -81,8 +80,7 @@ private:
 
 template<> struct Serialize<WebkitBoxReflection> { void operator()(StringBuilder&, const CSS::SerializationContext&, const WebkitBoxReflection&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::WebkitBoxReflection, 3)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::WebkitBoxReflect);

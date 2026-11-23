@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -69,5 +68,4 @@ auto Blending<ZIndex>::blend(const ZIndex& a, const ZIndex& b, const BlendingCon
     return { WebCore::Style::blend(*a.tryValue(), *b.tryValue(), context) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

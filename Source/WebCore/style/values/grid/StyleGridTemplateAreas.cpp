@@ -31,8 +31,7 @@
 #include "StyleGridTrackSizingDirection.h"
 #include <algorithm>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static GridNamedLinesMap initializeImplicitNamedGridLines(const GridNamedAreaMap& namedGridAreas, GridTrackSizingDirection direction)
 {
@@ -111,5 +110,4 @@ void Serialize<GridTemplateAreas>::operator()(StringBuilder& builder, const CSS:
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

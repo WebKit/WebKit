@@ -28,9 +28,7 @@
 #include "LayoutBox.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-
-namespace Layout {
+namespace WebCore::Layout {
 
 inline bool Box::isRuby() const { return style().display() == Style::DisplayType::InlineRuby; }
 inline bool Box::isRubyInlineBox() const { return isRuby() || isRubyBase(); }
@@ -63,8 +61,6 @@ inline bool Box::isContainingBlockForOutOfFlowPosition() const
         || isLayoutContainmentBox()
         || !style().transform().isNone()
         || !style().offsetPath().isNone();
-}
-
 }
 
 }

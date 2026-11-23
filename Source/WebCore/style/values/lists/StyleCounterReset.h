@@ -28,8 +28,7 @@
 #include <WebCore/StyleCustomIdent.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'counter-reset'> = [ <counter-name> <integer>?@(default=0) ]+ | none
 // https://drafts.csswg.org/css-lists/#propdef-counter-set
@@ -61,8 +60,7 @@ struct CounterReset : ListOrNone<CounterResetList> {
 
 template<> struct CSSValueConversion<CounterResetValue> { auto operator()(BuilderState&, const CSSValue&) -> CounterResetValue; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::CounterResetValue, 2)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::CounterReset)

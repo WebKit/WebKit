@@ -30,8 +30,7 @@
 #include "CSSPropertyParserConsumer+Font.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -92,5 +91,4 @@ auto CSSValueConversion<FontVariantNumeric>::operator()(BuilderState& state, con
     return FontVariantNumeric::Platform { figure, spacing, fraction, ordinal, slashedZero };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 #include <WebCore/CSSGridSubgrid.h>
 #include <WebCore/CSSGridTrackList.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'grid-template-columns'/'grid-template-rows'> = none | <track-list> | <auto-track-list> | subgrid <line-name-list>?
 // https://drafts.csswg.org/css-grid/#propdef-grid-template-columns
@@ -56,7 +55,6 @@ private:
 // Customization is needed to return CSSGridTemplateListValue.
 template<> struct CSSValueCreation<GridTemplateList> { Ref<CSSValue> operator()(CSSValuePool&, const GridTemplateList&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::GridTemplateList)

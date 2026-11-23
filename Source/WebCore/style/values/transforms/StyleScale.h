@@ -27,8 +27,7 @@
 #include <WebCore/StyleScaleTransformFunction.h>
 #include <WebCore/StyleTransformFunctionWrapper.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'scale'> = none | [ <number> | <percentage> ]{1,3}
 // https://drafts.csswg.org/css-transforms-2/#propdef-scale
@@ -112,8 +111,7 @@ template<> struct Blending<Scale> {
 
 template<> struct ToPlatform<Scale> { auto operator()(const Scale&, const FloatSize&, ZoomFactor) -> RefPtr<TransformOperation>; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Scale::Function)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Scale)

@@ -30,8 +30,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WebCore::Color resolveColor(const CurrentColor&, const ResolvedColors& resolvedColors)
 {
@@ -57,5 +56,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const CurrentColor&)
     return ts << "currentColor"_s;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "TimingFunction.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 CSS::CubicBezierEasingFunction toCSSCubicBezierEasingFunction(const CubicBezierTimingFunction& function, const Style::ComputedStyle& style)
 {
@@ -73,5 +72,4 @@ Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::CubicBezierEasingF
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

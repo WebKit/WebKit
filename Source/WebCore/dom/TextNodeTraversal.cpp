@@ -29,8 +29,7 @@
 #include "ContainerNode.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace TextNodeTraversal {
+namespace WebCore::TextNodeTraversal {
 
 void appendContents(const ContainerNode& root, StringBuilder& result)
 {
@@ -62,5 +61,4 @@ String childTextContent(const ContainerNode& root)
     return result.toString();
 }
 
-}
 }

@@ -26,8 +26,7 @@
 
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct PercentageValidator {
     static constexpr std::optional<CSS::PercentageUnit> validate(CSSUnitType unitType, CSS::PropertyParserState&, CSSPropertyParserOptions)
@@ -50,5 +49,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::PercentageRaw<R, V>>
     using PercentageToken = PercentageConsumer<CSS::Percentage<R, V>, PercentageValidator>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

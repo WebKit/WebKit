@@ -28,11 +28,9 @@
 #include "CSSColorInterpolationMethod.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using ColorInterpolationMethod = CSS::ColorInterpolationMethod;
 template<> inline constexpr bool TreatAsNonConverting<ColorInterpolationMethod> = true;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

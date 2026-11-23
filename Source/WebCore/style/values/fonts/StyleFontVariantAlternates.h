@@ -28,8 +28,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TextFlags.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'font-variant-alternates'> = normal | [ stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) ]
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-variant-alternates
@@ -76,5 +75,4 @@ template<> struct Serialize<FontVariantAlternates> { void operator()(StringBuild
 
 TextStream& operator<<(TextStream&, const FontVariantAlternates&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

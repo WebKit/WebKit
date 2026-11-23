@@ -29,9 +29,7 @@
 #include <array>
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-
-namespace MIMESniffer {
+namespace WebCore::MIMESniffer {
 
 template<std::size_t N>
 NODELETE constexpr auto span8(const char(&p)[N])
@@ -404,6 +402,4 @@ String getModelMIMETypeFromContent(std::span<const uint8_t> sequence)
     return nullString();
 }
 
-} // namespace MIMESniffer
-
-} // namespace WebCore
+} // namespace WebCore::MIMESniffer

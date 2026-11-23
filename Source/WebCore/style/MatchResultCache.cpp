@@ -33,8 +33,7 @@
 #include "StyledElement.h"
 #include <wtf/BitSet.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Cache entries contain a MatchResult object that references element's mutable inline style.
 // As a result the cache entry mutates when element's inline style mutates.
@@ -196,5 +195,4 @@ void MatchResultCache::set(const Element& element, const UnadjustedStyle& unadju
         m_entries.remove(element);
 }
 
-}
 }

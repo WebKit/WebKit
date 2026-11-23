@@ -30,8 +30,7 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'offset-rotate'> = [ auto | reverse ] || <angle>
 // https://drafts.fxtf.org/motion/#propdef-offset-rotate
@@ -91,7 +90,6 @@ template<> struct Evaluation<OffsetRotate, AcceleratedEffectOffsetRotate> {
 
 WTF::TextStream& operator<<(WTF::TextStream&, const OffsetRotate&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::OffsetRotate)

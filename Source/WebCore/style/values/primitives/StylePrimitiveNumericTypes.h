@@ -28,8 +28,7 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // NOTE: This is spelled with an explicit "Or" to distinguish it from types like AnglePercentage/LengthPercentage that have behavior distinctions beyond just being a union of the two types (specifically, calc() has specific behaviors for those types).
 template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> struct NumberOrPercentage {
@@ -147,8 +146,7 @@ template<auto nR, auto pR, typename V> struct ToCSSMapping<NumberOrPercentageRes
     using type = CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 namespace WTF {
 

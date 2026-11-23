@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSPrimitiveNumericRange.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: Integer Primitive
 
@@ -55,5 +54,4 @@ template<Range = All, typename = double> struct Flex;
 template<Range = All, typename = float> struct AnglePercentage;
 template<Range = All, typename = float> struct LengthPercentage;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

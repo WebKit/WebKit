@@ -28,8 +28,7 @@
 #include <WebCore/CSSGridTrackSize.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <track-repeat>        = repeat( [ <integer [1,∞]> ] , [ <line-names>? <track-size> ]+ <line-names>? )
 // <auto-repeat>         = repeat( [ auto-fill | auto-fit ] , [ <line-names>? <fixed-size> ]+ <line-names>? )
@@ -87,8 +86,7 @@ struct GridTrackList {
 };
 DEFINE_TYPE_WRAPPER_GET(GridTrackList, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::GridTrackRepeatFunctionParameters, 2)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::GridTrackList)

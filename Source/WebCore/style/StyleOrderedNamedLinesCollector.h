@@ -37,8 +37,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class OrderedNamedLinesCollector {
     WTF_MAKE_NONCOPYABLE(OrderedNamedLinesCollector);
@@ -171,5 +170,4 @@ inline void OrderedNamedLinesCollectorInSubgridLayout::collectLineNamesForIndex(
     appendLines(lineNamesValue, autoRepeatIndexInFirstRepetition, NamedLinesType::AutoRepeatNamedLines);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

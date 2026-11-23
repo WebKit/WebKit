@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - CSSValue Visitation
 
@@ -38,5 +37,4 @@ template<NumericRaw RawType> struct CSSValueChildrenVisitor<RawType> {
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

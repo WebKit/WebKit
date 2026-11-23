@@ -28,9 +28,7 @@
 
 #include <wtf/text/ASCIILiteral.h>
 
-namespace WebCore {
-
-namespace ContentSecurityPolicyDirectiveNames {
+namespace WebCore::ContentSecurityPolicyDirectiveNames {
 
 ASCIILiteral baseURI = "base-uri"_s;
 ASCIILiteral childSrc = "child-src"_s;
@@ -63,6 +61,4 @@ ASCIILiteral upgradeInsecureRequests = "upgrade-insecure-requests"_s;
 ASCIILiteral blockAllMixedContent = "block-all-mixed-content"_s;
 ASCIILiteral workerSrc = "worker-src"_s;
 
-} // namespace ContentSecurityPolicyDirectiveNames
-
-} // namespace WebCore
+} // namespace WebCore::ContentSecurityPolicyDirectiveNames

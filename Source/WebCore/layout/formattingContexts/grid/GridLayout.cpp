@@ -39,8 +39,7 @@
 #include "UsedTrackSizes.h"
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct UsedGridItemSizes {
     LayoutUnit inlineAxisSize;
@@ -294,5 +293,4 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
     return { usedInlineSizes, usedBlockSizes };
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

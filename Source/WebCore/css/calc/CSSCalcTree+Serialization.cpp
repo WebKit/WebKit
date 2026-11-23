@@ -37,8 +37,7 @@
 #include <ranges>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 struct SerializationState {
     enum class GroupingParenthesis {
@@ -810,5 +809,4 @@ void serializationForCSSAsFunctionArgument(StringBuilder& builder, const Tree& t
     serializeCalculationTree(builder, tree.root, state);
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

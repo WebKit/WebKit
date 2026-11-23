@@ -33,8 +33,7 @@
 #include "StyleFontSizeFunctions.h"
 #include "StyleZoom.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 inline bool BuilderState::isBuildingHighlightStyle() const
 {
@@ -495,5 +494,4 @@ inline void BuilderState::setFontDescriptionVariantNumericSlashedZero(FontVarian
     fontCascade.updateRequiresShaping();
 }
 
-}
 }

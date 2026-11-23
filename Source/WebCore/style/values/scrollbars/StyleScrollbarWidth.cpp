@@ -30,8 +30,7 @@
 #include "DocumentQuirks.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -56,5 +55,4 @@ auto CSSValueConversion<ScrollbarWidth>::operator()(BuilderState& state, const C
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -36,8 +36,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct ZoomFactor;
 
@@ -69,5 +68,4 @@ private:
 TextStream& operator<<(TextStream&, const Value&);
 
 } // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

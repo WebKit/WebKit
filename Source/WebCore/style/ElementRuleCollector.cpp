@@ -66,8 +66,7 @@
 #include <ranges>
 #include <wtf/SetForScope.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static const StyleProperties& leftToRightDeclarationSingleton()
 {
@@ -1088,5 +1087,4 @@ void ElementRuleCollector::addAuthorKeyframeRules(const StyleRuleKeyframe& keyfr
     m_result->authorDeclarations.append({ keyframe.properties(), SelectorChecker::MatchAll, propertyAllowlist });
 }
 
-}
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 #include "StyleValueTypes.h"
 #include "StyleZoomPrimitives.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Utility used to store a numeric type along with the zoom to apply during
 // evaluation. Useful when storing numeric values outside of `Style::ComputedStyle`.
@@ -48,5 +47,4 @@ template<typename T, typename Result> struct Evaluation<ZoomResolvable<T>, Resul
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

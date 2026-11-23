@@ -30,11 +30,9 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
 
-namespace WebCore {
-namespace OpenType {
+namespace WebCore::OpenType {
 
 bool tryGetTypoMetrics(CTFontRef, short& ascent, short& descent, short& lineGap);
 
-} // namespace OpenType
-} // namespace WebCore
+} // namespace WebCore::OpenType
 #endif // OpenTypeCG_h

@@ -41,8 +41,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -231,5 +230,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const BoxPath& value)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

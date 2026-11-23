@@ -29,8 +29,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -56,5 +55,4 @@ auto CSSValueConversion<MathDepth>::operator()(BuilderState& state, const CSSVal
     return { toStyleFromCSSValue<MathDepth::Base>(state, value).value };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

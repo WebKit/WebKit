@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <font-metrics-override> = normal | <percentage [0,∞]>
 // https://drafts.csswg.org/css-fonts-4/#font-metrics-override-desc
@@ -44,7 +43,6 @@ template<> struct DeprecatedCSSValueConversion<FontMetricsOverride> {
     auto operator()(const CSSValue&) -> std::optional<FontMetricsOverride>;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FontMetricsOverride)

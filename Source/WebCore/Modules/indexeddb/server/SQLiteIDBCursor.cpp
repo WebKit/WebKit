@@ -39,8 +39,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 static const size_t prefetchLimit = 256;
 static const size_t prefetchSizeLimit = 1 * MB;
@@ -689,5 +688,4 @@ uint64_t SQLiteIDBCursor::boundIDValue() const
     return std::holds_alternative<IDBObjectStoreIdentifier>(m_boundID) ? std::get<IDBObjectStoreIdentifier>(m_boundID).toUInt64() : std::get<IDBIndexIdentifier>(m_boundID).toUInt64();
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

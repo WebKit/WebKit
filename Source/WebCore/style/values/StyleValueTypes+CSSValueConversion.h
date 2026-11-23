@@ -29,8 +29,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Specialization for `TupleLike` (wrapper).
 template<TupleLike StyleType>
@@ -196,5 +195,4 @@ template<EnumSetOrKeywordBaseDerived T> struct CSSValueConversion<T> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

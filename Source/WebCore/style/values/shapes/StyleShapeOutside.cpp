@@ -34,8 +34,7 @@
 #include "StyleKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - ShapeOutside
 
@@ -200,5 +199,4 @@ auto Blending<ShapeOutside>::blend(const ShapeOutside& a, const ShapeOutside& b,
     ), aValue->value, bValue->value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

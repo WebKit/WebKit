@@ -40,8 +40,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace DisplayList {
+namespace WebCore::DisplayList {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RecorderImpl);
 
@@ -521,5 +520,4 @@ void RecorderImpl::drawPlaceholder(Function<void(GraphicsContext&)>&& function)
     m_items.append(DrawPlaceholder(WTF::move(function)));
 }
 
-} // namespace DisplayList
-} // namespace WebCore
+} // namespace WebCore::DisplayList

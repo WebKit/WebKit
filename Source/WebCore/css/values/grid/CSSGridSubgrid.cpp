@@ -27,8 +27,7 @@
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<GridSubgrid>::operator()(StringBuilder& builder, const SerializationContext& context, const GridSubgrid& value)
 {
@@ -45,5 +44,4 @@ void Serialize<GridSubgrid>::operator()(StringBuilder& builder, const Serializat
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

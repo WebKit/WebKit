@@ -34,8 +34,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -143,5 +142,4 @@ auto Blending<CornerShapeValue>::blend(const CornerShapeValue& a, const CornerSh
     return convertInterpolationValueToCurvature(interpolatedValue);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,13 +28,11 @@
 
 #include "ColorSerialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<ResolvedColor>::operator()(StringBuilder& builder, const SerializationContext&, const ResolvedColor& value)
 {
     builder.append(WebCore::serializationForCSS(value.value));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

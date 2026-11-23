@@ -38,8 +38,7 @@
 #include <ranges>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -202,5 +201,4 @@ auto Blending<BoxShadows>::blend(const BoxShadows& from, const BoxShadows& to, c
     return ShadowInterpolation<BoxShadows, MatchingBoxShadows>::interpolate(from, to, fromStyle, toStyle, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

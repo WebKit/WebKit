@@ -29,9 +29,7 @@
 
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 class CombinedURLFilters;
 
@@ -63,7 +61,6 @@ private:
     CombinedURLFilters& m_combinedURLFilters;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

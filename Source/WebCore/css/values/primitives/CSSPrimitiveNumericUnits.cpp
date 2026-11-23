@@ -27,8 +27,7 @@
 
 #include "CSSCalcSymbolTable.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 ASCIILiteral unitString(AngleUnit angleUnit)
 {
@@ -201,5 +200,4 @@ static_assert(std::to_underlying(LengthUnit::Cqb) == std::to_underlying(LengthPe
 static_assert(std::to_underlying(LengthUnit::Cqmin) == std::to_underlying(LengthPercentageUnit::Cqmin));
 static_assert(std::to_underlying(LengthUnit::Cqmax) == std::to_underlying(LengthPercentageUnit::Cqmax));
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

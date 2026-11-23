@@ -29,8 +29,7 @@
 #include <WebCore/StyleSelfAlignmentData.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'align-self'> = auto | <overflow-position>? normal | stretch | <baseline-position> | <overflow-position>? <self-position>
 // https://drafts.csswg.org/css-align/#propdef-align-self
@@ -265,7 +264,6 @@ template<typename... F> constexpr decltype(auto) AlignSelf::switchOn(NOESCAPE F&
 
 template<> struct CSSValueConversion<AlignSelf> { auto operator()(BuilderState&, const CSSValue&) -> AlignSelf; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::AlignSelf)

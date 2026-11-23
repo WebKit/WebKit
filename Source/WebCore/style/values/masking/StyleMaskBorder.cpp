@@ -35,8 +35,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 MaskBorder::MaskBorder()
     : maskBorderSource { Style::ComputedStyle::initialMaskBorderSource() }
@@ -124,5 +123,4 @@ TextStream& operator<<(TextStream& ts, const MaskBorder& value)
     return ts << "style-image "_s << value.maskBorderSource << " slices "_s << value.maskBorderSlice;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

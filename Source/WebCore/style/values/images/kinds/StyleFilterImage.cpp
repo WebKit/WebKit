@@ -47,8 +47,7 @@
 #include "TransparencyLayerContextSwitcher.h"
 #include <wtf/PointerComparison.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 FilterImage::FilterImage(RefPtr<Image>&& image, Filter&& filter)
     : GeneratedImage { Type::FilterImage }
@@ -275,5 +274,4 @@ void FilterImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedIm
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'speak-as'> = none | normal | spell-out || digits || [ literal-punctuation | no-punctuation ]
 // FIXME: `none` is non-standard and computes to `normal`
@@ -80,7 +79,6 @@ private:
 
 template<> struct CSSValueConversion<SpeakAs> { SpeakAs operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SpeakAs)

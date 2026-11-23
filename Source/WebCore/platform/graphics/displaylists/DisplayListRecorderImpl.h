@@ -29,9 +29,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-
-namespace DisplayList {
+namespace WebCore::DisplayList {
 
 class RecorderImpl : public Recorder, public RefCounted<RecorderImpl> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(RecorderImpl, WEBCORE_EXPORT);
@@ -137,5 +135,4 @@ private:
     Vector<Item> m_items;
 };
 
-}
 }

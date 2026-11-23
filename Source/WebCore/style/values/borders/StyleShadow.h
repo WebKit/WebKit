@@ -30,8 +30,7 @@
 #include <WebCore/WritingMode.h>
 #include <wtf/FixedVector.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class ShadowStyle : bool { Normal, Inset };
 
@@ -167,5 +166,4 @@ template<Shadow ShadowType> void adjustRectForShadow(FloatRect& rect, const Shad
     rect.setHeight(rect.height() - shadowExtent.top() + shadowExtent.bottom());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

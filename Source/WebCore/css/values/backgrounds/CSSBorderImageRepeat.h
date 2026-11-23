@@ -27,8 +27,7 @@
 
 #include "CSSValueTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'border-image-repeat'> = [ stretch | repeat | round | space ]{1,2}
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-image-repeat
@@ -47,7 +46,6 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageRepeat, values);
 
 template<> struct CSSValueCreation<BorderImageRepeat> { auto operator()(CSSValuePool&, const BorderImageRepeat&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::BorderImageRepeat)

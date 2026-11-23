@@ -29,12 +29,10 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 CompiledContentExtension::~CompiledContentExtension() = default;
-    
-} // namespace ContentExtensions
-} // namespace WebCore
+
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-underline-offset'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-underline-offset
@@ -39,7 +38,6 @@ struct TextUnderlineOffset : PrimitiveNumericOrKeyword<LengthPercentage<>, CSS::
     float resolve(const Style::ComputedStyle&, float autoValue = 0.0f) const;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextUnderlineOffset)

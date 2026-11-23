@@ -28,8 +28,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/IndexedRange.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // https://drafts.csswg.org/css-values-4/#coordinating-list-property
 template<typename T>
@@ -224,5 +223,4 @@ TextStream& operator<<(TextStream& ts, const CoordinatedValueList<T>& value)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

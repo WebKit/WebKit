@@ -36,8 +36,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleWebKitLineBoxContain.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, LineLayoutResult& lineLayoutResult)
     : m_inlineFormattingContext(inlineFormattingContext)
@@ -936,5 +935,3 @@ void LineBoxBuilder::expandAboveRootInlineBox(LineBox& lineBox, InlineLayoutUnit
 }
 
 }
-}
-

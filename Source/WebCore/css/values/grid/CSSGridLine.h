@@ -27,8 +27,7 @@
 #include "CSSCustomIdent.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <grid-line-explicit> = [ <integer [-∞,-1]> | <integer [1,∞]> ] && <custom-ident>?
 struct GridLineExplicit {
@@ -101,8 +100,7 @@ private:
 // `GridLine` is special-cased to return a `CSSGridLineValue`.
 template<> struct CSSValueCreation<GridLine> { Ref<CSSValue> operator()(CSSValuePool&, const GridLine&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::GridLineExplicit, 2)
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::GridLineSpan, 2)

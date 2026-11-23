@@ -45,8 +45,7 @@ class CryptoKeyEC;
 class CryptoKeyHMAC;
 }
 
-namespace fido {
-namespace pin {
+namespace fido::pin {
 
 // Subcommand enumerates the subcommands to the main |authenticatorClientPIN|
 // command. See
@@ -244,7 +243,6 @@ WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const KeyAgreementRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const TokenRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
 
-} // namespace pin
-} // namespace fido
+} // namespace fido::pin
 
 #endif // ENABLE(WEB_AUTHN)

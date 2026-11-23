@@ -47,9 +47,7 @@
 #include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-
-namespace VectorMath {
+namespace WebCore::VectorMath {
 
 #if USE(ACCELERATE)
 // On the Mac we use the highly optimized versions in Accelerate.framework
@@ -1246,8 +1244,6 @@ void convolve(std::span<const float> signal, std::span<const float> filter, std:
 
 #endif // USE(ACCELERATE)
 
-} // namespace VectorMath
-
-} // namespace WebCore
+} // namespace WebCore::VectorMath
 
 #endif // ENABLE(WEB_AUDIO)

@@ -28,8 +28,7 @@
 #include "StyleKeyword+ValueRepresentationNeeded.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<EnumWithValueRepresentation T> TextStream& operator<<(TextStream& ts, const T& value)
 {
@@ -37,5 +36,4 @@ template<EnumWithValueRepresentation T> TextStream& operator<<(TextStream& ts, c
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-decoration-thickness'> = auto | from-font | <length-percentage>
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-decoration-thickness
@@ -46,7 +45,6 @@ struct TextDecorationThickness : PrimitiveNumericOrKeyword<LengthPercentage<>, C
 
 template<> struct CSSValueConversion<TextDecorationThickness> { auto operator()(BuilderState&, const CSSValue&) -> TextDecorationThickness; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextDecorationThickness)

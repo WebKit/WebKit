@@ -26,12 +26,10 @@
 
 #include "CSSBoxShadow.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <`box-shadow`> = none | <box-shadow>#
 // https://drafts.csswg.org/css-backgrounds-3/#propdef-box-shadow
 using BoxShadowProperty = ListOrNone<CommaSeparatedVector<BoxShadow>>;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

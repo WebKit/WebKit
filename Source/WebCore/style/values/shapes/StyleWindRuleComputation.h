@@ -27,8 +27,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/WindRule.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // All types that want to expose a generated WebCore::WindRule must specialize WindRuleComputation the following member function:
 //
@@ -54,5 +53,4 @@ template<CSSValueID Name, typename StyleType> struct WindRuleComputation<Functio
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

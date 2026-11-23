@@ -27,8 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct DFA;
 
@@ -37,7 +36,6 @@ public:
     WEBCORE_EXPORT static void minimize(DFA&);
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

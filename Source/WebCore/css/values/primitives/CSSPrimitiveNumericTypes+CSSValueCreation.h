@@ -29,8 +29,7 @@
 #include "CSSValuePool.h"
 #include "CSSValueTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion from strongly typed `CSS::` value types to `WebCore::CSSValue` types.
 
@@ -48,5 +47,4 @@ template<Calc CSSType> struct CSSValueCreation<CSSType> {
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

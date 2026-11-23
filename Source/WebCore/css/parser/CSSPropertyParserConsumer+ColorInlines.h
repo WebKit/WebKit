@@ -28,8 +28,7 @@
 #include "CSSPlatformColorResolutionState.h"
 #include "CSSPropertyParserConsumer+Color.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: <color> parsing (raw)
 
@@ -47,5 +46,4 @@ inline WebCore::Color parseColorRaw(StringView string, const CSSParserContext& c
     return parseColorRawGeneral(string, context, scriptExecutionContext, { }, state);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

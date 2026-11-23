@@ -76,8 +76,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Range.h>
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 
@@ -1972,5 +1971,4 @@ void LineLayout::outputLineTree(WTF::TextStream& stream, size_t depth) const
 }
 #endif
 
-}
 }

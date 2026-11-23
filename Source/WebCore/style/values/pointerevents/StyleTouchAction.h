@@ -27,8 +27,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TouchAction.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'touch-action'> = auto | none | [ [ pan-x | pan-left | pan-right ] || [ pan-y | pan-up | pan-down ] ] | manipulation
 // FIXME: Currently implemented grammar is: auto | none | [ pan-x || pan-y || pinch-zoom ] | manipulation
@@ -74,7 +73,6 @@ template<> struct CSSValueConversion<TouchAction> { auto operator()(BuilderState
 
 template<> struct ToPlatform<TouchAction> { auto operator()(const TouchAction&) -> OptionSet<WebCore::TouchAction>; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TouchAction)

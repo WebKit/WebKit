@@ -34,8 +34,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -137,5 +136,4 @@ void Serialize<WebkitBoxReflection>::operator()(StringBuilder& builder, const CS
     serializeMask(value.mask);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

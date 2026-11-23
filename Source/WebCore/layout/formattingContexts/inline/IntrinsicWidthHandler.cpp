@@ -34,8 +34,7 @@
 #include "TextOnlySimpleLineBuilder.h"
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 NODELETE static bool isBoxEligibleForNonLineBuilderMinimumWidth(const ElementBox& box)
 {
@@ -502,5 +501,3 @@ const ElementBox& IntrinsicWidthHandler::lineBuilderRoot() const
 }
 
 }
-}
-

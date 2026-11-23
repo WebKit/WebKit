@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -50,5 +49,4 @@ auto CSSValueConversion<CounterIncrementValue>::operator()(BuilderState& state, 
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

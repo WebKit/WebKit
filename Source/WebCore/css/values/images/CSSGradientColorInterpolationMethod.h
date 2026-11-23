@@ -27,8 +27,7 @@
 
 #include <WebCore/CSSColorInterpolationMethod.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct GradientColorInterpolationMethod {
     enum class Default : bool { SRGB, OKLab };
@@ -53,5 +52,4 @@ template<> struct Serialize<GradientColorInterpolationMethod> { void operator()(
 template<> struct ComputedStyleDependenciesCollector<GradientColorInterpolationMethod> { constexpr void operator()(ComputedStyleDependencies&, const GradientColorInterpolationMethod&) { } };
 template<> struct CSSValueChildrenVisitor<GradientColorInterpolationMethod> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const GradientColorInterpolationMethod&) { return IterationStatus::Continue; } };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

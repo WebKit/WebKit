@@ -30,8 +30,7 @@
 #include "InlineLineBuilder.h"
 #include <WebCore/InlineDisplayLine.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineLayoutState;
 class LineBox;
@@ -65,5 +64,3 @@ private:
 };
 
 }
-}
-

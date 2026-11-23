@@ -46,8 +46,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 static UnevaluatedCalcBase simplify(const CSSCalc::Value& value, std::optional<CSSToLengthConversionData>&& conversionData, const CSSCalcSymbolTable& symbolTable)
 {
@@ -384,5 +383,4 @@ TextStream& operator<<(TextStream& ts, const UnevaluatedCalcBase& value)
     return ts;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

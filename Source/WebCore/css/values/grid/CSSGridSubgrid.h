@@ -27,8 +27,7 @@
 #include <WebCore/CSSGridLineNames.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <name-repeat> = repeat( [ <integer [1,∞]> | auto-fill ], <line-names>+)
 // https://drafts.csswg.org/css-grid/#typedef-name-repeat
@@ -90,8 +89,7 @@ DEFINE_TYPE_WRAPPER_GET(GridSubgrid, value);
 // Custom serialization needed to add leading 'subgrid' keyword.
 template<> struct Serialize<GridSubgrid> { void operator()(StringBuilder&, const SerializationContext&, const GridSubgrid&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::GridNameRepeatFunctionParameters, 2)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::GridSubgrid)

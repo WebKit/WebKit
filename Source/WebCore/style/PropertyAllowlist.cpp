@@ -28,8 +28,7 @@
 
 #include "CSSProperty.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 PropertyAllowlist propertyAllowlistForPseudoElement(PseudoElementType type)
 {
@@ -484,5 +483,4 @@ bool isValidCueBackgroundStyleProperty(CSSPropertyID id)
 }
 #endif
 
-}
 }

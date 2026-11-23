@@ -30,8 +30,7 @@
 #include <WebCore/LayoutUnits.h>
 #include <wtf/Range.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct AncestorStack;
 class ElementBox;
@@ -142,5 +141,3 @@ inline InlineRect InlineDisplayContentBuilder::mapInlineRectLogicalToVisual(cons
 }
 
 }
-}
-

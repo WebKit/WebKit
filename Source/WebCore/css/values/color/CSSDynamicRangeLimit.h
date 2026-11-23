@@ -28,8 +28,7 @@
 #include "CSSValueTypes.h"
 #include <wtf/CompactVariant.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct DynamicRangeLimitMixFunction;
 
@@ -80,7 +79,6 @@ template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(NOESCAPE F&&.
     );
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::DynamicRangeLimit)

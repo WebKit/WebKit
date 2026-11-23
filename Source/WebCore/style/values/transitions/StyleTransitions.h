@@ -27,10 +27,8 @@
 #include <WebCore/StyleCoordinatedValueList.h>
 #include <WebCore/StyleTransition.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using Transitions = CoordinatedValueList<Transition>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

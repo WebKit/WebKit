@@ -29,8 +29,7 @@
 #include "XPathExpressionNode.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 class Function : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(Function);
@@ -47,5 +46,4 @@ private:
     void setArguments(const String& name, Vector<std::unique_ptr<Expression>>);
 };
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

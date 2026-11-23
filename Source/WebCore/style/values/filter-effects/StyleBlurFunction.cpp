@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Blur Blur::passthroughForInterpolation()
 {
@@ -76,5 +75,4 @@ auto ToPlatform<Blur>::operator()(const Blur& value, const Style::ComputedStyle&
     return BlurFilterOperation::create(Style::evaluate<float>(value, style.usedZoomForLength()));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

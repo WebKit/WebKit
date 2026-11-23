@@ -30,8 +30,7 @@
 #include "CSSValueKeywords.h"
 #include <wtf/text/StringView.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: <string>
 // https://drafts.csswg.org/css-values/#strings
@@ -57,5 +56,4 @@ RefPtr<CSSValue> consumeString(CSSParserTokenRange& range)
     return CSSStringValue::create(CSS::String { range.consumeIncludingWhitespace().value().toString() });
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

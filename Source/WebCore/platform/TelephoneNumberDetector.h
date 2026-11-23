@@ -30,15 +30,13 @@
 
 #include <unicode/utypes.h>
 
-namespace WebCore {
-namespace TelephoneNumberDetector {
+namespace WebCore::TelephoneNumberDetector {
 
 void prewarm();
 bool isSupported();
 bool find(std::span<const char16_t> buffer, int* startPos, int* endPos);
 
-} // namespace TelephoneNumberDetector
-} // namespace WebCore
+} // namespace WebCore::TelephoneNumberDetector
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION)
 #endif // TelephoneNumberDetector_h

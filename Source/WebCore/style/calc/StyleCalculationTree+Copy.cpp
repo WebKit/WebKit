@@ -28,9 +28,7 @@
 #include "StyleCalculationTree.h"
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 static auto copy(const std::optional<Child>& root) -> std::optional<Child>;
 static auto copy(const Random::Fixed&) -> Random::Fixed;
@@ -103,6 +101,4 @@ template<typename Op> Child copy(const IndirectNode<Op>& root)
     return makeChild(WTF::apply([](const auto& ...x) { return Op { copy(x)... }; } , *root));
 }
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

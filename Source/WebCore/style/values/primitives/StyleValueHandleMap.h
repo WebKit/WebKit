@@ -29,8 +29,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Side table for values that PrimitiveData refers to by handle rather than holding inline, which is
 // what lets it stay packed. Each value type gets its own map.
@@ -117,5 +116,4 @@ template<typename ValueType> void ValueHandleMap<ValueType>::deref(unsigned hand
     // so drop the last reference (valueHold) after unlocking.
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

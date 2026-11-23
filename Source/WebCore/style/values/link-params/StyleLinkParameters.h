@@ -31,9 +31,7 @@
 #include <WebCore/StyleTypeSpecifier.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 // <param-spec> = color | accent-color | [ <dashed-ident> <css-type>? ]
 struct ParamSpec {
@@ -129,8 +127,7 @@ template<> struct CSSValueCreation<LinkParameter> {
     auto operator()(CSSValuePool&, const ComputedStyle&, const LinkParameter&) -> Ref<CSSValue>;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ParamSpec::Custom, 2)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ParamSpec)

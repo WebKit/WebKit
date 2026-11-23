@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 BorderImage::BorderImage()
     : borderImageSource { Style::ComputedStyle::initialBorderImageSource() }
@@ -122,5 +121,4 @@ TextStream& operator<<(TextStream& ts, const BorderImage& value)
     return ts << "style-image "_s << value.borderImageSource << " slices "_s << value.borderImageSlice;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

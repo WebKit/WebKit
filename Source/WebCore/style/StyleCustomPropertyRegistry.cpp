@@ -40,8 +40,7 @@
 #include "WebAnimation.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomPropertyRegistry);
 
@@ -238,5 +237,4 @@ bool CustomPropertyRegistry::invalidatePropertiesWithViewportUnits(Document& doc
     return invalidatedAny;
 }
 
-}
 }

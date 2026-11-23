@@ -32,7 +32,7 @@
 #include "JSDOMBinding.h"
 #include "Node.h"
 
-namespace WebCore { namespace DOMJIT {
+namespace WebCore::DOMJIT {
 
 using JSC::CCallHelpers;
 using JSC::GPRReg;
@@ -49,6 +49,6 @@ void loadDocumentElement(MacroAssembler& jit, GPRReg document, GPRReg output)
     jit.loadPtr(CCallHelpers::Address(document, Document::documentElementMemoryOffset()), output);
 }
 
-} }
+}
 
 #endif

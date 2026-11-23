@@ -35,8 +35,7 @@
 #include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
 #include "CSSValueKeywords.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
@@ -64,5 +63,4 @@ RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range, CSS::PropertyPars
     return CSSKeywordValue::create(CSSValueID::Block);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

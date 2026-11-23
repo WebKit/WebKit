@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 BackgroundLayer::BackgroundLayer()
     : m_image(BackgroundLayer::initialImage())
@@ -111,5 +110,4 @@ TextStream& operator<<(TextStream& ts, const BackgroundLayer& layer)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

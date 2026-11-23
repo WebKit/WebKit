@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TabSize.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -86,5 +85,4 @@ auto ToPlatform<TabSize>::operator()(const TabSize& value, ZoomFactor zoom) -> W
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

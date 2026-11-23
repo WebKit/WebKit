@@ -28,9 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct TermCreatorInput {
     const Term& term;
@@ -81,7 +79,6 @@ size_t CombinedFiltersAlphabet::memoryUsed() const
 }
 #endif
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

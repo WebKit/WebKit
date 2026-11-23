@@ -96,8 +96,7 @@
 #include <WebCore/StyleEnvironmentMap.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class BackdropFilterData;
 class CustomPropertyData;
@@ -285,5 +284,4 @@ private:
     NonInheritedRareData(const NonInheritedRareData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

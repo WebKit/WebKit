@@ -29,8 +29,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 TextStream& operator<<(TextStream& ts, Operator op)
 {
@@ -70,5 +69,4 @@ TextStream& operator<<(TextStream& ts, Operator op)
     return ts;
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

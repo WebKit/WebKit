@@ -32,9 +32,7 @@
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-
-namespace MathMLOperatorDictionary {
+namespace WebCore::MathMLOperatorDictionary {
 enum class Form : uint8_t { Infix, Prefix, Postfix };
 enum Flag {
     Accent = 0x1,
@@ -60,5 +58,4 @@ std::optional<Property> search(std::array<char16_t, 2>, Form, bool explicitForm)
 bool isVertical(char32_t);
 }
 
-}
 #endif // ENABLE(MATHML)

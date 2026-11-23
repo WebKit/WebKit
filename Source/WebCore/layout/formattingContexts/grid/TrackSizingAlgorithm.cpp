@@ -37,8 +37,7 @@
 #include <wtf/Vector.h>
 #include <wtf/ZippedRange.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct FlexTrack {
     size_t trackIndex;
@@ -1071,5 +1070,4 @@ TrackSizes TrackSizingAlgorithm::sizeTracks(const TrackSizingItemList& trackSizi
     });
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

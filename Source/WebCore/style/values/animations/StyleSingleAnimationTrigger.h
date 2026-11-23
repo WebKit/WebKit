@@ -28,8 +28,7 @@
 #include <WebCore/StyleCustomIdent.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // https://drafts.csswg.org/animation-triggers-1/#typedef-animation-action
 // <animation-action> = none | play | play-once | play-forwards | play-backwards | pause | reset | replay
@@ -65,8 +64,7 @@ struct SingleAnimationTrigger : ListOrNone<NamedAnimationTriggers> {
 template<> struct CSSValueConversion<NamedAnimationTrigger> { auto operator()(BuilderState&, const CSSValue&) -> NamedAnimationTrigger; };
 template<> struct CSSValueConversion<AnimationAction> { auto operator()(BuilderState&, const CSSValue&) -> AnimationAction; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::NamedAnimationTrigger, 2)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationTrigger)

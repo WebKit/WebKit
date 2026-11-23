@@ -48,8 +48,7 @@
 #include "CSSValuePool.h"
 #include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 bool isPredefinedCounterStyle(CSSValueID valueID)
 {
@@ -301,5 +300,4 @@ RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, 
     return values;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

@@ -32,8 +32,7 @@
 #include <WebCore/StyleTimelineTriggerName.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // macro(ownerType, property, type, lowercaseName, uppercaseName)
 
@@ -141,5 +140,4 @@ TextStream& operator<<(TextStream&, const TimelineTrigger&);
 #undef FOR_EACH_TIMELINE_TRIGGER_PROPERTY
 #undef FOR_EACH_TIMELINE_TRIGGER_SHORTHAND
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

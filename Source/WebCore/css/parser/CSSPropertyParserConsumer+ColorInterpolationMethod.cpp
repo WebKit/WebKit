@@ -32,8 +32,7 @@
 #include "CSSValueKeywords.h"
 #include <wtf/SortedArrayMap.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: - color-mix()
 
@@ -123,5 +122,4 @@ std::optional<CSS::ColorInterpolationMethod> consumeColorInterpolationMethod(CSS
     }
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

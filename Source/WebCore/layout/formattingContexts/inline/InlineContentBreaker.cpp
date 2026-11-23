@@ -35,8 +35,7 @@
 #include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 NODELETE static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
@@ -1054,5 +1053,4 @@ void InlineContentBreaker::ContinuousContent::reset()
     m_hasShapedContent = false;
 }
 
-}
 }

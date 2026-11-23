@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // invert() = invert( [ <number [0,1(clamp upper)] > | <percentage [0,100(clamp upper)]> ]? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-invert
@@ -42,7 +41,6 @@ using InvertFunction = FunctionNotation<CSSValueID::Invert, Invert>;
 
 DEFINE_TYPE_WRAPPER_GET(Invert, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Invert, 1)

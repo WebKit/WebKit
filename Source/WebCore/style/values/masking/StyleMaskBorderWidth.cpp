@@ -38,8 +38,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -143,5 +142,4 @@ auto Blending<MaskBorderWidth>::blend(const MaskBorderWidth& a, const MaskBorder
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

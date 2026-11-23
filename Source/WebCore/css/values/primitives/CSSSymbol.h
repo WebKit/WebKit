@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct SymbolRaw {
     CSSValueID value;
@@ -66,5 +65,4 @@ template<> struct CSSValueChildrenVisitor<Symbol> { constexpr IterationStatus op
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Symbol&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

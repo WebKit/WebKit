@@ -27,8 +27,7 @@
 #include <wtf/PointerComparison.h>
 #include <wtf/Ref.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename Function> struct TransformFunctionWrapper {
     TransformFunctionWrapper(Ref<const Function> value) : value { WTF::move(value) } { }
@@ -44,5 +43,4 @@ template<typename Function> struct TransformFunctionWrapper {
     Ref<const Function> value;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

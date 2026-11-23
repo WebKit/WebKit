@@ -28,8 +28,7 @@
 #include <limits>
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // Used to indicate how one of the bounds (upper or lower) of range should be interpreted
 // at parse time.
@@ -253,5 +252,4 @@ template<Range range, std::unsigned_integral T> constexpr bool isWithinRange(T v
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -27,8 +27,7 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // This is used to identify style scopes that can affect an element.
 // Scopes are in tree-of-trees order. Styles from earlier scopes win over later ones (modulo !important).
@@ -59,5 +58,4 @@ inline TextStream& operator<<(TextStream& ts, const ScopeOrdinal scopeOrdinal)
     return ts;
 }
 
-}
 }

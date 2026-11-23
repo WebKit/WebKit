@@ -27,8 +27,7 @@
 
 #include "LayoutElementBox.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InitialContainingBlock;
 class LayoutState;
@@ -41,5 +40,3 @@ void showInlineTreeAndRuns(TextStream&, const LayoutState&, const ElementBox& in
 #endif
 
 }
-}
-

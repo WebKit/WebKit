@@ -46,8 +46,7 @@
 
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 GridFormattingContext::GridFormattingContext(const ElementBox& gridBox, LayoutState& layoutState)
     : m_gridBox(gridBox)
@@ -521,5 +520,4 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     };
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

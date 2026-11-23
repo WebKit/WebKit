@@ -34,8 +34,7 @@
 #include "StyleSelfAlignmentData.h"
 #include <wtf/HashTraits.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class UnplacedGridItem;
 
@@ -94,5 +93,4 @@ private:
     const GridAreaLines m_gridAreaLines;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

@@ -29,8 +29,7 @@
 #include "IDBResultData.h"
 #include "UniqueIDBDatabaseTransaction.h"
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 Ref<ServerOpenDBRequest> ServerOpenDBRequest::create(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
 {
@@ -95,5 +94,4 @@ void ServerOpenDBRequest::didOpenDatabase(const IDBResultData& result)
         transaction->addOpenRequestResult(result.error());
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

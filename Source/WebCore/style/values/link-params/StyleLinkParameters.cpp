@@ -42,8 +42,7 @@
 #include "StyleColorResolver.h"
 #include "StyleCustomProperty.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static ParamSpec toStyleParamSpec(const CSS::ParamSpec& spec)
 {
@@ -144,5 +143,4 @@ auto CSSValueCreation<LinkParameter>::operator()(CSSValuePool&, const ComputedSt
     return CSSParamValue::create(CSS::ParamFunction { CSS::LinkParameter { toCSSParamSpec(parameter.spec), toCSS(parameter.value, style) } });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -30,8 +30,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<TypeSpecifier>::operator()(StringBuilder& builder, const SerializationContext&, const TypeSpecifier& value)
 {
@@ -54,5 +53,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const TypeSpecifier& value)
     return ts << builder.toString();
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

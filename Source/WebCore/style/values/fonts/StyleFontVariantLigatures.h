@@ -32,8 +32,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TextFlags.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'font-variant-ligatures'> = normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ]
 // https://drafts.csswg.org/css-fonts-4/#font-variant-ligatures-prop
@@ -112,7 +111,6 @@ private:
 
 template<> struct CSSValueConversion<FontVariantLigatures> { NODELETE FontVariantLigatures operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FontVariantLigatures)

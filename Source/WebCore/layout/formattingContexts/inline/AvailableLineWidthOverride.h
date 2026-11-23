@@ -29,8 +29,7 @@
 #include <optional>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // This class overrides the total line width available for candidate content on a line.
 // Note that this only impacts how much content can fit in a line, and it does not change
@@ -61,5 +60,4 @@ private:
     std::optional<Vector<LayoutUnit>> m_individualLineWidthOverrides;
 };
 
-}
 }

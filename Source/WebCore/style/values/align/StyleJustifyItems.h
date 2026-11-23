@@ -30,8 +30,7 @@
 #include <WebCore/StyleSelfAlignmentData.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'justify-items'> = <overflow-position>? normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ]
 // https://drafts.csswg.org/css-align/#propdef-justify-items
@@ -316,7 +315,6 @@ template<typename... F> constexpr decltype(auto) JustifyItems::switchOn(NOESCAPE
 
 template<> struct CSSValueConversion<JustifyItems> { auto operator()(BuilderState&, const CSSValue&) -> JustifyItems; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::JustifyItems)

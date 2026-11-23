@@ -28,8 +28,7 @@
 #include "StyleFontPalette.h"
 #include "StyleFontPaletteMix.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename... F> decltype(auto) FontPalette::switchOn(NOESCAPE F&&... f) const
 {
@@ -57,5 +56,4 @@ template<typename... F> decltype(auto) FontPalette::switchOn(NOESCAPE F&&... f) 
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

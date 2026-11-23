@@ -41,8 +41,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomProperty);
 
@@ -242,5 +241,4 @@ const Vector<CSSParserToken>& CustomProperty::tokens() const
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

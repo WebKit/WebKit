@@ -27,8 +27,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Serialization
 
@@ -49,5 +48,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const Symbol& value)
     return ts << nameLiteralForSerialization(value.value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

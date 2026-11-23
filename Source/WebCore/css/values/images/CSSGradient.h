@@ -31,8 +31,7 @@
 #include <WebCore/CSSPosition.h>
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Common Types
 
@@ -242,8 +241,7 @@ using Gradient = Variant<
     FunctionNotation<CSSValueID::RepeatingConicGradient, ConicGradient>
 >;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 template<typename C, typename P> inline constexpr bool WebCore::TreatAsTupleLike<WebCore::CSS::GradientColorStop<C, P>> = true;
 

@@ -29,8 +29,7 @@
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSDocument.h>
 
-namespace JSC {
-namespace JSCastingHelpers {
+namespace JSC::JSCastingHelpers {
 
 template<>
 struct InheritsTraits<WebCore::JSDocument> {
@@ -42,8 +41,7 @@ struct InheritsTraits<WebCore::JSDocument> {
     }
 };
 
-} // namespace JSCastingHelpers
-} // namespace JSC
+} // namespace JSC::JSCastingHelpers
 
 namespace WebCore {
 

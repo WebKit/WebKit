@@ -28,8 +28,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
     PrimitiveData length[6];
@@ -123,5 +122,4 @@ void BoxData::dumpDifferences(TextStream& ts, const BoxData& other) const
 }
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

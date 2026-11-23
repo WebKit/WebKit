@@ -28,8 +28,7 @@
 #include "InlineDisplayContent.h"
 #include <optional>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class ElementBox;
 
@@ -37,5 +36,4 @@ class ElementBox;
 // Returns nothing for content that needs the full inline layout.
 std::optional<InlineDisplay::Content> buildSVGTextDisplayContent(const ElementBox& root);
 
-}
 }

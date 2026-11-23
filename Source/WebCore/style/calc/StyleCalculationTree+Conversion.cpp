@@ -42,9 +42,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 struct ToCSSConversionOptions {
     CSSCalc::CanonicalDimension::Dimension canonicalDimension;
@@ -393,6 +391,4 @@ Tree toStyle(const CSSCalc::Tree& tree, const ToStyleOptions& toStyleOptions)
     return Tree { toStyle(simplifiedTree.root, conversionOptions) };
 }
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

@@ -40,8 +40,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 // The IndexedDB spec states the maximum value you can get from the key generator is 2^53.
 constexpr uint64_t maxGeneratedKeyValue = 0x20000000000000;
@@ -697,5 +696,4 @@ MemoryObjectStore* MemoryIDBBackingStore::objectStoreForName(const String& name)
     return m_objectStoresByName.get(name);
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

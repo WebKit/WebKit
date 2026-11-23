@@ -35,8 +35,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteIDBTransaction);
 
@@ -258,6 +257,4 @@ SQLiteDatabase* SQLiteIDBTransaction::sqliteDatabase() const
     return m_sqliteDatabase.get();
 }
 
-
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

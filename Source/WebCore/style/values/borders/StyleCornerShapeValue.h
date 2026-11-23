@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using SuperellipseFunction = FunctionNotation<CSSValueID::Superellipse, Number<>>;
 
@@ -61,7 +60,6 @@ template<> struct Blending<CornerShapeValue> {
 
 DEFINE_TYPE_WRAPPER_GET(CornerShapeValue, superellipse)
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::CornerShapeValue)

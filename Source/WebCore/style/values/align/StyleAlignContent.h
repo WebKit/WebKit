@@ -30,8 +30,7 @@
 #include <WebCore/StyleOverflowPosition.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'align-content'> = normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position>
 // https://drafts.csswg.org/css-align/#propdef-align-content
@@ -253,7 +252,6 @@ template<typename... F> constexpr decltype(auto) AlignContent::switchOn(NOESCAPE
 
 template<> struct CSSValueConversion<AlignContent> { auto operator()(BuilderState&, const CSSValue&) -> AlignContent; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::AlignContent)

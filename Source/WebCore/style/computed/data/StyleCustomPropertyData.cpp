@@ -27,8 +27,7 @@
 #include "config.h"
 #include "StyleCustomPropertyData.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CustomPropertyData);
 
@@ -184,5 +183,4 @@ void CustomPropertyData::dumpDifferences(TextStream& ts, const CustomPropertyDat
 }
 #endif // !LOG_DISABLED
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

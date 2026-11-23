@@ -24,9 +24,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 struct Child;
 struct Tree;
@@ -36,6 +34,4 @@ struct Tree;
 Tree copy(const Tree&);
 Child copy(const Child&);
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

@@ -32,8 +32,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Serialize
 
@@ -68,5 +67,4 @@ void add(Hasher& hasher, const String& value)
     add(hasher, value.value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

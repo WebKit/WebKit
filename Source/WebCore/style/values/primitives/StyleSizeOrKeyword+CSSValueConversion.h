@@ -34,8 +34,7 @@
 #include "StyleSizeOrKeyword.h"
 #include "StyleUnevaluatedCalcSize.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - <calc-size()> conversion
 
@@ -172,5 +171,4 @@ template<SizeOrKeywordDerived StyleType> struct CSSValueConversion<StyleType> : 
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

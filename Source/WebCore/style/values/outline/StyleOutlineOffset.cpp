@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleSnapLengthAsBorderWidth.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -86,5 +85,4 @@ auto Evaluation<UsedOutlineOffset, LayoutUnit>::operator()(const UsedOutlineOffs
     return LayoutUnit { snapSignedLengthAsBorderWidth(evaluate<float>(value.value, zoom), deviceScaleFactor) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

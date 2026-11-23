@@ -27,8 +27,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'scroll-behavior'> = auto | smooth
 // https://drafts.csswg.org/css-overflow-3/#smooth-scrolling
@@ -37,5 +36,4 @@ enum class ScrollBehavior : bool {
     Smooth
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

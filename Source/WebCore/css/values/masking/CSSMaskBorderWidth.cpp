@@ -28,8 +28,7 @@
 
 #include "CSSMaskBorderWidthValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -38,5 +37,4 @@ auto CSSValueCreation<MaskBorderWidth>::operator()(CSSValuePool&, const MaskBord
     return CSSMaskBorderWidthValue::create(MaskBorderWidth { value });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

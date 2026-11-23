@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSValue& value, float multiplier) -> LineHeight
 {
@@ -179,5 +178,4 @@ auto Evaluation<LineHeight, float>::operator()(
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

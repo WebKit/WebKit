@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSPrimitiveNumericConcepts.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Forward declaration of PrimitiveNumeric to needed to create a hard constraint for the Numeric concept below.
 template<CSS::Numeric> struct PrimitiveNumeric;
@@ -47,5 +46,4 @@ template<CSS::Numeric> struct UnevaluatedCalculation;
 // Concept for use in generic contexts to filter on UnevaluatedCalc Style types.
 template<typename T> concept Calc = std::same_as<T, UnevaluatedCalculation<typename T::CSS>>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

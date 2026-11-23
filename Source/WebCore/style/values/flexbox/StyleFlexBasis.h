@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleSizeOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct PreferredSize;
 
@@ -65,7 +64,6 @@ struct FlexBasis : SizeOrKeyword<CSS::Keyword::Content, CSS::Keyword::Auto, CSS:
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FlexBasis)

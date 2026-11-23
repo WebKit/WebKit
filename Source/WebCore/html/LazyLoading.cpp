@@ -43,9 +43,7 @@
 #include "HTMLMediaElement.h"
 #endif
 
-namespace WebCore {
-
-namespace LazyLoading {
+namespace WebCore::LazyLoading {
 
 bool hasLazyAttributeValue(StringView attributeValue)
 {
@@ -88,6 +86,4 @@ bool isLazyLoadable(const Element& element)
     return isInLazyState(element);
 }
 
-} // namespace LazyLoading
-
-} // namespace WebCore
+} // namespace WebCore::LazyLoading

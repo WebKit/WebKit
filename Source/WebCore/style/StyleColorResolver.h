@@ -31,8 +31,7 @@
 #include <WebCore/StyleComputedStyle.h>
 #include <WebCore/StyleResolvedColors.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename T> concept ImplementsVisitedLinkColor = requires {
     { T::visitedLinkColor(std::declval<const ComputedStyleProperties&>()) } -> std::same_as<const Color&>;
@@ -223,5 +222,4 @@ WebCore::Color ColorPropertyResolver<ColorTraits>::visitedDependentColorApplying
     return colorApplyingColorFilter(visitedDependentResolveColor(paintBehavior, StyleColorOptionsPurpose::Rendering));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

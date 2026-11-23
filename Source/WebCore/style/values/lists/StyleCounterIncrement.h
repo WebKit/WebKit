@@ -28,8 +28,7 @@
 #include <WebCore/StyleCustomIdent.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'counter-increment'> = [ <counter-name> <integer>?@(default=1) ]+ | none
 // https://drafts.csswg.org/css-lists/#propdef-counter-increment
@@ -61,8 +60,7 @@ struct CounterIncrement : ListOrNone<CounterIncrementList> {
 
 template<> struct CSSValueConversion<CounterIncrementValue> { auto operator()(BuilderState&, const CSSValue&) -> CounterIncrementValue; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::CounterIncrementValue, 2)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::CounterIncrement)

@@ -32,8 +32,7 @@
 #include "CSSPrimitiveNumericTypes+SymbolReplacement.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 static WebCore::Color convertToRelativeAlphaResultRepresentation(const WebCore::Color& color)
 {
@@ -116,5 +115,4 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeAlphaColorResolver&
     return origin.colorWithAlpha(alpha);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

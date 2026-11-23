@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleTextEdge.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-box-edge'> = auto | <text-edge>
 // https://drafts.csswg.org/css-inline-3/#propdef-text-box-edge
@@ -37,7 +36,6 @@ struct TextBoxEdge : TextEdge<CSS::Keyword::Auto> {
     constexpr bool isAuto() const { return isKeyword(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextBoxEdge)

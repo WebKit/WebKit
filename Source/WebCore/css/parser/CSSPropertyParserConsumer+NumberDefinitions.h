@@ -26,8 +26,7 @@
 
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct NumberValidator {
     static constexpr std::optional<CSS::NumberUnit> validate(CSSUnitType unitType, CSS::PropertyParserState&, CSSPropertyParserOptions)
@@ -50,5 +49,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::NumberRaw<R, V>> {
     using NumberToken = NumberConsumer<CSS::Number<R, V>, NumberValidator>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

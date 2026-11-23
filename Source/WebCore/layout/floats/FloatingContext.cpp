@@ -37,8 +37,7 @@
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatingContext);
 
@@ -853,5 +852,4 @@ NODELETE bool Iterator::operator==(const Iterator& other) const
     return m_current == other.m_current;
 }
 
-}
 }

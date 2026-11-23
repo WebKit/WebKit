@@ -50,8 +50,7 @@
 #include "StyleTransform.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeRotate3dFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -505,5 +504,4 @@ RefPtr<CSSValue> consumePortalTransform(CSSParserTokenRange& range, CSS::Propert
 
 #endif // ENABLE(SPATIAL_PORTAL)
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

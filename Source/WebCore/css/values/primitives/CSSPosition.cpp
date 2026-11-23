@@ -25,8 +25,7 @@
 #include "config.h"
 #include "CSSPosition.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool isCenterPosition(const Position& position)
 {
@@ -81,5 +80,4 @@ std::pair<CSS::PositionX, CSS::PositionY> split(CSS::Position&& position)
     );
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -42,9 +42,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
-namespace WebCore {
-
-namespace LibWebRTCCertificateGenerator {
+namespace WebCore::LibWebRTCCertificateGenerator {
 
 class RTCCertificateGeneratorCallbackWrapper : public ThreadSafeRefCounted<RTCCertificateGeneratorCallbackWrapper, WTF::DestructionThread::Main> {
 public:
@@ -115,8 +113,6 @@ void generateCertificate(Ref<SecurityOrigin>&& origin, LibWebRTCProvider& provid
     });
 }
 
-} // namespace LibWebRTCCertificateGenerator
-
-} // namespace WebCore
+} // namespace WebCore::LibWebRTCCertificateGenerator
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

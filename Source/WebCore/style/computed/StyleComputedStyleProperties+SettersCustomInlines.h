@@ -37,8 +37,7 @@
 #define SET_NESTED_PAIR(group, parent, variable1, value1, variable2, value2) SET_STYLE_PROPERTY_PAIR(group->parent, group.access().parent.access(), variable1, value1, variable2, value2)
 #define SET_DOUBLY_NESTED_PAIR(group, grandparent, parent, variable1, value1, variable2, value2) SET_STYLE_PROPERTY_PAIR(group->grandparent->parent, group.access().grandparent.access().parent.access(), variable1, value1, variable2, value2)
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // FIXME: - Below are property setters that are not yet generated
 
@@ -331,8 +330,7 @@ inline void ComputedStyleProperties::didSetCounterSet()
     updateUsedCounterSetDirectives();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 #undef SET
 #undef SET_DOUBLY_NESTED

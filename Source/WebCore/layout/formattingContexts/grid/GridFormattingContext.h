@@ -36,8 +36,7 @@
 #include <WebCore/StyleZoomPrimitives.h>
 #include <wtf/CheckedRef.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class ElementBox;
 class PlacedGridItem;
@@ -161,5 +160,4 @@ private:
     const IntrinsicWidthSizingPath m_intrinsicWidthSizingPath;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

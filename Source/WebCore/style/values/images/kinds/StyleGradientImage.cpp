@@ -38,8 +38,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto GradientImage::cachedGradientsForTesting() const -> Vector<CachedGradientForTesting>
 {
@@ -172,5 +171,4 @@ bool GradientImage::containsCurrentColor() const
     return Style::containsCurrentColor(m_gradient);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

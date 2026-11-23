@@ -27,11 +27,9 @@
 #include <WebCore/ScrollAxis.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-progress-timeline-axis> = block | inline | x | y
 using ProgressTimelineAxis = ScrollAxis;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

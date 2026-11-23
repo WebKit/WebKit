@@ -29,8 +29,7 @@
 #include <WebCore/LayoutInlineTextBox.h>
 #include <WebCore/WritingMode.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineItemsBuilder;
 
@@ -108,7 +107,6 @@ inline void InlineTextItem::setGlyphOverflow(LayoutUnit top, LayoutUnit bottom)
     m_glyphBottomOverflow = bottom.ceil();
 }
 
-}
 }
 
 SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(InlineTextItem, isText())

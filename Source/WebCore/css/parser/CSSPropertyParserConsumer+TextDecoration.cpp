@@ -40,8 +40,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 static std::optional<CSS::TextShadow> consumeSingleUnresolvedTextShadow(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -140,5 +139,4 @@ RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange& range, CSS::PropertyPars
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

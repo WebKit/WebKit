@@ -62,8 +62,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Builder);
 
@@ -915,5 +914,4 @@ auto Builder::makeRollbackCascadeKeyForRevertRule(const PropertyCascade& parentC
     return { &parentCascade, 0, 0, 0, true };
 }
 
-}
 }

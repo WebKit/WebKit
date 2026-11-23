@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'border-radius'> = <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]?
 // https://drafts.csswg.org/css-backgrounds-3/#propdef-border-radius
@@ -88,7 +87,6 @@ struct BorderRadiusSide {
     bool operator==(const BorderRadiusSide&) const = default;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::BorderRadius, 2)

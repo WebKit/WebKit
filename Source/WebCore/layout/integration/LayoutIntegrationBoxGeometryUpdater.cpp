@@ -70,8 +70,7 @@
 #include "RenderViewTransitionCapture.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 static inline void adjustBorderForTable(const RenderBoxModelObject& renderer, RectEdges<LayoutUnit>& borderWidths)
 {
@@ -799,5 +798,3 @@ inline WritingMode BoxGeometryUpdater::writingMode() const
 }
 
 }
-}
-

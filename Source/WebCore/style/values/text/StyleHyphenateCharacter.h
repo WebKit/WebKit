@@ -28,8 +28,7 @@
 #include <WebCore/StyleString.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'hyphenate-character'> = auto | <string>
 // https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character
@@ -40,7 +39,6 @@ struct HyphenateCharacter : ValueOrKeyword<String, CSS::Keyword::Auto> {
     bool isString() const { return isValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::HyphenateCharacter)

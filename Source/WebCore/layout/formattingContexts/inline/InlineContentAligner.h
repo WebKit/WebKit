@@ -30,8 +30,7 @@
 #include <WebCore/InlineLineRun.h>
 #include <WebCore/LayoutUnits.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineContentAligner {
 public:
@@ -48,5 +47,3 @@ private:
 };
 
 }
-}
-

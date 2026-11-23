@@ -26,13 +26,11 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-box-flex-group'> = <integer [0,∞]>
 // Obsolete.
 // https://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#propdef-box-flex-group
 using WebkitBoxFlexGroup = Integer<CSS::Nonnegative>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 #include <WebCore/StyleRotateTransformFunction.h>
 #include <WebCore/StyleTransformFunctionWrapper.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'rotate'> = none | <angle> | [ x | y | z | <number>{3} ] && <angle>
 // https://drafts.csswg.org/css-transforms-2/#propdef-rotate
@@ -129,8 +128,7 @@ template<> struct Blending<Rotate> {
 
 template<> struct ToPlatform<Rotate> { auto operator()(const Rotate&, const FloatSize&, ZoomFactor) -> RefPtr<TransformOperation>; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Rotate::Function)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Rotate)

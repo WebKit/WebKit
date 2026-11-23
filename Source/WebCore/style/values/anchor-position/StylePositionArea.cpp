@@ -33,8 +33,7 @@
 #include "StyleSelfAlignmentData.h"
 #include "WritingMode.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 NODELETE [[maybe_unused]] static bool axisIsBlockOrX(PositionAreaAxis axis)
 {
@@ -682,5 +681,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, PositionAreaValue value)
     return ts << "{ span1: "_s << value.blockOrXAxis() << ", span2: "_s << value.inlineOrYAxis() << " }"_s;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

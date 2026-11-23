@@ -29,8 +29,7 @@
 #include <WebCore/CSSPrimitiveNumeric.h>
 #include <WebCore/CSSPrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // NOTE: This is spelled with an explicit "Or" to distinguish it from types like AnglePercentage/LengthPercentage that have behavior distinctions beyond just being a union of the two types (specifically, calc() has specific behaviors for those types).
 template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPercentage {
@@ -261,8 +260,7 @@ private:
     Variant<PrimitiveDataEmptyToken, Number, Percentage> value;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 namespace WTF {
 

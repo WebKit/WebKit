@@ -35,8 +35,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 bool Filter::hasReferenceFilter() const
 {
@@ -205,5 +204,4 @@ auto ToPlatform<Filter>::operator()(const Filter& value, const Style::ComputedSt
     }) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

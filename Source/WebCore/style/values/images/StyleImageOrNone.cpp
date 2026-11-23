@@ -32,8 +32,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderState.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -98,5 +97,4 @@ auto Blending<ImageOrNone>::blend(const ImageOrNone& a, const ImageOrNone& b, co
     return Style::blend(*a.tryImage(), *b.tryImage(), aStyle, bStyle, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

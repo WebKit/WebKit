@@ -34,8 +34,7 @@
 #include "RenderElement.h"
 #include "StyleColorResolver.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 ColorImage::ColorImage(Color&& color)
     : GeneratedImage { Type::ColorImage }
@@ -124,5 +123,4 @@ WebCore::Color ColorImage::resolvedColor(const RenderElement& renderer) const
     return ColorResolver { renderer.style() }.colorResolvingCurrentColorApplyingColorFilter(m_color);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

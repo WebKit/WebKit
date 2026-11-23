@@ -29,8 +29,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 TextStream& operator<<(TextStream& ts, Category category)
 {
@@ -51,5 +50,4 @@ TextStream& operator<<(TextStream& ts, Category category)
     return ts;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

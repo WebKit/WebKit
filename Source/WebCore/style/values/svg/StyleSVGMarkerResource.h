@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleURL.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <paint> = none | <url>
 // NOTE: `context-fill` and `context-stroke` are not implemented.
@@ -40,7 +39,6 @@ struct SVGMarkerResource : ValueOrKeyword<URL, CSS::Keyword::None> {
     std::optional<URL> tryURL() const { return tryValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGMarkerResource)

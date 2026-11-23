@@ -31,8 +31,7 @@
 #include "RenderObject.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatAvoider);
 
@@ -94,5 +93,4 @@ bool FloatAvoider::overflowsContainingBlock() const
     return m_containingBlockAbsoluteContentBox.end < right;
 }
 
-}
 }

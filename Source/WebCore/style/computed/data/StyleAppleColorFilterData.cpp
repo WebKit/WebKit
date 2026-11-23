@@ -32,8 +32,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AppleColorFilterData);
 
@@ -65,5 +64,4 @@ void AppleColorFilterData::dumpDifferences(TextStream& ts, const AppleColorFilte
 }
 #endif // !LOG_DISABLED
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

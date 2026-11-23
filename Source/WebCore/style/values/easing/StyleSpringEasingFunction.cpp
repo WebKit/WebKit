@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "TimingFunction.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 CSS::SpringEasingFunction toCSSSpringEasingFunction(const SpringTimingFunction& function, const Style::ComputedStyle& style)
 {
@@ -67,5 +66,4 @@ Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::SpringEasingFuncti
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

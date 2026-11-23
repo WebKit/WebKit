@@ -27,8 +27,7 @@
 
 #include <WebCore/LayoutUnits.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineRect {
 public:
@@ -349,5 +348,4 @@ inline InlineRect::operator InlineLayoutRect() const
     return m_rect;
 }
 
-}
 }

@@ -28,8 +28,7 @@
 #include <WebCore/CSSColor.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <box-shadow> = <color>? && [<length>{2} <length [0,∞]>? <length>?] && inset?
 // https://drafts.csswg.org/css-backgrounds-3/#typedef-shadow
@@ -58,7 +57,6 @@ template<size_t I> const auto& get(const BoxShadow& value)
         return value.inset;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::BoxShadow, 5)

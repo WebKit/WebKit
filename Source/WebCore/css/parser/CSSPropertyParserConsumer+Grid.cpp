@@ -49,8 +49,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 static std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdentForGridLine(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -1079,5 +1078,4 @@ RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range, CSS::PropertyPa
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

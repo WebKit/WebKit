@@ -33,8 +33,7 @@
 #include "StyleColorResolutionState.h"
 #include "StyleComputedStyle.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Color toStyleColor(const CSS::LightDarkColor& unresolved, ColorResolutionState& state)
 {
@@ -46,5 +45,4 @@ Color toStyleColor(const CSS::LightDarkColor& unresolved, ColorResolutionState& 
     return toStyleColor(unresolved.lightColor, state);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

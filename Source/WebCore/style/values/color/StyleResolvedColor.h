@@ -30,8 +30,7 @@
 #include <WebCore/Color.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ResolvedColors;
 
@@ -63,5 +62,4 @@ WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, co
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ResolvedColor&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

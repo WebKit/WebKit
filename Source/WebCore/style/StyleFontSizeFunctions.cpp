@@ -38,9 +38,7 @@
 #include "LocalFrame.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 float usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const SettingsValues& settings)
 {
@@ -237,5 +235,4 @@ float adjustedFontSize(float size, const WebCore::FontSizeAdjust& sizeAdjust, co
     ASSERT_NOT_REACHED();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

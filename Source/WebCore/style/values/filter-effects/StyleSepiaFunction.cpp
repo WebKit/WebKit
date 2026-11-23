@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Sepia Sepia::passthroughForInterpolation()
 {
@@ -84,5 +83,4 @@ auto ToPlatform<Sepia>::operator()(const Sepia& value) -> Ref<FilterOperation>
     return BasicColorMatrixFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<CSS::SepiaFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

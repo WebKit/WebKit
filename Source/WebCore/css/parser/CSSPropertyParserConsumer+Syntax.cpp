@@ -32,8 +32,7 @@
 #include "CSSSubstitutionParser.h"
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -50,5 +49,4 @@ RefPtr<CSSValue> consumeFunctionResult(CSSParserTokenRange& range, CSS::Property
     return CSSSubstitutionParser::parseDeclarationValue(resultName, range.consumeAll(), state.context);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

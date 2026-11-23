@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'margin-*'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-box/#margin-physical
@@ -43,7 +42,6 @@ struct MarginEdge : PrimitiveNumericOrKeyword<LengthPercentage<>, CSS::Keyword::
 // https://drafts.csswg.org/css-box/#propdef-margin
 using MarginBox = MinimallySerializingSpaceSeparatedRectEdges<MarginEdge>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::MarginEdge)

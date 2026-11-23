@@ -82,9 +82,7 @@
 #include "WebAnimationUtilities.h"
 #include <ranges>
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
 
@@ -2192,5 +2190,4 @@ bool postResolutionCallbacksAreSuspended()
     return resolutionNestingDepth;
 }
 
-}
 }

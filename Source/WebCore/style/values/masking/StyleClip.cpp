@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -136,5 +135,4 @@ auto Blending<Clip>::blend(const Clip& a, const Clip& b, const BlendingContext& 
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

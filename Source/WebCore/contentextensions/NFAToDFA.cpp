@@ -38,9 +38,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/IndexedRange.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 using NFANodeIndexSet = HashSet<unsigned>;
 typedef MutableRange<signed char, NFANodeIndexSet> NFANodeRange;
@@ -357,8 +355,6 @@ std::optional<DFA> NFAToDFA::convert(NFA&& nfa)
     return dfa;
 }
 
-} // namespace ContentExtensions
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

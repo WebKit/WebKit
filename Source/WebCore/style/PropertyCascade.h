@@ -33,8 +33,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ValueOrReference.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class PropertyCascade {
     WTF_MAKE_TZONE_ALLOCATED(PropertyCascade);
@@ -242,5 +241,4 @@ inline const PropertyCascade::Property& PropertyCascade::customProperty(const At
     return m_customProperties.find(name)->value;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

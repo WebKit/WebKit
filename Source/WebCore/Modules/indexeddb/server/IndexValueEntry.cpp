@@ -29,8 +29,7 @@
 #include "IDBCursorInfo.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IndexValueEntry);
 
@@ -225,5 +224,4 @@ Vector<IDBKeyData> IndexValueEntry::keys() const
     return result;
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

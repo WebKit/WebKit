@@ -26,15 +26,11 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-
-namespace HTTPHeaderValues {
+namespace WebCore::HTTPHeaderValues {
 
 const String& textPlainContentType();
 const String& formURLEncodedContentType();
 WEBCORE_EXPORT const String& applicationJSONContentType();
 const String& noCache();
 WEBCORE_EXPORT const String& maxAge0();
-}
-
 }

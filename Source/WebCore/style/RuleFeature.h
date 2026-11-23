@@ -32,8 +32,7 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Optional selectors of RuleFeature.
 struct RuleFeatureInvalidationSelector {
@@ -54,8 +53,7 @@ private:
     RuleFeatureSelectors(CSSSelectorList&& invalidationSelector, CSSSelectorList&& scopeSelector);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 namespace WTF {
 // CSSSelectorList owns its selectors through a single std::unique_ptr so these wrappers are effectively smart pointers.

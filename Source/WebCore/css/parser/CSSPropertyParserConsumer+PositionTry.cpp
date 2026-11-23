@@ -33,8 +33,7 @@
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSValueList.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumePositionTryFallbacks(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -85,6 +84,4 @@ RefPtr<CSSValue> consumePositionTryFallbacks(CSSParserTokenRange& range, CSS::Pr
     return consumeListSeparatedBy<',', OneOrMore, ListOptimization::SingleValue>(range, consumeFallback);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
-
+} // namespace WebCore::CSSPropertyParserHelpers

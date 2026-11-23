@@ -27,8 +27,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'scroll-snap-align'> = [ none | start | end | center ]{1,2}
 // https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-snap-align
@@ -67,7 +66,6 @@ template<size_t I> constexpr const auto& get(const ScrollSnapAlign& value)
 
 template<> struct CSSValueConversion<ScrollSnapAlign> { ScrollSnapAlign operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_COALESCING_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ScrollSnapAlign, 2)

@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'math-depth'> = auto-add | add(<integer>) | <integer>
 // https://w3c.github.io/mathml-core/#propdef-math-depth
@@ -42,5 +41,4 @@ template<> struct CSSValueConversion<MathDepth> {
     auto operator()(BuilderState&, const CSSValue&) -> MathDepth;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

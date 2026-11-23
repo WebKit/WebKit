@@ -30,8 +30,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 StyleSelfAlignmentData AlignItems::resolve() const
 {
@@ -171,5 +170,4 @@ auto CSSValueConversion<AlignItems>::operator()(BuilderState& state, const CSSVa
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

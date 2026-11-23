@@ -27,8 +27,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+DeprecatedConversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<Numeric StyleType, typename... Rest>
 auto deprecatedConvertNumericFromCSSValue(const CSSPrimitiveValue& value, Rest&&... rest) -> std::optional<StyleType>
@@ -87,5 +86,4 @@ template<Numeric NumericType> struct DeprecatedCSSValueConversion<NumericType> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

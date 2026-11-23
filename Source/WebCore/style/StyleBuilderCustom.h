@@ -67,8 +67,7 @@
 #include "ViewTimeline.h"
 #include <ranges>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename T>
 decltype(auto) forwardInheritedValue(T&& value)
@@ -770,5 +769,4 @@ inline void BuilderCustom::applyHighlightValueColor(BuilderState& builderState, 
         builderState.style().setColorForHighlight(toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

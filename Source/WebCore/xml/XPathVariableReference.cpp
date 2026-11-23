@@ -28,8 +28,7 @@
 #include "XPathVariableReference.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VariableReference);
 
@@ -47,5 +46,4 @@ Value VariableReference::evaluate() const
     return bindings.get(m_name);
 }
 
-}
 }

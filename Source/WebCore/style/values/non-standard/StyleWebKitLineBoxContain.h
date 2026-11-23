@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <-webkit-line-box-contain> = none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]
 // NOTE: There is no standard associated with this property.
@@ -49,7 +48,6 @@ struct WebkitLineBoxContain : EnumSetOrKeywordBase<WebkitLineBoxContain, WebkitL
     constexpr bool isNone() const { return isKeyword(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitLineBoxContain)

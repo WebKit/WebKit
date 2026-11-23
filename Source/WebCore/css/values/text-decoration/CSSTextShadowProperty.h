@@ -26,12 +26,10 @@
 
 #include "CSSTextShadow.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <`text-shadow`> = none | <text-shadow>#
 // https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
 using TextShadowProperty = ListOrNone<CommaSeparatedVector<TextShadow>>;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

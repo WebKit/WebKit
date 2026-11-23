@@ -32,8 +32,7 @@
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleUpdate.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 std::unique_ptr<Relations> commitRelationsToRenderStyle(Style::ComputedStyle& style, const Element& element, const Relations& relations)
 {
@@ -152,5 +151,4 @@ void copyRelations(Style::ComputedStyle& to, const Style::ComputedStyle& from)
         to.setLastChildState();
 }
 
-}
 }

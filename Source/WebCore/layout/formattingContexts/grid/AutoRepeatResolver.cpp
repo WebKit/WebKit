@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleZoomPrimitives.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 enum class RepeatStrategy : bool {
     LargestWithoutOverflow,
@@ -126,5 +125,4 @@ size_t AutoRepeatResolver::resolveRepetitions(const Style::GridTemplateList& gri
     return 1;
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

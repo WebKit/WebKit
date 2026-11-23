@@ -28,8 +28,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PositionX, LengthPercentage<>);
 DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PositionY, LengthPercentage<>);
@@ -132,8 +131,7 @@ template<> struct Evaluation<Position, FloatPoint> {
     auto operator()(const Position&, FloatSize, ZoomFactor) -> FloatPoint;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::PositionX)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::PositionY)

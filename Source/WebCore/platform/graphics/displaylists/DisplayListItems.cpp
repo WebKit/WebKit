@@ -40,8 +40,7 @@
 #include "GraphicsContextSkia.h"
 #endif
 
-namespace WebCore {
-namespace DisplayList {
+namespace WebCore::DisplayList {
 
 void Save::apply(GraphicsContext& context) const
 {
@@ -861,5 +860,4 @@ void SetURLForRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("dest_rect"_s, destRect());
 }
 
-} // namespace DisplayList
-} // namespace WebCore
+} // namespace WebCore::DisplayList

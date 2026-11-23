@@ -31,8 +31,7 @@
 #include "GridLayoutUtils.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 ExplicitGridTrackSizes ExplicitGridResolver::resolve(const Style::ComputedStyle& gridContainerStyle, const AutoRepeatConstraint& inlineAxisAutoRepeatConstraint, const AutoRepeatConstraint& blockAxisAutoRepeatConstraint, LayoutUnit usedColumnGap, LayoutUnit usedRowGap)
 {
@@ -77,5 +76,4 @@ ExplicitGridResolver::ResolveTrackSizesResult ExplicitGridResolver::resolveTrack
     return { trackSizesWithAutoRepetitions(gridTemplateList, autoRepeatTracksCount), { insertionPoint, insertionPoint + autoRepeatTracksCount } };
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

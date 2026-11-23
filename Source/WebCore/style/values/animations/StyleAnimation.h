@@ -38,8 +38,7 @@
 #include <WebCore/StyleSingleAnimationTrigger.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // macro(ownerType, property, type, lowercaseName, uppercaseName)
 
@@ -195,5 +194,4 @@ TextStream& operator<<(TextStream&, const Animation&);
 #undef FOR_EACH_ANIMATION_SHORTHAND
 #undef FOR_EACH_ANIMATION_PROPERTY
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

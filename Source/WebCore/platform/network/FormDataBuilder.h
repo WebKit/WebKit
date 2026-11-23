@@ -28,9 +28,7 @@ namespace PAL {
 class TextEncoding;
 }
 
-namespace WebCore {
-
-namespace FormDataBuilder {
+namespace WebCore::FormDataBuilder {
 
 // Helper functions used by HTMLFormElement for multi-part form data.
 Vector<uint8_t> generateUniqueBoundaryString();
@@ -43,7 +41,5 @@ void finishMultiPartHeader(Vector<uint8_t>&);
 // Helper functions used by HTMLFormElement for non-multi-part form data.
 void addKeyValuePairAsFormData(Vector<uint8_t>&, const Vector<uint8_t>& key, const Vector<uint8_t>& value, FormData::EncodingType = FormData::EncodingType::FormURLEncoded);
 void encodeStringAsFormData(Vector<uint8_t>&, const UTF8CString&);
-
-}
 
 }

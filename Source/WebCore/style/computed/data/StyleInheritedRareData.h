@@ -78,8 +78,7 @@
 #include <WebCore/StyleColorScheme.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class AppleColorFilterData;
 class CustomPropertyData;
@@ -245,5 +244,4 @@ private:
     InheritedRareData(const InheritedRareData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 #include "CSSSpringEasingFunction.h"
 #include "CSSStepsEasingFunction.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // `EasingFunction` uses a wrapping a struct to allow forward declaration.
 struct EasingFunction {
@@ -63,7 +62,6 @@ struct EasingFunction {
     bool operator==(const EasingFunction&) const = default;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::EasingFunction)

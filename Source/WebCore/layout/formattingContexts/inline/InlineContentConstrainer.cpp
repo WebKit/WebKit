@@ -34,8 +34,7 @@
 #include <wtf/PriorityQueue.h>
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // Ideally, the act of balancing inline content will use the same number of lines as if the inline content
 // was laid out via `text-wrap: wrap`. However, adhering to this ideal is expensive (quadratic in the number
@@ -938,5 +937,4 @@ InlineLayoutUnit InlineContentConstrainer::computedTextIndent(IsFirstFormattedLi
     return m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, isFirstFormattedLine, previousLineEndsParagraph, m_maximumLineWidthConstraint);
 }
 
-}
 }

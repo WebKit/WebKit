@@ -32,8 +32,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Abs);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Acos);
@@ -620,5 +619,4 @@ TextStream& operator<<(TextStream& ts, Tree tree)
     return ts << "CSSCalc::Tree [ "_s << serializationForCSS(tree, { .range = CSS::All, .serializationContext = CSS::defaultSerializationContext() }) << " ]"_s;
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

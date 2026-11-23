@@ -29,8 +29,7 @@
 #include <WebCore/StylePositionAreaTrack.h>
 #include <wtf/EnumTraits.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // A span in the position-area. position-area requires two spans of opposite
 // axis to determine the containing block area.
@@ -80,5 +79,4 @@ private:
 
 WTF::TextStream& operator<<(WTF::TextStream&, PositionAreaSpan);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

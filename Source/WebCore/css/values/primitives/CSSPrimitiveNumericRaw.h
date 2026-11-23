@@ -28,8 +28,7 @@
 #include <WebCore/CSSPrimitiveNumericUnits.h>
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: Numeric Primitives Raw
 
@@ -242,5 +241,4 @@ template<Range R = All, typename V = float> struct LengthPercentageRaw : Primiti
     using Percentage = CSS::PercentageRaw<R, V>;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

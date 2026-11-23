@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<TextTransform>::operator()(BuilderState& state, const CSSValue& value) -> TextTransform
 {
@@ -97,5 +96,4 @@ auto CSSValueConversion<TextTransform>::operator()(BuilderState& state, const CS
     return result;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

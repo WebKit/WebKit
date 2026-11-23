@@ -28,8 +28,7 @@
 
 #include "CSSMaskBorderRepeatValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -38,5 +37,4 @@ auto CSSValueCreation<MaskBorderRepeat>::operator()(CSSValuePool&, const MaskBor
     return CSSMaskBorderRepeatValue::create(MaskBorderRepeat { value });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

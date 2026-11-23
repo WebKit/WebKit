@@ -27,8 +27,7 @@
 #include "CSSPrimitiveNumericTypes+Canonicalization.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct ResolutionValidator {
     static constexpr std::optional<CSS::ResolutionUnit> validate(CSSUnitType unitType, CSS::PropertyParserState&, CSSPropertyParserOptions)
@@ -54,5 +53,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::ResolutionRaw<R, V>>
     using DimensionToken = DimensionConsumer<CSS::Resolution<R, V>, ResolutionValidator>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

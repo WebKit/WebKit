@@ -29,8 +29,7 @@
 #include "InlineTextItem.h"
 #include "RenderObject.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct SameSizeAsInlineItem {
     void* layoutBox;
@@ -49,5 +48,4 @@ struct SameSizeAsInlineItem {
 
 static_assert(sizeof(InlineItem) == sizeof(SameSizeAsInlineItem));
 
-}
 }

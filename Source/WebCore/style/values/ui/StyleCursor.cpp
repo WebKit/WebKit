@@ -46,8 +46,7 @@
 #include <WebKitAdditions/AXCustomColorModeController.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 std::optional<WebCore::Cursor> Cursor::selectImageCursor(const RenderObject* renderer, const LocalFrame& frame, float deviceScaleFactor, IntPoint pointInMainFrame) const
 {
@@ -176,5 +175,4 @@ TextStream& operator<<(TextStream& ts, const CursorImageAndHotSpot& value)
     return ts << "cursor image with hotspot " << value.hotSpot;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

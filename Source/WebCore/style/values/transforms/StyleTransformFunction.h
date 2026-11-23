@@ -35,8 +35,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TransformOperation.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Any <transform-function>.
 // https://www.w3.org/TR/css-transforms-1/#typedef-transform-function
@@ -70,5 +69,4 @@ template<> struct ToPlatform<TransformFunction> { auto operator()(const Transfor
 
 TextStream& operator<<(TextStream&, const TransformFunction&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

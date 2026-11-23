@@ -32,8 +32,7 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSValueList.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
@@ -57,5 +56,4 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range, CSS::Property
     return CSSValueList::createSpaceSeparated(CSSKeywordValue::create(*firstValue), CSSKeywordValue::create(CSSValueID::Mandatory));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

@@ -54,8 +54,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 static std::optional<CSS::ClipRect> consumeUnresolvedClipRectFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -409,5 +408,4 @@ std::optional<CSS::MaskBorder> consumeUnresolvedMaskBorder(CSSParserTokenRange& 
     };
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

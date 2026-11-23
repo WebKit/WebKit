@@ -33,9 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 class CompiledContentExtension;
 
@@ -76,7 +74,6 @@ private:
     mutable DFABytecodeInterpreter m_urlFiltersInterpreter;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

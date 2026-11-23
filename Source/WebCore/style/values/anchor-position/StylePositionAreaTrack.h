@@ -26,8 +26,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Specifies which tracks(s) on the axis that the position-area span occupies.
 // Represented as 3 bits: start track, center track, end track.
@@ -60,5 +59,4 @@ constexpr PositionAreaTrack flipPositionAreaTrack(PositionAreaTrack track)
 
 WTF::TextStream& operator<<(WTF::TextStream&, PositionAreaTrack);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

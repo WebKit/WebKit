@@ -26,8 +26,7 @@
 
 #include "Color.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct ContrastColorResolver {
     WebCore::Color color { };
@@ -35,5 +34,4 @@ struct ContrastColorResolver {
 
 WebCore::Color resolve(const ContrastColorResolver&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

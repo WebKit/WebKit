@@ -32,8 +32,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextPainter.h"
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 InlineContent::InlineContent(const RenderBlockFlow& formattingContextRoot)
     : m_formattingContextRoot(&formattingContextRoot)
@@ -224,5 +223,4 @@ void InlineContent::shrinkToFit()
     m_displayContent.lines.shrinkToFit();
 }
 
-}
 }

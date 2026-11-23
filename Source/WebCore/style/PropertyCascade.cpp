@@ -41,8 +41,7 @@
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PropertyCascade);
 
@@ -549,5 +548,4 @@ ValueOrReference<HashSet<AnimatableCSSProperty>> PropertyCascade::overriddenAnim
     return { };
 }
 
-}
 }

@@ -29,8 +29,7 @@
 #include <WebCore/StyleColor.h>
 #include <wtf/Markable.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <scrollbar-color-parts> = <color>{2}
 struct ScrollbarColorParts {
@@ -80,8 +79,7 @@ template<> struct Blending<ScrollbarColor> {
     auto blend(const ScrollbarColor&, const ScrollbarColor&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> ScrollbarColor;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ScrollbarColorParts, 2)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ScrollbarColor)

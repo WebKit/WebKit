@@ -27,8 +27,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TextSpacing.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-spacing-trim'> = space-all | normal | space-first | trim-start | trim-both | trim-all | auto
 // FIXME: Only `space-all`, `trim-all` and `auto` are currently supported.
@@ -49,7 +48,6 @@ struct TextSpacingTrim {
 };
 DEFINE_TYPE_WRAPPER_GET(TextSpacingTrim, value);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::TextSpacingTrim);

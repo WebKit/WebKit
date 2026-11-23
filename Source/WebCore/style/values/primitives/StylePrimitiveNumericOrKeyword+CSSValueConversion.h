@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleSizeOrKeyword.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -237,5 +236,4 @@ template<LengthPercentageOrKeywordDerived StyleType> struct NumericOrKeywordCSSV
 template<LengthPercentageOrKeywordDerived StyleType> requires (!SizeOrKeywordDerived<StyleType>)
 struct CSSValueConversion<StyleType> : NumericOrKeywordCSSValueConversion<StyleType> { };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

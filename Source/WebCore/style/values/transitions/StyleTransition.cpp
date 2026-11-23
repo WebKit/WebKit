@@ -29,8 +29,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Transition::Transition()
     : m_data { Data::create() }
@@ -94,5 +93,4 @@ TextStream& operator<<(TextStream& ts, const Transition& transition)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

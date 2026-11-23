@@ -28,8 +28,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'scrollbar-width'> = auto | thin | none
 // https://drafts.csswg.org/css-scrollbars/#propdef-scrollbar-width
@@ -61,5 +60,4 @@ template<> struct ToPlatform<ScrollbarWidth> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

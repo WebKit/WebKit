@@ -28,8 +28,7 @@
 
 #include "ColorLuminance.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // https://drafts.csswg.org/css-color-5/#contrast-color
 WebCore::Color resolve(const ContrastColorResolver& resolver)
@@ -44,5 +43,4 @@ WebCore::Color resolve(const ContrastColorResolver& resolver)
     return contrastWithWhite > contrastWithBlack ? WebCore::Color::white : WebCore::Color::black;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

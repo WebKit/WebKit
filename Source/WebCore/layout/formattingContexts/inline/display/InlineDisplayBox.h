@@ -35,8 +35,7 @@
 #include <unicode/ubidi.h>
 #include <wtf/EnumSet.h>
 
-namespace WebCore {
-namespace InlineDisplay {
+namespace WebCore::InlineDisplay {
 
 struct Box {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Box);
@@ -372,5 +371,4 @@ inline bool operator==(const Box& a, const Box& b)
         && (!a.isTextOrSoftLineBreak() || (a.text() == b.text()));
 }
 
-}
 }

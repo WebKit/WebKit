@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+Calculation.h"
 #include "StyleSizeOrKeyword.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Blending
 
@@ -169,5 +168,4 @@ private:
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

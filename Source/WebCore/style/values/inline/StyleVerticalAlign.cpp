@@ -32,8 +32,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<VerticalAlign>::operator()(BuilderState& state, const CSSValue& value) -> VerticalAlign
 {
@@ -93,5 +92,4 @@ auto Blending<VerticalAlign>::blend(const VerticalAlign& a, const VerticalAlign&
     return Style::blend(*a.tryLengthPercentage(), *b.tryLengthPercentage(), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

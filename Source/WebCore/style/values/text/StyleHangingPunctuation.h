@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'hanging-punctuation'> = none | [ first || [ force-end | allow-end ] || last ]
 // https://drafts.csswg.org/css-text/#propdef-hanging-punctuation
@@ -79,7 +78,6 @@ private:
 
 template<> struct CSSValueConversion<HangingPunctuation> { HangingPunctuation operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::HangingPunctuation)

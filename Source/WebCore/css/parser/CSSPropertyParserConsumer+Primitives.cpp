@@ -28,8 +28,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserOptions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 bool consumeCommaIncludingWhitespace(CSSParserTokenRange& range)
 {
@@ -94,5 +93,4 @@ std::optional<CSSParserTokenRange> consumeArgument(CSSParserTokenRange& range, u
     return argumentStart.rangeUntil(range);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

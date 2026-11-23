@@ -40,8 +40,7 @@ namespace Style {
 class ComputedStyle;
 }
 
-namespace CQ {
-namespace Features {
+namespace CQ::Features {
 
 const MQ::FeatureSchema& width();
 const MQ::FeatureSchema& height();
@@ -59,6 +58,5 @@ bool isScrollStateFeature(const MQ::FeatureSchema*);
 
 Vector<const MQ::FeatureSchema*> allSchemas();
 
-} // namespace Features
-} // namespace CQ
+} // namespace CQ::Features
 } // namespace WebCore

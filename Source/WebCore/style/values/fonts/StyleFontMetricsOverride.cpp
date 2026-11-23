@@ -29,8 +29,7 @@
 #include "CSSKeywordValue.h"
 #include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -48,5 +47,4 @@ auto DeprecatedCSSValueConversion<FontMetricsOverride>::operator()(const CSSValu
     return FontMetricsOverride { WTF::move(*percentage) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -35,8 +35,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 namespace {
 
@@ -490,7 +489,6 @@ void DFAMinimizer::minimize(DFA& dfa)
     }
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

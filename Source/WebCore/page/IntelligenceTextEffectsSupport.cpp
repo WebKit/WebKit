@@ -38,8 +38,7 @@
 #include "TextIterator.h"
 #include <wtf/UUID.h>
 
-namespace WebCore {
-namespace IntelligenceTextEffectsSupport {
+namespace WebCore::IntelligenceTextEffectsSupport {
 
 #if ENABLE(WRITING_TOOLS)
 Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document& document, const SimpleRange& scope, const CharacterRange& range)
@@ -123,5 +122,4 @@ void decorateWritingToolsTextReplacements(Document& document, const SimpleRange&
 }
 #endif
 
-} // namespace IntelligenceTextEffectsSupport
-} // namespace WebCore
+} // namespace WebCore::IntelligenceTextEffectsSupport

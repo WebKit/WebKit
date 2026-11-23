@@ -44,8 +44,7 @@
 #include "UsedStyle.h"
 #include <WebCore/StyleShadow.h>
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 inline static float endPaddingQuirkValue(const RenderBlockFlow& flow)
 {
@@ -792,5 +791,3 @@ FloatRect InlineContentBuilder::appendToTruncatedDisplayContent(Layout::InlineLa
 }
 
 }
-}
-

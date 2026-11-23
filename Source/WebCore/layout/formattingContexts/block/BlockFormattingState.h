@@ -28,8 +28,7 @@
 #include <WebCore/PlacedFloats.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class ElementBox;
 
@@ -50,5 +49,4 @@ private:
     PlacedFloats m_placedFloats;
 };
 
-}
 }

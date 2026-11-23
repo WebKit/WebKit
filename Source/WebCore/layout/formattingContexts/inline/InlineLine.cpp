@@ -36,8 +36,7 @@
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 Line::Line(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
@@ -1052,5 +1051,3 @@ InlineLayoutUnit LineRun::letterSpacing() const
 }
 
 }
-}
-

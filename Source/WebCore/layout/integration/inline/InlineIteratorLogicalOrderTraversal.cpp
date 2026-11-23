@@ -31,8 +31,7 @@
 #include <algorithm>
 #include <ranges>
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 static TextLogicalOrderCache makeTextLogicalOrderCacheIfNeeded(const RenderText& text)
 {
@@ -180,5 +179,4 @@ LeafBoxIterator lastLeafOnLineInLogicalOrderWithNode(const LineBoxIterator& line
     return box;
 }
 
-}
 }

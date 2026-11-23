@@ -30,8 +30,7 @@
 #include "CSSPlatformColorResolutionState.h"
 #include "ColorSerialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool ContrastColor::operator==(const ContrastColor&) const = default;
 
@@ -73,5 +72,4 @@ IterationStatus CSSValueChildrenVisitor<ContrastColor>::operator()(NOESCAPE cons
     return visitCSSValueChildren(func, value.color);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

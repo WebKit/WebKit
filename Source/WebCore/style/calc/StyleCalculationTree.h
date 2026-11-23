@@ -32,9 +32,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 // `Style::Calculation::Tree` is a reduced representation of `CSSCalc::Tree` used in cases where everything else (e.g all non-canonical dimensions) has been resolved except percentages, which can't be resolved until they are used as they need some value to resolve against. Currently, these are only used by the `Length` type to represent <length-percentage> values, but are implemented generically so can be used for any <*-percentage> type if the need ever arises.
 
@@ -836,9 +834,7 @@ Child::Child(T&& value)
 {
 }
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation
 
 namespace std {
 

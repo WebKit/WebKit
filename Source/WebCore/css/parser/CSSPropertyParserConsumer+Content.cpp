@@ -44,8 +44,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 static std::optional<CSS::Quotes> consumeUnresolvedQuotes(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
@@ -294,5 +293,4 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, CSS::PropertyParserS
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

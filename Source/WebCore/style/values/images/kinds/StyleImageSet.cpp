@@ -37,8 +37,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageSet);
 
@@ -131,5 +130,4 @@ void ImageSet::updateDeviceScaleFactor(const Document& document)
     m_accessedBestFitImage = false;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

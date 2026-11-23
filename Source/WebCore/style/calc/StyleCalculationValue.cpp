@@ -38,9 +38,7 @@
 #include <cmath>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 Ref<Value> Value::create(Tree&& tree)
 {
@@ -88,6 +86,4 @@ TextStream& operator<<(TextStream& ts, const Value& value)
     return ts << "calc("_s << value.tree() << ')';
 }
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

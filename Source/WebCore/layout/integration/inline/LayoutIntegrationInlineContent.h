@@ -32,10 +32,8 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 class InlineContent;
-}
 }
 
 namespace WTF {

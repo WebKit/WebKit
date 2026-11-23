@@ -30,9 +30,7 @@
 #include "StyleCalculationTree.h"
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 static constexpr size_t maximumSubstitutionTreeDepth = 128;
 
@@ -212,6 +210,4 @@ bool containsPercentage(const Tree& tree)
     return contains<Percentage>(tree.root);
 }
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

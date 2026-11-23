@@ -38,8 +38,7 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 class MemoryCursor;
 class MemoryIDBBackingStore;
@@ -106,5 +105,4 @@ private:
     HashMap<IDBResourceIdentifier, WeakPtr<MemoryCursor>> m_cursors;
 };
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

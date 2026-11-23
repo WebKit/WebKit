@@ -40,8 +40,7 @@
 #include "RenderObjectInlines.h"
 #include "TextBoxTrimmer.h"
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 static inline const Layout::ElementBox& rootLayoutBox(const Layout::ElementBox& child)
 {
@@ -359,5 +358,4 @@ LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox& b
     }
 }
 
-}
 }

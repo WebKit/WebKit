@@ -52,8 +52,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 InlineLayoutUnit TextUtil::singleSpaceWidth(const FontCascade& fontCascade, bool canUseSimplifiedContentMeasuring)
 {
@@ -921,5 +920,4 @@ SUPPRESS_NODELETE char32_t TextUtil::lastBaseCharacterFromText(StringView string
     return 0;
 }
 
-}
 }

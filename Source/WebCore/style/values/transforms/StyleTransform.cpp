@@ -34,8 +34,7 @@
 #include "StyleInterpolationContext.h"
 #include "TransformOperations.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -100,5 +99,4 @@ auto ToPlatform<Transform>::operator()(const Transform& value, const FloatSize& 
     }) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

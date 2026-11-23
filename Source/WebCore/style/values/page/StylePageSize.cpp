@@ -30,8 +30,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static PageSize pageSizeFromName(BuilderState& state, const CSSKeywordValue& pageSizeName, RefPtr<const CSSKeywordValue> pageOrientation)
 {
@@ -181,5 +180,4 @@ auto CSSValueConversion<PageSize>::operator()(BuilderState& state, const CSSValu
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

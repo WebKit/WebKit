@@ -28,8 +28,7 @@
 
 #include "StyleSheetContents.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 StyleSheetContentsCache::StyleSheetContentsCache() = default;
 
@@ -69,5 +68,4 @@ void StyleSheetContentsCache::clear()
     m_cache.clear();
 }
 
-}
 }

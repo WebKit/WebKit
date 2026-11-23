@@ -29,8 +29,7 @@
 #include "RenderElementInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace InlineDisplay {
+namespace WebCore::InlineDisplay {
 
 inline bool Box::isHorizontal() const { return writingMode().isHorizontal(); }
 
@@ -50,5 +49,4 @@ inline bool Box::isVisibleIgnoringUsedVisibility() const
     return !isFullyTruncated() && style().visibility() == Visibility::Visible;
 }
 
-}
 }

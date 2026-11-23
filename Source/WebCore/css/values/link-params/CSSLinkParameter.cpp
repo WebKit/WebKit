@@ -27,8 +27,7 @@
 
 #include <wtf/Hasher.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Hashing
 
@@ -44,5 +43,4 @@ void add(Hasher& hasher, const LinkParameter& value)
     add(hasher, value.spec, value.value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

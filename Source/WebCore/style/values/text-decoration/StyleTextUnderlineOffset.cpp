@@ -28,8 +28,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 float TextUnderlineOffset::resolve(const Style::ComputedStyle& style, float autoValue) const
 {
@@ -49,5 +48,4 @@ float TextUnderlineOffset::resolve(const Style::ComputedStyle& style, float auto
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

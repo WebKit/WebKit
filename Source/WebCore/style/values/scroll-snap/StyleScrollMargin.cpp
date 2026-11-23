@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -73,5 +72,4 @@ LayoutBoxExtent extentForRect(const ScrollMarginBox& margin, const LayoutRect& r
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

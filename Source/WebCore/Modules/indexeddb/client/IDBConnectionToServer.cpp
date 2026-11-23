@@ -43,8 +43,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace IDBClient {
+namespace WebCore::IDBClient {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBConnectionToServer);
 
@@ -533,5 +532,4 @@ void IDBConnectionToServer::didGetAllDatabaseNamesAndVersions(const IDBResourceI
     m_proxy->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(databases));
 }
 
-} // namespace IDBClient
-} // namespace WebCore
+} // namespace WebCore::IDBClient

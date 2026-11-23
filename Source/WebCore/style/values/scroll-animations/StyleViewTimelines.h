@@ -27,10 +27,8 @@
 #include <WebCore/StyleCoordinatedValueList.h>
 #include <WebCore/StyleViewTimeline.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using ViewTimelines = CoordinatedValueList<ViewTimeline>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

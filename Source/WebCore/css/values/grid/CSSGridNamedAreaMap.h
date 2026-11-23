@@ -29,8 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomStringHash.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct CustomIdent;
 
@@ -59,5 +58,4 @@ template<> struct Serialize<GridNamedAreaMap> { void operator()(StringBuilder&, 
 
 WTF::TextStream& operator<<(WTF::TextStream&, const GridNamedAreaMap&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

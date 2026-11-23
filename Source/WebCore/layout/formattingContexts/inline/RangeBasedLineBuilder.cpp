@@ -30,8 +30,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 NODELETE static inline bool hasInlineBoxesOnly(size_t inlineBoxCount, size_t numberOfInlineItems)
 {
@@ -187,5 +186,3 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
 }
 
 }
-}
-

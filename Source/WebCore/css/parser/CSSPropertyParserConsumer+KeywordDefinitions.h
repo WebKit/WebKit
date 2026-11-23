@@ -26,12 +26,10 @@
 
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 template<CSSValueID Id> struct ConsumerDefinition<Constant<Id>> {
     using IdentToken = KeywordConsumer<Constant<Id>>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

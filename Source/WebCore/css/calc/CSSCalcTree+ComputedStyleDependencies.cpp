@@ -31,8 +31,7 @@
 #include "CSSUnits.h"
 #include "ComputedStyleDependencies.h"
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 void collectComputedStyleDependencies(const Child& root, ComputedStyleDependencies& dependencies)
 {
@@ -87,5 +86,4 @@ void collectComputedStyleDependencies(const Tree& tree, ComputedStyleDependencie
     collectComputedStyleDependencies(tree.root, dependencies);
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

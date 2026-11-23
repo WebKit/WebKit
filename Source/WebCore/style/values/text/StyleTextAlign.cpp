@@ -32,8 +32,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleKeyword+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<TextAlign>::operator()(BuilderState& state, const CSSValue& value) -> TextAlign
 {
@@ -69,5 +68,4 @@ auto CSSValueConversion<TextAlign>::operator()(BuilderState& state, const CSSVal
     return fromCSSValue<TextAlign>(*keywordValue);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

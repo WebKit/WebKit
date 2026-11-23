@@ -27,9 +27,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-
-namespace ContentSecurityPolicyDirectiveNames {
+namespace WebCore::ContentSecurityPolicyDirectiveNames {
 
 extern ASCIILiteral baseURI;
 extern ASCIILiteral childSrc;
@@ -62,7 +60,4 @@ extern ASCIILiteral upgradeInsecureRequests;
 extern ASCIILiteral blockAllMixedContent;
 extern ASCIILiteral workerSrc;
 
-} // namespace ContentSecurityPolicyDirectiveNames
-
-} // namespace WebCore
-
+} // namespace WebCore::ContentSecurityPolicyDirectiveNames

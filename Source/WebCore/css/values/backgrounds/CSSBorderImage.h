@@ -30,8 +30,7 @@
 #include "CSSBorderImageSource.h"
 #include "CSSBorderImageWidth.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'border-image'> = <'border-image-source'> || <'border-image-slice'> [ / <'border-image-width'> | / <'border-image-width'>? / <'border-image-outset'> ]? || <'border-image-repeat'>
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-image
@@ -73,7 +72,6 @@ template<> struct CSSValueCreation<BorderImage> { auto operator()(CSSValuePool&,
 
 template<> struct Serialize<BorderImage> { void operator()(StringBuilder&, const SerializationContext&, const BorderImage&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::BorderImage, 5)

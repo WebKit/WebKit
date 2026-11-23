@@ -28,8 +28,7 @@
 #include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Serialization
 
@@ -91,5 +90,4 @@ Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Content::Data>::operator(
     );
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

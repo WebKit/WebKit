@@ -28,8 +28,7 @@
 #include <WebCore/FontSizeAdjust.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'font-size-adjust'> = none | [ [ ex-height | cap-height | ch-width | ic-width | ic-height ]? [ from-font | <number [0,inf]> ] ]
 // FIXME: Current spec grammar is `none | <number [0,∞]>`
@@ -82,7 +81,6 @@ template<> struct Blending<FontSizeAdjust> {
 
 TextStream& operator<<(TextStream&, const FontSizeAdjust&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FontSizeAdjust)

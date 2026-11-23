@@ -33,8 +33,7 @@
 #include <WebCore/CSSValueTypes.h>
 #include <wtf/Markable.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // The following color kinds are forward declared and stored in UniqueRefs to
 // avoid unnecessarily growing the size of Color for the uncommon cases.
@@ -190,8 +189,7 @@ template<> struct ComputedStyleDependenciesCollector<Color> { void operator()(Co
 template<> struct CSSValueChildrenVisitor<Color> { IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const Color&); };
 template<> struct DeprecatedCSSOMValueCreation<Color> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const Color&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 namespace WTF {
 

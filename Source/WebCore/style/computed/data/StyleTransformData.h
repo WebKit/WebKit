@@ -31,8 +31,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TransformData);
 class TransformData : public RefCounted<TransformData> {
@@ -58,5 +57,4 @@ private:
     TransformData(const TransformData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

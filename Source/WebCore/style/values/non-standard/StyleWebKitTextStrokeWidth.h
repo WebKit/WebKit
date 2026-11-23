@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <`-webkit-text-stroke-width`> = <length [0,∞]> | thin | medium | thick
 // NOTE: There is no standard associated with this property.
@@ -60,7 +59,6 @@ template<> struct Evaluation<WebkitTextStrokeWidth, float> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::WebkitTextStrokeWidth)

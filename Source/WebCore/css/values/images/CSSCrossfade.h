@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSValueTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // https://drafts.csswg.org/css-images-4/#funcdef-cross-fade
 
@@ -89,8 +88,7 @@ struct Crossfade {
 DEFINE_TYPE_WRAPPER_GET(Crossfade, components);
 using CrossfadeFunction = FunctionNotation<CSSValueID::CrossFade, Crossfade>;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::WebkitCrossfade, 3)
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::CrossfadeComponent, 2)

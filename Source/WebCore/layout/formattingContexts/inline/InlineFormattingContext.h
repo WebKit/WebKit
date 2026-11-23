@@ -35,8 +35,7 @@
 #include <WebCore/LayoutState.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineDamage;
 class InlineContentCache;
@@ -118,5 +117,4 @@ private:
     InlineLayoutState m_inlineLayoutState;
 };
 
-}
 }

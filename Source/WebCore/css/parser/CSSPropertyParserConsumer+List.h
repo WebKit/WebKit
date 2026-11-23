@@ -28,8 +28,7 @@
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSValueList.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 enum class ListOptimization : bool { None, SingleValue };
 
@@ -113,5 +112,4 @@ auto consumeListSeparatedBy(CSSParserTokenRange& range, NOESCAPE const SubConsum
     }
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

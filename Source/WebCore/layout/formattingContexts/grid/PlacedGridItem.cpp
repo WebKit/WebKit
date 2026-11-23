@@ -32,8 +32,7 @@
 #include "StyleJustifySelf.h"
 #include "UnplacedGridItem.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& gridAreaLines, const Style::ComputedStyle& gridContainerStyle)
     : PlacedGridItem(gridItem, gridAreaLines, gridContainerStyle, gridItem.style())
@@ -53,5 +52,4 @@ PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& 
 {
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

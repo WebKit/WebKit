@@ -28,8 +28,7 @@
 
 #include "CSSBorderImageRepeatValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -38,5 +37,4 @@ auto CSSValueCreation<BorderImageRepeat>::operator()(CSSValuePool&, const Border
     return CSSBorderImageRepeatValue::create(BorderImageRepeat { value });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

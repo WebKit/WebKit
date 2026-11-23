@@ -35,8 +35,7 @@
 #include "StyleOrphans.h"
 #include "StyleWidows.h"
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 NODELETE static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line, const Layout::BlockLayoutState::LineGrid& lineGrid)
 {
@@ -183,5 +182,4 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
     }
 }
 
-}
 }

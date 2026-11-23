@@ -29,8 +29,7 @@
 #include "StyleComputedStyle.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 ResolvedColors::ResolvedColors(WebCore::Color currentColor, StyleColorOptionsPurpose purpose)
     : m_currentColor(currentColor)
@@ -64,5 +63,4 @@ ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStylePropertie
     return ResolvedColors(style.visitedLinkColor(), purpose);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

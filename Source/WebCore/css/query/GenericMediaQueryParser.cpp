@@ -42,8 +42,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 AtomString FeatureParser::consumeFeatureName(CSSParserTokenRange& range)
 {
@@ -375,5 +374,4 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
     return isValid;
 }
 
-}
 }

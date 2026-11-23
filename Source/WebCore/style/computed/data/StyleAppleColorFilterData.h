@@ -30,8 +30,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AppleColorFilterData);
 class AppleColorFilterData : public RefCounted<AppleColorFilterData> {
@@ -53,5 +52,4 @@ private:
     AppleColorFilterData(const AppleColorFilterData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

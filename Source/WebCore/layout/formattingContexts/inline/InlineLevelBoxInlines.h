@@ -32,8 +32,7 @@
 #include "LayoutBoxInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::ComputedStyle& style, NOESCAPE const PreferredLineHeightFunctor& preferredLineHeightFunctor)
 {
@@ -114,5 +113,3 @@ inline void InlineLevelBox::setTextEmphasis(std::pair<InlineLayoutUnit, InlineLa
 }
 
 }
-}
-

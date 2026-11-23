@@ -33,8 +33,7 @@
 #include <WebCore/InlineLineTypes.h>
 #include <WebCore/LineLayoutResult.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct LineInput {
     InlineItemRange needsLayoutRange;
@@ -93,6 +92,4 @@ private:
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
 };
 
-
-}
 }

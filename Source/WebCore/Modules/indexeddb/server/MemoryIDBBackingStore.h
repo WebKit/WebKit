@@ -35,8 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 class MemoryObjectStore;
 
@@ -110,5 +109,4 @@ private:
     HashMap<String, Ref<MemoryObjectStore>> m_objectStoresByName;
 };
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

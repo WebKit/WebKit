@@ -29,8 +29,7 @@
 #include "CSSBorderImageRepeatValue.h"
 #include "StyleKeyword+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -85,5 +84,4 @@ auto CSSValueCreation<BorderImageRepeat>::operator()(CSSValuePool&, const Style:
     return CSSBorderImageRepeatValue::create(toCSS(value, style));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -34,8 +34,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Invert Invert::passthroughForInterpolation()
 {
@@ -89,5 +88,4 @@ auto ToPlatform<Invert>::operator()(const Invert& value) -> Ref<FilterOperation>
     return BasicComponentTransferFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<InvertFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 
 #include "CSSValueTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'mask-border-repeat'> = [ stretch | repeat | round | space ]{1,2}
 // https://drafts.fxtf.org/css-masking-1/#propdef-mask-border-repeat
@@ -47,7 +46,6 @@ DEFINE_TYPE_WRAPPER_GET(MaskBorderRepeat, values);
 
 template<> struct CSSValueCreation<MaskBorderRepeat> { auto operator()(CSSValuePool&, const MaskBorderRepeat&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::MaskBorderRepeat)

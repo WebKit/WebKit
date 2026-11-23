@@ -35,8 +35,7 @@
 #include "LayoutElementBox.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 InlineQuirks::InlineQuirks(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
@@ -235,5 +234,3 @@ bool InlineQuirks::hasSoftWrapOpportunityAroundImages(std::optional<IntrinsicWid
 }
 
 }
-}
-

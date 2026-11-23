@@ -30,8 +30,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 std::optional<Type> Type::add(Type type1, Type type2)
 {
@@ -473,5 +472,4 @@ TextStream& operator<<(TextStream& ts, Type type)
     return ts << "CSSCalc::Type [ px="_s << type.length << " deg="_s << type.angle << " s="_s << type.time << " hz="_s << type.frequency << " dppx="_s << type.resolution << " fr="_s << type.flex << " %="_s << type.percent << " hint="_s << type.percentHint << " ]"_s;
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

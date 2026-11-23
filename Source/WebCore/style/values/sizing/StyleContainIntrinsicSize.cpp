@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<ContainIntrinsicSize>::operator()(BuilderState& state, const CSSValue& value) -> ContainIntrinsicSize
 {
@@ -99,5 +98,4 @@ auto Blending<ContainIntrinsicSize>::blend(const ContainIntrinsicSize& a, const 
     return ContainIntrinsicSize { a.type, Style::blend(a.length, b.length, context) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

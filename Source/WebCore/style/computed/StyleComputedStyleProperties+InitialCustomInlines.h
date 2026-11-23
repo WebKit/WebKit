@@ -92,8 +92,7 @@
 #include <WebCore/AppleVisualEffect.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 constexpr WebkitLineBoxContain ComputedStyleProperties::initialLineBoxContain()
 {
@@ -110,5 +109,4 @@ constexpr PositionVisibility ComputedStyleProperties::initialPositionVisibility(
     return PositionVisibilityValue::AnchorVisible;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

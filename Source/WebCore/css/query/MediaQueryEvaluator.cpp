@@ -34,8 +34,7 @@
 #include "RenderView.h"
 #include "StyleFontSizeFunctions.h"
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 MediaQueryEvaluator::MediaQueryEvaluator(const AtomString& mediaType, const Document& document)
     : GenericMediaQueryEvaluator()
@@ -149,5 +148,4 @@ bool MediaQueryEvaluator::isPrintMedia() const
     return m_mediaType == printAtom();
 }
 
-}
 }

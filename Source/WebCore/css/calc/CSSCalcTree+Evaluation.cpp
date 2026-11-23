@@ -39,8 +39,7 @@
 #include "StyleCustomIdent.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 static auto evaluate(const CSS::Keyword::None&, const EvaluationOptions&) -> std::optional<CSS::Keyword::None>;
 static auto evaluate(const ChildOrNone&, const EvaluationOptions&) -> std::optional<Variant<double, CSS::Keyword::None>>;
@@ -408,5 +407,4 @@ std::optional<double> evaluateWithoutFallback(const Anchor& anchor, const Evalua
     return Style::AnchorPositionEvaluator::evaluate(*builderState, anchorScopedName, side);
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

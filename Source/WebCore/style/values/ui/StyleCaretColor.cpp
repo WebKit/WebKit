@@ -28,8 +28,7 @@
 
 #include "AnimationUtilities.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 const Color& CaretColor::colorOrCurrentColor() const
 {
@@ -65,5 +64,4 @@ auto Blending<CaretColor>::blend(const CaretColor& a, const CaretColor& b, const
     return Style::blend(*a.tryColor(), *b.tryColor(), aStyle, bStyle, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

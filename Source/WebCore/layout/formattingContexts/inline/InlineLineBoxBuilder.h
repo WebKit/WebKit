@@ -30,8 +30,7 @@
 #include "InlineLineBuilder.h"
 #include <WebCore/TextUtil.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class Box;
 class ElementBox;
@@ -80,5 +79,3 @@ private:
 };
 
 }
-}
-

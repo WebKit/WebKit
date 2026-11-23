@@ -27,11 +27,9 @@
 #include <WebCore/CSSGridNamedAreaMap.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using GridNamedAreaMap = CSS::GridNamedAreaMap;
 template<> inline constexpr bool TreatAsNonConverting<GridNamedAreaMap> = true;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

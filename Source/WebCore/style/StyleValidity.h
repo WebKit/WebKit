@@ -25,8 +25,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class Validity : uint8_t {
     Valid,
@@ -49,5 +48,4 @@ enum class InvalidationScope : uint8_t {
     Descendants
 };
 
-}
 }

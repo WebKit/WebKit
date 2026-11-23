@@ -27,8 +27,7 @@
 #include <WebCore/ScopedName.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-container-name> = <custom-ident excluding=none,and,or,not>
 // https://www.w3.org/TR/css-contain-3/#valdef-container-name-custom-ident
@@ -41,7 +40,6 @@ using ContainerNameList = SpaceSeparatedFixedVector<ContainerName>;
 // https://www.w3.org/TR/css-contain-3/#propdef-container-name
 struct ContainerNames : ListOrNone<ContainerNameList> { using ListOrNone<ContainerNameList>::ListOrNone; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ContainerNames)

@@ -31,8 +31,7 @@
 #include <wtf/EnumSet.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class Box;
 class BoxGeometry;
@@ -127,5 +126,4 @@ inline bool PlacedFloats::hasEndPositioned() const
     return m_positionTypes.contains(PositionType::End);
 }
 
-}
 }

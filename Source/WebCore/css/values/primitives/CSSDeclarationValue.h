@@ -29,8 +29,7 @@
 #include <WebCore/CSSVariableData.h>
 #include <wtf/Ref.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <declaration-value> = <any value>
 // https://drafts.csswg.org/css-syntax/#typedef-declaration-value
@@ -67,5 +66,4 @@ void add(Hasher&, const DeclarationValue&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const DeclarationValue&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -28,8 +28,7 @@
 
 #include "CSSDynamicRangeLimitMix.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // NOTE: All non-template functions must be implemented in the implementation
 // file due to the use of the incomplete type `DynamicRangeLimitMixFunction`.
@@ -61,5 +60,4 @@ DynamicRangeLimit::~DynamicRangeLimit() = default;
 
 bool DynamicRangeLimit::operator==(const DynamicRangeLimit&) const = default;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

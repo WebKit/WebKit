@@ -32,8 +32,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 HueRotate HueRotate::passthroughForInterpolation()
 {
@@ -75,5 +74,4 @@ auto ToPlatform<HueRotate>::operator()(const HueRotate& value) -> Ref<FilterOper
     return BasicColorMatrixFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<HueRotateFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

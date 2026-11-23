@@ -28,8 +28,7 @@
 #include "LayoutRect.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Evaluation
 
@@ -79,5 +78,4 @@ LayoutBoxExtent extentForRect(const ScrollPaddingBox& padding, const LayoutRect&
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

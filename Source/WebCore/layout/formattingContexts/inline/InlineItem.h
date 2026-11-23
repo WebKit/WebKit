@@ -29,8 +29,7 @@
 #include <WebCore/LayoutUnits.h>
 #include <unicode/ubidi.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineItemsBuilder;
 
@@ -121,7 +120,6 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
     static bool isType(const WebCore::Layout::InlineItem& inlineItem) { return inlineItem.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-}
 }
 
 namespace WTF {

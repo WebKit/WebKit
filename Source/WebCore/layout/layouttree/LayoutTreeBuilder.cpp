@@ -37,8 +37,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 #if ENABLE(TREE_DEBUGGING)
 void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, const ElementBox& inlineFormattingRoot, size_t depth)
@@ -236,5 +235,4 @@ void showLayoutTree(const InitialContainingBlock& initialContainingBlock)
 }
 #endif
 
-}
 }

@@ -26,8 +26,7 @@
 #include "config.h"
 #include "CSSPlatformColorResolutionState.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 PlatformColorResolutionDelegate::~PlatformColorResolutionDelegate() = default;
 
@@ -66,5 +65,4 @@ WebCore::Color PlatformColorResolutionDelegate::webkitFocusRingColor() const
     return { };
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

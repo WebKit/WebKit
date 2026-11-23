@@ -33,8 +33,7 @@
 #include <optional>
 #include <wtf/CheckedRef.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class ElementBox;
 class InlineLayoutState;
@@ -72,5 +71,3 @@ private:
 };
 
 }
-}
-

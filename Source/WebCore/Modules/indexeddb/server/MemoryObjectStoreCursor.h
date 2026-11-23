@@ -30,8 +30,7 @@
 #include "MemoryCursor.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 class MemoryBackingStoreTransaction;
 class MemoryObjectStore;
@@ -68,5 +67,4 @@ private:
     IDBKeyData m_currentPositionKey;
 };
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

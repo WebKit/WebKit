@@ -30,8 +30,7 @@
 #include <WebCore/CSSString.h>
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <symbols-type> = cyclic | numeric | alphabetic | symbolic | fixed
 // https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type
@@ -67,8 +66,7 @@ struct CounterStyle {
 };
 DEFINE_TYPE_WRAPPER_GET(CounterStyle, identifier);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::CounterStyle)
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::SymbolsParameters, 2)

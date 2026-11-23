@@ -50,8 +50,7 @@
 #include <numbers>
 #include <wtf/SortedArrayMap.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 // MARK: - Constants
 
@@ -1666,5 +1665,4 @@ std::optional<TypedChild> parseCalcDimension(const CSSParserToken& token, Parser
     return TypedChild { WTF::move(child), type };
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

@@ -32,8 +32,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -127,5 +126,4 @@ AcceleratedEffectOffsetPath Evaluation<OffsetPath, AcceleratedEffectOffsetPath>:
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 
 #include <WebCore/SQLiteIDBBackingStore.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 // SQLite-backed in-memory IndexedDB backing store.
 // Unlike MemoryIDBBackingStore (which uses HashMaps), this uses SQLite's
@@ -58,5 +57,4 @@ public:
     void deleteBackingStore() final { }
 };
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

@@ -37,8 +37,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GridItemData);
 
@@ -82,5 +81,4 @@ void GridItemData::dumpDifferences(TextStream& ts, const GridItemData& other) co
 }
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

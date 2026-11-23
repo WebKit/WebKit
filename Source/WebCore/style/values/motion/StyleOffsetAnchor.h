@@ -28,8 +28,7 @@
 #include <WebCore/StylePosition.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'offset-anchor'> = auto | <position>
 // https://drafts.fxtf.org/motion/#propdef-offset-anchor
@@ -92,7 +91,6 @@ template<> struct Evaluation<OffsetAnchor, AcceleratedEffectOffsetAnchor> {
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::OffsetAnchor)

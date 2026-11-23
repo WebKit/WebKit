@@ -35,8 +35,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 MeshGradientImage::MeshGradientImage(Gradient&& gradient)
     : GeneratedImage { Type::MeshGradientImage }
@@ -145,5 +144,4 @@ bool MeshGradientImage::containsCurrentColor() const
     return m_containsCurrentColor;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

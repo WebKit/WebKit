@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 static void appendControlPoints(StringBuilder& builder, const SerializationContext& context, const auto& controlPoints)
 {
@@ -91,5 +90,4 @@ void Serialize<MeshGradient>::operator()(StringBuilder& builder, const Serializa
     serializationForCSS(builder, context, gradient.rows);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

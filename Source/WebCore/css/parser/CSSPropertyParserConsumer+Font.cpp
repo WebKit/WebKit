@@ -74,8 +74,7 @@
 #include "CSSFontVariationValue.h"
 #endif
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 NODELETE static CSSParserMode parserMode(ScriptExecutionContext& context)
 {
@@ -1142,5 +1141,4 @@ Vector<AtomString> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenR
     return result;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

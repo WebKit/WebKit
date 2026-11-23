@@ -28,8 +28,7 @@
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LayoutUnits.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class Rect {
 public:
@@ -332,5 +331,4 @@ inline Rect::operator FloatRect() const
     return m_rect;
 }
 
-}
 }

@@ -28,8 +28,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TextFlags.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'font-variant-numeric'> = normal | [ <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero ]
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-variant-numeric
@@ -127,7 +126,6 @@ private:
 
 template<> struct CSSValueConversion<FontVariantNumeric> { NODELETE FontVariantNumeric operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FontVariantNumeric)

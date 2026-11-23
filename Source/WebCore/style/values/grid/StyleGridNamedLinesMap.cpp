@@ -27,13 +27,11 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 TextStream& operator<<(TextStream& ts, const GridNamedLinesMap& value)
 {
     return ts << value.map;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

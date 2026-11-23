@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // sepia() = sepia( [ <number [0,1(clamp upper)] > | <percentage [0,100(clamp upper)]> ]? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-sepia
@@ -42,7 +41,6 @@ using SepiaFunction = FunctionNotation<CSSValueID::Sepia, Sepia>;
 
 DEFINE_TYPE_WRAPPER_GET(Sepia, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Sepia, 1)

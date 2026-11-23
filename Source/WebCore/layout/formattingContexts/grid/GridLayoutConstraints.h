@@ -27,8 +27,7 @@
 
 #include "AxisConstraint.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct GridLayoutConstraints {
     AxisConstraint inlineAxis;
@@ -43,5 +42,4 @@ struct AutoRepeatConstraint {
     std::optional<LayoutUnit> maximumSize;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-animation-iteration-count> = infinite | <number [0,∞]>
 // https://www.w3.org/TR/css-animations-1/#typedef-single-animation-iteration-count
@@ -44,7 +43,6 @@ struct SingleAnimationIterationCount : ValueOrKeyword<Number<CSS::Nonnegative>, 
     bool isNumber() const { return isValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationIterationCount)

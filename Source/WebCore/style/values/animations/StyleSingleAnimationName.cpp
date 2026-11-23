@@ -31,8 +31,7 @@
 #include "StyleCustomIdent.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -49,5 +48,4 @@ auto CSSValueConversion<SingleAnimationName>::operator()(BuilderState& state, co
     return toStyleFromCSSValue<ScopedName>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

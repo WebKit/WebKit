@@ -30,8 +30,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -52,5 +51,4 @@ auto CSSValueConversion<SingleTransitionProperty>::operator()(BuilderState& stat
     return toStyleFromCSSValue<CustomIdent>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

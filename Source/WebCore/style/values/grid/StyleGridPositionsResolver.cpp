@@ -39,8 +39,7 @@
 #include <ranges>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 namespace {
 
@@ -663,5 +662,4 @@ GridSpan GridPositionsResolver::resolveGridPositionsFromStyle(const RenderGrid& 
     return GridSpan::untranslatedDefiniteGridSpan(startLine, std::max(startLine, endLine));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

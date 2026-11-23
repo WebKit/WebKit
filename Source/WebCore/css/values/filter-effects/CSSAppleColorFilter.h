@@ -35,8 +35,7 @@
 #include "CSSSepiaFunction.h"
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // Non-standard types used for the `-apple-color-filter` property. It is similar to <'filter'>,
 // but does not support `blur()`, `drop-shadow()` and reference filters, but adds support for the
@@ -80,8 +79,7 @@ struct AppleColorFilter : ListOrNone<AppleColorFilterValueList> {
     using ListOrNone<AppleColorFilterValueList>::ListOrNone;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::AppleColorFilterValue)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::AppleColorFilter)

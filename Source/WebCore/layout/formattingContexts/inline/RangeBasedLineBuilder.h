@@ -28,8 +28,7 @@
 #include "AbstractLineBuilder.h"
 #include "TextOnlySimpleLineBuilder.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineContentBreaker;
 
@@ -46,5 +45,4 @@ private:
     size_t m_inlineBoxCount { 0 };
 };
 
-}
 }

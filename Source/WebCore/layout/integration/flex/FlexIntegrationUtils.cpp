@@ -41,9 +41,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexItemContentCache);
 
@@ -826,5 +824,4 @@ FlexItemIntrinsicWidthComputationScope::FlexItemIntrinsicWidthComputationScope(R
 {
 }
 
-} // namespace LayoutIntegration
-} // namespace WebCore
+} // namespace WebCore::LayoutIntegration

@@ -34,8 +34,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <position-try-fallback> = [ [<dashed-ident> || <try-tactic>] | <position-area> ]
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-try-fallbacks
@@ -98,8 +97,7 @@ template<> struct Serialize<PositionTryFallback::PositionArea> { void operator()
 // `PositionTryFallback::PositionArea` is special-cased to handle `ImmutableStyleProperties`.
 TextStream& operator<<(TextStream&, const PositionTryFallback::PositionArea&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PositionTryFallback)
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PositionTryFallback::RuleAndTactics, 2)

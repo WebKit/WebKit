@@ -31,8 +31,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleKeyword+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<Resize>::operator()(BuilderState& state, const CSSValue& value) -> Resize
 {
@@ -46,5 +45,4 @@ auto CSSValueConversion<Resize>::operator()(BuilderState& state, const CSSValue&
     return fromCSSValue<Resize>(*keywordValue);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

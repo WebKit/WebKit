@@ -31,8 +31,7 @@
 #include <WebCore/CompositeOperation.h>
 #include <algorithm>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Generic implementation of interpolation for filter lists for use by both `Style::Filter` and `Style::AppleColorFilter`.
 // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
@@ -144,5 +143,4 @@ auto blendFilterLists(const FilterList& from, const FilterList& to, const Style:
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

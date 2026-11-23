@@ -35,8 +35,7 @@
 #include <numbers>
 #include <wtf/TinyLRUCache.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Path Caching
 
@@ -190,5 +189,4 @@ AcceleratedEffectCircleFunction Evaluation<CircleFunction, AcceleratedEffectCirc
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

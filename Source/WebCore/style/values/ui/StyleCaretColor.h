@@ -28,8 +28,7 @@
 #include <WebCore/StyleColor.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'caret-color'> = auto | <color>
 // https://drafts.csswg.org/css-ui-4/#caret-color
@@ -53,7 +52,6 @@ template<> struct Blending<CaretColor> {
     auto blend(const CaretColor&, const CaretColor&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> CaretColor;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::CaretColor);

@@ -29,8 +29,7 @@
 #include "CSSKeyword.h"
 #include <wtf/Variant.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct FontPaletteMixFunction;
 
@@ -89,7 +88,6 @@ template<typename... F> decltype(auto) FontPalette::switchOn(NOESCAPE F&&... f) 
 
 template<> struct CSSValueCreation<FontPalette> { Ref<CSSValue> operator()(CSSValuePool&, const FontPalette&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::FontPalette)

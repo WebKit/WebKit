@@ -33,9 +33,7 @@
 
 #include <stdint.h>
 
-namespace cbor {
-
-namespace constants {
+namespace cbor::constants {
 
 // Mask selecting the low-order 5 bits of the "initial byte", which is where
 // the additional information is encoded.
@@ -56,8 +54,6 @@ static constexpr uint8_t kAdditionalInformation4Bytes = 26u;
 // Indicates the integer is in the next 8 bytes.
 static constexpr uint8_t kAdditionalInformation8Bytes = 27u;
 
-} // namespace constants
-
-} // namespace cbor
+} // namespace cbor::constants
 
 #endif // ENABLE(WEB_AUTHN)

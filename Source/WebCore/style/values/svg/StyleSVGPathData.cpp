@@ -37,8 +37,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -97,5 +96,4 @@ auto Blending<SVGPathData>::blend(const SVGPathData& a, const SVGPathData& b, co
     return Style::blend(*a.tryPath(), *b.tryPath(), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

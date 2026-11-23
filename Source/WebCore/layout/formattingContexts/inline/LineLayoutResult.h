@@ -30,8 +30,7 @@
 #include <WebCore/LayoutUnits.h>
 #include <WebCore/PlacedFloats.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct LineLayoutResult {
     using PlacedFloatList = PlacedFloats::List;
@@ -118,5 +117,4 @@ struct LineLayoutResult {
     bool isLastLineWithoutBlockEllipsis { false };
 };
 
-}
 }

@@ -29,8 +29,7 @@
 #include "LayoutInlineTextBox.h"
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineSoftLineBreakItem : public InlineItem {
 public:
@@ -58,7 +57,6 @@ inline InlineSoftLineBreakItem::InlineSoftLineBreakItem(const InlineTextBox& inl
     m_startOrPosition = position;
 }
 
-}
 }
 
 SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(InlineSoftLineBreakItem, isSoftLineBreak())

@@ -41,8 +41,7 @@
 #include "StyleSingleAnimationRange.h"
 #include "StyleViewTimelineInsetItem.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 bool isTimelineRangeName(CSSValueID id)
 {
@@ -279,5 +278,4 @@ std::optional<Style::SingleAnimationRangeEnd> parseAbsoluteSingleAnimationRangeE
     return parseAbsoluteSingleAnimationRangeEdgeRaw<Style::SingleAnimationRangeEnd>(string, context, document);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

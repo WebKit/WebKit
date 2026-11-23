@@ -43,8 +43,7 @@
 #include "TextUtil.h"
 #include <ranges>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 InlineFormattingUtils::InlineFormattingUtils(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
@@ -715,5 +714,3 @@ std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine
 }
 
 }
-}
-

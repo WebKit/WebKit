@@ -27,8 +27,7 @@
 #include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <line-names> = '[' <custom-ident excluding=span,auto>* ']'
 // https://drafts.csswg.org/css-grid/#typedef-line-names
@@ -65,7 +64,6 @@ DEFINE_TYPE_WRAPPER_GET(GridLineNames, value);
 // Custom serialization needed to add leading '[' and trailing ']'.
 template<> struct Serialize<GridLineNames> { void operator()(StringBuilder&, const SerializationContext&, const GridLineNames&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::GridLineNames)

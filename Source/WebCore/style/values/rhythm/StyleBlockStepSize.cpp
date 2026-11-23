@@ -29,8 +29,7 @@
 #include "AnimationUtilities.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Blending
 
@@ -55,5 +54,4 @@ auto Blending<BlockStepSize>::blend(const BlockStepSize& a, const BlockStepSize&
     return Style::blend(*a.tryValue(), *b.tryValue(), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

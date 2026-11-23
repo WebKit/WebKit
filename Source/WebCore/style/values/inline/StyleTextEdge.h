@@ -27,8 +27,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <text-edge> = [ text | cap | ex | ideographic | ideographic-ink ]
 //               [ text | alphabetic | ideographic | ideographic-ink ]?
@@ -96,7 +95,6 @@ protected:
 
 template<typename T> concept TextEdgeDerived = WTF::IsBaseOfTemplate<TextEdge, T>::value && VariantLike<T>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextEdgePair)

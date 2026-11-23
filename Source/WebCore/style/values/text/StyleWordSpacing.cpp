@@ -27,8 +27,7 @@
 
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<WordSpacing>::operator()(BuilderState& state, const CSSValue& value) -> WordSpacing
 {
@@ -49,5 +48,4 @@ auto CSSValueConversion<WordSpacing>::operator()(BuilderState& state, const CSSV
     return toStyleFromCSSValue<WordSpacing::Wrapped>(state, *primitiveValue);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

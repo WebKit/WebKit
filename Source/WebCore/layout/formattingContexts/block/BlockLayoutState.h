@@ -30,8 +30,7 @@
 #include <WebCore/StyleTextBoxEdge.h>
 #include <algorithm>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class BlockFormattingContext;
 
@@ -129,5 +128,4 @@ inline BlockLayoutState::BlockLayoutState(PlacedFloats& placedFloats, MarginStat
 {
 }
 
-}
 }

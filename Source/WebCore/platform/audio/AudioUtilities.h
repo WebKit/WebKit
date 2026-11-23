@@ -30,9 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
-
-namespace AudioUtilities {
+namespace WebCore::AudioUtilities {
 
 // https://www.w3.org/TR/webaudio/#render-quantum-size
 constexpr size_t renderQuantumSize = 128;
@@ -92,8 +90,6 @@ inline float flushDenormalFloatToZero(float f)
 #endif
 }
 
-} // AudioUtilites
-
-} // WebCore
+} // namespace WebCore::AudioUtilities
 
 #endif // AudioUtilities_h

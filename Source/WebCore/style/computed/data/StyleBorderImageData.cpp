@@ -30,8 +30,7 @@
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BorderImageData);
 
@@ -87,5 +86,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const BorderImageData& borderIm
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

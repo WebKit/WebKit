@@ -29,8 +29,7 @@
 #include <WebCore/StyleGridNamedLinesMap.h>
 #include <WebCore/StyleGridTrackSizingDirection.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'grid-template-areas'> = none | <string>+
 // https://drafts.csswg.org/css-grid/#propdef-grid-template-areas
@@ -81,7 +80,6 @@ template<> struct CSSValueCreation<GridTemplateAreas> { auto operator()(CSSValue
 
 template<> struct Serialize<GridTemplateAreas> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const GridTemplateAreas&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridTemplateAreas);

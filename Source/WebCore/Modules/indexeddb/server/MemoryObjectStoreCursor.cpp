@@ -32,8 +32,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryObjectStoreCursor);
 
@@ -361,5 +360,4 @@ void MemoryObjectStoreCursor::iterate(const IDBKeyData& key, const IDBKeyData& p
     currentData(outData);
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

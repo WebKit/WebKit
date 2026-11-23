@@ -33,8 +33,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class BoxGeometry;
 class InlineFormattingContext;
@@ -158,5 +157,3 @@ inline InlineLevelBox& LineBox::inlineLevelBoxFor(const LineRun& lineRun)
 }
 
 }
-}
-

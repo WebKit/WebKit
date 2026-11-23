@@ -29,8 +29,7 @@
 #include <concepts>
 #include <optional>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class CalcSizeValue;
 
@@ -80,5 +79,4 @@ template<CSSValueID Id> constexpr std::optional<PreparedCalcSizeBasis> preparedB
 
 Ref<CalcSizeValue> makeCalcSizeValue(PreparedCalcSizeBasis, Calculation::Tree&&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'block-step-size'> = none | <length [0,∞]>
 // https://www.w3.org/TR/css-rhythm-1/#propdef-block-step-size
@@ -49,7 +48,6 @@ template<> struct Blending<BlockStepSize> {
     NODELETE BlockStepSize blend(const BlockStepSize&, const BlockStepSize&, const BlendingContext&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::BlockStepSize)

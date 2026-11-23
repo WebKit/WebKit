@@ -24,8 +24,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 struct AnchorSide;
 struct Tree;
@@ -34,5 +33,4 @@ struct Tree;
 Tree copy(const Tree&);
 AnchorSide copy(const AnchorSide&);
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

@@ -28,8 +28,7 @@
 #include "InlineDisplayBoxInlines.h"
 #include "InlineIteratorBox.h"
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 inline float Box::logicalBottom() const { return logicalRectIgnoringInlineDirection().maxY(); }
 inline float Box::logicalHeight() const { return logicalRectIgnoringInlineDirection().height(); }
@@ -77,5 +76,4 @@ inline LeafBoxIterator Box::nextLogicalLeftwardOnLineIgnoringLineBreak() const
         ? nextLineLeftwardOnLineIgnoringLineBreak() : nextLineRightwardOnLineIgnoringLineBreak();
 }
 
-}
 }

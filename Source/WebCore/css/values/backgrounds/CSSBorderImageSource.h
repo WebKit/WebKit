@@ -29,8 +29,7 @@
 #include "CSSValueTypes.h"
 #include <wtf/PointerComparison.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'border-image-source'> = none | <image>
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-image-source
@@ -63,7 +62,6 @@ private:
 
 template<> struct CSSValueCreation<BorderImageSource> { auto operator()(CSSValuePool&, const BorderImageSource&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::BorderImageSource)

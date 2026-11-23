@@ -29,8 +29,7 @@
 #include <WebCore/LayoutUnits.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class BoxGeometry {
     WTF_MAKE_TZONE_ALLOCATED(BoxGeometry);
@@ -500,5 +499,4 @@ inline BoxGeometry::VerticalEdges& BoxGeometry::VerticalEdges::operator+=(Vertic
     return *this;
 }
 
-}
 }

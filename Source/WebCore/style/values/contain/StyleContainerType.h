@@ -27,8 +27,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'container-type'> = normal | [ [ size | inline-size ] || scroll-state ]
 // https://drafts.csswg.org/css-conditional-5/#container-type
@@ -82,7 +81,6 @@ template<> struct CSSValueConversion<ContainerType> {
     auto operator()(BuilderState&, const CSSValue&) -> ContainerType;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ContainerType)

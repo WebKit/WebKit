@@ -34,8 +34,7 @@
 #include <wtf/cf/VectorCF.h>
 #endif
 
-namespace WebCore {
-namespace OpenType {
+namespace WebCore::OpenType {
 
 NODELETE static inline short readShortFromTable(std::span<const UInt8> os2Data, CFIndex offset)
 {
@@ -67,5 +66,4 @@ bool tryGetTypoMetrics(CTFontRef font, short& ascent, short& descent, short& lin
     return result;
 }
 
-} // namespace OpenType
-} // namespace WebCore
+} // namespace WebCore::OpenType

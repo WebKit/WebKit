@@ -29,8 +29,7 @@
 #include <WebCore/InlineIteratorTextBox.h>
 #include <WebCore/RenderBlockFlow.h>
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 struct TextLogicalOrderCacheData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TextLogicalOrderCacheData);
@@ -103,5 +102,4 @@ Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineBoxIterator& lineBox, 
     return boxes;
 }
 
-}
 }

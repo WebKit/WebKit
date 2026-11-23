@@ -35,8 +35,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace DisplayList {
+namespace WebCore::DisplayList {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayList);
 
@@ -96,5 +95,4 @@ TextStream& operator<<(TextStream& ts, const DisplayList& displayList)
     return ts;
 }
 
-} // namespace DisplayList
-} // namespace WebCore
+} // namespace WebCore::DisplayList

@@ -28,8 +28,7 @@
 
 #include "LayoutElementBox.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // Convert a 1-indexed explicit CSS grid line into a 0-indexed grid line.
 // https://www.w3.org/TR/css-grid-1/#line-placement
@@ -176,6 +175,4 @@ WTF::Range<size_t> UnplacedGridItem::definiteColumnRange() const
     return { definitePosition.startLine, definitePosition.endLine };
 }
 
-} // namespace Layout
-
-} // namespace WebCore
+} // namespace WebCore::Layout

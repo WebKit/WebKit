@@ -28,11 +28,9 @@
 #include <WebCore/CSSTypeSpecifier.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using TypeSpecifier = CSS::TypeSpecifier;
 template<> inline constexpr bool TreatAsNonConverting<TypeSpecifier> = true;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

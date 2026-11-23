@@ -28,8 +28,7 @@
 #include <WebCore/StyleCustomIdent.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-line-grid'> = none | <custom-ident excluding=none>
 // NOTE: While it has the same name, the standardized `line-grid` property is quite a bit different. See https://drafts.csswg.org/css-line-grid/#propdef-line-grid.
@@ -40,7 +39,6 @@ struct WebkitLineGrid : ValueOrKeyword<CustomIdent, CSS::Keyword::None> {
     bool isCustomIdent() const { return isValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitLineGrid)

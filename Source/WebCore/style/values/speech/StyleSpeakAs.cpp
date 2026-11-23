@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<SpeakAs>::operator()(BuilderState& state, const CSSValue& value) -> SpeakAs
 {
@@ -87,5 +86,4 @@ auto CSSValueConversion<SpeakAs>::operator()(BuilderState& state, const CSSValue
     return result;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

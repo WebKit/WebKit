@@ -52,8 +52,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/SetForScope.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
     : m_ruleSet(&ruleSet)
@@ -657,5 +656,4 @@ void RuleSetBuilder::MediaQueryCollector::addRuleIfNeeded(const RuleData& ruleDa
     context.affectedRules.add(ruleData.styleRule());
 }
 
-}
 }

@@ -57,8 +57,7 @@
 #include "StyleZoomPrimitivesInlines.h"
 #include "Styleable.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Define this to 1 to enable validation of direct serialization against serialization using CSSValue.
 #define VALIDATE_DIRECT_COMPUTED_VALUE_SERIALIZATION 0
@@ -629,5 +628,4 @@ WTF::String Extractor::appleColorFilterSerializationForTesting(Element& element)
     return { };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

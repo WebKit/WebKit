@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -83,5 +82,4 @@ auto ToStyle<CSS::RectFunction>::operator()(const CSS::RectFunction& value, cons
     return { toStyle(value.parameters, state) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

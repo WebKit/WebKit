@@ -27,8 +27,7 @@
 #include "CSSColor.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // hue-rotate() = hue-rotate( [ <angle> | <zero> ]? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-hue-rotate
@@ -43,7 +42,6 @@ using HueRotateFunction = FunctionNotation<CSSValueID::HueRotate, HueRotate>;
 
 DEFINE_TYPE_WRAPPER_GET(HueRotate, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::HueRotate, 1)

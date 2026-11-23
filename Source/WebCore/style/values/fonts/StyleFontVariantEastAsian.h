@@ -32,8 +32,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TextFlags.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'font-variant-east-asian'> = normal | [ <east-asian-variant-values> || <east-asian-width-values> || ruby ]
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-variant-east-asian
@@ -111,7 +110,6 @@ private:
 
 template<> struct CSSValueConversion<FontVariantEastAsian> { NODELETE FontVariantEastAsian operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FontVariantEastAsian)

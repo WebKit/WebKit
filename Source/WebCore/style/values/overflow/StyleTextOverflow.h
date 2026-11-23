@@ -29,8 +29,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-overflow'> = clip | ellipsis | <string>
 // https://drafts.csswg.org/css-overflow-3/#propdef-text-overflow
@@ -84,7 +83,6 @@ template<> struct CSSValueConversion<TextOverflow> {
     auto operator()(BuilderState&, const CSSValue&) -> TextOverflow;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextOverflow)

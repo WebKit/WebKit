@@ -30,8 +30,7 @@
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 Ref<IDBConnectionToClient> IDBConnectionToClient::create(IDBConnectionToClientDelegate& delegate)
 {
@@ -233,5 +232,4 @@ void IDBConnectionToClient::setClientSuspended(bool isSuspended)
         database->handleTransactionsAfterAbortingSuspendedClientTransactions();
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

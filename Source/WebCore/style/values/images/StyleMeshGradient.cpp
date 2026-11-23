@@ -32,8 +32,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static RectEdges<FloatPoint> completeControlPoints(std::span<const FloatPoint> controlPoints, FloatPoint meshPoint)
 {
@@ -174,5 +173,4 @@ bool containsCurrentColor(const MeshGradient& gradient)
     });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

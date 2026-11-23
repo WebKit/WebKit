@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-mask-mode> = alpha | luminance | match-source
 // https://drafts.fxtf.org/css-masking-1/#typedef-masking-mode
@@ -43,5 +42,4 @@ enum class MaskMode : uint8_t {
 // NOTE: Custom conversion is required to resolve `auto` value when aliased to `-webkit-mask-source-type`.
 template<> struct CSSValueConversion<MaskMode> { MaskMode operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

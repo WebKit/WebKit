@@ -31,8 +31,7 @@
 #include <WebCore/StyleComputedStyleProperties+InitialInlines.h>
 #undef COMPUTED_STYLE_PROPERTIES_INITIAL_INLINES_INCLUDE_TRAP
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Non-property initial values
 
@@ -46,5 +45,4 @@ inline PageSize ComputedStyle::initialPageSize()
     return CSS::Keyword::Auto { };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

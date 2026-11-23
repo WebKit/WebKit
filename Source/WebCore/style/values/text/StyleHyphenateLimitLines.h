@@ -27,8 +27,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'hyphenate-limit-lines'> = no-limit | <integer [0,∞]>
 // https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-lines
@@ -38,7 +37,6 @@ struct HyphenateLimitLines : ValueOrKeyword<Integer<CSS::Nonnegative, short>, CS
     constexpr bool isNoLimit() const { return isKeyword(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::HyphenateLimitLines)

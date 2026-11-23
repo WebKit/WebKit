@@ -30,8 +30,7 @@
 #include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Type maps
 
@@ -355,5 +354,4 @@ template<auto nR, auto pR, typename V> struct ToStyle<CSS::NumberOrPercentageRes
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

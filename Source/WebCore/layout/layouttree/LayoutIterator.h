@@ -27,8 +27,7 @@
 
 #include <WebCore/LayoutInitialContainingBlock.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 template <typename T>
 class LayoutIterator {
@@ -242,7 +241,6 @@ inline bool LayoutIterator<T>::operator==(const LayoutIterator& other) const
     return m_current == other.m_current;
 }
 
-}
 }
 #include <WebCore/LayoutChildIterator.h>
 

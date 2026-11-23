@@ -30,8 +30,7 @@
 #include "StyleKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<OverflowClipMargin>::operator()(BuilderState& state, const CSSValue& value) -> OverflowClipMargin
 {
@@ -90,5 +89,4 @@ auto CSSValueConversion<OverflowClipMargin>::operator()(BuilderState& state, con
     return { *referenceBox, *length };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

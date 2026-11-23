@@ -28,8 +28,7 @@
 #include <concepts>
 #include <limits>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Dimension calculations are imprecise, often resulting in values of e.g.
 // 44.99998. We need to round if we're really close to the next integer value.
@@ -49,5 +48,4 @@ template<typename T> inline T roundForImpreciseConversion(double value)
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -32,9 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 class DFAMerger {
     typedef MutableRangeList<signed char, uint64_t, 128> CombinedTransitionsMutableRangeList;
@@ -220,8 +218,6 @@ void DFACombiner::combineDFAs(unsigned minimumSize, NOESCAPE const Function<void
     }
 }
 
-}
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif

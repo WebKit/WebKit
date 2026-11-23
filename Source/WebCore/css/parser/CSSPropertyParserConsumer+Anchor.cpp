@@ -42,8 +42,7 @@
 #include "CSSPinnedAnchorNameValue.h"
 #endif
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // <position-area> syntax, rewritten for expository purpose:
 //
@@ -396,5 +395,4 @@ RefPtr<CSSValue> consumePinnedAnchorName(CSSParserTokenRange& range, CSS::Proper
     return consumeDashedIdent(range, state);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

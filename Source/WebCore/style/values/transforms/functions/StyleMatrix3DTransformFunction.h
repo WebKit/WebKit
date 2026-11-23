@@ -30,8 +30,7 @@
 #include "StyleTransformFunctionBase.h"
 #include "TransformationMatrix.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // matrix3d() = matrix3d( <number>#{16} )
 // https://drafts.csswg.org/css-transforms-2/#funcdef-matrix3d
@@ -64,7 +63,6 @@ private:
     TransformationMatrix m_matrix;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::Matrix3DTransformFunction, WebCore::Style::TransformFunctionBase::Type::Matrix3D ==)

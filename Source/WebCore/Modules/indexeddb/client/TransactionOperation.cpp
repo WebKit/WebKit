@@ -32,8 +32,7 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace IDBClient {
+namespace WebCore::IDBClient {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TransactionOperation);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TransactionOperationImpl);
@@ -70,5 +69,4 @@ void TransactionOperation::transitionToComplete(const IDBResultData& data, RefPt
         m_transaction->performCallbackOnOriginThread(lastRef.releaseNonNull(), &TransactionOperation::transitionToCompleteOnThisThread, data);
 }
 
-} // namespace IDBClient
-} // namespace WebCore
+} // namespace WebCore::IDBClient

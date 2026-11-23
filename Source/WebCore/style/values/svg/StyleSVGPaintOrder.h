@@ -27,8 +27,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/EnumTraits.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class PaintType : uint8_t { Fill, Stroke, Markers };
 
@@ -107,7 +106,6 @@ private:
 
 template<> struct CSSValueConversion<SVGPaintOrder> { NODELETE SVGPaintOrder operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGPaintOrder)

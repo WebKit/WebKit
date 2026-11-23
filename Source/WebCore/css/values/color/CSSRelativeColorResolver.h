@@ -35,8 +35,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <optional>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 template<typename D>
 struct RelativeColorResolver {
@@ -143,5 +142,4 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeColorResolver<Descr
     return convertToColor<Descriptor, CSSColorFunctionForm::Relative>(typedColor);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

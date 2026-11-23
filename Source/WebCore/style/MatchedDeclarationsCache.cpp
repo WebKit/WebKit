@@ -44,8 +44,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MatchedDeclarationsCache);
 
@@ -260,5 +259,4 @@ void MatchedDeclarationsCache::sweep()
     m_additionsSinceLastSweep = 0;
 }
 
-}
 }

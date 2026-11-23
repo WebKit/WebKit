@@ -38,8 +38,7 @@
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBox)
     : m_flexBox(flexBox)
@@ -631,5 +630,4 @@ bool FlexLayout::hasDefiniteSizeForPercentResolution(const RenderBox& flexItem)
     return usedFlexBasisIsContent && FlexIntegrationUtils::flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexItem, flexLayoutState);
 }
 
-}
 }

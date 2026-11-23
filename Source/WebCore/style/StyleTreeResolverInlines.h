@@ -28,8 +28,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 inline bool supportsFirstLineAndLetterPseudoElement(const Style::ComputedStyle& style)
 {
@@ -42,5 +41,4 @@ inline bool supportsFirstLineAndLetterPseudoElement(const Style::ComputedStyle& 
         || display == DisplayType::TableCaption;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

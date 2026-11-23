@@ -32,8 +32,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSRelativeAlphaColorResolver.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool RelativeAlphaColor::operator==(const RelativeAlphaColor&) const = default;
 
@@ -93,5 +92,4 @@ IterationStatus CSSValueChildrenVisitor<RelativeAlphaColor>::operator()(NOESCAPE
     return IterationStatus::Continue;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

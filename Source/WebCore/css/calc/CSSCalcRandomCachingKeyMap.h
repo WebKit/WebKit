@@ -30,8 +30,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 class RandomCachingKeyMap final : public RefCounted<RandomCachingKeyMap> {
 public:
@@ -52,5 +51,4 @@ private:
     HashMap<RandomCachingKey, double> m_map;
 };
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

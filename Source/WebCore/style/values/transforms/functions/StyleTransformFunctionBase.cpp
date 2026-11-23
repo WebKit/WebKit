@@ -29,8 +29,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 TextStream& operator<<(TextStream& ts, TransformFunctionBase::Type type)
 {
@@ -128,5 +127,4 @@ auto ToPlatform<TransformFunctionType>::operator()(TransformFunctionType type) -
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

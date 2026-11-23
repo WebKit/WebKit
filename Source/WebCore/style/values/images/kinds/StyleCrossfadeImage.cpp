@@ -50,8 +50,7 @@
 #include <WebKitAdditions/AXCustomColorModeController.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 CrossfadeImage::CrossfadeImage(CrossfadeFunction&& function)
     : GeneratedImage { Type::CrossfadeImage }
@@ -474,5 +473,4 @@ void CrossfadeImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cache
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

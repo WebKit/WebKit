@@ -29,8 +29,7 @@
 #include "StyleComputedStyle.h"
 #include "StyleComputedStyleProperties+ConstructionInlines.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 inline ComputedStyle::ComputedStyle(CreateDefaultStyleTag tag)
     : ComputedStyleProperties { tag }
@@ -42,5 +41,4 @@ inline ComputedStyle::ComputedStyle(const ComputedStyle& other, CloneTag tag)
 {
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

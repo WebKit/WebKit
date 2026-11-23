@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <track-breadth> = <length-percentage [0,∞]> | <flex [0,∞]> | min-content | max-content | auto
 // https://drafts.csswg.org/css-grid/#typedef-track-breadth
@@ -55,7 +54,6 @@ private:
     Variant<LengthPercentage<Nonnegative>, Flex<Nonnegative>, Keyword::MinContent, Keyword::MaxContent, Keyword::Auto> m_value;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::GridTrackBreadth)

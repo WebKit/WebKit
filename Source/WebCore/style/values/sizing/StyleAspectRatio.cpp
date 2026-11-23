@@ -34,8 +34,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<AspectRatio>::operator()(BuilderState& state, const CSSValue& value) -> AspectRatio
 {
@@ -91,5 +90,4 @@ auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, co
     return AspectRatio { a.m_type, Ratio { .numerator = { std::exp(blendedRatio) }, .denominator = { 1 } } };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

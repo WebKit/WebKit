@@ -33,9 +33,7 @@
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct PrefixTreeVertex;
 
@@ -61,7 +59,6 @@ private:
     HashMap<const PrefixTreeVertex*, ActionList> m_actions;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

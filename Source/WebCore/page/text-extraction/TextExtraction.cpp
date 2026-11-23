@@ -126,8 +126,7 @@
 #include "DataDetection.h"
 #endif
 
-namespace WebCore {
-namespace TextExtraction {
+namespace WebCore::TextExtraction {
 
 using namespace JSC;
 
@@ -4050,5 +4049,4 @@ Vector<FilterRule> extractRules(Vector<FilterRuleData>&& data)
     });
 }
 
-} // namespace TextExtraction
-} // namespace WebCore
+} // namespace WebCore::TextExtraction

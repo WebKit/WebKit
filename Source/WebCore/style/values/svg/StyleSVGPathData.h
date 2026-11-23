@@ -32,8 +32,7 @@
 
 #include <WebCore/StylePathFunction.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'d'> = none | <path()>
 // https://svgwg.org/svg2-draft/paths.html#DProperty
@@ -83,7 +82,6 @@ template<> struct Blending<SVGPathData> {
     auto blend(const SVGPathData&, const SVGPathData&, const BlendingContext&) -> SVGPathData;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGPathData)

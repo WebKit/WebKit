@@ -33,8 +33,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 StyleSelfAlignmentData AlignSelf::resolve(const Style::ComputedStyle* containerStyle) const
 {
@@ -190,5 +189,4 @@ auto CSSValueConversion<AlignSelf>::operator()(BuilderState& state, const CSSVal
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

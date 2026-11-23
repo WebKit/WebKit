@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'grid-auto-flow'> = normal | [ [ row | column ] || dense ]
 // FIXME: `normal` is not specified in the link below. Figure out where `normal` comes from and add link.
@@ -96,7 +95,6 @@ template<typename... F> decltype(auto) GridAutoFlow::switchOn(NOESCAPE F&&... f)
 // Customization is needed to return CSSGridAutoFlowValue.
 template<> struct CSSValueCreation<GridAutoFlow> { Ref<CSSValue> operator()(CSSValuePool&, const GridAutoFlow&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::GridAutoFlow)

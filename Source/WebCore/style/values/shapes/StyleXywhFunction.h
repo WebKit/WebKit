@@ -27,12 +27,10 @@
 #include <WebCore/CSSXywhFunction.h>
 #include <WebCore/StyleInsetFunction.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // NOTE: There is no Style::Xywh type. Style conversion of CSS::Xywh yields a Style::Inset.
 template<> struct ToStyle<CSS::Xywh> { auto operator()(const CSS::Xywh&, const BuilderState&) -> Inset; };
 template<> struct ToStyle<CSS::XywhFunction> { auto operator()(const CSS::XywhFunction&, const BuilderState&) -> InsetFunction; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

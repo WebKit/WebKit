@@ -33,8 +33,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class TextBreakingPositionCache {
     WTF_MAKE_TZONE_ALLOCATED(TextBreakingPositionCache);
@@ -86,5 +85,4 @@ private:
     Timer m_delayedEvictionTimer;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

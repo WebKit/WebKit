@@ -34,10 +34,8 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-namespace IDBClient {
+namespace WebCore::IDBClient {
 class IDBConnectionToServerDelegate;
-}
 }
 
 namespace WebCore {

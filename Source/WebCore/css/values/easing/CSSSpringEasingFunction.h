@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // FIXME: Contexts that allow calc() should not be defined using a closed interval - https://drafts.csswg.org/css-values-4/#calc-range
 // If spring() ever goes further with standardization, the allowable ranges for `mass` and `stiffness` should be reconsidered as the
@@ -60,7 +59,6 @@ template<size_t I> const auto& get(const SpringEasingParameters& value)
         return value.initialVelocity;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::SpringEasingParameters, 4)

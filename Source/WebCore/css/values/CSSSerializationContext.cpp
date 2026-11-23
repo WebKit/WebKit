@@ -27,8 +27,7 @@
 
 #include "CSSStyleSheet.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 SerializationContext::SerializationContext() = default;
 SerializationContext::~SerializationContext() = default;
@@ -46,5 +45,4 @@ const SerializationContext& defaultSerializationContext()
     return context;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

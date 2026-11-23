@@ -27,8 +27,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-touch-callout'> = default | none
 // NOTE: There is no standard associated with this property.
@@ -41,5 +40,4 @@ enum class WebkitTouchCallout : bool {
 
 WTF::TextStream& operator<<(WTF::TextStream&, WebkitTouchCallout);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

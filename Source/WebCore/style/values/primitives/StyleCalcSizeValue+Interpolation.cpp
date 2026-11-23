@@ -29,8 +29,7 @@
 #include "StyleCalculationTree+Copy.h"
 #include "StyleCalculationTree+Substitution.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static Calculation::Tree hundredPercent()
 {
@@ -109,5 +108,4 @@ Ref<CalcSizeValue> makeCalcSizeValue(PreparedCalcSizeBasis preparedBasis, Calcul
     return CalcSizeValue::create(WTF::move(basis), WTF::move(calculation), basisHasPercentage, hasPercentage);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

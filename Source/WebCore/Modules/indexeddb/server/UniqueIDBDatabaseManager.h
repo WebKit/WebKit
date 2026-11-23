@@ -28,10 +28,8 @@
 #include <WebCore/IDBDatabaseIdentifier.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 class UniqueIDBDatabaseManager;
-}
 }
 
 namespace WebCore {

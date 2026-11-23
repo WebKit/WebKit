@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleTransformFunctionBase.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // perspective() = perspective( [ <length [0,∞]> | none ] )
 // https://drafts.csswg.org/css-transforms-2/#funcdef-perspective
@@ -66,7 +65,6 @@ private:
     Perspective m_p;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::PerspectiveTransformFunction, WebCore::Style::TransformFunctionBase::Type::Perspective ==)

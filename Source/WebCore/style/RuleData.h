@@ -26,8 +26,7 @@
 #include "StyleRule.h"
 #include <wtf/CompactRefPtrTuple.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class MatchBasedOnRuleHash : unsigned {
     None,
@@ -91,8 +90,7 @@ private:
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 namespace WTF {
 

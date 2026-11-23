@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-transform'> = none | [ capitalize | uppercase | lowercase ] || full-width || full-size-kana | math-auto
 // https://drafts.csswg.org/css-text/#propdef-text-transform
@@ -86,7 +85,6 @@ private:
 
 template<> struct CSSValueConversion<TextTransform> { auto operator()(BuilderState&, const CSSValue&) -> TextTransform; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextTransform)

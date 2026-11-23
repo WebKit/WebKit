@@ -31,8 +31,7 @@
 #include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace DisplayList {
+namespace WebCore::DisplayList {
 
 void applyItem(GraphicsContext& context, const AffineTransform& baseTransform, ControlFactory& controlFactory, const Item& item)
 {
@@ -87,5 +86,4 @@ TextStream& operator<<(TextStream& ts, const Item& item)
     return ts;
 }
 
-} // namespace DisplayList
-} // namespace WebCore
+} // namespace WebCore::DisplayList

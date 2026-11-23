@@ -30,13 +30,9 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-namespace FragmentDirectiveRangeFinder {
+namespace WebCore::FragmentDirectiveRangeFinder {
 
 WEBCORE_EXPORT const Vector<SimpleRange> findRangesFromTextDirectives(Vector<ParsedTextDirective>& parsedTextDirectives, Document&);
 std::optional<SimpleRange> findRangeFromTextDirective(ParsedTextDirective, Document&);
 
-}
-
-} // namespace WebCore
+} // namespace WebCore::FragmentDirectiveRangeFinder

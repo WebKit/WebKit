@@ -34,8 +34,7 @@
 #include "ColorSerialization.h"
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 template<typename Descriptor, unsigned Index>
 using RelativeColorComponent = GetCSSColorParseTypeWithCalcAndSymbolsComponentResult<Descriptor, Index>;
@@ -156,5 +155,4 @@ template<typename D> struct CSSValueChildrenVisitor<RelativeColor<D>> {
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

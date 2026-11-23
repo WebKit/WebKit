@@ -27,8 +27,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Utilities and macros for implementing coordinating list property groups.
 // https://drafts.csswg.org/css-values-4/#coordinating-list-property
@@ -300,5 +299,4 @@ bool allPropertiesAreSet(const T& value)
     });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

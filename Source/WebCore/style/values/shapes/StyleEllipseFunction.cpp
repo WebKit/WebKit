@@ -36,8 +36,7 @@
 #include <WebCore/StylePosition.h>
 #include <wtf/TinyLRUCache.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Path Caching
 
@@ -205,5 +204,4 @@ AcceleratedEffectEllipseFunction Evaluation<EllipseFunction, AcceleratedEffectEl
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

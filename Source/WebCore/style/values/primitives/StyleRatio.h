@@ -27,8 +27,7 @@
 #include <WebCore/CSSRatio.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <ratio> = <number [0,∞]> [ / <number [0,∞]> ]?
 // https://drafts.csswg.org/css-values-4/#ratio-value
@@ -54,7 +53,6 @@ DEFINE_TYPE_MAPPING(CSS::Ratio, Ratio)
 // `Ratio` is special-cased to return a `CSSRatioValue`.
 template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const Ratio&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SLASH_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Ratio, 2)

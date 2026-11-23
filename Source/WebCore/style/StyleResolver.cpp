@@ -107,8 +107,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace HTMLNames;
 
@@ -959,5 +958,4 @@ CustomFunctionRegistry& Resolver::ensureCustomFunctionRegistry()
     return *m_customFunctionRegistry;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

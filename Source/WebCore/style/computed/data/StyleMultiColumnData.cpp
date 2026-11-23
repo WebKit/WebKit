@@ -28,8 +28,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MultiColumnData);
 
@@ -88,5 +87,4 @@ void MultiColumnData::dumpDifferences(TextStream& ts, const MultiColumnData& oth
 }
 #endif // !LOG_DISABLED
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

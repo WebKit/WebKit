@@ -33,8 +33,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/ASCIILiteral.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Unit Literal Type
 
@@ -1590,5 +1589,4 @@ template<auto unit, typename T> constexpr decltype(auto) convertToValueInUnitsOf
     return UnitTraits<typename T::UnitType>::template convert<unit>(value.value, value.unit);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

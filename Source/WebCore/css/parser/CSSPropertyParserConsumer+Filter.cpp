@@ -51,8 +51,7 @@
 #include "StyleFilter.h"
 #include <wtf/text/StringView.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 template<CSSValueID filterFunction> static decltype(auto) consumeNumberOrPercentFilterParameter(CSSParserTokenRange& args, CSS::PropertyParserState& state)
 {
@@ -478,5 +477,4 @@ std::optional<Style::Filter> parseFilterValueListOrNoneRaw(StringView string, co
     return Style::toStyle(*filter, *CheckedPtr { builderState.ptr() });
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

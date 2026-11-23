@@ -26,13 +26,11 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-box-flex'> = <number>
 // Obsolete.
 // https://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#propdef-box-flex
 using WebkitBoxFlex = Number<CSS::All, float>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

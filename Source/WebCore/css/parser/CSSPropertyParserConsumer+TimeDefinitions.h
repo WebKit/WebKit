@@ -27,8 +27,7 @@
 #include "CSSPrimitiveNumericTypes+Canonicalization.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct TimeValidator {
     static constexpr std::optional<CSS::TimeUnit> validate(CSSUnitType unitType, CSS::PropertyParserState&, CSSPropertyParserOptions)
@@ -54,5 +53,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::TimeRaw<R, V>> {
     using DimensionToken = DimensionConsumer<CSS::Time<R, V>, TimeValidator>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

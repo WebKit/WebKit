@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumeric.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <clip-edge> = <length> | auto
 struct ClipEdge : ValueOrKeyword<Length<>, Keyword::Auto> {
@@ -106,8 +105,7 @@ private:
 // Specialized to return a `DeprecatedCSSOMPrimitiveValue`.
 template<> struct DeprecatedCSSOMValueCreation<ClipRect> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const ClipRect&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::ClipRect);
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::ClipEdge);

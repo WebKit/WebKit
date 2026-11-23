@@ -26,10 +26,8 @@
 
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 using FillRule = Variant<Keyword::Nonzero, Keyword::Evenodd>;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

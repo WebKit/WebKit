@@ -26,13 +26,11 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-box-ordinal-group'> = <integer [1,∞]>
 // Obsolete.
 // https://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#propdef-box-ordinal-group
 using WebkitBoxOrdinalGroup = Integer<CSS::Positive>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

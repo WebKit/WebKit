@@ -30,8 +30,7 @@
 #include "StyleUnevaluatedCalcSize.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Rebuilding the CSS side keeps serialization in step with the parser, and lets serialization and
 // CSSValue creation share one path.
@@ -88,5 +87,4 @@ template<SizeOrKeywordDerived StyleType> struct CSSValueCreation<StyleType> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

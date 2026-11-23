@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <steps-easing-function> = steps( <integer>, <steps-easing-function-position>? )
 // <steps-easing-function-position> = jump-start | jump-end | jump-none | jump-both | start | end
@@ -90,8 +89,7 @@ template<typename T, typename K, auto shouldSerializeKeyword> struct Serialize<S
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::StepsEasingParameters, 1)
 

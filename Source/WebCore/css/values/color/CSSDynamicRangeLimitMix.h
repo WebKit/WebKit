@@ -28,8 +28,7 @@
 #include "CSSDynamicRangeLimit.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // dynamic-range-limit-mix() = dynamic-range-limit-mix( [ <'dynamic-range-limit'> && <percentage [0,100]> ]#{2,} )
 // https://drafts.csswg.org/css-color-hdr/#dynamic-range-limit-mix
@@ -48,7 +47,6 @@ inline bool operator==(const UniqueRef<DynamicRangeLimitMixFunction>& a, const U
     return arePointingToEqualData(a, b);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::DynamicRangeLimitMixFunction)

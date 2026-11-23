@@ -28,8 +28,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 enum class ForceNormalization : bool { No, Yes };
 
@@ -90,5 +89,4 @@ auto normalizedMixPercentages(const auto& components) -> NormalizedMixPercentage
     return { WTF::move(percentages), leftover };
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

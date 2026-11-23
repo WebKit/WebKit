@@ -29,8 +29,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<WhiteSpaceTrim>::operator()(BuilderState& state, const CSSValue& value) -> WhiteSpaceTrim
 {
@@ -65,5 +64,4 @@ auto CSSValueConversion<WhiteSpaceTrim>::operator()(BuilderState& state, const C
     return result;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -34,8 +34,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LineBox);
 
@@ -148,6 +147,4 @@ InlineRect LineBox::logicalContentBoxForInlineBox(const Box& layoutBox) const
     return logicalRectForInlineLevelBox(layoutBox);
 }
 
-} // namespace Layout
-} // namespace WebCore
-
+} // namespace WebCore::Layout

@@ -29,8 +29,7 @@
 #include "ColorBlending.h"
 #include "GraphicsTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 WebCore::Color blendSourceOver(const ColorLayersResolver& colorLayers)
 {
@@ -46,5 +45,4 @@ WebCore::Color blendSourceOver(const ColorLayersResolver& colorLayers)
     return *resultingColor;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

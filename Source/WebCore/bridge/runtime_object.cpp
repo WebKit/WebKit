@@ -35,8 +35,7 @@
 
 using namespace WebCore;
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 WEBCORE_EXPORT const ClassInfo RuntimeObject::s_info = { "RuntimeObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeObject) };
 
@@ -319,5 +318,4 @@ JSC::GCClient::IsoSubspace* RuntimeObject::subspaceForImpl(JSC::VM& vm)
     return &downcast<JSVMClientData>(vm.clientData)->runtimeObjectSpace();
 }
 
-}
 }

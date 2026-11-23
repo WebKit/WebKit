@@ -27,13 +27,11 @@
 
 #include "DeprecatedCSSOMPrimitiveValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ClipRect>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const ClipRect& value)
 {
     return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::CSS

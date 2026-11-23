@@ -27,8 +27,7 @@
 #include <WebCore/CSSPosition.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <ellipse()> = ellipse( <radial-size>? [ at <position> ]? )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-ellipse
@@ -55,7 +54,6 @@ template<size_t I> const auto& get(const Ellipse& value)
 
 template<> struct Serialize<Ellipse> { void operator()(StringBuilder&, const SerializationContext&, const Ellipse&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Ellipse, 2)

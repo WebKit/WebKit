@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -127,5 +126,4 @@ TextStream& operator<<(TextStream& ts, const ViewFunctionParameters& value)
     return ts << value.axis << " "_s << value.insets;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

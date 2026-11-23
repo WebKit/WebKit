@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<auto R, typename V> WTF::TextStream& operator<<(WTF::TextStream& ts, const Length<R, V>& value)
 {
@@ -59,5 +58,4 @@ template<auto nR, auto pR, typename V> WTF::TextStream& operator<<(WTF::TextStre
     return ts << value.value;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

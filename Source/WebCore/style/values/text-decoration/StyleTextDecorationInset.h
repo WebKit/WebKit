@@ -27,10 +27,8 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 using TextDecorationInsetPair = MinimallySerializingSpaceSeparatedPair<LengthPercentage<>>;
-}
 }
 
 // text-decoration-inset stores 'auto' or a length-percentage pair, so ValueOrKeyword needs a Markable
@@ -54,8 +52,7 @@ template<> struct MarkableTraits<WebCore::Style::TextDecorationInsetPair> {
 };
 }
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-decoration-inset'> = auto | <length-percentage>{1,2}
 // The first value applies to the start endpoint, the second to the end endpoint of the line
@@ -96,7 +93,6 @@ template<> struct CSSValueConversion<TextDecorationInsetPair> {
     auto operator()(BuilderState&, const CSSValue&) -> TextDecorationInsetPair;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextDecorationInset)

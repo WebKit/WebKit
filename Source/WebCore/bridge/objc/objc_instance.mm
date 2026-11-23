@@ -56,8 +56,7 @@
 - (NSString *)_web_description;
 @end
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 NODELETE static RetainPtr<NSString>& globalException()
 {
@@ -505,7 +504,6 @@ JSC::JSValue ObjcInstance::valueOf(JSGlobalObject* lexicalGlobalObject) const
     return stringValue(lexicalGlobalObject);
 }
 
-}
 }
 
 @implementation NSObject (WebDescriptionCategory)

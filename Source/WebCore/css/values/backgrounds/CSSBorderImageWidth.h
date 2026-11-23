@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct BorderImageWidthValue {
     using LengthPercentage = CSS::LengthPercentage<Nonnegative>;
@@ -101,8 +100,7 @@ template<> struct CSSValueCreation<BorderImageWidth> { auto operator()(CSSValueP
 
 template<> struct Serialize<BorderImageWidth> { void operator()(StringBuilder&, const SerializationContext&, const BorderImageWidth&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::BorderImageWidth)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::BorderImageWidth::Value)

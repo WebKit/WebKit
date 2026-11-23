@@ -26,12 +26,10 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-animation-delay> = <time>
 // https://www.w3.org/TR/css-animations-1/#propdef-animation-delay
 using SingleAnimationDelay = Time<>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Serialization
 
@@ -70,5 +69,4 @@ template<auto nR, auto pR, typename V> struct Serialize<NumberOrPercentageResolv
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

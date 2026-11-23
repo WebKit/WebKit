@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'top'>/<'right'>/<'bottom'>/<'left'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-position/#insets
@@ -41,7 +40,6 @@ struct InsetEdge : PrimitiveNumericOrKeyword<LengthPercentage<CSS::AllLayoutUnit
 // https://drafts.csswg.org/css-position/#propdef-inset
 using InsetBox = MinimallySerializingSpaceSeparatedRectEdges<InsetEdge>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::InsetEdge)

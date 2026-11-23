@@ -27,10 +27,8 @@
 #include <WebCore/StyleBackgroundLayer.h>
 #include <WebCore/StyleCoordinatedValueList.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using BackgroundLayers = CoordinatedValueList<BackgroundLayer>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

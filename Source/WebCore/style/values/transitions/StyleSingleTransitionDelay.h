@@ -26,12 +26,10 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-transition-delay> = <time>
 // https://www.w3.org/TR/css-transitions-1/#propdef-transition-delay
 using SingleTransitionDelay = Time<>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

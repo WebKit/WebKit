@@ -28,9 +28,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-namespace HTTPHeaderValues {
+namespace WebCore::HTTPHeaderValues {
 
 const String& textPlainContentType()
 {
@@ -61,8 +59,6 @@ const String& maxAge0()
 {
     static NeverDestroyed<const String> value(MAKE_STATIC_STRING_IMPL("max-age=0"));
     return value;
-}
-
 }
 
 }

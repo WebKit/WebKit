@@ -33,8 +33,7 @@
 #include <WebCore/StyleSingleTransitionProperty.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // macro(ownerType, property, type, lowercaseName, uppercaseName)
 
@@ -134,5 +133,4 @@ TextStream& operator<<(TextStream&, const Transition&);
 #undef FOR_EACH_TRANSITION_ENUM
 #undef FOR_EACH_TRANSITION_PROPERTY
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -34,8 +34,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 LineBoxVerticalAligner::LineBoxVerticalAligner(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
@@ -522,5 +521,3 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
 }
 
 }
-}
-

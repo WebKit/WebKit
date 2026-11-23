@@ -28,8 +28,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<Polygon>::operator()(StringBuilder& builder, const SerializationContext& context, const Polygon& value)
 {
@@ -45,5 +44,4 @@ void Serialize<Polygon>::operator()(StringBuilder& builder, const SerializationC
     serializationForCSS(builder, context, value.vertices);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

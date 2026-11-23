@@ -35,8 +35,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "SystemFontDatabase.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -72,5 +71,4 @@ auto Blending<FontWeight>::blend(const FontWeight& a, const FontWeight& b, const
     return Style::blend(a.number(), b.number(), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

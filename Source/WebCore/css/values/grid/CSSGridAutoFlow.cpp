@@ -27,13 +27,11 @@
 
 #include "CSSGridAutoFlowValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 Ref<CSSValue> CSSValueCreation<GridAutoFlow>::operator()(CSSValuePool&, const GridAutoFlow& value)
 {
     return CSSGridAutoFlowValue::create(value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

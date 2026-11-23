@@ -33,8 +33,7 @@
 #include "StyleComputedStyleProperties+SettersInlines.h"
 #undef COMPUTED_STYLE_PROPERTIES_SETTERS_INLINES_INCLUDE_TRAP
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Non-property setters
 
@@ -98,5 +97,4 @@ inline void ComputedStyle::resetBorderRadius()
     setBorderBottomRightRadius(initialBorderBottomRightRadius());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

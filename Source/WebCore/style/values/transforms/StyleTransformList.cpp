@@ -32,8 +32,7 @@
 #include "StyleMatrix3DTransformFunction.h"
 #include "TransformationMatrix.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 void TransformList::apply(TransformationMatrix& matrix, const FloatSize& size, ZoomFactor zoom, unsigned start) const
 {
@@ -192,5 +191,4 @@ auto Blending<TransformList>::blend(const TransformList& from, const TransformLi
     });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

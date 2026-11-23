@@ -34,8 +34,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -105,5 +104,4 @@ auto Blending<GridTrackBreadth>::blend(const GridTrackBreadth& from, const GridT
     return Style::blend(from.length(), to.length(), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

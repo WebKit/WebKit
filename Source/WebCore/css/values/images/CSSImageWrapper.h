@@ -28,8 +28,7 @@
 #include "CSSValue.h"
 #include "CSSValueTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // Utility type that wraps an `<image>` production value for use with the strong style type system.
 struct ImageWrapper {
@@ -53,5 +52,4 @@ template<> struct DeprecatedCSSOMValueCreation<ImageWrapper> { Ref<DeprecatedCSS
 
 template<> struct Serialize<ImageWrapper> { void operator()(StringBuilder&, const SerializationContext&, const ImageWrapper&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

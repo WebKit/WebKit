@@ -33,8 +33,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 namespace {
 
@@ -275,5 +274,4 @@ std::optional<InlineDisplay::Content> buildSVGTextDisplayContent(const ElementBo
     return content;
 }
 
-}
 }

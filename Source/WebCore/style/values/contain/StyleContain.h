@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'contain'> = none | strict@(aliased-to=[size layout paint style]) | content@(aliased-to=[layout paint style]) | [ [size | inline-size] || layout || style || paint ]
 // https://drafts.csswg.org/css-contain-2/#contain-property
@@ -98,7 +97,6 @@ private:
 
 template<> struct CSSValueConversion<Contain> { auto operator()(BuilderState&, const CSSValue&) -> Contain; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Contain)

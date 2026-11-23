@@ -29,8 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // https://drafts.csswg.org/css-values-5/#substitution-context
 // A substitution context is the dependency type plus values specific to that type: a property name
@@ -111,5 +110,4 @@ private:
     Guard* m_top { nullptr };
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

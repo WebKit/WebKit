@@ -24,8 +24,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class GridPositionSide : uint8_t {
     ColumnStartSide,
@@ -34,5 +33,4 @@ enum class GridPositionSide : uint8_t {
     RowEndSide
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

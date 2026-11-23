@@ -28,8 +28,7 @@
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 #include <WebCore/StyleZoomPrimitives.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // `EvaluationMinimum` is a specialized version of the `Evaluation` protocol
 // for `LengthPercentage` and `LengthPercentage + Keywords` types.
@@ -81,5 +80,4 @@ template<LengthPercentageOrKeywordDerived StyleType, typename Result> struct Eva
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

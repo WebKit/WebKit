@@ -31,9 +31,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 // A ImmutableNFANodeBuilder let you build an NFA node by adding states and linking with other nodes.
 // When a builder is destructed, all its properties are finalized into the NFA. Using the NFA with a live
@@ -227,7 +225,6 @@ private:
     bool m_finalized { true };
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

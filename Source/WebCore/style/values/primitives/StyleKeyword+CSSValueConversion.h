@@ -31,8 +31,7 @@
 #include "StyleKeyword+Mappings.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename T> requires std::is_enum_v<T> struct CSSValueConversion<T> {
     T operator()(BuilderState&, const CSSKeywordValue& value)
@@ -74,5 +73,4 @@ private:
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

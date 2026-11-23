@@ -34,8 +34,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -53,5 +52,4 @@ RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange& range, CSS::Property
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

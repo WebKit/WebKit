@@ -27,8 +27,7 @@
 
 #include <WebCore/BoxSides.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
 enum class PositionTryOrder : uint8_t {
@@ -43,5 +42,4 @@ NODELETE LogicalBoxAxis selfAxisForPositionTryOrder(PositionTryOrder, WritingMod
 
 WTF::TextStream& operator<<(WTF::TextStream&, PositionTryOrder);
 
-}
 }

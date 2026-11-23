@@ -28,8 +28,7 @@
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 #include <WebCore/SVGPathByteStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <path()> = path( <'fill-rule'>? , <string> )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-path
@@ -60,7 +59,6 @@ template<> struct Serialize<Path> { void operator()(StringBuilder&, const Serial
 template<> struct ComputedStyleDependenciesCollector<Path::Data> { NODELETE void operator()(ComputedStyleDependencies&, const Path::Data&); };
 template<> struct CSSValueChildrenVisitor<Path::Data> { NODELETE IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const Path::Data&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Path, 2)

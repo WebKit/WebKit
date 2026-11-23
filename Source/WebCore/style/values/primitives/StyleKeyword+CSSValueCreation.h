@@ -32,8 +32,7 @@
 #include "StyleKeyword+ValueRepresentationNeeded.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<EnumWithoutValueRepresentation T> struct CSSValueCreation<T> {
     Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, T value)
@@ -61,5 +60,4 @@ template<EnumWithValueRepresentation T> struct CSSValueCreation<T> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

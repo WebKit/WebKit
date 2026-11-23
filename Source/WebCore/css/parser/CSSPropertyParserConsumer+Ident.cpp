@@ -30,8 +30,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
 {
@@ -147,5 +146,4 @@ std::optional<CSSWideKeyword> consumeCSSWideKeyword(CSSParserTokenRange& range)
     return keyword;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

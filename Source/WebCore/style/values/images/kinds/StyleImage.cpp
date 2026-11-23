@@ -35,8 +35,7 @@
 #include "RenderElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static std::optional<SourceImage> convertToLuminanceMask(GraphicsContext& context, SourceImage&& image)
 {
@@ -602,5 +601,4 @@ ConcreteObjectSize Image::negotiate(const RenderElement& renderer, const ImageSi
     return context.resolve(naturalDimensions(renderer, context));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

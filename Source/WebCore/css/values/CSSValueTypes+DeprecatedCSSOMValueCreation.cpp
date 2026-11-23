@@ -29,8 +29,7 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - DeprecatedCSSOMValue Creation
 
@@ -64,5 +63,4 @@ template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationS
     return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::Slash, owner);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

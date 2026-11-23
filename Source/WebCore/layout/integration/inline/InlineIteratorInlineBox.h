@@ -27,9 +27,7 @@
 
 #include "InlineIteratorBox.h"
 
-namespace WebCore {
-
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 class InlineBox : public Box {
 public:
@@ -78,7 +76,6 @@ inline bool InlineBox::isSplit() const
     return nextInlineBoxLineRightward() || nextInlineBoxLineLeftward();
 }
 
-}
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::InlineBox)

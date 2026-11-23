@@ -28,8 +28,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <repeat-style> = repeat-x@(alias=[repeat no-repeat]) | repeat-y@(alias=[no-repeat repeat]) | [repeat | space | round | no-repeat]{1,2}
 // https://www.w3.org/TR/css-backgrounds-3/#typedef-repeat-style
@@ -60,7 +59,6 @@ struct RepeatStyle {
 
 template<> struct CSSValueConversion<RepeatStyle> { RepeatStyle operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::RepeatStyle)

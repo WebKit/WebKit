@@ -30,8 +30,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -76,5 +75,4 @@ auto CSSValueConversion<AnimationAction>::operator()(BuilderState& state, const 
     return CSS::Keyword::None { };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

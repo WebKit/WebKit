@@ -28,8 +28,7 @@
 #include "GridTypeAliases.h"
 #include "LayoutUnit.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 enum class ExtraSpaceDistributionTarget : bool { BaseSizes, GrowthLimits };
 
@@ -60,5 +59,4 @@ public:
         const PlacedGridItemSpanList&, UnsizedTracks&, LayoutUnit gapSize, ResolveIntrinsicTrackSizesPhase);
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

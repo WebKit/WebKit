@@ -29,8 +29,7 @@
 #include <WebCore/InlineDisplayLine.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace InlineDisplay {
+namespace WebCore::InlineDisplay {
 
 using Boxes = Vector<Box, 2>;
 using Lines = Vector<Line, 1>;
@@ -59,5 +58,4 @@ private:
     std::unique_ptr<LineEllipses> lineEllipses;
 };
 
-}
 }

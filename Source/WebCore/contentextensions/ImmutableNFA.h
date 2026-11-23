@@ -30,9 +30,7 @@
 #include <WebCore/ContentExtensionsDebugging.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 template <typename CharacterType>
 struct ImmutableRange {
@@ -80,7 +78,6 @@ struct ImmutableNFA {
     }
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

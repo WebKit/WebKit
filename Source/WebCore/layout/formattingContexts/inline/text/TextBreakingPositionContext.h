@@ -31,8 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Hasher.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 enum class WhiteSpaceCollapseBehavior : uint8_t {
     CollapseAll,
@@ -86,8 +85,7 @@ inline TextBreakingPositionContext::TextBreakingPositionContext(const Style::Com
 
 void add(Hasher&, const TextBreakingPositionContext&);
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout
 
 namespace WTF {
 

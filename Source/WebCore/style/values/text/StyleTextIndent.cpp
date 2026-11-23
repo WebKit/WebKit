@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -110,5 +109,4 @@ auto Blending<TextIndent>::blend(const TextIndent& a, const TextIndent& b, const
     return TextIndent { Style::blend(a.amount, b.amount, context), a.hanging, a.eachLine };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

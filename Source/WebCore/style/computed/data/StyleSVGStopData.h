@@ -34,8 +34,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGStopData);
 class SVGStopData : public RefCounted<SVGStopData> {
@@ -60,5 +59,4 @@ private:
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SVGStopData&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

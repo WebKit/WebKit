@@ -27,8 +27,7 @@
 #include <WebCore/CSSBorderRadius.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <xywh()> = xywh( <length-percentage>{2} <length-percentage [0,∞]>{2} [ round <'border-radius'> ]? )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-xywh
@@ -56,7 +55,6 @@ template<size_t I> const auto& get(const Xywh& value)
 
 template<> struct Serialize<Xywh> { void operator()(StringBuilder&, const SerializationContext&, const Xywh&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Xywh, 3)

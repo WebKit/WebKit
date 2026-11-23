@@ -32,9 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 class CombinedFiltersAlphabet {
 public:
@@ -57,7 +55,6 @@ private:
     Vector<std::unique_ptr<Term>> m_internedTermsStorage;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

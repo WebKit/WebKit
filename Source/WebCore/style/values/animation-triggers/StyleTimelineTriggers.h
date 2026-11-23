@@ -28,10 +28,8 @@
 #include <WebCore/StyleCoordinatedValueList.h>
 #include <WebCore/StyleTimelineTrigger.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using TimelineTriggers = CoordinatedValueList<TimelineTrigger>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

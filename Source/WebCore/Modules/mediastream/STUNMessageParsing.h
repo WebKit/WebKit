@@ -30,8 +30,7 @@
 
 #if ENABLE(WEB_RTC)
 
-namespace WebCore {
-namespace WebRTC {
+namespace WebCore::WebRTC {
 
 struct STUNMessageLengths {
     size_t messageLength { 0 };
@@ -43,7 +42,6 @@ NODELETE WEBCORE_EXPORT std::optional<STUNMessageLengths> getSTUNOrTURNMessageLe
 enum class MessageType { STUN, Data };
 WEBCORE_EXPORT Vector<uint8_t> extractMessages(Vector<uint8_t>&&, MessageType, NOESCAPE const Function<void(std::span<const uint8_t> data)>&);
 
-} // namespace WebRTC
-} // namespace WebCore
+} // namespace WebCore::WebRTC
 
 #endif

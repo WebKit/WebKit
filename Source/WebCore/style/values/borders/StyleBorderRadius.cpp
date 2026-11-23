@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -105,5 +104,4 @@ auto Evaluation<BorderRadius, LayoutRoundedRect::Radii>::operator()(const Border
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class CalcSizeValue;
 NODELETE Ref<CalcSizeValue> CLANG_POINTER_CONVERSION protect(CalcSizeValue&);
@@ -85,5 +84,4 @@ WTF::TextStream& operator<<(WTF::TextStream&, const UnevaluatedCalcSize&);
 NODELETE WEBCORE_EXPORT CSSValueID calcSizeBasisKeyword(const CalcSizeValue&);
 NODELETE WEBCORE_EXPORT bool calcSizeHasPercentage(const CalcSizeValue&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

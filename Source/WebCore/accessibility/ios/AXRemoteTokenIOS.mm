@@ -26,9 +26,7 @@
 #import "config.h"
 #import "AXRemoteTokenIOS.h"
 
-namespace WebCore {
-
-namespace Accessibility {
+namespace WebCore::Accessibility {
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -41,6 +39,4 @@ RetainPtr<NSData> newAccessibilityRemoteToken(NSString *uuidString)
 
 #endif
 
-} // namespace Accessibility
-
-} // namespace WebCore
+} // namespace WebCore::Accessibility

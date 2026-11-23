@@ -39,8 +39,7 @@
 #include <wtf/RunLoop.h>
 #endif
 
-namespace WebCore {
-namespace StorageUtilities {
+namespace WebCore::StorageUtilities {
 
 std::optional<ClientOrigin> readOriginFromFile(const String& filePath)
 {
@@ -87,5 +86,4 @@ String encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOrig
     return base64URLEncodeToString(crypto->computeHash());
 }
 
-} // namespace StorageUtilities
-} // namespace WebCore
+} // namespace WebCore::StorageUtilities

@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -147,5 +146,4 @@ auto Blending<BorderImageWidth>::blend(const BorderImageWidth& a, const BorderIm
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

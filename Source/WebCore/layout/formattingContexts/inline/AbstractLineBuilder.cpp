@@ -31,8 +31,7 @@
 #include "InlineFormattingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 AbstractLineBuilder::AbstractLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
     : m_line(inlineFormattingContext)
@@ -118,5 +117,4 @@ InlineLayoutState& AbstractLineBuilder::layoutState()
     return formattingContext().layoutState();
 }
 
-}
 }

@@ -26,8 +26,7 @@
 
 #include <wtf/OptionSet.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ComputedStyle;
 
@@ -97,5 +96,4 @@ WTF::TextStream& operator<<(WTF::TextStream&, DifferenceContextSensitiveProperty
 void dumpDifferences(WTF::TextStream&, const ComputedStyle&, const ComputedStyle&);
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

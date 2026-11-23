@@ -32,8 +32,7 @@
 #include "CSSPropertyParserState.h"
 #include "CSSValueKeywords.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeObjectViewBox(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -46,5 +45,4 @@ RefPtr<CSSValue> consumeObjectViewBox(CSSParserTokenRange& range, CSS::PropertyP
     return consumeBasicShapeRect(range, state);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

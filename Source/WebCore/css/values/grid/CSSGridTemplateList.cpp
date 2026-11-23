@@ -27,13 +27,11 @@
 
 #include "CSSGridTemplateListValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 Ref<CSSValue> CSSValueCreation<GridTemplateList>::operator()(CSSValuePool&, const GridTemplateList& value)
 {
     return CSSGridTemplateListValue::create(value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

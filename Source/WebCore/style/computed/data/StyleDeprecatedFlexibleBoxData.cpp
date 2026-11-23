@@ -28,8 +28,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DeprecatedFlexibleBoxData);
 
@@ -86,5 +85,4 @@ void DeprecatedFlexibleBoxData::dumpDifferences(TextStream& ts, const Deprecated
 }
 #endif // !LOG_DISABLED
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

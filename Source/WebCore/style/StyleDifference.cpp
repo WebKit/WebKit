@@ -31,8 +31,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleExtractor.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 NODELETE static Visibility visibilityIncludingForceHidden(const ComputedStyle& style)
 {
@@ -1155,5 +1154,4 @@ void dumpDifferences(TextStream& ts, const Style::ComputedStyle& a, const Style:
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

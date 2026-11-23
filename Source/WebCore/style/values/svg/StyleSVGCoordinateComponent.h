@@ -26,15 +26,13 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'x'/'y'> = <length-percentage>
 // https://svgwg.org/svg2-draft/geometry.html#X
 // https://svgwg.org/svg2-draft/geometry.html#Y
 DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGCoordinateComponent, LengthPercentage<>);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGCoordinateComponent)

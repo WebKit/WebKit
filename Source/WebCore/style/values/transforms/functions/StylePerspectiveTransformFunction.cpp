@@ -34,8 +34,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 PerspectiveTransformFunction::PerspectiveTransformFunction(Perspective p)
     : TransformFunctionBase(TransformFunctionBase::Type::Perspective)
@@ -131,5 +130,4 @@ void PerspectiveTransformFunction::dump(TextStream& ts) const
     ts << type() << '(' << m_p << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

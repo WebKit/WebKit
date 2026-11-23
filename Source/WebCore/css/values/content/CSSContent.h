@@ -29,8 +29,7 @@
 #include "CSSImageWrapper.h"
 #include "CSSString.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <leader()>            = leader( <leader-type> )
 // <target>              = <target-counter()> | <target-counters()> | <target-text()>
@@ -200,8 +199,7 @@ template<> struct DeprecatedCSSOMValueCreation<ContentCountersFunction> { Ref<De
 // Specialized to return a `DeprecatedCSSOMValueList` only when both `visible` and `alt` are present.
 template<> struct DeprecatedCSSOMValueCreation<Content::Data> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const Content::Data&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ContentCounterFunctionParameters, 2)
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ContentCountersFunctionParameters, 3)

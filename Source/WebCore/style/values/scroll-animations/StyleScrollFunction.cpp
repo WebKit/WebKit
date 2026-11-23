@@ -31,8 +31,7 @@
 #include "StyleKeyword+CSSValueCreation.h"
 #include "StyleKeyword+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -89,5 +88,4 @@ TextStream& operator<<(TextStream& ts, const ScrollFunctionParameters& value)
     return ts << value.scroller << " "_s << value.axis;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include "CSSGridLineNames.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Serialization
 
@@ -50,5 +49,4 @@ TextStream& operator<<(TextStream& ts, const GridLineNames& value)
     return ts << '[' << value.value << ']';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -59,5 +58,4 @@ auto CSSValueConversion<FlexWrap>::operator()(BuilderState& state, const CSSValu
     return flexWrapValue->flexWrap();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

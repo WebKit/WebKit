@@ -29,9 +29,7 @@
 #include "RenderBox.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-
-namespace BlockStepSizing {
+namespace WebCore::BlockStepSizing {
 
 bool childHasSupportedStyle(const Style::ComputedStyle& childStyle)
 {
@@ -70,6 +68,4 @@ NO_RETURN_DUE_TO_ASSERT void distributeExtraSpaceToChildContentArea(RenderBox& /
     ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-} // namespace BlockStepSizing
-
-} // namespace WebCore
+} // namespace WebCore::BlockStepSizing

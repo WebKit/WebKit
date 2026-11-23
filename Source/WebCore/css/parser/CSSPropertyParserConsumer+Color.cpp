@@ -69,8 +69,7 @@
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 template<typename T> static CSS::Color makeCSSColor(T&& unresolvedColorKind)
 {
@@ -1050,5 +1049,4 @@ RefPtr<CSSValue> consumeDynamicRangeLimit(CSSParserTokenRange& range, CSS::Prope
     return CSSDynamicRangeLimitValue::create(WTF::move(*dynamicRangeLimit));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

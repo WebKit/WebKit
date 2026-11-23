@@ -27,8 +27,7 @@
 
 #include <WebCore/InlineLineBox.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineFormattingContext;
 class LineBox;
@@ -55,5 +54,4 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
 };
 
-}
 }

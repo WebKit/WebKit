@@ -32,8 +32,7 @@
 #include <WebCore/ScriptWrappableInlines.h>
 #include <WebCore/WebCoreOpaqueRoot.h>
 
-namespace JSC {
-namespace JSCastingHelpers {
+namespace JSC::JSCastingHelpers {
 
 template<>
 struct InheritsTraits<WebCore::JSNode> {
@@ -46,8 +45,7 @@ struct InheritsTraits<WebCore::JSNode> {
     }
 };
 
-} // namespace JSCastingHelpers
-} // namespace JSC
+} // namespace JSC::JSCastingHelpers
 
 namespace WebCore {
 

@@ -27,8 +27,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <mask-border-outset-value> = <length [0,∞]> | <number [0,∞]>
 struct MaskBorderOutsetValue {
@@ -77,8 +76,7 @@ DEFINE_TYPE_WRAPPER_GET(MaskBorderOutset, values);
 
 template<> struct CSSValueCreation<MaskBorderOutset> { auto operator()(CSSValuePool&, const MaskBorderOutset&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::MaskBorderOutset)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::MaskBorderOutsetValue)

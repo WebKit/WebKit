@@ -33,9 +33,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct PrefixTreeEdge {
     const Term* term;
@@ -459,7 +457,6 @@ bool CombinedURLFilters::processNFAs(size_t maxNFASize, NOESCAPE const Function<
     return true;
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

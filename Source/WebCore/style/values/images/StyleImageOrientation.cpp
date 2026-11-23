@@ -29,8 +29,7 @@
 
 #include "ImageOrientation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Platform
 
@@ -43,5 +42,4 @@ auto ToPlatform<ImageOrientation>::operator()(ImageOrientation value) -> WebCore
     RELEASE_ASSERT_NOT_REACHED();
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

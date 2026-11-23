@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'stroke-miterlimit'> = <number [0,∞]>
 // FIXME: The current spec grammar is `<number [1,∞]>`, though this does not match what SVG specified.
@@ -47,7 +46,6 @@ struct StrokeMiterlimit {
 };
 DEFINE_TYPE_WRAPPER_GET(StrokeMiterlimit, value);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::StrokeMiterlimit)

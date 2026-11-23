@@ -31,8 +31,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/StyleViewTimelineInsetItem.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // macro(ownerType, property, type, lowercaseName, uppercaseName)
 
@@ -108,5 +107,4 @@ TextStream& operator<<(TextStream&, const ViewTimeline&);
 #undef FOR_EACH_VIEW_TIMELINE_VALUE
 #undef FOR_EACH_VIEW_TIMELINE_PROPERTY
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

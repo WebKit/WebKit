@@ -37,8 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CQ {
+namespace WebCore::CQ {
 
 OptionSet<Axis> requiredAxesForFeature(const MQ::Feature& feature)
 {
@@ -120,5 +119,4 @@ void serialize(StringBuilder& builder, const ContainerQuery& query)
     builder.append(interleave(query, CQ::serialize, ", "_s));
 }
 
-}
 }

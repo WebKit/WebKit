@@ -26,8 +26,7 @@
 #include "config.h"
 #include "InlineDisplayContent.h"
 
-namespace WebCore {
-namespace InlineDisplay {
+namespace WebCore::InlineDisplay {
 
 void Content::clear()
 {
@@ -154,7 +153,4 @@ void Content::shrinkLineInBlockDirection(size_t lineIndex, float delta)
     }
 }
 
-
 }
-}
-

@@ -26,8 +26,7 @@
 
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct FlexValidator {
     static constexpr std::optional<CSS::FlexUnit> validate(CSSUnitType unitType, CSS::PropertyParserState&, CSSPropertyParserOptions)
@@ -50,5 +49,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::FlexRaw<R, V>> {
     using DimensionToken = DimensionConsumer<CSS::Flex<R, V>, FlexValidator>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

@@ -33,8 +33,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGMarkerResourceData);
 class SVGMarkerResourceData : public RefCounted<SVGMarkerResourceData> {
@@ -60,5 +59,4 @@ private:
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SVGMarkerResourceData&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

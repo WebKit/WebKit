@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolvedColors.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DropShadow DropShadow::passthroughForInterpolation()
 {
@@ -115,5 +114,4 @@ auto ToPlatform<DropShadow>::operator()(const DropShadow& value, const Style::Co
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

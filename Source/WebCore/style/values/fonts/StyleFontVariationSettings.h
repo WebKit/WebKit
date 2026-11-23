@@ -28,8 +28,7 @@
 #include <WebCore/FontTaggedSettings.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'font-variation-settings'> = normal | [ <opentype-tag> <number> ]#
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-variation-settings
@@ -69,5 +68,4 @@ template<> struct Blending<FontVariationSettings> {
 
 TextStream& operator<<(TextStream&, const FontVariationSettings&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

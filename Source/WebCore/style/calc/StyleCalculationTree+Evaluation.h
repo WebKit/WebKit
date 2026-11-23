@@ -27,9 +27,7 @@
 #include "StyleZoomPrimitives.h"
 #include <optional>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 struct Tree;
 
@@ -46,6 +44,4 @@ struct EvaluationOptions {
 
 double evaluate(const Tree&, const EvaluationOptions&);
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

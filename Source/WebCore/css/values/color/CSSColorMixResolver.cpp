@@ -31,8 +31,7 @@
 #include "ColorInterpolation.h"
 #include <wtf/ZippedRange.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 template<typename InterpolationMethod>
 static WebCore::Color mixColorComponentsUsingColorInterpolationMethod(InterpolationMethod interpolationMethod, double progress, const WebCore::Color& color1, const WebCore::Color& color2)
@@ -137,5 +136,4 @@ WebCore::Color mix(const ColorMixResolver& colorMix)
     return color;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

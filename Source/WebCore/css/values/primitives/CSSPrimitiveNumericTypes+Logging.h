@@ -28,8 +28,7 @@
 #include "CSSSerializationContext.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Calc auto const& value)
 {
@@ -58,5 +57,4 @@ template<auto nR, auto pR, typename V> WTF::TextStream& operator<<(WTF::TextStre
     return ts << value.value;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -31,8 +31,7 @@
 #include "StyleScope.h"
 #include <wtf/HashSet.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ChildChangeInvalidation {
 public:
@@ -95,5 +94,4 @@ inline ChildChangeInvalidation::~ChildChangeInvalidation()
     invalidateAfterChange();
 }
 
-}
 }

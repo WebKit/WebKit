@@ -81,8 +81,7 @@
 #include <WebCore/StyleWebKitLocale.h>
 #include <WebCore/ViewTimeline.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - ComputedStyleBase::NonInheritedFlags
 
@@ -569,5 +568,4 @@ inline const PageSize& ComputedStyleBase::pageSize() const
     return m_nonInheritedData->rareData->pageSize;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion from strongly typed `CSS::` value types to `WebCore::DeprecatedCSSOMValue` types.
 
@@ -70,5 +69,4 @@ template<Calc CSSType> struct DeprecatedCSSOMValueCreation<CSSType> {
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -30,8 +30,7 @@
 #include "StyleColorResolutionState.h"
 #include "StyleResolvedColor.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // NOTE: There is no Style::AbsoluteColor<D> type. Style conversion of CSS::AbsoluteColor<D> yields a Style::ResolvedColor.
 
@@ -47,5 +46,4 @@ template<typename D> Color toStyleColor(const CSS::AbsoluteColor<D>& unresolved,
     return Color { ResolvedColor { resolve(WTF::move(resolver), state.conversionData) } };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

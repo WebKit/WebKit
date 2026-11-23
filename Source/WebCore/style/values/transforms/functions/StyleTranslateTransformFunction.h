@@ -28,8 +28,7 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleTransformFunctionBase.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // translate() = translate( <length-percentage> , <length-percentage>? )
 // https://drafts.csswg.org/css-transforms/#funcdef-transform-translate
@@ -82,7 +81,6 @@ private:
     Z m_z;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::TranslateTransformFunction, WebCore::Style::TransformFunctionBase::isTranslateTransformFunctionType)

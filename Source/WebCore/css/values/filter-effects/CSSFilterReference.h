@@ -26,8 +26,7 @@
 
 #include "CSSURL.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // https://drafts.fxtf.org/filter-effects/#typedef-filter-url
 struct FilterReference {
@@ -37,7 +36,6 @@ struct FilterReference {
 };
 DEFINE_TYPE_WRAPPER_GET(FilterReference, url);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FilterReference, 1)

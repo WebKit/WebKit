@@ -30,8 +30,7 @@
 #include "LayoutUnit.h"
 #include <wtf/Function.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class GridFormattingContext;
 class IntegrationUtils;
@@ -62,5 +61,4 @@ struct GridItemSizingFunctions {
     Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&, std::optional<LayoutUnit> oppositeAxisGridAreaMaximumSize)> usedMinimumSize;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

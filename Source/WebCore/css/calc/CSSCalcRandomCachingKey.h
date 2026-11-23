@@ -31,8 +31,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 // Resolved caching identity for a <random-key>. `element-scoped` is NOT part of this key; it selects
 // which map (per-element vs document) the key is looked up in. The dashed-ident (`name`) and the
@@ -77,8 +76,7 @@ struct RandomCachingKey {
     bool operator==(const RandomCachingKey&) const = default;
 };
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc
 
 namespace WTF {
 

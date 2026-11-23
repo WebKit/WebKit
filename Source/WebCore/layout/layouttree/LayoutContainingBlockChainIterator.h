@@ -28,8 +28,7 @@
 #include <WebCore/LayoutElementBox.h>
 #include <WebCore/LayoutInitialContainingBlock.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class LayoutContainingBlockChainIterator {
 public:
@@ -97,5 +96,4 @@ inline LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinForma
     return containingBlockChain(layoutBox, root);
 }
 
-}
 }

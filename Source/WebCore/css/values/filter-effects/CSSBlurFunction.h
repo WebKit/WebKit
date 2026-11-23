@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // blur() = blur( <length [0,∞]>? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-blur
@@ -42,7 +41,6 @@ using BlurFunction = FunctionNotation<CSSValueID::Blur, Blur>;
 
 DEFINE_TYPE_WRAPPER_GET(Blur, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Blur, 1)

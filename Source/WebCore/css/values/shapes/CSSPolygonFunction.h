@@ -27,8 +27,7 @@
 #include <WebCore/CSSFillRule.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <polygon()> = polygon( <'fill-rule'>? [ round <length> ]? , [<length-percentage> <length-percentage>]# )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-polygon
@@ -54,7 +53,6 @@ template<size_t I> const auto& get(const Polygon& value)
 
 template<> struct Serialize<Polygon> { void operator()(StringBuilder&, const SerializationContext&, const Polygon&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Polygon, 2)

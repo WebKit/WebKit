@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSPrimitiveNumeric.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: Primitive Numeric or Keyword
 
@@ -204,8 +203,7 @@ private:
     Data m_data;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 namespace WTF {
 

@@ -39,8 +39,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, CSS::PropertyParserState& state, int defaultValue)
 {
@@ -86,5 +85,4 @@ RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange& range, CSS::PropertyPars
     return consumeCounter(range, state, 0);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

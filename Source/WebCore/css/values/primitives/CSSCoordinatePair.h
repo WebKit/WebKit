@@ -26,12 +26,10 @@
 
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <coordinate-pair> = <length-percentage>{2}
 // https://drafts.csswg.org/css-shapes-1/#typedef-shape-coordinate-pair
 using CoordinatePair = SpaceSeparatedPoint<LengthPercentage<>>;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -34,8 +34,7 @@
 #include <cmath>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Ref<CalcSizeValue> CalcSizeValue::create(Basis&& basis, Calculation::Tree&& calculation, bool basisHasPercentage, bool hasPercentage)
 {
@@ -170,5 +169,4 @@ TextStream& operator<<(TextStream& ts, const CalcSizeValue& value)
     return ts << ", "_s << value.calculation() << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

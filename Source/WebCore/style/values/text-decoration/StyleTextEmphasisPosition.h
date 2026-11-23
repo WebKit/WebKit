@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-emphasis-position'> = [ over | under ] && [ right | left ]?@(default=right)
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-emphasis-position
@@ -83,7 +82,6 @@ private:
 
 template<> struct CSSValueConversion<TextEmphasisPosition> { auto operator()(BuilderState&, const CSSValue&) -> TextEmphasisPosition; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextEmphasisPosition)

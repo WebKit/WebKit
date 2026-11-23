@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // saturate() = saturate( [ <number [0,∞]> | <percentage [0,∞]> ]? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-saturate
@@ -42,7 +41,6 @@ using SaturateFunction = FunctionNotation<CSSValueID::Saturate, Saturate>;
 
 DEFINE_TYPE_WRAPPER_GET(Saturate, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Saturate, 1)

@@ -37,8 +37,7 @@
 #include "CSSValuePair.h"
 #include <wtf/EnumeratedArray.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 using DisplayOutsideInsideMap = EnumeratedArray<DisplayOutside, EnumeratedArray<DisplayInside, std::pair<CSSValueID, CSSValueID>>>;
 
@@ -306,5 +305,4 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSS::PropertyParserS
     }
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

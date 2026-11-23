@@ -29,8 +29,7 @@
 #include "ContainerQuery.h"
 #include "GenericMediaQueryParser.h"
 
-namespace WebCore {
-namespace CQ {
+namespace WebCore::CQ {
 
 struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser>  {
     // Parse the container query, which is a `<container-condition>#`, a comma-separated
@@ -52,5 +51,4 @@ struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser> 
     static Vector<const MQ::FeatureSchema*> featureSchemas();
 };
 
-}
 }

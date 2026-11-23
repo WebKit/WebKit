@@ -33,8 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct ZoomFactor;
 
@@ -162,8 +161,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const TransformFunctionBase&);
 
 template<> struct ToPlatform<TransformFunctionType> { NODELETE TransformOperationType operator()(TransformFunctionType); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 #define SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \

@@ -42,10 +42,10 @@ template<typename> struct ArgumentCoder;
 }
 
 #if ENABLE(WEBASSEMBLY)
-namespace JSC { namespace Wasm {
+namespace JSC::Wasm {
 class Module;
 class MemoryHandle;
-} }
+}
 #endif
 
 namespace JSC {

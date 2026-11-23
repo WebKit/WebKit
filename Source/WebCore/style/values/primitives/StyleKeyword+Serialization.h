@@ -29,8 +29,7 @@
 #include "StyleKeyword+ValueRepresentationNeeded.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<EnumWithoutValueRepresentation T> struct Serialize<T> {
     void operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, T value)
@@ -57,5 +56,4 @@ template<EnumWithValueRepresentation T> struct Serialize<T> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

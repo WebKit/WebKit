@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -51,5 +50,4 @@ auto CSSValueConversion<ViewTimelineInsetItem>::operator()(BuilderState& state, 
     return toStyleFromCSSValue<ViewTimelineInsetItem::Offset>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

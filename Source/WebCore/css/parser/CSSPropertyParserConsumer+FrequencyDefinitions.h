@@ -27,8 +27,7 @@
 #include "CSSPrimitiveNumericTypes+Canonicalization.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct FrequencyValidator {
     static constexpr std::optional<CSS::FrequencyUnit> validate(CSSUnitType unitType, CSS::PropertyParserState&, CSSPropertyParserOptions)
@@ -54,5 +53,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::FrequencyRaw<R, V>> 
     using DimensionToken = DimensionConsumer<CSS::Frequency<R, V>, FrequencyValidator>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

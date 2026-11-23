@@ -31,9 +31,7 @@
 
 #include <wtf/text/CString.h>
 
-namespace WebCore {
-
-namespace ServerTimingParser {
+namespace WebCore::ServerTimingParser {
 
 Vector<ServerTiming> parseServerTiming(const String& headerValue)
 {
@@ -72,6 +70,4 @@ Vector<ServerTiming> parseServerTiming(const String& headerValue)
     return entries;
 }
 
-} // namespace ServerTimingParser
-
-} // namespace WebCore
+} // namespace WebCore::ServerTimingParser

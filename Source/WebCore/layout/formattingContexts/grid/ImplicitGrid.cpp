@@ -33,8 +33,7 @@
 #include "UnplacedGridItem.h"
 #include <wtf/Assertions.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // The implicit grid is created from the explicit grid + items that are placed outside
 // of the explicit grid. Since we know the explicit tracks from style we start the
@@ -377,5 +376,4 @@ GridAreaLines ImplicitGrid::placeAutoPositionedItemWithAutoColumnAndRow(const Un
     }
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

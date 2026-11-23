@@ -32,8 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MarqueeData);
 class MarqueeData : public RefCounted<MarqueeData> {
@@ -60,5 +59,4 @@ private:
     MarqueeData(const MarqueeData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

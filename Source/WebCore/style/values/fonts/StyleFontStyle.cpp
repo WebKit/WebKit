@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -98,5 +97,4 @@ auto Blending<FontStyle>::blend(const FontStyle& a, const FontStyle& b, const Bl
     return Style::blend(a.angle().value_or(FontStyle::Angle { 0 }), b.angle().value_or(FontStyle::Angle { 0 }), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

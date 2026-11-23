@@ -27,8 +27,7 @@
 #include <WebCore/CSSValueKeywords.h>
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // NOTE: The `CSS::Keyword` struct is defined in the generated header "CSSValueKeywords.h".
 
@@ -64,5 +63,4 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Keyword&);
 
 NODELETE void add(Hasher&, const Keyword&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

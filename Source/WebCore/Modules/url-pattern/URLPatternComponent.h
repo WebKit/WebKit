@@ -37,10 +37,9 @@ namespace WTF {
 class BumpPointerAllocator;
 }
 
-namespace JSC {
-namespace Yarr {
+namespace JSC::Yarr {
 struct BytecodePattern;
-} }
+}
 
 namespace WebCore {
 

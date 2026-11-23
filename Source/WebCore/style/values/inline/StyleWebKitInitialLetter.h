@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-initial-letter'> = normal | <number [0,∞]>{1,2}@(default=previous)
 // NOTE: There is a standard `initial-letter` property with a different grammar that is not yet implemented.
@@ -71,7 +70,6 @@ private:
 
 template<> struct CSSValueConversion<WebkitInitialLetter> { auto operator()(BuilderState&, const CSSValue&) -> WebkitInitialLetter; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitInitialLetter)

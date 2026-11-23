@@ -37,8 +37,7 @@
 #include "StyleFontPaletteMix.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -158,5 +157,4 @@ auto Blending<FontPalette>::blend(const FontPalette& a, const FontPalette& b, co
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

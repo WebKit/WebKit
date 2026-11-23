@@ -29,8 +29,7 @@
 #include "StyleZoomPrimitives.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 UnevaluatedCalculationBase::UnevaluatedCalculationBase(Calculation::Value& value)
     : m_calc { value }
@@ -87,5 +86,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const UnevaluatedCalculationBas
     return ts << protect(value.calculation()).get();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

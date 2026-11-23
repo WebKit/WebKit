@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <linear()> = linear( [ <number> && <percentage>{0,2} ]# )
 // https://drafts.csswg.org/css-easing-2/#funcdef-linear
@@ -70,8 +69,7 @@ template<size_t I> const auto& get(const LinearEasingParameters::Stop::Length& v
         return value.extra;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearEasingParameters, 1)
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearEasingParameters::Stop, 2)

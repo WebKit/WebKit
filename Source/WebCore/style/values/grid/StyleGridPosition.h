@@ -37,8 +37,7 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <grid-line-explicit> = [ [ <integer [-∞,-1]> | <integer [1,∞]> ] && <custom-ident>? ]
 struct GridPositionExplicit {
@@ -152,8 +151,7 @@ NODELETE void add(Hasher&, const GridPosition&);
 template<> struct CSSValueConversion<GridPosition> { auto operator()(BuilderState&, const CSSValue&) -> GridPosition; };
 template<> struct CSSValueCreation<GridPosition> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const GridPosition&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridPosition)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridPosition::Explicit)

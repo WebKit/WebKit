@@ -34,8 +34,7 @@ enum class Category : uint8_t;
 
 struct ComputedStyleDependencies;
 
-namespace MQ {
-namespace Features {
+namespace MQ::Features {
 
 const FeatureSchema& animation();
 const FeatureSchema& anyHover();
@@ -83,6 +82,5 @@ const FeatureSchema& prefersColorScheme();
 
 Vector<const FeatureSchema*> allSchemas();
 
-} // namespace Features
-} // namespace MQ
+} // namespace MQ::Features
 } // namespace WebCore

@@ -30,8 +30,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 bool DeclarationValue::operator==(const DeclarationValue& other) const
 {
@@ -65,5 +64,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const DeclarationValue& declara
     return ts << value->serialize();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

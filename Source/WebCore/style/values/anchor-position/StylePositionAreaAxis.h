@@ -26,8 +26,7 @@
 
 #include <WebCore/WritingMode.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // The axis that the span specifies.
 // Represented as 3 bits: axis type, direction type, [Logical]BoxAxis value.
@@ -103,5 +102,4 @@ constexpr LogicalBoxAxis mapPositionAreaAxisToLogicalAxis(PositionAreaAxis posit
 
 WTF::TextStream& operator<<(WTF::TextStream&, PositionAreaAxis);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

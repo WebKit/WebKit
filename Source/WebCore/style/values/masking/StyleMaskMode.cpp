@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<MaskMode>::operator()(BuilderState& state, const CSSValue& value) -> MaskMode
 {
@@ -52,5 +51,4 @@ auto CSSValueConversion<MaskMode>::operator()(BuilderState& state, const CSSValu
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

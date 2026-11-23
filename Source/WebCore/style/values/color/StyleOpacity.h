@@ -28,8 +28,7 @@
 #include <WebCore/AcceleratedEffectOpacity.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <opacity-value> = <number [0,1]@(ignore-both-at-parse)> | <percentage [0,100]@(ignore-both-at-parse, converted-to-number)>
 // https://drafts.csswg.org/css-color-4/#typedef-opacity-opacity-value
@@ -80,7 +79,6 @@ template<> struct Evaluation<Opacity, AcceleratedEffectOpacity> {
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::Opacity)

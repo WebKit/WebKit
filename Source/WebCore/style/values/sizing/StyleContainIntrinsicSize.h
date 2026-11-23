@@ -27,8 +27,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -159,7 +158,6 @@ template<> struct Blending<ContainIntrinsicSize> {
     NODELETE ContainIntrinsicSize blend(const ContainIntrinsicSize&, const ContainIntrinsicSize&, const BlendingContext&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ContainIntrinsicSize);

@@ -29,9 +29,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct HashableActionList {
     enum DeletedValueTag { DeletedValue };
@@ -83,5 +81,4 @@ struct HashableActionListHashTraits : public WTF::CustomHashTraits<HashableActio
     static const bool emptyValueIsZero = false;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions

@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<HangingPunctuation>::operator()(BuilderState& state, const CSSValue& value) -> HangingPunctuation
 {
@@ -86,5 +85,4 @@ auto CSSValueConversion<HangingPunctuation>::operator()(BuilderState& state, con
     return result;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

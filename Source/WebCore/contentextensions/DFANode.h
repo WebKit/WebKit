@@ -30,9 +30,7 @@
 #include <WebCore/ContentExtensionsDebugging.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct DFA;
 
@@ -166,7 +164,6 @@ private:
 
 static_assert(sizeof(DFANode) <= 16, "Keep the DFANodes small");
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

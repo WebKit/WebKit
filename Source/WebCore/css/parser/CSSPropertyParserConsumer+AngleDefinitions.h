@@ -28,8 +28,7 @@
 #include "CSSPrimitiveNumericTypes+Canonicalization.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct AngleValidator {
     static constexpr std::optional<CSS::AngleUnit> validate(CSSUnitType unitType, CSS::PropertyParserState&, CSSPropertyParserOptions)
@@ -70,5 +69,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::AngleRaw<R, V>> {
     using NumberToken = NumberConsumerForUnitlessValues<CSS::Angle<R, V>, AngleValidator, CSS::AngleUnit::Deg>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

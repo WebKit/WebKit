@@ -61,10 +61,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
-namespace WTF {
-namespace Persistence {
+namespace WTF::Persistence {
 class Decoder;
-}
 }
 
 namespace JSC {

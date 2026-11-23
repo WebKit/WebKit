@@ -32,8 +32,7 @@
 #include "CSSUnevaluatedCalc.h"
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: Resolver for users that want to get a CSSPrimitiveValue result.
 
@@ -85,5 +84,4 @@ struct CSSPrimitiveValueResolver : MetaResolver<RefPtr<CSSPrimitiveValue>, CSSPr
     using MetaResolver<RefPtr<CSSPrimitiveValue>, CSSPrimitiveValueResolverBase, Ts...>::consumeAndResolve;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

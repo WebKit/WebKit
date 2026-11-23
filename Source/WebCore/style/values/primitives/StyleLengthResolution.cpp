@@ -46,8 +46,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Font Metric Zoom
 
@@ -848,5 +847,4 @@ double emToPxDoubleZoomed(double value, const ComputedStyle& style)
     return value * style.fontCascade().fontDescription().usedSize();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -30,8 +30,7 @@
 #include "TrackSizingAlgorithm.h"
 #include <wtf/ZippedRange.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // Used for space distribution.
 static Vector<size_t> indexesForUnfrozenAffectedTracks(const Vector<size_t>& spannedAffectedTracks,
@@ -295,5 +294,4 @@ TrackIndexes ExtraSpaceDistributor::distributeExtraSpace(ExtraSpaceDistributionT
     return tracksWhoseGrowthLimitBecameFinite;
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

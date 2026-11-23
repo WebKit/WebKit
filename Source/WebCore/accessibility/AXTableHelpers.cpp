@@ -48,9 +48,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <queue>
 
-namespace WebCore {
-
-namespace AXTableHelpers {
+namespace WebCore::AXTableHelpers {
 
 using namespace HTMLNames;
 
@@ -390,6 +388,4 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
     return false;
 }
 
-} // namespace AXTableHelpers
-
-} // namespace WebCore
+} // namespace WebCore::AXTableHelpers

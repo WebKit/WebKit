@@ -34,8 +34,7 @@
 #include <wtf/Markable.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineContentAligner;
 class InlineFormattingContext;
@@ -206,5 +205,4 @@ inline TextDirection LineRun::inlineDirection() const
     return m_style->writingMode().bidiDirection();
 }
 
-}
 }

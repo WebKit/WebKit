@@ -27,8 +27,7 @@
 #include <WebCore/ScopedName.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-progress-timeline-name> = none | <dashed-ident>
 // https://drafts.csswg.org/scroll-animations/#propdef-scroll-timeline-name
@@ -39,7 +38,6 @@ struct ProgressTimelineName : ValueOrKeyword<ScopedName, CSS::Keyword::None> {
     bool isDashedIdentifier() const { return isValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ProgressTimelineName)

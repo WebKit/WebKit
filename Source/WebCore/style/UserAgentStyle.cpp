@@ -68,8 +68,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace HTMLNames;
 
@@ -278,5 +277,4 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

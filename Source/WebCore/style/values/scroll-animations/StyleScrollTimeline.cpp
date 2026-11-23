@@ -28,8 +28,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 ScrollTimeline::ScrollTimeline()
     : m_data { Data { } }
@@ -52,5 +51,4 @@ TextStream& operator<<(TextStream& ts, const ScrollTimeline& value)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

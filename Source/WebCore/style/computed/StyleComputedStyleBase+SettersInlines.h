@@ -39,8 +39,7 @@
 #define SET_NESTED_PAIR(group, parent, variable1, value1, variable2, value2) SET_STYLE_PROPERTY_PAIR(group->parent, group.access().parent.access(), variable1, value1, variable2, value2)
 #define SET_DOUBLY_NESTED_PAIR(group, grandparent, parent, variable1, value1, variable2, value2) SET_STYLE_PROPERTY_PAIR(group->grandparent->parent, group.access().grandparent.access().parent.access(), variable1, value1, variable2, value2)
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename T, typename U> inline bool compareEqual(const T& a, const U& b)
 {
@@ -446,8 +445,7 @@ inline void ComputedStyleBase::setPageSize(PageSize&& pageSize)
     SET_NESTED(m_nonInheritedData, rareData, pageSize, WTF::move(pageSize));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 #undef SET
 #undef SET_DOUBLY_NESTED

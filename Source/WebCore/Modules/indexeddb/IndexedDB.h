@@ -26,9 +26,7 @@
 
 #pragma once
 
-namespace WebCore {
-
-namespace IndexedDB {
+namespace WebCore::IndexedDB {
 
 enum class TransactionState : uint8_t {
     Active,
@@ -102,6 +100,4 @@ enum class CursorIterateOption : bool {
     Reply,
 };
 
-} // namespace IndexedDB
-
-} // namespace WebCore
+} // namespace WebCore::IndexedDB

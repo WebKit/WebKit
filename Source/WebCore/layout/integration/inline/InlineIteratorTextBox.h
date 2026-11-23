@@ -28,9 +28,7 @@
 #include <WebCore/InlineIteratorBox.h>
 #include <WebCore/RenderText.h>
 
-namespace WebCore {
-
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 class TextBoxIterator;
 
@@ -124,7 +122,6 @@ inline TextBoxSelectableRange TextBox::selectableRange() const
     };
 }
 
-}
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::TextBox)

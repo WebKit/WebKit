@@ -30,8 +30,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 OptionSet<Change> determineChanges(const Style::ComputedStyle& s1, const Style::ComputedStyle& s2)
 {
@@ -103,6 +102,4 @@ TextStream& operator<<(TextStream& ts, OptionSet<Change> changes)
     return ts;
 }
 
-} // namespace Style
-
-} // namespace WebCore
+} // namespace WebCore::Style

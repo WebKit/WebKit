@@ -35,8 +35,7 @@
 #include "SystemFontDatabase.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -133,5 +132,4 @@ TextStream& operator<<(TextStream& ts, const FontFamily& fontFamily)
     return ts << fontFamily.value;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -46,8 +46,7 @@
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct WhitespaceContent {
     size_t length { 0 };
@@ -1455,5 +1454,4 @@ std::pair<bool, bool> InlineItemsBuilder::shouldDeferTextMeasurement(const Inlin
     return { shouldDefer || !canCacheWidthOnInlineTextItem(inlineTextBox, false), shouldDefer || !canCacheWidthOnInlineTextItem(inlineTextBox, true) };
 }
 
-}
 }

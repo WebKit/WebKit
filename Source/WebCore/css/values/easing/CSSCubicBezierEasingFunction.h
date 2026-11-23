@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <cubic-bezier()> = cubic-bezier( [ <number [0,1]>, <number> ]#{2} )
 // https://drafts.csswg.org/css-easing-2/#funcdef-cubic-bezier
@@ -45,7 +44,6 @@ using CubicBezierEasingFunction = FunctionNotation<CSSValueID::CubicBezier, Cubi
 
 DEFINE_TYPE_WRAPPER_GET(CubicBezierEasingParameters, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::CubicBezierEasingParameters, 1)

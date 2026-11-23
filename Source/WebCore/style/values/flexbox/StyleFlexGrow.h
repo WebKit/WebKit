@@ -26,12 +26,10 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'flex-grow'> = <number [0,∞]>
 // https://drafts.csswg.org/css-flexbox/#propdef-flex-grow
 using FlexGrow = Number<CSS::Nonnegative, float>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleKeyword+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<ScrollSnapType>::operator()(BuilderState& state, const CSSValue& value) -> ScrollSnapType
 {
@@ -53,5 +52,4 @@ auto CSSValueConversion<ScrollSnapType>::operator()(BuilderState& state, const C
     return { axis, toStyleFromCSSValue<ScrollSnapStrictness>(state, list->item(1)) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

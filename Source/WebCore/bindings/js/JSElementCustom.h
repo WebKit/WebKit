@@ -29,8 +29,7 @@
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSElement.h>
 
-namespace JSC {
-namespace JSCastingHelpers {
+namespace JSC::JSCastingHelpers {
 
 template<>
 struct InheritsTraits<WebCore::JSElement> {
@@ -42,5 +41,4 @@ struct InheritsTraits<WebCore::JSElement> {
     }
 };
 
-} // namespace JSCastingHelpers
-} // namespace JSC
+} // namespace JSC::JSCastingHelpers

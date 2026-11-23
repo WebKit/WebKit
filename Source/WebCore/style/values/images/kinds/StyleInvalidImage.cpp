@@ -30,8 +30,7 @@
 #include "CSSImageValue.h"
 #include "DeprecatedCSSOMValue.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Ref<InvalidImage> InvalidImage::create()
 {
@@ -79,6 +78,4 @@ Ref<DeprecatedCSSOMValue> InvalidImage::computedStyleDeprecatedCSSOMValue(CSSVal
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }
 
-} // namespace Style
-} // namespace WebCore
-
+} // namespace WebCore::Style

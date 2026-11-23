@@ -30,8 +30,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool DeclarationValue::operator==(const DeclarationValue& other) const
 {
@@ -59,5 +58,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const DeclarationValue& declara
     return ts << protect(declarationValue.value)->serialize();
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

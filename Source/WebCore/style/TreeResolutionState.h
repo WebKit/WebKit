@@ -28,8 +28,7 @@
 #include "AnchorPositionEvaluator.h"
 #include <wtf/CheckedPtr.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // This state has lifetime of a single style resolution cycle, including any layout interleaving.
 struct TreeResolutionState : public CanMakeCheckedPtr<TreeResolutionState> {
@@ -39,5 +38,4 @@ struct TreeResolutionState : public CanMakeCheckedPtr<TreeResolutionState> {
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(TreeResolutionState);
 };
 
-}
 }

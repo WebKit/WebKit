@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Snaps a non-negative length, in CSS pixels, to an integer number of device pixels.
 // https://drafts.csswg.org/css-values-4/#snap-a-length-as-a-border-width
@@ -41,5 +40,4 @@ NODELETE Length<CSS::Nonnegative> snapLengthAsBorderWidth(Length<CSS::Nonnegativ
 NODELETE float snapSignedLengthAsBorderWidth(float, float deviceScaleFactor);
 NODELETE Length<> snapSignedLengthAsBorderWidth(Length<>, float deviceScaleFactor);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

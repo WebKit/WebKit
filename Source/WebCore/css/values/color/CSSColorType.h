@@ -25,8 +25,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 enum class ColorType : uint8_t {
     Absolute = 1 << 0,
@@ -34,5 +33,4 @@ enum class ColorType : uint8_t {
     System = 1 << 2,
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

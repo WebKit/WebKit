@@ -28,8 +28,7 @@
 
 #include "runtime_object.h"
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 class ObjcInstance;
 
@@ -58,7 +57,6 @@ private:
     void finishCreation(VM&);
 };
 
-}
 }
 
 #endif

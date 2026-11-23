@@ -33,8 +33,7 @@
 #include "ContainerQueryFeatures.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace CQ {
+namespace WebCore::CQ {
 
 using namespace MQ;
 
@@ -265,5 +264,4 @@ std::optional<MQ::Feature> ContainerQueryParser::consumeAndValidateFeature(CSSPa
     return GenericMediaQueryParser<ContainerQueryParser>::consumeAndValidateFeature(range, context, state);
 }
 
-}
 }

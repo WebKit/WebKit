@@ -26,9 +26,7 @@
 #include "HTMLNames.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-
-namespace InputTypeNames {
+namespace WebCore::InputTypeNames {
 
 // The type names must be lowercased because they will be the return values of
 // input.type and input.type must be lowercase according to DOM Level 2.
@@ -158,5 +156,3 @@ const AtomString& week()
 }
 
 } // namespace WebCore::InputTypeNames
-
-} // namespace WebCore

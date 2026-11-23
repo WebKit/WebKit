@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TrackSizingFunctions.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
 {
@@ -122,5 +121,4 @@ GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingC
     };
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

@@ -31,9 +31,7 @@
 #include <WebCore/DFANode.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 // The DFA abstract a partial DFA graph in a compact form.
 struct WEBCORE_EXPORT DFA {
@@ -79,7 +77,6 @@ inline void DFANode::RangeIterator::resetTarget(uint32_t newTarget)
     dfa.transitionDestinations[position] = newTarget;
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

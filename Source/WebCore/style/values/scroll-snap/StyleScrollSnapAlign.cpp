@@ -28,8 +28,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleKeyword+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<ScrollSnapAlign>::operator()(BuilderState& state, const CSSValue& value) -> ScrollSnapAlign
 {
@@ -46,5 +45,4 @@ auto CSSValueConversion<ScrollSnapAlign>::operator()(BuilderState& state, const 
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'margin-trim'> = none | block | [ block-start || block-end ]
 // https://drafts.csswg.org/css-box/#margin-trim
@@ -87,7 +86,6 @@ private:
 
 template<> struct CSSValueConversion<MarginTrim> { auto operator()(BuilderState&, const CSSValue&) -> MarginTrim; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::MarginTrim)

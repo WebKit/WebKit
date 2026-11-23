@@ -28,8 +28,7 @@
 #include <WebCore/StyleColor.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'accent-color'> = auto | <color>
 // https://drafts.csswg.org/css-ui-4/#propdef-accent-color
@@ -53,7 +52,6 @@ template<> struct Blending<AccentColor> {
     auto blend(const AccentColor&, const AccentColor&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> AccentColor;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::AccentColor);

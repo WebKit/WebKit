@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<Numeric StyleType> struct CSSValueCreation<StyleType> {
     Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value)
@@ -71,5 +70,4 @@ template<auto nR, auto pR, typename V> struct CSSValueCreation<NumberOrPercentag
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

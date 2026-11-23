@@ -40,8 +40,7 @@
 #include "CSSValuePool.h"
 #include "RenderStyleConstants.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 using namespace CSS::Literals;
 
@@ -701,5 +700,4 @@ RefPtr<CSSValue> consumePositionY(CSSParserTokenRange& range, CSS::PropertyParse
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

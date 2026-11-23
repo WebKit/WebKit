@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'display'> = [ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> | <-webkit-display>
 // NOTE: All <display-legacy> values are aliases of other values, so do not appear in the enum.
@@ -433,7 +432,6 @@ template<> struct Blending<Display> {
     NODELETE Display blend(Display, Display, const BlendingContext&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Display, 1)

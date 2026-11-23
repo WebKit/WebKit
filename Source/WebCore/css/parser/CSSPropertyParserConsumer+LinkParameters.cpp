@@ -39,8 +39,7 @@
 #include "CSSVariableData.h"
 #include <pal/text/TextEncoding.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // <param()>    = param( <param-spec> , <declaration-value>? )
 // <param-spec> = color | accent-color | [ <dashed-ident> <css-type>? ]
@@ -128,5 +127,4 @@ Vector<CSS::ParamFunction> parseLinkParametersFromFragmentDirective(StringView f
     return parameters;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

@@ -28,8 +28,7 @@
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 #include <WebCore/CSSUnevaluatedCalc.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Requires Conversion Data
 
@@ -82,5 +81,4 @@ inline bool isUnevaluatedCalc(Numeric auto const& value)
     return WTF::switchOn(value, [&](const auto& alternative) { return isUnevaluatedCalc(alternative); });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

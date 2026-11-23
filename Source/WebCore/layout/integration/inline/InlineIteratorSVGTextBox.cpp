@@ -33,8 +33,7 @@
 #include "SVGTextBoxPainter.h"
 #include "SVGTextFragment.h"
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 static_assert(std::ranges::bidirectional_range<SVGTextBoxRange> && std::ranges::common_range<SVGTextBoxRange> && std::ranges::view<SVGTextBoxRange> && std::ranges::borrowed_range<SVGTextBoxRange>);
 
@@ -143,5 +142,4 @@ BoxIterator lastBoxFor(const RenderSVGText& svgText)
     return { };
 }
 
-}
 }

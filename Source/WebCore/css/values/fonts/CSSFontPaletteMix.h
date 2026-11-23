@@ -29,8 +29,7 @@
 #include "CSSFontPalette.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <palette-mix()> = palette-mix( <color-interpolation-method>? , [ <'font-palette'> && <percentage [0,100]>? ]# )
 // https://drafts.csswg.org/css-fonts-4/#funcdef-palette-mix
@@ -86,8 +85,7 @@ inline constexpr auto defaultInterpolationMethodForPaletteMix = ColorInterpolati
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FontPaletteMixParameters::Component, 2)
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FontPaletteMixParameters, 2)

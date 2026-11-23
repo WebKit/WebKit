@@ -31,9 +31,7 @@
 #include <WebCore/ImmutableNFANodeBuilder.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 typedef Vector<uint64_t, 0, CrashOnOverflow, 1> ActionList;
 typedef ImmutableRange<char> ImmutableCharRange;
@@ -45,7 +43,6 @@ struct NFA : public ImmutableNFA<char, uint64_t> {
 #endif
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

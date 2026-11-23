@@ -33,8 +33,7 @@
 
 OBJC_CLASS NSString;
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 typedef union {
     CFTypeRef objectValue;
@@ -77,5 +76,4 @@ ObjcValueType objcValueTypeForType(const char *type);
 
 Exception *throwError(JSGlobalObject*, ThrowScope&, NSString *message);
 
-} // namespace Bindings
-} // namespace JSC
+} // namespace JSC::Bindings

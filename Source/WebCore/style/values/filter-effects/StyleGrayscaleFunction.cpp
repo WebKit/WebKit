@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Grayscale Grayscale::passthroughForInterpolation()
 {
@@ -84,5 +83,4 @@ auto ToPlatform<Grayscale>::operator()(const Grayscale& value) -> Ref<FilterOper
     return BasicColorMatrixFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<GrayscaleFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

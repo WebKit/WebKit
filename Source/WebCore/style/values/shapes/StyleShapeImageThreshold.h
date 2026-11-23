@@ -26,13 +26,11 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'shape-image-threshold'> = <number>
 // FIXME: Current spec has this defined as <opacity-value> (e.g. <number> | <percentage>).
 // https://www.w3.org/TR/css-shapes/#propdef-shape-image-threshold
 using ShapeImageThreshold = Number<CSS::ClosedUnitRangeClampBoth, float>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

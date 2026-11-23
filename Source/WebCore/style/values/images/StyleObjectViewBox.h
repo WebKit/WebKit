@@ -28,8 +28,7 @@
 #include <WebCore/StyleInsetFunction.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // All <basic-shape-rect> variants (inset(), rect(), xywh()) canonicalize to
 // InsetFunction during style building. See StyleRectFunction.h and
@@ -92,7 +91,6 @@ template<> struct Blending<ObjectViewBox> {
     auto blend(const ObjectViewBox& from, const ObjectViewBox& to, const BlendingContext&) -> ObjectViewBox;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ObjectViewBox)

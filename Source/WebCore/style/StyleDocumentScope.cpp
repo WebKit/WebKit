@@ -66,9 +66,7 @@
 #include <WebKitAdditions/StyleDocumentScopeAdditions.cpp>
 #endif
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentScope);
 
@@ -521,5 +519,4 @@ void DocumentScope::forgetLastSuccessfulPositionOptionIndex(const Styleable& sty
     m_lastSuccessfulPositionOptionIndexes.remove(styleable);
 }
 
-}
 }

@@ -53,8 +53,7 @@
             group.access().parentVariable.access().variable = value; \
     } while (0)
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static_assert(ComputedStyleBase::PublicPseudoIDBits == allPublicPseudoElementTypes.size());
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> ComputedStyleBase::TextTransformBits));
@@ -526,8 +525,7 @@ void ComputedStyleBase::InheritedFlags::dumpDifferences(TextStream& ts, const In
 }
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 #undef SET_VAR
 #undef SET_NESTED_VAR

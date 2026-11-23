@@ -30,8 +30,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'shape-outside'> = none | [ <basic-shape> || <shape-box> ] | <image>
 // https://www.w3.org/TR/css-shapes/#propdef-shape-outside
@@ -176,9 +175,7 @@ template<> struct Blending<ShapeOutside> {
     auto blend(const ShapeOutside&, const ShapeOutside&, const BlendingContext&) -> ShapeOutside;
 };
 
-} // namespace Style
-} // namespace WebCore
-
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ShapeOutside::ShapeAndShapeBox, 2)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::ShapeOutside::Image);

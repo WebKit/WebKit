@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <dasharray-value> = [ <length-percentage [0,∞]> | <number [0,∞]>@(converted-to-px) ]
 struct SVGStrokeDasharrayValue {
@@ -68,8 +67,7 @@ template<> struct Blending<SVGStrokeDasharray> {
     auto blend(const SVGStrokeDasharray&, const SVGStrokeDasharray&, const BlendingContext&) -> SVGStrokeDasharray;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGStrokeDasharrayValue)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGStrokeDasharray)

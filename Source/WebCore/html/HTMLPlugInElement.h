@@ -28,10 +28,8 @@
 #include <WebCore/RenderEmbeddedObject.h>
 #include <wtf/Platform.h>
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 class Instance;
-}
 }
 
 namespace WebCore {

@@ -23,8 +23,7 @@
 #include "StyleComputedStyle.h"
 #include "StyleRelations.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct UnadjustedStyle {
     std::unique_ptr<Style::ComputedStyle> style;
@@ -38,5 +37,4 @@ struct ResolvedStyle {
     RefPtr<const MatchResult> matchResult { };
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

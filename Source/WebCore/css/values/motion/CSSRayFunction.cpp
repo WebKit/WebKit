@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<Ray>::operator()(StringBuilder& builder, const SerializationContext& context, const Ray& value)
 {
@@ -55,5 +54,4 @@ void Serialize<Ray>::operator()(StringBuilder& builder, const SerializationConte
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

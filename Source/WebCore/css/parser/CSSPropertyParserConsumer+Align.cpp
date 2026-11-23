@@ -35,8 +35,7 @@
 #include "CSSValuePool.h"
 #include <optional>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 NODELETE static RefPtr<CSSValue> consumeAlignmentBaseline(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
@@ -469,5 +468,4 @@ RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange& range, CSS::PropertyPa
     }
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

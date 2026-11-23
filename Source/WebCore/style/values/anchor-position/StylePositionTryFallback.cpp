@@ -39,8 +39,7 @@
 #include "StylePropertiesInlines.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 bool PositionTryFallback::PositionArea::operator==(const PositionTryFallback::PositionArea& other) const
 {
@@ -179,5 +178,4 @@ TextStream& operator<<(TextStream& ts, const PositionTryFallback::PositionArea& 
     return ts << protect(value.properties)->getPropertyValue(CSSPropertyID::PositionArea);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

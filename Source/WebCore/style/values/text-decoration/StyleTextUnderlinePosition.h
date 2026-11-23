@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-underline-position'> = auto | [ from-font | under ] || [ left | right ]
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-underline-position
@@ -92,7 +91,6 @@ private:
 
 template<> struct CSSValueConversion<TextUnderlinePosition> { TextUnderlinePosition operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextUnderlinePosition)

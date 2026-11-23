@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+CSSValueCreation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 using BorderImageExtractedType = SpaceSeparatedTuple<
    std::optional<BorderImageSource>,
@@ -71,5 +70,4 @@ void Serialize<BorderImage>::operator()(StringBuilder& builder, const Serializat
     serializationForCSS(builder, context, makeExtractedType(value));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

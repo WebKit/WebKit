@@ -31,8 +31,7 @@
 #include "CSSValuePair.h"
 #include "StyleBuilderState.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename ValueType>
 const ValueType* requiredDowncast(BuilderState&, const CSSValue&);
@@ -135,5 +134,4 @@ inline auto requiredFunctionDowncast(BuilderState& builderState, const CSSValue&
     return function;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

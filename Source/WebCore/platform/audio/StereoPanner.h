@@ -29,14 +29,10 @@
 #include "AudioBus.h"
 #include <memory>
 
-namespace WebCore {
+namespace WebCore::StereoPanner {
 
-namespace StereoPanner {
-    
 void panWithSampleAccurateValues(const AudioBus& inputBus, AudioBus& outputBus, std::span<const float> panValues);
 
 void panToTargetValue(const AudioBus& inputBus, AudioBus& outputBus, float panValue, size_t framesToProcess);
 
-} // namespace StereoPanner
-
-} // namespace WebCore
+} // namespace WebCore::StereoPanner

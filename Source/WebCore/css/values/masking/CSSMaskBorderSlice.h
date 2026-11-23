@@ -27,8 +27,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'mask-border-slice'> = [<number [0,∞]> | <percentage [0,∞]>]{1,4} && fill?
 // https://drafts.fxtf.org/css-masking-1/#propdef-mask-border-slice
@@ -53,7 +52,6 @@ template<size_t I> const auto& get(const MaskBorderSlice& value)
 
 template<> struct CSSValueCreation<MaskBorderSlice> { auto operator()(CSSValuePool&, const MaskBorderSlice&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::MaskBorderSlice, 2)

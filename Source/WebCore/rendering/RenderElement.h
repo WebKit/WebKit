@@ -587,8 +587,7 @@ inline RenderElement* RenderObject::parent() const
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderElement, isRenderElement())
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 inline bool isExcludedFromLayoutBoxNavigation(const RenderObject& renderer)
 {
@@ -632,8 +631,7 @@ inline const Box* ElementBox::lastChild() const
     return nullptr;
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout
 
 // For RenderObject::layoutBox() and fromLayoutBox(), which need both RenderElement and RenderText.
 #include <WebCore/RenderText.h>

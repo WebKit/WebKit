@@ -31,8 +31,7 @@
 
 #if ENABLE(DARK_MODE_CSS)
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<ColorScheme>::operator()(StringBuilder& builder, const SerializationContext& context, const ColorScheme& value)
 {
@@ -48,7 +47,6 @@ void Serialize<ColorScheme>::operator()(StringBuilder& builder, const Serializat
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 #endif

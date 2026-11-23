@@ -31,8 +31,7 @@
 #include <unicode/utf16.h>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-namespace URLPatternUtilities {
+namespace WebCore::URLPatternUtilities {
 
 bool Token::isNull() const
 {
@@ -276,5 +275,4 @@ ExceptionOr<Vector<Token>> Tokenizer::tokenize()
     return WTF::move(m_tokenList);
 }
 
-} // namespace URLPatternUtilities
-} // namespace WebCore
+} // namespace WebCore::URLPatternUtilities

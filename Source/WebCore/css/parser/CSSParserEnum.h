@@ -25,9 +25,7 @@
 
 #include <optional>
 
-namespace WebCore {
-
-namespace CSSParserEnum {
+namespace WebCore::CSSParserEnum {
 
 enum class NestedContextType : uint8_t {
     Style,
@@ -39,6 +37,4 @@ using NestedContext = std::optional<NestedContextType>;
 
 enum class IsForgiving : bool { No, Yes };
 
-} // namespace CSSParserEnum
-
-} // namespace WebCore
+} // namespace WebCore::CSSParserEnum

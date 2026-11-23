@@ -44,9 +44,7 @@
 #include "ServiceWorkerThread.h"
 #include "WorkerGlobalScope.h"
 
-namespace WebCore {
-
-namespace ServiceWorkerFetch {
+namespace WebCore::ServiceWorkerFetch {
 
 // https://fetch.spec.whatwg.org/commit-snapshots/586cd2a44c2a865b37c166dc0740f3fb8bb220d6/#concept-http-fetch step 5.7
 ResourceError validateResponse(const ResourceResponse& response, FetchOptionsMode mode, FetchOptionsRedirect redirect)
@@ -268,6 +266,4 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     globalScope.updateExtendedEventsSet(event.ptr());
 }
 
-} // namespace ServiceWorkerFetch
-
-} // namespace WebCore
+} // namespace WebCore::ServiceWorkerFetch

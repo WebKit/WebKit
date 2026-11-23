@@ -27,10 +27,8 @@
 #include <WebCore/StyleAnimation.h>
 #include <WebCore/StyleCoordinatedValueList.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using Animations = CoordinatedValueList<Animation>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

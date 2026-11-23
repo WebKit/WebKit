@@ -29,8 +29,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool addRow(GridNamedAreaMap& gridAreaMap, const GridNamedAreaMapRow& row)
 {
@@ -125,5 +124,4 @@ TextStream& operator<<(TextStream& ts, const GridNamedAreaMap& value)
     return ts << serializationForCSS(defaultSerializationContext(), value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

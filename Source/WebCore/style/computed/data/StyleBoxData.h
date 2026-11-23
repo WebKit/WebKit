@@ -34,8 +34,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxData);
 class BoxData : public RefCounted<BoxData> {
@@ -77,5 +76,4 @@ private:
     BoxData(const BoxData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -40,8 +40,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Box::BoxRareData);
 
@@ -632,5 +631,4 @@ UsedStyle Box::firstLineUsedStyle() const
     return rendererForIntegration()->firstLineUsedStyle();
 }
 
-}
 }

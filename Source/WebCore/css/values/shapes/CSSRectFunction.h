@@ -28,8 +28,7 @@
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 #include <WebCore/RectEdges.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <rect()> = rect( [ <length-percentage> | auto ]{4} [ round <'border-radius'> ]? )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-rect
@@ -53,7 +52,6 @@ template<size_t I> const auto& get(const Rect& value)
 
 template<> struct Serialize<Rect> { void operator()(StringBuilder&, const SerializationContext&, const Rect&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Rect, 2)

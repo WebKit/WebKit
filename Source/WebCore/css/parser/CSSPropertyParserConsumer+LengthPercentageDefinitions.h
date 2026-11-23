@@ -27,8 +27,7 @@
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 struct LengthPercentageValidator {
     static constexpr std::optional<CSS::LengthPercentageUnit> validate(CSSUnitType unitType, CSS::PropertyParserState& state, CSSPropertyParserOptions options)
@@ -65,5 +64,4 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::LengthPercentageRaw<
     using NumberToken = NumberConsumerForUnitlessValues<CSS::LengthPercentage<R, V>, LengthPercentageValidator, CSS::LengthUnit::Px>;
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

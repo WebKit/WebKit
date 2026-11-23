@@ -29,8 +29,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct GridNamedLinesMap {
     HashMap<CustomIdent, Vector<unsigned>> map;
@@ -40,5 +39,4 @@ struct GridNamedLinesMap {
 
 WTF::TextStream& operator<<(WTF::TextStream&, const GridNamedLinesMap&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

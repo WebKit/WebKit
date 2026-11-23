@@ -28,8 +28,7 @@
 
 #include "CSSBorderImageSliceValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -38,5 +37,4 @@ auto CSSValueCreation<BorderImageSlice>::operator()(CSSValuePool&, const BorderI
     return CSSBorderImageSliceValue::create(BorderImageSlice { value });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

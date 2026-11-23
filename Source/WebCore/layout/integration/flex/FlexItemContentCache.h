@@ -30,8 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/WeakRef.h>
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 // FlexItemContentCache caches per-flex-item measurements for subsequent layouts.
 class FlexItemContentCache {
@@ -57,5 +56,4 @@ private:
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_contentLogicalHeights;
 };
 
-} // namespace LayoutIntegration
-} // namespace WebCore
+} // namespace WebCore::LayoutIntegration

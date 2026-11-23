@@ -28,8 +28,7 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <wtf/Hasher.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'max-lines`> = auto | <integer [1,∞]>
 // https://www.w3.org/TR/css-overflow-4/#propdef-max-lines.
@@ -48,7 +47,6 @@ struct MaximumLines : ValueOrKeyword<Integer<CSS::Range { 1, CSS::Range::infinit
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::MaximumLines)

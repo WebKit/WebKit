@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<TouchAction>::operator()(BuilderState& state, const CSSValue& value) -> TouchAction
 {
@@ -111,5 +110,4 @@ auto ToPlatform<TouchAction>::operator()(const TouchAction& value) -> OptionSet<
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

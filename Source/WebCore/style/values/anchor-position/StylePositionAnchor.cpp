@@ -33,8 +33,7 @@
 #include "CSSPinnedAnchorNameValue.h"
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<PositionAnchor>::operator()(BuilderState& state, const CSSValue& value) -> PositionAnchor
 {
@@ -66,5 +65,4 @@ auto CSSValueConversion<PositionAnchor>::operator()(BuilderState& state, const C
     return { toStyleFromCSSValue<AnchorName>(state, value) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

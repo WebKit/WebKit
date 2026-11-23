@@ -31,8 +31,7 @@
 #include <WebCore/WebKitFontFamilyNames.h>
 #include <ranges>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-font-family> = [ <family-name> | <generic-family> ]
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-family
@@ -147,8 +146,7 @@ template<> struct CSSValueConversion<FontFamilies> { auto operator()(BuilderStat
 
 TextStream& operator<<(TextStream&, const FontFamily&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_COMMA_SEPARATED_RANGE_LIKE_CONFORMANCE(WebCore::Style::FontFamilies)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FontFamily)

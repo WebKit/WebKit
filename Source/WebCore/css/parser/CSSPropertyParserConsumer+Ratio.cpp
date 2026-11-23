@@ -34,8 +34,7 @@
 #include "CSSPropertyParserState.h"
 #include "CSSRatioValue.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 std::optional<CSS::Ratio> consumeUnresolvedRatio(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -90,5 +89,4 @@ RefPtr<CSSValue> consumeRatio(CSSParserTokenRange& range, CSS::PropertyParserSta
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

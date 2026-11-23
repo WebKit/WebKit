@@ -36,8 +36,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<typename> class GeneratedImageCache;
 
@@ -147,5 +146,4 @@ private:
     Entries m_entries;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

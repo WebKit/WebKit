@@ -31,8 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // Combined text is rare.
 static HashMap<const InlineTextBox*, std::unique_ptr<InlineTextBox::CombinedText>>& combinedTextMap()
@@ -76,5 +75,3 @@ void InlineTextBox::setCombinedText(std::unique_ptr<CombinedText>&& combinedText
 }
 
 }
-}
-

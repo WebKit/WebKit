@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // brightness() = brightness( [ <number [0,∞]> | <percentage [0,∞]> ]? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-brightness
@@ -42,7 +41,6 @@ using BrightnessFunction = FunctionNotation<CSSValueID::Brightness, Brightness>;
 
 DEFINE_TYPE_WRAPPER_GET(Brightness, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Brightness, 1)

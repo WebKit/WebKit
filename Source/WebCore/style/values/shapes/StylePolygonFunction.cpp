@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TinyLRUCache.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Path Caching
 
@@ -108,5 +107,4 @@ AcceleratedEffectPolygonFunction Evaluation<PolygonFunction, AcceleratedEffectPo
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

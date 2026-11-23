@@ -38,8 +38,7 @@
 #include <wtf/Range.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineDamage);
 
@@ -694,5 +693,4 @@ bool InlineInvalidation::isSafeToRemoveWithoutFullInvalidation(const Box& layout
     return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox();
 }
 
-}
 }

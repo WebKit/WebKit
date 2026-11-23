@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 MaskLayer::MaskLayer()
     : m_image(MaskLayer::initialImage())
@@ -112,5 +111,4 @@ TextStream& operator<<(TextStream& ts, const MaskLayer& layer)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

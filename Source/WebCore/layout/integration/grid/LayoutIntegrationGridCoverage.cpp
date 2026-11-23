@@ -38,8 +38,7 @@
 #include <pal/Logging.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 enum class ReasonCollectionMode : bool {
     FirstOnly,
@@ -771,5 +770,4 @@ bool canUseForGridLayout(const RenderGrid& renderGrid)
     return reasons.isEmpty();
 }
 
-} // namespace LayoutIntegration
-} // namespace WebCore
+} // namespace WebCore::LayoutIntegration

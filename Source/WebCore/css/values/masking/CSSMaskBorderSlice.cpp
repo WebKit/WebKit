@@ -28,8 +28,7 @@
 
 #include "CSSMaskBorderSliceValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -38,5 +37,4 @@ auto CSSValueCreation<MaskBorderSlice>::operator()(CSSValuePool&, const MaskBord
     return CSSMaskBorderSliceValue::create(MaskBorderSlice { value });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

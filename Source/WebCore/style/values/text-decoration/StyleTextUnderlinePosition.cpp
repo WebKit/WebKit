@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<TextUnderlinePosition>::operator()(BuilderState& state, const CSSValue& value) -> TextUnderlinePosition
 {
@@ -94,5 +93,4 @@ auto CSSValueConversion<TextUnderlinePosition>::operator()(BuilderState& state, 
     return result;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

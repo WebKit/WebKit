@@ -63,8 +63,7 @@
 #define _C_GCINVISIBLE '!'
 #endif
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 /*
 
@@ -334,5 +333,4 @@ Exception *throwError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope, NS
     return throwException(lexicalGlobalObject, scope, JSC::createError(lexicalGlobalObject, String(message)));
 }
 
-}
 }

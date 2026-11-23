@@ -27,8 +27,7 @@
 
 #include "StylePreferredSize.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 std::optional<PreferredSize> FlexBasis::tryPreferredSize() const
 {
@@ -50,5 +49,4 @@ std::optional<PreferredSize> FlexBasis::tryPreferredSize() const
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

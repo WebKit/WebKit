@@ -34,8 +34,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 NODELETE static InlineRect mapLineRectLogicalToVisual(const InlineRect& lineLogicalRect, const LayoutSize formattingRootBorderBoxSize, WritingMode writingMode)
 {
@@ -715,5 +714,3 @@ bool InlineDisplayLineBuilder::hasTrailingLineWithBlockContent(const InlineDispl
 }
 
 }
-}
-

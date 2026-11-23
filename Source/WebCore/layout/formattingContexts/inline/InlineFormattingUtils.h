@@ -31,8 +31,7 @@
 #include "LineLayoutResult.h"
 #include <WebCore/InlineLineTypes.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineFormattingContext;
 class InlineLevelBox;
@@ -89,5 +88,3 @@ private:
 };
 
 }
-}
-

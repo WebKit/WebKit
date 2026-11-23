@@ -26,8 +26,7 @@
 
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<auto R, typename V> struct DeprecatedToStyle<CSS::LengthRaw<R, V>> {
     using From = CSS::LengthRaw<R, V>;
@@ -115,5 +114,4 @@ template<CSS::Numeric NumericType> struct DeprecatedToStyle<NumericType> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

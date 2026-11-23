@@ -28,8 +28,7 @@
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<FontPaletteMixParameters>::operator()(StringBuilder& builder, const SerializationContext& context, const FontPaletteMixParameters& value)
 {
@@ -83,5 +82,4 @@ void Serialize<FontPaletteMixParameters>::operator()(StringBuilder& builder, con
     }, ", "_s));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

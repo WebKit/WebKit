@@ -28,8 +28,7 @@
 #include "CSSColor.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // drop-shadow() = drop-shadow( [ <color>? && [<length>{2} <length [0,∞]>?] ] )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-drop-shadow
@@ -52,7 +51,6 @@ template<size_t I> const auto& get(const DropShadow& value)
         return value.stdDeviation;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DropShadow, 3)

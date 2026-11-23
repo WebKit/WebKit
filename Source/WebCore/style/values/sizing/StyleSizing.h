@@ -27,8 +27,7 @@
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 #include <concepts>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Compile-time analog of the `isIntrinsicOrStretch()` predicate shared by the sizing
 // types (PreferredSize, MinimumSize, MaximumSize, FlexBasis). It matches exactly the
@@ -48,5 +47,4 @@ concept IsIntrinsicOrStretchSizeKeyword = std::same_as<T, CSS::Keyword::MinConte
 template<typename T>
 concept IsSizingKeyword = IsIntrinsicOrStretchSizeKeyword<T> || std::same_as<T, CSS::Keyword::MinIntrinsic>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

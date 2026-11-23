@@ -31,8 +31,7 @@
 #include <wtf/MappedFileData.h>
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct NFA;
 
@@ -187,7 +186,6 @@ private:
     Metadata m_metadata;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

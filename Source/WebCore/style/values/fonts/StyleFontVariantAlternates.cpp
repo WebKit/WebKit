@@ -33,8 +33,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -232,5 +231,4 @@ TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alternates)
     return ts << alternates.platform();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

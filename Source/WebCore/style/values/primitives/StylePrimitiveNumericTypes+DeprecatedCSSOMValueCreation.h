@@ -27,8 +27,7 @@
 #include "CSSPrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion from strongly typed `CSS::` value types to `WebCore::DeprecatedCSSOMValue` types.
 
@@ -71,5 +70,4 @@ template<auto nR, auto pR, typename V> struct DeprecatedCSSOMValueCreation<Numbe
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

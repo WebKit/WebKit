@@ -27,8 +27,7 @@
 #include "GenericMediaQueryParser.h"
 #include "MediaQuery.h"
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 struct MediaQuery;
 using MediaQueryList = Vector<MediaQuery>;
@@ -48,5 +47,4 @@ struct MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
 void serialize(StringBuilder&, const MediaQueryList&);
 void serialize(StringBuilder&, const MediaQuery&);
 
-}
 }

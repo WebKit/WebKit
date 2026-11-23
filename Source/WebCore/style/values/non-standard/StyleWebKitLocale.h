@@ -30,8 +30,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-locale'> = auto | <string>
 // NOTE: There is no standard associated with this property.
@@ -80,7 +79,6 @@ template<> struct ToPlatform<WebkitLocale> {
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitLocale)

@@ -34,8 +34,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 ObjcClass::ObjcClass(ClassStructPtr aClass)
     : _isa(aClass)
@@ -240,5 +239,4 @@ JSValue ObjcClass::fallbackObject(JSGlobalObject* lexicalGlobalObject, Instance*
     return ObjcFallbackObjectImp::create(lexicalGlobalObject, lexicalGlobalObject, objcInstance, propertyName.publicName());
 }
 
-}
 }

@@ -28,8 +28,7 @@
 #include "CSSGridTrackSizesValue.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 auto GridTrackSizeDefaulter::operator()() const -> const GridTrackSize&
 {
@@ -44,5 +43,4 @@ Ref<CSSValue> CSSValueCreation<GridTrackSizes>::operator()(CSSValuePool&, const 
     return CSSGridTrackSizesValue::create(value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

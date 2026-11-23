@@ -46,8 +46,7 @@
 #include "CSSValueList.h"
 #include <wtf/SortedArrayMap.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 using namespace CSS::Literals;
 
@@ -1103,5 +1102,4 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, CSS::PropertyPa
     return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

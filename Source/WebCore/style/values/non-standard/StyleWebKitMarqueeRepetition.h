@@ -27,8 +27,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-marquee-repetition'> = infinite | <integer [0,∞]>
 // NOTE: There is no standard associated with this property. It exists to model the "marquee loop count" concept derived from the <marquee> element's `loop` attribute.
@@ -43,7 +42,6 @@ struct WebkitMarqueeRepetition : ValueOrKeyword<Integer<CSS::Nonnegative>, CSS::
     std::optional<Integer> tryInteger() const { return tryValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitMarqueeRepetition)

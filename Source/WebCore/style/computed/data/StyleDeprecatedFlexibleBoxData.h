@@ -32,8 +32,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DeprecatedFlexibleBoxData);
 class DeprecatedFlexibleBoxData : public RefCounted<DeprecatedFlexibleBoxData> {
@@ -62,5 +61,4 @@ private:
     DeprecatedFlexibleBoxData(const DeprecatedFlexibleBoxData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WebCore::Color ColorResolver::colorApplyingColorFilter(const WebCore::Color& color) const
 {
@@ -83,5 +82,4 @@ bool ColorResolver::visitedDependentShouldReturnUnvisitedLinkColor(OptionSet<Pai
     return false;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

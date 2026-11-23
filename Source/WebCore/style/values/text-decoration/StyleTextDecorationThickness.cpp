@@ -34,8 +34,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static constexpr float textDecorationBaseFontSize = 16;
 
@@ -69,5 +68,4 @@ auto CSSValueConversion<TextDecorationThickness>::operator()(BuilderState& state
     return toStyleFromCSSValue<TextDecorationThickness::Numeric>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

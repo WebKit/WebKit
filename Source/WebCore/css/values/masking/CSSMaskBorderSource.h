@@ -29,8 +29,7 @@
 #include "CSSValueTypes.h"
 #include <wtf/PointerComparison.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'mask-border-source'> = none | <image>
 // https://drafts.csswg.org/css-backgrounds/#propdef-mask-border-source
@@ -63,7 +62,6 @@ private:
 
 template<> struct CSSValueCreation<MaskBorderSource> { auto operator()(CSSValuePool&, const MaskBorderSource&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::MaskBorderSource)

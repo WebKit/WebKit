@@ -31,8 +31,7 @@
 #include "StyleBuilderChecking.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -90,5 +89,4 @@ void add(Hasher& hasher, const String& value)
     add(hasher, value.value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

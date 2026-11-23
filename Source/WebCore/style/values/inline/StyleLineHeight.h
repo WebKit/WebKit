@@ -27,8 +27,7 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <wtf/Hasher.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'line-height'> = normal | <number [0,∞]> | <length-percentage [0,∞]>
 // NOTE: <length-percentage [0,∞]> gets converted to <length [0,∞]> at style building time by resolving any percentages against `font-size`.
@@ -109,7 +108,6 @@ template<> struct Evaluation<LineHeight, float> {
     auto operator()(const LineHeight&, LineHeightEvaluationContext, ZoomFactor) -> float;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::LineHeight)

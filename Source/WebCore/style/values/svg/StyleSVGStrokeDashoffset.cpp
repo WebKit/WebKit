@@ -29,8 +29,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -50,5 +49,4 @@ auto CSSValueConversion<SVGStrokeDashoffset>::operator()(BuilderState& state, co
     return toStyleFromCSSValue<SVGStrokeDashoffset::LengthPercentage>(state, *primitiveValue);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

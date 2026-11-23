@@ -31,8 +31,7 @@
 #include "StyleChangedAnimatablePropertiesGenerated.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle& a, const Style::ComputedStyle& b, CSSPropertiesBitSet& changingProperties, const Settings& settings, EnumSet<AnimatablePropertiesCollectionQuirks> quirks)
 {
@@ -72,5 +71,4 @@ void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle
         changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::AppleColorFilter));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

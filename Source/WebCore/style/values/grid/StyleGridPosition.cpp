@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static std::optional<int> maxPositionForTesting;
 static constexpr auto gridMaxPosition = 1000000;
@@ -213,5 +212,4 @@ Ref<CSSValue> CSSValueCreation<GridPosition>::operator()(CSSValuePool& pool, con
     return CSS::createCSSValue(pool, toCSS(value, style));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

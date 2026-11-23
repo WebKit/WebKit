@@ -28,8 +28,7 @@
 #include <wtf/Box.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 enum class Prefix : uint8_t { Not, Only };
 
@@ -75,5 +74,4 @@ void traverseFeatures(const MediaQueryList& list, NOESCAPE const TraverseFunctio
         traverseFeatures(query, function);
 }
 
-}
 }

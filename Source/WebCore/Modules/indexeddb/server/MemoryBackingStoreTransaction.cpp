@@ -37,8 +37,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 Ref<MemoryBackingStoreTransaction> MemoryBackingStoreTransaction::create(MemoryIDBBackingStore& backingStore, const IDBTransactionInfo& info)
 {
@@ -274,5 +273,4 @@ void MemoryBackingStoreTransaction::addCursor(MemoryCursor& cursor)
     m_cursors.add(cursor.info().identifier(), &cursor);
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

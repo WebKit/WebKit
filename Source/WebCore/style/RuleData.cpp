@@ -50,8 +50,7 @@
 #include "StyleSheetContents.h"
 #include "UserAgentParts.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace HTMLNames;
 
@@ -212,5 +211,4 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     ASSERT(this->selectorIndex() == selectorIndex);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

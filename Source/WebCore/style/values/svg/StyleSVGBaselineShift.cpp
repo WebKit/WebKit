@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<SVGBaselineShift>::operator()(BuilderState& state, const CSSValue& value) -> SVGBaselineShift
 {
@@ -80,5 +79,4 @@ auto Blending<SVGBaselineShift>::blend(const SVGBaselineShift& a, const SVGBasel
     return Style::blend(*a.tryLengthPercentage(), *b.tryLengthPercentage(), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

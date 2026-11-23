@@ -43,8 +43,7 @@
 #include "TextBoxPainter.h"
 #include <wtf/Assertions.h>
 
-namespace WebCore {
-namespace LayoutIntegration {
+namespace WebCore::LayoutIntegration {
 
 InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderBoxModelObject* inlineBoxWithLayer, const InlineContent& inlineContent, const RenderBlockFlow& root)
     : m_paintInfo(paintInfo)
@@ -280,5 +279,3 @@ bool LayerPaintScope::testIsIncludesAndUpdate(const InlineDisplay::Box& box)
 }
 
 }
-}
-

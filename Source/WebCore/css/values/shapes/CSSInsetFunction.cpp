@@ -28,8 +28,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<Inset>::operator()(StringBuilder& builder, const SerializationContext& context, const Inset& value)
 {
@@ -43,5 +42,4 @@ void Serialize<Inset>::operator()(StringBuilder& builder, const SerializationCon
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

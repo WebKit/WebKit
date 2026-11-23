@@ -33,8 +33,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTabSize.h"
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 static_assert(std::ranges::bidirectional_range<TextBoxRange> && std::ranges::common_range<TextBoxRange> && std::ranges::view<TextBoxRange> && std::ranges::borrowed_range<TextBoxRange>);
 
@@ -106,5 +105,4 @@ TextBoxRange textBoxesFor(const RenderText& text)
     return { lineLeftmostTextBoxFor(text) };
 }
 
-}
 }

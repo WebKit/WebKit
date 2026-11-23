@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: Two Component Types
 
@@ -158,8 +157,7 @@ bool isCenterPosition(const Position&);
 
 std::pair<CSS::PositionX, CSS::PositionY> split(CSS::Position&&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TwoComponentPositionHorizontal, 1)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TwoComponentPositionVertical, 1)

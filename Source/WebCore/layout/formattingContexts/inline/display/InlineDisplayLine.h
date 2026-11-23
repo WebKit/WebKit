@@ -31,8 +31,7 @@
 #include <WebCore/TextUtil.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace InlineDisplay {
+namespace WebCore::InlineDisplay {
 
 struct Content;
 
@@ -228,5 +227,3 @@ inline void Line::setLineBoxRectForSVGText(const FloatRect& rect)
 }
 
 }
-}
-

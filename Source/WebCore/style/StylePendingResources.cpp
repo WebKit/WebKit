@@ -48,8 +48,7 @@
 #include "StyleImage.h"
 #include "StyleSVGMarkerResource.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes>
 enum class LoadPolicy { CORS, NoCORS, Anonymous };
@@ -193,5 +192,4 @@ void loadPendingResources(const Style::ComputedStyle& style, Document& document,
         loadPendingResources(*firstLineStyle, document, element);
 }
 
-}
 }

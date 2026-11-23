@@ -28,8 +28,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 TextStream& operator<<(TextStream& ts, WebkitOverflowScrolling value)
 {
@@ -40,5 +39,4 @@ TextStream& operator<<(TextStream& ts, WebkitOverflowScrolling value)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

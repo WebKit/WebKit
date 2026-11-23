@@ -27,8 +27,7 @@
 
 #include "CSSGradient.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - GradientColorStop get<>
 
@@ -176,8 +175,7 @@ template<size_t I> const auto& get(const ConicGradient& gradient)
         return gradient.stops;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearGradient, 3)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedLinearGradient, 3)

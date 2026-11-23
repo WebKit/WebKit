@@ -27,8 +27,7 @@
 
 #include <WebCore/LayoutUnit.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct AxisConstraint {
     // https://drafts.csswg.org/css-grid-1/#algo-flex-tracks
@@ -85,5 +84,4 @@ private:
     std::optional<LayoutUnit> m_containerMaximumSize;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

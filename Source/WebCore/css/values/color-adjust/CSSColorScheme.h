@@ -32,8 +32,7 @@
 
 #if ENABLE(DARK_MODE_CSS)
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'color-scheme'> = normal | [ light | dark | <custom-ident> ]+ && only?
 // https://drafts.csswg.org/css-color-adjust/#propdef-color-scheme
@@ -58,8 +57,7 @@ template<size_t I> const auto& get(const ColorScheme& colorScheme)
         return colorScheme.only;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ColorScheme, 2)
 

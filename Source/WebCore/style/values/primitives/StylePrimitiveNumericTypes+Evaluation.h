@@ -35,8 +35,7 @@
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -395,5 +394,4 @@ template<auto aR, auto bR, typename V> auto reflectSum(const LengthPercentage<aR
     return CalcResult { Calculation::subtract(Calculation::percentage(100), Calculation::add(copyCalculation(a), copyCalculation(b))) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

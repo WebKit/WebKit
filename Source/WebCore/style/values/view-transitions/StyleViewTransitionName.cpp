@@ -28,8 +28,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -52,5 +51,4 @@ auto CSSValueConversion<ViewTransitionName>::operator()(BuilderState& state, con
     return { toStyleFromCSSValue<CustomIdent>(state, value), state.styleScopeOrdinal() };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

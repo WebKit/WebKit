@@ -32,8 +32,7 @@
 #include <WebCore/StylePinnedAnchorName.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'position-anchor'> = normal | none | auto | <anchor-name>
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-anchor
@@ -124,7 +123,6 @@ template<> struct CSSValueConversion<PositionAnchor> {
     auto operator()(BuilderState&, const CSSValue&) -> PositionAnchor;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PositionAnchor)

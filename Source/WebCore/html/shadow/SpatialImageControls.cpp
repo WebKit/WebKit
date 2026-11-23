@@ -51,8 +51,7 @@
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace SpatialImageControls {
+namespace WebCore::SpatialImageControls {
 
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)
 
@@ -310,5 +309,4 @@ void updateSpatialImageControls(HTMLImageElement& element)
 
 #endif
 
-} // namespace SpatialImageControls
-} // namespace WebCore
+} // namespace WebCore::SpatialImageControls

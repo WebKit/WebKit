@@ -26,12 +26,10 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'order'> = <integer>
 // https://drafts.csswg.org/css-display-4/#propdef-order
 using Order = Integer<>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

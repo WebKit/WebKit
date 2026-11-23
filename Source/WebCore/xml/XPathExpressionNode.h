@@ -29,8 +29,7 @@
 #include "XPathValue.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 struct EvaluationContext {
     RefPtr<Node> node;
@@ -84,5 +83,4 @@ private:
     bool m_isContextSizeSensitive;
 };
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

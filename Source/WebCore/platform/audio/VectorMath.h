@@ -27,9 +27,7 @@
 
 // Defines the interface for several vector math functions whose implementation will ideally be optimized.
 
-namespace WebCore {
-
-namespace VectorMath {
+namespace WebCore::VectorMath {
 
 // Multiples inputVector by scalar then adds the result to outputVector (simplified vsma).
 // for (n = 0; n < numberOfElementsToProcess; ++n)
@@ -92,6 +90,4 @@ void filterBiquad(std::span<const double> source, std::span<const double, 5> coe
 // at least output.size() + filter.size() - 1 elements.
 void convolve(std::span<const float> signal, std::span<const float> filter, std::span<float> output);
 
-} // namespace VectorMath
-
-} // namespace WebCore
+} // namespace WebCore::VectorMath

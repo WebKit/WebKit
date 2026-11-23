@@ -29,8 +29,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -51,5 +50,4 @@ auto CSSValueConversion<TextOverflow>::operator()(BuilderState& state, const CSS
     return toStyleFromCSSValue<String>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

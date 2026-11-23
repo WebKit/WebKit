@@ -35,8 +35,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 NODELETE static bool consumeOptionalDelimiter(CSSParserTokenRange& range, char16_t value)
 {
@@ -161,5 +160,4 @@ RefPtr<CSSValue> consumeUnicodeRangeToken(CSSParserTokenRange& range)
     return CSSUnicodeRangeValue::create(unicodeRange->start, unicodeRange->end);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

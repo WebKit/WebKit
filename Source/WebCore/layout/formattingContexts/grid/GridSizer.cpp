@@ -34,8 +34,7 @@
 #include "TrackSizingFunctions.h"
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 GridSizer::GridSizer(const GridFormattingContext& gridFormattingContext, const GridLayoutState& gridLayoutState)
     : m_gridFormattingContext(gridFormattingContext)
@@ -191,5 +190,4 @@ UsedTrackSizes GridSizer::sizeGrid(const PlacedGridItems& placedGridItems, const
     return { columnSizes, rowSizes };
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

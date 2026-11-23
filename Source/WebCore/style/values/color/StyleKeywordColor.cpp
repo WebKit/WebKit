@@ -42,8 +42,7 @@
 #include "StyleCurrentColor.h"
 #include "StyleResolvedColors.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(KeywordColor);
 
@@ -138,5 +137,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const KeywordColor& keywordColo
     return ts << "keywordColor(style color: "_s << keywordColor.computedStyleColor.debugDescription() << ", render color: " << keywordColor.renderColor.debugDescription() << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

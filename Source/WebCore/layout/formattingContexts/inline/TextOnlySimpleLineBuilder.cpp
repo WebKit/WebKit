@@ -32,8 +32,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct TextOnlyLineBreakResult {
     InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::Yes };
@@ -564,5 +563,3 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedDisplayBuild(const Elemen
 }
 
 }
-}
-

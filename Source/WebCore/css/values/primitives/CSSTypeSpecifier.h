@@ -28,8 +28,7 @@
 #include <WebCore/CSSCustomPropertySyntax.h>
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <css-type> = <syntax-component> | <type()>
 // https://drafts.csswg.org/css-mixins-1/#typedef-css-type
@@ -53,5 +52,4 @@ void add(Hasher&, const TypeSpecifier&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TypeSpecifier&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

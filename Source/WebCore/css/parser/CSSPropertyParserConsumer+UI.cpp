@@ -40,8 +40,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -80,5 +79,4 @@ RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, CSS::PropertyParserSt
     return CSSValueList::createCommaSeparated(WTF::move(list));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

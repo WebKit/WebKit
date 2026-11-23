@@ -34,9 +34,7 @@
 #include <wtf/WeakRandomNumber.h>
 #include <wtf/text/ASCIILiteral.h>
 
-namespace WebCore {
-
-namespace AudioUtilities {
+namespace WebCore::AudioUtilities {
 
 double discreteTimeConstantForSampleRate(double timeConstant, double sampleRate)
 {
@@ -220,6 +218,4 @@ Vector<uint8_t> flacDescriptionFromFLACMagicCookie(std::span<const uint8_t> cook
     return description;
 }
 
-} // AudioUtilites
-
-} // WebCore
+} // namespace WebCore::AudioUtilities

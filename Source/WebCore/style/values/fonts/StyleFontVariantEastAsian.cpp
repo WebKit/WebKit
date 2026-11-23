@@ -30,8 +30,7 @@
 #include "CSSPropertyParserConsumer+Font.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -93,5 +92,4 @@ auto CSSValueConversion<FontVariantEastAsian>::operator()(BuilderState& state, c
     return FontVariantEastAsian::Platform { variant, width, ruby };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

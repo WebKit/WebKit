@@ -30,8 +30,7 @@
 #include <WebCore/WebAnimationTypes.h>
 #include <WebCore/WebAnimationUtilities.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-transition-property> = all | <custom-ident>
 // https://www.w3.org/TR/css-transitions-1/#single-transition-property
@@ -104,8 +103,7 @@ DEFINE_TYPE_WRAPPER_GET(SingleTransitionProperty::SingleProperty, value);
 
 template<> struct CSSValueConversion<SingleTransitionProperty> { auto operator()(BuilderState&, const CSSValue&) -> SingleTransitionProperty; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SingleTransitionProperty::UnknownProperty)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SingleTransitionProperty::CustomProperty)

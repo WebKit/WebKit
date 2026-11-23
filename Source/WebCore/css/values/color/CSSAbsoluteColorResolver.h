@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <optional>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 template<typename D> struct AbsoluteColorResolver {
     using Descriptor = D;
@@ -80,5 +79,4 @@ template<typename D> WebCore::Color resolveNoConversionDataRequired(const Absolu
     return convertToColor<D, CSSColorFunctionForm::Absolute>(typedColor, absolute.nestingLevel);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

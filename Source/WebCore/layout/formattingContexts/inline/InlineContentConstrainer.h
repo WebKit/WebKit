@@ -34,8 +34,7 @@
 #include <WebCore/InlineTextItem.h>
 #include <optional>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineContentConstrainer {
 public:
@@ -126,5 +125,4 @@ private:
     std::optional<size_t> m_firstLeadingNonTrimmedItem;
 };
 
-}
 }

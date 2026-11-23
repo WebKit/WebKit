@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 OpacityParameters OpacityParameters::passthroughForInterpolation()
 {
@@ -107,5 +106,4 @@ auto ToPlatform<OpacityParameters>::operator()(const OpacityParameters& value) -
     return BasicComponentTransferFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<OpacityFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -34,8 +34,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeOverflowClipMargin(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -87,5 +86,4 @@ RefPtr<CSSValue> consumeOverflowClipMargin(CSSParserTokenRange& range, CSS::Prop
     return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

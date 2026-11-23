@@ -98,8 +98,7 @@
 #include <WebCore/AppleVisualEffect.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // FIXME: Support generating properties that have their storage spread out
 
@@ -371,5 +370,4 @@ inline bool ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::BackgroundCo
     return visitedLinkColor == WebCore::Color::transparentBlack;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 #include <WebCore/AcceleratedEffectOffsetDistance.h>
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'offset-distance'> = <length-percentage>
 // https://drafts.fxtf.org/motion/#propdef-offset-distance
@@ -50,7 +49,6 @@ template<> struct Evaluation<OffsetDistance, AcceleratedEffectOffsetDistance> {
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::OffsetDistance)

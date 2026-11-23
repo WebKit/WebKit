@@ -32,8 +32,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TrailingArray.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct WillChange;
 
@@ -255,8 +254,7 @@ private:
 
 template<> struct CSSValueConversion<WillChange> { auto operator()(BuilderState&, const CSSValue&) -> WillChange; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_COMMA_SEPARATED_RANGE_LIKE_CONFORMANCE(WebCore::Style::WillChangeAnimatableFeatures)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID);

@@ -29,8 +29,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingUtils.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class LineBoxVerticalAligner {
 public:
@@ -69,5 +68,3 @@ private:
 };
 
 }
-}
-

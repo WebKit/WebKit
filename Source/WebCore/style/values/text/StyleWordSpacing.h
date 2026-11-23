@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'word-spacing'> = normal | <length-percentage>
 // NOTE: Computed value resolves `normal` to 0px.
@@ -45,7 +44,6 @@ struct WordSpacing : PrimitiveNumericWrapperBase<LengthPercentage<CSS::AllLayout
 
 template<> struct CSSValueConversion<WordSpacing> { auto operator()(BuilderState&, const CSSValue&) -> WordSpacing; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::WordSpacing);

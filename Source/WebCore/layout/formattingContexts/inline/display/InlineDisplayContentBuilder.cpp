@@ -44,8 +44,7 @@
 
 using WTF::Range;
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 NODELETE static inline LayoutUnit marginLineLeft(const Layout::BoxGeometry& boxGeometry, WritingMode writingMode)
 {
@@ -1213,5 +1212,3 @@ void InlineDisplayContentBuilder::setLogicalRight(InlineDisplay::Box& displayBox
 }
 
 }
-}
-

@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+Serialization.h"
 #include "TransformOperationData.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 void Serialize<Ray>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const Ray& value)
 {
@@ -138,5 +137,4 @@ AcceleratedEffectRayFunction Evaluation<RayFunction, AcceleratedEffectRayFunctio
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

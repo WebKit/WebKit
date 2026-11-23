@@ -38,8 +38,7 @@ namespace CSSCalc {
 struct Tree;
 }
 
-namespace Style {
-namespace Calculation {
+namespace Style::Calculation {
 
 struct Tree;
 
@@ -71,6 +70,5 @@ CSSCalc::Tree toCSS(const Tree&, const ToCSSOptions&);
 // Converts from CSSCalc::Tree to Style::Calculation::Tree.
 Tree toStyle(const CSSCalc::Tree&, const ToStyleOptions&);
 
-} // namespace Calculation
-} // namespace Style
+} // namespace Style::Calculation
 } // namespace WebCore

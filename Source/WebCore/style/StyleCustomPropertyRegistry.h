@@ -30,8 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ComputedStyle;
 class CustomProperty;
@@ -69,5 +68,4 @@ private:
     mutable bool m_hasInvalidPrototypeStyle { false };
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

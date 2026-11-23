@@ -27,8 +27,7 @@
 #include "CSSQuotesValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 const WTF::String& Quotes::openQuote(unsigned index) const
 {
@@ -126,5 +125,4 @@ Ref<CSSValue> CSSValueCreation<Quotes>::operator()(CSSValuePool&, const Style::C
     return CSSQuotesValue::create(toCSS(value, style));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

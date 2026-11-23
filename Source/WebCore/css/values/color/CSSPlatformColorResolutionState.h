@@ -32,8 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 enum class LightDarkColorAppearance : bool;
 
@@ -159,5 +158,4 @@ struct PlatformColorResolutionStateNester {
     PlatformColorResolutionState& state;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

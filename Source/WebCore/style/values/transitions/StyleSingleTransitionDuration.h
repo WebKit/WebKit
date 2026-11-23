@@ -26,12 +26,10 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-transition-duration> = <time [0,∞]>
 // https://www.w3.org/TR/css-transitions-1/#propdef-transition-duration
 using SingleTransitionDuration = Time<CSS::Nonnegative>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -34,8 +34,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IndexValueStore);
 
@@ -444,5 +443,4 @@ String IndexValueStore::loggingString() const
 }
 #endif
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

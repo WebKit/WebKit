@@ -34,9 +34,7 @@
 #include <wtf/IndexedRange.h>
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
-
-namespace StereoPanner {
+namespace WebCore::StereoPanner {
 
 void panWithSampleAccurateValues(const AudioBus& inputBus, AudioBus& outputBus, std::span<const float> panValues)
 {
@@ -138,8 +136,6 @@ void panToTargetValue(const AudioBus& inputBus, AudioBus& outputBus, float panVa
     }
 }
 
-} // namespace StereoPanner
-
-} // namespace WebCore
+} // namespace WebCore::StereoPanner
 
 #endif // ENABLE(WEB_AUDIO)

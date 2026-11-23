@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<FreeformGradientColorStop>::operator()(StringBuilder& builder, const SerializationContext& context, const FreeformGradientColorStop& value)
 {
@@ -54,5 +53,4 @@ void Serialize<FreeformGradient>::operator()(StringBuilder& builder, const Seria
     serializationForCSS(builder, context, gradient.stops);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

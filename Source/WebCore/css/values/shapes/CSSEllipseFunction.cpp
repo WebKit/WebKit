@@ -28,8 +28,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 static bool hasDefaultValueForEllipseRadius(Ellipse::RadialSize radius)
 {
@@ -61,5 +60,4 @@ void Serialize<Ellipse>::operator()(StringBuilder& builder, const SerializationC
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

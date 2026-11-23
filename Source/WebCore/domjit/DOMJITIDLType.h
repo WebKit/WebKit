@@ -27,7 +27,7 @@
 
 #include "IDLTypes.h"
 
-namespace WebCore { namespace DOMJIT {
+namespace WebCore::DOMJIT {
 
 template<typename IDLType>
 struct IDLJSArgumentTypeSelect;
@@ -45,4 +45,4 @@ template<> struct IDLJSArgumentTypeSelect<IDLRequiresExistingAtomStringAdaptor<I
 template<typename IDLType>
 using IDLJSArgumentType = typename IDLJSArgumentTypeSelect<IDLType>::type;
 
-} }
+}

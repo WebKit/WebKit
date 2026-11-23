@@ -37,8 +37,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - IsRepeatingGradient
 
@@ -1236,5 +1235,4 @@ bool isOpaque(const Gradient& gradient, const Style::ComputedStyle& style)
     return WTF::switchOn(gradient, [&](auto& gradient) { return isOpaque(gradient, style); } );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

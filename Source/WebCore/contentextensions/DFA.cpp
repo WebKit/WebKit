@@ -32,9 +32,7 @@
 #include <ranges>
 #include <wtf/DataLog.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 DFA DFA::empty()
 {
@@ -166,8 +164,6 @@ void DFA::debugPrintDot() const
 }
 #endif
 
-} // namespace ContentExtensions
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

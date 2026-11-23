@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'rx'/'ry'> = <length-percentage [0,∞]> | auto
 // https://svgwg.org/svg2-draft/geometry.html#RX
@@ -38,7 +37,6 @@ struct SVGRadiusComponent : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonn
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGRadiusComponent)

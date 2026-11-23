@@ -28,12 +28,9 @@
 #include "LayoutUnit.h"
 #include <wtf/Vector.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 struct UsedTrackSizes {
     TrackSizes columnSizes;
     TrackSizes rowSizes;
 };
 }
-}
-

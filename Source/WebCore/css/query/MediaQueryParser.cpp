@@ -32,8 +32,7 @@
 #include "GenericMediaQuerySerialization.h"
 #include "MediaQueryFeatures.h"
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 Vector<const FeatureSchema*> MediaQueryParser::featureSchemas()
 {
@@ -244,5 +243,4 @@ void serialize(StringBuilder& builder, const MediaQuery& query)
         serialize(builder, *query.condition);
 }
 
-}
 }

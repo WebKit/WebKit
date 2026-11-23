@@ -29,8 +29,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSPropertyParser.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 const CSSRegisteredCustomProperty* LocalPropertyRegistry::get(const AtomString& name) const
 {
@@ -59,5 +58,4 @@ void LocalPropertyRegistry::add(CSSRegisteredCustomProperty&& property)
     m_properties.set(property.name, makeUniqueRef<CSSRegisteredCustomProperty>(WTF::move(property)));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

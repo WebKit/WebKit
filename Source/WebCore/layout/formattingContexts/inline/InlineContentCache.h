@@ -31,8 +31,7 @@
 #include <WebCore/LineLayoutResult.h>
 #include <wtf/HashMap.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
@@ -138,5 +137,3 @@ inline void InlineContentCache::InlineItems::replace(size_t insertionPosition, I
 }
 
 }
-}
-

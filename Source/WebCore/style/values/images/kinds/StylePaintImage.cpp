@@ -51,8 +51,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/PointerComparison.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 PaintImage::PaintImage(CustomIdent&& name, Ref<CSSVariableData>&& arguments)
     : GeneratedImage { Type::PaintImage }
@@ -246,5 +245,4 @@ bool PaintImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& s
     return !size.isEmpty() && canDraw(renderer);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

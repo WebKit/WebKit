@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'position-visibility'> = always | [ anchor-valid || anchor-visible || no-overflow ]
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-visibility
@@ -49,7 +48,6 @@ struct PositionVisibility : EnumSetOrKeywordBase<PositionVisibility, PositionVis
     constexpr bool isAlways() const { return isKeyword(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PositionVisibility)

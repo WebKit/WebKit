@@ -28,8 +28,7 @@
 #include "CSSAppleInvertLightnessFunction.h"
 #include "ColorMatrix.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // FIXME: This hueRotate code exists to allow AppleInvertLightness to perform hue rotation
 // on color values outside of the non-extended SRGB value range (0-1) to maintain the behavior of colors
@@ -130,5 +129,4 @@ bool AppleInvertLightness::inverseTransformColor(SRGBA<float>& color) const
     return true;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

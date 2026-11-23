@@ -37,8 +37,7 @@
 #include "CSSSepiaFunction.h"
 #include <wtf/StdLibExtras.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // Any <filter-function> or a reference to filter via <url>.
 // https://drafts.fxtf.org/filter-effects/#typedef-filter-function
@@ -80,8 +79,7 @@ struct Filter : ListOrNone<FilterValueList> {
     using ListOrNone<FilterValueList>::ListOrNone;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::FilterValue)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::Filter)

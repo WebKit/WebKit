@@ -39,9 +39,7 @@
 #include "WritingMode.h"
 #include <wtf/Range.h>
 
-namespace WebCore {
-namespace Layout {
-namespace GridLayoutUtils {
+namespace WebCore::Layout::GridLayoutUtils {
 
 // https://drafts.csswg.org/css-grid-1/#collapsed-gutter
 // The gutters on either side of a collapsed track coincide, and a collapsed track at either end of
@@ -1261,6 +1259,4 @@ Vector<BaselineSharingGroup> baselineSharingGroups(const PlacedGridItems& gridIt
     return groups;
 }
 
-}
-}
 }

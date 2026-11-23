@@ -33,8 +33,7 @@
 #include "StyleJustifyItems.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 StyleSelfAlignmentData JustifySelf::resolve(const Style::ComputedStyle* containerStyle) const
 {
@@ -202,5 +201,4 @@ auto CSSValueConversion<JustifySelf>::operator()(BuilderState& state, const CSSV
     }
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

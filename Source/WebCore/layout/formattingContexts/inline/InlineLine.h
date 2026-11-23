@@ -36,8 +36,7 @@
 #include <unicode/ubidi.h>
 #include <wtf/Range.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct ExpansionInfo;
 class InlineContentAligner;
@@ -241,5 +240,4 @@ inline size_t Line::HangingContent::length() const
     return length;
 }
 
-}
 }

@@ -35,8 +35,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GridItemData);
 class GridItemData : public RefCounted<GridItemData> {
@@ -61,5 +60,4 @@ private:
     GridItemData(const GridItemData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -32,8 +32,7 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Document.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Serialization
 
@@ -134,5 +133,4 @@ bool mayDependOnBaseURL(const URL& url)
         && !url.resolved.protocolIsData();
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

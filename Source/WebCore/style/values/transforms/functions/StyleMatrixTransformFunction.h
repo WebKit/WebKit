@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleTransformFunctionBase.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // matrix() = matrix( <number>#{6} )
 // https://drafts.csswg.org/css-transforms/#funcdef-transform-matrix
@@ -69,7 +68,6 @@ private:
     Number<> m_f;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::MatrixTransformFunction, WebCore::Style::TransformFunctionBase::Type::Matrix ==)

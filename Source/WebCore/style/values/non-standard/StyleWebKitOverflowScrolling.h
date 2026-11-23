@@ -27,8 +27,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-overflow-scrolling'> = auto | touch
 // NOTE: There is no standard associated with this property.
@@ -41,5 +40,4 @@ enum class WebkitOverflowScrolling : bool {
 
 WTF::TextStream& operator<<(WTF::TextStream&, WebkitOverflowScrolling);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

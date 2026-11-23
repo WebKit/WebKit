@@ -27,8 +27,7 @@
 #include <WebCore/StyleCalcSizeValue+Evaluation.h>
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // Base for the sizing properties, which accept `calc-size()`, `stretch()` and `fit-content()` in addition to a
 // <length-percentage> and their keywords. Being a distinct base keeps the handling of those off the
@@ -74,5 +73,4 @@ struct SizeOrKeyword : PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercent
 // it are more specialized than ones constrained on that, rather than ambiguous with them.
 template<typename T> concept SizeOrKeywordDerived = LengthPercentageOrKeywordDerived<T> && WTF::IsBaseOfTemplate<SizeOrKeyword, T>::value;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

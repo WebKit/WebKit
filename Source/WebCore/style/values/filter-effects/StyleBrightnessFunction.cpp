@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Brightness Brightness::passthroughForInterpolation()
 {
@@ -109,5 +108,4 @@ auto ToPlatform<Brightness>::operator()(const Brightness& value) -> Ref<FilterOp
     return BasicComponentTransferFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<BrightnessFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

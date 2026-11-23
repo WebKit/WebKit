@@ -28,8 +28,7 @@
 #include <WebCore/LayoutUnit.h>
 #include <optional>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct ComputedVerticalMargin {
     std::optional<LayoutUnit> before;
@@ -99,5 +98,4 @@ struct PrecomputedMarginBefore {
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveAndNegativeMarginBefore;
 };
 
-}
 }

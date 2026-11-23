@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleTransformFunctionBase.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // skew() = skew( [ <angle> | <zero> ] , [ <angle> | <zero> ]? )
 // https://drafts.csswg.org/css-transforms/#funcdef-transform-skew
@@ -67,7 +66,6 @@ private:
     Angle<> m_angleY;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::SkewTransformFunction, WebCore::Style::TransformFunctionBase::isSkewTransformFunctionType)

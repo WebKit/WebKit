@@ -31,8 +31,7 @@
 #include "SVGURIReference.h"
 #include "StyleBuilderState.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 void FilterReference::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
@@ -63,5 +62,4 @@ auto ToStyle<CSS::FilterReference>::operator()(const CSS::FilterReference& value
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

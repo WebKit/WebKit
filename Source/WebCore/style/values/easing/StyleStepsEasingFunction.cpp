@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "TimingFunction.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 CSS::StepsEasingFunction toCSSStepsEasingFunction(const StepsTimingFunction& function, const Style::ComputedStyle&)
 {
@@ -112,5 +111,4 @@ Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::StepsEasingFunctio
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

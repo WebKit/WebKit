@@ -25,8 +25,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <visual-box> = border-box | content-box | padding-box
 // https://drafts.csswg.org/css-box-4/#typedef-visual-box
@@ -36,5 +35,4 @@ enum class VisualBox : uint8_t {
     PaddingBox
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

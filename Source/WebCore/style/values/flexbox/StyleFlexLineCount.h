@@ -26,12 +26,10 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'flex-line-count'> = <integer [1,∞]>
 // https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property
 using FlexLineCount = Integer<CSS::Positive>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

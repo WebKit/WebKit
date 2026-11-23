@@ -30,8 +30,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -51,5 +50,4 @@ auto CSSValueConversion<StrokeWidth>::operator()(BuilderState& state, const CSSV
     return toStyleFromCSSValue<StrokeWidth::LengthPercentage>(state, *primitiveValue);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

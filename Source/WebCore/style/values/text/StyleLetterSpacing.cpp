@@ -27,8 +27,7 @@
 
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CSSValue& value) -> LetterSpacing
 {
@@ -49,5 +48,4 @@ auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CS
     return toStyleFromCSSValue<LetterSpacing::Wrapped>(state, *primitiveValue);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

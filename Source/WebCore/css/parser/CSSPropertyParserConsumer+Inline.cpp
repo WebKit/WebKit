@@ -33,8 +33,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 static RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange& range)
 {
@@ -83,5 +82,4 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, CSS::PropertyPar
     return consumeTextEdge(range);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

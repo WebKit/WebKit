@@ -29,8 +29,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <algorithm>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 MatrixTransformFunction::MatrixTransformFunction(Number<> a, Number<> b, Number<> c, Number<> d, Number<> e, Number<> f)
     : TransformFunctionBase(TransformFunctionBase::Type::Matrix)
@@ -140,5 +139,4 @@ void MatrixTransformFunction::dump(TextStream& ts) const
        << m_f << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

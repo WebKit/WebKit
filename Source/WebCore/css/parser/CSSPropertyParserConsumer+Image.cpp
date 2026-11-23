@@ -76,8 +76,7 @@
 #include "CSSVariableData.h"
 #include <wtf/SortedArrayMap.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // Used by radial gradient consumers internally.
 enum class ShapeKeyword : bool { Circle, Ellipse };
@@ -1616,5 +1615,4 @@ std::optional<CSS::ImageOrNone> consumeUnresolvedImageOrNone(CSSParserTokenRange
     return CSS::ImageOrNone { CSS::ImageWrapper { image.releaseNonNull() } };
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

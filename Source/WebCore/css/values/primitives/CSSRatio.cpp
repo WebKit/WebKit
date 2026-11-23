@@ -27,13 +27,11 @@
 
 #include "CSSRatioValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 Ref<CSSValue> CSSValueCreation<Ratio>::operator()(CSSValuePool&, const Ratio& ratio)
 {
     return CSSRatioValue::create(ratio);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

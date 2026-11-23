@@ -33,8 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 // This file contains an implementation of math operations used by CSSCalc::Tree and Style::Calculation::Tree.
 
@@ -560,5 +559,4 @@ template<> struct OperatorExecutor<Operator::Random> {
     }
 };
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

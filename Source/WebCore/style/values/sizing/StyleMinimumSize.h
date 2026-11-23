@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleSizeOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct PreferredSize;
 
@@ -81,7 +80,6 @@ private:
 
 using MinimumSizePair = SpaceSeparatedSize<MinimumSize>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::MinimumSize)

@@ -28,8 +28,7 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleTransformFunctionBase.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // rotate() = rotate( [ <angle> | <zero> ] )
 // https://drafts.csswg.org/css-transforms/#funcdef-transform-rotate
@@ -79,7 +78,6 @@ private:
     Angle<> m_angle;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::RotateTransformFunction, WebCore::Style::TransformFunctionBase::isRotateTransformFunctionType)

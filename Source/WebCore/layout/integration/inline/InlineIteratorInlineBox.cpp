@@ -30,8 +30,7 @@
 #include "RenderBlockFlowInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 static_assert(std::ranges::bidirectional_range<InlineBoxRange> && std::ranges::common_range<InlineBoxRange> && std::ranges::view<InlineBoxRange> && std::ranges::borrowed_range<InlineBoxRange>);
 
@@ -148,5 +147,4 @@ InlineBox inlineBoxFor(const LayoutIntegration::InlineContent& content, size_t b
     return { content, boxIndex };
 }
 
-}
 }

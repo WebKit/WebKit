@@ -32,8 +32,7 @@
 #include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 static_assert(sizeof(InlineItem) == sizeof(InlineTextItem));
 
@@ -105,5 +104,4 @@ bool InlineTextItem::shouldPreserveSpacesAndTabs(const InlineTextItem& inlineTex
     return TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox());
 }
 
-}
 }

@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+CSSValueCreation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 using MaskBorderExtractedType = SpaceSeparatedTuple<
    std::optional<MaskBorderSource>,
@@ -71,5 +70,4 @@ void Serialize<MaskBorder>::operator()(StringBuilder& builder, const Serializati
     serializationForCSS(builder, context, makeExtractedType(value));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

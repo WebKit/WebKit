@@ -29,9 +29,7 @@
 
 #include <WebCore/DFA.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct NFA;
 
@@ -41,7 +39,6 @@ public:
     WEBCORE_EXPORT static std::optional<DFA> convert(NFA&&);
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

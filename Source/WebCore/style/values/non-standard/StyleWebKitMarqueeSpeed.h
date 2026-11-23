@@ -27,8 +27,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-marquee-speed'> = <time [0,∞]>
 // NOTE: There is no standard associated with this property. It exists to model the "marquee scroll interval" concept derived from the <marquee> element's `scrolldelay` attribute.
@@ -50,7 +49,6 @@ struct WebkitMarqueeSpeed {
 };
 DEFINE_TYPE_WRAPPER_GET(WebkitMarqueeSpeed, value);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::WebkitMarqueeSpeed)

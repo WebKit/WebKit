@@ -27,8 +27,7 @@
 #include "StylePrimitiveNumericOrKeyword.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Blending
 
@@ -56,5 +55,4 @@ template<LengthPercentageOrKeywordDerived StyleType> struct NumericOrKeywordBlen
 
 template<LengthPercentageOrKeywordDerived StyleType> struct Blending<StyleType> : NumericOrKeywordBlending<StyleType> { };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,8 +29,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 TimelineTrigger::TimelineTrigger()
     : m_data { Data { } }
@@ -57,5 +56,4 @@ TextStream& operator<<(TextStream& ts, const TimelineTrigger& value)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

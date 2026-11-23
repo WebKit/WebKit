@@ -44,8 +44,7 @@
 #include <ranges>
 #include <wtf/SetForScope.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 NODELETE static bool shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules)
 {
@@ -677,5 +676,4 @@ void Invalidator::invalidateHostAndSlottedStyleIfNeeded(ShadowRoot& shadowRoot)
     }
 }
 
-}
 }

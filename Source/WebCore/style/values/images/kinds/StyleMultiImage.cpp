@@ -45,8 +45,7 @@
 #include "StylePaintImage.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MultiImage);
 
@@ -292,5 +291,4 @@ bool MultiImage::containsCurrentColor() const
     return m_selectedImage && protect(m_selectedImage)->containsCurrentColor();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -22,9 +22,7 @@
 
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-
-namespace InputTypeNames {
+namespace WebCore::InputTypeNames {
 
 NODELETE const AtomString& button();
 const AtomString& checkbox();
@@ -49,6 +47,4 @@ const AtomString& time();
 NODELETE const AtomString& url();
 const AtomString& week();
 
-}
-
-} // namespace WebCore
+} // namespace WebCore::InputTypeNames

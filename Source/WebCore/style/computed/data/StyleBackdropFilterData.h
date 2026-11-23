@@ -30,8 +30,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BackdropFilterData);
 class BackdropFilterData : public RefCounted<BackdropFilterData> {
@@ -53,5 +52,4 @@ private:
     BackdropFilterData(const BackdropFilterData&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

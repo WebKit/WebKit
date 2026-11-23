@@ -27,8 +27,7 @@
 #include <WebCore/CSSGridTrackBreadth.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <minmax()> = minmax( <inflexible-breadth> , <track-breadth> )
 //            | minmax( <fixed-breadth>      , <track-breadth> )
@@ -89,8 +88,7 @@ private:
     Variant<GridTrackBreadth, GridMinMaxFunction, GridFitContentFunction> m_value;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::GridMinMaxFunctionParameters, 2)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::GridFitContentFunctionParameters)

@@ -32,8 +32,7 @@
 #include "StyleInvalidationFunctions.h"
 #include <wtf/BitVector.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class ClassChangeType : bool { Add, Remove };
 
@@ -177,5 +176,4 @@ void ClassChangeInvalidation::invalidateAfterChange()
     Invalidator::invalidateWithMatchElementRuleSets(m_element, m_afterChangeRuleSets);
 }
 
-}
 }

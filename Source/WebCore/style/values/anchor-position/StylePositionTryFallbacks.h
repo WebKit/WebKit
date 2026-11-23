@@ -27,8 +27,7 @@
 #include <WebCore/StylePositionTryFallback.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <position-try-fallback-list> = <position-try-fallback>#
 using PositionTryFallbackList = CommaSeparatedFixedVector<PositionTryFallback>;
@@ -37,7 +36,6 @@ using PositionTryFallbackList = CommaSeparatedFixedVector<PositionTryFallback>;
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-try-fallbacks
 struct PositionTryFallbacks : ListOrNone<PositionTryFallbackList> { using ListOrNone<PositionTryFallbackList>::ListOrNone; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PositionTryFallbacks)

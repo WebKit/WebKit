@@ -35,9 +35,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 enum class AtomQuantifier : uint8_t {
     One,
@@ -665,7 +663,6 @@ inline size_t Term::memoryUsed() const
 }
 #endif
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

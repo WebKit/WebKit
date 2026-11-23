@@ -52,8 +52,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/PointerComparison.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 ScopeRuleSets::ScopeRuleSets(Resolver& styleResolver)
     : m_authorStyle(RuleSet::create())
@@ -534,5 +533,4 @@ bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bo
     return false;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

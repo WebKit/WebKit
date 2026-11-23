@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <legacy-position> = left | right | center
 // https://drafts.csswg.org/css-align/#valdef-justify-items-legacy
@@ -69,5 +68,4 @@ constexpr decltype(auto) visitLegacyPosition(auto&& primaryKeyword, LegacyPositi
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

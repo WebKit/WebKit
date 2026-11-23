@@ -28,8 +28,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'scrollbar-gutter'> = auto | stable && both-edges?
 // https://www.w3.org/TR/css-overflow-3/#propdef-scrollbar-gutter
@@ -79,7 +78,6 @@ private:
 
 template<> struct CSSValueConversion<ScrollbarGutter> { ScrollbarGutter operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ScrollbarGutter)

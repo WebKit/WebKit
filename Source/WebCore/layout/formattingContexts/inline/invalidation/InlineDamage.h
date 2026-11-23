@@ -30,8 +30,7 @@
 #include <WebCore/InlineLineTypes.h>
 #include <wtf/EnumSet.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class Box;
 class InlineInvalidation;
@@ -120,5 +119,4 @@ inline void InlineDamage::resetLayoutPosition()
     // Never reset m_hasTruncatedDisplayContent. The display content stays truncated until the next layout.
 }
 
-}
 }

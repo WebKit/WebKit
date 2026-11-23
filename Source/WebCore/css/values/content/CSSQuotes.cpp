@@ -25,8 +25,6 @@
 #include "config.h"
 #include "CSSQuotes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

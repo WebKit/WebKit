@@ -103,8 +103,7 @@
 #include <WebKitAdditions/StyleAdjusterAdditions.cpp>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 using namespace HTMLNames;
@@ -1537,5 +1536,4 @@ void Adjuster::adjustViewTimelines(Style::ComputedStyle& style)
     style.ensureViewTimelines().prepareForUse();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

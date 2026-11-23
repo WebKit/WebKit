@@ -28,8 +28,7 @@
 #include "StyleFlexBasis.h"
 #include "StyleMinimumSize.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 MinimumSize PreferredSize::asMinimumSize() const
 {
@@ -59,5 +58,4 @@ FlexBasis PreferredSize::asFlexBasis() const
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

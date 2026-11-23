@@ -32,8 +32,7 @@
 #include "StyleColorResolutionState.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -99,5 +98,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const ContrastColor& contrastCo
     return ts << "contrast-color("_s << contrastColor.color << ")"_s;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

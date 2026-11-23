@@ -30,8 +30,7 @@
 #include "CSSMaskBorderSource.h"
 #include "CSSMaskBorderWidth.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'mask-border'> = <'mask-border-source'> || <'mask-border-slice'> [ / <'mask-border-width'>? [ / <'mask-border-outset'> ]? ]? || <'mask-border-repeat'> || <'mask-border-mode'>
 // FIXME: Add support for `mask-border-mode`.
@@ -74,7 +73,6 @@ template<> struct CSSValueCreation<MaskBorder> { auto operator()(CSSValuePool&, 
 
 template<> struct Serialize<MaskBorder> { void operator()(StringBuilder&, const SerializationContext&, const MaskBorder&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::MaskBorder, 5)

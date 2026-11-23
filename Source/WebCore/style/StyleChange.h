@@ -31,8 +31,7 @@ namespace WTF {
 class TextStream;
 }
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ComputedStyle;
 
@@ -50,7 +49,5 @@ WEBCORE_EXPORT OptionSet<Change> determineChanges(const Style::ComputedStyle&, c
 
 WTF::TextStream& operator<<(WTF::TextStream&, Change);
 WTF::TextStream& operator<<(WTF::TextStream&, OptionSet<Change>);
-
-}
 
 }

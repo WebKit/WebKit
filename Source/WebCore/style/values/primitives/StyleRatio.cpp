@@ -28,13 +28,11 @@
 #include "CSSRatioValue.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Ref<CSSValue> CSSValueCreation<Ratio>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Ratio& ratio)
 {
     return CSSRatioValue::create(toCSS(ratio, style));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

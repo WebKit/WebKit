@@ -27,8 +27,7 @@
 #include <WebCore/ScopedName.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-animation-name> = none | <keyframes-name>
 // https://www.w3.org/TR/css-animations-1/#propdef-animation-name
@@ -66,7 +65,6 @@ private:
 
 template<> struct CSSValueConversion<SingleAnimationName> { auto operator()(BuilderState&, const CSSValue&) -> SingleAnimationName; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationName)

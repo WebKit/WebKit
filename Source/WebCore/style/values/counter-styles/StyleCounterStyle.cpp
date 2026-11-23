@@ -34,8 +34,7 @@
 #include "CSSValuePool.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -114,5 +113,4 @@ Ref<CSSValue> CSSValueCreation<SymbolsFunction>::operator()(CSSValuePool&, const
     return CSSSymbolsFunctionValue::create(toCSS(value, style));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'resize'> = none | both | horizontal | vertical | block | inline
 // https://drafts.csswg.org/css-ui-4/#propdef-resize
@@ -46,5 +45,4 @@ enum class Resize : uint8_t {
 // NOTE: Custom conversion is required to resolve `-internal-textarea-auto`.
 template<> struct CSSValueConversion<Resize> { Resize operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

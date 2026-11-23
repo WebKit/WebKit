@@ -27,8 +27,7 @@
 #include "CSSCalcTree.h"
 #include "StyleCalculationTree.h"
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 template<typename> struct ToCalculationMapping;
 template<> struct ToCalculationMapping<Sum> { using type = Style::Calculation::Sum; };
@@ -99,5 +98,4 @@ template<> struct ToCalcMapping<Style::Calculation::CalcMix> { using type = Calc
 template<typename T> using ToCalculationTreeOp = typename ToCalculationMapping<T>::type;
 template<typename T> using ToCalcTreeOp = typename ToCalcMapping<T>::type;
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

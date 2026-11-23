@@ -27,8 +27,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <border-image-slice-value> = <number [0,∞]> | <percentage [0,∞]>
 // <'border-image-slice'> = [<number [0,∞]> | <percentage [0,∞]>]{1,4} && fill?
@@ -54,7 +53,6 @@ template<size_t I> const auto& get(const BorderImageSlice& value)
 
 template<> struct CSSValueCreation<BorderImageSlice> { auto operator()(CSSValuePool&, const BorderImageSlice&) -> Ref<CSSValue>; };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::BorderImageSlice, 2)

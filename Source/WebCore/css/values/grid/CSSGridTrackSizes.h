@@ -26,8 +26,7 @@
 
 #include "CSSGridTrackSize.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 using GridTrackSizeList = SpaceSeparatedVector<GridTrackSize>;
 
@@ -56,7 +55,6 @@ struct GridTrackSizes : ListOrDefault<GridTrackSizeList, GridTrackSizeDefaulter>
 // Customization is needed to return CSSGridTrackSizesValue.
 template<> struct CSSValueCreation<GridTrackSizes> { Ref<CSSValue> operator()(CSSValuePool&, const GridTrackSizes&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_RANGE_LIKE_CONFORMANCE_FOR_LIST_OR_DEFAULT_DERIVED_TYPE(WebCore::CSS::GridTrackSizes)

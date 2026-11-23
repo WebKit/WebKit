@@ -30,8 +30,7 @@
 #include "RenderObjectInlines.h"
 #include "StyleResolver.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - GeneratedImage.
 
@@ -76,5 +75,4 @@ bool GeneratedImage::hasClient(RenderElement& renderer) const
     return m_clients.contains(renderer);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -30,8 +30,7 @@
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -65,5 +64,4 @@ Ref<CSSValue> CSSValueCreation<GridAutoFlow>::operator()(CSSValuePool& pool, con
     return CSS::createCSSValue(pool, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -27,8 +27,7 @@
 #include <WebCore/StyleTransformFunctionWrapper.h>
 #include <WebCore/StyleTranslateTransformFunction.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'translate'> = none | <length-percentage> [ <length-percentage> <length>? ]?
 // https://drafts.csswg.org/css-transforms-2/#propdef-translate
@@ -113,8 +112,7 @@ template<> struct Blending<Translate> {
 
 template<> struct ToPlatform<Translate> { auto operator()(const Translate&, const FloatSize&, ZoomFactor) -> RefPtr<TransformOperation>; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Translate::Function)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Translate)

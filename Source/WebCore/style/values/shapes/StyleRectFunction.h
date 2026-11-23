@@ -27,12 +27,10 @@
 #include <WebCore/CSSRectFunction.h>
 #include <WebCore/StyleInsetFunction.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // NOTE: There is no Style::Rect type. Style conversion of CSS::Rect yields a Style::Inset.
 template<> struct ToStyle<CSS::Rect> { auto operator()(const CSS::Rect&, const BuilderState&) -> Inset; };
 template<> struct ToStyle<CSS::RectFunction> { auto operator()(const CSS::RectFunction&, const BuilderState&) -> InsetFunction; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

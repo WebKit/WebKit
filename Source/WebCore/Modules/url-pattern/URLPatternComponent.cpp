@@ -38,8 +38,7 @@
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/text/MakeString.h>
 
-namespace WebCore {
-namespace URLPatternUtilities {
+namespace WebCore::URLPatternUtilities {
 
 URLPatternComponent::URLPatternComponent() = default;
 
@@ -199,5 +198,4 @@ URLPatternComponentResult URLPatternComponent::createComponentMatchResult(String
     return URLPatternComponentResult { !input.isEmpty() ? WTF::move(input) : emptyString(), WTF::move(groups) };
 }
 
-}
 }

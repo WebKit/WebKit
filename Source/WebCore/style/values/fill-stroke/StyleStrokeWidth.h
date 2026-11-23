@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'stroke-width'> = <length-percentage [0,∞]> | <number [0,∞]>@(converted-to-px)
 // FIXME: The current spec has the grammar as <'stroke-width'> = <length-percentage [0,∞]>#.
@@ -61,7 +60,6 @@ DEFINE_TYPE_WRAPPER_GET(StrokeWidth, value);
 
 template<> struct CSSValueConversion<StrokeWidth> { auto operator()(BuilderState&, const CSSValue&) -> StrokeWidth; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::StrokeWidth)

@@ -81,8 +81,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleScope.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BuilderState);
 
@@ -414,6 +413,4 @@ void BuilderState::didApplyAuthorProperty(CSSPropertyID propertyID)
         style().setHasAuthorHighlightColors();
 }
 
-
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

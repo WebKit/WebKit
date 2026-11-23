@@ -26,8 +26,7 @@
 
 #include <WebCore/CSSValueTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'flex-wrap'> = nowrap | [ wrap | wrap-reverse ] || balance
 // NOTE: `balance` on its own means `wrap balance`, so it has no non-wrapping form.
@@ -94,7 +93,6 @@ struct FlexWrap {
     constexpr bool operator==(const FlexWrap&) const = default;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::FlexWrap)

@@ -28,8 +28,7 @@
 
 #include "DeprecatedCSSOMValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - CSSValue Visitation
 
@@ -52,5 +51,4 @@ void Serialize<ImageWrapper>::operator()(StringBuilder& builder, const Serializa
     builder.append(protect(value.value)->cssText(context));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

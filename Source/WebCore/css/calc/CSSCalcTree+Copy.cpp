@@ -27,8 +27,7 @@
 
 #include "CSSCalcTree.h"
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 static auto copy(const Random::Sharing&) -> Random::Sharing;
 static auto copy(const CSSValueID&) -> CSSValueID;
@@ -136,5 +135,4 @@ Tree copy(const Tree& tree)
     };
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

@@ -31,8 +31,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -67,5 +66,4 @@ void add(Hasher& hasher, const Keyword& value)
     add(hasher, value.value);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -40,8 +40,7 @@
 #include "CSSValueKeywords.h"
 #include <wtf/UniqueRef.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 NODELETE static bool isValidBasisKeyword(CSSValueID keyword, CSSPropertyID property)
 {
@@ -200,5 +199,4 @@ RefPtr<CSSValue> consumeCalcSize(CSSParserTokenRange& range, CSS::PropertyParser
     return CSSCalcSizeValue::create(WTF::move(*calcSize));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

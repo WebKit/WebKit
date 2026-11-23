@@ -34,8 +34,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Saturate Saturate::passthroughForInterpolation()
 {
@@ -105,5 +104,4 @@ auto ToPlatform<Saturate>::operator()(const Saturate& value) -> Ref<FilterOperat
     return BasicColorMatrixFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<SaturateFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

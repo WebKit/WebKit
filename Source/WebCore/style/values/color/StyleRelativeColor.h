@@ -38,8 +38,7 @@
 #include "StyleResolvedColor.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ResolvedColors;
 
@@ -163,5 +162,4 @@ template<typename D> WTF::TextStream& operator<<(WTF::TextStream& ts, const Rela
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include <WebCore/StyleCustomIdent.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-timeline-trigger-name> = none | <dashed-ident>
 // https://drafts.csswg.org/animation-triggers-1/#timeline-trigger-name
@@ -40,7 +39,6 @@ struct TimelineTriggerName : ValueOrKeyword<CustomIdent, CSS::Keyword::None> {
     bool isDashedIdentifier() const { return isValue(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TimelineTriggerName)

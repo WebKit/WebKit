@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Contrast Contrast::passthroughForInterpolation()
 {
@@ -111,5 +110,4 @@ auto ToPlatform<Contrast>::operator()(const Contrast& value) -> Ref<FilterOperat
     return BasicComponentTransferFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<ContrastFunction::name>());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

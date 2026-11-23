@@ -32,8 +32,7 @@
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleForVisitedLink.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 bool containsCurrentColor(const Style::SVGPaint& paint)
 {
@@ -128,5 +127,4 @@ auto Blending<SVGPaint>::blend(const SVGPaint& a, const SVGPaint& b, const Style
     return Style::blend(a.colorDisregardingType(), b.colorDisregardingType(), aStyle, bStyle, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

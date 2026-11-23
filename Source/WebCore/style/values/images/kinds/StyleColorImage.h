@@ -29,8 +29,7 @@
 #include "StyleColor.h"
 #include "StyleGeneratedImage.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class ColorImage final : public GeneratedImage {
 public:
@@ -62,7 +61,6 @@ private:
     Color m_color;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(ColorImage, isColorImage)

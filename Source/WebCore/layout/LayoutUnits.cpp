@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutUnits.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
-}
 }

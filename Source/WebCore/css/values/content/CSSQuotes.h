@@ -26,8 +26,7 @@
 
 #include "CSSString.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <'quote'> = auto | none | match-parent | [ <string> <string> ]+
 // FIXME: Add support for `match-parent`.
@@ -65,7 +64,6 @@ private:
     Variant<Keyword::Auto, Keyword::None, Data> m_value;
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::Quotes)

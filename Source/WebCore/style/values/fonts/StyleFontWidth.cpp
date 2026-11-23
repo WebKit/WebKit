@@ -32,8 +32,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -79,5 +78,4 @@ auto Blending<FontWidth>::blend(const FontWidth& a, const FontWidth& b, const Bl
     return Style::blend(a.percentage(), b.percentage(), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include "GridLayoutConstraints.h"
 #include "StyleContentAlignmentData.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct GridLayoutState {
     const GridLayoutConstraints gridLayoutConstraints;
@@ -41,5 +40,4 @@ struct GridLayoutState {
     const BitVector collapsedRowTracksList;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

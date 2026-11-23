@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto ToStyle<CSS::Xywh>::operator()(const CSS::Xywh& value, const BuilderState& state) -> Inset
 {
@@ -52,5 +51,4 @@ auto ToStyle<CSS::XywhFunction>::operator()(const CSS::XywhFunction& value, cons
     return { toStyle(value.parameters, state) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

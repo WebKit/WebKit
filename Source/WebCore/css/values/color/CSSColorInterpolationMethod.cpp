@@ -28,8 +28,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<ColorInterpolationMethod>::operator()(StringBuilder& builder, const SerializationContext&, const ColorInterpolationMethod& value)
 {
@@ -42,5 +41,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorInterpolationMethod&
     return ts << "in " << value.value;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

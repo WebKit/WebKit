@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSSerializationContext.h"
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 static void serialize(StringBuilder& builder, const QueryInParens& queryInParens)
 {
@@ -158,5 +157,4 @@ void serialize(StringBuilder& builder, const Feature& feature)
     }
 }
 
-}
 }

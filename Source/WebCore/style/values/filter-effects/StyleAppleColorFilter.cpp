@@ -35,8 +35,7 @@
 #include "StylePrimitiveNumericTypes+Serialization.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 const AppleColorFilter& AppleColorFilter::none()
 {
@@ -145,5 +144,4 @@ auto Blending<AppleColorFilter>::blend(const AppleColorFilter& from, const Apple
     return AppleColorFilter { WTF::move(blendedFilterList) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

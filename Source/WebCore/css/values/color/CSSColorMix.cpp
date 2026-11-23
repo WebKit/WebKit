@@ -35,8 +35,7 @@
 #include "ColorSerialization.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 using namespace CSS::Literals;
 
@@ -162,5 +161,4 @@ IterationStatus CSSValueChildrenVisitor<ColorMix>::operator()(NOESCAPE const Fun
     return IterationStatus::Continue;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -39,8 +39,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static constexpr auto defaultMetric = FontSizeAdjust::Metric::ExHeight;
 
@@ -170,5 +169,4 @@ TextStream& operator<<(TextStream& ts, const FontSizeAdjust& value)
     return ts << value.platform();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

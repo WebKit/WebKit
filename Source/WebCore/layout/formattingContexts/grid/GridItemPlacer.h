@@ -30,8 +30,7 @@
 #include "GridTypeAliases.h"
 #include "UnplacedGridItem.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct GridItemPlacementResult {
     GridAreas gridAreas;
@@ -50,5 +49,4 @@ private:
     const GridAutoFlowOptions m_autoFlowOptions;
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

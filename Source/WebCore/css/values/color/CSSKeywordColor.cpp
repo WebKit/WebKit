@@ -39,8 +39,7 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 NODELETE static bool isVGAPaletteColor(CSSValueID id)
 {
@@ -154,5 +153,4 @@ void Serialize<KeywordColor>::operator()(StringBuilder& builder, const Serializa
     builder.append(nameLiteralForSerialization(value.valueID));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

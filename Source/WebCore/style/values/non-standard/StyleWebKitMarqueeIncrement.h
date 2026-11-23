@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-marquee-increment'> = <length-percentage>
 // NOTE: There is no standard associated with this property. It exists to model the "marquee scroll distance" concept derived from the <marquee> element's `scrollamount` attribute.
@@ -36,7 +35,6 @@ namespace Style {
 // FIXME: Consider changing this type (and the associated internal property `-webkit-marquee-increment`) to be named after the spec term "marquee scroll distance".
 DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(WebkitMarqueeIncrement, LengthPercentage<>);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::WebkitMarqueeIncrement)

@@ -39,8 +39,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // https://drafts.csswg.org/css-shapes-1/#typedef-shape-arc-command
 static FloatSize resolveArcCommandRadius(const ArcCommand::SizeOfEllipse& size, FloatSize boxSize, ZoomFactor zoom)
@@ -973,5 +972,4 @@ AcceleratedEffectShapeFunction Evaluation<ShapeFunction, AcceleratedEffectShapeF
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

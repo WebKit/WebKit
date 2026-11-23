@@ -28,8 +28,7 @@
 #include "CSSImageWrapper.h"
 #include <wtf/PointerComparison.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct ImageOrNone {
     ImageOrNone(CSS::Keyword::None)
@@ -69,7 +68,6 @@ private:
     RefPtr<CSSValue> m_value { };
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::ImageOrNone)

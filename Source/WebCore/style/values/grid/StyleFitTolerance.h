@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'fit-tolerance'> = normal | <length-percentage [0,∞]> | infinite
 // https://drafts.csswg.org/css-grid-3/#placement-tolerance
@@ -39,7 +38,6 @@ struct FitTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegativ
     ALWAYS_INLINE bool isInfinite() const { return holdsAlternative<CSS::Keyword::Infinite>(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FitTolerance)

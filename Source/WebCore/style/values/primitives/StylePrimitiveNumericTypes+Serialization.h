@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleValueTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 template<Numeric StyleType> struct Serialize<StyleType> {
     void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value)
@@ -77,5 +76,4 @@ template<auto nR, auto pR, typename V> struct Serialize<NumberOrPercentageResolv
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

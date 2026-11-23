@@ -33,8 +33,7 @@
 #include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 static RefPtr<CSSNumericValue> toCSSNumericValue(const SingleAnimationRangeEdgeOffset& offset, ZoomFactor zoom)
 {
@@ -325,5 +324,4 @@ auto DeprecatedCSSValueConversion<SingleAnimationRangeEnd>::operator()(const CSS
     return deprecatedConvertSingleAnimationRangeEdge<SingleAnimationRangeEnd>(value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

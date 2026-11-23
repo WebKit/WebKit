@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -108,5 +107,4 @@ void SurroundData::dumpDifferences(TextStream& ts, const SurroundData& other) co
 }
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

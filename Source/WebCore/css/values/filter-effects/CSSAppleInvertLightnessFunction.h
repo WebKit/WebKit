@@ -26,8 +26,7 @@
 
 #include "CSSValueTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // Non-standard addition.
 struct AppleInvertLightness {
@@ -35,7 +34,6 @@ struct AppleInvertLightness {
 };
 using AppleInvertLightnessFunction = FunctionNotation<CSSValueID::AppleInvertLightness, AppleInvertLightness>;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_EMPTY_LIKE_CONFORMANCE(WebCore::CSS::AppleInvertLightness)

@@ -33,8 +33,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -56,5 +55,4 @@ RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::Pro
     return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

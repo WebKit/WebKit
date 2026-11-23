@@ -27,8 +27,7 @@
 
 #include "CSSCalcSymbolTable.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Symbol replacement
 
@@ -41,5 +40,4 @@ Number<> replaceSymbol(Symbol symbol, const CSSCalcSymbolTable& symbolTable)
     return NumberRaw<> { result->value };
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

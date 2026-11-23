@@ -34,8 +34,7 @@
 #include "WritingMode.h"
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 NODELETE static TextEmphasisMark defaultTextEmphasisMark(WritingMode mode)
 {
@@ -149,5 +148,4 @@ auto CSSValueConversion<TextEmphasisStyle>::operator()(BuilderState& state, cons
     return TextEmphasisStyle::CustomMark { AtomString { toStyleFromCSSValue<String>(state, value).value } };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

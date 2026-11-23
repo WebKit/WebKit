@@ -32,8 +32,7 @@
 #include "ColorSerialization.h"
 #include "StyleKeyword+Mappings.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 WebCore::Color createColor(const ColorLayers& value, PlatformColorResolutionState& state)
 {
@@ -88,5 +87,4 @@ IterationStatus CSSValueChildrenVisitor<ColorLayers>::operator()(NOESCAPE const 
     return visitCSSValueChildrenOnRangeLike(func, value.colors);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

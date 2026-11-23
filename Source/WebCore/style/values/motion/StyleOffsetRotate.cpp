@@ -36,8 +36,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -124,5 +123,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const OffsetRotate& rotate)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

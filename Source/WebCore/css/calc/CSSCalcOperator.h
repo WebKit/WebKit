@@ -28,8 +28,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 // Don't change these values; parsing uses them.
 enum class Operator : uint8_t {
@@ -68,5 +67,4 @@ enum class Operator : uint8_t {
 
 TextStream& operator<<(TextStream&, Operator);
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

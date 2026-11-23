@@ -33,8 +33,7 @@
 #include <WebCore/CSSShapeFunction.h>
 #include <WebCore/CSSXywhFunction.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <basic-shape> = <circle()> | <ellipse() | <inset()> | <path()> | <polygon()> | <rect()> | <shape()> | <xywh()>
 // https://drafts.csswg.org/css-shapes/#typedef-basic-shape
@@ -57,5 +56,4 @@ using BasicShapeRect = Variant<
     XywhFunction
 >;
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

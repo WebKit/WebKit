@@ -28,9 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 enum class PropertyAllowlist : uint8_t {
     None,
@@ -57,5 +55,4 @@ NODELETE bool isValidCueSelectorStyleProperty(CSSPropertyID);
 NODELETE bool isValidCueBackgroundStyleProperty(CSSPropertyID);
 #endif
 
-}
 }

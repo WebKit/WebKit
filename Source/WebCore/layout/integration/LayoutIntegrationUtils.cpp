@@ -35,8 +35,7 @@
 #include "RenderObject.h"
 #include "RenderObjectInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 const Style::ComputedStyle& IntegrationUtils::firstNonAnonymousAncestorStyle(const Box& box)
 {
@@ -254,5 +253,3 @@ std::pair<LayoutRect, LayoutRect> IntegrationUtils::toMarginAndBorderBoxVisualRe
 }
 
 }
-}
-

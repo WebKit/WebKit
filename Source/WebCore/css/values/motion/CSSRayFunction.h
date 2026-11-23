@@ -27,8 +27,7 @@
 #include <WebCore/CSSPosition.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 using RaySize = Variant<Keyword::ClosestCorner, Keyword::ClosestSide, Keyword::FarthestCorner, Keyword::FarthestSide, Keyword::Sides>;
 
@@ -59,7 +58,6 @@ template<size_t I> const auto& get(const Ray& value)
 
 template<> struct Serialize<Ray> { void operator()(StringBuilder&, const SerializationContext&, const Ray&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Ray, 4)

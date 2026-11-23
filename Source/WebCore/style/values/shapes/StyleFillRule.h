@@ -26,10 +26,8 @@
 
 #include <WebCore/CSSFillRule.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using FillRule = CSS::FillRule;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

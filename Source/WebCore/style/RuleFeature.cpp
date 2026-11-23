@@ -39,8 +39,7 @@
 #include "StyleRule.h"
 #include <wtf/MainThread.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 NODELETE static bool isSiblingOrSubject(MatchElement::Relation relation)
 {
@@ -732,5 +731,4 @@ void RuleFeatureSet::shrinkToFit()
         rules->shrinkToFit();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

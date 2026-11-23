@@ -28,8 +28,7 @@
 
 #include "ColorSerialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Serialize
 
@@ -38,5 +37,4 @@ void Serialize<HexColor>::operator()(StringBuilder& builder, const Serialization
     builder.append(WebCore::serializationForCSS(WebCore::Color { value.value }));
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

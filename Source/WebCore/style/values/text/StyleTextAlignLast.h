@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-align-last'> = auto | start | end | left | right | center | justify | match-parent
 // NOTE: `match-parent` is computed to a specific alignment during style building.
@@ -47,5 +46,4 @@ enum class TextAlignLast : uint8_t {
 // NOTE: Custom conversion is required to resolve `match-parent`.
 template<> struct CSSValueConversion<TextAlignLast> { TextAlignLast operator()(BuilderState&, const CSSValue&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include "AbstractLineBuilder.h"
 #include "FloatingContext.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 struct LineContent;
 struct LineCandidate;
@@ -120,5 +119,4 @@ private:
     LineClamp m_lineClamp;
 };
 
-}
 }

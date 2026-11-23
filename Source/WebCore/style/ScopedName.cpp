@@ -30,8 +30,7 @@
 #include "StyleBuilderChecking.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -59,5 +58,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const ScopedName& scopedName)
     return ts << scopedName.name;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

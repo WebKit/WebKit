@@ -35,8 +35,7 @@
 
 #if ENABLE(DARK_MODE_CSS)
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct ColorScheme {
     ColorScheme(CSS::Keyword::Normal) : schemes { }, only { std::nullopt } { }
@@ -78,8 +77,7 @@ template<> struct Serialize<ColorScheme> { void operator()(StringBuilder&, const
 
 TextStream& operator<<(TextStream&, const ColorScheme&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ColorScheme, 2)
 

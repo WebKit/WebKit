@@ -116,8 +116,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ZippedRange.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 using namespace CSSPropertyParserHelpers;
 
@@ -2450,5 +2449,4 @@ inline bool PropertyParserCustom::consumeMarkerShorthand(CSSParserTokenRange& ra
     return true;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

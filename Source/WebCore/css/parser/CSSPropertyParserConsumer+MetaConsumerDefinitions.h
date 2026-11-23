@@ -32,8 +32,7 @@
 #include "CSSPropertyParserState.h"
 #include "CSSUnevaluatedCalc.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: - Generic Consumer Definition
 
@@ -253,5 +252,4 @@ template<typename T> struct KeywordConsumer {
     }
 };
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

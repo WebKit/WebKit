@@ -28,8 +28,7 @@
 #include "Element.h"
 #include "StyleInvalidator.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class AttributeChangeInvalidation {
 public:
@@ -62,6 +61,5 @@ inline AttributeChangeInvalidation::~AttributeChangeInvalidation()
         return;
     invalidateStyleWithRuleSets();
 }
-    
-}
+
 }

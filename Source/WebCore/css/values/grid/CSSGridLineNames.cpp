@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 void Serialize<GridLineNames>::operator()(StringBuilder& builder, const SerializationContext& context, const GridLineNames& value)
 {
@@ -42,5 +41,4 @@ void Serialize<GridLineNames>::operator()(StringBuilder& builder, const Serializ
     builder.append(']');
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

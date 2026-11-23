@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -145,5 +144,4 @@ auto ToPlatform<Rotate>::operator()(const Rotate& value, const FloatSize& size, 
     return nullptr;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

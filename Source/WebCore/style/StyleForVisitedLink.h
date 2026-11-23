@@ -25,10 +25,8 @@
 
 #pragma once
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class ForVisitedLink : bool { No, Yes };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

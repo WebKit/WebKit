@@ -31,8 +31,7 @@
 #include <WebCore/PlacedFloats.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class FloatAvoider;
 class Box;
@@ -90,5 +89,4 @@ private:
     const PlacedFloats& m_placedFloats;
 };
 
-}
 }

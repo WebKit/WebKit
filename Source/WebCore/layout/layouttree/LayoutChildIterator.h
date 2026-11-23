@@ -27,8 +27,7 @@
 
 #include <WebCore/LayoutIterator.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 template <typename T>
 class LayoutChildIterator : public LayoutIterator<T> {
@@ -106,5 +105,4 @@ inline LayoutChildIteratorAdapter<T> childrenOfType(const ElementBox& parent)
     return LayoutChildIteratorAdapter<T>(parent);
 }
 
-}
 }

@@ -43,8 +43,7 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-namespace WebCore {
-namespace DataURLDecoder {
+namespace WebCore::DataURLDecoder {
 
 static bool shouldRemoveFragmentIdentifier(const String& mediaType)
 {
@@ -204,5 +203,4 @@ std::optional<Result> decode(const URL& url, ShouldValidatePadding shouldValidat
     return decodeSynchronously(*task);
 }
 
-} // namespace DataURLDecoder
-} // namespace WebCore
+} // namespace WebCore::DataURLDecoder

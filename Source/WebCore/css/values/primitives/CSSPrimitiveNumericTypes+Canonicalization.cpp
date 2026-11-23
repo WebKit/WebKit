@@ -25,8 +25,7 @@
 #include "config.h"
 #include "CSSPrimitiveNumericTypes+Canonicalization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: Angle
 
@@ -56,5 +55,4 @@ double canonicalizeResolution(double value, ResolutionUnit unit)
     return convertResolution<ResolutionUnit::Dppx>(value, unit);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

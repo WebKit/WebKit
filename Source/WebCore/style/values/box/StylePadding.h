@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'padding-*'> = <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-box/#padding-physical
@@ -38,7 +37,6 @@ DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PaddingEdge, LengthPercentage<CSS::Nonnega
 // https://drafts.csswg.org/css-box/#propdef-padding
 using PaddingBox = MinimallySerializingSpaceSeparatedRectEdges<PaddingEdge>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::PaddingEdge)

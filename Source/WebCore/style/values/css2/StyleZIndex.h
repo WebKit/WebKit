@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 class BoxData;
 class ComputedStyleBase;
@@ -105,7 +104,6 @@ template<> struct Blending<ZIndex> {
     auto blend(const ZIndex&, const ZIndex&, const BlendingContext&) -> ZIndex;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ZIndex)

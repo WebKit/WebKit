@@ -28,8 +28,7 @@
 #include <WebCore/CSSFlexWrap.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using CSS::FlexWrapType;
 
@@ -59,7 +58,6 @@ template<> struct CSSValueConversion<FlexWrap> {
     auto operator()(BuilderState&, const CSSValue&) -> FlexWrap;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FlexWrap)

@@ -28,8 +28,7 @@
 #include <WebCore/StylePosition.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'offset-position'> = auto | normal | <position>
 // https://drafts.fxtf.org/motion/#propdef-offset-position
@@ -94,7 +93,6 @@ template<> struct Evaluation<OffsetPosition, AcceleratedEffectOffsetPosition> {
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::OffsetPosition)

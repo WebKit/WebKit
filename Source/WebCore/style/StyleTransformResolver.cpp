@@ -35,8 +35,7 @@
 #include "TransformOperationData.h"
 #include "TransformationMatrix.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 TransformResolver::TransformResolver(TransformationMatrix& transform, const ComputedStyle& style)
     : m_transform { transform }
@@ -210,5 +209,4 @@ void TransformResolver::applyMotionPathTransform(const TransformOperationData& t
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

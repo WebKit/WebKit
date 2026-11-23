@@ -51,9 +51,7 @@
 #include "TextBoundaries.h"
 #include "TextIterator.h"
 
-namespace WebCore {
-
-namespace FragmentDirectiveRangeFinder {
+namespace WebCore::FragmentDirectiveRangeFinder {
 using namespace FragmentDirectiveUtilities;
 
 enum class BoundaryPointIsAtEnd : bool { No, Yes };
@@ -426,6 +424,4 @@ const Vector<SimpleRange> findRangesFromTextDirectives(Vector<ParsedTextDirectiv
     return ranges;
 }
 
-} // FragmentDirectiveRangeFinder
-
-} // WebCore
+} // namespace WebCore::FragmentDirectiveRangeFinder

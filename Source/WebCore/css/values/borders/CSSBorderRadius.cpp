@@ -28,8 +28,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 static bool hasDefaultValueForAxis(const BorderRadius::Axis& values)
 {
@@ -85,5 +84,4 @@ void Serialize<BorderRadius>::operator()(StringBuilder& builder, const Serializa
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

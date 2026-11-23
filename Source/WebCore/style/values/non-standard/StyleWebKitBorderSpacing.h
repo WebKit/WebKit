@@ -27,12 +27,10 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-border-horizontal-spacing'/'-webkit-border-vertical-spacing'> = <length [0,∞]>
 // NOTE: There is no standard associated with this property.
 using WebkitBorderSpacing = Length<CSS::Nonnegative>;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

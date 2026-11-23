@@ -28,8 +28,7 @@
 #include "StylePropertiesInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomFunction);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomFunctionRegistry);
@@ -58,5 +57,4 @@ const CustomFunction* CustomFunctionRegistry::functionForName(const AtomString& 
     return m_functions.get(name);
 }
 
-}
 }

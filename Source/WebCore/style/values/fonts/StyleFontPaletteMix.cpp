@@ -30,8 +30,7 @@
 #include "StyleFontPaletteInlines.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -104,5 +103,4 @@ void Serialize<FontPaletteMixParameters>::operator()(StringBuilder& builder, con
     }, ", "_s));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

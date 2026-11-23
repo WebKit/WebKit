@@ -35,8 +35,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGMarkerResourceData);
 
@@ -84,5 +83,4 @@ TextStream& operator<<(TextStream& ts, const SVGMarkerResourceData& data)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

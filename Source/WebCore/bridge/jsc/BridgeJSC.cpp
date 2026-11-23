@@ -36,9 +36,7 @@
 #include <JavaScriptCore/ObjectPrototype.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace JSC {
-
-namespace Bindings {
+namespace JSC::Bindings {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Class);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Field);
@@ -105,6 +103,4 @@ RootObject* Instance::rootObject() const
     return m_rootObject && m_rootObject->isValid() ? m_rootObject.get() : 0;
 }
 
-} // namespace Bindings
-
-} // namespace JSC
+} // namespace JSC::Bindings

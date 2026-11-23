@@ -28,8 +28,7 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // https://www.w3.org/TR/css-values-4/#numeric-types
 enum class Category : uint8_t {
@@ -48,5 +47,4 @@ enum class Category : uint8_t {
 
 TextStream& operator<<(TextStream&, Category);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

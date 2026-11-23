@@ -29,8 +29,7 @@
 #include "StyleCalcSizeValue.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 UnevaluatedCalcSize::UnevaluatedCalcSize(CalcSizeValue& value)
     : m_calcSize { value }
@@ -104,5 +103,4 @@ bool calcSizeHasPercentage(const CalcSizeValue& value)
     return value.hasPercentage();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

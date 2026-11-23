@@ -42,8 +42,7 @@
 
 using namespace WebCore;
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 static JSC_DECLARE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive);
 
@@ -337,5 +336,4 @@ JSC::GCClient::IsoSubspace* ObjcFallbackObjectImp::subspaceForImpl(JSC::VM& vm)
     return &downcast<JSVMClientData>(vm.clientData)->objcFallbackObjectImpSpace();
 }
 
-} // namespace Bindings
-} // namespace JSC
+} // namespace JSC::Bindings

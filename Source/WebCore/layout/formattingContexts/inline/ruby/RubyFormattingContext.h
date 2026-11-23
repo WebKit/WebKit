@@ -31,8 +31,7 @@
 #include <WebCore/InlineLineRun.h>
 #include <wtf/Range.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineFormattingContext;
 class Line;
@@ -73,5 +72,4 @@ private:
     static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, std::span<InlineDisplay::Box>, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext&);
 };
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

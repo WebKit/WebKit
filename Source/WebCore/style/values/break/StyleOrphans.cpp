@@ -28,8 +28,7 @@
 #include "AnimationUtilities.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Blending
 
@@ -38,5 +37,4 @@ auto Blending<Orphans>::blend(const Orphans& a, const Orphans& b, const Blending
     return Style::blend(a.tryValue().value_or(2), b.tryValue().value_or(2), context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

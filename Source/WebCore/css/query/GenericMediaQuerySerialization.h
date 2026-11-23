@@ -27,11 +27,9 @@
 #include "GenericMediaQueryTypes.h"
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 void serialize(StringBuilder&, const Feature&);
 void serialize(StringBuilder&, const Condition&);
 
-}
 }

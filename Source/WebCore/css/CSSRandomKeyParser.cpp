@@ -37,8 +37,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // <random-ua-ident> = ua- PROPERTY [ - INDEX ]?, where INDEX is 1-based. Returns nullopt when the
 // ident does not name a known property, which makes the whole <random-key> invalid.
@@ -177,5 +176,4 @@ CSSCalc::RandomSharingAuto randomSharingAuto(const RandomKeySource& source, unsi
     };
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

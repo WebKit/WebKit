@@ -32,9 +32,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 class Resolver;
 
@@ -84,5 +82,4 @@ private:
     unsigned m_additionsSinceLastSweep { 0 };
 };
 
-}
 }

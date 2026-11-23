@@ -72,9 +72,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 
-namespace Inspector {
-
-namespace ResourceUtilities {
+namespace Inspector::ResourceUtilities {
 
 using namespace WebCore;
 
@@ -871,6 +869,4 @@ Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(const R
     return requestObject;
 }
 
-} // namespace ResourceUtilities
-
-} // namespace Inspector
+} // namespace Inspector::ResourceUtilities

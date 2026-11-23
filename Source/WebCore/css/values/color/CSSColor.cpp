@@ -42,8 +42,7 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "StyleColorResolutionState.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 Color::Color(Color::ColorKind&& kind)
     : value { WTF::move(kind) }
@@ -411,5 +410,4 @@ Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Color>::operator()(CSSVal
     return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

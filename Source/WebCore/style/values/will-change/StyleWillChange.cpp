@@ -34,8 +34,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ZippedRange.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WillChangeAnimatableFeatures::Data);
 
@@ -268,5 +267,4 @@ auto CSSValueConversion<WillChange>::operator()(BuilderState& state, const CSSVa
     });
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -29,9 +29,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 // A range list keeps ranges sorted. Ranges are not sorted in the vector, but
 template <typename CharacterType, typename DataType, unsigned inlineCapacity = 0>
@@ -265,7 +263,6 @@ private:
     }
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

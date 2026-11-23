@@ -30,9 +30,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
-namespace Calculation {
+namespace WebCore::Style::Calculation {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Abs);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Acos);
@@ -387,6 +385,4 @@ TextStream& operator<<(TextStream& ts, const Tree& tree)
     return ts << tree.root;
 }
 
-} // namespace Calculation
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style::Calculation

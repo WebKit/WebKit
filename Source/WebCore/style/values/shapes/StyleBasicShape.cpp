@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "TransformOperationData.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -183,5 +182,4 @@ AcceleratedEffectBasicShape Evaluation<BasicShape, AcceleratedEffectBasicShape>:
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -33,8 +33,7 @@
 #include "StyleBuilderChecking.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 OptionSet<WebCore::ColorScheme> ColorScheme::colorScheme() const
 {
@@ -93,7 +92,6 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorScheme& value)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 #endif

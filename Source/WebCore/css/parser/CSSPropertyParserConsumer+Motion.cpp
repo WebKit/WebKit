@@ -46,8 +46,7 @@
 #include "CSSValueList.h"
 #include <wtf/SortedArrayMap.h>
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 static RefPtr<CSSValue> consumeRayFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -192,5 +191,4 @@ RefPtr<CSSValue> consumeOffsetPath(CSSParserTokenRange& range, CSS::PropertyPars
     return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

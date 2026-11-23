@@ -45,8 +45,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ZippedRange.h>
 
-namespace WebCore {
-namespace CSSCalc {
+namespace WebCore::CSSCalc {
 
 static auto copyAndSimplify(const Random::Sharing&, const SimplificationOptions&) -> Random::Sharing;
 static auto copyAndSimplify(const CalcMix::Item&, const SimplificationOptions&) -> CalcMix::Item;
@@ -1779,5 +1778,4 @@ bool canSimplify(const Tree& tree, const SimplificationOptions&)
     );
 }
 
-} // namespace CSSCalc
-} // namespace WebCore
+} // namespace WebCore::CSSCalc

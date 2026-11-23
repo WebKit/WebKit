@@ -28,14 +28,10 @@
 #include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
-namespace WebCore {
-
-namespace Accessibility {
+namespace WebCore::Accessibility {
 
 #if PLATFORM(IOS_FAMILY)
 WEBCORE_EXPORT RetainPtr<NSData> newAccessibilityRemoteToken(NSString *);
 #endif
 
-} // namespace Accessibility
-
-} // namespace WebCore
+} // namespace WebCore::Accessibility

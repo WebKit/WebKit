@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // grayscale() = grayscale( [ <number [0,1(clamp upper)] > | <percentage [0,100(clamp upper)]> ]? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-grayscale
@@ -42,7 +41,6 @@ using GrayscaleFunction = FunctionNotation<CSSValueID::Grayscale, Grayscale>;
 
 DEFINE_TYPE_WRAPPER_GET(Grayscale, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Grayscale, 1)

@@ -41,8 +41,7 @@
 #include "StyleEasingFunction.h"
 #include "TimingFunction.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: - <steps()>
 
@@ -397,5 +396,4 @@ RefPtr<TimingFunction> parseEasingFunctionDeprecated(StringView string, const CS
     return Style::createTimingFunctionDeprecated(*result);
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

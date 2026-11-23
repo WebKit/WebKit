@@ -30,8 +30,7 @@
 #include "StyleBuilderChecking.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto GridTrackSizeDefaulter::operator()() const -> const GridTrackSize&
 {
@@ -84,5 +83,4 @@ auto CSSValueCreation<GridTrackSizes>::operator()(CSSValuePool&, const Style::Co
     return CSSGridTrackSizesValue::create(toCSS(value, style));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

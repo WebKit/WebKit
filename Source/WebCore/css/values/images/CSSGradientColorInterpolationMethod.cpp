@@ -26,8 +26,7 @@
 #include "config.h"
 #include "CSSGradientColorInterpolationMethod.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool GradientColorInterpolationMethod::isDefault() const
 {
@@ -49,5 +48,4 @@ void Serialize<GradientColorInterpolationMethod>::operator()(StringBuilder& buil
     serializationForCSS(builder, context, value.method);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

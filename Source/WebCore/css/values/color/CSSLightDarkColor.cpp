@@ -34,8 +34,7 @@
 #include "Document.h"
 #include "StyleBuilderState.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool LightDarkColor::operator==(const LightDarkColor&) const = default;
 
@@ -87,5 +86,4 @@ IterationStatus CSSValueChildrenVisitor<LightDarkColor>::operator()(NOESCAPE con
     return IterationStatus::Continue;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -30,8 +30,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -61,5 +60,4 @@ auto CSSValueConversion<WebkitInitialLetter>::operator()(BuilderState& state, co
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

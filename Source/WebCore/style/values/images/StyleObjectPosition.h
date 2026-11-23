@@ -26,12 +26,10 @@
 
 #include <WebCore/StylePosition.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'object-position'> = <position>
 // https://www.w3.org/TR/css-images-3/#the-object-position
 using ObjectPosition = Position;
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

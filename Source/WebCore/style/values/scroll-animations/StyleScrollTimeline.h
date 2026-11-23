@@ -30,8 +30,7 @@
 #include <WebCore/StyleProgressTimelineName.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // macro(ownerType, property, type, lowercaseName, uppercaseName)
 
@@ -103,5 +102,4 @@ TextStream& operator<<(TextStream&, const ScrollTimeline&);
 #undef FOR_EACH_SCROLL_TIMELINE_VALUE
 #undef FOR_EACH_SCROLL_TIMELINE_PROPERTY
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "ComputedStyleDependencies.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Computed Style Dependencies
 
@@ -106,5 +105,4 @@ void ComputedStyleDependenciesCollector<LengthUnit>::operator()(ComputedStyleDep
     }
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

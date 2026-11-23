@@ -31,8 +31,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/StyleVisualBox.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'overflow-clip-margin'> = <visual-box> || <length>
 // https://drafts.csswg.org/css-overflow/#overflow-clip-margin
@@ -76,7 +75,6 @@ template<> struct CSSValueConversion<OverflowClipMargin> {
     auto operator()(BuilderState&, const CSSValue&) -> OverflowClipMargin;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::OverflowClipMargin)

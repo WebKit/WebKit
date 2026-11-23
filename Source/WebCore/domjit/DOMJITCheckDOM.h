@@ -36,7 +36,7 @@
 #include "Node.h"
 #include <JavaScriptCore/Snippet.h>
 
-namespace WebCore { namespace DOMJIT {
+namespace WebCore::DOMJIT {
 
 template<typename DOMInterface>
 struct TypeChecker {
@@ -92,6 +92,6 @@ Ref<JSC::Snippet> checkDOM()
     return snippet;
 }
 
-} }
+}
 
 #endif

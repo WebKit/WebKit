@@ -44,8 +44,7 @@ extern int xpathyyparse(WebCore::XPath::Parser&);
 
 #include "XPathGrammar.h"
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 struct Parser::Token {
     int type;
@@ -473,5 +472,4 @@ ExceptionOr<std::unique_ptr<Expression>> Parser::parseStatement(const String& st
     return WTF::move(parser.m_result);
 }
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

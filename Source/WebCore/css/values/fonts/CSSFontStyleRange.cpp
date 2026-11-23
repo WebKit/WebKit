@@ -30,8 +30,7 @@
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -47,5 +46,4 @@ void Serialize<FontStyleRange::Oblique>::operator()(StringBuilder& builder, cons
     CSS::serializationForCSS(builder, context, SpaceSeparatedTuple { Keyword::Oblique { }, value.angle });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

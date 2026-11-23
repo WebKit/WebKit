@@ -27,8 +27,7 @@
 
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Evaluation
 
@@ -41,5 +40,4 @@ auto Evaluation<OffsetDistance, AcceleratedEffectOffsetDistance>::operator()(con
 
 #endif
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

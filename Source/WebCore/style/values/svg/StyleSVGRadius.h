@@ -26,14 +26,12 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'r'> = <length-percentage [0,∞]>
 // https://svgwg.org/svg2-draft/geometry.html#R
 DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGRadius, LengthPercentage<CSS::Nonnegative>);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGRadius)

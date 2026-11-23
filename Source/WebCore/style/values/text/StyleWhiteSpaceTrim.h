@@ -27,8 +27,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'white-space-trim'> = none | discard-before || discard-after || discard-inner
 // https://drafts.csswg.org/css-text-4/#white-space-trim
@@ -81,7 +80,6 @@ template<> struct CSSValueConversion<WhiteSpaceTrim> {
     NODELETE WhiteSpaceTrim operator()(BuilderState&, const CSSValue&);
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WhiteSpaceTrim)

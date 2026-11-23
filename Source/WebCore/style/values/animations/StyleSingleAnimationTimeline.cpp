@@ -32,8 +32,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -62,5 +61,4 @@ auto CSSValueConversion<SingleAnimationTimeline>::operator()(BuilderState& state
     return toStyleFromCSSValue<ScopedName>(state, value);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

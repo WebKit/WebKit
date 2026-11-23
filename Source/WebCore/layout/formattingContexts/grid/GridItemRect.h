@@ -27,9 +27,7 @@
 
 #include "GridAreaLines.h"
 
-namespace WebCore {
-
-namespace Layout {
+namespace WebCore::Layout {
 
 struct GridItemRect {
     LayoutRect borderBoxRect;
@@ -38,5 +36,4 @@ struct GridItemRect {
     const CheckedRef<const ElementBox> layoutBox;
 };
 
-} // namespace Layout
-} // namespace  WebCore
+} // namespace WebCore::Layout

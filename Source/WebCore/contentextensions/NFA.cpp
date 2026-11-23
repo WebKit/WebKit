@@ -31,9 +31,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
 void NFA::debugPrintDot() const
@@ -119,8 +117,6 @@ void NFA::debugPrintDot() const
 }
 #endif
 
-} // namespace ContentExtensions
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

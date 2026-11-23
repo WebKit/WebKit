@@ -33,8 +33,7 @@
 #include "StyleInvalidImage.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF::String Content::altText() const
 {
@@ -220,5 +219,4 @@ Ref<CSSValue> CSSValueCreation<Content>::operator()(CSSValuePool&, const Style::
     return CSSContentValue::create(toCSS(value, style));
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

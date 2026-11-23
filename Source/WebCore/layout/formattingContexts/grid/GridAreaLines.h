@@ -25,8 +25,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 // https://drafts.csswg.org/css-grid-1/#grid-area
 struct GridAreaLines {
     size_t columnStartLine { 0 };
@@ -34,5 +33,4 @@ struct GridAreaLines {
     size_t rowStartLine { 0 };
     size_t rowEndLine { 0 };
 };
-}
 }

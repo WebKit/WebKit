@@ -27,8 +27,7 @@
 #include "CSSValueTypes.h"
 #include "DeprecatedCSSOMValueList.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - DeprecatedCSSOMValue Creation
 
@@ -122,5 +121,4 @@ template<CSSValueID Name, typename CSSType> struct DeprecatedCSSOMValueCreation<
     }
 };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

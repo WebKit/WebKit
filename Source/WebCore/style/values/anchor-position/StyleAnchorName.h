@@ -27,8 +27,7 @@
 #include <WebCore/ScopedName.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-anchor-name> = <custom-ident excluding=none>
 // https://drafts.csswg.org/css-anchor-position-1/#valdef-anchor-name-dashed-ident
@@ -41,7 +40,6 @@ using AnchorNameList = CommaSeparatedFixedVector<AnchorName>;
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-anchor-name
 struct AnchorNames : ListOrNone<AnchorNameList> { using ListOrNone<AnchorNameList>::ListOrNone; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::AnchorNames)

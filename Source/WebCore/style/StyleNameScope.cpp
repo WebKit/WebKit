@@ -31,8 +31,7 @@
 #include "StyleBuilderChecking.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<NameScope>::operator()(BuilderState& state, const CSSValue& value) -> NameScope
 {
@@ -63,5 +62,4 @@ auto CSSValueConversion<NameScope>::operator()(BuilderState& state, const CSSVal
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

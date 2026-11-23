@@ -29,8 +29,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/ColorTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct PlatformColorResolutionState;
 
@@ -61,5 +60,4 @@ template<> struct Serialize<HexColor> { void operator()(StringBuilder&, const Se
 template<> struct ComputedStyleDependenciesCollector<HexColor> { constexpr void operator()(ComputedStyleDependencies&, const HexColor&) { } };
 template<> struct CSSValueChildrenVisitor<HexColor> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const HexColor&) { return IterationStatus::Continue; } };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

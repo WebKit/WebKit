@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleTextEdge.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'line-fit-edge'> = leading | <text-edge>
 // https://drafts.csswg.org/css-inline-3/#propdef-line-fit-edge
@@ -37,7 +36,6 @@ struct LineFitEdge : TextEdge<CSS::Keyword::Leading> {
     constexpr bool isLeading() const { return isKeyword(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::LineFitEdge)

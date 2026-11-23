@@ -27,8 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'widows'> = <integer [1,∞]>
 // https://drafts.csswg.org/css-break/#propdef-orphans
@@ -48,7 +47,6 @@ template<> struct Blending<Widows> {
     auto blend(const Widows&, const Widows&, const BlendingContext&) -> Widows;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Widows)

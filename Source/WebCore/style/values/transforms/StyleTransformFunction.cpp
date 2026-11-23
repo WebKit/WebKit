@@ -55,8 +55,7 @@
 #include "StyleTranslateTransformFunction.h"
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: Matrix
 
@@ -865,5 +864,4 @@ TextStream& operator<<(TextStream& ts, const TransformFunction& value)
     return ts << protect(value.function());
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

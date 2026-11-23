@@ -26,8 +26,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-align'> = start | end | left | right | center | justify | match-parent | justify-all | -webkit-left | -webkit-right | -webkit-center
 // NOTE: `match-parent` is computed to a specific alignment during style building.
@@ -52,5 +51,4 @@ enum class TextAlign : uint8_t {
 // NOTE: Custom conversion is required to resolve `match-parent` and `-internal-th-center`.
 template<> struct CSSValueConversion<TextAlign> { auto operator()(BuilderState&, const CSSValue&) -> TextAlign; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

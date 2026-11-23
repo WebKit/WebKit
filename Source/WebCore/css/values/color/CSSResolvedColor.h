@@ -29,8 +29,7 @@
 #include <WebCore/Color.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct PlatformColorResolutionState;
 
@@ -61,5 +60,4 @@ template<> struct Serialize<ResolvedColor> { void operator()(StringBuilder&, con
 template<> struct ComputedStyleDependenciesCollector<ResolvedColor> { constexpr void operator()(ComputedStyleDependencies&, const ResolvedColor&) { } };
 template<> struct CSSValueChildrenVisitor<ResolvedColor> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const ResolvedColor&) { return IterationStatus::Continue; } };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

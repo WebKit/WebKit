@@ -27,8 +27,7 @@
 #include <WebCore/CSSGridAutoFlow.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // FIXME: Style::GridAutoFlow and CSS::GridAutoFlow are identical and ideally would
 // be the same type using TreatAsNonConverting<>, but currently TreatAsNonConverting<>
@@ -51,7 +50,6 @@ struct GridAutoFlow : CSS::GridAutoFlow {
 template<> struct CSSValueConversion<GridAutoFlow> { GridAutoFlow operator()(BuilderState&, const CSSValue&); };
 template<> struct CSSValueCreation<GridAutoFlow> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const GridAutoFlow&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridAutoFlow)

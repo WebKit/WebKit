@@ -27,8 +27,7 @@
 
 #include "LayoutDescendantIterator.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class FormattingContextBoxIterator : public LayoutDescendantIterator<Box> {
 public:
@@ -79,6 +78,4 @@ inline FormattingContextBoxIteratorAdapter formattingContextBoxes(const ElementB
     return { root };
 }
 
-
-}
 }

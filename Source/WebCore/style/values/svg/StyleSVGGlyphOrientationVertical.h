@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'glyph-orientation-vertical'> = auto | <angle>
 // NOTE: The value of the angle is restricted to 0, 90, 180, and 270 degrees.
@@ -66,5 +65,4 @@ template<> struct ValueRepresentation<SVGGlyphOrientationVertical> {
 
 template<> struct CSSValueConversion<SVGGlyphOrientationVertical> { auto operator()(BuilderState&, const CSSValue&) -> SVGGlyphOrientationVertical; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -26,14 +26,12 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'shape-margin'> = <length-percentage [0,∞]>
 // https://www.w3.org/TR/css-shapes/#propdef-shape-margin
 DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(ShapeMargin, LengthPercentage<CSS::Nonnegative>);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::ShapeMargin)

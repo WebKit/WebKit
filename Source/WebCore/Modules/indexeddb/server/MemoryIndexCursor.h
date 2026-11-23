@@ -31,8 +31,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 class MemoryIndex;
 
@@ -58,5 +57,4 @@ private:
     IDBKeyData m_currentPrimaryKey;
 };
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

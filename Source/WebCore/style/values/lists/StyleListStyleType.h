@@ -34,9 +34,7 @@
 #include <wtf/Variant.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 // <'list-style-type'> = <counter-style> | <string> | none
 // https://drafts.csswg.org/css-lists/#propdef-list-style-type
@@ -175,7 +173,6 @@ template<> struct CSSValueConversion<ListStyleType> { auto operator()(BuilderSta
 
 template<> struct CSSValueCreation<ListStyleType> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const ListStyleType&); };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ListStyleType)

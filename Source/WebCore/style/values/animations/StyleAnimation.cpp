@@ -30,8 +30,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Animation::Animation()
     : m_data { Data::create() }
@@ -145,5 +144,4 @@ TextStream& operator<<(TextStream& ts, const Animation& animation)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

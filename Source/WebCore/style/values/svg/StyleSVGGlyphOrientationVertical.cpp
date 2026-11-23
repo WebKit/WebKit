@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include <cmath>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 auto CSSValueConversion<SVGGlyphOrientationVertical>::operator()(BuilderState& state, const CSSValue& value) -> SVGGlyphOrientationVertical
 {
@@ -56,5 +55,4 @@ auto CSSValueConversion<SVGGlyphOrientationVertical>::operator()(BuilderState& s
     return SVGGlyphOrientationVertical::Degrees270;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

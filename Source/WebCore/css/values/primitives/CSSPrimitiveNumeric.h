@@ -34,8 +34,7 @@
 #include <wtf/Brigand.h>
 #include <wtf/EnumTraits.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Primitive Numeric (Raw + UnevaluatedCalc)
 
@@ -344,8 +343,7 @@ auto rangeExpandingCast(T&& value) -> ReplacingRange<T, newRange>
     );
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 namespace WTF {
 

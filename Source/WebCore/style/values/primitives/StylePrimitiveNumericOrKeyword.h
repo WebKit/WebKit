@@ -27,9 +27,7 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleUnevaluatedCalcSize.h>
 
-namespace WebCore {
-namespace Style {
-
+namespace WebCore::Style {
 
 // `PrimitiveNumericOrKeyword` provides an efficient representation of `Variant<N, Ks...>`.
 // It should be preferred over `ValueOrKeyword<>` when the value is a numeric type.
@@ -524,7 +522,6 @@ template<typename T> T get(PrimitiveNumericOrKeywordDerived auto const& value)
     return value.template get<T>();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 template<typename N, WebCore::Style::CalcSizeSupport S, typename... Ks> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::PrimitiveNumericOrKeywordOrOptionalCalcSize<N, S, Ks...>> = true;

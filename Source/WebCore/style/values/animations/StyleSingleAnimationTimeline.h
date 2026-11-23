@@ -29,8 +29,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/StyleViewFunction.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-animation-timeline> = auto | none | <custom-ident> | <scroll()> | <view()>
 // https://www.w3.org/TR/css-animations-2/#typedef-single-animation-timeline
@@ -84,7 +83,6 @@ private:
 
 template<> struct CSSValueConversion<SingleAnimationTimeline> { auto operator()(BuilderState&, const CSSValue&) -> SingleAnimationTimeline; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationTimeline)

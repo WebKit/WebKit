@@ -28,8 +28,7 @@
 #include <WebCore/CSSValueTypes.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct FontFamilyName {
     WTF::AtomString value;
@@ -51,5 +50,4 @@ WTF::TextStream& operator<<(WTF::TextStream&, const FontFamilyName&);
 
 NODELETE void add(Hasher&, const FontFamilyName&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

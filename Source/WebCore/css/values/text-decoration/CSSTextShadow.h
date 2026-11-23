@@ -28,8 +28,7 @@
 #include <WebCore/CSSColor.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <text-shadow> = <color>? && [<length>{2} <length [0,∞]>?]
 // https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
@@ -51,7 +50,6 @@ template<size_t I> const auto& get(const TextShadow& value)
         return value.blur;
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::TextShadow, 3)

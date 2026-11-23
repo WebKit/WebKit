@@ -32,8 +32,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleRatio.h"
 
-namespace WebCore {
-namespace MQ {
+namespace WebCore::MQ {
 
 static std::optional<LayoutUnit> resolveLength(const Value& value, const CSSToLengthConversionData& conversionData, Style::ZoomFactor zoom)
 {
@@ -277,5 +276,4 @@ EvaluationResult evaluateIdentifierFeature(const Feature& feature, CSSValueID cu
     return toEvaluationResult(value == currentValue);
 }
 
-} // namespace MQ
-} // namespace WebCore
+} // namespace WebCore::MQ

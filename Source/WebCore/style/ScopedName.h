@@ -30,8 +30,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 struct ScopedName {
     AtomString name;
@@ -59,8 +58,7 @@ template<> struct CSSValueConversion<ScopedName> {
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScopedName&);
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 namespace WTF {
 

@@ -34,8 +34,7 @@
 #include "CSSValuePool.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 ListStyleType::ListStyleType(const IPCData& data)
 {
@@ -128,5 +127,4 @@ auto CSSValueCreation<ListStyleType>::operator()(CSSValuePool& pool, const Style
     );
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

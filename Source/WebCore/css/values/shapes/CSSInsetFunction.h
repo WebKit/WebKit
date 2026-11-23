@@ -27,8 +27,7 @@
 #include <WebCore/CSSBorderRadius.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <inset()> = inset( <length-percentage>{1,4} [ round <'border-radius'> ]? )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-inset
@@ -52,7 +51,6 @@ template<size_t I> const auto& get(const Inset& value)
 
 template<> struct Serialize<Inset> { void operator()(StringBuilder&, const SerializationContext&, const Inset&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Inset, 2)

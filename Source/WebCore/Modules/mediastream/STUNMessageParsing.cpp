@@ -37,8 +37,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/rtc_base/byte_order.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
-namespace WebCore {
-namespace WebRTC {
+namespace WebCore::WebRTC {
 
 NODELETE static inline bool isStunMessage(uint16_t messageType)
 {
@@ -132,7 +131,6 @@ Vector<uint8_t> extractMessages(Vector<uint8_t>&& buffer, MessageType type, NOES
     return type == MessageType::STUN ? extractSTUNOrTURNMessages(WTF::move(buffer), processMessage) : extractDataMessages(WTF::move(buffer), processMessage);
 }
 
-} // namespace WebRTC
-} // namespace WebCore
+} // namespace WebCore::WebRTC
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

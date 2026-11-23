@@ -34,8 +34,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleComputedStyle.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -92,5 +91,4 @@ auto Blending<ScrollbarColor>::blend(const ScrollbarColor& a, const ScrollbarCol
     };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

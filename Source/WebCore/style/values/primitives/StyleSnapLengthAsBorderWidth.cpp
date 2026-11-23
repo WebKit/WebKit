@@ -28,8 +28,7 @@
 
 #include <cmath>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 float snapLengthAsBorderWidth(float length, float deviceScaleFactor)
 {
@@ -66,5 +65,4 @@ Length<> snapSignedLengthAsBorderWidth(Length<> length, float deviceScaleFactor)
     return Length<> { snapSignedLengthAsBorderWidth(length.unresolvedValue(), deviceScaleFactor) };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

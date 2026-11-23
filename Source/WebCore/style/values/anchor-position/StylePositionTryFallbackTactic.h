@@ -26,8 +26,7 @@
 
 #pragma once
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <try-tactic> = flip-block || flip-inline || flip-start || flip-x || flip-y
 // https://drafts.csswg.org/css-anchor-position-1/#typedef-position-try-fallbacks-try-tactic
@@ -39,6 +38,4 @@ enum class PositionTryFallbackTactic : uint8_t {
     FlipY,
 };
 
-} // namespace Style
-} // namespace WebCore
-
+} // namespace WebCore::Style

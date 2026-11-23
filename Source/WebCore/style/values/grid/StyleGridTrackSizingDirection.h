@@ -25,8 +25,7 @@
 #pragma once
 #include <WebCore/BoxSides.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class GridTrackSizingDirection : bool { Columns, Rows };
 
@@ -51,5 +50,4 @@ constexpr GridTrackSizingDirection gridTrackSizingDirection(LogicalBoxAxis axis)
         : GridTrackSizingDirection::Rows;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,8 +28,7 @@
 #include "StylePrimitiveNumericTypes+Calculation.h"
 #include "StylePrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: Interpolation of base numeric types
 // https://drafts.csswg.org/css-values/#combining-values
@@ -205,5 +204,4 @@ template<auto nR, auto pR, typename V> struct Blending<NumberOrPercentageResolve
     }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

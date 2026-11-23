@@ -31,8 +31,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Expression);
 
@@ -60,5 +59,4 @@ void Expression::setSubexpressions(Vector<std::unique_ptr<Expression>> subexpres
     }
 }
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

@@ -57,8 +57,7 @@
 #include "CSSValuePair.h"
 #include "CSSWebkitBoxReflectValue.h"
 
-namespace WebCore {
-namespace CSSPropertyParserHelpers {
+namespace WebCore::CSSPropertyParserHelpers {
 
 // MARK: - Border Radius
 
@@ -712,5 +711,4 @@ RefPtr<CSSValue> consumeWebkitBoxReflect(CSSParserTokenRange& range, CSS::Proper
     return nullptr;
 }
 
-} // namespace CSSPropertyParserHelpers
-} // namespace WebCore
+} // namespace WebCore::CSSPropertyParserHelpers

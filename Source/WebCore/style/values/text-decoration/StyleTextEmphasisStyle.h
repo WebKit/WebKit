@@ -28,8 +28,7 @@
 #include <WebCore/StyleString.h>
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'text-emphasis-style'> = none | [ [ filled | open ] || [ dot | circle | double-circle | triangle | sesame ] ] | <string>
 // https://drafts.csswg.org/css-text-decor/#propdef-text-emphasis-style
@@ -95,8 +94,7 @@ struct TextEmphasisStyle {
 
 template<> struct CSSValueConversion<TextEmphasisStyle> { auto operator()(BuilderState&, const CSSValue&) -> TextEmphasisStyle; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextEmphasisStyle::Shape);
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextEmphasisStyle::CustomMark);

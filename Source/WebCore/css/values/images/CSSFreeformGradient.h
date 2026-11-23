@@ -29,8 +29,7 @@
 #include <WebCore/CSSGradientColorInterpolationMethod.h>
 #include <WebCore/CSSPosition.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // https://github.com/w3c/csswg-drafts/pull/14655
 
@@ -75,8 +74,7 @@ template<size_t I> const auto& get(const FreeformGradient& value)
 
 template<> struct Serialize<FreeformGradient> { void operator()(StringBuilder&, const SerializationContext&, const FreeformGradient&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FreeformGradientColorStop, 3)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FreeformGradient, 2)

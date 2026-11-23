@@ -27,8 +27,7 @@
 
 #include <WebCore/StyleValueTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'-webkit-hyphenate-limit-before'/`-webkit-hyphenate-limit-after`> = auto | <integer [0,∞]>
 // NOTE: There is no standard associated with these specific properties, but there is `hyphenate-limit-chars` which offers a superset of the functionality. See https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-chars.
@@ -38,7 +37,6 @@ struct HyphenateLimitEdge : ValueOrKeyword<Integer<CSS::Nonnegative, short>, CSS
     constexpr bool isAuto() const { return isKeyword(); }
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::HyphenateLimitEdge)

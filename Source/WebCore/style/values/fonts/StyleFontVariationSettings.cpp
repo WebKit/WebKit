@@ -38,8 +38,7 @@
 #include "StylePrimitiveNumericTypes+Serialization.h"
 #include <wtf/ZippedRange.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -149,5 +148,4 @@ TextStream& operator<<(TextStream& ts, const FontVariationSettings& value)
     return ts << value.platform();
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

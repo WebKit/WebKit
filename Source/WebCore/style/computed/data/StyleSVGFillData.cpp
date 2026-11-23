@@ -35,8 +35,7 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGFillData);
 
@@ -76,5 +75,4 @@ bool SVGFillData::operator==(const SVGFillData& other) const
         && visitedLinkFill == other.visitedLinkFill;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

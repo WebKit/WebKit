@@ -29,8 +29,7 @@
 #include <WebCore/ColorInterpolationMethod.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <color-interpolation-method> = in [ <rectangular-color-space> | <polar-color-space> <hue-interpolation-method>? | <custom-color-space> ]
 // https://drafts.csswg.org/css-color-5/#color-interpolation-method
@@ -45,5 +44,4 @@ template<> struct ComputedStyleDependenciesCollector<ColorInterpolationMethod> {
 template<> struct CSSValueChildrenVisitor<ColorInterpolationMethod> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const ColorInterpolationMethod&) { return IterationStatus::Continue; } };
 WTF::TextStream& operator<<(WTF::TextStream&, const ColorInterpolationMethod&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -30,13 +30,11 @@
 #include "StyleColor.h"
 #include "StyleResolvedColor.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 Color toStyleColor(const CSS::HexColor& unresolved, ColorResolutionState&)
 {
     return { ResolvedColor { WebCore::Color { unresolved.value } } };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

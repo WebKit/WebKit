@@ -27,8 +27,7 @@
 #include <WebCore/CSSPosition.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // <circle()> = circle( <radial-size>? [ at <position> ]? )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-circle
@@ -55,7 +54,6 @@ template<size_t I> const auto& get(const Circle& value)
 
 template<> struct Serialize<Circle> { void operator()(StringBuilder&, const SerializationContext&, const Circle&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Circle, 2)

@@ -27,8 +27,7 @@
 #include <WebCore/StyleColor.h>
 #include <WebCore/StyleURL.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 enum class ForVisitedLink : bool;
 
@@ -180,8 +179,7 @@ template<> struct Blending<SVGPaint> {
     auto blend(const SVGPaint&, const SVGPaint&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> SVGPaint;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::SVGPaint::URLNone, 2)
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::SVGPaint::URLColor, 2)

@@ -29,8 +29,7 @@
 #include "CSSFontPaletteMix.h"
 #include "CSSFontPaletteValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // NOTE: All non-template functions must be implemented in the implementation
 // file due to the use of the incomplete type `FontPaletteMixFunction`.
@@ -97,5 +96,4 @@ Ref<CSSValue> CSSValueCreation<FontPalette>::operator()(CSSValuePool&, const Fon
     return CSSFontPaletteValue::create(FontPalette { value });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

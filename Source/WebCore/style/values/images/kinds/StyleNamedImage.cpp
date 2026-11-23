@@ -39,8 +39,7 @@
 #include <WebKitAdditions/AXCustomColorModeController.h>
 #endif
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 NamedImage::NamedImage(CustomIdent&& name)
     : GeneratedImage { Type::NamedImage }
@@ -123,5 +122,4 @@ bool NamedImage::knownToBeOpaque(const RenderElement&) const
     return false;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

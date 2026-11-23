@@ -38,8 +38,7 @@
 #include <WebCore/StyleWebKitLineBoxContain.h>
 #include <wtf/EnumSet.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class LineBox;
 class LineBoxBuilder;
@@ -217,5 +216,4 @@ inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
         || WTF::holdsAlternative<CSS::Keyword::Bottom>(m_style.verticalAlignment);
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

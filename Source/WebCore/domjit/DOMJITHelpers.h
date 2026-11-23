@@ -35,7 +35,7 @@
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 
-namespace WebCore { namespace DOMJIT {
+namespace WebCore::DOMJIT {
 
 using JSC::CCallHelpers;
 using JSC::GPRReg;
@@ -185,7 +185,7 @@ JSC_DECLARE_JIT_OPERATION(operationToJSElement, JSC::EncodedJSValue, (JSC::JSGlo
 JSC_DECLARE_JIT_OPERATION(operationToJSHTMLElement, JSC::EncodedJSValue, (JSC::JSGlobalObject*, void*));
 JSC_DECLARE_JIT_OPERATION(operationToJSDocument, JSC::EncodedJSValue, (JSC::JSGlobalObject*, void*));
 
-} }
+}
 
 IGNORE_WARNINGS_END
 

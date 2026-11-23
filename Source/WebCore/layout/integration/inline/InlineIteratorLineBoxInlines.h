@@ -29,8 +29,7 @@
 #include "InlineIteratorLineBox.h"
 #include "RenderBoxModelObjectInlines.h"
 
-namespace WebCore {
-namespace InlineIterator {
+namespace WebCore::InlineIterator {
 
 inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox& lineBox)
 {
@@ -58,5 +57,4 @@ inline LeafBoxIterator LineBox::logicalRightmostLeafBox() const
         : lineLeftmostLeafBox();
 }
 
-}
 }

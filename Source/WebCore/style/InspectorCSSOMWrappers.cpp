@@ -50,8 +50,7 @@
 #include "StyleSheetContents.h"
 #include "UserAgentStyle.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 void InspectorCSSOMWrappers::collectFromStyleSheetIfNeeded(CSSStyleSheet& styleSheet)
 {
@@ -185,5 +184,4 @@ CSSKeyframesRule* InspectorCSSOMWrappers::getWrapperForKeyframesRuleInSheets(con
     return m_keyframesRuleToCSSOMWrapperMap.get(rule);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

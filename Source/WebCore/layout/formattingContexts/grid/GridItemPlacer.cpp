@@ -29,8 +29,7 @@
 #include "ImplicitGrid.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 GridItemPlacer::GridItemPlacer(GridAutoFlowOptions autoFlowOptions)
     : m_autoFlowOptions(autoFlowOptions)
@@ -99,5 +98,4 @@ GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logic
     return { WTF::move(gridAreas), implicitGrid.columnsCount(), implicitGrid.rowsCount() };
 }
 
-} // namespace Layout
-} // namespace WebCore
+} // namespace WebCore::Layout

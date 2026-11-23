@@ -29,8 +29,7 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-namespace URLPatternUtilities {
+namespace WebCore::URLPatternUtilities {
 
 struct Part;
 struct URLPatternStringOptions;
@@ -56,5 +55,4 @@ private:
     bool m_ignoreCase { false };
 };
 
-} // namespace URLPatternUtilities
-} // namespace WebCore
+} // namespace WebCore::URLPatternUtilities

@@ -30,8 +30,7 @@
 #include "CSSValuePair.h"
 #include "StyleBuilderChecking.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -83,5 +82,4 @@ auto CSSValueConversion<ContainerType>::operator()(BuilderState& state, const CS
     return CSS::Keyword::Normal { };
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -32,8 +32,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/ASCIILiteral.h>
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 ASCIILiteral WebKitContentBlockerDomain = "WebKitContentBlockerDomain"_s;
 
@@ -142,7 +141,6 @@ const std::error_category& contentExtensionErrorCategory()
     return contentExtensionErrorCategory;
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

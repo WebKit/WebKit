@@ -28,8 +28,7 @@
 #include "AbstractLineBuilder.h"
 #include "InlineContentCache.h"
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 class InlineContentBreaker;
 struct CandidateTextContent;
@@ -66,5 +65,4 @@ private:
     std::optional<InlineLayoutUnit> m_overflowContentLogicalWidth { };
 };
 
-}
 }

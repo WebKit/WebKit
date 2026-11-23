@@ -39,8 +39,7 @@
 #include <ranges>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // MARK: - Conversion
 
@@ -145,5 +144,4 @@ auto Blending<TextShadows>::blend(const TextShadows& from, const TextShadows& to
     return ShadowInterpolation<TextShadows, MatchingTextShadows>::interpolate(from, to, fromStyle, toStyle, context);
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes.h"
 #include <optional>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 struct ColorMixResolver {
     struct Component {
@@ -48,5 +47,4 @@ struct ColorMixResolver {
 
 WebCore::Color mix(const ColorMixResolver&);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

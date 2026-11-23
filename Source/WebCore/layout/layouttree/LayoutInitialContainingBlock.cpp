@@ -31,8 +31,7 @@
 #include "StyleComputedStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InitialContainingBlock);
 
@@ -67,5 +66,3 @@ const InitialContainingBlock& initialContainingBlock(const Box& layoutBox)
 }
 
 }
-}
-

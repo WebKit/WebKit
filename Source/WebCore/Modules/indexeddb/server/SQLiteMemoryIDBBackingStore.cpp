@@ -34,8 +34,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace IDBServer {
+namespace WebCore::IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteMemoryIDBBackingStore);
 
@@ -158,5 +157,4 @@ IDBError SQLiteMemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo
     return IDBError { };
 }
 
-} // namespace IDBServer
-} // namespace WebCore
+} // namespace WebCore::IDBServer

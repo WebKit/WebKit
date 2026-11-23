@@ -29,9 +29,7 @@
 #include <mutex>
 #include <wtf/Lock.h>
 
-namespace WebCore {
-
-namespace SQLiteDatabaseTracker {
+namespace WebCore::SQLiteDatabaseTracker {
 
 static Lock transactionInProgressLock;
 static SQLiteDatabaseTrackerClient* s_staticSQLiteDatabaseTrackerClient WTF_GUARDED_BY_LOCK(transactionInProgressLock) { nullptr };
@@ -73,6 +71,4 @@ bool hasTransactionInProgress()
     return !s_staticSQLiteDatabaseTrackerClient || s_transactionInProgressCounter > 0;
 }
 
-} // namespace SQLiteDatabaseTracker
-
-} // namespace WebCore
+} // namespace WebCore::SQLiteDatabaseTracker

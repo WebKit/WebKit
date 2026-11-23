@@ -36,8 +36,7 @@
 #include "TextUtil.h"
 #include <ranges>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::Layout {
 
 NODELETE static inline InlineLayoutUnit fullWidthAdvance(const Box& box)
 {
@@ -651,5 +650,3 @@ void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFor
 }
 
 }
-}
-

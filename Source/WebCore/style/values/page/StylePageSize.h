@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'size'> (for @page) = <length [0,∞]>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]
 // https://drafts.csswg.org/css-page-3/#descdef-page-size
@@ -54,7 +53,6 @@ private:
 
 template<> struct CSSValueConversion<PageSize> { auto operator()(BuilderState&, const CSSValue&) -> PageSize; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PageSize)

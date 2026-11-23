@@ -26,8 +26,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <'stroke-dashoffset'> = <length-percentage> | <number>@(converted-to-px)
 // https://svgwg.org/svg2-draft/painting.html#StrokeDashoffsetProperty
@@ -57,7 +56,6 @@ DEFINE_TYPE_WRAPPER_GET(SVGStrokeDashoffset, value);
 
 template<> struct CSSValueConversion<SVGStrokeDashoffset> { auto operator()(BuilderState&, const CSSValue&) -> SVGStrokeDashoffset; };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGStrokeDashoffset)

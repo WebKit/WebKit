@@ -30,8 +30,7 @@
 #include <WebCore/CSSGradientColorInterpolationMethod.h>
 #include <WebCore/CSSPosition.h>
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // https://github.com/w3c/csswg-drafts/pull/14655
 
@@ -138,8 +137,7 @@ template<size_t I> const auto& get(const MeshGradient& value)
 
 template<> struct Serialize<MeshGradient> { void operator()(StringBuilder&, const SerializationContext&, const MeshGradient&); };
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::MeshGradientRelativeControlPoint, 2)
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::MeshGradientAbsolutePosition, 2)

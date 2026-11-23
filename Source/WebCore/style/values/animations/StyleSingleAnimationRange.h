@@ -29,8 +29,7 @@
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TimelineRangeValue.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 // <single-animation-range-[start|end]> = [ normal | <length-percentage> | <timeline-range-name> <length-percentage>? ]
 // https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start
@@ -197,8 +196,7 @@ template<> struct DeprecatedCSSValueConversion<SingleAnimationRangeEnd> {
     auto operator()(const CSSValue&) -> std::optional<SingleAnimationRangeEnd>;
 };
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationRangeStart)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationRangeEnd)

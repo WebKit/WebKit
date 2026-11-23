@@ -34,9 +34,7 @@
 #include "SharedBuffer.h"
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-namespace CDMUtilities {
+namespace WebCore::CDMUtilities {
 
 RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
 {
@@ -50,8 +48,6 @@ RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
         return nullptr;
 
     return value->asObject();
-}
-
 }
 
 }

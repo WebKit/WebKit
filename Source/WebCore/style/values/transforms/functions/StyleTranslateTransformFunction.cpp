@@ -31,8 +31,7 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "TranslateTransformOperation.h"
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 using namespace CSS::Literals;
 
@@ -129,5 +128,4 @@ void TranslateTransformFunction::dump(TextStream& ts) const
     ts << type() << '(' << m_x << ", "_s << m_y << ", "_s << m_z << ')';
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style

@@ -28,9 +28,7 @@
 #include "Element.h"
 #include "StyleInvalidator.h"
 
-namespace WebCore {
-
-namespace Style {
+namespace WebCore::Style {
 
 class IdChangeInvalidation {
 public:
@@ -71,5 +69,4 @@ inline IdChangeInvalidation::~IdChangeInvalidation()
     invalidateStyleWithRuleSets();
 }
 
-}
 }

@@ -29,8 +29,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSUnevaluatedCalc.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 bool BorderImageWidthValue::isLength() const
 {
@@ -68,5 +67,4 @@ void Serialize<BorderImageWidth>::operator()(StringBuilder& builder, const Seria
     CSS::serializationForCSS(builder, context, value.values);
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

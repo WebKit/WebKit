@@ -28,8 +28,7 @@
 
 #include "CSSBorderImageOutsetValue.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // MARK: - Conversion
 
@@ -38,5 +37,4 @@ auto CSSValueCreation<BorderImageOutset>::operator()(CSSValuePool&, const Border
     return CSSBorderImageOutsetValue::create(BorderImageOutset { value });
 }
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS

@@ -26,8 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 
-namespace WebCore {
-namespace CSS {
+namespace WebCore::CSS {
 
 // contrast() = contrast( [ <number [0,∞]> | <percentage [0,∞]> ]? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-contrast
@@ -42,7 +41,6 @@ using ContrastFunction = FunctionNotation<CSSValueID::Contrast, Contrast>;
 
 DEFINE_TYPE_WRAPPER_GET(Contrast, value);
 
-} // namespace CSS
-} // namespace WebCore
+} // namespace WebCore::CSS
 
 DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Contrast, 1)

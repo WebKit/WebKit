@@ -27,8 +27,7 @@
 
 #include <wtf/text/TextStream.h>
 
-namespace WebCore {
-namespace Style {
+namespace WebCore::Style {
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, PositionAreaAxis axis)
 {
@@ -44,5 +43,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, PositionAreaAxis axis)
     return ts;
 }
 
-} // namespace Style
-} // namespace WebCore
+} // namespace WebCore::Style
