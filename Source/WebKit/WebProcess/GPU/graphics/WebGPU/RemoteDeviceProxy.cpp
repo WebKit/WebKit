@@ -67,6 +67,7 @@ RemoteDeviceProxy::RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&& features, c
     , m_parent(parent)
     , m_queue(RemoteQueueProxy::create(parent, convertToBackingContext, queueIdentifier))
 {
+    m_queue->setDevice(*this);
 }
 
 RemoteDeviceProxy::~RemoteDeviceProxy()
@@ -119,7 +120,7 @@ RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createTexture(const ::WebGPU::Textu
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier, {
+    auto result = RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier, {
         .size = descriptor.size,
         .mipLevelCount = descriptor.mipLevelCount,
         .sampleCount = descriptor.sampleCount,

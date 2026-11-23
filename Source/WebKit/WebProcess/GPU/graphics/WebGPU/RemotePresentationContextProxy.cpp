@@ -56,6 +56,7 @@ void RemotePresentationContextProxy::configure(const ::WebGPU::CanvasConfigurati
     auto sendResult = send(Messages::RemotePresentationContext::Configure(*convertedConfiguration));
     UNUSED_VARIABLE(sendResult);
 
+    m_configuredDevice = downcast<RemoteDeviceProxy>(canvasConfiguration.device);
     m_textureProperties = {
         .size = { canvasConfiguration.width, canvasConfiguration.height, 1 },
         .mipLevelCount = 1,
@@ -70,6 +71,7 @@ void RemotePresentationContextProxy::unconfigure()
 {
     for (size_t i = 0; i < textureCount; ++i)
         m_currentTexture[i] = nullptr;
+    m_configuredDevice = nullptr;
 
     auto sendResult = send(Messages::RemotePresentationContext::Unconfigure());
     UNUSED_VARIABLE(sendResult);
@@ -81,12 +83,17 @@ RefPtr<::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture(uint
         return nullptr;
 
     if (!m_currentTexture[frameIndex]) {
+        // A context that is not configured has no textures.
+        RefPtr device = m_configuredDevice;
+        if (!device)
+            return nullptr;
+
         auto identifier = WebGPUTextureIdentifier::generate();
         auto sendResult = send(Messages::RemotePresentationContext::GetCurrentTexture(identifier, frameIndex));
         if (sendResult != IPC::Error::NoError)
             return nullptr;
 
-        m_currentTexture[frameIndex] = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier, m_textureProperties, true);
+        m_currentTexture[frameIndex] = RemoteTextureProxy::create(*device, m_convertToBackingContext, identifier, m_textureProperties, true);
     } else
         protect(m_currentTexture[frameIndex])->undestroy();
 

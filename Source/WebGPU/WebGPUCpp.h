@@ -1448,6 +1448,8 @@ class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
 public:
     virtual ~Device() = default;
 
+    // The adapter that created the device.
+    virtual Adapter& adapter() const = 0;
     virtual Vector<FeatureName> features() const = 0;
     virtual const Limits& limits() const = 0;
     virtual Ref<Queue> queue() = 0;
@@ -1589,6 +1591,8 @@ class Queue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Queue> {
 public:
     virtual ~Queue() = default;
 
+    // Null once the device is gone: the device owns its queue.
+    virtual RefPtr<Device> device() const = 0;
     virtual void submit(Vector<Ref<CommandBuffer>>&&) = 0;
     virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
     // A write of at least largeBufferSize bytes may alias `data` rather than copy it, until the work
@@ -1716,6 +1720,8 @@ class Texture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Texture> 
 public:
     virtual ~Texture() = default;
 
+    // The device that created the texture.
+    virtual Device& device() const = 0;
     // std::nullopt is a descriptor with all members at their defaults.
     virtual RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
     virtual void destroy() = 0;

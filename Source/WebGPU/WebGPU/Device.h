@@ -29,6 +29,7 @@
 #error This header requires ARC. Include it only from files compiled with -fobjc-arc.
 #endif
 
+#import "Adapter.h"
 #import "BindableResource.h"
 #import "HardwareCapabilities.h"
 #import "Queue.h"
@@ -170,7 +171,7 @@ public:
     void generateAnInternalError(String&& message);
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
-    Adapter& adapter() const { return m_adapter; }
+    Adapter& adapter() const final { return m_adapter; }
 #if CPU(X86_64)
     bool hasUnifiedMemory() const { return false; }
 #else

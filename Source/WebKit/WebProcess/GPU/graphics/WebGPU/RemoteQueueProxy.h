@@ -57,6 +57,10 @@ public:
     RemoteAdapterProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    RefPtr<::WebGPU::Device> device() const final { return m_device.get(); }
+    // Set by the device that owns the queue, once.
+    void setDevice(::WebGPU::Device& device) { m_device = device; }
+
     void submit(Vector<Ref<::WebGPU::CommandBuffer>>&&) final;
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
     void writeBuffer(::WebGPU::Buffer&, uint64_t bufferOffset, std::span<const uint8_t> data) final;
@@ -105,6 +109,7 @@ private:
     WebGPUQueueIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteAdapterProxy> m_parent;
+    ThreadSafeWeakPtr<::WebGPU::Device> m_device;
 #if ENABLE(VIDEO)
     const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif

@@ -294,7 +294,7 @@ WGPUStatus wgpuDeviceGetLimits(WGPUDevice device, WGPULimits* limits)
 WGPUAdapter wgpuDeviceGetAdapter(WGPUDevice device)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::releaseToAPI(Ref { WebGPU::CAPI::metalFromAPI(device).adapter() });
+        return WebGPU::CAPI::releaseToAPI(Ref { protect(WebGPU::CAPI::fromAPI(device))->adapter() });
     }
 }
 
