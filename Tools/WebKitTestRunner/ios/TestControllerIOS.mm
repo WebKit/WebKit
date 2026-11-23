@@ -364,7 +364,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     [UIKeyboardImpl.activeInstance setCorrectionLearningAllowed:NO];
     [pasteboardConsistencyEnforcer() clearPasteboard];
     [[UIApplication sharedApplication] _cancelAllTouches];
-    [[HIDEventGenerator sharedHIDEventGenerator] resetActiveModifiers];
+    [[HIDEventGenerator sharedHIDEventGenerator] resetState];
 
     restorePortraitOrientationIfNeeded();
 
