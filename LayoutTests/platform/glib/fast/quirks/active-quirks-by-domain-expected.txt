@@ -320,6 +320,25 @@ https://www.iheart.com/
         script: document.cookie = 'app=listen:60; path=/; domain=.iheart.com';
 https://www.imdb.com/
     NeedsChromeMediaControlsPseudoElementQuirk
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: (function() {
+        let advertisement = document.getElementById('inline50_responsive_wrapper');
+        let observed = Symbol.for('WebKitIMDbStaleAdQuirk');
+        if (!advertisement || advertisement[observed] || window.__webkitIMDbStaleAdQuirk !== undefined)
+            return;
+        advertisement[observed] = true;
+        new ResizeObserver(() => {
+            let api = window.ad_utils?.responsiveAdAPI;
+            if (window.__webkitIMDbStaleAdQuirk !== undefined || !api || api.previousWindowWidth === Infinity)
+                return;
+            if (api.getLastAdResponse()?.slots?.inline50?.creativeMetadata?.creativeWidth > document.documentElement.clientWidth) {
+                api.previousWindowWidth = Infinity;
+                dispatchEvent(new Event('resize'));
+            }
+        }).observe(advertisement);
+    })();
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: #inline50_wrapper, #inline50_wrapper * { max-width: 100%; }
     NeedsZeroMaxTouchPointsQuirk
 https://www.instagram.com/
     NeedsInstagramResizingReelsQuirk

@@ -534,7 +534,7 @@ webkit.org/b/308100 [ Release ] fast/dom/Window/window-property-invalid-characte
 
 webkit.org/b/308632 svg/repaint/non-scaling-stroke-transform-animation.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/309376 [ Debug ] compositing/animation/animation-backing.html [ Failure Pass ]
+webkit.org/b/309376 compositing/animation/animation-backing.html [ Failure Pass ]
 
 webkit.org/b/330947 webaudio/suspend-context-while-backgrounded.html [ Failure Pass ]
 webkit.org/b/330948 [ Debug ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]

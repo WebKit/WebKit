@@ -107,6 +107,8 @@ imported/w3c/web-platform-tests/css/css-fonts/size-adjust-unicode-range-system-f
 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-justify-items-center-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-justify-content-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-justify-content-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/out-of-range-color-stop-conic.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ Pass ]
@@ -2901,7 +2903,6 @@ webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
 
 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-currentTime.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-maxFramerate.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure ]
 
 # The last promise test here fails because webrtcbin doesn't rely on a singleton signaling thread.
@@ -5228,6 +5229,10 @@ webkit.org/b/331425 http/tests/workers/service/Client-properties-subframe.html [
 webkit.org/b/297001 http/tests/local/blob/navigate-blob.html [ Crash Failure Pass ]
 
 webkit.org/b/332135 [ Debug ] inspector/layers/layerTreeDidChange.html [ Failure Pass ]
+
+webkit.org/b/332823 ipc/serialized-type-info.html [ Failure ]
+webkit.org/b/332824 http/wpt/webcodecs/videoEncoder-high-bit-depth.html [ Failure ]
+webkit.org/b/332825 imported/w3c/web-platform-tests/scroll-animations/crashtests/viewport-100vh.html [ Crash Pass ]
 
 # End: Common failures between GTK and WPE.
 
