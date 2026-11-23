@@ -87,7 +87,8 @@
                 { "name": "origin", "type": "string", "description": "The serialized origin of the realm." },
                 { "name": "type", "$ref": "BidiScript.RealmType", "description": "The type of the realm." },
                 { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context associated with the realm. Not present for worklet/worker realms." },
-                { "name": "owners", "type": "array", "items": { "$ref": "BidiScript.Realm" }, "optional": true, "description": "Owner realms of a dedicated worker realm." }
+                { "name": "owners", "type": "array", "items": { "$ref": "BidiScript.Realm" }, "optional": true, "description": "Owner realms of a dedicated worker realm." },
+                { "name": "sandbox", "type": "string", "optional": true, "description": "The name of the sandbox realm, if this is a sandbox realm." }
             ]
         },
         {
@@ -318,7 +319,8 @@
                 { "name": "origin", "type": "string", "description": "The serialized origin of the realm." },
                 { "name": "type", "$ref": "BidiScript.RealmType", "description": "The type of the realm." },
                 { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context associated with the realm. Not present for worklet/worker realms." },
-                { "name": "owners", "type": "array", "items": { "$ref": "BidiScript.Realm" }, "optional": true, "description": "Owner realms of a dedicated worker realm." }
+                { "name": "owners", "type": "array", "items": { "$ref": "BidiScript.Realm" }, "optional": true, "description": "Owner realms of a dedicated worker realm." },
+                { "name": "sandbox", "type": "string", "optional": true, "description": "The name of the sandbox realm, if this is a sandbox realm." }
             ]
         },
         {
