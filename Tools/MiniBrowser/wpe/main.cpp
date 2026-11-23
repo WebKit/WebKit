@@ -79,6 +79,7 @@ static guint defaultWindowHeightLegacyAPI = 720;
 static GHashTable* openViews;
 static gboolean windowMaximized;
 static gboolean windowFullscreen;
+static gboolean disableKeyBindings;
 static const char* configFile;
 #if ENABLE_WPE_PLATFORM
 #if defined(USE_LIBWPE) && USE_LIBWPE
@@ -141,6 +142,7 @@ static const GOptionEntry commandLineOptions[] =
     { "features", 'F', 0, G_OPTION_ARG_STRING, &featureList, "Enable or disable WebKit features (hint: pass 'help' for a list)", "FEATURE-LIST" },
     { "maximized", 'm', 0, G_OPTION_ARG_NONE, &windowMaximized, "Start with maximized window", nullptr },
     { "fullscreen", 'f', 0, G_OPTION_ARG_NONE, &windowFullscreen, "Start with fullscreen window", nullptr },
+    { "disable-key-binding", 'b', 0, G_OPTION_ARG_NONE, &disableKeyBindings, "Disable key bindings", nullptr },
 #if ENABLE_WPE_PLATFORM
 #if defined(USE_LIBWPE) && USE_LIBWPE
     { "use-legacy-api", 0, 0, G_OPTION_ARG_NONE, &useLegacyAPI, "Use the WPE legacy API (libwpe)", nullptr },
@@ -710,7 +712,8 @@ static void activate(GApplication* application, gpointer)
             wpe_toplevel_maximize(wpeToplevel);
         if (windowFullscreen)
             wpe_toplevel_fullscreen(wpeToplevel);
-        g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), webView);
+        if (!disableKeyBindings)
+            g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), webView);
         wpe_toplevel_set_title(wpeToplevel, defaultWindowTitle);
         g_signal_connect(webView, "notify::title", G_CALLBACK(webViewTitleChanged), wpeView);
     }
