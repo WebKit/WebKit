@@ -1131,7 +1131,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
                 }
             } else if (needsGridItemMinContentContributionForSecondColumnPass) {
                 auto rowSize = renderGrid()->gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, Style::GridTrackSizingDirection::Rows);
-                auto stretchedSize = !GridLayoutFunctions::isOrthogonalGridItem(*renderGrid(), gridItem) ? gridItem.constrainLogicalHeightByMinMax(rowSize, { }) : gridItem.constrainLogicalWidthByMinMax(rowSize, renderGrid()->contentBoxWidth(), *renderGrid());
+                auto availableSize = GridLayoutFunctions::availableAlignmentSpaceForGridItemBeforeStretching(*renderGrid(), rowSize, gridItem, Style::GridTrackSizingDirection::Rows);
+                auto stretchedSize = !GridLayoutFunctions::isOrthogonalGridItem(*renderGrid(), gridItem) ? gridItem.constrainLogicalHeightByMinMax(availableSize, { }) : gridItem.constrainLogicalWidthByMinMax(availableSize, renderGrid()->contentBoxWidth(), *renderGrid());
                 ScopedOverridingContentSizeForGridItem scope(*renderGrid(), gridItem, stretchedSize, Style::GridTrackSizingDirection::Rows);
                 return gridItem.minContentLogicalWidthContribution();
             } else if (shouldTreatGridAreaBlockSizeAsIndefinite(gridItem)) {
