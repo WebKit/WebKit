@@ -4231,7 +4231,19 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 
 void MediaPlayerPrivateGStreamer::setViewportVisibility(ViewportVisibility visibility)
 {
-    bool isVisible = visibility == ViewportVisibility::VisibleInViewport;
+    bool isVisible;
+    switch (visibility) {
+    case ViewportVisibility::NotVisible:
+        isVisible = false;
+        break;
+    case ViewportVisibility::IntersectingViewport:
+    case ViewportVisibility::VisibleInViewport:
+    case ViewportVisibility::VisibleInFullscreen:
+    case ViewportVisibility::VisibleInPictureInPicture:
+        isVisible = true;
+        break;
+    }
+
     GST_DEBUG_OBJECT(pipeline(), "Player is now %svisible in the viewport", isVisible ? "" : "not ");
 
     if (isMediaStreamPlayer() || isVisible == m_isVisibleInViewport)
