@@ -43,6 +43,7 @@
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/NativePromise.h>
+#include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -87,6 +88,14 @@ struct GPUProcessCreationParameters;
 namespace SecurityFlags { struct Storage; }
 struct SharedPreferencesForWebProcess;
 
+#if ENABLE(MEDIA_STREAM)
+enum class CaptureSandboxAccess : uint8_t {
+    Audio = 1 << 0,
+    Video = 1 << 1,
+    Display = 1 << 2,
+};
+#endif
+
 class GPUProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_TZONE_ALLOCATED(GPUProcessProxy);
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
@@ -127,7 +136,7 @@ public:
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay);
-    void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
+    void updateSandboxAccess(OptionSet<CaptureSandboxAccess>);
     void setShouldListenToVoiceActivity(const WebPageProxy&, bool);
     void setPageUsingMicrophone(WebPageProxyIdentifier identifier) { m_lastPageUsingMicrophone = identifier; }
 #endif
