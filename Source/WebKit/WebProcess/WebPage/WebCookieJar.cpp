@@ -115,7 +115,11 @@ bool WebCookieJar::isEligibleForCache(WebFrame& frame, const URL& firstPartyForC
     if (resourceDomain.isEmpty())
         return false;
 
-    return frame.isMainFrame() || RegistrableDomain { firstPartyForCookies } == resourceDomain;
+    RegistrableDomain firstPartyDomain { firstPartyForCookies };
+    if (frame.isMainFrame() && firstPartyDomain.isEmpty())
+        return true;
+
+    return firstPartyDomain == resourceDomain;
 }
 
 static WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking(const WebFrame* frame)

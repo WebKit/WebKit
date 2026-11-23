@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+var lines = [];
+
+function log(msg) {
+  lines.push(msg);
+}
+
+function doTest() {
+  log('* "iframe"\n');
+  log('document.cookie = ' + document.cookie + '\n');
+  document.cookie = 'cookie=iframe';
+
+  var wnd = window.open('about:blank');
+  log('* "about:blank"\n');
+  log('document.cookie = ' + wnd.document.cookie + '\n');
+
+  parent.postMessage(lines, '*');
+}
+</script>
+</head>
+<body onload="doTest()">
+</body>
+</html>
