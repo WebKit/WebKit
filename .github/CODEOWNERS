@@ -193,8 +193,8 @@ AllowedSPI*.toml @emw-apple
 # ================================================================================
 # WebDriver
 
-/Source/WebDriver/ @carlosgcampos @burg
-/Source/WebKit/UIProcess/Automation @carlosgcampos @burg
+/Source/WebDriver/ @burg
+/Source/WebKit/UIProcess/Automation @burg
 
 # ================================================================================
 # CMake
