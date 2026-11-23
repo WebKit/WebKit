@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
+<style>
+.inline-box { position: relative; }
+.table { position: absolute; display: table; margin: auto; }
+.float { float: left; width: 10px; height: 10px; }
+</style>
+<div><div class="float"></div>XX <span class="inline-box">XX<div class="table"><div style="display: table-cell">XX</div></div></span></div>
+<div>XX <span class="inline-box">XX<div class="table" style="writing-mode: vertical-rl"><div style="display: table-cell">XX</div></div></span></div>
+<div>XX <span class="inline-box">XX<table style="position: absolute; width: 50%"><tr><td>XX</td></tr></table></span></div>
