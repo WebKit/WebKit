@@ -5629,10 +5629,10 @@ header: <WebCore/InspectorOverlay.h>
     WebCore::Color borderColor;
     WebCore::Color marginColor;
     WebCore::InspectorOverlayHighlight::Type type;
+    bool usePageCoordinates;
     Vector<WebCore::FloatQuad> quads;
     Vector<WebCore::InspectorOverlayHighlight::GridHighlightOverlay> gridHighlightOverlays;
     Vector<WebCore::InspectorOverlayHighlight::FlexHighlightOverlay> flexHighlightOverlays;
-    bool usePageCoordinates;
 };
 
 #endif

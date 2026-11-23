@@ -136,10 +136,10 @@ struct InspectorOverlayHighlight {
     Color marginColor;
 
     Type type { Type::Node };
+    bool usePageCoordinates { true };
     Vector<FloatQuad> quads;
     Vector<GridHighlightOverlay> gridHighlightOverlays;
     Vector<FlexHighlightOverlay> flexHighlightOverlays;
-    bool usePageCoordinates { true };
 
     using Bounds = FloatRect;
 };

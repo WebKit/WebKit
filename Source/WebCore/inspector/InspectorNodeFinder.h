@@ -61,9 +61,9 @@ private:
     String m_query;
     String m_tagNameQuery;
     String m_attributeQuery;
-    bool m_caseSensitive;
 
     ListHashSet<Node*> m_results;
+    bool m_caseSensitive;
     bool m_startTagFound;
     bool m_endTagFound;
     bool m_exactAttributeMatch;

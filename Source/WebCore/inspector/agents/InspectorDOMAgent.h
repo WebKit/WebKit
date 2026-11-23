@@ -336,21 +336,21 @@ private:
 
     struct InspectorEventListener {
         Inspector::Protocol::DOM::EventListenerId identifier { 1 };
+        bool useCapture { false };
+        bool disabled { false };
         RefPtr<EventTarget> eventTarget;
         RefPtr<EventListener> eventListener;
         AtomString eventType;
-        bool useCapture { false };
-        bool disabled { false };
         RefPtr<JSC::Breakpoint> breakpoint;
 
         InspectorEventListener() { }
 
         InspectorEventListener(Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
             : identifier(identifier)
+            , useCapture(capture)
             , eventTarget(&target)
             , eventListener(&listener)
             , eventType(type)
-            , useCapture(capture)
         {
         }
 
