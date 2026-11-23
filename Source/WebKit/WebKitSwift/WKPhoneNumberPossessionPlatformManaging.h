@@ -61,6 +61,10 @@ NS_SWIFT_SENDABLE
 - (void)requestWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier challenge:(NSData *)challenge includesPhoneNumber:(BOOL)includesPhoneNumber phoneNumberSuffixHint:(nullable NSString *)phoneNumberSuffixHint presentationAnchor:(WKPhoneNumberPossessionPresentationAnchor)presentationAnchor completionHandler:(void (^)(id<WKPhoneNumberPossessionPlatformResponse> _Nullable, NSError * _Nullable))completionHandler NS_SWIFT_NAME(request(relyingPartyIdentifier:challenge:includesPhoneNumber:phoneNumberSuffixHint:presentationAnchor:completionHandler:));
 @end
 
+@interface WKPhoneNumberPossessionPlatformManager (Enablement)
++ (void)isEnabledWithCompletionHandler:(void (^)(BOOL))completionHandler;
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // ENABLE(PHONE_NUMBER_POSSESSION)
