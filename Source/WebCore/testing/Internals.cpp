@@ -686,6 +686,9 @@ void Internals::resetToConsistentState(Page& page)
     page.setSystemImageAnimationEnabled(true);
     if (!page.imageAnimationEnabled())
         page.setImageAnimationEnabled(true);
+#if ENABLE(VIDEO)
+    page.clearCaptionDisplaySettingsClientForTesting();
+#endif
 
     RefPtr localMainFrame = page.localMainFrame();
     if (!localMainFrame)
