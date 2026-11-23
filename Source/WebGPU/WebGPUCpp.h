@@ -1306,6 +1306,8 @@ class Adapter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Adapter> 
 public:
     virtual ~Adapter() = default;
 
+    // The instance that created the adapter. Null when the instance is gone.
+    virtual RefPtr<Instance> instance() const = 0;
     virtual Vector<FeatureName> features() const = 0;
     virtual const Limits& limits() const = 0;
     virtual AdapterInfo info() = 0;

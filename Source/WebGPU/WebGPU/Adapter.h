@@ -80,7 +80,8 @@ public:
     void makeInvalid() { m_device = nil; }
     NODELETE bool isXRCompatible() const final;
 
-    RefPtr<Instance> instance() const { return m_instance.get(); }
+    RefPtr<WebGPU::Instance> instance() const final;
+    // The Metal instance, for the callers that need what only it has.
     ThreadSafeWeakPtr<Instance> weakInstance() const { return m_instance; }
 
 private:

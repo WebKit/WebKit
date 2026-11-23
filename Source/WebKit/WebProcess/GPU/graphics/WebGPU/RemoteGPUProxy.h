@@ -35,6 +35,7 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebModel {
 struct ImageAsset;
@@ -55,6 +56,7 @@ class WebPage;
 namespace WebGPU {
 class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
+class RemoteWebGPUInstanceProxy;
 }
 
 class RemoteGPUProxy final : public WebCore::WebGPUIntegration, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy>, SerialFunctionDispatcher {
@@ -85,8 +87,12 @@ public:
     RemoteGPUIdentifier backing() const { return m_backing; }
     NODELETE RefPtr<WebKit::Mesh> createModelBacking(unsigned width, unsigned height, WebModel::ImageAsset&& diffuseTexture, WebModel::ImageAsset&& specularTexture, bool standardDynamicRange, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 
+    // The WebGPU::Instance that the adapters are created from. Called on the dispatcher thread.
+    Ref<WebGPU::RemoteWebGPUInstanceProxy> ensureInstance();
+
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
+    friend class WebGPU::RemoteWebGPUInstanceProxy;
 
     RemoteGPUProxy(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
     void initializeIPC(Ref<IPC::StreamClientConnection>&&, IPC::Connection& renderingBackendIPCConnection, IPC::StreamServerConnection::Handle&&);
@@ -148,6 +154,8 @@ private:
     const RefPtr<IPC::StreamClientConnection> m_streamConnection;
     const RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
     const Ref<RemoteRenderingBackendProxy> m_renderingBackend;
+    // Weak, because the instance holds a reference to this. The adapters hold the instance.
+    ThreadSafeWeakPtr<WebGPU::RemoteWebGPUInstanceProxy> m_instance;
     RemoteGPUIdentifier m_backing { RemoteGPUIdentifier::generate() };
     bool m_didInitialize { false };
     bool m_lost { false };

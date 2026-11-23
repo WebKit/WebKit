@@ -37,7 +37,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAdapterProxy);
 
-RemoteAdapterProxy::RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUAdapterIdentifier identifier)
+RemoteAdapterProxy::RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteWebGPUInstanceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUAdapterIdentifier identifier)
     : m_backing(identifier)
     , m_features(WTF::move(features))
     , m_limits(limits)

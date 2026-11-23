@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteGPUProxy.h"
+#include "RemoteWebGPUInstanceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
@@ -43,16 +43,17 @@ class ConvertToBackingContext;
 class RemoteAdapterProxy final : public ::WebGPU::Adapter {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAdapterProxy);
 public:
-    static Ref<RemoteAdapterProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUAdapterIdentifier identifier)
+    static Ref<RemoteAdapterProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteWebGPUInstanceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUAdapterIdentifier identifier)
     {
         return adoptRef(*new RemoteAdapterProxy(WTF::move(features), limits, WTF::move(info), xrCompatible, parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteAdapterProxy();
 
-    RemoteGPUProxy& parent() const { return m_parent; }
+    RemoteWebGPUInstanceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    RefPtr<::WebGPU::Instance> instance() const final { return m_parent.ptr(); }
     Vector<::WebGPU::FeatureName> features() const final { return m_features; }
     const ::WebGPU::Limits& limits() const LIFETIME_BOUND final { return m_limits; }
     ::WebGPU::AdapterInfo info() final { return m_info; }
@@ -64,7 +65,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, ::WebGPU::AdapterInfo&&, bool xrCompatible, RemoteGPUProxy&, ConvertToBackingContext&, WebGPUAdapterIdentifier);
+    RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, ::WebGPU::AdapterInfo&&, bool xrCompatible, RemoteWebGPUInstanceProxy&, ConvertToBackingContext&, WebGPUAdapterIdentifier);
 
     RemoteAdapterProxy(const RemoteAdapterProxy&) = delete;
     RemoteAdapterProxy(RemoteAdapterProxy&&) = delete;
@@ -89,7 +90,7 @@ private:
     const ::WebGPU::Limits m_limits;
     const ::WebGPU::AdapterInfo m_info;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
-    const Ref<RemoteGPUProxy> m_parent;
+    const Ref<RemoteWebGPUInstanceProxy> m_parent;
     bool m_xrCompatible { false };
 };
 

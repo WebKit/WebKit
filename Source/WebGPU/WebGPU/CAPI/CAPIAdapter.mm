@@ -29,11 +29,12 @@
 #import "WebGPUCppConversions.h"
 #import <wtf/text/MakeString.h>
 
-// The caller owns the reference to the instance. Null when the instance is gone.
+// The caller owns the reference to the instance. Null when the instance is gone. The wgpuInstance*
+// functions use the instance as a Metal instance, which it is: only Metal objects reach the C API.
 WGPUInstance wgpuAdapterGetInstance(WGPUAdapter adapter)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::metalFromAPI(adapter))->instance());
+        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(adapter))->instance());
     }
 }
 
@@ -141,7 +142,7 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
 {
     @autoreleasepool {
         Ref protectedAdapter = WebGPU::CAPI::metalFromAPI(adapter);
-        WebGPU::CAPI::Future future { protectedAdapter->instance() };
+        WebGPU::CAPI::Future future { protectedAdapter->weakInstance().get() };
         auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
             callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();

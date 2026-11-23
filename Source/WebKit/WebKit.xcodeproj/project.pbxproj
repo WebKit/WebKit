@@ -4725,6 +4725,8 @@
 		1CB7462927436EE700F19874 /* RemoteRenderBundleEncoderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderBundleEncoderProxy.cpp; sourceTree = "<group>"; };
 		1CB7462A27436EE700F19874 /* RemoteBufferProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBufferProxy.h; sourceTree = "<group>"; };
 		1CB7462B27436EE700F19874 /* RemoteTextureViewProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextureViewProxy.cpp; sourceTree = "<group>"; };
+		4BE3A1C12EC7F00100A1B2C3 /* RemoteWebGPUInstanceProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWebGPUInstanceProxy.cpp; sourceTree = "<group>"; };
+		4BE3A1C22EC7F00100A1B2C3 /* RemoteWebGPUInstanceProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWebGPUInstanceProxy.h; sourceTree = "<group>"; };
 		1CB7462C27436EE700F19874 /* RemoteCommandBufferProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCommandBufferProxy.h; sourceTree = "<group>"; };
 		1CB7462D27436EE700F19874 /* RemoteQueueProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteQueueProxy.cpp; sourceTree = "<group>"; };
 		1CB7462E27436EE700F19874 /* RemoteRenderPassEncoderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPassEncoderProxy.h; sourceTree = "<group>"; };
@@ -11781,6 +11783,8 @@
 				1CB7463927436EE900F19874 /* RemoteTextureProxy.h */,
 				1CB7462B27436EE700F19874 /* RemoteTextureViewProxy.cpp */,
 				1CB7461A27436EE400F19874 /* RemoteTextureViewProxy.h */,
+				4BE3A1C12EC7F00100A1B2C3 /* RemoteWebGPUInstanceProxy.cpp */,
+				4BE3A1C22EC7F00100A1B2C3 /* RemoteWebGPUInstanceProxy.h */,
 				0D943BF42C65329700D33BA5 /* RemoteXRBindingProxy.cpp */,
 				0D943BF32C65329700D33BA5 /* RemoteXRBindingProxy.h */,
 				0D943C012C6546BD00D33BA5 /* RemoteXRProjectionLayerProxy.cpp */,
