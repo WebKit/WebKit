@@ -34,6 +34,7 @@
 #include "FontCascadeInlines.h"
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutBoxInlines.h"
+#include "LayoutIterator.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
@@ -129,7 +130,13 @@ InlineItemsBuilder::InlineItemsBuilder(InlineContentCache& inlineContentCache, c
 
 void InlineItemsBuilder::build(InlineItemPosition startPosition)
 {
-    InlineItemList inlineItemList;
+    auto& inlineItemCache = inlineContentCache().inlineItems();
+    ASSERT(!startPosition || startPosition.index < inlineItemCache.size());
+    if (startPosition.index >= inlineItemCache.size())
+        startPosition = { };
+
+    // Rebuild in the cached list, so appending to large content grows it rather than allocating a merged copy.
+    auto& inlineItemList = inlineItemCache.content();
     collectInlineItems(inlineItemList, startPosition);
 
     if (m_hasWhiteSpaceTrim)
@@ -143,17 +150,9 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     if (contentRequiresVisualReordering() || m_hasTextAutospace)
         computeInlineTextItemWidthsAndTextSpacing(inlineItemList);
 
-    auto adjustInlineContentCacheWithNewInlineItems = [&] {
-        ASSERT(!startPosition || startPosition.index < inlineContentCache().inlineItems().content().size());
-
-        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextWithStyleOfItsOwn, m_hasTextAutospace, m_hasWhiteSpaceTrim, m_inlineBoxCount };
-        auto isPopulatedFromCache = m_textContentPopulatedFromCache && *m_textContentPopulatedFromCache ? InlineContentCache::InlineItems::IsPopulatedFromCache::Yes : InlineContentCache::InlineItems::IsPopulatedFromCache::No;
-        auto& inlineItemCache = inlineContentCache().inlineItems();
-        if (!startPosition || startPosition.index >= inlineItemCache.content().size())
-            return inlineItemCache.set(WTF::move(inlineItemList), contentAttributes, isPopulatedFromCache);
-        inlineItemCache.replace(startPosition.index, WTF::move(inlineItemList), contentAttributes, isPopulatedFromCache);
-    };
-    adjustInlineContentCacheWithNewInlineItems();
+    auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextWithStyleOfItsOwn, m_hasTextAutospace, m_hasWhiteSpaceTrim, m_inlineBoxCount };
+    auto isPopulatedFromCache = m_textContentPopulatedFromCache && *m_textContentPopulatedFromCache ? InlineContentCache::InlineItems::IsPopulatedFromCache::Yes : InlineContentCache::InlineItems::IsPopulatedFromCache::No;
+    inlineItemCache.didRebuild(contentAttributes, isPopulatedFromCache, startPosition ? InlineContentCache::InlineItems::IsPartialRebuild::Yes : InlineContentCache::InlineItems::IsPartialRebuild::No);
 
 #if ASSERT_ENABLED
     // Check if we've got matching inline box start/end pairs and unique inline level items (non-text, non-inline box items).
@@ -471,7 +470,11 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::traverseUntilDamaged(const B
         m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(layoutBox);
         m_hasTextAndLineBreakOnlyContent &= (isInlineBoxWithInlineContent(layoutBox) || isTextOrLineBreak(layoutBox));
         m_hasTextWithStyleOfItsOwn |= isTextWithStyleOfItsOwn(layoutBox);
-        return &layoutBox == &firstDamagedLayoutBox;
+        if (&layoutBox == &firstDamagedLayoutBox)
+            return true;
+        if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox))
+            m_textLengthBeforeDamagedBox += inlineTextBox->content().length();
+        return false;
     };
 
     if (appendAndCheckForDamage(*protect(root().firstChild())))
@@ -502,6 +505,18 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::traverseUntilDamaged(const B
     ASSERT_NOT_REACHED();
     queue.append(*protect(root().firstChild()));
     return queue;
+}
+
+// Text length of the given box and all content after it in this inline formatting context.
+static size_t textLengthFromBoxToEnd(const Box& firstBox, const ElementBox& root)
+{
+    size_t textLength = 0;
+    for (CheckedPtr<const Box> box = &firstBox; box;) {
+        if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(*box))
+            textLength += inlineTextBox->content().length();
+        box = isInlineBoxWithInlineContent(*box) ? LayoutBoxTraversal::next(*box, root) : LayoutBoxTraversal::nextSkippingChildren(*box, root);
+    }
+    return textLength;
 }
 
 InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(InlineItemPosition startPosition)
@@ -540,26 +555,37 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
+    // The list holds the cached items: the ones before the damaged item stay, and the rest are rebuilt after them.
     auto layoutQueue = initializeLayoutQueue(startPosition);
-    auto& inlineItemCache = this->inlineContentCache().inlineItems();
+
+    // Rebuilding resumes inside the damaged item's text, so read where before dropping it.
+    CheckedPtr<const Box> damagedLayoutBox;
+    std::optional<size_t> damagedContentOffset;
+    if (startPosition) {
+        auto& damagedInlineItem = inlineItemList[startPosition.index];
+        damagedLayoutBox = &damagedInlineItem.layoutBox();
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(damagedInlineItem))
+            damagedContentOffset = inlineTextItem->start();
+        else if (auto* inlineSoftLineBreakItem = dynamicDowncast<InlineSoftLineBreakItem>(damagedInlineItem))
+            damagedContentOffset = inlineSoftLineBreakItem->position();
+    }
+    inlineItemList.shrink(startPosition.index);
+
+    if (damagedLayoutBox) {
+        // Expect the rebuilt content to have as many items per character as the cached items before it.
+        auto textLengthBeforeDamage = m_textLengthBeforeDamagedBox + damagedContentOffset.value_or(0);
+        if (textLengthBeforeDamage && !inlineItemList.isEmpty()) {
+            auto itemsPerCharacter = std::min(1.0, static_cast<double>(inlineItemList.size()) / textLengthBeforeDamage);
+            auto remainingTextLength = textLengthFromBoxToEnd(*damagedLayoutBox, root()) - damagedContentOffset.value_or(0);
+            InlineFormattingUtils::reserveCapacityForEstimatedSize(inlineItemList, inlineItemList.size() + static_cast<size_t>(remainingTextLength * itemsPerCharacter * InlineFormattingUtils::estimatedSizeMargin));
+        }
+    }
 
     auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
-        if (!startPosition)
+        if (&inlineTextBox != damagedLayoutBox.get())
             return { };
-        auto& currentInlineItems = inlineItemCache.content();
-        if (startPosition.index >= currentInlineItems.size()) {
-            ASSERT_NOT_REACHED();
-            return { };
-        }
-        auto& damagedInlineItem = currentInlineItems[startPosition.index];
-        if (&inlineTextBox != &damagedInlineItem.layoutBox())
-            return { };
-        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(damagedInlineItem))
-            return inlineTextItem->start();
-        if (auto* inlineSoftLineBreakItem = dynamicDowncast<InlineSoftLineBreakItem>(damagedInlineItem))
-            return inlineSoftLineBreakItem->position();
-        ASSERT_NOT_REACHED();
-        return { };
+        ASSERT(damagedContentOffset);
+        return damagedContentOffset;
     };
 
     while (!layoutQueue.isEmpty()) {
@@ -1141,7 +1167,6 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
         return measured;
     };
 
-    inlineItemList.reserveCapacity(inlineItemList.size() + breakingPositions.size());
     unsigned previousPosition = 0;
     for (auto endPosition : breakingPositions) {
         auto startPosition = std::exchange(previousPosition, endPosition);

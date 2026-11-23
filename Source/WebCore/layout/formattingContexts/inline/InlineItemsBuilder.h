@@ -79,6 +79,8 @@ private:
     const Ref<const SecurityOrigin> m_securityOrigin;
 
     size_t m_inlineBoxCount { 0 };
+    // Text before the damaged box, which partial rebuild measures the item rate of the cached items over.
+    size_t m_textLengthBeforeDamagedBox { 0 };
     bool m_hasTextAndLineBreakOnlyContent { true }; // Note that this is true for cases like <span>text content</span>
     bool m_hasTextWithStyleOfItsOwn { false };
     bool m_contentRequiresVisualReordering { false };

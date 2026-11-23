@@ -68,6 +68,17 @@ public:
 
     static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
 
+    // Appending a large amount of content would otherwise grow the vector in many steps that each copy it.
+    // Smaller estimates are left to normal growth, so frequent small appends keep amortized growth.
+    static constexpr double estimatedSizeMargin = 1.1;
+    template<typename VectorType>
+    static void reserveCapacityForEstimatedSize(VectorType& vector, size_t estimatedSize)
+    {
+        auto capacity = vector.capacity();
+        if (estimatedSize > capacity + capacity / 2)
+            vector.reserveCapacity(estimatedSize);
+    }
+
     NODELETE static LineEndingTruncationPolicy lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful);
 
     NODELETE static std::optional<LineLayoutResult::InlineContentEnding> inlineContentEnding(const LineResult&);
