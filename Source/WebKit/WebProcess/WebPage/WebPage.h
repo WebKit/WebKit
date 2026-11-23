@@ -1356,6 +1356,9 @@ public:
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
 
+    // Whether a print started with beginPrinting() is still in progress.
+    bool hasActivePrintContext() const { return !!m_printContext; }
+
     void updateFrameScrollingMode(WebCore::FrameIdentifier, WebCore::ScrollbarMode);
 
     void markLayersVolatile(CompletionHandler<void(bool)>&& completionHandler = { });

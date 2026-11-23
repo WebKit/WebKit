@@ -131,6 +131,9 @@ static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebs
     });
 }
 
+// Large enough for any realistic command, while still bounding how much a client can make WebDriver buffer.
+static constexpr uint64_t maximumIncomingMessageSize = 256 * MB;
+
 static void handleWebSocketConnection(SoupServer*, SoupServerMessage*, const char* path, SoupWebsocketConnection* connection, gpointer userData)
 {
     // Delayed steps from the end of the handshake, as now we have a connection object
@@ -142,6 +145,14 @@ static void handleWebSocketConnection(SoupServer*, SoupServerMessage*, const cha
         auto connectionForKey = WebSocketMessageHandler::Connection(connection);
         webSocketServer->addConnection({ connection }, sessionId);
     }
+
+    // libsoup fails the connection on any message over 128 KiB by default. BiDi commands can carry
+    // much more than that, such as a navigate URL holding a whole document, or large script arguments.
+    soup_websocket_connection_set_max_incoming_payload_size(connection, maximumIncomingMessageSize);
+#if SOUP_CHECK_VERSION(3, 7, 3)
+    // Newer libsoup also limits the size of a message reassembled from fragments, to 128 KiB by default.
+    soup_websocket_connection_set_max_total_message_size(connection, maximumIncomingMessageSize);
+#endif
 
     g_signal_connect(connection, "closed", G_CALLBACK(+[](SoupWebsocketConnection* connection, gpointer userData) {
         auto webSocketServer = static_cast<WebSocketServer*>(userData);
