@@ -44,6 +44,9 @@ class APITestSuite(TestSuiteFormat):
             return pattern
         return None
 
+    def is_wildcard_pattern(self, pattern: str) -> bool:
+        return pattern.endswith('*')
+
     def matches_test(self, pattern: str, test_name: str) -> bool:
         if pattern.endswith('*'):
             return test_name.startswith(pattern[:-1])
