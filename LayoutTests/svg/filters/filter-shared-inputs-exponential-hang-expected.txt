@@ -1,0 +1,3 @@
+This test passes if it does not hang. Each feComposite uses the previous result for both of its inputs, so expanding the filter graph as a tree takes exponential time.
+
+ PASS
