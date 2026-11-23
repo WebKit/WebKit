@@ -223,6 +223,14 @@ void CoordinatedSceneState::didPaintTile()
     m_pendingTiles--;
 }
 
+void CoordinatedSceneState::schedulePaintForPendingPreRenderedTiles()
+{
+    assertIsMainThread();
+
+    for (Ref layer : copyToVector(m_layers))
+        layer->schedulePaintForPendingPreRenderedTiles();
+}
+
 CoordinatedSceneState::ChangedPreRenderedTiles CoordinatedSceneState::didPaintPreRenderedTile(WebCore::CoordinatedPlatformLayer& layer)
 {
     Locker locker { m_layersWithPreRenderedTilesLock };

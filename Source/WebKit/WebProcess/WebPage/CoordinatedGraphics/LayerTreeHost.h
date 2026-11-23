@@ -85,6 +85,7 @@ private:
     WebCore::FloatRect visibleContentsRect() const;
 
     void requestCompositionForRenderingUpdate();
+    void pendingPreRenderedTilesTimerFired();
 
     // CoordinatedPlatformLayer::Client
     WebCore::CoordinatedTileManager& tileManager() const LIFETIME_BOUND override { return *m_tileManager; }
@@ -101,9 +102,8 @@ private:
     int maxTextureSize() const override;
     void willPaintTile() override;
     void didPaintTile() override;
-#if USE(SKIA)
     void didPaintPreRenderedTile(WebCore::CoordinatedPlatformLayer&) override;
-#endif
+    void notifyPreRenderedTilesPending() override;
 
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -159,6 +159,8 @@ private:
     std::unique_ptr<WebCore::CoordinatedTileManager> m_tileManager;
     HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
     uint64_t m_renderingUpdateID { 0 };
+    bool m_pendingPreRenderedTiles { false };
+    RunLoop::Timer m_pendingPreRenderedTilesTimer;
 
 #if PLATFORM(GTK)
     bool m_transientZoom { false };

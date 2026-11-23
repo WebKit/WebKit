@@ -159,6 +159,14 @@ void CoordinatedPlatformLayer::notifyScrollingPositionChanged()
     m_client->didChangeLayerPendingScrollingPosition(*this);
 }
 
+void CoordinatedPlatformLayer::notifyPreRenderedTilesPending()
+{
+    assertIsMainThread();
+    m_hasPendingPreRenderedTiles = true;
+    if (m_client)
+        m_client->notifyPreRenderedTilesPending();
+}
+
 void CoordinatedPlatformLayer::addPendingChange(Change change)
 {
     assertIsMainThread();
@@ -444,6 +452,7 @@ void CoordinatedPlatformLayer::setContentsOpaque(bool contentsOpaque)
 
     m_contentsOpaque = contentsOpaque;
     addPendingChange(Change::ContentsOpaque);
+    m_needsTilesUpdate = true;
     // FIXME: request a full repaint?
     damageWholeLayer();
 }
@@ -940,6 +949,10 @@ void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
 
             m_tilesUpdate = std::nullopt;
             m_pendingChanges.remove(Change::BackingStoreTiles);
+            {
+                Locker locker { m_preRenderedPendingTileUpdatesLock };
+                m_preRenderedPendingTileUpdates = { };
+            }
         }
     }
 }
@@ -955,6 +968,11 @@ void CoordinatedPlatformLayer::purgeBackingStores()
     m_tilesUpdate = std::nullopt;
     m_imageBackingStore = nullptr;
     m_contentsBuffer = nullptr;
+
+    {
+        Locker locker { m_preRenderedPendingTileUpdatesLock };
+        m_preRenderedPendingTileUpdates = { };
+    }
 
     {
         Locker locker { m_scrollbarContents.lock };
@@ -1013,7 +1031,13 @@ void CoordinatedPlatformLayer::didPaintTile()
 void CoordinatedPlatformLayer::didPaintPreRenderedTile()
 {
     // Called from painting threads.
-    if (m_client)
+    bool deferred = m_preRenderedTilesDeferredNotifications.transaction([](int& value) -> bool {
+        if (value == -1)
+            return false;
+        ++value;
+        return true;
+    });
+    if (!deferred && m_client)
         m_client->didPaintPreRenderedTile(*this);
 }
 
@@ -1149,6 +1173,14 @@ bool CoordinatedPlatformLayer::commitPendingRenderingUpdateProperties()
     }
     if (changes.contains(Change::BackingStoreTiles)) {
         ASSERT(m_tilesUpdate);
+        Vector<CoordinatedBackingStoreProxy::Update::TileUpdate> pendingPreRenderedTileUpdates;
+        {
+            Locker locker { m_preRenderedPendingTileUpdatesLock };
+            pendingPreRenderedTileUpdates = WTF::move(m_preRenderedPendingTileUpdates);
+        }
+        if (!pendingPreRenderedTileUpdates.isEmpty())
+            m_tilesUpdate->prependTileUpdates(WTF::move(pendingPreRenderedTileUpdates));
+
         properties.tilesUpdate = std::exchange(m_tilesUpdate, std::nullopt);
         properties.contentsScale = m_contentsScale;
     }
@@ -1377,10 +1409,44 @@ void CoordinatedPlatformLayer::processPendingBackingStoreTileUpdates()
         m_target->processPendingTileUpdates();
 }
 
+void CoordinatedPlatformLayer::schedulePaintForPendingPreRenderedTiles()
+{
+    assertIsMainThread();
+    if (!std::exchange(m_hasPendingPreRenderedTiles, false))
+        return;
+
+    if (!m_backingStoreProxy)
+        return;
+
+    m_preRenderedTilesDeferredNotifications.store(0);
+
+    auto tilesToUpdate = m_backingStoreProxy->schedulePaintForPreRenderedTiles(*this);
+    if (!tilesToUpdate.isEmpty()) {
+        Locker locker { m_preRenderedPendingTileUpdatesLock };
+        if (m_preRenderedPendingTileUpdates.isEmpty())
+            m_preRenderedPendingTileUpdates = WTF::move(tilesToUpdate);
+        else
+            m_preRenderedPendingTileUpdates.appendVector(WTF::move(tilesToUpdate));
+    }
+
+    // Notify for pre-rendered tiles that finished painting before their updates were added to m_preRenderedPendingTileUpdates.
+    if (m_preRenderedTilesDeferredNotifications.exchange(-1) > 0 && m_client)
+        m_client->didPaintPreRenderedTile(*this);
+}
+
 bool CoordinatedPlatformLayer::processPendingBackingStoreTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles)
 {
     ASSERT(!isMainThread());
-    return m_target ? m_target->processPendingTileUpdatesIncludingPreRendered(shouldStopProcessingTiles) : false;
+    if (!m_target)
+        return false;
+
+    Vector<CoordinatedBackingStoreProxy::Update::TileUpdate> pendingPreRenderedTileUpdates;
+    {
+        Locker locker { m_preRenderedPendingTileUpdatesLock };
+        pendingPreRenderedTileUpdates = WTF::move(m_preRenderedPendingTileUpdates);
+    }
+
+    return m_target->processPendingTileUpdatesIncludingPreRendered(WTF::move(pendingPreRenderedTileUpdates), shouldStopProcessingTiles);
 }
 
 } // namespace WebCore

@@ -74,7 +74,17 @@ void SkiaBackingStore::update(const FloatSize& size, float scale, CoordinatedBac
         it->value.setIsVisible(item.value);
     }
 
-    for (const auto& tileUpdate : update.tilesToUpdate()) {
+    scheduleTileUpdates(update.tilesToUpdate());
+}
+
+void SkiaBackingStore::updatePreRenderedTiles(Vector<CoordinatedBackingStoreProxy::Update::TileUpdate>&& tileUpdates)
+{
+    scheduleTileUpdates(tileUpdates);
+}
+
+void SkiaBackingStore::scheduleTileUpdates(const Vector<CoordinatedBackingStoreProxy::Update::TileUpdate>& tileUpdates)
+{
+    for (const auto& tileUpdate : tileUpdates) {
         auto it = m_tiles.find(tileUpdate.tileID);
         ASSERT(it != m_tiles.end());
         if (tileUpdate.buffer->paintingState() != CoordinatedTileBuffer::PaintingState::Cancelled) {

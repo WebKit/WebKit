@@ -55,6 +55,7 @@ public:
     bool requiresStrictSourceConstraint(SkSamplingOptions sampling) const { return sampling.filter == SkFilterMode::kLinear && m_hasPaddedTiles; }
 
     void update(const FloatSize&, float scale, CoordinatedBackingStoreProxy::Update&&);
+    void updatePreRenderedTiles(Vector<CoordinatedBackingStoreProxy::Update::TileUpdate>&&);
 
     enum class ProcessHiddenTiles : bool { No, Yes };
     bool processPendingTileUpdates(ProcessHiddenTiles, const Function<bool()>& shouldStopProcessingTiles = nullptr);
@@ -110,6 +111,8 @@ private:
         RefPtr<BitmapTexture> m_texture;
         mutable sk_sp<SkImage> m_cachedImage;
     };
+
+    void scheduleTileUpdates(const Vector<CoordinatedBackingStoreProxy::Update::TileUpdate>&);
 
     HashMap<uint32_t, Tile> m_tiles;
     FloatSize m_size;
