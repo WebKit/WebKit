@@ -119,6 +119,11 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestCouponCodeUpdate)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentOrderDetails)
 #endif
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentDelegateSession)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestDelegateSessionUpdate)
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationController)
 #endif

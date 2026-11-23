@@ -109,6 +109,14 @@ DECLARE_SYSTEM_HEADER
 #endif
 #endif
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+// FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+#if __has_include(<PassKitCore/PKPaymentDelegateSession.h>)
+#import <PassKitCore/PKPaymentDelegateSession.h>
+#import <PassKitCore/PKPaymentRequestStatus_Private.h>
+#endif
+#endif
+
 #if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
@@ -412,6 +420,41 @@ typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
 @property (nonatomic, copy, readonly, nullable) NSString *issuingRegionCode;
 @end
 #endif
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+// FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+#if !__has_include(<PassKitCore/PKPaymentDelegateSession.h>)
+@interface PKPaymentDelegateSession : NSObject
+@end
+
+@interface PKPaymentRequestDelegateSessionUpdate : NSObject
+- (instancetype)initWithStatus:(PKPaymentAuthorizationStatus)status delegateSession:(nullable PKPaymentDelegateSession *)session;
+@property (nonatomic, assign) PKPaymentAuthorizationStatus status;
+@property (nullable, nonatomic, strong) PKPaymentDelegateSession *session;
+@end
+#endif
+
+@interface PKPaymentDelegateSession (DelegatedWebCheckout)
+- (instancetype)initWithSessionData:(NSString *)sessionData;
+@end
+
+@interface PKPaymentRequest (DelegatedWebCheckout)
+@property (nonatomic, assign) BOOL usesDelegateSession;
+@end
+
+#if PLATFORM(IOS_FAMILY)
+@interface PKPaymentAuthorizationController (DelegatedWebCheckout)
++ (instancetype)delegatedWebCheckoutControllerWithOriginatingURL:(NSURL *)originatingURL thumbnailURLs:(NSArray<NSURL *> *)thumbnailURLs;
+@end
+#endif
+
+#if PLATFORM(MAC)
+@interface PKPaymentAuthorizationViewController (DelegatedWebCheckout)
++ (instancetype)delegatedWebCheckoutViewControllerWithOriginatingURL:(NSURL *)originatingURL thumbnailURLs:(NSArray<NSURL *> *)thumbnailURLs;
+- (void)prepareForDelegatedWebCheckoutPresentationWithCompletion:(void (^)(BOOL ready))completion;
+@end
+#endif
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
 
 NS_ASSUME_NONNULL_END
 

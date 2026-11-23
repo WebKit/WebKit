@@ -35,6 +35,10 @@
     [Conditional=APPLE_PAY_COUPON_CODE] undefined changeCouponCode(DOMString couponCode);
     undefined acceptPayment();
     undefined cancelPayment();
+    [Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT] undefined completeDelegatedWebCheckoutPayment();
+    [Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT] readonly attribute boolean delegateValidationCompleted;
+    [Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT] readonly attribute DOMString completedDelegateSession;
+    [Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT] readonly attribute DOMString delegatedWebCheckoutOriginatingURL;
 
     undefined addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, boolean supportsInstallments);
 

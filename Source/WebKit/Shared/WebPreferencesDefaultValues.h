@@ -175,6 +175,10 @@ bool defaultBidiContentAwarePasteEnabled();
 bool defaultExtendedProofreadingEnabled();
 #endif
 
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+bool defaultApplePayDelegatedWebCheckoutEnabled();
+#endif
+
 bool defaultRunningBoardThrottlingEnabled();
 bool defaultShouldDropNearSuspendedAssertionAfterDelay();
 bool defaultShouldTakeNearSuspendedAssertion();

@@ -1,0 +1,14 @@
+Test that the delegated web checkout API is not exposed when ApplePayDelegatedWebCheckoutEnabled is off, and that Apple Pay is.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof ApplePaySession is "function"
+PASS typeof ApplePaySession.delegatedWebCheckout is "undefined"
+PASS 'completeDelegateValidation' in ApplePaySession.prototype is false
+PASS 'onvalidatedelegate' in ApplePaySession.prototype is false
+PASS 'onpaymentcompleted' in ApplePaySession.prototype is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

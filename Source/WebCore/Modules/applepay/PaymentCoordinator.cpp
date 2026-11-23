@@ -68,6 +68,13 @@ PaymentCoordinator::PaymentCoordinator(Ref<PaymentCoordinatorClient>&& client)
 
 PaymentCoordinator::~PaymentCoordinator() = default;
 
+static Vector<URL> linkIconURLs(Document& document)
+{
+    return LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }).map([](auto& icon) {
+        return icon.url;
+    });
+}
+
 bool PaymentCoordinator::supportsVersion(Document&, unsigned version) const
 {
     auto supportsVersion = m_client->supportsVersion(version);
@@ -114,10 +121,7 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
     if (!page)
         return false;
 
-    auto linkIconURLs = LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }).map([](auto& icon) {
-        return icon.url;
-    });
-    auto showPaymentUI = m_client->showPaymentUI(page->mainFrameURL(), WTF::move(linkIconURLs), paymentRequest);
+    auto showPaymentUI = m_client->showPaymentUI(page->mainFrameURL(), linkIconURLs(document), paymentRequest);
     PAYMENT_COORDINATOR_RELEASE_LOG("beginPaymentSession() -> %d", showPaymentUI);
     if (!showPaymentUI)
         return false;
@@ -198,6 +202,34 @@ void PaymentCoordinator::cancelPaymentSession()
     PAYMENT_COORDINATOR_RELEASE_LOG("cancelPaymentSession()");
     m_client->cancelPaymentSession();
 }
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+bool PaymentCoordinator::beginDelegatedWebCheckoutSession(Document& document, PaymentSession& paymentSession)
+{
+    ASSERT(!m_activeSession);
+
+    RefPtr page = document.page();
+    if (!page)
+        return false;
+
+    auto showDelegatedWebCheckoutUI = m_client->showDelegatedWebCheckoutUI(page->mainFrameURL(), linkIconURLs(document));
+    PAYMENT_COORDINATOR_RELEASE_LOG("beginDelegatedWebCheckoutSession() -> %d", showDelegatedWebCheckoutUI);
+    if (!showDelegatedWebCheckoutUI)
+        return false;
+
+    m_activeSession = paymentSession;
+    return true;
+}
+
+void PaymentCoordinator::completeDelegateValidation(const std::optional<String>& delegateSession)
+{
+    ASSERT(m_activeSession);
+    PAYMENT_COORDINATOR_RELEASE_LOG("completeDelegateValidation() -> %d", !!delegateSession);
+    m_client->completeDelegateValidation(delegateSession);
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
 
 void PaymentCoordinator::validateMerchant(URL&& validationURL)
 {
@@ -287,6 +319,31 @@ void PaymentCoordinator::didCancelPaymentSession(PaymentSessionError&& error)
     activeSession->didCancelPaymentSession(WTF::move(error));
     m_activeSession = nullptr;
 }
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+void PaymentCoordinator::validateDelegate()
+{
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession)
+        return;
+
+    PAYMENT_COORDINATOR_RELEASE_LOG("validateDelegate()");
+    activeSession->validateDelegate();
+}
+
+void PaymentCoordinator::didCompleteDelegatedWebCheckoutPayment()
+{
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession)
+        return;
+
+    PAYMENT_COORDINATOR_RELEASE_LOG("didCompleteDelegatedWebCheckoutPayment()");
+    activeSession->didCompleteDelegatedWebCheckoutPayment();
+    m_activeSession = nullptr;
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
 
 std::optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, unsigned version, const String& paymentNetwork) const
 {

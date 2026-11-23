@@ -67,6 +67,7 @@ struct ApplePayShippingMethodUpdate;
 }
 
 OBJC_CLASS NSObject;
+OBJC_CLASS NSViewController;
 OBJC_CLASS PKPaymentAuthorizationViewController;
 OBJC_CLASS PKPaymentRequest;
 OBJC_CLASS UIViewController;
@@ -109,6 +110,9 @@ public:
 #endif
         virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
         virtual Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+        virtual RefPtr<PaymentAuthorizationPresenter> paymentCoordinatorDelegatedWebCheckoutPresenter(WebPaymentCoordinatorProxy&, const URL& originatingURL, const Vector<URL>& linkIconURLs) = 0;
+#endif
 #endif
         virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
         virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
@@ -151,6 +155,10 @@ private:
     void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) final;
 #endif
     void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) final;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    void presenterWillValidateDelegate(PaymentAuthorizationPresenter&) final;
+    void presenterDidCompleteDelegatedWebCheckoutPayment(PaymentAuthorizationPresenter&) final;
+#endif
     CocoaWindow *presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const final;
 
     // Message handlers
@@ -168,6 +176,10 @@ private:
     void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&);
     void abortPaymentSession();
     void cancelPaymentSession();
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    void showDelegatedWebCheckoutUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, CompletionHandler<void(bool)>&&);
+    void completeDelegateValidation(const std::optional<String>& delegateSession);
+#endif
 
     void getSetupFeatures(const PaymentSetupConfiguration&, CompletionHandler<void(PaymentSetupFeatures&&)>&&);
     void beginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
@@ -181,12 +193,20 @@ private:
     NODELETE bool canAbort() const;
 
     void didReachFinalState(WebCore::PaymentSessionError&& = { });
+    void didFinishShowingPaymentUI(bool result);
 
     void platformCanMakePayments(CompletionHandler<void(bool)>&&);
     void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
     void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
     void platformShowPaymentUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession&);
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    void platformShowDelegatedWebCheckoutUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, CompletionHandler<void(bool)>&&);
+    void platformCompleteDelegateValidation(const std::optional<String>& delegateSession);
+#endif
+#if PLATFORM(MAC)
+    void beginPaymentSheet(NSViewController *, NSWindow *);
+#endif
     void platformCompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
     void platformCompleteShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
     void platformCompletePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
@@ -202,6 +222,11 @@ private:
 
     WeakPtr<Client> m_client;
     std::optional<WebCore::PageIdentifier> m_destinationID;
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    enum class DelegateValidationState : uint8_t { Idle, Validating, ValidationComplete };
+    DelegateValidationState m_delegateValidationState { DelegateValidationState::Idle };
+#endif
 
     enum class State : uint16_t {
         // Idle - Nothing's happening.

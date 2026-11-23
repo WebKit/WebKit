@@ -1,0 +1,42 @@
+Test ApplePaySession.delegatedWebCheckout().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof ApplePaySession.delegatedWebCheckout is "function"
+PASS ApplePaySession.delegatedWebCheckout() threw exception InvalidAccessError: Must create a new ApplePaySession from a user gesture handler..
+
+begin() needs an onvalidatedelegate handler.
+PASS session.begin() threw exception InvalidAccessError: A delegated web checkout session needs an onvalidatedelegate handler..
+
+A payment the merchant completes.
+PASS validateEvent.type is "validatedelegate"
+PASS validateEvent.validationURL is undefined.
+PASS internals.mockPaymentCoordinator.delegatedWebCheckoutOriginatingURL is "https://127.0.0.1:8443/ssl/applepay/ApplePaySessionDelegatedWebCheckout.https.html"
+PASS session.completeMerchantValidation({ }) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS session.completeDelegateValidation('session') threw exception TypeError: Type error.
+PASS session.completeDelegateValidation({ sessionData: 'session' }) threw exception TypeError: Member ApplePayDelegateSessionUpdate.status is required and must be an instance of unsigned short.
+PASS session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS }) threw exception TypeError: A successful delegate validation needs sessionData..
+PASS session.completeDelegateValidation({ status: 2, sessionData: 'session' }) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS, sessionData: 'session' }) did not throw exception.
+PASS internals.mockPaymentCoordinator.delegateValidationCompleted is true
+PASS internals.mockPaymentCoordinator.completedDelegateSession is "session"
+PASS session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS, sessionData: 'session' }) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS session.completePayment({ status: ApplePaySession.STATUS_SUCCESS }) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS completedEvent.type is "paymentcompleted"
+PASS session.abort() threw exception InvalidAccessError: The object does not support the operation or argument..
+
+A payment that doesn't complete.
+PASS cancelEvent.sessionError.code is "unknown"
+
+The agent couldn't get a delegate session.
+PASS session.completeDelegateValidation({ status: ApplePaySession.STATUS_FAILURE }) did not throw exception.
+PASS internals.mockPaymentCoordinator.delegateValidationCompleted is true
+PASS failureCancelEvent.sessionError.code is "unknown"
+
+The agent aborts.
+PASS session.abort() did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

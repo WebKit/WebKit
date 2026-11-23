@@ -44,10 +44,12 @@
     [CallWith=CurrentDocument] static boolean canMakePayments();
     [CallWith=CurrentDocument] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
     [CallWith=CurrentDocument] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
+    [CallWith=CurrentDocument, NewObject, Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT, EnabledBySetting=ApplePayDelegatedWebCheckoutEnabled] static ApplePaySession delegatedWebCheckout();
 
     [CallWith=CurrentDocument] undefined begin();
     undefined abort();
     [CallWith=CurrentGlobalObject] undefined completeMerchantValidation(any merchantSession);
+    [Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT, EnabledBySetting=ApplePayDelegatedWebCheckoutEnabled] undefined completeDelegateValidation(ApplePayDelegateSessionUpdate update);
     undefined completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
     undefined completeShippingContactSelection(ApplePayShippingContactUpdate update);
     undefined completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
@@ -66,4 +68,6 @@
     attribute EventHandler onshippingcontactselected;
     [Conditional=APPLE_PAY_COUPON_CODE] attribute EventHandler oncouponcodechanged;
     attribute EventHandler oncancel;
+    [Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT, EnabledBySetting=ApplePayDelegatedWebCheckoutEnabled] attribute EventHandler onvalidatedelegate;
+    [Conditional=APPLE_PAY_DELEGATED_WEB_CHECKOUT, EnabledBySetting=ApplePayDelegatedWebCheckoutEnabled] attribute EventHandler onpaymentcompleted;
 };

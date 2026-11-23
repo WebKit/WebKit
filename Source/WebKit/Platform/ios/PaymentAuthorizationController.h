@@ -40,9 +40,15 @@ namespace WebKit {
 class PaymentAuthorizationController final : public PaymentAuthorizationPresenter {
 public:
     static Ref<PaymentAuthorizationController> create(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *);
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    static RefPtr<PaymentAuthorizationController> createForDelegatedWebCheckout(PaymentAuthorizationPresenter::Client&, const URL& originatingURL, const Vector<URL>& linkIconURLs);
+#endif
 
 private:
     PaymentAuthorizationController(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *);
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    PaymentAuthorizationController(PaymentAuthorizationPresenter::Client&, PKPaymentAuthorizationController *);
+#endif
 
     // PaymentAuthorizationPresenter
     WKPaymentAuthorizationDelegate *platformDelegate() final;

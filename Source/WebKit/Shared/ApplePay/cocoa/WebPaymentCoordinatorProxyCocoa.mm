@@ -407,6 +407,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [result setIsDelegatedRequest:*isDelegatedRequest];
 #endif
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    // FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+    if (paymentRequest.usesDelegateValidation() && [result respondsToSelector:@selector(setUsesDelegateSession:)])
+        [result setUsesDelegateSession:YES];
+#endif
+
     return result;
 }
 
@@ -429,6 +435,13 @@ void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCor
 {
     protect(m_authorizationPresenter)->completeMerchantValidation(paymentMerchantSession);
 }
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+void WebPaymentCoordinatorProxy::platformCompleteDelegateValidation(const std::optional<String>& delegateSession)
+{
+    protect(m_authorizationPresenter)->completeDelegateValidation(delegateSession);
+}
+#endif
 
 void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&& update)
 {

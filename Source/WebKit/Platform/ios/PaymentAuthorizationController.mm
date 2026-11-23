@@ -31,6 +31,7 @@
 #import "WKPaymentAuthorizationDelegate.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
@@ -124,6 +125,29 @@
     [self _didRequestMerchantSession:sessionBlock];
 }
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+#pragma mark Delegated web checkout
+
+- (BOOL)respondsToSelector:(SEL)selector
+{
+    if (selector == @selector(paymentAuthorizationController:didRequestDelegateSessionUpdate:))
+        return [self _claimsDelegateSessionRequests];
+    return [super respondsToSelector:selector];
+}
+
+- (void)paymentAuthorizationController:(PKPaymentAuthorizationController *)controller didRequestDelegateSessionUpdate:(void (^)(PKPaymentRequestDelegateSessionUpdate *update))handler
+{
+    [self _didRequestDelegateSession:handler];
+}
+
+- (void)paymentAuthorizationControllerDidCompleteDelegatedWebCheckoutPayment:(PKPaymentAuthorizationController *)controller
+{
+    [self _didCompleteDelegatedWebCheckoutPayment];
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
 - (NSString *)presentationSceneIdentifierForPaymentAuthorizationController:(PKPaymentAuthorizationController *)controller
 {
@@ -157,6 +181,34 @@ PaymentAuthorizationController::PaymentAuthorizationController(PaymentAuthorizat
     [m_controller setDelegate:m_delegate.get()];
     [m_controller setPrivateDelegate:m_delegate.get()];
 }
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+RefPtr<PaymentAuthorizationController> PaymentAuthorizationController::createForDelegatedWebCheckout(PaymentAuthorizationPresenter::Client& client, const URL& originatingURL, const Vector<URL>& linkIconURLs)
+{
+    // FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+    if (![PAL::getPKPaymentAuthorizationControllerClassSingleton() respondsToSelector:@selector(delegatedWebCheckoutControllerWithOriginatingURL:thumbnailURLs:)])
+        return nullptr;
+
+    RetainPtr<PKPaymentAuthorizationController> controller = [PAL::getPKPaymentAuthorizationControllerClassSingleton() delegatedWebCheckoutControllerWithOriginatingURL:originatingURL.createNSURL().get() thumbnailURLs:createNSArray(linkIconURLs).get()];
+    if (!controller)
+        return nullptr;
+
+    Ref presenter = adoptRef(*new PaymentAuthorizationController(client, controller.get()));
+    presenter->setUsesDelegateValidation(true);
+    return presenter;
+}
+
+PaymentAuthorizationController::PaymentAuthorizationController(PaymentAuthorizationPresenter::Client& client, PKPaymentAuthorizationController *controller)
+    : PaymentAuthorizationPresenter(client)
+    , m_controller(controller)
+    , m_delegate(adoptNS([[WKPaymentAuthorizationControllerDelegate alloc] initWithRequest:nil presenter:*this]))
+{
+    [m_controller setDelegate:m_delegate.get()];
+    [m_controller setPrivateDelegate:m_delegate.get()];
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
 
 WKPaymentAuthorizationDelegate *PaymentAuthorizationController::platformDelegate()
 {

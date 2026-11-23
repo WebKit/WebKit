@@ -69,6 +69,11 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
         paymentCoordinatorProxy->m_authorizationPresenter = protect(paymentCoordinatorProxy->m_client)->paymentCoordinatorAuthorizationPresenter(*paymentCoordinatorProxy, paymentRequest.get());
         if (!paymentCoordinatorProxy->m_authorizationPresenter)
             return completionHandler(false);
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+        // FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+        if ([paymentRequest respondsToSelector:@selector(usesDelegateSession)])
+            protect(paymentCoordinatorProxy->m_authorizationPresenter)->setUsesDelegateValidation([paymentRequest usesDelegateSession]);
+#endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
         protect(paymentCoordinatorProxy->m_client)->getWindowSceneAndBundleIdentifierForPaymentPresentation(webPageProxyID, [weakThis = WTF::move(weakThis), completionHandler = WTF::move(completionHandler), webPageProxyID](const String& sceneIdentifier, const String& bundleIdentifier) mutable {
@@ -89,6 +94,18 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 #endif
     });
 }
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+void WebPaymentCoordinatorProxy::platformShowDelegatedWebCheckoutUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(!m_authorizationPresenter);
+    m_authorizationPresenter = protect(m_client)->paymentCoordinatorDelegatedWebCheckoutPresenter(*this, originatingURL, linkIconURLs);
+    if (!m_authorizationPresenter)
+        return completionHandler(false);
+
+    protect(m_authorizationPresenter)->present(protect(protect(m_client)->paymentCoordinatorPresentingViewController(*this)).get(), WTF::move(completionHandler));
+}
+#endif
 
 void WebPaymentCoordinatorProxy::platformHidePaymentUI()
 {

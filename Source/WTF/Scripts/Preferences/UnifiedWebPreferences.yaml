@@ -504,6 +504,17 @@ ApplePayCapabilityDisclosureAllowed:
   condition: ENABLE(APPLE_PAY)
   defaultValue: true
 
+ApplePayDelegatedWebCheckoutEnabled:
+  type: bool
+  status: internal
+  condition: ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+  humanReadableName: "Apple Pay Delegated Web Checkout"
+  humanReadableDescription: "Enable the Apple Pay delegated web checkout API"
+  defaultValue:
+    default: false
+    WebKit: WebKit::defaultApplePayDelegatedWebCheckoutEnabled()
+  sharedPreferenceForWebProcess: true
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 ApplePayEnabled:
   type: bool

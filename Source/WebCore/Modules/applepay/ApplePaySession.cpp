@@ -31,6 +31,7 @@
 #include "ApplePayCancelEvent.h"
 #include "ApplePayCouponCodeChangedEvent.h"
 #include "ApplePayCouponCodeUpdate.h"
+#include "ApplePayDelegateSessionUpdate.h"
 #include "ApplePayErrorCode.h"
 #include "ApplePayErrorContactField.h"
 #include "ApplePayLineItem.h"
@@ -48,6 +49,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "JSDOMConvertBoolean.h"
@@ -57,6 +59,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
+#include "PaymentAPIVersion.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
 #include "PaymentMerchantSession.h"
@@ -492,10 +495,38 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
     return session;
 }
 
-ApplePaySession::ApplePaySession(Document& document, unsigned version, ApplePaySessionPaymentRequest&& paymentRequest)
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+ExceptionOr<Ref<ApplePaySession>> ApplePaySession::delegatedWebCheckout(Document& document)
+{
+    auto canCall = canCreateSession(document);
+    if (canCall.hasException())
+        return canCall.releaseException();
+
+    if (!UserGestureIndicator::processingUserGesture())
+        return Exception { ExceptionCode::InvalidAccessError, "Must create a new ApplePaySession from a user gesture handler."_s };
+
+    if (!document.page())
+        return Exception { ExceptionCode::InvalidAccessError, "Frame is detached"_s };
+
+    Ref session = adoptRef(*new ApplePaySession(document, PaymentAPIVersion::current(), ApplePaySessionPaymentRequest { }, IsDelegatedWebCheckout::Yes));
+    session->suspendIfNeeded();
+    return session;
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+ApplePaySession::ApplePaySession(Document& document, unsigned version, ApplePaySessionPaymentRequest&& paymentRequest
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    , IsDelegatedWebCheckout isDelegatedWebCheckout
+#endif
+    )
     : ActiveDOMObject { document }
     , m_paymentRequest { WTF::move(paymentRequest) }
     , m_version { version }
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    , m_isDelegatedWebCheckout { isDelegatedWebCheckout }
+#endif
 {
     ASSERT(document.page()->paymentCoordinator().supportsVersion(document, version));
 }
@@ -599,7 +630,33 @@ ExceptionOr<void> ApplePaySession::begin(Document& document)
     Ref paymentCoordinator = this->paymentCoordinator();
     if (paymentCoordinator->hasActiveSession())
         return Exception { ExceptionCode::InvalidAccessError, "Page already has an active payment session."_s };
-    if (!paymentCoordinator->beginPaymentSession(document, *this, m_paymentRequest))
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    if (m_isDelegatedWebCheckout == IsDelegatedWebCheckout::Yes) {
+        if (!hasEventListeners(eventNames().validatedelegateEvent))
+            return Exception { ExceptionCode::InvalidAccessError, "A delegated web checkout session needs an onvalidatedelegate handler."_s };
+        if (!paymentCoordinator->beginDelegatedWebCheckoutSession(document, *this))
+            return Exception { ExceptionCode::InvalidAccessError, "The delegated web checkout session couldn't begin."_s };
+
+        m_state = State::Active;
+        return { };
+    }
+
+    bool usesDelegateValidation = false;
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    if (m_paymentRequest.isDelegatedRequest().value_or(false)) {
+        usesDelegateValidation = document.settings().applePayDelegatedWebCheckoutEnabled() && hasEventListeners(eventNames().validatedelegateEvent);
+        if (!usesDelegateValidation && !hasEventListeners(eventNames().validatemerchantEvent))
+            return Exception { ExceptionCode::InvalidAccessError, "A delegated request needs an onvalidatedelegate or onvalidatemerchant handler."_s };
+    }
+#endif
+    auto paymentRequest = m_paymentRequest;
+    paymentRequest.setUsesDelegateValidation(usesDelegateValidation);
+#else
+    auto& paymentRequest = m_paymentRequest;
+#endif
+
+    if (!paymentCoordinator->beginPaymentSession(document, *this, paymentRequest))
         return Exception { ExceptionCode::InvalidAccessError, "There is already has an active payment session."_s };
 
     m_state = State::Active;
@@ -646,6 +703,36 @@ ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::JSGlobalObjec
 
     return { };
 }
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+ExceptionOr<void> ApplePaySession::completeDelegateValidation(ApplePayDelegateSessionUpdate&& update)
+{
+    if (!canCompleteDelegateValidation())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    std::optional<String> delegateSession;
+    switch (update.status) {
+    case ApplePayPaymentAuthorizationResult::Success:
+        if (update.sessionData.isNull())
+            return Exception { ExceptionCode::TypeError, "A successful delegate validation needs sessionData."_s };
+        delegateSession = WTF::move(update.sessionData);
+        break;
+
+    case ApplePayPaymentAuthorizationResult::Failure:
+        break;
+
+    default:
+        return Exception { ExceptionCode::InvalidAccessError };
+    }
+
+    m_delegateValidationState = DelegateValidationState::ValidationComplete;
+    protect(paymentCoordinator())->completeDelegateValidation(delegateSession);
+
+    return { };
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
 
 ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(ApplePayShippingMethodUpdate&& update)
 {
@@ -849,6 +936,32 @@ void ApplePaySession::validateMerchant(URL&& validationURL)
     auto event = ApplePayValidateMerchantEvent::create(eventNames().validatemerchantEvent, WTF::move(validationURL));
     dispatchEvent(event.get());
 }
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+void ApplePaySession::validateDelegate()
+{
+    if (m_state == State::Aborted)
+        return;
+
+    ASSERT(m_delegateValidationState == DelegateValidationState::Idle);
+    ASSERT(m_state == State::Active);
+
+    m_delegateValidationState = DelegateValidationState::ValidatingDelegate;
+
+    dispatchEvent(Event::create(eventNames().validatedelegateEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void ApplePaySession::didCompleteDelegatedWebCheckoutPayment()
+{
+    ASSERT(m_state == State::Active);
+
+    m_state = State::Completed;
+
+    dispatchEvent(Event::create(eventNames().paymentcompletedEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
 
 void ApplePaySession::didAuthorizePayment(const Payment& payment)
 {
@@ -1056,6 +1169,21 @@ bool ApplePaySession::canCompleteMerchantValidation() const
 
     return true;
 }
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+bool ApplePaySession::canCompleteDelegateValidation() const
+{
+    if (m_state != State::Active)
+        return false;
+
+    if (m_delegateValidationState != DelegateValidationState::ValidatingDelegate)
+        return false;
+
+    return true;
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
 
 bool ApplePaySession::canCompleteShippingMethodSelection() const
 {

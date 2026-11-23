@@ -25,17 +25,25 @@
 
 #import "config.h"
 
-#if ENABLE(APPLE_PAY_REMOTE_UI)
-
+#import "ClassMethodSwizzler.h"
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKFeature.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+
+#import <pal/cocoa/PassKitSoftLink.h>
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
 
 static NSString * const userScriptSource = @"window.wkUserScriptInjected = true";
 
@@ -274,3 +282,250 @@ TEST(ApplePay, CanMakePaymentFalseDoesNotBlockUserAgentScripts)
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(APPLE_PAY_REMOTE_UI)
+
+#if PLATFORM(MAC) && HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+// FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+@protocol TestDelegatedWebCheckoutDelegate <PKPaymentAuthorizationViewControllerDelegate>
+- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestDelegateSessionUpdate:(void (^)(PKPaymentRequestDelegateSessionUpdate *update))handler;
+- (void)paymentAuthorizationViewControllerDidCompleteDelegatedWebCheckoutPayment:(PKPaymentAuthorizationViewController *)controller;
+@end
+
+@interface TestDelegatedWebCheckoutViewController : NSViewController
+@property (nonatomic, assign) id delegate;
+@property (nonatomic, assign) id privateDelegate;
+@property (nonatomic, readonly) NSURL *originatingURL;
+@property (nonatomic, readonly) NSArray<NSURL *> *thumbnailURLs;
+- (void)setOriginatingURL:(NSURL *)originatingURL thumbnailURLs:(NSArray<NSURL *> *)thumbnailURLs;
+@end
+
+@implementation TestDelegatedWebCheckoutViewController {
+    RetainPtr<NSURL> _originatingURL;
+    RetainPtr<NSArray<NSURL *>> _thumbnailURLs;
+}
+
+- (void)loadView
+{
+    self.view = adoptNS([[NSView alloc] initWithFrame:NSMakeRect(0, 0, 320, 240)]).get();
+}
+
+- (NSURL *)originatingURL
+{
+    return _originatingURL.get();
+}
+
+- (NSArray<NSURL *> *)thumbnailURLs
+{
+    return _thumbnailURLs.get();
+}
+
+- (void)setOriginatingURL:(NSURL *)originatingURL thumbnailURLs:(NSArray<NSURL *> *)thumbnailURLs
+{
+    _originatingURL = originatingURL;
+    _thumbnailURLs = thumbnailURLs;
+}
+
+- (void)prepareForDelegatedWebCheckoutPresentationWithCompletion:(void (^)(BOOL ready))completion
+{
+    completion(YES);
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+// FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+static bool passKitSupportsDelegatedWebCheckout()
+{
+    return [PAL::getPKPaymentAuthorizationViewControllerClassSingleton() respondsToSelector:@selector(delegatedWebCheckoutViewControllerWithOriginatingURL:thumbnailURLs:)]
+        && [PAL::getPKPaymentDelegateSessionClassSingleton() instancesRespondToSelector:@selector(initWithSessionData:)]
+        && [PAL::getPKPaymentRequestClassSingleton() instancesRespondToSelector:@selector(setUsesDelegateSession:)];
+}
+
+static RetainPtr<TestDelegatedWebCheckoutViewController>& testDelegatedWebCheckoutViewController()
+{
+    static NeverDestroyed<RetainPtr<TestDelegatedWebCheckoutViewController>> viewController;
+    return viewController.get();
+}
+
+static RetainPtr<PKPaymentRequest>& testDelegatedPaymentRequest()
+{
+    static NeverDestroyed<RetainPtr<PKPaymentRequest>> paymentRequest;
+    return paymentRequest.get();
+}
+
+static id delegatedWebCheckoutViewControllerOverride(id, SEL, NSURL *originatingURL, NSArray<NSURL *> *thumbnailURLs)
+{
+    testDelegatedWebCheckoutViewController() = adoptNS([[TestDelegatedWebCheckoutViewController alloc] init]);
+    [testDelegatedWebCheckoutViewController() setOriginatingURL:originatingURL thumbnailURLs:thumbnailURLs];
+    return testDelegatedWebCheckoutViewController().get();
+}
+
+static void requestViewControllerOverride(id, SEL, PKPaymentRequest *paymentRequest, void (^completion)(id, NSError *))
+{
+    testDelegatedPaymentRequest() = paymentRequest;
+    testDelegatedWebCheckoutViewController() = adoptNS([[TestDelegatedWebCheckoutViewController alloc] init]);
+    completion(testDelegatedWebCheckoutViewController().get(), nil);
+}
+
+static RetainPtr<TestWKWebView> delegatedWebCheckoutWebView()
+{
+    [TestProtocol registerWithScheme:@"https"];
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setApplePayEnabled:YES];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ApplePayDelegatedWebCheckoutEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-delegated-web-checkout.html"]]];
+    return webView;
+}
+
+static void waitForPresentedDelegatedWebCheckoutViewController()
+{
+    Util::waitFor([] {
+        return testDelegatedWebCheckoutViewController() && [testDelegatedWebCheckoutViewController() delegate];
+    });
+}
+
+static NSArray<NSString *> *pageEvents(TestWKWebView *webView, NSUInteger count)
+{
+    Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.events.length"] unsignedIntegerValue] >= count;
+    });
+    Util::runFor(100_ms);
+    return [webView objectByEvaluatingJavaScript:@"window.events"];
+}
+
+TEST(ApplePay, DelegatedWebCheckoutCompletedPayment)
+{
+    if (!passKitSupportsDelegatedWebCheckout())
+        return;
+
+    ClassMethodSwizzler factorySwizzler { PAL::getPKPaymentAuthorizationViewControllerClassSingleton(), @selector(delegatedWebCheckoutViewControllerWithOriginatingURL:thumbnailURLs:), reinterpret_cast<IMP>(delegatedWebCheckoutViewControllerOverride) };
+
+    RetainPtr webView = delegatedWebCheckoutWebView();
+    testDelegatedWebCheckoutViewController() = nil;
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"startDelegatedWebCheckout()"];
+    waitForPresentedDelegatedWebCheckoutViewController();
+
+    EXPECT_WK_STREQ(@"https://bundle-file/apple-pay-delegated-web-checkout.html", [testDelegatedWebCheckoutViewController() originatingURL].absoluteString);
+    EXPECT_EQ(1U, [testDelegatedWebCheckoutViewController() thumbnailURLs].count);
+    EXPECT_WK_STREQ(@"https://bundle-file/icon.png", [testDelegatedWebCheckoutViewController() thumbnailURLs].firstObject.absoluteString);
+
+    id<TestDelegatedWebCheckoutDelegate> delegate = [testDelegatedWebCheckoutViewController() delegate];
+    auto *viewController = (PKPaymentAuthorizationViewController *)testDelegatedWebCheckoutViewController().get();
+    EXPECT_TRUE([delegate respondsToSelector:@selector(paymentAuthorizationViewController:didRequestDelegateSessionUpdate:)]);
+
+    __block RetainPtr<PKPaymentRequestDelegateSessionUpdate> update;
+    [delegate paymentAuthorizationViewController:viewController didRequestDelegateSessionUpdate:^(PKPaymentRequestDelegateSessionUpdate *result) {
+        update = result;
+    }];
+    Util::waitFor(^{
+        return !!update;
+    });
+
+    EXPECT_EQ(PKPaymentAuthorizationStatusSuccess, [update status]);
+    NSString *sessionString = [webView objectByEvaluatingJavaScript:@"window.delegateSession"];
+    RetainPtr expectedSession = adoptNS([PAL::allocPKPaymentDelegateSessionInstance() initWithSessionData:sessionString]);
+    EXPECT_TRUE([[update session] isEqual:expectedSession.get()]);
+
+    [delegate paymentAuthorizationViewControllerDidCompleteDelegatedWebCheckoutPayment:viewController];
+    [delegate paymentAuthorizationViewControllerDidFinish:viewController];
+
+    NSArray<NSString *> *events = pageEvents(webView.get(), 2);
+    EXPECT_EQ(2U, events.count);
+    EXPECT_WK_STREQ(@"validatedelegate", events.firstObject);
+    EXPECT_WK_STREQ(@"paymentcompleted", events.lastObject);
+
+    [TestProtocol unregister];
+}
+
+TEST(ApplePay, DelegatedWebCheckoutPaymentNotCompleted)
+{
+    if (!passKitSupportsDelegatedWebCheckout())
+        return;
+
+    ClassMethodSwizzler factorySwizzler { PAL::getPKPaymentAuthorizationViewControllerClassSingleton(), @selector(delegatedWebCheckoutViewControllerWithOriginatingURL:thumbnailURLs:), reinterpret_cast<IMP>(delegatedWebCheckoutViewControllerOverride) };
+
+    RetainPtr webView = delegatedWebCheckoutWebView();
+    testDelegatedWebCheckoutViewController() = nil;
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"startDelegatedWebCheckout()"];
+    waitForPresentedDelegatedWebCheckoutViewController();
+
+    [[testDelegatedWebCheckoutViewController() delegate] paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)testDelegatedWebCheckoutViewController().get()];
+
+    NSArray<NSString *> *events = pageEvents(webView.get(), 1);
+    EXPECT_EQ(1U, events.count);
+    EXPECT_WK_STREQ(@"cancel unknown", events.firstObject);
+
+    [TestProtocol unregister];
+}
+
+TEST(ApplePay, DelegatedWebCheckoutDelegateValidationFailed)
+{
+    if (!passKitSupportsDelegatedWebCheckout())
+        return;
+
+    ClassMethodSwizzler factorySwizzler { PAL::getPKPaymentAuthorizationViewControllerClassSingleton(), @selector(delegatedWebCheckoutViewControllerWithOriginatingURL:thumbnailURLs:), reinterpret_cast<IMP>(delegatedWebCheckoutViewControllerOverride) };
+
+    RetainPtr webView = delegatedWebCheckoutWebView();
+    testDelegatedWebCheckoutViewController() = nil;
+    [webView objectByEvaluatingJavaScript:@"window.failDelegateValidation = true"];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"startDelegatedWebCheckout()"];
+    waitForPresentedDelegatedWebCheckoutViewController();
+
+    id<TestDelegatedWebCheckoutDelegate> delegate = [testDelegatedWebCheckoutViewController() delegate];
+    auto *viewController = (PKPaymentAuthorizationViewController *)testDelegatedWebCheckoutViewController().get();
+
+    __block RetainPtr<PKPaymentRequestDelegateSessionUpdate> update;
+    [delegate paymentAuthorizationViewController:viewController didRequestDelegateSessionUpdate:^(PKPaymentRequestDelegateSessionUpdate *result) {
+        update = result;
+    }];
+    Util::waitFor(^{
+        return !!update;
+    });
+
+    EXPECT_EQ(PKPaymentAuthorizationStatusFailure, [update status]);
+    EXPECT_NULL([update session]);
+
+    [delegate paymentAuthorizationViewControllerDidFinish:viewController];
+
+    NSArray<NSString *> *events = pageEvents(webView.get(), 2);
+    EXPECT_EQ(2U, events.count);
+    EXPECT_WK_STREQ(@"validatedelegate", events.firstObject);
+    EXPECT_WK_STREQ(@"cancel unknown", events.lastObject);
+
+    [TestProtocol unregister];
+}
+
+TEST(ApplePay, DelegatedRequestUsesDelegateValidationOnlyWithAListener)
+{
+    if (!passKitSupportsDelegatedWebCheckout())
+        return;
+
+    ClassMethodSwizzler requestSwizzler { PAL::getPKPaymentAuthorizationViewControllerClassSingleton(), @selector(requestViewControllerWithPaymentRequest:completion:), reinterpret_cast<IMP>(requestViewControllerOverride) };
+
+    RetainPtr webView = delegatedWebCheckoutWebView();
+    for (BOOL usesDelegateValidation : { YES, NO }) {
+        testDelegatedWebCheckoutViewController() = nil;
+        testDelegatedPaymentRequest() = nil;
+        [webView objectByEvaluatingJavaScript:@"window.events = []"];
+        [webView objectByEvaluatingJavaScriptWithUserGesture:[NSString stringWithFormat:@"startDelegatedRequest(%@)", usesDelegateValidation ? @"true" : @"false"]];
+        waitForPresentedDelegatedWebCheckoutViewController();
+
+        id delegate = [testDelegatedWebCheckoutViewController() delegate];
+        EXPECT_EQ(usesDelegateValidation, [delegate respondsToSelector:@selector(paymentAuthorizationViewController:didRequestDelegateSessionUpdate:)]);
+        EXPECT_EQ(usesDelegateValidation, [testDelegatedPaymentRequest() usesDelegateSession]);
+
+        [delegate paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)testDelegatedWebCheckoutViewController().get()];
+        EXPECT_WK_STREQ(@"cancel unknown", pageEvents(webView.get(), 1).firstObject);
+    }
+
+    [TestProtocol unregister];
+}
+
+} // namespace TestWebKitAPI
+
+#endif // PLATFORM(MAC) && HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)

@@ -1496,6 +1496,13 @@ Ref<PaymentAuthorizationPresenter> WebPageProxy::Internals::paymentCoordinatorAu
     return PaymentAuthorizationController::create(paymentCoordinatorProxy, paymentRequest);
 }
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+RefPtr<PaymentAuthorizationPresenter> WebPageProxy::Internals::paymentCoordinatorDelegatedWebCheckoutPresenter(WebPaymentCoordinatorProxy& paymentCoordinatorProxy, const URL& originatingURL, const Vector<URL>& linkIconURLs)
+{
+    return PaymentAuthorizationController::createForDelegatedWebCheckout(paymentCoordinatorProxy, originatingURL, linkIconURLs);
+}
+#endif
+
 UIViewController *WebPageProxy::Internals::paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&)
 {
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the

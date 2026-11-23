@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="apple-touch-icon" href="https://bundle-file/icon.png">
+<script>
+window.events = [];
+window.delegateSession = "WebKitDelegateSession";
+window.failDelegateValidation = false;
+
+function listen(session)
+{
+    session.onvalidatedelegate = (event) => {
+        window.events.push("validatedelegate");
+        if (window.failDelegateValidation)
+            session.completeDelegateValidation({ status: ApplePaySession.STATUS_FAILURE });
+        else
+            session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS, sessionData: window.delegateSession });
+    };
+    session.onpaymentcompleted = () => window.events.push("paymentcompleted");
+    session.oncancel = (event) => window.events.push("cancel " + event.sessionError.code);
+}
+
+function startDelegatedWebCheckout()
+{
+    const session = ApplePaySession.delegatedWebCheckout();
+    listen(session);
+    session.begin();
+}
+
+function startDelegatedRequest(usesDelegateValidation)
+{
+    const session = new ApplePaySession(3, {
+        countryCode: "US",
+        currencyCode: "USD",
+        supportedNetworks: ["visa"],
+        merchantCapabilities: ["supports3DS"],
+        total: { label: "WebKit", amount: "1.00" },
+        isDelegatedRequest: true,
+    });
+    if (usesDelegateValidation)
+        listen(session);
+    else {
+        session.onvalidatemerchant = () => window.events.push("validatemerchant");
+        session.oncancel = (event) => window.events.push("cancel " + event.sessionError.code);
+    }
+    session.begin();
+}
+</script>
+</head>
+<body></body>
+</html>

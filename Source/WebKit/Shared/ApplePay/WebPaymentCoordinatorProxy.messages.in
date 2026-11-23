@@ -47,6 +47,10 @@ messages -> WebPaymentCoordinatorProxy {
     CompletePaymentSession(struct WebCore::ApplePayPaymentAuthorizationResult result)
     AbortPaymentSession()
     CancelPaymentSession()
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    [EnabledBy=ApplePayDelegatedWebCheckoutEnabled] ShowDelegatedWebCheckoutUI(WebCore::PageIdentifier destinationID, WebKit::WebPageProxyIdentifier webPageProxyIdentifier, URL originatingURL, Vector<URL> linkIconURLs) -> (bool result) Synchronous
+    [EnabledBy=ApplePayDelegatedWebCheckoutEnabled] CompleteDelegateValidation(std::optional<String> delegateSession)
+#endif
 
     GetSetupFeatures(WebKit::PaymentSetupConfiguration configuration) -> (WebKit::PaymentSetupFeatures features)
     BeginApplePaySetup(WebKit::PaymentSetupConfiguration configuration, WebKit::PaymentSetupFeatures features) -> (bool result)

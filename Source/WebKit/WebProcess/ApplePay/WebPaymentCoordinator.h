@@ -81,6 +81,10 @@ private:
 
     void abortPaymentSession() override;
     void cancelPaymentSession() override;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    bool showDelegatedWebCheckoutUI(const URL& originatingURL, const Vector<URL>& linkIconURLs) override;
+    void completeDelegateValidation(const std::optional<String>&) override;
+#endif
 
     bool isWebPaymentCoordinator() const override { return true; }
 
@@ -107,6 +111,10 @@ private:
     void didChangeCouponCode(String&& couponCode);
 #endif
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    void validateDelegate();
+    void didCompleteDelegatedWebCheckoutPayment();
+#endif
 
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();

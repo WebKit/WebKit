@@ -257,6 +257,9 @@ webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Tim
 
 http/tests/paymentrequest/ApplePayModifier-disbursementRequest.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-isDelegatedRequest.https.html [ Skip ]
+http/tests/ssl/applepay/ApplePaySessionDelegatedRequestValidation.https.html [ Skip ]
+http/tests/ssl/applepay/ApplePaySessionDelegatedWebCheckout-disabled.https.html [ Skip ]
+http/tests/ssl/applepay/ApplePaySessionDelegatedWebCheckout.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-estimatedLineItem.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]

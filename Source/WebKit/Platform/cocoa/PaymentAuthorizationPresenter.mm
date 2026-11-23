@@ -460,6 +460,25 @@ void PaymentAuthorizationPresenter::completeCouponCodeChange(std::optional<WebCo
 
 #endif // HAVE(PASSKIT_COUPON_CODE)
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+void PaymentAuthorizationPresenter::completeDelegateValidation(const std::optional<String>& delegateSession)
+{
+    ASSERT(platformDelegate());
+    RetainPtr<PKPaymentDelegateSession> session;
+    // FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+    if (delegateSession && [PAL::getPKPaymentDelegateSessionClassSingleton() instancesRespondToSelector:@selector(initWithSessionData:)])
+        session = adoptNS([PAL::allocPKPaymentDelegateSessionInstance() initWithSessionData:delegateSession->createNSString().get()]);
+    [protect(platformDelegate()) completeDelegateValidation:session.get()];
+}
+
+void PaymentAuthorizationPresenter::setUsesDelegateValidation(bool usesDelegateValidation)
+{
+    [protect(platformDelegate()) setUsesDelegateValidation:usesDelegateValidation];
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
 } // namespace WebKit
 
 #endif // USE(PASSKIT) && ENABLE(APPLE_PAY)

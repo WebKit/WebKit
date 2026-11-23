@@ -556,6 +556,9 @@ private:
     const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) final;
     const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
     Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    RefPtr<PaymentAuthorizationPresenter> paymentCoordinatorDelegatedWebCheckoutPresenter(WebPaymentCoordinatorProxy&, const URL& originatingURL, const Vector<URL>& linkIconURLs) final;
+#endif
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;

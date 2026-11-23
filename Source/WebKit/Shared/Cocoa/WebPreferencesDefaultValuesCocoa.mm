@@ -135,6 +135,13 @@ bool defaultExtendedProofreadingEnabled()
     return os_feature_enabled(TextComposer, PostEditingProofreadingReview);
 }
 
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+bool defaultApplePayDelegatedWebCheckoutEnabled()
+{
+    return os_feature_enabled(Wallet, DelegatedWebCheckout);
+}
+#endif
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 bool defaultTextRecognitionInVideosEnabled()

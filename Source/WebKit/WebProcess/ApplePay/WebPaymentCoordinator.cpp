@@ -177,6 +177,26 @@ void WebPaymentCoordinator::cancelPaymentSession()
     send(Messages::WebPaymentCoordinatorProxy::CancelPaymentSession());
 }
 
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+bool WebPaymentCoordinator::showDelegatedWebCheckoutUI(const URL& originatingURL, const Vector<URL>& linkIconURLs)
+{
+    RefPtr webPage = m_webPage;
+    if (!webPage)
+        return false;
+
+    auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::ShowDelegatedWebCheckoutUI(webPage->identifier(), webPage->webPageProxyIdentifier(), originatingURL, linkIconURLs));
+    auto [result] = sendResult.takeReplyOr(false);
+    return result;
+}
+
+void WebPaymentCoordinator::completeDelegateValidation(const std::optional<String>& delegateSession)
+{
+    send(Messages::WebPaymentCoordinatorProxy::CompleteDelegateValidation(delegateSession));
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
 IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)
@@ -234,6 +254,20 @@ void WebPaymentCoordinator::didCancelPaymentSession(WebCore::PaymentSessionError
 {
     protect(paymentCoordinator())->didCancelPaymentSession(WTF::move(sessionError));
 }
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+void WebPaymentCoordinator::validateDelegate()
+{
+    protect(paymentCoordinator())->validateDelegate();
+}
+
+void WebPaymentCoordinator::didCompleteDelegatedWebCheckoutPayment()
+{
+    protect(paymentCoordinator())->didCompleteDelegatedWebCheckoutPayment();
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
 
 void WebPaymentCoordinator::getSetupFeatures(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&& completionHandler)
 {

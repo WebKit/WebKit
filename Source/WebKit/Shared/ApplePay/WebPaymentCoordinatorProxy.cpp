@@ -98,27 +98,29 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
     m_state = State::Activating;
 
     platformShowPaymentUI(webPageProxyID, originatingURL, linkIconURLs, paymentRequest, [weakThis = WeakPtr { *this }](bool result) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-
-        if (protectedThis->m_state == State::Idle) {
-            ASSERT(!activePaymentCoordinatorProxy());
-            ASSERT(!protectedThis->m_destinationID);
-            ASSERT(protectedThis->m_merchantValidationState == MerchantValidationState::Idle);
-            return;
-        }
-
-        ASSERT(protectedThis->m_state == State::Activating);
-        if (!result) {
-            protectedThis->didReachFinalState();
-            return;
-        }
-
-        protectedThis->m_state = State::Active;
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didFinishShowingPaymentUI(result);
     });
 
     completionHandler(true);
+}
+
+void WebPaymentCoordinatorProxy::didFinishShowingPaymentUI(bool result)
+{
+    if (m_state == State::Idle) {
+        ASSERT(!activePaymentCoordinatorProxy());
+        ASSERT(!m_destinationID);
+        ASSERT(m_merchantValidationState == MerchantValidationState::Idle);
+        return;
+    }
+
+    ASSERT(m_state == State::Activating);
+    if (!result) {
+        didReachFinalState();
+        return;
+    }
+
+    m_state = State::Active;
 }
 
 void WebPaymentCoordinatorProxy::completeMerchantValidation(const WebCore::PaymentMerchantSession& paymentMerchantSession)
@@ -220,6 +222,42 @@ void WebPaymentCoordinatorProxy::cancelPaymentSession()
     didReachFinalState();
 }
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+void WebPaymentCoordinatorProxy::showDelegatedWebCheckoutUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLs, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (RefPtr coordinator = activePaymentCoordinatorProxy())
+        coordinator->didReachFinalState();
+    activePaymentCoordinatorProxy() = *this;
+
+    MESSAGE_CHECK_COMPLETION(canBegin(), completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(!m_destinationID, completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(!m_authorizationPresenter, completionHandler(false));
+
+    m_destinationID = destinationID;
+    m_state = State::Activating;
+
+    platformShowDelegatedWebCheckoutUI(webPageProxyID, originatingURL, linkIconURLs, [weakThis = WeakPtr { *this }](bool result) {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didFinishShowingPaymentUI(result);
+    });
+
+    completionHandler(true);
+}
+
+void WebPaymentCoordinatorProxy::completeDelegateValidation(const std::optional<String>& delegateSession)
+{
+    if (m_state == State::Idle)
+        return;
+
+    MESSAGE_CHECK(m_delegateValidationState == DelegateValidationState::Validating);
+
+    platformCompleteDelegateValidation(delegateSession);
+    m_delegateValidationState = DelegateValidationState::ValidationComplete;
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
 void WebPaymentCoordinatorProxy::presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL& url)
 {
     ASSERT(m_merchantValidationState == MerchantValidationState::Idle);
@@ -227,6 +265,27 @@ void WebPaymentCoordinatorProxy::presenterWillValidateMerchant(PaymentAuthorizat
     m_merchantValidationState = MerchantValidationState::Validating;
     send(Messages::WebPaymentCoordinator::ValidateMerchant(url.string()));
 }
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+void WebPaymentCoordinatorProxy::presenterWillValidateDelegate(PaymentAuthorizationPresenter&)
+{
+    ASSERT(m_delegateValidationState == DelegateValidationState::Idle);
+
+    m_delegateValidationState = DelegateValidationState::Validating;
+    send(Messages::WebPaymentCoordinator::ValidateDelegate());
+}
+
+void WebPaymentCoordinatorProxy::presenterDidCompleteDelegatedWebCheckoutPayment(PaymentAuthorizationPresenter&)
+{
+    if (m_state != State::Active)
+        return;
+
+    m_state = State::Completing;
+    send(Messages::WebPaymentCoordinator::DidCompleteDelegatedWebCheckoutPayment());
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
 
 void WebPaymentCoordinatorProxy::presenterDidAuthorizePayment(PaymentAuthorizationPresenter&, const WebCore::Payment& payment)
 {
@@ -383,6 +442,9 @@ void WebPaymentCoordinatorProxy::didReachFinalState(WebCore::PaymentSessionError
     m_authorizationPresenter = nullptr;
     m_destinationID = std::nullopt;
     m_merchantValidationState = MerchantValidationState::Idle;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    m_delegateValidationState = DelegateValidationState::Idle;
+#endif
     m_state = State::Idle;
 
     ASSERT(activePaymentCoordinatorProxy() == this);

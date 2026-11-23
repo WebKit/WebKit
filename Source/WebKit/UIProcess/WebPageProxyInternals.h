@@ -587,6 +587,9 @@ public:
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
     const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
     Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    RefPtr<PaymentAuthorizationPresenter> paymentCoordinatorDelegatedWebCheckoutPresenter(WebPaymentCoordinatorProxy&, const URL& originatingURL, const Vector<URL>& linkIconURLs) final;
+#endif
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
