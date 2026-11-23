@@ -1,4 +1,4 @@
 AH
 
-PASS Testing parsing of misnested <form> tags inside <template>
+FAIL Testing parsing of misnested <form> tags inside <template> assert_equals: The parsed structure should match the expected result with correctly nested elements. expected "A<template><br>BC<form>D<div>E</div></form>FG</template>H" but got "A<template contentnamespace=\"html\"><br>BC<form>D<div>E</div></form>FG</template>H"
 

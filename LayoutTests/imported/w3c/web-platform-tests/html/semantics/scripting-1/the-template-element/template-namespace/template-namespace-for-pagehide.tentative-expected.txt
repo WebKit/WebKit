@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'capturedExplicitTpl.setAttribute')
+
+PASS Attribute changes on <template for> during prepare content patching do not change its active parser namespace
+

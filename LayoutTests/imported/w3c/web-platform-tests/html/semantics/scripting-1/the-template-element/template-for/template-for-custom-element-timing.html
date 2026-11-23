@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - custom elements in a patch are constructed by the parser</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/parsing.html#insert-an-element-at-the-adjusted-insertion-location">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-template-for">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+  <script>
+    test((t) => {
+      const outerIframe = document.createElement("iframe");
+      document.body.appendChild(outerIframe);
+      t.add_cleanup(() => outerIframe.remove());
+
+      const doc = outerIframe.contentDocument;
+      doc.open();
+      doc.write(`<div id="target"><?marker name="m"></div>`);
+      doc.write(`<scr` + `ipt>
+        window.log = [];
+        customElements.define("x-probe", class extends HTMLElement {
+          static observedAttributes = ["data-x"];
+          constructor() {
+            super();
+            window.log.push(["constructed", this.isConnected, this.attributes.length]);
+          }
+          attributeChangedCallback(name, oldValue, newValue) {
+            window.log.push(["attributeChanged", name, newValue, this.isConnected]);
+          }
+          connectedCallback() {
+            window.log.push(["connected", this.isConnected]);
+          }
+        });
+      </scr` + `ipt>`);
+      doc.write(`<x-probe data-x="parsed"></x-probe>`);
+      const parsedLog = outerIframe.contentWindow.log.splice(0);
+      doc.write(`<template for="m"><x-probe data-x="patched"></x-probe></template>`);
+      const patchedLog = outerIframe.contentWindow.log.splice(0);
+      doc.close();
+
+      assert_equals(JSON.stringify(parsedLog[0]), JSON.stringify(["constructed", false, 0]),
+        "a normally parsed custom element is constructed disconnected and attribute-less");
+      assert_equals(JSON.stringify(patchedLog[0]), JSON.stringify(["constructed", false, 0]),
+        "a patched custom element is constructed disconnected and attribute-less");
+
+      assert_equals(
+        JSON.stringify(patchedLog).replaceAll("patched", "parsed"),
+        JSON.stringify(parsedLog),
+        "a patched custom element goes through the same construction steps as a parsed one");
+
+      assert_equals(doc.querySelector("#target x-probe").getAttribute("data-x"), "patched");
+    }, "A custom element in a patch is constructed by the parser, not upgraded after insertion");
+  </script>
+</body>

@@ -1,0 +1,4 @@
+
+PASS A NULL character in processing instruction data becomes U+FFFD
+PASS A NULL character in the for attribute does not match a plain marker name
+

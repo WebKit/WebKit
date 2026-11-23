@@ -1,0 +1,16 @@
+
+PASS Fragment parsing (innerHTML) respects template contentNamespace and ancestor SVG namespace
+PASS DOM-created <template> keeps HTML contentNamespace even when appended to <svg> or <math>
+PASS Dynamic template.contentNamespace changes and setHTMLUnsafe respect template contentNamespace
+PASS cloneNode(true) and cloneNode(false) copy sticky contentNamespace
+PASS Sticky template contentNamespace persists across DOM moves and attribute removal
+PASS Range.prototype.createContextualFragment with a context inside <template contentnamespace='svg'>
+PASS DOM-attached <template> keeps its sticky contentNamespace in outer template.content or standalone DocumentFragment
+FAIL Sanitizer preserves explicit contentnamespace by default, and stripping contentnamespace does not revert contentNamespace or break serialization div.setHTML is not a function. (In 'div.setHTML('<template contentnamespace="svg"><text><![CDATA[></template><p id="cdata-breakout">injected</p>]]></text></template>')', 'div.setHTML' is undefined)
+PASS Direct top-level CDATA, shallow cloneNode(false)/importNode, uppercase contentnamespace, desc integration point, and foreign attribute adjustments
+FAIL Document.parseHTML respects explicit and inherited <template> namespaces Can't find variable: Sanitizer
+FAIL Positional appendHTMLUnsafe and beforeHTMLUnsafe respect <template> namespaces svg.appendHTMLUnsafe is not a function. (In 'svg.appendHTMLUnsafe("<template><circle/></template>")', 'svg.appendHTMLUnsafe' is undefined)
+FAIL Element.prototype.streamHTMLUnsafe respects <template> namespaces promise_test: Unhandled rejection with value: object "TypeError: tpl.streamHTMLUnsafe is not a function. (In 'tpl.streamHTMLUnsafe()', 'tpl.streamHTMLUnsafe' is undefined)"
+FAIL template.setHTML() and Sanitizer replaceWithChildrenElements respect template contentNamespace svgTpl.setHTML is not a function. (In 'svgTpl.setHTML("<circle/><script>window.sanitizedScript = true;</scr" + "ipt>")', 'svgTpl.setHTML' is undefined)
+PASS Mutability quirks: contentnamespace attribute does not affect contentNamespace or innerHTML/cloneNode after creation
+

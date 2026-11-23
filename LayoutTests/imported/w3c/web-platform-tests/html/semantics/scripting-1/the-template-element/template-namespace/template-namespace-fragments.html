@@ -1,0 +1,346 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>HTML Templates: fragment APIs, cloning, and sanitizer with template contents namespace</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-template-element">
+<link rel="help" href="https://github.com/whatwg/html/pull/13100">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg>
+  <template id="in-svg">
+    <circle cx="10" cy="10" r="5" />
+  </template>
+</svg>
+
+<script>
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+const SVG_NS = "http://www.w3.org/2000/svg";
+const MATHML_NS = "http://www.w3.org/1998/Math/MathML";
+
+test(() => {
+  const t = document.createElement("template");
+  t.contentNamespace = SVG_NS;
+  t.innerHTML = "<g viewBox='0 0 10 10'><circle cx='1' cy='2' r='3'/></g>";
+  const g = t.content.firstElementChild;
+  assert_equals(g.namespaceURI, SVG_NS);
+  assert_true(g.hasAttribute("viewBox"));
+  assert_equals(g.firstElementChild.namespaceURI, SVG_NS);
+
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.innerHTML = "<template><path d='M0 0'/></template>";
+  const innerTemplate = svg.firstElementChild;
+  assert_equals(innerTemplate.namespaceURI, HTML_NS);
+  assert_equals(innerTemplate.contentNamespace, SVG_NS);
+  assert_equals(innerTemplate.content.firstElementChild.namespaceURI, SVG_NS);
+}, "Fragment parsing (innerHTML) respects template contentNamespace and ancestor SVG namespace");
+
+test(() => {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  const tInSvg = document.createElement("template");
+  assert_equals(tInSvg.contentNamespace, HTML_NS);
+  svg.appendChild(tInSvg);
+  tInSvg.innerHTML = "<circle cx='5' cy='5' r='5'/>";
+  assert_equals(tInSvg.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const math = document.createElementNS(MATHML_NS, "math");
+  const tInMath = document.createElement("template");
+  math.appendChild(tInMath);
+  tInMath.innerHTML = "<mrow><mi>x</mi></mrow>";
+  assert_equals(tInMath.content.firstElementChild.namespaceURI, HTML_NS);
+}, "DOM-created <template> keeps HTML contentNamespace even when appended to <svg> or <math>");
+
+test(() => {
+  const t = document.createElement("template");
+  t.contentNamespace = SVG_NS;
+  t.innerHTML = "<circle/>";
+  assert_equals(t.content.firstElementChild.namespaceURI, SVG_NS);
+
+  t.contentNamespace = MATHML_NS;
+  t.innerHTML = "<mi>x</mi>";
+  assert_equals(t.content.firstElementChild.namespaceURI, MATHML_NS);
+
+  t.contentNamespace = HTML_NS;
+  t.innerHTML = "<a href='#'></a>";
+  assert_equals(t.content.firstElementChild.namespaceURI, HTML_NS);
+
+  t.setHTMLUnsafe("<svg><template id='unsafe-in-svg'><rect/></template></svg>");
+  const unsafeT = t.content.getElementById("unsafe-in-svg");
+  assert_equals(unsafeT.namespaceURI, HTML_NS);
+  assert_equals(unsafeT.contentNamespace, SVG_NS);
+  assert_equals(unsafeT.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const tSvgUnsafe = document.createElement("template");
+  tSvgUnsafe.contentNamespace = SVG_NS;
+  tSvgUnsafe.setHTMLUnsafe("<clippath/>");
+  assert_equals(tSvgUnsafe.content.firstElementChild.namespaceURI, SVG_NS);
+  assert_equals(tSvgUnsafe.content.firstElementChild.localName, "clipPath");
+}, "Dynamic template.contentNamespace changes and setHTMLUnsafe respect template contentNamespace");
+
+test(() => {
+  const tInSvg = document.getElementById("in-svg");
+  assert_equals(tInSvg.contentNamespace, SVG_NS);
+  const cloned = tInSvg.cloneNode(true);
+  assert_equals(cloned.namespaceURI, HTML_NS);
+  assert_equals(cloned.contentNamespace, SVG_NS);
+  assert_equals(cloned.content.querySelector("circle").namespaceURI, SVG_NS);
+
+  cloned.innerHTML = "<circle id='still-svg'/>";
+  assert_equals(cloned.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const shallow = tInSvg.cloneNode(false);
+  assert_equals(shallow.contentNamespace, SVG_NS);
+  shallow.innerHTML = "<rect width='5' height='5'/>";
+  assert_equals(shallow.content.firstElementChild.namespaceURI, SVG_NS);
+}, "cloneNode(true) and cloneNode(false) copy sticky contentNamespace");
+
+test(() => {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  const domTemplate = document.createElement("template");
+  svg.appendChild(domTemplate);
+  domTemplate.innerHTML = "<circle cx='1' cy='1' r='1'/>";
+  assert_equals(domTemplate.contentNamespace, HTML_NS);
+  assert_equals(domTemplate.content.firstElementChild.namespaceURI, HTML_NS);
+
+  domTemplate.contentNamespace = SVG_NS;
+  const clonedExplicit = domTemplate.cloneNode(false);
+  assert_equals(clonedExplicit.contentNamespace, SVG_NS);
+  clonedExplicit.innerHTML = "<rect width='2' height='2'/>";
+  assert_equals(clonedExplicit.content.firstElementChild.namespaceURI, SVG_NS);
+  clonedExplicit.removeAttribute("contentnamespace");
+  assert_equals(clonedExplicit.contentNamespace, SVG_NS);
+  clonedExplicit.innerHTML = "<a href='#'>still svg after removing attribute</a>";
+  assert_equals(clonedExplicit.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const svg2 = document.createElementNS(SVG_NS, "svg");
+  svg2.innerHTML = "<template><path/></template>";
+  const parserTemplate = svg2.firstElementChild;
+  assert_equals(parserTemplate.contentNamespace, SVG_NS);
+  assert_equals(parserTemplate.content.firstElementChild.namespaceURI, SVG_NS);
+
+  parserTemplate.remove();
+  assert_equals(parserTemplate.contentNamespace, SVG_NS);
+  parserTemplate.innerHTML = "<a href='#'>still svg after detach</a>";
+  assert_equals(parserTemplate.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const math = document.createElementNS(MATHML_NS, "math");
+  math.appendChild(parserTemplate);
+  parserTemplate.innerHTML = "<mi>x</mi>";
+  assert_equals(parserTemplate.content.firstElementChild.namespaceURI, SVG_NS);
+}, "Sticky template contentNamespace persists across DOM moves and attribute removal");
+
+test(() => {
+  const t = document.createElement("template");
+  t.contentNamespace = SVG_NS;
+  t.innerHTML = "<g></g>";
+  const g = t.content.firstElementChild;
+  assert_equals(g.namespaceURI, SVG_NS);
+
+  const range = document.createRange();
+  range.selectNodeContents(t);
+  const frag = range.createContextualFragment("<circle cx='3' cy='4' r='5'/><clippath/>");
+  assert_equals(frag.firstElementChild.namespaceURI, SVG_NS);
+  assert_equals(frag.lastElementChild.namespaceURI, SVG_NS);
+  assert_equals(frag.lastElementChild.localName, "clipPath");
+}, "Range.prototype.createContextualFragment with a context inside <template contentnamespace='svg'>");
+
+test(() => {
+  const outer = document.createElement("template");
+  outer.contentNamespace = SVG_NS;
+  const inner = document.createElement("template");
+  outer.content.appendChild(inner);
+  inner.innerHTML = "<circle cx='1' cy='1' r='2'/>";
+  assert_equals(inner.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.innerHTML = "<template><rect/></template>";
+  const parsedInSvg = svg.firstElementChild;
+  assert_equals(parsedInSvg.content.firstElementChild.namespaceURI, SVG_NS);
+  const standaloneFrag = new DocumentFragment();
+  standaloneFrag.appendChild(parsedInSvg);
+  parsedInSvg.innerHTML = "<circle/>";
+  assert_equals(parsedInSvg.content.firstElementChild.namespaceURI, SVG_NS);
+}, "DOM-attached <template> keeps its sticky contentNamespace in outer template.content or standalone DocumentFragment");
+
+test(() => {
+  const div = document.createElement("div");
+  div.setHTML('<template contentnamespace="svg"><text><![CDATA[></template><p id="cdata-breakout">injected</p>]]></text></template>');
+  assert_equals(div.querySelector("p"), null);
+  assert_equals(div.textContent, "");
+
+  const sDefaultWithTemplate = new Sanitizer();
+  sDefaultWithTemplate.allowElement("template");
+  div.setHTML(
+    '<template id="explicit-svg" contentnamespace="svg"><circle/></template>' +
+    '<svg><template id="inferred-svg"><rect/></template></svg>',
+    { sanitizer: sDefaultWithTemplate }
+  );
+  const templates = div.querySelectorAll("template");
+  assert_equals(templates[0].getAttribute("contentnamespace"), "svg");
+  assert_equals(templates[0].content.firstElementChild.namespaceURI, SVG_NS);
+  assert_false(templates[1].hasAttribute("contentnamespace"));
+  assert_equals(templates[1].content.firstElementChild.namespaceURI, SVG_NS);
+
+  const sReplaceBreakout = new Sanitizer({
+    elements: ["div", { name: "svg", namespace: SVG_NS }, "xmp", "p"],
+    replaceWithChildrenElements: [{ name: "foreignObject", namespace: SVG_NS }]
+  });
+  div.setHTML('<svg><foreignObject><template><xmp></template><p>injected</p></xmp></template></foreignObject></svg>', { sanitizer: sReplaceBreakout });
+  assert_equals(div.querySelector("p"), null);
+
+  const sReplaceKeep = new Sanitizer({
+    elements: ["div", { name: "svg", namespace: SVG_NS }, "template", "a", { name: "a", namespace: SVG_NS }],
+    replaceWithChildrenElements: [{ name: "foreignObject", namespace: SVG_NS }]
+  });
+  div.setHTML('<svg><foreignObject><template><a>x</a></template></foreignObject></svg>', { sanitizer: sReplaceKeep });
+  const t = div.querySelector("template");
+  assert_equals(t.parentNode.namespaceURI, SVG_NS);
+  assert_false(t.hasAttribute("contentnamespace"));
+  assert_equals(t.content.firstElementChild.namespaceURI, HTML_NS);
+
+  const sStripAttr = new Sanitizer({
+    elements: ["div", { name: "svg", namespace: SVG_NS }, "template", { name: "circle", namespace: SVG_NS }],
+    attributes: ["id"]
+  });
+  div.setHTML('<template id="stripped-svg" contentnamespace="svg"><circle/></template>', { sanitizer: sStripAttr });
+  const strippedTpl = div.querySelector("#stripped-svg");
+  assert_false(strippedTpl.hasAttribute("contentnamespace"));
+  assert_equals(strippedTpl.contentNamespace, SVG_NS);
+  assert_equals(strippedTpl.content.firstElementChild.namespaceURI, SVG_NS);
+  assert_equals(strippedTpl.outerHTML, '<template contentnamespace="svg" id="stripped-svg"><circle></circle></template>');
+}, "Sanitizer preserves explicit contentnamespace by default, and stripping contentnamespace does not revert contentNamespace or break serialization");
+
+test(() => {
+  const doc = Document.parseHTMLUnsafe(
+    "<template id='direct-cdata' contentnamespace='SVG'><![CDATA[<raw>&direct]]><a>svg-a</a></template>" +
+    "<template id='math-attrs' contentnamespace='MathML'><csymbol definitionurl='#x'/></template>" +
+    "<svg><template id='shallow-src'><circle/></template><desc><template id='in-desc'><a>desc-a</a></template></desc></svg>"
+  );
+  const cdataTpl = doc.getElementById("direct-cdata");
+  assert_equals(cdataTpl.content.firstChild.nodeValue, "<raw>&direct");
+  assert_equals(cdataTpl.content.querySelector("a").namespaceURI, SVG_NS);
+
+  const csymbol = doc.getElementById("math-attrs").content.firstElementChild;
+  assert_equals(csymbol.namespaceURI, MATHML_NS);
+  assert_true(csymbol.hasAttribute("definitionURL"));
+
+  assert_equals(doc.getElementById("in-desc").content.firstElementChild.namespaceURI, HTML_NS);
+
+  const shallow = doc.getElementById("shallow-src").cloneNode(false);
+  assert_equals(shallow.namespaceURI, HTML_NS);
+  assert_equals(shallow.contentNamespace, SVG_NS);
+  assert_equals(shallow.content.childNodes.length, 0);
+  shallow.innerHTML = "<a>still-svg-when-detached</a>";
+  assert_equals(shallow.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const importedAuto = document.importNode(doc.getElementById("shallow-src"), true);
+  assert_equals(importedAuto.contentNamespace, SVG_NS);
+  assert_equals(importedAuto.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const imported = document.importNode(cdataTpl, false);
+  assert_equals(imported.contentNamespace, SVG_NS);
+  assert_equals(imported.content.childNodes.length, 0);
+  imported.innerHTML = "<![CDATA[<frag>]]><use xlink:href='#x'/>";
+  assert_equals(imported.content.firstChild.nodeValue, "<frag>");
+  const useEl = imported.content.querySelector("use");
+  assert_equals(useEl.getAttributeNodeNS("http://www.w3.org/1999/xlink", "href").value, "#x");
+}, "Direct top-level CDATA, shallow cloneNode(false)/importNode, uppercase contentnamespace, desc integration point, and foreign attribute adjustments");
+
+test(() => {
+  const s = new Sanitizer({
+    elements: ["html", "head", "body", { name: "svg", namespace: SVG_NS }, "template", { name: "circle", namespace: SVG_NS }],
+    attributes: ["id", "contentnamespace"]
+  });
+  const parsedDoc = Document.parseHTML(
+    "<body><template id='p-svg' contentnamespace='svg'><circle/></template><svg><template id='p-inh'><circle/></template></svg></body>",
+    { sanitizer: s }
+  );
+  assert_equals(parsedDoc.getElementById("p-svg").content.firstElementChild.namespaceURI, SVG_NS);
+  assert_equals(parsedDoc.getElementById("p-inh").content.firstElementChild.namespaceURI, SVG_NS);
+}, "Document.parseHTML respects explicit and inherited <template> namespaces");
+
+test(() => {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.appendHTMLUnsafe("<template><circle/></template>");
+  assert_equals(svg.querySelector("template").content.firstElementChild.namespaceURI, SVG_NS);
+
+  const tpl = document.createElement("template");
+  tpl.contentNamespace = SVG_NS;
+  tpl.appendHTMLUnsafe("<circle/>");
+  assert_equals(tpl.content.firstElementChild.namespaceURI, SVG_NS);
+
+  tpl.content.firstElementChild.beforeHTMLUnsafe("<rect/>");
+  assert_equals(tpl.content.firstElementChild.localName, "rect");
+  assert_equals(tpl.content.firstElementChild.namespaceURI, SVG_NS);
+}, "Positional appendHTMLUnsafe and beforeHTMLUnsafe respect <template> namespaces");
+
+promise_test(async () => {
+  const tpl = document.createElement("template");
+  tpl.contentNamespace = SVG_NS;
+  const writer = tpl.streamHTMLUnsafe().getWriter();
+  await writer.write("<cir");
+  await writer.write("cle/>");
+  await writer.close();
+  assert_equals(tpl.content.firstElementChild.namespaceURI, SVG_NS);
+}, "Element.prototype.streamHTMLUnsafe respects <template> namespaces");
+
+test(() => {
+  const svgTpl = document.createElement("template");
+  svgTpl.contentNamespace = SVG_NS;
+  svgTpl.setHTML("<circle/><script>window.sanitizedScript = true;</scr" + "ipt>");
+  assert_equals(svgTpl.content.childElementCount, 1);
+  assert_equals(svgTpl.content.firstElementChild.localName, "circle");
+  assert_equals(svgTpl.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const mathTpl = document.createElement("template");
+  mathTpl.contentNamespace = MATHML_NS;
+  mathTpl.setHTML("<mrow><mi>x</mi></mrow><script>window.sanitizedMathScript = true;</scr" + "ipt>");
+  assert_equals(mathTpl.content.childElementCount, 1);
+  assert_equals(mathTpl.content.firstElementChild.localName, "mrow");
+  assert_equals(mathTpl.content.firstElementChild.namespaceURI, MATHML_NS);
+
+  const div = document.createElement("div");
+  const sReplaceG = new Sanitizer({
+    elements: ["div", { name: "svg", namespace: SVG_NS }, "template", { name: "circle", namespace: SVG_NS }],
+    replaceWithChildrenElements: [{ name: "g", namespace: SVG_NS }]
+  });
+  div.setHTML("<svg><g><template><circle/></template></g></svg>", { sanitizer: sReplaceG });
+  const unparentedGTpl = div.querySelector("template");
+  assert_true(unparentedGTpl instanceof HTMLTemplateElement);
+  assert_equals(unparentedGTpl.parentNode.localName, "svg");
+  assert_equals(unparentedGTpl.contentNamespace, SVG_NS);
+  assert_equals(unparentedGTpl.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const sReplaceTpl = new Sanitizer({
+    elements: ["div", { name: "circle", namespace: SVG_NS }],
+    replaceWithChildrenElements: ["template"]
+  });
+  div.setHTML('<template contentnamespace="svg"><circle/></template>', { sanitizer: sReplaceTpl });
+  assert_equals(div.childNodes.length, 0);
+}, "template.setHTML() and Sanitizer replaceWithChildrenElements respect template contentNamespace");
+
+test(() => {
+  const domTpl = document.createElement("template");
+  domTpl.setAttribute("contentnamespace", "svg");
+  assert_equals(domTpl.contentNamespace, HTML_NS);
+  domTpl.innerHTML = "<circle/>";
+  assert_equals(domTpl.content.firstElementChild.namespaceURI, HTML_NS);
+  assert_equals(domTpl.outerHTML, '<template contentnamespace="html"><circle></circle></template>');
+
+  const wrap = document.createElement("div");
+  wrap.innerHTML = '<template contentnamespace="html"></template>';
+  const parsedTpl = wrap.firstElementChild;
+  parsedTpl.contentNamespace = SVG_NS;
+  assert_equals(parsedTpl.getAttribute("contentnamespace"), "html");
+  parsedTpl.innerHTML = "<circle/>";
+  assert_equals(parsedTpl.content.firstElementChild.namespaceURI, SVG_NS);
+  assert_equals(parsedTpl.outerHTML, '<template contentnamespace="svg"><circle></circle></template>');
+
+  parsedTpl.setAttribute("contentnamespace", "mathml");
+  assert_equals(parsedTpl.contentNamespace, SVG_NS);
+  const cloned = parsedTpl.cloneNode(true);
+  assert_equals(cloned.contentNamespace, SVG_NS);
+  assert_equals(cloned.getAttribute("contentnamespace"), "mathml");
+  cloned.innerHTML = "<rect/>";
+  assert_equals(cloned.content.firstElementChild.namespaceURI, SVG_NS);
+}, "Mutability quirks: contentnamespace attribute does not affect contentNamespace or innerHTML/cloneNode after creation");
+</script>

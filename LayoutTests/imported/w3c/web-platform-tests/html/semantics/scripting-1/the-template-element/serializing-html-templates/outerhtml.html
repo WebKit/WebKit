@@ -22,7 +22,7 @@ test(function () {
     div.innerHTML = 'some text';
     template.content.appendChild(div);
 
-    assert_equals(template.outerHTML, '<template><div id="div1">some text</div></template>',
+    assert_equals(template.outerHTML, '<template contentnamespace="html"><div id="div1">some text</div></template>',
        'template element is serialized incorrectly');
 
 }, 'Template contents should be serialized instead of template element if serializing template element');
@@ -41,7 +41,7 @@ test(function () {
     div.innerHTML = 'some text';
     nestedTemplate.content.appendChild(div);
 
-    assert_equals(template.outerHTML, '<template><template><div id="div1">some text</div></template></template>',
+    assert_equals(template.outerHTML, '<template contentnamespace="html"><template contentnamespace="html"><div id="div1">some text</div></template></template>',
        'template element is serialized incorrectly');
 
 
@@ -59,7 +59,7 @@ test(function () {
     template.content.appendChild(div);
     doc.body.appendChild(template);
 
-    assert_equals(doc.documentElement.outerHTML, '<html><head><title>Test Document</title></head><body><template><div id="div1">some text</div></template></body></html>',
+    assert_equals(doc.documentElement.outerHTML, '<html><head><title>Test Document</title></head><body><template contentnamespace="html"><div id="div1">some text</div></template></body></html>',
        'template element is serialized incorrectly');
 
 }, 'Template contents should be serialized instead of template element if serializing template element. '

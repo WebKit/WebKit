@@ -1,0 +1,4 @@
+patched
+
+PASS A patch nested in a patch targeting a body child widens its marker scope from body to html
+

@@ -1,0 +1,79 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>HTML Templates: shadowrootmode and template contents namespace</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-template-element">
+<link rel="help" href="https://github.com/whatwg/html/pull/13100">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div id="sr-host"><template shadowrootmode="open" contentnamespace="svg"><circle id="sr-direct-circle" /><?marker name="sr-root-slot"><template for="sr-root-slot"><a id="sr-root-patched" href="#">patched in shadow root</a></template></template></div>
+
+<script>
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+test(() => {
+  const srHost = document.getElementById("sr-host");
+  assert_not_equals(srHost.shadowRoot, null);
+  const directCircle = srHost.shadowRoot.getElementById("sr-direct-circle");
+  assert_not_equals(directCircle, null);
+  assert_equals(directCircle.namespaceURI, HTML_NS);
+  const patchedLink = srHost.shadowRoot.getElementById("sr-root-patched");
+  assert_not_equals(patchedLink, null);
+  assert_equals(patchedLink.namespaceURI, HTML_NS);
+
+  const host2 = document.createElement("div");
+  const sr2 = host2.attachShadow({ mode: "open" });
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.innerHTML = "<template><circle/></template>";
+  const tFromSvg = svg.firstElementChild;
+  assert_equals(tFromSvg.contentNamespace, SVG_NS);
+  assert_equals(tFromSvg.content.firstElementChild.namespaceURI, SVG_NS);
+
+  // Moving a sticky SVG template into a shadow root preserves its SVG contentNamespace.
+  sr2.appendChild(tFromSvg);
+  tFromSvg.innerHTML = "<rect/>";
+  assert_equals(tFromSvg.content.firstElementChild.namespaceURI, SVG_NS);
+
+  // When declarative shadow root attachment fails, contentNamespace applies.
+  const failedDsr = document.createElement("div");
+  failedDsr.innerHTML = '<template shadowrootmode="open" contentnamespace="svg"><circle/></template>';
+  const failedDsrTpl = failedDsr.firstElementChild;
+  assert_equals(failedDsr.shadowRoot, null);
+  assert_equals(failedDsrTpl.contentNamespace, SVG_NS);
+  assert_equals(failedDsrTpl.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const svgHostDoc = Document.parseHTMLUnsafe('<svg><template shadowrootmode="open" contentnamespace="svg"><circle/></template></svg>');
+  const svgDsrTpl = svgHostDoc.querySelector("template");
+  assert_equals(svgDsrTpl.contentNamespace, SVG_NS);
+  assert_equals(svgDsrTpl.content.firstElementChild.namespaceURI, SVG_NS);
+
+  const dupHostDoc = Document.parseHTMLUnsafe(
+    '<div id="dup"><template shadowrootmode="open"><p>first</p></template>' +
+    '<template shadowrootmode="open" contentnamespace="svg"><circle/></template></div>'
+  );
+  const dupFallbackTpl = dupHostDoc.getElementById("dup").querySelector("template");
+  assert_equals(dupFallbackTpl.contentNamespace, SVG_NS);
+  assert_equals(dupFallbackTpl.content.firstElementChild.namespaceURI, SVG_NS);
+}, "<template shadowrootmode='open'> supersedes contentnamespace only when a shadow root is actually attached");
+
+test(() => {
+  const outer = document.createElement("div");
+  outer.setHTMLUnsafe(
+    '<div id="dsd-host"><template shadowrootmode="open" shadowrootserializable contentnamespace="svg">' +
+    '<circle id="dsd-c"/><xmp><span id="dsd-raw"></span></xmp></template></div>' +
+    '<template id="dsd-ctrl-svg" contentnamespace="svg"><circle id="ctrl-c"/></template>'
+  );
+  const host = outer.querySelector("#dsd-host");
+  assert_equals(host.shadowRoot.querySelector("#dsd-c").namespaceURI, HTML_NS);
+  assert_equals(host.shadowRoot.querySelector("#dsd-raw"), null);
+  assert_equals(outer.querySelector("#dsd-ctrl-svg").content.querySelector("#ctrl-c").namespaceURI, SVG_NS);
+
+  const roundtrip = document.createElement("div");
+  roundtrip.setHTMLUnsafe(outer.getHTML({ serializableShadowRoots: true }));
+  const rtHost = roundtrip.querySelector("#dsd-host");
+  assert_equals(rtHost.shadowRoot.querySelector("#dsd-c").namespaceURI, HTML_NS);
+  assert_equals(rtHost.shadowRoot.querySelector("#dsd-raw"), null);
+  assert_equals(roundtrip.querySelector("#dsd-ctrl-svg").content.querySelector("#ctrl-c").namespaceURI, SVG_NS);
+}, "Declarative ShadowRoot supersedes <template contentnamespace='svg'> and round-trips consistently via getHTML()");
+</script>

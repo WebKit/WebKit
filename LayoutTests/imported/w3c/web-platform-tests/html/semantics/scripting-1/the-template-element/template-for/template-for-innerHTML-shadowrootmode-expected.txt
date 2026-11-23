@@ -1,0 +1,4 @@
+
+PASS A valid shadowrootmode makes for inert even where declarative shadow roots are disallowed
+PASS An invalid shadowrootmode does not make for inert
+

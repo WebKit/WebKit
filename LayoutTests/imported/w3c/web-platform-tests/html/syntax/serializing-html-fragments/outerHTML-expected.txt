@@ -84,7 +84,7 @@ PASS Node for summary
 PASS Node for table
 PASS Node for tbody
 PASS Node for td
-PASS Node for template
+FAIL Node for template assert_equals: template node created. expected "<template></template>" but got "<template contentnamespace=\"html\"></template>"
 PASS Node for textarea
 PASS Node for tfoot
 PASS Node for th

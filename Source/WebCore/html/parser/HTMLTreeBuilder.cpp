@@ -276,8 +276,12 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
     // For efficiency, we skip step 5 ("Let root be a new html element with no attributes") and instead use the DocumentFragment as a root node.
     m_tree.openElements().pushRootNode(HTMLStackItem(fragment));
 
-    if (contextElement.elementName() == HTML::template_)
-        m_templateInsertionModes.append(InsertionMode::TemplateContents);
+    if (contextElement.elementName() == HTML::template_) {
+        auto mode = InsertionMode::TemplateContents;
+        if (options.templateContentNamespace && downcast<HTMLTemplateElement>(contextElement).contentNamespace() != HTMLNames::xhtmlNamespaceURI)
+            mode = InsertionMode::InBody;
+        m_templateInsertionModes.append(mode);
+    }
 
     resetInsertionModeAppropriately();
 
@@ -372,7 +376,7 @@ void HTMLTreeBuilder::updateTokenizerForAdjustedCurrentNode()
     //   replace U+0000 NULL with U+FFFD), which treats integration points as HTML content and thus
     //   excludes them.
     //   https://html.spec.whatwg.org/multipage/parsing.html#tree-construction
-    bool adjustedCurrentNodeIsForeign = !m_tree.isEmpty() && !isInHTMLNamespace(adjustedCurrentStackItem());
+    bool adjustedCurrentNodeIsForeign = !m_tree.isEmpty() && !parserNamespaceIsHTML(adjustedCurrentStackItem());
     bool inForeignContent = adjustedCurrentNodeIsForeign
         && !HTMLElementStack::isHTMLIntegrationPoint(adjustedCurrentStackItem())
         && !HTMLElementStack::isMathMLTextIntegrationPoint(adjustedCurrentStackItem());
@@ -1013,10 +1017,17 @@ void HTMLTreeBuilder::didCreateCustomOrFallbackElement(Ref<Element>&& element, C
 void HTMLTreeBuilder::processTemplateStartTag(AtomHTMLToken&& token)
 {
     m_tree.activeFormattingElements().appendMarker();
-    m_tree.insertHTMLTemplateElement(WTF::move(token));
+    m_tree.insertHTMLTemplateElement(WTF::move(token), adjustedContextNamespace(), fragmentContextNamespace());
     m_framesetOk = false;
-    m_templateInsertionModes.append(InsertionMode::TemplateContents);
-    m_insertionMode = InsertionMode::TemplateContents;
+    auto mode = InsertionMode::TemplateContents;
+    if (m_options.templateContentNamespace) {
+        // https://whatpr.org/html/13100/parsing.html#push-a-template-insertion-mode
+        Ref templateElement = downcast<HTMLTemplateElement>(m_tree.openElements().top());
+        if (templateElement->contentNamespace() != HTMLNames::xhtmlNamespaceURI)
+            mode = InsertionMode::InBody;
+    }
+    m_templateInsertionModes.append(mode);
+    m_insertionMode = mode;
 }
 
 bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
@@ -2897,13 +2908,72 @@ HTMLStackItem& HTMLTreeBuilder::adjustedCurrentStackItem()
     return m_tree.currentStackItem();
 }
 
+// https://whatpr.org/html/13100/parsing.html#parser-namespace
+bool HTMLTreeBuilder::parserNamespaceIsHTML(const HTMLStackItem& item) const
+{
+    if (m_options.templateContentNamespace && item.elementName() == HTML::template_)
+        return downcast<HTMLTemplateElement>(item.element()).contentNamespace() == HTMLNames::xhtmlNamespaceURI;
+    return isInHTMLNamespace(item);
+}
+
+const AtomString& HTMLTreeBuilder::parserNamespace(const HTMLStackItem& item) const
+{
+    if (m_options.templateContentNamespace && item.elementName() == HTML::template_)
+        return downcast<HTMLTemplateElement>(item.element()).contentNamespace();
+    return item.namespaceURI();
+}
+
+// https://whatpr.org/html/13100/parsing.html#resolve-a-parser-context-namespace
+const AtomString& HTMLTreeBuilder::contextNamespaceForStackItem(HTMLStackItem& item, EncodingAttributeSource encodingSource) const
+{
+    if (!item.isElement())
+        return HTMLNames::xhtmlNamespaceURI;
+    if (item.elementName() == HTML::template_)
+        return downcast<HTMLTemplateElement>(item.element()).contentNamespace();
+    if (item.elementName() == MathML::annotation_xml) {
+        // On-stack items use the start tag token's encoding attribute; the fragment context
+        // element has no token, so its live attribute decides.
+        bool isIntegrationPoint;
+        if (encodingSource == EncodingAttributeSource::Element)
+            isIntegrationPoint = HTMLElementStack::isHTMLIntegrationPoint(item);
+        else {
+            auto* encoding = item.findAttribute(MathMLNames::encodingAttr);
+            isIntegrationPoint = encoding
+                && (equalLettersIgnoringASCIICase(encoding->value(), "text/html"_s)
+                    || equalLettersIgnoringASCIICase(encoding->value(), "application/xhtml+xml"_s));
+        }
+        return isIntegrationPoint ? HTMLNames::xhtmlNamespaceURI : MathMLNames::mathmlNamespaceURI;
+    }
+    if (HTMLElementStack::isHTMLIntegrationPoint(item) || HTMLElementStack::isMathMLTextIntegrationPoint(item))
+        return HTMLNames::xhtmlNamespaceURI;
+    auto& namespaceURI = item.namespaceURI();
+    if (namespaceURI == SVGNames::svgNamespaceURI || namespaceURI == MathMLNames::mathmlNamespaceURI)
+        return namespaceURI;
+    return HTMLNames::xhtmlNamespaceURI;
+}
+
+const AtomString& HTMLTreeBuilder::adjustedContextNamespace()
+{
+    if (!m_options.templateContentNamespace || m_tree.isEmpty())
+        return HTMLNames::xhtmlNamespaceURI;
+    bool isFragmentContextItem = isParsingFragment() && m_tree.openElements().hasOnlyOneElement();
+    return contextNamespaceForStackItem(adjustedCurrentStackItem(), isFragmentContextItem ? EncodingAttributeSource::Element : EncodingAttributeSource::Token);
+}
+
+const AtomString& HTMLTreeBuilder::fragmentContextNamespace()
+{
+    if (!m_options.templateContentNamespace || !isParsingFragment())
+        return HTMLNames::xhtmlNamespaceURI;
+    return contextNamespaceForStackItem(m_fragmentContext.contextElementStackItem(), EncodingAttributeSource::Element);
+}
+
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#tree-construction
 bool HTMLTreeBuilder::shouldProcessTokenInForeignContent(const AtomHTMLToken& token)
 {
     if (m_tree.isEmpty())
         return false;
     HTMLStackItem& adjustedCurrentNode = adjustedCurrentStackItem();
-    if (isInHTMLNamespace(adjustedCurrentNode))
+    if (parserNamespaceIsHTML(adjustedCurrentNode))
         return false;
     if (HTMLElementStack::isMathMLTextIntegrationPoint(adjustedCurrentNode)) {
         if (token.type() == HTMLToken::Type::StartTag
@@ -2998,10 +3068,24 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
             m_tree.openElements().popUntilForeignContentScopeMarker();
             processStartTag(WTF::move(token));
             return;
+        case TagName::template_:
+            if (m_options.templateContentNamespace) {
+                // https://whatpr.org/html/13100/parsing.html#parsing-main-inforeign: the token is
+                // processed using the "in head" rules; a self-closing template start tag is
+                // followed by a fake template end tag.
+                bool selfClosing = token.selfClosing();
+                processTemplateStartTag(WTF::move(token));
+                if (selfClosing && m_tree.currentStackItem().elementName() == HTML::template_) {
+                    AtomHTMLToken fakeToken(HTMLToken::Type::EndTag, TagName::template_);
+                    processTemplateEndTag(WTF::move(fakeToken));
+                }
+                return;
+            }
+            break;
         default:
             break;
         }
-        auto& currentNamespace = adjustedCurrentNode.namespaceURI();
+        auto& currentNamespace = parserNamespace(adjustedCurrentNode);
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
             adjustMathMLAttributes(token);
         if (currentNamespace == SVGNames::svgNamespaceURI) {
@@ -3022,6 +3106,11 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
         break;
     }
     case HTMLToken::Type::EndTag: {
+        if (m_options.templateContentNamespace && token.tagName() == TagName::template_) {
+            processTemplateEndTag(WTF::move(token));
+            return;
+        }
+
         if (adjustedCurrentNode.namespaceURI() == SVGNames::svgNamespaceURI)
             adjustSVGTagNameCase(token);
 
@@ -3037,6 +3126,8 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
             processEndTag(WTF::move(token));
             return;
         }
+        if (m_options.templateContentNamespace && m_tree.currentStackItem().elementName() == HTML::template_)
+            return;
         if (!isInHTMLNamespace(m_tree.currentStackItem())) {
             // FIXME: This code just wants an Element* iterator, instead of an ElementRecord*
             auto* nodeRecord = &m_tree.openElements().topRecord();
@@ -3049,8 +3140,17 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
                 }
                 nodeRecord = nodeRecord->next();
 
-                if (isInHTMLNamespace(nodeRecord->stackItem()))
+                if (isInHTMLNamespace(nodeRecord->stackItem())) {
+                    if (m_options.templateContentNamespace) {
+                        // https://whatpr.org/html/13100/parsing.html#parsing-main-inforeign:
+                        // foreign end-tag recovery stops at open template boundaries.
+                        if (nodeRecord->stackItem().elementName() == HTML::template_)
+                            return;
+                        if (&nodeRecord->stackItem().node() == &m_tree.openElements().rootNode() && isParsingFragment() && m_fragmentContext.contextElement().elementName() == HTML::template_)
+                            return;
+                    }
                     break;
+                }
             }
         }
         // Otherwise, process the token according to the rules given in the section corresponding to the current insertion mode in HTML content.

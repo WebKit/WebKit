@@ -949,9 +949,11 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (!m_currentNode) // Synchronous DOM events may have removed the current node.
         return;
 
-    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(newElement))
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(newElement)) {
+        if (document->settings().htmlTemplateContentNamespaceEnabled())
+            templateElement->setContentNamespaceFromParser(templateElement->resolveContentNamespace(HTMLTemplateElement::resolveParserContextNamespace(*currentNode, HTMLNames::xhtmlNamespaceURI)));
         pushCurrentNode(&protect(templateElement->content()).get());
-    else
+    } else
         pushCurrentNode(newElement.ptr());
 
     if (!m_parsingFragment && isFirstElement && document->frame())

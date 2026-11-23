@@ -11,7 +11,7 @@
 
 test(() => {
   const p = new DOMParser();
-  const doc = p.parseFromString("<!DOCTYPE html><svg><template>text</template></svg>", "text/html");
+  const doc = p.parseFromString("<svg xmlns='http://www.w3.org/2000/svg'><template>text</template></svg>", "image/svg+xml");
 
   const template = doc.querySelector("template");
   assert_equals(template.textContent, "text");
@@ -21,8 +21,11 @@ test(() => {
 
 test(() => {
   const doc = document.implementation.createHTMLDocument();
-  doc.body.innerHTML = "<svg><template></template></svg>";
-  doc.querySelector("template").innerHTML = "text";
+  const svg = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const svgTemplate = doc.createElementNS("http://www.w3.org/2000/svg", "template");
+  svg.appendChild(svgTemplate);
+  doc.body.appendChild(svg);
+  svgTemplate.innerHTML = "text";
 
   const template = doc.querySelector("template");
   assert_equals(template.textContent, "text");

@@ -1,0 +1,6 @@
+
+patched
+
+PASS Removing the markers does not disconnect an iframe inside the patch
+PASS Removing the markers does not disconnect an iframe beside the patch
+

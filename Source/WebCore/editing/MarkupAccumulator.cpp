@@ -48,8 +48,10 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
+#include "MathMLNames.h"
 #include "NodeName.h"
 #include "ProcessingInstruction.h"
+#include "SVGNames.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -615,6 +617,27 @@ NODELETE static bool isURLAttributeForElement(const Element& element, const Attr
     return element.isURLAttribute(attribute) || element.isHTMLContentAttribute(attribute);
 }
 
+// https://whatpr.org/html/13100/parsing.html#serialising-html-fragments: the template content
+// namespace is always serialized first, and any contentnamespace attribute is skipped so
+// namespaces round-trip.
+static RefPtr<const HTMLTemplateElement> templateElementWithSerializedContentNamespace(const Element& element)
+{
+    if (!element.document().settings().htmlTemplateContentNamespaceEnabled())
+        return nullptr;
+    return dynamicDowncast<HTMLTemplateElement>(element);
+}
+
+// Matches any attribute whose serialized name is "contentnamespace", regardless of its namespace.
+static bool attributeSerializesAsContentNamespace(const Attribute& attribute)
+{
+    auto& name = attribute.name();
+    return name.localName() == contentnamespaceAttr->localName()
+        && name.prefix().isEmpty()
+        && name.namespaceURI() != XLinkNames::xlinkNamespaceURI
+        && name.namespaceURI() != XMLNames::xmlNamespaceURI
+        && name.namespaceURI() != XMLNSNames::xmlnsNamespaceURI;
+}
+
 void MarkupAccumulator::appendStartTagWithURLReplacement(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
     bool hasURLAttribute = false;
@@ -623,6 +646,8 @@ void MarkupAccumulator::appendStartTagWithURLReplacement(StringBuilder& result, 
 
     if (element.hasAttributes()) {
         for (auto& attribute : element.attributes()) {
+            if (attributeSerializesAsContentNamespace(attribute) && !inXMLFragmentSerialization() && templateElementWithSerializedContentNamespace(element))
+                continue;
             if (attribute.name() == crossoriginAttr || attribute.name() == integrityAttr) {
                 attributesToAppendIfURLNotReplaced.append(attribute);
                 continue;
@@ -651,13 +676,29 @@ void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& ele
 {
     appendOpenTag(result, element, namespaces);
 
+    RefPtr<const HTMLTemplateElement> templateElement;
+    if (!inXMLFragmentSerialization())
+        templateElement = templateElementWithSerializedContentNamespace(element);
+    if (templateElement) {
+        auto& contentNamespace = templateElement->contentNamespace();
+        auto keyword = "html"_s;
+        if (contentNamespace == SVGNames::svgNamespaceURI)
+            keyword = "svg"_s;
+        else if (contentNamespace == MathMLNames::mathmlNamespaceURI)
+            keyword = "mathml"_s;
+        result.append(" contentnamespace=\""_s, keyword, '"');
+    }
+
     if (m_serializationContext) {
         // This function might change ordering of attributes in markup, so it should only be used for URL replacement case.
         appendStartTagWithURLReplacement(result, element, namespaces);
     } else {
         if (element.hasAttributes()) {
-            for (auto& attribute : element.attributes())
+            for (auto& attribute : element.attributes()) {
+                if (templateElement && attributeSerializesAsContentNamespace(attribute))
+                    continue;
                 appendAttribute(result, element, attribute, namespaces);
+            }
         }
     }
 

@@ -1,0 +1,4 @@
+
+PASS <template shadowrootmode='open'> supersedes contentnamespace only when a shadow root is actually attached
+PASS Declarative ShadowRoot supersedes <template contentnamespace='svg'> and round-trips consistently via getHTML()
+
