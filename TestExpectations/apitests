@@ -272,7 +272,6 @@ rdar://97553050 [ ios ] TestWebKitAPI.PrivateClickMeasurement.DaemonBasicFunctio
 webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.DestinationClickFraudPrevention [ Pass Timeout ]
 webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.EphemeralWithAttributedBundleIdentifier [ Pass Timeout ]
 webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.ManualAttributionAndConversion [ Pass Timeout ]
-webkit.org/b/330584 TestWebKitAPI.PrivateClickMeasurement.SourceClickFraudPrevention [ Pass Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.CrashWithGestureController [ Skip ]
 webkit.org/b/324277 TestWebKitAPI.ProcessSwap.HistoryItemIDConfusion [ Pass Timeout ]
 rdar://137984168 [ ios ] TestWebKitAPI.ProcessSwap.NavigateBackAfterCrossOriginClientRedirect [ Skip ]
