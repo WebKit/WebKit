@@ -145,7 +145,7 @@ private:
     void pushErrorScope(::WebGPU::ErrorFilter);
     void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&);
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&);
-    void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason)>&&);
+    void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, bool isLost)>&&);
 
     void setLabel(String&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);

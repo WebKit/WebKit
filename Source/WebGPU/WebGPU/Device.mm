@@ -417,11 +417,12 @@ void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
 
     m_adapter->makeInvalid();
 
+    // The callback sees that the device is lost.
+    m_isLost = true;
     if (m_deviceLostCallback)
         m_deviceLostCallback(reason, "Device lost."_s);
 
     protect(m_defaultQueue)->makeInvalid();
-    m_isLost = true;
 }
 
 static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)

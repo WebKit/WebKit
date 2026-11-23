@@ -154,7 +154,7 @@ public:
     NODELETE void setLabel(String&&) final;
 
     NODELETE bool isValid() const final { return m_device; }
-    bool isLost() const { return m_isLost; }
+    NODELETE bool isLost() const final { return m_isLost; }
     NODELETE const Limits& limits() const LIFETIME_BOUND final { return m_capabilities.limits; }
     const Limits limitsCopy() const { return m_capabilities.limits; }
     const HardwareCapabilities::BaseCapabilities& baseCapabilities() const LIFETIME_BOUND { return m_capabilities.baseCapabilities; }

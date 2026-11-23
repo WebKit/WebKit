@@ -101,7 +101,7 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 // Calls the uncaptured error callback of the C API with each error of the device that no error scope
 // catches, until the device is lost. As in webgpu.h, the callback has no callback mode: it is called
 // in the call that generates the error, on its thread.
-static void listenForUncapturedErrors(WebGPU::Metal::Device& device, const WGPUUncapturedErrorCallbackInfo& callbackInfo)
+static void listenForUncapturedErrors(WebGPU::Device& device, const WGPUUncapturedErrorCallbackInfo& callbackInfo)
 {
     device.resolveUncapturedErrorEvent({ [weakDevice = ThreadSafeWeakPtr { device }, callbackInfo](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
         // There is no error when the device is destroyed.

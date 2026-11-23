@@ -435,10 +435,14 @@ void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std:
     });
 }
 
-void RemoteDevice::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason)>&& callback)
+// The reply says whether the device is lost: a callback is also completed when another one replaces
+// it, and then the device is not lost. The device keeps the callback, so it is held weakly. A device
+// that is gone is lost.
+void RemoteDevice::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, bool isLost)>&& callback)
 {
-    m_backing->resolveDeviceLostPromise([callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason, String&&) mutable {
-        callback(reason);
+    m_backing->resolveDeviceLostPromise([weakDevice = ThreadSafeWeakPtr { m_backing.get() }, callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason, String&&) mutable {
+        RefPtr device = weakDevice;
+        callback(reason, !device || device->isLost());
     });
 }
 
