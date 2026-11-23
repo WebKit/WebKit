@@ -2686,6 +2686,24 @@ void CodeBlock::forceOptimizationSlowPathConcurrently()
 }
 
 #if ENABLE(DFG_JIT)
+void CodeBlock::optimizeAfterWarmUpForDeferredCompilation()
+{
+    dataLogLnIf(Options::verboseOSR(), *this, ": Optimizing after warm-up, compilation deferred.");
+    auto* jitData = baselineJITData();
+    ASSERT(jitData);
+
+    // While a compile is pending, reaching the threshold only re-checks the plan. The quick tier-up
+    // threshold would re-check more often than needed, so use the normal threshold capped at
+    // maximumExecutionCountsBetweenCheckpointsForBaseline() so that waiting adds no
+    // updateAllPredictions() calls compared to the quick threshold.
+    int32_t threshold = adjustedCounterValue(Options::thresholdForOptimizeAfterWarmUp());
+    if (unlinkedCodeBlock()->isQuickDFGTierUp()) {
+        int32_t quickThreshold = adjustedCounterValue(static_cast<int32_t>(Options::thresholdForOptimizeAfterWarmUp() * Options::quickDFGTierUpThresholdFactor()));
+        threshold = std::max(quickThreshold, std::min(threshold, Options::maximumExecutionCountsBetweenCheckpointsForBaseline()));
+    }
+    jitData->executeCounter().setNewThreshold(threshold, this);
+}
+
 void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResult result)
 {
     JITType type = jitType();
@@ -2720,7 +2738,7 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
         // necessarily guarantee anything. So, we make sure that even if that
         // function ends up being a no-op, we still eventually retry and realize
         // that we have optimized code ready.
-        optimizeAfterWarmUp();
+        optimizeAfterWarmUpForDeferredCompilation();
         return;
     case CompilationResult::CompilationInvalidated:
         // Retry with exponential backoff.
