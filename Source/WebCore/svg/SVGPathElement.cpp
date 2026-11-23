@@ -151,9 +151,10 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         if (auto* path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
 
-        updateSVGRendererForElementChange();
         if (document().settings().cssDPropertyEnabled())
             setPresentationalHintStyleIsDirty();
+        else
+            updateSVGRendererForElementChange();
         invalidateResourceImageBuffersIfNeeded();
         return;
     }
