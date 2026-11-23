@@ -57,40 +57,31 @@ static PlatformImagePtr placeholderPlatformImage()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteNativeImageProxy);
 
-Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&& resourceCache)
-{
-    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, WTF::move(resourceCache), nullptr));
-}
-
 Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&& sharedResourceCache)
 {
-    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, nullptr, WTF::move(sharedResourceCache)));
+    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, WTF::move(sharedResourceCache)));
 }
 
-RemoteNativeImageProxy::RemoteNativeImageProxy(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakPtr<RemoteResourceCacheProxy>&& resourceCache, RefPtr<RemoteSharedResourceCacheProxy>&& sharedResourceCache)
-    : m_resourceCache(WTF::move(resourceCache))
-    , m_sharedResourceCache(WTF::move(sharedResourceCache))
+RemoteNativeImageProxy::RemoteNativeImageProxy(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&& sharedResourceCache)
+    : m_sharedResourceCache(WTF::move(sharedResourceCache))
+    , m_referenceTracker(renderingResourceIdentifier())
     , m_size(size)
     , m_colorSpace(WTF::move(colorSpace))
     , m_hasAlpha(hasAlpha)
 {
-    if (m_sharedResourceCache)
-        m_referenceTracker.emplace(renderingResourceIdentifier());
 }
 
 RemoteNativeImageProxy::~RemoteNativeImageProxy()
 {
-    // For a shared image both apply: the RemoteResourceCacheProxy that adopted it releases the
-    // rendering backend's cache entry, and the shared resource cache releases the shared entry.
+    // Both apply: the RemoteResourceCacheProxy that adopted the image releases the rendering
+    // backend's cache entry, and the shared resource cache releases the shared entry.
     if (CheckedPtr resourceCache = m_resourceCache.get())
         resourceCache->willDestroyRemoteNativeImageProxy(*this);
-    if (m_sharedResourceCache)
-        m_sharedResourceCache->releaseNativeImage(*this);
+    protect(m_sharedResourceCache)->releaseNativeImage(*this);
 }
 
 void RemoteNativeImageProxy::attachResourceCache(WeakRef<RemoteResourceCacheProxy>&& resourceCache)
 {
-    ASSERT(isSharedNativeImage());
     ASSERT(!m_resourceCache);
     m_resourceCache = WTF::move(resourceCache);
 }
@@ -103,13 +94,8 @@ PlatformImagePtr RemoteNativeImageProxy::platformImage() const
             return m_platformImage;
     }
     PlatformImagePtr platformImage;
-    // Currently calls made here are always to a cache that is local to the thread.
-    if (CheckedPtr resourceCache = m_resourceCache.get())
-        platformImage = resourceCache->platformImage(*this);
-    else if (RefPtr sharedResourceCache = m_sharedResourceCache) {
-        if (RefPtr bitmap = sharedResourceCache->nativeImagePixels(*this))
-            platformImage = bitmap->createPlatformImage();
-    }
+    if (RefPtr bitmap = protect(m_sharedResourceCache)->nativeImagePixels(*this))
+        platformImage = bitmap->createPlatformImage();
     // The callers do not expect !platformImage().
     if (!platformImage)
         platformImage = placeholderPlatformImage();

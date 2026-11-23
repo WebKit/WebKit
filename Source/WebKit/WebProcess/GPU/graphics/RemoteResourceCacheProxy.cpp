@@ -100,10 +100,18 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy() = default;
 
 Ref<RemoteNativeImageProxy> RemoteResourceCacheProxy::createNativeImage(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha)
 {
-    WeakRef weakThis = m_remoteNativeImageProxyWeakFactory.createWeakPtr(*this).releaseNonNull();
-    Ref nativeImage = RemoteNativeImageProxy::create(size, WTF::move(colorSpace), hasAlpha, WTF::move(weakThis));
-    m_nativeImages.add(nativeImage.ptr(), NativeImageEntry { nullptr, true });
+    Ref nativeImage = RemoteNativeImageProxy::create(size, WTF::move(colorSpace), hasAlpha, m_remoteRenderingBackendProxy->sharedResourceCache());
+    // The GPU process caches the image in the rendering backend when it publishes it, so it needs no adopting message.
+    adoptSharedNativeImage(nativeImage);
     return nativeImage;
+}
+
+void RemoteResourceCacheProxy::adoptSharedNativeImage(RemoteNativeImageProxy& image)
+{
+    // The image reports its destruction to this cache from now on, so that the rendering backend cache
+    // entry is released.
+    image.attachResourceCache(m_remoteNativeImageProxyWeakFactory.createWeakPtr(*this).releaseNonNull());
+    m_nativeImages.add(&image, NativeImageEntry { nullptr, true });
 }
 
 RemoteGradientIdentifier RemoteResourceCacheProxy::recordGradientUse(const Gradient& gradient)
@@ -211,10 +219,7 @@ bool RemoteResourceCacheProxy::recordNativeImageUse(const NativeImage& image, co
 
 RemoteNativeImageReadReference RemoteResourceCacheProxy::recordSharedNativeImageUse(RemoteNativeImageProxy& image)
 {
-    // The image reports its destruction to this cache from now on, so that the rendering backend cache
-    // entry created by the caller is released, and so that pixel read-back can be routed through here.
-    image.attachResourceCache(m_remoteNativeImageProxyWeakFactory.createWeakPtr(*this).releaseNonNull());
-    m_nativeImages.add(&image, NativeImageEntry { nullptr, true });
+    adoptSharedNativeImage(image);
     return image.newReadReference();
 }
 
@@ -284,22 +289,6 @@ void RemoteResourceCacheProxy::willDestroyNativeImage(const NativeImage& image)
 void RemoteResourceCacheProxy::willDestroyRemoteNativeImageProxy(const RemoteNativeImageProxy& image)
 {
     willDestroyNativeImage(image);
-}
-
-PlatformImagePtr RemoteResourceCacheProxy::platformImage(const RemoteNativeImageProxy& image)
-{
-    auto it = m_nativeImages.find(&image);
-    RELEASE_ASSERT(it != m_nativeImages.end());
-    auto& entry = it->value;
-    if (!entry.existsInRemote)
-        return nullptr;
-    if (!entry.bitmap) {
-        auto bitmap = m_remoteRenderingBackendProxy->nativeImageBitmap(image);
-        if (!bitmap)
-            return nullptr;
-        entry.bitmap = WTF::move(bitmap);
-    }
-    return RefPtr { entry.bitmap }->createPlatformImage();
 }
 
 void RemoteResourceCacheProxy::willDestroyGradient(const Gradient& gradient)

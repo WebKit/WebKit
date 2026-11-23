@@ -344,7 +344,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
     // This read-back bypasses flushDrawingContext(), so send any buffered line
     // strokes into the stream before the (in-order) CopyNativeImage message.
     sendPendingDrawsIfNecessary();
-    send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->renderingResourceIdentifier()));
+    send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->reference()));
     return nativeImage;
 }
 

@@ -426,7 +426,7 @@ void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier iden
     MESSAGE_CHECK(success, "Missing ImageBuffer");
 }
 
-void RemoteRenderingBackend::sinkImageBufferIntoNativeImage(RenderingResourceIdentifier identifier, RenderingResourceIdentifier imageIdentifier)
+void RemoteRenderingBackend::sinkImageBufferIntoNativeImage(RenderingResourceIdentifier identifier, RemoteNativeImageReference imageReference)
 {
     assertIsCurrent(workQueue());
     // Like releaseImageBuffer(), the buffer is gone after this. The web process does not release it again.
@@ -439,13 +439,21 @@ void RemoteRenderingBackend::sinkImageBufferIntoNativeImage(RenderingResourceIde
     if (!image)
         image = createPlaceholderNativeImage();
     MESSAGE_CHECK(image, "NativeImage could not be created");
-    bool success = m_remoteResourceCache.cacheNativeImage(imageIdentifier, image.releaseNonNull());
+    bool success = cacheAndPublishNativeImage(imageReference, image.releaseNonNull());
     MESSAGE_CHECK(success, "NativeImage already exists");
 }
 
 RefPtr<NativeImage> RemoteRenderingBackend::createPlaceholderNativeImage()
 {
     return ImageBuffer::sinkIntoNativeImage(ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8));
+}
+
+bool RemoteRenderingBackend::cacheAndPublishNativeImage(RemoteNativeImageReference reference, Ref<NativeImage>&& image)
+{
+    assertIsCurrent(workQueue());
+    if (!m_remoteResourceCache.cacheNativeImage(reference.identifier(), image.copyRef()))
+        return false;
+    return protect(m_sharedResourceCache)->addNativeImage(reference, WTF::move(image));
 }
 
 void RemoteRenderingBackend::createImageBufferSet(ImageBufferSetIdentifier identifier, RemoteGraphicsContextIdentifier contextIdentifier)
@@ -465,18 +473,6 @@ void RemoteRenderingBackend::releaseImageBufferSet(ImageBufferSetIdentifier iden
 void RemoteRenderingBackend::destroyGetPixelBufferSharedMemory()
 {
     m_getPixelBufferSharedMemory = nullptr;
-}
-
-void RemoteRenderingBackend::nativeImageBitmap(RenderingResourceIdentifier imageIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>)>&& completionHandler)
-{
-    std::optional<ShareableBitmap::Handle> result;
-    [&] {
-        RefPtr image = m_remoteResourceCache.cachedNativeImage(imageIdentifier);
-        MESSAGE_CHECK(image, "NativeImage not cached.");
-        result = protect(m_sharedResourceCache)->createBitmapHandle(*image);
-    }();
-    ASSERT(result);
-    completionHandler(WTF::move(result));
 }
 
 void RemoteRenderingBackend::cacheNativeImage(ShareableBitmap::Handle&& handle, RenderingResourceIdentifier imageIdentifier)

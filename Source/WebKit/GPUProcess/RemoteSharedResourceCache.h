@@ -74,10 +74,6 @@ public:
     // For stream message handlers: std::nullopt means that the handler should defer the message.
     std::optional<RefPtr<WebCore::NativeImage>> readNativeImage(IPC::StreamServerConnection&, RemoteNativeImageReadReference&&);
 
-    // A bitmap with the pixels of `image`, owned by the Web process. Replaces the platform image of `image` with
-    // one that uses the bitmap, so that the pixels are not held twice.
-    std::optional<WebCore::ShareableBitmap::Handle> createBitmapHandle(const WebCore::NativeImage&);
-
     const WebCore::ProcessIdentity& resourceOwner() const LIFETIME_BOUND { return m_resourceOwner; }
 #if HAVE(IOSURFACE)
     WebCore::IOSurfacePool& ioSurfacePool() const { return m_ioSurfacePool; }
@@ -103,6 +99,10 @@ private:
     void releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier);
     void releaseNativeImage(RemoteNativeImageWriteReference&&);
     void getNativeImagePixels(RemoteNativeImageReadReference&&, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+
+    // A bitmap with the pixels of `image`, owned by the Web process. Replaces the platform image of `image` with
+    // one that uses the bitmap, so that the pixels are not held twice.
+    std::optional<WebCore::ShareableBitmap::Handle> createBitmapHandle(const WebCore::NativeImage&);
 
     const Ref<IPC::Connection> m_connection;
     const Ref<WorkQueue> m_workQueue;
