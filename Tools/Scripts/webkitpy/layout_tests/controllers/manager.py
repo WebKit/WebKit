@@ -396,6 +396,9 @@ class Manager(object):
         overall_start_time = time.time()
         max_child_processes_for_run = 1
         all_uploads = []
+        drivers_skipping_all_tests = []
+        drivers_with_tests = []
+        last_driver_state_with_tests = None
 
         for driver_name in self._driver_names:
             self._current_driver_name = driver_name
@@ -445,13 +448,21 @@ class Manager(object):
             # Check to see if all tests we are running are skipped.
             if aggregate_tests == aggregate_tests_to_skip:
                 # XXX: this is currently identical to the follow if, which likely isn't intended
-                _log.error("All tests skipped.")
-                return test_run_results.RunDetails(exit_code=0, skipped_all_tests=True)
+                if len(self._driver_names) > 1:
+                    _log.info('All tests skipped for {}.'.format(driver_name))
+                drivers_skipping_all_tests.append(driver_name)
+                self._port.stop_helper()
+                continue
 
             # Check to make sure we have no tests to run that are not skipped.
             if not aggregate_tests_to_run:
-                _log.critical('No tests to run.')
-                return test_run_results.RunDetails(exit_code=-1)
+                if len(self._driver_names) > 1:
+                    _log.info('No tests to run for {}.'.format(driver_name))
+                self._port.stop_helper()
+                continue
+
+            drivers_with_tests.append(driver_name)
+            last_driver_state_with_tests = (driver_name, self._port, self._results_directory, self._finder)
 
             self._printer.write_update("Checking build ...")
             if not self._port.check_build():
@@ -618,6 +629,14 @@ class Manager(object):
             if initial_results and (initial_results.interrupted or initial_results.keyboard_interrupted):
                 break
 
+        if not last_driver_state_with_tests:
+            if len(drivers_skipping_all_tests) == len(self._driver_names):
+                _log.error("All tests skipped.")
+                return test_run_results.RunDetails(exit_code=0, skipped_all_tests=True)
+            _log.critical('No tests to run.')
+            return test_run_results.RunDetails(exit_code=-1)
+
+        self._current_driver_name, self._port, self._results_directory, self._finder = last_driver_state_with_tests
 
         # Used for final logging, max_child_processes_for_run is most relevant here.
         self._options.child_processes = max_child_processes_for_run
@@ -630,7 +649,7 @@ class Manager(object):
                 overall_retry_results.results_by_name[test_name] = result
 
         end_time = time.time()
-        result = self._end_test_run(overall_start_time, end_time, overall_initial_results, overall_retry_results, overall_enabled_pixel_tests_in_retry, overall_skipped_by_disabled_keys)
+        result = self._end_test_run(overall_start_time, end_time, overall_initial_results, overall_retry_results, overall_enabled_pixel_tests_in_retry, overall_skipped_by_disabled_keys, drivers_with_tests)
 
         if self._options.report_urls and all_uploads:
             self._printer.writeln('\n')
@@ -694,7 +713,7 @@ class Manager(object):
 
         return (initial_results, retry_results, enabled_pixel_tests_in_retry)
 
-    def _end_test_run(self, start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry, skipped_by_disabled_keys):
+    def _end_test_run(self, start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry, skipped_by_disabled_keys, driver_names=None):
         if initial_results is None:
             _log.error('No results generated')
             return test_run_results.RunDetails(exit_code=-1)
@@ -709,6 +728,8 @@ class Manager(object):
         _log.debug("summarizing results")
         flat_expectations = OrderedDict()
         for key, exp in self._expectations.items():
+            if driver_names and isinstance(key, tuple) and key[0] not in driver_names:
+                continue
             device_type = key[1] if isinstance(key, tuple) else key
             if device_type not in flat_expectations:
                 flat_expectations[device_type] = exp

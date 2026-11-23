@@ -416,6 +416,80 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(details.exit_code, 0)
         self.assertContains(err, 'All tests skipped.\n')
 
+    def _run_with_tests_skipped_for_drivers(self, args, skipped_tests_by_driver, host):
+        original_skipped_layout_tests = test.TestPort.skipped_layout_tests
+
+        def skipped_layout_tests(port, device_type):
+            return original_skipped_layout_tests(port, device_type) | skipped_tests_by_driver.get(port.driver_name(), set())
+
+        with patch.object(test.TestPort, 'skipped_layout_tests', skipped_layout_tests):
+            return logging_run(['--skipped=always'] + args, tests_included=True, host=host, shared_port=False)
+
+    def test_all_tests_skipped_single_driver(self):
+        host = MockHost()
+        details, err, _ = self._run_with_tests_skipped_for_drivers(
+            ['-2', 'passes/text.html'], {'WebKitTestRunner': {'passes/text.html'}}, host)
+        self.assertEqual(details.exit_code, 0)
+        self.assertTrue(details.skipped_all_tests)
+        self.assertIsNone(details.initial_results)
+        self.assertContains(err, 'All tests skipped.\n')
+        self.assertNotIn('All tests skipped for', err.getvalue())
+
+    def test_all_tests_skipped_for_first_driver_runs_second_driver(self):
+        host = MockHost()
+        details, err, _ = self._run_with_tests_skipped_for_drivers(
+            ['-2', '-1', 'passes/text.html', 'failures/unexpected/text.html'],
+            {'WebKitTestRunner': {'passes/text.html', 'failures/unexpected/text.html'}}, host)
+
+        self.assertFalse(details.skipped_all_tests)
+        self.assertEqual(details.exit_code, 1)
+        self.assertContains(err, 'All tests skipped for WebKitTestRunner.\n')
+        self.assertNotIn('All tests skipped.\n', err.getvalue())
+
+        self.assertEqual(details.initial_results.results_by_name['passes/text.html'].type, test_expectations.PASS)
+        self.assertEqual(list(details.initial_results.unexpected_results_by_name.keys()), ['failures/unexpected/text.html'])
+        self.assertEqual(details.summarized_results['num_regressions'], 1)
+        self.assertEqual(details.summarized_results['tests']['failures']['unexpected']['text.html']['expected'], 'PASS')
+        self.assertNotIn('passes', details.summarized_results['tests'])
+
+        self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/full_results.json'))
+        wk1_full_results = host.filesystem.read_text_file('/tmp/layout-test-results/wk1/full_results.json')
+        self.assertTrue(wk1_full_results.startswith("ADD_RESULTS('wk1',"))
+        wk1_results = json.loads(wk1_full_results[len("ADD_RESULTS('wk1',"):-len(');')])
+        self.assertEqual(wk1_results['num_regressions'], 1)
+        self.assertEqual(wk1_results['tests']['failures']['unexpected']['text.html']['report'], 'REGRESSION')
+
+    def test_all_tests_skipped_for_second_driver_keeps_first_driver_results(self):
+        host = MockHost()
+        details, err, _ = self._run_with_tests_skipped_for_drivers(
+            ['-2', '-1', 'passes/text.html', 'failures/unexpected/text.html'],
+            {'DumpRenderTree': {'passes/text.html', 'failures/unexpected/text.html'}}, host)
+
+        self.assertFalse(details.skipped_all_tests)
+        self.assertEqual(details.exit_code, 1)
+        self.assertContains(err, 'All tests skipped for DumpRenderTree.\n')
+        self.assertNotIn('All tests skipped.\n', err.getvalue())
+
+        self.assertEqual(details.initial_results.results_by_name['passes/text.html'].type, test_expectations.PASS)
+        self.assertEqual(list(details.initial_results.unexpected_results_by_name.keys()), ['failures/unexpected/text.html'])
+        self.assertEqual(details.summarized_results['num_regressions'], 1)
+
+        wk2_results = parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
+        self.assertEqual(wk2_results['num_regressions'], 1)
+        self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/wk1/full_results.json'))
+
+    def test_all_tests_skipped_for_every_driver(self):
+        host = MockHost()
+        details, err, _ = self._run_with_tests_skipped_for_drivers(
+            ['-2', '-1', 'passes/text.html'],
+            {'WebKitTestRunner': {'passes/text.html'}, 'DumpRenderTree': {'passes/text.html'}}, host)
+        self.assertEqual(details.exit_code, 0)
+        self.assertTrue(details.skipped_all_tests)
+        self.assertIsNone(details.initial_results)
+        self.assertContains(err, 'All tests skipped for WebKitTestRunner.\n')
+        self.assertContains(err, 'All tests skipped for DumpRenderTree.\n')
+        self.assertContains(err, 'All tests skipped.\n')
+
     def test_ignored_sanitizer_options_warning_logged_once_per_run(self):
         with patch.dict('os.environ', {'ASAN_OPTIONS': 'log_path=/tmp/shell'}):
             details, err, _ = logging_run(['-1', '-2', 'passes/text.html', 'passes/image.html'], tests_included=True)
