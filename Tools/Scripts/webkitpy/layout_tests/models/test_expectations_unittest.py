@@ -362,25 +362,35 @@ class ExpectationSyntaxTests(Base):
             self.assertEqual(expectation_line.modifiers, modifiers)
             self.assertEqual(expectation_line.expectations, expectations)
 
+    def assert_bare(self, line, modifiers, comment=None):
+        self.assert_tokenize_exp(line, warnings=[TestExpectationParser.MISSING_EXPECTATIONS_WARNING], comment=comment)
+        expectation_line = TestExpectationParser._tokenize_line('TestExpectations', line, 1)
+        self.assertEqual(expectation_line.modifiers, modifiers)
+        self.assertEqual(expectation_line.expectations, ['PASS'])
+
     def test_bare_name(self):
-        self.assert_tokenize_exp('foo.html', modifiers=['SKIP'], expectations=['PASS'])
+        self.assert_bare('foo.html', ['SKIP'])
 
     def test_bare_name_and_bugs(self):
-        self.assert_tokenize_exp('webkit.org/b/12345 foo.html', modifiers=['BUGWK12345', 'SKIP'], expectations=['PASS'])
-        self.assert_tokenize_exp('Bug(dpranke) foo.html', modifiers=['BUGDPRANKE', 'SKIP'], expectations=['PASS'])
-        self.assert_tokenize_exp('webkit.org/b/12345 webkit.org/b/34567 foo.html', modifiers=['BUGWK12345', 'BUGWK34567', 'SKIP'], expectations=['PASS'])
+        self.assert_bare('webkit.org/b/12345 foo.html', ['BUGWK12345', 'SKIP'])
+        self.assert_bare('Bug(dpranke) foo.html', ['BUGDPRANKE', 'SKIP'])
+        self.assert_bare('webkit.org/b/12345 webkit.org/b/34567 foo.html', ['BUGWK12345', 'BUGWK34567', 'SKIP'])
 
     def test_comments(self):
         self.assert_tokenize_exp("# comment", name=None, comment="# comment")
-        self.assert_tokenize_exp("foo.html # comment", comment="# comment", expectations=['PASS'], modifiers=['SKIP'])
+        self.assert_bare('foo.html # comment', ['SKIP'], comment='# comment')
+        self.assert_tokenize_exp('foo.html [ Skip ] # comment', comment='# comment', expectations=['PASS'], modifiers=['SKIP'])
 
     def test_config_modifiers(self):
-        self.assert_tokenize_exp('[ Mac ] foo.html', modifiers=['MAC', 'SKIP'], expectations=['PASS'])
-        self.assert_tokenize_exp('[ Mac Vista ] foo.html', modifiers=['MAC', 'VISTA', 'SKIP'], expectations=['PASS'])
+        self.assert_bare('[ Mac ] foo.html', ['MAC', 'SKIP'])
+        self.assert_bare('[ Mac Vista ] foo.html', ['MAC', 'VISTA', 'SKIP'])
         self.assert_tokenize_exp('[ Mac ] foo.html [ Failure ] ', modifiers=['MAC'], expectations=['FAIL'])
 
     def test_unknown_config(self):
-        self.assert_tokenize_exp('[ Foo ] foo.html ', modifiers=['Foo', 'SKIP'], expectations=['PASS'])
+        self.assert_bare('[ Foo ] foo.html ', ['Foo', 'SKIP'])
+
+    def test_line_that_failed_to_parse_does_not_also_lack_expectations(self):
+        self.assert_tokenize_exp('foo.html webkit.org/b/12345 ]', warnings=['"webkit.org/b/12345" is not at the start of the line.'])
 
     def test_unknown_expectation(self):
         self.assert_tokenize_exp('foo.html [ Audio ]', warnings=['Unrecognized expectation "Audio"'])
