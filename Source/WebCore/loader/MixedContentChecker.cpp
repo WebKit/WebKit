@@ -78,6 +78,12 @@ static bool isDataContextSecure(const Frame& frame)
 
 static bool isMixedContent(const Frame& frame, const URL& url)
 {
+    // Schemes handled by a scheme handler are authenticated by the embedder, so they are potentially
+    // trustworthy URLs and never mixed content.
+    // https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy
+    if (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()))
+        return false;
+
     if (isDocumentSecure(frame) || (frame.frameURLProtocol() == "data"_s && isDataContextSecure(frame)))
         return !SecurityOrigin::isSecure(url);
 
@@ -133,7 +139,7 @@ bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destina
     if (targetAddressSpace != IPAddressSpace::Public)
         return false;
     // 4.1.1 request’s URL is a potentially trustworthy URL.
-    if (url.protocolIs("https"_s))
+    if (url.protocolIs("https"_s) || LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()))
         return false;
     // 4.1.2 request’s URL’s host is an IP address.
     if (URL::hostIsIPAddress(url.host()) && !shouldTreatAsPotentiallyTrustworthy(url))
@@ -142,8 +148,7 @@ bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destina
     if (!destinationIsImageAudioOrVideo(destination))
         return false;
     // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
-    auto schemeIsHandledBySchemeHandler = LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
-    if (!schemeIsHandledBySchemeHandler && destinationIsImageAndInitiatorIsImageset(destination, initiator))
+    if (destinationIsImageAndInitiatorIsImageset(destination, initiator))
         return false;
     return true;
 }
@@ -152,7 +157,7 @@ static bool shouldAllowConnectionWithPotentiallyInsecureProtocol(Frame& frame, c
 {
     if (RefPtr localFrame = dynamicDowncast<const LocalFrame>(frame); localFrame && protect(localFrame->document())->quirks().shouldAllowMixedContentConnectionToLoopback(url))
         return true;
-    return (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || shouldTreatAsPotentiallyTrustworthy(url)) && isUpgradable == MixedContentChecker::IsUpgradable::Yes;
+    return shouldTreatAsPotentiallyTrustworthy(url) && isUpgradable == MixedContentChecker::IsUpgradable::Yes;
 }
 
 bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpgradable isUpgradable, IPAddressSpace targetAddressSpace)

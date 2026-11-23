@@ -98,22 +98,19 @@ TEST(MixedContentChecker, CanModifyRequest)
         Initiator::Imageset
     ));
 
-    // But if the scheme is handled by the handler, it is modifiable even if the initiator is "imageset".
+    // A scheme handled by a scheme handler is potentially trustworthy, so it is never modified.
     LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler("custom"_s);
 
     ASSERT_TRUE(LegacySchemeRegistry::schemeIsHandledBySchemeHandler("custom"_s));
 
-    ASSERT_TRUE(MixedContentChecker::canModifyRequest(
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
         URL { "custom://example.com/cat.jpg"_s },
         destination,
-        Initiator::Imageset
+        initiator
     ));
 
-    // This exception won't apply if the cheme is not registered.
-    ASSERT_FALSE(LegacySchemeRegistry::schemeIsHandledBySchemeHandler("custom2"_s));
-
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
-        URL { "custom2://example.com/cat.jpg"_s },
+        URL { "custom://example.com/cat.jpg"_s },
         destination,
         Initiator::Imageset
     ));
