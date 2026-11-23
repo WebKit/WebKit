@@ -136,9 +136,19 @@ ConversionResult<char16_t> convert(std::span<const char8_t> source, std::span<ch
     return convertInternal(source, buffer);
 }
 
-ConversionResult<char8_t> convert(std::span<const Latin1Character> source, std::span<char8_t> buffer)
+SUPPRESS_NODELETE ConversionResult<char8_t> convert(std::span<const Latin1Character> source, std::span<char8_t> buffer)
 {
-    return convertInternal(source, buffer);
+    // Each Latin-1 character takes at most two bytes in UTF-8.
+    if (buffer.size() / 2 >= source.size()) {
+        size_t length = simdutf::convert_latin1_to_utf8(byteCast<char>(source), buffer);
+        bool isAllASCII = length == source.size();
+        return { ConversionResultCode::Success, buffer.first(length), isAllASCII };
+    }
+
+    auto result = simdutf::convert_latin1_to_utf8_safe_with_details(byteCast<char>(source), buffer);
+    auto code = result.input_count == source.size() ? ConversionResultCode::Success : ConversionResultCode::TargetExhausted;
+    bool isAllASCII = result.output_count == result.input_count;
+    return { code, buffer.first(result.output_count), isAllASCII };
 }
 
 ConversionResult<char8_t> convertReplacingInvalidSequences(std::span<const char16_t> source, std::span<char8_t> buffer)

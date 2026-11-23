@@ -269,6 +269,47 @@ TEST(WTF_UTF8Conversion, Latin1ToUTF8)
     EXPECT_STREQ("target exhausted", serialize(convert(latin1Array(0x80, 0xFF), buffer1)));
 }
 
+TEST(WTF_UTF8Conversion, Latin1ToUTF8LongStrings)
+{
+    using namespace WTF::Unicode;
+
+    Vector<Latin1Character> source;
+    Vector<char8_t> expected;
+    for (unsigned i = 0; i < 200; ++i) {
+        auto character = Latin1Character(i % 7 ? 'a' + i % 26 : 0x80 + i % 128);
+        source.append(character);
+        if (isASCII(character))
+            expected.append(char8_t(character));
+        else {
+            expected.append(char8_t(0xC0 | (character >> 6)));
+            expected.append(char8_t(0x80 | (character & 0x3F)));
+        }
+    }
+
+    Vector<char8_t> buffer(FillWith { }, 2 * source.size(), char8_t(0));
+    auto result = convert(source.span(), buffer.mutableSpan());
+    EXPECT_EQ(ConversionResultCode::Success, result.code);
+    EXPECT_TRUE(std::ranges::equal(expected.span(), result.buffer));
+    EXPECT_FALSE(result.isAllASCII);
+
+    for (size_t bufferSize : { expected.size(), expected.size() - 1, size_t(100), size_t(101) }) {
+        result = convert(source.span(), buffer.mutableSpan().first(bufferSize));
+        EXPECT_EQ(bufferSize == expected.size() ? ConversionResultCode::Success : ConversionResultCode::TargetExhausted, result.code);
+        EXPECT_GE(bufferSize, result.buffer.size());
+        EXPECT_LE(bufferSize - 1, result.buffer.size());
+        EXPECT_TRUE(std::ranges::equal(expected.span().first(result.buffer.size()), result.buffer));
+    }
+
+    Vector<Latin1Character> asciiSource(FillWith { }, 100, Latin1Character('a'));
+    result = convert(asciiSource.span(), buffer.mutableSpan());
+    EXPECT_EQ(100u, result.buffer.size());
+    EXPECT_TRUE(result.isAllASCII);
+    result = convert(asciiSource.span(), buffer.mutableSpan().first(99));
+    EXPECT_EQ(ConversionResultCode::TargetExhausted, result.code);
+    EXPECT_EQ(99u, result.buffer.size());
+    EXPECT_TRUE(result.isAllASCII);
+}
+
 TEST(WTF_UTF8Conversion, EqualUTF16ToUTF8)
 {
     using namespace WTF::Unicode;
