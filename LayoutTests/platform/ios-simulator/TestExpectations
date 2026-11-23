@@ -34,3 +34,5 @@ webkit.org/b/329236 webkit.org/b/329245 webgl/video-formats/upload-path-vp8-420-
 webkit.org/b/329236 webkit.org/b/329240 webkit.org/b/329245 webgl/video-formats/upload-path-vp9-alpha-420-bt709-videorange-mse.html [ Failure ]
 webkit.org/b/329236 webkit.org/b/329245 webgl/video-formats/upload-path-vp9-p0-420-bt709-videorange-mse.html [ Failure ]
 webkit.org/b/329235 webkit.org/b/329245 webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange-mse.html [ Failure ]
+
+webkit.org/b/332732 http/wpt/webcodecs/videoEncoder-high-bit-depth.html [ Failure ]
