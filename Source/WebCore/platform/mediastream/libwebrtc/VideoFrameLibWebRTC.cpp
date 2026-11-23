@@ -60,8 +60,10 @@ VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirr
 {
     switch (m_buffer->type()) {
     case webrtc::VideoFrameBuffer::Type::kI420:
-    case webrtc::VideoFrameBuffer::Type::kI422:
         m_videoPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+        break;
+    case webrtc::VideoFrameBuffer::Type::kI422:
+        m_videoPixelFormat = kCVPixelFormatType_422YpCbCr8BiPlanarFullRange;
         break;
     case webrtc::VideoFrameBuffer::Type::kI010:
         m_videoPixelFormat = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;

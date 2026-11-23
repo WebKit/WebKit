@@ -244,8 +244,10 @@ CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t widt
 
     switch (bufferType) {
     case webrtc::BufferType::I420:
-    case webrtc::BufferType::I422:
         pixelBufferType = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+        break;
+    case webrtc::BufferType::I422:
+        pixelBufferType = isFullRange ? kCVPixelFormatType_422YpCbCr8BiPlanarFullRange : kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange;
         break;
     case webrtc::BufferType::I010:
         pixelBufferType = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;

@@ -85,8 +85,10 @@ CVPixelBufferPoolRef WebKitDecoderReceiver::pixelBufferPool(size_t pixelBufferWi
         return m_pixelBufferPool;
 
     OSType pixelFormat;
-    if (type == BufferType::I420 || type == BufferType::I422)
+    if (type == BufferType::I420)
         pixelFormat = m_isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+    else if (type == BufferType::I422)
+        pixelFormat = m_isFullRange ? kCVPixelFormatType_422YpCbCr8BiPlanarFullRange : kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange;
     else if (type == BufferType::I010)
         pixelFormat = m_isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
     else if (type == BufferType::I210)

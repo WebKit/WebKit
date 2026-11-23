@@ -297,7 +297,7 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame
 
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I422BufferInterface* frame, CVPixelBufferRef pixel_buffer) {
     RTC_DCHECK(pixel_buffer);
-    RTC_DCHECK(CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
+    RTC_DCHECK(CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_422YpCbCr8BiPlanarFullRange || CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange);
     RTC_DCHECK_EQ(CVPixelBufferGetHeightOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->height()));
     RTC_DCHECK_EQ(CVPixelBufferGetWidthOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->width()));
 
@@ -323,18 +323,12 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I422BufferInterface* frame
     if (src_width_y != dst_width_y
         || src_height_y != dst_height_y
         || src_width_uv != dst_width_uv
-        || (src_height_uv + 1) / 2 != dst_height_uv)
+        || src_height_uv != dst_height_uv)
         return false;
 
-    // I422ToNV21 with U and V swapped writes NV12.
-    int result = libyuv::I422ToNV21(
-        frame->DataY(), frame->StrideY(),
-        frame->DataV(), frame->StrideV(),
-        frame->DataU(), frame->StrideU(),
-        dst_y, dst_stride_y, dst_uv, dst_stride_uv,
-        frame->width(), frame->height());
-
-    return !result;
+    libyuv::CopyPlane(frame->DataY(), frame->StrideY(), dst_y, dst_stride_y, src_width_y, src_height_y);
+    libyuv::MergeUVPlane(frame->DataU(), frame->StrideU(), frame->DataV(), frame->StrideV(), dst_uv, dst_stride_uv, src_width_uv, src_height_uv);
+    return true;
 }
 
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I210BufferInterface* frame, CVPixelBufferRef pixel_buffer)
