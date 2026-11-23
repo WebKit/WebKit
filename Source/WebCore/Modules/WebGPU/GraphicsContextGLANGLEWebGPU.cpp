@@ -30,9 +30,13 @@
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
+#include "GraphicsLayerEnums.h"
 #include "IOSurface.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
+#include "PlatformCALayer.h"
+#include "PlatformCALayerDelegatedContents.h"
 #include "WebGPU.h"
 #include "WebGPUCompositorIntegration.h"
 #include "WebGPUPresentationContextDescriptor.h"
@@ -44,6 +48,50 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+// Shows the render buffer that the compositor integration returns. The Web Process cannot make IOSurfaces
+// of the render buffers when it does not render the DOM itself, so the delegate keeps the send rights.
+class GraphicsContextGLANGLEWebGPUDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+public:
+    static Ref<GraphicsContextGLANGLEWebGPUDisplayDelegate> create(bool isOpaque)
+    {
+        return adoptRef(*new GraphicsContextGLANGLEWebGPUDisplayDelegate(isOpaque));
+    }
+
+    // GraphicsLayerContentsDisplayDelegate overrides.
+    void prepareToDelegateDisplay(PlatformCALayer& layer) final
+    {
+        layer.setOpaque(m_isOpaque);
+    }
+
+    void display(PlatformCALayer& layer) final
+    {
+        if (m_displayBuffer)
+            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, { } });
+        else
+            layer.clearContents();
+    }
+
+    // The first row of a render buffer is the bottom row of the drawing buffer.
+    GraphicsLayerCompositingCoordinatesOrientation orientation() const final
+    {
+        return GraphicsLayerCompositingCoordinatesOrientation::BottomUp;
+    }
+
+    void setDisplayBuffer(MachSendRight&& displayBuffer)
+    {
+        m_displayBuffer = WTF::move(displayBuffer);
+    }
+
+private:
+    explicit GraphicsContextGLANGLEWebGPUDisplayDelegate(bool isOpaque)
+        : m_isOpaque(isOpaque)
+    {
+    }
+
+    MachSendRight m_displayBuffer;
+    const bool m_isOpaque;
+};
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLANGLEWebGPU);
 
@@ -106,6 +154,7 @@ GraphicsContextGLANGLEWebGPU::GraphicsContextGLANGLEWebGPU(const GraphicsContext
     , m_device(WTF::move(device))
     , m_compositorIntegration(WTF::move(compositorIntegration))
     , m_presentationContext(WTF::move(presentationContext))
+    , m_layerContentsDisplayDelegate(GraphicsContextGLANGLEWebGPUDisplayDelegate::create(!attributes.alpha))
     , m_drawingBufferColorSpace(ColorSpace::SRGB())
 {
 }
@@ -200,6 +249,7 @@ void GraphicsContextGLANGLEWebGPU::freeDrawingBuffers()
             EGL_DestroyImageKHR(m_displayObj, buffer.image);
     }
     m_drawingBuffers.clear();
+    m_displayBufferIndex = std::nullopt;
 }
 
 bool GraphicsContextGLANGLEWebGPU::reshapeDrawingBuffer()
@@ -228,7 +278,8 @@ bool GraphicsContextGLANGLEWebGPU::reshapeDrawingBuffer()
         .height = static_cast<uint32_t>(size.height()),
     });
     m_drawingBuffers.grow(renderBufferCount);
-    return bindDrawingBuffer(0);
+    m_currentDrawingBuffer = 0;
+    return bindDrawingBuffer(m_currentDrawingBuffer);
 }
 
 bool GraphicsContextGLANGLEWebGPU::bindDrawingBuffer(uint32_t index)
@@ -270,14 +321,47 @@ void GraphicsContextGLANGLEWebGPU::prepareForDisplay()
     checkGPUStatus();
     if (isContextLost() || m_drawingBuffers.isEmpty())
         return;
-    // FIXME: Present the frame through the compositor integration.
+    // Submits the commands of the frame. The compositor integration presents the frame after them,
+    // as its messages go through the same stream.
     GL_Flush();
+    auto frameIndex = m_currentDrawingBuffer;
+    m_compositorIntegration->prepareForDisplay(frameIndex, [weakThis = WeakPtr { *this }, frameIndex](MachSendRight&& displayBuffer, std::optional<uint32_t> replacedRenderBufferIndex) mutable {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didPrepareForDisplay(frameIndex, WTF::move(displayBuffer), replacedRenderBufferIndex);
+    });
+    if (m_drawingBuffers.isEmpty())
+        return;
+    m_currentDrawingBuffer = (frameIndex + 1) % m_drawingBuffers.size();
+    if (!bindDrawingBuffer(m_currentDrawingBuffer))
+        forceContextLost();
+}
+
+void GraphicsContextGLANGLEWebGPU::didPrepareForDisplay(uint32_t frameIndex, MachSendRight&& displayBuffer, std::optional<uint32_t> replacedRenderBufferIndex)
+{
+    if (frameIndex >= m_drawingBuffers.size())
+        return;
+    // The compositor still showed the render buffer that the next frame draws to, so the compositor
+    // integration gave it a new one, with a new texture, which bindDrawingBuffer() binds.
+    if (replacedRenderBufferIndex && *replacedRenderBufferIndex < m_drawingBuffers.size())
+        m_presentationContext->renderBufferWasReplaced(*replacedRenderBufferIndex);
+    // The compositor integration replies once the frame is scheduled, so the layer does not wait for it.
+    m_displayBufferIndex = displayBuffer ? std::optional { frameIndex } : std::nullopt;
+    m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(displayBuffer));
 }
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLEWebGPU::readCompositedResults()
 {
-    // FIXME: Read the presented frame.
-    return nullptr;
+    if (!m_displayBufferIndex)
+        return nullptr;
+    auto* image = m_drawingBuffers[*m_displayBufferIndex].image;
+    if (!image)
+        return nullptr;
+    ScopedTexture texture;
+    ScopedRestoreTextureBinding restoreBinding(TEXTURE_BINDING_2D, TEXTURE_2D);
+    GL_BindTexture(TEXTURE_2D, texture);
+    GL_EGLImageTargetTexture2DOES(TEXTURE_2D, image);
+    ScopedScratchReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO, texture);
+    return readPixelsForPaintResults();
 }
 
 void GraphicsContextGLANGLEWebGPU::setDrawingBufferColorSpace(const ColorSpace& colorSpace)
@@ -295,7 +379,7 @@ void GraphicsContextGLANGLEWebGPU::setDrawingBufferColorSpace(const ColorSpace& 
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLANGLEWebGPU::layerContentsDisplayDelegate()
 {
-    return nullptr;
+    return m_layerContentsDisplayDelegate.ptr();
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)

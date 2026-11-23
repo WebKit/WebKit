@@ -30,12 +30,15 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/GraphicsContextGLANGLE.h>
 #include <WebCore/WebGPUCppAPI.h>
+#include <optional>
+#include <wtf/MachSendRight.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class GraphicsContextGLANGLEWebGPUDisplayDelegate;
 class WebGPUCompositorIntegration;
 class WebGPUIntegration;
 
@@ -81,11 +84,13 @@ private:
     // Starts a frame in the render buffer, and binds it to m_texture.
     bool bindDrawingBuffer(uint32_t index);
     void freeDrawingBuffers();
+    void didPrepareForDisplay(uint32_t frameIndex, MachSendRight&& displayBuffer, std::optional<uint32_t> replacedRenderBufferIndex);
 
     const Ref<WebGPUIntegration> m_gpu;
     const Ref<::WebGPU::Device> m_device;
     const Ref<WebGPUCompositorIntegration> m_compositorIntegration;
     const Ref<::WebGPU::PresentationContext> m_presentationContext;
+    const Ref<GraphicsContextGLANGLEWebGPUDisplayDelegate> m_layerContentsDisplayDelegate;
     ColorSpace m_drawingBufferColorSpace;
 
     // A render buffer, and the EGLImage of its texture. Not in m_eglImages, which is the namespace of
@@ -95,6 +100,9 @@ private:
         void* image { nullptr };
     };
     Vector<DrawingBuffer> m_drawingBuffers;
+    uint32_t m_currentDrawingBuffer { 0 };
+    // The render buffer that the layer shows.
+    std::optional<uint32_t> m_displayBufferIndex;
 };
 
 } // namespace WebCore

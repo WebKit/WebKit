@@ -1,0 +1,49 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true WebGLOnWebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test that WebGL on WebGPU presents the default framebuffer upright</title>
+<style>
+canvas {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+<script>
+"use strict";
+// Each canvas is green in the top half and blue in the bottom half. The bottom half is the first
+// rows of the drawing buffer.
+function paint(attributes)
+{
+    var canvas = document.createElement("canvas");
+    canvas.width = 40;
+    canvas.height = 40;
+    document.body.appendChild(canvas);
+    var gl = canvas.getContext("webgl", attributes);
+    if (!gl)
+        return;
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.SCISSOR_TEST);
+    gl.scissor(0, 0, 40, 20);
+    gl.clearColor(0, 0, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.disable(gl.SCISSOR_TEST);
+}
+
+for (var alpha of [true, false]) {
+    for (var premultipliedAlpha of [true, false]) {
+        for (var antialias of [false, true]) {
+            for (var preserveDrawingBuffer of [false, true])
+                paint({ alpha, premultipliedAlpha, antialias, preserveDrawingBuffer });
+        }
+    }
+}
+</script>
+</body>
+</html>
