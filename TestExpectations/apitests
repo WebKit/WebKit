@@ -338,8 +338,6 @@ webkit.org/b/326696 [ ios ] TestWebKitAPI.TextExtractionTests/screenTimeBlocksTe
 webkit.org/b/326416 [ mac ] TestWebKitAPI.TextExtractionTests/visibleTextOnly() [ Skip ]
 webkit.org/b/326696 [ ios ] TestWebKitAPI.TextExtractionTests/visibleTextOnly() [ Skip ]
 webkit.org/b/319130 [ ios ] TestWebKitAPI.TextManipulationTests/completeTextManipulationAvoidExtractingManipulatedTextAfterManipulation() [ Pass Timeout ]
-webkit.org/b/330975 [ iOS27 ] TestWebKitAPI.UIPasteboardTests.InvalidPreferredPresentationSizeForImage [ Pass Failure ]
-webkit.org/b/330975 [ iOS27 ] TestWebKitAPI.UIPasteboardTests.MissingPreferredPresentationSizeForImage [ Pass Failure ]
 webkit.org/b/331365 [ ios ] TestWebKitAPI.UIPasteboardTests.PasteDataBackedURL [ Pass Failure ]
 rdar://168769459 [ mac Sequoia- ] TestWebKitAPI.UnifiedPDF.PrintSize [ Skip ]
 webkit.org/b/287473 [ ios ] TestWebKitAPI.UnifiedPDF.RespectsPageFragment [ Skip ]
