@@ -77,23 +77,23 @@ private:
     bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const final;
 
     // Generic components.
-    AXCoreObject* mathBaseObject() final;
+    RefPtr<AXCoreObject> mathBaseObject() final;
 
     // Root components.
     std::optional<AccessibilityChildrenVector> mathRadicand() final;
-    AXCoreObject* mathRootIndexObject() final;
+    RefPtr<AXCoreObject> mathRootIndexObject() final;
 
     // Fraction components.
-    AXCoreObject* mathNumeratorObject() final;
-    AXCoreObject* mathDenominatorObject() final;
+    RefPtr<AXCoreObject> mathNumeratorObject() final;
+    RefPtr<AXCoreObject> mathDenominatorObject() final;
 
     // Under over components.
-    AXCoreObject* mathUnderObject() final;
-    AXCoreObject* mathOverObject() final;
+    RefPtr<AXCoreObject> mathUnderObject() final;
+    RefPtr<AXCoreObject> mathOverObject() final;
 
     // Subscript/superscript components.
-    AXCoreObject* mathSubscriptObject() final;
-    AXCoreObject* mathSuperscriptObject() final;
+    RefPtr<AXCoreObject> mathSubscriptObject() final;
+    RefPtr<AXCoreObject> mathSuperscriptObject() final;
 
     // Fenced components.
     String mathFencedOpenString() const final;

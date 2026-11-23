@@ -273,7 +273,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMathMLElem
     return { { children[0] } };
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathRootIndexObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathRootIndexObject()
 {
     if (!isMathRoot() || isMathSquareRoot())
         return nullptr;
@@ -282,10 +282,10 @@ AXCoreObject* AccessibilityMathMLElement::mathRootIndexObject()
     if (children.size() < 2)
         return nullptr;
 
-    return children[1].unsafePtr();
+    return children[1].ptr();
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathNumeratorObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathNumeratorObject()
 {
     if (!isMathFraction())
         return nullptr;
@@ -294,10 +294,10 @@ AXCoreObject* AccessibilityMathMLElement::mathNumeratorObject()
     if (children.size() != 2)
         return nullptr;
 
-    return children[0].unsafePtr();
+    return children[0].ptr();
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathDenominatorObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathDenominatorObject()
 {
     if (!isMathFraction())
         return nullptr;
@@ -306,10 +306,10 @@ AXCoreObject* AccessibilityMathMLElement::mathDenominatorObject()
     if (children.size() != 2)
         return nullptr;
 
-    return children[1].unsafePtr();
+    return children[1].ptr();
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathUnderObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathUnderObject()
 {
     if (!isMathUnderOver() || !element())
         return nullptr;
@@ -320,12 +320,12 @@ AXCoreObject* AccessibilityMathMLElement::mathUnderObject()
 
     auto elementName = this->elementName();
     if (elementName == ElementName::MathML_munder || elementName == ElementName::MathML_munderover)
-        return children[1].unsafePtr();
+        return children[1].ptr();
 
     return nullptr;
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathOverObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathOverObject()
 {
     if (!isMathUnderOver() || !node())
         return nullptr;
@@ -333,15 +333,15 @@ AXCoreObject* AccessibilityMathMLElement::mathOverObject()
     const auto& children = unignoredChildren();
     auto elementName = this->elementName();
     if (children.size() >= 2 && elementName == ElementName::MathML_mover)
-        return children[1].unsafePtr();
+        return children[1].ptr();
 
     if (children.size() >= 3 && elementName == ElementName::MathML_munderover)
-        return children[2].unsafePtr();
+        return children[2].ptr();
 
     return nullptr;
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathBaseObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathBaseObject()
 {
     if (!isMathSubscriptSuperscript() && !isMathUnderOver() && !isMathMultiscript())
         return nullptr;
@@ -349,12 +349,12 @@ AXCoreObject* AccessibilityMathMLElement::mathBaseObject()
     const auto& children = unignoredChildren();
     // The base object in question is always the first child.
     if (children.size() > 0)
-        return children[0].unsafePtr();
+        return children[0].ptr();
 
     return nullptr;
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathSubscriptObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathSubscriptObject()
 {
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;
@@ -365,12 +365,12 @@ AXCoreObject* AccessibilityMathMLElement::mathSubscriptObject()
 
     auto elementName = this->elementName();
     if (elementName == ElementName::MathML_msub || elementName == ElementName::MathML_msubsup)
-        return children[1].unsafePtr();
+        return children[1].ptr();
 
     return nullptr;
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathSuperscriptObject()
+RefPtr<AXCoreObject> AccessibilityMathMLElement::mathSuperscriptObject()
 {
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;
@@ -380,10 +380,10 @@ AXCoreObject* AccessibilityMathMLElement::mathSuperscriptObject()
 
     auto elementName = this->elementName();
     if (count >= 2 && elementName == ElementName::MathML_msup)
-        return children[1].unsafePtr();
+        return children[1].ptr();
 
     if (count >= 3 && elementName == ElementName::MathML_msubsup)
-        return children[2].unsafePtr();
+        return children[2].ptr();
 
     return nullptr;
 }

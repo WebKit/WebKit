@@ -135,7 +135,7 @@ private:
     HTMLFrameOwnerElement* frameOwnerElement() const { return m_frameOwnerElement; }
 
     AccessibilityObject* firstChild() const final { return webAreaObject(); }
-    AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
+    RefPtr<AccessibilityScrollbar> addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);
 
     bool m_childrenDirty;

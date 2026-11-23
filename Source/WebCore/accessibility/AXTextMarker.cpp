@@ -2159,7 +2159,7 @@ AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direct
     }
     AX_ASSERT(direction == AXDirection::Previous);
 
-    auto previousInPreOrder = [&] (AXIsolatedObject& object) -> AXIsolatedObject* {
+    auto previousInPreOrder = [&](AXIsolatedObject& object) -> RefPtr<AXIsolatedObject> {
         if (RefPtr sibling = object.previousSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true)) {
             if (shouldStop(*sibling))
                 return nullptr;
@@ -2167,7 +2167,7 @@ AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direct
             const auto& children = sibling->childrenIncludingIgnored(/* updateChildrenIfNeeded */ true);
             if (children.size() && canDescendFrom(*sibling, children.last().get()))
                 return downcast<AXIsolatedObject>(sibling->deepestLastChildIncludingIgnored(/* updateChildrenIfNeeded */ true));
-            return downcast<AXIsolatedObject>(sibling.unsafeGet());
+            return downcast<AXIsolatedObject>(WTF::move(sibling));
         }
         return object.parentObject();
     };

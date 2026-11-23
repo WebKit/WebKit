@@ -3307,8 +3307,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathRootIndexObject() ? object->mathRootIndexObject()->wrapper() : 0;
+    RefPtr rootIndex = protect(self.axBackingObject)->mathRootIndexObject();
+    return rootIndex ? rootIndex->wrapper() : nil;
 }
 
 - (NSArray *)accessibilityMathRadicand
@@ -3325,8 +3325,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathNumeratorObject() ? object->mathNumeratorObject()->wrapper() : 0;
+    RefPtr numerator = protect(self.axBackingObject)->mathNumeratorObject();
+    return numerator ? numerator->wrapper() : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathDenominatorObject
@@ -3334,8 +3334,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathDenominatorObject() ? object->mathDenominatorObject()->wrapper() : 0;
+    RefPtr denominator = protect(self.axBackingObject)->mathDenominatorObject();
+    return denominator ? denominator->wrapper() : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathBaseObject
@@ -3343,8 +3343,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathBaseObject() ? object->mathBaseObject()->wrapper() : 0;
+    RefPtr base = protect(self.axBackingObject)->mathBaseObject();
+    return base ? base->wrapper() : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathSubscriptObject
@@ -3352,8 +3352,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathSubscriptObject() ? object->mathSubscriptObject()->wrapper() : 0;
+    RefPtr subscript = protect(self.axBackingObject)->mathSubscriptObject();
+    return subscript ? subscript->wrapper() : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathSuperscriptObject
@@ -3361,8 +3361,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathSuperscriptObject() ? object->mathSuperscriptObject()->wrapper() : 0;
+    RefPtr superscript = protect(self.axBackingObject)->mathSuperscriptObject();
+    return superscript ? superscript->wrapper() : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathUnderObject
@@ -3370,8 +3370,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathUnderObject() ? object->mathUnderObject()->wrapper() : 0;
+    RefPtr under = protect(self.axBackingObject)->mathUnderObject();
+    return under ? under->wrapper() : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathOverObject
@@ -3379,8 +3379,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr<AccessibilityObject> object = self.axBackingObject;
-    return object->mathOverObject() ? object->mathOverObject()->wrapper() : 0;
+    RefPtr over = protect(self.axBackingObject)->mathOverObject();
+    return over ? over->wrapper() : nil;
 }
 
 - (NSString *)accessibilityPlatformMathSubscriptKey

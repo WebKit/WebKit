@@ -2152,37 +2152,44 @@ static id handleMathRootRadicandAttribute(WebAccessibilityObjectWrapper*, AXCore
 
 static id handleMathFractionNumeratorAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return (backingObject.mathNumeratorObject()) ? backingObject.mathNumeratorObject()->wrapper() : 0;
+    RefPtr numerator = backingObject.mathNumeratorObject();
+    return numerator ? numerator->wrapper() : nil;
 }
 
 static id handleMathFractionDenominatorAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return (backingObject.mathDenominatorObject()) ? backingObject.mathDenominatorObject()->wrapper() : 0;
+    RefPtr denominator = backingObject.mathDenominatorObject();
+    return denominator ? denominator->wrapper() : nil;
 }
 
 static id handleMathBaseAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return (backingObject.mathBaseObject()) ? backingObject.mathBaseObject()->wrapper() : 0;
+    RefPtr base = backingObject.mathBaseObject();
+    return base ? base->wrapper() : nil;
 }
 
 static id handleMathSubscriptAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return (backingObject.mathSubscriptObject()) ? backingObject.mathSubscriptObject()->wrapper() : 0;
+    RefPtr subscript = backingObject.mathSubscriptObject();
+    return subscript ? subscript->wrapper() : nil;
 }
 
 static id handleMathSuperscriptAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return (backingObject.mathSuperscriptObject()) ? backingObject.mathSuperscriptObject()->wrapper() : 0;
+    RefPtr superscript = backingObject.mathSuperscriptObject();
+    return superscript ? superscript->wrapper() : nil;
 }
 
 static id handleMathUnderAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return (backingObject.mathUnderObject()) ? backingObject.mathUnderObject()->wrapper() : 0;
+    RefPtr under = backingObject.mathUnderObject();
+    return under ? under->wrapper() : nil;
 }
 
 static id handleMathOverAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return (backingObject.mathOverObject()) ? backingObject.mathOverObject()->wrapper() : 0;
+    RefPtr over = backingObject.mathOverObject();
+    return over ? over->wrapper() : nil;
 }
 
 static id handleMathFencedOpenAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)

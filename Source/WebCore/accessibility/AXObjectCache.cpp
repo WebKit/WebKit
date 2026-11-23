@@ -1419,7 +1419,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
     if (object->isDetached())
         return nullptr;
 
-    return object.unsafePtr();
+    return m_objects.get(object->objectID());
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

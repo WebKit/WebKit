@@ -94,7 +94,7 @@ public:
     AccessibilityObject* nextSibling() const final;
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* observableObject() const override;
-    AccessibilityObject* titleUIElement() const final;
+    RefPtr<AXCoreObject> titleUIElement() const final;
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
     AccessibilityObject* crossFrameParentObject() const final;

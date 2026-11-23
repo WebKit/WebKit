@@ -626,13 +626,13 @@ public:
     virtual AXCoreObject* parentTableIfExposedTableRow() const = 0;
     virtual bool isExposedTableRow() const = 0;
     virtual unsigned rowIndex() const = 0;
-    AXCoreObject* rowHeader();
+    RefPtr<AXCoreObject> rowHeader();
 
     // ARIA tree/grid row support.
     virtual bool isARIAGridRow() const = 0;
     virtual bool isARIATreeGridRow() const = 0;
     virtual AccessibilityChildrenVector disclosedRows() = 0; // Also implemented by ARIATreeItems.
-    virtual AXCoreObject* disclosedByRow() const = 0;
+    virtual RefPtr<AXCoreObject> disclosedByRow() const = 0;
 
     virtual bool isFieldset() const = 0;
     bool isImageMapLink() const;
@@ -793,7 +793,7 @@ public:
     NODELETE bool supportsARIARoleDescription() const;
 
     // Retrieval of related objects.
-    AXCoreObject* activeDescendant() const;
+    RefPtr<AXCoreObject> activeDescendant() const;
     AccessibilityChildrenVector activeDescendantOfObjects() const { return relatedObjects(AXRelation::ActiveDescendantOf); }
     AccessibilityChildrenVector associatedActionElements() const { return relatedObjects(AXRelation::Actions); }
     AccessibilityChildrenVector ariaActionsOfObjects() const { return relatedObjects(AXRelation::ActionsOf); }
@@ -917,8 +917,8 @@ public:
 
     // Finds the next or previous sibling that is not ignored. Uses the parent's
     // children() list, so it works for both live objects and isolated objects.
-    AXCoreObject* nextSiblingUnignored() const;
-    AXCoreObject* previousSiblingUnignored() const;
+    RefPtr<AXCoreObject> nextSiblingUnignored() const;
+    RefPtr<AXCoreObject> previousSiblingUnignored() const;
 
     // Finds objects within |this| object matching the given search criteria.
     virtual AccessibilityChildrenVector findMatchingObjectsWithin(AccessibilitySearchCriteria&&);
@@ -932,7 +932,7 @@ public:
     virtual Vector<String> performTextOperation(const AccessibilityTextOperation&) = 0;
 
     AccessibilityChildrenVector linkedObjects() const;
-    virtual AXCoreObject* titleUIElement() const;
+    virtual RefPtr<AXCoreObject> titleUIElement() const;
     virtual AXCoreObject* scrollBar(AccessibilityOrientation) = 0;
 
     virtual bool inheritsPresentationalRole() const = 0;
@@ -1231,7 +1231,7 @@ public:
     RefPtr<AXCoreObject> previousInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
     RefPtr<AXCoreObject> previousInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin, bool includeCrossFrame);
     RefPtr<AXCoreObject> previousSiblingIncludingIgnored(bool updateChildrenIfNeeded);
-    AXCoreObject* deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded);
+    RefPtr<AXCoreObject> deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded);
 
     void setIndexInParent(unsigned index)
     {
@@ -1380,20 +1380,20 @@ public:
 
     // Root components.
     virtual std::optional<AccessibilityChildrenVector> mathRadicand() = 0;
-    virtual AXCoreObject* mathRootIndexObject() = 0;
+    virtual RefPtr<AXCoreObject> mathRootIndexObject() = 0;
 
     // Under over components.
-    virtual AXCoreObject* mathUnderObject() = 0;
-    virtual AXCoreObject* mathOverObject() = 0;
+    virtual RefPtr<AXCoreObject> mathUnderObject() = 0;
+    virtual RefPtr<AXCoreObject> mathOverObject() = 0;
 
     // Fraction components.
-    virtual AXCoreObject* mathNumeratorObject() = 0;
-    virtual AXCoreObject* mathDenominatorObject() = 0;
+    virtual RefPtr<AXCoreObject> mathNumeratorObject() = 0;
+    virtual RefPtr<AXCoreObject> mathDenominatorObject() = 0;
 
     // Subscript/superscript components.
-    virtual AXCoreObject* mathBaseObject() = 0;
-    virtual AXCoreObject* mathSubscriptObject() = 0;
-    virtual AXCoreObject* mathSuperscriptObject() = 0;
+    virtual RefPtr<AXCoreObject> mathBaseObject() = 0;
+    virtual RefPtr<AXCoreObject> mathSubscriptObject() = 0;
+    virtual RefPtr<AXCoreObject> mathSuperscriptObject() = 0;
 
     // Fenced components.
     virtual String mathFencedOpenString() const = 0;
@@ -1828,11 +1828,11 @@ AXCoreObject* findUnignoredDescendant(T& object, bool includeSelf, NOESCAPE cons
 }
 
 template<typename T, typename F>
-T* findUnignoredChild(T& object, NOESCAPE const F& matches)
+RefPtr<T> findUnignoredChild(T& object, NOESCAPE const F& matches)
 {
-    for (auto child : object.unignoredChildren()) {
+    for (auto& child : object.unignoredChildren()) {
         if (matches(child))
-            return downcast<T>(child.unsafePtr());
+            return downcast<T>(child.ptr());
     }
     return nullptr;
 }

@@ -287,7 +287,7 @@ private:
     bool isARIATreeGridRow() const final { return boolAttributeValue(AXProperty::IsARIATreeGridRow); }
     bool isARIAGridRow() const final { return boolAttributeValue(AXProperty::IsARIAGridRow) || isARIATreeGridRow(); }
     AccessibilityChildrenVector disclosedRows() final { return tree().objectsForIDs(vectorAttributeValue<AXID>(AXProperty::DisclosedRows)); }
-    AXIsolatedObject* disclosedByRow() const final { return objectAttributeValue(AXProperty::DisclosedByRow); }
+    RefPtr<AXCoreObject> disclosedByRow() const final { return objectAttributeValue(AXProperty::DisclosedByRow); }
 
     bool isFieldset() const final { return elementName() == ElementName::HTML_fieldset; }
     bool isChecked() const final { return boolAttributeValue(AXProperty::IsChecked); }
@@ -401,14 +401,14 @@ private:
     bool isMathToken() const final { return boolAttributeValue(AXProperty::IsMathToken); }
     bool isAnonymousMathOperator() const final { return boolAttributeValue(AXProperty::IsAnonymousMathOperator); }
     std::optional<AccessibilityChildrenVector> mathRadicand() final;
-    AXIsolatedObject* mathRootIndexObject() final { return objectAttributeValue(AXProperty::MathRootIndexObject); }
-    AXIsolatedObject* mathUnderObject() final { return objectAttributeValue(AXProperty::MathUnderObject); }
-    AXIsolatedObject* mathOverObject() final { return objectAttributeValue(AXProperty::MathOverObject); }
-    AXIsolatedObject* mathNumeratorObject() final { return objectAttributeValue(AXProperty::MathNumeratorObject); }
-    AXIsolatedObject* mathDenominatorObject() final { return objectAttributeValue(AXProperty::MathDenominatorObject); }
-    AXIsolatedObject* mathBaseObject() final { return objectAttributeValue(AXProperty::MathBaseObject); }
-    AXIsolatedObject* mathSubscriptObject() final { return objectAttributeValue(AXProperty::MathSubscriptObject); }
-    AXIsolatedObject* mathSuperscriptObject() final { return objectAttributeValue(AXProperty::MathSuperscriptObject); }
+    RefPtr<AXCoreObject> mathRootIndexObject() final { return objectAttributeValue(AXProperty::MathRootIndexObject); }
+    RefPtr<AXCoreObject> mathUnderObject() final { return objectAttributeValue(AXProperty::MathUnderObject); }
+    RefPtr<AXCoreObject> mathOverObject() final { return objectAttributeValue(AXProperty::MathOverObject); }
+    RefPtr<AXCoreObject> mathNumeratorObject() final { return objectAttributeValue(AXProperty::MathNumeratorObject); }
+    RefPtr<AXCoreObject> mathDenominatorObject() final { return objectAttributeValue(AXProperty::MathDenominatorObject); }
+    RefPtr<AXCoreObject> mathBaseObject() final { return objectAttributeValue(AXProperty::MathBaseObject); }
+    RefPtr<AXCoreObject> mathSubscriptObject() final { return objectAttributeValue(AXProperty::MathSubscriptObject); }
+    RefPtr<AXCoreObject> mathSuperscriptObject() final { return objectAttributeValue(AXProperty::MathSuperscriptObject); }
     String mathFencedOpenString() const final { return stringAttributeValue(AXProperty::MathFencedOpenString); }
     String mathFencedCloseString() const final { return stringAttributeValue(AXProperty::MathFencedCloseString); }
     int mathLineThickness() const final { return intAttributeValue(AXProperty::MathLineThickness); }

@@ -219,7 +219,7 @@ public:
     bool isARIAGridRow() const override { return false; }
     bool isARIATreeGridRow() const override { return false; }
     AccessibilityChildrenVector disclosedRows() override; // ARIATreeItem implementation. Table rows are handled in AccessibilityNodeObject();
-    AccessibilityObject* disclosedByRow() const override { return nullptr; }
+    RefPtr<AXCoreObject> disclosedByRow() const override { return nullptr; }
 
     void postMenuClosedNotificationIfNecessary() const;
 
@@ -785,20 +785,20 @@ public:
 
     // Root components.
     std::optional<AccessibilityChildrenVector> mathRadicand() override { return std::nullopt; }
-    AXCoreObject* mathRootIndexObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathRootIndexObject() override { return nullptr; }
 
     // Under over components.
-    AXCoreObject* mathUnderObject() override { return nullptr; }
-    AXCoreObject* mathOverObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathUnderObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathOverObject() override { return nullptr; }
 
     // Fraction components.
-    AXCoreObject* mathNumeratorObject() override { return nullptr; }
-    AXCoreObject* mathDenominatorObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathNumeratorObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathDenominatorObject() override { return nullptr; }
 
     // Subscript/superscript components.
-    AXCoreObject* mathBaseObject() override { return nullptr; }
-    AXCoreObject* mathSubscriptObject() override { return nullptr; }
-    AXCoreObject* mathSuperscriptObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathBaseObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathSubscriptObject() override { return nullptr; }
+    RefPtr<AXCoreObject> mathSuperscriptObject() override { return nullptr; }
 
     // Fenced components.
     String mathFencedOpenString() const override { return String(); }

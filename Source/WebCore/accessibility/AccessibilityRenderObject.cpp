@@ -914,7 +914,7 @@ void AccessibilityRenderObject::labelText(Vector<AccessibilityText>& textOrder) 
     AccessibilityNodeObject::labelText(textOrder);
 }
 
-AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
+RefPtr<AXCoreObject> AccessibilityRenderObject::titleUIElement() const
 {
     if (is<RenderTableCell>(m_renderer.get())) {
         // Try to find if the first cell in this row is a <th>. If it is,
@@ -952,7 +952,7 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
         return cache ? cache->getOrCreate(*headerCell) : nullptr;
     }
 
-    return downcast<AccessibilityObject>(AccessibilityNodeObject::titleUIElement());
+    return AccessibilityNodeObject::titleUIElement();
 }
 
 bool AccessibilityRenderObject::isAllowedChildOfTree() const

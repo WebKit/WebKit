@@ -271,7 +271,7 @@ void AccessibilityScrollView::removeChildScrollbar(AccessibilityObject* scrollba
     }
 }
 
-AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* scrollbar)
+RefPtr<AccessibilityScrollbar> AccessibilityScrollView::addChildScrollbar(Scrollbar* scrollbar)
 {
     if (!scrollbar)
         return nullptr;
@@ -283,7 +283,7 @@ AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* sc
     Ref scrollBarObject = uncheckedDowncast<AccessibilityScrollbar>(*cache->getOrCreate(*scrollbar));
     scrollBarObject->setParent(this);
     addChild(scrollBarObject.get());
-    return scrollBarObject.unsafePtr();
+    return scrollBarObject;
 }
 
 void AccessibilityScrollView::clearChildren()

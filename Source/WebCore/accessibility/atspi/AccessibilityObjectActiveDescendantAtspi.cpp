@@ -32,7 +32,7 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::activeDescendant() const
     if (!m_coreObject)
         return nullptr;
 
-    if (auto* activeDescendant = m_coreObject->activeDescendant())
+    if (RefPtr activeDescendant = m_coreObject->activeDescendant())
         return activeDescendant->wrapper();
 
     return nullptr;

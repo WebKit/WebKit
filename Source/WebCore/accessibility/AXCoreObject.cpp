@@ -632,7 +632,7 @@ AXCoreObject* AXCoreObject::parentObjectIncludingCrossFrame() const
 #endif
 }
 
-AXCoreObject* AXCoreObject::nextSiblingUnignored() const
+RefPtr<AXCoreObject> AXCoreObject::nextSiblingUnignored() const
 {
     RefPtr parent = parentObjectIncludingCrossFrame();
     if (!parent)
@@ -655,12 +655,12 @@ AXCoreObject* AXCoreObject::nextSiblingUnignored() const
             if (auto stitchedInto = sibling->stitchedIntoID(); stitchedInto && *stitchedInto != sibling->objectID())
                 continue;
         }
-        return sibling.unsafePtr();
+        return sibling.ptr();
     }
     return nullptr;
 }
 
-AXCoreObject* AXCoreObject::previousSiblingUnignored() const
+RefPtr<AXCoreObject> AXCoreObject::previousSiblingUnignored() const
 {
     RefPtr parent = parentObjectIncludingCrossFrame();
     if (!parent)
@@ -683,7 +683,7 @@ AXCoreObject* AXCoreObject::previousSiblingUnignored() const
             if (auto stitchedInto = sibling->stitchedIntoID(); stitchedInto && *stitchedInto != sibling->objectID())
                 continue;
         }
-        return sibling.unsafePtr();
+        return sibling.ptr();
     }
     return nullptr;
 }
@@ -815,7 +815,7 @@ RefPtr<AXCoreObject> AXCoreObject::previousInPreOrder(bool updateChildrenIfNeede
     return previous;
 }
 
-AXCoreObject* AXCoreObject::deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded)
+RefPtr<AXCoreObject> AXCoreObject::deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded)
 {
     const auto& children = childrenIncludingIgnored(updateChildrenIfNeeded);
     if (children.isEmpty())
@@ -828,7 +828,7 @@ AXCoreObject* AXCoreObject::deepestLastChildIncludingIgnored(bool updateChildren
             break;
         deepestChild = descendants[descendants.size() - 1];
     }
-    return deepestChild.unsafePtr();
+    return deepestChild;
 }
 
 size_t AXCoreObject::indexInSiblings(const AccessibilityChildrenVector& siblings) const
@@ -866,7 +866,7 @@ AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNee
     if (indexOfThis == notFound)
         return nullptr;
 
-    return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].unsafePtr() : nullptr;
+    return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].ptr() : nullptr;
 }
 
 RefPtr<AXCoreObject> AXCoreObject::previousSiblingIncludingIgnored(bool updateChildrenIfNeeded)
@@ -1428,7 +1428,7 @@ AXCoreObject* AXCoreObject::columnHeader()
     return nullptr;
 }
 
-AXCoreObject* AXCoreObject::rowHeader()
+RefPtr<AXCoreObject> AXCoreObject::rowHeader()
 {
     const auto& rowChildren = unignoredChildren();
     if (rowChildren.isEmpty())
@@ -1445,7 +1445,7 @@ AXCoreObject* AXCoreObject::rowHeader()
     for (const auto& child : rowChildren) {
         // We found a non-header cell, so this is not an entire row of headers -- return the original header cell.
         if (!isARIAGridRow && !child->hasElementName(ElementName::HTML_th))
-            return firstCell.unsafePtr();
+            return firstCell;
 
         // For grid rows, the first header encountered is the row header.
         if (isARIAGridRow && child->isRowHeader())
@@ -1805,12 +1805,12 @@ bool AXCoreObject::supportsActiveDescendant() const
     }
 }
 
-AXCoreObject* AXCoreObject::activeDescendant() const
+RefPtr<AXCoreObject> AXCoreObject::activeDescendant() const
 {
     auto activeDescendants = relatedObjects(AXRelation::ActiveDescendant);
     AX_ASSERT(activeDescendants.size() <= 1);
     if (!activeDescendants.isEmpty())
-        return activeDescendants[0].unsafePtr();
+        return WTF::move(activeDescendants[0]);
     return nullptr;
 }
 
@@ -2025,16 +2025,19 @@ String AXCoreObject::title(Vector<AccessibilityText>* computedText) const
     return { };
 }
 
-AXCoreObject* AXCoreObject::titleUIElement() const
+RefPtr<AXCoreObject> AXCoreObject::titleUIElement() const
 {
     auto labels = relatedObjects(AXRelation::LabeledBy);
 #if PLATFORM(COCOA)
     // We impose the restriction that if there is more than one label, then we should return none.
     // FIXME: the behavior should be the same in all platforms.
-    return labels.size() == 1 ? labels.first().unsafePtr() : nullptr;
+    if (labels.size() != 1)
+        return nullptr;
 #else
-    return labels.size() ? labels.first().unsafePtr() : nullptr;
+    if (labels.isEmpty())
+        return nullptr;
 #endif
+    return WTF::move(labels.first());
 }
 
 String AXCoreObject::expandedTextValue() const

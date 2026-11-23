@@ -2668,7 +2668,7 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         if (object.isARIATreeGridRow()) {
             setProperty(AXProperty::IsARIATreeGridRow, true);
             setObjectVectorProperty(AXProperty::DisclosedRows, object.disclosedRows());
-            setObjectProperty(AXProperty::DisclosedByRow, object.disclosedByRow());
+            setObjectProperty(AXProperty::DisclosedByRow, object.disclosedByRow().get());
         } else if (object.isARIAGridRow())
             setProperty(AXProperty::IsARIAGridRow, true);
 
@@ -2721,16 +2721,16 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
                 if (auto radicand = object.mathRadicand())
                     setObjectVectorProperty(AXProperty::MathRadicand, *radicand);
 
-                setObjectProperty(AXProperty::MathRootIndexObject, object.mathRootIndexObject());
+                setObjectProperty(AXProperty::MathRootIndexObject, object.mathRootIndexObject().get());
             }
 
-            setObjectProperty(AXProperty::MathUnderObject, object.mathUnderObject());
-            setObjectProperty(AXProperty::MathOverObject, object.mathOverObject());
-            setObjectProperty(AXProperty::MathNumeratorObject, object.mathNumeratorObject());
-            setObjectProperty(AXProperty::MathDenominatorObject, object.mathDenominatorObject());
-            setObjectProperty(AXProperty::MathBaseObject, object.mathBaseObject());
-            setObjectProperty(AXProperty::MathSubscriptObject, object.mathSubscriptObject());
-            setObjectProperty(AXProperty::MathSuperscriptObject, object.mathSuperscriptObject());
+            setObjectProperty(AXProperty::MathUnderObject, object.mathUnderObject().get());
+            setObjectProperty(AXProperty::MathOverObject, object.mathOverObject().get());
+            setObjectProperty(AXProperty::MathNumeratorObject, object.mathNumeratorObject().get());
+            setObjectProperty(AXProperty::MathDenominatorObject, object.mathDenominatorObject().get());
+            setObjectProperty(AXProperty::MathBaseObject, object.mathBaseObject().get());
+            setObjectProperty(AXProperty::MathSubscriptObject, object.mathSubscriptObject().get());
+            setObjectProperty(AXProperty::MathSuperscriptObject, object.mathSuperscriptObject().get());
             setMathscripts(AXProperty::MathPrescripts, object);
             setMathscripts(AXProperty::MathPostscripts, object);
         }

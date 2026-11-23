@@ -1070,7 +1070,7 @@ RelationMap AccessibilityObjectAtspi::relationMap() const
 
     AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;
     if (m_coreObject->isControl() || m_coreObject->isFieldset()) {
-        if (auto* label = m_coreObject->titleUIElement())
+        if (RefPtr label = m_coreObject->titleUIElement())
             ariaLabelledByElements.append(*label);
     } else if (m_coreObject->role() == AccessibilityRole::Legend) {
         if (auto* renderFieldset = ancestorsOfType<RenderBlock>(*m_coreObject->renderer()).first()) {
