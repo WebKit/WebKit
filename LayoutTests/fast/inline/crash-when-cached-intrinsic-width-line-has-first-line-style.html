@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#target::first-line { color: green; }
+</style>
+</head>
+<body>
+<div id="target">PASS if no crash or assert.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Make the content orthogonal to its container, so that layout computes the intrinsic widths of the
+// block and caches the maximum intrinsic width line content. The cached line runs point at the
+// first-line style, which is owned by the element's computed style. Note that only the simplified
+// text-only path caches the line content, which is why the content here is a single text node.
+target.style.writingMode = "vertical-rl";
+document.documentElement.offsetWidth;
+
+// Resolving a new style for the element destroys the first-line style the cached line content refers to.
+target.style.writingMode = "";
+document.documentElement.offsetWidth;
+</script>
+</body>
+</html>

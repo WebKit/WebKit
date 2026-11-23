@@ -56,9 +56,9 @@ public:
     void appendAtomicInlineBox(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit marginBoxLogicalWidth);
     void appendInlineBoxStart(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment);
     void appendInlineBoxEnd(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth);
-    void appendLineBreak(const InlineItem&, const Style::ComputedStyle&);
-    void appendWordBreakOpportunity(const InlineItem&, const Style::ComputedStyle&);
-    void appendOutOfFlow(const InlineItem&, const Style::ComputedStyle&);
+    void appendLineBreak(const InlineItem&);
+    void appendWordBreakOpportunity(const InlineItem&);
+    void appendOutOfFlow(const InlineItem&);
     void appendBlock(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
 
     void setContentNeedsBidiReordering() { m_hasNonDefaultBidiLevelRun = true; }
@@ -116,6 +116,7 @@ private:
     bool lineHasVisuallyNonEmptyContent() const;
 
     bool isFirstFormattedLine() const { return m_isFirstFormattedLine; }
+    IsFirstFormattedLine isFirstFormattedLineForRuns() const { return m_isFirstFormattedLine ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No; }
     NODELETE const InlineFormattingContext& formattingContext() const LIFETIME_BOUND;
     static bool appendTrailingInlineItemAsTrailingRun(RunList&, InlineLayoutUnit trimmedTrailingWhitespaceWidth, InlineItemRange, const InlineItemList&);
 
