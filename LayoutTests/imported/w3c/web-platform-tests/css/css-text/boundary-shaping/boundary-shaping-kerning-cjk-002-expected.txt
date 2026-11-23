@@ -1,0 +1,4 @@
+すペすすすすすすすすす
+
+PASS A right-aligned ruby with a kerned base and a wider annotation ends at the end edge of the line
+
