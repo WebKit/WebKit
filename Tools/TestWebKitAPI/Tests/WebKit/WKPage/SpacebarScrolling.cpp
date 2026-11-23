@@ -130,6 +130,8 @@ TEST(WebKit, SpacebarScrolling)
 
 #if PLATFORM(COCOA)
     EXPECT_FALSE(didNotHandleKeyDownEvent);
+#else
+    UNUSED_VARIABLE(didNotHandleKeyDownEvent);
 #endif
 }
 

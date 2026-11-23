@@ -57,8 +57,12 @@ struct _WebKitWebFormManagerPrivate {
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebFormManager, webkit_web_form_manager, G_TYPE_OBJECT, GObject)
 #else
+// FIXME: Unfortunately the instance struct is declared in the public header,
+// so we cannot use WEBKIT_DEFINE_TYPE here until the next API/ABI break. :(
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
+IGNORE_WARNINGS_BEGIN("unused-but-set-global")
 G_DEFINE_TYPE(WebKitWebFormManager, webkit_web_form_manager, G_TYPE_OBJECT)
+IGNORE_WARNINGS_END
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkit_web_form_manager_init(WebKitWebFormManager*)
