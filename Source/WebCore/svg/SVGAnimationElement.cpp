@@ -232,7 +232,7 @@ void SVGAnimationElement::animationAttributeChanged()
 {
     // Assumptions may not hold after an attribute change.
     m_animationValid = false;
-    setInactive();
+    setNeedsAnimationRevalidation();
 }
 
 ExceptionOr<float> SVGAnimationElement::getStartTime() const
