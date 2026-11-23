@@ -764,6 +764,62 @@ class ResultsDBReportMixin(abc.ABC):
             counts.append(f'{len(flakes)} flaky')
         return f"Ignored {' and '.join(counts)} failure(s)"
 
+    def modified_test_names(self):
+        """Tests this change modifies, named as run-webkit-tests reports failures."""
+        # modified_tests carries a 'LayoutTests/' prefix, failing tests are named relative to it.
+        prefix = 'LayoutTests/'
+        changed = set()
+        for test in self.getProperty('modified_tests', None) or []:
+            changed.add(test[len(prefix):] if test.startswith(prefix) else test)
+        return changed
+
+    @defer.inlineCallbacks
+    def filter_failures_using_results_db(self, failing_tests):
+        """
+        Sets failing_tests_filtered to `failing_tests` without the ones the results database knows to fail
+        or flake without this change, and records those in pre_existing_failures_in_results_db and
+        pre_existing_flakes_in_results_db.
+        """
+        self.failing_tests_filtered = list(failing_tests)
+        self.pre_existing_failures_in_results_db = []
+        configuration = self.results_db_query_configuration()
+
+        # The database only knows the test without this change, so it cannot vouch for one it modifies.
+        modified = self.modified_test_names()
+        self.tests_modified_by_change = [test for test in failing_tests if test in modified]
+        candidates = [test for test in failing_tests if test not in modified]
+        if self.tests_modified_by_change:
+            yield self._addToLog(
+                self.results_db_log_name,
+                f"Not consulting the results database for {len(self.tests_modified_by_change)} failing test(s) modified by this change: {', '.join(self.tests_modified_by_change)}\n",
+            )
+
+        identifier, has_commit = yield self.resolve_identifier_for_results_db(configuration, bool(candidates))
+
+        tests = candidates[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
+        unexplained = set()
+        for test in tests:
+            data = yield ResultsDatabase.is_test_pre_existing_failure(
+                test, configuration=configuration,
+                commit=identifier if has_commit else None,
+            )
+            if data['is_existing_failure']:
+                self.pre_existing_failures_in_results_db.append(test)
+                self.failing_tests_filtered.remove(test)
+            else:
+                unexplained.add(test)
+
+            yield self._addToLog(
+                self.results_db_log_name,
+                f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\n"
+                f"Response from results-db: {data['raw_data']}\n"
+                f"{data['logs']}"
+            )
+
+        excused = yield self.pre_existing_flakes_using_results_db(unexplained)
+        for test in excused:
+            self.failing_tests_filtered.remove(test)
+
     @defer.inlineCallbacks
     def pre_existing_flakes_using_results_db(self, new_failures: set[str]) -> Generator[Any, Any, set[str]]:
         """
@@ -4169,58 +4225,6 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
 
         self._parseRunWebKitTestsOutput(logText)
 
-    def modified_test_names(self):
-        """Tests this change modifies, named as run-webkit-tests reports failures."""
-        # modified_tests carries a 'LayoutTests/' prefix, failing tests are named relative to it.
-        prefix = 'LayoutTests/'
-        changed = set()
-        for test in self.getProperty('modified_tests', None) or []:
-            changed.add(test[len(prefix):] if test.startswith(prefix) else test)
-        return changed
-
-    @defer.inlineCallbacks
-    def filter_failures_using_results_db(self, failing_tests):
-        self.failing_tests_filtered = failing_tests.copy()
-        configuration = self.results_db_query_configuration()
-
-        # The database only knows the test without this change, so it cannot vouch for one it modifies.
-        modified = self.modified_test_names()
-        self.tests_modified_by_change = [test for test in failing_tests if test in modified]
-        candidates = [test for test in failing_tests if test not in modified]
-        if self.tests_modified_by_change:
-            yield self._addToLog(
-                self.results_db_log_name,
-                'Not consulting the results database for {} failing test(s) modified by this change: {}\n'.format(
-                    len(self.tests_modified_by_change), ', '.join(self.tests_modified_by_change),
-                ),
-            )
-
-        identifier, has_commit = yield self.resolve_identifier_for_results_db(configuration, bool(candidates))
-
-        tests = candidates[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
-        unexplained = set()
-        for test in tests:
-            data = yield ResultsDatabase.is_test_pre_existing_failure(
-                test, configuration=configuration,
-                commit=identifier if has_commit else None,
-            )
-            if data['is_existing_failure']:
-                self.pre_existing_failures_in_results_db.append(test)
-                self.failing_tests_filtered.remove(test)
-            else:
-                unexplained.add(test)
-
-            yield self._addToLog(
-                self.results_db_log_name,
-                f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\n"
-                f"Response from results-db: {data['raw_data']}\n"
-                f"{data['logs']}"
-            )
-
-        excused = yield self.pre_existing_flakes_using_results_db(unexplained)
-        for test in excused:
-            self.failing_tests_filtered.remove(test)
-
     def evaluateResult(self, cmd):
         result = SUCCESS
 
@@ -4713,6 +4717,7 @@ class ReRunWebKitTestsEWSSiteIsolation(SiteIsolationResultsDBMixin, ReRunWebKitT
 class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLogMixin, GitHubMixin):
     name = 'analyze-layout-tests-results'
     suite = 'layout-tests'
+    MAX_FAILURES_TO_CHECK_RESULTS_DB = RunWebKitTests.MAX_FAILURES_TO_CHECK_RESULTS_DB
     description = ['analyze-layout-test-results']
     descriptionDone = ['analyze-layout-tests-results']
 
@@ -4752,7 +4757,7 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
 
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             if exceed_failure_limit:
-                message = 'Failure limit exceed. At least found'
+                message = 'Failure limit exceeded. Found at least'
             else:
                 message = 'Found'
             new_failures_string = ' '.join(sorted(new_failures)[:self.NUM_FAILURES_TO_DISPLAY])
@@ -4939,30 +4944,20 @@ class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddTo
         num_flaky_failures = len(flaky_failures)
         flaky_failures_string = ', '.join(sorted(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY])
 
-        if first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit:
-            if (len(first_results_failing_tests) - len(clean_tree_results_failing_tests)) <= 5:
-                # If we've made it here, then many tests are failing with the change applied, but
-                # if the clean tree is also failing many tests, even if it's not quite as many,
-                # then we can't be certain that the discrepancy isn't due to flakiness, and hence we must defer judgement.
-                return defer.returnValue(self.retry_build())
-            rc = yield self.report_failure(first_results_failing_tests)
-            return defer.returnValue(rc)
-
-        if second_results_did_exceed_test_failure_limit:
+        # An early-exit run doesn't retry its failures, so blame only what failed in both runs and was clean without the change.
+        if first_results_did_exceed_test_failure_limit or second_results_did_exceed_test_failure_limit:
             if clean_tree_results_did_exceed_test_failure_limit:
                 return defer.returnValue(self.retry_build())
-            failures_introduced_by_change = first_results_failing_tests - clean_tree_results_failing_tests
+            clean_tree_results_flaky_tests = set(self.getProperty('clean_tree_run_flakies', []))
+            failures_introduced_by_change = first_results_failing_tests.intersection(second_results_failing_tests) - clean_tree_results_failing_tests - clean_tree_results_flaky_tests
+            # Completed runs already consulted the results database.
+            both_runs_exceeded_failure_limit = first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit
+            is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
+            if failures_introduced_by_change and both_runs_exceeded_failure_limit and is_main:
+                yield self.filter_failures_using_results_db(sorted(failures_introduced_by_change))
+                failures_introduced_by_change = set(self.failing_tests_filtered)
             if failures_introduced_by_change:
-                rc = yield self.report_failure(failures_introduced_by_change)
-                return defer.returnValue(rc)
-            return defer.returnValue(self.retry_build())
-
-        if first_results_did_exceed_test_failure_limit:
-            if clean_tree_results_did_exceed_test_failure_limit:
-                return defer.returnValue(self.retry_build())
-            failures_introduced_by_change = second_results_failing_tests - clean_tree_results_failing_tests
-            if failures_introduced_by_change:
-                rc = yield self.report_failure(failures_introduced_by_change)
+                rc = yield self.report_failure(failures_introduced_by_change, exceed_failure_limit=both_runs_exceeded_failure_limit)
                 return defer.returnValue(rc)
             return defer.returnValue(self.retry_build())
 

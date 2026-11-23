@@ -3726,12 +3726,29 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def configureStep(self):
+    def configureStep(self, results_db_failures=(), results_db_flakes=()):
         self.setup_step(AnalyzeLayoutTestsResults())
         self.setProperty('first_results_exceed_failure_limit', False)
         self.setProperty('second_results_exceed_failure_limit', False)
         self.setProperty('clean_tree_results_exceed_failure_limit', False)
         self.setProperty('clean_tree_run_failures', [])
+
+        self.results_db_queries = []
+
+        def fake_is_pre_existing(cls, test, **kwargs):
+            self.results_db_queries.append(test)
+            return defer.succeed({
+                'is_existing_failure': test in results_db_failures,
+                'pass_rate': 0 if test in results_db_failures else 100,
+                'raw_data': {},
+                'logs': '',
+                'request_failed': False,
+            })
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(lambda cls, tests, **kwargs: defer.succeed((
+            {test: FlakyVerdict(flaky_type='CleanTree', intra_build_evidence=True) if test in results_db_flakes else FlakyVerdict() for test in tests}, ''))))
 
     def test_failure_introduced_by_change(self):
         self.configureStep()
@@ -3869,7 +3886,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
         self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 27)])
-        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        self.expect_outcome(result=FAILURE, state_string='Failure limit exceeded. Found at least 3 new test failures: test27 test28 test29 (failure)')
         return self.run_step()
 
     def test_clean_tree_has_some_failures(self):
@@ -3879,7 +3896,168 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
         self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 10)])
-        self.expect_outcome(result=FAILURE, state_string='Found 30 new test failures: test0 test1 test10 test11 test12 test13 test14 test15 test16 test17 ... (failure)')
+        self.expect_outcome(result=FAILURE, state_string='Failure limit exceeded. Found at least 20 new test failures: test10 test11 test12 test13 test14 test15 test16 test17 test18 test19 ... (failure)')
+        return self.run_step()
+
+    def test_both_runs_exceed_failure_limit_with_failures_that_are_flaky_on_clean_tree(self):
+        # A test that leaves WebKitTestRunner in a bad state fails the tests after it in every run.
+        # Without the change, those pass on retry.
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 5)])
+        self.setProperty('clean_tree_run_flakies', [f'test{i}' for i in range(5, 30)])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_both_runs_exceed_failure_limit_blames_only_tests_failing_in_both(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(25, 55)])
+        self.expect_outcome(result=FAILURE, state_string='Failure limit exceeded. Found at least 5 new test failures: test25 test26 test27 test28 test29 (failure)')
+        return self.run_step()
+
+    def test_both_runs_exceed_failure_limit_without_common_failures(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(30, 60)])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_both_runs_exceed_failure_limit_with_failures_known_to_results_db(self):
+        self.configureStep(results_db_failures={'test0', 'test1'}, results_db_flakes={'test2'})
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['test0', 'test1', 'test2'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test0', 'test1', 'test2'])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_both_runs_exceed_failure_limit_with_new_failure_and_failures_known_to_results_db(self):
+        self.configureStep(results_db_failures={'test0'}, results_db_flakes={'test1'})
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['test0', 'test1', 'test2'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test0', 'test1', 'test2'])
+        self.expect_outcome(result=FAILURE, state_string='Failure limit exceeded. Found at least 1 new test failure: test2 (failure)')
+        return self.run_step()
+
+    def test_both_runs_exceed_failure_limit_does_not_excuse_modified_tests(self):
+        # The results database only knows the test without the change.
+        self.configureStep(results_db_failures={'test0'})
+        self.setProperty('modified_tests', ['LayoutTests/test0'])
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['test0'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test0'])
+        self.expect_outcome(result=FAILURE, state_string='Failure limit exceeded. Found at least 1 new test failure: test0 (failure)')
+        return self.run_step()
+
+    def test_both_runs_exceed_failure_limit_on_other_branch_does_not_consult_results_db(self):
+        self.configureStep(results_db_failures={'test0'})
+        self.setProperty('github.base.ref', 'safari-7620-branch')
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['test0'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test0'])
+        self.expect_outcome(result=FAILURE, state_string='Failure limit exceeded. Found at least 1 new test failure: test0 (failure)')
+        rc = self.run_step()
+        self.assertEqual(self.results_db_queries, [])
+        return rc
+
+    def test_one_run_exceeds_failure_limit_does_not_consult_results_db_again(self):
+        # The run that completed already filtered its failures through the results database.
+        self.configureStep(results_db_failures={'test2'})
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_run_failures', ['test2'])
+        self.setProperty('second_run_failures_filtered', [])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        rc = self.run_step()
+        self.assertEqual(self.results_db_queries, [])
+        return rc
+
+    def test_both_runs_exceed_failure_limit_checks_every_common_failure_with_results_db(self):
+        failures = [f'test{i}' for i in range(0, 60)]
+        self.configureStep(results_db_failures=set(failures))
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', failures)
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', failures)
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        rc = self.run_step()
+        self.assertEqual(sorted(self.results_db_queries), sorted(failures))
+        return rc
+
+    def test_all_runs_exceed_failure_limit(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('clean_tree_results_exceed_failure_limit', True)
+        self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(30, 60)])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_first_run_exceed_failure_limit_with_failure_that_is_flaky_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_run_failures', ['test1'])
+        self.setProperty('clean_tree_run_flakies', ['test1'])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_first_run_exceed_failure_limit_with_new_failure_in_second_run(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_run_failures', ['test1', 'test2'])
+        self.setProperty('clean_tree_run_flakies', ['test1'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: test2 (failure)')
+        return self.run_step()
+
+    def test_first_run_exceed_failure_limit_with_failure_only_in_second_run(self):
+        # The first run may have exited before reaching the test, and run-webkit-tests reports a crash
+        # even if the test passes on retry, so one failing run doesn't identify a regression.
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_run_failures', ['test40'])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_second_run_exceed_failure_limit_with_failure_only_in_first_run(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test40'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_second_run_exceed_failure_limit_with_failure_that_is_flaky_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('clean_tree_run_flakies', ['test1'])
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_second_run_exceed_failure_limit_with_new_failure_in_first_run(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1', 'test2'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures', ['test1'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: test2 (failure)')
         return self.run_step()
 
     def test_clean_tree_has_lot_of_failures_and_no_new_failure(self):
@@ -3899,7 +4077,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 300)])
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 300)])
-        failure_message = 'Found 300 new test failures: test0 test1 test10 test100 test101 test102 test103 test104 test105 test106 ...'
+        failure_message = 'Failure limit exceeded. Found at least 300 new test failures: test0 test1 test10 test100 test101 test102 test103 test104 test105 test106 ...'
         self.expect_outcome(result=FAILURE, state_string=failure_message + ' (failure)')
         rc = self.run_step()
         self.expect_property('comment_text', failure_message)
