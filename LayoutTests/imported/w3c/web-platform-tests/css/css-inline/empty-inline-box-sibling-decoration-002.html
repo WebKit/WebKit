@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<title>CSS Inline: decorations on an empty inline box that follows an undecorated empty sibling, with direction, writing-mode (including sideways) and text-align</title>
+<link rel="help" href="https://www.w3.org/TR/CSS2/visuren.html#inline-formatting">
+<link rel="help" href="https://drafts.csswg.org/css-writing-modes-4/#logical-direction-layout">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#text-align-property">
+<meta name="assert" content="Margins, borders and padding of an empty inline box are honored in right-to-left, vertical, sideways and aligned lines regardless of whether it is the first inline box in the line.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+div { font-size: 10px; line-height: 20px; inline-size: 200px; margin: 0 0 10px 50px; }
+.decorated { border-inline-start: 10px solid green; padding-inline-start: 30px; }
+.rtl { direction: rtl; }
+.vertical-rl { writing-mode: vertical-rl; }
+.vertical-lr { writing-mode: vertical-lr; }
+.sideways-rl { writing-mode: sideways-rl; }
+.sideways-lr { writing-mode: sideways-lr; }
+</style>
+
+<div id="rtl-control" class="rtl"><span id="rtl-control-target" class="decorated"></span><span id="rtl-control-after"></span></div>
+
+<div id="rtl" class="rtl"><span></span><span id="rtl-target" class="decorated"></span><span id="rtl-after"></span></div>
+
+<div id="rtl-margin" class="rtl"><span></span><span id="rtl-margin-target" style="margin-inline-start: 40px; border-inline-start: 10px solid green"></span></div>
+
+<div id="vertical-rl" class="vertical-rl"><span></span><span id="vertical-rl-target" class="decorated"></span><span id="vertical-rl-after"></span></div>
+
+<div id="vertical-lr" class="vertical-lr"><span></span><span id="vertical-lr-target" style="margin-inline-start: 40px; border-inline-start: 10px solid green"></span><span id="vertical-lr-after"></span></div>
+
+<div id="vertical-rl-rtl" class="vertical-rl rtl"><span></span><span id="vertical-rl-rtl-target" class="decorated"></span><span id="vertical-rl-rtl-after"></span></div>
+
+<div id="sideways-rl" class="sideways-rl"><span></span><span id="sideways-rl-target" class="decorated"></span><span id="sideways-rl-after"></span></div>
+
+<div id="sideways-lr" class="sideways-lr"><span></span><span id="sideways-lr-target" class="decorated"></span><span id="sideways-lr-after"></span></div>
+
+<div id="center" style="text-align: center"><span></span><span id="center-target" class="decorated"></span><span id="center-after"></span></div>
+
+<div id="right" style="text-align: right"><span></span><span id="right-target" class="decorated"></span></div>
+
+<script>
+function rect(id) {
+  return document.getElementById(id).getBoundingClientRect();
+}
+
+test(() => {
+  assert_equals(rect("rtl-control").right - rect("rtl-control-target").right, 0, "right offset");
+  assert_equals(rect("rtl-control-target").width, 40, "width");
+  assert_equals(rect("rtl-control").right - rect("rtl-control-after").right, 40, "following sibling right offset");
+  assert_equals(rect("rtl-control").height, 20, "line box is not empty");
+}, "direction: rtl with the decorated box first");
+
+test(() => {
+  assert_equals(rect("rtl").right - rect("rtl-target").right, 0, "right offset");
+  assert_equals(rect("rtl-target").width, 40, "width");
+  assert_equals(rect("rtl").right - rect("rtl-after").right, 40, "following sibling right offset");
+  assert_equals(rect("rtl").height, 20, "line box is not empty");
+}, "direction: rtl");
+
+test(() => {
+  assert_equals(rect("rtl-margin").right - rect("rtl-margin-target").right, 40, "right offset");
+  assert_equals(rect("rtl-margin-target").width, 10, "width");
+}, "direction: rtl with margin-inline-start");
+
+test(() => {
+  assert_equals(rect("vertical-rl-target").top - rect("vertical-rl").top, 0, "top offset");
+  assert_equals(rect("vertical-rl-target").height, 40, "height");
+  assert_equals(rect("vertical-rl-after").top - rect("vertical-rl").top, 40, "following sibling top offset");
+  assert_equals(rect("vertical-rl").width, 20, "line box is not empty");
+}, "writing-mode: vertical-rl");
+
+test(() => {
+  assert_equals(rect("vertical-lr-target").top - rect("vertical-lr").top, 40, "top offset");
+  assert_equals(rect("vertical-lr-target").height, 10, "height");
+  assert_equals(rect("vertical-lr-after").top - rect("vertical-lr").top, 50, "following sibling top offset");
+}, "writing-mode: vertical-lr with margin-inline-start");
+
+test(() => {
+  assert_equals(rect("vertical-rl-rtl").bottom - rect("vertical-rl-rtl-target").bottom, 0, "bottom offset");
+  assert_equals(rect("vertical-rl-rtl-target").height, 40, "height");
+  assert_equals(rect("vertical-rl-rtl").bottom - rect("vertical-rl-rtl-after").bottom, 40, "following sibling bottom offset");
+  assert_equals(rect("vertical-rl-rtl").width, 20, "line box is not empty");
+}, "writing-mode: vertical-rl; direction: rtl");
+
+test(() => {
+  assert_equals(rect("sideways-rl-target").top - rect("sideways-rl").top, 0, "top offset");
+  assert_equals(rect("sideways-rl-target").height, 40, "height");
+  assert_equals(rect("sideways-rl-after").top - rect("sideways-rl").top, 40, "following sibling top offset");
+  assert_equals(rect("sideways-rl").width, 20, "line box is not empty");
+}, "writing-mode: sideways-rl");
+
+test(() => {
+  assert_equals(rect("sideways-lr").bottom - rect("sideways-lr-target").bottom, 0, "bottom offset");
+  assert_equals(rect("sideways-lr-target").height, 40, "height");
+  assert_equals(rect("sideways-lr").bottom - rect("sideways-lr-after").bottom, 40, "following sibling bottom offset");
+  assert_equals(rect("sideways-lr").width, 20, "line box is not empty");
+}, "writing-mode: sideways-lr");
+
+test(() => {
+  assert_equals(rect("center-target").left - rect("center").left, 80, "left offset");
+  assert_equals(rect("center-target").width, 40, "width");
+  assert_equals(rect("center-after").left - rect("center").left, 120, "following sibling left offset");
+}, "text-align: center");
+
+test(() => {
+  assert_equals(rect("right-target").left - rect("right").left, 160, "left offset");
+  assert_equals(rect("right-target").width, 40, "width");
+}, "text-align: right");
+</script>

@@ -1,0 +1,10 @@
+
+PASS Border and padding
+PASS No decoration
+PASS margin-inline-start
+PASS Nested inline boxes
+PASS writing-mode: vertical-rl
+PASS writing-mode: sideways-lr
+PASS text-align: left
+PASS text-align: center
+

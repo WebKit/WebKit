@@ -49,6 +49,7 @@ private:
     void processNonBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     void processBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     bool processBidiLinesWithNoContent(const LineLayoutResult&, InlineDisplay::Boxes&);
+    void mirrorInlineBoxForRightToLeftLine(InlineDisplay::Box&);
 
     void truncateForEllipsisPolicy(LineEndingTruncationPolicy, const LineLayoutResult&, InlineDisplay::Boxes&);
 
