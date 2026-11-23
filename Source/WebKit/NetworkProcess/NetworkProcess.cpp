@@ -1503,13 +1503,8 @@ void NetworkProcess::hasLocalStorageOrCookies(PAL::SessionID sessionID, const Re
         if (hasCookies)
             return completionHandler(true);
 
-        if (session) {
-            protect(session->storageManager())->fetchData({ WebsiteDataType::LocalStorage }, NetworkStorageManager::ShouldComputeSize::No, [domain, completionHandler = WTF::move(completionHandler)](auto entries) mutable {
-                completionHandler(std::ranges::any_of(entries, [&domain](auto& entry) {
-                    return domain.matches(entry.origin);
-                }));
-            });
-        }
+        if (session)
+            protect(session->storageManager())->hasLocalStorage(domain, WTF::move(completionHandler));
     });
 }
 
@@ -1519,12 +1514,7 @@ void NetworkProcess::hasLocalStorage(PAL::SessionID sessionID, const Registrable
     if (!session)
         return completionHandler(false);
 
-    auto types = OptionSet<WebsiteDataType> { WebsiteDataType::LocalStorage };
-    session->storageManager().fetchData(types, NetworkStorageManager::ShouldComputeSize::No, [domain, completionHandler = WTF::move(completionHandler)](auto entries) mutable {
-        completionHandler(std::ranges::any_of(entries, [&domain](auto& entry) {
-            return domain.matches(entry.origin);
-        }));
-    });
+    session->storageManager().hasLocalStorage(domain, WTF::move(completionHandler));
 }
 
 void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)

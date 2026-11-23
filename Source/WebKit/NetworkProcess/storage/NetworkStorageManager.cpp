@@ -1467,6 +1467,30 @@ void NetworkStorageManager::fetchData(OptionSet<WebsiteDataType> types, ShouldCo
     });
 }
 
+void NetworkStorageManager::hasLocalStorage(const WebCore::RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
+
+    workQueue().dispatch([this, protectedThis = Ref { *this }, domain = crossThreadCopy(domain), completionHandler = WTF::move(completionHandler)] mutable {
+        // Main-frame navigations wait for this answer, so only origins of this domain get an
+        // OriginStorageManager; making and removing one for every origin on disk is most of the cost.
+        bool hasLocalStorage = false;
+        for (auto& origin : getAllOrigins()) {
+            if (!domain.matches(origin.clientOrigin) && !domain.matches(origin.topOrigin))
+                continue;
+            hasLocalStorage = !originStorageManager(origin)->fetchDataTypesInList({ WebsiteDataType::LocalStorage }, false).isEmpty();
+            removeOriginStorageManagerIfPossible(origin);
+            if (hasLocalStorage)
+                break;
+        }
+
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler), hasLocalStorage] mutable {
+            completionHandler(hasLocalStorage);
+        });
+    });
+}
+
 HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet<WebsiteDataType> types, WallTime modifiedSinceTime, NOESCAPE const Function<bool(const WebCore::ClientOrigin&)>& filter)
 {
     RELEASE_ASSERT(!RunLoop::isMain());
