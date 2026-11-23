@@ -2180,6 +2180,7 @@ webkit.org/b/304995 [ Release ] imported/w3c/web-platform-tests/largest-contentf
 
 webkit.org/b/305086 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
 
+webkit.org/b/305403 [ Sequoia Release arm64 ] http/tests/performance/performance-resource-timing-cross-origin-media.html [ Pass Timeout ]
 webkit.org/b/305403 [ Sequoia ] http/tests/performance/performance-resource-timing-redirection-cross-origin-media.html [ Failure ]
 
 # webkit.org/b/296008 [macOS Debug] http/tests/media/hls and platform/mac/media/encrypted-media tests are timing out on some EWS bots
