@@ -3430,6 +3430,16 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/frame.py": {
+        "subtests": {
+            "test_navigated_frame_and_main_frame_fragment[same_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/331658"}, "mac-site-isolation": { "status": ["PASS"], "bug": "webkit.org/b/331658"}}
+            },
+            "test_navigated_frame_and_main_frame_fragment[cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/331658"}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/user_prompt_closed/beforeunload.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288343"}}
     },
