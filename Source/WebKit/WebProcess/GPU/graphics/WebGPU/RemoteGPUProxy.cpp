@@ -82,6 +82,9 @@ RemoteGPUProxy::RemoteGPUProxy(ModelConvertToBackingContext& modelConvertToBacki
     : m_modelConvertToBackingContext(modelConvertToBackingContext)
     , m_dispatcher(dispatcher)
     , m_renderingBackend(renderingBackend)
+#if ENABLE(VIDEO)
+    , m_videoFrameObjectHeapProxy(renderingBackend.videoFrameObjectHeapProxy())
+#endif
 {
 }
 

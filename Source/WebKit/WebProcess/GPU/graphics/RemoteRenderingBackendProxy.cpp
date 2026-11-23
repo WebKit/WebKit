@@ -46,6 +46,7 @@
 #include "RemoteSharedResourceCacheProxy.h"
 #include "RemoteSnapshotRecorderProxy.h"
 #include "RemoteTextDetectorProxy.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
@@ -127,6 +128,9 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_gpuProcessConnection = gpuProcessConnection.get();
         m_gpuProcessIPCConnection = &gpuProcessConnection->connection();
         m_sharedResourceCache = gpuProcessConnection->sharedResourceCache();
+#if ENABLE(VIDEO)
+        m_videoFrameObjectHeapProxy = &gpuProcessConnection->videoFrameObjectHeapProxy();
+#endif
     });
 }
 
@@ -800,6 +804,14 @@ RefPtr<IPC::Connection> RemoteRenderingBackendProxy::gpuProcessIPCConnection()
     ensureGPUProcessConnection();
     return m_gpuProcessIPCConnection;
 }
+
+#if ENABLE(VIDEO)
+Ref<RemoteVideoFrameObjectHeapProxy> RemoteRenderingBackendProxy::videoFrameObjectHeapProxy()
+{
+    ensureGPUProcessConnection();
+    return *m_videoFrameObjectHeapProxy;
+}
+#endif
 
 RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::cachedImageBuffer(const ImageBuffer& imageBuffer) const
 {

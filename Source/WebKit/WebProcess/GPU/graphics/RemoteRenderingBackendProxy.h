@@ -85,6 +85,9 @@ class RemoteSharedResourceCacheProxy;
 class RemoteLayerBackingStore;
 class RemoteImageBufferProxyFlushState;
 class RemoteImageBufferSetProxy;
+#if ENABLE(VIDEO)
+class RemoteVideoFrameObjectHeapProxy;
+#endif
 
 enum class UsesRenderingUpdateBackpressure : bool { No, Yes };
 
@@ -204,6 +207,10 @@ public:
     RefPtr<IPC::StreamClientConnection> connection();
     // The connection of the GPU process connection that connection() was created on.
     RefPtr<IPC::Connection> gpuProcessIPCConnection();
+#if ENABLE(VIDEO)
+    // The video frame object heap of the GPU process connection that connection() was created on.
+    Ref<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy();
+#endif
     void gpuProcessConnectionDidClose(IPC::Connection&);
 
     bool isCurrent() const final;
@@ -256,6 +263,9 @@ private:
     RefPtr<IPC::StreamClientConnection> m_connection;
     RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
+#if ENABLE(VIDEO)
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#endif
     RemoteRenderingBackendIdentifier m_identifier { RemoteRenderingBackendIdentifier::generate() };
     const UniqueRef<RemoteResourceCacheProxy> m_remoteResourceCacheProxy { RemoteResourceCacheProxy::create(*this) };
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
