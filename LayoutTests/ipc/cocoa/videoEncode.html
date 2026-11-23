@@ -16,7 +16,7 @@ if (window.IPC) {
         const height = 6000;
 
         CoreIPC.GPU.LibWebRTCCodecsProxy.CreateEncoder(0, {
-            id, codecType:0, codecString:'avc1.64001f', parameters:[], useLowLatency:true, useAnnexB:false, scalabilityMode:1
+            id, codecType:0, codecString:'avc1.64001f', parameters:[], useLowLatency:true, useAnnexB:false, scalabilityMode:1, size:{ width, height }
         });
         CoreIPC.GPU.LibWebRTCCodecsProxy.InitializeEncoder(0, {
             id, width, height, startBitrate:62, maxBitrate:91, minBitrate:5, maxFramerate:720916

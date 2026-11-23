@@ -1242,6 +1242,9 @@ webkit.org/b/332407 [ x86_64 ] fast/webgpu/render-bundle-fragment-depth-after-dy
 # Takes about 30 seconds on Intel Macs.
 webkit.org/b/332404 [ x86_64 ] http/wpt/webcodecs/configure-encoder-big-frame-size.html [ Slow ]
 
+# The HEVC Main 10 cases get an encoder error on Intel Macs.
+webkit.org/b/332774 [ x86_64 ] http/wpt/webcodecs/videoEncoder-high-bit-depth.html [ Failure ]
+
 webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
 
 webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pass Failure ]
