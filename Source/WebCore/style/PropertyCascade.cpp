@@ -234,13 +234,6 @@ void PropertyCascade::setDelayingForRuleRollback(CSSPropertyID propertyID, CSSVa
     SUPPRESS_UNCOUNTED_ARG set(propertyID, last.value, last.properties, last.origin);
 }
 
-bool PropertyCascade::hasProperty(CSSPropertyID propertyID, const CSSValue& value)
-{
-    if (propertyID == CSSPropertyID::Custom)
-        return hasCustomProperty(downcast<CSSCustomPropertyValue>(value).name());
-    return propertyID < firstLogicalGroupProperty ? hasNormalProperty(propertyID) : hasLogicalGroupProperty(propertyID);
-}
-
 bool PropertyCascade::mayOverrideExistingProperty(CSSPropertyID propertyID, const CSSValue& value)
 {
     if (propertyID == CSSPropertyID::Custom)

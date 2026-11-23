@@ -40,7 +40,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HasSelectorFilter);
 static constexpr unsigned HoverSalt = 101;
 
 HasSelectorFilter::HasSelectorFilter(const Element& element, Type type)
-    : m_type(type)
 {
     switch (type) {
     case Type::Descendants:

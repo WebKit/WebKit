@@ -95,9 +95,6 @@ StyleSheetContents* UserAgentStyle::viewTransitionsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 #endif
-#if ENABLE(SERVICE_CONTROLS)
-StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
-#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
 StyleSheetContents* UserAgentStyle::attachmentStyleSheet;
 #endif
