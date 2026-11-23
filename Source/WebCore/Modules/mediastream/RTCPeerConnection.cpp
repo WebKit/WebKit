@@ -624,7 +624,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
                 // https://tools.ietf.org/html/rfc8489#section-14.3
                 if (server.credential.length() > 64 || server.username.length() > 64) {
                     constexpr size_t MaxTurnUsernameLength = 509;
-                    if (server.credential.utf8().length() > MaxTurnUsernameLength || server.username.utf8().length() > MaxTurnUsernameLength)
+                    if (utf8Length(server.credential) > MaxTurnUsernameLength || utf8Length(server.username) > MaxTurnUsernameLength)
                         return Exception { ExceptionCode::InvalidAccessError, "TURN/TURNS username and/or credential are too long"_s };
                 }
             } else if (!serverURL.protocolIs("stun"_s) && !serverURL.protocolIs("stuns"_s))
@@ -770,10 +770,10 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(String&& l
     if (isClosed())
         return Exception { ExceptionCode::InvalidStateError };
 
-    if (label.utf8().length() > 65535)
+    if (utf8Length(label) > 65535)
         return Exception { ExceptionCode::TypeError, "label is too long"_s };
 
-    if (options.protocol.utf8().length() > 65535)
+    if (utf8Length(options.protocol) > 65535)
         return Exception { ExceptionCode::TypeError, "protocol is too long"_s };
 
     if (!options.negotiated)
