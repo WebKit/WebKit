@@ -280,7 +280,7 @@ Ref<Node> ShadowRoot::cloneNodeInternal(Document& document, CloningOperation typ
             WTF::move(registry),
             m_keepsCustomElementRegistryNull ? ShadowRootKeepsCustomElementRegistryNull::Yes : ShadowRootKeepsCustomElementRegistryNull::No);
     }
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
     case CloningOperation::Everything:
         break;
     }
@@ -295,7 +295,7 @@ SerializedNode ShadowRoot::serializeNode(CloningOperation type) const
     switch (type) {
     case CloningOperation::SelfWithTemplateContent: {
         bool hasScopedRegistry = customElementRegistry() && customElementRegistry()->isScoped();
-        return { SerializedNode::ShadowRoot { { serializeChildNodes() },
+        return { SerializedNode::ShadowRoot { { },
             m_mode == ShadowRootMode::Open,
             m_slotAssignmentMode,
             m_delegatesFocus ? ShadowRootDelegatesFocus::Yes : ShadowRootDelegatesFocus::No,
@@ -305,7 +305,7 @@ SerializedNode ShadowRoot::serializeNode(CloningOperation type) const
             m_keepsCustomElementRegistryNull || hasScopedRegistry ? ShadowRootKeepsCustomElementRegistryNull::Yes : ShadowRootKeepsCustomElementRegistryNull::No
         } };
     }
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
     case CloningOperation::Everything:
         break;
     }

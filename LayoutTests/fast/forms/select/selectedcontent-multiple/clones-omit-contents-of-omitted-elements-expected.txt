@@ -1,0 +1,4 @@
+
+PASS Option clones in selectedcontent do not clone the contents of omitted elements
+PASS Option clones in selectedcontent do not clone the contents of omitted elements in a shadow tree
+

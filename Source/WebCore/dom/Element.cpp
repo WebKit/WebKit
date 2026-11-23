@@ -692,13 +692,14 @@ bool Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouse
 Ref<Node> Element::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* fallbackRegistry) const
 {
     switch (type) {
-    case CloningOperation::SelfOnly:
-    case CloningOperation::SelfWithTemplateContent: {
+    case CloningOperation::SelfWithShadowTree: {
         Ref clone = cloneElementWithoutChildren(document, fallbackRegistry);
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
         cloneShadowTreeIfPossible(clone);
         return clone;
     }
+    case CloningOperation::SelfWithTemplateContent:
+        return cloneElementWithoutChildren(document, fallbackRegistry);
     case CloningOperation::Everything:
         break;
     }
@@ -711,7 +712,9 @@ std::optional<ShadowRoot> Element::serializeShadowRoot() const
     RefPtr oldShadowRoot = this->shadowRoot();
     if (!oldShadowRoot || !oldShadowRoot->isClonable())
         return std::nullopt;
-    return std::get<ShadowRoot>(oldShadowRoot->serializeNode(Node::CloningOperation::SelfWithTemplateContent).data);
+    auto shadowRoot = std::get<ShadowRoot>(oldShadowRoot->serializeNode(Node::CloningOperation::SelfWithTemplateContent).data);
+    shadowRoot.children = oldShadowRoot->serializeChildNodes();
+    return shadowRoot;
 }
 template std::optional<SerializedNode::ShadowRoot> Element::serializeShadowRoot() const;
 
@@ -727,11 +730,15 @@ template Vector<SerializedNode::Element::Attribute> Element::serializeAttributes
 SerializedNode Element::serializeNode(CloningOperation type) const
 {
     Vector<SerializedNode> children;
+    std::optional<SerializedNode::ShadowRoot> shadowRoot;
     switch (type) {
-    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithShadowTree:
+        shadowRoot = serializeShadowRoot<SerializedNode::ShadowRoot>();
+        break;
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
+        shadowRoot = serializeShadowRoot<SerializedNode::ShadowRoot>();
         children = serializeChildNodes();
         break;
     }
@@ -740,11 +747,11 @@ SerializedNode Element::serializeNode(CloningOperation type) const
         { WTF::move(children) },
         { tagQName() },
         serializeAttributes<SerializedNode::Element::Attribute>(),
-        serializeShadowRoot<SerializedNode::ShadowRoot>()
+        WTF::move(shadowRoot)
     } };
 }
 
-void Element::cloneShadowTreeIfPossible(Element& newHost) const
+void Element::cloneShadowTreeIfPossible(Element& newHost, ShouldCloneChild shouldCloneChild) const
 {
     RefPtr oldShadowRoot = this->shadowRoot();
     if (!oldShadowRoot || !oldShadowRoot->isClonable())
@@ -755,7 +762,10 @@ void Element::cloneShadowTreeIfPossible(Element& newHost) const
         return downcast<ShadowRoot>(WTF::move(clone));
     }();
     newHost.addShadowRoot(clonedShadowRoot.copyRef());
-    oldShadowRoot->cloneChildNodes(protect(newHost.document()), nullptr, clonedShadowRoot);
+    if (shouldCloneChild)
+        oldShadowRoot->cloneChildNodes(protect(newHost.document()), nullptr, clonedShadowRoot, shouldCloneChild);
+    else
+        oldShadowRoot->cloneChildNodes(protect(newHost.document()), nullptr, clonedShadowRoot);
 }
 
 Ref<Element> Element::cloneElementWithChildren(Document& document, CustomElementRegistry* fallbackRegistry) const
