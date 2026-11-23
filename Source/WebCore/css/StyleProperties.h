@@ -83,18 +83,21 @@ public:
         using pointer = PropertyReference;
         using reference = PropertyReference;
 
-        Iterator(const T& properties)
-            : properties { properties }
+        Iterator() = default;
+        Iterator(const T& properties, unsigned index)
+            : properties { &properties }
+            , index { index }
         {
         }
 
-        PropertyReference operator*() const { return properties.propertyAt(index); }
+        PropertyReference operator*() const { return properties->propertyAt(index); }
         Iterator& operator++() { ++index; return *this; }
-        bool operator==(std::nullptr_t) const { return index >= properties.propertyCount(); }
+        Iterator operator++(int) { auto result = *this; ++index; return result; }
+        bool operator==(const Iterator& other) const { return index == other.index; }
 
     private:
         // The iterator is a short-lived view and the StyleProperties outlives it.
-        SUPPRESS_UNCOUNTED_MEMBER const T& properties;
+        SUPPRESS_UNCOUNTED_MEMBER const T* properties { nullptr };
         unsigned index { 0 };
     };
 
@@ -102,8 +105,8 @@ public:
     inline bool isEmpty() const;
     inline PropertyReference propertyAt(unsigned) const LIFETIME_BOUND;
 
-    Iterator<StyleProperties> begin() const LIFETIME_BOUND { return { *this }; }
-    static constexpr std::nullptr_t end() { return nullptr; }
+    inline Iterator<StyleProperties> begin() const LIFETIME_BOUND;
+    inline Iterator<StyleProperties> end() const LIFETIME_BOUND;
     inline unsigned size() const;
 
     WEBCORE_EXPORT RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
