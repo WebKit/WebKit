@@ -29,26 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUExternalTextureDescriptor.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPUExternalTextureDescriptor& externalTextureDescriptor)
-{
-    auto base = convertToBacking(static_cast<const WebCore::WebGPUObjectDescriptorBase&>(externalTextureDescriptor));
-    if (!base)
-        return std::nullopt;
-
-    std::optional<WebCore::MediaPlayerIdentifier> optionalMediaIdentifier { std::nullopt };
-    if (auto* mediaIdentifier = std::get_if<std::optional<WebCore::MediaPlayerIdentifier>>(&externalTextureDescriptor.videoBacking))
-        optionalMediaIdentifier = *mediaIdentifier;
-    return { { WTF::move(*base), optionalMediaIdentifier, externalTextureDescriptor.colorSpace, externalTextureDescriptor.visibleSize
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-        , std::nullopt
-#endif
-    } };
-}
 
 std::optional<WebCore::WebGPUExternalTextureDescriptor> ConvertFromBackingContext::convertFromBacking(const ExternalTextureDescriptor& externalTextureDescriptor, ConvertFromBackingContext::PixelBufferType pixelBuffer)
 {

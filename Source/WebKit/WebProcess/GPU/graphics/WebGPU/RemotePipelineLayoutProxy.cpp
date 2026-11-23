@@ -29,16 +29,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemotePipelineLayoutMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePipelineLayoutProxy);
 
-RemotePipelineLayoutProxy::RemotePipelineLayoutProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUPipelineLayoutIdentifier identifier)
+RemotePipelineLayoutProxy::RemotePipelineLayoutProxy(RemoteDeviceProxy& parent, WebGPUPipelineLayoutIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }

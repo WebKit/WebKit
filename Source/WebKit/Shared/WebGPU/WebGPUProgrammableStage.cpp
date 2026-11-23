@@ -29,20 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUProgrammableStage.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<ProgrammableStage> ConvertToBackingContext::convertToBacking(const ::WebGPU::ProgrammableStage& programmableStage)
-{
-    auto module = convertToBacking(protect(programmableStage.module).get());
-    auto constants = WTF::map(programmableStage.constants, [](auto& constant) {
-        return makeKeyValuePair(constant.key, constant.value);
-    });
-    return { { module, programmableStage.entryPoint, WTF::move(constants) } };
-}
 
 std::optional<::WebGPU::ProgrammableStage> ConvertFromBackingContext::convertFromBacking(const ProgrammableStage& programmableStage, Vector<::WebGPU::ConstantEntry>& constantsStorage)
 {

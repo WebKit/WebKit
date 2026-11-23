@@ -33,7 +33,6 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemotePlaceholderRenderingContextSource.h"
 #include "RemoteRenderingBackendProxy.h"
-#include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
@@ -158,7 +157,7 @@ RefPtr<WebCore::WebGPUIntegration> GPUProcessWebWorkerClient::createGPUForWebGPU
     if (!dispatcher)
         return nullptr;
     assertIsCurrent(*dispatcher);
-    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), ModelDowncastConvertToBackingContext::create(), protect(ensureRenderingBackend()), *dispatcher);
+    return RemoteGPUProxy::create(ModelDowncastConvertToBackingContext::create(), protect(ensureRenderingBackend()), *dispatcher);
 }
 #endif
 

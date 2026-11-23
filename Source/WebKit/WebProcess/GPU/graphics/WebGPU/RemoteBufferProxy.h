@@ -34,21 +34,21 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
 static constexpr size_t maxCrossProcessResourceCopySize = 16 * MB;
 
 class RemoteBufferProxy final : public ::WebGPU::Buffer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBufferProxy);
 public:
-    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBufferIdentifier identifier, const ::WebGPU::BufferDescriptor& descriptor)
+    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, WebGPUBufferIdentifier identifier, const ::WebGPU::BufferDescriptor& descriptor)
     {
-        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier, descriptor));
+        return adoptRef(*new RemoteBufferProxy(parent, identifier, descriptor));
     }
 
     virtual ~RemoteBufferProxy();
 
     RemoteDeviceProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUBufferIdentifier backing() const { return m_backing; }
 
     void mapAsync(OptionSet<::WebGPU::MapMode>, uint64_t offset, std::optional<uint64_t> sizeForMap, CompletionHandler<void(bool)>&&) final;
     void getMappedRange(uint64_t offset, std::optional<uint64_t>, NOESCAPE const Function<void(std::span<uint8_t>)>&) final;
@@ -67,17 +67,13 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUBufferIdentifier, const ::WebGPU::BufferDescriptor&);
+    RemoteBufferProxy(RemoteDeviceProxy&, WebGPUBufferIdentifier, const ::WebGPU::BufferDescriptor&);
 
     RemoteBufferProxy(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy(RemoteBufferProxy&&) = delete;
     RemoteBufferProxy& operator=(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy& operator=(RemoteBufferProxy&&) = delete;
 
-    WebGPUBufferIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -95,7 +91,6 @@ private:
     }
 
     WebGPUBufferIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
     const uint64_t m_size;
     const OptionSet<::WebGPU::BufferUsage> m_usage;

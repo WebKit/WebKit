@@ -29,16 +29,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteSamplerMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSamplerProxy);
 
-RemoteSamplerProxy::RemoteSamplerProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUSamplerIdentifier identifier)
+RemoteSamplerProxy::RemoteSamplerProxy(RemoteDeviceProxy& parent, WebGPUSamplerIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }

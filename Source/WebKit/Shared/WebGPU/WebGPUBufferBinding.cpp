@@ -29,17 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const ::WebGPU::BufferBinding& bufferBinding)
-{
-    auto buffer = convertToBacking(protect(bufferBinding.buffer).get());
-
-    return { { buffer, bufferBinding.offset, bufferBinding.size } };
-}
 
 std::optional<::WebGPU::BufferBinding> ConvertFromBackingContext::convertFromBacking(const BufferBinding& bufferBinding)
 {

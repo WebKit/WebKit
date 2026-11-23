@@ -35,38 +35,34 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
 class RemoteBindGroupLayoutProxy;
 
 class RemoteComputePipelineProxy final : public ::WebGPU::ComputePipeline {
     WTF_MAKE_TZONE_ALLOCATED(RemoteComputePipelineProxy);
 public:
-    static Ref<RemoteComputePipelineProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUComputePipelineIdentifier identifier)
+    static Ref<RemoteComputePipelineProxy> create(RemoteDeviceProxy& parent, WebGPUComputePipelineIdentifier identifier)
     {
-        return adoptRef(*new RemoteComputePipelineProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteComputePipelineProxy(parent, identifier));
     }
 
     virtual ~RemoteComputePipelineProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUComputePipelineIdentifier backing() const { return m_backing; }
 
     Ref<::WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t index) final;
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteComputePipelineProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUComputePipelineIdentifier);
+    RemoteComputePipelineProxy(RemoteDeviceProxy&, WebGPUComputePipelineIdentifier);
 
     RemoteComputePipelineProxy(const RemoteComputePipelineProxy&) = delete;
     RemoteComputePipelineProxy(RemoteComputePipelineProxy&&) = delete;
     RemoteComputePipelineProxy& operator=(const RemoteComputePipelineProxy&) = delete;
     RemoteComputePipelineProxy& operator=(RemoteComputePipelineProxy&&) = delete;
 
-    WebGPUComputePipelineIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -74,7 +70,6 @@ private:
     }
 
     WebGPUComputePipelineIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };
 

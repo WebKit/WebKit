@@ -41,15 +41,14 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
 class RemoteQueueProxy;
 
 class RemoteDeviceProxy final : public ::WebGPU::Device {
     WTF_MAKE_TZONE_ALLOCATED(RemoteDeviceProxy);
 public:
-    static Ref<RemoteDeviceProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
+    static Ref<RemoteDeviceProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, RemoteAdapterProxy& parent, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier)
     {
-        return adoptRef(*new RemoteDeviceProxy(WTF::move(features), limits, parent, convertToBackingContext, identifier, queueIdentifier));
+        return adoptRef(*new RemoteDeviceProxy(WTF::move(features), limits, parent, identifier, queueIdentifier));
     }
 
     virtual ~RemoteDeviceProxy();
@@ -117,9 +116,7 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUDeviceIdentifier, WebGPUQueueIdentifier);
+    RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, RemoteAdapterProxy&, WebGPUDeviceIdentifier, WebGPUQueueIdentifier);
 
     RemoteDeviceProxy(const RemoteDeviceProxy&) = delete;
     RemoteDeviceProxy(RemoteDeviceProxy&&) = delete;
@@ -140,7 +137,6 @@ private:
     WebGPUDeviceIdentifier m_backing;
     const Vector<::WebGPU::FeatureName> m_features;
     const ::WebGPU::Limits m_limits;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteAdapterProxy> m_parent;
     const Ref<RemoteQueueProxy> m_queue;
     bool m_isLost { false };

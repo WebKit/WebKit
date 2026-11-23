@@ -29,29 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const ::WebGPU::BindGroupEntry& bindGroupEntry)
-{
-    return WTF::switchOn(bindGroupEntry.resource, [&](const Ref<::WebGPU::Sampler>& sampler) -> std::optional<BindGroupEntry> {
-        return { { bindGroupEntry.binding, { convertToBacking(protect(sampler.get()).get()) } } };
-    }, [&](const Ref<::WebGPU::Texture>& texture) -> std::optional<BindGroupEntry> {
-        return { { bindGroupEntry.binding, { convertToBacking(protect(texture.get()).get()) } } };
-    }, [&](const Ref<::WebGPU::TextureView>& textureView) -> std::optional<BindGroupEntry> {
-        return { { bindGroupEntry.binding, { convertToBacking(protect(textureView.get()).get()) } } };
-    }, [&] (const auto& bufferBinding) -> std::optional<BindGroupEntry> {
-        auto convertedBufferBinding = convertToBacking(bufferBinding);
-        if (!convertedBufferBinding)
-            return std::nullopt;
-
-        return { { bindGroupEntry.binding, { WTF::move(*convertedBufferBinding) } } };
-    }, [&](const Ref<::WebGPU::ExternalTexture>& externalTexture) -> std::optional<BindGroupEntry> {
-        return { { bindGroupEntry.binding, { convertToBacking(protect(externalTexture.get()).get()) } } };
-    });
-}
 
 std::optional<::WebGPU::BindGroupEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupEntry& bindGroupEntry)
 {

@@ -34,25 +34,24 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteQuerySetProxy final : public ::WebGPU::QuerySet {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQuerySetProxy);
 public:
-    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier, const ::WebGPU::QuerySetDescriptor& descriptor)
+    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, WebGPUQuerySetIdentifier identifier, const ::WebGPU::QuerySetDescriptor& descriptor)
     {
-        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier, descriptor.count, descriptor.type));
+        return adoptRef(*new RemoteQuerySetProxy(parent, identifier, descriptor.count, descriptor.type));
     }
     // An invalid query set, which, as the Metal one, has no count and no type.
-    static Ref<RemoteQuerySetProxy> createInvalid(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier)
+    static Ref<RemoteQuerySetProxy> createInvalid(RemoteDeviceProxy& parent, WebGPUQuerySetIdentifier identifier)
     {
-        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier, 0, std::nullopt));
+        return adoptRef(*new RemoteQuerySetProxy(parent, identifier, 0, std::nullopt));
     }
 
     virtual ~RemoteQuerySetProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUQuerySetIdentifier backing() const { return m_backing; }
 
     void destroy() final;
     uint32_t count() const final { return m_count; }
@@ -62,17 +61,13 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUQuerySetIdentifier, uint32_t count, std::optional<::WebGPU::QueryType>);
+    RemoteQuerySetProxy(RemoteDeviceProxy&, WebGPUQuerySetIdentifier, uint32_t count, std::optional<::WebGPU::QueryType>);
 
     RemoteQuerySetProxy(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy(RemoteQuerySetProxy&&) = delete;
     RemoteQuerySetProxy& operator=(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy& operator=(RemoteQuerySetProxy&&) = delete;
 
-    WebGPUQuerySetIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -80,7 +75,6 @@ private:
     }
 
     WebGPUQuerySetIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
     const uint32_t m_count;
     const std::optional<::WebGPU::QueryType> m_type;

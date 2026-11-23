@@ -33,16 +33,14 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 // The WebGPU::Instance of the Web Process. It has no object of its own in the GPU Process: it
 // sends through the RemoteGPU of its parent, as RemoteGPUProxy did before there was an instance.
 class RemoteWebGPUInstanceProxy final : public ::WebGPU::Instance {
     WTF_MAKE_TZONE_ALLOCATED(RemoteWebGPUInstanceProxy);
 public:
-    static Ref<RemoteWebGPUInstanceProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteWebGPUInstanceProxy> create(RemoteGPUProxy& parent)
     {
-        return adoptRef(*new RemoteWebGPUInstanceProxy(parent, convertToBackingContext));
+        return adoptRef(*new RemoteWebGPUInstanceProxy(parent));
     }
 
     virtual ~RemoteWebGPUInstanceProxy();
@@ -62,7 +60,7 @@ public:
     void destroy() final { }
 
 private:
-    RemoteWebGPUInstanceProxy(RemoteGPUProxy&, ConvertToBackingContext&);
+    explicit RemoteWebGPUInstanceProxy(RemoteGPUProxy&);
 
     RemoteWebGPUInstanceProxy(const RemoteWebGPUInstanceProxy&) = delete;
     RemoteWebGPUInstanceProxy(RemoteWebGPUInstanceProxy&&) = delete;
@@ -75,7 +73,6 @@ private:
         return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), root().backing());
     }
 
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
 };
 

@@ -30,7 +30,6 @@
 
 #include "RemoteGPUProxy.h"
 #include "RemoteXRProjectionLayerMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/PlatformXR.h>
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/MachSendRight.h>
@@ -39,9 +38,8 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRProjectionLayerProxy);
 
-RemoteXRProjectionLayerProxy::RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRProjectionLayerIdentifier identifier)
+RemoteXRProjectionLayerProxy::RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&& parent, WebGPUXRProjectionLayerIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(WTF::move(parent))
 {
 }

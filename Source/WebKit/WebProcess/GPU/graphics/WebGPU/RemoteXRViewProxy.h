@@ -36,35 +36,30 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteXRViewProxy final : public ::WebGPU::XRView {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRViewProxy);
 public:
-    static Ref<RemoteXRViewProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRViewIdentifier identifier)
+    static Ref<RemoteXRViewProxy> create(RemoteDeviceProxy& parent, WebGPUXRViewIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRViewProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRViewProxy(parent, identifier));
     }
 
     virtual ~RemoteXRViewProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() const { return m_parent->root(); }
+    WebGPUXRViewIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final { }
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteXRViewProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUXRViewIdentifier);
+    RemoteXRViewProxy(RemoteDeviceProxy&, WebGPUXRViewIdentifier);
 
     RemoteXRViewProxy(const RemoteXRViewProxy&) = delete;
     RemoteXRViewProxy(RemoteXRViewProxy&&) = delete;
     RemoteXRViewProxy& operator=(const RemoteXRViewProxy&) = delete;
     RemoteXRViewProxy& operator=(RemoteXRViewProxy&&) = delete;
-
-    WebGPUXRViewIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -78,7 +73,6 @@ private:
     }
 
     WebGPUXRViewIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };
 

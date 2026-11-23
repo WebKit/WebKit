@@ -38,14 +38,12 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteQueueProxy final : public ::WebGPU::Queue {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQueueProxy);
 public:
-    static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQueueIdentifier identifier)
+    static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, WebGPUQueueIdentifier identifier)
     {
-        return adoptRef(*new RemoteQueueProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteQueueProxy(parent, identifier));
     }
 
     virtual ~RemoteQueueProxy();
@@ -56,6 +54,7 @@ public:
 
     RemoteAdapterProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUQueueIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::Device> device() const final { return m_device.get(); }
     // Set by the device that owns the queue, once.
@@ -72,16 +71,12 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteQueueProxy(RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUQueueIdentifier);
+    RemoteQueueProxy(RemoteAdapterProxy&, WebGPUQueueIdentifier);
 
     RemoteQueueProxy(const RemoteQueueProxy&) = delete;
     RemoteQueueProxy(RemoteQueueProxy&&) = delete;
     RemoteQueueProxy& operator=(const RemoteQueueProxy&) = delete;
     RemoteQueueProxy& operator=(RemoteQueueProxy&&) = delete;
-
-    WebGPUQueueIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -107,7 +102,6 @@ private:
 #endif
 
     WebGPUQueueIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteAdapterProxy> m_parent;
     ThreadSafeWeakPtr<::WebGPU::Device> m_device;
 #if ENABLE(VIDEO)

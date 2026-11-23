@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteBufferMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -37,9 +36,8 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBufferProxy);
 
-RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBufferIdentifier identifier, const ::WebGPU::BufferDescriptor& descriptor)
+RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, WebGPUBufferIdentifier identifier, const ::WebGPU::BufferDescriptor& descriptor)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
     , m_size(descriptor.size)
     , m_usage(descriptor.usage)

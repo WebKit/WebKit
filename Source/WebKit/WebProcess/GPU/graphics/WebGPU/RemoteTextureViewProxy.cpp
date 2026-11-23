@@ -29,16 +29,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteTextureViewMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureViewProxy);
 
-RemoteTextureViewProxy::RemoteTextureViewProxy(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUTextureViewIdentifier identifier)
+RemoteTextureViewProxy::RemoteTextureViewProxy(RemoteTextureProxy& parent, WebGPUTextureViewIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_root(parent.root())
 {
 }

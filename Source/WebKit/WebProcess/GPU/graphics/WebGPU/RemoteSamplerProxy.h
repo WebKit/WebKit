@@ -34,36 +34,31 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteSamplerProxy final : public ::WebGPU::Sampler {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSamplerProxy);
 public:
-    static Ref<RemoteSamplerProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUSamplerIdentifier identifier)
+    static Ref<RemoteSamplerProxy> create(RemoteDeviceProxy& parent, WebGPUSamplerIdentifier identifier)
     {
-        return adoptRef(*new RemoteSamplerProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteSamplerProxy(parent, identifier));
     }
 
     virtual ~RemoteSamplerProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUSamplerIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteSamplerProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUSamplerIdentifier);
+    RemoteSamplerProxy(RemoteDeviceProxy&, WebGPUSamplerIdentifier);
 
     RemoteSamplerProxy(const RemoteSamplerProxy&) = delete;
     RemoteSamplerProxy(RemoteSamplerProxy&&) = delete;
     RemoteSamplerProxy& operator=(const RemoteSamplerProxy&) = delete;
     RemoteSamplerProxy& operator=(RemoteSamplerProxy&&) = delete;
 
-    WebGPUSamplerIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -71,7 +66,6 @@ private:
     }
 
     WebGPUSamplerIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };
 

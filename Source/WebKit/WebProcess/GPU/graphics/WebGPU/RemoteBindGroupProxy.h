@@ -34,37 +34,32 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteBindGroupProxy final : public ::WebGPU::BindGroup {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBindGroupProxy);
 public:
-    static Ref<RemoteBindGroupProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBindGroupIdentifier identifier)
+    static Ref<RemoteBindGroupProxy> create(RemoteDeviceProxy& parent, WebGPUBindGroupIdentifier identifier)
     {
-        return adoptRef(*new RemoteBindGroupProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteBindGroupProxy(parent, identifier));
     }
 
     virtual ~RemoteBindGroupProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUBindGroupIdentifier backing() const { return m_backing; }
 
     bool updateExternalTextures(::WebGPU::ExternalTexture&) final;
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteBindGroupProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUBindGroupIdentifier);
+    RemoteBindGroupProxy(RemoteDeviceProxy&, WebGPUBindGroupIdentifier);
 
     RemoteBindGroupProxy(const RemoteBindGroupProxy&) = delete;
     RemoteBindGroupProxy(RemoteBindGroupProxy&&) = delete;
     RemoteBindGroupProxy& operator=(const RemoteBindGroupProxy&) = delete;
     RemoteBindGroupProxy& operator=(RemoteBindGroupProxy&&) = delete;
 
-    WebGPUBindGroupIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -77,7 +72,6 @@ private:
     }
 
     WebGPUBindGroupIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };
 

@@ -35,14 +35,12 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteXRProjectionLayerProxy final : public ::WebGPU::XRProjectionLayer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRProjectionLayerProxy);
 public:
-    static Ref<RemoteXRProjectionLayerProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUXRProjectionLayerIdentifier identifier)
+    static Ref<RemoteXRProjectionLayerProxy> create(Ref<RemoteGPUProxy>&& parent, WebGPUXRProjectionLayerIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRProjectionLayerProxy(WTF::move(parent), convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRProjectionLayerProxy(WTF::move(parent), identifier));
     }
 
     virtual ~RemoteXRProjectionLayerProxy();
@@ -60,9 +58,7 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUXRProjectionLayerIdentifier);
+    RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&&, WebGPUXRProjectionLayerIdentifier);
 
     RemoteXRProjectionLayerProxy(const RemoteXRProjectionLayerProxy&) = delete;
     RemoteXRProjectionLayerProxy(RemoteXRProjectionLayerProxy&&) = delete;
@@ -81,7 +77,6 @@ private:
     }
 
     WebGPUXRProjectionLayerIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
 };
 

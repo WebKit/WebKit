@@ -35,38 +35,34 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
 class RemoteBindGroupLayoutProxy;
 
 class RemoteRenderPipelineProxy final : public ::WebGPU::RenderPipeline {
     WTF_MAKE_TZONE_ALLOCATED(RemoteRenderPipelineProxy);
 public:
-    static Ref<RemoteRenderPipelineProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPURenderPipelineIdentifier identifier)
+    static Ref<RemoteRenderPipelineProxy> create(RemoteDeviceProxy& parent, WebGPURenderPipelineIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderPipelineProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteRenderPipelineProxy(parent, identifier));
     }
 
     virtual ~RemoteRenderPipelineProxy();
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPURenderPipelineIdentifier backing() const { return m_backing; }
 
     Ref<::WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t index) final;
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteRenderPipelineProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPURenderPipelineIdentifier);
+    RemoteRenderPipelineProxy(RemoteDeviceProxy&, WebGPURenderPipelineIdentifier);
 
     RemoteRenderPipelineProxy(const RemoteRenderPipelineProxy&) = delete;
     RemoteRenderPipelineProxy(RemoteRenderPipelineProxy&&) = delete;
     RemoteRenderPipelineProxy& operator=(const RemoteRenderPipelineProxy&) = delete;
     RemoteRenderPipelineProxy& operator=(RemoteRenderPipelineProxy&&) = delete;
 
-    WebGPURenderPipelineIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -74,7 +70,6 @@ private:
     }
 
     WebGPURenderPipelineIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
 };
 

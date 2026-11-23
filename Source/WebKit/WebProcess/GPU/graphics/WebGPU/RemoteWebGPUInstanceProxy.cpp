@@ -31,16 +31,14 @@
 #include "RemoteAdapterProxy.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPURequestAdapterResponse.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWebGPUInstanceProxy);
 
-RemoteWebGPUInstanceProxy::RemoteWebGPUInstanceProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
-    , m_parent(parent)
+RemoteWebGPUInstanceProxy::RemoteWebGPUInstanceProxy(RemoteGPUProxy& parent)
+    : m_parent(parent)
 {
 }
 
@@ -74,7 +72,7 @@ void RemoteWebGPUInstanceProxy::requestAdapter(const ::WebGPU::RequestAdapterOpt
         .subgroupMaxSize = response->subgroupMaxSize,
         .hasUnifiedMemory = response->hasUnifiedMemory,
     };
-    callback(RemoteAdapterProxy::create(WTF::move(response->features), response->limits, WTF::move(info), options.xrCompatible, *this, m_convertToBackingContext, identifier));
+    callback(RemoteAdapterProxy::create(WTF::move(response->features), response->limits, WTF::move(info), options.xrCompatible, *this, identifier));
 }
 
 #if PLATFORM(COCOA)

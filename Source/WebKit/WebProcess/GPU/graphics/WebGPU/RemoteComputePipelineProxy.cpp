@@ -30,16 +30,14 @@
 
 #include "RemoteBindGroupLayoutProxy.h"
 #include "RemoteComputePipelineMessages.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteComputePipelineProxy);
 
-RemoteComputePipelineProxy::RemoteComputePipelineProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUComputePipelineIdentifier identifier)
+RemoteComputePipelineProxy::RemoteComputePipelineProxy(RemoteDeviceProxy& parent, WebGPUComputePipelineIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }
@@ -57,7 +55,7 @@ Ref<::WebGPU::BindGroupLayout> RemoteComputePipelineProxy::getBindGroupLayout(ui
     auto sendResult = send(Messages::RemoteComputePipeline::GetBindGroupLayout(index, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteBindGroupLayoutProxy::create(protect(m_parent->root()), m_convertToBackingContext, identifier);
+    return RemoteBindGroupLayoutProxy::create(protect(m_parent->root()), identifier);
 }
 
 void RemoteComputePipelineProxy::setLabel(String&& label)

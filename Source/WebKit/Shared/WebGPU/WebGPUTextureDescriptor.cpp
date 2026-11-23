@@ -29,15 +29,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<TextureDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::TextureDescriptor& textureDescriptor)
-{
-    return { { { textureDescriptor.label }, textureDescriptor.size, textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, Vector(textureDescriptor.viewFormats) } };
-}
 
 // The descriptor borrows the view formats from textureDescriptor.
 std::optional<::WebGPU::TextureDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureDescriptor& textureDescriptor)

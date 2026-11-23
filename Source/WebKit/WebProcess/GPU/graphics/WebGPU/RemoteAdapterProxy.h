@@ -38,20 +38,19 @@ class RemoteGPUProxy;
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteAdapterProxy final : public ::WebGPU::Adapter {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAdapterProxy);
 public:
-    static Ref<RemoteAdapterProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteWebGPUInstanceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUAdapterIdentifier identifier)
+    static Ref<RemoteAdapterProxy> create(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteWebGPUInstanceProxy& parent, WebGPUAdapterIdentifier identifier)
     {
-        return adoptRef(*new RemoteAdapterProxy(WTF::move(features), limits, WTF::move(info), xrCompatible, parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteAdapterProxy(WTF::move(features), limits, WTF::move(info), xrCompatible, parent, identifier));
     }
 
     virtual ~RemoteAdapterProxy();
 
     RemoteWebGPUInstanceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUAdapterIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::Instance> instance() const final { return m_parent.ptr(); }
     Vector<::WebGPU::FeatureName> features() const final { return m_features; }
@@ -63,16 +62,12 @@ public:
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, ::WebGPU::AdapterInfo&&, bool xrCompatible, RemoteWebGPUInstanceProxy&, ConvertToBackingContext&, WebGPUAdapterIdentifier);
+    RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, ::WebGPU::AdapterInfo&&, bool xrCompatible, RemoteWebGPUInstanceProxy&, WebGPUAdapterIdentifier);
 
     RemoteAdapterProxy(const RemoteAdapterProxy&) = delete;
     RemoteAdapterProxy(RemoteAdapterProxy&&) = delete;
     RemoteAdapterProxy& operator=(const RemoteAdapterProxy&) = delete;
     RemoteAdapterProxy& operator=(RemoteAdapterProxy&&) = delete;
-
-    WebGPUAdapterIdentifier backing() const { return m_backing; }
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -89,7 +84,6 @@ private:
     const Vector<::WebGPU::FeatureName> m_features;
     const ::WebGPU::Limits m_limits;
     const ::WebGPU::AdapterInfo m_info;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteWebGPUInstanceProxy> m_parent;
     bool m_xrCompatible { false };
 };

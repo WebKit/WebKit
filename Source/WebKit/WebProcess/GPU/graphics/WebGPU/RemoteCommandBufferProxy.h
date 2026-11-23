@@ -34,35 +34,30 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 class RemoteCommandBufferProxy final : public ::WebGPU::CommandBuffer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCommandBufferProxy);
 public:
-    static Ref<RemoteCommandBufferProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUCommandBufferIdentifier identifier)
+    static Ref<RemoteCommandBufferProxy> create(RemoteGPUProxy& root, WebGPUCommandBufferIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandBufferProxy(root, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteCommandBufferProxy(root, identifier));
     }
 
     virtual ~RemoteCommandBufferProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
+    WebGPUCommandBufferIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;
     bool isValid() const final;
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteCommandBufferProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUCommandBufferIdentifier);
+    RemoteCommandBufferProxy(RemoteGPUProxy&, WebGPUCommandBufferIdentifier);
 
     RemoteCommandBufferProxy(const RemoteCommandBufferProxy&) = delete;
     RemoteCommandBufferProxy(RemoteCommandBufferProxy&&) = delete;
     RemoteCommandBufferProxy& operator=(const RemoteCommandBufferProxy&) = delete;
     RemoteCommandBufferProxy& operator=(RemoteCommandBufferProxy&&) = delete;
 
-    WebGPUCommandBufferIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -70,7 +65,6 @@ private:
     }
 
     WebGPUCommandBufferIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
 };
 

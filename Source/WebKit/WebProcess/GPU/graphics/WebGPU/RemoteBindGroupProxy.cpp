@@ -29,16 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteBindGroupMessages.h"
-#include "WebGPUConvertToBackingContext.h"
+#include "WebGPUProxyIdentifiers.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBindGroupProxy);
 
-RemoteBindGroupProxy::RemoteBindGroupProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUBindGroupIdentifier identifier)
+RemoteBindGroupProxy::RemoteBindGroupProxy(RemoteDeviceProxy& parent, WebGPUBindGroupIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }
@@ -63,7 +62,7 @@ bool RemoteBindGroupProxy::isValid() const
 
 bool RemoteBindGroupProxy::updateExternalTextures(::WebGPU::ExternalTexture& externalTexture)
 {
-    auto convertedDescriptor = protect(m_convertToBackingContext)->convertToBacking(externalTexture);
+    auto convertedDescriptor = identifier(externalTexture);
     auto sendResult = sendSync(Messages::RemoteBindGroup::UpdateExternalTextures(WTF::move(convertedDescriptor)));
     auto [result] = sendResult.takeReplyOr(false);
     return result;

@@ -29,26 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
-#include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
-
-std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
-{
-    std::optional<Vector<WebGPUBindGroupLayoutIdentifier>> optionalBindGroupLayouts;
-    Vector<WebGPUBindGroupLayoutIdentifier> bindGroupLayouts;
-    if (pipelineLayoutDescriptor.bindGroupLayouts) {
-        bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
-        for (auto backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts)
-            bindGroupLayouts.append(convertToBacking(backingBindGroupLayout.get()));
-
-        optionalBindGroupLayouts = bindGroupLayouts;
-    }
-
-    return { { { pipelineLayoutDescriptor.label }, WTF::move(optionalBindGroupLayouts) } };
-}
 
 // The descriptor borrows the bind group layouts from bindGroupLayouts.
 std::optional<::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor, Vector<Ref<::WebGPU::BindGroupLayout>>& bindGroupLayouts)

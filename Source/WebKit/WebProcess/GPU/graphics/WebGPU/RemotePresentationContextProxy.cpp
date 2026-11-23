@@ -31,16 +31,15 @@
 #include "RemotePresentationContextMessages.h"
 #include "RemoteTextureProxy.h"
 #include "WebGPUCanvasConfiguration.h"
-#include "WebGPUConvertToBackingContext.h"
+#include "WebGPUDescriptorSerializers.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePresentationContextProxy);
 
-RemotePresentationContextProxy::RemotePresentationContextProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUPresentationContextIdentifier identifier)
+RemotePresentationContextProxy::RemotePresentationContextProxy(RemoteGPUProxy& parent, WebGPUPresentationContextIdentifier identifier)
     : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
 }
@@ -49,7 +48,7 @@ RemotePresentationContextProxy::~RemotePresentationContextProxy() = default;
 
 void RemotePresentationContextProxy::configure(const ::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
-    auto convertedConfiguration = m_convertToBackingContext->convertToBacking(canvasConfiguration);
+    auto convertedConfiguration = serialize(canvasConfiguration);
     if (!convertedConfiguration)
         return;
 
@@ -93,7 +92,7 @@ RefPtr<::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture(uint
         if (sendResult != IPC::Error::NoError)
             return nullptr;
 
-        m_currentTexture[frameIndex] = RemoteTextureProxy::create(*device, m_convertToBackingContext, identifier, m_textureProperties, true);
+        m_currentTexture[frameIndex] = RemoteTextureProxy::create(*device, identifier, m_textureProperties, true);
     } else
         protect(m_currentTexture[frameIndex])->undestroy();
 

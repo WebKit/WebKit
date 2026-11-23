@@ -30,19 +30,18 @@
 
 #include "RemoteAdapterMessages.h"
 #include "RemoteDeviceProxy.h"
-#include "WebGPUConvertToBackingContext.h"
+#include "WebGPUDescriptorSerializers.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAdapterProxy);
 
-RemoteAdapterProxy::RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteWebGPUInstanceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUAdapterIdentifier identifier)
+RemoteAdapterProxy::RemoteAdapterProxy(Vector<::WebGPU::FeatureName>&& features, const ::WebGPU::Limits& limits, ::WebGPU::AdapterInfo&& info, bool xrCompatible, RemoteWebGPUInstanceProxy& parent, WebGPUAdapterIdentifier identifier)
     : m_backing(identifier)
     , m_features(WTF::move(features))
     , m_limits(limits)
     , m_info(WTF::move(info))
-    , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
     , m_xrCompatible(xrCompatible)
 {
@@ -56,8 +55,7 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
 
 void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<::WebGPU::Device>&&)>&& callback)
 {
-    Ref convertToBackingContext = m_convertToBackingContext;
-    auto convertedDescriptor = convertToBackingContext->convertToBacking(descriptor);
+    auto convertedDescriptor = serialize(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return callback(nullptr);
@@ -74,7 +72,7 @@ void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descrip
         return;
     }
 
-    auto result = RemoteDeviceProxy::create(WTF::move(features), supportedLimits, *this, convertToBackingContext, identifier, queueIdentifier);
+    auto result = RemoteDeviceProxy::create(WTF::move(features), supportedLimits, *this, identifier, queueIdentifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     callback(WTF::move(result));
 }

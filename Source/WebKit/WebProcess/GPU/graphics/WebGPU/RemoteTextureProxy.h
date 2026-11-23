@@ -34,8 +34,6 @@
 
 namespace WebKit::WebGPU {
 
-class ConvertToBackingContext;
-
 // The values a texture was created with, which the getters of the C++ API return. Outside the
 // class, so that a default argument of RemoteTextureProxy can use its default member initializers.
 // The format is std::nullopt when the Web Process does not know the values.
@@ -53,14 +51,15 @@ class RemoteTextureProxy final : public ::WebGPU::Texture {
 public:
     using Properties = RemoteTextureProxyProperties;
 
-    static Ref<RemoteTextureProxy> create(RemoteDeviceProxy& device, ConvertToBackingContext& convertToBackingContext, WebGPUTextureIdentifier identifier, const Properties& properties = { }, bool isCanvasBacking = false)
+    static Ref<RemoteTextureProxy> create(RemoteDeviceProxy& device, WebGPUTextureIdentifier identifier, const Properties& properties = { }, bool isCanvasBacking = false)
     {
-        return adoptRef(*new RemoteTextureProxy(device, convertToBackingContext, identifier, properties, isCanvasBacking));
+        return adoptRef(*new RemoteTextureProxy(device, identifier, properties, isCanvasBacking));
     }
 
     virtual ~RemoteTextureProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
+    WebGPUTextureIdentifier backing() const { return m_backing; }
 
     RemoteDeviceProxy& device() const final { return m_device; }
     RefPtr<::WebGPU::TextureView> createView(const std::optional<::WebGPU::TextureViewDescriptor>&) final;
@@ -81,17 +80,13 @@ public:
     OptionSet<::WebGPU::TextureUsage> usage() const final { return m_properties.usage; }
 
 private:
-    friend class DowncastConvertToBackingContext;
-
-    RemoteTextureProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUTextureIdentifier, const Properties&, bool isCanvasBacking);
+    RemoteTextureProxy(RemoteDeviceProxy&, WebGPUTextureIdentifier, const Properties&, bool isCanvasBacking);
 
     RemoteTextureProxy(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy(RemoteTextureProxy&&) = delete;
     RemoteTextureProxy& operator=(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy& operator=(RemoteTextureProxy&&) = delete;
 
-    WebGPUTextureIdentifier backing() const { return m_backing; }
-    
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
     {
@@ -99,7 +94,6 @@ private:
     }
 
     WebGPUTextureIdentifier m_backing;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
     const Ref<RemoteDeviceProxy> m_device;
 
