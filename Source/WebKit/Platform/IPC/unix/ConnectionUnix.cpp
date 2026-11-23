@@ -362,9 +362,11 @@ void Connection::platformOpen()
     });
 }
 
-auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> std::optional<OutgoingMessage>
+auto Connection::platformCreateOutgoingMessages(UniqueRef<Encoder>&& encoder) -> Vector<OutgoingMessage, 1>
 {
-    return WTF::move(encoder);
+    Vector<OutgoingMessage, 1> messages;
+    messages.append(WTF::move(encoder));
+    return messages;
 }
 
 bool Connection::platformCanSendOutgoingMessages() const

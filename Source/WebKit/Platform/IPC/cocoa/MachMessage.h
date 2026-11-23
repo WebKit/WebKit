@@ -27,6 +27,7 @@
 
 #if OS(DARWIN)
 
+#include "Attachment.h"
 #include "Encoder.h"
 #include "Timeout.h"
 #include <expected>
@@ -56,12 +57,12 @@ class MachMessage {
     WTF_MAKE_NONCOPYABLE(MachMessage);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachMessage);
 public:
+    // Limit by convention. Implementation would work with more.
     static constexpr size_t maxAttachmentCount = 16383;
 
     using SendResult = MachMessageSendResult;
 
-    // Returns nullptr if the encoder has more than maxAttachmentCount attachments.
-    static std::unique_ptr<MachMessage> create(UniqueRef<Encoder>&&);
+    static Vector<UniqueRef<MachMessage>, 1> createMessages(UniqueRef<Encoder>&&);
 
     ~MachMessage();
 
@@ -70,6 +71,7 @@ public:
     SendResult send(mach_port_t destination, Timeout = Timeout::now());
 
     enum class ReceiveResult : uint8_t {
+        PendingAttachments, // A pending attachments message: its attachments were added to `pendingAttachments`.
         NoMessage,
         NoSenders,
         Notification,
@@ -77,6 +79,9 @@ public:
         OutOfMemory, // The message could not be received, so it is still in the queue.
     };
 
+    static std::expected<UniqueRef<Decoder>, ReceiveResult> receiveDecoder(mach_port_t, Vector<Attachment>& pendingAttachments, Timeout = Timeout::now());
+
+    // Receives the next message, along with the pending attachments messages that precede it.
     static std::expected<UniqueRef<Decoder>, ReceiveResult> receiveDecoder(mach_port_t, Timeout = Timeout::now());
 
     ReceiverName messageReceiverName() const { return receiverName(messageName()); }
@@ -86,6 +91,11 @@ public:
 
 private:
     MachMessage(MessageName, MmapSpan<uint8_t>&& outOfLineBody);
+    MachMessage() = default; // Pending attachments.
+
+    // Builds the message for an encoder with at most as many attachments as one Mach message may carry.
+    static UniqueRef<MachMessage> createBody(UniqueRef<Encoder>&&);
+    static UniqueRef<MachMessage> createPendingAttachments(Vector<Attachment>&&);
 
     enum class State : uint8_t {
         NotSent, // mach_msg() was not called, or it failed with MACH_SEND_INVALID_DEST.
@@ -93,7 +103,7 @@ private:
         Sent, // mach_msg() succeeded.
     };
 
-    MessageName m_messageName;
+    MessageName m_messageName { MessageName::Invalid };
     State m_state { State::NotSent };
     MmapSpan<uint8_t> m_outOfLineBody;
     mach_msg_header_t m_messageHeader[];
