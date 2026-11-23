@@ -39,6 +39,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RunLoop.h>
+#import <wtf/Scope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface OverrideMouseLocation : NSObject
@@ -54,6 +55,33 @@ static NSPoint overrideMouseLocation = { 0, 0 };
 
 + (void)setOverrideMouseLocation:(NSPoint)location {
     overrideMouseLocation = location;
+}
+@end
+
+@interface NSWindow (MouseEventTestsWindowSwizzler)
+- (NSPoint)_mouseEventTests_mouseLocationOutsideOfEventStream;
+@end
+
+@implementation NSWindow (MouseEventTestsWindowSwizzler)
+- (NSPoint)_mouseEventTests_mouseLocationOutsideOfEventStream
+{
+    return [self convertPointFromScreen:[OverrideMouseLocation overrideMouseLocation]];
+}
+@end
+
+static IMP s_originalScreenFrameIMP;
+static std::optional<NSRect> s_overrideScreenFrame;
+
+@interface NSScreen (MouseEventTestsSwizzler)
+- (NSRect)_mouseEventTests_frame;
+@end
+
+@implementation NSScreen (MouseEventTestsSwizzler)
+- (NSRect)_mouseEventTests_frame
+{
+    if (s_overrideScreenFrame)
+        return *s_overrideScreenFrame;
+    return reinterpret_cast<NSRect (*)(id, SEL)>(s_originalScreenFrameIMP)(self, @selector(frame));
 }
 @end
 
@@ -400,6 +428,175 @@ TEST(MouseEventTests, WindowChangeShouldCauseMouseLeaveEvent)
 TEST(MouseEventTests, WindowChangeShouldNotCauseMouseLeaveEvent)
 {
     runDispatchMouseLeaveEventOnWindowMoveTest(NSMakePoint(250, 50), NSMakeRect(0, 0, 400, 400), NSMakeRect(100, 0, 400, 400), 0);
+}
+
+TEST(MouseEventTests, WindowChangeWithNonZeroWebViewOffsetAndObscuredInsets)
+{
+    [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    auto resetOverride = makeScopeExit([] {
+        [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    });
+    InstanceMethodSwizzler windowSwizzler([NSWindow class], @selector(mouseLocationOutsideOfEventStream), [NSWindow instanceMethodForSelector:@selector(_mouseEventTests_mouseLocationOutsideOfEventStream)]);
+    ClassMethodSwizzler swizzler([NSEvent class], @selector(mouseLocation), [OverrideMouseLocation methodForSelector:@selector(overrideMouseLocation)]);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+    [[webView window] setFrame:NSMakeRect(100, 100, 600, 500) display:YES];
+    [webView setFrame:NSMakeRect(80, 60, 400, 300)];
+    [webView _setObscuredContentInsets:NSEdgeInsetsMake(50, 0, 0, 0) immediate:YES];
+
+    bool didEnter = false;
+    bool didLeave = false;
+    [webView performAfterReceivingMessage:@"mouseenter" action:[&] { didEnter = true; }];
+    [webView performAfterReceivingMessage:@"mouseleave" action:[&] { didLeave = true; }];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "    #target { position: absolute; left: 20px; top: 30px; width: 60px; height: 40px; background: red; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='target'></div>"
+        "<script>"
+        "    let mouseLeaveCount = 0;"
+        "    let pointerLeaveCount = 0;"
+        "    let mouseMoveCount = 0;"
+        "    let pointerMoveCount = 0;"
+        "    let lastLeaveClientX = -1;"
+        "    let lastLeaveClientY = -1;"
+        "    let target = document.getElementById('target');"
+        "    target.addEventListener('mouseenter', () => { window.webkit.messageHandlers.testHandler.postMessage('mouseenter'); });"
+        "    target.addEventListener('mouseleave', event => {"
+        "        mouseLeaveCount++;"
+        "        lastLeaveClientX = event.clientX;"
+        "        lastLeaveClientY = event.clientY;"
+        "        window.webkit.messageHandlers.testHandler.postMessage('mouseleave');"
+        "    });"
+        "    target.addEventListener('pointerleave', () => { pointerLeaveCount++; });"
+        "    document.addEventListener('mousemove', () => { mouseMoveCount++; });"
+        "    document.addEventListener('pointermove', () => { pointerMoveCount++; });"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    // Center of #target is client (50, 50) -> flipped view (50, 100) with 50px top obscured inset.
+    NSPoint initialWindowPoint = [webView convertPoint:NSMakePoint(50, 100) toView:nil];
+    [OverrideMouseLocation setOverrideMouseLocation:[[webView window] convertPointToScreen:initialWindowPoint]];
+    [webView mouseMoveToPoint:initialWindowPoint withFlags:0];
+    [webView waitForPendingMouseEvents];
+    EXPECT_TRUE(Util::runFor(&didEnter, 5_s));
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"target.matches(':hover')"] boolValue]);
+
+    [webView objectByEvaluatingJavaScript:@"mouseMoveCount = 0; pointerMoveCount = 0;"];
+
+    // Shift window by (-15, +10): stationary cursor maps to client (65, 60), still inside #target ([20, 80) x [30, 70)).
+    [[webView window] setFrame:NSMakeRect(85, 110, 600, 500) display:YES];
+    Util::spinRunLoop(5);
+    [webView objectByEvaluatingJavaScript:@"0"];
+    Util::spinRunLoop(5);
+    [webView objectByEvaluatingJavaScript:@"0"];
+
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"mouseLeaveCount"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"pointerLeaveCount"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"mouseMoveCount"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"pointerMoveCount"] intValue], 0);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"target.matches(':hover')"] boolValue]);
+
+    // Shift window further left to x=20: stationary cursor maps to client (130, 60), outside #target.
+    [[webView window] setFrame:NSMakeRect(20, 110, 600, 500) display:YES];
+    EXPECT_TRUE(Util::runFor(&didLeave, 5_s));
+
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"mouseLeaveCount"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"pointerLeaveCount"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"mouseMoveCount"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"pointerMoveCount"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"lastLeaveClientX"] intValue], 130);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"lastLeaveClientY"] intValue], 60);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"target.matches(':hover')"] boolValue]);
+}
+
+TEST(MouseEventTests, WindowChangeOnExternalMonitorWithOffsetAndNegativeCoordinates)
+{
+    s_overrideScreenFrame = std::nullopt;
+    [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    auto resetOverrides = makeScopeExit([] {
+        s_overrideScreenFrame = std::nullopt;
+        [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    });
+    s_originalScreenFrameIMP = [NSScreen instanceMethodForSelector:@selector(frame)];
+    InstanceMethodSwizzler screenFrameSwizzler([NSScreen class], @selector(frame), [NSScreen instanceMethodForSelector:@selector(_mouseEventTests_frame)]);
+    InstanceMethodSwizzler windowSwizzler([NSWindow class], @selector(mouseLocationOutsideOfEventStream), [NSWindow instanceMethodForSelector:@selector(_mouseEventTests_mouseLocationOutsideOfEventStream)]);
+    ClassMethodSwizzler mouseLocationSwizzler([NSEvent class], @selector(mouseLocation), [OverrideMouseLocation methodForSelector:@selector(overrideMouseLocation)]);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+
+    bool didEnter = false;
+    bool didLeave = false;
+    [webView performAfterReceivingMessage:@"mouseenter" action:[&] { didEnter = true; }];
+    [webView performAfterReceivingMessage:@"mouseleave" action:[&] { didLeave = true; }];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "    #target { position: absolute; left: 50px; top: 50px; width: 100px; height: 100px; background: blue; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='target'></div>"
+        "<script>"
+        "    let enterCoords = null;"
+        "    let leaveCoords = null;"
+        "    let mouseMoveCount = 0;"
+        "    let target = document.getElementById('target');"
+        "    target.addEventListener('mouseenter', event => {"
+        "        enterCoords = { clientX: event.clientX, clientY: event.clientY, screenX: event.screenX, screenY: event.screenY };"
+        "        window.webkit.messageHandlers.testHandler.postMessage('mouseenter');"
+        "    });"
+        "    target.addEventListener('mouseleave', event => {"
+        "        leaveCoords = { clientX: event.clientX, clientY: event.clientY, screenX: event.screenX, screenY: event.screenY };"
+        "        window.webkit.messageHandlers.testHandler.postMessage('mouseleave');"
+        "    });"
+        "    document.addEventListener('mousemove', () => { mouseMoveCount++; });"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    // Simulate a 3008x1692 external display positioned above a 1728x1117 primary display (NSMaxY = 2809, negative X origin).
+    s_overrideScreenFrame = NSMakeRect(-640, 1117, 3008, 1692);
+    [[webView window] setFrame:NSMakeRect(-500, 2200, 400, 400) display:NO];
+
+    // Window point (100, 300) -> flipped client (100, 100), Cocoa screen (-400, 2500) -> flipped WebKit global (-400, 2809 - 2500 = 309).
+    NSPoint initialWindowPoint = NSMakePoint(100, 300);
+    [OverrideMouseLocation setOverrideMouseLocation:NSMakePoint(-400, 2500)];
+    [webView mouseMoveToPoint:initialWindowPoint withFlags:0];
+    [webView waitForPendingMouseEvents];
+    EXPECT_TRUE(Util::runFor(&didEnter, 5_s));
+
+    NSDictionary *enterCoords = [webView objectByEvaluatingJavaScript:@"enterCoords"];
+    EXPECT_EQ([enterCoords[@"clientX"] intValue], 100);
+    EXPECT_EQ([enterCoords[@"clientY"] intValue], 100);
+    EXPECT_EQ([enterCoords[@"screenX"] intValue], -400);
+    EXPECT_EQ([enterCoords[@"screenY"] intValue], 309);
+
+    [webView objectByEvaluatingJavaScript:@"mouseMoveCount = 0;"];
+
+    // Move window to (-650, 2200): stationary screen cursor (-400, 2500) is now at window (250, 300) -> client (250, 100), outside #target.
+    [[webView window] setFrame:NSMakeRect(-650, 2200, 400, 400) display:NO];
+    EXPECT_TRUE(Util::runFor(&didLeave, 5_s));
+
+    NSDictionary *leaveCoords = [webView objectByEvaluatingJavaScript:@"leaveCoords"];
+    EXPECT_EQ([leaveCoords[@"clientX"] intValue], 250);
+    EXPECT_EQ([leaveCoords[@"clientY"] intValue], 100);
+    EXPECT_EQ([leaveCoords[@"screenX"] intValue], -400);
+    EXPECT_EQ([leaveCoords[@"screenY"] intValue], 309);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"mouseMoveCount"] intValue], 0);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"target.matches(':hover')"] boolValue]);
 }
 
 static NSString *tallDocumentLines = @"Line of text. Line of text. Line of text. Line of text. "

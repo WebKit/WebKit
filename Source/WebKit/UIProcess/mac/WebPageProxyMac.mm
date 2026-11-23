@@ -51,6 +51,7 @@
 #import "TextChecker.h"
 #import "WKQuickLookPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
+#import "WKWebViewInternal.h"
 #import "WebContextMenuProxyMac.h"
 #import <WebCore/ColorSpace.h>
 #import "WebPageMessages.h"
@@ -68,6 +69,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Pasteboard.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/SharedBuffer.h>
@@ -203,8 +205,12 @@ void WebPageProxy::searchTheWeb(const String& string)
 
 void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
+    uint64_t expectedMouseEventCount = m_mouseEventCountForPendingWindowAndViewFrameUpdate;
+    if (!expectedMouseEventCount || m_handledMouseEventCount != expectedMouseEventCount)
+        expectedMouseEventCount = 0;
+
     // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
-    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, viewFrameInWindowCoordinates, accessibilityViewCoordinates] (std::optional<FloatRect> frameFromUIClient) {
+    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, viewFrameInWindowCoordinates, accessibilityViewCoordinates, expectedMouseEventCount](std::optional<FloatRect> frameFromUIClient) {
         RefPtr pageClient = this->pageClient();
         if (!pageClient)
             return;
@@ -224,8 +230,9 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
 
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
             if (&webProcess == &legacyMainFrameProcess()) {
-                webProcess.sendWithAsyncReply(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), [this, protectedThis, viewFrameInWindowCoordinates] {
-                    updateMouseEventTargetAfterWindowAndViewFramesChanged(viewFrameInWindowCoordinates);
+                webProcess.sendWithAsyncReply(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), [protectedThis, expectedMouseEventCount] {
+                    if (expectedMouseEventCount && protectedThis->m_handledMouseEventCount == expectedMouseEventCount)
+                        protectedThis->updateMouseEventTargetAfterWindowAndViewFramesChanged();
                 }, pageID);
                 return;
             }
@@ -234,20 +241,24 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
     });
 }
 
-void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates)
+void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged()
 {
-    RetainPtr window = platformWindow();
+    if (!hasRunningProcess())
+        return;
 
-    // The origin of mac coordinate system is the bottom left corner. We need to convert
-    // the point to the web coordinate system which has an origin of the top left corner.
+    RetainPtr view = cocoaView();
+    if (!view)
+        return;
+
+    RetainPtr window = [view window];
+    if (!window)
+        return;
+
+    // Convert from unflipped window coordinates (bottom-left origin) to flipped view coordinates (top-left origin).
     auto macMouseLocationInWindow = [window mouseLocationOutsideOfEventStream];
-
-    auto webMouseLocationInWindow = DoublePoint(macMouseLocationInWindow.x, [window frame].size.height - macMouseLocationInWindow.y);
-
-    // do same conversion as above
-    auto macMouseLocationInScreen = [NSEvent mouseLocation];
-    auto webMouseLocationInScreen = DoublePoint(macMouseLocationInScreen.x, [[NSScreen mainScreen] frame].size.height - macMouseLocationInScreen.y);
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::UpdateMouseEventTargetAfterWindowAndViewFramesChanged(webMouseLocationInWindow, webMouseLocationInScreen), webPageIDInMainFrameProcess());
+    DoublePoint webMouseLocationInView = [view convertPoint:macMouseLocationInWindow fromView:nil];
+    DoublePoint webMouseLocationInScreen = WebCore::globalPoint(macMouseLocationInWindow, window.get());
+    protect(legacyMainFrameProcess())->send(Messages::WebPage::UpdateMouseEventTargetAfterWindowAndViewFramesChanged(webMouseLocationInView, webMouseLocationInScreen), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
