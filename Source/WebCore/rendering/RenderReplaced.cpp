@@ -277,6 +277,11 @@ Color RenderReplaced::calculateHighlightColor() const
 
 void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    // The outline phases only paint this renderer's own outline (see below), so skip shouldPaint()
+    // and the document marker lookups when its style has none.
+    if ((paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) && !style().hasOutline())
+        return;
+
     if (!shouldPaint(paintInfo, paintOffset))
         return;
 
@@ -736,7 +741,15 @@ LayoutRect RenderReplaced::replacedContentRect(NaturalDimensions zoomedNaturalDi
 
 LayoutRect RenderReplaced::replacedContentPaintRect() const
 {
-    return computePaintRectForObjectViewBox(replacedContentRect());
+    auto naturalDimensions = zoomedNaturalDimensions();
+    return replacedContentPaintRect(replacedContentRect(naturalDimensions), naturalDimensions);
+}
+
+LayoutRect RenderReplaced::replacedContentPaintRect(const LayoutRect& replacedContentRect, NaturalDimensions zoomedNaturalDimensions) const
+{
+    if (!zoomedNaturalDimensions.width || !zoomedNaturalDimensions.height)
+        return replacedContentRect;
+    return computePaintRectForObjectViewBox(replacedContentRect, LayoutSize { FloatSize { *zoomedNaturalDimensions.width, *zoomedNaturalDimensions.height } });
 }
 
 std::optional<double> RenderReplaced::preferredAspectRatio() const
