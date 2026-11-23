@@ -114,6 +114,7 @@ private:
     void executeBundles(Vector<WebGPURenderBundleIdentifier>&&);
     void end();
 
+    void makeInvalid(String&& error);
     void setLabel(String&&);
     void destruct();
 

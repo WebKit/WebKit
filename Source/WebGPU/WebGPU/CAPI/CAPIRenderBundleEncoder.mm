@@ -105,10 +105,10 @@ NODELETE void wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint3
 void wgpuRenderBundleEncoderSetIndexBuffer(WGPURenderBundleEncoder renderBundleEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
     @autoreleasepool {
-        Ref protectedRenderBundleEncoder = WebGPU::CAPI::metalFromAPI(renderBundleEncoder);
+        Ref protectedRenderBundleEncoder = WebGPU::CAPI::fromAPI(renderBundleEncoder);
         auto apiFormat = WebGPU::CAPI::fromAPI(format);
         if (!apiFormat)
-            return protectedRenderBundleEncoder->makeInvalid(@"setIndexBuffer: invalid index format");
+            return protectedRenderBundleEncoder->makeInvalid("setIndexBuffer: invalid index format"_s);
         protectedRenderBundleEncoder->setIndexBuffer(protect(WebGPU::CAPI::fromAPI(buffer)), *apiFormat, offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
     }
 }

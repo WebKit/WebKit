@@ -140,10 +140,10 @@ void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncod
 void wgpuRenderPassEncoderSetIndexBuffer(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
     @autoreleasepool {
-        Ref protectedRenderPassEncoder = WebGPU::CAPI::metalFromAPI(renderPassEncoder);
+        Ref protectedRenderPassEncoder = WebGPU::CAPI::fromAPI(renderPassEncoder);
         auto apiFormat = WebGPU::CAPI::fromAPI(format);
         if (!apiFormat)
-            return protectedRenderPassEncoder->makeInvalid(@"setIndexBuffer: invalid index format");
+            return protectedRenderPassEncoder->makeInvalid("setIndexBuffer: invalid index format"_s);
         protectedRenderPassEncoder->setIndexBuffer(protect(WebGPU::CAPI::fromAPI(buffer)), *apiFormat, offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
     }
 }

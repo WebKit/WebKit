@@ -1410,6 +1410,10 @@ public:
     // generates.
     virtual RefPtr<RenderPassEncoder> beginInvalidRenderPass(String&& error) = 0;
     virtual RefPtr<ComputePassEncoder> beginInvalidComputePass(String&& error) = 0;
+    // Makes the encoder invalid, as a failed validation of a command does, for a command that the
+    // caller could not convert. The error is the one of the validation error that finishing the
+    // encoder generates.
+    virtual void makeInvalid(String&& error) = 0;
 
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
@@ -1670,6 +1674,10 @@ public:
     virtual void popDebugGroup() = 0;
     virtual void insertDebugMarker(String&& markerLabel) = 0;
     virtual RefPtr<RenderBundle> finish(const RenderBundleDescriptor&) = 0;
+    // Makes the encoder invalid, as a failed validation of a command does, for a command that the
+    // caller could not convert. The error is the one of the validation error that finishing the
+    // encoder generates.
+    virtual void makeInvalid(String&& error) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1704,6 +1712,10 @@ public:
     // The bundles are borrowed for the call.
     virtual void executeBundles(std::span<const Ref<RenderBundle>>) = 0;
     virtual void end() = 0;
+    // Makes the pass invalid, as a failed validation of a command does, for a command that the
+    // caller could not convert. The error is the one of the validation error that finishing the
+    // command encoder generates.
+    virtual void makeInvalid(String&& error) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 

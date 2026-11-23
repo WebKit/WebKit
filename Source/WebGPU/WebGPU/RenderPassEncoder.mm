@@ -1857,6 +1857,11 @@ void RenderPassEncoder::makeInvalid(NSString* errorString)
     m_renderCommandEncoder = nil;
 }
 
+void RenderPassEncoder::makeInvalid(String&& error)
+{
+    makeInvalid(error.createNSString().get());
+}
+
 void RenderPassEncoder::popDebugGroup()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup

@@ -300,11 +300,6 @@ inline Metal::Buffer& metalFromAPI(WGPUBuffer handle)
     return downcast<Metal::Buffer>(fromAPI(handle));
 }
 
-inline Metal::CommandEncoder& metalFromAPI(WGPUCommandEncoder handle)
-{
-    return downcast<Metal::CommandEncoder>(fromAPI(handle));
-}
-
 inline Metal::Device& metalFromAPI(WGPUDevice handle)
 {
     return downcast<Metal::Device>(fromAPI(handle));
@@ -318,16 +313,6 @@ inline Metal::Instance& metalFromAPI(WGPUInstance handle)
 inline Metal::Queue& metalFromAPI(WGPUQueue handle)
 {
     return downcast<Metal::Queue>(fromAPI(handle));
-}
-
-inline Metal::RenderBundleEncoder& metalFromAPI(WGPURenderBundleEncoder handle)
-{
-    return downcast<Metal::RenderBundleEncoder>(fromAPI(handle));
-}
-
-inline Metal::RenderPassEncoder& metalFromAPI(WGPURenderPassEncoder handle)
-{
-    return downcast<Metal::RenderPassEncoder>(fromAPI(handle));
 }
 
 inline Metal::ShaderModule& metalFromAPI(WGPUShaderModule handle)

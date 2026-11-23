@@ -65,6 +65,7 @@ public:
     void insertDebugMarker(String&& markerLabel) final;
     RefPtr<::WebGPU::RenderBundle> finish(const ::WebGPU::RenderBundleDescriptor&) final;
 
+    void makeInvalid(String&& error) final;
     void setLabel(String&&) final;
     bool isValid() const final;
 

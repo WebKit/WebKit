@@ -194,6 +194,12 @@ void RemoteRenderPassEncoderProxy::end()
     UNUSED_VARIABLE(sendResult);
 }
 
+void RemoteRenderPassEncoderProxy::makeInvalid(String&& error)
+{
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::MakeInvalid(WTF::move(error)));
+    UNUSED_VARIABLE(sendResult);
+}
+
 void RemoteRenderPassEncoderProxy::setLabel(String&& label)
 {
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetLabel(WTF::move(label)));

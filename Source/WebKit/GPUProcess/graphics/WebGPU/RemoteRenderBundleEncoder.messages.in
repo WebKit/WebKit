@@ -43,6 +43,7 @@ messages -> RemoteRenderBundleEncoder Stream {
     void PopDebugGroup()
     void InsertDebugMarker(String markerLabel)
     void Finish(WebKit::WebGPU::RenderBundleDescriptor descriptor, WebKit::WebGPURenderBundleIdentifier identifier)
+    void MakeInvalid(String error)
     void SetLabel(String label)
 }
 

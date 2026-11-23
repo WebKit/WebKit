@@ -244,6 +244,11 @@ void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descrip
     objectHeap->addObject(identifier, remoteCommandBuffer);
 }
 
+void RemoteCommandEncoder::makeInvalid(String&& error)
+{
+    protect(m_backing)->makeInvalid(WTF::move(error));
+}
+
 void RemoteCommandEncoder::setLabel(String&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));

@@ -132,6 +132,7 @@ public:
     void deferRenderCommandEncoder(MTLRenderPassDescriptor* descriptor) { m_deferredDescriptor = descriptor; }
     id<MTLRenderCommandEncoder> materializeRenderCommandEncoder() const;
     void makeInvalid(NSString* = nil);
+    void makeInvalid(String&& error) final;
     CommandEncoder& parentEncoder() const { return m_parentEncoder; }
 
     bool setCommandEncoder(const BindGroupEntryUsageData::Resource&);

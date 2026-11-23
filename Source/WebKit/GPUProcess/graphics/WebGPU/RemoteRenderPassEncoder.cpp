@@ -212,6 +212,11 @@ void RemoteRenderPassEncoder::end()
     protect(m_backing)->end();
 }
 
+void RemoteRenderPassEncoder::makeInvalid(String&& error)
+{
+    protect(m_backing)->makeInvalid(WTF::move(error));
+}
+
 void RemoteRenderPassEncoder::setLabel(String&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
