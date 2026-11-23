@@ -99,7 +99,7 @@ class VertexArrayWgpu : public VertexArrayImpl
 
     uint32_t calculateAdjustedIndexCount(gl::PrimitiveMode mode,
                                          bool primitiveRestartEnabled,
-                                         gl::DrawElementsType destDrawElementsTypeOrInvalid,
+                                         gl::DrawElementsType sourceDrawElementsTypeOrInvalid,
                                          GLsizei count,
                                          const uint8_t *srcIndexData);
 
