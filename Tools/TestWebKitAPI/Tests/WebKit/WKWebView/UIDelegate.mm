@@ -26,7 +26,6 @@
 #import "config.h"
 
 #import "ClassMethodSwizzler.h"
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/ios/IOSMouseEventTestHarness.h"
 #import "InstanceMethodSwizzler.h"
@@ -90,7 +89,10 @@ static bool uiDelegateDidReceiveMessage;
 @interface AudioObserver : NSObject
 @end
 
-@implementation AudioObserver
+@implementation AudioObserver {
+@package
+    bool _done;
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
 {
@@ -99,7 +101,7 @@ static bool uiDelegateDidReceiveMessage;
     EXPECT_FALSE([[change objectForKey:NSKeyValueChangeOldKey] boolValue]);
     EXPECT_TRUE([[change objectForKey:NSKeyValueChangeNewKey] boolValue]);
     EXPECT_TRUE(context == nullptr);
-    done = true;
+    _done = true;
 }
 
 @end
@@ -111,19 +113,22 @@ TEST(WebKit, WKWebViewIsPlayingAudio)
     [webView addObserver:observer.get() forKeyPath:@"_isPlayingAudio" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [webView synchronouslyLoadTestPageNamed:@"file-with-video"];
     [webView evaluateJavaScript:@"playVideo()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&observer->_done);
     [webView removeObserver:observer.get() forKeyPath:@"_isPlayingAudio"];
 }
 
 @interface NoUIDelegate : NSObject <WKNavigationDelegate>
 @end
 
-@implementation NoUIDelegate
+@implementation NoUIDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
     if ([navigationAction.request.URL.absoluteString isEqualToString:[[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"] absoluteString]])
-        done = true;
+        _done = true;
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
@@ -131,17 +136,18 @@ TEST(WebKit, WKWebViewIsPlayingAudio)
 
 TEST(WebKit, WindowOpenWithoutUIDelegate)
 {
-    done = false;
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     RetainPtr delegate = adoptNS([[NoUIDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadHTMLString:@"<script>window.open('simple2.html');window.location='simple.html'</script>" baseURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 @interface GeolocationDelegate : NSObject <WKUIDelegatePrivate> {
     bool _allowGeolocation;
     Function<void(WKFrameInfo*)> _validationHandler;
+@package
+    bool _done;
 }
 
 - (id)initWithAllowGeolocation:(bool)allowGeolocation;
@@ -176,7 +182,7 @@ TEST(WebKit, WindowOpenWithoutUIDelegate)
     else
         EXPECT_STREQ(message.UTF8String, "error 1 User denied Geolocation");
     completionHandler();
-    done = true;
+    _done = true;
 }
 
 @end
@@ -216,7 +222,6 @@ TEST(WebKit, GeolocationPermission)
     RetainPtr delegate1 = adoptNS([[GeolocationDelegate alloc] initWithAllowGeolocation:false]);
     [webView setUIDelegate:delegate1.get()];
 
-    done = false;
     [delegate1 setValidationHandler:[](WKFrameInfo *frame) {
         EXPECT_TRUE(frame.isMainFrame);
         EXPECT_STREQ(frame.request.URL.absoluteString.UTF8String, "https://example.com/");
@@ -225,9 +230,8 @@ TEST(WebKit, GeolocationPermission)
         EXPECT_STREQ(frame.securityOrigin.host.UTF8String, "example.com");
     }];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate1->_done);
 
-    done = false;
     RetainPtr delegate2 = adoptNS([[GeolocationDelegate alloc] initWithAllowGeolocation:true]);
     [delegate2 setValidationHandler:[](WKFrameInfo *frame) {
         EXPECT_TRUE(frame.isMainFrame);
@@ -238,9 +242,9 @@ TEST(WebKit, GeolocationPermission)
     }];
     [webView setUIDelegate:delegate2.get()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate2->_done);
 
-    done = false;
+    delegate2->_done = false;
     [delegate2 setValidationHandler:[](WKFrameInfo *frame) {
         EXPECT_TRUE(frame.isMainFrame);
         EXPECT_STREQ(frame.request.URL.absoluteString.UTF8String, "custom://localhost/mainframe.html");
@@ -249,7 +253,7 @@ TEST(WebKit, GeolocationPermission)
         EXPECT_STREQ(frame.securityOrigin.host.UTF8String, "localhost");
     }];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"custom://localhost/mainframe.html"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate2->_done);
 }
 
 @interface GeolocationDelegateNew : NSObject <WKUIDelegatePrivate>
@@ -258,6 +262,8 @@ TEST(WebKit, GeolocationPermission)
 
 @implementation GeolocationDelegateNew {
     Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
+@package
+    bool _done;
 }
 - (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler {
     _validationHandler = WTF::move(validationHandler);
@@ -275,7 +281,7 @@ TEST(WebKit, GeolocationPermission)
     if (_validationHandler)
         _validationHandler(origin, frame);
 
-    done  = true;
+    _done = true;
     decisionHandler(WKPermissionDecisionGrant);
 }
 
@@ -352,11 +358,10 @@ TEST(WebKit, GeolocationPermissionInIFrame)
         EXPECT_TRUE(frame.webView == webView);
     }];
 
-    done = false;
     uiDelegateDidReceiveMessage = false;
     [webView loadRequest:server1.request()];
     TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
-    EXPECT_TRUE(done);
+    EXPECT_TRUE(permissionDelegate->_done);
 }
 
 TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
@@ -418,13 +423,12 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
 
     NSString *getCurrentPosition = @"navigator.geolocation.getCurrentPosition(() => { webkit.messageHandlers.testHandler.postMessage(\"ok\") }, () => { webkit.messageHandlers.testHandler.postMessage(\"ko\") });";
 
-    done = false;
     uiDelegateDidReceiveMessage = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     [navigationDelegate waitForDidFinishNavigation];
     [webView evaluateJavaScript:getCurrentPosition completionHandler:nil];
     TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&permissionDelegate->_done);
 
 #if ENABLE(WEB_ARCHIVE)
     RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"example" withExtension:@"webarchive"];
@@ -439,11 +443,11 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 
-    done = false;
+    permissionDelegate->_done = false;
     uiDelegateDidReceiveMessage = false;
     [webView evaluateJavaScript:getCurrentPosition completionHandler:nil];
     TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&permissionDelegate->_done);
 
     // Reset web process state.
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
@@ -451,7 +455,7 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    done = false;
+    permissionDelegate->_done = false;
     uiDelegateDidReceiveMessage = false;
     doneEvaluatingJavaScript = false;
     [webView callAsyncJavaScript:@"return (await new Promise(function (resolve, reject) {"
@@ -464,7 +468,7 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
     EXPECT_FALSE(uiDelegateDidReceiveMessage);
-    EXPECT_TRUE(done);
+    EXPECT_TRUE(permissionDelegate->_done);
 #endif
 }
 
@@ -512,22 +516,24 @@ TEST(WebKit, GeolocationPermissionInDisallowedIFrame)
     }];
     webView.get().navigationDelegate = navigationDelegate.get();
 
-    done = false;
     uiDelegateDidReceiveMessage = false;
     [webView loadRequest:server1.request()];
     TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
-    EXPECT_FALSE(done);
+    EXPECT_FALSE(permissionDelegate->_done);
 }
 
 @interface InjectedBundleNodeHandleIsSelectElementDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
-@implementation InjectedBundleNodeHandleIsSelectElementDelegate
+@implementation InjectedBundleNodeHandleIsSelectElementDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
 {
     completionHandler();
-    done = true;
+    _done = true;
     ASSERT_STREQ(message.UTF8String, "isSelectElement success");
 }
 
@@ -541,7 +547,7 @@ TEST(WebKit, InjectedBundleNodeHandleIsSelectElement)
     RetainPtr delegate = adoptNS([[InjectedBundleNodeHandleIsSelectElementDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -718,7 +724,10 @@ static RetainPtr<UITestDelegate> delegate;
 @interface UITestDelegate : NSObject <WKUIDelegatePrivate, WKURLSchemeHandler>
 @end
 
-@implementation UITestDelegate
+@implementation UITestDelegate {
+@package
+    bool _done;
+}
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
@@ -730,7 +739,7 @@ static RetainPtr<UITestDelegate> delegate;
 - (void)_showWebView:(WKWebView *)webView
 {
     webViewFromDelegateCallback = webView;
-    done = true;
+    _done = true;
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
@@ -755,7 +764,7 @@ TEST(WebKit, ShowWebView)
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setUIDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///first"]]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
     
     ASSERT_EQ(webViewFromDelegateCallback, uiDelegateCreatedWebView);
 }
@@ -765,7 +774,10 @@ static bool receivedWindowFrame;
 @interface WindowFrameDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
-@implementation WindowFrameDelegate
+@implementation WindowFrameDelegate {
+@package
+    bool _done;
+}
 
 - (void)_webView:(WKWebView *)webView setWindowFrame:(CGRect)frame
 {
@@ -785,7 +797,7 @@ static bool receivedWindowFrame;
 {
     EXPECT_STREQ("350", message.UTF8String);
     completionHandler();
-    done = true;
+    _done = true;
 }
 
 @end
@@ -797,7 +809,7 @@ TEST(WebKit, WindowFrame)
     [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<script>moveBy(10,20);alert(outerWidth);</script>" baseURL:nil];
     TestWebKitAPI::Util::run(&receivedWindowFrame);
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 #if PLATFORM(MAC)
@@ -886,11 +898,14 @@ static bool drawFooterCalled;
 @interface PrintDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
-@implementation PrintDelegate
+@implementation PrintDelegate {
+@package
+    bool _done;
+}
 
 - (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame
 {
-    done = true;
+    _done = true;
 }
 
 - (CGFloat)_webViewHeaderHeight:(WKWebView *)webView
@@ -934,7 +949,7 @@ TEST(WebKit, PrintFrame)
     RetainPtr delegate = adoptNS([[PrintDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<head><title>test_title</title></head><body onload='setTimeout(function() { print() });'>hello world!</body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     RetainPtr letterPrintInfo = adoptNS([[NSPrintInfo sharedPrintInfo] copy]);
     [letterPrintInfo setPaperName:@"Letter"];
@@ -955,7 +970,7 @@ TEST(WebKit, PrintPreview)
     RetainPtr delegate = adoptNS([[PrintDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<head><title>test_title</title></head><body onload='print()'>hello world!</body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     NSPrintOperation *operation = [webView _printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]];
     NSPrintOperation.currentOperation = operation;
@@ -966,12 +981,11 @@ TEST(WebKit, PrintPreview)
 
 TEST(WebKit, PrintAdjustMarginsAfterPageClose)
 {
-    done = false;
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     RetainPtr delegate = adoptNS([[PrintDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<head><title>test</title></head><body onload='print()'>content</body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
     RetainPtr operation = [webView _printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]];
     [NSPrintOperation setCurrentOperation:operation];
     RetainPtr previewView = [operation view];
@@ -1014,6 +1028,8 @@ TEST(WebKit, PrintWithCompletionHandler)
 
 @interface NotificationDelegate : NSObject <WKUIDelegatePrivate> {
     bool _allowNotifications;
+@package
+    bool _done;
 }
 - (id)initWithAllowNotifications:(bool)allowNotifications;
 @end
@@ -1035,7 +1051,7 @@ TEST(WebKit, PrintWithCompletionHandler)
     else
         EXPECT_STREQ(message.UTF8String, "permission denied");
     completionHandler();
-    done = true;
+    _done = true;
 }
 
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
@@ -1057,13 +1073,12 @@ TEST(WebKit, NotificationPermission)
     [webView setUIDelegate:uiDelegate.get()];
     [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org"]];
     [webView evaluateJavaScript:@"requestPermission()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&uiDelegate->_done);
     uiDelegate = adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:NO]);
     [webView setUIDelegate:uiDelegate.get()];
     [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
     [webView evaluateJavaScript:@"requestPermission()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&uiDelegate->_done);
 }
 
 @interface MouseMoveOverElementDelegate : NSObject <WKUIDelegatePrivate>
@@ -1197,11 +1212,14 @@ TEST(WebKit, MouseMoveOverElementWithClosedWebView)
 @interface AutoFillDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
-@implementation AutoFillDelegate
+@implementation AutoFillDelegate {
+@package
+    bool _done;
+}
 
 - (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id <NSSecureCoding>)userInfo
 {
-    done = true;
+    _done = true;
     ASSERT_TRUE([(id<NSObject>)userInfo isKindOfClass:[NSString class]]);
     ASSERT_STREQ([(NSString*)userInfo UTF8String], "user data string");
 }
@@ -1232,18 +1250,21 @@ TEST(WebKit, ClickAutoFillButton)
     NSPoint buttonLocation = NSMakePoint(rect.origin.x + rect.size.width / 2, [webView frame].size.height - (rect.origin.y + rect.size.height / 2));
     [webView sendClickAtPoint:buttonLocation];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 @interface InjectedBundleNodeHandleIsTextFieldDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
-@implementation InjectedBundleNodeHandleIsTextFieldDelegate
+@implementation InjectedBundleNodeHandleIsTextFieldDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
 {
     completionHandler();
-    done = true;
+    _done = true;
     ASSERT_STREQ(message.UTF8String, "isTextField success");
 }
 
@@ -1257,13 +1278,16 @@ TEST(WebKit, InjectedBundleNodeHandleIsTextField)
     RetainPtr delegate = adoptNS([[InjectedBundleNodeHandleIsTextFieldDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 @interface PinnedStateObserver : NSObject
 @end
 
-@implementation PinnedStateObserver
+@implementation PinnedStateObserver {
+@package
+    bool _done;
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
 {
@@ -1272,7 +1296,7 @@ TEST(WebKit, InjectedBundleNodeHandleIsTextField)
     EXPECT_EQ([[change objectForKey:NSKeyValueChangeOldKey] unsignedIntegerValue], _WKRectEdgeAll);
     EXPECT_EQ([[change objectForKey:NSKeyValueChangeNewKey] unsignedIntegerValue], _WKRectEdgeLeft | _WKRectEdgeRight);
     EXPECT_TRUE(context == nullptr);
-    done = true;
+    _done = true;
 }
 
 @end
@@ -1283,18 +1307,21 @@ TEST(WebKit, PinnedState)
     RetainPtr observer = adoptNS([[PinnedStateObserver alloc] init]);
     [webView addObserver:observer.get() forKeyPath:@"_pinnedState" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [webView loadHTMLString:@"<body onload='scroll(100, 100)' style='height:10000vh;'/>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&observer->_done);
     [webView removeObserver:observer.get() forKeyPath:@"_pinnedState"];
 }
 
 @interface DidScrollDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
-@implementation DidScrollDelegate
+@implementation DidScrollDelegate {
+@package
+    bool _done;
+}
 
 - (void)_webViewDidScroll:(WKWebView *)webView
 {
-    done = true;
+    _done = true;
 }
 
 @end
@@ -1305,7 +1332,7 @@ TEST(WebKit, DidScroll)
     RetainPtr delegate = adoptNS([[DidScrollDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<body onload='scroll(100, 100)' style='height:10000vh;'/>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 static NSEvent *tabEvent(NSWindow *window, NSEventType type, NSEventModifierFlags flags)
@@ -1421,7 +1448,10 @@ TEST(WebKit, TabDoesNotTakeFocusFromEditableWebView)
 @interface SaveDataToFileDelegate : NSObject <WKUIDelegatePrivate, WKNavigationDelegate>
 @end
 
-@implementation SaveDataToFileDelegate
+@implementation SaveDataToFileDelegate {
+@package
+    bool _done;
+}
 
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url
 {
@@ -1430,7 +1460,7 @@ TEST(WebKit, TabDoesNotTakeFocusFromEditableWebView)
     EXPECT_STREQ([suggestedFilename UTF8String], "test.pdf");
     EXPECT_STREQ([mimeType UTF8String], "application/pdf");
     EXPECT_STREQ([[url absoluteString] UTF8String], [[pdfURL absoluteString] UTF8String]);
-    done = true;
+    _done = true;
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
@@ -1453,7 +1483,7 @@ TEST(WebKit, SaveDataToFile)
     [webView setNavigationDelegate:delegate.get()];
     NSURL *pdfURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"];
     [webView loadRequest:[NSURLRequest requestWithURL:pdfURL]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 @interface OpenPDFWithPreviewDelegate : NSObject <WKUIDelegatePrivate>
@@ -1586,11 +1616,14 @@ static void synthesizeWheelEvents(NSView *view, int x, int y)
 @interface WheelDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
-@implementation WheelDelegate
+@implementation WheelDelegate {
+@package
+    bool _done;
+}
 
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event
 {
-    done = true;
+    _done = true;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
@@ -1607,7 +1640,7 @@ TEST(WebKit, DidNotHandleWheelEvent)
     RetainPtr delegate = adoptNS([[WheelDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<body onload='alert(\"ready\")' onwheel='()=>{}' style='overflow:hidden; height:10000vh;'></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 #endif // RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT

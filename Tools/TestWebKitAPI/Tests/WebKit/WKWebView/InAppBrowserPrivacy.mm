@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -144,7 +143,7 @@ static void initializeInAppBrowserPrivacyTestSettings()
 
 TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
 {
-    isDone = false;
+    __block bool isDone = false;
     initializeInAppBrowserPrivacyTestSettings();
     RetainPtr userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
 
@@ -184,7 +183,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
 
 TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtEnd)
 {
-    isDone = false;
+    __block bool isDone = false;
     initializeInAppBrowserPrivacyTestSettings();
     RetainPtr userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
     
@@ -238,6 +237,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
+    __block bool isDone = false;
     [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(YES, [result boolValue]);
         isDone = true;
@@ -269,7 +269,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
 TEST(InAppBrowserPrivacy, AppBoundDomains)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] _appBoundDomains:^(NSArray<NSString *> *domains) {
         NSArray *domainsToCompare = @[@"apple.com", @"bar.com", @"example.com", @"localhost", @"longboardshop.biz", @"searchforlongboards.biz", @"testdomain1",  @"webkit.org"];
 
@@ -289,7 +289,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomains)
 TEST(InAppBrowserPrivacy, AppBoundSchemes)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] _appBoundSchemes:^(NSArray<NSString *> *schemes) {
         NSArray *schemesToCompare = @[@"app-bound-custom-scheme", @"test"];
 
@@ -316,7 +316,7 @@ TEST(InAppBrowserPrivacy, LocalFilesAreAppBound)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
         EXPECT_TRUE(isForcedIntoAppBoundMode);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -334,7 +334,7 @@ TEST(InAppBrowserPrivacy, DataProtocolIsAppBound)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,start"]]];
     [webView _test_waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
         EXPECT_TRUE(isForcedIntoAppBoundMode);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -352,7 +352,7 @@ TEST(InAppBrowserPrivacy, AboutProtocolIsAppBound)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     [webView _test_waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
         EXPECT_TRUE(isForcedIntoAppBoundMode);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -364,7 +364,6 @@ TEST(InAppBrowserPrivacy, AboutProtocolIsAppBound)
 TEST(InAppBrowserPrivacy, LocalHostIsAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -378,7 +377,7 @@ TEST(InAppBrowserPrivacy, LocalHostIsAppBound)
     [webView loadRequest:request];
     [delegate waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
         EXPECT_TRUE(isForcedIntoAppBoundMode);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -390,7 +389,6 @@ TEST(InAppBrowserPrivacy, LocalHostIsAppBound)
 TEST(InAppBrowserPrivacy, LoopbackIPAddressIsAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -404,7 +402,7 @@ TEST(InAppBrowserPrivacy, LoopbackIPAddressIsAppBound)
     [webView loadRequest:request];
     [delegate waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
         EXPECT_TRUE(isForcedIntoAppBoundMode);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -505,7 +503,6 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetAffectingAllFramesFails)
 TEST(InAppBrowserPrivacy, NonAppBoundDomainCannotAccessMessageHandlers)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -535,7 +532,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainCannotAccessMessageHandlers)
 TEST(InAppBrowserPrivacy, AppBoundDomainCanAccessMessageHandlers)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
+    __block bool isDone = false;
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -818,11 +815,15 @@ static String expectedMessage;
 @interface SWInAppBrowserPrivacyMessageHandler : NSObject <WKScriptMessageHandler>
 @end
 
-@implementation SWInAppBrowserPrivacyMessageHandler
+@implementation SWInAppBrowserPrivacyMessageHandler {
+@package
+    bool _receivedMessage;
+}
+
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_WK_STREQ(message.body, expectedMessage);
-    isDone = true;
+    _receivedMessage = true;
 }
 @end
 
@@ -910,13 +911,12 @@ self.addEventListener("message", (event) => {
 
 )SWRESOURCE"_s;
 
-static RetainPtr<WKWebView> setUpSWTest(WKWebsiteDataStore *dataStore)
+static RetainPtr<WKWebView> setUpSWTest(WKWebsiteDataStore *dataStore, SWInAppBrowserPrivacyMessageHandler *messageHandler)
 {
-    isDone = false;
+    __block bool isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr messageHandler = adoptNS([[SWInAppBrowserPrivacyMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    [[configuration userContentController] addScriptMessageHandler:messageHandler name:@"sw"];
     [configuration preferences]._serviceWorkerEntitlementDisabledForTesting = YES;
     [configuration setLimitsNavigationsToAppBoundDomains:YES];
     [configuration setWebsiteDataStore:dataStore];
@@ -929,7 +929,6 @@ static RetainPtr<WKWebView> setUpSWTest(WKWebsiteDataStore *dataStore)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
 
     return webView;
 }
@@ -937,7 +936,7 @@ static RetainPtr<WKWebView> setUpSWTest(WKWebsiteDataStore *dataStore)
 
 static void cleanUpSWTest(WKWebView *webView)
 {
-    isDone = false;
+    __block bool isDone = false;
     // Reset service worker entitlement.
     [webView _clearServiceWorkerEntitlementOverride:^(void) {
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -950,14 +949,14 @@ static void cleanUpSWTest(WKWebView *webView)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
 }
 
 TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
 {
     initializeInAppBrowserPrivacyTestSettings();
 
-    auto webView = setUpSWTest([WKWebsiteDataStore defaultDataStore]);
+    RetainPtr messageHandler = adoptNS([[SWInAppBrowserPrivacyMessageHandler alloc] init]);
+    auto webView = setUpSWTest([WKWebsiteDataStore defaultDataStore], messageHandler.get());
 
     TestWebKitAPI::HTTPServer server({
         { "/main.html"_s, { mainBytes } },
@@ -967,9 +966,9 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
     // Expect the service worker load to complete successfully.
     expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain"_s;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
+    TestWebKitAPI::Util::run(&messageHandler->_receivedMessage);
 
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
         EXPECT_EQ(1u, [websiteDataRecords count]);
         EXPECT_WK_STREQ(websiteDataRecords[0].displayName, "localhost");
@@ -983,9 +982,9 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
 TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
-    auto webView = setUpSWTest([WKWebsiteDataStore defaultDataStore]);
+    RetainPtr messageHandler = adoptNS([[SWInAppBrowserPrivacyMessageHandler alloc] init]);
+    auto webView = setUpSWTest([WKWebsiteDataStore defaultDataStore], messageHandler.get());
 
     TestWebKitAPI::HTTPServer server({
         { "/main.html"_s, { mainUnregisterBytes } },
@@ -994,10 +993,9 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
 
     expectedMessage = "Unregistration success"_s;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&messageHandler->_receivedMessage);
 
-    isDone = false;
-
+    __block bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
         EXPECT_EQ(0u, [websiteDataRecords count]);
         isDone = true;
@@ -1013,7 +1011,8 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorkerMaxRegistrationCount)
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [websiteDataStoreConfiguration setOverrideServiceWorkerRegistrationCountTestingValue:1];
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-    auto webView = setUpSWTest(dataStore.get());
+    RetainPtr messageHandler = adoptNS([[SWInAppBrowserPrivacyMessageHandler alloc] init]);
+    auto webView = setUpSWTest(dataStore.get(), messageHandler.get());
 
     TestWebKitAPI::HTTPServer server({
         { "/main.html"_s, { mainUnregisterBytes } },
@@ -1022,10 +1021,9 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorkerMaxRegistrationCount)
 
     expectedMessage = "Unregistration success"_s;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&messageHandler->_receivedMessage);
 
-    isDone = false;
-
+    __block bool isDone = false;
     [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
         EXPECT_EQ(0u, [websiteDataRecords count]);
         isDone = true;
@@ -1041,7 +1039,8 @@ TEST(InAppBrowserPrivacy, ReregisterServiceWorkerMaxRegistrationCount)
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [websiteDataStoreConfiguration setOverrideServiceWorkerRegistrationCountTestingValue:1];
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-    auto webView = setUpSWTest(dataStore.get());
+    RetainPtr messageHandler = adoptNS([[SWInAppBrowserPrivacyMessageHandler alloc] init]);
+    auto webView = setUpSWTest(dataStore.get(), messageHandler.get());
 
     TestWebKitAPI::HTTPServer server({
         { "/main.html"_s, { mainReregisterBytes } },
@@ -1051,10 +1050,9 @@ TEST(InAppBrowserPrivacy, ReregisterServiceWorkerMaxRegistrationCount)
 
     expectedMessage = "Reregistration success"_s;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&messageHandler->_receivedMessage);
 
-    isDone = false;
-
+    __block bool isDone = false;
     [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
         EXPECT_EQ(1u, [websiteDataRecords count]);
         isDone = true;
@@ -1067,7 +1065,6 @@ TEST(InAppBrowserPrivacy, ReregisterServiceWorkerMaxRegistrationCount)
 TEST(InAppBrowserPrivacy, NonAppBoundDomainDoesNotAllowServiceWorkers)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1083,7 +1080,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainDoesNotAllowServiceWorkers)
     [webView _test_waitForDidFinishNavigation];
     
     // Expect that service workers are disabled for this webView.
-    isDone = false;
+    __block bool isDone = false;
     [webView _serviceWorkersEnabled:^(BOOL enabled) {
         EXPECT_FALSE(enabled);
         isDone = true;
@@ -1096,13 +1093,11 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainDoesNotAllowServiceWorkers)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
 }
 
 TEST(InAppBrowserPrivacy, AppBoundFlagForNonAppBoundDomainFails)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1128,7 +1123,6 @@ TEST(InAppBrowserPrivacy, AppBoundFlagForNonAppBoundDomainFails)
 TEST(InAppBrowserPrivacy, NavigateAwayFromAppBoundDomainWithAppBoundFlagFails)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1159,7 +1153,6 @@ TEST(InAppBrowserPrivacy, NavigateAwayFromAppBoundDomainWithAppBoundFlagFails)
 TEST(InAppBrowserPrivacy, AppBoundDomainWithoutFlagTreatedAsNonAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1176,7 +1169,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomainWithoutFlagTreatedAsNonAppBound)
 
     // But the navigation should not have been considered app-bound because the WebView configuration
     // specification was not set.
-    isDone = false;
+    __block bool isDone = false;
     [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
         EXPECT_FALSE(isAppBound);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -1188,7 +1181,6 @@ TEST(InAppBrowserPrivacy, AppBoundDomainWithoutFlagTreatedAsNonAppBound)
 TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1203,7 +1195,7 @@ TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
     [webView loadRequest:request];
     [delegate waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
         EXPECT_FALSE(isAppBound);
         isDone = true;
@@ -1238,7 +1230,6 @@ TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
 TEST(InAppBrowserPrivacy, WebViewCannotUpdateAppBoundFlagOnceSet)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1254,7 +1245,7 @@ TEST(InAppBrowserPrivacy, WebViewCannotUpdateAppBoundFlagOnceSet)
     [webView loadRequest:request];
     [delegate waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
         EXPECT_TRUE(isAppBound);
         isDone = true;
@@ -1273,7 +1264,6 @@ TEST(InAppBrowserPrivacy, WebViewCannotUpdateAppBoundFlagOnceSet)
 
 TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
 {
-    isDone = false;
     initializeInAppBrowserPrivacyTestSettings();
     RetainPtr userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
 
@@ -1287,7 +1277,7 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
     RetainPtr delegate = adoptNS([AppBoundDomainDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(!!error);
         isDone = true;
@@ -1305,7 +1295,6 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
 
 TEST(InAppBrowserPrivacy, InjectScriptInNonAppBoundSubframeAppBoundMainframeFails)
 {
-    isDone = false;
     initializeInAppBrowserPrivacyTestSettings();
 
     RetainPtr userScript = adoptNS([[WKUserScript alloc] initWithSource:@"var img = document.createElement('img'); img.src = 'in-app-browser:///should-load-for-main-frame-only'; document.getElementById('body').appendChild(img);" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
@@ -1337,7 +1326,6 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
 {
     allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
 
-    isDone = false;
     initializeInAppBrowserPrivacyTestSettings();
 
     RetainPtr userScript = adoptNS([[WKUserScript alloc] initWithSource:@"var img = document.createElement('img'); img.src = 'in-app-browser:///should-load-for-main-frame-only'; document.getElementById('body').appendChild(img);" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
@@ -1416,7 +1404,6 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
 TEST(InAppBrowserPrivacy, LoadFromHTMLStringsSucceedsIfAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1437,7 +1424,6 @@ TEST(InAppBrowserPrivacy, LoadFromHTMLStringsSucceedsIfAppBound)
 TEST(InAppBrowserPrivacy, LoadFromHTMLStringNoBaseURLIsAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1452,7 +1438,7 @@ TEST(InAppBrowserPrivacy, LoadFromHTMLStringNoBaseURLIsAppBound)
     [webView loadHTMLString:HTML baseURL:nil];
     [delegate waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
         EXPECT_TRUE(isForcedIntoAppBoundMode);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -1464,7 +1450,6 @@ TEST(InAppBrowserPrivacy, LoadFromHTMLStringNoBaseURLIsAppBound)
 TEST(InAppBrowserPrivacy, LoadFromHTMLStringsFailsIfNotAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
@@ -1480,7 +1465,7 @@ TEST(InAppBrowserPrivacy, LoadFromHTMLStringsFailsIfNotAppBound)
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
     EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
         EXPECT_TRUE(isForcedIntoAppBoundMode);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -1492,7 +1477,6 @@ TEST(InAppBrowserPrivacy, LoadFromHTMLStringsFailsIfNotAppBound)
 TEST(InAppBrowserPrivacy, AppBoundCustomScheme)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    isDone = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
@@ -1513,7 +1497,7 @@ TEST(InAppBrowserPrivacy, AppBoundCustomScheme)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
         EXPECT_TRUE(isAppBound);
         cleanUpInAppBrowserPrivacyTestSettings();
