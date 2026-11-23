@@ -171,9 +171,14 @@ std::optional<LineLayoutResult> TextOnlySimpleLineBuilder::placeSingleCharacterC
     ASSERT(lineInput.needsLayoutRange.start.index + 1 == lineInput.needsLayoutRange.end.index && !lineInput.needsLayoutRange.start.offset && !lineInput.needsLayoutRange.end.offset);
 
     auto lineRect = lineInput.initialLogicalRect;
-    auto contentWidth = inlineTextItem->width().value_or(0.f);
+    CheckedRef style = isFirstFormattedLineCandidate ? inlineTextItem->firstLineStyle() : inlineTextItem->style();
+    auto contentWidth = [&] {
+        if (auto width = inlineTextItem->width())
+            return *width;
+        return TextUtil::width(*inlineTextItem, protect(style->fontCascade()), { });
+    }();
     Line::RunList singleRun;
-    singleRun.append({ Line::Run(*inlineTextItem, protect(inlineTextItem->style()), { }, contentWidth) });
+    singleRun.append({ Line::Run(*inlineTextItem, style, { }, contentWidth) });
 
     auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(protect(rootStyle()), contentWidth, lineRect.width(), { }, true);
     auto contentRight = contentLeft + contentWidth;
