@@ -30,6 +30,12 @@ private import TestWebKitAPILibrary
 
 // MARK: Supporting test types
 
+#if WTF_PLATFORM_WATCHOS || WTF_PLATFORM_APPLETV
+private let isEnhancedSecurityEnabledByDefault = true
+#else
+private let isEnhancedSecurityEnabledByDefault = false
+#endif
+
 @MainActor
 private class TestNavigationDecider: WebPage.NavigationDeciding {
     var preferencesMutation: (inout WebPage.NavigationPreferences) -> Void = { _ in }
@@ -49,7 +55,7 @@ private class TestNavigationDecider: WebPage.NavigationDeciding {
 struct EnhancedSecurityTests {
     @Test(arguments: [
         (mode: WebPage.NavigationPreferences.SecurityRestrictionMode.maximizeCompatibility, expected: true),
-        (mode: WebPage.NavigationPreferences.SecurityRestrictionMode.none, expected: false),
+        (mode: WebPage.NavigationPreferences.SecurityRestrictionMode.none, expected: isEnhancedSecurityEnabledByDefault),
     ])
     func securityRestrictionModeFromConfiguration(
         mode: WebPage.NavigationPreferences.SecurityRestrictionMode,
@@ -80,7 +86,7 @@ struct EnhancedSecurityTests {
         #expect(page.backingWebView._webProcessIdentifier != 0)
 
         let result = await page.backingWebView._isEnhancedSecurityEnabled()
-        #expect(result == enabled)
+        #expect(result == (enabled || isEnhancedSecurityEnabledByDefault))
     }
 }
 
