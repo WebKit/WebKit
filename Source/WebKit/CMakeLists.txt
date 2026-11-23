@@ -1608,6 +1608,12 @@ endif ()
 
 list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
+if (SWIFT_REQUIRED)
+    # WebKit_SwiftCxxHeader is created in a deferred call.
+    add_custom_target(WebKit_DerivedHeadersForSwift DEPENDS ${WebKit_HEADERS} ${WebKit_DERIVED_SOURCES})
+    cmake_language(DEFER CALL add_dependencies WebKit_SwiftCxxHeader WebKit_DerivedHeadersForSwift)
+endif ()
+
 WEBKIT_COMPUTE_SOURCES(WebKit)
 if (DEFINED WebKit_SWIFT_INTEROP_SOURCES)
     list(REMOVE_ITEM WebKit_SOURCES ${WebKit_SWIFT_INTEROP_SOURCES})
@@ -1657,6 +1663,9 @@ if (DEFINED WebKit_SWIFT_INTEROP_SOURCES)
     WEBKIT_DEFINE_SUBTARGET(WebKit_SwiftInterop WebKit ${WebKit_SWIFT_INTEROP_SOURCES})
     WEBKIT_REUSE_PREFIX_HEADER(WebKit_SwiftInterop WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX OBJCXX)
     target_compile_definitions(WebKit_SwiftInterop PRIVATE WK_COMPILING_SWIFT_INTEROP_SUBTARGET)
+    # Generate the derived headers (e.g. *Messages.h) first. This target is kept
+    # out of the WebKit build order (see below), so it would not wait for them.
+    add_dependencies(WebKit_SwiftInterop WebKit_DerivedHeadersForSwift)
     # Feed objects into the WebKit link via a response file + LINK_DEPENDS so
     # cmake_object_order_depends_target_WebKit doesn't pick up this sub-target
     # (and through it, WebKit_SwiftCxxHeader).

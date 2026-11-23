@@ -1428,6 +1428,10 @@ function(_webkit_platform_args_clang_prefix _outvar _depfile _mt_target _wtf_inc
         -include cmakeconfig.h
         -include wtf/Platform.h
     )
+    # Custom commands don't get CMAKE_SYSROOT either.
+    if (CMAKE_SYSROOT)
+        list(APPEND _cmd "--sysroot=${CMAKE_SYSROOT}")
+    endif ()
     # Custom commands don't inherit add_compile_options, so mirror the SDK stubs
     # and headers OptionsCocoa.cmake feeds C-family compiles, which Platform.h
     # needs too.
@@ -1584,7 +1588,12 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
             ${WEBKIT_SDK_SYSTEM_SEARCH_FLAGS}
             "-iframework" "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
     endif ()
-    if (CMAKE_Swift_COMPILER_TARGET)
+    # Cross toolchains pass --target and --sysroot in CMAKE_CXX_COMPILER_ARG1.
+    if (CMAKE_CXX_COMPILER_ARG1)
+        separate_arguments(_cxx_compiler_arg1 NATIVE_COMMAND "${CMAKE_CXX_COMPILER_ARG1}")
+        list(APPEND _clang_cmd ${_cxx_compiler_arg1})
+    endif ()
+    if (CMAKE_Swift_COMPILER_TARGET AND NOT CMAKE_CXX_COMPILER_ARG1)
         list(APPEND _clang_cmd "-target" "${CMAKE_Swift_COMPILER_TARGET}")
     endif ()
     if (WEBKIT_ADDITIONS_INCLUDE_PATH)
@@ -1712,6 +1721,11 @@ function(WEBKIT_QUERY_SWIFT_TARGET_INFO _result _swift_compiler)
     if (CMAKE_Swift_COMPILER_TARGET)
         list(APPEND _swift_target_info_args "-target" "${CMAKE_Swift_COMPILER_TARGET}")
     endif ()
+    # Pass -sdk, -resource-dir etc. so the reported paths are the ones from the target.
+    if (CMAKE_Swift_FLAGS)
+        separate_arguments(_swift_flags NATIVE_COMMAND "${CMAKE_Swift_FLAGS}")
+        list(APPEND _swift_target_info_args ${_swift_flags})
+    endif ()
     execute_process(
         COMMAND "${_swift_compiler}" -print-target-info ${_swift_target_info_args}
         RESULT_VARIABLE _swift_target_info_result
@@ -1789,7 +1803,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # module.modulemap, and Swift's embedded clang already loads the one from
         # /opt/swift/usr/lib/swift/clang/include. Forwarding both makes every
         # _Builtin_* / opencl_c module get defined twice and aborts -emit-module.
-        if (NOT APPLE AND NOT WIN32)
+        # Skip this when cross-compiling. The target sysroot already provides these
+        # headers, and the list can contain host paths such as /usr/include.
+        if (NOT APPLE AND NOT WIN32 AND NOT CMAKE_CROSSCOMPILING)
             foreach (_dir IN LISTS CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
                 if (_dir MATCHES "^/usr/lib/gcc/")
                     continue ()

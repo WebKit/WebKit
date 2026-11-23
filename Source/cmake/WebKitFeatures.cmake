@@ -159,8 +159,14 @@ macro(WEBKIT_OPTION_BEGIN)
     # keep whatever is already defined.
     # When cross-building default to off, because the auto-detection here would pick
     # up the host swiftc instead of a cross-aware one and break the target build.
+    # Unless the toolchain sets CMAKE_Swift_COMPILER_TARGET for its own swiftc.
+    if (CMAKE_CROSSCOMPILING AND NOT CMAKE_Swift_COMPILER_TARGET)
+        set(_swift_cross_toolchain_unknown TRUE)
+    else ()
+        set(_swift_cross_toolchain_unknown FALSE)
+    endif ()
     if (NOT DEFINED ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT)
-        if (CMAKE_CROSSCOMPILING)
+        if (_swift_cross_toolchain_unknown)
             set(_swift_features_default OFF)
         elseif (COMPILER_IS_CLANG)
             _WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT(_swift_interop_ok)
@@ -194,7 +200,7 @@ macro(WEBKIT_OPTION_BEGIN)
     # gate this in PlatformEnable.h on the SDK version instead.
     if (NOT DEFINED ENABLE_SWIFT_BASE_CLASS_ANNOTATIONS_DEFAULT)
         set(ENABLE_SWIFT_BASE_CLASS_ANNOTATIONS_DEFAULT OFF)
-        if (NOT APPLE AND NOT CMAKE_CROSSCOMPILING)
+        if (NOT APPLE AND NOT _swift_cross_toolchain_unknown)
             _WEBKIT_DETECT_SWIFT_VERSION_NUMBER(_swift_version_number)
             if (_swift_version_number AND _swift_version_number VERSION_GREATER_EQUAL 6.4)
                 set(ENABLE_SWIFT_BASE_CLASS_ANNOTATIONS_DEFAULT ON)
@@ -438,9 +444,17 @@ endmacro()
 
 # enable_language(Swift) hasn't run yet and gets replaced by swiftc-wrapper
 # anyway, so resolve swiftc from PATH like the wrapper does on non-Apple hosts.
+# Honor SWIFTC first like enable_language(Swift). A cross toolchain sets it, and
+# find_program() could pick a host swiftc from CMAKE_PREFIX_PATH.
 macro(_WEBKIT_FIND_PROBE_SWIFTC _swiftc_var)
     set(${_swiftc_var} "${CMAKE_Swift_COMPILER}")
     if (NOT ${_swiftc_var} OR ${_swiftc_var} MATCHES "swiftc-wrapper")
+        if (NOT _WEBKIT_PROBE_SWIFTC AND NOT "$ENV{SWIFTC}" STREQUAL "")
+            get_filename_component(_probe_swiftc "$ENV{SWIFTC}" PROGRAM)
+            if (EXISTS "${_probe_swiftc}")
+                set(_WEBKIT_PROBE_SWIFTC "${_probe_swiftc}" CACHE FILEPATH "swiftc used to probe Swift support")
+            endif ()
+        endif ()
         find_program(_WEBKIT_PROBE_SWIFTC NAMES swiftc)
         set(${_swiftc_var} "${_WEBKIT_PROBE_SWIFTC}")
     endif ()

@@ -37,6 +37,17 @@ if (SWIFT_REQUIRED)
 
     enable_language(Swift)
 
+    # CMake knows no implicit include directories for Swift, so the C++ ones
+    # would reach the Clang importer as -I and pull in host headers.
+    if (CMAKE_CROSSCOMPILING)
+        foreach (_dir IN LISTS CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
+            list(APPEND CMAKE_Swift_IMPLICIT_INCLUDE_DIRECTORIES "${_dir}")
+            if (CMAKE_SYSROOT AND _dir MATCHES "^${CMAKE_SYSROOT}(/.*)$")
+                list(APPEND CMAKE_Swift_IMPLICIT_INCLUDE_DIRECTORIES "${CMAKE_MATCH_1}")
+            endif ()
+        endforeach ()
+    endif ()
+
     # Match Xcode, which leaves SWIFT_TREAT_WARNINGS_AS_ERRORS unset: every new
     # Swift toolchain adds warnings, and a blanket -warnings-as-errors turns each
     # of them into a build break. Diagnostics that must stay fatal are listed
