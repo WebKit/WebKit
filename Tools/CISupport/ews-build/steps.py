@@ -380,7 +380,7 @@ class GitHubMixin(object):
         if not pr_sha:
             yield self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')
             return defer.returnValue(-1)
-        return defer.returnValue(0 if pr_sha == self.getProperty('github.head.sha', '?') else 1)
+        return defer.returnValue(0 if pr_sha in (self.getProperty('github.head.sha', '?'), self.getProperty('pushed_head_sha')) else 1)
 
     def _is_pr_blocked(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
@@ -7421,12 +7421,89 @@ class CleanWebKitBuildIfBaseChanged(steps.ShellSequence):
         return {'step': self.descriptionDone[0]}
 
 
-class PushCommitToWebKitRepo(shell.ShellCommand):
+class AcquireLandingLock(buildstep.BuildStep, AddToLogMixin):
+    # Builds must take turns from the rebase in Canonicalize to the push in PushCommitToWebKitRepo, and buildbot locks can
+    # only be held by a single step or by a whole build. PushCommitToWebKitRepo releases the lock; a build that stops
+    # earlier releases it by finishing.
+    name = 'acquire-landing-lock'
+    description = ['Waiting for other pull requests to land']
+    descriptionDone = ['Acquired landing lock']
+    POLL_INTERVAL = 2
+
+    holder = None
+    waiting = []
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.deferred = None
+
+    @classmethod
+    def release(cls, build):
+        if cls.holder is build:
+            cls.holder = None
+
+    @classmethod
+    def blocker(cls, build):
+        for other in [cls.holder] + cls.waiting:
+            if other is build:
+                return None
+            if other and not other.finished:
+                return other
+        return None
+
+    @defer.inlineCallbacks
+    def run(self):
+        start_time = time.time()
+        last_blocker = None
+        AcquireLandingLock.waiting.append(self.build)
+        try:
+            while blocker := self.blocker(self.build):
+                if self.stopped:
+                    return CANCELLED
+                if blocker is not last_blocker:
+                    last_blocker = blocker
+                    yield self._addToLog('stdio', f"Waiting for {blocker.getProperty('buildername', '')} build {blocker.getProperty('buildnumber', '')} (PR #{blocker.getProperty('github.number', '')}) to land.\n")
+                self.deferred = task.deferLater(reactor, self.POLL_INTERVAL, lambda: None)
+                try:
+                    yield self.deferred
+                except defer.CancelledError:
+                    return CANCELLED
+            AcquireLandingLock.holder = self.build
+        finally:
+            AcquireLandingLock.waiting.remove(self.build)
+
+        if last_blocker:
+            yield self._addToLog('stdio', f'Acquired the landing lock after {int(time.time() - start_time)} seconds.\n')
+        return SUCCESS
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Acquired landing lock'}
+        return {'step': 'Stopped waiting for landing lock'}
+
+    def interrupt(self, reason):
+        if self.deferred and not self.deferred.called:
+            self.deferred.cancel()
+        return super().interrupt(reason)
+
+
+class PushedCommitMixin(object):
+    # The push output doesn't name the commit when the remote already has it, as on a retry after GitHub applied a push
+    # but reported it as failed, so ask git.
+    @defer.inlineCallbacks
+    def pushed_commit(self):
+        command = yield self.makeRemoteShellCommand(command=['git', 'rev-parse', 'HEAD'], collectStdout=True)
+        yield self.runCommand(command)
+        sha = command.stdout.strip()
+        return sha if command.results() == SUCCESS and re.fullmatch(r'[0-9a-f]{40}', sha) else None
+
+
+class PushCommitToWebKitRepo(shell.ShellCommand, PushedCommitMixin):
     name = 'push-commit-to-webkit-repo'
     descriptionDone = ['Pushed commit to WebKit repository']
     haltOnFailure = False
     MAX_RETRY = 2
-    HASH_RE = re.compile(r'\s+[0-9a-f]+\.\.+(?P<hash>[0-9a-f]+)\s+')
+    RETRY_DELAY = 10
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
@@ -7441,14 +7518,11 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         self.env['GIT_USER'] = username
         self.env['GIT_PASSWORD'] = access_token
 
-        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-
         rc = yield super().run()
 
         if rc == SUCCESS:
-            log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-            landed_hash = self.hash_from_commit_text(log_text)
+            AcquireLandingLock.release(self.build)
+            landed_hash = yield self.pushed_commit()
             if landed_hash:
                 self.setProperty('landed_hash', landed_hash)
 
@@ -7466,23 +7540,15 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
                 if self.getProperty('github.number', ''):
+                    # This is for GitHub errors. Only merge queue builds push, and this build still holds the landing
+                    # lock, so the same commit can be pushed again.
                     self.build.addStepsAfterCurrentStep([
-                        CleanGitRepo(),
-                        CheckOutSource(),
-                        FetchBranches(),
-                        UpdateWorkingDirectory(),
-                        ShowIdentifier(),
-                        CheckOutPullRequest(),
-                        AddReviewerToCommitMessage(),
-                        Canonicalize(),
-                        # Only queues which land on feature branches reach this point with a feature branch
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False, excludeFeatureBranches=False),
-                        PushPullRequestBranch(),
-                        UpdatePullRequest(),
+                        WaitForDuration(duration=self.RETRY_DELAY),
                         PushCommitToWebKitRepo(),
                     ])
                 return defer.returnValue(rc)
 
+            AcquireLandingLock.release(self.build)
             self.setProperty('comment_text', 'merge-queue failed to commit PR to repository. To retry, remove any blocking labels and re-apply merge-queue label')
             self.setProperty('build_finish_summary', 'Failed to commit to WebKit repository')
             self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest()])
@@ -7496,12 +7562,6 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES
-
-    def hash_from_commit_text(self, commit_text):
-        match = self.HASH_RE.search(commit_text)
-        if match:
-            return match.group('hash')
-        return None
 
 
 class DetermineLandedIdentifier(shell.ShellCommand):
@@ -7548,8 +7608,11 @@ class DetermineLandedIdentifier(shell.ShellCommand):
             else:
                 rc = FAILURE
 
-        self.setProperty('comment_text', self.comment_text_for_bug(landed_hash, self.identifier))
-        commit_summary = f'Committed {self.identifier or landed_hash}'
+        # landed_hash is a full hash, and comments and summaries have always shown the 12 characters that git push prints.
+        # identifier_for_hash() returns the hash it was given when it can't find an identifier.
+        short_hash = landed_hash[:12] if landed_hash else landed_hash
+        self.setProperty('comment_text', self.comment_text_for_bug(short_hash, self.identifier))
+        commit_summary = f"Committed {self.identifier if self.identifier and '@' in self.identifier else short_hash}"
         self.descriptionDone = commit_summary
         self.setProperty('build_summary', commit_summary)
         self.addURL(self.identifier, self.url_for_identifier(self.identifier))
@@ -7580,10 +7643,8 @@ class DetermineLandedIdentifier(shell.ShellCommand):
 
     def comment_text_for_bug(self, hash=None, identifier=None):
         identifier_str = identifier if identifier and '@' in identifier else '?'
-        comment = '{} {} ({}): <{}>'.format(
-            'Test gardening commit' if self.getProperty('is_test_gardening') else 'Committed',
-            identifier_str, hash, self.url_for_identifier(identifier),
-        )
+        commit_type = 'Test gardening commit' if self.getProperty('is_test_gardening') else 'Committed'
+        comment = f'{commit_type} {identifier_str} ({hash}): <{self.url_for_identifier(identifier)}>'
 
         pr_number = self.getProperty('github.number', '')
         if pr_number:
@@ -8248,13 +8309,16 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         return super().getResultSummary()
 
 
-class PushPullRequestBranch(shell.ShellCommand):
+class PushPullRequestBranch(shell.ShellCommand, PushedCommitMixin):
     name = 'push-pull-request-branch'
     haltOnFailure = True
+    MAX_RETRY = 2
+    RETRY_DELAY = 10
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
 
+    @defer.inlineCallbacks
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         remote, repo_name = self.getProperty('github.head.repo.full_name', DEFAULT_REMOTE).split('/', 1)
         if '-' in repo_name:
@@ -8266,7 +8330,26 @@ class PushPullRequestBranch(shell.ShellCommand):
         self.env['GIT_USER'] = username
         self.env['GIT_PASSWORD'] = access_token
 
-        return super().run()
+        rc = yield super().run()
+
+        if rc == SUCCESS:
+            # The pull request now points to this commit, which is the same change. Record it, so that BlockPullRequest
+            # doesn't take it for a newer version of the pull request.
+            pushed_sha = yield self.pushed_commit()
+            if pushed_sha:
+                self.setProperty('pushed_head_sha', pushed_sha)
+            return rc
+
+        # This is for GitHub errors. Other failures, such as a fork that doesn't let the merge queue push, fail again.
+        retry_count = int(self.getProperty('push_pull_request_branch_retry_count', 0))
+        if retry_count < self.MAX_RETRY:
+            self.setProperty('push_pull_request_branch_retry_count', retry_count + 1)
+            self.haltOnFailure = False
+            self.build.addStepsAfterCurrentStep([
+                WaitForDuration(duration=self.RETRY_DELAY),
+                PushPullRequestBranch(),
+            ])
+        return rc
 
     def getResultSummary(self):
         if self.results == SUCCESS:

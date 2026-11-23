@@ -449,6 +449,7 @@ class MergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(CheckStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
 
+        self.addStep(AcquireLandingLock())
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
         self.addStep(PushPullRequestBranch())
@@ -463,6 +464,7 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
     def __init__(self, platform, **kwargs):
         super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
 
+        self.addStep(AcquireLandingLock())
         self.addStep(Canonicalize())
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(PushPullRequestBranch())
