@@ -1899,6 +1899,8 @@ webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 
 webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure Pass ]
 
+webkit.org/b/326556 inspector/debugger/breakpoint-action-log.html [ Failure ]
+
 webkit.org/b/326767 [ Debug ] http/tests/site-isolation/inspector/canvas/console-record-canvas-moved-from-iframe.html [ Crash ]
 
 # These tests are fast enough in release but quite slow in debug builds.
