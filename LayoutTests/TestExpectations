@@ -5876,11 +5876,15 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html [ Pas
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Pass Failure ]
 
-# Flac and Vorbis decoding requires an extra description which isn't provided. Skipped as the tests time out.
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?flac [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?vorbis [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?flac [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?vorbis [ Skip ]
+# The tests check support with isConfigSupported() without the description that Flac and Vorbis decoding requires.
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?flac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?vorbis [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?flac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?vorbis [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-reconfigure.https.any.html?flac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-reconfigure.https.any.html?vorbis [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-reconfigure.https.any.worker.html?flac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-reconfigure.https.any.worker.html?vorbis [ Failure ]
 
 # HEVC support may not be available to all platforms.
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_annexb [ Pass Failure ]

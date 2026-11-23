@@ -172,6 +172,18 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
     setState(WebCodecsCodecState::Configured);
     m_isKeyChunkRequired = true;
 
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }] mutable {
+        RefPtr internalDecoder = m_internalDecoder;
+        if (!internalDecoder)
+            return WebCodecsControlMessageOutcome::Processed;
+        blockControlMessageQueue();
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }](auto&&) {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->unblockControlMessageQueue();
+        });
+        return WebCodecsControlMessageOutcome::Processed;
+    } });
+
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
     queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, codec = config.codec, config = createVideoDecoderConfig(config), isSupportedCodec]() mutable {
         auto rotation = config.rotation;
@@ -338,6 +350,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::resetDecoder(const Exception& exception
         return Exception { ExceptionCode::InvalidStateError, "VideoDecoder is closed"_s };
 
     setState(WebCodecsCodecState::Unconfigured);
+    ++m_decoderCount;
     if (RefPtr internalDecoder = std::exchange(m_internalDecoder, { }))
         internalDecoder->reset();
     clearControlMessageQueueAndMaybeScheduleDequeueEvent();

@@ -125,6 +125,18 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
     setState(WebCodecsCodecState::Configured);
     m_isKeyChunkRequired = true;
 
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }] mutable {
+        RefPtr internalDecoder = m_internalDecoder;
+        if (!internalDecoder)
+            return WebCodecsControlMessageOutcome::Processed;
+        blockControlMessageQueue();
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }](auto&&) {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->unblockControlMessageQueue();
+        });
+        return WebCodecsControlMessageOutcome::Processed;
+    } });
+
     bool isSupportedCodec = AudioDecoder::isCodecSupported(config.codec);
     queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, codec = config.codec, config = createAudioDecoderConfig(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         blockControlMessageQueue();
@@ -270,6 +282,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::resetDecoder(const Exception& exception
         return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is closed"_s };
 
     setState(WebCodecsCodecState::Unconfigured);
+    ++m_decoderCount;
     if (RefPtr internalDecoder = std::exchange(m_internalDecoder, { }))
         internalDecoder->reset();
     clearControlMessageQueueAndMaybeScheduleDequeueEvent();
