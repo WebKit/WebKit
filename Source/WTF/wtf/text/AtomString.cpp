@@ -25,8 +25,7 @@
 
 #include <wtf/dtoa.h>
 #include <wtf/text/IntegerToStringConversion.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/unicode/CharacterNames.h>
+#include <wtf/text/StringCommon.h>
 
 namespace WTF {
 
@@ -139,35 +138,29 @@ void AtomString::show() const
 
 #endif
 
-static inline StringBuilder replaceUnpairedSurrogatesWithReplacementCharacterInternal(StringView view)
+static String toWellFormedString(std::span<const char16_t> characters)
 {
-    // Slow path: https://infra.spec.whatwg.org/#javascript-string-convert
-    // Replaces unpaired surrogates with the replacement character.
-    StringBuilder result;
-    result.reserveCapacity(view.length());
-    for (auto codePoint : view.codePoints()) {
-        if (U_IS_SURROGATE(codePoint))
-            result.append(replacementCharacter);
-        else
-            result.append(codePoint);
-    }
+    std::span<char16_t> buffer;
+    auto result = String::createUninitialized(characters.size(), buffer);
+    toWellFormedUTF16(characters, buffer);
     return result;
 }
 
-AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&& string)
+// https://infra.spec.whatwg.org/#javascript-string-convert
+String replaceUnpairedSurrogatesWithReplacementCharacterIn16BitString(String&& string)
 {
-    // Fast path for the case where there are no unpaired surrogates.
-    if (!hasUnpairedSurrogate(string)) [[likely]]
+    auto characters = string.span16();
+    if (isWellFormedUTF16(characters)) [[likely]]
         return WTF::move(string);
-    return replaceUnpairedSurrogatesWithReplacementCharacterInternal(string).toAtomString();
+    return toWellFormedString(characters);
 }
 
-String replaceUnpairedSurrogatesWithReplacementCharacter(String&& string)
+AtomString replaceUnpairedSurrogatesWithReplacementCharacterIn16BitString(AtomString&& string)
 {
-    // Fast path for the case where there are no unpaired surrogates.
-    if (!hasUnpairedSurrogate(string)) [[likely]]
+    auto characters = string.span16();
+    if (isWellFormedUTF16(characters)) [[likely]]
         return WTF::move(string);
-    return replaceUnpairedSurrogatesWithReplacementCharacterInternal(string).toString();
+    return AtomString { toWellFormedString(characters) };
 }
 
 } // namespace WTF
