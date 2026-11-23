@@ -551,11 +551,10 @@ RefPtr<::WebGPU::XRView> ObjectHeap::createXRViewFromBacking(WebGPUXRViewIdentif
     return findBackingInMap(m_xrViews, identifier);
 }
 
-ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPUIntegration& gpu, WebGPUIdentifier identifier) const
+ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(WebGPUIdentifier identifier) const
 {
     ExistsAndValid result;
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    Ref protectedGPU = gpu;
     bool everyObjectIsValid = true;
     applyToMaps(*this, [&](const auto&... maps) {
         auto checkMap = [&](const auto& map) {
@@ -564,13 +563,14 @@ ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGP
             if (iterator == map.end())
                 return;
             result.exists = true;
-            everyObjectIsValid = everyObjectIsValid && protectedGPU->isValid(protect(iterator->value->backing()));
+            // A compositor integration has no invalid state.
+            if constexpr (!std::is_same_v<Identifier, WebGPUCompositorIntegrationIdentifier>)
+                everyObjectIsValid = everyObjectIsValid && protect(iterator->value->backing())->isValid();
         };
         (checkMap(maps), ...);
     });
     result.valid = result.exists && everyObjectIsValid;
 #else
-    UNUSED_PARAM(gpu);
     UNUSED_PARAM(identifier);
 #endif
     return result;

@@ -225,17 +225,23 @@ void RemoteGPU::createCompositorIntegration(WebGPUCompositorIntegrationIdentifie
     objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 
+static void drawNativeImageToCanvas(WebCore::NativeImage& image, const WebCore::IntSize& canvasSize, WebCore::GraphicsContext& context)
+{
+    WebCore::GraphicsContextStateSaver stateSaver(context);
+    context.setImageInterpolationQuality(WebCore::InterpolationQuality::DoNotInterpolate);
+    context.drawNativeImage(image, WebCore::FloatRect { { }, canvasSize }, WebCore::FloatRect { { }, image.size() }, { WebCore::CompositeOperator::Copy });
+}
+
 void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage, WebCore::RenderingResourceIdentifier imageBufferIdentifier)
 {
     assertIsCurrent(workQueue());
     BinarySemaphore semaphore;
 
-    RefPtr gpu = m_backing.get();
     Ref renderingBackend = m_renderingBackend;
     Ref protectedNativeImage = nativeImage;
     renderingBackend->dispatch([&]() mutable {
         if (auto imageBuffer = renderingBackend->imageBuffer(imageBufferIdentifier)) {
-            gpu->paintToCanvas(protectedNativeImage, imageBuffer->backendSize(), imageBuffer->context());
+            drawNativeImageToCanvas(protectedNativeImage, imageBuffer->backendSize(), imageBuffer->context());
             imageBuffer->flushDrawingContext();
         }
         semaphore.signal();
@@ -391,13 +397,12 @@ void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool
 {
     // FIXME: should not be used. Figure out if still needed.
     assertIsCurrent(workQueue());
-    RefPtr gpu = m_backing;
-    if (!gpu) {
+    if (!m_backing) {
         completionHandler(false, false);
         return;
     }
 
-    auto result = m_objectHeap->objectExistsAndValid(*gpu, identifier);
+    auto result = m_objectHeap->objectExistsAndValid(identifier);
     completionHandler(result.valid, result.exists);
 }
 

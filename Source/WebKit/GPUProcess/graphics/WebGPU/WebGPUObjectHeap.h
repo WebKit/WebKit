@@ -41,7 +41,6 @@
 
 namespace WebCore {
 class WebGPUCompositorIntegration;
-class WebGPUIntegration;
 }
 
 namespace WebKit {
@@ -180,7 +179,7 @@ public:
     };
     // Identifiers of different types may have the same value. The object exists when an object of any
     // type has the value, and is valid when every object that has it is valid.
-    ExistsAndValid objectExistsAndValid(const WebCore::WebGPUIntegration&, WebGPUIdentifier) const;
+    ExistsAndValid objectExistsAndValid(WebGPUIdentifier) const;
 private:
     ObjectHeap();
 
