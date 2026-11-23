@@ -36,6 +36,7 @@
 #include "NativeWebWheelEvent.h"
 #include "TouchGestureController.h"
 #include "WebPreferences.h"
+#include <WebCore/TouchAction.h>
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -238,6 +239,10 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
                     {
 #if WPE_CHECK_VERSION(1, 5, 0)
                         auto* event = &axisEvent.event.base;
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+                        if (!WebCore::constrainPanToTouchActions(page.touchActionsForCurrentTouches(), axisEvent.event.x_axis, axisEvent.event.y_axis) && axisEvent.phase != WebWheelEvent::Phase::Ended)
+                            return;
+#endif
 #else
                         auto* event = &axisEvent.event;
 #endif

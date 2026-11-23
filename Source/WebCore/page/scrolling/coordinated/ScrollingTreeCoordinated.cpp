@@ -372,11 +372,35 @@ static TrackingType mergeTrackingTypes(TrackingType a, TrackingType b)
     return a;
 }
 
-TrackingType ScrollingTreeCoordinated::eventTrackingTypeForTouchEvent(const PlatformTouchEvent& event)
+#if ENABLE(TOUCH_ACTION_REGIONS)
+// Returns the touch actions that both sets allow. Like Chromium, a touch sequence only allows
+// what the touch actions at the points of all of its touches allow.
+static OptionSet<TouchAction> intersectTouchActions(OptionSet<TouchAction> a, OptionSet<TouchAction> b)
+{
+    if (a.contains(TouchAction::Auto))
+        return b;
+    if (b.contains(TouchAction::Auto))
+        return a;
+    if (a.contains(TouchAction::Manipulation) && b.contains(TouchAction::Manipulation))
+        return { TouchAction::Manipulation };
+
+    auto expand = [](OptionSet<TouchAction> touchActions) {
+        if (touchActions.contains(TouchAction::Manipulation))
+            return OptionSet<TouchAction> { TouchAction::PanX, TouchAction::PanY, TouchAction::PinchZoom };
+        return touchActions - TouchAction::None;
+    };
+    auto result = expand(a) & expand(b);
+    if (result.isEmpty())
+        return { TouchAction::None };
+    return result;
+}
+#endif
+
+auto ScrollingTreeCoordinated::trackTouchEvent(const PlatformTouchEvent& event) -> TouchEventTrackingResult
 {
     auto offset = mainFrameScrollOffset();
     if (!offset)
-        return TrackingType::NotTracking;
+        return { };
 
     for (auto& touchPoint : event.touchPoints()) {
         if (touchPoint.state() != PlatformTouchPoint::State::TouchPressed)
@@ -391,6 +415,10 @@ TrackingType ScrollingTreeCoordinated::eventTrackingTypeForTouchEvent(const Plat
 
         Locker layerLocker { layerAndPoint->first->lock() };
         auto& eventRegion = layerAndPoint->first->eventRegion();
+
+#if ENABLE(TOUCH_ACTION_REGIONS)
+        m_touchEventTracking.touchActions = intersectTouchActions(m_touchEventTracking.touchActions, eventRegion.touchActionsForPoint(roundedIntPoint(layerAndPoint->second)));
+#endif
 
         auto update = [&](TrackingType& trackingType, EventTrackingRegions::EventType eventType) {
             if (trackingType == TrackingType::Synchronous)
@@ -448,10 +476,12 @@ TrackingType ScrollingTreeCoordinated::eventTrackingTypeForTouchEvent(const Plat
         }
     }
 
+    TouchEventTrackingResult result { globalTrackingType, m_touchEventTracking.touchActions };
+
     if (allTouchPointsAreReleased)
         m_touchEventTracking.reset();
 
-    return globalTrackingType;
+    return result;
 }
 #endif
 

@@ -404,6 +404,18 @@ enum class WebCore::IndexedDB::RequestType : uint8_t {
     double initialVelocity()
 };
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+header: <WebCore/TouchAction.h>
+[OptionSet] enum class WebCore::TouchAction : uint8_t {
+    Auto,
+    None,
+    Manipulation,
+    PanX,
+    PanY,
+    PinchZoom
+};
+#endif
+
 header: <WebCore/ResourceLoadStatistics.h>
 [OptionSet] enum class WebCore::NavigatorAPIsAccessed : uint64_t {
     AppVersion,

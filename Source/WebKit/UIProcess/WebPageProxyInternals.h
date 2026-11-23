@@ -103,6 +103,10 @@
 #include <WebCore/EventTrackingRegions.h>
 #endif
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+#include <WebCore/TouchAction.h>
+#endif
+
 #if ENABLE(UI_SIDE_COMPOSITING)
 #include "VisibleContentRectUpdateInfo.h"
 #endif
@@ -467,6 +471,9 @@ public:
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> touchEventQueue;
+#endif
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    OptionSet<WebCore::TouchAction> touchActions { WebCore::TouchAction::Auto };
 #endif
 
 #if ENABLE(WRITING_TOOLS)

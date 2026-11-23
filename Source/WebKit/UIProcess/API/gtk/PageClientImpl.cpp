@@ -441,6 +441,13 @@ void PageClientImpl::beganExitFullScreen(const IntRect& /* initialFrame */, cons
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& event, bool wasEventHandled)
 {
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    // Only touch starts change the touch actions. Replies to the touch moves and touch end of
+    // the previous touch sequence can come after a new one has begun.
+    if (event.type() == WebEventType::TouchStart)
+        webkitWebViewBaseSetTouchActions(WEBKIT_WEB_VIEW_BASE(m_viewWidget), webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget))->touchActionsForCurrentTouches());
+#endif
+
     if (wasEventHandled) {
         webkitWebViewBasePageGrabbedTouch(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
         return;
