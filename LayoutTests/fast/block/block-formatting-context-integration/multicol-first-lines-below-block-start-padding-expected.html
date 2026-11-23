@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 180px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; float: left; margin: 0 6px 6px 0; }
+.f { float: left; width: 50px; background-color: rgba(0, 128, 0, 0.3); }
+.r { float: right; width: 40px; background-color: rgba(0, 0, 255, 0.3); }
+</style>
+<div class=mc><div style="padding-top: 115px; background-color: silver">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="border-top: 110px solid silver; padding-top: 5px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 50px"></div><div style="padding-top: 65px; background-color: silver">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 60px"></div><div class=f>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div class=r>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div style="clear: both; background-color: silver">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>

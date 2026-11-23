@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+article { height: 50px; column-gap: 0; columns: 4 30px; width: 120px; column-fill: auto; border: 1px solid black; margin: 2px; float: left; }
+.o { background-color: orange; }
+.g { background-color: green; height: 10px; width: 20px; }
+.b { background-color: rgba(0, 0, 255, 0.5); }
+img { display: block; width: 20px; height: 40px; background-color: purple; }
+</style>
+<article><div class=o style="padding-top: 75px"></div></article>
+<article><div class=o style="padding-top: 125px"><div class=g></div></div></article>
+<article><div class=o style="padding-top: 60px"><div class=b style="padding-top: 50px"><div class=g></div></div></div></article>
+<article><div class=o style="display: flow-root; padding-top: 75px"><div class=g></div></div></article>
+<article><div class=o style="padding-top: 75px"><div class=g></div><span>x y z</span></div></article>

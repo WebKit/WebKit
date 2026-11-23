@@ -67,9 +67,9 @@ void GridLayout::updateFormattingContextGeometries()
     clearGridItemGridAreas();
 
     auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
-    CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
-
-    boxGeometryUpdater.setFormattingContextRootGeometry(gridBoxContainingBlock->contentBoxLogicalWidth());
+    // Like the renderer's own padding and margins (UsedStyle), from the inline size the formatting context it is in gives its containing block,
+    // which the block formatting context writes to the containing block's renderer only once all of its content is laid out.
+    boxGeometryUpdater.setFormattingContextRootGeometry(CheckedRef { gridBoxRenderer() }->containingBlockLogicalWidthForContent());
     boxGeometryUpdater.setFormattingContextContentGeometry(CheckedRef { layoutState() }->geometryForBox(gridBox()).contentBoxWidth(), { });
 }
 
@@ -197,7 +197,7 @@ static std::optional<LayoutUnit> inlineAxisContainingBlockSize(const RenderGrid&
     }
     if (gridContainerRenderer.isGridItem()) {
         // containingBlockLogicalWidthForContent() returns 0 for a grid area that is not resolved yet.
-        if (auto gridAreaWidth = gridContainerRenderer.gridAreaContentLogicalWidth(); gridAreaWidth && !*gridAreaWidth)
+        if (auto gridAreaWidth = gridContainerRenderer.overridingContainingBlockContentLogicalWidth(); gridAreaWidth && !*gridAreaWidth)
             return { };
     }
     return gridContainerRenderer.containingBlockLogicalWidthForContent();
@@ -317,7 +317,7 @@ void GridLayout::updateFormattingContextRootRendererBeforeLayout()
 void GridLayout::clearGridItemGridAreas()
 {
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
-        CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->clearGridAreaContentSize();
+        CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->clearOverridingContainingBlockContentSize();
 }
 
 // Some code (e.g. relative positioning) needs the grid areas after layout is done.
@@ -330,8 +330,8 @@ void GridLayout::updateGridItemGridAreas(const Layout::UsedTrackSizes& usedTrack
     for (auto& gridItemRect : gridItemRects) {
         auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
         CheckedRef renderer = downcast<RenderBox>(*gridItemRect.layoutBox->rendererForIntegration());
-        renderer->setGridAreaContentLogicalWidth(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.columnStartLine, lineNumbersForGridArea.columnEndLine, usedTrackSizes.columnSizes, usedColumnGap));
-        renderer->setGridAreaContentLogicalHeight(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.rowStartLine, lineNumbersForGridArea.rowEndLine, usedTrackSizes.rowSizes, usedRowGap));
+        renderer->setOverridingContainingBlockContentLogicalWidth(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.columnStartLine, lineNumbersForGridArea.columnEndLine, usedTrackSizes.columnSizes, usedColumnGap));
+        renderer->setOverridingContainingBlockContentLogicalHeight(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.rowStartLine, lineNumbersForGridArea.rowEndLine, usedTrackSizes.rowSizes, usedRowGap));
     }
 }
 

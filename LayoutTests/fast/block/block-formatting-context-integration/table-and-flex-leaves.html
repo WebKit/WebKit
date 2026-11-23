@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.block { height: 20px; margin: 10px 0; background: lightblue; }
+table { background: orange; border: 3px solid black; }
+td { background: yellow; padding: 2px; }
+.flex { display: flex; background: rgba(0, 128, 0, 0.4); padding: 5px; border: 2px solid green; }
+.flex > div { flex: 1; height: 20px; background: green; margin: 0 2px; }
+canvas { background: blue; }
+</style>
+<div class="root" id="root">
+  <div class="block"></div>
+  <table style="width: 50%; margin: 15px auto"><tr><td>cell</td><td>another cell</td></tr></table>
+  <table style="margin-left: 30px"><tr><td>shrink-to-fit</td></tr></table>
+  <div class="flex" style="margin: 0 20px"><div></div><div></div></div>
+  <div class="flex" style="width: 50%; margin-left: auto; padding: 10%"><div></div></div>
+  <div style="padding: 0 10px"><div class="flex" style="min-width: 300px"><div></div></div></div>
+  <div class="block"></div>
+</div>
+<div class="root" style="height: 200px">
+  <div class="flex" style="height: 25%"><div style="height: auto"></div></div>
+  <table style="height: 50%"><tr><td>percentage height</td></tr></table>
+</div>
+<div class="root">
+  <div class="flex" style="height: 50px"><canvas width="40" height="100" style="max-height: 50%"></canvas></div>
+</div>
+<div class="root" style="height: 100px">
+  <div class="flex"><canvas width="40" height="40" style="max-height: 10%"></canvas></div>
+</div>
+<div class="root" style="width: auto; float: left">
+  <table><tr><td>in a shrink-to-fit root</td></tr></table>
+  <div class="flex" style="margin-right: 15px"><div style="width: 80px"></div></div>
+</div>
+<div class="root" dir="rtl">
+  <table style="margin-right: 20px"><tr><td>right to left</td></tr></table>
+  <div class="flex" style="width: 60%; margin-right: auto"><div></div></div>
+</div>
+<div class="root" id="outer">
+  <div style="padding: 0 20px"><div class="flex"><div></div></div></div>
+  <div id="nested" style="padding: 0 50px"><table style="width: 100%"><tr><td>nested containing block</td></tr></table><div class="flex"><div></div></div></div>
+  <div id="sized" style="height: 100px"><div class="flex" style="height: 50%"><div></div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "300px";
+document.getElementById("nested").style.paddingLeft = "100px";
+document.getElementById("outer").style.width = "250px";
+document.getElementById("sized").style.height = "60px";
+document.body.offsetHeight;
+</script>

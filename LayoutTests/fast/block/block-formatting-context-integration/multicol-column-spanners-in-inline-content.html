@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 3; column-rule: 2px solid; width: 240px; border: 1px solid; margin-bottom: 6px; }
+.s { column-span: all; background-color: lightblue; }
+.r { position: relative; left: 20px; }
+</style>
+<div class=mc><span>a</span><div>b</div><span>c<div class=s>spanner</div>d</span><div class=s>spanner</div>e</div>
+<div class=mc>a<span>b<div class=s>spanner</div><div>block</div>c<div>block</div></span></div>
+<div class=mc><span class=r>a<div class=s>spanner</div>b</span></div>
+<div class=mc><span>a<div><div class=s>spanner</div></div>b</span></div>

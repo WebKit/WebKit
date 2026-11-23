@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.cb { position: relative; width: 200px; height: 100px; border: 1px solid; margin: 4px; display: inline-block; vertical-align: top; }
+.anchor { position: absolute; left: 70px; top: 35px; width: 60px; height: 30px; background: orange; }
+.a { position: absolute; background: lightblue; }
+</style>
+<div class="cb"><div id="moves" class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: bottom right">moves</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div id="area" class="a" style="position-anchor: --a; position-area: top">area</div></div>
+<div class="cb" id="resized"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: span-all right">resized</div></div>
+<div class="cb"><div id="grows" class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; justify-self: anchor-center; top: 0">grows</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div id="text" class="a" style="position-anchor: --a; position-area: left">text</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("moves").style.left = "20px";
+document.getElementById("area").style.positionArea = "bottom left";
+document.getElementById("resized").style.width = "260px";
+document.getElementById("grows").style.width = "120px";
+document.getElementById("text").firstChild.data = "longer text";
+</script>

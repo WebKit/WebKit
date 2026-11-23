@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 12px; line-height: 15px; }
+.mc { columns: 3; column-gap: 10px; width: 250px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.b { background-color: rgba(0, 0, 255, 0.3); border: 2px solid blue; margin: 4px 0; }
+.s { column-span: all; height: 10px; background-color: green; }
+img { display: block; background-color: green; }
+.f { float: left; width: 20px; height: 30px; background-color: orange; }
+</style>
+<div class=mc><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed Lorem ipsum dolor sit amet, consectetur adipiscing</div><div class=s></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+<div class=mc><div class=b style="margin-bottom: 10px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div class=s style="margin: 3px 0"></div><div class="b h" style="margin-top: 8px; height: 40px"></div><div class=b>Duis aute irure dolor.</div></div>
+<div class=mc><div class=b style="padding: 4px">Lorem ipsum dolor sit amet.<div class=s></div><img class=h style="width: 30px; height: 40px">Ut enim ad minim veniam.</div></div>
+<div class=mc><div class=b style="height: 100px; margin: 0"><div class=h style="width: 30px; height: 50px; background-color: green"></div><div class=s></div><img style="width: 30px; height: 20px"></div></div>
+<div class=mc><div class=b><div class=b>Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class=s></div>Ut enim ad minim veniam, quis nostrud.</div>Duis aute irure dolor.</div></div>
+<div class=mc>text text<img class="f h" style="height: 50px">text<div class=s></div>text text text</div>
+<div class=mc><img style="width: 30px; height: 20px"><img class=h style="width: 30px; height: 20px"><img class=f style="height: 25px"><div class=s></div>text</div>
+<div class=mc><div class=b style="height: 30px; margin: 0 0 -10px"></div><div class=s style="opacity: 0.5"></div>text text text</div>
+<div class=mc><div class=s></div>Lorem ipsum dolor sit amet, consectetur adipiscing<div class=s></div><div class=s style="background-color: blue"></div>Lorem ipsum dolor sit amet, consectetur adipiscing<div class=s></div></div>
+<div class=mc><div style="padding-bottom: 12px; background-color: blue"><div class=s></div></div><div class=s></div><div></div></div>
+<div class=mc style="height: 120px; column-fill: auto"><div class=h style="height: 30px"></div>Lorem ipsum dolor sit amet, consectetur adipiscing<div class=s></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div>
+<div class=mc><img style="width: 30px; height: 20px"><img class=h style="width: 30px; height: 30px; break-before: column"><div class=s></div><img style="width: 30px; height: 20px"><img style="width: 30px; height: 20px; break-before: column"></div>
+<div class=mc style="width: auto"><img class=f><div class=s></div><img class=f style="width: 30px"></div>
+<div class=mc><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div><div class=s></div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div></div>
+<div class=mc><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div><div class="s t"></div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div></div>

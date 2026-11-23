@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 250px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 45px; background: tan; }
+.rtl { direction: rtl; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><div class="left"></div><div id="direction">text that becomes right-to-left beside the left float and wraps</div></div>
+<div class="root"><div class="rtl"><div class="right" id="float"></div>floats in the rtl block container with text around it</div><div>after</div></div>
+<div class="root"><div class="left"></div><div class="rtl"><div class="avoider" style="width: 100px" id="avoider">avoider</div></div></div>
+<div class="root"><div class="rtl"><div class="left"></div><div id="text">short</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("direction").style.direction = "rtl";
+document.getElementById("float").style.width = "120px";
+document.getElementById("avoider").style.width = "200px";
+document.getElementById("text").firstChild.data = "longer rtl text that wraps around the left float in the rtl block container";
+</script>

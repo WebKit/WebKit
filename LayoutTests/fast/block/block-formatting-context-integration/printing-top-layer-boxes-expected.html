@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.b { border-left: 4px solid; height: 300px; margin: 20px 0; }
+dialog, [popover] { border: 2px solid blue; padding: 0; width: 100px; height: 50px; }
+</style>
+<div class=b></div><div style="margin-left: 150px"><div class=b></div><div class=b></div><div popover=manual id=popover style="position: absolute; inset: auto; margin: 0">popover</div><div class=b></div></div>
+<div class=b></div><div popover=manual id=start style="inset: auto; margin: 0">start</div><div class=b></div><div popover=manual id=centered>centered</div><div class=b></div>
+<script>
+start.showPopover();
+popover.showPopover();
+centered.showPopover();
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>

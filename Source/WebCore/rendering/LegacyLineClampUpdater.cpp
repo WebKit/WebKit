@@ -28,6 +28,7 @@
 
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBox.h"
+#include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewInlines.h"
@@ -105,9 +106,19 @@ std::optional<LegacyLineClampUpdater::ClampedContent> LegacyLineClampUpdater::cl
             auto currentLineClamp = layoutState.legacyLineClamp();
 
             // Let line-clamp logic run but make sure no clamping happens (it's needed to make sure certain features are disabled like ellipsis in inline direction).
-            layoutState.setLegacyLineClamp(RenderLayoutState::LegacyLineClamp { inlineLayout->lineCount() + 1, { }, { }, { } });
-            lastRoot->setChildNeedsLayout(MarkingBehavior::OnlyThis);
-            lastRoot->layoutIfNeeded();
+            // The block formatting context lays out the root it is in again instead, where nothing reaches the clamp point either.
+            CheckedPtr root = LayoutIntegration::coveredBlockFormattingContextRoot(*lastRoot);
+            if (root && root != lastRoot) {
+                layoutState.setLegacyLineClamp(RenderLayoutState::LegacyLineClamp { std::numeric_limits<size_t>::max(), { }, { }, { } });
+                for (CheckedPtr<RenderBlock> blockContainer = lastRoot; blockContainer && blockContainer != root; blockContainer = blockContainer->containingBlock())
+                    blockContainer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+                root->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+                root->layoutIfNeeded();
+            } else {
+                layoutState.setLegacyLineClamp(RenderLayoutState::LegacyLineClamp { inlineLayout->lineCount() + 1, { }, { }, { } });
+                lastRoot->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+                lastRoot->layoutIfNeeded();
+            }
 
             layoutState.setLegacyLineClamp(currentLineClamp);
         }

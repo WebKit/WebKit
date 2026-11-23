@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font-family: -apple-system; font-size: 12px; line-height: 16px; }
+input { all: unset; appearance: base; }
+input::checkmark { all: unset; content: ""; display: block; width: 40px; height: 20px; margin: 6px 0 4px; background-color: green; }
+.c { width: 200px; border: 1px solid; margin-bottom: 6px; }
+</style>
+<div class=c>before <input type="checkbox" checked> after</div>
+<div class=c>before <input type="radio" checked> after</div>
+<div class=c><span style="border: 1px solid blue">a box <input type="checkbox" checked> and text</span></div>
+<div class=c style="direction: rtl">before <input type="checkbox" checked> after</div>
+<div class=c style="display: flow-root"><div style="float: left; width: 30px; height: 50px; border: 1px solid"></div>text <input type="checkbox" checked> beside a float</div>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.c { background: rgba(255, 255, 0, 0.4); }
+p { margin: 6px 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l"></div><div class="r"></div><div class="c" style="clear: both">cleared both</div></div>
+<div class="root"><div class="l"></div><div class="r"></div><div class="c" style="clear: left">cleared left</div></div>
+<div class="root"><div class="l"></div><div class="c" style="clear: both; margin-top: 10px">margin smaller than the float</div></div>
+<div class="root"><div class="l"></div><div class="c" style="clear: both; margin-top: 50px">margin larger than the float</div></div>
+<div class="root"><p>before</p><div class="l"></div><div class="c" style="clear: both; margin-top: 4px">after a margin</div></div>
+<div class="root"><div class="l"></div><div style="clear: both"></div><p>after an empty clearfix</p></div>
+<div class="root"><div class="l"></div><div style="clear: both; margin: 8px 0"></div><p style="margin-top: 20px">after an empty clearfix with margins</p></div>
+<div class="root"><div class="l"></div><div style="clear: both; margin: -5px 0 8px"></div><p style="margin-top: 3px">after a negative margin</p></div>
+<div class="root"><div><div class="l"></div><div style="clear: both"></div></div><p>after a container with a clearfix</p></div>
+<div class="root"><div class="l"></div><div style="margin-top: 20px"><div class="c" style="clear: both">nested in a block with a margin</div></div></div>
+<div class="root"><span class="l"></span>text<div class="c" style="clear: both; border-top: 2px solid">with a border</div></div>
+<div class="root"><p><span class="l"></span>inline float</p><div class="c" style="clear: left">cleared after a paragraph</div></div>
+<div class="root"><div class="l"></div><div style="clear: both; padding-top: 5px" class="c"><div style="margin-top: 10px">padding</div></div></div>
+<div class="root" dir="rtl"><div class="l"></div><div class="r"></div><div class="c" style="clear: right">right to left</div></div>
+<div class="root"><div><div class="l"></div></div><div style="clear: both"><p style="margin-top: 25px">a child margin through a cleared box</p></div></div>
+<div class="root" style="border-top: 1px solid"><div><div class="l"></div><div><div class="c" style="clear: left; margin-top: 50px; height: 20px">right under the float</div></div></div></div>
+<div class="root"><div style="margin-bottom: 10px"><div class="l"></div><div style="clear: both; margin: 4px 0"></div></div><p>the margins of an empty clearfix do not collapse with its parent's</p></div>
+<div class="root"><div style="margin-top: 5px"><div class="l"></div><div style="clear: left"><div class="l" style="width: 20px"></div><div>a float in a cleared box, both waiting for their top</div></div></div></div>
+</div>

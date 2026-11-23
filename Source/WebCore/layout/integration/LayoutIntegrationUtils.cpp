@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationUtils.h"
 
+#include "BlockFormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationFormattingContextLayout.h"
@@ -55,25 +56,47 @@ static LayoutUnit inlineWidthForGridItemWithGridArea(const LayoutState& layoutSt
     // RenderGrid sets the grid item renderer's grid area content logical width during
     // item placement which is present until we have resolved the actual grid area
     // inline size.
-    renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
+    renderer->setOverridingContainingBlockContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
     renderer->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
 
     auto width = layoutState.logicalWidthWithFormattingContextForBox(box, logicalWidthType);
 
-    renderer->clearGridAreaContentSize();
+    renderer->clearOverridingContainingBlockContentSize();
     renderer->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
 
     return width;
 }
 
-IntegrationUtils::IntegrationUtils(const LayoutState& globalLayoutState)
+IntegrationUtils::IntegrationUtils(LayoutState& globalLayoutState)
     : m_globalLayoutState(globalLayoutState)
+{
+}
+
+IntegrationUtils::IntegrationUtils(LayoutState& globalLayoutState, BlockFormattingContext& blockFormattingContext, BlockLayoutResult& blockLayoutResult)
+    : m_globalLayoutState(globalLayoutState)
+    , m_blockFormattingContext(&blockFormattingContext)
+    , m_blockLayoutResult(&blockLayoutResult)
 {
 }
 
 void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight) const
 {
+    // A float whose content the block formatting context lays out once the float is placed (layoutFloatContent) gets its geometry from it.
+    if (m_blockFormattingContext && box.isFloatingPositioned()) {
+        if (auto geometry = m_blockFormattingContext->geometryForFloatInInlineContent(downcast<RenderBox>(*box.rendererForIntegration()))) {
+            m_globalLayoutState->ensureGeometryForBox(box) = *geometry;
+            return;
+        }
+    }
     m_globalLayoutState->layoutWithFormattingContextForBox(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
+}
+
+std::optional<bool> IntegrationUtils::layoutFloatContent(const ElementBox& floatBox, BoxGeometry& geometry) const
+{
+    ASSERT(floatBox.isFloatingPositioned());
+    if (!m_blockFormattingContext)
+        return { };
+    return m_blockFormattingContext->layoutContentOfFloatInInlineContent(downcast<RenderBox>(*floatBox.rendererForIntegration()), geometry);
 }
 
 std::pair<LayoutUnit, LayoutUnit> IntegrationUtils::borderAndPaddingForGridItem(const ElementBox& box, std::optional<LayoutUnit> gridAreaInlineSize) const
@@ -82,10 +105,10 @@ std::pair<LayoutUnit, LayoutUnit> IntegrationUtils::borderAndPaddingForGridItem(
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
 
     // The inline grid area is indefinite while sizing columns, so the item's cyclic percentage padding resolves against zero.
-    renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
+    renderer->setOverridingContainingBlockContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
     auto inlineBorderAndPadding = renderer->borderAndPaddingLogicalWidth();
     auto blockBorderAndPadding = renderer->borderAndPaddingLogicalHeight();
-    renderer->clearGridAreaContentSize();
+    renderer->clearOverridingContainingBlockContentSize();
 
     return { inlineBorderAndPadding, blockBorderAndPadding };
 }
@@ -200,20 +223,40 @@ LayoutUnit IntegrationUtils::maxContentLogicalWidthContribution(const ElementBox
     return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContentContribution);
 }
 
-void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState& inlineLayoutState) const
+// Only the block formatting context breaks the box itself; the render tree breaks it across pages in the strip of pages, with pagination struts.
+BlockContentBreak IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, InlineLayoutState& inlineLayoutState) const
 {
     ASSERT(block.isBlockLevelBox());
+    if (m_blockFormattingContext)
+        return LayoutIntegration::layoutWithBlockFormattingContextForBlockInInline(*m_blockFormattingContext, *m_blockLayoutResult, block, blockLineLogicalTopLeft, inlineLayoutState, m_globalLayoutState);
     m_globalLayoutState->layoutWithFormattingContextForBlockInInline(block, blockLineLogicalTopLeft, inlineLayoutState);
+    return BlockContentBreak::No;
 }
 
 Layout::BlockLayoutState::MarginState IntegrationUtils::toMarginState(const RenderBlockFlow::MarginInfo& marginInfo)
 {
-    return { marginInfo.canCollapseWithChildren(), marginInfo.canCollapseMarginBeforeWithChildren(), marginInfo.canCollapseMarginAfterWithChildren(), marginInfo.quirkContainer(), marginInfo.atBeforeSideOfBlock(), marginInfo.atAfterSideOfBlock(), marginInfo.hasMarginBeforeQuirk(), marginInfo.hasMarginAfterQuirk(), marginInfo.determinedMarginBeforeQuirk(), marginInfo.positiveMargin(), marginInfo.negativeMargin(), marginInfo.marginBeforeWithClearance() };
+    auto marginState = BlockLayoutState::MarginState { };
+    marginState.adjoiningMargins = { .positive = marginInfo.positiveMargin(), .negative = marginInfo.negativeMargin() };
+    marginState.marginBeforeIncludedInClearance = marginInfo.marginBeforeWithClearance();
+    marginState.atBlockContainerStart = marginInfo.atBeforeSideOfBlock();
+    marginState.blockContainerMarginBeforeCollapsesWithContent = marginInfo.canCollapseMarginBeforeWithChildren();
+    marginState.blockContainerMarginAfterCollapsesWithContent = marginInfo.canCollapseMarginAfterWithChildren();
+    marginState.marginBeforeIsQuirky = marginInfo.hasMarginBeforeQuirk();
+    marginState.marginAfterIsQuirky = marginInfo.hasMarginAfterQuirk();
+    marginState.marginBeforeQuirkIsDetermined = marginInfo.determinedMarginBeforeQuirk();
+    return marginState;
 }
 
-RenderBlockFlow::MarginInfo IntegrationUtils::toMarginInfo(const Layout::BlockLayoutState::MarginState& marginState)
+void IntegrationUtils::updateMarginInfo(RenderBlockFlow::MarginInfo& marginInfo, const BlockLayoutState::MarginState& marginState)
 {
-    return { marginState.canCollapseWithChildren, marginState.canCollapseMarginBeforeWithChildren, marginState.canCollapseMarginAfterWithChildren, marginState.quirkContainer, marginState.atBeforeSideOfBlock, marginState.atAfterSideOfBlock, marginState.hasMarginBeforeQuirk, marginState.hasMarginAfterQuirk, marginState.determinedMarginBeforeQuirk, marginState.positiveMargin, marginState.negativeMargin, marginState.marginBeforeWithClearance };
+    ASSERT(marginInfo.canCollapseMarginBeforeWithChildren() == marginState.blockContainerMarginBeforeCollapsesWithContent);
+    marginInfo.setMargin(marginState.adjoiningMargins.positive, marginState.adjoiningMargins.negative);
+    marginInfo.setMarginBeforeWithClearance(marginState.marginBeforeIncludedInClearance);
+    marginInfo.setAtBeforeSideOfBlock(marginState.atBlockContainerStart);
+    marginInfo.setCanCollapseMarginAfterWithChildren(marginState.blockContainerMarginAfterCollapsesWithContent);
+    marginInfo.setHasMarginBeforeQuirk(marginState.marginBeforeIsQuirky);
+    marginInfo.setHasMarginAfterQuirk(marginState.marginAfterIsQuirky);
+    marginInfo.setDeterminedMarginBeforeQuirk(marginState.marginBeforeQuirkIsDetermined);
 }
 
 std::pair<LayoutRect, LayoutRect> IntegrationUtils::toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode writingMode)

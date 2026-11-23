@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; width: 300px; border: 1px solid; margin-bottom: 4px; }
+.float { float: left; width: 100px; height: 30px; background: orange; }
+.avoider { overflow: hidden; background: lightblue; border: 2px solid blue; padding: 1px; }
+.leaf { background: lightgreen; }
+</style>
+<div class="root"><div class="float"></div><div class="avoider" style="width: fit-content" id="text">short</div></div>
+<div class="root"><div class="float" id="float"></div><div class="avoider" style="width: fit-content">fit-content beside a float that grows</div></div>
+<div class="root"><div class="float"></div><div class="avoider" id="keyword">sizing keyword change</div></div>
+<div class="root"><div class="float"></div><button style="display: block" id="button">button</button></div>
+<div class="root"><div class="float"></div><div class="leaf" style="display: flex" id="flex">flex box that gets a min-width</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer text in the fit-content box that wraps beside the float";
+document.getElementById("float").style.width = "180px";
+document.getElementById("keyword").style.width = "max-content";
+document.getElementById("button").firstChild.data = "a button label that is too long for the space";
+document.getElementById("flex").style.minWidth = "max-content";
+</script>

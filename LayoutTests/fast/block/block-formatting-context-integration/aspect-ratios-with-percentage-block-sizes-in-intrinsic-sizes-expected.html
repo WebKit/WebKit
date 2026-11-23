@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; margin-bottom: 4px; }
+.box { border: 1px solid blue; }
+.ratio { background: rgba(0, 128, 0, 0.5); }
+</style>
+<div class="root"><div class="box" style="width: min-content; height: 50px"><div class="ratio" style="height: 100%; aspect-ratio: 1"></div></div></div>
+<div class="root"><div class="box" style="width: min-content; height: 60px"><div style="height: 50%"><div class="ratio" style="height: 100%; aspect-ratio: 2"></div></div></div></div>
+<div class="root"><div class="box" style="width: max-content; height: 80px"><div class="ratio" style="min-height: 50%; aspect-ratio: 1"></div></div></div>
+<div class="root"><div class="box" style="width: max-content; height: 80px"><div class="ratio" style="max-height: 25%; aspect-ratio: 1; width: 200px"></div></div></div>
+<div class="root"><div class="box" style="width: min-content; height: 50px"><div class="ratio" style="height: calc(50% + 10px); aspect-ratio: 1"></div></div></div>
+<div class="root"><div class="box" style="width: min-content; height: 50px"><div style="overflow: hidden; height: 60%"><div class="ratio" style="height: 100%; aspect-ratio: 1"></div></div></div></div>
+<div class="root"><div class="box" style="width: min-content; height: 50px">text<div class="ratio" style="height: 50%; aspect-ratio: 1"></div></div></div>
+<div class="root"><div class="box" style="width: min-content"><div class="ratio" style="height: 50%; aspect-ratio: 1"></div></div></div>
+<div class="root"><div class="box" style="width: min-content; height: 50px; padding: 5px; box-sizing: border-box"><div class="ratio" style="height: 100%; aspect-ratio: 1"></div></div></div>
+<div class="root"><div class="box" style="float: left; height: 30px"><div class="ratio" style="height: 100%; aspect-ratio: 1"></div></div></div>
+<div class="root" style="height: 40px"><div class="ratio" style="height: 100%; aspect-ratio: 3"></div></div>

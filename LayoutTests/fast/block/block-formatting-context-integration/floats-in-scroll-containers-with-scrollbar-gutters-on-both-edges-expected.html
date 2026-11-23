@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<!-- The content box is 90px wide between the 15px gutters, 18px into the padding box, and the floats and the boxes avoiding them are at its edges.
+     The render tree path places them a gutter off. -->
+<style>
+.s { width: 120px; height: 30px; border: 2px solid; padding: 3px; overflow: auto; scrollbar-gutter: stable both-edges; margin-bottom: 5px; position: relative; }
+.f { position: absolute; top: 3px; width: 30px; height: 20px; background: orange; }
+.a { position: absolute; top: 3px; width: 60px; height: 5px; background: blue; }
+</style>
+<div class="s"><div class="f" style="left: 78px"></div><div class="a" style="left: 18px"></div></div>
+<div class="s"><div class="f" style="left: 18px"></div><div class="a" style="left: 48px"></div></div>
+<div class="s"><div class="f" style="left: 78px"></div><div class="a" style="left: 18px"></div></div>
+<div class="s"><div class="f" style="left: 18px"></div><div class="a" style="left: 48px"></div></div>
+<div class="s"><div class="f" style="left: 78px"></div><div class="a" style="left: 18px"></div></div>
+<div class="s"><div class="f" style="left: 18px"></div><div class="a" style="left: 48px"></div></div>

@@ -94,22 +94,35 @@ NODELETE static bool isEmptyInlineContent(const InlineItemList& inlineItemList)
     return inlineTextItem && !inlineTextItem->length();
 }
 
-InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, BlockLayoutState& parentBlockLayoutState)
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats)
+    : InlineFormattingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState, placedFloats, IntegrationUtils { globalLayoutState })
+{
+}
+
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats, BlockFormattingContext& blockFormattingContext, BlockLayoutResult& blockLayoutResult)
+    : InlineFormattingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState, placedFloats, IntegrationUtils { globalLayoutState, blockFormattingContext, blockLayoutResult })
+{
+}
+
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats, IntegrationUtils&& integrationUtils)
     : m_rootBlockContainer(rootBlockContainer)
     , m_globalLayoutState(globalLayoutState)
-    , m_floatingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState.placedFloats())
+    , m_floatingContext(rootBlockContainer, placedFloats, { }, { })
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
-    , m_integrationUtils(globalLayoutState)
+    , m_integrationUtils(WTF::move(integrationUtils))
     , m_inlineContentCache(globalLayoutState.inlineContentCache(rootBlockContainer))
-    , m_inlineLayoutState(parentBlockLayoutState)
+    , m_inlineLayoutState(parentBlockLayoutState, placedFloats)
 {
+    // The placed floats are the root's own, so the floating context needs no offset, and the inline directions match.
+    ASSERT(&placedFloats.blockFormattingContextRoot() == &rootBlockContainer);
     initializeInlineLayoutState(globalLayoutState);
 }
 
-std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, InlineDamage* lineDamage)
+std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, InlineDamage* lineDamage, const InlineBreakToken* breakToken)
 {
     rebuildInlineItemListIfNeeded(lineDamage);
+    m_fragmentainerEnd = constraints.fragmentainerEnd();
 
     if (formattingUtils().shouldDiscardRemainingContentInBlockDirection()) {
         // This inline content may be completely collapsed (i.e. after clamped block container)
@@ -135,6 +148,9 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     }
 
     auto needsLayoutRange = [&]() -> InlineItemRange {
+        // The content continues from where the fragmentainer before stopped.
+        if (breakToken)
+            return { breakToken->start, { inlineItemList.size(), { } } };
         if (!InlineInvalidation::mayOnlyNeedPartialLayout(lineDamage))
             return { { }, { inlineItemList.size(), { } } };
         if (auto partialRange = partialRangeForDamage(inlineItemList, *lineDamage))
@@ -152,6 +168,8 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     }
 
     auto previousLine = [&]() -> std::optional<PreviousLine> {
+        if (breakToken)
+            return breakToken->previousLine;
         if (!needsLayoutRange.start)
             return { };
         if (!lineDamage || !lineDamage->layoutStartPosition()) {
@@ -166,7 +184,7 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     }();
 
     auto& inlineLayoutState = layoutState();
-    inlineLayoutState.setLineCount(previousLine ? previousLine->lineIndex + 1lu : 0lu);
+    inlineLayoutState.setLineCount(breakToken ? breakToken->lineCount : previousLine ? previousLine->lineIndex + 1lu : 0lu);
     // FIXME: This needs partial support when line-clamped content has nested blocks.
     inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(inlineLayoutState.lineCount());
 
@@ -183,18 +201,18 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(inlineItems, inlineLayoutState) && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root())) {
         auto simplifiedLineBuilder = makeUniqueRef<TextOnlySimpleLineBuilder>(*this, root(), constraints.horizontal(), inlineItemList);
         auto shouldUseSimplifiedDisplayContentBuild = [&] {
-            if (lineDamage || !m_globalLayoutState->inStandardsMode() || inlineLayoutState.parentBlockLayoutState().lineClamp())
+            if (lineDamage || breakToken || constraints.fragmentainerEnd() || !m_globalLayoutState->inStandardsMode() || inlineLayoutState.parentBlockLayoutState().lineClamp())
                 return false;
             return TextOnlySimpleLineBuilder::isEligibleForSimplifiedDisplayBuild(root());
         };
-        return lineLayout(simplifiedLineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage, shouldUseSimplifiedDisplayContentBuild()).moveToUniquePtr();
+        return lineLayout(simplifiedLineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage, shouldUseSimplifiedDisplayContentBuild(), !!breakToken).moveToUniquePtr();
     }
     if (RangeBasedLineBuilder::isEligibleForRangeInlineLayout(*this, needsLayoutRange, inlineItems, inlineLayoutState.placedFloats())) {
         auto rangeBasedLineBuilder = makeUniqueRef<RangeBasedLineBuilder>(*this, constraints.horizontal(), inlineItems);
-        return lineLayout(rangeBasedLineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage).moveToUniquePtr();
+        return lineLayout(rangeBasedLineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage, false, !!breakToken).moveToUniquePtr();
     }
     auto lineBuilder = makeUniqueRef<LineBuilder>(*this, constraints.horizontal(), inlineItemList, inlineContentCache().textSpacingContext());
-    return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage).moveToUniquePtr();
+    return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage, false, !!breakToken).moveToUniquePtr();
 }
 
 std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContentSize(InlineDamage* lineDamage)
@@ -300,20 +318,21 @@ NODELETE static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, si
 NODELETE static inline void handleAfterSideMargin(BlockLayoutState::MarginState& marginState, InlineDisplay::Content& displayContent)
 {
     if (!InlineDisplayLineBuilder::hasTrailingLineWithBlockContent(displayContent.lines))
-        marginState.canCollapseMarginAfterWithChildren = false;
+        marginState.blockContainerMarginAfterCollapsesWithContent = false;
 }
 
-UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage, bool mayUseSimplifiedDisplayContentBuild)
+UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage, bool mayUseSimplifiedDisplayContentBuild, bool isResumingAfterBreak)
 {
     ASSERT(!needsLayoutRange.isEmpty());
     auto layoutResult = makeUniqueRef<InlineLayoutResult>();
     auto& inlineLayoutState = layoutState();
-    auto& marginState = inlineLayoutState.parentBlockLayoutState().marginState();
+    auto& marginState = inlineLayoutState.marginState();
 
     auto isPartialLayout = InlineInvalidation::mayOnlyNeedPartialLayout(lineDamage);
-    ASSERT(isPartialLayout || !previousLine);
+    ASSERT(isPartialLayout || isResumingAfterBreak || !previousLine);
+    auto fragmentainerEnd = constraints.fragmentainerEnd();
 
-    if (!isPartialLayout && (createDisplayContentForLineFromCachedContent(constraints, layoutResult.get(), mayUseSimplifiedDisplayContentBuild) || createDisplayContentForEmptyInlineContent(constraints, inlineItemList, layoutResult.get()))) {
+    if (!isPartialLayout && !isResumingAfterBreak && !fragmentainerEnd && (createDisplayContentForLineFromCachedContent(constraints, layoutResult.get(), mayUseSimplifiedDisplayContentBuild) || createDisplayContentForEmptyInlineContent(constraints, inlineItemList, layoutResult.get()))) {
         layoutResult->range = InlineLayoutResult::Range::Full;
         handleAfterSideMargin(marginState, layoutResult->displayContent);
         return layoutResult;
@@ -321,9 +340,82 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
 
     auto floatingContext = this->floatingContext();
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
+    // A forced line break that clears floats at the end of the line before the break moves the first line below the floats it clears in this
+    // fragmentainer too (CSS 2.2 §9.5.2, InlineFormattingUtils::logicalTopForNextLine).
+    if (isResumingAfterBreak && needsLayoutRange.start.index && !needsLayoutRange.start.offset) {
+        auto& previousItem = inlineItemList[needsLayoutRange.start.index - 1];
+        if (previousItem.isHardLineBreak() && previousItem.layoutBox().hasFloatClear()) {
+            if (auto floatsBlockEnd = floatingContext.blockEndOfFloatsToClear(previousItem.layoutBox()))
+                lineLogicalTop = std::max(lineLogicalTop, InlineLayoutUnit { *floatsBlockEnd });
+        }
+    }
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto leadingInlineItemPosition = needsLayoutRange.start;
     auto isFirstFormattedLineCandidate = !previousLine;
+    // Where each line in the fragmentainer starts, and the first one that does not fit in it, after which the lines go on as far as widows
+    // asks for, to tell where the break goes.
+    struct LineStart {
+        InlineItemPosition position;
+        std::optional<PreviousLine> previousLine;
+        size_t boxCount { 0 };
+        size_t pushedFloatCount { 0 };
+        size_t lineCount { 0 };
+    };
+    auto lineStarts = Vector<LineStart> { };
+    auto lineIndexAtFragmentainerEnd = std::optional<size_t> { };
+    auto spaceShortage = InlineLayoutUnit { };
+    auto breakBetweenLines = [&](bool honorsOrphansAndWidows) {
+        // Rule 3 of css-break-3 §4.4: as many lines as orphans before the break, and as widows after it, or none here, when a break before the
+        // content is allowed; otherwise the break goes where the lines stop fitting. The lines between block-level boxes are those of an
+        // anonymous block container of their own (CSS 2.2 §9.2.1.1), which orphans and widows count in, and a break before them, after a
+        // block-level box, is one between blocks, as is one before a block-level box.
+        auto& lines = layoutResult->displayContent.lines;
+        auto breakIndex = *lineIndexAtFragmentainerEnd;
+        if (honorsOrphansAndWidows && !lines[breakIndex].hasBlockLevelBox()) {
+            auto paragraphStart = breakIndex;
+            while (paragraphStart && !lines[paragraphStart - 1].hasBlockLevelBox())
+                --paragraphStart;
+            auto paragraphEnd = breakIndex;
+            while (paragraphEnd < lines.size() && !lines[paragraphEnd].hasBlockLevelBox())
+                ++paragraphEnd;
+            // A line without content, like the last one after a forced line break, is no line box (CSS 2.2 §9.4.2), which widows do not
+            // count (LineLayout::lineCount).
+            while (paragraphEnd > breakIndex + 1 && !lines[paragraphEnd - 1].hasContentfulInFlowBox())
+                --paragraphEnd;
+            auto lineCountAfter = paragraphEnd - breakIndex;
+            if (lineCountAfter < fragmentainerEnd->widows) {
+                auto lineCountBefore = breakIndex - paragraphStart;
+                auto neededLineCount = fragmentainerEnd->widows - lineCountAfter;
+                // When orphans keeps some of the lines widows asks for, and no break before the paragraph can keep them all, the ones it leaves
+                // go, where that ends the paragraph in the next fragmentainer (computeAdjustmentsForPagination moves them once).
+                auto movableLineCount = lineCountBefore > fragmentainerEnd->orphans ? lineCountBefore - fragmentainerEnd->orphans : 0;
+                auto canBreakBeforeParagraph = paragraphStart || fragmentainerEnd->isBreakBeforeAllowed;
+                auto endsParagraphInNextFragmentainer = [&] {
+                    return lines[paragraphEnd - 1].lineBoxLogicalRect().maxY() - lines[breakIndex - movableLineCount].lineBoxLogicalRect().y() <= fragmentainerEnd->blockSize;
+                };
+                if (neededLineCount > movableLineCount && movableLineCount && !canBreakBeforeParagraph && endsParagraphInNextFragmentainer())
+                    breakIndex -= movableLineCount;
+                else
+                    breakIndex -= std::min(lineCountBefore, neededLineCount);
+            }
+            if (breakIndex - paragraphStart < fragmentainerEnd->orphans)
+                breakIndex = paragraphStart ? paragraphStart : fragmentainerEnd->isBreakBeforeAllowed ? 0 : *lineIndexAtFragmentainerEnd;
+        }
+        auto& lineStart = lineStarts[breakIndex];
+        // With the ellipses of the lines that go, which a line-clamp container gives the line that reaches its limit.
+        auto& displayContent = layoutResult->displayContent;
+        displayContent.remove(breakIndex, lines.size() - breakIndex, lineStart.boxCount, displayContent.boxes.size() - lineStart.boxCount);
+        // The floats of the lines after the break go with them to the next fragmentainer, where they are placed again.
+        m_pushedFloats.shrink(lineStart.pushedFloatCount);
+        auto breakLineIndex = lineStart.previousLine ? lineStart.previousLine->lineIndex + 1 : 0;
+        auto& placedFloats = layoutState().placedFloats();
+        for (auto& floatItem : Vector { placedFloats.list() }) {
+            if (floatItem.layoutBox() && floatItem.placedByLine() && *floatItem.placedByLine() >= breakLineIndex)
+                placedFloats.remove(*floatItem.layoutBox());
+        }
+        layoutResult->breakToken = InlineBreakToken { lineStart.position, lineStart.previousLine, spaceShortage, false, lineStart.lineCount };
+        layoutResult->range = isResumingAfterBreak ? InlineLayoutResult::Range::FromBreak : InlineLayoutResult::Range::Full;
+    };
 
     while (true) {
 
@@ -331,6 +423,7 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
         auto lineInput = LineInput { { leadingInlineItemPosition, needsLayoutRange.end }, lineInitialRect, formattingUtils().blockEllipsisForLine() };
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1lu) : 0lu;
 
+        auto pushedFloatCount = m_pushedFloats.size();
         auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine, isFirstFormattedLineCandidate);
         // Either this line is the clamped line (it has the block ellipsis) or we are coming back from a block (block-in-inline) that took the clamp point.
         if (lineLayoutResult.blockEllipsis || (lineLayoutResult.isBlockContent() && formattingUtils().shouldDiscardRemainingContentInBlockDirection()))
@@ -339,7 +432,33 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
 
         auto canUseSimplifiedDisplayContentBuild = mayUseSimplifiedDisplayContentBuild && hasContentfulInFlowContent;
         auto lineBox = canUseSimplifiedDisplayContentBuild ? LineBoxBuilder { *this, lineLayoutResult }.buildForRootInlineBoxOnly(lineIndex) : LineBoxBuilder { *this, lineLayoutResult }.build(lineIndex);
+        auto lineCountBefore = layoutResult->displayContent.lines.size();
+        if (fragmentainerEnd)
+            lineStarts.append({ lineInput.needsLayoutRange.start, previousLine, layoutResult->displayContent.boxes.size(), pushedFloatCount, inlineLayoutState.lineCount() });
         auto lineLogicalRect = createDisplayContentForInlineContent(lineBox, lineLayoutResult, constraints, layoutResult->displayContent, canUseSimplifiedDisplayContentBuild);
+        // Ruby annotation boxes are out-of-flow items too (InlineItemsBuilder), which their ruby base places.
+        for (auto& run : lineLayoutResult.runs) {
+            if (run.isOutOfFlow() && run.layoutBox().isOutOfFlowPositioned())
+                layoutResult->outOfFlowBoxLines.append({ run.layoutBox(), lineIndex });
+        }
+        // A line that does not fit in the fragmentainer starts the next one, unless it is at the start of this one, or taller than one
+        // (css-break-3 §4.4).
+        if (fragmentainerEnd && !lineIndexAtFragmentainerEnd && LayoutUnit { lineLogicalRect.bottom() } > fragmentainerEnd->logicalBottom && (lineCountBefore || fragmentainerEnd->hasContentBefore) && LayoutUnit { lineLogicalRect.height() } <= fragmentainerEnd->blockSize) {
+            lineIndexAtFragmentainerEnd = lineCountBefore;
+            spaceShortage = lineLogicalRect.bottom() - fragmentainerEnd->logicalBottom;
+        }
+        // The block-level box on the line goes to the next fragmentainer, which its own walk found, or its initial letter does: the break is
+        // right before its line.
+        auto breaksBeforeLine = lineLayoutResult.blockContentBreak == BlockContentBreak::Before || lineLayoutResult.initialLetterGoesToNextFragmentainer;
+        if (fragmentainerEnd && breaksBeforeLine && !lineIndexAtFragmentainerEnd && (lineCountBefore || fragmentainerEnd->hasContentBefore)) {
+            lineIndexAtFragmentainerEnd = lineCountBefore;
+            breakBetweenLines(false);
+            return layoutResult;
+        }
+        if (lineIndexAtFragmentainerEnd && layoutResult->displayContent.lines.size() - *lineIndexAtFragmentainerEnd >= fragmentainerEnd->widows) {
+            breakBetweenLines(true);
+            return layoutResult;
+        }
         if (!canUseSimplifiedDisplayContentBuild) {
             updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
             updateLayoutStateWithLineLayoutResult(lineLayoutResult, lineLogicalRect, floatingContext);
@@ -348,13 +467,33 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
             isFirstFormattedLineCandidate = false;
             inlineLayoutState.incrementLineCount();
         }
+        // A block-level box that breaks inside at the end of the fragmentainer ends it with its line, and continues on the first line of the
+        // next one.
+        if (fragmentainerEnd && lineLayoutResult.blockContentBreak == BlockContentBreak::Inside && !lineIndexAtFragmentainerEnd) {
+            auto blockLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, true, lineLayoutResult.hasContentfulInFlowContent(), lineLayoutResult.directionality.inlineBaseDirection, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
+            layoutResult->breakToken = InlineBreakToken { lineInput.needsLayoutRange.start, WTF::move(blockLine), spaceShortage, true, lineIndex + 1 };
+            layoutResult->range = isResumingAfterBreak ? InlineLayoutResult::Range::FromBreak : InlineLayoutResult::Range::Full;
+            return layoutResult;
+        }
 
         auto lineContentEnd = lineLayoutResult.inlineItemRange.end;
         leadingInlineItemPosition = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult, previousLineEnd, needsLayoutRange.end);
 
         auto isEndOfContent = leadingInlineItemPosition == needsLayoutRange.end && lineLayoutResult.floatContent.suspendedFloats.isEmpty();
+        // A block-level box that ends with a column spanner ends the fragmentainer, a multi-column line, after its line, and the content after it
+        // starts the next one.
+        if (fragmentainerEnd && lineLayoutResult.blockContentBreak == BlockContentBreak::After && !lineIndexAtFragmentainerEnd && !isEndOfContent) {
+            auto blockLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, true, lineLayoutResult.hasContentfulInFlowContent(), lineLayoutResult.directionality.inlineBaseDirection, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
+            layoutResult->breakToken = InlineBreakToken { leadingInlineItemPosition, WTF::move(blockLine), spaceShortage, false, lineIndex + 1 };
+            layoutResult->range = isResumingAfterBreak ? InlineLayoutResult::Range::FromBreak : InlineLayoutResult::Range::Full;
+            return layoutResult;
+        }
+        if (isEndOfContent && lineIndexAtFragmentainerEnd) {
+            breakBetweenLines(true);
+            return layoutResult;
+        }
         if (isEndOfContent) {
-            layoutResult->range = !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
+            layoutResult->range = isResumingAfterBreak ? InlineLayoutResult::Range::FromBreak : !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
             break;
         }
 
@@ -365,8 +504,14 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
 
         if (formattingUtils().shouldDiscardRemainingContentInBlockDirection()) {
             resetBoxGeometriesForDiscardedContent({ leadingInlineItemPosition, needsLayoutRange.end }, lineLayoutResult.floatContent.suspendedFloats);
-            layoutResult->range = !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
+            layoutResult->range = isResumingAfterBreak ? InlineLayoutResult::Range::FromBreak : !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
             layoutResult->lineClamp.didDiscardContent = true;
+            // The clamp point ends the content, whose lines up to it orphans and widows count, like at its end. The lines after the break,
+            // the clamped one included, go to the next fragmentainer, where the content is clamped.
+            if (lineIndexAtFragmentainerEnd) {
+                breakBetweenLines(true);
+                layoutResult->lineClamp = { };
+            }
             break;
         }
 
@@ -401,13 +546,40 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
             staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
             floatBoxGeometry.setTopLeft(staticPosition);
 
-            auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, constraints.horizontal());
+            auto containingBlock = FloatingContext::ContainingBlock { { }, constraints.horizontal() };
+            auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, containingBlock);
             floatBoxGeometry.setTopLeft(floatBoxTopLeft);
-            placedFloats.add(floatingContext.makeFloatItem(floatBox, floatBoxGeometry));
+            // Its content breaks from where it goes, which the block formatting context pushes it from when none of it fits.
+            integrationUtils().layoutFloatContent(downcast<ElementBox>(floatBox), floatBoxGeometry);
+            placedFloats.add(floatingContext.makeFloatItem(floatBox, floatBoxGeometry, containingBlock));
             continue;
         }
         ASSERT_NOT_REACHED();
     }
+}
+
+bool InlineFormattingContext::pushesFloat(const Box& floatBox, const BoxGeometry& floatBoxGeometry, std::optional<bool> isBreakBeforeFloatContent) const
+{
+    if (!m_fragmentainerEnd)
+        return false;
+    if (m_fragmentainerEnd->hasFloatsPushedBefore || !m_pushedFloats.isEmpty())
+        return true;
+    // Forced breaks apply to floats in the normal flow of the root too (css-break-3 §3.1), but not at the start of the fragmentainer.
+    using ForcedBreaks = ConstraintsForInlineContent::FragmentainerEnd::ForcedBreaks;
+    if (auto forcedBreaks = m_fragmentainerEnd->forcedBreaks; forcedBreaks != ForcedBreaks::None) {
+        auto breakBefore = floatBox.style().breakBefore();
+        auto fragmentainerLogicalTop = m_fragmentainerEnd->logicalBottom - m_fragmentainerEnd->blockSize;
+        if ((forcedBreaks == ForcedBreaks::Page ? alwaysPageBreak(breakBefore) : breakBefore == BreakBetween::Column) && BoxGeometry::marginBoxRect(floatBoxGeometry).top() > fragmentainerLogicalTop)
+            return true;
+    }
+    // One whose content breaks goes when none of its content fits, at the break before the float (css-break-3 §4.1).
+    if (isBreakBeforeFloatContent)
+        return *isBreakBeforeFloatContent;
+    // Unless it is at the start of the fragmentainer, or taller than one (RenderBlockFlow::positionNewFloats moves the margin box of an
+    // unsplittable float to the next page).
+    auto marginBox = BoxGeometry::marginBoxRect(floatBoxGeometry);
+    auto fragmentainerLogicalTop = m_fragmentainerEnd->logicalBottom - m_fragmentainerEnd->blockSize;
+    return marginBox.top() > fragmentainerLogicalTop && marginBox.bottom() > m_fragmentainerEnd->logicalBottom && marginBox.height() <= m_fragmentainerEnd->blockSize;
 }
 
 void InlineFormattingContext::updateLayoutStateWithLineLayoutResult(const LineLayoutResult& lineLayoutResult, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext)

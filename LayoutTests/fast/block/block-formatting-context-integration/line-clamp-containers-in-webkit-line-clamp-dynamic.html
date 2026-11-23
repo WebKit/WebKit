@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.box { display: -webkit-box; -webkit-box-orient: vertical; width: 180px; margin: 0 4px 4px 0; border: 1px solid black; vertical-align: top; }
+.plain { display: inline-block; }
+.w { display: inline-block; vertical-align: top; }
+.lc { line-clamp: 2; background-color: lightgreen; }
+.lcd { max-lines: 2; continue: discard; background-color: pink; }
+.lcs { max-lines: 2; background-color: lightblue; }
+.initial .box { -webkit-line-clamp: 1 !important; }
+.initial .lc, .initial .lcs { max-lines: 3; }
+.initial .t { display: none; }
+</style>
+<div class=initial id=cases>
+<div class=w><div class=box style="-webkit-line-clamp: 3"><div class=lc>a<br>b<br>c<br>d</div><div>after</div></div></div>
+<div class=w><div class=box style="-webkit-line-clamp: 3"><div class=lcs>a<br>b<br>c<br>d</div><div>after</div></div></div>
+<div class=w><div class=box style="-webkit-line-clamp: 2"><div><div><div class=lc>a<br>b<br>c</div></div><div>x</div><div>y</div></div></div></div>
+<div class=w><div class=box style="-webkit-line-clamp: 3"><div><span>x</span><div class=lc>a<br>b<br>c</div>y<br>z<span class=t>w</span></div></div></div>
+<div class=w><div class=box style="-webkit-line-clamp: 3"><div><div class=lcs><div>a</div><div>b</div><div>c</div></div><div>after</div></div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

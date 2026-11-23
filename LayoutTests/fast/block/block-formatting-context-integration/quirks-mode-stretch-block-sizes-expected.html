@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.g { height: 90px; width: 250px; border: 1px solid; margin-bottom: 4px; display: inline-block; vertical-align: top; }
+.s { background: lightblue; border: 2px solid blue; padding: 2px; }
+.s2 { background: lightblue; border: 2px solid blue; padding: 2px; }
+</style>
+<div class=g><div class=s style="height: stretch;">direct</div></div>
+<div class=g><div><div class=s style="height: stretch;">past an auto parent</div></div></div>
+<div class=g><div style="height: 50%;"><div class=s style="height: stretch;">percentage parent</div></div></div>
+<div class=g><div><div class=s style="height: 50%;">percentage past an auto parent</div></div></div>
+<div class=g><div><div class=s style="display: flex; height: stretch;">flex past an auto parent</div></div></div>
+<div class=g><div class=s style="display: flex; height: stretch;">flex direct</div></div>
+<div class=g><div><div class=s style="min-height: stretch;">min</div></div></div>
+<div class=g><div class=s style="max-height: stretch; height: 400px;">max</div></div>
+<div class=g><div style="display: flow-root;"><img style="height: stretch; width: 20px; background: green;"></div></div>
+<div class=s2 style="height: stretch; width: 100px; float: left;">float in the body</div>
+<div style="position: relative; height: 120px; width: 300px; border: 1px solid;">
+<div style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: 120px;"><div class=s2 style="height: stretch;">in an inset sized box</div></div>
+<div style="position: absolute; top: 10px; left: 150px; width: 120px;"><div class=s2 style="height: stretch;">in an auto sized positioned box</div></div>
+</div>
+<div style="display: flex; height: 60px; width: 300px; border: 1px solid;"><div style="width: 200px;"><div class=s2 style="height: stretch;">in a flex item</div></div></div>
+<div style="height: 50px; width: 300px; border: 1px solid; overflow: hidden;"><div style="display: flow-root;"><div class=s2 style="height: stretch;">in an auto root</div></div></div>

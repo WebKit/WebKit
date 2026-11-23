@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.cb { position: relative; width: 180px; height: 100px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; }
+.a { position: absolute; background-color: rgba(0, 128, 0, 0.4); }
+.c { display: inline-block; width: 40px; height: 10px; background-color: rgba(0, 0, 255, 0.4); }
+</style>
+<div class=cb><div class=a style="width: intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: min-intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: intrinsic; left: 0; right: 0"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: min-intrinsic; left: 10px; right: 10px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: intrinsic; padding: 0 5px; height: 40px; aspect-ratio: 1"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: intrinsic; aspect-ratio: 2"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: 50px; min-width: intrinsic; left: 0; right: 0"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: 30px; min-width: intrinsic; justify-self: start; left: 0; right: 0"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="max-width: intrinsic; left: 0; right: 0"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: 120px; max-width: min-intrinsic; left: 0"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="width: min-content; min-width: intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="height: intrinsic; padding: 5px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="height: min-intrinsic; padding: 5px; box-sizing: border-box; top: 20px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="height: 150px; max-height: intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=a style="height: intrinsic"><div style="width: 30px; height: 50%; min-height: 10px; background-color: blue"></div></div></div>
+<div class=cb><div class=a style="width: intrinsic; display: flex"><div class=c></div> <div class=c></div></div></div>

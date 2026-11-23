@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.scroller { display: flow-root; overflow: auto; width: 300px; height: 150px; background: lightgray; margin-bottom: 10px; font-size: 16px; line-height: 16px; }
+.sticky { position: sticky; top: 0; background: rgba(0, 128, 0, 0.7); height: 20px; }
+.content { height: 60px; margin: 10px; background: rgba(0, 0, 255, 0.3); }
+</style>
+<div class="scroller" id="scroller">
+  <div class="content"></div>
+  <div class="sticky">sticky</div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+</div>
+<div class="scroller" id="nested">
+  <div class="content" style="height: auto"><div class="sticky" style="top: 10px; margin-left: 20px">nested sticky</div><div style="height: 200px"></div></div>
+  <div class="sticky" style="top: auto; bottom: 0">bottom sticky</div>
+  <div class="content" id="grows">x</div>
+</div>
+<script>
+document.getElementById("scroller").scrollTop = 120;
+document.body.offsetHeight;
+document.getElementById("grows").firstChild.data = "text that wraps onto more lines inside the box after the sticky one";
+document.getElementById("nested").scrollTop = 80;
+</script>

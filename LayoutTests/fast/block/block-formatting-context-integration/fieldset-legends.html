@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+fieldset { width: 250px; margin: 0 0 6px 0; border: 2px solid; padding: 4px; }
+legend { border: 1px solid blue; }
+.f { float: left; width: 20px; height: 30px; border: 1px solid green; }
+.m { margin: 8px 0; border-left: 3px solid red; }
+</style>
+<fieldset><legend><div class=f></div>float in the legend</legend>after</fieldset>
+<fieldset><legend><div class=m>margins in the legend</div></legend>after</fieldset>
+<fieldset><legend style="padding: 0; border: 0"><div class=m>margins without border and padding</div><div class=m>second</div></legend>after</fieldset>
+<fieldset><legend>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</legend><div class=m>after</div></fieldset>
+<fieldset style="writing-mode: vertical-rl; height: 120px; width: auto"><legend><div class=f></div>vertical</legend>after</fieldset>
+<fieldset><legend id=dynamic><div class=f></div><span id=text>dynamic</span></legend>after</fieldset>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "dynamic text that got longer and wraps";
+document.getElementById("dynamic").firstChild.style.height = "40px";
+</script>

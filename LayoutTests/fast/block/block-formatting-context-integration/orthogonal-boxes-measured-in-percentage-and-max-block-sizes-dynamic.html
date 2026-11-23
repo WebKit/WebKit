@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.ib { display: inline-block; vertical-align: top; background-color: rgba(0, 0, 255, 0.2); margin: 0 4px 4px 0; }
+.outer { display: inline-block; vertical-align: top; height: 120px; margin: 0 4px 4px 0; }
+.v { writing-mode: vertical-rl; background-color: rgba(0, 128, 0, 0.4); }
+.c { display: flow-root; width: 250px; margin: 0 4px 4px 0; outline: 1px solid black; }
+.fc { width: fit-content; background-color: rgba(0, 0, 255, 0.2); }
+.initial .outer { height: 60px; }
+.initial .t { height: 90px !important; }
+.initial .ar { width: 50px !important; }
+.initial .mh { max-height: 40px !important; }
+.initial .ch { height: 50px !important; }
+</style>
+<div class=initial id=cases>
+<div class=outer><div class=ib style="height: 100%"><div style="height: 50%"><div class=v>vertical text that wraps</div></div></div></div>
+<div class=outer><div class=ib><div style="height: 50%"><div class=v>vertical text that wraps</div></div></div></div>
+<div class=ib><div class=mh style="max-height: 80px"><div class=v>text in a max block size</div></div></div>
+<div class="ib t" style="height: 150px"><div style="height: 50%"><div class=v>text in a percent block size</div></div></div>
+<div class="ib t" style="height: 150px"><div style="height: 50%"><span class=v style="display: inline-block">inline block text that wraps</span></div></div>
+<div class="ib t" style="height: 150px"><div style="height: 50%"><div class=v style="float: left">floating text that wraps</div></div></div>
+<div class=ib><div class=ar style="aspect-ratio: 2; width: 100px"><div class=v>aspect ratio text that wraps</div></div></div>
+<div class="c ch" style="height: 100px"><div class=fc><div style="height: 50%"><div class=v>fit content percent text</div></div></div></div>
+<div class="c ch" style="height: 100px"><div class=fc style="height: 100%"><div><div style="height: 50%"><div class=v>through an auto block</div></div></div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

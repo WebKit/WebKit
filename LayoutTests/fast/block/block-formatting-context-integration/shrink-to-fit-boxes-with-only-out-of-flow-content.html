@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.root { display: flow-root; position: relative; width: 200px; height: 50px; background-color: lightgray; margin-bottom: 6px; }
+.b { border: 2px solid green; }
+.a { position: absolute; width: 60px; height: 30px; background-color: rgba(0, 0, 255, 0.6); }
+</style>
+<div class=root><div class=b style="float: left; position: relative"><div class=a>float</div></div></div>
+<div class=root><div class=b style="float: left"><div class=a>float</div></div></div>
+<div class=root><div class=b style="float: left; overflow: scroll; position: relative"><div class=a>scroller</div></div></div>
+<div class=root><div class=b style="display: inline-block; position: relative"><div class=a>inline-block</div></div></div>
+<div class=root><div class=b style="position: absolute; top: 10px; left: 10px"><div class=a>absolute</div></div></div>
+<div class=root><div class=b style="width: fit-content; position: relative"><div class=a>fit-content</div></div></div>

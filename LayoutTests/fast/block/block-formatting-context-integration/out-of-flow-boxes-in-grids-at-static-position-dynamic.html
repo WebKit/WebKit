@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.cb { position: relative; width: 300px; border: 1px solid; margin-bottom: 4px; }
+.grid { display: grid; height: 60px; padding: 3px; border: 2px solid gray; margin: 5px; }
+.abs { position: absolute; width: 40px; height: 15px; background: blue; margin-top: 2px; }
+</style>
+<div class=cb><div class=grid id=grid><div class=abs style="align-self: center;"></div></div></div>
+<div class=cb><div class=grid><div class=abs style="left: 50px;" id=aligned></div></div></div>
+<div class=cb><div class=grid><div class=abs style="align-self: end; height: auto; width: 80px;"><span id=text>short</span></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("grid").style.height = "80px";
+document.getElementById("aligned").style.alignSelf = "end";
+document.getElementById("text").firstChild.data = "content that wraps onto more lines";
+document.body.offsetHeight;
+</script>

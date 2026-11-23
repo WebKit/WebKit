@@ -109,7 +109,17 @@ FloatRect InlineContentBuilder::build(std::unique_ptr<Layout::InlineLayoutResult
     inlineContent.releaseCaches();
     auto damageRect = FloatRect { };
 
-    if (!layoutResult || layoutResult->range == Layout::InlineLayoutResult::Range::Full) {
+    // The lines of a fragmentainer follow those of the fragmentainers before, where the content they end with continues: the last box of
+    // each layout box is found again over all the lines.
+    if (layoutResult && layoutResult->range == Layout::InlineLayoutResult::Range::FromBreak) {
+        for (auto& box : inlineContent.displayContent().boxes)
+            box.clearIsLastForLayoutBox();
+        auto firstNewLineIndex = inlineContent.displayContent().lines.size();
+        inlineContent.displayContent().append(WTF::move(layoutResult->displayContent));
+        updateOverflow(inlineContent, firstNewLineIndex);
+        for (size_t lineIndex = firstNewLineIndex; lineIndex < inlineContent.displayContent().lines.size(); ++lineIndex)
+            damageRect.unite(inlineContent.displayContent().lines[lineIndex].inkOverflow());
+    } else if (!layoutResult || layoutResult->range == Layout::InlineLayoutResult::Range::Full) {
         for (auto& line : inlineContent.displayContent().lines)
             damageRect.unite(line.inkOverflow());
 
@@ -434,6 +444,9 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
             if (box.isAtomicInlineBox() || box.isBlockLevelBox()) {
                 if (box.isBlockLevelBox())
                     inlineContent.setHasBlockLevelBoxes();
+                // A block-level box that breaks across fragmentainers has the overflow of all its fragments on its first line.
+                if (box.isBlockLevelBox() && !box.isFirstForLayoutBox())
+                    continue;
 
                 CheckedRef renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
                 if (!renderer->hasSelfPaintingLayer()) {

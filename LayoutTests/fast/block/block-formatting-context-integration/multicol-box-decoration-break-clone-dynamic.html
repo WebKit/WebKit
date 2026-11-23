@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; font: 10px/20px monospace; }
+.m { columns: 3; column-fill: auto; gap: 0; width: 300px; height: 100px; margin-bottom: 8px; outline: 1px solid black; }
+.c { border: 5px solid green; padding: 5px; background-color: lightblue; }
+.k { background-color: purple; }
+</style>
+<div class=m><div class=c id=toClone><div class=k style="height: 200px"></div></div></div>
+<div class=m><div class=c id=height style="-webkit-box-decoration-break: clone; height: 100px; padding: 0; border-width: 10px"></div></div>
+<div class=m><div class=c id=text style="-webkit-box-decoration-break: clone; padding: 0; border-width: 10px">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>x</div></div>
+<div class=m><div class=c id=toSlice style="-webkit-box-decoration-break: clone"><div class=k style="height: 200px"></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("toClone").style.webkitBoxDecorationBreak = "clone";
+document.getElementById("height").style.height = "150px";
+document.getElementById("text").lastChild.data = "10";
+document.getElementById("toSlice").style.webkitBoxDecorationBreak = "slice";
+</script>

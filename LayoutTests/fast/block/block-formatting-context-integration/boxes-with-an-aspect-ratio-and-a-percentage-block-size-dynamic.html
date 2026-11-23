@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; margin: 0; }
+.c { position: relative; height: 100%; aspect-ratio: 1.5; background: lightblue; }
+</style>
+<div id="grid" style="width: 0px; height: 60px; display: grid; justify-items: center; margin-left: 100px"><div style="height: 100%; background: green"><div style="height: 100%; aspect-ratio: 1"></div></div></div>
+<div style="display: grid; grid-template-columns: auto 1fr; width: 400px; border: 1px solid"><div><div class="c" id="ratio" style="height: 50%"></div></div><div id="sibling" style="height: 40px">sibling</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("grid").style.height = "90px";
+document.getElementById("ratio").style.aspectRatio = "2";
+document.getElementById("sibling").style.height = "100px";
+</script>

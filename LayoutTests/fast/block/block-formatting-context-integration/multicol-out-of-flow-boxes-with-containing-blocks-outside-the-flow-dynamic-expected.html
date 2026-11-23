@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 60px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; }
+.f { float: left; }
+.a { position: absolute; border: 2px solid blue; width: 30px; height: 10px; }
+</style>
+<div class="mc f" style="position: relative"><div style="height: 70px"></div><div id=a1 class=a></div>after</div>
+<div class="mc f" style="position: relative"><div id=s style="height: 70px"></div><div class=a></div>after</div>
+<div class="mc f"><div style="height: 70px"></div><div id=a2 class=a></div>after</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("a1").style.left = "40px";
+document.getElementById("a2").style.width = "20px";
+document.body.offsetHeight;
+document.getElementById("a1").style.width = "20px";
+document.getElementById("s").style.height = "20px";
+</script>

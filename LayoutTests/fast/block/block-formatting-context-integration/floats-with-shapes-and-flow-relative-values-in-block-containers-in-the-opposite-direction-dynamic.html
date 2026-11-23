@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 250px; border: 1px solid; margin: 0 2px 4px 0; }
+.sl { float: left; width: 60px; height: 60px; background: orange; shape-outside: polygon(0 0, 100% 0, 0 100%); }
+.box { width: 60px; height: 30px; background: orange; }
+.rtl { direction: rtl; }
+</style>
+<div class="root"><div class="rtl"><div class="sl"></div></div><div id="text">short</div></div>
+<div class="root"><div id="direction"><div class="sl"></div></div><div>ltr text beside the shaped float of a container that becomes rtl</div></div>
+<div class="root"><div class="rtl"><div style="height: 12px">block</div><div class="box" id="float" style="float: left"></div></div><div>text beside the float that becomes inline-start</div></div>
+<div class="root"><div class="rtl"><div class="sl" id="shape"></div></div><div>ltr text beside the float whose shape changes to a circle</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer ltr text beside the shaped float that the rtl container placed";
+document.getElementById("direction").style.direction = "rtl";
+document.getElementById("float").style.float = "inline-start";
+document.getElementById("shape").style.shapeOutside = "circle(50% at 0 0)";
+</script>

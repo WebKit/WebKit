@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; margin-bottom: 4px; }
+.box { border: 1px solid blue; width: min-content; }
+.ratio { background: rgba(0, 128, 0, 0.5); }
+</style>
+<div class="root"><div class="box" style="height: 30px" id="height"><div class="ratio" style="height: 100%; aspect-ratio: 1"></div></div></div>
+<div class="root"><div class="box" style="height: 60px"><div class="ratio" style="height: 50%; aspect-ratio: 1" id="percentage"></div></div></div>
+<div class="root"><div class="box" style="height: 40px"><div class="ratio" style="height: 50%" id="ratio"></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("height").style.height = "70px";
+document.getElementById("percentage").style.height = "100%";
+document.getElementById("ratio").style.aspectRatio = "2";
+</script>

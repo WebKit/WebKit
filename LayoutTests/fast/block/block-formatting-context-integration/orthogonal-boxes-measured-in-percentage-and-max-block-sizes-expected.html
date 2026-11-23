@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.ib { display: inline-block; vertical-align: top; background-color: rgba(0, 0, 255, 0.2); margin: 0 4px 4px 0; }
+.outer { display: inline-block; vertical-align: top; height: 90px; margin: 0 4px 4px 0; }
+.v { writing-mode: vertical-rl; background-color: rgba(0, 128, 0, 0.4); }
+.c { display: flow-root; width: 190px; margin: 0 4px 4px 0; outline: 1px solid black; }
+.fc { width: fit-content; background-color: rgba(0, 0, 255, 0.2); }
+</style>
+<div class=outer><div class=ib style="height: 100%"><div style="height: 50%"><div class=v>vertical text that wraps</div></div></div></div>
+<div class=outer><div class=ib><div style="height: 50%"><div class=v>vertical text that wraps</div></div></div></div>
+<div class=ib><div style="max-height: 60px"><div class=v>text in a max block size</div></div></div>
+<div class=ib><div style="height: 50%; max-height: 60px"><div class=v>percent and max block size</div></div></div>
+<div class=ib style="height: 100px"><div style="height: 50%"><div class=v>text in a percent block size</div></div></div>
+<div class=ib style="height: 100px"><div style="height: 50%"><span class=v style="display: inline-block">inline block text that wraps</span></div></div>
+<div class=ib style="height: 100px"><div style="height: 50%"><div class=v style="float: left">floating text that wraps</div></div></div>
+<div class=ib style="height: 100px"><div style="max-height: 50%"><div class=v>text with a percent max</div></div></div>
+<div class=ib style="height: 100px"><div style="height: 40%"><div style="height: 50%"><div class=v>nested percent text</div></div></div></div>
+<div class=ib style="height: 100px; padding: 10px"><div style="height: calc(50% + 10px)"><div class=v>calc block size text</div></div></div>
+<div class=ib><div style="aspect-ratio: 2; width: 100px"><div class=v>aspect ratio text that wraps</div></div></div>
+<div class=ib style="height: 100px"><div style="height: 50%; box-sizing: border-box; padding: 10px; border: 5px solid"><div class=v>border box text</div></div></div>
+<div class=ib style="height: 100px"><div style="height: 50%"><div class=v style="display: flex">vertical flex text</div></div></div>
+<div class=ib style="height: 100px"><div style="height: stretch"><div class=v>stretch block size text that wraps</div></div></div>
+<div class=ib style="height: 100px"><div style="height: 50%; padding-top: 10%"><div class=v>percent padding text</div></div></div>
+<div class=c style="height: 80px"><div class=fc><div style="height: 50%"><div class=v>fit content percent text</div></div></div></div>
+<div class=c style="height: 80px"><div class=fc style="height: stretch"><div style="height: 50%"><div class=v>stretch then percent text</div></div></div></div>
+<div class=c style="height: 80px"><div class=fc style="height: 100%"><div><div style="height: 50%"><div class=v>through an auto block</div></div></div></div></div>
+<div class=c style="height: 80px"><div class=fc style="height: 80%; overflow: hidden"><div style="height: 50%"><div class=v>scroll container text</div></div></div></div>

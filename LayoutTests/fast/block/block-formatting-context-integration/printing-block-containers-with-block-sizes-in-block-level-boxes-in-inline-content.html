@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.unused { width: 300px; height: 60px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.h { border-left: 3px solid blue; }
+.g { border: 2px solid green; padding: 1px; }
+</style>
+<script>if (window.testRunner) testRunner.setPrinting();</script>
+<div style="height: 760px"></div>a <span><div class=h style="height: 20px">Lorem<br>ipsum<br>dolor<br>sit<br>amet<br>consectetur</div>tail</span> after
+<div style="height: 700px; break-before: page"></div>a <span><div class=g><div class=h style="height: 60px">LOREM</div><div class=h style="height: 40px">Lorem<br>ipsum<br>dolor<br>sit<br>amet<br>consectetur<br>adipiscing<br>elit</div>inner</div>tail</span> after

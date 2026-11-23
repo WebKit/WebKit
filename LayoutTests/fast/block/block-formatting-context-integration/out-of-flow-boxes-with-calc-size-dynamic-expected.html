@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.cb { position: relative; width: 180px; height: 80px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; }
+.a { position: absolute; background-color: rgba(0, 128, 0, 0.4); }
+.w { width: 50px; height: 20px; background-color: rgba(0, 0, 255, 0.4); }
+</style>
+<div class=cb><div class=a style="width: 25px"><div class=w></div></div></div>
+<div class=cb><div class=a style="left: 0; width: 90px"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: 60px"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: 100px"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: 140px"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: 118px"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: 40px"><div class=w></div></div></div>
+<div class=cb><div class=a style="top: 0; height: 40px"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: 50px"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: 50px"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: 30px"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: 50px"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: 90px"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: 100px; height: 70px"></div></div>
+<div class=cb><div class=a style="top: 10px; height: 60px"><div class=w></div></div></div>
+<div class=cb><div class=a style="writing-mode: vertical-rl; width: 100px"><div class=w></div></div></div>
+<div class=cb><div class=a style="top: 0; width: 60px; height: 40px"><div style="width: 50%; height: 50%; background-color: blue"></div></div></div>
+<div class=cb><div class=a style="top: 0; width: 60px; height: 60px"><div style="width: 50%; height: 50%; background-color: blue"></div></div></div>

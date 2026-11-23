@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>
+.container { display: flow-root; width: 300px; margin-bottom: 5px; outline: 1px solid; }
+.box { background: green; height: 20px; }
+.positioned { position: relative; width: 300px; height: 120px; margin-bottom: 5px; outline: 1px solid; }
+.min-content { width: min-content; display: flow-root; margin-bottom: 5px; outline: 1px solid; }
+.item { display: inline-block; width: 60px; height: 10px; background: blue; }
+</style>
+<!-- stretch() fits the margin box to its argument, whatever the box-sizing; fit-content() clamps the stretch() of its argument between the
+min-content and max-content sizes. -->
+<div class="container"><div class="box" style="width: stretch(200px); margin-left: 30px; margin-right: 20px"></div></div>
+<div class="container"><div class="box" style="width: stretch(50%); margin-left: 10%; padding-left: 10px"></div></div>
+<div class="container"><div class="box" style="width: stretch(250px); max-width: stretch(150px); margin-right: 25px"></div></div>
+<div class="container" style="height: 100px"><div class="box" style="height: stretch(60px); margin: 10px 0 20px; width: 50px"></div></div>
+<div class="container" style="height: 100px"><div class="box" style="height: stretch(50%); margin-bottom: 10px; width: 50px"><div style="height: 50%; background: blue"></div></div></div>
+<div class="container"><div style="width: fit-content(100px); background: green"><span class="item"></span> <span class="item"></span></div></div>
+<div class="container"><div style="width: fit-content(250px); margin-left: 20px; background: green"><span class="item"></span> <span class="item"></span></div></div>
+<div class="container"><div style="width: fit-content(20px); background: green"><span class="item"></span> <span class="item"></span></div></div>
+<div class="min-content"><div style="width: fit-content(100px); background: green"><span class="item"></span> <span class="item"></span></div></div>
+<div class="min-content"><div class="box" style="width: stretch(100px); margin-right: 10px"></div></div>
+<div class="positioned"><div class="box" style="position: absolute; top: 5px; left: 0; width: stretch(150px); height: stretch(40px); margin: 10px"></div>
+<div style="position: absolute; top: 60px; left: 0; right: 0; width: fit-content(120px); background: green"><span class="item"></span> <span class="item"></span> <span class="item"></span></div></div>
+<div class="positioned" style="height: 200px"><div style="position: absolute; top: 0; left: 0; aspect-ratio: 1 / 1; min-height: stretch(150px); margin-bottom: 50px; background: green"></div></div>

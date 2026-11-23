@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; width: 250px; padding: 3px; margin-bottom: 4px; position: relative; }
+.small { font-size: 9px; line-height: 11px; }
+.none { -webkit-line-grid: none; }
+</style>
+<div class=grid>
+  <div class="small none" style="padding-top: 3px;"><span id=text>one line</span>
+    <div style="display: flex; margin-top: 2px; width: 60px;"><div id=flex-item>flex</div></div>
+    <div style="position: absolute; left: 150px; top: 5px; width: 60px;" id=positioned>positioned</div>
+    <div style="display: flow-root; margin-top: 3px; width: 60px;" id=flow-root>flow root</div>
+  </div>
+</div>
+<div class=grid>
+  <div class="small none" style="display: flow-root; margin-top: 3px; padding-top: 2px; width: 120px;" id=root>a root with none</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "still in the line grid, on more than one line";
+document.getElementById("flex-item").firstChild.data = "flex item that wraps";
+document.getElementById("positioned").firstChild.data = "positioned, on more than one line";
+document.getElementById("flow-root").firstChild.data = "flow root on more than one line";
+document.getElementById("root").firstChild.data = "a root with none, on more than one line";
+document.body.offsetHeight;
+</script>

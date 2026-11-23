@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; columns: 3; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.w { width: 300px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.l { columns: 3; column-gap: 6px; }
+.s { column-span: all; border: 1px solid blue; }
+.h { height: 60px; border: 1px solid green; }
+</style>
+<div class=mc><div class=h>Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class=s>spanner</div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div>after</div></div>
+<div class=mc style="height: 150px"><div class=h style="height: 200px">Lorem ipsum dolor sit amet.<div class=s>spanner</div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><div>after</div></div>
+<div class=mc><div class=h style="height: 40px">Lorem ipsum.<div class=s>spanner</div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><div>after</div></div>
+<div class=mc><div class=h style="height: 40px">Lorem ipsum.<div class=s>spanner</div>Lorem ipsum.</div><div>after</div></div>
+<div class=mc><div class=h style="height: 40px">Lorem ipsum.<div class=s>spanner</div>Lorem<div class=s>second spanner</div>ipsum.</div><div>after</div></div>

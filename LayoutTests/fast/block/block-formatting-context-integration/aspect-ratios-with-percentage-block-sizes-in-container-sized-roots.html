@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.r { aspect-ratio: 2; height: 100%; border: 2px solid blue; box-sizing: border-box; }
+.c { border: 2px solid green; margin-bottom: 4px; }
+</style>
+<div class=c style="display: grid; height: 50px; justify-items: center"><div><div class=r></div></div></div>
+<div class=c style="display: grid; height: 50px; justify-items: center"><div><div style="height: 80%"><div class=r></div></div></div></div>
+<div class=c style="display: grid; grid-template-rows: 40px; justify-items: start"><div><div style="height: 50%"><div class=r></div></div></div></div>
+<div class=c style="display: inline-grid; height: 30px"><div><div class=r></div></div></div>
+<div class=c style="display: flex; height: 50px"><div><div style="height: 80%"><div class=r></div></div></div></div>
+<div class=c style="display: flex; flex-direction: column; height: 50px; align-items: flex-start"><div style="flex: 1"><div class=r></div></div></div>
+<table class=c style="height: 60px"><tr><td><div class=r></div></td></tr></table>
+<table class=c style="height: 60px"><tr><td><div style="height: 80%"><div class=r></div></div></td></tr></table>

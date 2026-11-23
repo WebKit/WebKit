@@ -27,6 +27,7 @@
 
 #include <WebCore/FormattingConstraints.h>
 #include <WebCore/LayoutSize.h>
+#include <optional>
 
 namespace WebCore::Layout {
 
@@ -36,9 +37,30 @@ struct ConstraintsForInlineContent : public ConstraintsForInFlowContent {
     LayoutUnit visualLeft() const { return m_visualLeft; }
     LayoutSize formattingRootBorderBoxSize() const { return m_formattingRootBorderBoxSize; }
 
+    // The block-end of the space left in the fragmentainer the content is laid out into, in the formatting context root's coordinates,
+    // whether something before the content took space in it, which a break before the first line needs, and the block size of the
+    // fragmentainer, which a line taller than it overflows wherever it goes (css-break-3 §4). The lines keep as many lines as orphans
+    // before a break and as widows after it, by breaking earlier, or before the content when a break there is allowed (css-break-3 §4.4).
+    struct FragmentainerEnd {
+        LayoutUnit logicalBottom;
+        bool hasContentBefore { false };
+        LayoutUnit blockSize;
+        bool isBreakBeforeAllowed { false };
+        size_t orphans { 1 };
+        size_t widows { 1 };
+        // Floats before the content went to the next fragmentainer, and the floats in it go there too (CSS 2.2 §9.5.1 rule 5).
+        bool hasFloatsPushedBefore { false };
+        // The break values that force breaks before floats here, those of pages or columns, unless forced breaks do nothing (css-break-3 §3.1).
+        enum class ForcedBreaks : uint8_t { None, Page, Column };
+        ForcedBreaks forcedBreaks { ForcedBreaks::None };
+    };
+    std::optional<FragmentainerEnd> fragmentainerEnd() const { return m_fragmentainerEnd; }
+    void setFragmentainerEnd(std::optional<FragmentainerEnd> fragmentainerEnd) { m_fragmentainerEnd = fragmentainerEnd; }
+
 private:
     LayoutUnit m_visualLeft;
     LayoutSize m_formattingRootBorderBoxSize;
+    std::optional<FragmentainerEnd> m_fragmentainerEnd;
 };
 
 inline ConstraintsForInlineContent::ConstraintsForInlineContent(const ConstraintsForInFlowContent& genericContraints, LayoutUnit visualLeft, LayoutSize formattingRootBorderBoxSize)

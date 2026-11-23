@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.flex { display: flex; align-items: start; gap: 10px; }
+.grid { display: grid; grid-template-columns: auto auto 100px; justify-items: start; gap: 10px; }
+.multicol { columns: 2; height: 60px; width: 500px; }
+.vertical { writing-mode: vertical-lr; }
+.sized { width: 120px; height: 30px; }
+.auto { height: auto; }
+.fit { width: fit-content; }
+</style>
+<!-- Progress and meter elements with their native appearance have no content, and the theme sizes them. -->
+<div class="flex"><progress value="30" max="100"></progress><meter value="70" min="0" max="100"></meter><progress class="sized" value="60" max="100"></progress><meter class="sized" value="20" min="0" max="100"></meter><progress class="auto" value="50" max="100"></progress><meter class="auto" value="50" min="0" max="100"></meter></div>
+<div class="grid"><progress value="30" max="100"></progress><meter value="70" min="0" max="100"></meter><progress style="justify-self: stretch" value="60" max="100"></progress></div>
+<div class="flex vertical"><progress value="30" max="100"></progress><meter value="70" min="0" max="100"></meter></div>
+<div class="multicol"><progress style="display: block" value="30" max="100"></progress><meter style="display: block" value="70" min="0" max="100"></meter><progress style="display: block" class="sized" value="60" max="100"></progress></div>
+<progress style="float: left" value="40" max="100"></progress><meter style="float: left" value="40" min="0" max="100"></meter>
+<div class="flex" style="clear: both"><progress class="fit" value="30" max="100"></progress><meter class="fit" value="70" min="0" max="100"></meter></div>
+<div style="position: relative; height: 40px"><progress style="position: absolute; width: auto; left: 0" value="30" max="100"></progress><meter style="position: absolute; width: auto; left: 200px" value="70" min="0" max="100"></meter></div>

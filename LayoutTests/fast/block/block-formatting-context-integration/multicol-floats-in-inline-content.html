@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 12px; line-height: 15px; }
+.mc { columns: 3; column-gap: 10px; column-fill: auto; height: 60px; width: 250px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+img.f { float: left; width: 20px; height: 30px; background-color: orange; }
+img.r { float: right; width: 20px; height: 10px; background-color: green; }
+</style>
+<div class="mc h"><img class=f>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</div>
+<div class=mc>a<br>b<br>c<br>d<br>e<br>f<img class=f>g<br>h</div>
+<div class=mc>a<br>b<br>c<br>d<br>e<img class=f style="height: 20px">f<br>g</div>
+<div class=mc>a<br>b<br>c<br>d<img class=f>e<br>f<br>g</div>
+<div class=mc>a<br>b<br>c<br>d<img class=f><img class=r>e<br>f<br>g</div>
+<div class=mc><div class=h style="height: 40px"></div><div style="padding-top: 1px"><img class=f></div><div>after<img class=r></div></div>
+<div class=mc><div>a<br>b<br>c<br>d<img class=f></div><div style="clear: left">cleared</div></div>
+<div class=mc>a<br>b<br>c<br>d<img class=f></div>
+<div class=mc style="widows: 2">a<br>b<br>c<br>d<img class=f style="height: 80px">e</div>
+<div class=mc>Lorem ipsum dolor sit amet, <span style="color: blue">consectetur <img class=r> adipiscing</span> elit, sed do eiusmod.</div>
+<div class=mc>a<br>b<img class=f style="height: 80px">c<br>d<br>e<br>f<br>g<br>h</div>
+<div class=mc><p style="margin: 0 0 6px">Lorem <img class=f> ipsum dolor sit amet, consectetur.</p><p style="margin: 0">Sed do <img class=r> eiusmod tempor incididunt ut labore.</p></div>

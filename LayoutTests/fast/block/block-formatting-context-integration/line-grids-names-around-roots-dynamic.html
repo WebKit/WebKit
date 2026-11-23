@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.a { -webkit-line-grid: a; -webkit-line-snap: baseline; font-size: 14px; line-height: 23px; width: 250px; padding: 3px; margin-bottom: 4px; position: relative; height: 150px; }
+.b { -webkit-line-grid: b; line-height: 13px; margin-top: 3px; }
+.small { font-size: 9px; line-height: 11px; }
+.back-on-a { -webkit-line-grid: a; margin-top: 2px; }
+</style>
+<div class=a>
+  <div class=b>
+    <div class=small>on b</div>
+    <div class=small style="display: flow-root; margin-top: 3px;">a nested root on b<div class=back-on-a><span id=nested>back on a</span></div></div>
+    <div class=small style="position: absolute; left: 130px; top: 30px;">positioned on b<div class=back-on-a><span id=positioned>back on a</span></div></div>
+    <div class=small style="float: left; width: 100px; margin-top: 5px;">a float on b<div class=back-on-a><span id=float>back on a</span></div></div>
+  </div>
+</div>
+<div class=a style="direction: rtl; height: 80px;">
+  <div class=b>
+    <div class=small style="overflow: hidden; width: 150px; margin-top: 3px;">right to left on b<div class=back-on-a style="-webkit-line-align: edges;"><span id=rtl>back on a</span></div></div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("nested").firstChild.data = "back on a, on more than one line";
+document.getElementById("positioned").firstChild.data = "back on a, on more than one line";
+document.getElementById("float").firstChild.data = "back on a, on more than one line";
+document.getElementById("rtl").firstChild.data = "back on a, on more than one line";
+document.body.offsetHeight;
+</script>

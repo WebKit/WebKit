@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>body { font-family: monospace; font-size: 12px; } div { margin: 2px; }</style>
+<div><input> <input value="value"> <input placeholder="placeholder"> <input placeholder="placeholder" value="both"></div>
+<div><input type="password" value="secret"> <input type="search" value="search"> <input type="search" placeholder="search"> <input type="number" value="12"></div>
+<div><input style="height: 40px" value="tall"> <input style="height: 8px" value="short"> <input style="padding: 6px; border: 3px solid" value="padded"> <input style="font-size: 20px" value="big"></div>
+<div><input style="width: 50px" value="long text that overflows the field"> <input dir="rtl" value="right to left"> <input style="text-align: center" value="center"> <input style="line-height: 30px" value="line height"></div>
+<div><input style="field-sizing: content" placeholder="sized to content"> <input style="field-sizing: content" value="value sized"> <input type="search" style="height: 40px" value="tall search"> <input type="number" style="height: 10px" value="3"></div>
+<div><textarea></textarea> <textarea>text in a textarea that wraps over lines</textarea> <textarea placeholder="placeholder"></textarea> <textarea rows="2" cols="10" placeholder="small">a</textarea></div>
+<div><textarea style="height: 20px">scrolls
+when
+too
+small</textarea> <textarea dir="rtl">right to left</textarea> <textarea style="padding: 8px; resize: none">padded</textarea> <textarea style="field-sizing: content">a
+b</textarea></div>
+<div style="writing-mode: vertical-lr; height: 120px"><input value="vertical"> <textarea>vertical</textarea></div>

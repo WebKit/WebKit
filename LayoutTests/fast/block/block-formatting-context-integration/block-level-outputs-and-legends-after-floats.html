@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 180px; margin: 0 4px 4px 0; outline: 1px solid black; }
+.fl { float: left; width: 60px; height: 40px; background-color: gray; }
+.b { display: block; background-color: rgba(0, 128, 0, 0.4); }
+.lg { padding: 0; width: fit-content; }
+.sh { width: auto; }
+</style>
+<div class=c><div class=fl></div><output class=b>some text in the box beside the float that wraps</output></div>
+<div class=c><div class=fl></div><output class=b style="width: 120px">some text in a fixed width box</output></div>
+<div class=c><div class=fl></div><legend class="b lg" style="width: 150px">some text in a legend beside the float</legend></div>
+<div class=c><div class=fl></div><legend class="b lg">short</legend></div>
+<div class=c><output class=b><div class=fl style="height: 30px"></div>a</output><div>text after the box</div></div>
+<div class=c><div class=fl></div><output class=b style="margin-top: 10px"><div style="margin-top: 20px">margins</div></output></div>
+<div class=c><div class=fl></div><output class=b style="overflow: hidden">overflow hidden box</output></div>
+<div class=c><div class=fl></div><output class=b style="margin-left: 20px; margin-right: 30px">text with margins in the box</output></div>
+<div class=c><div class=fl></div><output class=b style="max-width: 100px">max width</output></div>
+<div class="c sh"><div class=fl></div><output class=b>shrink to fit</output></div>
+<div class="c sh"><div class=fl></div><legend class="b lg">legend shrink</legend></div>
+<div class="c sh"><div class=fl style="width: 30px"></div><output class=b><span>a b c d e f g</span></output></div>
+<div class=c style="direction: rtl"><div class=fl></div><output class=b>right to left text in the box</output></div>
+<div class=c><div class=fl></div><output class=b style="display: list-item; list-style: none">list item output</output></div>
+<div class=c style="writing-mode: vertical-lr; width: auto; height: 180px"><div class=fl style="width: 40px; height: 60px"></div><output class=b>vertical text in the box</output></div>
+<div class=c><div class=fl></div><div><legend class="b lg">nested legend</legend><output class=b>nested output text</output></div></div>

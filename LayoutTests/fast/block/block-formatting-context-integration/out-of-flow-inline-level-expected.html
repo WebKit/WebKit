@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; padding: 5px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; }
+.relative { position: relative; margin: 10px; padding: 5px; background: lightblue; }
+.abs { position: absolute; width: 10px; height: 10px; background: green; }
+.block { position: absolute; display: block; width: 30px; height: 5px; background: blue; }
+</style>
+<div class="root">
+  <div class="relative">xx<span class="abs"></span>xx <span>x<span class="abs" style="background: orange"></span></span>x<div class="block"></div>xxx</div>
+  <div class="relative" style="text-align: center">x<span class="abs"></span></div>
+  <div class="relative" dir="rtl">xx<span class="abs"></span>xx<div class="block"></div></div>
+  <div><span class="abs" style="right: 0; bottom: 0; background: purple"></span></div>
+  <div class="relative">xx<br style="position: absolute">xx<br style="position: fixed">xx</div>
+  <div class="relative"><div id="text">x<span class="abs" style="top: auto; right: 0"></span></div></div>
+  <div class="relative" id="moves">x<span class="abs" style="top: auto; background: orange"></span>x</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx";
+document.getElementById("moves").firstChild.data = "xxxx";
+</script>

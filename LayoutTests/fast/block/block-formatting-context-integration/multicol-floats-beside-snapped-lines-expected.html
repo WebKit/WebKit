@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; outline: 1px solid; margin: 1px 7px 7px 1px; float: left; }
+.g { -webkit-line-grid: grid; }
+.s { -webkit-line-snap: baseline; }
+.f { float: left; width: 40px; height: 36px; outline: 1px solid green; }
+.n { break-before: column; }
+</style>
+<div class=mc><div class=g><div style="height: 96px"></div><div>Lorem ipsum dolor sit amet,</div><div class=n><img class=f>consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>
+<div class=mc><div class=g><div style="height: 96px"></div><div>Lorem ipsum Lorem ipsum dolor sit</div><div class=n><img class=f style="float: right; height: 48px">amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>
+<div class=mc><div class=g><div style="height: 96px"></div><div><div class=f style="overflow: hidden">x</div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>
+<div class=mc><div class=g><div style="height: 96px"></div><div>Lorem ipsum dolor sit amet,</div><div class=n><div class=f style="break-inside: avoid; height: 48px">Lorem ipsum dolor sit amet</div>consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>

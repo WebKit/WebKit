@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 90px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+fieldset { background: lightblue; margin: 0; }
+legend { background: orange; }
+.f { display: flex; }
+.g { display: grid; grid-template-columns: 1fr 1fr; }
+</style>
+<div class="roots">
+<div class="root"><fieldset class=f style="position: absolute; top: 5px; left: 5px"><legend id=text>legend</legend><div>flex</div><div>items</div></fieldset></div>
+<div class="root"><fieldset class=f id=size style="position: absolute; bottom: 5px; right: 5px; width: 120px; height: 40px"><legend>sized</legend><div>x</div></fieldset></div>
+<div class="root"><fieldset class=f id=display style="position: absolute; top: 5px; left: 5px"><legend>display</legend><div>a</div><div>b</div></fieldset></div>
+<div class="root"><fieldset class=g id=removal style="position: absolute; top: 5px; left: 5px"><legend>removed legend</legend><div>a</div><div>b</div></fieldset></div>
+<div class="root"><fieldset class=g id=height style="position: absolute; top: 5px; left: 5px"><legend id=legendHeight>legend height</legend><div>a</div><div>b</div></fieldset></div>
+<div class="root"><fieldset id=toFlex style="position: absolute; top: 5px; left: 5px"><legend>block to flex</legend><div>a</div><div>b</div></fieldset></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "a much longer legend";
+document.getElementById("size").style.width = "160px";
+document.getElementById("size").style.height = "60px";
+document.getElementById("display").style.display = "grid";
+document.getElementById("removal").firstElementChild.remove();
+document.getElementById("legendHeight").style.height = "30px";
+document.getElementById("toFlex").style.display = "flex";
+</script>

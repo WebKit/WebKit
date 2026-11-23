@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 150px; height: 100px; border: 1px solid black; margin: 0 2px 4px 0; float: left; font: 12px/14px sans-serif; }
+.c { background-color: rgba(0, 128, 0, 0.3); margin: 10px; }
+.p { background-color: rgba(0, 0, 255, 0.3); height: 50%; }
+</style>
+<div class=root id=root1><div class=c style="height: stretch; max-height: -webkit-fill-available" id=c1>a</div></div>
+<div class=root><div class=c style="height: -webkit-fill-available; max-height: stretch" id=c2>b</div></div>
+<div class=root><div><div class=c style="height: stretch; min-height: -webkit-fill-available">c</div></div></div>
+<div class=root><div><div class=c style="height: -webkit-fill-available; min-height: stretch">d</div></div></div>
+<div class=root><div style="height: 60px; border: 1px solid blue" id=parent5><div class=c style="height: stretch; min-height: -webkit-fill-available">e</div></div></div>
+<div class=root><div style="height: 60px; border: 1px solid blue"><div class=c style="height: -webkit-fill-available; max-height: stretch">f</div></div></div>
+<div class=root><div style="border: 1px solid blue"><div class=c style="min-height: -webkit-fill-available; max-height: stretch">g</div></div></div>
+<div class=root><div style="height: 50%; padding: 3px"><div class=c style="height: stretch; max-height: -webkit-fill-available; padding: 2px">h</div></div></div>
+<div class=root><div class=c style="height: 0; min-height: stretch; max-height: -webkit-fill-available" id=c9></div><div>after</div></div>
+<div class=root><div class=c style="max-height: -webkit-fill-available; min-height: stretch; height: 10px"></div><div>after</div></div>
+<div class=root><div class=c style="height: stretch; max-height: -webkit-fill-available; aspect-ratio: 1; width: 50px"></div></div>
+<div class=root><div class=c style="height: stretch; max-height: -webkit-fill-available"><div class=p>half</div></div></div>
+<div class=root><div class=c style="height: -webkit-fill-available; min-height: stretch; display: flow-root" id=c13><div class=p>half</div></div></div>
+<div class=root style="writing-mode: vertical-lr"><div class=c style="width: stretch; max-width: -webkit-fill-available">vertical</div></div>
+<div class=root><span><div class=c style="height: stretch; max-height: -webkit-fill-available">in an inline box</div></span></div>
+<div class=root><div style="height: 20px; border: 1px solid blue"><div class=c style="height: 0; min-height: stretch; max-height: -webkit-fill-available"></div><div>after</div></div></div>
+<div class=root><div style="height: 20px; border: 1px solid blue" id=parent17><div class=c style="height: stretch; max-height: -webkit-fill-available"></div><div>after</div></div></div>

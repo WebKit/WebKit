@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; width: 120px; height: 90px; border: 1px solid; margin: 3px; display: inline-block; vertical-align: top; }
+.a { position: absolute; background: lightblue; border: 2px solid blue; }
+</style>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: min-content" id="text">text</div></div>
+<div class="cb" id="width"><div class="a" style="top: 5px; left: 5px; width: fit-content">fit content that wraps</div></div>
+<div class="cb" id="height"><div class="a" style="top: 10px; left: 5px; height: -webkit-fill-available">fill available</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; right: 5px" id="keyword">becomes max content</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: 50px; height: min-content" id="content">content</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer min content text";
+document.getElementById("width").style.width = "60px";
+document.getElementById("height").style.height = "50px";
+document.getElementById("keyword").style.width = "max-content";
+document.getElementById("content").firstChild.data = "content that grows into several lines";
+</script>

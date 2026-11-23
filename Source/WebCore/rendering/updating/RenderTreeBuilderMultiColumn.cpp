@@ -35,6 +35,7 @@
 #include "RenderTextControl.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
+#include "RenderTreePosition.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/SetForScope.h>
@@ -124,6 +125,9 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
             // implement (not to mention specify behavior).
             return ancestor == &fragmentedFlow;
         }
+        // It spans "the nearest multicol ancestor in the same block formatting context" (css-multicol-1 §6.1).
+        if (CheckedPtr block = dynamicDowncast<RenderBlock>(*ancestor); block && block->createsNewFormattingContext())
+            return false;
         if (CheckedPtr blockFlowAncestor = dynamicDowncast<RenderBlockFlow>(*ancestor)) {
             if (blockFlowAncestor->willCreateColumns()) {
                 // This ancestor (descendent of the fragmentedFlow) will create columns later. The spanner belongs to it.
@@ -213,13 +217,15 @@ void RenderTreeBuilder::MultiColumn::restoreColumnSpannersForContainer(RenderMul
             ASSERT_NOT_REACHED();
             continue;
         }
-        // Move the spanner back to its original position.
+        // Move the spanner back to its original position, before the renderer of what follows it in the DOM.
         CheckedRef spannerOriginalParent = *placeholder->parent();
         // Detaching the spanner takes care of removing the placeholder (and merges the RenderMultiColumnSets).
         placeholder = nullptr;
         auto spannerToReInsert = m_builder.detach(*protect(spanner->parent()), *spanner, WillBeDestroyed::No);
         auto restoreColumnSpannersScope = SetForScope { gRestoringColumnSpannersForContainer, true };
-        m_builder.attach(spannerOriginalParent, WTF::move(spannerToReInsert));
+        CheckedPtr element = spannerToReInsert->node();
+        auto* beforeChild = element ? RenderTreePosition { spannerOriginalParent }.nextSiblingRenderer(*element) : nullptr;
+        m_builder.attach(spannerOriginalParent, WTF::move(spannerToReInsert), beforeChild);
     }
 }
 

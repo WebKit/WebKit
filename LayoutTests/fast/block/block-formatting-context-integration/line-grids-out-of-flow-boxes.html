@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; width: 250px; height: 150px; padding: 3px; margin-bottom: 4px; position: relative; }
+.small { font-size: 9px; line-height: 11px; }
+.abs { position: absolute; }
+</style>
+<div class=grid>
+  <div class=small>first</div>
+  <div class="small abs" style="left: 5px; top: 7px;">top anchored<br>two</div>
+  <div class="small abs" style="left: 120px;">at its static position<br>two</div>
+  <div class="small abs" style="left: 5px; bottom: 6px; width: 100px; padding-bottom: 5px;">bottom anchored, with lines that wrap</div>
+  <div class="small abs" style="left: 130px; top: 40px; width: 100px;"><div>a block</div><div style="margin-top: 3px;">another<br>two</div></div>
+  <table class="small abs" style="left: 130px; top: 95px;"><tr><td style="padding: 1px;">a table<br>cell</td></tr></table>
+  <div class="small abs" style="display: flex; left: 190px; top: 95px;"><div>flex<br>item</div></div>
+  <div class="small abs" style="display: flex; left: 190px; bottom: 3px; padding-bottom: 7px;"><div>flex from<br>the bottom</div></div>
+</div>
+<div class=grid style="-webkit-line-grid: a; line-height: 23px; height: 120px;">
+  <div style="-webkit-line-grid: b; line-height: 13px; margin-top: 3px;">
+    <div class=small>on b</div>
+    <div class="small abs" style="left: 5px; top: 30px;">on b too<br>two</div>
+    <div class="small abs" style="-webkit-line-grid: a; left: 120px; top: 30px;">back on a<br>two</div>
+    <div class="small abs" style="-webkit-line-grid: c; line-height: 17px; left: 5px; top: 70px;">a grid of its own<br>two</div>
+    <div class="small abs" style="overflow: auto; left: 120px; top: 70px;">a scroll container<br>two</div>
+  </div>
+</div>
+<div class=grid style="direction: rtl; height: 80px; -webkit-line-align: edges;">
+  <div class="small abs" style="right: 7px; top: 9px;">right to left<br>two</div>
+  <div class="small abs" style="left: 7px; bottom: 4px; padding-bottom: 3px;">and from the bottom<br>two</div>
+</div>
+<div style="display: flex; width: 260px; position: absolute; left: 280px; top: 4px;"><div class=grid style="height: 90px;"><div class=small>in a flex item</div><div class="small abs" style="left: 9px; top: 21px;">positioned in the flex item<br>two</div></div></div>

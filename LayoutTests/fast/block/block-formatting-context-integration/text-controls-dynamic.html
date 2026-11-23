@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>body { font-family: monospace; font-size: 12px; } div { margin: 2px; }</style>
+<div><input id="value" value="short"> <input id="placeholder" placeholder="placeholder"> <input id="cleared" value="cleared"> <input id="resized" value="resized"></div>
+<div><input id="padding" value="padding"> <input id="font" value="font"> <input type="search" id="search" value="search"> <input id="sized" style="field-sizing: content" value="sized"></div>
+<div><textarea id="text">one line</textarea> <textarea id="textPlaceholder"></textarea> <textarea id="textCleared">cleared</textarea> <textarea id="textResized">resized</textarea></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("value").value = "a much longer value than before";
+document.getElementById("placeholder").placeholder = "changed placeholder";
+document.getElementById("cleared").value = "";
+document.getElementById("cleared").placeholder = "now empty";
+document.getElementById("resized").style.width = "60px";
+document.getElementById("padding").style.padding = "5px 10px";
+document.getElementById("font").style.fontSize = "18px";
+document.getElementById("search").value = "";
+document.getElementById("sized").value = "a longer sized value";
+document.getElementById("text").value = "first line\nsecond line\nthird line";
+document.getElementById("textPlaceholder").placeholder = "placeholder";
+document.getElementById("textCleared").value = "";
+document.getElementById("textCleared").placeholder = "empty";
+document.getElementById("textResized").style.height = "60px";
+</script>

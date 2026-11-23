@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+p { margin: 6px 0; background: rgba(255, 255, 0, 0.3); }
+</style>
+<div class="roots">
+<div class="root" id="resized"><div class="l" id="wider"></div><div class="r" id="taller"></div><p>text beside two block-level floats</p><p>a paragraph the float grows into</p></div>
+<div class="root"><div class="l" id="side"></div><p id="inserted-before">a float that moves to the other side and one added before this</p></div>
+<div class="root"><div class="l" id="removed" style="height: 60px"></div><p>text next to a float that goes away</p></div>
+<div class="root"><div><div class="l"></div></div><p id="margin" style="margin-top: 5px">a margin that collapses through the float's block grows</p></div>
+<div class="root"><div><div class="l" style="height: 40px"></div></div><p>text</p><div id="cleared" style="display: none; clear: both">cleared</div></div>
+<div class="root"><div class="l" style="height: 40px"></div><p>text</p><div id="uncleared" style="clear: both">not cleared anymore</div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "160px";
+document.getElementById("wider").style.width = "70px";
+document.getElementById("taller").style.height = "90px";
+document.getElementById("side").style.float = "right";
+const added = document.createElement("div");
+added.className = "l";
+added.style.height = "20px";
+document.getElementById("inserted-before").before(added);
+document.getElementById("removed").remove();
+document.getElementById("margin").style.marginTop = "25px";
+document.getElementById("cleared").style.display = "block";
+document.getElementById("uncleared").style.clear = "none";
+</script>

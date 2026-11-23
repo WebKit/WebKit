@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.box { background: rgba(0, 128, 0, 0.5); margin: 10px 5%; padding: 4px; }
+</style>
+<div class="root">
+  <div class="box" style="opacity: 0.6">opacity</div>
+  <div class="box" style="transform: translateX(20px) rotate(3deg)">transform</div>
+  <div class="box" style="filter: hue-rotate(90deg)">filter</div>
+  <div class="box" style="will-change: transform">will-change</div>
+  <div class="box" style="mix-blend-mode: multiply">mix-blend-mode</div>
+  <div style="opacity: 0.8; margin-top: 30px"><div class="box" style="margin-top: 20px; transform: scale(0.8)">margins collapse through layers</div></div>
+  <div style="display: flow-root; transform: translateY(5px); margin: 15px 0"><div class="box">flow-root with a transform</div></div>
+  <div style="display: flex; opacity: 0.7; transform: rotate(-2deg)"><span class="box">flex container</span><span class="box">with a layer</span></div>
+  <div class="box" style="margin-top: 25px">after</div>
+</div>

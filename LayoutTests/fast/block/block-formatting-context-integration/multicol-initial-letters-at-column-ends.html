@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.multicol { columns: 3; column-gap: 10px; column-fill: auto; width: 620px; height: 200px; margin-bottom: 10px; }
+.before { height: 160px; background: green; }
+p { margin: 0; }
+.drop::first-letter { -webkit-initial-letter: 2 4; padding-right: 0.1em; }
+.raised::first-letter { -webkit-initial-letter: 3 2; padding-right: 0.1em; }
+</style>
+<!-- An initial letter that does not fit below the content before it goes to the next column with its line. -->
+<div class="multicol"><div class="before"></div><p class="drop">Example with a sunken initial letter and the lines alongside it, which go to the next column with it.</p></div>
+<div class="multicol"><div class="before"></div><p class="raised">Example with a raised initial letter and the lines alongside it, which go to the next column with it.</p></div>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+body { margin: 4px; font: 12px/14px monospace; }
+.c { display: flow-root; width: 300px; margin-bottom: 6px; outline: 1px solid black; }
+.fl { float: left; width: 40px; height: 30px; background-color: gray; }
+.l { display: block; padding: 0 2px; background-color: rgba(0, 128, 0, 0.4); }
+fieldset { margin: 0; }
+</style>
+<div class=c><div class=l>a legend outside a fieldset</div></div>
+<div class=c><div class=fl></div><div class=l><div class=fl></div>beside floats</div></div>
+<div class=c><div class=l style="text-align: right; margin: 0 20px">margins and right aligned text</div></div>
+<div class=c><div class=l style="max-width: 150px">max width</div></div>
+<div class=c><div class=l style="width: fit-content">fit-content</div></div>
+<div class=c><fieldset><legend>rendered</legend><div class=l>second legend</div><div><div class=l>nested legend</div></div></fieldset></div>
+<div class=c dir=rtl><div class=l>right to left</div></div>
+<div class=c style="display: inline-block; width: auto"><div class=l>shrink to fit container</div><div>x</div></div>

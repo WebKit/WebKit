@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<style>
+body { margin: 4px; font: 12px/14px monospace; }
+.c { display: flow-root; width: 300px; margin-bottom: 6px; outline: 1px solid black; }
+.fl { float: left; width: 40px; height: 30px; background-color: gray; }
+.l { background-color: rgba(0, 128, 0, 0.4); }
+.d { padding: 0 2px; }
+fieldset { margin: 0; }
+</style>
+<div class=c><div class="l d">a longer legend outside a fieldset</div></div>
+<div class=c><fieldset><legend class=l>promoted to the rendered legend</legend>x</fieldset></div>
+<div class=c><fieldset><legend>new</legend><div class="l d">no longer the rendered legend</div>x</fieldset></div>
+<div class=c><div class=fl style="width: 120px"></div><div class="l d">a legend beside a float that wraps</div></div>

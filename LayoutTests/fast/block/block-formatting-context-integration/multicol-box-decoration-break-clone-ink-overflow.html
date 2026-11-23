@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font: 10px/20px monospace; }
+.m { columns: 3; column-fill: auto; gap: 20px; width: 340px; height: 60px; margin: 20px; }
+.c { -webkit-box-decoration-break: clone; background-color: lightblue; box-shadow: 0 0 0 6px cyan; outline: 3px solid hotpink; }
+</style>
+<div class=m><div class=c style="height: 150px"></div></div>
+<div class=m><div style="border-left: 4px solid orange"><div class=c style="margin-left: 12px">1<br>2<br>3<br>4<br>5<br>6<br>7</div></div></div>
+<div class=m><div class=c style="height: 80px"></div><img style="display: block; width: 30px; height: 40px; background-color: green"></div>

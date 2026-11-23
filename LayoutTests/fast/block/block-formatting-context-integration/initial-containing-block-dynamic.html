@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<html id=html style="margin: 4px 6px; border: 2px solid; height: 30%">
+<style>
+body { font: 10px/12px monospace; margin: 3px; }
+iframe { width: 140px; height: 90px; border: 1px solid; margin: 2px; vertical-align: top; }
+.abs { position: absolute; background: lightblue; }
+.fixed { position: fixed; background: lightgreen; }
+</style>
+<body>
+<div id=grow style="width: 100px; background: lightgray">short</div>
+<div class=abs>static abs</div>
+<div id=fixed class=fixed style="left: 10px; bottom: 10px">fixed</div>
+<div id=toggle class=abs style="right: 10px; top: 300px">toggled</div>
+<div style="margin-top: 40px">
+<iframe id=resized srcdoc="<html style='height: 100%'><body style='margin: 0; height: 100%; font: 10px/12px monospace'><div style='height: 50%; background: lightgray'>half</div><div style='position: fixed; width: 50%; height: 20%; bottom: 0; background: lightgreen'>fixed</div><div style='position: absolute; height: 30%; right: 0; bottom: 0; background: lightblue'>abs</div>"></iframe>
+<iframe id=changed srcdoc="<html id=html style='margin: 5px; border: 2px solid'><body style='margin: 3px; font: 10px/12px monospace'><div id=text style='background: lightgray'>short</div><div style='position: absolute; background: lightblue'>static abs</div><div id=positioned style='background: lightgreen'>positioned</div>"></iframe>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.addEventListener("load", () => {
+    const resized = document.getElementById("resized");
+    const changed = document.getElementById("changed").contentDocument;
+    document.body.offsetHeight;
+    resized.contentDocument.body.offsetHeight;
+    changed.body.offsetHeight;
+
+    document.getElementById("grow").firstChild.data = "much longer text that wraps";
+    document.getElementById("fixed").style.left = "100px";
+    document.getElementById("html").style.marginTop = "20px";
+    document.getElementById("toggle").style.position = "static";
+    resized.style.width = "180px";
+    resized.style.height = "110px";
+    changed.getElementById("text").firstChild.data = "much longer text that wraps";
+    changed.getElementById("html").style.display = "flow-root";
+    changed.getElementById("positioned").style.position = "absolute";
+    changed.getElementById("positioned").style.bottom = "0";
+    document.body.offsetHeight;
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

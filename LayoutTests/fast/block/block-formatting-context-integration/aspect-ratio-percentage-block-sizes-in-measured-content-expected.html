@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.ib { display: inline-block; vertical-align: top; background-color: rgba(0, 0, 255, 0.2); margin: 0 4px 4px 0; }
+.r { aspect-ratio: 2; background-color: rgba(0, 128, 0, 0.4); }
+.o { display: inline-block; vertical-align: top; height: 110px; margin: 0 4px 4px 0; position: relative; width: 120px; }
+</style>
+<div class=o><div class=ib style="height: stretch"><div class=r style="height: 50%"></div></div></div>
+<div class=o><div class=ib><div style="height: stretch"><div class=r style="height: 50%"></div></div></div></div>
+<div class=o><div class=ib style="height: 100px"><div style="padding-top: 10%"><div class=r style="height: 50%"></div></div></div></div>
+<div class=o><div class=ib style="height: 100px"><div style="aspect-ratio: 1; width: 80px"><div class=r style="height: 50%"></div></div></div></div>
+<div class=o><div class=ib style="height: 100px"><div style="height: 80%; padding-bottom: 5%"><div class=r style="height: 50%"></div></div></div></div>
+<div class=o><div style="position: absolute; top: 0; bottom: 20px; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="height: 50%"></div></div></div>
+<div class=o><div style="position: absolute; top: 0; height: 70%; background-color: rgba(0, 0, 255, 0.2)"><div><div class=r style="height: 50%"></div></div></div></div>
+<div class=o><div style="position: absolute; top: 0; bottom: 0; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="max-height: 30%; height: 80%"></div></div></div>
+<div class=o><div style="position: absolute; top: 0; bottom: 0; overflow: scroll; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="height: 50%"></div></div></div>
+<div class=o><div style="position: absolute; top: 0; bottom: 10px; writing-mode: vertical-rl; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="width: 50%"></div></div></div>
+<div style="display: flex; height: 80px; margin-bottom: 4px"><div style="width: fit-content; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="height: 50%"></div></div></div>
+<div style="display: grid; grid-template-rows: 80px; width: 300px; margin-bottom: 4px"><div style="width: fit-content; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="height: 50%"></div></div></div>
+<table style="height: 80px"><tr><td><div class=ib><div class=r style="height: 50%"></div></div></td></tr></table>

@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.root { width: 300px; border: 1px solid; margin-bottom: 4px; }
+.cv { content-visibility: hidden; border: 2px solid blue; padding: 3px; margin: 5px 0; }
+</style>
+<div class=root>
+  <div>before</div>
+  <div class=cv>hidden content<br>two<div>block</div></div>
+  <div>after an empty hidden box</div>
+  <div class=cv style="contain-intrinsic-size: 100px 40px;">sized by contain-intrinsic-size<div style="float: left; width: 50px; height: 80px;"></div></div>
+  <div>after a sized hidden box</div>
+  <div class=cv style="width: fit-content; contain-intrinsic-size: 70px 30px;">shrink to fit</div>
+  <div class=cv style="display: flow-root; contain-intrinsic-size: auto 25px;">flow root<div style="position: absolute; top: 0; left: 0;">positioned</div></div>
+  <div class=cv style="float: left; contain-intrinsic-size: 60px 20px;">a float</div>
+  <div style="overflow: hidden;">beside the float</div>
+  <span>inline <span class=cv style="display: inline-block; contain-intrinsic-size: 40px 10px;">inline block</span> after</span>
+  <div class=cv style="overflow: auto; height: 50px; contain-intrinsic-size: 100px 20px;">a scroll container<div style="height: 200px;"></div></div>
+</div>
+<div class=root>
+  <div style="float: left; border: 1px solid green;"><div class=cv style="contain-intrinsic-inline-size: 40px;">wider content than its intrinsic inline size</div><div>text</div></div>
+  <div style="display: inline-block; border: 1px solid green;"><div class=cv style="contain-intrinsic-size: 70px 15px;">wide content in an inline block</div></div>
+  <div style="clear: both; width: max-content; border: 1px solid red;"><div class=cv style="contain-intrinsic-inline-size: 120px;">x</div></div>
+  <div class=cv style="content-visibility: auto; margin-left: -5000px; contain-intrinsic-size: auto 45px;">off-screen auto content<br>two<br>three<br>four</div>
+  <div>after an off-screen auto box</div>
+  <div style="content-visibility: auto; contain-intrinsic-size: auto 45px;">on-screen auto content<br>two</div>
+  <div>after an on-screen auto box</div>
+</div>
+<div class=cv style="position: absolute; left: 340px; top: 4px; contain-intrinsic-size: 80px 30px;">positioned hidden<div>block</div></div>
+<div class=cv style="position: absolute; left: 340px; top: 60px; overflow: auto; contain-intrinsic-size: 80px 30px;">positioned scroll container<div style="height: 200px;"></div></div>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; }
+.a { aspect-ratio: 1; }
+.r { aspect-ratio: 2; height: 100%; border: 2px solid blue; box-sizing: border-box; }
+.r > div { width: 20px; height: 5px; }
+.c { border: 2px solid green; margin-bottom: 4px; vertical-align: top; }
+</style>
+<div class=c style="display: inline-grid"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-grid; grid-template-rows: 30px"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-grid; grid-template-rows: 30px"><div class=a style="justify-self: start"><div class=r><div></div></div></div></div>
+<div class=c style="display: grid; height: 30px; width: max-content"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; height: 30px"><div class=a style="align-self: start"><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; flex-direction: column"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; flex-direction: column; height: 30px"><div class=a style="align-self: start"><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-grid"><div style="width: 48px; height: 24px"><div class=r style="aspect-ratio: auto; width: 48px; height: 24px"><div></div></div></div></div>
+<div class=c style="display: inline-grid; grid-template-rows: 30px"><div style="width: 60px; height: 30px"><div class=r style="aspect-ratio: auto; width: 60px; height: 30px"><div></div></div></div></div>
+<div class=c style="display: inline-grid; grid-template-rows: 30px"><div style="width: 60px; height: 30px"><div class=r style="aspect-ratio: auto; width: 60px; height: 30px"><div></div></div></div></div>
+<div class=c style="display: grid; height: 50px; width: max-content"><div style="width: 100px; height: 50px"><div class=r style="aspect-ratio: auto; width: 100px; height: 50px"><div></div></div></div></div>
+<div class=c style="display: inline-grid; grid-template-columns: 50px"><div class=a style="align-self: stretch"><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-grid"><div class=a style="width: 30px"><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; height: 30px"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; height: 30px"><div class=a style="width: 40px"><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; flex-wrap: wrap; height: 30px"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; flex-direction: column; height: 30px"><div class=a style="flex: 1"><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; flex-direction: column; width: 50px"><div class=a><div class=r><div></div></div></div></div>

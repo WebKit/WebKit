@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 20px/40px monospace; }
+.root { display: inline-block; vertical-align: top; width: 140px; margin: 2px; background: lightgray; }
+.both { text-box-trim: trim-both; text-box-edge: cap alphabetic; }
+.start { text-box-trim: trim-start; }
+.end { text-box-trim: trim-end; }
+p { margin: 0; background: lightblue; }
+</style>
+<div class="root both">inline content only</div>
+<div class="root both"><p>first</p><p>last</p></div>
+<div class="root both"><div><div><p>nested first</p></div></div><p>middle</p><div><p>nested last</p></div></div>
+<div class="root start"><div style="padding-top: 4px"><p>padding</p></div><p>second</p></div>
+<div class="root end"><p>first</p><div style="padding-bottom: 4px"><p>padding</p></div></div>
+<div class="root"><div class="both"><p>child trims</p><p>its content</p></div><p>after</p></div>
+<div class="root both"><div style="display: flow-root"><p>new formatting context</p></div><p>after</p></div>
+<div class="root end">before <span><div>block in inline<br>last</div></span></div>
+<div class="root start"><span><div>block in inline first</div></span> after</div>
+<div class="root both"><p></p><p>empty before</p><p></p></div>
+<div class="root both" style="writing-mode: vertical-rl; height: 140px; width: auto"><p>vertical</p><p>text</p></div>
+<div class="root"><div style="display: flow-root"><div class="end"><p>in a new</p><p>formatting context</p></div></div></div>
+<div class="root" style="position: relative; height: 130px"><div style="position: absolute"><div class="end"><p>in an</p><p>out-of-flow box</p></div></div></div>

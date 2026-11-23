@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.a { position: absolute; background: rgba(255, 128, 0, 0.8); }
+.ps::before { content: "B"; position: absolute; background: rgba(255, 128, 0, 0.8); }
+p { margin: 0; }
+</style>
+<div class="roots">
+<div class="root"><p>before</p><div class="l"></div><span class="a">A</span><p>after</p></div>
+<div class="root" style="text-align: center"><p>centered</p><div class="l"></div><div class="r"></div><span class="a">A</span><p>after</p></div>
+<div class="root" style="text-align: right"><p>right</p><div class="r"></div><span class="a">A</span><p>after</p></div>
+<div class="root"><div class="l"></div><div class="ps"><p>a pseudo-element</p></div></div>
+<div class="root" dir="rtl"><p>rtl</p><div class="l"></div><div class="r"></div><span class="a">A</span><p>after</p></div>
+<div class="root"><div style="margin-top: 10px"><div class="l"></div><span class="a">A</span><p style="margin-top: 20px">a pending float</p></div></div>
+<div class="root"><div style="margin-top: 10px"><div class="l" style="height: 15px"></div><div style="margin-top: 30px"></div><span class="a">A</span><p>margins collapse below the float</p></div></div>
+<div class="root"><p>inset</p><div class="l"></div><span class="a" style="left: 5px">A</span><p>after</p></div>
+<div class="root"><p>below</p><div class="l" style="height: 5px"></div><p>text that goes below the float</p><span class="a">A</span></div>
+<div class="root"><div class="l"></div><div style="margin-left: 50px"><span class="a">A</span><p>a margin past the float</p></div></div>
+<div class="root"><div class="l"></div><img class="a" style="width: 10px; height: 10px"><p>an image</p></div>
+</div>

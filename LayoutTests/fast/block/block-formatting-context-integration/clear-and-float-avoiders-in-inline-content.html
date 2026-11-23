@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 240px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 45px; background: tan; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><span>text <span class="left"></span>more <div style="clear: left; background: lightgreen">cleared block in inline</div>after</span></div>
+<div class="root"><span class="left"></span><span>inline <div class="avoider">avoider in inline</div>after</span></div>
+<div class="root"><span class="left"></span><span>inline <div class="avoider" style="width: 220px">too wide avoider in inline</div>after</span></div>
+<div class="root"><span class="right"></span><span class="left"></span><span>a <div style="clear: both; margin-top: 10px">both</div> b</span></div>
+<div class="root"><span class="left" style="height: 10px"></span><span><div style="clear: left; margin-top: 20px">margin past the float</div></span></div>
+<div class="root"><span class="left"></span><span>x<div style="margin-top: 5px"><div style="clear: left">nested clear</div></div>y</span></div>
+<div class="root"><span><span class="left"></span><div class="avoider" style="margin: 0 auto; width: 100px">auto margins</div></span></div>
+<div class="root"><span class="right"></span><span><div class="avoider">avoider beside right</div>z</span></div>
+<div class="root"><span>text that wraps <span class="left"></span>around the float <div class="avoider">avoider after lines</div>tail</span></div>
+<div class="root" style="direction: rtl"><span class="left"></span><span>rtl <div class="avoider">avoider</div><div style="clear: left">clear</div></span></div>
+<div class="root"><span class="left"></span><span><div style="clear: left"></div>after empty cleared</span></div>
+<div class="root"><span><span class="left"></span><table style="background: lightgreen"><tr><td>table in inline</td></tr></table></span></div>

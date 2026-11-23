@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+p { margin: 0; background: rgba(255, 255, 0, 0.4); }
+</style>
+<div class="roots">
+<div class="root"><a><div class="r"></div><p>a block-level box in an inline box after a float</p><p style="margin-top: 4px">and another one</p></a></div>
+<div class="root"><span>text<div style="background: silver"><span class="l" style="height: 50px"></span>a float inside a block-level box in inline content</div>lines after it that wrap around that float and more text</span></div>
+<div class="root"><span><div>block</div><span class="l"></span>a float after a block-level box in an inline box</span></div>
+<div class="root"><span class="r"></span><span><p style="margin-top: 10px">a margin collapsing through the block container</p>text after it wrapping around</span></div>
+<div class="root"><div><span><div style="margin-top: 20px"></div><span class="l"></span><p style="margin-top: 15px">after a self-collapsing block</p>more text after it</span></div></div>
+<div class="root"><div class="l" style="height: 70px"></div><div><span>intruding<p style="margin-top: 12px">block in an inline box beside an intruding float</p>text after</span></div></div>
+<div class="root"><div><a><span class="r" style="height: 30px"></span><p style="margin-top: 16px">the block container's top moves down with the margin</p></a></div><p>after</p></div>
+<div class="root" dir="rtl"><span><span class="l"></span><p>from right to left</p>text after the block</span></div>
+</div>

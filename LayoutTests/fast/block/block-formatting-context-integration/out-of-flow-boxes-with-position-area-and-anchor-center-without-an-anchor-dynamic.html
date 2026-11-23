@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.cb { position: relative; width: 180px; height: 100px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; font: 12px/14px sans-serif; }
+.a { position: absolute; background-color: rgba(0, 128, 0, 0.4); }
+.c { width: 40px; height: 20px; background-color: rgba(0, 0, 255, 0.4); }
+.initial .cb { height: 80px; }
+.initial .c { width: 20px; }
+</style>
+<div class=initial id=cases>
+<div class=cb><span id=t0>x</span><div class=a style="position-area: top"><div class=c></div></div></div>
+<div class=cb><span id=t1>x</span><div class=a style="position-area: bottom right"><div class=c></div></div></div>
+<div class=cb><span id=t2>x</span><div class=a style="position-area: bottom right; inset: 0"><div class=c></div></div></div>
+<div class=cb><span id=t3>x</span><div class=a style="position-area: top left; left: 10px; top: 10px"><div class=c></div></div></div>
+<div class=cb><span id=t4>x</span><div class=a style="position-area: center; inset: 0"><div class=c></div></div></div>
+<div class=cb><span id=t5>x</span><div class=a style="position-area: span-all; inset: 0; width: 50px"><div class=c></div></div></div>
+<div class=cb><span id=t6>x</span><div class=a style="position-anchor: --missing; position-area: bottom; top: 0; bottom: 0"><div class=c></div></div></div>
+<div class=cb><span id=t7>x</span><div class=a style="position-area: end; inset: 0; justify-self: start"><div class=c></div></div></div>
+<div class=cb dir=rtl><span id=t8>x</span><div class=a style="position-area: right; left: 0; right: 0"><div class=c></div></div></div>
+<div class=cb style="writing-mode: vertical-rl"><span id=t9>x</span><div class=a style="position-area: top; inset: 0"><div class=c></div></div></div>
+<div class=cb><span id=t10>x</span><div class=a style="position-area: bottom; margin: auto; inset: 0; width: 50px; height: 50px"><div class=c></div></div></div>
+<div class=cb><span id=t11>x</span><div class=a style="justify-self: anchor-center; left: 0; right: 0; width: 50px"><div class=c></div></div></div>
+<div class=cb><span id=t12>x</span><div class=a style="align-self: anchor-center; top: 0; bottom: 0; height: 50px"><div class=c></div></div></div>
+<div class=cb><span id=t13>x</span><div class=a style="justify-self: anchor-center; left: 10px"><div class=c></div></div></div>
+<div class=cb><span id=t14>x</span><div class=a style="justify-self: anchor-center"><div class=c></div></div></div>
+<div class=cb dir=rtl><span id=t15>x</span><div class=a style="justify-self: safe anchor-center"><div class=c></div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+for (const text of document.querySelectorAll("span"))
+    text.firstChild.data = "text";
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

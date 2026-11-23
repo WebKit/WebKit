@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 240px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 45px; background: tan; }
+.vertical { writing-mode: vertical-rl; background: lightblue; }
+.vertical-lr { writing-mode: vertical-lr; background: lightgreen; }
+</style>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 60px" id="text">short</div></div>
+<div class="root"><div class="left" id="float"></div><div class="vertical" style="height: 40px">beside a float that grows</div></div>
+<div class="root"><div class="right"></div><div class="vertical" style="height: 40px; margin: 0 auto" id="height">auto margins</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer vertical text that needs more columns";
+document.getElementById("float").style.width = "200px";
+document.getElementById("height").style.height = "20px";
+</script>

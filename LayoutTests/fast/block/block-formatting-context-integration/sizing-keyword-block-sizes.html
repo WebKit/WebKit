@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; color: green; }
+.box { background: lightblue; padding: 2px; margin: 5px 0; }
+.child { margin: 10px 0; height: 10px; background: blue; }
+.percentage { height: 50%; background: orange; }
+</style>
+<div class="root">
+  <div class="box" style="height: min-content">xx xx</div>
+  <div class="box" style="height: max-content; box-sizing: border-box">xx xx xx</div>
+  <div class="box" style="height: fit-content"><div class="child"></div></div>
+  <div style="height: max-content"><div class="child"></div></div>
+  <div style="height: min-content; margin-bottom: 20px"><div class="child" style="margin-bottom: 30px"></div></div>
+  <div class="box" style="height: fit-content; min-height: min-content; max-height: max-content">xx</div>
+  <div class="box" style="min-height: fit-content; max-height: min-content">xx xx</div>
+  <div class="box" style="min-height: max-content">x</div>
+  <div style="height: 100px"><div class="box" style="height: fit-content"><div class="percentage">x</div></div></div>
+  <div style="height: 10px; margin-bottom: 20px; background: blue"></div><div style="height: min-content; margin: 15px 0"></div><div style="height: 10px; margin-top: 20px; background: blue"></div>
+  <div class="box" id="dynamic" style="height: fit-content">x</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("dynamic").firstChild.data = "xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx";
+</script>

@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true dumpCSSPageBoxes=true ] -->
+<style>
+@page { size: 400px 200px; margin: 0; }
+body { margin: 0; line-height: 20px; }
+.float { float: left; break-before: page; width: 100px; height: 50px; border: 2px solid green; }
+</style>
+<!-- Forced breaks apply to floats in the normal flow of the root too: a float with break-before: page goes to the next page, the content around it stays. -->
+<div>first line</div>
+<div class="float"></div>
+<div>second line</div>
+<div>text before <span class="float" style="border-color: blue"></span>text after</div>

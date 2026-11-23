@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false CSSRhythmicSizingEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.st { block-step-size: 25px; border-left: 3px solid blue; }
+</style>
+<div class=mc><div style="height: 100px"></div><div class=st id=a style="block-step-size: 25px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div>after</div></div>
+<div class=mc><div style="height: 90px"></div><div class=st style="display: flow-root" id=b>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>after</div></div>
+<div class=mc><div style="height: 60px"></div><div class=st style="display: flow-root; margin: 4px 0" id=c>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>after</div></div>

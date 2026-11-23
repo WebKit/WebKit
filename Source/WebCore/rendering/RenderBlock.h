@@ -243,6 +243,9 @@ public:
 
     enum FieldsetFindLegendOption { FieldsetIgnoreFloatingOrOutOfFlow, FieldsetIncludeFloatingOrOutOfFlow };
     RenderBox* findFieldsetLegend(FieldsetFindLegendOption = FieldsetIgnoreFloatingOrOutOfFlow) const;
+    // The legends after the rendered legend of this fieldset, when it stops being one: the next one becomes the rendered legend, which the
+    // fieldset lays out out of the flow of its content (layoutExcludedChildren).
+    void setLegendsAfterRenderedLegendNeedLayout(const RenderBox&);
     virtual void layoutExcludedChildren(RelayoutChildren);
     virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthsForFieldsetLegend() const;
 
@@ -262,9 +265,10 @@ public:
     // layout bits, so the layout after style resolution lays them out.
     static void restoreLayoutBitsAfterInterleavedLayout();
 
+    bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
+
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
-    bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
 
     void layout() override;
 

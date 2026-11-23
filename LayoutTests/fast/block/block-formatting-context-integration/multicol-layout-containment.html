@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+article { height: 50px; column-gap: 0; columns: 4 30px; width: 120px; column-fill: auto; border: 1px solid black; margin: 2px; float: left; }
+.o { background-color: orange; }
+.g { background-color: green; height: 10px; width: 20px; }
+.c { contain: layout; }
+</style>
+<article><div class="o c"><div class=g></div><div class=g style="break-before: column"></div></div></article>
+<article><div class=g></div><div class="o c" style="border-top: 10px solid blue"><div class=g style="break-before: column"></div></div></article>
+<article><div class=g></div><div class="o c"><div class=g style="break-before: column"></div><div class=g></div></div></article>
+<article><div class=g></div><div class=c><div class="o c"><div class=g style="break-before: column"></div></div></div></article>
+<article><div class=g></div><div class="o c" style="break-before: column"><div class=g></div></div></article>
+<article><div class="o c"><div class=g style="height: 26px"></div><div class=g style="height: 26px; break-before: column"></div></div></article>
+<article><div class="o c"><div class=g style="height: 80px"></div></div><div class=g></div></article>
+<article><div class=o style="content-visibility: auto"><div class=g style="height: 80px"></div></div></article>
+<article><div class=g></div><div class=g></div><div class=c><img style="display: block; width: 20px; height: 40px; break-before: avoid; background-color: purple"></div></article>
+<article><div class="o c"><div class=g style="break-after: column"></div></div><div class=g></div></article>
+<article><div class=g></div><div class="o c"><div class=g></div><div class=g style="break-after: column"></div></div><div class=g></div></article>

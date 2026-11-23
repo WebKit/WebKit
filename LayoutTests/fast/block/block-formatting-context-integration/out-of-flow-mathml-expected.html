@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.c { position: relative; display: inline-block; vertical-align: top; width: 180px; height: 90px; margin: 0 4px 4px 0; border: 1px solid; }
+math { background-color: rgba(0, 128, 0, 0.3); }
+</style>
+<div class=c><math style="position: absolute; top: 5px; left: 5px"><mi>x</mi><mo>+</mo><mn>1</mn></math></div>
+<div class=c><math display="block" style="position: absolute; top: 5px; left: 5px"><mfrac><mi>a</mi><mi>b</mi></mfrac></math></div>
+<div class=c><math display="block" style="position: absolute; left: 0; right: 0; bottom: 5px"><mi>centered</mi></math></div>
+<div class=c><math style="position: absolute; right: 5px; bottom: 5px; padding: 4px; border: 2px solid"><msqrt><mi>y</mi></msqrt></math></div>
+<div class=c>text <math style="position: absolute"><mi>s</mi></math> after</div>
+<div class=c><math style="position: absolute; width: 100px; height: 40px; top: 10px"><mi>sized</mi></math></div>
+<div class=c><math><mrow style="position: absolute; top: 0"><mi>inner</mi></mrow></math></div>
+<div class=c><math style="position: absolute; top: 5px; left: 5px; writing-mode: vertical-lr"><mi>v</mi></math></div>
+<div class=c style="direction: rtl"><math style="position: absolute; top: 5px"><mi>rtl</mi><mo>=</mo><mn>2</mn></math></div>
+<div class=c><math style="position: absolute; top: 5px; left: 5px"><mtable><mtr><mtd><mi>a</mi></mtd><mtd><mi>b</mi></mtd></mtr></mtable></math></div>

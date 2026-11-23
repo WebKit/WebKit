@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.cb { position: relative; width: 180px; height: 100px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; }
+.a { position: absolute; background-color: rgba(0, 128, 0, 0.4); }
+.c { width: 150px; height: 10px; background-color: rgba(0, 0, 255, 0.4); }
+</style>
+<div class=cb><div class=a style="width: min-content; height: 50px; aspect-ratio: 2"></div></div>
+<div class=cb><div class=a style="width: max-content; height: 20px; aspect-ratio: 2"><div class=c></div></div></div>
+<div class=cb><div class=a style="width: fit-content; height: 40%; aspect-ratio: 1"></div></div>
+<div class=cb><div class=a style="width: 10px; min-width: max-content; height: 50px; aspect-ratio: 2"></div></div>
+<div class=cb><div class=a style="width: 150px; max-width: min-content; height: 50px; aspect-ratio: 1"></div></div>
+<div class=cb><div class=a style="width: min-content; height: stretch; aspect-ratio: 0.5"></div></div>
+<div class=cb><div class=a style="width: min-content; min-width: 0; height: 20px; aspect-ratio: 2"><div class=c></div></div></div>
+<div class=cb><div class=a style="writing-mode: vertical-rl; height: min-content; width: 30px; aspect-ratio: 0.5"></div></div>
+<div class=cb><div class=a style="box-sizing: border-box; padding: 5px; width: min-content; height: 50px; aspect-ratio: 2"></div></div>
+<div class=cb><div class=a style="width: calc-size(min-content, size + 10px); height: 30px; aspect-ratio: 2"></div></div>
+<div class=cb><div class=a style="width: max-content; height: 30px; min-height: 60px; aspect-ratio: 2"></div></div>
+<div class=cb><div class=a style="width: max-content; height: 50px; aspect-ratio: 1; overflow: hidden"><div class=c></div></div></div>
+<div class=cb><div class=a style="width: max-content; aspect-ratio: 2"><div class=c></div></div></div>
+<div class=cb><div class=a style="width: fit-content; top: 0; bottom: 0; height: auto; aspect-ratio: 1; max-height: 40px"></div></div>

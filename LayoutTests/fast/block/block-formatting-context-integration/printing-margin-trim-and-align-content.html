@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.c { border: 2px solid blue; line-height: 30px; }
+.b { border-left: 4px solid; height: 60px; margin: 20px 0; }
+.r { display: flow-root; border: 2px solid green; line-height: 30px; }
+</style>
+<div style="height: 650px"></div><div class=c style="margin-trim: block"><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div></div><div class=b></div>
+<div style="height: 650px; break-before: page"></div><div class=c><div class=c style="margin-trim: block"><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div></div></div>
+<div style="height: 700px; break-before: page"></div><div class=c style="margin-trim: block-end"><div class=b></div><div class=b style="height: 120px"></div></div><div class=b></div>
+<div style="height: 650px; break-before: page"></div><div class=r style="align-content: center; height: 400px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div><div class=b></div>
+<div style="height: 650px; break-before: page"></div><div class=r style="align-content: end; height: 300px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div><div class=b></div>
+<div style="height: 100px; break-before: page"></div><div class=r style="align-content: end; height: 1200px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div><div class=b></div>
+<div style="height: 650px; break-before: page"></div><div class=r style="align-content: end; height: 200px">a<br>b</div><div class=b></div>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

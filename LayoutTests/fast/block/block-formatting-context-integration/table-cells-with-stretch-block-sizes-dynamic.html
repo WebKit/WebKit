@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>body { font-family: monospace; font-size: 10px; } table { border: 1px solid; margin: 2px; } td { border: 1px solid; padding: 2px; } .p { background: lightblue; } .tall { height: 100px; width: 5px; }</style>
+<table><tr><td id="cell" style="height: 60px"><div class="p" style="height: stretch">cell</div></td><td style="height: 60px"><div class="p" id="child" style="height: 30px">child</div></td><td id="container" style="height: 60px">a</td><td id="auto"><div class="p" style="height: stretch">auto</div></td><td><div class="tall"></div></td></tr></table>
+<script>
+document.body.offsetHeight;
+document.getElementById("cell").style.height = "80px";
+document.getElementById("child").style.height = "stretch";
+const child = document.createElement("div");
+child.className = "p";
+child.style.height = "calc-size(stretch, size - 20px)";
+child.textContent = "added";
+document.getElementById("container").appendChild(child);
+document.getElementById("auto").style.height = "50px";
+</script>

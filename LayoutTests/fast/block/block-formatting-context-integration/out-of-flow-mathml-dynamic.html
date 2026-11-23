@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.c { position: relative; display: inline-block; vertical-align: top; width: 180px; height: 90px; margin: 0 4px 4px 0; border: 1px solid; }
+math { background-color: rgba(0, 128, 0, 0.3); }
+.initial .c { width: 120px; }
+.initial .m { top: 30px; left: 20px; }
+.initial .p { padding: 10px; }
+</style>
+<div class=initial id=cases>
+<div class=c><math class=m style="position: absolute; top: 5px; left: 5px"><mi id=t>x</mi><mo>+</mo><mn>1</mn></math></div>
+<div class=c><math display="block" style="position: absolute; left: 0; right: 0; bottom: 5px"><mi>centered</mi></math></div>
+<div class=c><math class=p style="position: absolute; right: 5px; bottom: 5px"><msqrt><mi>y</mi></msqrt></math></div>
+<div class=c>text <math style="position: absolute"><mi>s</mi></math> after</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.getElementById("t").firstChild.data = "longer";
+document.body.offsetHeight;
+</script>

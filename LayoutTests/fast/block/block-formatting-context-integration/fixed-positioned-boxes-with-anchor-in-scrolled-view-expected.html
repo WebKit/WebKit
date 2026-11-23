@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; height: 2000px; font: 10px/12px monospace; }
+.anchor { width: 50px; height: 20px; background: lightgray; }
+.anchored { position: fixed; width: 50px; background: lightgreen; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.addEventListener("load", () => {
+    window.scrollTo(0, 300);
+    requestAnimationFrame(() => {
+        document.body.offsetHeight;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+</script>
+<body>
+<div style="height: 400px"></div>
+<div class=anchor style="anchor-name: --b; margin-left: 120px">b</div>
+<div style="height: 380px"></div>
+<div class=anchor style="anchor-name: --a; margin-left: 20px">a</div>
+<div style="height: 30px"></div>
+<div class=anchor style="anchor-name: --c; margin-left: 220px">c</div>
+<div class=anchored style="position-anchor: --a; position-area: bottom; height: 200px">below</div>
+<div class=anchored style="position-anchor: --b; position-area: top; height: 300px">above</div>
+<div class=anchored style="position-anchor: --c; top: 0; bottom: 0; align-self: anchor-center; left: 220px; height: 300px">center</div>
+<div class=anchored style="position-anchor: --a; position-area: bottom right; height: 200px; align-self: unsafe start">unsafe</div>
+</body>

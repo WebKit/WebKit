@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 150px; margin: 0 4px 4px 0; outline: 1px solid black; }
+.v { writing-mode: vertical-lr; width: auto; height: 150px; }
+.fl { float: left; width: 50px; height: 30px; background-color: gray; }
+.fr { float: right; width: 40px; height: 25px; background-color: silver; }
+canvas, svg { display: block; background-color: green; border: 0; }
+.s { width: stretch; height: 20px; }
+</style>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s></canvas></div>
+<div class=c><div class=fl></div><canvas width=2 height=1 style="width: stretch"></canvas></div>
+<div class=c><div class=fl></div><div class=fr style="clear: left; width: 50px; height: 30px"></div><canvas width=1 height=1 style="width: stretch"></canvas></div>
+<div class=c><div class=fl></div><div class=fr style="clear: left"></div><canvas width=2 height=1 style="width: stretch; height: 40px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 style="width: 0; min-width: stretch; height: 15px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 style="width: 1000px; max-width: stretch; height: 15px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 style="width: stretch; height: 15px; padding: 0 5px; border: solid blue; border-width: 0 5px; margin-left: 10px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s style="margin-left: 20px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s style="margin-left: 80px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s style="margin-left: -10px; margin-right: 10px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s style="margin: 0 auto"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s style="margin-left: auto; margin-right: 10px"></canvas></div>
+<div class=c><div class=fr></div><canvas width=1 height=1 class=s style="margin-right: 10px"></canvas></div>
+<div class=c><div class=fl></div><div class=fr></div><svg class=s></svg></div>
+<div class=c><div class=fl></div><svg viewBox="0 0 20 10" style="width: stretch"></svg></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 style="width: -webkit-fill-available; height: 20px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 style="width: 10px; min-width: -webkit-fill-available; height: 20px"></canvas></div>
+<div class=c><canvas width=1 height=1 class=s style="margin: 0 10px"></canvas></div>
+<div class=c style="height: 60px"><div class=fl></div><canvas width=1 height=1 style="width: stretch; height: 50%"></canvas></div>
+<div class=c><div class=fl></div><div><canvas width=1 height=1 class=s></canvas></div></div>
+<div class=c style="text-align: -webkit-center"><div class=fl></div><canvas width=1 height=1 style="width: stretch; max-width: 60px; height: 20px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s style="box-sizing: border-box; padding: 5px 10px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=300 height=30 style="max-width: stretch"></canvas></div>
+<div class=c><div class=fl></div><canvas width=2 height=1 style="min-width: stretch"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 style="width: stretch; aspect-ratio: 4"></canvas></div>
+<div class=c style="direction: rtl"><div class=fl></div><canvas width=1 height=1 class=s style="margin-left: 10px; margin-right: 20px"></canvas></div>
+<div class=c style="direction: rtl"><div class=fr></div><canvas width=1 height=1 class=s style="margin-right: 10px"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s style="clear: left"></canvas></div>
+<div class=c><div class=fl style="width: 160px"></div><canvas width=1 height=1 class=s></canvas></div>
+<div class=c><div class=fl style="width: 145px"></div><canvas width=1 height=1 class=s style="padding: 0 5px"></canvas></div>
+<div class=c><div class=fl style="height: 1px"></div><div class=fl style="clear: left; width: 80px; height: 1px"></div><canvas width=1 height=1 style="width: stretch; height: 15px"></canvas></div>
+<div class="c v"><div class=fl style="width: 30px; height: 50px"></div><canvas width=1 height=1 style="height: stretch; width: 20px"></canvas></div>
+<div class="c v" style="writing-mode: vertical-rl"><div class=fr style="width: 25px; height: 40px"></div><canvas width=1 height=1 style="height: stretch; width: 20px; margin-bottom: 10px"></canvas></div>

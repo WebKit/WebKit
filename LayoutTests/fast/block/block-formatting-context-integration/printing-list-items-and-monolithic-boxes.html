@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+ul { margin: 0; padding-left: 20px; list-style: none; line-height: 30px; }
+li { border-left: 2px solid; }
+.b { border-left: 4px solid; height: 60px; }
+.v { writing-mode: vertical-rl; border: 2px solid; }
+</style>
+<div style="height: 700px"></div><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </li></ul><div class=b></div>
+<div style="height: 700px; break-before: page"></div><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </li></ul></li></ul><div class=b></div>
+<div style="height: 760px; break-before: page"></div><button style="display: block; height: 80px">button</button><div class=b></div>
+<div style="height: 780px; break-before: page"></div><input style="display: block; height: 40px" value=input><div class=b></div>
+<div style="height: 760px; break-before: page"></div><textarea style="display: block; height: 80px">textarea</textarea><div class=b></div>
+<div style="height: 750px; break-before: page"></div><div class=v style="height: 100px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div><div class=b></div>
+<div style="height: 0px; break-before: page"></div><div class=v style="height: 1000px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div><div class=b></div>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

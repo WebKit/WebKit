@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.lc { line-clamp: 8; border: 1px solid green; }
+.r { overflow: hidden; border: 1px solid blue; }
+</style>
+<div class=mc><div style="height: 84px"></div><div class=lc>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>
+<div class=mc><div style="height: 60px"></div><div class=r><ul style="margin: 0; padding-left: 14px"><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li></ul></div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>
+<div class=mc><div style="height: 60px"></div><fieldset style="margin: 0; padding: 2px"><legend>legend</legend>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</fieldset><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>
+<div class=mc><div style="height: 84px"></div><div class=lc style="line-clamp: 3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 110px"></div><div class=lc>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>
+<div class=mc><div style="height: 110px"></div><div class=r><ul style="margin: 0; padding-left: 14px"><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li></ul></div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>
+<div class=mc><div style="height: 110px"></div><fieldset style="margin: 0; padding: 0 2px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</fieldset><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>

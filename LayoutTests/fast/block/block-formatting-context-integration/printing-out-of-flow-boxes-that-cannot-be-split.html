@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true dumpCSSPageBoxes=true ] -->
+<style>
+@page { size: 500px 250px; margin: 0; }
+body { margin: 0; }
+canvas { display: block; border: 2px solid green; }
+</style>
+<!-- The content of an out-of-flow box that cannot be split does not break across the pages, like that of one in the normal flow. -->
+<div style="position: absolute; top: 0; left: 0; contain: size; width: 100px; height: 500px"><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas></div>
+<div style="position: absolute; top: 50px; left: 150px; overflow: hidden; width: 100px; height: 500px"><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas></div>
+<div style="position: relative; margin-left: 300px; height: 600px">
+    <div style="position: absolute; top: 100px; left: 0; contain: size; width: 100px; height: 400px"><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas><canvas width="80" height="100"></canvas></div>
+</div>

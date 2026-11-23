@@ -103,6 +103,33 @@ struct PaintInfo {
         return !subtreePaintRoot || subtreePaintRoot == &renderer;
     }
 
+    // The column of a multi-column flow being painted when it paints the fragments in it of the boxes that clone their decorations across
+    // columns, and the monolithic boxes past its end whole (LocalFrameViewLayoutContext::paintsColumnsFromFragments), with no clip: its part
+    // of the flow in the flow's block axis, which tells the fragments in it, and its clip, which the rest of the content paints with
+    // (RenderBox::paintInfoForFragmentainer).
+    struct Fragmentainer {
+        std::pair<LayoutUnit, LayoutUnit> logicalRange;
+        LayoutRect clipRect;
+        bool isHorizontal { true };
+
+        bool contains(LayoutUnit fragmentainerPosition) const { return fragmentainerPosition >= logicalRange.first && fragmentainerPosition < logicalRange.second; }
+        // Its clip at its inline-axis edges only, for content in it that crosses none of its block-axis edges.
+        LayoutRect inlineAxisClipRect() const
+        {
+            auto farAway = LayoutUnit::max() / 4;
+            auto rect = clipRect;
+            if (isHorizontal) {
+                rect.setY(-farAway);
+                rect.setHeight(2 * farAway);
+            } else {
+                rect.setX(-farAway);
+                rect.setWidth(2 * farAway);
+            }
+            return rect;
+        }
+    };
+    std::optional<Fragmentainer> fragmentainer;
+
     bool forceTextColor() const { return forceBlackText() || forceWhiteText(); }
     bool forceBlackText() const { return paintBehavior.contains(PaintBehavior::ForceBlackText); }
     bool forceWhiteText() const { return paintBehavior.contains(PaintBehavior::ForceWhiteText); }

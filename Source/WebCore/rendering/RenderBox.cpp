@@ -155,8 +155,8 @@ public:
     std::optional<Style::PreferredSize> logicalWidthForFlexBasisComputation;
     std::optional<Style::PreferredSize> logicalHeightForFlexBasisComputation;
     // FIXME: We should store these based on physical direction.
-    std::optional<RenderBox::GridAreaSize> gridAreaContentLogicalWidth;
-    std::optional<RenderBox::GridAreaSize> gridAreaContentLogicalHeight;
+    std::optional<RenderBox::ContainingBlockContentSize> overridingContainingBlockContentLogicalWidth;
+    std::optional<RenderBox::ContainingBlockContentSize> overridingContainingBlockContentLogicalHeight;
 };
 
 // Size of border belt for autoscroll. When mouse pointer in border belt,
@@ -553,7 +553,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
         clearOverridingSize();
 
     if (oldStyle && oldStyle->hasOutOfFlowPosition() != style().hasOutOfFlowPosition()) {
-        clearGridAreaContentSize();
+        clearOverridingContainingBlockContentSize();
         if (auto* containingBlock = this->containingBlock(); containingBlock && oldStyle->hasOutOfFlowPosition()) {
             // When going from out-of-flow to inflow, the containing block gains new descendant content and its preferred width becomes invalid.
             containingBlock->setNeedsLayoutAndInvalidateContentLogicalWidths();
@@ -1634,52 +1634,58 @@ std::optional<LayoutUnit> RenderBox::overridingBorderBoxLogicalHeight() const
     return m_overridingSizes ? m_overridingSizes->borderBoxLogicalHeight : std::nullopt;
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentWidth(WritingMode writingMode) const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentWidth(WritingMode writingMode) const
 {
     if (writingMode.isHorizontal())
-        return gridAreaContentLogicalWidth();
-    return gridAreaContentLogicalHeight();
+        return overridingContainingBlockContentLogicalWidth();
+    return overridingContainingBlockContentLogicalHeight();
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentHeight(WritingMode writingMode) const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentHeight(WritingMode writingMode) const
 {
     if (writingMode.isHorizontal())
-        return gridAreaContentLogicalHeight();
-    return gridAreaContentLogicalWidth();
+        return overridingContainingBlockContentLogicalHeight();
+    return overridingContainingBlockContentLogicalWidth();
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentLogicalWidth() const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentLogicalWidth() const
 {
-    return m_overridingSizes ? m_overridingSizes->gridAreaContentLogicalWidth : std::nullopt;
+    return m_overridingSizes ? m_overridingSizes->overridingContainingBlockContentLogicalWidth : std::nullopt;
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentLogicalHeight() const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentLogicalHeight() const
 {
-    return m_overridingSizes ? m_overridingSizes->gridAreaContentLogicalHeight : std::nullopt;
+    return m_overridingSizes ? m_overridingSizes->overridingContainingBlockContentLogicalHeight : std::nullopt;
 }
 
-void RenderBox::setGridAreaContentLogicalWidth(GridAreaSize logicalWidth)
+void RenderBox::setOverridingContainingBlockContentLogicalWidth(ContainingBlockContentSize logicalWidth)
 {
-    ensureOverridingSizes().gridAreaContentLogicalWidth = logicalWidth;
+    ensureOverridingSizes().overridingContainingBlockContentLogicalWidth = logicalWidth;
 }
 
-void RenderBox::setGridAreaContentLogicalHeight(GridAreaSize logicalHeight)
+void RenderBox::setOverridingContainingBlockContentLogicalHeight(ContainingBlockContentSize logicalHeight)
 {
-    ensureOverridingSizes().gridAreaContentLogicalHeight = logicalHeight;
+    ensureOverridingSizes().overridingContainingBlockContentLogicalHeight = logicalHeight;
 }
 
-void RenderBox::clearGridAreaContentSize()
+void RenderBox::clearOverridingContainingBlockContentSize()
 {
     if (!m_overridingSizes)
         return;
-    m_overridingSizes->gridAreaContentLogicalWidth = std::nullopt;
-    m_overridingSizes->gridAreaContentLogicalHeight = std::nullopt;
+    m_overridingSizes->overridingContainingBlockContentLogicalWidth = std::nullopt;
+    m_overridingSizes->overridingContainingBlockContentLogicalHeight = std::nullopt;
 }
 
-void RenderBox::clearGridAreaContentLogicalHeight()
+void RenderBox::clearOverridingContainingBlockContentLogicalWidth()
 {
     if (m_overridingSizes)
-        m_overridingSizes->gridAreaContentLogicalHeight = std::nullopt;
+        m_overridingSizes->overridingContainingBlockContentLogicalWidth = std::nullopt;
+}
+
+void RenderBox::clearOverridingContainingBlockContentLogicalHeight()
+{
+    if (m_overridingSizes)
+        m_overridingSizes->overridingContainingBlockContentLogicalHeight = std::nullopt;
 }
 
 std::optional<Style::PreferredSize> RenderBox::overridingLogicalHeightForFlexBasisComputation() const
@@ -1946,6 +1952,104 @@ ControlPart* RenderBox::ensureControlPartForBorderOnly()
 ControlPart* RenderBox::ensureControlPartForDecorations()
 {
     return theme().canCreateControlPartForDecorations(*this) ? ensureControlPart() : nullptr;
+}
+
+void RenderBox::paintDecorationsPerFragment(PaintInfo& paintInfo, const LayoutPoint& paintOffset, NOESCAPE const Function<void(const LayoutRect&)>& paint)
+{
+    auto* boxFragments = layoutContext().boxFragments(*this);
+    // A column that paints the fragments in it of the boxes that clone their decorations across columns (PaintInfo::fragmentainer) paints those
+    // of this box in it, and the decorations of the others like the strip of columns paints them, clipped at its edges.
+    auto& fragmentainer = paintInfo.fragmentainer;
+    GraphicsContextStateSaver fragmentainerStateSaver(paintInfo.context(), false);
+    if (fragmentainer && !(boxFragments && boxFragments->clonesDecorations)) {
+        fragmentainerStateSaver.save();
+        paintInfo.context().clip(fragmentainer->clipRect);
+    }
+    if (!boxFragments || boxFragments->fragments.isEmpty()) {
+        paint(LayoutRect { paintOffset, borderBoxSize() });
+        return;
+    }
+    // A range of the block axis from the block-start edge of the border box, across the border box in the inline axis.
+    auto blockRange = [&](LayoutRect rect, LayoutUnit offset, LayoutUnit size) {
+        if (isHorizontalWritingMode()) {
+            rect.setY(offset);
+            rect.setHeight(size);
+        } else {
+            rect.setX(offset);
+            rect.setWidth(size);
+        }
+        blockStartRelativeToPhysical(rect);
+        rect.moveBy(paintOffset);
+        return rect;
+    };
+    auto& fragments = boxFragments->fragments;
+    // Each fragment of one that clones them has the box's decorations (css-break-3 §5.4), which a page paints for the fragments in it only,
+    // whose ink overflow past its edges is not in the pages next to it.
+    if (boxFragments->clonesDecorations) {
+        for (auto& fragment : fragments) {
+            auto fragmentRect = blockRange(borderBoxRect(), fragment.blockOffset, fragment.blockSize);
+            if (fragmentainer ? !fragmentainer->contains(fragment.fragmentainerPosition) : document().printing() && !fragmentRect.intersects(paintInfo.rect))
+                continue;
+            paint(fragmentRect);
+        }
+        return;
+    }
+    // The others have the slices of the decorations of the unbroken box, as tall as its fragments, cut at the gaps between them, which are not at
+    // the ends of fragmentainers, which already cut them.
+    auto unbrokenBlockSize = 0_lu;
+    for (auto& fragment : fragments)
+        unbrokenBlockSize += fragment.blockSize;
+    auto farAway = LayoutUnit::max() / 4;
+    auto clipArea = borderBoxRect();
+    clipArea.inflate(farAway);
+    auto consumedBlockSize = 0_lu;
+    for (size_t index = 0; index < fragments.size(); ++index) {
+        auto& fragment = fragments[index];
+        auto clipStart = index ? fragment.blockOffset : -farAway;
+        auto clipEnd = index + 1 < fragments.size() ? fragment.blockOffset + fragment.blockSize : farAway;
+        GraphicsContextStateSaver stateSaver(paintInfo.context());
+        paintInfo.context().clip(snapRectToDevicePixels(blockRange(clipArea, clipStart, clipEnd - clipStart), document().deviceScaleFactor()));
+        paint(blockRange(borderBoxRect(), fragment.blockOffset - consumedBlockSize, unbrokenBlockSize));
+        consumedBlockSize += fragment.blockSize;
+    }
+}
+
+std::optional<PaintInfo> RenderBox::paintInfoForFragmentainer(const PaintInfo& paintInfo, const LayoutPoint& paintOffset, GraphicsContextStateSaver& stateSaver) const
+{
+    ASSERT(paintInfo.fragmentainer);
+    auto& fragmentainer = *paintInfo.fragmentainer;
+    auto* boxFragments = layoutContext().boxFragments(*this);
+    // A monolithic box past the end of its column paints whole there, with no clip, and not in the columns after it: "content that extends
+    // outside column boxes visibly overflows and is not clipped to the column box" (css-multicol-1 §8.1).
+    if (boxFragments && boxFragments->monolithicBoxFragmentainerPosition) {
+        if (!fragmentainer.contains(*boxFragments->monolithicBoxFragmentainerPosition))
+            return { };
+        auto paintInfoForBox = PaintInfo { paintInfo };
+        paintInfoForBox.fragmentainer = std::nullopt;
+        return paintInfoForBox;
+    }
+    auto overflowRect = visualOverflowRect();
+    overflowRect.moveBy(paintOffset + location());
+    auto& clipRect = fragmentainer.clipRect;
+    auto [start, end] = fragmentainer.isHorizontal ? std::pair { overflowRect.y(), overflowRect.maxY() } : std::pair { overflowRect.x(), overflowRect.maxX() };
+    auto [clipStart, clipEnd] = fragmentainer.isHorizontal ? std::pair { clipRect.y(), clipRect.maxY() } : std::pair { clipRect.x(), clipRect.maxX() };
+    if (end <= clipStart || start >= clipEnd)
+        return { };
+    auto paintInfoForBox = PaintInfo { paintInfo };
+    if (start >= clipStart && end <= clipEnd && !(boxFragments && boxFragments->hasDescendantsPaintedByColumn)) {
+        stateSaver.save();
+        paintInfo.context().clip(fragmentainer.inlineAxisClipRect());
+        paintInfoForBox.fragmentainer = std::nullopt;
+        return paintInfoForBox;
+    }
+    // One broken across columns that clones its decorations, and one that has such a box or a monolithic box past the end of its column in
+    // it, paint what of them is in the column.
+    if (boxFragments && (boxFragments->clonesDecorations || boxFragments->hasDescendantsPaintedByColumn))
+        return paintInfoForBox;
+    stateSaver.save();
+    paintInfo.context().clip(clipRect);
+    paintInfoForBox.fragmentainer = std::nullopt;
+    return paintInfoForBox;
 }
 
 bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect& paintedExtent) const
@@ -2424,23 +2528,18 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
         return constraints.containingInlineSize();
     }
 
-    if (isGridItem()) {
-        ASSERT(is<RenderGrid>(containingBlock));
-        if (auto gridAreaContentLogicalWidth = this->gridAreaContentLogicalWidth())
-            return gridAreaContentLogicalWidth->value_or(0_lu);
-    }
+    if (auto overridingContainingBlockContentLogicalWidth = this->overridingContainingBlockContentLogicalWidth())
+        return overridingContainingBlockContentLogicalWidth->value_or(0_lu);
 
     return containingBlock->contentBoxLogicalWidth();
 }
 
 LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHeightType heightType) const
 {
-    if (isGridItem()) {
-        if (auto gridAreaContentLogicalHeight = this->gridAreaContentLogicalHeight(); gridAreaContentLogicalHeight && *gridAreaContentLogicalHeight) {
-            // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
-            // height value we get from gridAreaContentLogicalHeight() here, including std::nullopt.
-            return gridAreaContentLogicalHeight->value();
-        }
+    if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight(); overridingContainingBlockContentLogicalHeight && *overridingContainingBlockContentLogicalHeight) {
+        // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
+        // height value we get from overridingContainingBlockContentLogicalHeight() here, including std::nullopt.
+        return overridingContainingBlockContentLogicalHeight->value();
     }
 
     if (auto* containingBlock = this->containingBlock())
@@ -2452,10 +2551,8 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHei
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 {
-    if (isGridItem()) {
-        if (auto gridAreaContentLogicalHeight = this->gridAreaContentLogicalHeight(); gridAreaContentLogicalHeight && *gridAreaContentLogicalHeight)
-            return gridAreaContentLogicalHeight->value();
-    }
+    if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight(); overridingContainingBlockContentLogicalHeight && *overridingContainingBlockContentLogicalHeight)
+        return overridingContainingBlockContentLogicalHeight->value();
 
     auto* containingBlock = this->containingBlock();
     if (auto overridingLogicalHeight = containingBlock->overridingBorderBoxLogicalHeight())
@@ -2619,8 +2716,12 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
     computedValues.margins.end = marginEnd(writingMode());
 
     if (isOutOfFlowPositioned()) {
-        ASSERT(!overridingBorderBoxLogicalWidth());
         ASSERT(!overridingLogicalWidthForFlexBasisComputation());
+        // The new block formatting context sizes the out-of-flow flex containers it lays out through the render tree (css-position-3 §4.3).
+        if (auto logicalWidth = overridingBorderBoxLogicalWidth()) {
+            computedValues.extent = *logicalWidth;
+            return;
+        }
         // FIXME: This calculation is not patched for block-flow yet.
         // https://bugs.webkit.org/show_bug.cgi?id=46500
         computeOutOfFlowPositionedLogicalWidth(computedValues);
@@ -2816,6 +2917,10 @@ static LayoutUnit marginForStretchInParentBlockAxis(const RenderBox& box, const 
 
 LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretch, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
 {
+    // The block formatting context gives a replaced element the stretch-fit inline size beside the floats it places (LocalFrameViewLayoutContext::stretchFitInlineSize).
+    if (auto stretchFitInlineSize = layoutContext().stretchFitInlineSize(*this))
+        return std::max(borderAndPadding, *stretchFitInlineSize);
+
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
     auto logicalWidthResult = fillAvailableMeasure(availableLogicalWidth, marginStart, marginEnd);
@@ -3290,6 +3395,11 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     }
 
     if (isOutOfFlowPositioned()) {
+        // The new block formatting context also gives them their block size when it does not depend on their content.
+        if (auto logicalHeight = overridingBorderBoxLogicalHeight()) {
+            computedValues.extent = *logicalHeight;
+            return computedValues;
+        }
         computeOutOfFlowPositionedLogicalHeight(computedValues);
         return computedValues;
     }
@@ -3657,12 +3767,12 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
                 if (isGridItem()) {
                     if (isOrthogonal(*this, containingBlock))
                         return containingBlockLogicalWidthForContent();
-                    // gridAreaContentLogicalHeight() is optional<optional<LayoutUnit>>:
+                    // overridingContainingBlockContentLogicalHeight() is optional<optional<LayoutUnit>>:
                     // - empty outer: not set at all (shouldn't happen for grid items)
                     // - outer set, inner nullopt: grid area height not yet resolved (auto tracks during intrinsic sizing)
                     // - outer set, inner has value: grid area height is definite
                     // When the grid area is not yet resolved, stretch doesn't resolve.
-                    auto gridAreaSize = gridAreaContentLogicalHeight();
+                    auto gridAreaSize = overridingContainingBlockContentLogicalHeight();
                     if (!gridAreaSize || !*gridAreaSize)
                         return { };
                     return gridAreaSize->value();
@@ -3674,7 +3784,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
                     return { };
                 if (isOrthogonal(*this, containingBlock))
                     return containingBlockLogicalWidthForContent();
-                return containingBlock->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
+                return containingBlockLogicalHeightForContent(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
             }();
             if (!availableSpace)
                 return { };
@@ -3684,6 +3794,10 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
             // Legacy -webkit-fill-available preserves pre-stretch-keyword behavior:
             // resolve through the containing block chain unconditionally, without the
             // stretch keyword's "indefinite containing block falls back to initial value" rule.
+            // The block formatting context gives a box it lays out through the render tree the available block size of its containing block
+            // (LocalFrameViewLayoutContext::ContainingBlockBlockSizes).
+            if (auto containingBlockBlockSizes = layoutContext().containingBlockBlockSizes(*this))
+                return containingBlockBlockSizes->availableBlockSize - borderAndPadding;
             return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) - borderAndPadding;
         },
         [&](const CSS::Keyword::Auto&) -> std::optional<LayoutUnit> {
@@ -3878,18 +3992,28 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
     const RenderBox* containingBlockChild = this;
     LayoutUnit rootMarginBorderPaddingHeight;
     bool isHorizontal = isHorizontalWritingMode();
+    // A formatting context that gives the box the content block size of its containing block has taken the margins, borders and padding
+    // of the body and the root element off already (BlockFormattingUtils::definiteContentBoxBlockSize).
+    auto hasContainingBlockContentBlockSize = overridingContainingBlockContentLogicalHeight().has_value();
+    // The block formatting context gives the content of a box it lays out through the render tree what the percentages that look past the box
+    // resolve against, which takes the margins, borders and padding of the body and the root element off too (LocalFrameViewLayoutContext::ContainingBlockBlockSizes).
+    auto percentageBasisPastBox = std::optional<std::optional<LayoutUnit>> { };
     while (containingBlock && !is<RenderView>(*containingBlock) && skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode())) {
-        if (containingBlock->isBody() || containingBlock->isDocumentElementRenderer())
+        if (!hasContainingBlockContentBlockSize && !percentageBasisPastBox && (containingBlock->isBody() || containingBlock->isDocumentElementRenderer()))
             rootMarginBorderPaddingHeight += containingBlock->marginBefore(containingBlock->writingMode()) + containingBlock->marginAfter(containingBlock->writingMode()) + containingBlock->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
         containingBlockChild = containingBlock;
+        if (!hasContainingBlockContentBlockSize && !percentageBasisPastBox) {
+            if (auto containingBlockBlockSizes = layoutContext().containingBlockBlockSizes(*containingBlockChild))
+                percentageBasisPastBox = containingBlockBlockSizes->percentageBasis;
+        }
         containingBlock = containingBlock->containingBlock();
     }
     if (updateDescendants == UpdatePercentageHeightDescendants::Yes) {
         containingBlock->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
     }
 
-    if (is<RenderView>(containingBlock) && view().frameView().isAutoSizeEnabled()) {
+    if (is<RenderView>(containingBlock) && view().frameView().isAutoSizeEnabled() && !percentageBasisPastBox) {
         // Dynamic height units like percentage don't play well with autosizing when we don't have a definite viewport size. Let's treat percentage as auto instead.
         return { };
     }
@@ -3899,14 +4023,19 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
 
     auto isOrthogonal = isHorizontal != containingBlock->isHorizontalWritingMode();
     auto overridingAvailableSize = std::optional<LayoutUnit> { };
-    if (isGridItem()) {
-        if (auto gridAreaSize = isOrthogonal ? gridAreaContentLogicalWidth() : gridAreaContentLogicalHeight()) {
-            if (!*gridAreaSize)
-                return { };
-            overridingAvailableSize = *gridAreaSize;
-        }
+    if (percentageBasisPastBox) {
+        if (!*percentageBasisPastBox)
+            return { };
+        overridingAvailableSize = *percentageBasisPastBox;
     }
-    if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(*containingBlock); tableCell && !isOrthogonal) {
+    // The overriding sizes are those of the box's own containing block, past which the walk may have gone.
+    auto isOrthogonalToContainingBlock = isHorizontal != this->containingBlock()->isHorizontalWritingMode();
+    if (auto containingBlockContentSize = isOrthogonalToContainingBlock ? overridingContainingBlockContentLogicalWidth() : overridingContainingBlockContentLogicalHeight()) {
+        if (!*containingBlockContentSize)
+            return { };
+        overridingAvailableSize = *containingBlockContentSize;
+    }
+    if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(*containingBlock); tableCell && !isOrthogonal && !percentageBasisPastBox) {
         if (skippedAutoHeightContainingBlock)
             return { };
         // Table cells violate what the CSS spec says to do with heights. Basically we
@@ -4166,7 +4295,15 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Style::PreferredSize& lo
         return computedValues.extent - block->borderAndPaddingLogicalHeight() - block->scrollbarLogicalHeight();
     }
 
-    LayoutUnit availableHeight = isOrthogonal(*this, *containingBlock()) ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(heightType);
+    auto availableHeight = [&] {
+        if (isOrthogonal(*this, *containingBlock()))
+            return containingBlockLogicalWidthForContent();
+        // The block formatting context gives the content of a box it lays out through the render tree the available block size of its containing
+        // block (LocalFrameViewLayoutContext::ContainingBlockBlockSizes).
+        if (auto containingBlockBlockSizes = layoutContext().containingBlockBlockSizes(*this))
+            return heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding ? containingBlockBlockSizes->availableBlockSize : containingBlockBlockSizes->availableBlockSizeIncludingMarginBorderPadding;
+        return containingBlockLogicalHeightForContent(heightType);
+    }();
     if (heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding) {
         // FIXME: Margin collapsing hasn't happened yet, so this incorrectly removes collapsed margins.
         availableHeight -= marginBefore(writingMode()) + marginAfter(writingMode()) + borderAndPaddingLogicalHeight();
@@ -4801,9 +4938,14 @@ void RenderBox::addOverflowFromFloatBox(const FloatingObject& floatBox)
 {
     if (!floatBox.renderer())
         return;
+    addOverflowFromFloatBox(*floatBox.renderer(), floatBox.locationOffsetOfBorderBox());
+}
+
+void RenderBox::addOverflowFromFloatBox(const RenderBox& floatBox, LayoutSize offsetFromThis)
+{
     CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this);
     auto options = blockFlow && blockFlow->establishesLineClampContainer() ? OptionSet { ComputeOverflowOptions::DoesNotContributeToScrollableOverflow } : OptionSet<ComputeOverflowOptions> { };
-    addOverflowWithRendererOffset(*floatBox.renderer(), floatBox.locationOffsetOfBorderBox(), options);
+    addOverflowWithRendererOffset(floatBox, offsetFromThis, options);
 }
 
 // 'offsetFromThis' is normally the renderer's position (RenderBox::location()).
@@ -5316,6 +5458,13 @@ bool RenderBox::isBlockSizeResolvableForStretch() const
     if (isOrthogonal(*this, *containingBlock))
         return true;
 
+    // The block formatting context gives a box it lays out through the render tree the block size of its containing block, when that is
+    // definite (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext).
+    if (!isGridItem()) {
+        if (auto containingBlockContentLogicalHeight = overridingContainingBlockContentLogicalHeight())
+            return !!*containingBlockContentLogicalHeight;
+    }
+
     // The containing block has a directly resolvable height (fixed, percentage, etc.)
     if (containingBlock->hasDefiniteLogicalHeight() || containingBlock->stretchesToViewport())
         return true;
@@ -5666,10 +5815,8 @@ bool RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHei
     if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).canUseFlexItemForPercentageResolution(*this))
         return false;
 
-    if (isGridItem()) {
-        if (auto containingBlockContentLogicalHeight = gridAreaContentLogicalHeight())
-            return !*containingBlockContentLogicalHeight;
-    }
+    if (auto containingBlockContentLogicalHeight = overridingContainingBlockContentLogicalHeight())
+        return !*containingBlockContentLogicalHeight;
 
     auto isOutOfFlowPositionedWithImplicitHeight = isOutOfFlowPositioned() && !style().logicalTop().isAuto() && !style().logicalBottom().isAuto();
     if (logicalHeight.isAuto() && !isOutOfFlowPositionedWithImplicitHeight)

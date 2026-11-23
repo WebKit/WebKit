@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<style>
+.outer { display: inline-block; vertical-align: top; columns: 2; column-gap: 10px; width: 400px; height: 120px; column-fill: auto; border: 1px solid black; margin: 0 0 8px 8px; }
+.balanced { height: auto; column-fill: balance; }
+.inner { columns: 2; column-gap: 6px; border: 1px solid blue; margin: 5px 0; }
+.s { column-span: all; border: 1px solid green; }
+.b { border: 1px solid red; height: 30px; }
+</style>
+<div class="outer">
+<div class="b"></div>
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<div class="s">spanner text here</div>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="inner" style="height: 50px">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div>
+</div>
+<div class="outer balanced">
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<div class="s">spanner<br>text<br>here</div>Ut enim ad minim veniam.</div>
+<div class="b"></div>
+</div>
+<div class="outer" style="direction: rtl">
+<div class="b" style="height: 80px"></div>
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<div class="s">spanner text here</div>Ut enim ad minim veniam.</div>
+</div>
+<div class="outer" style="writing-mode: vertical-rl; width: 120px; height: 300px">
+<div class="b" style="width: 30px; height: auto"></div>
+<div class="inner" style="margin: 0 5px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.<div class="s">spanner</div>Ut enim ad minim veniam, quis nostrud.</div>
+</div>
+<div class="outer">
+<div class="b" style="height: 50px"></div>
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class="s">second spanner</div>Lorem ipsum.</div>
+</div>
+<div class="outer">
+<div class="b" style="height: 90px"></div>
+<div class="inner"><div class="s">one<br>two<br>three</div>Lorem ipsum dolor sit amet.</div>
+</div>
+<div class="outer">
+<div class="inner" style="padding-top: 130px"><div class="s">spanner after the padding</div></div>
+</div>

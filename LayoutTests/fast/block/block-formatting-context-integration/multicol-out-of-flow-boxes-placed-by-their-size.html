@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+article { height: 50px; column-gap: 0; columns: 4 30px; width: 120px; column-fill: auto; border: 1px solid black; margin: 2px; float: left; }
+.cb { position: relative; height: 100px; background-color: orange; }
+.a { position: absolute; width: 20px; background-color: rgba(0, 0, 255, 0.6); }
+.g { background-color: green; height: 10px; width: 15px; }
+.n { height: 10px; width: 10px; background-color: purple; }
+img { display: block; width: 15px; height: 20px; background-color: green; }
+</style>
+<article><div class=cb><div class=a style="bottom: 0; height: 10px"></div></div></article>
+<article><div class=cb><div class=a style="bottom: 10px"><div class=g></div><div class=g></div></div></div></article>
+<article><div class=cb style="height: 90px"><div class=a style="bottom: 0"><div class=g style="height: 30px"></div></div></div></article>
+<article><div class=cb><div class=a style="bottom: 0">x<br>y</div></div></article>
+<article><div class=cb><div class=a style="bottom: 0; padding-top: 5px"><div class=g></div></div><div class=a style="bottom: 30px; left: 22px"><div class=g></div></div></div></article>
+<article><div class=cb><div class=a style="top: 0; bottom: 0; align-self: end"><div class=g></div></div></div></article>
+<article><div class=cb><div class=a style="top: 0; bottom: 0; align-self: center"><div class=g></div></div></div></article>
+<article><div class=cb><div class=a style="top: 0; bottom: 0; align-self: end; height: 30px"></div></div></article>
+<article><div class=cb><div class=a style="top: 0; bottom: 0; margin: auto 0; height: 20px"></div></div></article>
+<article><div class=cb><div class=a style="top: 0; bottom: 0; margin: auto 0; height: fit-content"><div class=g></div></div></div></article>
+<article><div class=cb><div style="height: 60px"></div><div class=a style="align-self: end"><div class=g></div></div></div></article>
+<article><div class=cb><div style="height: 60px"></div><div class=a style="align-self: center"><div class=g></div></div></div></article>
+<article><div class=cb><div style="height: 60px"></div><div class=n style="anchor-name: --a"></div><div class=a style="position-anchor: --a; bottom: anchor(top)"><div class=g></div></div></div></article>
+<article><div class=cb><div style="height: 60px"></div><div class=n style="anchor-name: --b"></div><div class=a style="position-anchor: --b; position-area: top"><div class=g></div></div></div></article>
+<article><div class=cb><div style="height: 70px"></div><div class=n style="anchor-name: --c"></div><div class=a style="position-anchor: --c; position-area: top"><img></div></div></article>
+<article><div class=cb><div style="height: 60px"></div><div class=n style="anchor-name: --d"></div><div class=a style="position-anchor: --d; top: anchor(bottom)"><img></div></div></article>
+<article><div class=cb><div style="height: 60px"></div><div class=n style="anchor-name: --e"></div><div class=a style="position-anchor: --e; align-self: anchor-center; top: 0; bottom: 0"><img></div></div></article>
+<article><div class=cb style="height: 65px"><div class=a style="bottom: 0"><img></div></div></article>
+<article><div class=cb><div class=a style="top: 0; bottom: 0; align-self: center"><img></div></div></article>
+<article><div class=cb><div style="height: 30px"></div><div class=n style="anchor-name: --f"></div><div class=a style="position-anchor: --f; position-area: bottom"><img></div></div></article>

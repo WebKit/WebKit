@@ -30,6 +30,7 @@
 #pragma once
 
 #include "BorderShape.h"
+#include "BoxExtents.h"
 #include "FloatRoundedRect.h"
 #include "LayoutShape.h"
 #include "RenderStyleConstants.h"
@@ -50,6 +51,7 @@ struct BoxShapeGeometry {
 };
 
 BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType, const RenderBox&);
+BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType, const RenderBox&, const LayoutSize& borderBoxSize, const LayoutBoxExtent& margins);
 
 class BoxLayoutShape final : public LayoutShape {
 public:

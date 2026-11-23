@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 380px; height: 100px; column-fill: auto; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+ul { margin: 0; padding-left: 10px; list-style: none; }
+li { border-left: 2px solid; }
+img { display: block; width: 30px; height: 20px; background-color: green; }
+.v { writing-mode: vertical-rl; border: 1px solid; }
+</style>
+<div class=mc><img style="height: 40px"><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </li></ul></div>
+<div class=mc style="height: auto"><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </li></ul></div>
+<div class=mc><img style="height: 70px"><button style="display: block; height: 40px">button</button><img></div>
+<div class=mc><img style="height: 70px"><div class=v style="height: 50px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div><img></div>
+<div class=mc style="height: auto"><img style="height: 30px"><textarea style="display: block; height: 60px">textarea</textarea><img style="height: 30px"></div>

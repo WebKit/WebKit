@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font: 10px/12px serif; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 56px; height: 46px; border: solid; border-width: 1px 2px 3px 4px; padding: 2px 3px 4px 5px; margin: 0 2px 2px 0; }
+.parent { width: 28px; height: 24px; margin: 3px 5px 7px 9px; border: solid orange; border-width: 2px 1px 4px 3px; padding: 1px 2px 3px 4px; }
+.abspos { position: absolute; width: 10px; height: 6px; margin: 1px 3px; background: green; }
+.htb { writing-mode: horizontal-tb; }
+.vrl { writing-mode: vertical-rl; }
+.vlr { writing-mode: vertical-lr; }
+.rtl { direction: rtl; }
+</style>
+<!-- An out-of-flow box whose static position is in a box with another writing mode than its containing block's: it aligns to the start in
+the writing mode of the box it would be in with position: static. -->
+<div class="cb htb"><div class="parent htb" id="mode">x<div class="abspos"></div></div></div>
+<div class="cb vrl"><div class="parent htb" id="direction">x<div class="abspos"></div></div></div>
+<div class="cb htb"><div class="parent vrl" id="padding">x<div class="abspos"></div></div></div>
+<div class="cb vlr"><div class="parent htb" id="text">x<div class="abspos"></div></div></div>
+<div class="cb htb" id="containing-block-mode"><div class="parent vrl">x<div class="abspos"></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("mode").className = "parent vrl";
+document.getElementById("direction").classList.add("rtl");
+document.getElementById("padding").style.padding = "5px 2px 1px 7px";
+document.getElementById("text").firstChild.data = "longer text";
+document.getElementById("containing-block-mode").className = "cb vlr rtl";
+</script>

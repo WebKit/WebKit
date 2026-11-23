@@ -1343,8 +1343,11 @@ void RenderElement::insertedIntoTree()
 void RenderElement::willBeRemovedFromTree()
 {
     if (isLegend()) {
-        if (CheckedPtr fieldset = dynamicDowncast<RenderBlock>(parent()); fieldset && fieldset->isFieldset())
+        if (CheckedPtr fieldset = dynamicDowncast<RenderBlock>(parent()); fieldset && fieldset->isFieldset()) {
             fieldset->setIntrinsicBorderForFieldset({ });
+            if (CheckedPtr legend = dynamicDowncast<RenderBox>(*this); legend && !renderTreeBeingDestroyed() && fieldset->findFieldsetLegend() == legend)
+                fieldset->setLegendsAfterRenderedLegendNeedLayout(*legend);
+        }
     }
 
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.

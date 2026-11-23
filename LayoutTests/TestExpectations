@@ -3419,6 +3419,11 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
 
+# These expect column-span: all to span inside boxes that establish a block formatting context, which css-multicol-1 no longer allows.
+imported/blink/fast/multicol/dynamic/relayout-inside-overflow-hidden.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/dynamic/relayout-spanner-parent-inside-overflow-hidden.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/span/summary-split.html [ ImageOnlyFailure ]
+
 # Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
 webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [ Skip ]
 
@@ -5467,7 +5472,6 @@ imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewpo
 imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html [ ImageOnlyFailure ]
@@ -5504,7 +5508,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-010.html [ Im
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html [ ImageOnlyFailure ]
@@ -5598,7 +5601,6 @@ webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/c
 webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-in-clipped-overflow.html [ Skip ]
 webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-inline-block-remove-child.html [ Skip ]
 webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html [ Skip ]
-[ Release ] imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html [ ImageOnlyFailure ]
 
 # -- End CSS multicol -- #
 
@@ -7307,7 +7309,6 @@ imported/w3c/web-platform-tests/css/css-break/monolithic-overflow-006.tentative.
 imported/w3c/web-platform-tests/css/css-break/monolithic-with-overflow-lr.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/monolithic-with-overflow-rl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/monolithic-with-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-012.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-021.html [ ImageOnlyFailure ]

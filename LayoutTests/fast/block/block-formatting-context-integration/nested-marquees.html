@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.root { display: flow-root; width: 250px; border: 1px solid; margin-bottom: 4px; }
+marquee { display: block; border: 2px solid green; padding: 3px; }
+.b { background: lightblue; }
+.fit { border: 1px solid blue; }
+.float { float: left; width: 40px; height: 20px; background: orange; }
+</style>
+<div class="root"><marquee behavior="alternate" scrollamount="0">long text in a nested marquee that is long enough to overflow the box</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="width: 150px"><div class="b">block child</div><div class="b" style="width: 60px">fixed</div><div class="b" style="padding: 5px; margin: 3px">padded</div></marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" direction="up"><div class="b">up child</div><div class="b">second</div></marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" direction="down" height="50">down text that wraps in a vertical marquee</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="width: min-content">min-content marquee</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="width: fit-content">fit-content marquee text that is long</marquee></div>
+<div class="root"><marquee behavior="none" style="width: min-content">behavior none</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" direction="up" style="width: min-content">vertical min-content text</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" dir="rtl"><div class="b">rtl child</div> rtl text</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0"><div class="b" style="width: 50%">half</div><div class="b" style="margin: 0 auto">auto margins</div></marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0"><marquee behavior="alternate" scrollamount="0" style="width: 80px">inner</marquee>outer</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="height: 30px; margin: 5px 0">margins</marquee><marquee behavior="alternate" scrollamount="0" style="margin: 10px 0">collapse</marquee></div>
+<div class="root"><div class="fit" style="width: min-content"><marquee behavior="alternate" scrollamount="0">in a min-content box</marquee></div></div>
+<div class="root"><div class="fit" style="width: min-content"><marquee behavior="alternate" scrollamount="0" direction="up">vertical in a min-content box</marquee></div></div>
+<div class="root"><div class="fit" style="width: max-content"><marquee behavior="none">behavior none in a max-content box</marquee></div></div>
+<div class="root"><div class="float"></div><marquee behavior="alternate" scrollamount="0" style="width: 100px">beside a float</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0"><div class="float"></div><div class="b">after a float</div></marquee></div>

@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 3; column-gap: 8px; column-fill: auto; height: 60px; width: 186px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.b { background-color: rgba(0, 0, 255, 0.3); border: 2px solid blue; margin: 4px 0; }
+.s { height: 15px; background-color: rgba(0, 128, 0, 0.5); }
+img { background-color: green; }
+.f { float: left; width: 20px; height: 30px; background-color: orange; }
+</style>
+<div class="mc h"><div class=b style="height: 40px"></div><div class=b style="height: 40px"></div><div class=b style="height: 20px; padding: 4px"></div></div>
+<div class="mc h">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div>
+<div class=mc><div class=b>Lorem ipsum dolor sit amet, consectetur adipiscing.</div><div class=b>Ut enim ad minim veniam, quis nostrud exercitation.</div></div>
+<div class=mc><div class=h style="height: 30px"></div><img style="display: block; width: 30px; height: 40px"><img style="display: block; width: 30px; height: 50px"><img style="display: block; width: 30px; height: 15px"></div>
+<div class=mc><div class=s></div><div class=s style="break-before: column"></div><div class=s style="break-before: page"></div><div class=s style="break-after: column"></div><div class=s></div></div>
+<div class=mc><div class=s></div><div style="break-before: column; padding-top: 20px"><div class=s></div></div></div>
+<div class=mc><div style="height: 40px"></div><div class=b style="height: 30px; break-inside: avoid-column"></div><div style="height: 10px"></div><div class=b style="height: 30px; break-inside: avoid-page"></div></div>
+<div class=mc><div style="height: 40px"></div><img style="display: block; width: 30px; height: 15px; break-before: column"><img style="display: block; width: 30px; height: 15px"><div style="height: 15px"></div><img style="display: block; width: 30px; height: 15px"><img style="display: block; width: 30px; height: 15px"></div>
+<div class=mc><div style="height: 30px"></div><div style="orphans: 3; widows: 3">a<br>b<br>c<br>d<br>e<br>f<br>g</div></div>
+<div class=mc style="line-height: 20px"><div>a</div><div style="break-before: column">b<br>c<br>d</div></div>
+<div class=mc><div style="height: 40px"></div><img class=f><img style="display: block; width: 30px; height: 15px"><img style="display: block; width: 30px; height: 15px"></div>
+<div class=mc><div class=b style="height: 150px"></div><div class=b style="height: 60px"></div></div>
+<div class=mc>text <span style="display: inline-block; width: 20px; height: 30px; background-color: green"></span> more text text <span style="display: inline-block; width: 20px; height: 30px; background-color: green"></span> and more text text text text text text text text text text text text text text.</div>
+<div class=mc><div class=b style="padding: 6px"><div class=b style="padding: 3px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></div></div>
+<div class=mc>text text text <img style="width: 20px; height: 80px"> text text text text text text text text text text text text text text.</div>
+<div class=mc style="-webkit-column-axis: vertical; width: 60px"><div class=b style="height: 70px"></div><div class=b style="height: 20px"></div></div>
+<div class=mc><div style="height: 40px"></div><div class=mc style="columns: 2; height: 30px; width: 50px; margin: 0; float: none">Lorem ipsum dolor sit amet, consectetur adipiscing</div></div>
+<div class=mc style="column-fill: balance"><div class=b style="height: 70px"></div><div class=b style="height: 20px"></div></div>
+<div class=mc><div class=b style="height: 30px"></div><div class=b style="column-span: all; height: 10px"></div><div class=b style="height: 50px"></div></div>
+<div class=mc></div>
+<div class=mc id=iterated>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+<pre id=out style="clear: left"></pre>
+<script>
+const range = document.createRange();
+range.selectNodeContents(document.getElementById("iterated"));
+document.getElementById("out").textContent = document.getElementById("iterated").innerText + "\n" + range.getClientRects().length;
+</script>

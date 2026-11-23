@@ -252,10 +252,20 @@ bool BlockPainter::paintChild(RenderBox& child, PaintInfo& paintInfoForChild, bo
             // Only a RenderBlockFlow places floats.
             if (is<RenderBlockFlow>(m_block))
                 paintFloat(child, childPoint);
-        } else if (paintType == PaintAsInlineBlock)
-            child.paintAsInlineBlock(paintInfoForChild, childPoint);
-        else
-            child.paint(paintInfoForChild, childPoint);
+        } else {
+            GraphicsContextStateSaver fragmentainerStateSaver(paintInfoForChild.context(), false);
+            auto paintInfoForFragmentainer = std::optional<PaintInfo> { };
+            if (paintInfoForChild.fragmentainer) {
+                paintInfoForFragmentainer = child.paintInfoForFragmentainer(paintInfoForChild, childPoint, fragmentainerStateSaver);
+                if (!paintInfoForFragmentainer)
+                    return true;
+            }
+            auto& childPaintInfo = paintInfoForFragmentainer ? *paintInfoForFragmentainer : paintInfoForChild;
+            if (paintType == PaintAsInlineBlock)
+                child.paintAsInlineBlock(childPaintInfo, childPoint);
+            else
+                child.paint(childPaintInfo, childPoint);
+        }
     }
 
     // Check for page-break-after: always, and if it's set, break and bail.
@@ -468,8 +478,11 @@ void BlockPainter::paintObject()
     }
 
     // 5. paint outline.
-    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && m_block->hasOutline() && m_block->usedStyle().visibility() == UsedVisibility::Visible)
-        m_block->paintOutline(m_paintInfo, LayoutRect(m_paintOffset, m_block->borderBoxSize()));
+    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && m_block->hasOutline() && m_block->usedStyle().visibility() == UsedVisibility::Visible) {
+        m_block->paintDecorationsPerFragment(m_paintInfo, m_paintOffset, [&](auto& rect) {
+            m_block->paintOutline(m_paintInfo, rect);
+        });
+    }
 
     // 7. paint caret.
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhase::Foreground,
@@ -514,8 +527,16 @@ void BlockPainter::paintFloat(RenderBox& floatBox, const LayoutPoint& floatBoxLo
     // Layout skips the floats that line-clamp hides after the clamp point.
     if (floatBox.isForceHiddenByLineClamp())
         return;
+    GraphicsContextStateSaver fragmentainerStateSaver(m_paintInfo.context(), false);
+    auto paintInfoForFragmentainer = std::optional<PaintInfo> { };
+    if (m_paintInfo.fragmentainer) {
+        paintInfoForFragmentainer = floatBox.paintInfoForFragmentainer(m_paintInfo, floatBoxLocation, fragmentainerStateSaver);
+        if (!paintInfoForFragmentainer)
+            return;
+    }
+    auto& paintInfo = paintInfoForFragmentainer ? *paintInfoForFragmentainer : m_paintInfo;
 
-    GraphicsContextStateSaver stateSaver(m_paintInfo.context(), false);
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
 
     auto clipBlockEndIfNeeded = [&] {
         // The clip rect in the float's own coordinates, moved to where the float's border box paints.
@@ -524,18 +545,18 @@ void BlockPainter::paintFloat(RenderBox& floatBox, const LayoutPoint& floatBoxLo
             return;
         clipRect->moveBy(floatBoxLocation + floatBox.locationOffset());
         // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
-        clipRect->intersect(m_paintInfo.rect);
+        clipRect->intersect(paintInfo.rect);
         stateSaver.save();
-        m_paintInfo.context().clip(*clipRect);
+        paintInfo.context().clip(*clipRect);
     };
     clipBlockEndIfNeeded();
 
     if (preservePhase) {
-        floatBox.paint(m_paintInfo, floatBoxLocation);
+        floatBox.paint(paintInfo, floatBoxLocation);
         return;
     }
     // "Paint a stacking context given |root| and |canvas|, treating |root| as if it created a new stacking context" (css-position-4, paint a stacking container).
-    auto paintInfoForFloat = PaintInfo { m_paintInfo };
+    auto paintInfoForFloat = PaintInfo { paintInfo };
 
     paintInfoForFloat.phase = PaintPhase::BlockBackground;
     floatBox.paint(paintInfoForFloat, floatBoxLocation);

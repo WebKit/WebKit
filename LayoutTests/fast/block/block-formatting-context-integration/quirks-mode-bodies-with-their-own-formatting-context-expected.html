@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+iframe { width: 190px; height: 120px; border: 1px solid; margin: 0 2px 2px 0; }
+</style>
+<body>
+<!-- Quirks mode: a body with a formatting context of its own stretches to the viewport less the margins, borders and padding around it. -->
+<script>
+const colors = "html { background: green; } body { background: lightblue; font: 16px/20px serif; }";
+const documents = [
+    "html { margin: 3px 6px 9px 12px; } body { display: flex; margin: 7px 11px 14px 23px; }|flex",
+    "html { border: 2px solid; padding: 3px; } body { display: grid; grid-template-rows: 1fr auto; border: 1px solid; padding: 2px; } div + div { background: orange; }|<div>first</div><div>last</div>",
+    "body { display: flex; flex-direction: column; margin: 5%; } div { flex: 1; } div + div { background: orange; }|<div>grows</div><div>grows</div>",
+    "body { display: table; margin: 4px 10px; }|table",
+    "body { display: -webkit-box; margin: 6px auto; }|box",
+    "body { display: flex; min-height: 20px; max-height: 40px; }|max-height",
+    "body { display: grid; position: relative; margin: 0 0 20px; }|relative",
+    "body { display: flex; margin-top: -5px; margin-bottom: 30px; }|negative",
+    "html { writing-mode: vertical-rl; margin: 2px 5px; } body { display: flex; margin: 3px 7px; }|vertical",
+    "body { display: grid; writing-mode: vertical-lr; margin: 3px 7px; }|orthogonal",
+    "html { height: 50px; } body { display: flex; }|html height",
+    "body { display: flex; }|<div style='height: 300px'>taller than the viewport</div>",
+];
+const iframes = documents.map(() => {
+    const iframe = document.createElement("iframe");
+    iframe.scrolling = "no";
+    return document.body.appendChild(iframe);
+});
+// The frames have their size before their documents are first laid out.
+document.body.offsetHeight;
+// The block sizes from the first layout, which a later one of the frames may not show.
+const blockSizes = document.body.appendChild(document.createElement("div"));
+documents.forEach((description, index) => {
+    const [style, content] = description.split("|");
+    const frameDocument = iframes[index].contentDocument;
+    frameDocument.open();
+    frameDocument.write(`<style>${colors} ${style}</style>${content}`);
+    frameDocument.close();
+    blockSizes.append(`${frameDocument.body.offsetHeight} `);
+});
+</script>

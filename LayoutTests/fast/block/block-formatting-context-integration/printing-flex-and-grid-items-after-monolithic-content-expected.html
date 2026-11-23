@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpCSSPageBoxes=true ] -->
+<style>
+:root { print-color-adjust: exact; }
+body { margin: 0; }
+.container { background: yellow; }
+.monolithic { contain: size; height: 350vh; width: 50px; background: blue; }
+</style>
+<!-- The flex or grid container lays out its items before it places them, where their first lines stay. -->
+<div class="container" style="display: flex; flex-flow: column">
+    <div class="monolithic"></div>
+    Text in a flex item
+</div>
+<div class="container" style="display: grid">
+    <div class="monolithic"></div>
+    Text in a grid item
+</div>

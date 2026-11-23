@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>body { font-family: monospace; font-size: 12px; } table { border: 1px solid; margin: 4px; } caption { background: lightblue; } td { border: 1px solid; }</style>
+<table><caption id="caption">a caption</caption><tr><td>cell</td></tr></table>
+<table id="table"><tr><td>a table that gets a caption</td></tr></table>
+<svg width="300" height="120" style="border: 1px solid"><foreignObject id="foreignObject" x="10" y="10" width="200" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="background: lightgreen"><p id="paragraph">foreign object paragraph</p></div></foreignObject></svg>
+<div><input type="file" id="file"> <input type="file" id="padded"></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("caption").firstChild.data = "a caption whose text got much longer";
+const caption = document.createElement("caption");
+caption.textContent = "new caption";
+document.getElementById("table").prepend(caption);
+document.getElementById("foreignObject").setAttribute("width", "120");
+document.getElementById("paragraph").firstChild.data = "foreign object paragraph that wraps now";
+document.getElementById("file").style.width = "100px";
+document.getElementById("padded").style.padding = "6px";
+</script>

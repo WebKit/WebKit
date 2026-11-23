@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 12px; line-height: 15px; }
+.mc { columns: 3; column-gap: 10px; width: 250px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.r { overflow: hidden; border: 2px solid blue; padding: 2px; margin: 4px 0; }
+.b { background-color: rgba(0, 0, 255, 0.3); border: 2px solid blue; margin: 4px 0; }
+.s { column-span: all; height: 10px; background-color: green; }
+img { display: block; background-color: green; width: 30px; height: 20px; }
+.f { float: left; width: 20px; height: 30px; background-color: orange; }
+</style>
+<div class=mc style="height: 80px; column-fill: auto"><div class=r style="overflow: auto; min-height: 30px; margin: 0">Lorem ipsum dolor sit amet.</div>Lorem ipsum dolor sit amet, consectetur </div>
+<div class=mc><div class=r>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></div>
+<div class=mc>Lorem ipsum dolor sit amet, consectetur <div class=r><img><img class=h><img><img><img></div>Lorem ipsum dolor sit amet, consectetur </div>
+<div class=mc style="height: 80px; column-fill: auto"><div class=r>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur </div></div>
+<div class=mc><div class=b><div class=r>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i</div>Lorem ipsum dolor sit amet, consectetur adipiscing</div></div>
+<div class=mc><div class=r><div style="display: flow-root" class=b>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i</div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div></div>
+<div class=mc><div class=r>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed<div class=s></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div></div>
+<div class=mc><div class=r><img><img class=h style="break-before: column"><img></div></div>
+<div class=mc><div class=r><img class=f style="height: 50px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></div>
+<div class=mc><img class=f style="height: 40px"><div class=r>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt </div></div>
+<div class=mc style="height: 60px; column-fill: auto"><img style="height: 45px"><div class=r style="padding: 0; border: 0"><img></div><img></div>
+<div class=mc><img style="height: 45px"><div class=r style="padding: 0; border: 0"><img class=h style="height: 40px"></div><img style="height: 40px"><img style="height: 10px"></div>
+<div class=mc><img style="height: 30px"><img style="height: 30px"><div class=r style="height: 25px; margin: 0"></div><img style="height: 30px"></div>
+<div class=mc><div class=r><img style="height: 60px"></div></div>

@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 250px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+img { display: block; width: 20px; height: 10px; background-color: green; }
+.o { width: 20px; background-color: blue; }
+.sc { contain: size; border: 1px solid red; }
+</style>
+<div class=mc><img style="height: 20px"><div class=sc style="height: 10px"><div class=o style="height: 40px"></div></div><img></div>
+<div class=mc><img><div class=sc>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div><img></div>
+<div class=mc><img style="height: 20px"><div class=sc style="contain: strict; height: 10px"><div class=o style="height: 40px"></div></div><img></div>
+<div class=mc><img style="height: 20px"><div style="border: 1px solid"><div class=sc style="height: 10px"><div class=o style="height: 40px"></div></div></div><img></div>
+<div class=mc><img style="height: 20px"><div style="display: flow-root; border: 1px solid"><div class=sc style="height: 10px"><div class=o style="height: 40px"></div></div></div><img></div>
+<div class=mc><img style="height: 20px"><div style="break-inside: avoid; border: 1px solid"><div class=sc style="height: 10px"><div class=o style="height: 40px"></div></div></div><img></div>
+<div class=mc><img style="height: 20px"><span>text <div class=sc style="height: 10px"><div class=o style="height: 40px"></div></div> text</span><img></div>
+<div class=mc><img style="height: 20px"><div style="position: relative; height: 10px"><div class=sc style="position: absolute; top: 3px; width: 30px; height: 10px"><div class=o style="height: 40px"></div></div></div><img style="height: 25px"></div>
+<div class=mc><img><div style="position: relative"><div class=sc style="position: absolute; width: 30px; height: 20px; border-bottom: 15px solid red"></div></div></div>
+<div class=mc><img style="height: 20px"><span style="position: relative">text<span class=sc style="position: absolute; top: 3px; width: 30px; height: 10px"><div class=o style="height: 40px"></div></span></span><img></div>
+<div class=mc><img style="height: 5px"><div class=sc style="height: 10px"><div class=o style="height: 25px"></div></div><div class=sc style="height: 10px"><div class=o style="height: 20px"></div></div><img style="height: 30px"><img style="height: 25px"></div>
+<div class=mc><img style="height: 20px"><div style="column-span: all; height: 5px; background-color: orange"></div><img style="height: 20px"><div class=sc style="height: 10px"><div class=o style="height: 40px"></div></div><img></div>
+<div class=mc><img style="height: 20px"><div style="overflow: hidden; height: 15px"><div class=sc style="height: 5px"><div class=o style="height: 40px"></div></div></div><img></div>
+<div class=mc><img style="height: 20px"><div style="position: relative; overflow: hidden; height: 15px"><div class=sc style="position: absolute; top: 5px; width: 30px; height: 30px"></div></div><img></div>
+<div class=mc><img style="height: 20px"><div class=sc style="float: left; width: 30px; height: 10px"><div class=o style="height: 40px"></div></div><img></div>
+<div class=mc><img style="height: 20px"><div class=sc style="width: 30px; height: 15px"><div class=o style="margin-left: 20px; width: 10px; height: 40px"></div></div><img></div>
+<div class=mc><img style="height: 20px"><div class=sc style="contain: none; writing-mode: horizontal-bt; height: 10px"><div class=o style="height: 40px"></div></div><img><img style="height: 15px"></div>
+<div class=mc><img style="height: 20px"><img style="height: 15px; border: 1px solid red"><img></div>
+<div class=mc><img style="height: 20px"><div style="break-inside: avoid; height: 10px; border: 1px solid"></div><img></div>

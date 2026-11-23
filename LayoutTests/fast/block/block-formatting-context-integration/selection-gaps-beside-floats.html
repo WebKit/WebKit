@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.container { display: flow-root; width: 300px; margin-bottom: 10px; }
+.left { float: left; width: 60px; height: 50px; border: 2px solid green; }
+.right { float: right; width: 60px; height: 50px; border: 2px solid green; }
+.gap { height: 20px; }
+</style>
+<!-- The selection gaps of a block leave out the floats the block formatting context placed beside it. -->
+<div id="container">
+<div class="container"><div class="left"></div><div>first line</div><div class="gap"></div><div>after the gap</div></div>
+<div class="container"><div class="right"></div><div>first line</div><div class="gap"></div><div>after the gap</div></div>
+<div class="container"><div class="left"></div><div><div>nested line</div><div class="gap"></div><div>nested after the gap</div></div></div>
+</div>
+<script>
+let range = new Range();
+range.setStart(container.firstElementChild, 0);
+range.setEnd(container.lastElementChild, container.lastElementChild.childNodes.length);
+window.getSelection().addRange(range);
+</script>

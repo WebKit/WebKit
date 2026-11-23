@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class GraphicsContextStateSaver;
 class LayoutRoundedRectRadii;
 class LocalFrameView;
 class RenderBlockFlow;
@@ -230,6 +231,8 @@ public:
     virtual void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromFloatBox(const FloatingObject&);
+    // A float at this offset from the box, which no float list of the render tree lists.
+    void addOverflowFromFloatBox(const RenderBox&, LayoutSize offsetFromThis);
 
     LayoutRect logicalVisualOverflowRectForPropagation(const WritingMode) const;
     LayoutRect visualOverflowRectForPropagation(const WritingMode) const;
@@ -389,6 +392,7 @@ public:
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::Percentage<CSS::NonnegativeLayoutUnitClamped, float>& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::UnevaluatedCalculation<CSS::LengthPercentage<CSS::NonnegativeLayoutUnitClamped, float>>& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::UnevaluatedCalcSize& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
+    bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
     bool hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
     LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const override;
@@ -430,16 +434,19 @@ public:
     NODELETE void clearOverridingBorderBoxLogicalWidth();
     NODELETE void clearOverridingSize();
 
-    // Grid item's containing block is not the grid container, but the grid area, for which we don't have a renderer.
-    using GridAreaSize = std::optional<LayoutUnit>;
-    NODELETE std::optional<GridAreaSize> gridAreaContentWidth(WritingMode) const;
-    NODELETE std::optional<GridAreaSize> gridAreaContentHeight(WritingMode) const;
-    NODELETE std::optional<GridAreaSize> gridAreaContentLogicalWidth() const;
-    NODELETE std::optional<GridAreaSize> gridAreaContentLogicalHeight() const;
-    void setGridAreaContentLogicalWidth(GridAreaSize);
-    void setGridAreaContentLogicalHeight(GridAreaSize);
-    NODELETE void clearGridAreaContentSize();
-    NODELETE void clearGridAreaContentLogicalHeight();
+    // The content size of the containing block when it is not the content box of containingBlock(): a grid item's containing block is
+    // its grid area, which has no renderer, and the new block formatting context lays out some boxes through the render tree before it
+    // writes their containing block's geometry. A nullopt size is indefinite.
+    using ContainingBlockContentSize = std::optional<LayoutUnit>;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentWidth(WritingMode) const;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentHeight(WritingMode) const;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentLogicalWidth() const;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentLogicalHeight() const;
+    void setOverridingContainingBlockContentLogicalWidth(ContainingBlockContentSize);
+    void setOverridingContainingBlockContentLogicalHeight(ContainingBlockContentSize);
+    NODELETE void clearOverridingContainingBlockContentSize();
+    NODELETE void clearOverridingContainingBlockContentLogicalWidth();
+    NODELETE void clearOverridingContainingBlockContentLogicalHeight();
 
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
@@ -491,6 +498,13 @@ public:
     ControlPart* ensureControlPartForDecorations();
 
     virtual void paintObject(PaintInfo&, const LayoutPoint&) { ASSERT_NOT_REACHED(); }
+    // Paints decorations, from the border box rect paint gets, once for each fragment of a box that the block formatting context broke across
+    // pages or columns into fragments that are not slices of its rect in the strip of fragmentainers (LocalFrameViewLayoutContext::boxFragments).
+    void paintDecorationsPerFragment(PaintInfo&, const LayoutPoint& paintOffset, NOESCAPE const Function<void(const LayoutRect&)>& paint);
+    // In a column that paints the fragments in it of the boxes that clone their decorations across columns (PaintInfo::fragmentainer), the
+    // paint info for this box, none when it is not in the column: it paints like the strip of columns paints it, clipped at the column's edges
+    // it crosses, unless it is one of those boxes or one is in it.
+    std::optional<PaintInfo> paintInfoForFragmentainer(const PaintInfo&, const LayoutPoint& paintOffset, GraphicsContextStateSaver&) const;
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
     virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
@@ -645,8 +659,6 @@ protected:
     LayoutRect localOutlineBoundsRepaintRect() const;
 
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
-
-    bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
 
     NODELETE void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
     NODELETE bool shouldIgnoreAspectRatio() const;

@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 70px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.g { display: grid; grid-template-columns: 1fr 1fr; background: rgba(0, 128, 0, 0.6); }
+.w { display: -webkit-box; background: orange; }
+</style>
+<div class="roots">
+<div class="root"><button style="position: absolute; top: 10px; left: 10px">fits its content</button></div>
+<div class="root"><button style="position: absolute; top: 10px; left: 10px; right: 10px">stretched</button></div>
+<div class="root"><button style="position: absolute; bottom: 5px; right: 5px; width: 100px; height: 30px; padding: 2px">sized</button></div>
+<div class="root">text <button style="position: absolute">static position</button> more</div>
+<div class="root"><input type="button" value="input" style="position: absolute; top: 20px; left: 30px"></div>
+<div class="root"><div class="g" style="position: absolute; top: 5px; left: 5px; width: 150px"><div>a</div><div>b</div></div></div>
+<div class="root"><div class="g" style="position: absolute; top: 5px; left: 5px"><div>fits</div><div>its content</div></div></div>
+<div class="root"><div class="g" style="position: absolute; inset: 10px"><div>inset</div><div>grid</div></div></div>
+<div class="root"><div>before</div><div class="g" style="position: absolute"><div>static</div><div>position</div></div></div>
+<div class="root"><div class="w" style="position: absolute; top: 5px; left: 5px"><div>webkit</div><div>box</div></div></div>
+<div class="root"><div class="w" style="-webkit-box-orient: vertical; position: absolute; top: 5px; right: 5px; width: 80px"><div>vertical</div><div>box</div></div></div>
+<div class="root"><div class="g" style="position: absolute; top: 0; left: 0; width: 150px"><div style="position: absolute; top: 40px">absolute in the grid</div><div>x</div></div></div>
+<div class="root" dir="rtl"><button style="position: absolute; top: 10px">right to left</button></div>
+<div class="root" style="writing-mode: vertical-rl; width: 70px; height: 150px"><div class="g" style="position: absolute; top: 5px"><div>vertical</div><div>grid</div></div></div>
+</div>

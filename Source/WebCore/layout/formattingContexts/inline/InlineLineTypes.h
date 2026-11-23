@@ -99,6 +99,25 @@ struct PreviousLine {
     Vector<const Box*> suspendedFloats;
 };
 
+// Where the inline content continues in the next fragmentainer: the inline item the next line starts at, and the line before it (css-break-3 §4).
+// The first line that did not fit needed spaceShortage more block space than the fragmentainer had left, which column balancing stretches the
+// columns by (RenderMultiColumnSet::recordSpaceShortage).
+// Where a block-level box in inline content breaks in the fragmentainer it is laid out into: before it, when it goes to the next one with its
+// line, or inside it, at the end of this one.
+enum class BlockContentBreak : uint8_t { No, Before, Inside, After };
+
+struct InlineBreakToken {
+    InlineItemPosition start;
+    std::optional<PreviousLine> previousLine;
+    InlineLayoutUnit spaceShortage { 0 };
+    // The first line continues the block-level box at start, which broke inside at the end of the fragmentainer before, on the previous
+    // line.
+    bool continuesBlockContent { false };
+    // The lines before the break that line-clamp counts: at a break between lines, those with content, unlike the line without content a
+    // block-level box in an inline box starts after (InlineFormattingContext::layout); at a break at a block-level box, the lines up to it.
+    size_t lineCount { 0 };
+};
+
 inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosition end)
     : start(start)
     , end(end)

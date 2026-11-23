@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.s { float: left; width: 60px; height: 20px; background: rgba(0, 128, 128, 0.6); }
+.c { background: rgba(255, 255, 0, 0.4); }
+.h { overflow: hidden; background: rgba(255, 0, 255, 0.3); }
+p { margin: 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><div class="c" style="clear: left">clear inside clear</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><div style="clear: both"></div><p>after an empty clearfix inside</p></div></div>
+<div class="root"><div class="l"></div><div class="r"></div><div style="clear: left"><div class="c" style="clear: right">the inner one clears the right float</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s" style="width: 20px"></div><div class="c" style="clear: both; margin-top: 40px">an inner margin past the inner float</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: both"><div class="s"></div><div style="clear: both"></div></div><p>after a cleared box that ends with a clearfix</p></div>
+<div class="root"><div style="margin-top: 5px"><div class="l"></div><div style="clear: left"><div class="s" style="height: 15px"></div><div class="c" style="clear: left">all waiting for their top</div></div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="c" style="clear: left">the first child clears the same float</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left; margin-top: 10px"><div class="s"></div><div class="c" style="clear: left; margin-top: 5px">margins</div></div><p>after</p></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><div style="clear: left"><div class="s" style="height: 10px"></div><div class="c" style="clear: left">three levels</div></div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left; margin-top: 50px"><div class="s"></div><div class="c" style="clear: left; margin-top: 10px">an outer margin past the float</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><div style="clear: both; margin: 8px 0"></div><div class="c" style="clear: both">two clearfixes</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><div class="h">an avoider after an inner float</div></div></div>
+</div>

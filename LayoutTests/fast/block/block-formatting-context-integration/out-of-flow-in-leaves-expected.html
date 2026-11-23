@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; padding: 5px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; }
+.abs { position: absolute; width: 10px; height: 10px; background: green; }
+.fixed { position: fixed; width: 10px; height: 10px; background: purple; }
+.leaf { margin: 10px; padding: 5px; background: lightblue; }
+</style>
+<div class="root">
+  <div class="leaf" style="display: flex"><div style="flex: 1">flex item<div class="abs" style="top: 0; right: 0"></div></div><div>item<div class="abs"></div></div></div>
+  <div class="leaf">inline <span style="display: inline-block; padding: 5px; background: white">block<span class="abs" style="background: orange"></span></span></div>
+  <table class="leaf"><tr><td>cell<div class="abs" style="background: blue"></div></td><td>cell</td></tr></table>
+  <div class="leaf" style="display: grid; grid-template-columns: 1fr 1fr"><div>grid</div><div>item<div class="abs" style="left: 0; bottom: 0"></div></div></div>
+  <div class="leaf" style="display: flex"><div style="flex: 1"><div style="float: right; width: 60px; background: white">float<div class="abs"></div></div>item</div></div>
+  <div>inline <span>box <span style="display: inline-block; background: white">block<div class="abs" style="background: orange"></div></span></span></div>
+</div>
+<div class="root"><div class="leaf" style="display: flex; flex-direction: column"><div id="text">x</div><div><div class="abs" id="moves" style="top: auto"></div></div></div></div>
+<div class="root" style="transform: translateX(0)"><div class="leaf" style="display: flex"><div style="position: relative; left: 20px; top: 10px">relatively positioned flex item<div class="fixed"></div></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that wraps onto a few more lines in the flex item";
+document.getElementById("moves").style.left = "200px";
+</script>

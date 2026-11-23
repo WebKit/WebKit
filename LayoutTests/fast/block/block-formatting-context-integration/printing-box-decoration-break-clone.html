@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<script>if (window.testRunner) testRunner.setPrinting();</script>
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.p { break-before: page; }
+.c { -webkit-box-decoration-break: clone; width: 200px; border: 8px solid blue; }
+.k { border-left: 20px solid purple; }
+</style>
+<div style="height: 752px"></div><div class=c><div class=k style="height: 100px"></div></div>
+<div class=p style="height: 760px"></div><div class=c style="height: 100px; padding: 4px; border-color: green"></div>
+<div class=p style="height: 760px"></div><div class=c>1<br>2<br>3</div>
+<div class=p style="height: 752px"></div><div class=c style="border-color: orange"><div class=c><div class=k style="height: 60px"></div></div></div>

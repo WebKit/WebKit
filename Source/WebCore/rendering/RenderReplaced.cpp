@@ -541,7 +541,9 @@ static FloatSize computeIntrinsicSizeForRenderer(const RenderReplaced& replacedR
             if (!naturalDimensions.width || !naturalDimensions.height) {
                 CheckedPtr containingBlock = renderImage->isOutOfFlowPositioned() ? renderImage->container() : renderImage->containingBlock();
                 if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(containingBlock)) {
-                    intrinsicSize.setWidth(renderBox->contentBoxLogicalWidth());
+                    // The new block formatting context gives the content width of a containing block it has not committed yet.
+                    auto overridingContainingBlockContentLogicalWidth = !renderImage->isGridItem() ? renderImage->overridingContainingBlockContentLogicalWidth() : std::nullopt;
+                    intrinsicSize.setWidth(overridingContainingBlockContentLogicalWidth ? overridingContainingBlockContentLogicalWidth->value_or(0_lu) : renderBox->contentBoxLogicalWidth());
                     intrinsicSize.setHeight(renderBox->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
                 }
             }
@@ -804,6 +806,9 @@ LayoutUnit RenderReplaced::computeConstrainedLogicalWidth() const
             logicalWidth = containerWidth - left - right;
         } else
             logicalWidth = containerWidth;
+    } else if (auto containingBlockContentLogicalWidth = overridingContainingBlockContentLogicalWidth(); containingBlockContentLogicalWidth && !isGridItem()) {
+        // The new block formatting context gives the content width of a containing block it has not committed yet.
+        logicalWidth = containingBlockContentLogicalWidth->value_or(0_lu);
     } else
         logicalWidth = containingBlock()->contentBoxLogicalWidth();
 
@@ -1404,6 +1409,9 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
         [&](const CSS::Keyword::Stretch&) -> LayoutUnit {
             auto availableWidth = calculateContainerWidth();
             auto borderAndPadding = borderAndPaddingLogicalWidth();
+            // The block formatting context gives it the stretch-fit inline size beside the floats it places (LocalFrameViewLayoutContext::stretchFitInlineSize).
+            if (auto stretchFitInlineSize = layoutContext().stretchFitInlineSize(*this))
+                return std::max(borderAndPadding, *stretchFitInlineSize) - borderAndPadding;
             LayoutUnit marginStart;
             LayoutUnit marginEnd;
             auto logicalWidthResult = fillAvailableMeasure(availableWidth, marginStart, marginEnd);
@@ -1460,8 +1468,8 @@ bool RenderReplaced::replacedMinMaxLogicalHeightComputesAsNone(const auto& logic
         return true;
 
     if (isGridItem() && logicalHeight.isPercentOrCalculated()) {
-        if (auto gridAreaContentLogicalHeight = this->gridAreaContentLogicalHeight())
-            return !*gridAreaContentLogicalHeight;
+        if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight())
+            return !*overridingContainingBlockContentLogicalHeight;
     }
 
     // stretch with an indefinite containing block behaves as the initial
@@ -1562,7 +1570,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
         if (isOutOfFlowPositioned()) {
             PositionedLayoutConstraints constraints(*this, LogicalBoxAxis::Block);
             availableHeight = constraints.containingSize();
-        } else if (auto gridAreaLogicalHeight = isGridItem() ? this->gridAreaContentLogicalHeight() : std::nullopt; gridAreaLogicalHeight && *gridAreaLogicalHeight)
+        } else if (auto gridAreaLogicalHeight = isGridItem() ? this->overridingContainingBlockContentLogicalHeight() : std::nullopt; gridAreaLogicalHeight && *gridAreaLogicalHeight)
             availableHeight = gridAreaLogicalHeight->value();
         else if (stretchedHeight)
             availableHeight = stretchedHeight.value();

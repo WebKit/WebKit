@@ -21,7 +21,7 @@
 #pragma once
 
 #include "LogicalSelectionOffsetCaches.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderElementStyleInlines.h"
 
 namespace WebCore {
@@ -29,7 +29,11 @@ namespace WebCore {
 void LogicalSelectionOffsetCaches::ContainingBlockInfo::setBlock(RenderBlock* block, const LogicalSelectionOffsetCaches* cache, bool parentCacheHasFloatsOrFragmentedFlows)
 {
     m_block = block;
-    bool blockHasFloatsOrFragmentedFlows = m_block && (m_block->containsFloats() || m_block->enclosingFragmentedFlow());
+    auto hasFloatsPlacedByBlockFormattingContext = [&] {
+        CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_block);
+        return blockFlow && blockFlow->hasFloatsPlacedByBlockFormattingContextInFormattingContext();
+    };
+    bool blockHasFloatsOrFragmentedFlows = m_block && (m_block->containsFloats() || m_block->enclosingFragmentedFlow() || hasFloatsPlacedByBlockFormattingContext());
     m_hasFloatsOrFragmentedFlows = parentCacheHasFloatsOrFragmentedFlows || m_hasFloatsOrFragmentedFlows || blockHasFloatsOrFragmentedFlows;
     m_cache = cache;
     m_cachedLogicalLeftSelectionOffset = false;

@@ -439,6 +439,10 @@ public:
 
                 if (a.nonInheritedData().boxData->hasAutoUsedZIndex != b.nonInheritedData().boxData->hasAutoUsedZIndex)
                     return true;
+
+                // Cloned borders and padding take space in each fragment of a box broken across lines, pages or columns (css-break-3 §5.4).
+                if (a.nonInheritedData().boxData->boxDecorationBreak != b.nonInheritedData().boxData->boxDecorationBreak)
+                    return true;
             }
 
             if (a.nonInheritedData().surroundData.ptr() != b.nonInheritedData().surroundData.ptr()) {

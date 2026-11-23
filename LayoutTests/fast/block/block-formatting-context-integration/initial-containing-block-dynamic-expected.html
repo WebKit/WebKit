@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<html id=html style="margin: 20px 6px 4px; border: 2px solid; height: 30%">
+<style>
+body { font: 10px/12px monospace; margin: 3px; }
+iframe { width: 140px; height: 90px; border: 1px solid; margin: 2px; vertical-align: top; }
+.abs { position: absolute; background: lightblue; }
+.fixed { position: fixed; background: lightgreen; }
+</style>
+<body>
+<div id=grow style="width: 100px; background: lightgray">much longer text that wraps</div>
+<div class=abs>static abs</div>
+<div id=fixed class=fixed style="left: 100px; bottom: 10px">fixed</div>
+<div id=toggle class=abs style="right: 10px; top: 300px; position: static">toggled</div>
+<div style="margin-top: 40px">
+<iframe id=resized style="width: 180px; height: 110px" srcdoc="<html style='height: 100%'><body style='margin: 0; height: 100%; font: 10px/12px monospace'><div style='height: 50%; background: lightgray'>half</div><div style='position: fixed; width: 50%; height: 20%; bottom: 0; background: lightgreen'>fixed</div><div style='position: absolute; height: 30%; right: 0; bottom: 0; background: lightblue'>abs</div>"></iframe>
+<iframe id=changed srcdoc="<html id=html style='margin: 5px; border: 2px solid; display: flow-root'><body style='margin: 3px; font: 10px/12px monospace'><div id=text style='background: lightgray'>much longer text that wraps</div><div style='position: absolute; background: lightblue'>static abs</div><div id=positioned style='background: lightgreen; position: absolute; bottom: 0'>positioned</div>"></iframe>
+</div>
+</body>
+</html>

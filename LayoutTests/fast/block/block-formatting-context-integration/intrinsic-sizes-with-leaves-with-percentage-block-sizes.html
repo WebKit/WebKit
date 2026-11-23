@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.stf { display: inline-block; vertical-align: top; border: 1px solid; margin: 2px; height: 80px; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 200px; height: 90px; border: 1px solid; margin: 2px; }
+.a { position: absolute; top: 0; left: 0; bottom: 0; border: 1px solid blue; }
+canvas { background: green; }
+img { background: orange; }
+</style>
+<div class="stf"><canvas style="display: block; height: 50%"></canvas></div>
+<div class="stf"><div><img style="display: block; height: 25%; aspect-ratio: 3 / 1"></div></div>
+<div class="stf"><div style="display: flex; height: 50%; aspect-ratio: 2 / 1; background: lightblue"></div></div>
+<div class="stf"><div style="display: grid; height: 100%; aspect-ratio: 1 / 2; background: pink"></div></div>
+<div class="stf">text <canvas style="height: 40%"></canvas></div>
+<div class="cb"><div class="a"><canvas style="display: block; height: 50%"></canvas></div></div>
+<div class="cb"><div class="a" style="height: 60px; bottom: auto"><div style="display: flex; height: 100%; aspect-ratio: 1; background: lightblue"></div></div></div>
+<div style="height: 60px"><div style="float: left; border: 1px solid">float <canvas style="height: 50%"></canvas></div></div>

@@ -1,0 +1,12 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font-family: -apple-system; font-size: 10px; line-height: 12px; margin: 5px; }
+</style>
+<script>
+if (window.internals)
+    internals.setPagination("LeftToRightPaginated", 10, 150);
+</script>
+<div style="height: 520px"></div>
+<table style="width: 140px; border: 1px solid"><tr><td>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</td></tr></table>
+<div style="height: 520px"></div>
+<div style="display: flex; width: 140px; border: 1px solid green"><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></div>

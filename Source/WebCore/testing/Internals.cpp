@@ -4858,6 +4858,8 @@ ExceptionOr<Internals::InlineLayoutInfo> Internals::lastInlineLayoutInfo(Element
         switch (layoutInfo->range) {
         case Layout::InlineLayoutResult::Range::Full:
             return "Full"_s;
+        case Layout::InlineLayoutResult::Range::FromBreak:
+            return "FromBreak"_s;
         case Layout::InlineLayoutResult::Range::FullFromDamage:
             return "FullFromDamage"_s;
         case Layout::InlineLayoutResult::Range::PartialFromDamage:

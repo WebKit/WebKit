@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 185px; margin: 0 4px 4px 0; outline: 1px solid black; }
+fieldset { margin: 0; }
+legend { padding: 0; }
+</style>
+<div class=c><span>before<fieldset><legend>legend</legend>content</fieldset>after</span></div>
+<div class=c><span><fieldset><legend>legend</legend>content</fieldset>after</span></div>
+<div class=c><span><fieldset style="margin-top: 20px"><legend style="margin-top: 10px">legend</legend>content</fieldset></span></div>
+<div class=c><span><fieldset style="margin-top: 5px"><legend style="margin-top: 30px">tall legend margin</legend>content</fieldset></span></div>
+<div class=c><span><fieldset><legend style="font-size: 30px">big legend</legend>content</fieldset></span></div>
+<div class=c><span><fieldset>no legend</fieldset></span></div>
+<div class=c><span><fieldset style="margin: 10px 0"><legend>legend</legend>a</fieldset><fieldset style="margin: 15px 0"><legend>legend</legend>b</fieldset></span></div>
+<div class=c><div style="margin-bottom: 20px">block</div><span><fieldset style="margin-top: 10px"><legend style="margin-top: 15px">legend</legend>c</fieldset></span></div>
+<div class=c><span><div style="margin-bottom: 25px">block</div><fieldset style="margin-top: 10px"><legend>legend</legend>d</fieldset></span></div>
+<div class=c><span><fieldset style="margin-bottom: 20px"><legend>legend</legend>e</fieldset></span><div style="margin-top: 10px">after block</div></div>
+<div class=c><span><fieldset style="border-width: 8px; padding: 0"><legend style="border: 3px solid">legend</legend>f</fieldset></span></div>
+<div class=c style="direction: rtl"><span>a<fieldset><legend>legend</legend>content</fieldset>b</span></div>
+<div class=c><div style="float: left; width: 50px; height: 70px; background-color: gray"></div><span>a<fieldset><legend>legend</legend>content</fieldset>b</span></div>
+<div class=c><span>a<fieldset style="width: fit-content"><legend>legend</legend>content</fieldset>b</span></div>
+<div class=c style="width: auto"><span>a<fieldset><legend>shrink</legend>content</fieldset>b</span></div>
+<div class=c><a href="#"><fieldset><legend>link legend</legend>g</fieldset></a></div>
+<div class=c style="writing-mode: vertical-lr; height: 150px; width: auto"><span><fieldset><legend>legend</legend>vertical</fieldset></span></div>

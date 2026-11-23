@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; height: 2000px; font: 10px/12px monospace; }
+.anchor { position: fixed; top: 20px; width: 40px; height: 20px; background: orange; }
+.a { position: absolute; width: 60px; height: 20px; background: lightblue; }
+</style>
+<div class="anchor" style="anchor-name: --a1; left: 20px"></div>
+<div class="anchor" style="anchor-name: --a2; left: 200px"></div>
+<div class="a" style="position-anchor: --a1; position-area: bottom right">area</div>
+<div class="a" style="position-anchor: --a2; top: 0; left: 0; right: 0; justify-self: anchor-center">center</div>
+<div id="text">text</div>
+<script>
+document.documentElement.scrollTop = 100;
+document.getElementById("text").firstChild.data = "changed text";
+</script>

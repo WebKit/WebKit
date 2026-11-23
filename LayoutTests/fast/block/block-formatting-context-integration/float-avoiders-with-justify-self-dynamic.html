@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 200px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 50px; height: 30px; background: orange; }
+.av { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><div class="left"></div><div class="av" id="value">becomes centered</div></div>
+<div class="root"><div class="left" id="float"></div><div class="av" style="justify-self: end"><span id="text">end</span></div></div>
+<div class="root"><div class="left"></div><div class="av" id="width" style="justify-self: center; width: 40px">width</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("value").style.justifySelf = "center";
+document.getElementById("float").style.width = "80px";
+document.getElementById("text").firstChild.data = "longer end";
+document.getElementById("width").style.width = "100px";
+</script>

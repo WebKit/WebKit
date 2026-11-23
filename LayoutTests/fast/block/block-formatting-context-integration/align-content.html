@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 120px; height: 50px; border: 1px solid; margin: 0 2px 4px 0; }
+.box { background: lightblue; }
+.tall { height: 80px; background: lightblue; }
+</style>
+<div class="root" style="align-content: center">centered inline text</div>
+<div class="root" style="align-content: end"><div class="box">block at the end</div></div>
+<div class="root" style="align-content: center; padding: 4px 0 12px; border-top-width: 5px"><div class="box">padded</div></div>
+<div class="root" style="align-content: center"><div style="float: left; width: 20px; height: 20px; background: orange"></div>float and text</div>
+<div class="root" style="align-content: center"><div style="position: absolute; width: 20px; height: 10px; background: green"></div></div>
+<div class="root" style="align-content: end"><div class="box">block</div><span style="position: absolute; background: green">oof</span></div>
+<div class="root" style="align-content: unsafe end"><div class="tall">unsafe end overflows the top</div></div>
+<div class="root" style="align-content: safe end"><div class="tall">safe end stays at the top</div></div>
+<div class="root" style="align-content: center; overflow: auto"><div class="tall">centered in a scroller</div></div>
+<div class="root" style="align-content: space-between">space-between falls back to start</div>
+<div class="root" style="align-content: center; writing-mode: vertical-rl">vertical root</div>
+<div class="root" style="align-content: last baseline"><div class="box">last baseline</div></div>
+<div class="root" style="height: auto"><div style="align-content: center; min-height: 40px; background: lightblue">nested root with a min height</div></div>
+<div class="root" style="overflow: hidden"><div style="align-content: end; height: 40px; background: lightblue"><p style="margin: 3px 0">margins inside</p></div></div>
+<div class="root" style="display: flex"><div style="align-content: center; width: 60px; background: lightblue">flex item</div><div style="align-content: end; width: 60px">end</div></div>
+<div class="root" style="display: grid"><div style="align-content: center; background: lightblue">grid item</div></div>

@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.wrap { width: 300px; border: 1px solid; margin: 2px; }
+.cb { position: relative; width: 150px; height: 90px; border: 1px solid; margin: 3px; display: inline-block; vertical-align: top; }
+.a { position: absolute; background: lightblue; }
+.l { background: lightblue; }
+</style>
+<div class="wrap"><div class="l" id="leafRatio" style="display: flex; aspect-ratio: 4">leaf ratio</div></div>
+<div class="wrap"><div class="l" id="leafHeight" style="display: flex; aspect-ratio: 2; height: 40px">leaf height</div></div>
+<div class="cb"><div class="a" id="ratio" style="aspect-ratio: 2; width: 60px">ratio</div></div>
+<div class="cb"><div class="a" id="height" style="aspect-ratio: 2; height: 30px">height</div></div>
+<div class="cb"><div class="a" id="insets" style="aspect-ratio: 2; top: 10px; bottom: 10px">insets</div></div>
+<div class="cb" id="containingBlock"><div class="a" style="aspect-ratio: 2; height: 50%">containing block</div></div>
+<div class="cb"><div class="a" id="text" style="aspect-ratio: 4; width: 60px">text</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("leafRatio").style.aspectRatio = "6";
+document.getElementById("leafHeight").style.height = "20px";
+document.getElementById("ratio").style.aspectRatio = "1";
+document.getElementById("height").style.height = "40px";
+document.getElementById("insets").style.bottom = "40px";
+document.getElementById("containingBlock").style.height = "60px";
+document.getElementById("text").firstChild.data = "text that grows to wrap over lines";
+</script>

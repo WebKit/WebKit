@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<script>
+if (window.internals) {
+    internals.settings.setUserInterfaceDirectionPolicy("System");
+    internals.settings.setSystemLayoutDirection("RTL");
+}
+</script>
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 110px; background: lightgray; font: 10px/12px monospace; }
+.s { width: 120px; height: 60px; border: 2px solid black; padding: 3px; background: lightblue; }
+.i { height: 20px; background: rgba(0, 128, 0, 0.6); }
+</style>
+<div class="roots">
+<div class="root"><div class="s" style="overflow: scroll"><div class="i">left scrollbar</div></div></div>
+<div class="root"><div class="s" dir="rtl" style="overflow: scroll"><div class="i">right to left</div></div></div>
+<div class="root"><div class="s" style="overflow: scroll; position: absolute; top: 5px; left: 20px">out of flow</div></div>
+</div>

@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>body { margin: 0; } div { background: lightgray; }</style>
+<div style="padding: 10px; height: 30px">before</div>
+<div id="container" style="margin: 0 20px"></div>
+<script>
+document.body.offsetHeight;
+var frameset = document.createElement("frameset");
+frameset.cols = "40%,*";
+frameset.border = 5;
+frameset.setAttribute("bordercolor", "blue");
+frameset.appendChild(document.createElement("frame"));
+frameset.appendChild(document.createElement("frame"));
+document.getElementById("container").appendChild(frameset);
+</script>

@@ -654,6 +654,9 @@ LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const Rende
         return container;
     };
     while (currentBox && !is<RenderView>(*currentBox) && !currentBox->isRenderFragmentedFlow()) {
+        // The block formatting context lays the box out where it puts it, which is not the box's location yet (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext).
+        if (auto offsetInFragmentedFlow = currentBox->view().frameView().layoutContext().offsetInFragmentedFlow(*currentBox))
+            return (isHorizontalWritingMode() ? blockRect.y() : blockRect.x()) + *offsetInFragmentedFlow;
         CheckedPtr containerBox = dynamicDowncast<RenderBox>(nextBoxContainer(*currentBox));
         if (!containerBox)
             return 0;

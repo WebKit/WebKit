@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; font: 10px/20px monospace; }
+.m { columns: 3; column-fill: auto; gap: 0; width: 300px; height: 100px; margin-bottom: 8px; outline: 1px solid black; }
+.c { -webkit-box-decoration-break: clone; border: 5px solid green; padding: 5px; background-color: lightblue; }
+.k { background-color: purple; }
+</style>
+<div class=m><div class=c><div class=k style="height: 200px"></div></div></div>
+<div class=m><div class=c style="height: 150px; padding: 0; border-width: 10px"></div></div>
+<div class=m><div class=c style="height: 200px; box-sizing: border-box; padding: 0; border-width: 10px"></div></div>
+<div class=m><div class=c style="padding: 0"><div class=c style="padding: 0; border-color: blue"><div class=k style="height: 200px"></div></div></div></div>
+<div class=m><div class=c style="padding: 0; border-width: 10px">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div></div>
+<div class=m><div style="border: 5px solid orange"><div class=c style="padding: 0; margin: 10px 0"><div class=k style="height: 150px"></div></div></div></div>
+<div class=m><div class=c style="padding: 0; border-radius: 10px"><div class=k style="height: 200px"></div></div></div>

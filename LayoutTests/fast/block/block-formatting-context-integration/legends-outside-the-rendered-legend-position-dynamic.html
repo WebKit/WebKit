@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; font: 12px/14px monospace; }
+.c { display: flow-root; width: 300px; margin-bottom: 6px; outline: 1px solid black; }
+.fl { float: left; width: 40px; height: 30px; background-color: gray; }
+.l { background-color: rgba(0, 128, 0, 0.4); }
+fieldset { margin: 0; }
+</style>
+<div class=c><legend class=l id=text>a legend</legend></div>
+<div class=c><fieldset><legend id=gone>gone</legend><legend class=l>promoted to the rendered legend</legend>x</fieldset></div>
+<div class=c><fieldset id=inserted><legend class=l>no longer the rendered legend</legend>x</fieldset></div>
+<div class=c><div class=fl id=float></div><legend class=l>a legend beside a float that wraps</legend></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "a longer legend outside a fieldset";
+document.getElementById("gone").remove();
+const legend = document.createElement("legend");
+legend.textContent = "new";
+document.getElementById("inserted").prepend(legend);
+document.getElementById("float").style.width = "120px";
+</script>

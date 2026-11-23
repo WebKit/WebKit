@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 250px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 45px; background: tan; }
+.rtl { direction: rtl; }
+.ltr { direction: ltr; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><div class="left"></div><div class="rtl">rtl text that wraps around the left float and keeps going on the next lines</div></div>
+<div class="root"><div class="right"></div><div class="left"></div><div class="rtl" style="padding: 0 7px; margin: 0 13px; border-left: 3px solid; border-right: 5px solid">rtl text with padding and margins beside two floats here</div></div>
+<div class="root"><div class="left"></div><div class="rtl avoider">rtl avoider</div></div>
+<div class="root"><div class="left"></div><div class="rtl"><div class="avoider" style="width: 100px">fixed avoider in rtl</div></div></div>
+<div class="root"><div class="left"></div><div class="rtl"><div class="avoider" style="width: 100px; margin-right: 20px">avoider margin</div></div></div>
+<div class="root"><div class="right"></div><div class="rtl"><div class="avoider" style="width: 100px; margin: 0 auto">auto margins</div></div></div>
+<div class="root"><div class="rtl"><div class="left"></div><div class="right"></div>floats in rtl container with text around them</div><div>ltr text after the rtl container floats</div></div>
+<div class="root"><div class="rtl"><div class="left" style="margin-left: 10px; margin-right: 5px"></div></div><div class="left"></div>second float next to first</div>
+<div class="root"><div class="rtl" style="padding-right: 20px"><div class="right"></div></div><div class="avoider">ltr avoider after rtl floats</div></div>
+<div class="root"><div class="left"></div><div class="rtl"><div class="ltr">nested ltr text in rtl beside float that wraps around</div></div></div>
+<div class="root"><div class="left"></div><div class="rtl"><div style="clear: left">cleared</div>after</div></div>
+<div class="root"><div class="left"></div><div class="rtl"><span>inline <div>block in inline</div> after</span></div></div>
+<div class="root"><div class="left"></div><div class="rtl" style="position: relative; height: 40px">text <div style="position: absolute; display: inline">oof</div></div></div>
+<div class="root"><div class="left"></div><div class="rtl"><table style="background: lightgreen"><tr><td>table</td></tr></table></div></div>
+<div class="root"><div class="left"></div><div class="rtl"><div class="avoider" style="width: fit-content">fit content in rtl beside float</div></div></div>
+<div class="root rtl"><div class="left"></div><div class="ltr">ltr in rtl root beside a left float with text that wraps</div><div class="right"></div><div class="ltr avoider">ltr avoider</div></div>
+<div class="root"><div class="rtl"><div class="left" style="width: 30%"></div><div class="right" style="margin-left: 10%"></div>percentages</div></div>
+<div class="root"><div class="rtl"><div>block before</div><div class="left" style="margin-left: 10px"></div><div class="right"></div><div>block after the floats in rtl that wraps around</div></div><div class="avoider">ltr avoider after</div></div>
+<div class="root"><div class="rtl" style="padding: 0 30px 0 10px"><div>block</div><div class="left"></div><div class="rtl avoider" style="width: 80px">rtl avoider</div></div></div>
+<div class="root"><div class="rtl" style="padding: 0 30px 0 10px"><div>block</div><div class="left"></div><div style="padding-right: 15px">child text that wraps beside the float in the padded rtl block container</div></div></div>

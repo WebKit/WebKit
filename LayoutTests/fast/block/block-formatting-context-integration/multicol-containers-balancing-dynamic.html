@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { display: inline-block; vertical-align: top; columns: 3; column-gap: 8px; width: 180px; border: 1px solid black; margin: 0 0 6px 6px; }
+.s { column-span: all; border: 1px solid green; }
+.b { border: 1px solid blue; }
+img { display: block; border: 1px solid green; }
+</style>
+<div class=mc id=t1>Lorem ipsum dolor sit amet, consectetur adipiscing elit,</div>
+<div class=mc><div class=b>Lorem ipsum dolor sit amet.</div><div class=b style="break-before: column">Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><div class=b>Ut enim.</div></div>
+<div class=mc>text text text<img style="width: 30px; height: 60px">text text text text text text</div>
+<div class=mc>Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class=s id=t2>column</div>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, ut enim ad minim veniam.<div class=s style="height: 6px"></div>Quis nostrud.</div>
+<div class=mc style="max-height: 70px">Lorem ipsum dolor sit amet.<div class=s style="height: 20px"></div>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, ut enim ad minim veniam.</div>
+<div class=mc style="height: 80px; column-fill: balance">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.<div class=s></div>Ut labore et dolore magna aliqua.</div>
+<div class=mc style="direction: rtl" id=t4>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.<div class=s>column spanner</div><div class=b>Ut enim ad minim veniam, quis nostrud exercitation.</div></div>
+<div class=mc style="writing-mode: vertical-rl; width: auto; height: 150px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.<div class=s>column spanner</div>Ut labore et dolore magna aliqua.</div>
+<div class=mc style="writing-mode: vertical-lr; direction: rtl; width: auto; height: 150px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</div>
+<div class=mc style="columns: 2; overflow: scroll; height: 60px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+<div class=mc style="columns: 4"><div class=b>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</div><div class=s>column spanner</div><div class=b style="height: 30px; break-inside: avoid-column" id=t5></div><div class=b style="height: 10px"></div><div class=b style="height: 20px"></div></div>
+<div class=mc id=t6><div class=b style="height: 10px; break-inside: avoid-column"></div><div class=b style="height: 10px; break-inside: avoid-column"></div><div class=b style="height: 10px; break-inside: avoid-column"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("t1").firstChild.appendData(" sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.");
+document.getElementById("t2").firstChild.appendData(" spanner");
+document.getElementById("t4").lastChild.firstChild.appendData(" Ullamco laboris.");
+document.getElementById("t5").style.height = "50px";
+for (const box of document.getElementById("t6").children)
+    box.style.height = "25px";
+</script>

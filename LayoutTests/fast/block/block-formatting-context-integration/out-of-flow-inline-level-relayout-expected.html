@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container { position: relative; width: 300px; height: 50px; margin: 10px 0; border: 1px solid black; padding-top: 4px; font-size: 20px; line-height: 20px; }
+.abs { position: absolute; left: 20px; width: 30px; height: 20px; margin: 10px 0; background: green; display: inline-block; }
+</style>
+<div class="container">
+  <span class="abs">x</span>
+</div>
+<div class="container">xx <span class="abs" style="left: auto">x</span></div>
+<p id="text">x</p>
+<script>
+document.body.offsetHeight;
+// The lines of the containers stay as they are, and so do the static positions of the out-of-flow boxes in them.
+document.getElementById("text").firstChild.data = "xxxx";
+</script>

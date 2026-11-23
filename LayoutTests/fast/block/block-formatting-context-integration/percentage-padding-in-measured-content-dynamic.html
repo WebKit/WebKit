@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; margin: 2px; border: 1px solid; float: left; clear: left; }
+.f { float: left; background: yellow; }
+.ib { display: inline-block; background: pink; }
+.c { background: lightblue; }
+</style>
+<body>
+<div class="root"><div class="f"><div class="c" style="padding-left: 50%"><span id="a">float</span></div></div></div>
+<div class="root" style="position: relative; height: 30px; width: 300px"><div style="position: absolute; background: yellow"><div class="c" style="padding-left: 30%"><span id="b">abs</span></div></div></div>
+<div class="root"><div class="f"><table class="c" style="padding-left: 20%"><tr><td id="c">cell</td></tr></table></div></div>
+<div class="root"><div class="f">text <span class="ib c" style="padding-right: 30%" id="d">atomic</span> text</div></div>
+<div class="root"><div style="width: max-content; background: yellow"><div class="c" style="padding: 0 calc(10% + 4px)" id="e">max</div></div></div>
+<div class="root"><div class="f"><div><div class="c" style="padding-left: 40%" id="g">nest</div></div></div></div>
+<div class="root"><div class="f">text <span class="ib c" style="padding-right: 30%" id="h">same</span> text</div></div>
+<script>
+document.body.offsetHeight;
+for (const id of ["a", "b", "c", "d", "e", "g", "h"]) {
+    const node = document.getElementById(id).firstChild;
+    node.data = { a: "float grows", b: "absolute box", c: "wider table cell", d: "longer atomic", e: "max-content box", g: "nested deeper", h: "sane" }[id];
+    document.body.offsetHeight;
+}
+</script>

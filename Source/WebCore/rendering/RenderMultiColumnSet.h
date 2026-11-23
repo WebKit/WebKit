@@ -72,6 +72,8 @@ public:
     unsigned computedColumnCount() const { return m_computedColumnCount; }
     LayoutUnit computedColumnWidth() const { return m_computedColumnWidth; }
     LayoutUnit computedColumnHeight() const { return m_computedColumnHeight; }
+    // The block size of the set (computeLogicalHeight).
+    LayoutUnit availableColumnHeight() const { return m_availableColumnHeight; }
     bool columnHeightComputed() const { return m_columnHeightComputed; }
 
     void setComputedColumnWidthAndCount(LayoutUnit width, unsigned count)
@@ -114,6 +116,8 @@ public:
     void updateLogicalWidth() override;
 
     void prepareForLayout(bool initial);
+    // Once the set has its position and size.
+    void updateAfterLayout();
     // Begin laying out content for this column set. This happens at the beginning of flow thread
     // layout, and when advancing from a previous column set or spanner to this one.
     void beginFlow(RenderBox* container);

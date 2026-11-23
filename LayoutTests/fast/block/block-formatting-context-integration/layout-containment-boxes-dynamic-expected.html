@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.root { display: flow-root; width: 150px; background-color: lightgray; margin: 0 6px 6px 0; float: left; }
+.f { float: left; width: 30px; height: 30px; background-color: rgba(0, 128, 0, 0.6); }
+.m { margin: 10px 0; height: 10px; background-color: blue; }
+.a { position: absolute; top: 2px; right: 2px; width: 10px; height: 10px; background-color: purple; }
+.b { border: 2px solid orange; }
+</style>
+<div class=root><div class=b style="contain: layout"><div class=m></div></div></div>
+<div class=root><div class=f></div><div class=b style="contain: layout">beside the float</div></div>
+<div class=root><div class=b style="contain: layout"><div class=f></div>x</div></div>
+<div class=root><div class=b style="contain: layout"><span>a b c d e f g h i j k l m n o p</span></div></div>

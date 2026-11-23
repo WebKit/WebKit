@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 240px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.f { float: left; width: 20px; height: 20px; background-color: rgba(0, 128, 0, 0.3); }
+.ib { display: inline-block; width: 70px; border: 1px solid blue; }
+</style>
+<div class=mc>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <span class=ib><div style="margin: 5px 0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div class=f></div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div>
+<div class=mc><div style="height: 70px"></div><div style="overflow: auto; height: 80px; border: 1px solid"><div style="margin-top: 10px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div class=f></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div>
+<div class=mc><div style="height: 50px"></div><div style="writing-mode: vertical-rl; height: 60px; border: 1px solid"><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div>
+<div class=mc><div style="height: 50px"></div><div style="contain: size; height: 60px; border: 1px solid"><div style="margin: 4px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div>
+<div class=mc>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <span class=ib style="overflow: hidden"><div style="display: flow-root; border: 1px solid">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div>

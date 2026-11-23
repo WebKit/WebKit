@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true HTMLInCanvasEnabled=true ] -->
+<style>
+body { font-family: -apple-system; font-size: 12px; line-height: 14px; }
+canvas { position: relative; width: 100px; height: 100px; padding: 10px; border: 2px solid; }
+.target { position: absolute; left: 10%; top: 20%; width: 50%; height: 25%; }
+</style>
+<div style="width: 300px"><canvas content="drawable"><div class=target></div></canvas><div style="height: 20px"></div></div>
+<div style="width: 300px">text <canvas content="drawable"><div class=target style="left: auto; right: 5%; top: auto; bottom: 10%"></div></canvas></div>
+<div style="width: 300px; direction: rtl"><canvas content="drawable"><div class=target></div></canvas></div>
+<pre id=log></pre>
+<script>
+const lines = [];
+for (const canvas of document.querySelectorAll('canvas')) {
+    const canvasRect = canvas.getBoundingClientRect();
+    const targetRect = canvas.firstElementChild.getBoundingClientRect();
+    lines.push([targetRect.left - canvasRect.left, targetRect.top - canvasRect.top, targetRect.width, targetRect.height].join(' '));
+}
+document.getElementById('log').textContent = lines.join('\n');
+</script>

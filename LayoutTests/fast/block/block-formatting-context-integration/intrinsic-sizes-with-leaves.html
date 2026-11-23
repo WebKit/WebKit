@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; vertical-align: top; background: lightgray; margin: 0 6px 6px 0; font-family: monospace; font-size: 10px; border: solid blue; border-width: 1px 2px 3px 4px; padding: 3px 5px 7px 9px; }
+.abs-container { position: relative; height: 140px; }
+.abs { position: absolute; display: block; }
+canvas { background: green; }
+.table { display: table; border: 2px solid purple; }
+.cell { display: table-cell; padding: 3px; background: pink; }
+.flex { display: flex; gap: 4px; background: orange; }
+.flex > div { background: brown; width: 20px; height: 10px; }
+.inline-block { display: inline-block; background: teal; color: white; }
+</style>
+<div class="root"><canvas width="50" height="20"></canvas><div>text</div></div>
+<div class="root"><canvas width="50" height="20" style="display: block; margin: 0 7px 0 13px"></canvas></div>
+<div class="root"><div class="table"><div class="cell">a table cell with text</div></div></div>
+<div class="root"><div class="flex"><div></div><div></div><div></div></div><div style="width: 30px; height: 5px; background: green"></div></div>
+<div class="root">text <span class="inline-block">inline block with some words</span> text</div>
+<div class="root"><div class="table" style="width: min-content"><div class="cell">min content table</div></div></div>
+<div class="root"><div class="flex" style="width: max-content; margin-left: 10px"><div></div><div></div></div></div>
+<div class="root"><button>button text</button><div>after the button</div></div>
+<div class="root" dir="rtl"><canvas width="40" height="20" style="display: block; margin-inline-start: 15px"></canvas></div>
+<div class="root"><div><div class="table" style="width: 60px"><div class="cell">nested</div></div></div></div>
+<div class="abs-container">
+  <div class="root abs"><canvas width="70" height="20" style="display: block"></canvas><div class="flex" style="width: 50%"><div></div></div></div>
+  <div class="root abs" style="left: 200px">a few words <canvas width="30" height="10"></canvas> and more words</div>
+</div>
+<div class="root" style="width: max-content"><div class="table"><div class="cell">a long table cell that does not wrap</div></div></div>
+<div class="root" style="width: min-content"><span class="inline-block">wrapping inline block</span><canvas width="35" height="10" style="display: block"></canvas></div>
+<div style="display: flow-root; width: 300px; background: lightgray"><div style="width: max-content; background: yellow"><div style="height: 30px; overflow: auto"><div style="width: 40px; height: 50px; background: green"></div></div></div></div>
+<div class="root"><div style="width: min-content; background: yellow"><div class="flex" style="display: grid; padding-left: 20%"><div>x</div></div></div></div>

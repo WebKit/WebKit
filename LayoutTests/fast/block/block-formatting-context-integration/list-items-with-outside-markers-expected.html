@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+body { font-family: -apple-system; font-size: 12px; line-height: 16px; }
+ul, ol { margin: 4px 0; }
+</style>
+<ul><li>inline content</li><li><div>a block</div><div>another block</div></li></ul>
+<ol><li><div><div>nested blocks</div></div></li><li style="list-style-position: inside">inside marker</li></ol>
+<ul><li><ul><li>nested list</li></ul></li></ul>
+<ul><li><div style="display: flow-root; border: 1px solid">a formatting context root</div></li></ul>
+<ul><li><div style="display: flex"><span>a flex container</span></div></li></ul>
+<ul><li style="list-style-image: none; list-style-type: square"><div style="font-size: 20px; line-height: 30px">larger text</div></li></ul>
+<ul><li></li><li>after an empty list item</li></ul>
+<div style="width: 200px; direction: rtl"><ul><li>right to left</li></ul></div>
+<div style="float: left; width: 150px"><ul><li>in a float</li></ul></div>
+<div style="clear: both"></div>
+<ul><li style="display: flow-root">a list item root</li></ul>

@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.cb { position: relative; width: 300px; border: 1px solid; margin-bottom: 4px; }
+.grid { display: grid; height: 60px; padding: 3px; border: 2px solid gray; margin: 5px; }
+.abs { position: absolute; width: 40px; height: 15px; background: blue; margin-top: 2px; }
+</style>
+<div class=cb><div class=grid><div>item</div><div class=abs style="align-self: center;"></div></div></div>
+<div class=cb><div class=grid><div class=abs style="align-self: end; left: 50px;"></div></div></div>
+<div class=cb><div class=grid><div class=abs style="align-self: self-end; left: 100px;"></div><div class=abs style="align-self: flex-end; left: 150px;"></div></div></div>
+<div class=cb><div class=grid style="align-items: center;"><div class=abs style="left: 200px;"></div></div></div>
+<div class=cb><div class=grid><div class=abs style="align-self: start; left: 10px;"></div><div class=abs style="align-self: baseline; left: 60px;"></div><div class=abs style="align-self: safe center; left: 110px;"></div><div class=abs style="align-self: unsafe end; left: 160px;"></div></div></div>
+<div class=cb><div class=grid style="height: 10px;"><div class=abs style="align-self: center; left: 20px; height: 30px;"></div></div></div>
+<div class=cb style="direction: rtl;"><div class=grid><div class=abs style="align-self: center;"></div></div></div>
+<div class=cb><div class=grid><div class=abs style="align-self: center; top: 5px; left: 220px;"></div><div class=abs style="align-self: center; height: auto; width: auto;">content</div></div></div>

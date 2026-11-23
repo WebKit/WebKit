@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; }
+.mc { columns: 4; column-gap: 0; height: 50px; width: 100px; border: 1px solid; float: left; margin: 0 6px 6px 0; column-fill: auto; }
+.g { background-color: green; width: 20px; }
+</style>
+<div class=mc><div class=g style="height: 30px; margin-top: 70px"></div></div>
+<div class=mc><div class=g style="display: flex; height: 30px; margin-top: 70px"></div></div>
+<div class=mc><img class=g style="display: block; height: 30px; margin-top: 70px"></div>
+<div class=mc><div class=g style="height: 80px; margin-top: 70px"></div></div>
+<div class=mc><div class=g style="display: flex; height: 80px; margin-top: 70px"></div></div>
+<div class=mc><div class=g style="display: flow-root; height: 30px; margin-top: 70px"></div></div>
+<div class=mc><div style="margin-top: 40px"><div class=g style="height: 30px; margin-top: 30px"></div></div></div>
+<div class=mc><div class=g style="height: 30px; margin-top: 30px"></div></div>
+<div class=mc><div class=g style="display: flex; height: 160px; margin-top: 100px"></div></div>
+<div class=mc><div style="padding-top: 60px"><div class=g style="height: 20px; margin-top: 10px"></div></div></div>

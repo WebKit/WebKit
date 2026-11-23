@@ -115,6 +115,12 @@ struct LineLayoutResult {
     std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.
     std::optional<BlockOverflowEllipsis> blockEllipsis { };
     bool isLastLineWithoutBlockEllipsis { false };
+    // Where the block-level box on the line breaks in the fragmentainer: before it, or inside it at the end of the fragmentainer, from where
+    // it continues on the first line of the next one (InlineBreakToken::continuesBlockContent).
+    BlockContentBreak blockContentBreak { BlockContentBreak::No };
+    // The initial letter on the line goes to the next fragmentainer, and so does the line, since breaks between the lines alongside an initial
+    // letter are avoided (css-inline-3, Interaction with Fragmentation).
+    bool initialLetterGoesToNextFragmentainer { false };
 };
 
 }

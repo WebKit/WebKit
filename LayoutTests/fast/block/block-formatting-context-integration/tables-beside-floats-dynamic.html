@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+table { border-spacing: 0; background: rgba(255, 0, 255, 0.3); }
+td { padding: 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l" id="wider"></div><table><tr><td>beside a float that gets wider</td></tr></table></div>
+<div class="root"><div class="l"></div><table><tr><td id="text">text</td></tr></table></div>
+<div class="root"><div class="l"></div><table id="width"><tr><td>a width that stops fitting</td></tr></table></div>
+<div class="root"><div class="l" id="removed"></div><table><tr><td>a float removed, and the table grows</td></tr></table></div>
+<div class="root"><p id="inserted-before" style="margin: 0">a float added</p><table><tr><td>before this table, which shrinks</td></tr></table></div>
+<div class="root"><div class="l"></div><table id="margin" style="margin-left: 20px"><tr><td>a margin that grows past the float</td></tr></table></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("wider").style.width = "100px";
+document.getElementById("text").firstChild.appendData(" that gets longer and wraps beside the float");
+document.getElementById("width").style.width = "180px";
+document.getElementById("removed").remove();
+const added = document.createElement("div");
+added.className = "l";
+document.getElementById("inserted-before").after(added);
+document.getElementById("margin").style.marginLeft = "60px";
+</script>

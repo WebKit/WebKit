@@ -736,6 +736,21 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, S
                     break;
                 multiColumnBuilder().restoreColumnSpannersForContainer(*protect(oldEnclosingFragmentedFlow.get()), containingBlock);
             }
+            // A column-span: all element spans the columns of the nearest multicol ancestor in the same block formatting context only
+            // (css-multicol-1 §6.1): those in a box that starts or stops establishing one stop or start spanning (isValidColumnSpanner).
+            if (!is<RenderBlock>(renderer) || !oldEnclosingFragmentedFlow || !renderer.parent())
+                return;
+            auto& style = renderer.style();
+            auto formattingContextMayHaveChanged = oldStyle.overflowX() != style.overflowX() || oldStyle.overflowY() != style.overflowY()
+                || oldStyle.floating() != style.floating() || oldStyle.hasOutOfFlowPosition() != style.hasOutOfFlowPosition()
+                || oldStyle.usedContain() != style.usedContain() || oldStyle.containerType() != style.containerType()
+                || oldStyle.alignContent() != style.alignContent() || oldStyle.writingMode() != style.writingMode()
+                || oldStyle.blockStepSize() != style.blockStepSize() || oldStyle.overflowContinue() != style.overflowContinue();
+            if (!formattingContextMayHaveChanged)
+                return;
+            multiColumnBuilder().restoreColumnSpannersForContainer(*oldEnclosingFragmentedFlow, renderer);
+            if (oldEnclosingFragmentedFlow)
+                multiColumnBuilder().multiColumnDescendantInserted(*oldEnclosingFragmentedFlow, renderer);
         }
     };
 

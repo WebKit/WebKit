@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.cb { position: relative; width: 300px; height: 120px; border: 1px solid; margin-bottom: 4px; display: inline-block; vertical-align: top; }
+img, canvas { background: green; }
+.v { writing-mode: vertical-rl; position: absolute; background: lightblue; }
+</style>
+<div class=cb><div class=v style="display: flex; top: 5px; left: 5px;"><div id=item>flex item</div><div>two</div></div><canvas id=canvas width=40 height=20 style="position: absolute; writing-mode: vertical-rl; bottom: 5px; right: 5px;"></canvas><table class=v style="top: 5px; left: 150px;"><tr><td id=cell>cell</td></tr></table></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("item").firstChild.data = "a longer flex item";
+document.getElementById("canvas").width = 60;
+document.getElementById("cell").firstChild.data = "a longer table cell";
+document.body.offsetHeight;
+</script>

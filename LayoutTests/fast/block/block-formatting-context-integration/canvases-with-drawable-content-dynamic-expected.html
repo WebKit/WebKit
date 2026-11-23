@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false HTMLInCanvasEnabled=true ] -->
+<style>
+canvas { background: lightgray; margin: 4px; }
+.drawable { background: green; color: white; font-family: monospace; font-size: 10px; height: 20px; }
+</style>
+<div id="inline" style="width: 300px">text</div>
+<div id="block" style="width: 300px"></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+function addCanvas(container, display) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 120;
+    canvas.height = 30;
+    canvas.setAttribute("content", "drawable");
+    canvas.style.display = display;
+    canvas.innerHTML = '<div drawable class="drawable" style="width: 50%">' + display + '</div>';
+    container.style.width = "160px";
+    container.appendChild(canvas);
+    return canvas;
+}
+onload = async () => {
+    document.body.offsetHeight;
+    const canvases = [addCanvas(document.getElementById("inline"), "inline"), addCanvas(document.getElementById("block"), "block")];
+    for (const canvas of canvases) {
+        await new Promise(resolve => {
+            canvas.addEventListener("paint", resolve, { once: true });
+            canvas.requestPaint();
+        });
+        canvas.getContext("2d").drawElementImage(canvas.firstElementChild, 0, 0);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>

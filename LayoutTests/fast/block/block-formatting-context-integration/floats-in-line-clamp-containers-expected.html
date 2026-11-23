@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { display: inline-block; vertical-align: top; width: 150px; line-clamp: 2; border: 1px solid; margin: 0 2px 4px 0; padding: 2px; background: lightyellow; }
+.float { float: left; width: 30px; height: 40px; background: skyblue; margin-right: 4px; }
+.right { float: right; width: 20px; height: 20px; background: tan; }
+</style>
+<div class="clamp"><div>line 1</div><div class="float"></div><div>line 2</div><div>line 3</div></div>
+<div class="clamp"><div>line 1</div><div>line 2</div><div class="float"></div><div>after the clamp point</div></div>
+<div class="clamp"><div>line 1</div><div>line 2</div><div class="float" style="margin-top: -20px; background: red"></div><div>hidden float pulled up</div></div>
+<div class="clamp">line 1 <span class="float"></span>line 2 and more text that wraps</div>
+<div class="clamp"><div>line 1</div><div>line 2</div><div class="right"></div></div>
+<div class="clamp"><div><div class="float"></div>nested line 1</div><div>line 2</div><div>line 3</div></div>
+<div class="clamp" style="line-clamp: 1"><div class="right"></div><div>only line</div><div class="float"></div></div>

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationFormattingContextLayout.h"
 
+#include "BlockFormattingContext.h"
 #include "BlockLayoutState.h"
 #include "FloatingObjects.h"
 #include "InlineLayoutState.h"
@@ -107,15 +108,15 @@ void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::opt
     // descendants resolve percentage/calc sizes and offsets against it during layout (including when the item
     // computes its overflow), and resolve the item's own geometry against it below rather than against the grid
     // container's content box.
-    renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
+    renderer->setOverridingContainingBlockContentLogicalWidth(gridAreaInlineSize);
     // A grid item measured while sizing the rows has no grid area block size yet. Leave it unset rather than
     // set it to an indefinite size, which hasDefiniteLogicalHeightForPercentageResolutionFromStyle() would
     // treat as definite.
     if (gridAreaBlockSize)
-        renderer->setGridAreaContentLogicalHeight(*gridAreaBlockSize);
+        renderer->setOverridingContainingBlockContentLogicalHeight(*gridAreaBlockSize);
     layoutRendererWithOverridingBorderBoxSize(renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
     updateGridItemBoxGeometry(box, gridAreaInlineSize, layoutState);
-    renderer->clearGridAreaContentSize();
+    renderer->clearOverridingContainingBlockContentSize();
 }
 
 static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContainer, auto& placedFloats)
@@ -232,8 +233,7 @@ NODELETE static inline void updateIFCLineClampAfterLayout(auto& inlineLayoutStat
 
 void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
 {
-    auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
-    auto& placedFloats = parentBlockLayoutState.placedFloats();
+    auto& placedFloats = inlineLayoutState.placedFloats();
     CheckedRef blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
     CheckedRef rootBlockContainer = downcast<RenderBlockFlow>(*rootLayoutBox(block).rendererForIntegration());
     auto& renderTreeLayoutState = *rootBlockContainer->view().frameView().layoutContext().layoutState();
@@ -246,12 +246,15 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
 
     auto positionAndMargin = RenderBlockFlow::BlockPositionAndMargin { };
     auto layoutBlockRenderer = [&] {
+        // Like RenderBlockFlow::layoutInlineContent's, with what the inline content changed so far.
+        auto marginInfo = RenderBlockFlow::MarginInfo { rootBlockContainer.get(), RenderBlockFlow::MarginInfo::IgnoreScrollbarForAfterMargin::No };
+        Layout::IntegrationUtils::updateMarginInfo(marginInfo, inlineLayoutState.marginState());
         if (inlineLayoutState.lineCount()) {
             auto textBoxTrimStartDisabler = TextBoxTrimStartDisabler { blockRenderer.get() };
-            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), marginInfo);
             return;
         }
-        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), marginInfo);
     };
     layoutBlockRenderer();
     ASSERT(!blockRenderer->needsLayout());
@@ -288,10 +291,47 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         // the box starts at, even though the box keeps it for that content (CSS 2.2 8.3.1, 9.5.2). A negative margin
         // before is not above the border box at all, which is why this is the positive part only.
         if (auto marginBeforeWithClearance = rootBlockContainer->selfCollapsingMarginBeforeWithClear(blockRenderer.ptr()))
-            marginState.marginBeforeWithClearance = *marginBeforeWithClearance;
-        parentBlockLayoutState.marginState() = marginState;
+            marginState.marginBeforeIncludedInClearance = *marginBeforeWithClearance;
+        inlineLayoutState.marginState() = marginState;
     };
     updateIFCAfterLayout();
+}
+
+Layout::BlockContentBreak layoutWithBlockFormattingContextForBlockInInline(Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult, const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
+{
+    CheckedRef blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
+    auto lineLogicalTop = blockLineLogicalTopLeft.y();
+    // The inline formatting context keeps the inline margins it took from the style (BoxGeometryUpdater::setFormattingContextContentGeometry),
+    // which size the line. The box's own inline content, as the root of its inline formatting context, gets the geometry the block formatting
+    // context gave it, with the used ones (LineLayout::updateFormattingContextGeometries).
+    auto inlineMargins = layoutState.geometryForBox(block).horizontalMargin();
+    // -webkit-line-clamp counts the lines of the box in the layout state, like the render tree path above.
+    auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp();
+    auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
+    auto& renderTreeLayoutState = *blockRenderer->view().frameView().layoutContext().layoutState();
+    if (isLegacyLineClamp)
+        updateRenderTreeLineClampBeforeLayout(inlineLayoutState, renderTreeLayoutState);
+    auto box = blockFormattingContext.layoutBlockLevelBoxInInlineContent(blockRenderer, lineLogicalTop, inlineLayoutState.lineCount(), inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks(), inlineLayoutState.placedFloats(), blockLayoutResult);
+
+    // Like the render tree path above: the line of the box ends where the content after it starts, and the box sits in it at its border box
+    // top.
+    // Its border and padding are the ones the block formatting context has, which a fieldset's legend adds to (RenderBlock::intrinsicBorderForFieldset).
+    auto& blockGeometry = layoutState.ensureGeometryForBox(block);
+    blockGeometry = box.geometry;
+    blockGeometry.setHorizontalMargin(inlineMargins);
+    blockGeometry.setVerticalMargin({ box.logicalBottom - lineLogicalTop - box.geometry.borderBoxHeight(), { } });
+    blockGeometry.setTopLeft({ blockGeometry.marginStart(), Layout::BoxGeometry::borderBoxTop(box.geometry) - lineLogicalTop });
+    inlineLayoutState.marginState() = box.marginState;
+    // Like updateIFCLineClampAfterLayout: the lines of the box count towards the line-clamp budget for the lines that follow it.
+    if (isLegacyLineClamp)
+        updateIFCLineClampAfterLayout(inlineLayoutState, renderTreeLayoutState);
+    else
+        inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks() + box.lineCount);
+    if (box.breaksBefore)
+        return Layout::BlockContentBreak::Before;
+    if (box.breaksAfter)
+        return Layout::BlockContentBreak::After;
+    return box.breaksInside ? Layout::BlockContentBreak::Inside : Layout::BlockContentBreak::No;
 }
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)

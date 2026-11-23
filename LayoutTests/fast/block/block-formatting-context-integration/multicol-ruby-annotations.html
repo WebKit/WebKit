@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 3; column-gap: 0; width: 150px; border: 1px solid; float: left; margin: 0 6px 6px 0; orphans: 1; widows: 1; }
+ruby div { display: inline-block; vertical-align: top; width: 20px; background-color: green; }
+.main { height: 30px; }
+.annotation { height: 10px; background-color: blue !important; }
+</style>
+<div class=mc style="height: 50px; column-fill: auto"><ruby><div class=main></div><rt><div class=annotation></div></rt></ruby><br><ruby><div class=main></div><rt><div class=annotation></div></rt></ruby><br><ruby><div class=main></div><rt><div class=annotation></div></rt></ruby><br></div>
+<div class=mc><ruby><div class=main></div><rt><div class=annotation></div></rt></ruby><br><ruby><div class=main></div><rt><div class=annotation></div></rt></ruby><br><ruby><div class=main></div><rt><div class=annotation></div></rt></ruby><br></div>
+<div class=mc style="height: 50px; column-fill: auto"><ruby style="ruby-position: under"><div class=main></div><rt><div class=annotation></div></rt></ruby><br><ruby style="ruby-position: under"><div class=main></div><rt><div class=annotation></div></rt></ruby><br><ruby style="ruby-position: under"><div class=main></div><rt><div class=annotation></div></rt></ruby><br></div>

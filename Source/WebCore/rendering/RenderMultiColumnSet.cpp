@@ -435,7 +435,11 @@ void RenderMultiColumnSet::endFlow(RenderBox* container, LayoutUnit bottomInCont
 void RenderMultiColumnSet::layout()
 {
     RenderBlockFlow::layout();
+    updateAfterLayout();
+}
 
+void RenderMultiColumnSet::updateAfterLayout()
+{
     // At this point the logical top and bottom of the column set are known. Update maximum column
     // height (multicol height may be constrained).
     m_maxColumnHeight = calculateMaxColumnHeight();
@@ -729,10 +733,20 @@ std::pair<unsigned, unsigned> RenderMultiColumnSet::firstAndLastColumnsFromOffse
 LayoutRect RenderMultiColumnSet::fragmentedFlowPortionRectAt(unsigned index) const
 {
     LayoutRect portionRect = fragmentedFlowPortionRect();
-    if (isHorizontalWritingMode())
-        portionRect = LayoutRect(portionRect.x(), portionRect.y() + index * computedColumnHeight(), portionRect.width(), computedColumnHeight());
-    else
-        portionRect = LayoutRect(portionRect.x() + index * computedColumnHeight(), portionRect.y(), computedColumnHeight(), portionRect.height());
+    // The last column ends where the set's part of the flow does, before the column spanner after it, where the part of the next set starts.
+    auto columnLogicalBottom = [&](LayoutUnit columnLogicalTop) {
+        auto logicalBottom = columnLogicalTop + computedColumnHeight();
+        if (index == columnCount() - 1 && nextSiblingMultiColumnSet())
+            return std::min(logicalBottom, std::max(columnLogicalTop, logicalBottomInFragmentedFlow()));
+        return logicalBottom;
+    };
+    if (isHorizontalWritingMode()) {
+        auto columnLogicalTop = portionRect.y() + index * computedColumnHeight();
+        portionRect = LayoutRect(portionRect.x(), columnLogicalTop, portionRect.width(), columnLogicalBottom(columnLogicalTop) - columnLogicalTop);
+    } else {
+        auto columnLogicalTop = portionRect.x() + index * computedColumnHeight();
+        portionRect = LayoutRect(columnLogicalTop, portionRect.y(), columnLogicalBottom(columnLogicalTop) - columnLogicalTop, portionRect.height());
+    }
     return portionRect;
 }
 
@@ -1074,6 +1088,18 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         // Convert it into a physical (RenderLayer-style) rectangle.
         fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowOverflowPortion);
         fragment.paginationClip = physicalFragmentedFlowOverflowPortion;
+        // The fragments in the column of the boxes that clone their decorations across columns paint there, with what overflows them past the
+        // column's edges (css-break-3 §5.4), and so do the monolithic boxes past its end, whole (css-multicol-1 §8.1), while the rest of the
+        // content clips at those edges itself (PaintInfo::fragmentainer).
+        if (view().frameView().layoutContext().paintsColumnsFromFragments(*multiColumnFlow())) {
+            auto farAway = LayoutUnit::max() / 4;
+            fragment.contentPaginationClip = LayoutRect { -farAway, -farAway, 2 * farAway, 2 * farAway };
+            fragment.fragmentainerIsHorizontal = isHorizontalWritingMode();
+            if (isHorizontalWritingMode())
+                fragment.fragmentainerLogicalRange = std::pair { fragmentedFlowPortion.y(), fragmentedFlowPortion.maxY() };
+            else
+                fragment.fragmentainerLogicalRange = std::pair { fragmentedFlowPortion.x(), fragmentedFlowPortion.maxX() };
+        }
         if (fragments.size() < maximumNumberOfFragments)
             fragments.append(fragment);
         else

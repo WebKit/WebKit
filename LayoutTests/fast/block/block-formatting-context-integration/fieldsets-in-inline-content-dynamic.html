@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 250px; margin: 0 4px 4px 0; outline: 1px solid black; }
+fieldset { margin: 0; }
+legend { padding: 0; }
+.initial .big { font-size: 30px; }
+.initial .m { margin-top: 25px; }
+.initial .w { width: 100px; }
+.initial .gone { display: none; }
+</style>
+<div class=initial id=cases>
+<div class=c><span>a<fieldset><legend class=big>legend</legend>content</fieldset>b</span></div>
+<div class=c><span>a<fieldset class=m><legend>legend</legend>content</fieldset>b</span></div>
+<div class=c><span>a<fieldset><legend class=m>legend</legend>content</fieldset>b</span></div>
+<div class=c><span>a<fieldset class=w><legend>legend text</legend>content</fieldset>b</span></div>
+<div class=c><span>a<fieldset><legend class=gone>legend</legend>content</fieldset>b</span></div>
+<div class=c><div style="float: left; width: 50px; height: 70px; background-color: gray"></div><span>a<fieldset><legend class=big>legend</legend>content</fieldset>b</span></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

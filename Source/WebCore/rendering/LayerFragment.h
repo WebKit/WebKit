@@ -104,6 +104,8 @@ public:
     {
         rects.moveBy(offset);
         paginationClip.moveBy(offset);
+        if (contentPaginationClip)
+            contentPaginationClip->moveBy(offset);
     }
 
     void intersect(const LayoutRect& rect) { rects.intersect(rect); }
@@ -119,6 +121,13 @@ public:
     // Also unique to paginated fragments. An additional clip that applies to the layer. It is in layer-local
     // (physical) coordinates.
     LayoutRect paginationClip;
+
+    // A column of a multi-column flow that paints the fragments in it of the boxes that clone their decorations across columns
+    // (LocalFrameViewLayoutContext::paintsColumnsFromFragments): the clip of the flow's own content, which is not at the column's block-axis
+    // edges, and the column's part of the flow, in its block axis (PaintInfo::fragmentainer).
+    std::optional<LayoutRect> contentPaginationClip;
+    std::optional<std::pair<LayoutUnit, LayoutUnit>> fragmentainerLogicalRange;
+    bool fragmentainerIsHorizontal { true };
 };
 
 typedef Vector<LayerFragment, 1> LayerFragments;

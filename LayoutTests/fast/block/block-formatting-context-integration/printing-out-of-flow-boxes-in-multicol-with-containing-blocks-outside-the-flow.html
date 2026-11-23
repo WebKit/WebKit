@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 60px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; }
+.f { float: left; }
+.a { position: absolute; border: 2px solid blue; width: 30px; height: 10px; }
+</style>
+<script>if (window.testRunner) testRunner.setPrinting();</script>
+<div style="height: 500px"></div>
+<div class=mc style="position: relative"><div style="height: 70px"></div><div class=a></div>after</div>
+<div class=mc><div style="height: 70px"></div><div class=a></div>after</div>

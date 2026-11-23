@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 180px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; float: left; margin: 0 6px 6px 0; }
+.f { float: left; width: 50px; background-color: rgba(0, 128, 0, 0.3); }
+.r { float: right; width: 40px; background-color: rgba(0, 0, 255, 0.3); }
+</style>
+<div class=mc><div style="height: 108px"></div><div>a b</div><div style="break-before: column"><div class=f style="padding-top: 12px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>
+<div class=mc><div style="height: 96px"></div><div>a b</div><div style="break-before: column"><div class=f style="padding-top: 24px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>

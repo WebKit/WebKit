@@ -84,8 +84,13 @@ void BoxDecorationPainter::paintBoxDecorations()
         return;
     }
 
-    LayoutRect paintRect = m_renderer->borderBoxRect();
-    paintRect.moveBy(m_paintOffset);
+    m_renderer->paintDecorationsPerFragment(m_paintInfo, m_paintOffset, [&](auto& paintRect) {
+        paintBoxDecorationsInRect(paintRect);
+    });
+}
+
+void BoxDecorationPainter::paintBoxDecorationsInRect(LayoutRect paintRect)
+{
     m_renderer->adjustBorderBoxRectForPainting(paintRect);
 
     auto& theme = m_renderer->theme();

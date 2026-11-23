@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<html style="margin: 3px; padding: 2px; border: 1px solid">
+<body id="body" style="margin: 5px; padding: 4px; border: 2px solid blue">
+<style>
+.leaf { background: green; width: 20px; }
+.flex { display: flex; }
+.grid { display: grid; }
+</style>
+<div id="ancestor" style="height: 40px; background: lightblue"><div><div class="leaf flex" style="height: 50%"></div></div></div>
+<div style="height: 40px; background: lightblue"><div id="wrapper"><div class="leaf grid" style="height: 50%"></div></div></div>
+<div style="height: 40px; background: lightblue"><div><div id="leaf" class="leaf flex" style="height: 50%"></div></div></div>
+<div class="leaf grid" style="height: 4%"></div>
+<div id="container" style="height: 40px; background: lightblue"></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("ancestor").style.height = "60px";
+document.getElementById("wrapper").style.height = "20px";
+document.getElementById("leaf").style.height = "25%";
+document.getElementById("body").style.marginTop = "20px";
+const leaf = document.createElement("div");
+leaf.className = "leaf flex";
+leaf.style.height = "75%";
+document.getElementById("container").appendChild(leaf);
+</script>
+</body>
+</html>

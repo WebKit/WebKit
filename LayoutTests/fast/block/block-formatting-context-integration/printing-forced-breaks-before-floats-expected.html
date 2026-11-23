@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpCSSPageBoxes=true ] -->
+<style>
+@page { size: 400px 200px; margin: 0; }
+body { margin: 0; line-height: 20px; }
+.box { width: 100px; height: 50px; border: 2px solid green; }
+</style>
+<div>first line</div>
+<div>second line</div>
+<div>text before text after</div>
+<div style="break-before: page"><div class="box" style="float: left"></div><div class="box" style="float: left; border-color: blue"></div></div>

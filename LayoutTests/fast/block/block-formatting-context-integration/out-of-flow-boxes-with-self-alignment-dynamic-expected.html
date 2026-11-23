@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.cb { position: relative; width: 200px; height: 80px; border: 1px solid; margin: 4px; display: inline-block; vertical-align: top; }
+.a { position: absolute; inset: 0; background: lightblue; }
+.f { width: 50px; height: 20px; }
+</style>
+<div class="cb"><div id="justify" class="a f" style="justify-self: start">justify</div></div>
+<div class="cb"><div id="align" class="a f" style="align-self: start">align</div></div>
+<div class="cb" id="containingBlock"><div class="a f" style="justify-self: end; align-self: end">resized</div></div>
+<div class="cb"><div id="text" class="a" style="justify-self: center; align-self: center">text</div></div>
+<div class="cb"><div style="margin-left: 30px" id="items">text<div class="a f" style="inset: auto">items</div></div></div>
+<div class="cb"><div id="insets" class="a f" style="justify-self: center; align-self: center; inset: auto">insets</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("justify").style.justifySelf = "center";
+document.getElementById("align").style.alignSelf = "end";
+document.getElementById("containingBlock").style.width = "150px";
+document.getElementById("text").firstChild.data = "longer text";
+document.getElementById("items").style.justifyItems = "center";
+document.getElementById("insets").style.inset = "10px";
+</script>

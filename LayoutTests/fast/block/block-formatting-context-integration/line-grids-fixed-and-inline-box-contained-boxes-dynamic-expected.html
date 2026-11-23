@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; width: 250px; height: 150px; padding: 3px; margin-bottom: 4px; }
+.small { font-size: 9px; line-height: 11px; }
+.abs { position: absolute; }
+.fixed { position: fixed; }
+.inline-box { position: relative; padding: 2px 3px; border: 1px solid; }
+</style>
+<div class=grid>
+  text <span class=inline-box>in a positioned inline box
+    <div class="small abs" style="left: 5px; top: 7px; width: 60px;">with lines that wrap</div>
+    <div class="small abs" style="left: 80px; top: 7px; width: 60px;">gets its height from its lines again</div>
+    <div class="small abs" style="display: flex; left: 130px; top: 50px;"><div>flex item that wraps</div></div>
+  </span> after
+</div>
+<div class=grid style="height: 80px; position: relative;">
+  <div class="small abs" style="left: 5px; top: 9px; width: 60px;">gets its height from its lines again</div>
+</div>
+<div class=grid style="height: 120px;">
+  <div class=small>fixed positioned boxes</div>
+  <div class="small fixed" style="left: 300px; top: 7px; width: 80px;">fixed, with lines that wrap</div>
+  <div class="small fixed" style="display: flex; left: 300px; top: 100px;"><div>fixed flex item</div></div>
+</div>

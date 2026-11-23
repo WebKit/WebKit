@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 180px; margin: 0 4px 4px 0; border: solid black; border-width: 4px 1px 9px; padding: 2px 0 6px; }
+.bt { writing-mode: horizontal-bt; }
+.b { background-color: rgba(0, 128, 0, 0.4); margin: 6px 0 4px; }
+</style>
+<div class=c>text in the root</div>
+<div class=c>three<br>two<br>one</div>
+<div class=c><div class=b>block two</div><div class=b>block one</div></div>
+<div class=c>three<div class=b style="padding: 3px 0 8px">two<br>one</div></div>
+<div class=c style="font-size: 24px; padding-bottom: 12px">big</div>
+<div class=c><span style="display: inline-block; border: solid blue; border-width: 2px 0 7px; padding: 1px 0 4px">inline block</span></div>

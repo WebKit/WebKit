@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.root { width: 300px; border: 1px solid; margin-bottom: 4px; }
+.rel { position: relative; background: lightyellow; border: 2px solid orange; padding: 0 4px; }
+.a { position: absolute; background: lightblue; width: 20px; height: 8px; }
+</style>
+<div class=root>text <span class=rel dir=rtl>right to left<span class=a style="top: 0; left: 0;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>right to left<span class=a style="top: 0; right: 0;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>right to left<span class=a style="bottom: 0; right: 3px; margin-right: 2px;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>right to left<span class=a style="inset: 0; width: auto; opacity: 0.5;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>static position<span class=a></span> after</span> text</div>
+<div class=root>text <span class=rel dir=rtl>right to left across lines of text here so it wraps<span class=a style="top: 0; right: 0;"></span></span></div>
+<div class=root dir=rtl>text <span class=rel dir=ltr>left to right<span class=a style="top: 0; left: 0;"></span><span class=a style="top: 10px; right: 0;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>percent<span class=a style="left: 50%; width: 50%;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>fit content<span class=a style="right: 0; width: auto; height: auto;">abs text</span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>margins<span class=a style="left: 0; right: 0; margin: 0 auto;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>over-constrained<span class=a style="left: 0; right: 0;"></span></span> text</div>
+<div class=root dir=rtl>text <span class=rel dir=ltr>over-constrained<span class=a style="left: 0; right: 0;"></span></span> text</div>
+<div class=root>text <span class=rel dir=rtl>own direction<span class=a dir=ltr style="left: 0; right: 0;"></span><span class=a dir=ltr></span></span> text</div>
+<div class=root dir=rtl>text <span class=rel dir=ltr>static<span class=a></span> after</span> text</div>
+<div class=root>text <span class=rel dir=rtl>margins<span class=a id=margins style="left: 0; margin-left: 3px; margin-right: 7px;"></span></span> <span id=used-margins></span></div>
+<script>
+// The used margins of the box, which follow its containing block's direction.
+document.body.offsetHeight;
+const style = getComputedStyle(document.getElementById("margins"));
+document.getElementById("used-margins").textContent = `${style.marginLeft} ${style.marginRight}`;
+</script>
