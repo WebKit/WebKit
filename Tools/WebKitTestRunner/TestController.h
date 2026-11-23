@@ -596,6 +596,7 @@ private:
     void initializeDNS();
 #endif
     void cocoaResetStateToConsistentValues(const TestOptions&);
+    void removeTestKeysFromKeychain();
     void setApplicationBundleIdentifier(const std::string&);
     void clearApplicationBundleIdentifierTestingOverride();
 #endif
@@ -797,6 +798,7 @@ private:
 #if PLATFORM(COCOA)
     std::unique_ptr<ClassMethodSwizzler> m_calendarSwizzler;
     std::pair<RetainPtr<NSString>, RetainPtr<NSString>> m_overriddenCalendarAndLocaleIdentifiers;
+    Vector<RetainPtr<CFTypeRef>> m_testKeyPersistentReferences;
 #endif // PLATFORM(COCOA)
 #if ENABLE(IMAGE_ANALYSIS)
     std::unique_ptr<InstanceMethodSwizzler> m_imageAnalysisRequestSwizzler;
