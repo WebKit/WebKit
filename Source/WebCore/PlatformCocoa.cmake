@@ -1382,6 +1382,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/SystemFontDatabaseCoreText.h
     platform/graphics/cocoa/TextTrackRepresentationCocoa.h
     platform/graphics/cocoa/VP9UtilitiesCocoa.h
+    platform/graphics/cocoa/VideoMediaSampleRenderer.h
     platform/graphics/cocoa/VideoTargetFactory.h
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h
     platform/graphics/cocoa/WebCoreCALayerExtras.h

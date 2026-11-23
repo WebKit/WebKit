@@ -227,6 +227,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/cocoa/TestGraphicsContextGLCocoa.mm
     Tests/WebCore/cocoa/TestUTIRegistry.cpp
     Tests/WebCore/cocoa/TestUTIUtilities.cpp
+    Tests/WebCore/cocoa/VideoMediaSampleRendererTests.mm
     Tests/WebCore/cocoa/WebCoreDecompressionSessionTests.mm
     Tests/WebCore/cocoa/WebCoreNSURLSession.mm
     Tests/WebCore/cocoa/XMLParsing.mm

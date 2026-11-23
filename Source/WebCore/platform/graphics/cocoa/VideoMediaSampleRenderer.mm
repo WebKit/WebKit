@@ -488,15 +488,13 @@ void VideoMediaSampleRenderer::enqueueSample(const MediaSample& sample, std::opt
 #endif
     }
     ++m_pendingSamplesCount;
-    dispatcher()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, sample = Ref { sample }, minimumUpcomingTime, flushId = m_flushId.load(), decompressionSessionBlocked = m_decompressionSessionBlocked]() mutable {
+    dispatcher()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, sample = Ref { sample }, minimumUpcomingTime, flushId = m_flushId.load(), decompressionSessionBlocked = m_decompressionSessionBlocked] mutable {
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return;
         assertIsCurrent(protectedThis->dispatcher().get());
         --protectedThis->m_pendingSamplesCount;
         if (flushId != protectedThis->m_flushId) {
-            protectedThis->m_compressedSamplesCount = 0;
-            protectedThis->m_compressedSampleQueue.clear();
             protectedThis->maybeBecomeReadyForMoreMediaData();
             return;
         }
@@ -842,6 +840,13 @@ void VideoMediaSampleRenderer::flushCompressedSampleQueue()
     ++m_flushId;
     m_compressedSamplesCount = 0;
     m_gotDecodingError = false;
+    dispatcher()->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis) {
+            assertIsCurrent(protectedThis->dispatcher().get());
+            protectedThis->m_compressedSampleQueue.clear();
+            protectedThis->m_compressedSamplesCount = 0;
+        }
+    });
 }
 
 void VideoMediaSampleRenderer::flushDecodedSampleQueue()
@@ -994,7 +999,7 @@ void VideoMediaSampleRenderer::flush()
 
     if (RefPtr decompressionSession = this->decompressionSession())
         decompressionSession->flush();
-    dispatcher()->dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+    dispatcher()->dispatch([weakThis = ThreadSafeWeakPtr { *this }] mutable {
         if (RefPtr protectedThis = weakThis) {
             assertIsCurrent(protectedThis->dispatcher().get());
             protectedThis->flushDecodedSampleQueue();

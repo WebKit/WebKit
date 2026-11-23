@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "FrameRateMonitor.h"
-#include "MediaPlayerEnums.h"
-#include "MediaReorderQueue.h"
-#include "ProcessIdentity.h"
-#include "SampleMap.h"
-#include "VideoPlaybackQualityMetrics.h"
-#include "WebAVSampleBufferListener.h"
+#include <WebCore/FrameRateMonitor.h>
+#include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/MediaReorderQueue.h>
+#include <WebCore/ProcessIdentity.h>
+#include <WebCore/SampleMap.h>
+#include <WebCore/VideoPlaybackQualityMetrics.h>
+#include <WebCore/WebAVSampleBufferListener.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -70,13 +70,13 @@ class VideoMediaSampleRenderer final
 {
 public:
     static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer, const Logger& logger, uint64_t logIdentifier) { return adoptRef(*new VideoMediaSampleRenderer(renderer, logger, logIdentifier)); }
-    ~VideoMediaSampleRenderer();
+    WEBCORE_EXPORT ~VideoMediaSampleRenderer();
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     using Preferences = VideoRendererPreferences;
     NODELETE bool prefersDecompressionSession() const;
-    NODELETE void setPreferences(Preferences);
+    NODELETE WEBCORE_EXPORT void setPreferences(Preferences);
     bool isUsingDecompressionSession() const { return m_isUsingDecompressionSession; }
     bool managesDecodedFrames() const { return m_isUsingDecompressionSession || m_isReceivingDecodedSamples; }
     bool isReceivingDecodedSamples() const { return m_lastEnqueuedSampleWasDecoded; }
@@ -86,19 +86,19 @@ public:
 
     bool isReadyForMoreMediaData() const;
     Ref<GenericPromise> requestMediaDataWhenReady();
-    void enqueueSample(const MediaSample&, std::optional<MediaTime> minimumUpcomingTime);
+    WEBCORE_EXPORT void enqueueSample(const MediaSample&, std::optional<MediaTime> minimumUpcomingTime);
     void stopRequestingMediaData();
 
-    void notifyFirstFrameAvailable(Function<void(const MediaTime&, double)>&&);
+    WEBCORE_EXPORT void notifyFirstFrameAvailable(Function<void(const MediaTime&, double)>&&);
     void notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&&);
-    void notifyWhenDecodingErrorOccurred(Function<void(NSError *)>&&);
+    WEBCORE_EXPORT void notifyWhenDecodingErrorOccurred(Function<void(NSError *)>&&);
     void notifyWhenVideoRendererRequiresFlushToResumeDecoding(Function<void()>&&);
 
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
     Ref<GenericPromise> changeRenderer(WebSampleBufferVideoRendering *);
 #endif
 
-    void flush();
+    WEBCORE_EXPORT void flush();
     void shutdown();
 
     void expectMinimumUpcomingSampleBufferPresentationTime(const MediaTime&);
@@ -129,7 +129,7 @@ public:
     void invalidateDecompressionSession();
 
 private:
-    VideoMediaSampleRenderer(WebSampleBufferVideoRendering *, const Logger&, uint64_t);
+    WEBCORE_EXPORT VideoMediaSampleRenderer(WebSampleBufferVideoRendering *, const Logger&, uint64_t);
 
     void clearTimebase();
     using TimebaseAndTimerSource = std::pair<RetainPtr<CMTimebaseRef>, OSObjectPtr<dispatch_source_t>>;
@@ -155,7 +155,7 @@ private:
         Displayed
     };
     DecodedFrameResult maybeQueueFrameForDisplay(const MediaTime&, const MediaSample&, FlushId);
-    NODELETE void flushCompressedSampleQueue();
+    void flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
     void cancelTimer();
     void purgeDecodedSampleQueue(FlushId);

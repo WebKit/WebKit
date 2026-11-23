@@ -2054,6 +2054,7 @@
 		512DD8FC0D91E6AF000F89EE /* ArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F20D91E6AF000F89EE /* ArchiveResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512DD8FD0D91E6AF000F89EE /* ArchiveFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */; };
 		512F29262BA2BD7000F1C326 /* MediaResourceSniffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F29242BA2BD6500F1C326 /* MediaResourceSniffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512FF6D62B312DAD00899005 /* VideoMediaSampleRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 512FF6D42B312DAD00899005 /* VideoMediaSampleRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5130F2F624AEA60A00E1D0A0 /* GameControllerSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5130F2F424AEA60300E1D0A0 /* GameControllerSoftLink.mm */; };
 		51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51327D5E11A33A2B004F9D65 /* SinkDocument.h */; };
 		513C7B6D2E7C2C2400079881 /* MediaSamplesBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 513C7B6C2E7C2BC700079881 /* MediaSamplesBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -50416,6 +50417,7 @@
 				1DAB3114251D725C00FC9485 /* VideoLayerManager.h in Headers */,
 				1DAB3115251D74DB00FC9485 /* VideoLayerManagerObjC.h in Headers */,
 				41DD3C2D2902C47700369BEF /* VideoMatrixCoefficients.h in Headers */,
+				512FF6D62B312DAD00899005 /* VideoMediaSampleRenderer.h in Headers */,
 				1D2F8E03234474EF00993B68 /* VideoPictureInPicture.h in Headers */,
 				4158707E28EC79A900C163C5 /* VideoPixelFormat.h in Headers */,
 				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
