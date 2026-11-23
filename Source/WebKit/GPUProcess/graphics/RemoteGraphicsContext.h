@@ -67,14 +67,12 @@ public:
     void setFillCachedGradient(WebCore::GradientIdentifier, const WebCore::AffineTransform&);
     void setFillGradient(Ref<const WebCore::Gradient>&&, const WebCore::AffineTransform&);
     void setFillPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::PatternParameters&);
-    void setFillPatternImageBuffer(WebCore::RenderingResourceIdentifier bufferIdentifier, const WebCore::PatternParameters&);
     void setFillRule(WebCore::WindRule);
     void setStrokePackedColor(WebCore::PackedColor::RGBA);
     void setStrokeColor(const WebCore::Color&);
     void setStrokeCachedGradient(WebCore::GradientIdentifier, const WebCore::AffineTransform&);
     void setStrokeGradient(Ref<const WebCore::Gradient>&&, const WebCore::AffineTransform&);
     void setStrokePatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::PatternParameters&);
-    void setStrokePatternImageBuffer(WebCore::RenderingResourceIdentifier bufferIdentifier, const WebCore::PatternParameters&);
     void setStrokePackedColorAndThickness(WebCore::PackedColor::RGBA, float);
     void setStrokeThickness(float);
     void setStrokeStyle(WebCore::StrokeStyle);

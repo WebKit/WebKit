@@ -4937,7 +4937,7 @@ static RefPtr<const Pattern> patternForDescription(PatternDescription descriptio
     if (!nativeImage)
         return nullptr;
 
-    return Pattern::create({ nativeImage.releaseNonNull() }, { true, true, patternOffsetTransform });
+    return Pattern::create(nativeImage.releaseNonNull(), { true, true, patternOffsetTransform });
 };
 #endif
 

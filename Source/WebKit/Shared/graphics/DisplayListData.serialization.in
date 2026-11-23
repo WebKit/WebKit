@@ -302,16 +302,11 @@ header: <WebCore/GraphicsContextState.h>
     ShadowsIgnoreTransforms,
 }
 
-header: <WebCore/Pattern.h>
-[CustomHeader, RefCounted=Const] class WebCore::Pattern {
-    WebCore::SourceImage tileImage();
-    WebCore::PatternParameters parameters();
-}
-
 header: <WebCore/SourceBrush.h>
+# Patterns are not encoded here. DisplayListDataSetState encodes them separately.
 [CustomHeader] class WebCore::SourceBrush {
-    WebCore::Color m_color;
-    Variant<std::monostate, WebCore::SourceBrushLogicalGradient, Ref<const WebCore::Pattern>> m_patternGradient;
+    WebCore::Color color();
+    std::optional<WebCore::SourceBrushLogicalGradient> logicalGradient();
 }
 
 [CustomHeader] class WebCore::GraphicsContextState {
@@ -401,10 +396,6 @@ header: <WebCore/DisplayListItems.h>
     WebCore::RasterDrawingOptions options();
 }
 
-[CustomHeader] class WebCore::DisplayList::SetState {
-    WebCore::GraphicsContextState state();
-}
-
 header: "DisplayListData.h"
 [CustomHeader] struct WebKit::DisplayListDataFont {
     WebCore::FontInternalAttributes attributes;
@@ -421,6 +412,17 @@ header: "DisplayListData.h"
     WebCore::RenderingResourceIdentifier identifier;
     WebCore::ShareableBitmapHandle handle;
     WebCore::ImageBufferParameters parameters;
+}
+
+[CustomHeader] struct WebKit::DisplayListDataPattern {
+    WebCore::RenderingResourceIdentifier tileImageIdentifier;
+    WebCore::PatternParameters parameters;
+}
+
+[CustomHeader] struct WebKit::DisplayListDataSetState {
+    WebCore::GraphicsContextState state;
+    std::optional<WebKit::DisplayListDataPattern> fillPattern;
+    std::optional<WebKit::DisplayListDataPattern> strokePattern;
 }
 
 using WebKit::DisplayListDataItem = Variant<
@@ -480,7 +482,7 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::SetLineDash,
     WebCore::DisplayList::SetLineJoin,
     WebCore::DisplayList::SetMiterLimit,
-    WebCore::DisplayList::SetState,
+    WebKit::DisplayListDataSetState,
     WebCore::DisplayList::StrokeEllipse,
     WebCore::DisplayList::StrokePath,
     WebCore::DisplayList::StrokeRect,

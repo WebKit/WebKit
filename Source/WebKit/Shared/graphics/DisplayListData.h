@@ -31,6 +31,7 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/ImageBufferParameters.h>
+#include <WebCore/Pattern.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Vector.h>
@@ -52,6 +53,19 @@ struct DisplayListDataImageBuffer {
     WebCore::RenderingResourceIdentifier identifier;
     WebCore::ShareableBitmapHandle handle;
     WebCore::ImageBufferParameters parameters;
+};
+
+struct DisplayListDataPattern {
+    WebCore::RenderingResourceIdentifier tileImageIdentifier;
+    WebCore::PatternParameters parameters;
+};
+
+// A SetState item that refers to the tile images of its fill and stroke patterns by identifier.
+// The brushes in the state hold no patterns.
+struct DisplayListDataSetState {
+    WebCore::GraphicsContextState state;
+    std::optional<DisplayListDataPattern> fillPattern;
+    std::optional<DisplayListDataPattern> strokePattern;
 };
 
 using DisplayListDataItem = Variant
@@ -111,7 +125,7 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::SetLineDash
     , WebCore::DisplayList::SetLineJoin
     , WebCore::DisplayList::SetMiterLimit
-    , WebCore::DisplayList::SetState
+    , DisplayListDataSetState
     , WebCore::DisplayList::StrokeEllipse
     , WebCore::DisplayList::StrokePath
     , WebCore::DisplayList::StrokeRect

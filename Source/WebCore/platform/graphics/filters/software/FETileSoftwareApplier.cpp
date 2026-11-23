@@ -68,7 +68,7 @@ bool FETileSoftwareApplier::apply(const Filter& filter, std::span<const Ref<Filt
     AffineTransform patternTransform;
     patternTransform.translate(tileRect.location() - maxResultRect.location());
 
-    auto pattern = Pattern::create({ tileNativeImage.releaseNonNull() }, { true, true, patternTransform });
+    auto pattern = Pattern::create(tileNativeImage.releaseNonNull(), { true, true, patternTransform });
 
     auto& resultContext = resultImage->context();
     resultContext.setFillPattern(WTF::move(pattern));

@@ -82,7 +82,7 @@ RefPtr<const Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& co
             m_tiles.remove(it);
         else if (auto index = cachedTiles.tiles.findIf(matchesScale); index != notFound) {
             auto tile = cachedTiles.tiles[index];
-            return Pattern::create({ WTF::move(tile.image) }, { true, true, tile.patternSpaceTransform });
+            return Pattern::create(WTF::move(tile.image), { true, true, tile.patternSpaceTransform });
         }
     }
 
@@ -129,7 +129,7 @@ RefPtr<const Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& co
         transform = patternTransform * transform;
 
     Ref image = tileNativeImage.releaseNonNull();
-    auto pattern = Pattern::create({ image.copyRef() }, { true, true, transform });
+    auto pattern = Pattern::create(image.copyRef(), { true, true, transform });
 
     auto& cachedTiles = m_tiles.ensure(renderer, [&] {
         return CachedTiles { objectBoundingBox, { } };

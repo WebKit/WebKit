@@ -36,10 +36,7 @@ namespace WebCore {
 
 cairo_pattern_t* Pattern::createPlatformPattern(const AffineTransform&) const
 {
-    auto nativeImage = tileNativeImage();
-    if (!nativeImage)
-        return nullptr;
-
+    Ref nativeImage = tileImage();
     auto platformImage = nativeImage->platformImage();
     if (!platformImage)
         return nullptr;

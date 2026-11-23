@@ -42,14 +42,12 @@ messages -> RemoteGraphicsContext Stream {
     SetFillCachedGradient(WebCore::GradientIdentifier identifier, WebCore::AffineTransform spaceTransform) StreamBatched
     SetFillGradient(Ref<const WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
     SetFillPatternNativeImage(WebCore::RenderingResourceIdentifier nativeImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
-    SetFillPatternImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::PatternParameters pattern) StreamBatched
     SetFillRule(enum:bool WebCore::WindRule rule) StreamBatched
     SetStrokePackedColor(WebCore::PackedColor::RGBA color) StreamBatched
     SetStrokeColor(WebCore::Color color) StreamBatched
     SetStrokeCachedGradient(WebCore::GradientIdentifier identifier, WebCore::AffineTransform spaceTransform) StreamBatched
     SetStrokeGradient(Ref<const WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
     SetStrokePatternNativeImage(WebCore::RenderingResourceIdentifier nativeImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
-    SetStrokePatternImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::PatternParameters pattern) StreamBatched
     SetStrokePackedColorAndThickness(WebCore::PackedColor::RGBA color, float thickness) StreamBatched
     SetStrokeThickness(float thickness) StreamBatched
     SetStrokeStyle(enum:uint8_t WebCore::StrokeStyle style) StreamBatched

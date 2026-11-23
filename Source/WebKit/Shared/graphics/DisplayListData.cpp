@@ -116,9 +116,10 @@ private:
                 return true;
             },
             [&](const DisplayList::SetState& item) {
-                if (!addPatternImage(item.state().fillBrush()) || !addPatternImage(item.state().strokeBrush()))
+                DisplayListDataSetState setState { item.state(), std::nullopt, std::nullopt };
+                if (!movePatternOut(setState.state.fillBrush(), setState.fillPattern) || !movePatternOut(setState.state.strokeBrush(), setState.strokePattern))
                     return false;
-                result.append(item);
+                result.append(WTF::move(setState));
                 return true;
             },
             [&](const DisplayList::DrawFilteredImageBuffer& item) {
@@ -165,10 +166,18 @@ private:
         return true;
     }
 
-    bool addPatternImage(const SourceBrush& brush)
+    // Moves the pattern of a pattern brush into `result`, with its tile image by identifier, and leaves a color brush.
+    bool movePatternOut(SourceBrush& brush, std::optional<DisplayListDataPattern>& result)
     {
         RefPtr pattern = brush.pattern();
-        return !pattern || addImage(pattern->tileImage());
+        if (!pattern)
+            return true;
+        Ref tileImage = pattern->tileImage();
+        if (!addImage(tileImage.get()))
+            return false;
+        result = DisplayListDataPattern { tileImage->renderingResourceIdentifier(), pattern->parameters() };
+        brush = SourceBrush { brush.color() };
+        return true;
     }
 
     bool addImage(const SourceImage& image)
@@ -311,6 +320,25 @@ static bool cacheImageBuffers(DisplayList::ResourceCache& resourceCache, Vector<
     return true;
 }
 
+static bool setPattern(SourceBrush& brush, const std::optional<DisplayListDataPattern>& pattern, const DisplayList::ResourceCache& resourceCache)
+{
+    if (!pattern)
+        return true;
+    RefPtr tileImage = resourceCache.nativeImage(pattern->tileImageIdentifier);
+    if (!tileImage)
+        return false;
+    brush.setPattern(WebCore::Pattern::create(tileImage.releaseNonNull(), pattern->parameters));
+    return true;
+}
+
+static std::optional<DisplayList::SetState> createSetState(DisplayListDataSetState&& setState, const DisplayList::ResourceCache& resourceCache)
+{
+    auto& state = setState.state;
+    if (!setPattern(state.fillBrush(), setState.fillPattern, resourceCache) || !setPattern(state.strokeBrush(), setState.strokePattern, resourceCache))
+        return std::nullopt;
+    return DisplayList::SetState { state };
+}
+
 std::optional<DisplayListData> DisplayListData::create(const DisplayList::DisplayList& displayList)
 {
     return DisplayListDataEncoder { }.encode(displayList);
@@ -346,9 +374,20 @@ RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool s
     for (auto& dataItems : borrow(m_bottomUpDisplayLists)) {
         Vector<DisplayList::Item> items(ReserveCapacityTag { }, dataItems.size());
         for (auto& dataItem : borrow(dataItems)) {
-            WTF::switchOn(dataItem, [&](auto& item) {
-                items.constructAndAppend(WTF::InPlaceType<std::decay_t<decltype(item)>>, WTF::move(item));
-            });
+            bool success = WTF::switchOn(dataItem,
+                [&](DisplayListDataSetState& setState) {
+                    auto item = createSetState(WTF::move(setState), resourceCache);
+                    if (!item)
+                        return false;
+                    items.append(WTF::move(*item));
+                    return true;
+                },
+                [&](auto& item) {
+                    items.constructAndAppend(WTF::InPlaceType<std::decay_t<decltype(item)>>, WTF::move(item));
+                    return true;
+                });
+            if (!success)
+                return nullptr;
         }
         displayList = DisplayList::DisplayList::createResolved(WTF::move(items), resourceCache);
         if (!displayList)

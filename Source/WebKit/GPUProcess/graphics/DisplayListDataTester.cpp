@@ -680,16 +680,29 @@ static void testImageBuffers(Tester& tester)
 
 static void testPatternBrushes(Tester& tester)
 {
+    Ref fillTile = testNativeImage();
     GraphicsContextState state;
-    state.setFillPattern(WebCore::Pattern::create(SourceImage { testNativeImage() }, { true, true, AffineTransform::makeScale({ 0.5, 0.5 }) }));
-    state.setStrokePattern(WebCore::Pattern::create(SourceImage { testImageBuffer() }));
+    state.setFillPattern(WebCore::Pattern::create(fillTile.copyRef(), { true, true, AffineTransform::makeScale({ 0.5, 0.5 }) }));
+    state.setStrokePattern(WebCore::Pattern::create(testNativeImage()));
     state.setStrokeThickness(10);
+
+    GraphicsContextState sharedTileState;
+    sharedTileState.setFillPattern(WebCore::Pattern::create(fillTile.copyRef()));
+    sharedTileState.setStrokePattern(WebCore::Pattern::create(fillTile.copyRef(), { false, true }));
 
     Vector<DisplayList::Item> items;
     items.append(DisplayList::SetState { state });
-    items.append(DisplayList::FillRect { { 10, 10, 40, 80 }, GraphicsContext::RequiresClipToRect::Yes });
-    items.append(DisplayList::StrokeRect { { 60, 10, 30, 80 }, 10 });
+    items.append(DisplayList::FillRect { { 10, 10, 40, 40 }, GraphicsContext::RequiresClipToRect::Yes });
+    items.append(DisplayList::StrokeRect { { 60, 10, 30, 30 }, 10 });
+    items.append(DisplayList::SetState { sharedTileState });
+    items.append(DisplayList::FillRect { { 10, 60, 40, 30 }, GraphicsContext::RequiresClipToRect::Yes });
+    items.append(DisplayList::StrokeRect { { 60, 60, 30, 30 }, 10 });
     Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
+
+    auto data = DisplayListData::create(displayList);
+    tester.expect(!!data, "Pattern brushes encode"_s);
+    if (data)
+        tester.expect(data->nativeImages().size() == 2 && data->imageBuffers().isEmpty(), "Pattern tiles are encoded once each"_s);
 
     RefPtr decoded = encodeAndDecodeDisplayList(displayList);
     tester.expect(!!decoded, "Pattern brushes round trip"_s);
@@ -776,13 +789,21 @@ static void testInvalidImages(Tester& tester)
     tester.expect(!decode({ }, imageBuffers(identifier, parameters), DisplayList::DrawFilteredImageBuffer { missingIdentifier, rect, filterWithEffect(FEFlood::create(Color::green, 1)) }), "A missing filter source image fails to decode"_s);
     tester.expect(!decode(nativeImages(identifier), { }, DisplayList::DrawFilteredImageBuffer { std::nullopt, rect, filterWithEffect(FEImage::create(SourceImage { missingIdentifier }, rect)) }), "An FEImage with a missing image fails to decode"_s);
 
-    GraphicsContextState state;
-    state.setFillPattern(WebCore::Pattern::create(SourceImage { missingIdentifier }));
-    tester.expect(!decode(nativeImages(identifier), { }, DisplayList::SetState { state }), "A pattern with a missing image fails to decode"_s);
+    auto setStateWithPatterns = [](std::optional<RenderingResourceIdentifier> fillTile, std::optional<RenderingResourceIdentifier> strokeTile) {
+        auto pattern = [](std::optional<RenderingResourceIdentifier> tile) -> std::optional<DisplayListDataPattern> {
+            if (!tile)
+                return std::nullopt;
+            return DisplayListDataPattern { *tile, { } };
+        };
+        return DisplayListDataSetState { { }, pattern(fillTile), pattern(strokeTile) };
+    };
+    tester.expect(!!decode(nativeImages(identifier), { }, setStateWithPatterns(identifier, identifier)), "Pattern tile image identifiers decode"_s);
+    tester.expect(!decode(nativeImages(identifier), { }, setStateWithPatterns(missingIdentifier, std::nullopt)), "A fill pattern with a missing image fails to decode"_s);
+    tester.expect(!decode(nativeImages(identifier), { }, setStateWithPatterns(std::nullopt, missingIdentifier)), "A stroke pattern with a missing image fails to decode"_s);
+    tester.expect(!decode({ }, imageBuffers(identifier, parameters), setStateWithPatterns(identifier, std::nullopt)), "An image buffer used as a pattern tile fails to decode"_s);
 
     tester.expect(!DisplayList::isResolved(DisplayList::DrawNativeImage { identifier, rect, rect, { } }), "A native image identifier is unresolved"_s);
     tester.expect(!DisplayList::isResolved(DisplayList::DrawFilteredImageBuffer { identifier, rect, filterWithEffect(FEFlood::create(Color::green, 1)) }), "A filter source image identifier is unresolved"_s);
-    tester.expect(!DisplayList::isResolved(DisplayList::SetState { state }), "A pattern image identifier is unresolved"_s);
 }
 
 static void testInvalidData(Tester& tester)

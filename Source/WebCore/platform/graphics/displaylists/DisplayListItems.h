@@ -279,8 +279,6 @@ public:
     GraphicsContextState& state() LIFETIME_BOUND { return m_state; }
     const GraphicsContextState& state() const LIFETIME_BOUND { return m_state; }
 
-    bool isResolved() const;
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 

@@ -36,6 +36,13 @@ const AffineTransform& SourceBrush::gradientSpaceTransform() const
     return identity;
 }
 
+std::optional<SourceBrushLogicalGradient> SourceBrush::logicalGradient() const
+{
+    if (auto* logicalGradient = std::get_if<SourceBrushLogicalGradient>(&m_patternGradient))
+        return *logicalGradient;
+    return std::nullopt;
+}
+
 const Gradient* SourceBrush::gradient() const
 {
     if (auto* logicalGradient = std::get_if<SourceBrushLogicalGradient>(&m_patternGradient))

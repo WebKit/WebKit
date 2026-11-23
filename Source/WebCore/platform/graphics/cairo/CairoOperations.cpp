@@ -523,8 +523,7 @@ FillSource::FillSource(const GraphicsContextState& state)
     if (auto fillPattern = state.fillBrush().pattern()) {
         pattern.object = adoptRef(fillPattern->createPlatformPattern(AffineTransform()));
 
-        auto& patternImage = fillPattern->tileImage();
-        pattern.size = patternImage.size();
+        pattern.size = fillPattern->tileImage().size();
         pattern.transform = fillPattern->patternSpaceTransform();
         pattern.repeatX = fillPattern->repeatX();
         pattern.repeatY = fillPattern->repeatY();

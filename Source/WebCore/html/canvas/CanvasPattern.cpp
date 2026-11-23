@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-Ref<CanvasPattern> CanvasPattern::create(SourceImage&& image, bool repeatX, bool repeatY, bool originClean)
+Ref<CanvasPattern> CanvasPattern::create(Ref<NativeImage>&& image, bool repeatX, bool repeatY, bool originClean)
 {
     return adoptRef(*new CanvasPattern(WTF::move(image), repeatX, repeatY, originClean));
 }
 
-CanvasPattern::CanvasPattern(SourceImage&& image, bool repeatX, bool repeatY, bool originClean)
+CanvasPattern::CanvasPattern(Ref<NativeImage>&& image, bool repeatX, bool repeatY, bool originClean)
     : m_tileImage(WTF::move(image))
     , m_parameters(repeatX, repeatY)
     , m_originClean(originClean)
@@ -51,7 +51,7 @@ CanvasPattern::~CanvasPattern() = default;
 
 Ref<const Pattern> CanvasPattern::createPattern() const
 {
-    Ref pattern = Pattern::create(SourceImage { m_tileImage }, m_parameters);
+    Ref pattern = Pattern::create(m_tileImage.copyRef(), m_parameters);
     m_pattern = pattern.ptr();
     return pattern;
 }
@@ -89,8 +89,6 @@ ExceptionOr<void> CanvasPattern::setTransform(DOMMatrix2DInit&& matrixInit)
 
     m_parameters.patternSpaceTransform = { matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0) };
     if (m_pattern) {
-        // Keep the tile of the old snapshot. It may hold the native image that was created for an image buffer tile.
-        m_tileImage = m_pattern->tileImage();
         m_pattern = nullptr;
         CanvasStyle::gradientOrPatternDidChange();
     }

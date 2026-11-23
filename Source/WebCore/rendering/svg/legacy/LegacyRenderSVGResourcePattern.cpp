@@ -147,7 +147,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     }
 
     // Build pattern.
-    patternData->pattern = Pattern::create({ tileNativeImage.releaseNonNull() }, { true, true, patternData->transform });
+    patternData->pattern = Pattern::create(tileNativeImage.releaseNonNull(), { true, true, patternData->transform });
 
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by

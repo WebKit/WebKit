@@ -28,7 +28,7 @@
 #pragma once
 
 #include <WebCore/AffineTransform.h>
-#include <WebCore/SourceImage.h>
+#include <WebCore/NativeImage.h>
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -67,13 +67,10 @@ struct PatternParameters {
 class Pattern final : public ThreadSafeRefCounted<Pattern> {
 public:
     using Parameters = PatternParameters;
-    NODELETE WEBCORE_EXPORT static Ref<const Pattern> create(SourceImage&& tileImage, const Parameters& = { });
+    NODELETE WEBCORE_EXPORT static Ref<const Pattern> create(Ref<NativeImage>&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
-    NODELETE WEBCORE_EXPORT const SourceImage& tileImage() const;
-
-    WEBCORE_EXPORT RefPtr<NativeImage> tileNativeImage() const;
-    WEBCORE_EXPORT RefPtr<ImageBuffer> tileImageBuffer() const;
+    NativeImage& tileImage() const LIFETIME_BOUND { return m_tileImage; }
 
     const Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
 
@@ -94,10 +91,10 @@ public:
     Ref<const Pattern> scaled(float scale) const;
 
 private:
-    Pattern(SourceImage&&, const Parameters&);
+    Pattern(Ref<NativeImage>&&, const Parameters&);
 
-    SourceImage m_tileImage;
-    Parameters m_parameters;
+    const Ref<NativeImage> m_tileImage;
+    const Parameters m_parameters;
 };
 
 inline Ref<const Pattern> Pattern::scaled(float scale) const
