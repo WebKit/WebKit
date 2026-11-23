@@ -17920,6 +17920,7 @@
 		A7CAEDA32CB740E200FE4677 /* StyleViewTransitionName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleViewTransitionName.h; sourceTree = "<group>"; };
 		A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DragImage.cpp; sourceTree = "<group>"; };
 		A7CFB3D00B7ED10A0070C32D /* DragImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragImage.h; sourceTree = "<group>"; };
+		A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageDataCustom.cpp; sourceTree = "<group>"; };
 		A7D20F3B107F373800A80392 /* WebGLActiveInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLActiveInfo.idl; sourceTree = "<group>"; };
 		A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLActiveInfo.cpp; sourceTree = "<group>"; };
 		A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLActiveInfo.h; sourceTree = "<group>"; };
@@ -26594,7 +26595,6 @@
 				2EDDAF4527920EC3005D18E4 /* InspectorOverlayLabel.cpp */,
 				2EDDAF4327920EB4005D18E4 /* InspectorOverlayLabel.h */,
 				9940EAFA2E8DBD6E007F64DD /* InspectorResourceType.h */,
-				99AA17012F1A00010001AAAA /* NetworkInterception.h */,
 				99C2CC9D2E8DFD890008FCDF /* InspectorResourceUtilities.cpp */,
 				99C2CC9C2E8DFD890008FCDF /* InspectorResourceUtilities.h */,
 				6A7279891F16C29B003F39B8 /* InspectorShaderProgram.cpp */,
@@ -26608,6 +26608,7 @@
 				F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */,
 				5CB05C9229CA1C2800CC1AA0 /* LegacyWebSocketInspectorInstrumentation.cpp */,
 				5CB05C9129CA1C2800CC1AA0 /* LegacyWebSocketInspectorInstrumentation.h */,
+				99AA17012F1A00010001AAAA /* NetworkInterception.h */,
 				59C27F04138D28C10079B7E2 /* NetworkResourcesData.cpp */,
 				59C27F06138D28CF0079B7E2 /* NetworkResourcesData.h */,
 				A5F36D3818F758720054C024 /* PageDebugger.cpp */,
@@ -32692,6 +32693,7 @@
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
 				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
 				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
+				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
 				5868C7D52546E0B300BF9DF3 /* JSIntersectionObserverCustom.cpp */,
 				77C13F042165658A002D9C5F /* JSIntersectionObserverEntryCustom.cpp */,
 				71601718279F2D7E005A25AE /* JSKeyframeEffectCustom.cpp */,
@@ -46789,7 +46791,6 @@
 				2EDDAF4427920EB4005D18E4 /* InspectorOverlayLabel.h in Headers */,
 				A5B81CB21FAA44620037D1E6 /* InspectorPageAgent.h in Headers */,
 				9940EAFB2E8DBD6E007F64DD /* InspectorResourceType.h in Headers */,
-				99AA17022F1A00010001AAAA /* NetworkInterception.h in Headers */,
 				99C2CC9F2E8DFD890008FCDF /* InspectorResourceUtilities.h in Headers */,
 				6A72798B1F16C29C003F39B8 /* InspectorShaderProgram.h in Headers */,
 				82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */,
@@ -48208,6 +48209,7 @@
 				1E8D17F2C31AF57C3D9059DB /* NetworkAgentInstrumentation.h in Headers */,
 				A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */,
 				628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */,
+				99AA17022F1A00010001AAAA /* NetworkInterception.h in Headers */,
 				416D75A220C651A500D02D2C /* NetworkLoadInformation.h in Headers */,
 				8A81BF8511DCFD9000DA2B98 /* NetworkLoadMetrics.h in Headers */,
 				08B786B0CEACA0F21D6A5676 /* NetworkLoadPolicy.h in Headers */,

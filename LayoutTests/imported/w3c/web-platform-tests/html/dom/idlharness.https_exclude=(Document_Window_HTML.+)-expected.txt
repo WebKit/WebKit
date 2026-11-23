@@ -1352,7 +1352,7 @@ PASS ImageData must be primary interface of new ImageData(10, 10)
 PASS Stringification of new ImageData(10, 10)
 PASS ImageData interface: new ImageData(10, 10) must inherit property "width" with the proper type
 PASS ImageData interface: new ImageData(10, 10) must inherit property "height" with the proper type
-PASS ImageData interface: new ImageData(10, 10) must inherit property "data" with the proper type
+FAIL ImageData interface: new ImageData(10, 10) must inherit property "data" with the proper type assert_inherits: property "data" found on object expected in prototype chain
 PASS ImageData interface: new ImageData(10, 10) must inherit property "pixelFormat" with the proper type
 PASS ImageData interface: new ImageData(10, 10) must inherit property "colorSpace" with the proper type
 PASS ImageBitmap interface: existence and properties of interface object
