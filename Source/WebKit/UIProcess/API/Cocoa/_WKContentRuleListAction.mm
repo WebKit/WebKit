@@ -31,11 +31,10 @@
 
 @implementation _WKContentRuleListAction
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKContentRuleListAction);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKContentRuleListAction.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _action->~ContentRuleListAction();
     
     [super dealloc];

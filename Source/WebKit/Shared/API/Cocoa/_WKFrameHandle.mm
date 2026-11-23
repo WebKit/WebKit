@@ -26,17 +26,17 @@
 #import "config.h"
 #import "_WKFrameHandleInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/FrameIdentifier.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation _WKFrameHandle
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKFrameHandle);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKFrameHandle.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _frameHandle->~FrameHandle();
 
     [super dealloc];

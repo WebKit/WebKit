@@ -43,10 +43,10 @@
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKCustomHeaderFields);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKCustomHeaderFields.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _fields->API::CustomHeaderFields::~CustomHeaderFields();
     [super dealloc];
 }

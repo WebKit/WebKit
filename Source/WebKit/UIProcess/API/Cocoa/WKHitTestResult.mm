@@ -28,6 +28,7 @@
 
 #import "APIJSHandle.h"
 #import "WKJSHandleInternal.h"
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URL.h>
 
@@ -47,11 +48,10 @@ NSURL *URLFromHitTestResultString(const String& urlString)
 
 @implementation WKHitTestResult
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKHitTestResult);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKHitTestResult.class, self))
-        return;
-
     SUPPRESS_UNCOUNTED_ARG _hitTestResult->~HitTestResult();
 
     [super dealloc];

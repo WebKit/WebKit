@@ -26,17 +26,17 @@
 #import "config.h"
 #import "_WKFeatureInternal.h"
 #import "_WKExperimentalFeature.h"
+#import "WKObject.h"
 #import "_WKInternalDebugFeature.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKFeature
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKFeature);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKFeature.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _wrappedFeature->API::Feature::~Feature();
 
     [super dealloc];

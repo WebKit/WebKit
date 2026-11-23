@@ -116,11 +116,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebViewConfiguration);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebViewConfiguration.class, self))
-        return;
-
     protect(*_pageConfiguration)->API::PageConfiguration::~PageConfiguration();
 
     [super dealloc];

@@ -67,11 +67,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKUserContentController);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKUserContentController.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _userContentControllerProxy->~WebUserContentControllerProxy();
 
     [super dealloc];

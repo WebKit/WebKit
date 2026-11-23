@@ -28,6 +28,7 @@
 
 #import "APIInspectorClient.h"
 #import "WKError.h"
+#import "WKObject.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
 #import "WebInspectorUIProxy.h"
@@ -234,11 +235,10 @@ private:
     return *_inspector;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKInspector);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInspector.class, self))
-        return;
-    
     SUPPRESS_UNRETAINED_ARG _inspector->~WebInspectorUIProxy();
 
     [super dealloc];

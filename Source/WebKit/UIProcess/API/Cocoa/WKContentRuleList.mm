@@ -50,11 +50,10 @@ RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleLi
 
 @implementation WKContentRuleList
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKContentRuleList);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContentRuleList.class, self))
-        return;
-
     Ref { *_contentRuleList }->~ContentRuleList();
 
     [super dealloc];

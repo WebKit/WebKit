@@ -128,11 +128,10 @@ private:
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKHTTPCookieStore);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKHTTPCookieStore.class, self))
-        return;
-
     for (Ref observer : _observers.values())
         protect(*_cookieStore)->unregisterObserver(observer);
 

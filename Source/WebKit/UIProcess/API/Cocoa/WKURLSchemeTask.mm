@@ -81,10 +81,10 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKURLSchemeTaskImpl);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKURLSchemeTaskImpl.class, self))
-        return;
     SUPPRESS_UNCOUNTED_ARG _urlSchemeTask->WebURLSchemeTask::~WebURLSchemeTask();
     [super dealloc];
 }

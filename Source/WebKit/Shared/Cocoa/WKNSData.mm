@@ -33,11 +33,10 @@
     AlignedStorage<API::Data> _data;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKNSData);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNSData.class, self))
-        return;
-
     Ref { *_data }->~Data();
 
     [super dealloc];
