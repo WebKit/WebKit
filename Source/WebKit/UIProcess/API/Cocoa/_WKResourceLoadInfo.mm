@@ -29,6 +29,7 @@
 #import "APIFrameHandle.h"
 #import "APIResourceLoadInfo.h"
 #import "ResourceLoadInfo.h"
+#import "WKObject.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
@@ -77,10 +78,10 @@ NODELETE static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType
 
 @implementation _WKResourceLoadInfo
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKResourceLoadInfo);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKResourceLoadInfo.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _info->API::ResourceLoadInfo::~ResourceLoadInfo();
     [super dealloc];
 }

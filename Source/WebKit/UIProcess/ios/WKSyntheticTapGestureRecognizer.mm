@@ -31,6 +31,7 @@
 #import "UIKitUtilities.h"
 #import "WKTouchEventsGestureRecognizer.h"
 #import <UIKit/UIGestureRecognizerSubclass.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKSyntheticTapGestureRecognizer {
@@ -64,9 +65,9 @@
 - (void)setState:(UIGestureRecognizerState)state
 {
     if (state == UIGestureRecognizerStateEnded)
-        [protect(_gestureIdentifiedTarget) performSelector:_gestureIdentifiedAction withObject:self];
+        wtfObjCMsgSend<void>(protect(_gestureIdentifiedTarget).get(), _gestureIdentifiedAction, self);
     else if (state == UIGestureRecognizerStateFailed)
-        [protect(_gestureFailedTarget) performSelector:_gestureFailedAction withObject:self];
+        wtfObjCMsgSend<void>(protect(_gestureFailedTarget).get(), _gestureFailedAction, self);
     [super setState:state];
 }
 
@@ -74,7 +75,7 @@
 {
     [super reset];
 
-    [protect(_resetTarget) performSelector:_resetAction withObject:self];
+    wtfObjCMsgSend<void>(protect(_resetTarget).get(), _resetAction, self);
     _lastActiveTouchIdentifier = nil;
 }
 

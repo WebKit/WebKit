@@ -28,6 +28,7 @@
 
 #import "TimeBasedEvictionMode.h"
 #import "UnifiedOriginStorageLevel.h"
+#import "WKObject.h"
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Borrow.h>
@@ -97,10 +98,10 @@ static void checkURLArgument(NSURL *url)
     return self;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKWebsiteDataStoreConfiguration);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebsiteDataStoreConfiguration.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _configuration->~WebsiteDataStoreConfiguration();
     [super dealloc];
 }

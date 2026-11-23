@@ -26,16 +26,17 @@
 #import "config.h"
 #import "_WKTargetedElementRequestInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKTargetedElementRequest {
     RetainPtr<NSString> _searchText;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKTargetedElementRequest);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKTargetedElementRequest.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _request->API::TargetedElementRequest::~TargetedElementRequest();
     [super dealloc];
 }

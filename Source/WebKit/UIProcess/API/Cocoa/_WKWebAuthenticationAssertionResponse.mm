@@ -27,6 +27,7 @@
 #import "_WKWebAuthenticationAssertionResponseInternal.h"
 
 #import "WKNSData.h"
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 #if ENABLE(WEB_AUTHN)
@@ -38,11 +39,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKWebAuthenticationAssertionResponse);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebAuthenticationAssertionResponse.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _response->~WebAuthenticationAssertionResponse();
 
     [super dealloc];

@@ -83,21 +83,21 @@ struct GeolocationRequestData {
 
 static void startUpdatingCallback(WKGeolocationManagerRef geolocationManager, const void* clientInfo)
 {
-    WKGeolocationProviderIOS *geolocationProvider = reinterpret_cast<WKGeolocationProviderIOS*>(const_cast<void*>(clientInfo));
+    WKGeolocationProviderIOS *geolocationProvider = (__bridge WKGeolocationProviderIOS *)clientInfo;
     ASSERT([geolocationProvider isKindOfClass:[WKGeolocationProviderIOS class]]);
     [geolocationProvider _startUpdating];
 }
 
 static void stopUpdatingCallback(WKGeolocationManagerRef geolocationManager, const void* clientInfo)
 {
-    WKGeolocationProviderIOS *geolocationProvider = reinterpret_cast<WKGeolocationProviderIOS*>(const_cast<void*>(clientInfo));
+    WKGeolocationProviderIOS *geolocationProvider = (__bridge WKGeolocationProviderIOS *)clientInfo;
     ASSERT([geolocationProvider isKindOfClass:[WKGeolocationProviderIOS class]]);
     [geolocationProvider _stopUpdating];
 }
 
 static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bool enable, const void* clientInfo)
 {
-    WKGeolocationProviderIOS *geolocationProvider = reinterpret_cast<WKGeolocationProviderIOS*>(const_cast<void*>(clientInfo));
+    WKGeolocationProviderIOS *geolocationProvider = (__bridge WKGeolocationProviderIOS *)clientInfo;
     ASSERT([geolocationProvider isKindOfClass:[WKGeolocationProviderIOS class]]);
     [geolocationProvider _setEnableHighAccuracy:enable];
 }
@@ -148,7 +148,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     if (wrappedProcessPool.get()._coreLocationProvider) {
         _geolocationManager = protectedProcessPool->supplement<WebKit::WebGeolocationManagerProxy>();
         WKGeolocationProviderV1 providerCallback = {
-            { 1, self },
+            { 1, (__bridge const void*)self },
             startUpdatingCallback,
             stopUpdatingCallback,
             setEnableHighAccuracy

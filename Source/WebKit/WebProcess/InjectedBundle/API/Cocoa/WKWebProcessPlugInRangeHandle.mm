@@ -38,10 +38,10 @@
     AlignedStorage<WebKit::InjectedBundleRangeHandle> _rangeHandle;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebProcessPlugInRangeHandle);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInRangeHandle.class, self))
-        return;
     SUPPRESS_UNCOUNTED_ARG _rangeHandle->~InjectedBundleRangeHandle();
     [super dealloc];
 }

@@ -43,10 +43,10 @@
     return WebKit::wrapper(WebKit::InjectedBundleScriptWorld::normalWorldSingleton());
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebProcessPlugInScriptWorld);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInScriptWorld.class, self))
-        return;
     SUPPRESS_UNCOUNTED_ARG _world->~InjectedBundleScriptWorld();
     [super dealloc];
 }

@@ -34,10 +34,10 @@
     AlignedStorage<WebKit::InjectedBundleHitTestResult> _hitTestResult;
 }
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(WKWebProcessPlugInHitTestResult);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInHitTestResult.class, self))
-        return;
     SUPPRESS_UNCOUNTED_ARG _hitTestResult->~InjectedBundleHitTestResult();
     [super dealloc];
 }

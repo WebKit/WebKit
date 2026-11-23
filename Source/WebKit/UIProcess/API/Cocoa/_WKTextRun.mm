@@ -26,15 +26,16 @@
 #import "config.h"
 #import "_WKTextRunInternal.h"
 
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 
 @implementation _WKTextRun
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKTextRun);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKTextRun.class, self))
-        return;
     SUPPRESS_UNRETAINED_ARG _textRun->API::TextRun::~TextRun();
     [super dealloc];
 }

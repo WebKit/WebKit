@@ -25,16 +25,17 @@
 
 #import "config.h"
 #import "_WKWebPushSubscriptionDataInternal.h"
+
+#import "WKObject.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 @implementation _WKWebPushSubscriptionData
 
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(_WKWebPushSubscriptionData);
+
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushSubscriptionData.class, self))
-        return;
-
     SUPPRESS_UNRETAINED_ARG _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
     [super dealloc];
 }
