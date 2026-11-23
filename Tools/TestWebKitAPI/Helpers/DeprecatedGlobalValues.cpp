@@ -33,7 +33,6 @@ bool didEnterPiP { false };
 bool didExitPiP { false };
 bool readyToContinue { false };
 bool didFinishLoad { false };
-bool didBecomeUnresponsive { false };
 bool wasPrompted { false };
 bool didFinishNavigationBoolean { false };
 bool didCreateWebView { false };
