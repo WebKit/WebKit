@@ -47,7 +47,7 @@ StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name)
 
 StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
     : StyleRuleBase(o)
-    , m_keyframes(o.keyframes())
+    , m_keyframes(o.keyframes().map([](auto& keyframe) { return keyframe->copy(); }))
     , m_name(o.m_name)
 {
 }
@@ -211,6 +211,10 @@ CSSRuleList& CSSKeyframesRule::cssRules()
 void CSSKeyframesRule::reattach(StyleRuleBase& rule)
 {
     m_keyframesRule = downcast<StyleRuleKeyframes>(rule);
+    for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
+        if (m_childRuleCSSOMWrappers[i])
+            protect(m_childRuleCSSOMWrappers[i])->reattach(m_keyframesRule->keyframes()[i]);
+    }
 }
 
 } // namespace WebCore

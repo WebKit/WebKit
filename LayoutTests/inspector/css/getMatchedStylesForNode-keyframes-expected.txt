@@ -244,7 +244,7 @@ Keyframes for "#multiple":
   {
     "selectorList": {
       "selectors": [],
-      "text": "0%,100%",
+      "text": "0%, 100%",
       "range": "<filtered>"
     },
     "sourceLine": 8,
