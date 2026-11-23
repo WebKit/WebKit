@@ -9376,6 +9376,34 @@ TEST_F(SuiteFixture,
     def test_swift_test_spans_ignore_string_literals(self):
         self.assertEqual(FindModifiedAPITests._test_spans_from_content(self.SWIFT, swift=True), [('ExampleTests', 'first', 2, 8), ('ExampleTests', 'second', 9, 11)])
 
+    def test_swift_tests_belong_to_the_type_that_encloses_them(self):
+        content = '''@Suite struct OuterTests {
+    enum Navigation: CaseIterable {
+        case assign
+
+        var script: String {
+            switch self {
+            case .assign: "location.href = '{'"
+            }
+        }
+    }
+
+    @Test(arguments: Navigation.allCases)
+    func navigates(navigation: Navigation) {
+    }
+
+    struct InnerTests {
+        @Test func inner() {
+        }
+    }
+
+    @Test func afterInner() {
+    }
+}
+'''
+        spans = FindModifiedAPITests._test_spans_from_content(content, swift=True)
+        self.assertEqual([(suite, test) for suite, test, _, _ in spans], [('OuterTests', 'navigates'), ('InnerTests', 'inner'), ('OuterTests', 'afterInner')])
+
     def test_changed_line_ranges(self):
         self.assertEqual(FindModifiedAPITests._changed_line_ranges('@@ -3,0 +4,2 @@\n+a\n+b\n@@ -10 +12 @@\n-c\n+d\n@@ -5,2 +4,0 @@\n'), [(4, 5), (12, 12), (4, 4)])
 

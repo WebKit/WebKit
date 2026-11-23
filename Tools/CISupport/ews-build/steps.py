@@ -6544,6 +6544,7 @@ class FindModifiedAPITests(shell.ShellCommand, AnalyzeChange):
     RE_SWIFT_TYPE = re.compile(r'^\s*(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:public|private|fileprivate|internal|final)\s+)*(?:struct|class|enum|actor|extension)\s+(\w+)')
     RE_SWIFT_TEST = re.compile(r'^\s*@Test\b')
     RE_SWIFT_FUNCTION = re.compile(r'\bfunc\s+(\w+)\s*\(')
+    RE_SWIFT_STRING = re.compile(r'"(?:\\.|[^"\\])*"')
     RE_HUNK = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@', re.MULTILINE)
     API_TEST_PATHS = ['Tools/TestWebKitAPI/Tests/']
     BINARY_FOR_DIRECTORY = {
@@ -6563,8 +6564,10 @@ class FindModifiedAPITests(shell.ShellCommand, AnalyzeChange):
         lines = content.splitlines()
         starts = []
         if swift:
-            suite = None
+            enclosing_types = []
+            pending_type = None
             pending_swift_test = None
+            depth = 0
             in_string_literal = False
             for number, line in enumerate(lines, 1):
                 was_in_string_literal = in_string_literal
@@ -6573,14 +6576,24 @@ class FindModifiedAPITests(shell.ShellCommand, AnalyzeChange):
                     continue
                 type_match = cls.RE_SWIFT_TYPE.match(line)
                 if type_match and pending_swift_test is None:
-                    suite = type_match.group(1)
+                    pending_type = type_match.group(1)
                     starts.append((None, None, number))
                 if cls.RE_SWIFT_TEST.match(line):
                     pending_swift_test = number
                 if pending_swift_test is not None and (function := cls.RE_SWIFT_FUNCTION.search(line)):
-                    if suite:
-                        starts.append((suite, function.group(1), pending_swift_test))
+                    if enclosing_types:
+                        starts.append((enclosing_types[-1][0], function.group(1), pending_swift_test))
                     pending_swift_test = None
+                for character in cls.RE_SWIFT_STRING.sub('""', line).split('//', 1)[0]:
+                    if character == '{':
+                        depth += 1
+                        if pending_type:
+                            enclosing_types.append((pending_type, depth))
+                            pending_type = None
+                    elif character == '}':
+                        if enclosing_types and enclosing_types[-1][1] == depth:
+                            enclosing_types.pop()
+                        depth -= 1
         else:
             for match in cls.RE_TEST_DEFINITION.finditer(content):
                 starts.append((match.group(1), match.group(2), content.count('\n', 0, match.start()) + 1))
