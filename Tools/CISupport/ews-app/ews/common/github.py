@@ -213,7 +213,7 @@ class GitHubEWS(GitHub):
     ICON_BUILD_ONGOING_WITH_FAILURES = u'![loading-orange](https://github-production-user-asset-6210df.s3.amazonaws.com/3098702/291015173-08c448be-ac0a-4fd6-92a3-8165057445b7.png)'
     # FIXME: Make ICON_BUILD_ONGOING_WITH_FAILURES more accessible
     ICON_BUILD_ERROR = u'\U0001F4A5'
-    ICON_BUILD_SKIPPED = u'\U000023ED\U0000FE0F'
+    ICON_BUILD_SKIPPED = u'![skipped](https://github.com/user-attachments/assets/eb6c9096-af2d-4342-8202-46e26508e68b)'
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
