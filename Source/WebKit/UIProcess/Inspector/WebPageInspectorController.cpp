@@ -745,7 +745,7 @@ void WebPageInspectorController::takeTimelineScreenshot(const WebCore::IntRect& 
             return;
 
         if (image)
-            controller.sendTimelineScreenshotRecord(timestamp, encodeDataURL(image, "image/png"_s));
+            controller.sendTimelineScreenshotRecord(timestamp, WebCore::encodeDataURL(image, "image/png"_s));
         controller.finishTimelineScreenshot();
     });
 #else

@@ -515,11 +515,7 @@ void ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& 
 
     auto [processIdentifier, channelID] = *parsed;
 
-    RefPtr inspectedPage = m_inspectedPage.get();
-    if (!inspectedPage) {
-        callback->sendFailure("Inspected page is gone"_s);
-        return;
-    }
+    Ref inspectedPage = m_inspectedPage;
 
     RefPtr<WebKit::WebProcessProxy> targetProcess;
     std::optional<PageIdentifier> targetPageID;
