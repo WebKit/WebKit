@@ -12,4 +12,4 @@ testWithBigIntTypedArrayConstructors((TA, makeCtorArg) => {
   const view = new TA(buffer);
   assert.sameValue(Atomics.and(view, 0, 1n), 0n, 'Atomics.and(view, 0, 1n) returns 0n');
   assert.sameValue(Atomics.load(view, 0), 0n, 'Atomics.load(view, 0) returns 0n');
-}, null, ["arraybuffer"], ["immutable"]);
+}, null, null, ["immutable"]);

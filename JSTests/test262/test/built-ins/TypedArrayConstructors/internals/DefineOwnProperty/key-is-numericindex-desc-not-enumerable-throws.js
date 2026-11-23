@@ -36,4 +36,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   }, "complete descriptor");
 
   assert.sameValue(sample[0], 0, "side effect check");
-}, null, ["passthrough"]);
+}, null, null, ["immutable"]);

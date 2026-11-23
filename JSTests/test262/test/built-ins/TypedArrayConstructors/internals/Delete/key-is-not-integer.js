@@ -39,4 +39,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
 
   assert.sameValue(delete sample["1.1"], true, 'The value of `delete sample["1.1"]` is true');
   assert.sameValue(delete sample[1.1], true, 'The value of `delete sample[1.1]` is true');
-}, null, ["passthrough"]);
+});

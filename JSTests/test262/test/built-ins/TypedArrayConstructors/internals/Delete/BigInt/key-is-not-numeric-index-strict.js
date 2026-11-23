@@ -44,4 +44,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   });
 
   assert.sameValue(delete sample.baz, true, 'The value of `delete sample.baz` is true');
-}, null, ["passthrough"]);
+});

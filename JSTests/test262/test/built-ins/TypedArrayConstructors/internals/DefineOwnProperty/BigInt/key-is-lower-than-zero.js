@@ -31,4 +31,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
     false,
     "-1"
   );
-}, null, ["passthrough"]);
+});

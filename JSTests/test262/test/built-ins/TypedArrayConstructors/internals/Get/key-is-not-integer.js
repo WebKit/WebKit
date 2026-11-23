@@ -34,4 +34,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample = new TA(makeCtorArg([42, 43]));
 
   assert.sameValue(sample["1.1"], undefined);
-}, null, ["passthrough"]);
+});

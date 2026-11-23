@@ -25,4 +25,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   Object.defineProperty(sample, s, { value: 42 });
 
   assert.sameValue(Reflect.has(sample, s), true);
-}, null, ["passthrough"]);
+});

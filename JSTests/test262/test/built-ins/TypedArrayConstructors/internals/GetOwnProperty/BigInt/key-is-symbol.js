@@ -28,4 +28,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
     "baz",
     "return value from a Symbol key"
   );
-}, null, ["passthrough"]);
+});

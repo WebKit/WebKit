@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   assert.throws(TypeError, function() {
     Object.defineProperty(sample, "-0", desc);
   });
-}, null, ["passthrough"]);
+});

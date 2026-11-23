@@ -37,4 +37,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert.sameValue(sample[s1], "bar", "return value from get accessor");
 
   assert.sameValue(sample[parentKey], "test262", "value from parent key");
-}, null, ["passthrough"]);
+});

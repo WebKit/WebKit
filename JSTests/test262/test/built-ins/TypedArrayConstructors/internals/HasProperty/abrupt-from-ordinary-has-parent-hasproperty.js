@@ -60,4 +60,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
     true,
     'Reflect.has(sample, "foo") must return true'
   );
-}, null, ["passthrough"]);
+});

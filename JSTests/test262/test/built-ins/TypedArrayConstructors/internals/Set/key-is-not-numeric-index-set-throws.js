@@ -37,4 +37,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   });
 
   assert.sameValue(sample.test262, undefined, 'The value of sample.test262 is expected to equal `undefined`');
-}, null, ["passthrough"]);
+});

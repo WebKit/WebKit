@@ -63,4 +63,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
     delete TypedArray.prototype[key];
   });
-}, null, ["passthrough"]);
+});

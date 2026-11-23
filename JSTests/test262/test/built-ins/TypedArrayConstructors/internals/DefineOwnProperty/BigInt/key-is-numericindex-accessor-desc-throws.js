@@ -41,4 +41,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
     });
   }, "get and set accessors");
   assert.sameValue(sample[0], 0n, "get and set accessors - side effect check");
-}, null, ["passthrough"]);
+});

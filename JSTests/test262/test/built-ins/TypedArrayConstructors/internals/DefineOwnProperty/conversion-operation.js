@@ -60,4 +60,4 @@ testTypedArrayConversions(byteConversionValues, function(TA, value, expected, in
   Object.defineProperty(sample, "0", {value: value});
 
   assert.sameValue(sample[0], expected, value + " converts to " + expected);
-});
+}, null, null, ["immutable"]);

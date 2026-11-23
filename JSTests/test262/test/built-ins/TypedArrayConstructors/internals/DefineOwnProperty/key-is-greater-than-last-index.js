@@ -44,4 +44,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
     false,
     "numericIndex > length"
   );
-}, null, ["passthrough"]);
+});

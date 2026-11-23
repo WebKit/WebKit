@@ -33,4 +33,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   );
   assert.sameValue(sample[0], 0, "does not change the value for [0]");
   assert.sameValue(sample["-0"], undefined, "does define a value for ['-0']");
-}, null, ["passthrough"]);
+});

@@ -15,4 +15,4 @@ testWithNonAtomicsFriendlyTypedArrayConstructors((TA, makeCtorArg) => {
   assert.throws(TypeError, function() {
     Atomics.or(view, 0, 1);
   }, `Atomics.or(new ${TA.name}(buffer), 0, 1) throws TypeError`);
-}, ["arraybuffer"]);
+});

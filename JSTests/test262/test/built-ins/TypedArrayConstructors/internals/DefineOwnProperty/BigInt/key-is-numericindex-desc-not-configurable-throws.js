@@ -36,4 +36,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   }, "complete descriptor");
 
   assert.sameValue(sample[0], 0n, "side effect check");
-}, null, ["passthrough"]);
+}, null, null, ["immutable"]);

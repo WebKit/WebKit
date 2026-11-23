@@ -33,4 +33,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
     "defineProperty's result"
   );
   assert.sameValue(sample[0], 42n, "side effect check");
-}, null, ["passthrough"]);
+}, null, null, ["immutable"]);

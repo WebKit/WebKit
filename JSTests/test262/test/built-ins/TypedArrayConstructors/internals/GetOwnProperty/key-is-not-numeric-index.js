@@ -35,4 +35,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
     "bar",
     "return value from a String key"
   );
-}, null, ["passthrough"]);
+});

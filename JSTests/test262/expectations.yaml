@@ -19,6 +19,24 @@
 ---
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 3
+test/built-ins/DataView/prototype/byteLength/detached-buffer.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteLength/resizable-array-buffer-auto.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteLength/resizable-array-buffer-fixed.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteOffset/detached-buffer.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteOffset/resizable-array-buffer-auto.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteOffset/resizable-array-buffer-fixed.js:
+  default: 3
+  strict mode: 3
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 3
   strict mode: 3
@@ -52,13 +70,88 @@ test/built-ins/Proxy/construct/arguments-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 3
   strict mode: 3
+test/built-ins/Temporal/PlainMonthDay/from/iso-year-used-only-for-overflow.js:
+  default: 3
+  strict mode: 3
+test/built-ins/TypedArray/prototype/filter/BigInt/callbackfn-detachbuffer-kept-undefined.js:
+  default: 3
+  strict mode: 3
+test/built-ins/TypedArray/prototype/filter/BigInt/callbackfn-shrink-kept-undefined.js:
+  default: 3
+  strict mode: 3
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
+  default: 3
+  strict mode: 3
+test/intl402/DateTimeFormat/prototype/format/german-weekday-no-year.js:
+  default: 3
+  strict mode: 3
+test/intl402/DateTimeFormat/timezone-case-insensitive.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/constructor-options-firstDayOfWeek-valid.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/constructor-unicode-extension-uvalue-yes.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/calendar/canonicalize-case.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/collation/canonicalize-case.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/firstDayOfWeek/valid-id.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/firstDayOfWeek/valid-options.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getCollations/preferred-from-unicode-extension-true-empty.js:
   default: 3
   strict mode: 3
 test/intl402/Locale/prototype/getHourCycles/region-priority.js:
   default: 3
   strict mode: 3
 test/intl402/Locale/prototype/getHourCycles/subdivision-region.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getNumberingSystems/preferred-from-unicode-extension-true-empty.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/language-subtag-with-more-than-three-letters.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-metadata-rtl-is-unknown.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-metadata-unlisted-language-script-is-rtl.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-subtag-missing.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-subtag-present.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-unregistered-or-privateuse.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/numberingSystem/canonicalize-case.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/ZonedDateTime/from/timezone-case-insensitive.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/ZonedDateTime/iana-legacy-names.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/ZonedDateTime/links.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/ZonedDateTime/prototype/equals/timezone-case-insensitive.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/ZonedDateTime/timezone-case-insensitive.js:
   default: 3
   strict mode: 3
 test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js:
@@ -79,6 +172,9 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 3
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 3
+test/language/expressions/assignment/fn-name-lhs-cover.js:
+  default: 3
+  strict mode: 3
 test/language/expressions/delete/super-property-uninitialized-this.js:
   default: 3
   strict mode: 3
@@ -111,6 +207,21 @@ test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   strict mode: 3
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: 3
+test/language/import/import-defer/evaluation-triggers/ignore-private-name-access.js:
+  module: 3
+test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
+  strict mode: 3
+test/language/statements/class/subclass/private-class-field-on-nonextensible-return-override.js:
+  strict mode: 3
+test/language/statements/for-await-of/head-lhs-async.js:
+  default: 3
+  strict mode: 3
+test/language/statements/for-in/head-lhs-let.js:
+  default: 3
+test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
+  default: 3
+test/language/statements/for/head-lhs-let.js:
+  default: 3
 test/language/statements/with/get-binding-value-call-with-proxy-env.js:
   default: 3
 test/language/statements/with/get-binding-value-idref-with-proxy-env.js:
@@ -119,12 +230,22 @@ test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopa
   default: 3
 test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js:
   default: 3
+test/staging/sm/ArrayBuffer/slice-species.js:
+  default: 3
+  strict mode: 3
 test/staging/sm/Date/two-digit-years.js:
   default: 3
   strict mode: 3
 test/staging/sm/Function/arguments-parameter-shadowing.js:
   default: 3
+test/staging/sm/Function/function-name-assignment.js:
+  default: 3
 test/staging/sm/Function/function-toString-builtin-name.js:
+  default: 3
+  strict mode: 3
+test/staging/sm/PrivateName/modify-non-extensible.js:
+  default: 3
+test/staging/sm/Proxy/revoked-get-function-realm-typeerror.js:
   default: 3
   strict mode: 3
 test/staging/sm/RegExp/replace-sticky-lastIndex.js:
@@ -144,7 +265,13 @@ test/staging/sm/class/superPropOrdering.js:
   strict mode: 3
 test/staging/sm/eval/redeclared-arguments-in-param-expression-eval.js:
   default: 3
+test/staging/sm/expressions/exponentiation-unparenthesised-unary.js:
+  default: 3
+  strict mode: 3
 test/staging/sm/expressions/object-literal-computed-property-evaluation.js:
+  default: 3
+  strict mode: 3
+test/staging/sm/expressions/short-circuit-compound-assignment-anon-fns.js:
   default: 3
   strict mode: 3
 test/staging/sm/extensions/function-caller-skips-eval-frames.js:
@@ -152,6 +279,8 @@ test/staging/sm/extensions/function-caller-skips-eval-frames.js:
 test/staging/sm/extensions/new-cross-compartment.js:
   default: 3
   strict mode: 3
+test/staging/sm/fields/await-identifier-module-2.js:
+  module: 3
 test/staging/sm/generators/delegating-yield-1.js:
   default: 3
   strict mode: 3
@@ -167,3 +296,14 @@ test/staging/sm/generators/delegating-yield-6.js:
 test/staging/sm/generators/delegating-yield-7.js:
   default: 3
   strict mode: 3
+test/staging/sm/lexical-environment/block-scoped-functions-annex-b-label.js:
+  default: 3
+test/staging/sm/lexical-environment/block-scoped-functions-deprecated-redecl.js:
+  default: 3
+test/staging/sm/lexical-environment/for-loop.js:
+  default: 3
+  strict mode: 3
+test/staging/sm/misc/future-reserved-words.js:
+  default: 3
+test/staging/sm/module/await-restricted-nested.js:
+  module: 3

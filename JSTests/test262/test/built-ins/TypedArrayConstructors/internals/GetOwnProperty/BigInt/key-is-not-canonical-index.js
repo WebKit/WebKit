@@ -45,4 +45,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
       "return value from a ordinary property key [" + key + "]"
     );
   });
-}, null, ["passthrough"]);
+});

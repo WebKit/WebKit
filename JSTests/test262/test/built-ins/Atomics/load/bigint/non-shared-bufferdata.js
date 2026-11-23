@@ -11,4 +11,4 @@ testWithBigIntTypedArrayConstructors((TA, makeCtorArg) => {
   const buffer = makeCtorArg(4);
   const view = new TA(buffer);
   assert.sameValue(Atomics.load(view, 0), 0n, 'Atomics.load(view, 0) returns 0n');
-}, null, ["arraybuffer"]);
+});

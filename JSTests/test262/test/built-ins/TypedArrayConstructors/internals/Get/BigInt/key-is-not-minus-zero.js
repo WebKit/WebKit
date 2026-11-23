@@ -34,4 +34,4 @@ testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample = new TA(makeCtorArg([42n, 43n]));
 
   assert.sameValue(sample["-0"], undefined);
-}, null, ["passthrough"]);
+});
