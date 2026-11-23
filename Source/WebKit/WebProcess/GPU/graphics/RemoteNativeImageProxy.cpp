@@ -33,6 +33,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -105,6 +106,10 @@ PlatformImagePtr RemoteNativeImageProxy::platformImage() const
     // Currently calls made here are always to a cache that is local to the thread.
     if (CheckedPtr resourceCache = m_resourceCache.get())
         platformImage = resourceCache->platformImage(*this);
+    else if (RefPtr sharedResourceCache = m_sharedResourceCache) {
+        if (RefPtr bitmap = sharedResourceCache->nativeImagePixels(*this))
+            platformImage = bitmap->createPlatformImage();
+    }
     // The callers do not expect !platformImage().
     if (!platformImage)
         platformImage = placeholderPlatformImage();

@@ -47,6 +47,7 @@ public:
     // Creates an image whose contents live in the GPU process's RemoteSharedResourceCache. It is not
     // cached in any rendering backend until RemoteResourceCacheProxy::recordSharedNativeImageUse()
     // adopts it, and its shared cache entry is released via `sharedResourceCache` when destroyed.
+    // While no rendering backend holds it, platformImage() reads the pixels from the shared cache, from any thread.
     static Ref<RemoteNativeImageProxy> create(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&&);
 
     ~RemoteNativeImageProxy() override;
