@@ -251,6 +251,11 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
     semaphore.wait();
 }
 
+Ref<RemoteSharedResourceCache> RemoteGPU::sharedResourceCache()
+{
+    return m_renderingBackend->sharedResourceCache();
+}
+
 RefPtr<WebCore::WebGPUIntegration> RemoteGPU::backing()
 {
     assertIsCurrent(workQueue());

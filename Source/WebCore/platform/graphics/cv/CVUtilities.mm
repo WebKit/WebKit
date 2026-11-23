@@ -26,6 +26,8 @@
 #import "config.h"
 #import "CVUtilities.h"
 
+#import "CMUtilities.h"
+#import "ColorSpace.h"
 #import "ColorSpaceCG.h"
 #import "FourCC.h"
 #import "IOSurface.h"
@@ -187,6 +189,37 @@ CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef buffer)
     if (alphaMode && CFEqual(alphaMode, kCVImageBufferAlphaChannelMode_PremultipliedAlpha))
         return kCGImageAlphaPremultipliedFirst;
     return kCGImageAlphaFirst;
+}
+
+std::optional<PlatformVideoColorSpace> videoColorSpaceForRGBContents(const ColorSpace& colorSpace)
+{
+    auto rgbColorSpace = [](PlatformVideoColorPrimaries primaries, PlatformVideoTransferCharacteristics transfer) {
+        return PlatformVideoColorSpace { .primaries = primaries, .transfer = transfer, .matrix = PlatformVideoMatrixCoefficients::Rgb, .fullRange = true };
+    };
+    if (colorSpace == ColorSpace::SRGB())
+        return rgbColorSpace(PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621);
+    if (colorSpace == ColorSpace::LinearSRGB())
+        return rgbColorSpace(PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Linear);
+    // The extended range does not fit in 8 bits, so the contents are clamped to the standard range.
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    if (colorSpace == ColorSpace::ExtendedSRGB())
+        return rgbColorSpace(PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621);
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    if (colorSpace == ColorSpace::DisplayP3() || colorSpace == ColorSpace::ExtendedDisplayP3())
+        return rgbColorSpace(PlatformVideoColorPrimaries::SmpteEg432, PlatformVideoTransferCharacteristics::Iec6196621);
+    if (colorSpace == ColorSpace::LinearDisplayP3())
+        return rgbColorSpace(PlatformVideoColorPrimaries::SmpteEg432, PlatformVideoTransferCharacteristics::Linear);
+#endif
+    // Extended linear contents would band in 8 bits, and the other color spaces have no video frame
+    // equivalent.
+    return std::nullopt;
+}
+
+void attachVideoColorSpaceForRGBContents(const PlatformVideoColorSpace& colorSpace, CVPixelBufferRef pixelBuffer)
+{
+    // RGB contents have no YCbCr matrix to attach.
+    attachColorSpaceToPixelBuffer({ .primaries = colorSpace.primaries, .transfer = colorSpace.transfer }, pixelBuffer);
 }
 
 void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef pixelBuffer, CGImageAlphaInfo alphaInfo)

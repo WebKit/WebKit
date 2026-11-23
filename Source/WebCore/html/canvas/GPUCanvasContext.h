@@ -43,6 +43,7 @@ class GPU;
 class GPUDevice;
 class GPUTexture;
 class ImageBitmap;
+class VideoFrame;
 struct GPUCanvasConfiguration;
 template<typename> class ExceptionOr;
 
@@ -64,6 +65,10 @@ public:
     virtual std::optional<GPUCanvasConfiguration> getConfiguration() const = 0;
     virtual GPUDevice* device() const = 0;
     virtual ExceptionOr<Ref<GPUTexture>> getCurrentTexture() = 0;
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    // Returns a video frame of the contents, or null when they cannot be read into one directly.
+    virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) { return nullptr; }
+#endif
 
 protected:
     GPUCanvasContext(CanvasBase&);

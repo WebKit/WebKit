@@ -36,7 +36,8 @@
 
 namespace WebCore {
 class ColorSpace;
-class ImageBuffer;
+class NativeImage;
+class VideoFrame;
 
 class GPUCompositorIntegration : public RefCountedAndCanMakeWeakPtr<GPUCompositorIntegration> {
 public:
@@ -56,7 +57,10 @@ public:
     WebGPUCompositorIntegration& backing() LIFETIME_BOUND { return m_backing; }
     const WebGPUCompositorIntegration& backing() const LIFETIME_BOUND { return m_backing; }
 
-    void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t);
+    RefPtr<NativeImage> copyNativeImage(uint32_t bufferIndex);
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    RefPtr<VideoFrame> copyVideoFrame(uint32_t bufferIndex);
+#endif
     void updateContentsHeadroom(float);
 
 private:

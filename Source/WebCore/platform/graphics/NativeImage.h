@@ -82,7 +82,8 @@ public:
 #endif
 
 #if USE(CG)
-    WEBCORE_EXPORT static RefPtr<NativeImage> create(RetainPtr<CVPixelBufferRef>, CGImageAlphaInfo, RetainPtr<CGColorSpaceRef>);
+    WEBCORE_EXPORT static RefPtr<NativeImage> create(RetainPtr<CVPixelBufferRef>, CGImageAlphaInfo, RetainPtr<CGColorSpaceRef>, Headroom contentHeadroom = Headroom::None);
+    WEBCORE_EXPORT static RefPtr<NativeImage> createTransient(RetainPtr<CVPixelBufferRef>, CGImageAlphaInfo, RetainPtr<CGColorSpaceRef>, Headroom contentHeadroom = Headroom::None);
 #endif
     WEBCORE_EXPORT static RefPtr<NativeImage> create(Ref<PixelBuffer>&&);
     WEBCORE_EXPORT static std::optional<Ref<NativeImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.

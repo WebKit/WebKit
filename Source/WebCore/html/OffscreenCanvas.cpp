@@ -51,9 +51,11 @@
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
+#include "PixelBuffer.h"
 #include "PlaceholderRenderingContext.h"
 #include "ScriptTrackingPrivacyCategory.h"
 #include "UpdateElementGeometryOptions.h"
+#include "VideoFrame.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
@@ -355,6 +357,43 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
 
     return Exception { ExceptionCode::TypeError };
 }
+
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+RefPtr<VideoFrame> OffscreenCanvas::toVideoFrame()
+{
+#if PLATFORM(COCOA) || USE(GSTREAMER)
+    if (!shouldInjectNoiseBeforeReadback()) {
+#if ENABLE(WEBGL)
+        // The video frames of a WebGL context are made on the main run loop.
+        if (RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context); context && isMainRunLoop())
+            return context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
+#endif
+
+        if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context)) {
+            if (RefPtr videoFrame = context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer))
+                return videoFrame;
+        }
+    }
+
+    RefPtr imageBuffer = makeRenderingResultsAvailable();
+    if (!imageBuffer)
+        return nullptr;
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, ColorSpace::SRGB() }, { { }, imageBuffer->truncatedLogicalSize() });
+    if (!pixelBuffer)
+        return nullptr;
+    return VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), {
+        .colorSpace = {
+            .primaries = PlatformVideoColorPrimaries::Bt709,
+            .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
+            .matrix = PlatformVideoMatrixCoefficients::Rgb,
+            .fullRange = true
+        }
+    });
+#else
+    return nullptr;
+#endif
+}
+#endif
 
 ExceptionOr<Ref<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
 {

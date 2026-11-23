@@ -29,12 +29,13 @@
 
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/ColorSpace.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/WebGPUCompositorIntegration.h>
 #include <WebCore/WebGPUDevice.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-class ImageBuffer;
 class NativeImage;
 }
 
@@ -54,8 +55,10 @@ public:
     RemoteGPUProxy& root() const { return m_parent; }
     WebGPUCompositorIntegrationIdentifier backing() const { return m_backing; }
 
-    void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
-    void withDisplayBufferAsNativeImage(uint32_t, Function<void(WebCore::NativeImage*)>) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(uint32_t bufferIndex) final;
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    RefPtr<WebCore::VideoFrame> copyVideoFrame(uint32_t bufferIndex) final;
+#endif
 
 private:
     RemoteCompositorIntegrationProxy(RemoteGPUProxy&, WebGPUCompositorIntegrationIdentifier);
@@ -92,6 +95,11 @@ private:
     const Ref<RemoteGPUProxy> m_parent;
     Seconds m_lastFrameGPUCost { 0_s };
     Seconds m_lastFramePresentStall { 0_s };
+    uint32_t m_renderBufferCount { 0 };
+    WebCore::IntSize m_renderBufferSize;
+    WebCore::ColorSpace m_renderBufferColorSpace { WebCore::ColorSpace::SRGB() };
+    bool m_renderBufferHasAlpha { true };
+    std::optional<float> m_contentsHeadroom;
 };
 
 } // namespace WebKit::WebGPU
