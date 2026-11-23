@@ -60,15 +60,25 @@ namespace WebCore {
 // https://www.w3.org/TR/css-fonts-4/#absolute-size-mapping
 static constexpr float initialFontSizePx = 16.0f;
 
-SVGLengthContext::SVGLengthContext(const SVGElement* context, const std::optional<FloatSize>& viewportSize)
+SVGLengthContext::SVGLengthContext(const SVGElement* context)
     : m_context(context)
-    , m_viewportSize(!m_context ? viewportSize : std::nullopt)
+{
+}
+
+SVGLengthContext::SVGLengthContext(const SVGElement& element, FloatSize viewportSize)
+    : m_context(&element)
+    , m_viewportSize(viewportSize)
 {
 }
 
 SVGLengthContext::~SVGLengthContext() = default;
 
 FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height)
+{
+    return resolveRectangle(SVGLengthContext(context), type, viewport, x, y, width, height);
+}
+
+FloatRect SVGLengthContext::resolveRectangle(const SVGLengthContext& lengthContext, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height)
 {
     ASSERT(type != SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN);
     if (type != SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) {
@@ -80,7 +90,6 @@ FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitT
             clampTo<float>(convertValueFromPercentageToUserUnits(height.valueAsPercentage(), height.lengthMode(), viewportSize)));
     }
 
-    SVGLengthContext lengthContext(context, viewport.size());
     return FloatRect(x.value(lengthContext), y.value(lengthContext), width.value(lengthContext), height.value(lengthContext));
 }
 
