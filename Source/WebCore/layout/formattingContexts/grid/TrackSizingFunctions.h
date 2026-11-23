@@ -44,12 +44,10 @@ public:
 
     FORWARD_VARIANT_FUNCTIONS(MaxTrackSizingFunction, m_value)
 
-    // Absent for a fit-content() maximum.
-    std::optional<Style::GridTrackBreadth> tryBreadth() const
+    // Null for a fit-content() maximum.
+    const Style::GridTrackBreadth* tryBreadth() const LIFETIME_BOUND
     {
-        if (auto* breadth = std::get_if<Style::GridTrackBreadth>(&m_value))
-            return *breadth;
-        return { };
+        return std::get_if<Style::GridTrackBreadth>(&m_value);
     }
 
     bool isAuto() const
