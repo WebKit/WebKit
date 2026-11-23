@@ -247,6 +247,52 @@ RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameObjectHeapProxyProcessor::remoteFr
     return uploadedFrame;
 }
 
+#if USE(LIBWEBRTC)
+RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameObjectHeapProxyProcessor::remoteFrame(RemoteVideoFrameObjectHeapProxy& heapProxy, const webrtc::VideoFrame& videoFrame, IntSize size)
+{
+    RefPtr connection = this->connection();
+    if (!connection)
+        return nullptr;
+
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    {
+        Locker locker { m_sharedVideoFrameWriterLock };
+        if (m_sharedVideoFrameWriter.isDisabled())
+            return nullptr;
+
+        auto buffer = m_sharedVideoFrameWriter.writeBuffer(videoFrame, *connection,
+            [&](auto& semaphore) {
+                connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0);
+            },
+            [&](auto&& handle) {
+                connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTF::move(handle) }, 0);
+            });
+        if (!buffer)
+            return nullptr;
+
+        SharedVideoFrame frame { { }, false, VideoFrameRotation::None, { }, false, WTF::move(*buffer) };
+        if (connection->send(Messages::RemoteVideoFrameObjectHeap::AddVideoFrame { reference, WTF::move(frame) }, 0) != IPC::Error::NoError) {
+            m_sharedVideoFrameWriter.disable();
+            return nullptr;
+        }
+    }
+    return RemoteVideoFrameProxy::create(*connection, heapProxy, reference, RemoteVideoFrameProxy::Properties { { }, false, VideoFrameRotation::None, size, 0, { }, false });
+}
+#endif
+
+RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameObjectHeapProxyProcessor::remoteBlackFrame(RemoteVideoFrameObjectHeapProxy& heapProxy, MediaTime presentationTime, VideoFrameRotation rotation, IntSize size)
+{
+    RefPtr connection = this->connection();
+    if (!connection)
+        return nullptr;
+
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    SharedVideoFrame frame { presentationTime, false, rotation, { }, false, size };
+    if (connection->send(Messages::RemoteVideoFrameObjectHeap::AddVideoFrame { reference, WTF::move(frame) }, 0) != IPC::Error::NoError)
+        return nullptr;
+    return RemoteVideoFrameProxy::create(*connection, heapProxy, reference, RemoteVideoFrameProxy::Properties { presentationTime, false, rotation, size, 0, { }, false });
+}
+
 }
 
 #endif

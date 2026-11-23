@@ -58,6 +58,13 @@ public:
     // Null if the frame belongs to another GPU process or sending it fails. The consumer messages that carry a
     // read reference of the result can be sent once this returns.
     RefPtr<RemoteVideoFrameProxy> remoteFrame(const WebCore::VideoFrame& frame) { return m_processor->remoteFrame(*this, frame); }
+#if USE(LIBWEBRTC)
+    // Any thread. A new RemoteVideoFrameProxy for a copy of the pixels of `frame`. Its rotation, mirroring
+    // and time are not set: the consumers of these frames send them separately.
+    RefPtr<RemoteVideoFrameProxy> remoteFrame(const webrtc::VideoFrame& frame, WebCore::IntSize size) { return m_processor->remoteFrame(*this, frame, size); }
+#endif
+    // Any thread. A new RemoteVideoFrameProxy for a black frame that the GPU process creates.
+    RefPtr<RemoteVideoFrameProxy> remoteBlackFrame(MediaTime presentationTime, WebCore::VideoFrameRotation rotation, WebCore::IntSize size) { return m_processor->remoteBlackFrame(*this, presentationTime, rotation, size); }
 #endif
 
 private:

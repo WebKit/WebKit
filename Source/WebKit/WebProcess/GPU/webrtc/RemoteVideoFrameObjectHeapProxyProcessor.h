@@ -66,8 +66,12 @@ public:
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
     void getVideoFrameBuffer(const RemoteVideoFrameProxy&, Callback&&);
     RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame&, ShouldApplyRotation = ShouldApplyRotation::No);
-    // See RemoteVideoFrameObjectHeapProxy::remoteFrame().
+    // See RemoteVideoFrameObjectHeapProxy::remoteFrame() and remoteBlackFrame().
     RefPtr<RemoteVideoFrameProxy> remoteFrame(RemoteVideoFrameObjectHeapProxy&, const WebCore::VideoFrame&);
+#if USE(LIBWEBRTC)
+    RefPtr<RemoteVideoFrameProxy> remoteFrame(RemoteVideoFrameObjectHeapProxy&, const webrtc::VideoFrame&, WebCore::IntSize);
+#endif
+    RefPtr<RemoteVideoFrameProxy> remoteBlackFrame(RemoteVideoFrameObjectHeapProxy&, MediaTime, WebCore::VideoFrameRotation, WebCore::IntSize);
 
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>::controlBlock(); }
     uint32_t weakRefCount() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>::weakRefCount(); }

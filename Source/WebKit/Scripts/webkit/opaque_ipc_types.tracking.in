@@ -471,12 +471,10 @@
     [Legacy] MessageParam WebPageProxy.SaveImageToLibrary handle
     [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage imageHandle
     [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage archiveHandle
-    [Legacy] MessageParam LibWebRTCCodecsProxy.SetSharedVideoFrameMemory storageHandle
     [Legacy] MessageParam RemoteGraphicsContextGL.SetSharedVideoFrameMemory storageHandle
     [Legacy] MessageParam RemoteGraphicsContextGL.GetBufferSubDataSharedMemory handle
     [Legacy] MessageParam RemoteGraphicsContextGL.ReadPixelsSharedMemory handle
     [Legacy] MessageParam RemoteImageBuffer.GetPixelBufferWithNewMemory handle
-    [Legacy] MessageParam RemoteSampleBufferDisplayLayer.SetSharedVideoFrameMemory storageHandle
     [Legacy] MessageParam RemoteAudioDestinationManager.CreateAudioDestination frameCount
     [Legacy] MessageParam RemoteVideoFrameObjectHeap.SetSharedVideoFrameMemory storageHandle
 

@@ -835,10 +835,14 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(WebCore::VideoC
     ensureGPUProcessConnectionAndDispatchToThread([this, protectedThis = Ref { *this }, encoder = WTF::move(encoder), parameters = WTF::move(parameters), callback = WTF::move(callback)]() mutable {
         assertIsCurrent(workQueue());
 
-        auto connection = [&]() -> Ref<IPC::Connection> {
+        RefPtr<IPC::Connection> connectionOrNull;
+        RefPtr<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy;
+        {
             Locker locker { m_connectionLock };
-            return *m_connection;
-        }();
+            connectionOrNull = m_connection;
+            videoFrameObjectHeapProxy = m_videoFrameObjectHeapProxy;
+        }
+        Ref connection = connectionOrNull.releaseNonNull();
 
         {
             Locker locker { m_encodersConnectionLock };
@@ -852,7 +856,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(WebCore::VideoC
                 assertIsCurrent(codecs->workQueue());
                 callback(codecs->m_encoders.get(identifier));
             });
-            setEncoderConnection(*encoder, connection.copyRef());
+            setEncoderConnection(*encoder, connection.copyRef(), videoFrameObjectHeapProxy.releaseNonNull());
         }
 
         encoder->parameters = WTF::move(parameters);
@@ -914,6 +918,18 @@ static WebCore::PlatformVideoColorSpace frameColorSpace(const WebCore::VideoFram
     return frame.colorSpace();
 }
 
+static RefPtr<RemoteVideoFrameProxy> remoteFrameForEncoding(RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, const webrtc::VideoFrame& frame)
+{
+    if (auto* provider = webrtc::videoFrameBufferProvider(frame))
+        return videoFrameObjectHeapProxy.remoteFrame(*static_cast<WebCore::VideoFrame*>(provider));
+    return videoFrameObjectHeapProxy.remoteFrame(frame, { frame.width(), frame.height() });
+}
+
+static RefPtr<RemoteVideoFrameProxy> remoteFrameForEncoding(RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, const WebCore::VideoFrame& frame)
+{
+    return videoFrameObjectHeapProxy.remoteFrame(frame);
+}
+
 template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::encodeFrameInternalWithLock(Encoder& encoder, const Frame& frame, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation rotation, bool isMirrored, MediaTime mediaTime, int64_t timestamp, std::optional<uint64_t> duration)
 {
     RefPtr connection = encoderConnection(encoder);
@@ -923,15 +939,14 @@ template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::
         return nullptr;
     }
 
-    auto buffer = encoder.sharedVideoFrameWriter.writeBuffer(frame, *connection,
-        [&](auto& semaphore) { connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
-        [&](SharedMemory::Handle&& handle) { connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, WTF::move(handle) }, 0); });
-    if (!buffer)
+    RefPtr videoFrameObjectHeapProxy = encoder.videoFrameObjectHeapProxy;
+    // Holds the frame in the GPU process until EncodeFrame has been sent.
+    RefPtr remoteFrame = videoFrameObjectHeapProxy ? remoteFrameForEncoding(*videoFrameObjectHeapProxy, frame) : nullptr;
+    auto reference = remoteFrame ? remoteFrame->newReadReference(*connection) : std::nullopt;
+    if (!reference)
         return nullptr;
 
-    bool shouldIgnoreAlpha = false;
-    SharedVideoFrame sharedVideoFrame { mediaTime, isMirrored, rotation, frameColorSpace(frame), shouldIgnoreAlpha, WTF::move(*buffer) };
-    auto promise = connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, WTF::move(sharedVideoFrame), timestamp, duration, shouldEncodeAsKeyFrame });
+    auto promise = connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, WTF::move(*reference), mediaTime, rotation, isMirrored, frameColorSpace(frame), timestamp, duration, shouldEncodeAsKeyFrame });
     return promise->whenSettled(workQueue(), [] (auto&& result) mutable {
         if (!result)
             return FramePromise::createAndReject("Encoding task did not complete"_s);
@@ -1157,7 +1172,7 @@ void LibWebRTCCodecs::clearConnection()
         return;
 
     ensureGPUProcessConnectionOnMainThreadWithLock();
-    m_queue->dispatch([this, protectedThis = Ref { *this }, connection = m_connection]() {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, connection = m_connection, videoFrameObjectHeapProxy = m_videoFrameObjectHeapProxy] {
         assertIsCurrent(workQueue());
         {
             Locker locker { m_connectionLock };
@@ -1167,14 +1182,10 @@ void LibWebRTCCodecs::clearConnection()
             }
         }
 
-        // In case we are waiting for GPUProcess, let's end the wait to not deadlock.
-        for (auto& encoder : m_encoders.values())
-            encoder->sharedVideoFrameWriter.disable();
-
         Locker locker { m_encodersConnectionLock };
         for (auto& encoder : m_encoders.values()) {
             createRemoteEncoder(*encoder, *connection, encoder->parameters, [](bool) { });
-            setEncoderConnection(*encoder, *connection);
+            setEncoderConnection(*encoder, *connection, *videoFrameObjectHeapProxy);
         }
     });
 }
@@ -1193,10 +1204,10 @@ IPC::Connection* LibWebRTCCodecs::encoderConnection(Encoder& encoder)
     return encoder.connection.get();
 }
 
-void LibWebRTCCodecs::setEncoderConnection(Encoder& encoder, Ref<IPC::Connection>&& connection)
+void LibWebRTCCodecs::setEncoderConnection(Encoder& encoder, Ref<IPC::Connection>&& connection, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
 {
     encoder.connection = WTF::move(connection);
-    encoder.sharedVideoFrameWriter = { };
+    encoder.videoFrameObjectHeapProxy = WTF::move(videoFrameObjectHeapProxy);
 
     if (auto& data = encoderInitializationData(encoder))
         protect(encoder.connection)->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder.identifier, data->width, data->height, data->startBitRate, data->maxBitRate, data->minBitRate, data->maxFrameRate }, 0);

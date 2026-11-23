@@ -36,7 +36,6 @@
 #import "Logging.h"
 #import "RemoteVideoFrameIdentifier.h"
 #import "RemoteVideoFrameObjectHeap.h"
-#import "SharedVideoFrame.h"
 #import <WebCore/CMUtilities.h>
 #import <WebCore/CVUtilities.h>
 #import <WebCore/FrameRateMonitor.h>
@@ -385,7 +384,7 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
         return;
     }
 
-    auto result = m_encoders.add(identifier, makeUniqueRef<Encoder>(encoder.releaseNonNull(), makeUniqueRef<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner), Deque<CompletionHandler<void(bool)>> { }, codecType, useLowLatency));
+    auto result = m_encoders.add(identifier, makeUniqueRef<Encoder>(encoder.releaseNonNull(), Deque<CompletionHandler<void(bool)>> { }, codecType, useLowLatency));
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
     callback(true);
@@ -444,26 +443,27 @@ LibWebRTCCodecsProxy::Encoder* LibWebRTCCodecsProxy::findEncoder(VideoEncoderIde
     return iterator->value.ptr();
 }
 
-void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, RemoteVideoFrameReadReference&& read, MediaTime presentationTime, WebCore::VideoFrameRotation rotation, bool isMirrored, WebCore::PlatformVideoColorSpace&& colorSpace, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
+    // Read the frame even if the encoder is gone, so that the heap can remove it. The Web process adds
+    // the frame to the heap on the same connection, before this message, so the wait is at most one heap
+    // queue hop.
+    RefPtr videoFrame = Ref { m_videoFrameObjectHeap }->get(WTF::move(read));
     auto* encoder = findEncoder(identifier);
     if (!encoder || encoder->isInvalid) {
-        // Make sure to read RemoteVideoFrameReadReference to prevent memory leaks.
-        if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
-            Ref { m_videoFrameObjectHeap }->get(WTF::move(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
         callback(false);
         return;
     }
 
-    auto pixelBuffer = encoder->frameReader->readBuffer(WTF::move(sharedVideoFrame.buffer));
+    RetainPtr<CVPixelBufferRef> pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
     if (!pixelBuffer) {
         callback(false);
         return;
     }
 
     if (CVPixelBufferGetPixelFormatType(pixelBuffer.get()) == kCVPixelFormatType_32BGRA) {
-        sharedVideoFrame.colorSpace = srgbAsBT709YUVColorSpace();
+        colorSpace = srgbAsBT709YUVColorSpace();
         if (!m_pixelBufferConformer)
             lazyInitialize(m_pixelBufferConformer, makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) }));
         pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
@@ -474,9 +474,9 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
     }
 
 #if !PLATFORM(MACCATALYST)
-    attachColorSpaceToPixelBuffer(sharedVideoFrame.colorSpace, pixelBuffer);
+    attachColorSpaceToPixelBuffer(colorSpace, pixelBuffer);
     encoder->encodingCallbacks.append(WTF::move(callback));
-    encoder->gpuEncoder->encodeFrame(pixelBuffer.get(), Seconds(sharedVideoFrame.time.toDouble()).nanoseconds(), timeStamp, duration, sharedVideoFrame.rotation, sharedVideoFrame.mirrored, shouldEncodeAsKeyFrame);
+    encoder->gpuEncoder->encodeFrame(pixelBuffer.get(), Seconds(presentationTime.toDouble()).nanoseconds(), timeStamp, duration, rotation, isMirrored, shouldEncodeAsKeyFrame);
 #else
     callback(false);
 #endif
@@ -533,26 +533,6 @@ void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uin
         return;
 
     encoder->gpuEncoder->setRates(bitRate, frameRate);
-}
-
-void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(VideoEncoderIdentifier identifier, IPC::Semaphore&& semaphore)
-{
-    assertIsCurrent(workQueue());
-    auto* encoder = findEncoder(identifier);
-    if (!encoder)
-        return;
-
-    encoder->frameReader->setSemaphore(WTF::move(semaphore));
-}
-
-void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(VideoEncoderIdentifier identifier, SharedMemory::Handle&& handle)
-{
-    assertIsCurrent(workQueue());
-    auto* encoder = findEncoder(identifier);
-    if (!encoder)
-        return;
-
-    encoder->frameReader->setSharedMemory(WTF::move(handle));
 }
 
 bool LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure() const

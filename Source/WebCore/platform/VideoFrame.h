@@ -124,7 +124,7 @@ public:
 
     enum class ShouldClone : bool { No, Yes };
     // updateTimestamp, updateOrientation and updateShouldIgnoreAlpha should be called before being used by VideoFrame consumers.
-    Ref<VideoFrame> updateTimestamp(MediaTime, ShouldClone);
+    WEBCORE_EXPORT Ref<VideoFrame> updateTimestamp(MediaTime, ShouldClone);
     WEBCORE_EXPORT Ref<VideoFrame> updateOrientation(Rotation, bool isMirrored, ShouldClone);
     WEBCORE_EXPORT Ref<VideoFrame> updateShouldIgnoreAlpha(bool, ShouldClone);
 
