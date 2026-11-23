@@ -57,6 +57,7 @@ private:
     Ref<GenericPromise> flush() final;
     void reset() final;
     NODELETE void close() final;
+    void setColorSpaceOverride(const std::optional<PlatformVideoColorSpace>&) final;
 
     const Ref<LibWebRTCVPXInternalVideoDecoder> m_internalDecoder;
 };

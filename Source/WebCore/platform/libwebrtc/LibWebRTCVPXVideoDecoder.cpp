@@ -79,6 +79,7 @@ public:
 
     Ref<VideoDecoder::DecodePromise> decode(VideoEncodedData&&);
     NODELETE void close() { m_isClosed = true; }
+    void setColorSpaceOverride(const std::optional<PlatformVideoColorSpace>&);
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&);
     NODELETE bool isVPx() const { return m_type == LibWebRTCVPXVideoDecoder::Type::VP8 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9_P2; }
@@ -100,7 +101,7 @@ private:
     OSType m_pixelBufferPoolType WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     const UniqueRef<webrtc::VideoDecoder> m_internalDecoder WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
     const bool m_useIOSurface { false };
-    const std::optional<PlatformVideoColorSpace> m_colorSpace;
+    std::optional<PlatformVideoColorSpace> m_colorSpace WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
     const ProcessIdentity m_resourceOwner;
     const VideoFrame::Rotation m_rotation;
     const bool m_isMirrored { false };
@@ -141,6 +142,19 @@ void LibWebRTCVPXVideoDecoder::close()
     m_internalDecoder->close();
 }
 
+void LibWebRTCVPXVideoDecoder::setColorSpaceOverride(const std::optional<PlatformVideoColorSpace>& colorSpace)
+{
+    vpxDecoderQueueSingleton().dispatch([colorSpace, decoder = m_internalDecoder] {
+        decoder->setColorSpaceOverride(colorSpace);
+    });
+}
+
+void LibWebRTCVPXInternalVideoDecoder::setColorSpaceOverride(const std::optional<PlatformVideoColorSpace>& colorSpace)
+{
+    assertIsCurrent(vpxDecoderQueueSingleton());
+    m_colorSpace = colorSpace;
+}
+
 
 Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoEncodedData&& frame)
 {
@@ -156,9 +170,9 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoE
         if (auto record = vpCodecConfigurationRecordFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data)) {
             if (record->bitDepth > 10)
                 return VideoDecoder::DecodePromise::createAndReject("VPx decoding of 12-bit content is not supported"_s);
-            m_videoInfo = createVideoInfoFromVPCodecConfigurationRecord(*record, m_colorSpace);
+            m_videoInfo = createVideoInfoFromVPCodecConfigurationRecord(*record);
         }
-    } else if (RefPtr videoInfo = createVideoInfoFromAV1Stream(data, std::nullopt, m_colorSpace))
+    } else if (RefPtr videoInfo = createVideoInfoFromAV1Stream(data))
         m_videoInfo = WTF::move(videoInfo);
 
     webrtc::EncodedImage image;
@@ -200,7 +214,7 @@ static RefPtr<VideoInfo> createVideoInfo(LibWebRTCVPXVideoDecoder::Type type, co
     if (!isVPx)
         return nullptr;
     if (auto record = createVPCodecConfigurationRecordFromVPCC(config.description))
-        return createVideoInfoFromVPCodecConfigurationRecord(*record, config.colorSpace);
+        return createVideoInfoFromVPCodecConfigurationRecord(*record);
     return nullptr;
 }
 
@@ -292,7 +306,7 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
         return 0;
 
     auto colorSpace = m_videoInfo ? std::optional { m_videoInfo->colorSpace() } : colorSpaceFromLibWebRTCVideoFrame(frame);
-    if (!m_videoInfo && m_colorSpace) {
+    if (m_colorSpace) {
         if (!colorSpace)
             colorSpace = m_colorSpace;
         else

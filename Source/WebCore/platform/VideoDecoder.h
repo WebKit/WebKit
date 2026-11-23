@@ -79,6 +79,7 @@ public:
     virtual Ref<GenericPromise> flush() = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
+    virtual void setColorSpaceOverride(const std::optional<PlatformVideoColorSpace>&) { }
 
     static String fourCCToCodecString(uint32_t fourCC);
 
