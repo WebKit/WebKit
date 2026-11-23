@@ -2349,6 +2349,15 @@ window.UIHelper = class UIHelper {
         }
     }
 
+    static async schedulesUpdatesForMonotonicAnimations()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve(false);
+
+        const script = `uiController.schedulesUpdatesForMonotonicAnimations()`;
+        return new Promise(resolve => testRunner.runUIScript(script, result => resolve(result === "true")));
+    }
+
     static async displayLinkWantsHighFrameRate()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

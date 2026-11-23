@@ -52,7 +52,7 @@ auto RemoteAnimationVisibility::update(CALayer *webViewLayer, const Vector<Anima
     VisibilityCache visibilityCache;
     HashSet<WebCore::PlatformLayerIdentifier> layerIDsThatMayBeVisible;
     Vector<AnimatedLayer> animatedLayersThatBecameVisible;
-    bool hasMonotonicAnimationsThatMayBeVisible = false;
+    bool hasVisibleMonotonicAnimations = false;
     bool hasHighImpactMonotonicAnimationsThatMayBeVisible = false;
 
     for (auto& animatedLayer : borrow(animatedLayers)) {
@@ -67,13 +67,13 @@ auto RemoteAnimationVisibility::update(CALayer *webViewLayer, const Vector<Anima
         if (!animatedLayer.animationStack->hasTimeBasedAnimations())
             continue;
 
-        hasMonotonicAnimationsThatMayBeVisible = true;
+        hasVisibleMonotonicAnimations = true;
         if (!m_layerIDsThatMayBeVisible.contains(animatedLayer.layerID))
             animatedLayersThatBecameVisible.append(animatedLayer);
     }
 
     m_layerIDsThatMayBeVisible = WTF::move(layerIDsThatMayBeVisible);
-    m_hasMonotonicAnimationsThatMayBeVisible = hasMonotonicAnimationsThatMayBeVisible;
+    m_hasVisibleMonotonicAnimations = hasVisibleMonotonicAnimations;
     m_hasHighImpactMonotonicAnimationsThatMayBeVisible = hasHighImpactMonotonicAnimationsThatMayBeVisible;
     return animatedLayersThatBecameVisible;
 }

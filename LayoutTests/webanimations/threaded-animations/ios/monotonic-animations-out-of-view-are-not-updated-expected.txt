@@ -1,0 +1,8 @@
+
+PASS Monotonic animations in view are updated as the display refreshes.
+PASS Monotonic animations are only updated while their element may be visible.
+PASS Monotonic animations are updated as the page scrolls programmatically.
+PASS Monotonic animations are updated as the page is scrolled by the user.
+PASS Monotonic animations account for the composited descendants of their element.
+PASS Monotonic animations on clipped out elements are not updated.
+

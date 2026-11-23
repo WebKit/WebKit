@@ -177,7 +177,7 @@ public:
     virtual HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const { return { }; }
     virtual HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const { return { }; }
     virtual bool hasHighImpactMonotonicAnimations() const { return false; }
-    virtual bool hasMonotonicAnimations() const { return false; }
+    virtual bool hasVisibleMonotonicAnimations() const { return false; }
     virtual void setAnimatedContentVisibilityNeedsUpdate() { }
     virtual void updateAnimatedContentVisibilityIfNeeded() { }
 #endif

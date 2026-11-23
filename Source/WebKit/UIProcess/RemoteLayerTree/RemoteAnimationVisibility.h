@@ -60,7 +60,7 @@ public:
     Vector<AnimatedLayer> update(CALayer *webViewLayer, const Vector<AnimatedLayer>&, NOESCAPE const AnimationStackForNode&);
 
     bool mayBeVisible(WebCore::PlatformLayerIdentifier layerID) const { return m_layerIDsThatMayBeVisible.contains(layerID); }
-    bool hasMonotonicAnimationsThatMayBeVisible() const { return m_hasMonotonicAnimationsThatMayBeVisible; }
+    bool hasVisibleMonotonicAnimations() const { return m_hasVisibleMonotonicAnimations; }
     bool hasHighImpactMonotonicAnimationsThatMayBeVisible() const { return m_hasHighImpactMonotonicAnimationsThatMayBeVisible; }
     void remove(WebCore::PlatformLayerIdentifier layerID) { m_layerIDsThatMayBeVisible.remove(layerID); }
 
@@ -70,7 +70,7 @@ private:
     static bool computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
 
     HashSet<WebCore::PlatformLayerIdentifier> m_layerIDsThatMayBeVisible;
-    bool m_hasMonotonicAnimationsThatMayBeVisible { true };
+    bool m_hasVisibleMonotonicAnimations { true };
     bool m_hasHighImpactMonotonicAnimationsThatMayBeVisible { true };
     bool m_needsUpdate { false };
 };

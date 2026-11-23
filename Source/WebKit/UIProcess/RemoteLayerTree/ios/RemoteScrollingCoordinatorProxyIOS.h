@@ -86,7 +86,7 @@ public:
     HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const override;
     void progressBasedTimelinesWereUpdatedForNode(const WebCore::ScrollingTreeScrollingNode&) override;
     bool hasHighImpactMonotonicAnimations() const override;
-    bool hasMonotonicAnimations() const override;
+    bool hasVisibleMonotonicAnimations() const override;
     void setAnimatedContentVisibilityNeedsUpdate() override { m_animationVisibility.setNeedsUpdate(); }
     void updateAnimatedContentVisibilityIfNeeded() override;
 #endif
@@ -126,7 +126,7 @@ private:
 #if ENABLE(THREADED_ANIMATIONS)
     void updateTimeDependentAnimationStacks();
     void updateAnimationStacksDependentOnScrollingNode(const WebCore::ScrollingTreeScrollingNode&);
-    void updateAnimationStacks(NOESCAPE const Function<bool(const RemoteAnimationStack&)>&);
+    void updateAnimationStacks(NOESCAPE const Function<bool(WebCore::PlatformLayerIdentifier, const RemoteAnimationStack&)>&);
     void animatedContentGeometryMayHaveChanged();
 #endif
 
