@@ -25,6 +25,9 @@
 
 #include "config.h"
 
+// The iOS simulator does not give these tests a WebGPU adapter.
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+
 #include <WebGPU/WebGPUCpp.h>
 #include <array>
 #include <wtf/CompletionHandler.h>
@@ -403,3 +406,5 @@ TEST_F(WebGPUInstanceDestroy, ReleasesTheInstanceOnTheThreadThatDestroysIt)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
