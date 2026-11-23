@@ -27,8 +27,7 @@
         let style = document.createElement("style");
         style.textContent = "@import url('" + css_url + "');";
         document.head.appendChild(style);
-        return timeoutPromise(css_test, 1000)
-          .then(() => requestViaXhr(font_url))
+        return waitForReport(css_test, font_url)
           .then(function(message) {
               assert_own_property(message, "headers");
               assert_own_property(message, "referrer");

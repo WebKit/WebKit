@@ -27,8 +27,7 @@
         let style = document.createElement("style");
         style.textContent = ".styled { background-image: url(" + css_url + "); }";
         document.head.appendChild(style);
-        return timeoutPromise(css_test, 1000)
-          .then(() => requestViaXhr(image_url))
+        return waitForReport(css_test, image_url)
           .then(function(message) {
               assert_own_property(message, "headers");
               assert_own_property(message, "referrer");

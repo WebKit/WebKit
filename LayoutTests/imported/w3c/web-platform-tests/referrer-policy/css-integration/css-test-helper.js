@@ -28,12 +28,9 @@ function runSvgTests(testProperties, testDescription, testFunction) {
 
     promise_test(t => {
       testFunction(current);
-      return timeoutPromise(t, 800)
-        .then(() => {
-            let check_url = url_prefix + "svg.py" + "?id=" + current.id +
-                            "&report-headers";
-            return requestViaFetch(check_url);
-          })
+      let check_url = url_prefix + "svg.py" + "?id=" + current.id +
+                      "&report-headers";
+      return waitForReport(t, check_url)
         .then(message => {
             assert_own_property(message, "headers");
             assert_own_property(message, "referrer");

@@ -30,8 +30,7 @@
             link.onload = resolve;
             document.head.appendChild(link);
           })
-          .then(() => timeoutPromise(css_test, 1000))
-          .then(() => requestViaXhr(img_url))
+          .then(() => waitForReport(css_test, img_url))
           .then(function(message) {
               assert_own_property(message, "headers");
               assert_own_property(message, "referrer");
