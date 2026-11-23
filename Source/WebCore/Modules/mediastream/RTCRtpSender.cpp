@@ -167,9 +167,10 @@ void RTCRtpSender::setParameters(RTCRtpSendParameters&& parameters, DOMPromiseDe
 
     // https://w3c.github.io/webrtc-pc/#dfn-setparameters-validation-steps
     if (m_trackKind == "audio"_s) {
-        for (auto& encoding : parameters.encodings) {
+        for (auto& encoding : borrow(parameters.encodings)) {
             encoding.scaleResolutionDownBy = { };
             encoding.maxFramerate = { };
+            encoding.scalabilityMode = { };
         }
     } else {
         for (auto& encoding : borrow(parameters.encodings)) {

@@ -41,6 +41,7 @@ struct RTCRtpEncodingParameters : RTCRtpCodingParameters {
     std::optional<unsigned long> maxBitrate;
     std::optional<double> maxFramerate;
     std::optional<double> scaleResolutionDownBy;
+    String scalabilityMode;
 
     RTCPriorityType priority { RTCPriorityType::Low };
     std::optional<RTCPriorityType> networkPriority;
