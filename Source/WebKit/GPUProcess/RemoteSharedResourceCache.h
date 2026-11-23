@@ -70,6 +70,8 @@ public:
     RefPtr<WebCore::ImageBuffer> takeSerializedImageBuffer(RemoteSerializedImageBufferIdentifier);
 
     bool addNativeImage(RemoteNativeImageReference, Ref<WebCore::NativeImage>);
+    // Null tells the readers that the image could not be made.
+    bool addNativeImage(RemoteNativeImageReference, RefPtr<WebCore::NativeImage>&&);
     RefPtr<WebCore::NativeImage> readNativeImage(RemoteNativeImageReadReference&&, Seconds timeout);
     // For stream message handlers: std::nullopt means that the handler should defer the message.
     std::optional<RefPtr<WebCore::NativeImage>> readNativeImage(IPC::StreamServerConnection&, RemoteNativeImageReadReference&&);

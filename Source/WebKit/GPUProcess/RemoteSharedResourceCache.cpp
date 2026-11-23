@@ -103,6 +103,11 @@ bool RemoteSharedResourceCache::addNativeImage(RemoteNativeImageReference refere
     return m_nativeImages.add(reference, WTF::move(image));
 }
 
+bool RemoteSharedResourceCache::addNativeImage(RemoteNativeImageReference reference, RefPtr<NativeImage>&& image)
+{
+    return m_nativeImages.add(reference, WTF::move(image));
+}
+
 RefPtr<NativeImage> RemoteSharedResourceCache::readNativeImage(RemoteNativeImageReadReference&& read, Seconds timeout)
 {
     return m_nativeImages.read(WTF::move(read), timeout);

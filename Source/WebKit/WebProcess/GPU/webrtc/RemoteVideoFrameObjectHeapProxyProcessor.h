@@ -31,6 +31,7 @@
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "RemoteVideoFrameProxyProperties.h"
 #include "SharedVideoFrame.h"
 #include "WorkQueueMessageReceiver.h"
 #include <wtf/Function.h>
@@ -53,10 +54,9 @@ class VideoFrame;
 
 namespace WebKit {
 
+class RemoteSharedResourceCacheProxy;
 class RemoteVideoFrameObjectHeapProxy;
 class RemoteVideoFrameProxy;
-
-enum class ShouldApplyRotation : bool { No, Yes };
 
 class RemoteVideoFrameObjectHeapProxyProcessor : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>, public GPUProcessConnection::Client {
 public:
@@ -65,8 +65,8 @@ public:
 
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
     void getVideoFrameBuffer(const RemoteVideoFrameProxy&, Callback&&);
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame&, ShouldApplyRotation = ShouldApplyRotation::No);
-    // See RemoteVideoFrameObjectHeapProxy::remoteFrame() and remoteBlackFrame().
+    // See RemoteVideoFrameObjectHeapProxy::createNativeImage(), remoteFrame() and remoteBlackFrame().
+    RefPtr<WebCore::NativeImage> createNativeImage(RemoteVideoFrameObjectHeapProxy&, const WebCore::VideoFrame&, ShouldApplyRotation);
     RefPtr<RemoteVideoFrameProxy> remoteFrame(RemoteVideoFrameObjectHeapProxy&, const WebCore::VideoFrame&);
 #if USE(LIBWEBRTC)
     RefPtr<RemoteVideoFrameProxy> remoteFrame(RemoteVideoFrameObjectHeapProxy&, const webrtc::VideoFrame&, WebCore::IntSize);
@@ -89,7 +89,6 @@ private:
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
     void newVideoFrameBuffer(RemoteVideoFrameIdentifier, std::optional<SharedVideoFrame::Buffer>&&);
-    void newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&&);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&);
@@ -107,13 +106,12 @@ private:
     Lock m_callbacksLock;
     HashMap<RemoteVideoFrameIdentifier, Callback> m_callbacks WTF_GUARDED_BY_LOCK(m_callbacksLock);
     const Ref<WorkQueue> m_queue;
+    const Ref<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
     SharedVideoFrameReader m_sharedVideoFrameReader;
 
     // Held across writing a frame and sending the message that reads it.
     Lock m_sharedVideoFrameWriterLock;
     SharedVideoFrameWriter m_sharedVideoFrameWriter WTF_GUARDED_BY_LOCK(m_sharedVideoFrameWriterLock);
-    RetainPtr<CVPixelBufferRef> m_convertedBuffer;
-    BinarySemaphore m_conversionSemaphore;
 };
 
 } // namespace WebKit

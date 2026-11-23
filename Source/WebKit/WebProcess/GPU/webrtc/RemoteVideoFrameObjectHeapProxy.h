@@ -47,7 +47,10 @@ public:
 
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, WTF::move(callback)); }
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame, ShouldApplyRotation shouldApplyRotation = ShouldApplyRotation::No) { return m_processor->getNativeImage(frame, shouldApplyRotation); }
+    // Any thread. A NativeImage of `frame` in 32BGRA, with its rotation and mirroring applied if asked. The GPU
+    // process makes it from the frame of remoteFrame() and publishes it in the shared resource cache, from where
+    // platformImage() reads the pixels. Does not wait for the image. Null if the frame cannot be sent.
+    RefPtr<WebCore::NativeImage> createNativeImage(const WebCore::VideoFrame& frame, ShouldApplyRotation shouldApplyRotation = ShouldApplyRotation::No) { return m_processor->createNativeImage(*this, frame, shouldApplyRotation); }
 
     // Any thread. The frame in the GPU process of this connection:
     // - `frame` itself, if it is a RemoteVideoFrameProxy of this connection whose rotation, mirroring and alpha

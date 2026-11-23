@@ -33,7 +33,7 @@ messages -> RemoteVideoFrameObjectHeap {
     GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read) AllowedWhenWaitingForSyncReply
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
     SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle)
-    ConvertFrameBuffer(struct WebKit::SharedVideoFrame frame, bool shouldApplyRotation) -> (WebCore::ColorSpace space) Synchronous
+    CreateNativeImage(WebKit::RemoteVideoFrameReadReference frame, WebKit::RemoteNativeImageReference image, enum:bool WebKit::ShouldApplyRotation applyRotation)
 #endif
     ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference write) AllowedWhenWaitingForSyncReply
 }

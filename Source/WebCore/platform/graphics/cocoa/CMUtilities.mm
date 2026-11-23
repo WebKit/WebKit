@@ -31,6 +31,7 @@
 #import "CAAudioStreamDescription.h"
 #import "CDMFairPlayStreaming.h"
 #import "CVUtilities.h"
+#import "ColorSpaceCG.h"
 #import "FormatDescriptionUtilities.h"
 #import "ISOTrackEncryptionBox.h"
 #import "Logging.h"
@@ -1119,6 +1120,33 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
     return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(samples));
 }
 
+static RetainPtr<CFDictionaryRef> createColorSpaceAttachments(const PlatformVideoColorSpace& colorSpace)
+{
+    RetainPtr attachments = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto setAttachment = [&](CFStringRef key, CFTypeRef value) {
+        if (value)
+            CFDictionarySetValue(attachments.get(), key, value);
+    };
+    if (colorSpace.primaries)
+        setAttachment(kCVImageBufferColorPrimariesKey, convertToCMColorPrimaries(*colorSpace.primaries));
+    if (colorSpace.transfer) {
+        setAttachment(kCVImageBufferTransferFunctionKey, convertToCMTransferFunction(*colorSpace.transfer));
+        if (*colorSpace.transfer == PlatformVideoTransferCharacteristics::Gamma22curve)
+            setAttachment(kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.2));
+        else if (*colorSpace.transfer == PlatformVideoTransferCharacteristics::Gamma28curve)
+            setAttachment(kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.8));
+    }
+    if (colorSpace.matrix)
+        setAttachment(kCVImageBufferYCbCrMatrixKey, convertToCMYCbCRMatrix(*colorSpace.matrix));
+    if (colorSpace.chromaLocation) {
+        if (RetainPtr cmChromaLocation = convertToCMChromaLocation(*colorSpace.chromaLocation)) {
+            setAttachment(kCVImageBufferChromaLocationTopFieldKey, cmChromaLocation.get());
+            setAttachment(kCVImageBufferChromaLocationBottomFieldKey, cmChromaLocation.get());
+        }
+    }
+    return attachments;
+}
+
 void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CVPixelBufferRef pixelBuffer)
 {
     ASSERT(pixelBuffer);
@@ -1126,23 +1154,16 @@ void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CV
         return;
 
     CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferCGColorSpaceKey);
-    if (colorSpace.primaries)
-        CVBufferSetAttachment(pixelBuffer, kCVImageBufferColorPrimariesKey, protect(convertToCMColorPrimaries(*colorSpace.primaries)), kCVAttachmentMode_ShouldPropagate);
-    if (colorSpace.transfer) {
-        CVBufferSetAttachment(pixelBuffer, kCVImageBufferTransferFunctionKey, protect(convertToCMTransferFunction(*colorSpace.transfer)), kCVAttachmentMode_ShouldPropagate);
-        if (*colorSpace.transfer == PlatformVideoTransferCharacteristics::Gamma22curve)
-            CVBufferSetAttachment(pixelBuffer, kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.2), kCVAttachmentMode_ShouldPropagate);
-        else if (*colorSpace.transfer == PlatformVideoTransferCharacteristics::Gamma28curve)
-            CVBufferSetAttachment(pixelBuffer, kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.8), kCVAttachmentMode_ShouldPropagate);
-    }
-    if (colorSpace.matrix)
-        CVBufferSetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, protect(convertToCMYCbCRMatrix(*colorSpace.matrix)), kCVAttachmentMode_ShouldPropagate);
-    if (colorSpace.chromaLocation) {
-        if (RetainPtr cmChromaLocation = convertToCMChromaLocation(*colorSpace.chromaLocation)) {
-            CVBufferSetAttachment(pixelBuffer, kCVImageBufferChromaLocationTopFieldKey, cmChromaLocation.get(), kCVAttachmentMode_ShouldPropagate);
-            CVBufferSetAttachment(pixelBuffer, kCVImageBufferChromaLocationBottomFieldKey, cmChromaLocation.get(), kCVAttachmentMode_ShouldPropagate);
-        }
-    }
+    CFDictionaryApplyFunction(createColorSpaceAttachments(colorSpace).get(), [](const void* key, const void* value, void* pixelBuffer) {
+        CVBufferSetAttachment(static_cast<CVPixelBufferRef>(pixelBuffer), static_cast<CFStringRef>(key), static_cast<CFTypeRef>(value), kCVAttachmentMode_ShouldPropagate);
+    }, pixelBuffer);
+}
+
+RetainPtr<CGColorSpaceRef> createCGColorSpace(const PlatformVideoColorSpace& colorSpace)
+{
+    if (RetainPtr cgColorSpace = adoptCF(CVImageBufferCreateColorSpaceFromAttachments(createColorSpaceAttachments(colorSpace).get())))
+        return cgColorSpace;
+    return sRGBColorSpaceSingleton();
 }
 
 PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer)

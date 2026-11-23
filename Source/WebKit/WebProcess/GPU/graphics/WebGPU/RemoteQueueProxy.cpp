@@ -205,14 +205,13 @@ bool RemoteQueueProxy::isValid() const
 
 RefPtr<WebCore::NativeImage> RemoteQueueProxy::getNativeImage(WebCore::VideoFrame& videoFrame)
 {
-    RefPtr<WebCore::NativeImage> nativeImage;
 #if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
-    callOnMainRunLoopAndWait([&nativeImage, videoFrame = protect(videoFrame), videoFrameHeap = protect(m_videoFrameObjectHeapProxy)] {
-        // FIXME: WebGPU uploads the native image as is, so the rotation has to be applied in GPU process. Apply the rotation when drawing instead.
-        nativeImage = videoFrameHeap->getNativeImage(videoFrame, ShouldApplyRotation::Yes);
-    });
+    // FIXME: WebGPU uploads the native image as is, so the rotation has to be applied in GPU process. Apply the rotation when drawing instead.
+    return protect(m_videoFrameObjectHeapProxy)->createNativeImage(videoFrame, ShouldApplyRotation::Yes);
+#else
+    UNUSED_PARAM(videoFrame);
+    return nullptr;
 #endif
-    return nativeImage;
 }
 
 

@@ -314,12 +314,8 @@ RefPtr<NativeImage> RemoteGraphicsContextGLProxy::videoFrameToNativeImage(WebCor
         return { };
 
 #if PLATFORM(COCOA)
-    RefPtr<NativeImage> nativeImage;
-    callOnMainRunLoopAndWait([&] {
-        // FIXME: WebGL uploads the native image as is, so the rotation has to be applied in GPU process. Apply the rotation when drawing instead.
-        nativeImage = m_videoFrameObjectHeapProxy->getNativeImage(frame, ShouldApplyRotation::Yes);
-    });
-    return nativeImage;
+    // FIXME: WebGL uploads the native image as is, so the rotation has to be applied in GPU process. Apply the rotation when drawing instead.
+    return protect(m_videoFrameObjectHeapProxy)->createNativeImage(frame, ShouldApplyRotation::Yes);
 #else
     return GraphicsContextGL::videoFrameToNativeImage(frame);
 #endif

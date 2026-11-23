@@ -529,7 +529,6 @@
 
 [UnsafeWrapper] std::optional<WebKit::SharedVideoFrame::Buffer> {
     [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewVideoFrameBuffer frame
-    [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewConvertedVideoFrameBuffer frame
 }
 
 [UnsafeWrapper] std::optional<Vector<WebKit::CoreIPCNSURLRequestData::BodyParts>> {

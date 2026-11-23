@@ -43,6 +43,9 @@ struct RemoteVideoFrameProxyProperties {
     bool shouldIgnoreAlpha;
 };
 
+// Whether a native image made from a video frame has the rotation and mirroring of the frame applied.
+enum class ShouldApplyRotation : bool { No, Yes };
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
