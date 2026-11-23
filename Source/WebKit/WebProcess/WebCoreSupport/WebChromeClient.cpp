@@ -174,6 +174,11 @@
 #include "RemoteGraphicsContextGLProxy.h"
 #endif
 
+#if ENABLE(WEBGL) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL_WEBGPU)
+#include "RemoteWebGPUInstanceProxy.h"
+#include <WebCore/GraphicsContextGLANGLEWebGPU.h>
+#endif
+
 #if ENABLE(WEBGL)
 #include <WebCore/GraphicsContextGL.h>
 #endif
@@ -1320,8 +1325,53 @@ std::unique_ptr<WebCore::WorkerClient> WebChromeClient::createWorkerClient(Seria
 }
 
 #if ENABLE(WEBGL)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL_WEBGPU)
+// A context that runs ANGLE in the Web Process on its WebGPU backend, over a WebGPU device of its own
+// in the GPU process.
+static RefPtr<GraphicsContextGL> createWebGPUGraphicsContextGL(const GraphicsContextGLAttributes& attributes, WebPage& page)
+{
+    RefPtr gpu = RemoteGPUProxy::create(ModelDowncastConvertToBackingContext::create(), page);
+    if (!gpu)
+        return nullptr;
+
+    // The adapter and the device of the GPU process reply synchronously. The futures of the C API
+    // that ANGLE waits for on the device complete through this instance, which dispatches the
+    // replies of this GPU proxy only.
+    std::optional<::WebGPU::PowerPreference> powerPreference;
+    if (attributes.powerPreference == GraphicsContextGLPowerPreference::LowPower)
+        powerPreference = ::WebGPU::PowerPreference::LowPower;
+    else if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
+        powerPreference = ::WebGPU::PowerPreference::HighPerformance;
+    RefPtr<::WebGPU::Adapter> adapter;
+    gpu->ensureInstance()->requestAdapter({ .powerPreference = powerPreference, .forceFallbackAdapter = false, .xrCompatible = false }, [&](RefPtr<::WebGPU::Adapter>&& result) {
+        adapter = WTF::move(result);
+    });
+    if (!adapter)
+        return nullptr;
+
+    // ANGLE derives the GL limits from the limits of the device, so the device has the limits of the
+    // adapter instead of the defaults of WebGPU.
+    RefPtr<::WebGPU::Device> device;
+    adapter->requestDevice({ .label = "WebGL"_s, .requiredFeatures = { }, .requiredLimits = adapter->limits() }, [&](std::expected<Ref<::WebGPU::Device>, String>&& result) {
+        if (result)
+            device = WTF::move(*result);
+    });
+    if (!device)
+        return nullptr;
+
+    return WebCore::GraphicsContextGLANGLEWebGPU::create(attributes, gpu.releaseNonNull(), device.releaseNonNull());
+}
+#endif
+
 RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL_WEBGPU)
+    if (RefPtr page = m_page) {
+        auto& settings = page->corePage()->settings();
+        if (settings.webGLOnWebGPUEnabled() && settings.webGPUEnabled())
+            return createWebGPUGraphicsContextGL(attributes, *page);
+    }
+#endif
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     WebProcess::singleton().initializePlatformDisplayIfNeeded();
     WebProcess::singleton().initializeVulkanIfNeeded();
