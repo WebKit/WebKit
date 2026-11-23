@@ -26,6 +26,8 @@
 #include "malloc/malloc.h"
 
 #include <atomic>
+#include <cstdlib>
+#include <limits>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -122,7 +124,9 @@ public:
         const std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (!zone || !m_zoneNames.count(zone))
             return nullptr;
-        void* memory = aligned_alloc(alignment, size);
+        if (size > std::numeric_limits<size_t>::max() - (alignment - 1))
+            return nullptr;
+        void* memory = aligned_alloc(alignment, (size + alignment - 1) & ~(alignment - 1));
         m_zoneAllocations[zone].emplace(memory, size);
         return memory;
     }

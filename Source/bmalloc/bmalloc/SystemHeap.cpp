@@ -174,7 +174,7 @@ void* SystemHeap::malloc(size_t size, FailureAction action)
 
 void* SystemHeap::memalign(size_t alignment, size_t size, FailureAction action)
 {
-    void* result = ::aligned_alloc(alignment, size);
+    void* result = systemAlignedAlloc(alignment, size);
     RELEASE_BASSERT(action == FailureAction::ReturnNull || result);
     return result;
 }
