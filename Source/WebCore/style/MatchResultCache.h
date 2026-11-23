@@ -53,6 +53,8 @@ public:
     void updateForFastPathInherit(const Element&, const Style::ComputedStyle& parentStyle);
     void set(const Element&, const UnadjustedStyle&);
 
+    NODELETE static bool canApplyPartially(CSSPropertyID);
+
 private:
     struct Entry;
     NODELETE static bool isUsableAfterInlineStyleChange(const MatchResultCache::Entry&, const StyleProperties& inlineStyle);
