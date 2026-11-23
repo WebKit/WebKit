@@ -83,15 +83,24 @@ WI.HARBuilder = class HARBuilder
 
     static pageTimings()
     {
+        // Both timings are milliseconds since the page started, which is when the main resource was requested.
+        let requestSentTimestamp = WI.networkManager.mainFrame.mainResource.requestSentTimestamp;
+
         let result = {};
 
         let domContentReadyEventTimestamp = WI.networkManager.mainFrame.domContentReadyEventTimestamp;
-        if (!isNaN(domContentReadyEventTimestamp))
-            result.onContentLoad = domContentReadyEventTimestamp * 1000;
+        if (!isNaN(domContentReadyEventTimestamp)) {
+            let onContentLoad = (domContentReadyEventTimestamp - requestSentTimestamp) * 1000;
+            if (!isNaN(onContentLoad) && onContentLoad >= 0)
+                result.onContentLoad = onContentLoad;
+        }
 
         let loadEventTimestamp = WI.networkManager.mainFrame.loadEventTimestamp;
-        if (!isNaN(loadEventTimestamp))
-            result.onLoad = loadEventTimestamp * 1000;
+        if (!isNaN(loadEventTimestamp)) {
+            let onLoad = (loadEventTimestamp - requestSentTimestamp) * 1000;
+            if (!isNaN(onLoad) && onLoad >= 0)
+                result.onLoad = onLoad;
+        }
 
         return result;
     }
