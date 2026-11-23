@@ -473,26 +473,7 @@ void RemoteRenderingBackend::nativeImageBitmap(RenderingResourceIdentifier image
     [&] {
         RefPtr image = m_remoteResourceCache.cachedNativeImage(imageIdentifier);
         MESSAGE_CHECK(image, "NativeImage not cached.");
-        RefPtr<ShareableBitmap> bitmap;
-#if USE(CG)
-        bitmap = ShareableBitmap::createFromImagePixels(*image);
-#endif
-        if (!bitmap)
-            bitmap = ShareableBitmap::createFromImageDraw(*image, ColorSpace { image->colorSpace() });
-        if (!bitmap)
-            return;
-        auto handle = bitmap->createHandle();
-        if (!handle)
-            return;
-        if (sharedResourceCache().resourceOwner())
-            handle->setOwnershipOfMemory(sharedResourceCache().resourceOwner(), WebCore::MemoryLedger::Graphics);
-        auto platformImage = bitmap->createPlatformImage();
-        if (!platformImage) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        image->replacePlatformImage(WTF::move(platformImage));
-        result = WTF::move(handle);
+        result = protect(m_sharedResourceCache)->createBitmapHandle(*image);
     }();
     ASSERT(result);
     completionHandler(WTF::move(result));
