@@ -2046,7 +2046,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::WebGPU::ComputePassDescriptor': ['"WebGPUComputePassDescriptor.h"'],
         'WebKit::WebGPU::ComputePassTimestampWrites': ['"WebGPUComputePassTimestampWrites.h"'],
         'WebKit::WebGPU::ComputePipelineDescriptor': ['"WebGPUComputePipelineDescriptor.h"'],
-        'WebKit::WebGPU::ConvertFromBackingContext': ['"WebGPUConvertFromBackingContext.h"'],
         'WebKit::WebGPU::DepthStencilState': ['"WebGPUDepthStencilState.h"'],
         'WebKit::WebGPU::DeviceDescriptor': ['"WebGPUDeviceDescriptor.h"'],
         'WebKit::WebGPU::Extent3D': ['"WebGPUExtent3D.h"'],

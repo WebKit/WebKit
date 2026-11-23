@@ -32,6 +32,7 @@
 #include "RemoteDevice.h"
 #include "RemoteQueue.h"
 #include "StreamServerConnection.h"
+#include "WebGPUDescriptorDeserializers.h"
 #include "WebGPUDeviceDescriptor.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPUSupportedLimits.h"
@@ -68,14 +69,15 @@ void RemoteAdapter::stopListeningForIPC()
 
 void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier, CompletionHandler<void(Vector<::WebGPU::FeatureName>&&, WebGPU::SupportedLimits&&)>&& callback)
 {
-    auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
+    Ref objectHeap = m_objectHeap;
+    auto convertedDescriptor = deserialize(objectHeap, descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
         callback({ }, { });
         return;
     }
 
-    protect(m_backing)->requestDevice(*convertedDescriptor, [callback = WTF::move(callback), objectHeap = protect(m_objectHeap), streamConnection = protect(m_streamConnection), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(m_gpu)](RefPtr<::WebGPU::Device>&& devicePtr) mutable {
+    protect(m_backing)->requestDevice(*convertedDescriptor, [callback = WTF::move(callback), objectHeap = WTF::move(objectHeap), streamConnection = protect(m_streamConnection), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(m_gpu)](RefPtr<::WebGPU::Device>&& devicePtr) mutable {
         if (!devicePtr.get() || !gpuConnectionToWebProcess) {
             callback({ }, { });
             return;

@@ -79,7 +79,7 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 #if PLATFORM(COCOA)
 void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::ColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, ::WebGPU::TextureFormat textureFormat, WebKit::WebGPUDeviceIdentifier deviceIdentifier, CompletionHandler<void(uint32_t)>&& callback)
 {
-    auto convertedDevice = protect(m_objectHeap)->convertDeviceFromBacking(deviceIdentifier);
+    auto convertedDevice = protect(m_objectHeap)->get(deviceIdentifier);
     MESSAGE_CHECK_COMPLETION(convertedDevice, callback(0));
 
     callback(protect(m_backing)->recreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, protect(*convertedDevice)));

@@ -32,6 +32,7 @@
 #include "RemotePresentationContextMessages.h"
 #include "RemoteTexture.h"
 #include "StreamServerConnection.h"
+#include "WebGPUDescriptorDeserializers.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCanvasConfiguration.h>
 #include <WebCore/WebGPUCppAPI.h>
@@ -61,7 +62,8 @@ void RemotePresentationContext::stopListeningForIPC()
 
 void RemotePresentationContext::configure(const WebGPU::CanvasConfiguration& canvasConfiguration)
 {
-    auto convertedConfiguration = m_objectHeap->convertFromBacking(canvasConfiguration);
+    Ref objectHeap = m_objectHeap;
+    auto convertedConfiguration = deserialize(objectHeap, canvasConfiguration);
     ASSERT(convertedConfiguration);
     if (!convertedConfiguration)
         return;

@@ -68,7 +68,7 @@ void RemoteRenderBundleEncoder::stopListeningForIPC()
 
 void RemoteRenderBundleEncoder::setPipeline(WebGPURenderPipelineIdentifier renderPipeline)
 {
-    auto convertedRenderPipeline = protect(m_objectHeap)->convertRenderPipelineFromBacking(renderPipeline);
+    auto convertedRenderPipeline = protect(m_objectHeap)->get(renderPipeline);
     ASSERT(convertedRenderPipeline);
     if (!convertedRenderPipeline)
         return;
@@ -78,7 +78,7 @@ void RemoteRenderBundleEncoder::setPipeline(WebGPURenderPipelineIdentifier rende
 
 void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUBufferIdentifier buffer, ::WebGPU::IndexFormat indexFormat, uint64_t offset, std::optional<uint64_t> size)
 {
-    RefPtr convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
+    RefPtr convertedBuffer = protect(m_objectHeap)->get(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -88,7 +88,7 @@ void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUBufferIdentifier buffer, ::
 
 void RemoteRenderBundleEncoder::setVertexBuffer(uint32_t slot, WebGPUBufferIdentifier buffer, uint64_t offset, std::optional<uint64_t> size)
 {
-    RefPtr convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
+    RefPtr convertedBuffer = protect(m_objectHeap)->get(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -117,7 +117,7 @@ void RemoteRenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instan
 
 void RemoteRenderBundleEncoder::drawIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
-    RefPtr convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
+    RefPtr convertedIndirectBuffer = protect(m_objectHeap)->get(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -127,7 +127,7 @@ void RemoteRenderBundleEncoder::drawIndirect(WebGPUBufferIdentifier indirectBuff
 
 void RemoteRenderBundleEncoder::drawIndexedIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
-    RefPtr convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
+    RefPtr convertedIndirectBuffer = protect(m_objectHeap)->get(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -143,7 +143,7 @@ void RemoteRenderBundleEncoder::setBindGroup(uint32_t index, std::optional<WebGP
         return;
     }
 
-    RefPtr convertedBindGroup = protect(m_objectHeap)->convertBindGroupFromBacking(*bindGroup);
+    RefPtr convertedBindGroup = protect(m_objectHeap)->get(*bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;

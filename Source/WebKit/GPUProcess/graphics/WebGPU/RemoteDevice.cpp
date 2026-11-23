@@ -52,6 +52,7 @@
 #include "RemoteXRBinding.h"
 #include "StreamServerConnection.h"
 #include "WebGPUCommandEncoderDescriptor.h"
+#include "WebGPUDescriptorDeserializers.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/VideoFrame.h>
 #include <WebCore/WebGPU.h>
@@ -132,7 +133,7 @@ void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebG
 void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, WebGPUTextureIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto texture = m_backing->createTexture(*convertedDescriptor);
@@ -307,7 +308,7 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
     }
 
     Ref objectHeap = m_objectHeap.get();
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, pixelBuffer);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, pixelBuffer);
     MESSAGE_CHECK(convertedDescriptor);
 
     RefPtr gpu = protect(m_gpu)->backing();
@@ -321,7 +322,7 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
 
 void RemoteDevice::updateExternalTexture(WebKit::WebGPUExternalTextureIdentifier externalTextureIdentifier, const WebCore::MediaPlayerIdentifier& mediaPlayerIdentifier)
 {
-    auto externalTexture = protect(m_objectHeap)->convertExternalTextureFromBacking(externalTextureIdentifier);
+    auto externalTexture = protect(m_objectHeap)->get(externalTextureIdentifier);
     if (!externalTexture.get())
         return;
 
@@ -344,7 +345,7 @@ void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::BindGroupLayoutEntry> entries;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, entries);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, entries);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto bindGroupLayout = m_backing->createBindGroupLayout(*convertedDescriptor);
@@ -357,7 +358,7 @@ void RemoteDevice::createPipelineLayout(const WebGPU::PipelineLayoutDescriptor& 
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<Ref<::WebGPU::BindGroupLayout>> bindGroupLayouts;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, bindGroupLayouts);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, bindGroupLayouts);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto pipelineLayout = m_backing->createPipelineLayout(*convertedDescriptor);
@@ -370,7 +371,7 @@ void RemoteDevice::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::BindGroupEntry> entries;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, entries);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, entries);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto bindGroup = m_backing->createBindGroup(*convertedDescriptor);
@@ -383,7 +384,7 @@ void RemoteDevice::createShaderModule(const WebGPU::ShaderModuleDescriptor& desc
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ShaderModuleCompilationHint> hints;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, hints);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, hints);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto shaderModule = m_backing->createShaderModule(*convertedDescriptor);
@@ -397,7 +398,7 @@ void RemoteDevice::createComputePipeline(const WebGPU::ComputePipelineDescriptor
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, constants);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, constants);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto computePipeline = m_backing->createComputePipeline(*convertedDescriptor);
@@ -410,10 +411,10 @@ void RemoteDevice::createComputePipelineWithPipelineLayoutFromPipeline(const Web
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, constants, true);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, constants, true);
     MESSAGE_CHECK_COMPLETION(convertedDescriptor, completionHandler(false));
 
-    RefPtr pipelineToReplace = objectHeap->convertComputePipelineFromBacking(pipelineToReplaceIdentifier);
+    RefPtr pipelineToReplace = objectHeap->get(pipelineToReplaceIdentifier);
     MESSAGE_CHECK_COMPLETION(pipelineToReplace, completionHandler(false));
 
     m_backing->createComputePipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, protect(*pipelineToReplace), [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](std::expected<Ref<::WebGPU::ComputePipeline>, ::WebGPU::PipelineError>&& computePipeline) mutable {
@@ -432,7 +433,7 @@ void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& 
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, storage);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, storage);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto renderPipeline = m_backing->createRenderPipeline(*convertedDescriptor);
@@ -445,10 +446,10 @@ void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebG
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, storage, true);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, storage, true);
     MESSAGE_CHECK_COMPLETION(convertedDescriptor, completionHandler(false));
 
-    RefPtr pipelineToReplace = objectHeap->convertRenderPipelineFromBacking(pipelineToReplaceIdentifier);
+    RefPtr pipelineToReplace = objectHeap->get(pipelineToReplaceIdentifier);
     MESSAGE_CHECK_COMPLETION(pipelineToReplace, completionHandler(false));
 
     m_backing->createRenderPipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, protect(*pipelineToReplace), [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](std::expected<Ref<::WebGPU::RenderPipeline>, ::WebGPU::PipelineError>&& renderPipeline) mutable {
@@ -467,7 +468,7 @@ void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescr
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, constants);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, constants);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
         callback(false, ""_s);
@@ -490,7 +491,7 @@ void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescrip
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, storage);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, storage);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
         callback(false, ""_s);
@@ -521,7 +522,7 @@ void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncod
 void RemoteDevice::createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor& descriptor, WebGPURenderBundleEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto renderBundleEncoder = m_backing->createRenderBundleEncoder(*convertedDescriptor);

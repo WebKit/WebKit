@@ -33,6 +33,7 @@
 #include "RemoteGPU.h"
 #include "RemoteQueueMessages.h"
 #include "StreamServerConnection.h"
+#include "WebGPUDescriptorDeserializers.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/SharedMemory.h>
 #include <WebCore/WebGPUCppAPI.h>
@@ -97,7 +98,7 @@ void RemoteQueue::submit(Vector<WebGPUCommandBufferIdentifier>&& commandBuffers)
 {
     Vector<Ref<::WebGPU::CommandBuffer>> convertedCommandBuffers(ReserveCapacityTag { }, commandBuffers.size());
     for (WebGPUCommandBufferIdentifier identifier : commandBuffers) {
-        auto convertedCommandBuffer = protect(m_objectHeap)->convertCommandBufferFromBacking(identifier);
+        auto convertedCommandBuffer = protect(m_objectHeap)->get(identifier);
         ASSERT(convertedCommandBuffer);
         if (!convertedCommandBuffer)
             return;
@@ -120,7 +121,7 @@ void RemoteQueue::writeBuffer(
     CompletionHandler<void(bool)>&& completionHandler)
 {
     auto data = dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
-    auto convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
+    auto convertedBuffer = protect(m_objectHeap)->get(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
@@ -139,7 +140,7 @@ void RemoteQueue::writeBufferWithCopy(
     Vector<uint8_t>&& data)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto convertedBuffer = objectHeap->convertBufferFromBacking(buffer);
+    auto convertedBuffer = objectHeap->get(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -157,7 +158,7 @@ void RemoteQueue::writeTexture(
 {
     auto data = dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     Ref objectHeap = m_objectHeap.get();
-    auto convertedDestination = objectHeap->convertFromBacking(destination);
+    auto convertedDestination = deserialize(objectHeap, destination);
     ASSERT(convertedDestination);
     if (!convertedDestination || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
@@ -177,7 +178,7 @@ void RemoteQueue::writeTextureWithCopy(
     const WebGPU::Extent3D& size)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto convertedDestination = objectHeap->convertFromBacking(destination);
+    auto convertedDestination = deserialize(objectHeap, destination);
     ASSERT(convertedDestination);
     if (!convertedDestination)
         return;
@@ -200,14 +201,14 @@ void RemoteQueue::copyExternalImageToTexture(
     CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
 
     Ref objectHeap = m_objectHeap.get();
-    auto convertedSource = objectHeap->convertFromBacking(source);
+    auto convertedSource = deserialize(objectHeap, source);
     ASSERT(convertedSource);
-    auto convertedDestination = objectHeap->convertFromBacking(destination);
+    auto convertedDestination = deserialize(objectHeap, destination);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;
 
-    // ConvertFromBackingContext cannot resolve the source, because only RemoteGPU can reach the
+    // deserialize() cannot resolve the source, because only RemoteGPU can reach the
     // RemoteRenderingBackend which owns the ImageBuffer.
     if (source.imageBufferIdentifier) {
         RefPtr sourceImageBuffer = protect(m_gpu)->imageBuffer(*source.imageBufferIdentifier);
@@ -272,9 +273,9 @@ void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
         return;
 
     Ref objectHeap = m_objectHeap.get();
-    auto convertedSource = objectHeap->convertFromBacking(source, WTF::move(pixelBuffer), rotation, isMirrored);
+    auto convertedSource = deserialize(objectHeap, source, WTF::move(pixelBuffer), rotation, isMirrored);
     ASSERT(convertedSource);
-    auto convertedDestination = objectHeap->convertFromBacking(destination);
+    auto convertedDestination = deserialize(objectHeap, destination);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;

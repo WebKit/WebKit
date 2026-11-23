@@ -58,7 +58,7 @@ void RemoteBindGroup::destruct()
 
 void RemoteBindGroup::updateExternalTextures(WebGPUExternalTextureIdentifier externalTextureIdentifier, CompletionHandler<void(bool)>&& completion)
 {
-    if (auto externalTexture = protect(m_objectHeap)->convertExternalTextureFromBacking(externalTextureIdentifier); externalTexture.get())
+    if (auto externalTexture = protect(m_objectHeap)->get(externalTextureIdentifier); externalTexture.get())
         completion(protect(m_backing)->updateExternalTextures(*externalTexture.get()));
     else
         completion(false);

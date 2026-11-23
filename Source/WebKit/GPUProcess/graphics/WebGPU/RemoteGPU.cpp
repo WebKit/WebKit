@@ -41,6 +41,7 @@
 #include "RemotePresentationContext.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamServerConnection.h"
+#include "WebGPUDescriptorDeserializers.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
@@ -197,7 +198,7 @@ void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescr
     ASSERT(backing);
 
     Ref objectHeap = m_objectHeap;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto presentationContext = backing->createPresentationContext(*convertedDescriptor);

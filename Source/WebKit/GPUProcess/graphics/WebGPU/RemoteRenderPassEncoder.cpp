@@ -63,7 +63,7 @@ void RemoteRenderPassEncoder::stopListeningForIPC()
 
 void RemoteRenderPassEncoder::setPipeline(WebGPURenderPipelineIdentifier renderPipeline)
 {
-    auto convertedRenderPipeline = protect(m_objectHeap)->convertRenderPipelineFromBacking(renderPipeline);
+    auto convertedRenderPipeline = protect(m_objectHeap)->get(renderPipeline);
     ASSERT(convertedRenderPipeline);
     if (!convertedRenderPipeline)
         return;
@@ -73,7 +73,7 @@ void RemoteRenderPassEncoder::setPipeline(WebGPURenderPipelineIdentifier renderP
 
 void RemoteRenderPassEncoder::setIndexBuffer(WebGPUBufferIdentifier buffer, ::WebGPU::IndexFormat indexFormat, uint64_t offset, std::optional<uint64_t> size)
 {
-    auto convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
+    auto convertedBuffer = protect(m_objectHeap)->get(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -83,7 +83,7 @@ void RemoteRenderPassEncoder::setIndexBuffer(WebGPUBufferIdentifier buffer, ::We
 
 void RemoteRenderPassEncoder::setVertexBuffer(uint32_t slot, WebGPUBufferIdentifier buffer, uint64_t offset, std::optional<uint64_t> size)
 {
-    RefPtr convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
+    RefPtr convertedBuffer = protect(m_objectHeap)->get(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -113,7 +113,7 @@ void RemoteRenderPassEncoder::drawIndexed(uint32_t indexCount,
 
 void RemoteRenderPassEncoder::drawIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
-    auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
+    auto convertedIndirectBuffer = protect(m_objectHeap)->get(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -123,7 +123,7 @@ void RemoteRenderPassEncoder::drawIndirect(WebGPUBufferIdentifier indirectBuffer
 
 void RemoteRenderPassEncoder::drawIndexedIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
-    auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
+    auto convertedIndirectBuffer = protect(m_objectHeap)->get(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -139,7 +139,7 @@ void RemoteRenderPassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUB
         return;
     }
 
-    RefPtr convertedBindGroup = protect(m_objectHeap)->convertBindGroupFromBacking(*bindGroup);
+    RefPtr convertedBindGroup = protect(m_objectHeap)->get(*bindGroup);
     if (!convertedBindGroup)
         return;
 
@@ -198,7 +198,7 @@ void RemoteRenderPassEncoder::executeBundles(Vector<WebGPURenderBundleIdentifier
 {
     Vector<Ref<::WebGPU::RenderBundle>> convertedBundles(ReserveCapacityTag { }, renderBundles.size());
     for (WebGPURenderBundleIdentifier identifier : renderBundles) {
-        auto convertedBundle = protect(m_objectHeap)->convertRenderBundleFromBacking(identifier);
+        auto convertedBundle = protect(m_objectHeap)->get(identifier);
         ASSERT(convertedBundle);
         if (!convertedBundle)
             return;

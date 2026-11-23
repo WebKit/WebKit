@@ -76,6 +76,7 @@ GPUProcess/graphics/WebGPU/RemoteXRBinding.cpp
 GPUProcess/graphics/WebGPU/RemoteXRProjectionLayer.cpp
 GPUProcess/graphics/WebGPU/RemoteXRSubImage.cpp
 GPUProcess/graphics/WebGPU/RemoteXRView.cpp
+GPUProcess/graphics/WebGPU/WebGPUDescriptorDeserializers.cpp
 GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp @cost:3
 GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
@@ -330,35 +331,6 @@ Shared/Extensions/WebExtensionRegisteredScriptsSQLiteStore.cpp
 Shared/Gamepad/GamepadData.cpp
 
 Shared/graphics/DisplayListData.cpp
-
-Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
-Shared/WebGPU/WebGPUBindGroupEntry.cpp
-Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.cpp
-Shared/WebGPU/WebGPUBufferBinding.cpp
-Shared/WebGPU/WebGPUCanvasConfiguration.cpp
-Shared/WebGPU/WebGPUComputePassDescriptor.cpp
-Shared/WebGPU/WebGPUComputePipelineDescriptor.cpp
-Shared/WebGPU/WebGPUDeviceDescriptor.cpp
-Shared/WebGPU/WebGPUExternalTextureDescriptor.cpp
-Shared/WebGPU/WebGPUFragmentState.cpp
-Shared/WebGPU/WebGPUImageCopyBuffer.cpp
-Shared/WebGPU/WebGPUImageCopyExternalImage.cpp
-Shared/WebGPU/WebGPUImageCopyTexture.cpp
-Shared/WebGPU/WebGPUImageCopyTextureTagged.cpp
-Shared/WebGPU/WebGPUObjectDescriptorBase.cpp
-Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp
-Shared/WebGPU/WebGPUPresentationContextDescriptor.cpp
-Shared/WebGPU/WebGPUProgrammableStage.cpp
-Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.cpp
-Shared/WebGPU/WebGPURenderPassColorAttachment.cpp
-Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp
-Shared/WebGPU/WebGPURenderPassDescriptor.cpp
-Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
-Shared/WebGPU/WebGPURenderPipelineDescriptor.cpp
-Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp
-Shared/WebGPU/WebGPUTextureDescriptor.cpp
-Shared/WebGPU/WebGPUVertexBufferLayout.cpp
-Shared/WebGPU/WebGPUVertexState.cpp
 
 Shared/WebsiteData/WebsiteData.cpp
 

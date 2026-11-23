@@ -36,6 +36,7 @@
 #include "RemoteRenderPassEncoder.h"
 #include "StreamServerConnection.h"
 #include "WebGPUComputePassDescriptor.h"
+#include "WebGPUDescriptorDeserializers.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -73,7 +74,7 @@ void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& d
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<std::optional<::WebGPU::RenderPassColorAttachment>> colorAttachments;
-    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, colorAttachments);
+    auto convertedDescriptor = deserialize(objectHeap, descriptor, colorAttachments);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto renderPassEncoder = protect(m_backing)->beginRenderPass(*convertedDescriptor);
@@ -87,7 +88,7 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
     Ref objectHeap = m_objectHeap.get();
     std::optional<::WebGPU::ComputePassDescriptor> convertedDescriptor;
     if (descriptor) {
-        auto resultDescriptor = objectHeap->convertFromBacking(*descriptor);
+        auto resultDescriptor = deserialize(objectHeap, *descriptor);
         MESSAGE_CHECK(resultDescriptor);
         convertedDescriptor = WTF::move(resultDescriptor);
     }
@@ -124,9 +125,9 @@ void RemoteCommandEncoder::copyBufferToBuffer(
     uint64_t size)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto convertedSource = objectHeap->convertBufferFromBacking(source);
+    auto convertedSource = objectHeap->get(source);
     ASSERT(convertedSource);
-    auto convertedDestination = objectHeap->convertBufferFromBacking(destination);
+    auto convertedDestination = objectHeap->get(destination);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;
@@ -139,9 +140,10 @@ void RemoteCommandEncoder::copyBufferToTexture(
     const WebGPU::ImageCopyTexture& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectHeap->convertFromBacking(source);
+    Ref objectHeap = m_objectHeap;
+    auto convertedSource = deserialize(objectHeap, source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectHeap->convertFromBacking(destination);
+    auto convertedDestination = deserialize(objectHeap, destination);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;
@@ -154,9 +156,10 @@ void RemoteCommandEncoder::copyTextureToBuffer(
     const WebGPU::ImageCopyBuffer& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectHeap->convertFromBacking(source);
+    Ref objectHeap = m_objectHeap;
+    auto convertedSource = deserialize(objectHeap, source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectHeap->convertFromBacking(destination);
+    auto convertedDestination = deserialize(objectHeap, destination);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;
@@ -169,9 +172,10 @@ void RemoteCommandEncoder::copyTextureToTexture(
     const WebGPU::ImageCopyTexture& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectHeap->convertFromBacking(source);
+    Ref objectHeap = m_objectHeap;
+    auto convertedSource = deserialize(objectHeap, source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectHeap->convertFromBacking(destination);
+    auto convertedDestination = deserialize(objectHeap, destination);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;
@@ -184,7 +188,7 @@ void RemoteCommandEncoder::clearBuffer(
     uint64_t offset,
     std::optional<uint64_t> size)
 {
-    auto convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
+    auto convertedBuffer = protect(m_objectHeap)->get(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -209,7 +213,7 @@ void RemoteCommandEncoder::insertDebugMarker(String&& markerLabel)
 
 void RemoteCommandEncoder::writeTimestamp(WebGPUQuerySetIdentifier querySet, uint32_t queryIndex)
 {
-    auto convertedQuerySet = protect(m_objectHeap)->convertQuerySetFromBacking(querySet);
+    auto convertedQuerySet = protect(m_objectHeap)->get(querySet);
     ASSERT(convertedQuerySet);
     if (!convertedQuerySet)
         return;
@@ -225,9 +229,9 @@ void RemoteCommandEncoder::resolveQuerySet(
     uint64_t destinationOffset)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto convertedQuerySet = objectHeap->convertQuerySetFromBacking(querySet);
+    auto convertedQuerySet = objectHeap->get(querySet);
     ASSERT(convertedQuerySet);
-    auto convertedDestination = objectHeap->convertBufferFromBacking(destination);
+    auto convertedDestination = objectHeap->get(destination);
     ASSERT(convertedDestination);
     if (!convertedQuerySet || !convertedDestination)
         return;

@@ -416,137 +416,137 @@ Vector<Ref<::WebGPU::Device>> ObjectHeap::devices() const
     return m_backingDevices.values();
 }
 
-RefPtr<::WebGPU::Adapter> ObjectHeap::convertAdapterFromBacking(WebGPUAdapterIdentifier identifier)
+RefPtr<::WebGPU::Adapter> ObjectHeap::get(WebGPUAdapterIdentifier identifier)
 {
     return findBackingInMap(m_adapters, identifier);
 }
 
-RefPtr<::WebGPU::BindGroup> ObjectHeap::convertBindGroupFromBacking(WebGPUBindGroupIdentifier identifier)
+RefPtr<::WebGPU::BindGroup> ObjectHeap::get(WebGPUBindGroupIdentifier identifier)
 {
     return findBackingInMap(m_bindGroups, identifier);
 }
 
-RefPtr<::WebGPU::BindGroupLayout> ObjectHeap::convertBindGroupLayoutFromBacking(WebGPUBindGroupLayoutIdentifier identifier)
+RefPtr<::WebGPU::BindGroupLayout> ObjectHeap::get(WebGPUBindGroupLayoutIdentifier identifier)
 {
     return findBackingInMap(m_bindGroupLayouts, identifier);
 }
 
-RefPtr<::WebGPU::Buffer> ObjectHeap::convertBufferFromBacking(WebGPUBufferIdentifier identifier)
+RefPtr<::WebGPU::Buffer> ObjectHeap::get(WebGPUBufferIdentifier identifier)
 {
     return findBackingInMap(m_buffers, identifier);
 }
 
-RefPtr<::WebGPU::CommandBuffer> ObjectHeap::convertCommandBufferFromBacking(WebGPUCommandBufferIdentifier identifier)
+RefPtr<::WebGPU::CommandBuffer> ObjectHeap::get(WebGPUCommandBufferIdentifier identifier)
 {
     return findBackingInMap(m_commandBuffers, identifier);
 }
 
-RefPtr<::WebGPU::CommandEncoder> ObjectHeap::convertCommandEncoderFromBacking(WebGPUCommandEncoderIdentifier identifier)
+RefPtr<::WebGPU::CommandEncoder> ObjectHeap::get(WebGPUCommandEncoderIdentifier identifier)
 {
     return findBackingInMap(m_commandEncoders, identifier);
 }
 
-WeakPtr<WebCore::WebGPUCompositorIntegration> ObjectHeap::convertCompositorIntegrationFromBacking(WebGPUCompositorIntegrationIdentifier identifier)
+WeakPtr<WebCore::WebGPUCompositorIntegration> ObjectHeap::get(WebGPUCompositorIntegrationIdentifier identifier)
 {
     return findBackingInMap(m_compositorIntegrations, identifier);
 }
 
-RefPtr<::WebGPU::ComputePassEncoder> ObjectHeap::convertComputePassEncoderFromBacking(WebGPUComputePassEncoderIdentifier identifier)
+RefPtr<::WebGPU::ComputePassEncoder> ObjectHeap::get(WebGPUComputePassEncoderIdentifier identifier)
 {
     return findBackingInMap(m_computePassEncoders, identifier);
 }
 
-RefPtr<::WebGPU::ComputePipeline> ObjectHeap::convertComputePipelineFromBacking(WebGPUComputePipelineIdentifier identifier)
+RefPtr<::WebGPU::ComputePipeline> ObjectHeap::get(WebGPUComputePipelineIdentifier identifier)
 {
     return findBackingInMap(m_computePipelines, identifier);
 }
 
-RefPtr<::WebGPU::Device> ObjectHeap::convertDeviceFromBacking(WebGPUDeviceIdentifier identifier)
+RefPtr<::WebGPU::Device> ObjectHeap::get(WebGPUDeviceIdentifier identifier)
 {
     return findBackingInMap(m_devices, identifier);
 }
 
-ThreadSafeWeakPtr<::WebGPU::ExternalTexture> ObjectHeap::convertExternalTextureFromBacking(WebGPUExternalTextureIdentifier identifier)
+ThreadSafeWeakPtr<::WebGPU::ExternalTexture> ObjectHeap::get(WebGPUExternalTextureIdentifier identifier)
 {
     return findBackingInMap(m_externalTextures, identifier);
 }
 
-RefPtr<::WebGPU::PipelineLayout> ObjectHeap::convertPipelineLayoutFromBacking(WebGPUPipelineLayoutIdentifier identifier)
+RefPtr<::WebGPU::PipelineLayout> ObjectHeap::get(WebGPUPipelineLayoutIdentifier identifier)
 {
     return findBackingInMap(m_pipelineLayouts, identifier);
 }
 
-RefPtr<::WebGPU::PresentationContext> ObjectHeap::convertPresentationContextFromBacking(WebGPUPresentationContextIdentifier identifier)
+RefPtr<::WebGPU::PresentationContext> ObjectHeap::get(WebGPUPresentationContextIdentifier identifier)
 {
     return findBackingInMap(m_presentationContexts, identifier);
 }
 
-RefPtr<::WebGPU::QuerySet> ObjectHeap::convertQuerySetFromBacking(WebGPUQuerySetIdentifier identifier)
+RefPtr<::WebGPU::QuerySet> ObjectHeap::get(WebGPUQuerySetIdentifier identifier)
 {
     return findBackingInMap(m_querySets, identifier);
 }
 
-RefPtr<::WebGPU::Queue> ObjectHeap::convertQueueFromBacking(WebGPUQueueIdentifier identifier)
+RefPtr<::WebGPU::Queue> ObjectHeap::get(WebGPUQueueIdentifier identifier)
 {
     return findBackingInMap(m_queues, identifier);
 }
 
-RefPtr<::WebGPU::RenderBundle> ObjectHeap::convertRenderBundleFromBacking(WebGPURenderBundleIdentifier identifier)
+RefPtr<::WebGPU::RenderBundle> ObjectHeap::get(WebGPURenderBundleIdentifier identifier)
 {
     return findBackingInMap(m_renderBundles, identifier);
 }
 
-RefPtr<::WebGPU::RenderBundleEncoder> ObjectHeap::convertRenderBundleEncoderFromBacking(WebGPURenderBundleEncoderIdentifier identifier)
+RefPtr<::WebGPU::RenderBundleEncoder> ObjectHeap::get(WebGPURenderBundleEncoderIdentifier identifier)
 {
     return findBackingInMap(m_renderBundleEncoders, identifier);
 }
 
-RefPtr<::WebGPU::RenderPassEncoder> ObjectHeap::convertRenderPassEncoderFromBacking(WebGPURenderPassEncoderIdentifier identifier)
+RefPtr<::WebGPU::RenderPassEncoder> ObjectHeap::get(WebGPURenderPassEncoderIdentifier identifier)
 {
     return findBackingInMap(m_renderPassEncoders, identifier);
 }
 
-RefPtr<::WebGPU::RenderPipeline> ObjectHeap::convertRenderPipelineFromBacking(WebGPURenderPipelineIdentifier identifier)
+RefPtr<::WebGPU::RenderPipeline> ObjectHeap::get(WebGPURenderPipelineIdentifier identifier)
 {
     return findBackingInMap(m_renderPipelines, identifier);
 }
 
-RefPtr<::WebGPU::Sampler> ObjectHeap::convertSamplerFromBacking(WebGPUSamplerIdentifier identifier)
+RefPtr<::WebGPU::Sampler> ObjectHeap::get(WebGPUSamplerIdentifier identifier)
 {
     return findBackingInMap(m_samplers, identifier);
 }
 
-RefPtr<::WebGPU::ShaderModule> ObjectHeap::convertShaderModuleFromBacking(WebGPUShaderModuleIdentifier identifier)
+RefPtr<::WebGPU::ShaderModule> ObjectHeap::get(WebGPUShaderModuleIdentifier identifier)
 {
     return findBackingInMap(m_shaderModules, identifier);
 }
 
-RefPtr<::WebGPU::Texture> ObjectHeap::convertTextureFromBacking(WebGPUTextureIdentifier identifier)
+RefPtr<::WebGPU::Texture> ObjectHeap::get(WebGPUTextureIdentifier identifier)
 {
     return findBackingInMap(m_textures, identifier);
 }
 
-RefPtr<::WebGPU::TextureView> ObjectHeap::convertTextureViewFromBacking(WebGPUTextureViewIdentifier identifier)
+RefPtr<::WebGPU::TextureView> ObjectHeap::get(WebGPUTextureViewIdentifier identifier)
 {
     return findBackingInMap(m_textureViews, identifier);
 }
 
-RefPtr<::WebGPU::XRBinding> ObjectHeap::convertXRBindingFromBacking(WebGPUXRBindingIdentifier identifier)
+RefPtr<::WebGPU::XRBinding> ObjectHeap::get(WebGPUXRBindingIdentifier identifier)
 {
     return findBackingInMap(m_xrBindings, identifier);
 }
 
-RefPtr<::WebGPU::XRProjectionLayer> ObjectHeap::convertXRProjectionLayerFromBacking(WebGPUXRProjectionLayerIdentifier identifier)
+RefPtr<::WebGPU::XRProjectionLayer> ObjectHeap::get(WebGPUXRProjectionLayerIdentifier identifier)
 {
     return findBackingInMap(m_xrProjectionLayers, identifier);
 }
 
-RefPtr<::WebGPU::XRSubImage> ObjectHeap::convertXRSubImageFromBacking(WebGPUXRSubImageIdentifier identifier)
+RefPtr<::WebGPU::XRSubImage> ObjectHeap::get(WebGPUXRSubImageIdentifier identifier)
 {
     return findBackingInMap(m_xrSubImages, identifier);
 }
 
-RefPtr<::WebGPU::XRView> ObjectHeap::createXRViewFromBacking(WebGPUXRViewIdentifier identifier)
+RefPtr<::WebGPU::XRView> ObjectHeap::get(WebGPUXRViewIdentifier identifier)
 {
     return findBackingInMap(m_xrViews, identifier);
 }

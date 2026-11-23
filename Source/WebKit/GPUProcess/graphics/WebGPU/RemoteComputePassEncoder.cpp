@@ -62,7 +62,7 @@ void RemoteComputePassEncoder::stopListeningForIPC()
 
 void RemoteComputePassEncoder::setPipeline(WebGPUComputePipelineIdentifier computePipeline)
 {
-    auto convertedComputePipeline = protect(m_objectHeap)->convertComputePipelineFromBacking(computePipeline);
+    auto convertedComputePipeline = protect(m_objectHeap)->get(computePipeline);
     ASSERT(convertedComputePipeline);
     if (!convertedComputePipeline)
         return;
@@ -77,7 +77,7 @@ void RemoteComputePassEncoder::dispatch(uint32_t workgroupCountX, uint32_t workg
 
 void RemoteComputePassEncoder::dispatchIndirect(WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
 {
-    auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
+    auto convertedIndirectBuffer = protect(m_objectHeap)->get(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -98,7 +98,7 @@ void RemoteComputePassEncoder::setBindGroup(uint32_t index, std::optional<WebGPU
         return;
     }
 
-    RefPtr convertedBindGroup = protect(m_objectHeap)->convertBindGroupFromBacking(*bindGroup);
+    RefPtr convertedBindGroup = protect(m_objectHeap)->get(*bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;
