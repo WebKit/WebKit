@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A stretch max-width resolves against a floated orthogonal containing block that has an auto height for repeat(auto-fill)</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-max-width-stretch-orthogonal-003-ref.html">
+<meta name="assert" content="The grid container's inline axis is the block axis of its vertical containing block, so its inline size resolves against the containing block's width, which does not depend on the grid's content, and the containing block having an auto height must not make it cyclic. The containing block is a 500px wide float, so the max-width is 500px, which is 10 columns of 50px.">
+<style>
+.containing-block {
+  writing-mode: vertical-rl;
+  width: 500px;
+  float: left;
+}
+.grid {
+  display: grid;
+  writing-mode: horizontal-tb;
+  grid-auto-rows: 50px;
+  grid-template-columns: repeat(auto-fill, 50px);
+  max-width: stretch;
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: -2; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>
