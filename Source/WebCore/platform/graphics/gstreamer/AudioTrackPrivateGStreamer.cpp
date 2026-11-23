@@ -99,6 +99,19 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>
         return;
 
     GST_DEBUG_OBJECT(m_data->objectForLogging(), "Updating audio configuration from %" GST_PTR_FORMAT, tags.get());
+
+    GUniqueOutPtr<char> comment;
+    if (gst_tag_list_get_string(tags.get(), GST_TAG_COMMENT, &comment.outPtr())) {
+        auto metadata = parseMediaStreamTrackMetadataFromJSONString(StringView::fromLatin1(comment.get()));
+        if (metadata && metadata->state == MediaStreamTrackState::Removed) {
+            RefPtr player = m_data->m_player;
+            if (player) {
+                player->removeMediaStreamAudioTrack(*this);
+                return;
+            }
+        }
+    }
+
     if (m_data->updateTrackIDFromTags(tags)) {
         GST_DEBUG_OBJECT(m_data->objectForLogging(), "Audio track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_data->m_trackID);
         notifyClients([trackID = *m_data->m_trackID](auto& client) {
@@ -150,7 +163,10 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 
 AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const
 {
-    if (m_data->m_stream && gst_stream_get_stream_flags(m_data->m_stream.get()) & GST_STREAM_FLAG_SELECT)
+    auto state = trackStateFromStreamTags();
+    if (state == MediaStreamTrackState::Unknown)
+        return AudioTrackPrivate::kind();
+    if (state == MediaStreamTrackState::Enabled)
         return AudioTrackPrivate::Kind::Main;
 
     return AudioTrackPrivate::kind();

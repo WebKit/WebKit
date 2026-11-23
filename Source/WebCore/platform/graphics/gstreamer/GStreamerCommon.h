@@ -521,6 +521,20 @@ private:
 
 bool enableMSEAdditionalPipelineDumps();
 
+enum MediaStreamTrackState {
+    Unknown,
+    Enabled,
+    Disabled,
+    Removed
+};
+
+struct MediaStreamTrackMetadata {
+    String identifier;
+    MediaStreamTrackState state;
+};
+
+std::optional<MediaStreamTrackMetadata> parseMediaStreamTrackMetadataFromJSONString(StringView);
+
 } // namespace WebCore
 
 #ifndef GST_BUFFER_DTS_OR_PTS
