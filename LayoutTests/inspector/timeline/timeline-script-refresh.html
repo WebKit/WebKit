@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Timeline.ScriptTimelineRefresh");
+
+    // `WI.ScriptDetailsTimelineView` and `WI.ScriptProfileTimelineView` listen for
+    // `WI.ScriptTimeline.Event.Refreshed` to lay out records that arrive when a capture stops.
+    suite.addTestCase({
+        name: "Timeline.ScriptTimelineRefresh.Refresh",
+        description: "WI.ScriptTimeline.refresh() should dispatch WI.ScriptTimeline.Event.Refreshed.",
+        async test() {
+            let scriptTimeline = new WI.ScriptTimeline(WI.TimelineRecord.Type.Script);
+            scriptTimeline.addRecord(new WI.ScriptTimelineRecord(WI.mainTarget, WI.ScriptTimelineRecord.EventType.TimerFired, 0, 1));
+
+            let refreshedCount = 0;
+            scriptTimeline.addEventListener(WI.ScriptTimeline.Event.Refreshed, (event) => { refreshedCount++; });
+
+            scriptTimeline.refresh();
+
+            InspectorTest.expectEqual(refreshedCount, 1, "refresh() should dispatch WI.ScriptTimeline.Event.Refreshed.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ScriptTimelineRefresh.RefreshWhenCaptureStops",
+        description: "Stopping a capture should refresh the Script timeline, so that records from ScriptProfiler are shown.",
+        async test() {
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Script];
+
+            let inactivePromise = new Promise((resolve) => {
+                let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                    if (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Inactive)
+                        return;
+
+                    WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                    resolve();
+                });
+            });
+
+            let scriptTimeline = null;
+            let refreshedCount = 0;
+            let recordAddedPromise = new Promise((resolve) => {
+                let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                    if (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Active)
+                        return;
+
+                    WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+
+                    scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+                    scriptTimeline.addEventListener(WI.ScriptTimeline.Event.Refreshed, (event) => { refreshedCount++; });
+
+                    let recordAddedListener = (recordAddedEvent) => {
+                        scriptTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, recordAddedListener);
+                        resolve();
+                    };
+                    scriptTimeline.addEventListener(WI.Timeline.Event.RecordAdded, recordAddedListener);
+
+                    InspectorTest.evaluateInPage("setTimeout(() => { 1; })");
+                });
+            });
+
+            const newRecording = true;
+            WI.timelineManager.startCapturing(newRecording);
+
+            await recordAddedPromise;
+
+            InspectorTest.log("Stopping Capture...");
+            WI.timelineManager.stopCapturing();
+
+            await inactivePromise;
+
+            InspectorTest.expectGreaterThan(refreshedCount, 0, "Stopping the capture should refresh the Script timeline at least once, once per target that tracked the ScriptProfiler.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that WI.ScriptTimeline.refresh() dispatches WI.ScriptTimeline.Event.Refreshed.</p>
+</body>
+</html>

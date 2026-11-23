@@ -60,7 +60,7 @@ WI.ScriptTimeline = class ScriptTimeline extends WI.Timeline
 
     refresh()
     {
-        this.dispatchEventToListeners(WI.Timeline.Event.Refresh);
+        this.dispatchEventToListeners(WI.ScriptTimeline.Event.Refreshed);
     }
 
     mainThreadRecordsInTimeRange(startTime, endTime, options)
