@@ -602,8 +602,7 @@ struct WKWebExtensionAPIDevToolsTests {
         }
     }
 
-    // FIXME: rdar://137268889 (4x TestWebKitAPI.WKWebExtensionAPIDevTools* (api-tests) are near constant timeouts)
-    @Test(.disabled("rdar://137268889"))
+    @Test
     func portMessagePassingToBackground() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
