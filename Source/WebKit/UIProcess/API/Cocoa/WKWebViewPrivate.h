@@ -692,8 +692,10 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 
 @property (nonatomic, setter=_setShouldSuppressTopColorExtensionView:) BOOL _shouldSuppressTopColorExtensionView WK_API_AVAILABLE(macos(26.0), ios(26.0));
 
-// Only _WKRectEdgeLeft and _WKRectEdgeRight are supported; other edges are ignored. Defaults to _WKRectEdgeLeft | _WKRectEdgeRight.
-@property (nonatomic, setter=_setSystemBackgroundColorExtensionEnabledEdges:) _WKRectEdge _systemBackgroundColorExtensionEnabledEdges WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+// Only _WKRectEdgeLeft and _WKRectEdgeRight are supported; other edges are ignored. Defaults to _WKRectEdgeLeft | _WKRectEdgeRight on Mac, iPad, and visionOS, and _WKRectEdgeNone on iPhone.
+@property (nonatomic, setter=_setSystemBackgroundColorExtensionEnabledEdges:) _WKRectEdge _systemBackgroundColorExtensionEnabledEdges WK_API_DEPRECATED_WITH_REPLACEMENT("systemBackgroundColorExtensionEnabledEdges", macos(27.0, WK_MAC_TBA), ios(27.0, WK_IOS_TBA), visionos(27.0, WK_XROS_TBA));
+
+- (void)_resetSystemBackgroundColorExtensionEnabledEdges WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, setter=_setShouldSuppressFormValidationBubble:) BOOL _shouldSuppressFormValidationBubble WK_API_AVAILABLE(ios(27.0), visionos(27.0));
 

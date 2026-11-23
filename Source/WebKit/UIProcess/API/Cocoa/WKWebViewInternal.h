@@ -180,12 +180,6 @@ enum class PreferSolidColorHardPocketReason : uint8_t {
     AttachedInspector   = 1 << 0,
     RequestedByClient   = 1 << 1,
 };
-
-enum class AdjustedColorExtensionsForBannerViewOverlaysEnablement : uint8_t {
-    EnabledIfHorizontalBannerViewPresent      = 1 << 0,
-    ForcedOnForTesting                        = 1 << 1,
-    ForcedOffForTesting                       = 1 << 2,
-};
 }
 
 @class NSScrollPocket;
@@ -379,7 +373,10 @@ struct LiveResizeSnapshotState {
     BOOL _usePlatformFindUI;
     BOOL _usesAutomaticContentInsetBackgroundFill;
     BOOL _shouldSuppressTopColorExtensionView;
-    _WKRectEdge _enabledSystemBackgroundColorExtensionEdges;
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    WKRectEdge _enabledSystemBackgroundColorExtensionEdges;
+    BOOL _enabledSystemBackgroundColorExtensionEdgesSetByClient;
+#endif
     BOOL _shouldSuppressFormValidationBubble;
 #if PLATFORM(MAC)
     OptionSet<WebKit::PreferSolidColorHardPocketReason> _preferSolidColorHardPocketReasons;
@@ -602,7 +599,6 @@ struct LiveResizeSnapshotState {
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     WebCore::RectEdges<RetainPtr<WKColorExtensionView>> _systemBackgroundColorExtensionViews;
-    WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement _adjustedColorExtensionsForBannerViewOverlaysEnablement;
 #endif
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)

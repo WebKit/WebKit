@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -41,6 +42,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebKit/WKWebViewPrivateForTestingIOS.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -99,6 +101,12 @@
 #endif // PLATFORM(MAC)
 
 namespace TestWebKitAPI {
+
+static_assert(static_cast<NSUInteger>(_WKRectEdgeNone) == static_cast<NSUInteger>(WKRectEdgeNone));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeLeft) == static_cast<NSUInteger>(WKRectEdgeLeft));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeTop) == static_cast<NSUInteger>(WKRectEdgeTop));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeRight) == static_cast<NSUInteger>(WKRectEdgeRight));
+static_assert(static_cast<NSUInteger>(_WKRectEdgeBottom) == static_cast<NSUInteger>(WKRectEdgeBottom));
 
 #if PLATFORM(MAC)
 
@@ -219,10 +227,11 @@ TEST(ObscuredContentInsets, ScrollViewFrameWithObscuredInsets)
 
 TEST(ObscuredContentInsets, ResizeScrollPocketWithoutHorizontalBannerView)
 {
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 600)]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-    [webView _disableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    setFeatureEnabled(configuration.get(), @"HorizontalBannerViewOverlaysEnabled", false);
 #endif
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 600) configuration:configuration.get()]);
     [webView setObscuredContentInsets:NSEdgeInsetsMake(100, 100, 0, 0)];
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView waitForNextPresentationUpdate];
@@ -239,7 +248,6 @@ TEST(ObscuredContentInsets, ResizeScrollPocketWithoutHorizontalBannerView)
 TEST(ObscuredContentInsets, ResizeScrollPocketWithHorizontalBannerView)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 600)]);
-    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
     [webView setObscuredContentInsets:NSEdgeInsetsMake(100, 100, 0, 0)];
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView waitForNextPresentationUpdate];
@@ -657,7 +665,9 @@ static constexpr CGFloat leftInset = 200;
 static constexpr CGFloat rightInset = 100;
 static constexpr CGFloat overflowPageWidth = 3000;
 
-static RetainPtr<TestWKWebView> setUpWebView(NSString *html)
+enum class SystemBackgroundColorExtensionEdges : bool { LeftAndRight, PlatformDefault };
+
+static RetainPtr<TestWKWebView> setUpWebView(NSString *html, SystemBackgroundColorExtensionEdges edges = SystemBackgroundColorExtensionEdges::LeftAndRight)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight)]);
 #if PLATFORM(MAC)
@@ -672,11 +682,30 @@ static RetainPtr<TestWKWebView> setUpWebView(NSString *html)
     [webView _setObscuredInsets:insets];
     [[webView scrollView] setContentInset:insets];
 #endif
-    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    if (edges == SystemBackgroundColorExtensionEdges::LeftAndRight)
+        [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeLeft | WKRectEdgeRight];
     [webView synchronouslyLoadHTMLString:html];
     [webView waitForNextPresentationUpdate];
     [webView waitForNextPresentationUpdate];
     return webView;
+}
+
+static WKRectEdge expectedDefaultSystemBackgroundColorExtensionEnabledEdges()
+{
+#if PLATFORM(MAC)
+    return WKRectEdgeLeft | WKRectEdgeRight;
+#else
+    if (PAL::currentUserInterfaceIdiomIsDesktop() || PAL::currentUserInterfaceIdiomIsVision())
+        return WKRectEdgeLeft | WKRectEdgeRight;
+    return WKRectEdgeNone;
+#endif
+}
+
+static bool isSystemBackgroundColorExtensionVisible(TestWKWebView *webView, NSString *layerName)
+{
+    [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
+    RetainPtr layer = [webView firstLayerWithNameContaining:layerName];
+    return layer && ![layer isHidden] && CGColorGetAlpha([layer backgroundColor]) > 0;
 }
 
 struct PageState {
@@ -1145,7 +1174,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorTracksA
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
     [webView _setAutomaticallyAdjustsContentInsets:NO];
     [webView setObscuredContentInsets:NSEdgeInsetsMake(topInset, leftInset, 0, rightInset)];
-    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeLeft | WKRectEdgeRight];
     [webView setAppearance:lightAppearance.get()];
     [webView synchronouslyLoadHTMLString:html.get()];
     [webView waitForNextPresentationUpdate];
@@ -1172,7 +1201,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorTracksA
     RetainPtr scrollView = [webView scrollView];
     [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
     [scrollView setContentInset:insets];
-    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeLeft | WKRectEdgeRight];
     [webView setOverrideUserInterfaceStyle:UIUserInterfaceStyleLight];
     [webView synchronouslyLoadHTMLString:html.get()];
     [webView waitForNextPresentationUpdate];
@@ -1214,31 +1243,73 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysEnableSystemBackgroundColorE
         )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html);
-    EXPECT_EQ([webView _systemBackgroundColorExtensionEnabledEdges], _WKRectEdgeLeft | _WKRectEdgeRight);
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], WKRectEdgeLeft | WKRectEdgeRight);
 
     auto isSystemBackgroundVisible = [&webView](NSString *layerName) {
-        [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
-        RetainPtr layer = [webView firstLayerWithNameContaining:layerName];
-        return layer && ![layer isHidden] && CGColorGetAlpha([layer backgroundColor]) > 0;
+        return isSystemBackgroundColorExtensionVisible(webView.get(), layerName);
     };
 
     EXPECT_TRUE(isSystemBackgroundVisible(@"Left system background color extension"));
     EXPECT_TRUE(isSystemBackgroundVisible(@"Right system background color extension"));
 
-    [webView _setSystemBackgroundColorExtensionEnabledEdges:_WKRectEdgeRight];
-    EXPECT_EQ([webView _systemBackgroundColorExtensionEnabledEdges], _WKRectEdgeRight);
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeRight];
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], WKRectEdgeRight);
     EXPECT_FALSE(isSystemBackgroundVisible(@"Left system background color extension"));
     EXPECT_TRUE(isSystemBackgroundVisible(@"Right system background color extension"));
 
-    [webView _setSystemBackgroundColorExtensionEnabledEdges:_WKRectEdgeAll];
-    EXPECT_EQ([webView _systemBackgroundColorExtensionEnabledEdges], _WKRectEdgeLeft | _WKRectEdgeRight);
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeAll];
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], WKRectEdgeLeft | WKRectEdgeRight);
     EXPECT_TRUE(isSystemBackgroundVisible(@"Left system background color extension"));
     EXPECT_TRUE(isSystemBackgroundVisible(@"Right system background color extension"));
 
-    [webView _setSystemBackgroundColorExtensionEnabledEdges:_WKRectEdgeTop | _WKRectEdgeBottom];
-    EXPECT_EQ([webView _systemBackgroundColorExtensionEnabledEdges], _WKRectEdgeNone);
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeTop | WKRectEdgeBottom];
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], WKRectEdgeNone);
     EXPECT_FALSE(isSystemBackgroundVisible(@"Left system background color extension"));
     EXPECT_FALSE(isSystemBackgroundVisible(@"Right system background color extension"));
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorExtensionsUsePlatformDefault)
+{
+    using namespace HorizontalBannerOverlays;
+
+    RetainPtr html = [@(R"(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin: 0; padding: 0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+            </style>
+        </head>
+        <body>
+        </body>
+        </html>
+        )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    RetainPtr webView = setUpWebView(html.get(), SystemBackgroundColorExtensionEdges::PlatformDefault);
+
+    auto defaultEdges = expectedDefaultSystemBackgroundColorExtensionEnabledEdges();
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], defaultEdges);
+
+    bool extensionsEnabledByDefault = defaultEdges == (WKRectEdgeLeft | WKRectEdgeRight);
+    EXPECT_EQ(isSystemBackgroundColorExtensionVisible(webView.get(), @"Left system background color extension"), extensionsEnabledByDefault);
+    EXPECT_EQ(isSystemBackgroundColorExtensionVisible(webView.get(), @"Right system background color extension"), extensionsEnabledByDefault);
+
+    // An explicitly set value takes precedence over the platform default.
+    WKRectEdge overriddenEdges = WKRectEdgeNone;
+    if (!extensionsEnabledByDefault)
+        overriddenEdges = WKRectEdgeLeft | WKRectEdgeRight;
+    [webView setSystemBackgroundColorExtensionEnabledEdges:overriddenEdges];
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], overriddenEdges);
+    EXPECT_EQ(isSystemBackgroundColorExtensionVisible(webView.get(), @"Left system background color extension"), !extensionsEnabledByDefault);
+    EXPECT_EQ(isSystemBackgroundColorExtensionVisible(webView.get(), @"Right system background color extension"), !extensionsEnabledByDefault);
+
+    // Resetting discards the explicitly set value and restores the platform default.
+    [webView _resetSystemBackgroundColorExtensionEnabledEdges];
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], defaultEdges);
+    EXPECT_EQ(isSystemBackgroundColorExtensionVisible(webView.get(), @"Left system background color extension"), extensionsEnabledByDefault);
+    EXPECT_EQ(isSystemBackgroundColorExtensionVisible(webView.get(), @"Right system background color extension"), extensionsEnabledByDefault);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysFixedColorExtensionFillsInsetWhenSystemBackgroundDisabled)
@@ -1264,7 +1335,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysFixedColorExtensionFillsInse
         )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html);
-    [webView _setSystemBackgroundColorExtensionEnabledEdges:_WKRectEdgeRight];
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeRight];
     [webView waitForNextPresentationUpdate];
 
 #if PLATFORM(MAC)
@@ -1294,10 +1365,30 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysFixedColorExtensionFillsInse
     scrollTo(webView, leftInset / 2);
     verifyLeftFixedExtensionFillsInset(@"scrolled half-leading-inset");
 
-    [webView _setSystemBackgroundColorExtensionEnabledEdges:_WKRectEdgeLeft | _WKRectEdgeRight];
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeLeft | WKRectEdgeRight];
     [webView waitForNextPresentationUpdate];
     [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
     assertLeftColorExtension(webView, capturePageState(webView), true, tolerance);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorExtensionSPIForwardsToAPI)
+{
+    using namespace HorizontalBannerOverlays;
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    EXPECT_EQ([webView _systemBackgroundColorExtensionEnabledEdges], expectedDefaultSystemBackgroundColorExtensionEnabledEdges());
+
+    [webView _setSystemBackgroundColorExtensionEnabledEdges:_WKRectEdgeLeft];
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], WKRectEdgeLeft);
+
+    [webView setSystemBackgroundColorExtensionEnabledEdges:WKRectEdgeRight];
+    EXPECT_EQ([webView _systemBackgroundColorExtensionEnabledEdges], _WKRectEdgeRight);
+
+    [webView _setSystemBackgroundColorExtensionEnabledEdges:_WKRectEdgeAll];
+    EXPECT_EQ([webView systemBackgroundColorExtensionEnabledEdges], WKRectEdgeLeft | WKRectEdgeRight);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #endif // ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)

@@ -105,6 +105,23 @@ extension View {
         environment(\.webViewContentBackground, visibility)
     }
 
+    /// Specifies the edges where the web view will display the system background color in the obscured content inset regions.
+    ///
+    /// For each edge in `edges` with a non-zero obscured content inset, the web view displays the system background color in the
+    /// portion of that edge's obscured content inset region that isn't occupied by overflowing web content.
+    ///
+    /// Only the leading and trailing edges are supported; other edges are ignored. If you don't apply this modifier, the web view
+    /// uses the leading and trailing edges on Mac, iPad, and visionOS, and no edges on iPhone.
+    ///
+    /// - Parameter edges: The edges where the web view displays the system background color.
+    /// - Returns: A view that displays the system background color in the obscured content inset regions of the specified edges.
+    @available(TBA, *)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
+    public nonisolated func webViewSystemBackgroundColorExtensionEdges(_ edges: Edge.Set) -> some View {
+        environment(\.webViewSystemBackgroundColorExtensionEdges, edges)
+    }
+
     /// Adds an action to be performed when a value, created from a scroll geometry, changes.
     ///
     /// - Parameters:
