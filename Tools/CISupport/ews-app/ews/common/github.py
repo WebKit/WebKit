@@ -213,6 +213,7 @@ class GitHubEWS(GitHub):
     ICON_BUILD_ONGOING_WITH_FAILURES = u'![loading-orange](https://github-production-user-asset-6210df.s3.amazonaws.com/3098702/291015173-08c448be-ac0a-4fd6-92a3-8165057445b7.png)'
     # FIXME: Make ICON_BUILD_ONGOING_WITH_FAILURES more accessible
     ICON_BUILD_ERROR = u'\U0001F4A5'
+    ICON_BUILD_SKIPPED = u'\U000023ED\U0000FE0F'
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
@@ -400,10 +401,11 @@ class GitHubEWS(GitHub):
             icon = GitHubEWS.ICON_EMPTY_SPACE
             name = u'~~{}~~'.format(name)
             hover_over_text = 'Build was cancelled. Recent messages:' + self._steps_messages(build)
+        elif build.result == Buildbot.SKIPPED and StatusBubble.is_skipped_for_no_relevant_changes(build):
+            icon = GitHubEWS.ICON_BUILD_SKIPPED
+            hover_over_text = StatusBubble.NO_RELEVANT_CHANGES_MESSAGE
         elif build.result == Buildbot.SKIPPED:
             icon = GitHubEWS.ICON_EMPTY_SPACE
-            if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
-                return u'| '
             name = u'~~{}~~'.format(name)
             hover_over_text = 'The change is no longer eligible for processing.'
             if re.search(r'Pull request .* is already closed', build.state_string):

@@ -49,6 +49,11 @@ class StatusBubble(View):
     BUILDER_ICON = u'\U0001f6e0'
     TESTER_ICON = u'\U0001f9ea'
     BUILD_RETRY_MSG = 'retrying build'
+    NO_RELEVANT_CHANGES_MESSAGE = "Skipped: this PR doesn't change any files relevant to this queue."
+
+    @classmethod
+    def is_skipped_for_no_relevant_changes(cls, build):
+        return build.result == Buildbot.SKIPPED and "doesn't have relevant changes" in (build.state_string or '')
 
     def _build_bubble(self, change, queue, hide_icons=False):
         bubble = {
@@ -116,7 +121,10 @@ class StatusBubble(View):
                 bubble['state'] = 'provisional-fail'
         elif build.result == Buildbot.SKIPPED:
             bubble['state'] = 'skipped'
-            bubble['details_message'] = 'The change is no longer eligible for processing.'
+            if self.is_skipped_for_no_relevant_changes(build):
+                bubble['details_message'] = StatusBubble.NO_RELEVANT_CHANGES_MESSAGE
+            else:
+                bubble['details_message'] = 'The change is no longer eligible for processing.'
 
             if len(builds) > 1:
                 bubble['details_message'] += '\nSome messages were logged while the change was still eligible:'
