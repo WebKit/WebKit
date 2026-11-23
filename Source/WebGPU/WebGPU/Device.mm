@@ -31,6 +31,7 @@
 #import "BindGroup.h"
 #import "BindGroupLayout.h"
 #import "Buffer.h"
+#import "CommandBuffer.h"
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
 #import "MetalSPI.h"
@@ -490,6 +491,71 @@ auto Device::currentErrorScope(WebGPU::ErrorFilter type) -> ErrorScope*
             return &*iterator;
     }
     return nullptr;
+}
+
+RefPtr<WebGPU::BindGroup> Device::createInvalidBindGroup()
+{
+    return BindGroup::createInvalid(*this);
+}
+
+RefPtr<WebGPU::BindGroupLayout> Device::createInvalidBindGroupLayout()
+{
+    return BindGroupLayout::createInvalid(*this);
+}
+
+RefPtr<WebGPU::Buffer> Device::createInvalidBuffer()
+{
+    return Buffer::createInvalid(*this);
+}
+
+RefPtr<WebGPU::CommandBuffer> Device::createInvalidCommandBuffer()
+{
+    return CommandBuffer::createInvalid(*this);
+}
+
+RefPtr<WebGPU::CommandEncoder> Device::createInvalidCommandEncoder()
+{
+    return CommandEncoder::createInvalid(*this);
+}
+
+RefPtr<WebGPU::ComputePipeline> Device::createInvalidComputePipeline()
+{
+    return ComputePipeline::createInvalid(*this);
+}
+
+RefPtr<WebGPU::PipelineLayout> Device::createInvalidPipelineLayout()
+{
+    return PipelineLayout::createInvalid(*this);
+}
+
+RefPtr<WebGPU::QuerySet> Device::createInvalidQuerySet()
+{
+    return QuerySet::createInvalid(*this);
+}
+
+RefPtr<WebGPU::RenderBundleEncoder> Device::createInvalidRenderBundleEncoder(String&& error)
+{
+    return RenderBundleEncoder::createInvalid(*this, error.createNSString().get());
+}
+
+RefPtr<WebGPU::RenderPipeline> Device::createInvalidRenderPipeline()
+{
+    return RenderPipeline::createInvalid(*this);
+}
+
+RefPtr<WebGPU::Sampler> Device::createInvalidSampler()
+{
+    return Sampler::createInvalid(*this);
+}
+
+RefPtr<WebGPU::ShaderModule> Device::createInvalidShaderModule()
+{
+    return ShaderModule::createInvalid(*this);
+}
+
+RefPtr<WebGPU::Texture> Device::createInvalidTexture()
+{
+    return Texture::createInvalid(*this);
 }
 
 void Device::generateAValidationError(NSString * message)

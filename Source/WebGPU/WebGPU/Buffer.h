@@ -95,8 +95,6 @@ public:
     std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) final;
     void unmap() final;
     void setLabel(String&&) final;
-    void generateAValidationError() final;
-    void generateAValidationError(String&&);
 
     NODELETE bool isValid() const final;
 

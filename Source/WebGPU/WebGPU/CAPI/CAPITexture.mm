@@ -43,15 +43,14 @@ void wgpuTextureRelease(WGPUTexture texture)
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
     @autoreleasepool {
-        Ref protectedTexture = WebGPU::CAPI::metalFromAPI(texture);
+        Ref protectedTexture = WebGPU::CAPI::fromAPI(texture);
         // A null descriptor is a descriptor with all members at their defaults.
         std::optional<WebGPU::TextureViewDescriptor> apiDescriptor;
         if (descriptor) {
             apiDescriptor = WebGPU::CAPI::fromAPI(*descriptor);
             if (!apiDescriptor) {
-                Ref device = protectedTexture->device();
-                device->generateAValidationError("GPUTextureViewDescriptor has an invalid enum value or usage bit"_s);
-                return WebGPU::CAPI::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
+                protect(protectedTexture->device())->generateAValidationError("GPUTextureViewDescriptor has an invalid enum value or usage bit"_s);
+                return WebGPU::CAPI::releaseToAPI(protectedTexture->createInvalidView());
             }
         }
         return WebGPU::CAPI::releaseToAPI(protectedTexture->createView(apiDescriptor));

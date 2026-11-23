@@ -41,7 +41,12 @@ class RemoteQuerySetProxy final : public ::WebGPU::QuerySet {
 public:
     static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier, const ::WebGPU::QuerySetDescriptor& descriptor)
     {
-        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier, descriptor));
+        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier, descriptor.count, descriptor.type));
+    }
+    // An invalid query set, which, as the Metal one, has no count and no type.
+    static Ref<RemoteQuerySetProxy> createInvalid(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier)
+    {
+        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier, 0, std::nullopt));
     }
 
     virtual ~RemoteQuerySetProxy();
@@ -59,7 +64,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUQuerySetIdentifier, const ::WebGPU::QuerySetDescriptor&);
+    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUQuerySetIdentifier, uint32_t count, std::optional<::WebGPU::QueryType>);
 
     RemoteQuerySetProxy(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy(RemoteQuerySetProxy&&) = delete;
@@ -78,7 +83,7 @@ private:
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
     const uint32_t m_count;
-    const ::WebGPU::QueryType m_type;
+    const std::optional<::WebGPU::QueryType> m_type;
 };
 
 } // namespace WebKit::WebGPU

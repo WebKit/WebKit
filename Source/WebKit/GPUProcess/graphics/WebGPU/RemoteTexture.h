@@ -79,6 +79,7 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void createView(const std::optional<WebGPU::TextureViewDescriptor>&, WebGPUTextureViewIdentifier);
+    void createInvalidView(WebGPUTextureViewIdentifier);
 
     void destroy();
     void undestroy();

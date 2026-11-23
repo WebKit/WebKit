@@ -30,6 +30,7 @@
 ]
 messages -> RemoteTexture Stream {
     void CreateView(std::optional<WebKit::WebGPU::TextureViewDescriptor> descriptor, WebKit::WebGPUTextureViewIdentifier identifier)
+    void CreateInvalidView(WebKit::WebGPUTextureViewIdentifier identifier)
     void Destroy()
     void Undestroy()
     void Destruct()

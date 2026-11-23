@@ -94,6 +94,16 @@ RefPtr<::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional
     return m_lastCreatedView;
 }
 
+RefPtr<::WebGPU::TextureView> RemoteTextureProxy::createInvalidView()
+{
+    auto identifier = WebGPUTextureViewIdentifier::generate();
+    auto sendResult = send(Messages::RemoteTexture::CreateInvalidView(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
 void RemoteTextureProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteTexture::Destroy());

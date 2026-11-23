@@ -36,12 +36,12 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQuerySetProxy);
 
-RemoteQuerySetProxy::RemoteQuerySetProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier, const ::WebGPU::QuerySetDescriptor& descriptor)
+RemoteQuerySetProxy::RemoteQuerySetProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUQuerySetIdentifier identifier, uint32_t count, std::optional<::WebGPU::QueryType> type)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
-    , m_count(descriptor.count)
-    , m_type(descriptor.type)
+    , m_count(count)
+    , m_type(type)
 {
 }
 

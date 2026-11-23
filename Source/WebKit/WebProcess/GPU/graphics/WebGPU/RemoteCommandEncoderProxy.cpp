@@ -91,6 +91,26 @@ RefPtr<::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass
     return result;
 }
 
+RefPtr<::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginInvalidRenderPass(String&& error)
+{
+    auto identifier = WebGPURenderPassEncoderIdentifier::generate();
+    auto sendResult = send(Messages::RemoteCommandEncoder::BeginInvalidRenderPass(WTF::move(error), identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+RefPtr<::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginInvalidComputePass(String&& error)
+{
+    auto identifier = WebGPUComputePassEncoderIdentifier::generate();
+    auto sendResult = send(Messages::RemoteCommandEncoder::BeginInvalidComputePass(WTF::move(error), identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteComputePassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
 void RemoteCommandEncoderProxy::copyBufferToBuffer(
     const ::WebGPU::Buffer& source,
     uint64_t sourceOffset,

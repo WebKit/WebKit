@@ -58,7 +58,6 @@ public:
     void copyFrom(std::span<const uint8_t>, size_t offset) final;
 
     void destroy() final;
-    void generateAValidationError() final;
 
     uint64_t size() const final { return m_size; }
     OptionSet<::WebGPU::BufferUsage> usage() const final { return m_usage; }

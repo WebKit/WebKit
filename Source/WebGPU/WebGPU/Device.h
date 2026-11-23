@@ -151,6 +151,21 @@ public:
     void resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, String&&)>&&) final;
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
     void pauseAllErrorReporting(bool pause) final;
+
+    RefPtr<WebGPU::BindGroup> createInvalidBindGroup() final;
+    RefPtr<WebGPU::BindGroupLayout> createInvalidBindGroupLayout() final;
+    RefPtr<WebGPU::Buffer> createInvalidBuffer() final;
+    RefPtr<WebGPU::CommandBuffer> createInvalidCommandBuffer() final;
+    RefPtr<WebGPU::CommandEncoder> createInvalidCommandEncoder() final;
+    RefPtr<WebGPU::ComputePipeline> createInvalidComputePipeline() final;
+    RefPtr<WebGPU::PipelineLayout> createInvalidPipelineLayout() final;
+    RefPtr<WebGPU::QuerySet> createInvalidQuerySet() final;
+    RefPtr<WebGPU::RenderBundleEncoder> createInvalidRenderBundleEncoder(String&& error) final;
+    RefPtr<WebGPU::RenderPipeline> createInvalidRenderPipeline() final;
+    RefPtr<WebGPU::Sampler> createInvalidSampler() final;
+    RefPtr<WebGPU::ShaderModule> createInvalidShaderModule() final;
+    RefPtr<WebGPU::Texture> createInvalidTexture() final;
+
     NODELETE void setLabel(String&&) final;
 
     NODELETE bool isValid() const final { return m_device; }
@@ -166,7 +181,7 @@ public:
 
     id<MTLDevice> _Nullable device() const { return m_device; }
     void generateAValidationError(NSString * message);
-    void generateAValidationError(String&& message);
+    void generateAValidationError(String&& message) final;
     void generateAnOutOfMemoryError(String&& message);
     void generateAnInternalError(String&& message);
 

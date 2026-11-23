@@ -54,6 +54,21 @@ messages -> RemoteDevice Stream {
     void ResolveDeviceLostPromise() -> (::WebGPU::DeviceLostReason reason, bool isLost)
     void SetLabel(String label)
     void PauseAllErrorReporting(bool pauseErrorReporting)
+
+    void CreateInvalidBindGroup(WebKit::WebGPUBindGroupIdentifier identifier)
+    void CreateInvalidBindGroupLayout(WebKit::WebGPUBindGroupLayoutIdentifier identifier)
+    void CreateInvalidBuffer(WebKit::WebGPUBufferIdentifier identifier)
+    void CreateInvalidCommandBuffer(WebKit::WebGPUCommandBufferIdentifier identifier)
+    void CreateInvalidCommandEncoder(WebKit::WebGPUCommandEncoderIdentifier identifier)
+    void CreateInvalidComputePipeline(WebKit::WebGPUComputePipelineIdentifier identifier)
+    void CreateInvalidPipelineLayout(WebKit::WebGPUPipelineLayoutIdentifier identifier)
+    void CreateInvalidQuerySet(WebKit::WebGPUQuerySetIdentifier identifier)
+    void CreateInvalidRenderBundleEncoder(String error, WebKit::WebGPURenderBundleEncoderIdentifier identifier)
+    void CreateInvalidRenderPipeline(WebKit::WebGPURenderPipelineIdentifier identifier)
+    void CreateInvalidSampler(WebKit::WebGPUSamplerIdentifier identifier)
+    void CreateInvalidShaderModule(WebKit::WebGPUShaderModuleIdentifier identifier)
+    void CreateInvalidTexture(WebKit::WebGPUTextureIdentifier identifier)
+    void GenerateAValidationError(String message)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable

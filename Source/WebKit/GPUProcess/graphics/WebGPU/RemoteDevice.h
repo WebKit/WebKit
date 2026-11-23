@@ -152,6 +152,21 @@ private:
     void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
     void pauseAllErrorReporting(bool pauseErrorReporting);
 
+    void createInvalidBindGroup(WebGPUBindGroupIdentifier);
+    void createInvalidBindGroupLayout(WebGPUBindGroupLayoutIdentifier);
+    void createInvalidBuffer(WebGPUBufferIdentifier);
+    void createInvalidCommandBuffer(WebGPUCommandBufferIdentifier);
+    void createInvalidCommandEncoder(WebGPUCommandEncoderIdentifier);
+    void createInvalidComputePipeline(WebGPUComputePipelineIdentifier);
+    void createInvalidPipelineLayout(WebGPUPipelineLayoutIdentifier);
+    void createInvalidQuerySet(WebGPUQuerySetIdentifier);
+    void createInvalidRenderBundleEncoder(String&& error, WebGPURenderBundleEncoderIdentifier);
+    void createInvalidRenderPipeline(WebGPURenderPipelineIdentifier);
+    void createInvalidSampler(WebGPUSamplerIdentifier);
+    void createInvalidShaderModule(WebGPUShaderModuleIdentifier);
+    void createInvalidTexture(WebGPUTextureIdentifier);
+    void generateAValidationError(String&& message);
+
     const Ref<::WebGPU::Device> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;

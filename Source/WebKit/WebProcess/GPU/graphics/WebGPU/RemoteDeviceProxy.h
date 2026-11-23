@@ -97,6 +97,22 @@ public:
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&&) final;
     bool isLost() const final;
     void pauseAllErrorReporting(bool pause) final;
+
+    RefPtr<::WebGPU::BindGroup> createInvalidBindGroup() final;
+    RefPtr<::WebGPU::BindGroupLayout> createInvalidBindGroupLayout() final;
+    RefPtr<::WebGPU::Buffer> createInvalidBuffer() final;
+    RefPtr<::WebGPU::CommandBuffer> createInvalidCommandBuffer() final;
+    RefPtr<::WebGPU::CommandEncoder> createInvalidCommandEncoder() final;
+    RefPtr<::WebGPU::ComputePipeline> createInvalidComputePipeline() final;
+    RefPtr<::WebGPU::PipelineLayout> createInvalidPipelineLayout() final;
+    RefPtr<::WebGPU::QuerySet> createInvalidQuerySet() final;
+    RefPtr<::WebGPU::RenderBundleEncoder> createInvalidRenderBundleEncoder(String&& error) final;
+    RefPtr<::WebGPU::RenderPipeline> createInvalidRenderPipeline() final;
+    RefPtr<::WebGPU::Sampler> createInvalidSampler() final;
+    RefPtr<::WebGPU::ShaderModule> createInvalidShaderModule() final;
+    RefPtr<::WebGPU::Texture> createInvalidTexture() final;
+    void generateAValidationError(String&& message) final;
+
     void setLabel(String&&) final;
     bool isValid() const final;
 

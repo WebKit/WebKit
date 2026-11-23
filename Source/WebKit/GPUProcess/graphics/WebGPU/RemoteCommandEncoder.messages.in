@@ -31,6 +31,8 @@
 messages -> RemoteCommandEncoder Stream {
     void BeginRenderPass(WebKit::WebGPU::RenderPassDescriptor descriptor, WebKit::WebGPURenderPassEncoderIdentifier identifier)
     void BeginComputePass(std::optional<WebKit::WebGPU::ComputePassDescriptor> descriptor, WebKit::WebGPUComputePassEncoderIdentifier identifier)
+    void BeginInvalidRenderPass(String error, WebKit::WebGPURenderPassEncoderIdentifier identifier)
+    void BeginInvalidComputePass(String error, WebKit::WebGPUComputePassEncoderIdentifier identifier)
     void CopyBufferToBuffer(WebKit::WebGPUBufferIdentifier source, uint64_t sourceOffset, WebKit::WebGPUBufferIdentifier destination, uint64_t destinationOffset, uint64_t size)
     void CopyBufferToTexture(WebKit::WebGPU::ImageCopyBuffer source, WebKit::WebGPU::ImageCopyTexture destination, WebKit::WebGPU::Extent3D copySize)
     void CopyTextureToBuffer(WebKit::WebGPU::ImageCopyTexture source, WebKit::WebGPU::ImageCopyBuffer destination, WebKit::WebGPU::Extent3D copySize)

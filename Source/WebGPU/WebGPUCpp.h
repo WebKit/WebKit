@@ -1357,8 +1357,6 @@ public:
     virtual std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) = 0;
     virtual void unmap() = 0;
     virtual void destroy() = 0;
-    // Generates the validation error of mapping a buffer that is not unmapped.
-    virtual void generateAValidationError() = 0;
     // The whole contents, where the implementation can reach them. Only the GPU Process can.
     virtual std::span<uint8_t> getBufferContents() = 0;
     virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
@@ -1404,6 +1402,13 @@ public:
     virtual void writeTimestamp(QuerySet&, uint32_t queryIndex) = 0;
     virtual void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset) = 0;
     virtual RefPtr<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
+
+    // Begins an invalid pass, as for a descriptor that the caller could not convert. Beginning one
+    // generates no error. The error is in the validation error that finishing this encoder
+    // generates.
+    virtual RefPtr<RenderPassEncoder> beginInvalidRenderPass(String&& error) = 0;
+    virtual RefPtr<ComputePassEncoder> beginInvalidComputePass(String&& error) = 0;
+
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1491,6 +1496,26 @@ public:
     virtual bool isLost() const = 0;
     // Stops generating errors, for the objects that are created invalid on purpose.
     virtual void pauseAllErrorReporting(bool pause) = 0;
+
+    // Invalid objects, as for a descriptor that the caller could not convert. Creating one
+    // generates no error; generateAValidationError() generates one.
+    virtual RefPtr<BindGroup> createInvalidBindGroup() = 0;
+    virtual RefPtr<BindGroupLayout> createInvalidBindGroupLayout() = 0;
+    virtual RefPtr<Buffer> createInvalidBuffer() = 0;
+    virtual RefPtr<CommandBuffer> createInvalidCommandBuffer() = 0;
+    virtual RefPtr<CommandEncoder> createInvalidCommandEncoder() = 0;
+    virtual RefPtr<ComputePipeline> createInvalidComputePipeline() = 0;
+    virtual RefPtr<PipelineLayout> createInvalidPipelineLayout() = 0;
+    virtual RefPtr<QuerySet> createInvalidQuerySet() = 0;
+    // The error is the one of the validation error that finishing the encoder generates.
+    virtual RefPtr<RenderBundleEncoder> createInvalidRenderBundleEncoder(String&& error) = 0;
+    virtual RefPtr<RenderPipeline> createInvalidRenderPipeline() = 0;
+    virtual RefPtr<Sampler> createInvalidSampler() = 0;
+    virtual RefPtr<ShaderModule> createInvalidShaderModule() = 0;
+    virtual RefPtr<Texture> createInvalidTexture() = 0;
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error
+    virtual void generateAValidationError(String&& message) = 0;
+
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1727,6 +1752,9 @@ public:
     virtual Device& device() const = 0;
     // std::nullopt is a descriptor with all members at their defaults.
     virtual RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
+    // An invalid view, as for a descriptor that the caller could not convert. Creating one
+    // generates no error.
+    virtual RefPtr<TextureView> createInvalidView() = 0;
     virtual void destroy() = 0;
     // Recreates a destroyed canvas texture, for the frame that reuses it.
     virtual void undestroy() = 0;
