@@ -1875,6 +1875,41 @@ static void runPromiseResolveThenableJobWithInternalMicrotask(JSGlobalObject* gl
     promiseResolveThenableJob(globalObject, promise, then, resolve, reject, microtaskCallCache);
 }
 
+// https://tc39.es/proposal-thenable-curtailment/#sec-perform-promise-resolution with thenCallTiming ~deferred~:
+// unlike an ordinary resolution, a callable "then" is called right away instead of from another job.
+static void runPromiseSafeResolveJob(JSGlobalObject* globalObject, VM& vm, InternalMicrotask, uint8_t, JSValue argument0, JSValue argument1, JSValue, MicrotaskCallCache* microtaskCallCache)
+{
+    auto* promise = uncheckedDowncast<JSPromise>(argument0);
+    JSValue resolution = argument1;
+    ASSERT(resolution.isObject());
+    if (resolution == promise) [[unlikely]]
+        return promise->resolvePromise(globalObject, vm, resolution);
+
+    auto* resolutionObject = asObject(resolution);
+    if (auto* resolutionPromise = dynamicDowncast<JSPromise>(resolutionObject)) {
+        if (resolutionPromise->isThenFastAndNonObservable() && promiseSpeciesWatchpointIsValid(vm, resolutionPromise)) [[likely]]
+            return resolutionPromise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::PromiseResolveWithoutHandlerJob, promise, jsUndefined());
+    }
+
+    JSValue then;
+    {
+        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+        then = resolutionObject->get(globalObject, vm.propertyNames->then);
+        if (catchScope.exception()) [[unlikely]] {
+            JSValue error = catchScope.exception()->value();
+            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]]
+                return;
+            return promise->rejectPromise(vm, error);
+        }
+    }
+
+    if (!then.isCallable())
+        return promise->fulfillPromise(vm, resolution);
+
+    auto [resolve, reject] = promise->createResolvingFunctions(vm, globalObject);
+    promiseResolveThenableJob(globalObject, resolution, then, resolve, reject, microtaskCallCache);
+}
+
 static void runPromiseFulfillWithoutHandlerJob(JSGlobalObject*, VM& vm, InternalMicrotask, uint8_t payload, JSValue argument0, JSValue argument1, JSValue, MicrotaskCallCache*)
 {
     auto* promise = uncheckedDowncast<JSPromise>(argument0);

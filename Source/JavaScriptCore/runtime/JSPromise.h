@@ -117,6 +117,7 @@ public:
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromise(JSGlobalObject*, JSValue);
 
     JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, VM&, JSValue);
+    JS_EXPORT_PRIVATE void safeResolve(JSGlobalObject*, VM&, JSValue);
     JS_EXPORT_PRIVATE void reject(VM&, JSValue);
     JS_EXPORT_PRIVATE void fulfill(VM&, JSValue);
     // Pipes its settlement to this promise via internal microtask. Otherwise directly

@@ -2256,6 +2256,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionHasOwnLengthProperty);
 static JSC_DECLARE_HOST_FUNCTION(functionLineStartTableIsBuilt);
 static JSC_DECLARE_HOST_FUNCTION(functionRejectPromiseAsHandled);
 static JSC_DECLARE_HOST_FUNCTION(functionMarkPromiseAsHandled);
+static JSC_DECLARE_HOST_FUNCTION(functionSafeResolvePromise);
 static JSC_DECLARE_HOST_FUNCTION(functionLastExceptionHasCapturedStack);
 static JSC_DECLARE_HOST_FUNCTION(functionSetUserPreferredLanguages);
 static JSC_DECLARE_HOST_FUNCTION(functionICUVersion);
@@ -4425,6 +4426,18 @@ JSC_DEFINE_HOST_FUNCTION(functionMarkPromiseAsHandled, (JSGlobalObject*, CallFra
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionSafeResolvePromise, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* promise = dynamicDowncast<JSPromise>(callFrame->argument(0));
+    if (!promise)
+        return throwVMTypeError(globalObject, scope, "first argument is not a Promise"_s);
+    promise->safeResolve(globalObject, vm, callFrame->argument(1));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsUndefined()));
+}
+
 // Returns undefined unless the most recent throw threw the argument.
 JSC_DEFINE_HOST_FUNCTION(functionLastExceptionHasCapturedStack, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -5057,6 +5070,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "hasOwnLengthProperty"_s, functionHasOwnLengthProperty, 1);
     addFunction(vm, allowIfNotFuzz, "rejectPromiseAsHandled"_s, functionRejectPromiseAsHandled, 1);
     addFunction(vm, allowIfNotFuzz, "markPromiseAsHandled"_s, functionMarkPromiseAsHandled, 1);
+    addFunction(vm, allowIfNotFuzz, "safeResolvePromise"_s, functionSafeResolvePromise, 2);
     addFunction(vm, allowIfNotFuzz, "lastExceptionHasCapturedStack"_s, functionLastExceptionHasCapturedStack, 1);
 
     addFunction(vm, allowIfNotFuzz, "setUserPreferredLanguages"_s, functionSetUserPreferredLanguages, 1);

@@ -30,8 +30,11 @@
 #include "DeferredWorkTimer.h"
 #include "ErrorInstance.h"
 #include "ErrorInstanceInlines.h"
+#include "GetterSetter.h"
 #include "GlobalObjectMethodTable.h"
+#include "JSAPIWrapperObject.h"
 #include "JSCInlines.h"
+#include "JSCallbackObject.h"
 #include "JSFunctionWithFields.h"
 #include "JSMicrotask.h"
 #include "JSPromiseCombinatorsContext.h"
@@ -174,6 +177,104 @@ void JSPromise::resolve(JSGlobalObject* globalObject, VM& vm, JSValue value)
         setFlags(flags() | isFirstResolvingFunctionCalledFlag);
         resolvePromise(globalObject, vm, value);
     }
+}
+
+// https://tc39.es/proposal-thenable-curtailment/#sec-hosthasinternalmethodswhichcanrunusercode
+static bool hostObjectHasImpureLookupInternalMethods(JSObject* object)
+{
+    // Lookups on C API objects call the embedder's property callbacks.
+    if (object->inherits<JSCallbackObject<JSNonFinalObject>>() || object->inherits<JSCallbackObject<JSGlobalObject>>())
+        return true;
+#if JSC_OBJC_API_ENABLED || defined(JSC_GLIB_API_ENABLED)
+    if (object->inherits<JSCallbackObject<JSAPIWrapperObject>>())
+        return true;
+#endif
+#if defined(JSC_GLIB_API_ENABLED)
+    if (object->inherits<JSCallbackObject<JSAPIWrapperGlobalObject>>())
+        return true;
+#endif
+    return false;
+}
+
+// Returns Get(object, "then") when PropertyAccessCouldRunUserCode(object, "then", ~get~) is false, and
+// the empty value when it is true. Other host objects whose lookups cannot be answered without side
+// effects report that by tainting a VMInquiry slot.
+// https://tc39.es/proposal-thenable-curtailment/#sec-has-property-which-could-run-user-code
+static JSValue thenPropertyIfReadingCannotRunUserCode(JSGlobalObject* globalObject, VM& vm, JSObject* object)
+{
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+    DisallowVMEntry disallowVMEntry(vm);
+    while (true) {
+        switch (object->type()) {
+        case ProxyObjectType:
+        case ModuleNamespaceObjectType:
+            return { };
+        default:
+            break;
+        }
+        if (hostObjectHasImpureLookupInternalMethods(object))
+            return { };
+
+        PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
+        bool hasProperty = object->methodTable()->getOwnPropertySlot(object, globalObject, vm.propertyNames->then, slot);
+        if (scope.exception()) [[unlikely]] {
+            scope.clearExceptionExceptTermination();
+            return { };
+        }
+        if (slot.isTaintedByOpaqueObject())
+            return { };
+        if (hasProperty) {
+            if (slot.isValue())
+                return slot.getValue(globalObject, vm.propertyNames->then);
+            if (slot.isAccessor() && slot.getterSetter()->isGetterNull())
+                return jsUndefined();
+            return { };
+        }
+
+        JSValue prototype = object->getPrototype(globalObject);
+        if (scope.exception()) [[unlikely]] {
+            scope.clearExceptionExceptTermination();
+            return { };
+        }
+        if (!prototype.isObject())
+            return jsUndefined();
+        object = asObject(prototype);
+    }
+}
+
+// https://tc39.es/proposal-thenable-curtailment/#sec-requires-deferred-promise-resolution
+static bool requiresDeferredPromiseResolution(JSGlobalObject* globalObject, VM& vm, JSValue value)
+{
+    if (!value.isObject())
+        return false;
+
+    JSObject* object = asObject(value);
+    if (isDefinitelyNonThenable(object, globalObject))
+        return false;
+
+    JSValue then = thenPropertyIfReadingCannotRunUserCode(globalObject, vm, object);
+    return !then || then.isCallable();
+}
+
+void JSPromise::safeResolve(JSGlobalObject* globalObject, VM& vm, JSValue resolution)
+{
+    // https://tc39.es/proposal-thenable-curtailment/#sec-safe-promise-resolve
+    // Like resolve(), but never runs user code: any step of resolving with the value that could
+    // (reading or calling a "then" property) is deferred to a microtask.
+
+    ASSERT(!resolution.inherits<Exception>());
+    if (isFirstResolvingFunctionCalled())
+        return;
+    setFlags(flags() | isFirstResolvingFunctionCalledFlag);
+
+    if (requiresDeferredPromiseResolution(globalObject, vm, resolution))
+        return globalObject->queueMicrotask(vm, InternalMicrotask::PromiseSafeResolveJob, 0, this, resolution, jsUndefined());
+
+    // "then" is absent or not callable, so this only fulfills, or rejects a self-resolution.
+    // Fulfilling directly avoids repeating the lookup with a real [[Get]].
+    if (resolution == this) [[unlikely]]
+        return resolvePromise(globalObject, vm, resolution);
+    fulfillPromise(vm, resolution);
 }
 
 void JSPromise::reject(VM& vm, JSValue value)

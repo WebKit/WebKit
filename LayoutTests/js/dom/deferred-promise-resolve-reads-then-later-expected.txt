@@ -1,0 +1,5 @@
+
+PASS Animation.finish() resolving the finished promise with the animation
+PASS customElements.define() resolving the whenDefined() promise with the constructor
+PASS A callable "then" is still honored, from a microtask
+

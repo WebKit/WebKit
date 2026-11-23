@@ -2516,6 +2516,10 @@ webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/parser/parse
 imported/w3c/web-platform-tests/custom-elements/custom-button-abort-insertion-crash.html [ Skip ]
 imported/w3c/web-platform-tests/custom-elements/custom-image-abort-insertion-crash.html [ Skip ]
 
+# Resolving a whenDefined() promise reads "then" from a microtask (https://tc39.es/proposal-thenable-curtailment/),
+# so this test's Object.prototype.then getter defines and resolves again in an endless chain of microtasks.
+imported/w3c/web-platform-tests/custom-elements/when-defined-reentry-crash.html [ Skip ]
+
 [ Debug ] imported/w3c/web-platform-tests/custom-elements/many-slots-crash.html [ Slow ]
 
 # selectors
