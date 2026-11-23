@@ -57,7 +57,7 @@ public:
     const ::WebGPU::Limits& limits() const LIFETIME_BOUND final { return m_limits; }
     ::WebGPU::AdapterInfo info() final { return m_info; }
     bool isXRCompatible() const final { return m_xrCompatible; }
-    void requestDevice(const ::WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<::WebGPU::Device>&&)>&&) final;
+    void requestDevice(const ::WebGPU::DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<::WebGPU::Device>, String>&&)>&&) final;
     void setLabel(String&&) final { }
     bool isValid() const final;
 

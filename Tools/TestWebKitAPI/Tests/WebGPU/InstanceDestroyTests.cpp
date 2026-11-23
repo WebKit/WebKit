@@ -141,8 +141,9 @@ public:
         ASSERT_TRUE(m_adapter);
 
         done = false;
-        m_adapter->requestDevice({ }, [&](RefPtr<WebGPU::Device>&& device) {
-            m_device = WTF::move(device);
+        m_adapter->requestDevice({ }, [&](std::expected<Ref<WebGPU::Device>, String>&& device) {
+            if (device)
+                m_device = WTF::move(*device);
             done = true;
         });
         m_scheduledWork->runWorkUntil([&] {
