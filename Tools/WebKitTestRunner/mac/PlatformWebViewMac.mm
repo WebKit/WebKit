@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
@@ -275,6 +276,25 @@ void PlatformWebView::waitForWindowRendering()
         WTFLogAlways("Timed out waiting for rendering of window."); // NOLINT
 }
 
+static void setWindowServerFrameOrigin(NSWindow *window, NSPoint origin)
+{
+    CGFloat firstScreenHeight = NSMaxY([[[NSScreen screens] firstObject] frame]);
+    CGPoint topLeft = CGPointMake(origin.x, firstScreenHeight - (origin.y + NSHeight([window frame])));
+    CGSMoveWindow(CGSMainConnectionID(), static_cast<CGSWindowID>([window windowNumber]), &topLeft);
+}
+
+static RetainPtr<CGImageRef> hardwareWindowSnapshot(NSWindow *window, bool nominalResolution)
+{
+    CGSWindowID windowID = static_cast<CGSWindowID>([window windowNumber]);
+    CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
+    if (nominalResolution)
+        options |= kCGSWindowCaptureNominalResolution;
+    RetainPtr<CFArrayRef> images = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
+    if (!images || !CFArrayGetCount(images.get()))
+        return nullptr;
+    return static_cast<CGImageRef>(const_cast<void*>(CFArrayGetValueAtIndex(images.get(), 0)));
+}
+
 RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
     RetainPtr panel = [m_cursorOverlay overlayPanel];
@@ -294,24 +314,49 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     size_t expectedWidth = viewFrame.size.width * backingScaleFactor;
     size_t expectedHeight = viewFrame.size.height * backingScaleFactor;
 
-    // Work around <rdar://problem/17084993>: CGWindowListCreateImage() can return images with
-    // incorrect dimensions immediately after a window resolution change via _setWindowResolution:,
-    // because the window server reallocates the backing store asynchronously. There is no public
-    // synchronization API to wait for this, so validate the captured dimensions and retry if needed.
+    // Hardware capture reads back what was composited to the display, so it can only produce the expected
+    // size at nominal resolution or at the screen's own scale. A window whose resolution was overridden past
+    // that (for example 3x on a 2x display, via _setWindowResolution:) gets the screen-scale image every
+    // time, so use the software path for it.
+    NSScreen *captureScreen = m_options.shouldShowWindow() ? [m_window screen] : [[NSScreen screens] firstObject];
+    bool canUseHardwareCapture = backingScaleFactor == 1 || backingScaleFactor == [captureScreen backingScaleFactor];
+
+    bool shouldMoveWindowOnScreen = canUseHardwareCapture && !m_options.shouldShowWindow();
+    NSWindowLevel windowLevel = [m_window level];
+    if (shouldMoveWindowOnScreen) {
+        [m_window setLevel:CGWindowLevelForKey(kCGDesktopWindowLevelKey)];
+        setWindowServerFrameOrigin(m_window, [captureScreen visibleFrame].origin);
+        [CATransaction flush];
+    }
+    auto moveWindowBackOnExit = WTF::makeScopeExit([&] {
+        if (!shouldMoveWindowOnScreen)
+            return;
+        setWindowServerFrameOrigin(m_window, [m_window frame].origin);
+        [m_window setLevel:windowLevel];
+    });
+
+    // Work around <rdar://problem/17084993>: window captures can return images with incorrect dimensions
+    // immediately after a window resolution change via _setWindowResolution:, because the window server
+    // reallocates the backing store asynchronously. There is no public synchronization API to wait for
+    // this, so validate the captured dimensions and retry if needed.
     constexpr unsigned maxRetries = 10;
     for (unsigned attempt = 0; ; ++attempt) {
         waitForWindowRendering();
 
-        RetainPtr image = adoptNS([platformView() _windowSnapshotInRect:CGRectNull withOptions:options]);
-        if (!image)
-            return nil;
+        RetainPtr cgImage = canUseHardwareCapture ? hardwareWindowSnapshot(m_window, backingScaleFactor == 1) : nullptr;
+        if (!cgImage) {
+            if (canUseHardwareCapture && !attempt)
+                WTFLogAlways("Hardware window capture failed; falling back to CGWindowListCreateImage(), which may omit video."); // NOLINT
+            RetainPtr image = adoptNS([platformView() _windowSnapshotInRect:CGRectNull withOptions:options]);
+            if (!image)
+                return nil;
+            cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+            if (!cgImage)
+                return nil;
+        }
 
-        auto cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
-        if (!cgImage)
-            return nil;
-
-        size_t actualWidth = CGImageGetWidth(cgImage);
-        size_t actualHeight = CGImageGetHeight(cgImage);
+        size_t actualWidth = CGImageGetWidth(cgImage.get());
+        size_t actualHeight = CGImageGetHeight(cgImage.get());
         if (actualWidth == expectedWidth && actualHeight == expectedHeight)
             return cgImage;
 

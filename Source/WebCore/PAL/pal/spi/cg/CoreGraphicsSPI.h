@@ -533,6 +533,7 @@ CGError CGSSetConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFSt
 // FIXME: CoreGraphics doesn't specify CF_RETURNS_RETAINED. See <rdar://148176662>.
 CGError CGSCopyConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CF_RETURNS_RETAINED CFTypeRef *value);
 CGError CGSGetScreenRectForWindow(CGSConnectionID, CGSWindowID, CGRect *);
+CGError CGSMoveWindow(CGSConnectionID, CGSWindowID, const CGPoint *);
 CGError CGSRegisterConnectionNotifyProc(CGSConnectionID, CGSNotifyConnectionProcPtr, CGSNotificationType, void* arg);
 CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
 
