@@ -2641,7 +2641,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate ] imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0628_first.html [ ImageOnlyFailure ]
 [ GoldenGate ] editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 [ GoldenGate ] fast/events/input-event-insert-link.html [ Failure ]
-[ GoldenGate ] fast/quirks/active-quirks-by-domain.html [ Failure ]
 [ GoldenGate arm64 ] fast/webgpu/nocrash/fuzz-283943.html [ Failure ]
 [ GoldenGate arm64 ] fast/webgpu/nocrash/fuzz-284326.html [ Failure ]
 [ GoldenGate ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
