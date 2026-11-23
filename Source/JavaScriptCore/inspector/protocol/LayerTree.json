@@ -77,7 +77,12 @@
                 { "name": "willChange", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"will-change\" style." },
                 { "name": "root", "type": "boolean", "optional": true, "description": "Composition due to association with the root element." },
                 { "name": "blending", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"blend-mode\" style." },
-                { "name": "backdropRoot", "type": "boolean", "optional": true, "description": "Composition due to association with an element that is a backdrop root" }
+                { "name": "backdropRoot", "type": "boolean", "optional": true, "description": "Composition due to association with an element that is a backdrop root" },
+                { "name": "overflowScrollPositioning", "type": "boolean", "optional": true, "description": "Composition due to association with an element that scrolls differently from the composited layer it paints into." },
+                { "name": "anchorPositioning", "type": "boolean", "optional": true, "description": "Composition due to association with an anchor-positioned element that moves with the scrolling of its anchor." },
+                { "name": "spatialPortal", "type": "boolean", "optional": true, "description": "Composition due to association with a spatial portal element." },
+                { "name": "spatialPortalHosting", "type": "boolean", "optional": true, "description": "Composition due to association with an element hosted by a spatial portal." },
+                { "name": "screenCaptureProtection", "type": "boolean", "optional": true, "description": "Composition due to association with an element that is protected from screen capture." }
             ]
         }
     ],

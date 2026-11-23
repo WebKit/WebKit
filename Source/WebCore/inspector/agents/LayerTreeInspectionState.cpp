@@ -239,6 +239,12 @@ Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>
     else if (reasons.contains(CompositingReason::Model))
         compositingReasons->setModel(true);
 
+    if (reasons.contains(CompositingReason::SpatialPortal))
+        compositingReasons->setSpatialPortal(true);
+
+    if (reasons.contains(CompositingReason::ScreenCaptureProtection))
+        compositingReasons->setScreenCaptureProtection(true);
+
     if (reasons.contains(CompositingReason::BackfaceVisibilityHidden))
         compositingReasons->setBackfaceVisibilityHidden(true);
 
@@ -260,7 +266,14 @@ Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>
     if (reasons.contains(CompositingReason::OverflowScrolling))
         compositingReasons->setOverflowScrollingTouch(true);
 
-    // FIXME: handle OverflowScrollPositioning (webkit.org/b/195985).
+    if (reasons.contains(CompositingReason::OverflowScrollPositioning))
+        compositingReasons->setOverflowScrollPositioning(true);
+
+    if (reasons.contains(CompositingReason::AnchorPositioning))
+        compositingReasons->setAnchorPositioning(true);
+
+    if (reasons.contains(CompositingReason::SpatialPortalHosting))
+        compositingReasons->setSpatialPortalHosting(true);
 
     if (reasons.contains(CompositingReason::Stacking))
         compositingReasons->setStacking(true);

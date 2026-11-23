@@ -380,68 +380,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
 
     _populateListOfCompositingReasons(list, compositingReasons)
     {
-        function addReason(reason)
-        {
-            list.appendChild(document.createElement("li")).textContent = reason;
-        }
-
-        if (compositingReasons.transform3D)
-            addReason(WI.UIString("Element has a 3D transform"));
-        if (compositingReasons.video)
-            addReason(WI.UIString("Element is <video>"));
-        if (compositingReasons.canvas)
-            addReason(WI.UIString("Element is <canvas>"));
-        if (compositingReasons.plugin)
-            addReason(WI.UIString("Element is a plug-in"));
-        if (compositingReasons.iFrame)
-            addReason(WI.UIString("Element is <iframe>"));
-        if (compositingReasons.model)
-            addReason(WI.UIString("Element is <model>"));
-        if (compositingReasons.backfaceVisibilityHidden)
-            addReason(WI.UIString("Element has \u201Cbackface-visibility: hidden\u201D style"));
-        if (compositingReasons.clipsCompositingDescendants)
-            addReason(WI.UIString("Element clips compositing descendants"));
-        if (compositingReasons.animation)
-            addReason(WI.UIString("Element is animated"));
-        if (compositingReasons.filters)
-            addReason(WI.UIString("Element has CSS filters applied"));
-        if (compositingReasons.positionFixed)
-            addReason(WI.UIString("Element has \u201Cposition: fixed\u201D style"));
-        if (compositingReasons.positionSticky)
-            addReason(WI.UIString("Element has \u201Cposition: sticky\u201D style"));
-        if (compositingReasons.overflowScrollingTouch)
-            addReason(WI.UIString("Element has \u201C-webkit-overflow-scrolling: touch\u201D style"));
-        if (compositingReasons.stacking)
-            addReason(WI.UIString("Element may overlap another compositing element"));
-        if (compositingReasons.overlap)
-            addReason(WI.UIString("Element overlaps other compositing element"));
-        if (compositingReasons.negativeZIndexChildren)
-            addReason(WI.UIString("Element has children with a negative z-index"));
-        if (compositingReasons.transformWithCompositedDescendants)
-            addReason(WI.UIString("Element has a 2D transform and composited descendants"));
-        if (compositingReasons.opacityWithCompositedDescendants)
-            addReason(WI.UIString("Element has opacity applied and composited descendants"));
-        if (compositingReasons.maskWithCompositedDescendants)
-            addReason(WI.UIString("Element is masked and has composited descendants"));
-        if (compositingReasons.reflectionWithCompositedDescendants)
-            addReason(WI.UIString("Element has a reflection and composited descendants"));
-        if (compositingReasons.filterWithCompositedDescendants)
-            addReason(WI.UIString("Element has CSS filters applied and composited descendants"));
-        if (compositingReasons.blendingWithCompositedDescendants)
-            addReason(WI.UIString("Element has CSS blending applied and composited descendants"));
-        if (compositingReasons.isolatesCompositedBlendingDescendants)
-            addReason(WI.UIString("Element is a stacking context and has composited descendants with CSS blending applied"));
-        if (compositingReasons.perspective)
-            addReason(WI.UIString("Element has perspective applied"));
-        if (compositingReasons.preserve3D)
-            addReason(WI.UIString("Element has \u201Ctransform-style: preserve-3d\u201D style"));
-        if (compositingReasons.willChange)
-            addReason(WI.UIString("Element has \u201Cwill-change\u201D style which includes opacity, transform, transform-style, perspective, filter or backdrop-filter"));
-        if (compositingReasons.root)
-            addReason(WI.UIString("Element is the root element"));
-        if (compositingReasons.blending)
-            addReason(WI.UIString("Element has \u201Cblend-mode\u201D style"));
-        if (compositingReasons.backdropRoot)
-            addReason(WI.UIString("Element is a backdrop root"));
+        for (let description of WI.LayerTreeManager.descriptionsForCompositingReasons(compositingReasons))
+            list.appendChild(document.createElement("li")).textContent = description;
     }
 };

@@ -1,0 +1,23 @@
+
+
+== Running test suite: LayerTreeManager.descriptionsForCompositingReasons
+-- Running test case: LayerTreeManager.descriptionsForCompositingReasons.EveryReason
+PASS: Each compositing reason should produce one distinct description.
+PASS: No reasons should produce no descriptions.
+PASS: Reasons that are false should be ignored.
+PASS: Descriptions should follow a fixed order.
+
+-- Running test case: LayerTreeManager.descriptionsForCompositingReasons.BackendReasons
+PASS: Should have a node for #backdrop-root.
+PASS: Should have a layer for #backdrop-root.
+PASS: #backdrop-root should be composited because it is a backdrop root.
+PASS: The descriptions of #backdrop-root should include the backdrop root reason.
+PASS: Should have a node for #anchored.
+PASS: Should have a layer for #anchored.
+PASS: #anchored should be composited because it is anchor-positioned.
+PASS: The descriptions of #anchored should include the anchor positioning reason.
+PASS: The descriptions of the password field layer should include the screen capture protection reason.
+PASS: A password field with a value should have a layer that is protected from screen capture.
+PASS: The backend should only report known compositing reasons.
+PASS: Every reported reason should have a description.
+

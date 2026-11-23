@@ -688,12 +688,17 @@ localizedStrings["Element is <model>"] = "Element is <model>";
 localizedStrings["Element is <video>"] = "Element is <video>";
 localizedStrings["Element is a backdrop root"] = "Element is a backdrop root";
 localizedStrings["Element is a plug-in"] = "Element is a plug-in";
+localizedStrings["Element is a spatial portal"] = "Element is a spatial portal";
 localizedStrings["Element is a stacking context and has composited descendants with CSS blending applied"] = "Element is a stacking context and has composited descendants with CSS blending applied";
+localizedStrings["Element is anchor-positioned and moves with the scrolling of its anchor"] = "Element is anchor-positioned and moves with the scrolling of its anchor";
 localizedStrings["Element is animated"] = "Element is animated";
+localizedStrings["Element is hosted by a spatial portal"] = "Element is hosted by a spatial portal";
 localizedStrings["Element is masked and has composited descendants"] = "Element is masked and has composited descendants";
+localizedStrings["Element is protected from screen capture"] = "Element is protected from screen capture";
 localizedStrings["Element is the root element"] = "Element is the root element";
 localizedStrings["Element may overlap another compositing element"] = "Element may overlap another compositing element";
 localizedStrings["Element overlaps other compositing element"] = "Element overlaps other compositing element";
+localizedStrings["Element scrolls differently from the composited layer it paints into"] = "Element scrolls differently from the composited layer it paints into";
 localizedStrings["Elements"] = "Elements";
 /* Name of Elements Tab */
 localizedStrings["Elements Tab Name"] = "Elements";
