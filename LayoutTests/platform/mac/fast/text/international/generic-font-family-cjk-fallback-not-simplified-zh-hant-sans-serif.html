@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+if (window.internals)
+    window.internals.setUserPreferredLanguages(["zh-tw"]);
+</script>
+</head>
+<body>
+This test makes sure the sans-serif generic font family does not resolve to a Simplified Chinese font for lang="zh-Hant" text when the primary font (Helvetica) has no CJK glyphs.
+<div style="font-size: 40px;">
+<div lang="zh-Hant" style='font-family: Helvetica, sans-serif;'>&#x9AA8;&#x76F4;&#x904E;&#x89D2;&#x8AA4;</div>
+</div>
+</body>
+</html>
