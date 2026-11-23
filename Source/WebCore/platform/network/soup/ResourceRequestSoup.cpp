@@ -24,6 +24,7 @@
 
 #include "BlobData.h"
 #include "BlobRegistryImpl.h"
+#include "BlobURL.h"
 #include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -54,6 +55,23 @@ static inline SoupMessagePriority toSoupMessagePriority(ResourceLoadPriority pri
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static GRefPtr<GUri> soupFirstPartyForCookies(const URL& firstPartyForCookies)
+{
+    if (firstPartyForCookies.isEmpty())
+        return nullptr;
+
+    if (firstPartyForCookies.protocolIsInHTTPFamily())
+        return urlToSoupURI(firstPartyForCookies);
+
+    if (firstPartyForCookies.protocolIsBlob()) {
+        auto originURL = BlobURL::getOriginURL(firstPartyForCookies);
+        if (originURL.protocolIsInHTTPFamily())
+            return urlToSoupURI(originURL);
+    }
+
+    return adoptGRef(g_uri_build(G_URI_FLAGS_NONE, firstPartyForCookies.protocol().utf8().data(), nullptr, nullptr, -1, "", nullptr, nullptr));
+}
+
 GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRegistry) const
 {
     auto uri = createSoupURI();
@@ -70,10 +88,8 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
 
     updateSoupMessageHeaders(soup_message_get_request_headers(soupMessage.get()));
 
-    if (firstPartyForCookies().protocolIsInHTTPFamily()) {
-        if (auto firstParty = urlToSoupURI(firstPartyForCookies()))
-            soup_message_set_first_party(soupMessage.get(), firstParty.get());
-    }
+    if (GRefPtr firstParty = soupFirstPartyForCookies(firstPartyForCookies()))
+        soup_message_set_first_party(soupMessage.get(), firstParty.get());
 
     if (!isSameSiteUnspecified()) {
         if (isSameSite()) {
