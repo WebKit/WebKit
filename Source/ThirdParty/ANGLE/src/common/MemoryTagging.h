@@ -24,7 +24,7 @@
 #    if defined(__arm64e__)
 #        if __has_include(<CoreFoundation/CFPriv.h>) // Matches USE_APPLE_INTERNAL_SDK in WTF.
 #            include <AppleFeatures/AppleFeatures.h>
-#            if defined(APPLE_FEATURE_MTE) && APPLE_FEATURE_MTE
+#            if defined(APPLE_FEATURE_MTE) && APPLE_FEATURE_MTE && !defined(ANGLE_WITH_SANITIZER)
 #                define ANGLE_ENABLE_MEMORY_TAGGING
 #            endif
 #        endif
