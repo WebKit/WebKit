@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% from 'parts.html' import window_chooser, suite_chooser, queue_dropdown, rolling_chooser, staleness, rate %}
+
+{% block content %}
+{% set filter_args = {'group': group, 'version': version, 'builder': builder} %}
+{% macro held_fields() %}
+<input type="hidden" name="days" value="{{ window.days }}">
+{%- if suite %}<input type="hidden" name="suite" value="{{ suite }}">{% endif %}
+{%- if rolling %}<input type="hidden" name="rolling" value="{{ rolling }}">{% endif %}
+{%- endmacro %}
+{{ staleness(freshness, freshness_dismissed) }}
+
+<div class="row headline">
+  <div class="col-4">
+    <span class="text large">Flake or Fault?</span>
+    <span class="text tiny">{% if suite %}{{ suite }}, {% endif %}{{ queue_summary }}, last {{ window.days }} days</span>
+  </div>
+  <div class="col-8">
+    <div class="chooser groups">
+      {{ queue_dropdown('landing', queue_tree, group, version, builder, queue_summary, held_fields()) }}
+      {{ suite_chooser('landing', window, suite_choices, suite, rolling=rolling, filter_args=filter_args) }}
+      {{ window_chooser('landing', window, window_choices, suite=suite, rolling=rolling, filter_args=filter_args) }}
+    </div>
+  </div>
+</div>
+
+<div class="row metrics">
+  <div class="col-3 metric">
+    <div class="text tiny label">Builds that blamed an author for noise</div>
+    {{ rate(counts.author_fp_rate_pct, counts.partial_fp + counts.false_red, counts.classifiable, 'failing builds') }}
+  </div>
+  <div class="col-3 metric">
+    <div class="text tiny label">Builds where nothing was the author's doing</div>
+    {{ rate(counts.false_red_rate_pct, counts.false_red, counts.classifiable, 'failing builds') }}
+  </div>
+  <div class="col-3 metric">
+    <div class="text tiny label">Author-visible failures already failing on main</div>
+    {{ rate(counts.blame_noise_rate_pct, counts.surfaced_pre_existing, counts.surfaced_total, 'tests shown') }}
+  </div>
+  <div class="col-3 metric">
+    <div class="text tiny label">Flakes the read path convicted</div>
+    <span class="value">{{ by_rule.values() | sum | count }}</span>
+    <span class="text tiny denominator">over {{ builds_queried | count }} builds that asked</span>
+  </div>
+</div>
+
+<div class="section chart">
+  <div class="header">
+    <div class="title">Blame noise over {{ window.days }} days</div>
+    {{ rolling_chooser('landing', window, rolling_choices, rolling, suite=suite, filter_args=filter_args) }}
+  </div>
+  <div class="content">
+    {% if chart.empty %}
+    <div class="placeholder">No classified builds in this range. Run <code>python3 -m scripts.refresh</code> to populate the database.</div>
+    {% else %}
+    <svg class="trend" width="100%" role="img" aria-label="Daily share of failing builds that blamed an author for noise">
+      {% for gridline in chart.gridlines %}
+      <line class="gridline" x1="{{ chart.plot_left }}%" y1="{{ gridline.y }}%" x2="{{ chart.plot_right }}%" y2="{{ gridline.y }}%"/>
+      <text class="axis" x="{{ chart.plot_left }}%" dx="-8" y="{{ gridline.y }}%" dy="4" text-anchor="end">{{ gridline.label }}</text>
+      {% endfor %}
+      {% for mark in chart.deployments %}
+      <line class="deployment" x1="{{ mark.x }}%" y1="{{ chart.plot_top }}%" x2="{{ mark.x }}%" y2="{{ chart.plot_bottom }}%">
+        <title>{{ mark.title }}</title>
+      </line>
+      <text class="deployment-label" x="{{ mark.x }}%" dx="4" y="{{ chart.plot_top }}%" dy="13">{{ mark.label }}<title>{{ mark.title }}</title></text>
+      {% endfor %}
+      {% for segment in chart.rolling_segments %}
+      <line class="rolling" x1="{{ segment.x1 }}%" y1="{{ segment.y1 }}%" x2="{{ segment.x2 }}%" y2="{{ segment.y2 }}%"/>
+      {% endfor %}
+      {% for dot in chart.dots %}
+      <circle class="daily" cx="{{ dot.x }}%" cy="{{ dot.y }}%" r="3"><title>{{ dot.title }}</title></circle>
+      {% endfor %}
+      {% for label in chart.day_labels %}
+      <text class="axis" x="{{ label.x }}%" y="{{ chart.day_label_y }}%" text-anchor="middle">{{ label.text }}</text>
+      {% endfor %}
+    </svg>
+    <div class="legend text tiny">
+      <span class="key daily"></span> one day
+      <span class="key rolling"></span> {{ rolling }}-day rolling
+      <span class="key deployment"></span> EWS deployment
+      — hover any point for its counts. Days are UTC.
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="section">
+  <div class="header"><div class="title">What the classifier convicted, last {{ window.days }} days</div></div>
+  <div class="content">
+    <table class="table full-width">
+      <thead><tr><th>Rule</th><th class="numeric">Convictions</th><th>Meaning</th></tr></thead>
+      <tbody>
+        {% for rule, total in by_rule.items() %}
+        <tr>
+          <td><a href="{{ url_for('tests', days=window.days, suite=suite, **dict(filter_args, **{filter_argument: 'rule:anyof:' ~ rule})) }}">{{ rule }}</a></td>
+          <td class="numeric">{{ total | count }}</td>
+          <td class="text tiny">{{ rule_descriptions[rule] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <details class="caveats-disclosure">
+      <summary>How a conviction is counted, and what the rates leave out</summary>
+      <div class="caveats text tiny">
+        <p>A failure is counted as noise when the same test passes {{ threshold_pct }}% of the time or less on main at the commit the change was rebased onto. Main does not contain the change, so a test that is reliable on main and was genuinely broken by the change cannot be told apart from one that flaked once during this build: every rate here is a floor on blame noise, not a verdict on any single build.</p>
+        <p>{{ counts.unclassified | count }} failing builds in this window have not been classified yet, and {{ counts.no_surfaced | count }} showed the author no new failures at all, so neither group is in the denominators above. {{ counts.surfaced_undetermined | count }} author-visible failures had no recorded history to compare against, and {{ query_failures | count }} of EWS's own flakiness queries returned no answer.</p>
+      </div>
+    </details>
+  </div>
+</div>
+{% endblock %}

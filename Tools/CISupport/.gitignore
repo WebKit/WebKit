@@ -5,6 +5,7 @@ twistd.log*
 twistd.pid
 state.sqlite
 passwords.json
+ews-dashboard/**/*.db*
 workers/
 archives/
 results/
