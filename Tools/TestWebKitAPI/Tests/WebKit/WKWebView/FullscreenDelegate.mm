@@ -27,7 +27,6 @@
 
 #if PLATFORM(MAC)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import <WebKit/WKPagePrivateMac.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -43,14 +42,18 @@ static bool receivedDidExitFullscreenMessage;
 static bool receivedVisibilityChangeMessage;
 
 @interface FullscreenDelegateMessageHandler : NSObject <WKScriptMessageHandler, _WKFullscreenDelegate>
+- (void)waitForLoadedMessage;
 @end
 
-@implementation FullscreenDelegateMessageHandler
+@implementation FullscreenDelegateMessageHandler {
+    bool _receivedLoadedMessage;
+}
+
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     NSString *bodyString = (NSString *)[message body];
     if ([bodyString isEqualToString:@"load"]) {
-        receivedLoadedMessage = true;
+        _receivedLoadedMessage = true;
         receivedVisibilityChangeMessage = false;
     } else if ([bodyString isEqualToString:@"visibilitychange"])
         receivedVisibilityChangeMessage = true;
@@ -74,6 +77,12 @@ static bool receivedVisibilityChangeMessage;
 - (void)_webViewDidExitFullscreen:(WKWebView *)view
 {
     receivedDidExitFullscreenMessage = true;
+}
+
+- (void)waitForLoadedMessage
+{
+    EXPECT_FALSE(_receivedLoadedMessage);
+    TestWebKitAPI::Util::run(&_receivedLoadedMessage);
 }
 @end
 
@@ -99,7 +108,7 @@ TEST(Fullscreen, Delegate)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"FullscreenDelegate" withExtension:@"html"]];
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&receivedLoadedMessage);
+    [handler waitForLoadedMessage];
 
     NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
     [webView mouseDown:event];
@@ -143,7 +152,7 @@ TEST(Fullscreen, VisibilityChangeNotDispatched)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"FullscreenDelegate" withExtension:@"html"]];
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&receivedLoadedMessage);
+    [handler waitForLoadedMessage];
 
     NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
 

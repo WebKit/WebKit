@@ -43,7 +43,6 @@ extern bool didBecomeUnresponsive;
 extern bool wasPrompted;
 extern bool didFinishNavigationBoolean;
 extern bool didCreateWebView;
-extern bool receivedLoadedMessage;
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSMutableArray;
