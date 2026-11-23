@@ -693,6 +693,8 @@ webkit.org/b/173188 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass
 
 webkit.org/b/167757 workers/bomb.html [ Pass Timeout ]
 
+webkit.org/b/332775 [ Debug ] workers/worker-set-delete-terminate-crash.html [ Pass Timeout ]
+
 webkit.org/b/187649 editing/selection/update-selection-by-style-change.html [ Pass ImageOnlyFailure ]
 
 # Touch events are not available on open source bots, thus only tested on Mac.
@@ -1490,7 +1492,8 @@ http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxSamplersPerS
 [ x86_64 ] http/tests/webgpu/webgpu/api/validation/createBindGroup.html [ Skip ]
 
 # shader tests that timeout
-http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise.html [ Pass Slow ]
+[ Release ] http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise.html [ Pass Slow ]
+webkit.org/b/332766 [ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise.html [ Skip ]
 [ arm64 ] http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_matrix_multiplication.html [ Pass Timeout ]
 
 # One CTS file per test, so the longest in the suite; they clear 150s only outside a parallel run.
