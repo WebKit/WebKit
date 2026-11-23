@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style type="text/css">
+canvas {
+    width: 100px;
+    height: 100px;
+}
+</style>
+<canvas id="target"></canvas>
+<script src="../resources/runner.js"></script>
+<script src="resources/drawimage-source-webgpu.js"></script>
+<script>
+runDrawImageSourceWebGPUTest({ source: "offscreen-canvas", format: "bgra8unorm", drawSource: "image-bitmap" });
+</script>
+</body>
+</html>

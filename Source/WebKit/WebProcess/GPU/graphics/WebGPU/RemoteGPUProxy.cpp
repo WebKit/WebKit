@@ -40,6 +40,7 @@
 #include "RemotePresentationContextProxy.h"
 #include "RemoteQueueProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "RemoteSharedResourceCacheProxy.h"
 #include "RemoteWebGPUInstanceProxy.h"
 #include "WebGPUDescriptorSerializers.h"
 #include "WebPage.h"
@@ -102,6 +103,7 @@ void RemoteGPUProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConn
         gpuProcessConnection->createGPU(m_backing, m_renderingBackend->renderingBackendIdentifier(), WTF::move(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
         lazyInitialize(m_gpuProcessIPCConnection, Ref { gpuProcessConnection->connection() });
+        lazyInitialize(m_sharedResourceCache, gpuProcessConnection->sharedResourceCache());
         didCreateGPU = true;
     });
     if (!didCreateGPU)

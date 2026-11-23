@@ -54,6 +54,7 @@
 #include "ScreenProperties.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
+#include "VideoFrame.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -406,6 +407,14 @@ NODELETE static PixelFormat readbackPixelFormat(PixelFormat format)
     return PixelFormat::BGRA8;
 }
 
+static void drawDisplayBufferImage(NativeImage& image, ImageBuffer& buffer)
+{
+    auto& context = buffer.context();
+    GraphicsContextStateSaver stateSaver(context);
+    context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
+    context.drawNativeImage(image, FloatRect { { }, buffer.logicalSize() }, FloatRect { { }, image.size() }, { CompositeOperator::Copy });
+}
+
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuffer sourceBuffer)
 {
     RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
@@ -414,43 +423,41 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
     const auto size = canvasBase().size();
     if (size.isEmpty())
         return nullptr;
+    RefPtr image = m_configuration ? surfaceBufferToNativeImage(sourceBuffer) : nullptr;
     if (!m_readDisplayBuffer) {
         m_readDisplayBuffer = ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, colorSpace(), readbackPixelFormat(pixelFormat()), scriptExecutionContext->graphicsClient());
         updateMemoryCost();
     }
     RefPtr<ImageBuffer> buffer = m_readDisplayBuffer;
-
-    if (!m_configuration)
+    if (!buffer || !image)
         return buffer;
+    drawDisplayBufferImage(*image, *buffer);
+    return buffer;
+}
+
+uint32_t GPUCanvasContextCocoa::displayBufferIndexForReading(SurfaceBuffer sourceBuffer)
+{
+    ASSERT(m_configuration);
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=294654 - OffscreenCanvas may not reflect the display the OffscreenCanvas is displayed on during background / resume
 #if HAVE(SUPPORT_HDR_DISPLAY)
     updateScreenHeadroomFromScreenPropertiesIfNeeded();
 #endif
 
-    if (m_configuration->lastPresentedFrameIndex && (sourceBuffer == SurfaceBuffer::DisplayBufferForInspector || !m_compositingResultsNeedsUpdating)) {
-        if (buffer) {
-            buffer->flushDrawingContext();
-            protect(m_compositorIntegration)->paintCompositedResultsToCanvas(*buffer, *m_configuration->lastPresentedFrameIndex);
-        }
-        return buffer;
-    }
+    if (m_configuration->lastPresentedFrameIndex && (sourceBuffer == SurfaceBuffer::DisplayBufferForInspector || !m_compositingResultsNeedsUpdating))
+        return *m_configuration->lastPresentedFrameIndex;
 
+    // The frame is presented before it is read. The read is sent after the presentation, so it
+    // reads the presented frame.
     auto frameCount = m_configuration->frameCount;
-    protect(m_compositorIntegration)->prepareForDisplay(frameCount, [weakThis = WeakPtr { *this }, frameCount, buffer](MachSendRight&&, std::optional<uint32_t> replacedRenderBufferIndex) {
+    protect(m_compositorIntegration)->prepareForDisplay(frameCount, [weakThis = WeakPtr { *this }](MachSendRight&&, std::optional<uint32_t> replacedRenderBufferIndex) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-
         if (replacedRenderBufferIndex)
             protect(protectedThis->m_presentationContext)->renderBufferWasReplaced(*replacedRenderBufferIndex);
-        RefPtr base = protectedThis->canvasBase();
-        if (buffer && protectedThis->m_configuration) {
-            buffer->flushDrawingContext();
-            protect(protectedThis->m_compositorIntegration)->paintCompositedResultsToCanvas(*buffer, frameCount);
-        }
     });
-    return buffer;
+    return frameCount;
 }
 
 RefPtr<NativeImage> GPUCanvasContextCocoa::surfaceBufferToNativeImage(SurfaceBuffer sourceBuffer)
@@ -460,19 +467,33 @@ RefPtr<NativeImage> GPUCanvasContextCocoa::surfaceBufferToNativeImage(SurfaceBuf
     bool useCache = sourceBuffer != SurfaceBuffer::DisplayBufferForInspector;
     if (useCache && m_readDisplayBufferImage)
         return m_readDisplayBufferImage;
-    RefPtr imageBuffer = surfaceBufferToImageBuffer(sourceBuffer);
-    if (!imageBuffer)
+    const auto size = canvasBase().size();
+    if (size.isEmpty())
         return nullptr;
-    // The copy is what GraphicsContext::drawImageBuffer would make for each individual draw of a
-    // deferred context. It is cached here, as the read buffer is discarded whenever the contents
-    // of the canvas change.
-    RefPtr image = imageBuffer->copyNativeImage();
+    RefPtr<NativeImage> image;
+    if (m_configuration)
+        image = protect(m_compositorIntegration)->copyNativeImage(displayBufferIndexForReading(sourceBuffer));
+    else {
+        // The drawing buffer of an unconfigured context is transparent black.
+        image = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace(), PixelFormat::BGRA8));
+    }
+    // The image is cached, as reading the display buffer again would make a new copy. The cached
+    // image is discarded whenever the contents of the canvas change.
     if (!useCache)
         return image;
     m_readDisplayBufferImage = WTF::move(image);
     updateMemoryCost();
     return m_readDisplayBufferImage;
 }
+
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+RefPtr<VideoFrame> GPUCanvasContextCocoa::surfaceBufferToVideoFrame(SurfaceBuffer sourceBuffer)
+{
+    if (!m_configuration || canvasBase().size().isEmpty())
+        return nullptr;
+    return protect(m_compositorIntegration)->copyVideoFrame(displayBufferIndexForReading(sourceBuffer));
+}
+#endif
 
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
 {
@@ -493,15 +514,16 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
         // cannot hold as it stands, such as rgba16float, presenting is the step that converts the
         // rendered frame into the surface being read here, so reading first hands back a frame
         // that has not been drawn yet.
-        protect(m_compositorIntegration)->prepareForDisplay(frameCount, [weakThis = WeakPtr { *this }, frameCount, bufferRef](MachSendRight&&, std::optional<uint32_t> replacedRenderBufferIndex) mutable {
+        Ref compositorIntegration = m_compositorIntegration;
+        compositorIntegration->prepareForDisplay(frameCount, [weakThis = WeakPtr { *this }](MachSendRight&&, std::optional<uint32_t> replacedRenderBufferIndex) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
             if (replacedRenderBufferIndex)
                 protect(protectedThis->m_presentationContext)->renderBufferWasReplaced(*replacedRenderBufferIndex);
-            bufferRef->flushDrawingContext();
-            protect(protectedThis->m_compositorIntegration)->paintCompositedResultsToCanvas(bufferRef, frameCount);
         });
+        if (RefPtr image = compositorIntegration->copyNativeImage(frameCount))
+            drawDisplayBufferImage(*image, bufferRef);
         // Transferring a frame away ends it, so the texture the page drew into expires and the next
         // getCurrentTexture() has to hand back a new one.
         protect(m_presentationContext)->present();

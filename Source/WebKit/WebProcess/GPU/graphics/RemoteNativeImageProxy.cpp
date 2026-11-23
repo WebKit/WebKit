@@ -61,9 +61,13 @@ Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, 
     return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, WTF::move(resourceCache), nullptr));
 }
 
-Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&& sharedResourceCache)
+Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&& sharedResourceCache, Headroom headroom)
 {
-    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, nullptr, WTF::move(sharedResourceCache)));
+    Ref image = adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, nullptr, WTF::move(sharedResourceCache)));
+    // The headroom is known before the pixels are, so drawing the image needs no fetch to know it.
+    image->m_baseImageHeadroom = headroom;
+    image->m_headroom = headroom;
+    return image;
 }
 
 RemoteNativeImageProxy::RemoteNativeImageProxy(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakPtr<RemoteResourceCacheProxy>&& resourceCache, RefPtr<RemoteSharedResourceCacheProxy>&& sharedResourceCache)

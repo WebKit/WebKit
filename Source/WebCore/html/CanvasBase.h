@@ -132,6 +132,7 @@ public:
     bool havePendingCanvasNoiseInjection() const { return m_canvasNoiseInjection.haveDirtyRects(); }
 
     RefPtr<ImageBuffer> createImageForNoiseInjection() const;
+    NODELETE bool shouldInjectNoiseBeforeReadback() const;
 
 protected:
     explicit CanvasBase(IntSize, ScriptExecutionContext&);
@@ -147,8 +148,6 @@ protected:
     void setPendingEntireContentsUpdate(ShouldApplyPostProcessingToDirtyRect);
 
 private:
-    NODELETE bool shouldInjectNoiseBeforeReadback() const;
-
     mutable IntSize m_size;
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
 
