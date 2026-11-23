@@ -60,7 +60,7 @@ class CredentialRequestCoordinator final : public RefCountedAndCanMakeWeakPtr<Cr
 public:
     NODELETE static Ref<CredentialRequestCoordinator> create(Ref<CredentialRequestCoordinatorClient>&&, Page&);
     WEBCORE_EXPORT void prepareCredentialRequests(const Document&, CredentialPromise&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
-    WEBCORE_EXPORT void abortTheCredentialRequest(ExceptionOr<JSC::JSValue>&&);
+    WEBCORE_EXPORT void abortTheCredentialRequest(JSC::JSValue);
     ~CredentialRequestCoordinator();
 
     void sessionDidFinish(const DigitalCredentialsSession&);
@@ -70,6 +70,7 @@ public:
 
 private:
     void rejectTheCredentialRequestWith(Exception&&);
+    void rejectTheCredentialRequestWith(JSC::JSValue);
 
     enum class InteractionState : uint8_t {
         Idle,

@@ -29,6 +29,7 @@
 
 #include "AbortSignal.h"
 #include "Chrome.h"
+#include "CommonVM.h"
 #include "CredentialRequestCoordinatorClient.h"
 #include "DigitalCredential.h"
 #include "DigitalCredentialsRequestData.h"
@@ -167,19 +168,18 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
         return rejectTheCredentialRequestWith(Exception { ExceptionCode::TypeError, "No valid credential requests remain after validation"_s });
 
     if (signal) {
-        ASSERT(!signal->aborted());
+        if (signal->aborted())
+            return rejectTheCredentialRequestWith(signal->reason().getValue());
+
         auto identifier = signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue reason) {
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return;
             LOG(DigitalCredentials, "Credential request was aborted by AbortSignal");
-            protectedThis->abortTheCredentialRequest(ExceptionOr<JSC::JSValue> { WTF::move(reason) });
+            protectedThis->abortTheCredentialRequest(reason);
         });
         session->setAbortAlgorithm(RefPtr { signal }, identifier);
     }
-
-    if (signal && signal->aborted())
-        return rejectTheCredentialRequestWith(Exception { ExceptionCode::AbortError, "Signal was already aborted."_s });
 
     initiateTheCredentialRequest(document, WTF::move(validatedCredentialRequests), WTF::move(unvalidatedRequests), signal);
 }
@@ -219,7 +219,7 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(std::expecte
 
     if (signal && signal->aborted()) {
         LOG(DigitalCredentials, "Credential chooser response received after AbortSignal aborted");
-        abortTheCredentialRequest(ExceptionOr<JSC::JSValue> { signal->reason().getValue() });
+        abortTheCredentialRequest(signal->reason().getValue());
         return;
     }
 
@@ -306,7 +306,7 @@ void CredentialRequestCoordinator::rejectTheCredentialRequestWith(Exception&& ex
     });
 }
 
-void CredentialRequestCoordinator::abortTheCredentialRequest(ExceptionOr<JSC::JSValue>&& reason)
+void CredentialRequestCoordinator::abortTheCredentialRequest(JSC::JSValue reason)
 {
     RefPtr session = m_activeSession;
     if (!session || !session->hasPromise())
@@ -317,32 +317,21 @@ void CredentialRequestCoordinator::abortTheCredentialRequest(ExceptionOr<JSC::JS
 
     setInteractionState(InteractionState::Aborting);
     dismissChooser();
+    rejectTheCredentialRequestWith(reason);
+}
 
-    std::optional<Exception> abortException;
-    std::optional<JSC::Strong<JSC::Unknown>> protectedReason;
+void CredentialRequestCoordinator::rejectTheCredentialRequestWith(JSC::JSValue reason)
+{
+    ASSERT(m_interactionState != InteractionState::Idle);
 
-    if (reason.hasException())
-        abortException = reason.releaseException();
-    else {
-        auto jsReason = reason.releaseReturnValue();
-        if (RefPtr page = m_page.get()) {
-            if (RefPtr document = page->localTopDocument()) {
-                if (auto* globalObject = document->globalObject()) {
-                    JSC::VM& vm = globalObject->vm();
-                    JSC::JSLockHolder lock(globalObject);
-                    protectedReason.emplace(vm, WTF::move(jsReason));
-                }
-            }
-        }
-    }
+    RefPtr session = m_activeSession;
+    if (!session)
+        return;
 
-    session->queueSettlement([abortException = WTF::move(abortException), protectedReason = WTF::move(protectedReason)](auto& promise) mutable {
-        if (abortException)
-            promise.reject(WTF::move(*abortException));
-        else if (protectedReason)
-            promise.template rejectType<IDLAny>(protectedReason->get());
-        else
-            promise.reject(Exception { ExceptionCode::AbortError, "The credential request was aborted."_s });
+    Ref vm = commonVM();
+    JSC::JSLockHolder lock(vm);
+    session->queueSettlement([reason = JSC::Strong<JSC::Unknown> { vm, reason }](auto& promise) {
+        promise.template rejectType<IDLAny>(reason.get());
     });
 }
 
