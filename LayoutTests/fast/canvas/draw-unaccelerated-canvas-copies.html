@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/unaccelerated-canvas-copies.js"></script>
+</head>
+<body>
+<script>
+description("Copies of an unaccelerated canvas show the contents the canvas had when the copy was taken.");
+window.jsTestIsAsync = true;
+
+async function runTest(sourceType, operationName, copyTypeName, changeName, destinationName)
+{
+    const source = createSourceContext(sourceType);
+    sourceOperations.fillRect(source, changedSourceColor);
+    sourceOperations[operationName](source, sourceColor);
+    const destination = destinationTypes[destinationName](source);
+    prepareDestination(destination, source);
+    const copy = await copyTypes[copyTypeName].take(destination, source);
+    if (sourceChanges[changeName])
+        sourceChanges[changeName](source, changedSourceColor);
+    drawCopy(destination, copy);
+    return checkPixels(destination, sourceColor);
+}
+
+async function runTests()
+{
+    for (const sourceType of ["HTMLCanvasElement", "OffscreenCanvas"]) {
+        for (const operationName of Object.keys(sourceOperations)) {
+            for (const [copyTypeName, copyType] of Object.entries(copyTypes)) {
+                for (const changeName of Object.keys(sourceChanges)) {
+                    if (changeName != "none" && !copyType.holdsCopy)
+                        continue;
+                    for (const destinationName of Object.keys(destinationTypes)) {
+                        const name = `${sourceType} source, last drawn with ${operationName}, ${copyTypeName}, source changed after the copy with ${changeName}, drawn into ${destinationName}`;
+                        reportResult(name, await runTest(sourceType, operationName, copyTypeName, changeName, destinationName));
+                    }
+                }
+            }
+        }
+    }
+    finishJSTest();
+}
+runTests();
+</script>
+</body>
+</html>

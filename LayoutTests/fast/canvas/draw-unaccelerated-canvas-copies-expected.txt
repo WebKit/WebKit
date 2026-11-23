@@ -1,0 +1,189 @@
+Copies of an unaccelerated canvas show the contents the canvas had when the copy was taken.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(canvas), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(canvas), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(canvas), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(canvas), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(canvas), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS HTMLCanvasElement source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(canvas), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(canvas), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with fillRect, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(canvas), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(canvas), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with strokeLine, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(canvas), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(canvas), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, drawImage(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with none, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with fillRect, drawn into the source canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into accelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into unaccelerated canvas
+PASS OffscreenCanvas source, last drawn with putImageData, createPattern(createImageBitmap(canvas)), source changed after the copy with putImageData, drawn into the source canvas
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

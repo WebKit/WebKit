@@ -155,17 +155,19 @@ void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
 }
 
 template<typename T>
-ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message) const
+ALWAYS_INLINE bool RemoteImageBufferProxy::send(T&& message) const
 {
     RefPtr connection = this->connection();
     if (!connection) [[unlikely]]
-        return;
+        return false;
 
     auto result = connection->send(std::forward<T>(message), renderingResourceIdentifier());
     if (result != IPC::Error::NoError) [[unlikely]] {
         RELEASE_LOG(RemoteLayerBuffers, "RemoteImageBufferProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
         didBecomeUnresponsive();
+        return false;
     }
+    return true;
 }
 
 template<typename T>
@@ -333,8 +335,20 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
     if (!backend)
         return nullptr;
     if (backend->canMapBackingStore()) {
+        // The GPU process has executed every earlier draw after the flush, so the copy taken from the
+        // mapping here and the one CopyNativeImage takes in the GPU process have the same contents. Later
+        // draws come after CopyNativeImage in the stream, and writes from this process to the mapping
+        // flush first. The GPU process copy is drawn there without uploading the image.
         flushDrawingContextImpl();
-        return ImageBuffer::copyNativeImage();
+        RefPtr nativeImage = ImageBuffer::copyNativeImage();
+        if (!nativeImage)
+            return nullptr;
+        RefPtr renderingBackend = m_renderingBackend;
+        if (!renderingBackend) [[unlikely]]
+            return nativeImage;
+        if (send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->renderingResourceIdentifier())))
+            renderingBackend->remoteResourceCacheProxy().recordNativeImageCopiedToRemote(*nativeImage);
+        return nativeImage;
     }
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]]
