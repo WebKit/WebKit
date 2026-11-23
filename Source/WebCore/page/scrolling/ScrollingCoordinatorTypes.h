@@ -84,6 +84,8 @@ struct ScrollableAreaParameters {
     OverscrollBehavior horizontalOverscrollBehavior { OverscrollBehavior::Auto };
     OverscrollBehavior verticalOverscrollBehavior { OverscrollBehavior::Auto };
 
+    ScrollAxisLock scrollAxisLock { ScrollAxisLock::Auto };
+
     bool allowsHorizontalScrolling { false };
     bool allowsVerticalScrolling { false };
 

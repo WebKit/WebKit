@@ -145,6 +145,11 @@ bool ThreadedScrollingTreeScrollingNodeDelegate::allowsVerticalScrolling() const
     return ScrollingTreeScrollingNodeDelegate::allowsVerticalScrolling();
 }
 
+ScrollAxisLock ThreadedScrollingTreeScrollingNodeDelegate::scrollAxisLock() const
+{
+    return scrollingNode()->scrollAxisLock();
+}
+
 void ThreadedScrollingTreeScrollingNodeDelegate::immediateScrollBy(const FloatSize& delta, ScrollClamping clamping)
 {
     scrollingNode()->scrollBy(delta, clamping);

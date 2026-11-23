@@ -1078,6 +1078,13 @@ OverscrollBehavior RenderLayerScrollableArea::verticalOverscrollBehavior() const
     return OverscrollBehavior::Auto;
 }
 
+ScrollAxisLock RenderLayerScrollableArea::scrollAxisLock() const
+{
+    if (m_layer.renderBox())
+        return m_layer.renderer().style().scrollAxisLock();
+    return ScrollAxisLock::Auto;
+}
+
 Color RenderLayerScrollableArea::scrollbarThumbColorStyle() const
 {
     if (CheckedPtr renderer = m_layer.renderBox())
