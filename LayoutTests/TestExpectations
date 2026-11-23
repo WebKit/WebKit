@@ -1841,6 +1841,9 @@ webkit.org/b/112521 [ Debug ] webaudio/audioprocessingevent.html [ Skip ]
 
 webkit.org/b/308024 webaudio/automatic-pull-node.html [ Pass Failure ]
 
+# Fails when a worklet global scope from an earlier test is still alive in the same web process.
+webkit.org/b/330318 webaudio/audioworklet-stops-on-document-stop.html [ Pass Failure ]
+
 # The test frequently times out, and is just unsuccessful at detecting incorrect behavior when it passes.
 webkit.org/b/72698 media/audio-garbage-collect.html [ Skip ]
 

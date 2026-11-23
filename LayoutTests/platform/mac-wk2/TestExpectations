@@ -2659,7 +2659,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate ] imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Failure ]
 [ GoldenGate ] inspector/timeline/timeline-event-RenderingFrame.html [ Failure Timeout ]
 [ GoldenGate arm64 ] inspector/timeline/timeline-event-TimerRemove.html [ Failure Timeout ]
-[ GoldenGate ] webaudio/audioworklet-stops-on-document-stop.html [ Failure ]
 [ GoldenGate ] webgl/video-formats/upload-path-av1-420-bt709-videorange.html [ Failure ]
 
 # webkit.org/b/304362 REGRESSION(Tahoe): editing/selection/select-across-readonly-input* broken by Liquid Glass
