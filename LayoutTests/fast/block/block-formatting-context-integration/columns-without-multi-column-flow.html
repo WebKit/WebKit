@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.c { columns: 2; column-gap: 10px; column-rule: 2px solid green; border: 1px solid; width: 300px; font-family: monospace; font-size: 10px; line-height: 12px; margin-bottom: 6px; }
+.p::before { display: block; columns: 2; column-gap: 10px; border: 1px solid blue; width: 280px; content: "a generated block with columns, which lays out its text in one column like any block"; }
+.b { height: 20px; border: 1px solid red; }
+.f { float: left; width: 40px; height: 30px; border: 1px solid orange; }
+</style>
+<div class="c" style="height: 20px"></div>
+<div class="c" style="padding: 5px"></div>
+<div class="c"><div class="p">text after the generated block</div></div>
+<div class="c" style="columns: 3 50px"><div class="p" style="padding-top: 4px">text</div><div class="b"></div></div>
+<div class="f"></div><div class="c" style="height: 10px; overflow: hidden"></div>
+<div style="columns: 2; column-gap: 8px; width: 400px; height: 90px; column-fill: auto; border: 1px solid; font-family: monospace; font-size: 10px; line-height: 12px">
+<div class="b" style="height: 70px"></div>
+<div class="p">in the second column</div>
+<div class="c" style="height: 40px; width: 150px"></div>
+</div>
+<input style="columns: 2; width: 200px" value="a text control with columns">

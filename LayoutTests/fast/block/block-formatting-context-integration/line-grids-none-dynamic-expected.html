@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; width: 250px; padding: 3px; margin-bottom: 4px; position: relative; }
+.small { font-size: 9px; line-height: 11px; }
+.none { -webkit-line-grid: none; }
+</style>
+<div class=grid>
+  <div class="small none" style="padding-top: 3px;"><span>still in the line grid, on more than one line</span>
+    <div style="display: flex; margin-top: 2px; width: 60px;"><div>flex item that wraps</div></div>
+    <div style="position: absolute; left: 150px; top: 5px; width: 60px;">positioned, on more than one line</div>
+    <div style="display: flow-root; margin-top: 3px; width: 60px;">flow root on more than one line</div>
+  </div>
+</div>
+<div class=grid>
+  <div class="small none" style="display: flow-root; margin-top: 3px; padding-top: 2px; width: 120px;">a root with none, on more than one line</div>
+</div>

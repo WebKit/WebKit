@@ -1124,6 +1124,141 @@ bool LocalFrameViewLayoutContext::isComputingIntrinsicLogicalWidthFor(const Rend
     return m_intrinsicLogicalWidthComputationList.contains(box);
 }
 
+void LocalFrameViewLayoutContext::addRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow& root)
+{
+    m_rootsWithFloatsPlacedByBlockFormattingContext.add(root);
+}
+
+bool LocalFrameViewLayoutContext::removeRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow& root)
+{
+    return m_rootsWithFloatsPlacedByBlockFormattingContext.remove(root);
+}
+
+bool LocalFrameViewLayoutContext::hasFloatsPlacedByBlockFormattingContext(const RenderBlockFlow& root) const
+{
+    return !m_rootsWithFloatsPlacedByBlockFormattingContext.isEmptyIgnoringNullReferences() && m_rootsWithFloatsPlacedByBlockFormattingContext.contains(root);
+}
+
+auto LocalFrameViewLayoutContext::containingBlockBlockSizes(const RenderBox& box) const -> std::optional<ContainingBlockBlockSizes>
+{
+    return m_containingBlockBlockSizes.getOptional(box);
+}
+
+void LocalFrameViewLayoutContext::setContainingBlockBlockSizes(const RenderBox& box, const ContainingBlockBlockSizes& sizes)
+{
+    m_containingBlockBlockSizes.set(box, ContainingBlockBlockSizes { sizes });
+}
+
+void LocalFrameViewLayoutContext::clearContainingBlockBlockSizes(const RenderBox& box)
+{
+    m_containingBlockBlockSizes.remove(box);
+}
+
+std::optional<LayoutUnit> LocalFrameViewLayoutContext::stretchFitInlineSize(const RenderBox& box) const
+{
+    return m_stretchFitInlineSizes.getOptional(box);
+}
+
+void LocalFrameViewLayoutContext::setStretchFitInlineSize(const RenderBox& box, LayoutUnit inlineSize)
+{
+    m_stretchFitInlineSizes.set(box, inlineSize);
+}
+
+void LocalFrameViewLayoutContext::clearStretchFitInlineSize(const RenderBox& box)
+{
+    m_stretchFitInlineSizes.remove(box);
+}
+
+bool LocalFrameViewLayoutContext::isMonolithicBox(const RenderBox& box) const
+{
+    return m_monolithicBoxes.contains(box);
+}
+
+void LocalFrameViewLayoutContext::addMonolithicBox(const RenderBox& box)
+{
+    m_monolithicBoxes.add(box);
+}
+
+void LocalFrameViewLayoutContext::removeMonolithicBox(const RenderBox& box)
+{
+    m_monolithicBoxes.remove(box);
+}
+
+std::optional<LayoutUnit> LocalFrameViewLayoutContext::offsetInFragmentedFlow(const RenderBox& box) const
+{
+    return m_offsetsInFragmentedFlow.getOptional(box);
+}
+
+void LocalFrameViewLayoutContext::setOffsetInFragmentedFlow(const RenderBox& box, LayoutUnit offset)
+{
+    m_offsetsInFragmentedFlow.set(box, offset);
+}
+
+void LocalFrameViewLayoutContext::clearOffsetInFragmentedFlow(const RenderBox& box)
+{
+    m_offsetsInFragmentedFlow.remove(box);
+}
+
+std::optional<std::optional<LayoutUnit>> LocalFrameViewLayoutContext::percentageBasisAtLastLayout(const RenderBlockFlow& box) const
+{
+    auto iterator = m_percentageBasesAtLastLayout.find(box);
+    if (iterator == m_percentageBasesAtLastLayout.end())
+        return std::nullopt;
+    return iterator->value;
+}
+
+void LocalFrameViewLayoutContext::setPercentageBasisAtLastLayout(const RenderBlockFlow& box, std::optional<LayoutUnit> percentageBasis)
+{
+    m_percentageBasesAtLastLayout.set(box, percentageBasis);
+}
+
+void LocalFrameViewLayoutContext::setBoxFragments(const RenderBlockFlow& root, Vector<std::pair<CheckedRef<const RenderBox>, BoxFragments>>&& boxFragments, bool isColumnContent)
+{
+    // The ones of the boxes the root laid out last time go, and so do those of a root that is gone.
+    if (!m_boxFragments.isEmptyIgnoringNullReferences()) {
+        m_boxFragments.removeIf([&](auto& entry) {
+            return !entry.value.root || entry.value.root.get() == &root;
+        });
+    }
+    if (!m_multiColumnFlowsPaintingColumnsFromFragments.isEmptyIgnoringNullReferences())
+        m_multiColumnFlowsPaintingColumnsFromFragments.remove(root);
+    auto boxesPaintedByColumn = Vector<CheckedRef<const RenderBox>> { };
+    for (auto& [box, fragments] : boxFragments) {
+        if (fragments.clonesDecorations || fragments.monolithicBoxFragmentainerPosition)
+            boxesPaintedByColumn.append(box);
+        m_boxFragments.set(box.get(), RootBoxFragments { root, WTF::move(fragments) });
+    }
+    if (!isColumnContent || !root.isRenderMultiColumnFlow() || boxesPaintedByColumn.isEmpty())
+        return;
+    m_multiColumnFlowsPaintingColumnsFromFragments.add(root);
+    for (auto& box : boxesPaintedByColumn) {
+        for (CheckedPtr ancestor = box->parent(); ancestor && ancestor != &root; ancestor = ancestor->parent()) {
+            CheckedPtr ancestorBox = dynamicDowncast<RenderBox>(*ancestor);
+            if (!ancestorBox)
+                continue;
+            auto addResult = m_boxFragments.add(*ancestorBox, RootBoxFragments { root, { } });
+            if (addResult.iterator->value.fragments.hasDescendantsPaintedByColumn)
+                break;
+            addResult.iterator->value.fragments.hasDescendantsPaintedByColumn = true;
+        }
+    }
+}
+
+bool LocalFrameViewLayoutContext::paintsColumnsFromFragments(const RenderBlockFlow& multiColumnFlow) const
+{
+    return !m_multiColumnFlowsPaintingColumnsFromFragments.isEmptyIgnoringNullReferences() && m_multiColumnFlowsPaintingColumnsFromFragments.contains(multiColumnFlow);
+}
+
+const LocalFrameViewLayoutContext::BoxFragments* LocalFrameViewLayoutContext::boxFragments(const RenderBox& box) const
+{
+    if (m_boxFragments.isEmptyIgnoringNullReferences())
+        return nullptr;
+    auto iterator = m_boxFragments.find(box);
+    if (iterator == m_boxFragments.end() || !iterator->value.root)
+        return nullptr;
+    return &iterator->value.fragments;
+}
+
 #ifndef NDEBUG
 void LocalFrameViewLayoutContext::checkLayoutState()
 {
@@ -1228,9 +1363,18 @@ ListItemOutsideMarkerScope::ListItemOutsideMarkerScope(LocalFrameViewLayoutConte
     layoutContext.m_listItemsWithOutsideMarker.append(listItem);
 }
 
+ListItemOutsideMarkerScope::ListItemOutsideMarkerScope(LocalFrameViewLayoutContext& layoutContext, const Vector<CheckedRef<RenderListItem>>& listItems)
+    : m_layoutContext(layoutContext)
+    , m_count(listItems.size())
+{
+    for (auto& listItem : listItems)
+        layoutContext.m_listItemsWithOutsideMarker.append(listItem.get());
+}
+
 ListItemOutsideMarkerScope::~ListItemOutsideMarkerScope()
 {
-    m_layoutContext->m_listItemsWithOutsideMarker.removeLast();
+    for (size_t index = 0; index < m_count; ++index)
+        m_layoutContext->m_listItemsWithOutsideMarker.removeLast();
 }
 
 } // namespace WebCore

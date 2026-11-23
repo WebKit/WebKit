@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.root { width: 300px; border: 1px solid; margin-bottom: 4px; display: flow-root; }
+.f { float: left; width: 40px; height: 20px; background: green; }
+.fr { float: right; width: 40px; height: 20px; background: green; }
+.av { overflow: hidden; height: 20px; background: blue; }
+</style>
+<div class=root><div style="margin-trim: block-start; border: 1px solid red;"><div class=f></div><div class=av style="margin-top: 15px;"></div><div class=av style="margin-top: 5px;"></div></div></div>
+<div class=root><div style="margin-trim: block-start; border: 1px solid red;"><div class=fr style="height: 40px;"></div><div class=av style="margin-top: 15px; width: 280px;"></div></div></div>
+<div class=root><div style="margin-trim: block; border: 1px solid red;"><div class=f></div><div style="clear: left; margin-top: 10px;">cleared</div><div style="margin-bottom: 9px;">last</div></div></div>
+<div class=root><div style="margin-trim: block-start; border: 1px solid red;"><div class=f style="height: 5px;"></div><div style="clear: left; margin-top: 30px;">cleared past its margin</div></div></div>
+<div class=root><div style="margin-trim: block-end; border: 1px solid red;"><div>text</div><div class=f></div><div class=av style="margin-bottom: 12px; width: 200px;"></div></div></div>
+<div class=root><div style="margin-trim: block-end; border: 1px solid red;"><div>text</div><div style="margin-bottom: 8px;"><div class=f style="height: 40px;"></div></div></div><div class=av>after an overhanging float</div></div>
+<div class=root style="margin-trim: block;"><div class=f></div><div class=av style="margin-top: 15px;"></div><div style="clear: left; margin-top: 10px;">cleared</div><div style="margin-bottom: 9px;"><div class=f style="height: 30px;"></div></div></div>
+<div class=root style="margin-trim: block-start;"><div><div class=f style="height: 8px;"></div><div style="clear: both; margin-top: 12px;">cleared in a child</div></div></div>
+<div class=root style="margin-trim: block-end;"><div>text</div><div style="margin-bottom: 6px;"><div style="margin-bottom: 4px;"><div class=f></div></div></div></div>
+<div class=root style="margin-trim: block-start;"><div class=f></div><span>inline <div class=av style="margin-top: 11px;"></div> after</span></div>
+<div class=root style="margin-trim: block-start;"><div><div class=f></div><table style="margin-top: 13px; background: orange;"><tr><td>table</td></tr></table></div></div>

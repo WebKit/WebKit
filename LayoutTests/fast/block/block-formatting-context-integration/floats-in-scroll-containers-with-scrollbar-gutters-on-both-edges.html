@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.s { width: 120px; height: 30px; border: 2px solid; padding: 3px; overflow: auto; scrollbar-gutter: stable both-edges; margin-bottom: 5px; }
+.f { width: 30px; height: 20px; background: orange; }
+.a { overflow: hidden; height: 5px; background: blue; }
+</style>
+<div class="s"><div class="f" style="float: right"></div><div class="a"></div></div>
+<div class="s" dir="rtl"><div class="f" style="float: left"></div><div class="a"></div></div>
+<div style="display: flow-root"><div class="s"><div class="f" style="float: right"></div><div class="a"></div></div></div>
+<div style="display: flow-root"><div class="s" dir="rtl"><div class="f" style="float: left"></div><div class="a"></div></div></div>
+<div style="display: flex; flex-direction: column; align-items: start"><div class="s"><div class="f" style="float: right"></div><div class="a"></div></div><div class="s" dir="rtl"><div class="f" style="float: left"></div><div class="a"></div></div></div>

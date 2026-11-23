@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 250px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 60px; background: orange; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><div class="left" id="shape"></div><div class="avoider">avoider beside a float that gets a shape</div></div>
+<div class="root"><div class="left" style="shape-outside: inset(0 0 40px 0)"></div><div class="avoider" id="width" style="width: 100px">avoider that gets too wide</div></div>
+<div class="root"><div class="left" style="shape-outside: inset(0 0 50px 0)"></div><div id="spacer" style="height: 0"></div><div class="avoider"><span id="text">short</span></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("shape").style.shapeOutside = "polygon(0 0, 100% 0, 0 100%)";
+document.getElementById("width").style.width = "220px";
+document.getElementById("spacer").style.height = "20px";
+document.getElementById("text").firstChild.data = "longer text in the avoider below the shape but beside the margin box";
+</script>

@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font-family: -apple-system; font-size: 20px; line-height: 2; }
+.c { line-clamp: 3; text-box-trim: trim-end; text-box-edge: text; border: 1px solid; width: 150px; margin-bottom: 4px; }
+</style>
+<div class=c>A<br>B<br>C<br>D</div>
+<div class=c><div>A<br>B<br>C<br>D</div></div>
+<div class=c><div style="padding-bottom: 6px">A<br>B<br>C<br>D</div></div>
+<div class=c><div style="border-bottom: 6px solid green"><div>A<br>B<br>C<br>D</div></div></div>
+<div class=c style="text-box-trim: none"><div style="text-box-trim: trim-end; padding-bottom: 6px">A<br>B<br>C<br>D</div></div>

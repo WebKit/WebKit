@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.c { background: rgba(255, 255, 0, 0.4); }
+p { margin: 6px 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l" id="taller"></div><div class="c" style="clear: both">below a float that grows</div></div>
+<div class="root"><div class="l"></div><div class="c" id="clear-added">clear added</div></div>
+<div class="root"><div class="l"></div><div class="c" id="clear-removed" style="clear: left">clear removed</div></div>
+<div class="root"><div class="l"></div><div class="c" id="margin" style="clear: both; margin-top: 10px">a margin that grows past the float</div></div>
+<div class="root"><p id="inserted-before">a float added before</p><div class="c" style="clear: both">this cleared block</div></div>
+<div class="root"><div class="l" id="removed"></div><div class="c" style="clear: both">a float removed</div></div>
+<div class="root"><div><div class="l" id="clearfix-float"></div><div style="clear: both"></div></div><p>after a clearfix whose float grows</p></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("taller").style.height = "60px";
+document.getElementById("clear-added").style.clear = "left";
+document.getElementById("clear-removed").style.clear = "none";
+document.getElementById("margin").style.marginTop = "40px";
+const added = document.createElement("div");
+added.className = "l";
+document.getElementById("inserted-before").after(added);
+document.getElementById("removed").remove();
+document.getElementById("clearfix-float").style.height = "50px";
+</script>

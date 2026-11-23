@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.r { aspect-ratio: 2; height: 100%; border: 2px solid blue; box-sizing: border-box; }
+.c { border: 2px solid green; margin-bottom: 4px; }
+</style>
+<div class=c id=g style="display: grid; height: 50px; justify-items: center"><div><div style="height: 80%"><div class=r></div></div></div></div>
+<div class=c id=f style="display: flex; height: 50px"><div><div style="height: 80%"><div class=r></div></div></div></div>
+<table class=c id=t style="height: 60px"><tr><td><div style="height: 80%"><div class=r></div></div></td></tr></table>
+<script>
+document.body.offsetHeight;
+document.getElementById("g").style.height = "30px";
+document.getElementById("f").style.height = "70px";
+document.getElementById("t").style.height = "40px";
+</script>

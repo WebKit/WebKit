@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+div { background-color: rgba(0, 128, 0, 0.3); }
+img { background-color: blue; display: block; }
+</style>
+<div style="height: 500px"></div>
+<div style="margin-top: 10px; border: 5px solid; padding: 7px"><div style="height: 30px"></div><div style="height: 60px; margin-top: 8px"></div></div>
+<img style="width: 50px; height: 100px; margin-top: 15px">
+<div style="height: 20px; break-before: page; margin-top: 12px"></div>
+<div style="height: 30px; break-after: page; margin-bottom: 9px"></div>
+<div style="height: 40px; margin-top: 6px"></div>
+<div style="height: 400px; border-bottom: 30px solid blue"></div>
+<div style="break-inside: avoid; height: 150px; margin-top: 11px"></div>
+<div style="padding-top: 10px; border-top: 4px solid"><div style="height: 200px"></div><img style="width: 20px; height: 300px; margin-top: 7px"></div>
+<div style="height: 700px; border: 3px solid red; padding: 9px"></div>
+<div style="height: 10px"></div>
+<div><img style="width: 30px; height: 590px"></div>
+<div style="height: 520px"></div>
+<div><div style="padding-left: 10px"><img style="width: 40px; height: 100px"></div></div>
+<div style="height: 50px"></div>
+<img style="width: 30px; height: 900px">
+<div style="height: 20px"></div>
+<div style="height: 300px"></div>
+<div style="border: 5px solid; padding: 10px"><div style="padding-bottom: 30px"><div style="height: 50px; margin-top: 20px"></div></div><div style="height: 250px"></div><div style="height: 30px"></div></div>
+<div style="height: 590px"></div>
+<div style="margin-top: 20px; height: 30px"></div>
+<div style="height: 570px"></div>
+<div style="height: 30px; margin-bottom: 40px"></div>
+<div style="height: 30px; margin-top: 40px"></div>
+<div style="height: 50px"></div>
+<div style="height: 740px; break-before: page"></div>
+<div style="border-top: 20px solid"><div><img style="width: 50px; height: 100px"></div></div>
+<div style="height: 740px; break-before: page"></div>
+<output style="display: block"><div style="height: 100px; border: 2px solid"></div></output>
+<div style="height: 300px; break-before: page"></div>
+<div style="break-inside: avoid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"><img style="width: 50px; height: 100px; border: 2px solid"></div>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.c { position: absolute; top: 0; width: 50px; height: 40px; }
+</style>
+<div class=c style="left: 0"><svg width="50" height="100%"><rect width="100%" height="100%" fill="green"/></svg></div>
+<div style="position: relative; height: 100px"><div class=c style="left: 60px"><svg width="50" height="100%"><rect width="100%" height="100%" fill="green"/></svg></div></div>
+<script>
+document.body.offsetHeight;
+for (const box of document.querySelectorAll('.c'))
+    box.style.height = '80px';
+</script>

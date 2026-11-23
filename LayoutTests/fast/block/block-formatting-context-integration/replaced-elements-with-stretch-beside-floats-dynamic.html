@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 150px; margin: 0 4px 4px 0; outline: 1px solid black; }
+.fl { float: left; width: 50px; height: 30px; background-color: gray; }
+canvas { display: block; background-color: green; border: 0; }
+.s { width: stretch; height: 20px; }
+.gone { display: none; }
+.initial .fl { width: 30px; }
+.initial .fl.gone { display: block; }
+.initial .cw { width: 120px; }
+.initial .m { margin-left: 40px; }
+.initial .t { height: 5px; }
+.initial .w { width: 30px; }
+.initial .h { height: 40px; }
+.initial .fill { width: -webkit-fill-available; }
+</style>
+<div class=initial id=cases>
+<div class=c><div class=fl></div><canvas width=1 height=1 class=s></canvas></div>
+<div class=c><div class="fl gone"></div><canvas width=1 height=1 class=s></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class="s m"></canvas></div>
+<div class=c><div class="fl t"></div><canvas width=2 height=1 style="width: stretch"></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class="s w"></canvas></div>
+<div class=c><div class=fl></div><canvas width=2 height=1 style="max-width: stretch" class=w></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 style="width: stretch" class=h></canvas></div>
+<div class=c><div class=fl></div><canvas width=1 height=1 class="s fill"></canvas></div>
+<div class="c cw"><div class=fl></div><canvas width=1 height=1 class=s></canvas></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

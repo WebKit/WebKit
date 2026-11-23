@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 220px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 50px; background: orange; }
+.right { float: right; width: 40px; height: 70px; background: tan; }
+</style>
+<div class="root"><div class="left"></div><fieldset><legend>Hello world</legend>Some fieldset content.</fieldset></div>
+<div class="root"><div class="left"></div><fieldset style="margin: 10px 0"><legend style="font-size: 20px">Tall legend</legend>content that wraps beside the float</fieldset></div>
+<div class="root"><div class="right"></div><div>text</div><fieldset style="width: 120px"><legend>fixed</legend>fixed width fieldset</fieldset></div>
+<div class="root"><div class="left"></div><div style="block-step-size: 30px; overflow: hidden; background: lightblue">block step beside the float with text that wraps</div><div>after</div></div>
+<div class="root"><div class="left"></div><div style="block-step-size: 25px; display: flow-root; margin-top: 5px; background: lightblue">step and margin</div></div>
+<div class="root"><div class="left" style="height: 20px"></div><div style="block-step-size: 40px; overflow: hidden; width: 200px; background: lightblue">too wide step box</div></div>
+<div class="root"><div class="left"></div><fieldset style="width: 200px"><legend>too wide</legend>below the float</fieldset></div>
+<div class="root"><div class="left"></div><div style="height: 10px"></div><fieldset style="margin-top: 5px"><legend style="margin-top: 15px">legend margin</legend>margins beside the float</fieldset></div>

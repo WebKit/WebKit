@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 110px; background: lightgray; font: 10px/12px monospace; }
+.s { width: 120px; height: 60px; border: 2px solid black; padding: 3px; background: lightblue; }
+.a { position: absolute; top: 5px; left: 60px; }
+</style>
+<div class="roots">
+<div class="root"><div class="s" style="overflow: auto"><span id="grows">x</span></div></div>
+<div class="root"><div class="s" style="overflow: auto"><span id="shrinks">x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x</span></div></div>
+<div class="root"><div class="s" style="overflow: auto; height: auto"><span id="widens">x</span></div></div>
+<div class="root"><div class="s a" style="overflow: auto"><div id="out-of-flow-grows">x</div></div></div>
+<div class="root"><div class="s" id="becomes-scroll" style="overflow: visible">a box that becomes a scroll container</div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("grows").firstChild.appendData(" x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x");
+document.getElementById("shrinks").firstChild.deleteData(1, 1000);
+document.getElementById("widens").firstChild.appendData("xxxxxxxxxxxxxxxxxxxxxxxx");
+document.getElementById("out-of-flow-grows").firstChild.appendData(" x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x");
+document.getElementById("becomes-scroll").style.overflow = "scroll";
+// The width right after the one layout that gives the out-of-flow box its scrollbar.
+document.getElementById("out-of-flow-grows").firstChild.appendData(" " + document.getElementById("out-of-flow-grows").offsetWidth);
+</script>

@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; }
+math { background: lightblue; }
+</style>
+<div class="root" id="resized">
+  <math display="block"><mn id="number">1</mn><mo>+</mo><mn>2</mn></math>
+  <math display="block" id="width"><mi>w</mi></math>
+  <math display="block"><mspace id="space" width="50px" height="10px" style="background: green"></mspace></math>
+  <math display="block"><mfrac><mi id="numerator">a</mi><mi>b</mi></mfrac></math>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "220px";
+document.getElementById("number").firstChild.data = "123456789";
+document.getElementById("width").style.width = "60px";
+document.getElementById("space").setAttribute("width", "260px");
+document.getElementById("numerator").firstChild.data = "a numerator";
+</script>

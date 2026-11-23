@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+html { overflow: hidden; }
+body { margin: 0; }
+.multicol { columns: 2; column-gap: 0; column-fill: auto; height: 600px; }
+.before { height: 50px; background: green; }
+.after { height: 50px; background: blue; }
+</style>
+<div class="multicol" id="multicol"><div class="before"></div></div>
+<script>
+// The frameset takes the size of the viewport, which the content before it leaves no room for in the first column.
+const frameset = document.createElement("frameset");
+frameset.rows = "100,*";
+frameset.cols = "100,*";
+frameset.innerHTML = "<frame><frame><frame><frame>";
+multicol.appendChild(frameset);
+const after = document.createElement("div");
+after.className = "after";
+multicol.appendChild(after);
+</script>

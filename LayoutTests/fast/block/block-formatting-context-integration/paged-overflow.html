@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.paged { width: 200px; height: 100px; border: 2px solid black; margin-bottom: 10px; }
+</style>
+<!-- A box with paged overflow makes columns of its content, which is not a nested block formatting context root's. -->
+<div class="paged" style="overflow-y: -webkit-paged-x">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia massa in lectus pretium vulputate. Curabitur viverra augue in leo faucibus congue. Vestibulum ligula neque.</div>
+<div class="paged" style="overflow-y: -webkit-paged-x"><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia massa in lectus pretium vulputate. Curabitur viverra augue in leo faucibus congue.</div></div>
+<div class="paged" style="overflow-y: -webkit-paged-y">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia massa in lectus pretium vulputate. Curabitur viverra augue in leo faucibus congue. Vestibulum ligula neque.</div>
+<div style="float: left; width: 210px"><div class="paged" style="overflow-y: -webkit-paged-x">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia massa in lectus.</div></div>

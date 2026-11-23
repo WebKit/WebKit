@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.outer { display: inline-block; vertical-align: top; columns: 2; column-gap: 10px; width: 300px; height: 100px; column-fill: auto; border: 1px solid; margin: 0 0 8px 8px; }
+.b { border: 1px solid blue; height: 30px; }
+</style>
+<div class=outer>
+<div style="display: flex"><div style="padding-top: 130px; flex: 1; border: 1px solid green"><table class=b><tr><td>x</td></tr></table></div></div>
+</div>
+<div class=outer>
+<div style="display: flex"><div style="padding-top: 160px; flex: 1; border: 1px solid green"><div class=b style="display: flex">x</div></div></div>
+</div>

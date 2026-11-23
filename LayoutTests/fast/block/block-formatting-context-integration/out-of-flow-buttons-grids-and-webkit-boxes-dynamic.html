@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 70px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.g { display: grid; grid-template-columns: 1fr 1fr; background: rgba(0, 128, 0, 0.6); }
+</style>
+<div class="roots">
+<div class="root"><button id="text" style="position: absolute; top: 10px; left: 10px">grows</button></div>
+<div class="root" id="resized"><div class="g" style="position: absolute; inset: 10px"><div>inset</div><div>grid</div></div></div>
+<div class="root"><div class="g" id="columns" style="position: absolute; top: 5px; left: 5px"><div>fits</div><div>its content</div></div></div>
+<div class="root"><div id="before" style="height: 10px"></div><div class="g" style="position: absolute"><div>static</div><div>position</div></div></div>
+<div class="root"><div id="orientation" style="display: -webkit-box; position: absolute; top: 5px; left: 5px; background: orange"><div>webkit</div><div>box</div></div></div>
+<div class="root"><div class="g" id="positioned"><div>becomes</div><div>absolute</div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "grows a lot longer";
+document.getElementById("resized").style.width = "150px";
+document.getElementById("columns").style.gridTemplateColumns = "50px 80px";
+document.getElementById("before").style.height = "30px";
+document.getElementById("orientation").style.webkitBoxOrient = "vertical";
+document.getElementById("positioned").style.position = "absolute";
+document.getElementById("positioned").style.top = "20px";
+</script>

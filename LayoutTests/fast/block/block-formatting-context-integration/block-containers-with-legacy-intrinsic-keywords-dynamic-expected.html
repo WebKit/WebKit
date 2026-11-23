@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.cb { width: 180px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; }
+.b { background-color: rgba(0, 128, 0, 0.4); }
+.c { display: inline-block; width: 40px; height: 10px; background-color: rgba(0, 0, 255, 0.4); }
+.f { float: left; width: 50px; height: 20px; background-color: orange; }
+.fr { float: right; width: 30px; height: 20px; background-color: orange; }
+.initial .cb { width: 150px; }
+.initial .c { width: 20px; }
+</style>
+<div class=initial id=cases>
+<div class=cb><div class=b style="width: intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="width: intrinsic"><div class=c></div> <div class=c></div> <div class=c></div> <div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="width: min-intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="width: 50px; min-width: intrinsic; margin-right: 20px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="width: 1000px; max-width: intrinsic; margin-left: 20px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="width: 10px; min-width: min-intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="width: 150px; max-width: min-intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="height: intrinsic"><div class=c></div><div style="width: 30px; height: 50%; min-height: 10px; background-color: blue"></div></div></div>
+<div class=cb><div class=b style="height: 5px; min-height: intrinsic"><div class=c></div> <div class=c></div> <div class=c></div> <div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="height: 100px; max-height: intrinsic"><div class=c></div></div></div>
+<div class=cb><div class=b style="height: min-intrinsic; padding: 5px; box-sizing: border-box"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class=b style="width: intrinsic; overflow: hidden"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=f></div><div class=b style="width: intrinsic; overflow: hidden"><div class=c></div> <div class=c></div> <div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=f></div><div class=b style="min-width: intrinsic; overflow: hidden"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class=b style="width: 50px; min-width: intrinsic; overflow: hidden"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class=b style="width: 1000px; max-width: intrinsic; overflow: hidden"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class=fr></div><div class=b style="max-width: intrinsic; overflow: hidden"><div class=c></div></div></div>
+<div class=cb><div class=b style="height: intrinsic"><div class=c style="display: block; margin-bottom: 20px"></div></div><div class=c></div></div>
+<div class=cb><div class=b style="height: intrinsic; margin: 10px 0"></div><div class=c></div></div>
+<div class=cb><div class=b style="width: intrinsic; margin: 0 auto"><div class=c></div></div></div>
+<div class=cb><div style="float: left; border: 1px solid blue"><div class=b style="width: intrinsic"><div class=c></div> <div class=c></div></div><div class=b style="width: min-intrinsic"><div class=c></div> <div class=c></div></div></div></div>
+<div class=cb><div class=b style="width: min-intrinsic; box-sizing: border-box; padding: 0 10px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb style="writing-mode: vertical-lr; width: auto; height: 120px"><div class=b style="width: intrinsic"><div class=c></div></div><div class=b style="width: min-intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="height: 30px; width: intrinsic; aspect-ratio: 2"></div></div>
+<div class=cb><div class=b style="width: intrinsic"><div class=c></div> <div class=c></div><div style="width: 50%; height: 10px; background-color: blue"></div></div></div>
+<div class=cb><div class=b style="width: min-content; min-width: intrinsic; margin-right: 30px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="width: intrinsic; max-width: 60px"><div class=c></div> <div class=c></div></div></div>
+<div class=cb style="width: 30px"><div class=b style="max-width: intrinsic; padding: 0 20px; height: 10px"></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

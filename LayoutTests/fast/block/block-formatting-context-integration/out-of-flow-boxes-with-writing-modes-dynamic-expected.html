@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; width: 120px; height: 90px; border: 1px solid; margin: 3px; display: inline-block; vertical-align: top; }
+.vrl { writing-mode: vertical-rl; }
+.a { position: absolute; background: lightblue; border: 2px solid blue; }
+</style>
+<div class="cb"><div class="a" id="mode" style="top: 5px; left: 20px; margin-top: 3px">becomes vertical</div></div>
+<div class="cb" id="size"><div class="a vrl" style="top: 5px; left: 20px; margin-top: 3px">containing block gets shorter</div></div>
+<div class="cb"><div class="a vrl" style="top: 5px; left: 20px; margin-top: 3px" id="text">text</div></div>
+<div class="cb"><div class="a vrl" id="insets" style="top: 5px; left: 20px; margin-top: 3px">insets change</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("mode").style.writingMode = "vertical-lr";
+document.getElementById("size").style.height = "50px";
+document.getElementById("text").firstChild.data = "longer text in the vertical box";
+document.getElementById("insets").style.bottom = "5px";
+document.getElementById("insets").style.right = "5px";
+</script>

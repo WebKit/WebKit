@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.c { position: relative; display: inline-block; vertical-align: top; width: 180px; height: 80px; border: 1px solid; margin: 0 4px 4px 0; }
+.a { position: absolute; width: 20px; height: 20px; background-color: green; }
+</style>
+<div class=c><table style="border: 1px solid"><tr><td>cell</td><div class=a></div></tr></table></div>
+<div class=c><table style="border: 1px solid"><div class=a></div><tr><td>cell</td></tr></table></div>
+<div class=c><table style="border: 3px solid; margin: 5px; padding: 4px; direction: rtl"><div class=a></div><tr><td>cell</td></tr></table></div>
+<div class=c><div style="display: -webkit-box; -webkit-box-orient: horizontal; direction: rtl; width: 150px; border: 1px solid"><div>a</div><div class=a></div><div>b</div></div></div>
+<div class=c><div style="display: -webkit-box; -webkit-box-orient: horizontal; direction: rtl; width: 150px; padding: 0 7px; border: 1px solid"><div>first</div><div class=a style="margin-right: 3px"></div><div>second</div></div></div>
+<div class=c><div style="display: -webkit-box; -webkit-box-orient: horizontal; writing-mode: vertical-rl; height: 60px; border: 1px solid"><div>a</div><div class=a></div></div></div>
+<div class=c><div style="display: -webkit-box; -webkit-box-orient: vertical; writing-mode: vertical-rl; height: 60px; border: 1px solid"><div>a</div><div class=a></div><div>b</div></div></div>
+<div class=c><math style="padding: 5px"><mrow><mi>x</mi><mspace class=a></mspace></mrow></math></div>
+<div class=c style="transform: translateX(0)"><div style="position: absolute; top: 10px; left: 15px; display: flex; padding: 5px; border: 2px solid"><span>x</span><div class=a style="position: fixed"></div></div></div>
+<div class=c style="transform: scale(1)"><div style="position: absolute; top: 20px; left: 30px; display: flex"><div style="position: relative; top: 5px; display: flex"><div class=a></div></div></div></div>
+<div class=c style="transform: scale(1)"><div style="position: absolute; top: 20px; left: 30px; display: table"><div style="display: table-cell">cell<div class=a style="position: fixed"></div></div></div></div>

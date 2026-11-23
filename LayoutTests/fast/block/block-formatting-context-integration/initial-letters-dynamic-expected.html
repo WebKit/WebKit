@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 16px/20px serif; }
+.root { display: inline-block; vertical-align: top; width: 200px; border: 1px solid; margin: 0 2px 4px 0; }
+p { margin: 0; }
+p::first-letter { -webkit-initial-letter: 3; color: green; }
+</style>
+<div class="root"><p id="first">A first paragraph long enough to go past its initial letter.</p><p>Second paragraph with its own initial letter and more text.</p></div>
+<div class="root"><p>One.</p><p id="margin">Second paragraph that moves down past the letter.</p></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("first").firstChild.data = "Short.";
+document.getElementById("margin").style.marginTop = "70px";
+</script>

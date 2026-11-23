@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; width: 120px; border: 1px solid; margin: 2px; float: left; }
+p { margin: 2px 0; background: lightblue; }
+</style>
+<body>
+<div class="clamp"><div><div id="grow">short</div><div>two</div><div>three</div></div></div>
+<div class="clamp"><div><p id="shrink">one two three four five six seven eight nine ten</p></div></div>
+<div class="clamp" id="more"><div>one</div><div>two</div><div>three</div><div>four</div></div>
+<div class="clamp" id="width"><div>text that wraps once the box gets narrower</div><div>after</div></div>
+<div class="clamp">start <span style="display: inline-block" id="inlineBlock">in</span> text text text text text text</div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><table><tr><td id="cell">cell</td></tr></table>after a table cell that wraps</div></div>
+<div class="clamp" id="none"><div>one two three four five six seven eight nine</div><div>after</div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div>before <span><div id="blockInInline">block</div> after</span> end end end end end end</div></div>
+<div class="clamp"><div><div style="overflow: hidden" id="nestedRoot">hidden</div><div>after the root</div></div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div id="beforeTable">one</div><div><table><tr><td>cell cell cell cell cell cell</td></tr></table></div>after</div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div id="beforeColumns">one</div><div><div style="column-count: 1">columns columns columns columns</div></div>after</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("grow").firstChild.data = "longer longer longer longer";
+document.getElementById("shrink").firstChild.data = "one two three four five";
+document.getElementById("more").style.webkitLineClamp = "3";
+document.getElementById("width").style.width = "70px";
+document.getElementById("inlineBlock").firstChild.data = "in in in in in in in in";
+document.getElementById("cell").firstChild.data = "cell cell cell cell cell cell cell";
+document.getElementById("none").style.webkitLineClamp = "none";
+document.getElementById("blockInInline").firstChild.data = "block block block block block block";
+document.getElementById("nestedRoot").firstChild.data = "hidden hidden hidden hidden hidden";
+document.getElementById("beforeTable").firstChild.data = "one two three four five";
+document.getElementById("beforeColumns").firstChild.data = "one two three four five";
+</script>

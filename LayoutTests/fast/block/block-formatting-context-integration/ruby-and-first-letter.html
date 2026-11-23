@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>body { font-family: monospace; font-size: 12px; } div { margin: 2px; border: 1px solid; width: 300px; }
+.fl::first-letter { color: green; font-size: 2em; }
+.fl2::first-letter { font-size: 3em; line-height: 1; padding: 2px; border: 1px solid blue; }
+.fl3::first-letter { vertical-align: top; font-size: 200%; }
+</style>
+<div><ruby>漢<rt>kan</rt>字<rt>ji</rt></ruby> text after ruby</div>
+<div>before <ruby>base<rt>annotation text that is long</rt></ruby> after</div>
+<div><ruby style="ruby-position: under">under<rt>below</rt></ruby> and <ruby>over<rp>(</rp><rt>above</rt><rp>)</rp></ruby></div>
+<div style="line-height: 30px"><ruby>tall<rt>line</rt></ruby> line height</div>
+<div><ruby><rb>a</rb><rb>b</rb><rt>x</rt><rt>y</rt></ruby> multiple bases</div>
+<div style="display: block ruby">block ruby<rt>annotation</rt></div>
+<div class="fl">first letter in a div</div>
+<div class="fl2">Big first letter that wraps over several lines in this narrow box of text</div>
+<div class="fl3">"Quoted first letter</div>
+<div class="fl"><span>first letter in a span</span></div>
+<div class="fl"><p>first letter in a paragraph</p><p>second</p></div>
+<div class="fl" dir="rtl">אות ראשונה</div>
+<div class="fl" style="writing-mode: vertical-lr; height: 120px; width: auto">vertical</div>
+<div class="fl"><ruby>ruby<rt>first</rt></ruby> letter</div>

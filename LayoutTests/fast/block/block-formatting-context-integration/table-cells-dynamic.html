@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font-family: monospace; font-size: 10px; line-height: 12px; }
+table { margin-bottom: 5px; border-spacing: 2px; background: lightgray; }
+td { background: silver; }
+</style>
+<table style="width: 300px"><tr><td id="grows">grows</td><td style="vertical-align: middle">middle</td><td style="vertical-align: bottom">bottom</td><td>baseline</td></tr></table>
+<table><tr><td><div id="margin" style="margin: 5px">margin</div></td><td>other</td></tr></table>
+<table id="resized" style="width: 300px"><tr><td>text that wraps once the table is narrower than it is now</td><td>x</td></tr></table>
+<table><tr><td id="alignment" style="height: 50px">changes its vertical alignment</td></tr></table>
+<table><tr><td><span>a<div id="block-level-box">block-level box</div>b</span></td></tr></table>
+<table style="border-collapse: collapse"><tr><td id="border" style="border: 1px solid">border</td><td style="border: 1px solid">x</td></tr></table>
+<table><tr><td id="inserted">start</td></tr></table>
+<script>
+document.body.offsetHeight;
+document.getElementById("grows").firstChild.data = "grows a lot so that this row gets taller";
+document.getElementById("margin").style.marginTop = "25px";
+document.getElementById("resized").style.width = "150px";
+document.getElementById("alignment").style.verticalAlign = "bottom";
+document.getElementById("block-level-box").style.marginBottom = "20px";
+document.getElementById("border").style.borderWidth = "5px";
+var block = document.createElement("div");
+block.appendChild(document.createTextNode("inserted block"));
+block.style.margin = "4px 0";
+document.getElementById("inserted").appendChild(block);
+document.body.offsetHeight;
+document.getElementById("alignment").style.verticalAlign = "middle";
+</script>

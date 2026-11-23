@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.cb { position: relative; width: 760px; height: 240px; border: 1px solid; }
+.abs { position: absolute; width: 140px; border: 3px solid gray; padding: 2px; }
+.fa { height: -webkit-fill-available; background: lightblue; }
+</style>
+<div class=cb id=cb>
+<div class=abs style="top: 5px; left: 5px;"><div class=fa>auto height, top inset only</div></div>
+<div class=abs style="top: 5px; left: 160px;"><div class=fa style="display: flex;"><div>leaf</div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cb").style.height = "150px";
+document.body.offsetHeight;
+</script>

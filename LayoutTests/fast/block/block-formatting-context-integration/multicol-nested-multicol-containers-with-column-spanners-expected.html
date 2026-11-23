@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; }
+.box { width: 100px; height: 100px; background-color: red; float: left; margin: 0 10px 10px 0; overflow: hidden; }
+.outer { columns: 2; column-fill: auto; column-gap: 0; height: 300px; }
+.inner { columns: 2; column-gap: 0; }
+.g { background-color: green; }
+.s { column-span: all; }
+</style>
+<div class=box><div class=outer><div class=g style="height: 50px"></div><div class=inner><div class=g style="height: 100px"></div><div class="g s" style="break-before: column; height: 100px"></div></div></div></div>
+<div class=box><div class=outer><div class=g style="height: 50px"></div><div class=inner><div class="g s" style="break-after: column; height: 50px"></div><div class=g style="height: 200px"></div></div></div></div>
+<div class=box><div class=outer><div class=g style="height: 50px"></div><div class=inner><div class=g style="height: 60px"></div><div class="g s" style="height: 25px"></div><div class=g style="height: 30px"></div></div></div></div>
+<div class=box><div class=outer style="height: 100px"><div class=g style="height: 50px"></div><div class=inner><div class=g style="height: 100px"></div><div class=g style="height: 100px"></div></div></div></div>

@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.outer { display: inline-block; vertical-align: top; columns: 2; column-gap: 10px; width: 400px; height: 120px; column-fill: auto; border: 1px solid black; margin: 0 0 8px 8px; }
+.inner { columns: 2; column-gap: 6px; border: 1px solid blue; width: 150px; float: left; margin: 2px; }
+.s { column-span: all; border: 1px solid green; }
+.b { border: 1px solid red; height: 30px; }
+</style>
+<div class="outer">
+<div class="b" style="height: 80px"></div>
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.<div class="s">spanner text</div>Ut enim ad minim veniam.</div>
+Some text beside the float that wraps around it and goes on for a while to fill the column.
+</div>
+<div class="outer">
+<div class="b" style="height: 50px"></div>
+<span>inline <div class="inner" style="float: right">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class="s">spanner</div>Ut enim.</div> content with a float in it that goes on.</span>
+</div>
+<div class="outer" style="direction: rtl">
+<div class="b" style="height: 60px"></div>
+<div class="inner" style="float: right">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.<div class="s">spanner</div>Ut enim ad minim veniam.</div>
+Some text beside the float.
+</div>
+<div class="outer">
+<div class="b" style="height: 70px"></div>
+<div class="inner" style="height: 90px; column-fill: auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div>
+<div class="b" style="clear: both"></div>
+</div>

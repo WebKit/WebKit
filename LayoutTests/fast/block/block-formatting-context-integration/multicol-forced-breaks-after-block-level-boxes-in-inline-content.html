@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.multicol { columns: 2; column-fill: auto; column-gap: 0; width: 200px; height: 60px; margin-bottom: 10px; line-height: 20px; }
+.block { height: 20px; background-color: green; }
+.inline-block { display: inline-block; width: 50px; height: 20px; background-color: blue; vertical-align: top; }
+</style>
+<div class=multicol><span><div class=block style="break-after: column"></div></span><span class=inline-block></span></div>
+<div class=multicol><span><div style="break-after: column"><div class=block></div></div></span><span class=inline-block></span></div>
+<div class=multicol><span><div><div class=block style="break-after: column"></div></div></span><span class=inline-block></span></div>
+<div class=multicol><span class=inline-block></span><span><div class=block style="break-after: column"></div></span><span class=inline-block></span></div>
+<div class=multicol><span class=inline-block></span><span><div class=block style="break-after: column"></div></span></div>

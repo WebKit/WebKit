@@ -40,15 +40,13 @@
 
 namespace WebCore {
 
-static bool hasTextBoxTrimEnd(const RenderBlock& blockContainer)
+bool LineClampUpdater::hasTextBoxTrimEnd(const RenderBlock& blockContainer)
 {
     auto textBoxTrim = blockContainer.style().textBoxTrim();
     return textBoxTrim == TextBoxTrim::TrimEnd || textBoxTrim == TextBoxTrim::TrimBoth;
 }
 
-// Whether the last line before the clamp point gets its block end trimmed when it is inside this block, given whether it would when
-// it is inside the parent.
-static bool shouldTrimEndAtClampPoint(const RenderBlock& blockContainer, bool parentShouldTrimEnd)
+bool LineClampUpdater::shouldTrimEndAtClampPoint(const RenderBlock& blockContainer, bool parentShouldTrimEnd)
 {
     // "trim-end: For block containers and column boxes: trim the block-end side of the last formatted line to the specified metric
     // of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders, there is no effect."
@@ -77,7 +75,16 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     // https://drafts.csswg.org/css-overflow-4/#continue
     if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(blockContainer); blockFlow && blockFlow->multiColumnFlow())
         maximumLinesForBlockContainer = { };
-    if (blockContainer.isFieldset() || (layoutState->legacyLineClamp() && blockContainer.isNonReplacedAtomicInlineLevelBox()) || blockContainer.isFloatingOrOutOfFlowPositioned()) {
+    // In the content of a -webkit-box with -webkit-line-clamp, max-lines only clamps a line-clamp container, whose content is an independent
+    // formatting context the -webkit-box does not count the lines of: "Only line boxes in the same block formatting context are counted."
+    // On any other box it does nothing, and the -webkit-box counts the box's lines (https://drafts.csswg.org/css-overflow-4/#max-lines).
+    auto isLineClampContainerInLegacyLineClamp = false;
+    if (maximumLinesForBlockContainer && layoutState->legacyLineClamp() && m_blockContainer->style().overflowContinue() != OverflowContinue::WebkitLegacy) {
+        isLineClampContainerInLegacyLineClamp = shouldDiscardOverflow(m_blockContainer);
+        if (!isLineClampContainerInLegacyLineClamp)
+            maximumLinesForBlockContainer = { };
+    }
+    if (blockContainer.isFieldset() || (layoutState->legacyLineClamp() && blockContainer.isNonReplacedAtomicInlineLevelBox()) || isLineClampContainerInLegacyLineClamp || blockContainer.isFloatingOrOutOfFlowPositioned()) {
         // Legacy line clamp does not cross into the interior of an atomic inline-level box.
         layoutState->setLineClamp({ });
 
@@ -159,6 +166,36 @@ LineClampUpdater::~LineClampUpdater()
         lineCount = blockFlow->lineCount();
     auto hasConstrainedTextWrapContent = m_previousLineClamp->hasConstrainedTextWrapContent || lineClamp->hasConstrainedTextWrapContent;
     layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow, m_previousLineClamp->clampAfterBox, m_previousLineClamp->isStableTextWrap, hasConstrainedTextWrapContent, m_previousLineClamp->shouldTrimEndAtClampPoint });
+}
+
+bool LineClampUpdater::contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContainer)
+{
+    // The block ellipsis goes on the last formatted line of the block with the clamped line.
+    CheckedPtr<const RenderBlockFlow> blockWithClampedLine;
+    for (CheckedPtr<const RenderObject> descendant = &lineClampContainer; descendant; descendant = descendant->nextInPreOrder(&lineClampContainer)) {
+        auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
+        if (blockFlow && blockFlow->childrenInline() && blockFlow->inlineLayout() && blockFlow->inlineLayout()->hasEllipsisInBlockDirectionOnLastFormattedLine()) {
+            blockWithClampedLine = blockFlow;
+            break;
+        }
+    }
+    if (!blockWithClampedLine || !blockWithClampedLine->inlineLayout()->contentFitsWithinMaximumLines())
+        return false;
+    for (CheckedPtr<const RenderObject> renderer = blockWithClampedLine; renderer && renderer != &lineClampContainer; renderer = renderer->parent()) {
+        CheckedPtr parent = renderer->parent();
+        if (parent->isInlineBox())
+            continue;
+        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*parent); blockFlow && blockFlow->childrenInline()) {
+            if (!blockFlow->inlineLayout() || !blockFlow->inlineLayout()->contentFitsWithinMaximumLines())
+                return false;
+            continue;
+        }
+        // "A point between two in-flow block-level sibling boxes in the line-clamp container's block formatting context."
+        // https://drafts.csswg.org/css-overflow-4/#line-clamp-containers
+        if (renderer->nextInFlowSibling())
+            return false;
+    }
+    return true;
 }
 
 bool LineClampUpdater::isAutoLineClampRoot() const

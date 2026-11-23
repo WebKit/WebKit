@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.root { width: 300px; border: 1px solid; margin-bottom: 4px; }
+.cv { content-visibility: hidden; border: 2px solid blue; padding: 3px; margin: 5px 0; }
+.visible { content-visibility: visible; }
+</style>
+<div class=root>
+  <div class=cv id=revealed><span id=text>short</span><div style="float: left; width: 30px; height: 30px; background: green;"></div><div id=block>block</div></div>
+  <div>after</div>
+  <div class="cv visible" id=hidden>gets hidden<br>two</div>
+  <div>after</div>
+  <div class="cv visible" style="overflow: auto; height: 50px;" id=hidden-scroll-container>a scroll container that gets hidden<div style="height: 200px;"></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "content that changed while it was hidden, on more lines";
+document.getElementById("block").style.marginTop = "7px";
+document.body.offsetHeight;
+document.getElementById("revealed").classList.add("visible");
+document.getElementById("hidden").classList.remove("visible");
+document.getElementById("hidden-scroll-container").classList.remove("visible");
+document.body.offsetHeight;
+</script>

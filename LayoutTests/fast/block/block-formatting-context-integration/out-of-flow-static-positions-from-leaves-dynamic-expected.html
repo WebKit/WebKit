@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.c { position: relative; display: inline-block; vertical-align: top; width: 180px; height: 80px; border: 1px solid; margin: 0 4px 4px 0; }
+.a { position: absolute; width: 20px; height: 20px; background-color: green; }
+.initial .m { top: 40px !important; left: 60px !important; }
+.initial .w { width: 60px !important; }
+</style>
+<div class=initial id=cases>
+<div class=c style="transform: translateX(0)"><div class=m style="position: absolute; top: 10px; left: 15px; display: flex; padding: 5px; border: 2px solid"><span>x</span><div class=a style="position: fixed"></div></div></div>
+<div class=c style="transform: scale(1)"><div class=m style="position: absolute; top: 20px; left: 30px; display: flex"><div style="position: relative; top: 5px; display: flex"><div class=a></div></div></div></div>
+<div class=c><div class=w style="display: -webkit-box; -webkit-box-orient: horizontal; direction: rtl; width: 150px; border: 1px solid"><div>first</div><div class=a></div><div>second</div></div></div>
+<div class=c><table class=m style="position: relative; top: 5px; left: 5px; border: 3px solid"><div class=a></div><tr><td>cell</td></tr></table></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

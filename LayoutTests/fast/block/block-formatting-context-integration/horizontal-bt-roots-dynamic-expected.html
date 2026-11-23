@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 180px; margin: 0 4px 4px 0; border: solid black; border-width: 4px 1px 9px; padding: 2px 0 6px; position: relative; }
+.bt { writing-mode: horizontal-bt; }
+.b { background-color: rgba(0, 128, 0, 0.4); margin: 6px 0 4px; }
+.initial .p { padding-bottom: 20px; }
+.initial .f { height: 10px; }
+.initial .w { width: 60px; }
+.initial .gone { display: none; }
+</style>
+<div class=initial id=cases>
+<div class="c bt p">padding change<div class=b>block</div></div>
+<div class="c bt"><div class=f style="float: left; width: 40px; height: 50px; background-color: gray"></div>text beside the float in bt mode</div>
+<div class=c><div class="bt w" style="position: absolute; top: 5px; width: 120px; border-bottom: 7px solid">oof bt that wraps text</div></div>
+<div class="c bt">one<div class="b gone">gone</div>two</div>
+<div class="c bt"><span id=t>text</span><div class=b>block</div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.getElementById("t").firstChild.data = "longer text that wraps onto another line";
+document.body.offsetHeight;
+</script>

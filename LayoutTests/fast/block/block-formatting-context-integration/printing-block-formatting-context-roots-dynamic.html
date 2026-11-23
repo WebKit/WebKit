@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+p { margin: 0; line-height: 30px; }
+.r { overflow: hidden; border: 2px solid; padding: 3px; }
+.b { border-left: 4px solid; height: 60px; }
+.f { float: left; width: 50px; border: 2px solid; }
+img { display: block; width: 50px; border: 2px solid; }
+.initial .h { height: 5px !important; }
+.initial .t { height: 300px !important; }
+</style>
+<div class=initial id=cases>
+<div style="height: 700px"></div><div class=r><div class="b h"></div><div class=b></div><div class=b></div><div class=b></div></div><div class=b></div>
+<div style="height: 700px; break-before: page"></div><div class=r><p id=text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p></div><div class=b></div>
+<div style="height: 700px; break-before: page"></div><div class=r style="padding: 0; border: 0"><img class=h style="height: 150px"></div>
+<div style="height: 700px; break-before: page"></div><div class=r><div class="b t"></div></div><div class=b></div>
+<div style="height: 700px; break-before: page"></div><div class=r><div class=b></div><div class=b></div><div class="b h" style="break-before: page"></div><div class=b></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.getElementById("text").firstChild.appendData("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ");
+</script>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

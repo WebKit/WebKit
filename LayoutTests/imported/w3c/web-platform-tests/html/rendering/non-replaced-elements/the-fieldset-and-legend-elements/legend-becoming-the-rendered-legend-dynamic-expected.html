@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Reference</title>
+<style>
+body { font: 12px/14px monospace; }
+fieldset { width: 300px; margin: 0 0 6px 0; }
+.fl { float: left; width: 100px; height: 40px; background-color: gray; }
+.p { background-color: orange; }
+</style>
+<fieldset><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset><legend style="float: right">a floating legend</legend><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset style="position: relative"><legend style="position: absolute; bottom: 0; right: 0">an absolute legend</legend><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset><legend>new</legend><div class=fl></div><legend class=p>some text in a legend that stops being the rendered legend when another one goes before it</legend></fieldset>

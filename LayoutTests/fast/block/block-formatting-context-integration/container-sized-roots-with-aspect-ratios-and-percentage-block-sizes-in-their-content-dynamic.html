@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.a { aspect-ratio: 1; }
+.r { aspect-ratio: 2; height: 100%; border: 2px solid blue; box-sizing: border-box; }
+.r > div { width: 20px; height: 5px; }
+.c { border: 2px solid green; margin-bottom: 4px; vertical-align: top; }
+</style>
+<div class=c style="display: inline-grid"><div class=a><div class=r><div></div></div></div></div>
+<div class=c id=rows style="display: inline-grid; grid-template-rows: 30px"><div class=a><div class=r><div></div></div></div></div>
+<div class=c id=height style="display: grid; height: 30px; width: max-content"><div class=a><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-flex; flex-direction: column; height: 30px"><div class=a style="align-self: start"><div class=r><div></div></div></div></div>
+<div class=c style="display: inline-grid"><div class=a style="align-self: stretch"><div class=r><div></div></div></div></div>
+<div class=c id=stretchedRows style="display: inline-grid; grid-template-rows: 30px"><div class=a style="align-self: stretch"><div class=r><div></div></div></div></div>
+<div class=c id=stretchedHeight style="display: grid; height: 50px; width: max-content"><div class=a style="align-self: stretch"><div class=r><div></div></div></div></div>
+<div class=c id=flexHeight style="display: inline-flex; height: 30px"><div class=a><div class=r><div></div></div></div></div>
+<script>
+document.body.offsetHeight;
+for (const content of document.querySelectorAll(".r > div")) {
+    for (let i = 0; i < 4; ++i) {
+        content.style.minWidth = (i % 2 ? 0 : 1) + "px";
+        document.body.offsetHeight;
+    }
+}
+document.getElementById("rows").style.gridTemplateRows = "40px";
+document.getElementById("height").style.height = "40px";
+document.getElementById("stretchedRows").style.gridTemplateRows = "40px";
+document.getElementById("stretchedHeight").style.height = "40px";
+document.getElementById("flexHeight").style.height = "40px";
+</script>

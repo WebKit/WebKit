@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; }
+.scroller { width: 100px; height: 50px; overflow: hidden; white-space: nowrap; font-size: 0; }
+.scroller > div { display: inline-block; width: 100px; height: 50px; }
+</style>
+<div class=scroller><div style="background-color: green"></div><div style="background-color: blue"></div><div style="background-color: green"></div></div>
+<div class=scroller style="position: absolute; top: 0; left: 120px"><div style="background-color: green"></div><div style="background-color: blue"></div><div style="background-color: green"></div></div>
+<div>text</div>
+<script>
+for (const scroller of document.querySelectorAll('.scroller'))
+    scroller.scrollLeft = 110;
+</script>

@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.x { border: 1px solid; }
+</style>
+<div class=mc><div style="height: 60px"></div><div style="display: flex"><div class=x>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div class=x style="width: 30px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div></div>
+<div class=mc><div style="height: 60px"></div><div style="display: grid; grid-template-columns: 40px 40px"><div class=x>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div class=x>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div></div>
+<div class=mc><div style="position: relative; height: 10px"><div class=x style="position: absolute; top: 60px; width: 80px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>
+<div class=mc><div style="height: 60px"></div><div style="display: flex"><div class=x><div style="float: left; width: 20px; height: 20px; background-color: green"></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div>
+<div class=mc><div style="height: 40px"></div><div style="display: flex"><div class=x style="position: relative; width: 90px; height: 20px"><div style="position: absolute; top: 40px; border: 1px solid blue">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div></div></div>
+<div class=mc><ul style="margin: 0"><li>Lorem ipsum</li></ul><div style="height: 98px"></div><div class=x style="display: flow-root">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>

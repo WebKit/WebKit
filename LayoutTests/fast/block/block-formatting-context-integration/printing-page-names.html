@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.x { border: 1px solid; width: 100px; height: 20px; }
+</style>
+<div class=x style="page: a"></div>
+<div class=x style="page: a; border-color: green"></div>
+<div class=x style="page: b; border-color: blue"></div>
+<div><div class=x style="border-color: orange"></div><div class=x style="page: c; border-color: purple"></div></div>
+<div style="page: c"><div class=x style="border-color: red"></div></div>
+<div class=x style="page: d; height: 40px"><div style="page: d">d</div></div>
+<div style="page: e"><div class=x></div>text</div>
+<div class=x style="page: e; display: flow-root; border-color: green"></div>
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>

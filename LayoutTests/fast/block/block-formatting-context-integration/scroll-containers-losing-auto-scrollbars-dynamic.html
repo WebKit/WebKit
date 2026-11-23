@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.scroller { overflow: auto; width: 75px; height: 75px; background: green; }
+.content { width: 100px; height: 100px; }
+</style>
+<!-- The scroll size of a scroll container whose auto scrollbars went away follows its new client size. -->
+<div class="scroller" id="scroller"><div class="content"></div></div>
+<div id="result"></div>
+<script>
+scroller.offsetWidth;
+scroller.style.width = "125px";
+scroller.style.height = "125px";
+scroller.offsetWidth;
+result.textContent = scroller.scrollWidth + " " + scroller.scrollHeight + " " + scroller.clientWidth + " " + scroller.clientHeight;
+</script>

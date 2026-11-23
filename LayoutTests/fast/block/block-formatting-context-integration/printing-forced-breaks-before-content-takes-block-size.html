@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true dumpCSSPageBoxes=true ] -->
+<style>
+@page { size: 400px 200px; margin: 0; }
+body { margin: 0; line-height: 20px; }
+.zero { height: 0; }
+</style>
+<!-- A forced break has nothing to separate where no content took block size in the page yet: not after zero-height boxes at its top. -->
+<div style="page: a">a</div>
+<div class="zero" style="page: b">b</div>
+<div class="zero" style="page: c; padding-left: 2em">c</div>
+<div style="page: d; padding-left: 4em">d</div>
+<div style="break-before: page">e</div>
+<div class="zero" style="break-before: page; padding-left: 2em">f</div>
+<div style="break-before: page; padding-left: 4em">g</div>
+<div style="break-before: page; border-top: 2px solid blue">h</div>

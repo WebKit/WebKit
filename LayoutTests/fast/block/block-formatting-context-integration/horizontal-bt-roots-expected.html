@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 180px; margin: 0 4px 4px 0; border: solid black; border-width: 4px 1px 9px; padding: 2px 0 6px; position: relative; }
+.bt { writing-mode: horizontal-bt; }
+.b { background-color: rgba(0, 128, 0, 0.4); margin: 6px 0 4px; }
+</style>
+<div class="c bt">text in the root</div>
+<div class="c bt"><div class=b>block one</div><div class=b>block two</div></div>
+<div class="c bt" style="height: 110px"><div class=b>fixed height root</div>text after</div>
+<div class="c bt"><div style="float: left; width: 50px; height: 40px; background-color: gray"></div>text beside the float that wraps around it</div>
+<div class="c bt"><div class=b style="margin-top: 20px"><div class=b style="margin-top: 15px">nested collapsing</div></div></div>
+<div class="c bt" style="height: 90px"><div style="position: absolute; top: 5px; left: 5px; width: 30px; height: 30px; background-color: green"></div><div style="position: absolute; bottom: 5px; right: 5px; width: 20px; height: 20px; background-color: blue"></div>text</div>
+<div class="c bt" style="height: 90px">a<div style="position: absolute; width: 30px; height: 30px; background-color: orange"></div>b</div>
+<div class="c bt"><span>inline <span style="border: 2px solid red; padding: 3px">box</span> text</span><div class=b>block in content</div></div>
+<div class="c bt"><div class=b style="display: flow-root; height: 30px">flow root</div><div class=b style="overflow: hidden">overflow hidden that wraps text in it</div></div>
+<div class="c bt"><div style="float: right; width: 40px; height: 30px; background-color: gray"></div><div class=b style="overflow: hidden">avoider</div><div style="clear: both" class=b>cleared</div></div>
+<div class="c bt" style="direction: rtl"><div class=b>rtl block</div>rtl text</div>
+<div class="c bt"><div class=b style="writing-mode: horizontal-tb">horizontal-tb inside</div><div class=b style="writing-mode: vertical-rl; height: 50px">vertical inside</div></div>
+<div class="c bt" style="overflow: auto; height: 60px"><div class=b>scroll a</div><div class=b>scroll b</div><div class=b>scroll c</div><div class=b>scroll d</div></div>
+<div class=c><div class=bt style="position: absolute; top: 5px; left: 5px; border: solid; border-width: 3px 1px 8px; padding: 2px 0 5px">oof bt text</div></div>
+<div class=c><div class="bt b" style="display: flow-root; border-top: 6px solid; padding-bottom: 5px">nested bt root<div class=b>child</div></div></div>
+<div class="c bt"><span>in <div class=b style="margin: 10px 0 5px">block in inline</div>after</span></div>
+<div class="c bt" style="line-clamp: 2">one<br>two<br>three<br>four</div>
+<div class="c bt"><div class=b style="display: inline-block; border-bottom: 6px solid; padding-top: 4px">inline block<br>two lines</div> after</div>

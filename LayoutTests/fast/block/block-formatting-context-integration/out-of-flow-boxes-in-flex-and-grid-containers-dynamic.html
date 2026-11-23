@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 70px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.f { display: flex; justify-content: center; height: 40px; padding: 5px; background: silver; }
+.g { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; background: silver; }
+.a { position: absolute; background: rgba(0, 128, 0, 0.6); }
+</style>
+<div class="roots">
+<div class="root" id="resized"><div class="f"><div class="a" style="top: 5px; left: 10%">inset</div></div></div>
+<div class="root"><div class="f"><div class="a" id="text" style="top: 5px; left: 5px">text</div></div></div>
+<div class="root"><div class="g" id="padding"><div>a</div><div class="a">static position</div></div></div>
+<div class="root"><div id="before" style="height: 10px"></div><div class="g"><div class="a">moves with the grid</div></div></div>
+<div class="root"><div class="f"><div class="a" id="insets" style="top: 5px; left: 5px">loses its inset and gets it back</div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "150px";
+document.getElementById("text").firstChild.data = "text that got longer";
+document.getElementById("padding").style.paddingTop = "15px";
+document.getElementById("before").style.height = "30px";
+document.getElementById("insets").style.left = "auto";
+document.body.offsetHeight;
+document.getElementById("insets").style.left = "20px";
+</script>

@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; padding-top: 50px; }
+.cb { position: relative; width: 170px; height: 40px; border: 1px solid; margin: 4px; display: inline-block; vertical-align: top; }
+.p { width: 70px; margin-left: 40px; height: 30px; border-left: 5px solid silver; border-right: 7px solid silver; padding: 0 3px 0 9px; }
+.s { position: absolute; background: lightblue; width: 40px; height: 20px; }
+.fit { width: auto; white-space: nowrap; }
+</style>
+<div class="cb"><div class="p"><div class="s" style="justify-self: start">st</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: center">ce</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: end">en</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: right">ri</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: self-end; direction: rtl">se</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: anchor-center">ac</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: last baseline">lb</div></div></div>
+<div class="cb"><div class="p" style="justify-items: center"><div class="s">items</div></div></div>
+<div class="cb"><div class="p" style="direction: rtl"><div class="s" style="justify-self: start">rtl st</div></div></div>
+<div class="cb"><div class="p" style="direction: rtl"><div class="s" style="justify-self: center">rtl ce</div></div></div>
+<div class="cb"><div class="p" style="direction: rtl"><div class="s" style="justify-self: end">rtl en</div></div></div>
+<div class="cb" style="direction: rtl"><div class="p" style="direction: ltr"><div class="s" style="justify-self: end">ltr en</div></div></div>
+<div class="cb" style="direction: rtl"><div class="p"><div class="s" style="justify-self: center">rtl cb</div></div></div>
+<div class="cb"><div class="p"><div class="s fit" style="justify-self: center">a fit-content box</div></div></div>
+<div class="cb"><div class="p"><div class="s fit" style="justify-self: end">fit-content at end</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: center; width: stretch">stretch</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: end; margin: 0 auto">auto margins</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: end; margin-right: 10px">margin</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: center; width: 220px">overflowing</div></div></div>
+<div class="cb"><div class="p" style="direction: rtl"><div class="s" style="justify-self: end; width: 220px">rtl overflowing</div></div></div>
+<div class="cb"><div class="p" style="direction: rtl"><div class="s" style="justify-self: unsafe end; width: 220px">unsafe</div></div></div>
+<div class="cb" style="writing-mode: vertical-lr; width: 40px; height: 180px"><div class="p" style="width: auto; height: 80px; margin: 40px 0 0 0"><div class="s" style="justify-self: end; width: 20px; height: 40px">v</div></div></div>
+<div class="cb"><div class="p">text <span class="s" style="justify-self: end">inline</span></div></div>
+<div class="cb"><div class="p" style="direction: rtl">text <span class="s" style="justify-self: end">rtl inline</span></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: end; writing-mode: vertical-lr; width: 20px; height: 30px">v</div></div></div>
+<div class="cb"><div class="p" style="writing-mode: vertical-lr; width: auto; height: 30px"><div class="s" style="justify-self: end; writing-mode: horizontal-tb">orth</div></div></div>
+<div class="cb"><div class="p"><div class="s" style="justify-self: center; position: fixed; top: 0">fixed</div></div></div>
+<div class="cb"><div class="p"><div popover="manual" class="s" style="justify-self: end; inset: auto; top: 25px; margin: 0; border: 0; padding: 0">popover</div></div></div>
+<script>
+for (const popover of document.querySelectorAll("[popover]"))
+    popover.showPopover();
+</script>

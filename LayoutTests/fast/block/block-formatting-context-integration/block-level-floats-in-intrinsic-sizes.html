@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; vertical-align: top; margin: 0 10px 10px 0; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.h { overflow: hidden; width: 50px; height: 20px; background: rgba(255, 0, 255, 0.3); }
+.t { width: auto; height: auto; }
+p { margin: 0; }
+</style>
+<div class="root"><p>x</p><div class="l"></div><div class="r"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="l" style="clear: left; width: 60px"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="r"></div><div class="l" style="clear: both; width: 20px"></div></div>
+<div class="root"><div class="l"></div><div class="r"></div><p>a block</p></div>
+<div class="root"><p>x</p><div class="l"></div><div class="h"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="h" style="margin-left: 20px"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="h" style="margin-left: 60px"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="h" style="width: 30px"></div><div class="r"></div><div class="h" style="width: 30px; margin-right: 70px"></div></div>
+<div class="root"><p>x</p><div class="l"></div>inline text beside it</div>
+<div class="root"><div><div class="l"></div><p>x</p></div><div class="l" style="width: 60px"></div></div>
+<div class="root"><p>x</p><div class="l t">float text</div><div class="l t" style="padding: 0 4px; border: 2px solid">more</div></div>
+<div class="root"><p>x</p><div class="l t" style="width: max-content">max-content</div><div class="r t" style="width: min-content">min-content float</div></div>
+<div class="root"><p>x</p><div class="l" style="margin: 0 5px"></div><div class="r" style="margin-left: calc(4px + 10%)"></div></div>
+<div class="root" style="width: min-content"><p>x</p><div class="l"></div><div class="l" style="width: 80px"></div></div>
+<div class="root" dir="rtl"><p>x</p><div class="l"></div><div class="h" style="margin-right: 20px; margin-left: 10px"></div></div>
+<div class="root" dir="rtl"><div><p>x</p><div class="l"></div><div class="h" style="margin-right: 20px; margin-left: 10px"></div></div></div>
+<div style="width: 300px"><div style="width: fit-content; background: lightgray"><p>x</p><div class="l"></div><div class="r"></div></div></div>

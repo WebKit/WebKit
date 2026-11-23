@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.cb { width: 180px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; }
+.b { background-color: rgba(0, 128, 0, 0.4); }
+.x { display: flex; flex-wrap: wrap; column-gap: 4px; }
+.c { display: inline-block; width: 40px; height: 10px; background-color: rgba(0, 0, 255, 0.4); }
+.f { float: left; width: 50px; height: 20px; background-color: orange; }
+canvas { display: block; background-color: rgba(0, 128, 0, 0.4); border: 2px solid green; }
+.initial .cb { width: 150px; }
+.initial .c { width: 20px; }
+</style>
+<div class=initial id=cases>
+<div class=cb><div class="b x" style="width: intrinsic"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class="b x" style="width: intrinsic"><div class=c></div><div class=c></div><div class=c></div><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class="b x" style="width: min-intrinsic"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class="b x" style="width: 50px; min-width: intrinsic; margin-right: 20px"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class="b x" style="width: 1000px; max-width: intrinsic; margin-left: 20px"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class="b x" style="width: 10px; min-width: min-intrinsic"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class="b x" style="width: 150px; max-width: min-intrinsic"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class="b x" style="width: intrinsic"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class="b x" style="width: intrinsic"><div class=c></div><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class="b x" style="min-width: intrinsic"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class="b x" style="width: 50px; min-width: intrinsic"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class="b x" style="width: 1000px; max-width: intrinsic"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class="b x" style="min-width: min-intrinsic; max-width: 20px"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class="b x" style="width: intrinsic; margin: 0 auto"><div class=c></div></div></div>
+<div class=cb><div class=b style="display: grid; grid-template-columns: auto auto; width: intrinsic"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class=b style="display: grid; grid-auto-flow: column; width: min-intrinsic"><div class=c></div><div class=c></div></div></div>
+<div class=cb><div class=b style="display: table; width: intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="display: table; width: min-intrinsic"><div class=c></div> <div class=c></div></div></div>
+<div class=cb><div class=b style="display: table; width: 50px; min-width: intrinsic"><div class=c></div></div></div>
+<div class=cb><div class=f></div><div class=b style="display: table; width: 1000px; max-width: intrinsic"><div class=c></div></div></div>
+<div class=cb><canvas width=60 height=20 style="width: intrinsic"></canvas></div>
+<div class=cb><canvas width=60 height=20 style="width: min-intrinsic"></canvas></div>
+<div class=cb><canvas width=60 height=20 style="min-width: intrinsic"></canvas></div>
+<div class=cb><canvas width=60 height=20 style="width: 1000px; max-width: intrinsic; margin-left: 10px"></canvas></div>
+<div class=cb><canvas width=60 height=20 style="height: 10px; width: intrinsic"></canvas></div>
+<div class=cb><div class=f></div><canvas width=60 height=20 style="width: intrinsic"></canvas></div>
+<div class=cb><svg style="display: block; width: intrinsic; background-color: rgba(0, 128, 0, 0.4)" viewBox="0 0 40 10"></svg></div>
+<div class=cb><div style="float: left; border: 1px solid blue"><div class="b x" style="width: intrinsic"><div class=c></div><div class=c></div></div><canvas width=60 height=20 style="width: min-intrinsic"></canvas></div></div>
+<div class=cb><button style="display: block; width: intrinsic"><div class=c></div></button></div>
+<div class=cb><div class="b x" style="height: intrinsic"><div class=c></div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

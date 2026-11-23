@@ -1,0 +1,17 @@
+<style>
+.columns {
+    columns: 2;
+    column-gap: 0;
+    column-fill: auto;
+    width: 400px;
+    height: 100px;
+    line-height: 20px;
+}
+.content {
+    line-clamp: 6 no-ellipsis;
+    widows: 4;
+    background-color: green;
+}
+</style>
+<!-- Avoiding the widow in the second column lays out the content again from the block-level box, with the same line-clamp as the first layout. -->
+<div class=columns><div class=content>1<br>2<br><span><div>3</div></span>4<br>5<br>6<br>7<br>8</div></div>

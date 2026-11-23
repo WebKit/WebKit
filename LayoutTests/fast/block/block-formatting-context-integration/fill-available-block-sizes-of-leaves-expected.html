@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.root { width: 300px; height: 120px; border: 1px solid; margin-bottom: 4px; display: inline-block; vertical-align: top; padding: 3px; }
+.leaf { background: lightblue; border: 2px solid blue; padding: 2px; margin: 4px 0; }
+</style>
+<div class=root><div style="display: flex; height: -webkit-fill-available;" class=leaf><div>flex</div></div></div>
+<div class=root><div style="height: 50%;"><div style="display: grid; min-height: -webkit-fill-available;" class=leaf><div>grid in a percentage parent</div></div></div></div>
+<div class=root><table style="height: -webkit-fill-available;" class=leaf><tr><td>table</td></tr></table></div>
+<div class=root><div style="display: flex; max-height: -webkit-fill-available; height: 400px;" class=leaf><div>capped</div></div></div>
+<div class=root style="height: auto; aspect-ratio: 4;"><div style="height: -webkit-fill-available; background: lightblue;">block container in a box with an aspect ratio</div></div>
+<div class=root style="height: auto; aspect-ratio: 4;"><div style="display: flex; height: -webkit-fill-available;" class=leaf><div>leaf in a box with an aspect ratio</div></div></div>

@@ -80,6 +80,31 @@ RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutSt
     computePaginationInformation(layoutStateStack, renderer, pageLogicalHeight, pageLogicalHeightChanged);
 }
 
+RenderLayoutState::RenderLayoutState(const RenderLayoutState& ancestor, RenderBox& blockContainer, LayoutSize layoutOffset, RenderBlockFlow& lineGrid, LayoutSize lineGridOffset)
+    : m_clipped(ancestor.isClipped())
+    , m_isPaginated(ancestor.isPaginated())
+    , m_pageLogicalHeightChanged(ancestor.pageLogicalHeightChanged())
+    , m_lineGrid(lineGrid)
+    , m_clipRect(ancestor.clipRect())
+    , m_paintOffset(layoutOffset)
+    , m_layoutOffset(layoutOffset)
+    , m_layoutDeltaForRepaint(ancestor.layoutDelta())
+    , m_pageLogicalHeight(ancestor.pageLogicalHeight())
+    , m_pageOffset(ancestor.pageOffset())
+    , m_lineGridOffset(lineGridOffset)
+    , m_lineClamp(ancestor.m_lineClamp)
+    , m_legacyLineClamp(ancestor.m_legacyLineClamp)
+#if ASSERT_ENABLED
+    , m_renderer(&blockContainer)
+#endif
+{
+    UNUSED_PARAM(blockContainer);
+#if ASSERT_ENABLED
+    m_layoutDeltaForRepaintXSaturated = ancestor.m_layoutDeltaForRepaintXSaturated;
+    m_layoutDeltaForRepaintYSaturated = ancestor.m_layoutDeltaForRepaintYSaturated;
+#endif
+}
+
 void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, RenderBox& renderer, LayoutSize offset)
 {
     bool fixed = renderer.isFixedPositioned();
@@ -153,7 +178,8 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
         m_pageOffset = ancestor->pageOffset();
 
         // Disable pagination for objects we don't support. For now this includes overflow:scroll/auto, inline blocks and writing mode roots.
-        if (renderer.isUnsplittableForPagination()) {
+        // Nor for boxes the block formatting context keeps whole.
+        if (renderer.isUnsplittableForPagination() || renderer.view().frameView().layoutContext().isMonolithicBox(renderer)) {
             m_pageLogicalHeight = 0;
             m_isPaginated = false;
         } else
@@ -290,6 +316,24 @@ LayoutStateMaintainer::~LayoutStateMaintainer()
     m_context.popLayoutState();
     if (m_paintOffsetCacheIsDisabled)
         m_context.enablePaintOffsetCache();
+}
+
+LineGridLayoutStateMaintainer::LineGridLayoutStateMaintainer(LocalFrameViewLayoutContext& context)
+    : m_context(context)
+{
+}
+
+void LineGridLayoutStateMaintainer::push(RenderBox& blockContainer, LayoutSize layoutOffset, RenderBlockFlow& lineGrid, LayoutSize lineGridOffset)
+{
+    ASSERT(m_context.layoutState());
+    m_context.m_layoutStateStack.append(makeUnique<RenderLayoutState>(*m_context.layoutState(), blockContainer, layoutOffset, lineGrid, lineGridOffset));
+    ++m_pushedLayoutStateCount;
+}
+
+LineGridLayoutStateMaintainer::~LineGridLayoutStateMaintainer()
+{
+    for (; m_pushedLayoutStateCount; --m_pushedLayoutStateCount)
+        m_context.popLayoutState();
 }
 
 LayoutStateDisabler::LayoutStateDisabler(LocalFrameViewLayoutContext& context)

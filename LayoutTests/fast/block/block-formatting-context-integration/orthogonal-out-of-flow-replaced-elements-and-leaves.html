@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.cb { position: relative; width: 300px; height: 120px; border: 1px solid; margin-bottom: 4px; display: inline-block; vertical-align: top; }
+img, canvas { background: green; }
+.v { writing-mode: vertical-rl; position: absolute; background: lightblue; }
+</style>
+<div class=cb><canvas width=40 height=20 style="position: absolute; writing-mode: vertical-rl; top: 5px; left: 5px;"></canvas><canvas width=40 height=20 style="position: absolute; writing-mode: vertical-rl; bottom: 5px; right: 5px; margin: 3px 7px 2px 1px;"></canvas><canvas width=40 height=20 style="position: absolute; writing-mode: vertical-lr; width: 30%; left: 100px; top: 10px;"></canvas></div>
+<div class=cb style="writing-mode: vertical-rl; width: 120px; height: 200px;"><canvas width=40 height=20 style="position: absolute; writing-mode: horizontal-tb; top: 5px; left: 5px;"></canvas><canvas width=40 height=20 style="position: absolute; writing-mode: horizontal-tb;"></canvas></div>
+<div class=cb>text <canvas width=40 height=20 style="position: absolute; writing-mode: vertical-rl;"></canvas> static</div>
+<div class=cb><div class=v style="display: flex; top: 5px; left: 5px;"><div>flex item one</div><div>two</div></div><div class=v style="display: grid; top: 5px; left: 80px; height: 60px;"><div>grid item text</div></div><table class=v style="top: 5px; left: 150px;"><tr><td>table cell</td></tr></table><div class=v style="display: flex; bottom: 0; right: 0; top: 0;"><div>stretched flex</div></div></div>

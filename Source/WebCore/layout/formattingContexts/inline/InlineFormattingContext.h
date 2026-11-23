@@ -45,6 +45,7 @@ struct InlineLayoutResult {
     InlineDisplay::Content displayContent;
     enum class Range : uint8_t {
         Full, // Display content represents the complete inline content -result of full layout
+        FromBreak, // Display content continues the display content of the fragmentainers before, from the line a break token starts at
         FullFromDamage, // Display content represents part of the inline content starting from damaged line until the end of inline content -result of partial layout with continuous damage all the way to the end of the inline content
         PartialFromDamage // Display content represents part of the inline content starting from damaged line until damage stops -result of partial layout with damage that does not cover the entire inline content
     };
@@ -56,6 +57,15 @@ struct InlineLayoutResult {
         bool contentFitsWithinMaximumLines { false }; // Without the (eagerly placed) block ellipsis, this inline content would fit within max-lines lines.
     };
     LineClamp lineClamp;
+    // The content continues in the next fragmentainer from here.
+    std::optional<InlineBreakToken> breakToken;
+    // The out-of-flow boxes whose static position is on a line of the display content (InlineDisplayContentBuilder::setGeometryForOutOfFlowBoxes),
+    // and the index of that line, which a fragmentainer may move them with.
+    struct OutOfFlowBoxLine {
+        CheckedRef<const Box> box;
+        size_t lineIndex { 0 };
+    };
+    Vector<OutOfFlowBoxLine> outOfFlowBoxLines;
 
     WTF_MAKE_TZONE_ALLOCATED(InlineLayoutResult);
 };
@@ -65,10 +75,13 @@ struct InlineLayoutResult {
 class InlineFormattingContext {
     WTF_MAKE_TZONE_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, const BlockLayoutState& parentBlockLayoutState, PlacedFloats&);
+    // The block formatting context the content is in lays out the block-level boxes in it, and adds them to the result it is building.
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, const BlockLayoutState& parentBlockLayoutState, PlacedFloats&, BlockFormattingContext&, BlockLayoutResult&);
 
     // Nullptr signals that there was no actual inline content to lay out and no lines were generated.
-    std::unique_ptr<InlineLayoutResult> layout(const ConstraintsForInlineContent&, InlineDamage* = nullptr);
+    // From where the content stopped in the fragmentainer before, when there is a break token.
+    std::unique_ptr<InlineLayoutResult> layout(const ConstraintsForInlineContent&, InlineDamage* = nullptr, const InlineBreakToken* = nullptr);
 
     std::pair<LayoutUnit, LayoutUnit> minimumMaximumContentSize(InlineDamage* = nullptr);
     LayoutUnit minimumContentSize(InlineDamage* = nullptr);
@@ -90,8 +103,16 @@ public:
 
     const IntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
 
+    // A float that does not fit in the fragmentainer goes to the start of the next one, and so do the floats after it, while the lines go
+    // on: floats break apart from the content beside them (css-break-3 §2.1).
+    bool pushesFloat(const Box&, const BoxGeometry&, std::optional<bool> isBreakBeforeFloatContent) const;
+    void pushFloat(PlacedFloats::Item&& floatItem) { m_pushedFloats.append(WTF::move(floatItem)); }
+    PlacedFloats::List takePushedFloats() { return std::exchange(m_pushedFloats, { }); }
+
 private:
-    UniqueRef<InlineLayoutResult> lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage*, bool mayUseSimplifiedDisplayContentBuild = false);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, const BlockLayoutState& parentBlockLayoutState, PlacedFloats&, IntegrationUtils&&);
+
+    UniqueRef<InlineLayoutResult> lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage*, bool mayUseSimplifiedDisplayContentBuild = false, bool isResumingAfterBreak = false);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&);
 
     void collectContentIfNeeded();
@@ -115,6 +136,8 @@ private:
     const IntegrationUtils m_integrationUtils;
     InlineContentCache& m_inlineContentCache;
     InlineLayoutState m_inlineLayoutState;
+    std::optional<ConstraintsForInlineContent::FragmentainerEnd> m_fragmentainerEnd;
+    PlacedFloats::List m_pushedFloats;
 };
 
 }

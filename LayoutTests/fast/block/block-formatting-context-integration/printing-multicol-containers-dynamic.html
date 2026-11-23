@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+p { margin: 0; line-height: 30px; }
+.n { columns: 2; column-gap: 20px; border: 2px solid; }
+.r { display: flow-root; border: 2px solid; padding: 3px; }
+.b { border-left: 4px solid; height: 60px; }
+.s { column-span: all; line-height: 30px; background-color: lightgray; }
+.initial .h { height: 5px !important; }
+.initial .t { height: 300px !important; }
+</style>
+<div class=initial id=cases>
+<div style="height: 600px"></div><div class="b h" style="height: 150px"></div><div class=n><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p></div><div class=b></div>
+<div style="height: 650px; break-before: page"></div><div class=n><p id=text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p></div><div class=b></div>
+<div style="height: 650px; break-before: page"></div><div class=n><div class="b t" style="height: 20px"></div></div><div class=b></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.getElementById("text").firstChild.appendData("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ");
+</script>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

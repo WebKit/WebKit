@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.multicol { columns: 2; column-gap: 0; width: 400px; line-height: 20px; margin-bottom: 10px; }
+.line { display: inline-block; width: 150px; height: 20px; background-color: green; vertical-align: top; }
+.short { display: inline-block; width: 50px; height: 20px; background-color: green; vertical-align: top; }
+fieldset { float: left; width: 200px; margin: 0; padding: 0; border: 0; background-color: blue; }
+fieldset > span { display: inline-block; width: 100px; height: 20px; background-color: orange; vertical-align: top; }
+</style>
+<div class=multicol style="column-fill: auto; height: 100px">
+    <span class=line></span> <span class=line></span> <span class=short></span> <fieldset><span></span> <span></span> <span></span> <span></span></fieldset>
+    <span class=line></span> <span class=line></span>
+</div>
+<div class=multicol>
+    <span class=line></span> <span class=line></span> <span class=line></span> <span class=short></span> <fieldset><span></span> <span></span> <span></span></fieldset>
+    <span class=line></span> <span class=line></span> <span class=line></span> <span class=line></span> <span class=line></span>
+</div>

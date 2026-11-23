@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.g { height: 150px; width: 250px; border: 1px solid; margin-bottom: 4px; display: inline-block; vertical-align: top; }
+.s { background: lightblue; border: 2px solid blue; padding: 2px; }
+.s2 { background: lightblue; border: 2px solid blue; padding: 2px; }
+</style>
+<div class=g id=grandparent><div><div class=s style="height: stretch;">past an auto parent</div></div></div>
+<div class=g><div id=parent><div class=s style="height: stretch;">parent gets a height</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("grandparent").style.height = "100px";
+document.getElementById("parent").style.height = "60px";
+document.body.offsetHeight;
+</script>

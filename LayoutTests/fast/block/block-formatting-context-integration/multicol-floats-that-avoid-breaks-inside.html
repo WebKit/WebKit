@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 180px; height: 120px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; float: left; margin: 0 6px 6px 0; }
+.f { float: left; width: 50px; background-color: rgba(0, 128, 0, 0.3); }
+.r { float: right; width: 40px; background-color: rgba(0, 0, 255, 0.3); }
+</style>
+<div class=mc><div style="height: 60px"></div><div class=f style="break-inside: avoid">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 60px"></div><div class=f style="break-inside: avoid-column">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 60px"></div><div class=f style="break-inside: avoid-page">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 60px"></div><div class=f style="break-inside: avoid">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 60px"></div><div class=f style="break-inside: avoid"><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div style="margin-top: 6px">a</div></div><div class=r style="height: 20px"></div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 60px"></div><div class=r style="break-inside: avoid; width: 60px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div class=f style="height: 20px"></div><div style="clear: left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>
+<div class=mc><div style="height: 80px"></div><div class=f style="break-inside: avoid; border: 2px solid; padding: 2px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div>

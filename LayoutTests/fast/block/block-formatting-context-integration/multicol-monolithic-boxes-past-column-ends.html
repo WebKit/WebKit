@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; column-fill: auto; width: 110px; height: 60px; border: 1px solid black; float: left; margin: 0 60px 40px 0; }
+.t { display: block; width: 30px; height: 80px; background-color: green; }
+.o { width: 40px; height: 10px; background-color: orange; }
+.s { width: 50px; height: 20px; background-color: blue; }
+.b { background-color: rgba(0, 0, 255, 0.3); }
+.sc { contain: size; height: 70px; border: 1px solid red; }
+.sv { overflow: auto; height: 80px; background-color: purple; }
+</style>
+<div class=mc><canvas class=t></canvas><div class=o></div></div>
+<div class=mc><div class=s></div><canvas class=t></canvas><div class=o></div></div>
+<div class=mc><canvas class=t></canvas><div class=o style="margin-top: -20px"></div><div class=o style="margin-top: 10px"></div></div>
+<div class=mc><div class=b><canvas class=t></canvas></div><div class=o></div></div>
+<div class=mc><div class=s></div><div class=sc>Lorem ipsum dolor sit amet, consectetur adipiscing</div></div>
+<div class=mc><div class=sv></div><div class=o></div></div>

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font: 10px/12px monospace; }
+.mc { columns: 3; column-gap: 6px; width: 300px; border: 1px solid; margin-bottom: 6px; }
+.s { column-span: all; border: 1px solid blue; }
+</style>
+<div class=mc>Lorem ipsum dolor sit amet <div style="overflow: hidden">before <div class=s style="column-span: none">spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div>before <div class=s>spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="contain: layout">before <div class=s style="column-span: none">spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="width: 90px">before <div class=s>spanner</div> after</div> consectetur adipiscing elit</div>

@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 380px; height: 100px; column-fill: auto; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.x { border: 1px solid red; height: 30px; }
+img { display: block; width: 30px; height: 20px; background-color: green; }
+.initial .h { height: 5px !important; }
+</style>
+<div class=initial id=cases>
+<div class=mc><img class=h style="height: 40px"><div class=x>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div><img><img></div>
+<div class=mc><img style="height: 40px"><div class=x id=text>Lorem ipsum dolor sit amet, consectetur </div><img><img></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.getElementById("text").firstChild.appendData(" Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ");
+</script>

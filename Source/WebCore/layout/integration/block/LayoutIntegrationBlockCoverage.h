@@ -1,0 +1,87 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/CheckedPtr.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
+#include <wtf/text/ASCIILiteral.h>
+
+namespace WebCore {
+
+class RenderBlock;
+class RenderBlockFlow;
+class RenderBox;
+class RenderView;
+
+namespace LayoutIntegration {
+
+bool canUseForBlockLayout(const RenderBlockFlow&);
+bool canUseForIntrinsicInlineSizes(const RenderBlockFlow&);
+// Whether the intrinsic inline sizes of a flex or grid item or a table cell depend on the block size its container gives it, which the render
+// tree learns from the percentage height descendants its layout registers (BlockLayout::invalidateIntrinsicInlineSizesIfPercentageBasisChanged).
+bool intrinsicInlineSizesDependOnContainerGivenBlockSize(const RenderBlockFlow&);
+// Whether the block formatting context a block formatting context root is in lays out its content, instead of laying it out through the
+// render tree.
+bool canUseForNestedBlockLayout(const RenderBlockFlow&);
+// Whether the block formatting context a float is in lays out its content in fragmented content, as a block formatting context of its own
+// (BlockFormattingContext::handleFloat), where the render tree lays it out otherwise.
+bool canUseForFloatContentLayout(const RenderBlockFlow&);
+// A table, a flex container (-webkit-box included), a grid container or a MathML box, which the render tree lays out with code of its own.
+bool isLaidOutByOwnRenderTreeLayout(const RenderBox&);
+// The walk of every block formatting context a root is nested in walks the content of the root, and asks again whether the root's content can
+// be laid out with it, which walks that content too, so the walks double with each level of nesting. While a scope is alive, the first scope
+// keeps the answers, which hold while the render tree does not change: during one check, or one layout of a root.
+class NestedBlockLayoutCoverageScope {
+    WTF_MAKE_NONCOPYABLE(NestedBlockLayoutCoverageScope);
+public:
+    NestedBlockLayoutCoverageScope();
+    ~NestedBlockLayoutCoverageScope();
+
+private:
+    std::optional<SingleThreadWeakHashMap<const RenderBlockFlow, bool>> m_canUseForNestedBlockLayout;
+};
+// The root of the block formatting context, laid out by the new block formatting context, that the block container is in or is the root of. It
+// lays out the out-of-flow boxes whose containing block is the block container.
+CheckedPtr<RenderBlockFlow> coveredBlockFormattingContextRoot(RenderBlock&);
+
+struct BlockLayoutCoverage {
+    unsigned coveredBoxes { 0 };
+    unsigned boxes { 0 };
+    // The boxes it does not lay out, by why the root of their block formatting context stays on the render tree path, most boxes first.
+    Vector<std::pair<ASCIILiteral, unsigned>> uncoveredBoxes;
+    // The area of the block formatting contexts it lays out: the border box of each root, without the ones of the roots of the block
+    // formatting contexts inside it.
+    double coveredArea { 0 };
+    double area { 0 };
+
+    bool operator==(const BlockLayoutCoverage&) const = default;
+};
+BlockLayoutCoverage computeBlockLayoutCoverage(const RenderView&);
+
+} // namespace LayoutIntegration
+} // namespace WebCore

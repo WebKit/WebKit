@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.h { overflow: hidden; background: rgba(255, 0, 255, 0.3); }
+table { border-spacing: 0; background: rgba(255, 128, 0, 0.4); }
+td { padding: 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l"></div><div class="h" style="margin-left: 10%; margin-right: 5%">percentages under the float</div></div>
+<div class="root"><div class="l"></div><div class="h" style="margin-left: 30%">a percentage past the float</div></div>
+<div class="root"><div class="l"></div><div class="r"></div><div class="h" style="margin-left: 30%">between floats</div></div>
+<div class="root"><div class="r"></div><div class="h" style="width: 50px; margin-left: auto; margin-right: 10%">auto</div></div>
+<div class="root"><div class="l"></div><div class="h" style="width: 100px; margin: 0 auto 0 30%">auto end margin</div></div>
+<div class="root"><div class="l"></div><table style="margin: 0 10%"><tr><td>a table with percentage margins and text that wraps</td></tr></table></div>
+<div class="root"><div class="r"></div><table style="margin: 0 10% 0 auto"><tr><td>a table</td></tr></table></div>
+<div class="root"><div class="l"></div><div class="h" style="width: 150px; margin-left: 10%">too wide with its margin</div></div>
+<div class="root"><div class="l"></div><div class="h" id="used-margins" style="width: 80px; margin: 0 10% 0 auto">used margins </div></div>
+</div>
+<script>
+const usedMarginsStyle = getComputedStyle(document.getElementById("used-margins"));
+document.getElementById("used-margins").firstChild.appendData(usedMarginsStyle.marginLeft + " " + usedMarginsStyle.marginRight);
+</script>

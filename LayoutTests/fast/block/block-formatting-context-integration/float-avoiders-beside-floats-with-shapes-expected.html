@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 250px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 60px; background: orange; }
+.right { float: right; width: 60px; height: 60px; background: tan; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><div class="left"></div><div class="avoider">avoider beside a triangle</div></div>
+<div class="root"><div class="left"></div><div class="avoider">avoider beside a small circle</div></div>
+<div class="root"><div class="left"></div><div style="height: 20px"></div><div class="avoider">avoider below the shape but beside the margin box</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="width: 220px">too wide avoider</div></div>
+<div class="root"><div class="right"></div><div class="avoider" style="width: 100px; margin: 0 auto">auto margins</div></div>
+<div class="root"><div class="left" style="margin-right: 20px"></div><div class="right"></div><div class="avoider">avoider between two shapes</div></div>
+<div class="root"><div class="left"></div><table style="background: lightgreen"><tr><td>table beside the shape</td></tr></table></div>
+<div class="root"><div class="left"></div><span>inline <div style="height: 20px"></div><div class="avoider">avoider in inline content</div></span></div>

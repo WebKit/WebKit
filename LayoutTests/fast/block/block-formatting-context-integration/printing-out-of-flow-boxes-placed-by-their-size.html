@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.cb { position: relative; border-left: 4px solid orange; }
+.p { break-before: page; }
+.a { position: absolute; left: 10px; width: 100px; border-left: 8px solid blue; }
+.g { border-left: 16px solid green; height: 20px; }
+img { display: block; width: 30px; height: 40px; border-left: 16px solid green; }
+</style>
+<div class=cb style="height: 1200px"><div class=a style="bottom: 0"><div class=g></div></div></div>
+<div class="cb p" style="height: 1000px"><div class=a style="top: 0; bottom: 0; align-self: center"><div class=g></div><div class=g></div></div></div>
+<div class="cb p" style="height: 1500px"><div class=a style="bottom: 0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></div>
+<div class="cb p" style="height: 820px"><div class=a style="bottom: 0"><img></div></div>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; }
+math { background: lightblue; }
+</style>
+<div class="root">
+  <math display="block"><mi>x</mi><mo>=</mo><mfrac><mrow><mo>-</mo><mi>b</mi></mrow><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></math>
+  <math display="block" style="margin: 6px 20px; padding: 4px; border: 2px solid"><msqrt><mi>a</mi><mo>+</mo><mi>b</mi></msqrt></math>
+  <math display="block" style="width: 120px"><munderover><mo>&#x2211;</mo><mi>i</mi><mi>n</mi></munderover><mi>i</mi></math>
+  <math display="block"><mspace width="400px" height="10px" style="background: green"></mspace></math>
+  <math display="block"><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd></mtr></mtable></math>
+  <div style="margin-top: 10px"><math display="block" style="margin-top: 20px"><mi>collapsing</mi></math></div>
+</div>
+<div class="root" dir="rtl"><math display="block"><mi>a</mi><mo>&lt;</mo><mi>b</mi></math><math display="block" style="width: 100px"><mn>12</mn></math></div>
+<div class="root"><mrow style="display: block; background: orange" xmlns="http://www.w3.org/1998/Math/MathML"><mi>r</mi><mi>o</mi><mi>w</mi></mrow></div>

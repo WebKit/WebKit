@@ -45,6 +45,8 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationBlockCoverage.h"
+#include "LayoutIntegrationBlockLayout.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LayoutScope.h"
@@ -216,8 +218,12 @@ void RenderBlock::styleWillChange(Style::Difference diff, const Style::ComputedS
 {
     const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     setBlockLevelReplacedOrAtomicInline(newStyle.display().isInlineType());
-    if (oldStyle) {
-        if (isLegend() && oldStyle->floating() == Float::None && newStyle.floating() != Float::None)
+    if (oldStyle && isLegend()) {
+        if (!isFloatingOrOutOfFlowPositioned() && (newStyle.floating() != Float::None || newStyle.hasOutOfFlowPosition())) {
+            if (CheckedPtr fieldset = dynamicDowncast<RenderBlock>(parent()); fieldset && fieldset->isFieldset() && fieldset->findFieldsetLegend() == this)
+                fieldset->setLegendsAfterRenderedLegendNeedLayout(*this);
+        }
+        if (oldStyle->floating() == Float::None && newStyle.floating() != Float::None)
             setIsExcludedFromNormalLayout(false);
     }
     RenderBox::styleWillChange(diff, newStyle);
@@ -790,8 +796,13 @@ bool RenderBlock::simplifiedLayout()
     // relative positioned container. So if we can have fixed pos objects in our positioned objects list check if any of them
     // are statically positioned and thus need to move with their absolute ancestors.
     bool canContainFixedPosObjects = canContainFixedPositionObjects();
-    if (outOfFlowChildNeedsLayout() || canContainFixedPosObjects)
-        layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects ? FixedPositionObjectsOnly::Yes : FixedPositionObjectsOnly::No);
+    if (outOfFlowChildNeedsLayout() || canContainFixedPosObjects) {
+        // The block formatting context lays out the out-of-flow boxes whose containing block it lays out.
+        if (CheckedPtr root = outOfFlowBoxes() ? LayoutIntegration::coveredBlockFormattingContextRoot(*this) : nullptr)
+            LayoutIntegration::BlockLayout { *root }.layoutOutOfFlowBoxes(*this, RelayoutChildren::No);
+        else
+            layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects ? FixedPositionObjectsOnly::Yes : FixedPositionObjectsOnly::No);
+    }
     addOverflowFromOutOfFlowBoxes();
 
     // Transform-origin depends on box size. When simplified layout doesn't change our
@@ -1890,7 +1901,7 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
                 continue;
             auto childLogicalBottom = logicalTopForChild(childBox) + logicalHeightForChild(childBox);
             if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(childBox))
-                childLogicalBottom = std::max(childLogicalBottom, blockFlow->lowestFloatLogicalBottom());
+                childLogicalBottom = std::max(childLogicalBottom, blockFlow->lowestFloatLogicalBottomIncludingFloatsPlacedByBlockFormattingContext());
             // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
             if (pointInLogicalContents.y() < childLogicalBottom || (boxesIncludeBlockEndEdge && pointInLogicalContents.y() == childLogicalBottom))
                 return positionForPointRespectingEditingBoundaries(*this, childBox, pointInContents, source);
@@ -2673,7 +2684,7 @@ bool RenderBlock::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() con
             return true;
     }
 
-    if (isGridItem() && gridAreaContentLogicalHeight())
+    if (isGridItem() && overridingContainingBlockContentLogicalHeight())
         return true;
 
     if (isFlexItem()) {
@@ -2903,6 +2914,15 @@ RenderBox* RenderBlock::findFieldsetLegend(FieldsetFindLegendOption option) cons
         }
     }
     return { };
+}
+
+void RenderBlock::setLegendsAfterRenderedLegendNeedLayout(const RenderBox& renderedLegend)
+{
+    ASSERT(isFieldset());
+    for (CheckedPtr sibling = renderedLegend.nextSiblingBox(); sibling; sibling = sibling->nextSiblingBox()) {
+        if (sibling->isLegend())
+            sibling->setNeedsLayout();
+    }
 }
 
 void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)

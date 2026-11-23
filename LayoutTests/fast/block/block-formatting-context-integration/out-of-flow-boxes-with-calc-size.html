@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.cb { position: relative; width: 180px; height: 80px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; }
+.a { position: absolute; background-color: rgba(0, 128, 0, 0.4); }
+.w { width: 50px; height: 20px; background-color: rgba(0, 0, 255, 0.4); }
+</style>
+<div class=cb><div class=a style="width: calc-size(auto, size / 2)"><div class=w></div></div></div>
+<div class=cb><div class=a style="left: 0; right: 0; width: calc-size(auto, size / 2)"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: calc-size(max-content, size + 10px)"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: calc-size(min-content, size * 2)"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: calc-size(stretch, size - 40px)"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: calc-size(100px, size + 10%)"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: calc-size(auto, size * 2)"><div class=w></div></div></div>
+<div class=cb><div class=a style="top: 0; bottom: 0; height: calc-size(auto, size / 2)"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: calc-size(stretch, size - 30px)"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: calc-size(50%, size + 10px)"><div class=w></div></div></div>
+<div class=cb><div class=a style="min-height: calc-size(auto, size + 30px)"><div class=w></div></div></div>
+<div class=cb><div class=a style="height: calc-size(auto, size * 3); max-height: 50px"><div class=w></div></div></div>
+<div class=cb><div class=a style="width: 10px; min-width: calc-size(max-content, size + 40px)"><div class=w></div></div></div>
+<div class=cb><div class=a style="aspect-ratio: 2; width: 100px; height: calc-size(auto, size + 20px)"></div></div>
+<div class=cb><div class=a style="top: 0; bottom: 0; height: calc-size(auto, size - 20px); margin: auto 0"><div class=w></div></div></div>
+<div class=cb><div class=a style="writing-mode: vertical-rl; width: calc-size(auto, size * 2)"><div class=w></div></div></div>
+<div class=cb><div class=a style="top: 0; bottom: 0; width: 60px; height: calc-size(auto, size / 2)"><div style="width: 50%; height: 50%; background-color: blue"></div></div></div>
+<div class=cb><div class=a style="top: 0; bottom: 0; width: 60px; height: calc-size(stretch, size - 20px)"><div style="width: 50%; height: 50%; background-color: blue"></div></div></div>

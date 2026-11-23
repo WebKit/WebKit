@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; margin-bottom: 4px; }
+.box { border: 1px solid blue; width: min-content; }
+.vertical { writing-mode: vertical-rl; background: lightgreen; }
+</style>
+<div class="root"><div class="box"><div class="vertical" id="text">short</div></div></div>
+<div class="root"><div class="box"><div class="vertical" style="height: 40px" id="height">vertical text that wraps</div></div></div>
+<div class="root"><div class="box"><div id="writing-mode" style="background: lightgreen">becomes vertical</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "much longer vertical text in the box";
+document.getElementById("height").style.height = "80px";
+document.getElementById("writing-mode").style.writingMode = "vertical-rl";
+</script>

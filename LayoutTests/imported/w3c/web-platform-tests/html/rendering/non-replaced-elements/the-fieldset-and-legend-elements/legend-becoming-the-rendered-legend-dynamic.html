@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A legend that becomes the rendered legend of its fieldset is laid out as the rendered legend</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#the-fieldset-and-legend-elements">
+<link rel="match" href="legend-becoming-the-rendered-legend-dynamic-ref.html">
+<meta name="assert" content="When the rendered legend of a fieldset goes, the next legend becomes the rendered legend and no longer wraps its lines beside the floats of the fieldset's content.">
+<style>
+body { font: 12px/14px monospace; }
+fieldset { width: 300px; margin: 0 0 6px 0; }
+.fl { float: left; width: 100px; height: 40px; background-color: gray; }
+.p { background-color: orange; }
+</style>
+<fieldset><legend id=none>FAIL</legend><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset><legend id=removed>FAIL</legend><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset><legend id=float>a floating legend</legend><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset style="position: relative"><legend id=absolute>an absolute legend</legend><div class=fl></div><legend class=p>some text in a legend beside the float that wraps onto more lines when it is short</legend></fieldset>
+<fieldset id=inserted><div class=fl></div><legend class=p>some text in a legend that stops being the rendered legend when another one goes before it</legend></fieldset>
+<script>
+document.body.offsetHeight;
+document.getElementById("none").style.display = "none";
+document.getElementById("removed").remove();
+document.getElementById("float").style.float = "right";
+document.getElementById("absolute").style.position = "absolute";
+document.getElementById("absolute").style.bottom = "0";
+document.getElementById("absolute").style.right = "0";
+const legend = document.createElement("legend");
+legend.textContent = "new";
+document.getElementById("inserted").prepend(legend);
+</script>

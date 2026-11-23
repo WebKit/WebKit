@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 90px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+fieldset { background: lightblue; margin: 0; }
+legend { background: orange; }
+.f { display: flex; }
+.g { display: grid; grid-template-columns: 1fr 1fr; }
+</style>
+<div class="roots">
+<div class="root"><fieldset class=f style="position: absolute; top: 5px; left: 5px"><legend>legend</legend><div>flex</div><div>items</div></fieldset></div>
+<div class="root"><fieldset class=f style="position: absolute; top: 5px; left: 5px; right: 5px"><legend>stretched</legend><div>flex</div></fieldset></div>
+<div class="root"><fieldset class=f style="position: absolute; bottom: 5px; right: 5px; width: 120px; height: 40px"><legend style="height: 20px">tall legend</legend><div>sized</div></fieldset></div>
+<div class="root"><fieldset class=f style="position: absolute; top: 5px; left: 5px"><legend>a legend wider than the content</legend><div>x</div></fieldset></div>
+<div class="root">text <fieldset class=f style="position: absolute"><legend>static</legend>position</fieldset> more</div>
+<div class="root"><fieldset class=g style="position: absolute; top: 5px; left: 5px"><legend>grid</legend><div>a</div><div>b</div></fieldset></div>
+<div class="root"><fieldset class=g style="position: absolute; inset: 10px"><legend style="margin-left: 20px">inset</legend><div>a</div><div>b</div></fieldset></div>
+<div class="root"><fieldset class=g style="position: absolute; top: 5px; left: 5px; width: 150px; border-width: 6px; padding: 4px"><legend style="text-align: center">centered</legend><div>a</div><div>b</div></fieldset></div>
+<div class="root"><fieldset class=f style="position: absolute; top: 5px; left: 5px"><div>no legend</div></fieldset></div>
+<div class="root" dir="rtl"><fieldset class=f style="position: absolute; top: 5px"><legend>right to left</legend><div>x</div></fieldset></div>
+<div class="root" style="writing-mode: vertical-rl; width: 90px; height: 150px"><fieldset class=g style="position: absolute; top: 5px"><legend>vertical</legend><div>a</div><div>b</div></fieldset></div>
+<div class="root"><fieldset class=f style="position: absolute; top: 5px; left: 5px; flex-direction: column"><legend>column</legend><div>a</div><div style="position: absolute; top: 40px">absolute inside</div></fieldset></div>
+</div>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 60px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.h { border-left: 3px solid blue; }
+.g { border: 2px solid green; padding: 1px; }
+</style>
+<div class=mc><span>a </span><div class=h style="height: 30px">Lorem<br>ipsum<br>dolor<br>sit<br>amet<br>consectetur<br>adipiscing</div><span>tail</span> after Lorem ipsum dolor sit amet</div>
+<div class=mc><span>a </span><div class=h style="height: 30px">line1<br>line2<br>line3<br>line4<br>line5<br>line6<br>line7<br>line8<br>line9<br>line10<br>line11<br>line12<br>line13<br>line14<br>line15</div><span>tail</span> after</div>
+<div class=mc><span>a </span><div class=h style="max-height: 20px">Lorem<br>ipsum<br>dolor<br>sit<br>amet</div><span>mid</span><div class=h style="height: 20px">one<br>two<br>three<br>four<br>five<br>six</div><span>tail</span> after</div>
+<div class=mc><span>a </span><div class=h style="height: 30px"><div style="float: left; width: 20px; height: 50px; border: 1px solid green"></div>Lorem<br>ipsum<br>dolor<br>sit<br>amet<br>consectetur</div><span>tail</span> after</div>
+<div class=mc style="height: auto; column-fill: balance"><span>a </span><div class=h style="height: 30px">Lorem<br>ipsum<br>dolor<br>sit<br>amet<br>consectetur</div><span>tail</span> after Lorem ipsum dolor sit amet consectetur adipiscing elit</div>
+<div class=mc><span>a </span><div class=g style="font-weight: bold"><div class=h style="height: 25px">Lorem<br>ipsum<br>dolor<br>sit<br>amet<br>consectetur</div>inner</div><span>tail</span> after</div>
+<div class=mc><span>a </span><div class=h style="height: 30px"><span>x </span><div class=h style="height: 10px; font-style: italic">p<br>q<br>r<br>s<br>t<br>u</div><i>y</i></div><span>tail</span> after</div>
+<div class=mc><span>a </span><div style="height: 20px"></div><div class=h style="height: 50px">Lorem<br>ipsum</div><span>tail</span> after</div>

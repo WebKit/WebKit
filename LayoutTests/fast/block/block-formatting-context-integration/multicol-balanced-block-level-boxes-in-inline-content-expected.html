@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<!-- The line boxes around a block-level box in inline content are in block boxes of their own (CSS 2.2 §9.2.1.1), whose orphans and widows do not take the box along: sibling blocks here, where the render tree keeps the lines next to the box together with it. -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 20px; }
+.mc { columns: 2; column-gap: 0; width: 100px; border: 1px solid; float: left; margin: 0 6px 6px 0; orphans: 1; widows: 1; }
+.kept { orphans: 2; widows: 2; }
+.b { background-color: green; }
+.e { background-color: orange; }
+</style>
+<div class=mc><span><div class=b style="height: 200px"></div></span></div>
+<div class=mc>x<span><div class=b style="height: 200px"></div></span>y</div>
+<div class=mc><span><div class=b><div class=e style="height: 200px; width: 20px"></div></div></span></div>
+<div class=mc><span><div class=b style="height: 200px">x</div></span></div>
+<div class=mc><span><div class=b style="height: 100px"></div><div class=e style="height: 100px"></div></span></div>
+<div class=mc>a<br>b<span><div class=b style="height: 120px"></div></span>c<br>d<br>e</div>
+<div class="mc kept"><div>x</div><div class=b style="height: 200px"></div><div>y</div></div>
+<div class="mc kept"><div>x<br>w</div><div class=b style="height: 200px"></div><div>y<br>z</div></div>

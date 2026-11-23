@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 180px; height: 100px; columns: 3; column-fill: auto; column-gap: 0; border: 1px solid; float: left; margin: 0 6px 6px 0; }
+.g { background-color: green; }
+.o { background-color: orange; }
+</style>
+<div class=mc><div style="width: 60px"><div class=g style="height: 50px"></div><div class=o style="float: left; width: 30px; line-height: 60px"><br></div><div class=g style="clear: right; height: 50px; display: flow-root"></div></div></div>
+<div class=mc><div style="width: 60px"><div class=g style="height: 50px"></div><div class=o style="float: right; width: 30px; line-height: 60px"><br></div><div class=g style="clear: right; height: 50px; display: flow-root"></div></div></div>
+<div class=mc><div class=g style="height: 50px"></div><div style="float: left; width: 60px; height: 40px"></div><div class=o style="clear: both"><div class=g style="float: left; width: 10px; height: 100px"></div><div class=g style="display: flow-root; break-inside: avoid; width: 40px; height: 100px"></div></div></div>
+<div class=mc><div class=g style="height: 50px"></div><div class=o style="clear: both"><img class=g style="float: left; width: 10px; height: 20px"><div class=g style="display: flow-root; break-inside: avoid; width: 40px; height: 100px"></div></div></div>
+<div class=mc><div class=g style="height: 70px"></div><div class=o style="float: left; width: 40px; height: 30px; margin-bottom: 50px"></div><br style="clear: both">a</div>
+<div class=mc><div class=g style="height: 50px"></div><div style="float: left; width: 60px; height: 40px"></div><div class=o style="clear: both"><div class=g style="float: left; width: 100%; height: 5px"></div><div class=g style="display: flow-root; break-inside: avoid; width: 50px; height: 100px"></div></div></div>
+<div class=mc><div class=g style="height: 50px"></div><div><div class=o style="float: left; width: 100%; height: 50px"></div><div style="break-inside: avoid; clear: left"><div class=g style="float: left; width: 100%; height: 10px"></div><div style="height: 10px"></div><div class=g style="height: 90px"></div></div></div></div>

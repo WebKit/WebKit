@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true CSSRhythmicSizingEnabled=true ] -->
+<style>
+body { font-family: monospace; font-size: 10px; line-height: 12px; }
+.st { block-step-size: 30px; border-left: 3px solid blue; width: 200px; break-before: page; }
+</style>
+<div style="height: 100px; border: 1px solid"></div><div class=st>aaaa bbbb cccc dddd eeee ffff gggg hhhh iiii jjjj kkkk llll mmmm nnnn oooo pppp</div><div>after</div>
+<div class=st style="display: flow-root; margin: 5px 0">aaaa bbbb cccc dddd</div><div>after</div>
+<div class=st style="height: 40px">aaaa</div><div>after</div>
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>

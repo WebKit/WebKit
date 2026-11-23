@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.cb { position: relative; width: 760px; height: 240px; border: 1px solid; }
+.abs { position: absolute; width: 140px; border: 3px solid gray; padding: 2px; margin: 6px 0 9px; }
+.fa { height: -webkit-fill-available; background: lightblue; }
+</style>
+<div class=cb>
+<div class=abs style="top: 5px; left: 5px;"><div class=fa>auto height, top inset only</div></div>
+<div class=abs style="top: 5px; bottom: 5px; left: 160px;"><div class=fa>both insets</div></div>
+<div class=abs style="top: 5px; left: 315px; height: 100px;"><div class=fa>fixed height</div></div>
+<div class=abs style="top: 5px; left: 470px; height: 50%;"><div class=fa>percentage height</div></div>
+<div class=abs style="top: 5px; left: 620px;"><div class=fa style="display: flex;"><div>leaf</div></div></div>
+</div>
+<script>
+// The render tree takes the block margins of an out-of-flow box off the available block size of its content from its previous layout, none
+// the first time (RenderBox::availableLogicalHeightUsing): the boxes are laid out once more.
+document.body.offsetHeight;
+for (const element of document.querySelectorAll(".abs")) {
+    element.style.wordSpacing = "1px";
+    document.body.offsetHeight;
+    element.style.wordSpacing = "";
+    document.body.offsetHeight;
+}
+</script>

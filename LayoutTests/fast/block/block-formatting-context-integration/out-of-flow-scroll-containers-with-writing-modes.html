@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; position: relative; width: 180px; height: 120px; margin: 4px; vertical-align: top; background: lightgray; font: 10px/12px monospace; }
+.a { position: absolute; top: 5px; left: 5px; border: 2px solid black; background: lightblue; }
+.vrl { writing-mode: vertical-rl; }
+.htb { writing-mode: horizontal-tb; }
+.c { width: 30px; height: 40px; background: green; }
+</style>
+<div class="root"><div class="a vrl" style="overflow-x: hidden; overflow-y: scroll"><div class="c"></div></div></div>
+<div class="root"><div class="a vrl" style="overflow-x: scroll; overflow-y: hidden"><div class="c"></div></div></div>
+<div class="root"><div class="a vrl" style="overflow: scroll; width: 60px; height: 50px">both</div></div>
+<div class="root vrl"><div class="a htb" style="overflow-x: hidden; overflow-y: scroll"><div class="c"></div></div></div>
+<div class="root vrl"><div class="a htb" style="overflow: scroll; width: 40px; height: 30px">scrolls</div></div>
+<div class="root vrl"><div class="a htb" style="overflow: auto; inset: 0; margin: auto; width: 60px; height: 40px">centered with long text</div></div>

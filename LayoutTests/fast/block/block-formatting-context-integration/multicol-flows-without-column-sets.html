@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.mc { columns: 2; column-gap: 10px; border: 1px solid; width: 300px; padding: 7px 11px; margin-bottom: 40px; font-family: monospace; font-size: 10px; line-height: 12px; }
+.a { position: absolute; width: 50px; height: 20px; border: 2px solid green; }
+</style>
+<div class="mc"><div class="a"></div></div>
+<div class="mc" style="position: relative"><div class="a"></div></div>
+<div class="mc" style="direction: rtl; position: relative"><div class="a"></div></div>
+<div class="mc" style="position: relative"><div class="a" style="top: 5px"></div><div class="a" style="position: fixed; left: 200px"></div></div>
+<div class="mc" style="writing-mode: vertical-rl; height: 100px; width: auto; position: relative"><div class="a"></div></div>

@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 250px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+img { display: block; width: 20px; height: 10px; background-color: green; }
+.o { width: 20px; background-color: blue; }
+.sc { contain: size; border: 1px solid red; }
+.initial .h { height: 5px !important; }
+</style>
+<div class=mc><img class=h style="height: 20px"><div class=sc style="height: 10px"><div class=o style="height: 40px"></div></div><img></div>
+<div class=mc><img><div class=sc>Lorem ipsum dolor sit amet, co Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div><img></div>

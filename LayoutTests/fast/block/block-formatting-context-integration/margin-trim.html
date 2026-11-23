@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 90px; margin: 2px; background: lightgray; }
+.c { background: lightyellow; outline: 1px solid orange; }
+.b { height: 10px; background: lightblue; margin: 6px 0; }
+.e { margin: 8px 0; }
+</style>
+<div class="root"><div class="c" style="margin-trim: block"><div class="b"></div><div class="b"></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block-start; border-top: 1px solid"><div class="e"></div><div><div class="b"></div></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block-end; padding-bottom: 2px"><div class="b"></div><div><div class="b" style="margin-bottom: 15px"></div></div></div></div>
+<div class="root" style="margin-trim: block"><div class="b"></div><div class="b"></div></div>
+<div class="root"><div class="c" style="margin-trim: block; border: 1px solid"><div style="margin-top: 20px">text</div><div style="margin-bottom: 20px">text</div></div></div>
+<div class="root"><div class="c" style="margin-trim: block-start"><div style="padding-top: 1px"><div class="b"></div></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block-end; border-bottom: 1px solid"><div class="e"></div><div class="b"></div></div></div>
+<div class="root"><div style="display: flow-root"><div class="c" style="margin-top: 20px; margin-trim: block-end"><div style="margin-top: 30px"></div></div><div class="b"></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block; display: flow-root"><div class="b"></div><div style="display: flow-root; margin: 7px 0" class="b"></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block"><span><div class="b"></div></span> text</div></div>

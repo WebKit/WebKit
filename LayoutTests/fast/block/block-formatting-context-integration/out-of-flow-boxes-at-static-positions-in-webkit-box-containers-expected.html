@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { position: relative; display: inline-block; vertical-align: top; width: 150px; height: 70px; border: 1px solid; margin: 0 2px 4px 0; }
+.abs { position: absolute; background: lightgreen; }
+.box { display: -webkit-box; border: 2px solid gray; padding: 3px; }
+</style>
+<div class="root"><h3 class="box" style="-webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin: 0; font-size: 10px"><span class="abs">oof</span>title text that gets clamped after two lines here</h3></div>
+<div class="root"><div class="box" style="-webkit-box-orient: vertical"><div>first</div><span class="abs">oof</span><div>second</div></div></div>
+<div class="root"><div class="box"><div>first</div><span class="abs">oof</span><div>second</div></div></div>
+<div class="root"><div class="box" style="-webkit-box-direction: reverse"><div>first</div><span class="abs">oof</span><div>second</div></div></div>
+<div class="root"><div style="display: flex"><div class="box" style="-webkit-box-orient: vertical"><span class="abs">in flex</span>text</div></div></div>
+<div class="root" style="direction: rtl"><div class="box" style="-webkit-box-orient: vertical; padding-right: 10px"><span class="abs">rtl vertical</span>text</div></div>
+<div class="root"><div class="box" style="-webkit-box-orient: vertical"><div style="height: 20px">tall</div><span class="abs" style="left: 40px">left</span></div></div>

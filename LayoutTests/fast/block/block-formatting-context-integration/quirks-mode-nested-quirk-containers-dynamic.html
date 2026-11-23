@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; vertical-align: top; width: 180px; border: 1px solid black; margin: 0 2px 4px 0; font: 12px/14px sans-serif; }
+.b { margin: 8px; height: 50px; outline: 1px solid blue; }
+.bt { border-top: 2px solid green; }
+.z { margin: 0; }
+p { background-color: rgba(0, 128, 0, 0.3); }
+.e { outline: 2px solid orange; height: 0; }
+.f { float: left; width: 20px; height: 15px; background-color: orange; }
+</style>
+<div class=root><div data-body class=b><div data-body class=b><p>quirky</p></div></div></div>
+<div class=root><div data-body class=b><div data-body class="b z"><p style="margin-top: 20px" id=not-quirky>not quirky</p></div></div></div>
+<div class=root><div data-body class="b bt"><div data-body class=b id=inner-margin><p>outer border</p></div></div></div>
+<div class=root><div data-body class="b bt"><div data-body class="b z"><p>outer border, no margin</p></div></div></div>
+<div class=root><div data-body class="b bt" id=outer-border><div data-body class="b bt"><p>both borders</p></div></div></div>
+<div class=root><div data-body class=b><div data-body class=b style="height: 0"><div class=e style="margin: 12px 0" id=collapsed-through></div></div><p>after</p></div></div>
+<div class=root><div data-body class=b><div style="margin: 5px"><div data-body class="b z"><p style="margin: 10px">deeper</p></div></div></div></div>
+<div class=root><div data-body class=b><div data-body class="b z"><div data-body class="b z"><p style="margin-top: 15px">three levels</p></div></div></div></div>
+<div class=root><div data-body class=b><div data-body class="b z"><div data-body class="b z" id=innermost><p>three levels, quirky</p></div></div></div></div>
+<div class=root><div data-body class=b><div data-body class=b style="display: flow-root"><p>own formatting context</p></div></div></div>
+<div class=root><table><tr><td><div data-body class=b><p id=in-cell>in a cell</p></div></td></tr></table></div>
+<div class=root><div data-body class=b><div data-body class="b z" style="height: 20px"><p>first</p></div><p>second</p></div></div>
+<div class=root><div data-body class=b><div data-body class=b style="display: flex">flex</div></div></div>
+<div class=root><div data-body class=b><div data-body class="b z"><div class=e style="margin: 10px 0"></div><div class=e style="margin-top: 6px"></div><p>after empty boxes</p></div></div></div>
+<div class=root><div data-body class=b><div data-body class="b z" style="padding-top: 3px"><p>inner padding</p></div></div></div>
+<div data-body class=root><div data-body class=b><p>in a body root</p></div></div>
+<div class=root><div data-body class=b><div class=f></div><div data-body class="b z"><p style="clear: left; margin-top: 20px" id=cleared>cleared</p></div></div></div>
+<div class=root><div data-body class=b><p><span data-body class="b z" style="display: block"><span style="display: block; margin-top: 5px">in a quirky paragraph</span></span></p></div></div>
+<div class=root><div class=f style="height: 10px"></div><div data-body class=b><div data-body class="b z"><p><span class=e style="display: block; clear: left; margin-top: 5px"></span>after a cleared box</p></div></div></div>
+<div class=root><div class=f style="height: 10px"></div><div data-body class=b><div data-body class="b z"><p><span style="display: block; clear: left; margin-top: 5px">cleared</span></p></div></div></div>
+<div class=root><div class=f style="height: 30px"></div><div data-body class=b><p><span data-body class="b z" style="display: block"><span class=e style="display: block; margin-top: 5px"></span><span style="display: block; clear: left">below floats</span></span></p></div></div>
+<script>
+for (const div of [...document.querySelectorAll("[data-body]")].reverse()) {
+    const body = document.createElement("body");
+    for (const attribute of div.attributes) {
+        if (attribute.name != "data-body")
+            body.setAttribute(attribute.name, attribute.value);
+    }
+    while (div.firstChild)
+        body.appendChild(div.firstChild);
+    div.replaceWith(body);
+}
+document.body.offsetHeight;
+document.getElementById("not-quirky").style.marginTop = "25px";
+document.getElementById("inner-margin").style.marginTop = "14px";
+document.getElementById("outer-border").style.borderTopWidth = "0";
+document.getElementById("collapsed-through").style.marginBottom = "20px";
+document.getElementById("innermost").style.marginTop = "6px";
+document.getElementById("in-cell").style.marginTop = "18px";
+document.getElementById("in-cell").firstChild.data = "in a table cell";
+document.getElementById("cleared").style.marginTop = "10px";
+document.body.offsetHeight;
+</script>

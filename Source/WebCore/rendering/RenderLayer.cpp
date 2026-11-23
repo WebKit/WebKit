@@ -4276,6 +4276,15 @@ RenderLayer* RenderLayer::enclosingPaginationLayerInSubtree(const RenderLayer* r
     return nullptr;
 }
 
+// The column painting the fragments in it of the boxes that clone their decorations across columns, in the coordinates of the layer being
+// painted (LayerFragment::contentPaginationClip).
+static std::optional<PaintInfo::Fragmentainer> fragmentainerForPainting(const LayerFragment& fragment)
+{
+    if (!fragment.fragmentainerLogicalRange)
+        return { };
+    return PaintInfo::Fragmentainer { *fragment.fragmentainerLogicalRange, fragment.paginationClip, fragment.fragmentainerIsHorizontal };
+}
+
 void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer* rootLayer, const LayoutRect& dirtyRect, PaginationInclusionMode inclusionMode,
     ClipRectsType clipRectsType, OptionSet<ClipRectsOption> clipRectOptions, const LayoutSize& offsetFromRoot,
     const LayoutRect* layerBoundingBox, ShouldApplyRootOffsetToFragments applyRootOffsetToFragments)
@@ -4351,6 +4360,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
                 // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
                 // clip, so the column clip ends up being all we apply.
                 fragment.intersect(fragment.paginationClip);
+                fragment.fragmentainerLogicalRange = std::nullopt;
 
                 if (applyRootOffsetToFragments == ApplyRootOffsetToFragments) {
                     fragment.paginationOffset = ancestorFragment.paginationOffset + fragment.paginationOffset + offsetWithinParentPaginatedLayer;
@@ -4394,8 +4404,14 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         fragment.intersect(ancestorClipRect);
 
         // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
-        // clip, so the column clip ends up being all we apply.
-        fragment.intersect(fragment.paginationClip);
+        // clip, so the column clip ends up being all we apply. A column that paints the fragments in it of the boxes that clone their decorations
+        // across columns paints those past its block-axis edges, but not the layers in the flow, and hit testing does not either.
+        if (this == paginationLayer && fragment.contentPaginationClip && clipRectsType == PaintingClipRects)
+            fragment.intersect(*fragment.contentPaginationClip);
+        else {
+            fragment.intersect(fragment.paginationClip);
+            fragment.fragmentainerLogicalRange = std::nullopt;
+        }
 
         if (applyRootOffsetToFragments == ApplyRootOffsetToFragments)
             fragment.paginationOffset = fragment.paginationOffset + offsetOfPaginationLayerFromRoot;
@@ -4489,6 +4505,7 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
 
         // Paint the background.
         PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::BlockBackground, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
@@ -4575,6 +4592,7 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
             clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.dirtyForegroundRect());
 
         PaintInfo paintInfo(context, fragment.dirtyForegroundRect().rect(), phase, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this, localPaintingInfo.requireSecurityOriginAccessForWidgets);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
         if (phase == PaintPhase::Foreground)
             paintInfo.overlapTestRequests = localPaintingInfo.overlapTestRequests;
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
@@ -4590,6 +4608,7 @@ void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments,
 
         // Paint our own outline
         PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::SelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
 
         GraphicsContextStateSaver stateSaver(context, false);
         RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
@@ -4613,6 +4632,7 @@ void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, Gr
 
         // Paint the mask.
         PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::Mask, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
@@ -4630,6 +4650,7 @@ void RenderLayer::paintChildClippingMaskForFragments(const LayerFragments& layer
 
         // Paint the clipped mask.
         PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::ClippingMask, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
@@ -4655,6 +4676,7 @@ void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFrag
     ASSERT(is<EventRegionContext>(localPaintingInfo.regionContext));
     for (const auto& fragment : layerFragments) {
         PaintInfo paintInfo(context, fragment.dirtyForegroundRect().rect(), PaintPhase::EventRegion, paintBehavior);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
         paintInfo.regionContext = localPaintingInfo.regionContext;
         paintInfo.regionContext->pushClip(enclosingIntRect(fragment.dirtyBackgroundRect().rect()));
 
@@ -4668,6 +4690,7 @@ void RenderLayer::collectAccessibilityRegionsForFragments(const LayerFragments& 
     ASSERT(is<AccessibilityRegionContext>(localPaintingInfo.regionContext));
     for (const auto& fragment : layerFragments) {
         PaintInfo paintInfo(context, fragment.dirtyForegroundRect().rect(), PaintPhase::Accessibility, paintBehavior);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
         paintInfo.regionContext = localPaintingInfo.regionContext;
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
@@ -4685,6 +4708,7 @@ void RenderLayer::collectAXCustomColorBackdropsForFragments(PaintPhase phase, co
             continue;
 
         PaintInfo paintInfo(context, fragment.dirtyForegroundRect().rect(), phase, paintBehavior);
+        paintInfo.fragmentainer = fragmentainerForPainting(fragment);
         paintInfo.regionContext = localPaintingInfo.regionContext;
         paintInfo.regionContext->pushClip(enclosingIntRect(fragment.dirtyBackgroundRect().rect()));
 

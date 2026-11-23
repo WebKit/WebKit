@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/LayoutShape.h>
 #include <WebCore/LayoutSize.h>
 #include <wtf/HashMap.h>
@@ -42,7 +43,17 @@ class RenderBlockFlow;
 class RenderBox;
 class FloatingObject;
 
+// The geometry of a float its shape is computed from, physical: the size of its border box, its margins, and the inline size of the content box
+// of its containing block, which a shape-margin percentage resolves against. The renderer's once laid out, or the one the block formatting context
+// gives the float when it lays out the float's content itself, before it writes the geometry to the renderer.
+struct ShapeOutsideBoxGeometry {
+    LayoutSize borderBoxSize;
+    LayoutBoxExtent margins;
+    LayoutUnit containingBlockContentLogicalWidth;
+};
+
 Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox&);
+Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox&, const ShapeOutsideBoxGeometry&);
 
 class ShapeOutsideDeltas final {
     WTF_MAKE_TZONE_ALLOCATED(ShapeOutsideDeltas);

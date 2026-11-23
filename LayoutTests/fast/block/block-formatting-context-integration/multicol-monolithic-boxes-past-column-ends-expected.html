@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { position: relative; width: 110px; height: 60px; border: 1px solid black; float: left; margin: 0 60px 40px 0; }
+.mc > * { position: absolute; top: 0; }
+.t { width: 30px; height: 80px; background-color: green; }
+.o { width: 40px; height: 10px; background-color: orange; }
+.s { width: 50px; height: 20px; background-color: blue; }
+.b { width: 50px; background-color: rgba(0, 0, 255, 0.3); }
+.sc { width: 48px; height: 70px; border: 1px solid red; }
+.sv { width: 50px; height: 80px; background-color: purple; }
+</style>
+<div class=mc><div class=t style="left: 0"></div><div class=o style="left: 60px"></div></div>
+<div class=mc><div class=s style="left: 0"></div><div class=t style="left: 60px"></div><div class=o style="left: 120px"></div></div>
+<div class=mc><div class=t style="left: 0"></div><div class=o style="left: 60px"></div><div class=o style="left: 60px; top: 20px"></div></div>
+<div class=mc><div class=b style="left: 0"><div class=t></div></div><div class=o style="left: 60px"></div></div>
+<div class=mc><div class=s style="left: 0"></div><div class=sc style="left: 60px">Lorem ipsum dolor sit amet, consectetur adipiscing</div></div>
+<div class=mc><div class=sv style="left: 0"></div><div class=o style="left: 60px"></div></div>

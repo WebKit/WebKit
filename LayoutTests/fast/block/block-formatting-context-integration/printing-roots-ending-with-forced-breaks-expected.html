@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.x { border: 1px solid; width: 150px; }
+</style>
+<div style="height: 700px"></div><div style="display: flex; border: 2px solid"><div><div class=x style="height: 30px; width: 50px; break-after: page"></div></div></div><div class=x style="height: 100px; width: 50px; border-color: green"></div>
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>

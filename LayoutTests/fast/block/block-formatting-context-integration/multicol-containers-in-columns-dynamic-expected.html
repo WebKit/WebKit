@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<style>
+.outer { display: inline-block; vertical-align: top; columns: 2; column-gap: 10px; width: 400px; height: 120px; column-fill: auto; border: 1px solid black; margin: 0 0 8px 8px; }
+.balanced { height: auto; column-fill: balance; }
+.inner { columns: 2; column-gap: 6px; border: 1px solid blue; margin: 5px 0; }
+.s { column-span: all; border: 1px solid green; }
+.b { border: 1px solid red; height: 30px; }
+</style>
+<div class="outer">
+<div class="b"></div>
+<div class="inner"><span id=t1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span><div class="s">spanner text here</div>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+</div>
+<div class="outer balanced">
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<div class="s" id=t2>spanner<br>text<br>here</div>Ut enim ad minim veniam.</div>
+<div class="b"></div>
+</div>
+<div class="outer">
+<div class="b" id=t3 style="height: 50px"></div>
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<div class="s">spanner text here</div>Ut enim ad minim veniam.</div>
+</div>
+<div class="outer">
+<div class="b" style="height: 50px"></div>
+<div class="inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class="s" id=t4>second spanner second spanner second spanner</div>Lorem ipsum.</div>
+</div>

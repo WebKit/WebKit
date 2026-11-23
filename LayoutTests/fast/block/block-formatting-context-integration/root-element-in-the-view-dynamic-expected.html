@@ -1,0 +1,8 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; margin: 4px; }
+iframe { width: 180px; height: 120px; border: 1px solid; margin: 2px; vertical-align: top; }
+</style>
+<iframe id=resized style="height: 160px" srcdoc="<html style='height: 50%; padding: 4px; background: lightgray'><body style='margin: 4px; height: 50%; background: lightblue; font: 10px/12px monospace'><div style='height: 50%; background: green'>half</div>"></iframe>
+<iframe id=changed srcdoc="<html id=html style='width: 60%; margin: 15px 4px 4px; border: 2px solid; background: lightgray'><body style='margin: 4px; font: 10px/12px monospace'><div id=text style='background: lightblue'>much longer text that wraps</div><div style='position: absolute; background: orange'>abs</div>"></iframe>
+<iframe id=quirks src="data:text/html,<html id=html style='margin: 20px 5px 5px; border: 2px solid; background: lightgray'><body style='margin: 6px; background: lightblue; font: 10px/12px monospace'><div id=text>changed quirks text</div>"></iframe>

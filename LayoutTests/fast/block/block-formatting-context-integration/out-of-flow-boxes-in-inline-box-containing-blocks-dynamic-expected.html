@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/14px monospace; }
+.root { width: 160px; border: 1px solid; margin: 2px; padding: 3px; display: inline-block; vertical-align: top; }
+.rel { position: relative; background: lightyellow; border: 2px solid orange; }
+.a { position: absolute; background: lightblue; }
+</style>
+<div class="root">text <span class="rel">inline<span class="a" id="size" style="right: 0; bottom: 0; width: 20px; height: 8px"></span></span> text</div>
+<div class="root">text <span id="position">inline<span class="a" style="left: 0; top: 0; width: 20px; height: 8px"></span></span> text</div>
+<div class="root">text <span class="rel">inline<span class="a" id="insets" style="left: 0; top: 0; width: 20px; height: 8px"></span></span> text</div>
+<div class="root" id="width">some text <span class="rel">inline box<span class="a" style="inset: 0; opacity: 0.5"></span></span> text</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("size").style.width = "40px";
+document.getElementById("position").style.position = "relative";
+document.getElementById("insets").style.left = "auto";
+document.getElementById("insets").style.right = "0";
+document.getElementById("width").style.width = "80px";
+</script>

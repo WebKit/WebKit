@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<style>
+.columns { columns: 2; column-gap: 0; column-fill: auto; width: 400px; height: 100px; line-height: 20px; margin-bottom: 10px; }
+.content { line-clamp: 6 no-ellipsis; background-color: green; }
+</style>
+<!-- Widows count the lines up to the clamp point, which ends the content. -->
+<div class="columns"><div class="content" style="widows: 4">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div></div>
+<!-- The lines before the break that line-clamp counts are those with content, not the line a block-level box in an inline box starts after. -->
+<div class="columns"><div class="content">1<br>2<br><span><div>3</div></span>4<br>5<br>6<br>7<br>8</div></div>

@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.g { border-left: 16px solid green; height: 50px; }
+.m { border-left: 4px solid; height: 30px; }
+</style>
+<div class=g style="margin-top: 900px"></div><div class=m></div>
+<div style="height: 0; break-before: page"></div><div class=g style="display: flex; margin-top: 900px; height: 900px"></div><div class=m></div>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

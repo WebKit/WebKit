@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 380px; height: 100px; column-fill: auto; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.fx { display: flex; gap: 4px; outline: 2px solid blue; }
+.fx > div { flex: 1; border: 1px solid; }
+.g { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid green; }
+table { border: 2px solid; border-spacing: 0; }
+td { border: 1px solid; padding: 0; }
+img { display: block; width: 30px; height: 20px; background-color: green; }
+.rel { position: relative; border: 1px solid; }
+.a { position: absolute; width: 170px; border: 1px solid; }
+.initial .h { height: 5px !important; }
+</style>
+<div class=initial id=cases>
+<div class=mc><img class=h style="height: 40px"><table><tr><td>row 0</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 1</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 2</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 3</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 4</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 5</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr></table></div>
+<div class=mc><div id=text>Lorem ipsum dolor sit amet, consectetur </div><table><tr><td>row 0</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 1</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 2</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 3</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 4</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr><tr><td>row 5</td><td>Lorem ipsum dolor sit amet, consectetur </td></tr></table></div>
+<div class=mc><img class=h style="height: 40px"><div class=g><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div></div></div>
+<div class=mc><img class=h style="height: 70px"><div class=fx><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div></div><img></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.getElementById("text").firstChild.appendData(" Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ");
+</script>

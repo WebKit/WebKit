@@ -115,6 +115,76 @@ public:
     NODELETE bool isInOrthogonalIntrinsicContributionLayout(const RenderBox&) const;
     NODELETE bool isComputingIntrinsicLogicalWidthFor(const RenderBox&) const;
 
+    // The block formatting context roots whose floats the block formatting context placed, which the render tree's float lists do not have
+    // then (LayoutIntegration::BlockLayout).
+    void addRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow&);
+    bool removeRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow&);
+    bool hasFloatsPlacedByBlockFormattingContext(const RenderBlockFlow& root) const;
+
+    // The block sizes of the containing block of a box that the block formatting context lays out through the render tree, which the content of
+    // the box reads where it looks past the box: the block formatting context writes the geometry of the containing block once all of it is
+    // laid out (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext).
+    struct ContainingBlockBlockSizes {
+        // What percentage block sizes that look past the box, which has an auto block size in quirks mode, resolve against; none is an
+        // indefinite one (RenderBox::computePercentageLogicalHeight).
+        std::optional<LayoutUnit> percentageBasis;
+        // RenderBox::availableLogicalHeight of the containing block, without and with its margins, borders and padding.
+        LayoutUnit availableBlockSize;
+        LayoutUnit availableBlockSizeIncludingMarginBorderPadding;
+    };
+    std::optional<ContainingBlockBlockSizes> containingBlockBlockSizes(const RenderBox&) const;
+    void setContainingBlockBlockSizes(const RenderBox&, const ContainingBlockBlockSizes&);
+    void clearContainingBlockBlockSizes(const RenderBox&);
+    // The border box inline size the stretch inline sizes of a block-level replaced element that the block formatting context lays out resolve
+    // to: the stretch-fit inline size in the space beside the floats it places, which the render tree's float lists do not have
+    // (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext).
+    std::optional<LayoutUnit> stretchFitInlineSize(const RenderBox&) const;
+    void setStretchFitInlineSize(const RenderBox&, LayoutUnit);
+    void clearStretchFitInlineSize(const RenderBox&);
+    // A box the block formatting context lays out whole while it breaks the content around it into fragmentainers, as monolithic content
+    // (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext): the render tree breaks none of the box's content across
+    // them either (RenderLayoutState::computePaginationInformation).
+    bool isMonolithicBox(const RenderBox&) const;
+    void addMonolithicBox(const RenderBox&);
+    void removeMonolithicBox(const RenderBox&);
+    // Where the block formatting context puts a box it lays out through the render tree in the multi-column flow it breaks into columns, from
+    // the top of the flow, before it writes the geometry of the box and of the boxes around it, which the render tree finds the box's place in
+    // the columns from otherwise (RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment).
+    std::optional<LayoutUnit> offsetInFragmentedFlow(const RenderBox&) const;
+    void setOffsetInFragmentedFlow(const RenderBox&, LayoutUnit);
+    void clearOffsetInFragmentedFlow(const RenderBox&);
+    // The block size the percentage block sizes in the content of a flex or grid item or a table cell resolved against at its last layout, from
+    // which the block formatting context measured its intrinsic inline sizes (LayoutIntegration::BlockLayout::invalidateIntrinsicInlineSizesIfPercentageBasisChanged).
+    std::optional<std::optional<LayoutUnit>> percentageBasisAtLastLayout(const RenderBlockFlow&) const;
+    void setPercentageBasisAtLastLayout(const RenderBlockFlow&, std::optional<LayoutUnit>);
+    // The fragments of the boxes that the block formatting context of a root broke across pages or columns whose fragments are not slices of the
+    // rect they have in the strip of fragmentainers, which painting reads: those with box-decoration-break: clone, each fragment of which has
+    // the box's decorations (css-break-3 §5.4), and those whose fragments have gaps between them, whose decorations are the slices of the
+    // unbroken box. Replaced at every layout of the root (LayoutIntegration::BlockLayout::layoutContent).
+    struct BlockFragment {
+        // From the block-start edge of the box's border box.
+        LayoutUnit blockOffset;
+        LayoutUnit blockSize;
+        // Where in the strip of the fragmented flow its block-start edge is, which tells the column it is in.
+        LayoutUnit fragmentainerPosition;
+    };
+    struct BoxFragments {
+        bool clonesDecorations { false };
+        // A box with no fragments of its own here that one that clones its decorations across columns, or a monolithic box past the end of
+        // its column, is in, whose content each column paints what of is in it (paintsColumnsFromFragments).
+        bool hasDescendantsPaintedByColumn { false };
+        Vector<BlockFragment> fragments;
+        // A monolithic box past the end of the fragmentainer it is in: where that fragmentainer is in the strip of the fragmented flow, whose
+        // column paints the box whole.
+        std::optional<LayoutUnit> monolithicBoxFragmentainerPosition;
+    };
+    void setBoxFragments(const RenderBlockFlow& root, Vector<std::pair<CheckedRef<const RenderBox>, BoxFragments>>&&, bool isColumnContent);
+    const BoxFragments* boxFragments(const RenderBox&) const;
+    // A multi-column flow with boxes that clone their decorations across its columns, or with monolithic boxes past the end of their columns,
+    // which paint the fragments of the first ones in each of them, and the others whole in theirs, with no clip
+    // (RenderMultiColumnSet::collectLayerFragments), and the rest of the content like one strip of columns.
+    bool paintsColumnsFromFragments(const RenderBlockFlow& multiColumnFlow) const;
+
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
         SingleThreadWeakPtr<const RenderBlockFlow> lastFormattedLineRoot;
@@ -165,6 +235,7 @@ public:
     bool layoutDeltaMatches(const LayoutSize& delta);
 #endif
     using LayoutStateStack = Vector<std::unique_ptr<RenderLayoutState>>;
+    const LayoutStateStack& layoutStateStack() const LIFETIME_BOUND { return m_layoutStateStack; }
 
     bool immediateRendererDestructionEnabledForTesting() const { return m_immediateRendererDestructionEnabledForTesting; }
     void setImmediateRendererDestructionEnabledForTesting(bool enabled) { m_immediateRendererDestructionEnabledForTesting = enabled; }
@@ -211,6 +282,7 @@ private:
     friend class ListItemOutsideMarkerScope;
     friend class LayoutFrameScope;
     friend class LayoutStateMaintainer;
+    friend class LineGridLayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
     friend class FlexPercentResolveDisabler;
@@ -308,6 +380,18 @@ private:
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
     SingleThreadWeakHashSet<RenderBox> m_boxesInOrthogonalIntrinsicContributionLayout;
     SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalWidthComputationList;
+    SingleThreadWeakHashSet<RenderBlockFlow> m_rootsWithFloatsPlacedByBlockFormattingContext;
+    SingleThreadWeakHashMap<RenderBox, ContainingBlockBlockSizes> m_containingBlockBlockSizes;
+    SingleThreadWeakHashMap<RenderBox, LayoutUnit> m_stretchFitInlineSizes;
+    SingleThreadWeakHashSet<RenderBox> m_monolithicBoxes;
+    SingleThreadWeakHashMap<RenderBox, LayoutUnit> m_offsetsInFragmentedFlow;
+    SingleThreadWeakHashMap<RenderBlockFlow, std::optional<LayoutUnit>> m_percentageBasesAtLastLayout;
+    struct RootBoxFragments {
+        SingleThreadWeakPtr<const RenderBlockFlow> root;
+        BoxFragments fragments;
+    };
+    SingleThreadWeakHashMap<RenderBox, RootBoxFragments> m_boxFragments;
+    SingleThreadWeakHashSet<RenderBlockFlow> m_multiColumnFlowsPaintingColumnsFromFragments;
     Vector<AnchorScrollAdjuster> m_anchorScrollAdjusters;
     std::optional<TextBoxTrim> m_textBoxTrim;
     std::optional<SubtreeScrollbarChangesState> m_subtreeScrollbarChangesState;
@@ -370,10 +454,13 @@ private:
 class ListItemOutsideMarkerScope {
 public:
     ListItemOutsideMarkerScope(LocalFrameViewLayoutContext&, RenderListItem&);
+    // The ones the block formatting context lays the content of out at once, from the outermost one.
+    ListItemOutsideMarkerScope(LocalFrameViewLayoutContext&, const Vector<CheckedRef<RenderListItem>>&);
     NODELETE ~ListItemOutsideMarkerScope();
 
 private:
     const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;
+    size_t m_count { 1 };
 };
 
 } // namespace WebCore

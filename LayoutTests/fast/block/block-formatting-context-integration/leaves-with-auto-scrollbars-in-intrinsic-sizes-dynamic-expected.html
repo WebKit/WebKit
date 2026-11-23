@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; margin-bottom: 5px; }
+.box { background: green; }
+.scroller { height: 39px; overflow: auto; }
+.content { width: 10px; height: 20px; background: orange; }
+table { border-spacing: 0; }
+td { padding: 0; }
+</style>
+<div class="root"><div class="box" style="width: max-content"><table><tr><td><div class="scroller"><div class="content" id="grows"></div></div></td></tr></table></div></div>
+<div class="root"><div class="box" style="width: fit-content"><div style="display: flex; overflow: auto; height: 39px"><div class="content" style="height: 40px" id="shrinks"></div></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("grows").style.height = "40px";
+document.getElementById("shrinks").style.height = "20px";
+</script>

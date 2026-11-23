@@ -50,9 +50,11 @@ struct ConstraintsForInFlowContent {
 
     enum BaseTypeFlag : uint8_t {
         GenericContent,
-        InlineContent
+        InlineContent,
+        BlockContent
     };
     bool isConstraintsForInlineContent() const { return baseTypeFlags().contains(InlineContent); }
+    bool isConstraintsForBlockContent() const { return baseTypeFlags().contains(BlockContent); }
 
 protected:
     ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop, EnumSet<BaseTypeFlag>);
@@ -63,6 +65,36 @@ private:
     unsigned m_baseTypeFlags : 4; // EnumSet<BaseTypeFlag>
     HorizontalConstraints m_horizontal;
     LayoutUnit m_logicalTop;
+};
+
+// What a parent formatting context decides for an independent formatting context root it lays out, in the root's writing mode.
+struct ConstraintsForIndependentFormattingContext {
+    // The containing block (CSS 2.2 §10.1): percentages resolve against it, and no block size means an indefinite one (§10.5).
+    LayoutUnit containingBlockInlineSize;
+    std::optional<LayoutUnit> containingBlockBlockSize;
+    // The containing block lays its children out again (RenderBlockFlow::layoutBlockChildren), the root included.
+    bool relayoutChildren { false };
+    // The border box inline size the parent formatting context decides (stretch-fit in a block formatting context, §10.3.3). Without it the
+    // root's own formatting context sizes it.
+    std::optional<LayoutUnit> borderBoxInlineSize;
+    // The border box inline size the stretch inline sizes of a block-level replaced element resolve to, which floats narrow (CSS 2.2 §9.5).
+    std::optional<LayoutUnit> stretchFitBorderBoxInlineSize;
+    // The block-start and block-end margins the parent formatting context decides, which the root's own formatting context reads: a quirks mode
+    // body stretches to the viewport less them (RenderBox::computeLogicalHeight).
+    LayoutUnit marginBefore;
+    LayoutUnit marginAfter;
+    // Those of its containing block, which a quirks mode body stretches to the viewport less too, from the root element.
+    LayoutUnit containingBlockMarginBefore;
+    LayoutUnit containingBlockMarginAfter;
+    // What the content of the root reads where it looks past the root: the block size percentage block sizes resolve against through an auto
+    // block size in quirks mode, and the available block sizes of the containing block, without and with its margins, borders and padding
+    // (RenderBox::availableLogicalHeight).
+    std::optional<LayoutUnit> contentPercentageBasis;
+    LayoutUnit containingBlockAvailableBlockSize;
+    LayoutUnit containingBlockAvailableBlockSizeIncludingMarginBorderPadding;
+    // Where the border box starts in the strip of fragmentainers of the root whose content breaks into them (FragmentainerConstraints::stripLogicalTop),
+    // when the root's own formatting context breaks its content across them too.
+    std::optional<LayoutUnit> borderBoxStripLogicalTop;
 };
 
 struct ConstraintsForOutOfFlowContent {

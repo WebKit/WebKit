@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+.multicol { columns: 2; column-gap: 20px; width: 500px; height: 200px; column-fill: auto; margin-bottom: 10px; }
+.inner { columns: 2; column-gap: 10px; }
+.spanner { column-span: all; border: 3px solid black; }
+.inner-spanner { column-span: all; height: 30px; background: blue; }
+.block { height: 40px; background: green; }
+fieldset { margin: 0; padding: 5px; border: 5px solid black; }
+</style>
+<!-- A fieldset with a multi-column container and its spanner inside. -->
+<div class="multicol">
+    <div class="block" style="height: 100px"></div>
+    <fieldset><div class="inner"><div class="block"></div><div class="block"></div><div class="inner-spanner"></div><div class="block"></div><div class="block"></div><div class="block"></div></div></fieldset>
+    <div class="block"></div>
+</div>
+<!-- A spanner with a multi-column container and its spanner inside. -->
+<div class="multicol" style="height: 150px">
+    <div class="block"></div>
+    <div class="inner">
+        <div class="block"></div><div class="block"></div>
+        <div class="spanner"><div class="inner"><div class="block"></div><div class="block"></div><div class="inner-spanner"></div><div class="block"></div><div class="block"></div></div></div>
+        <div class="block"></div><div class="block"></div>
+    </div>
+    <div class="block"></div>
+</div>

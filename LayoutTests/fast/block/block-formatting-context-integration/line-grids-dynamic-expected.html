@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; width: 150px; padding: 3px; margin-bottom: 5px; }
+.small { font-size: 9px; }
+</style>
+<div class=grid>
+  <div class=small id=first>one and some more text that wraps onto a few more lines</div>
+  <div class=small style="-webkit-line-snap: none; line-height: 11px;" id=fourth>grows by lines that are not on the grid</div>
+  <div class=small style="margin-top: 3px;">moves down by a few lines</div>
+  <div class=small style="display: flow-root; margin-top: 2px;">a flow-root that moves<div style="margin-top: 1px;">inside it</div></div>
+</div>
+<div class=grid>
+  <div class=small style="margin-left: 3px;"><span id=second>much longer text that wraps a couple of times here</span> line</div>
+  <div class=small style="margin-left: 7px;">moves too<span><div style="margin-top: 2px;">block in inline</div></span>after</div>
+</div>
+<div class=grid style="-webkit-line-grid: other; line-height: 23px;">
+  <div style="font-size: 18px;" id=third>much longer text</div>
+  <div class=small>below</div>
+</div>

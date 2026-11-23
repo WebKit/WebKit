@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.c { display: inline-block; vertical-align: top; width: 180px; margin: 0 4px 4px 0; outline: 1px solid black; }
+.fl { float: left; width: 60px; height: 40px; background-color: gray; }
+.b { display: block; background-color: rgba(0, 128, 0, 0.4); }
+.lg { padding: 0; width: fit-content; }
+.sh { width: auto; }
+.initial .fl { width: 30px; }
+.initial .m { margin-left: 20px; }
+.initial .w { width: 100px; }
+.initial .h { height: 10px; }
+</style>
+<div class=initial id=cases>
+<div class=c><div class=fl></div><output class=b>some text in the box beside the float that wraps</output></div>
+<div class=c><div class=fl></div><output class="b m">text in a box with a margin</output></div>
+<div class=c><div class=fl></div><legend class="b lg w">legend text that wraps around</legend></div>
+<div class=c><div class="fl h"></div><output class=b>text below a float that grows</output></div>
+<div class="c sh"><div class=fl></div><output class=b>shrink to fit</output></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

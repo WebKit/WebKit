@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 20px; }
+.mc { position: relative; columns: 2; column-gap: 0; width: 200px; margin: 0 10px 10px 0; float: left; }
+.s { column-span: all; height: 10px; background-color: gray; }
+.d { height: 20px; background-color: lightblue; }
+.f { float: left; width: 20px; height: 20px; background-color: lightgreen; }
+.a { position: absolute; width: 10px; height: 10px; background-color: orange; }
+.r { position: relative; }
+.marker { position: absolute; box-sizing: border-box; border: 2px solid blue; }
+.hit { position: absolute; width: 6px; height: 6px; }
+</style>
+<div class=mc><div class=d></div><div class=s></div><div class=d data-t></div><div class=d data-t></div><div class=d data-t></div><div class=d data-t><span style="display: inline-block; width: 10px; height: 10px; background-color: purple" data-t></span></div></div>
+<div class=mc><div class=d></div><div class=s></div><div class=d></div><div class=f data-t></div><div class=d data-t style="height: 50px"></div></div>
+<div class=mc>a<br><div class=s></div>b<br>c<br>d <span data-t>e</span><br>f<br>g</div>
+<div class=mc><div class=d></div><div class=s></div><div class=d data-t></div><div class=s></div><div class=d data-t></div><div class=d data-t></div></div>
+<div class=mc><div class=d></div><div class=s></div><div class=d></div><div class=d data-t style="height: 30px"><div class=d data-t></div></div></div>
+<div class=mc><div class=d style="height: 10px"><div data-t style="height: 50px; width: 20px; background-color: purple"></div></div><div class=s></div><div class=d></div><div class=d></div></div>
+<div class=mc><div data-t style="padding-left: 10px"><div class=d></div><div class=s></div><div class=d data-t></div><div class=d data-t></div><div class=d data-t></div></div></div>
+<div class=mc><div class=d></div><div class=s></div><div class=d></div><div class=d></div><div class="d r"><div class=a data-t style="left: 0; top: 0"></div></div><div class=a data-t style="left: 20px; top: 60px"></div></div>
+<div class=mc><div class="d r"><div class=a data-t style="left: 30px; top: 5px; height: 60px"></div></div><div class=s></div><div class=d></div><div class=d></div><div class=d></div></div>
+<div class=mc>a<br><div class=s></div>b<br>c<br>d<br><span class=r>e<img class=a data-t></span><br>f</div>
+<script>
+document.body.offsetHeight;
+const markers = [];
+for (const target of document.querySelectorAll("[data-t]")) {
+    for (const rect of target.getClientRects())
+        markers.push(["marker", rect.left, rect.top, rect.width, rect.height]);
+    const rect = target.getBoundingClientRect();
+    const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    markers.push(["hit", rect.left, rect.top, 0, 0, hit == target || target.contains(hit) ? "green" : "red"]);
+}
+for (const [className, left, top, width, height, color] of markers) {
+    const marker = document.createElement("div");
+    marker.className = className;
+    marker.style.left = left + "px";
+    marker.style.top = top + "px";
+    if (width || height) {
+        marker.style.width = width + "px";
+        marker.style.height = height + "px";
+    }
+    if (color)
+        marker.style.backgroundColor = color;
+    document.body.appendChild(marker);
+}
+</script>

@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>body { font-family: monospace; font-size: 10px; } table { border: 1px solid; margin: 2px; } td { border: 1px solid; padding: 2px; } .p { background: lightblue; }</style>
+<table><tr><td id="cell" style="height: 60px; width: 40px"><div class="p" style="height: 50%">cell</div></td><td style="height: 60px"><div class="p" id="child" style="height: 50%">child</div></td><td id="container" style="height: 60px">a</td></tr></table>
+<table id="table" style="height: 80px"><tr><td><div class="p" style="height: 100%">table</div></td><td><div class="p" id="text" style="height: 40%">text</div></td></tr></table>
+<script>
+document.body.offsetHeight;
+document.getElementById("cell").style.height = "90px";
+document.getElementById("child").style.height = "75%";
+const child = document.createElement("div");
+child.className = "p";
+child.style.height = "30%";
+child.textContent = "added";
+document.getElementById("container").appendChild(child);
+document.getElementById("table").style.height = "50px";
+document.getElementById("text").firstChild.data = "longer text that wraps";
+</script>

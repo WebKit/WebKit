@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 200px; height: 80px; border: 1px solid; margin: 0 2px 4px 0; }
+td { border: 1px solid gray; }
+</style>
+<div class="cb"><table style="position: absolute; right: 0; top: 5px; background: lightblue"><tr><td id="cell">short</td></tr></table></div>
+<div class="cb" id="containingBlock"><table style="position: absolute; left: 0; right: 0; bottom: 0; background: lightblue"><tr><td>bottom</td></tr></table></div>
+<div class="cb"><textarea id="textarea" style="position: absolute; right: 5px; bottom: 5px; width: 60px">area</textarea></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cell").firstChild.data = "much longer cell text";
+document.getElementById("containingBlock").style.height = "50px";
+document.getElementById("textarea").style.width = "120px";
+</script>

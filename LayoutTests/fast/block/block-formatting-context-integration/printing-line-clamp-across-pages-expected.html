@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<style>
+body { font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.lc { line-clamp: 5; border: 1px solid green; width: 150px; }
+.wlc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; border: 1px solid green; width: 150px; }
+</style>
+<div style="height: 750px"></div><div class=wlc>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>after</div>
+<div style="break-before: page; height: 770px"></div><div class=lc style="line-clamp: 3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>after</div>
+<div style="break-before: page; height: 740px"></div><div class=wlc><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div></div><div>after</div>
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>

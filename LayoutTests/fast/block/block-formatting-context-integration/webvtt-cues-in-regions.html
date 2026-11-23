@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+pre { font-family: monospace; font-size: 12px; }
+</style>
+<video id=video width=320 height=240></video>
+<pre id=log></pre>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+async function run()
+{
+    const video = document.getElementById('video');
+    video.src = '../../../media/content/test.mp4';
+    await new Promise(resolve => video.addEventListener('canplay', resolve, { once: true }));
+    const track = document.createElement('track');
+    track.src = 'resources/webvtt-regions.vtt';
+    video.appendChild(track);
+    await new Promise(resolve => video.textTracks.addEventListener('addtrack', resolve, { once: true }));
+    video.textTracks[0].mode = 'showing';
+    video.currentTime = 1;
+    await new Promise(resolve => video.addEventListener('seeked', resolve, { once: true }));
+    internals.ensureUserAgentShadowRoot(video);
+    const shadowRoot = internals.shadowRoot(video);
+    while (shadowRoot.querySelectorAll('div[useragentpart=-webkit-media-text-track-region]').length < 2)
+        await new Promise(resolve => setTimeout(resolve, 10));
+    document.body.offsetHeight;
+    const lines = [];
+    for (const element of shadowRoot.querySelectorAll('div[useragentpart=-webkit-media-text-track-region], div[useragentpart=-webkit-media-text-track-region-container], div[useragentpart=-webkit-media-text-track-region-container] > *')) {
+        const rect = element.getBoundingClientRect();
+        lines.push([element.getAttribute('useragentpart') || element.localName, rect.left, rect.top, rect.width, rect.height].join(' '));
+    }
+    document.getElementById('log').textContent = lines.join('\n');
+    video.remove();
+    testRunner.notifyDone();
+}
+run();
+</script>

@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 4px; }
+.ib { display: inline-block; vertical-align: top; background-color: rgba(0, 0, 255, 0.2); margin: 0 4px 4px 0; }
+.r { aspect-ratio: 2; background-color: rgba(0, 128, 0, 0.4); }
+.o { display: inline-block; vertical-align: top; height: 110px; margin: 0 4px 4px 0; position: relative; width: 120px; }
+.initial .o { height: 60px; }
+.initial .h { height: 40px !important; }
+</style>
+<div class=initial id=cases>
+<div class=o><div class=ib style="height: stretch"><div class=r style="height: 50%"></div></div></div>
+<div class=o><div class=ib><div style="height: stretch"><div class=r style="height: 50%"></div></div></div></div>
+<div class=o><div class="ib h" style="height: 100px"><div style="padding-top: 10%"><div class=r style="height: 50%"></div></div></div></div>
+<div class=o><div style="position: absolute; top: 0; bottom: 20px; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="height: 50%"></div></div></div>
+<div class=o><div style="position: absolute; top: 0; height: 70%; background-color: rgba(0, 0, 255, 0.2)"><div><div class=r style="height: 50%"></div></div></div></div>
+<div style="display: flex; height: 80px; margin-bottom: 4px" class=h><div style="width: fit-content; background-color: rgba(0, 0, 255, 0.2)"><div class=r style="height: 50%"></div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+document.body.offsetHeight;
+</script>

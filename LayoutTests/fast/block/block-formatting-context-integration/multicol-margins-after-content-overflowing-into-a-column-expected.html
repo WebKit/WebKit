@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 100px; height: 100px; columns: 2; column-gap: 0; border: 1px solid; float: left; margin: 0 6px 6px 0; }
+.g { background-color: green; }
+.o { background-color: orange; }
+</style>
+<div class=mc style="column-fill: auto"><div style="display: flex"><div style="margin-bottom: 20px"><div style="height: 50px; width: 50px"><div class=g style="height: 100px; width: 50px"></div></div><div class=g style="height: 60px; width: 50px; break-inside: avoid"></div></div></div><div class=o style="margin-top: -20px; height: 40px; width: 50px"></div></div>
+<div class=mc style="column-fill: auto"><div style="display: table; width: 100%"><div style="display: table-cell; vertical-align: bottom; padding-bottom: 30px"><div class=g style="height: 150px"></div></div></div><div class=o style="margin-top: -30px; height: 30px"></div></div>
+<div class=mc style="column-fill: auto"><div style="display: table; width: 50px; margin-bottom: 15px"><div style="display: table-cell"><div class=g style="height: 50px"></div><div class=g style="height: 50px"></div><div class=g style="height: 20px"></div></div></div><div class=o style="height: 20px; width: 40px"></div></div>
+<div class=mc style="column-fill: auto"><div style="display: table; width: 50px; margin-bottom: 15px"><div style="display: table-cell"><div class=g style="height: 50px"></div><div class=g style="height: 50px"></div><div class=g style="height: 20px"></div></div></div><div class=o style="margin-top: 25px; height: 20px; width: 40px"></div></div>

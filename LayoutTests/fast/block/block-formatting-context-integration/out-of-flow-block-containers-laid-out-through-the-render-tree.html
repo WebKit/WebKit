@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 150px; height: 80px; border: 1px solid; margin: 0 2px 4px 0; }
+.abs { position: absolute; background: lightblue; }
+</style>
+<div class="cb">text <div class="abs" style="content-visibility: hidden; width: 50px; height: 20px; left: 10px; background: orange">hidden</div></div>
+<div class="cb"><div class="abs" style="line-clamp: 2; width: 80px">clamped text that goes on for several lines here</div></div>
+<div class="cb"><div class="abs" style="contain: layout; right: 0">contained</div></div>
+<div class="cb"><div class="abs" style="top: 5px"><ul style="margin: 0"><li>list item with a marker</li></ul></div></div>
+<div class="cb"><div style="display: flex"><div class="abs" style="left: 60px; top: 20px"><ol style="margin: 0"><li>list in a flex item</li></ol></div></div>block</div>
+<div class="cb"><table><tr style="position: absolute; content-visibility: hidden; overflow: hidden; top: 30px; width: 40px; height: 10px; background: orange"><td>cell</td></tr><tr><td>row</td></tr></table></div>
+<div class="cb"><div class="abs" style="contain: size; contain-intrinsic-size: 30px 15px; bottom: 0">sized</div></div>
+<div class="cb"><div class="abs" style="contain: paint; top: 10px; bottom: 10px; left: 20px; right: 20px">stretched</div></div>
+<div class="cb"><span>inline <div class="abs" style="contain: layout">in inline content</div></span> after</div>
+<div class="cb"><div class="abs" style="contain: layout; width: 50%; height: 50%; bottom: 0; right: 0">percentages</div></div>

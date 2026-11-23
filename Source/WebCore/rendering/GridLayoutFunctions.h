@@ -77,7 +77,7 @@ NODELETE bool isOrthogonalParent(const RenderGrid&, const RenderElement& parent)
 bool isAspectRatioBlockSizeDependentGridItem(const RenderBox&);
 // Swaps columns and rows when the writing modes of the grid and the renderer are orthogonal.
 NODELETE Style::GridTrackSizingDirection flowAwareDirection(const RenderGrid&, const RenderElement&, Style::GridTrackSizingDirection);
-NODELETE std::optional<RenderBox::GridAreaSize> overridingContainingBlockContentSizeForGridItem(const RenderBox&, Style::GridTrackSizingDirection);
+NODELETE std::optional<RenderBox::ContainingBlockContentSize> overridingContainingBlockContentSizeForGridItem(const RenderBox&, Style::GridTrackSizingDirection);
 NODELETE bool hasRelativeOrKeywordOrAutoSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection);
 
 NODELETE bool isFlippedDirection(const RenderGrid&, Style::GridTrackSizingDirection);

@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 12px; line-height: 15px; }
+.mc { columns: 3; column-gap: 10px; width: 250px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.b { background-color: rgba(0, 0, 255, 0.3); border: 2px solid blue; margin: 4px 0; }
+img { display: block; background-color: green; }
+.f { float: left; width: 20px; height: 30px; background-color: orange; }
+</style>
+<div class=mc>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo</div>
+<div class=mc><div class="b h" style="margin-bottom: 10px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div><div class=b>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</div><div class=b>Duis aute irure dolor.</div></div>
+<div class=mc>text text text text<img style="width: 30px; height: 40px">text text text text text text text text text<img class=h style="width: 30px; height: 30px">more text</div>
+<div class=mc>text text text<img style="width: 30px; height: 80px">text text text text</div>
+<div class=mc><div class=b style="height: 10px; margin: 0"></div><div class=b style="height: 70px; margin: 0; break-inside: avoid-column"></div><div class=b style="height: 10px; margin: 0"></div></div>
+<div class=mc><img class=f style="height: 70px"><img style="width: 30px; height: 15px"><img style="width: 30px; height: 15px"></div>
+<div class=mc><div style="height: 15px"></div><div style="widows: 5; break-before: column">a<br>b<br>c<br>d<br>e</div></div>
+<div class=mc><img style="width: 30px; height: 20px"><img style="width: 30px; height: 25px"><img style="width: 30px; height: 25px"><img style="width: 30px; height: 20px"></div>
+<div class=mc><div style="height: 20px; background-color: green; break-inside: avoid-column"></div><div style="height: 25px; background-color: blue; break-inside: avoid-column"></div><div style="height: 25px; background-color: green; break-inside: avoid-column"></div><div style="height: 20px; background-color: blue; break-inside: avoid-column"></div></div>
+<div class=mc><div class=b style="height: 30px; margin: 0"></div><div class=b style="height: 25px; margin: 0; break-inside: avoid-column"></div><div class=b style="height: 25px; margin: 0; break-inside: avoid-column"></div><div class=b style="height: 10px; margin: 0"></div></div>
+<div class=mc><img style="width: 30px; height: 30px"><img class=f style="height: 25px"><img style="width: 30px; height: 25px"><img style="width: 30px; height: 10px"></div>
+<div class=mc><div class="s h" style="height: 30px; background-color: green"></div><div style="height: 20px; background-color: green; break-before: column"></div><div style="height: 20px; background-color: green"></div><div style="height: 10px; background-color: green; break-before: column"></div></div>
+<div class=mc style="columns: 2"><div style="height: 10px; background-color: green"></div><div style="height: 10px; background-color: blue; break-before: column"></div><div style="height: 10px; background-color: green; break-before: column"></div></div>
+<div class=mc><div style="height: 30px; background-color: green"></div><div style="break-before: column; padding-top: 20px"><div style="height: 20px; background-color: green"></div></div></div>
+<div class=mc style="height: 50px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+<div class=mc style="max-height: 40px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+<div class=mc style="columns: 2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+<div class=mc style="columns: 4"><div class=b>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></div>
+<div class=mc><div style="contain: size"><div style="height: 60px; background-color: green"></div></div><div style="height: 30px; background-color: blue"></div></div>

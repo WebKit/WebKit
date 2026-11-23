@@ -1,0 +1,75 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.c { background: silver; }
+p { margin: 6px 0; }
+</style>
+<div class="roots">
+<div class="root">
+  <p><span class="l"></span><span class="r" style="height: 80px"></span>text that wraps around a left float and a right float in the same paragraph</p>
+  <p>a paragraph the right float of the paragraph before intrudes into</p>
+</div>
+<div class="root">
+  <div class="c"><div style="margin: 0 10px"><span class="l" style="height: 60px"></span>nested</div></div>
+  <div class="c">lines next to a float that hangs out of a nested block container</div>
+  <div class="c" style="margin-top: 14px">and below it</div>
+</div>
+<div class="root">
+  <div class="c" style="margin-top: 20px"><span class="l"></span>top margin</div>
+  <div style="margin-top: 20px"><span class="r" style="height: 20px"></span></div>
+  <div class="c">a block container with floats only collapses its margins through</div>
+  <div style="height: 0"><span class="l" style="height: 40px"></span></div>
+  <div class="c">after a block that has no block size</div>
+</div>
+<div class="root">
+  <p>text <span style="background: yellow">in an inline box <span class="r"></span>with a float</span> inside it and more text after</p>
+  <p><span class="l" style="width: 60px; height: 12px"></span><span class="l" style="width: 30px; height: 24px"></span><span class="l" style="width: 100px; height: 12px"></span>three floats placed side by side and below</p>
+</div>
+<div class="root" style="width: auto; display: inline-block"><span class="l"></span><span class="r" style="height: 20px"></span>shrink</div>
+<div class="root"><span class="l" style="height: 80px"></span>the root grows to contain the float</div>
+<div class="root">
+  <div><div><span class="l"></span></div><p style="margin-top: 20px">the float in a block the margins collapse through goes down with them</p></div>
+  <div><div style="margin-top: 4px"><span class="r"></span></div><div></div><p style="margin-top: 16px">and a float on the other side</p></div>
+</div>
+<div class="root">
+  <p style="margin: 0"><span class="l" style="height: 40px"></span>text</p>
+  <div><div><span class="l"></span></div><p style="margin-top: 30px">the float goes down past the one before, not beside it</p></div>
+</div>
+<div class="root" style="line-height: 9px">
+  <p style="margin: 0"><span class="l" style="height: 36.5px"></span>x</p>
+  <p style="margin: 0">lines beside a float with a fractional bottom, which the render tree path floors, and the lines after</p>
+</div>
+<div class="root"><p><span class="l"></span>text</p><input type="checkbox" style="display: block; width: 50px; height: 10px"></div>
+<div class="root"><div id="caret-block"><span class="l" style="height: 40px"></span>caret</div><div style="margin-top: 50px">after</div></div>
+<div class="root" id="caret-result"></div>
+<div class="root"><div style="height: 0"><span class="l" id="hit" style="background: red"></span></div><div style="height: 0">x</div></div>
+<div class="root" dir="rtl">
+  <p><span class="l"></span><span class="r"></span>text from right to left around the floats</p>
+  <p>and the next paragraph</p>
+</div>
+<div class="root">
+  <p><span class="l" style="width: 50px; height: 50px; border-radius: 50%; shape-outside: circle(50%); shape-margin: 5%"></span>lines along a shape with a percentage shape margin, and some more text</p>
+</div>
+<div class="root" style="writing-mode: vertical-lr; height: 160px; width: auto">
+  <p><span class="l"></span>vertical left to right text around a float</p>
+  <p>next paragraph</p>
+</div>
+<div class="root" style="writing-mode: vertical-rl; height: 160px; width: auto">
+  <p><span class="l"></span><span class="r"></span>vertical right to left text around floats</p>
+  <p>next paragraph</p>
+</div>
+</div>
+<script>
+// A float that hangs out of its block container paints and takes hits there.
+const hit = document.getElementById("hit");
+const rect = hit.getBoundingClientRect();
+if (document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2) == hit)
+    hit.style.background = "green";
+// Below its block container, beside the float, is still in that block container.
+const caretBlock = document.getElementById("caret-block").getBoundingClientRect();
+const caretRange = document.caretRangeFromPoint(caretBlock.left + 100, caretBlock.top + 25);
+document.getElementById("caret-result").textContent = caretRange.startContainer.textContent;
+</script>

@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.c { background: lightblue; margin: 4px 0; }
+.wrap { width: 300px; border: 1px solid; }
+.cb { position: relative; width: 200px; height: 80px; border: 1px solid; margin: 4px; display: inline-block; vertical-align: top; }
+.oof { position: absolute; background: lightblue; }
+</style>
+<div class="wrap">
+<div class="c" id="toggle">toggle<div style="height: 30px"></div></div>
+<div class="c" id="intrinsic" style="contain: size; contain-intrinsic-size: 100px 25px">intrinsic</div>
+<div style="width: min-content; border: 1px solid"><div class="c" id="inline" style="contain: inline-size">inline</div></div>
+<div class="c" style="contain: layout"><div id="grows" style="height: 10px">grows</div></div>
+</div>
+<div class="cb"><div class="oof" id="oof" style="contain: size layout">out-of-flow<div style="height: 30px; width: 60px"></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("toggle").style.contain = "size";
+document.getElementById("intrinsic").style.containIntrinsicSize = "60px 45px";
+document.getElementById("inline").style.containIntrinsicInlineSize = "90px";
+document.getElementById("grows").style.height = "40px";
+document.getElementById("oof").style.containIntrinsicSize = "80px 30px";
+</script>

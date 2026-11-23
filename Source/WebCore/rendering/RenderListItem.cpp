@@ -598,8 +598,7 @@ void RenderListItem::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit p
 
     auto markerScope = ListItemOutsideMarkerScope { view().frameView().layoutContext(), *this };
     RenderBlockFlow::layoutBlock(relayoutChildren, pageLogicalHeight);
-    placeOutsideMarker(*outsideMarker);
-    addOverflowFromContainedBox(*outsideMarker);
+    placeOutsideMarkerAfterLayout();
 }
 
 static std::pair<float, float> layoutBoundsForMarkerText(const Style::ComputedStyle& style, const String& text)
@@ -684,27 +683,38 @@ LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow& marker)
     return fontBaseline - marker.firstLineBaseline().value_or(marker.logicalHeight());
 }
 
+bool RenderListItem::markerNeedsOwnLine() const
+{
+    if (!markerBox() || childrenInline())
+        return false;
+    // Quirks mode puts the marker of a list item that starts with a nested list on a line of its own above that list, rather than on the line its first item makes.
+    for (CheckedPtr child = firstChild(); child; child = child->nextSibling()) {
+        auto boxType = markerSearchBoxType(*child);
+        if (boxType != MarkerSearchBoxType::Opaque)
+            return boxType == MarkerSearchBoxType::NestedListInQuirksMode;
+    }
+    return false;
+}
+
 void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
-    CheckedPtr outsideMarker = markerBox();
-    if (!outsideMarker)
+    if (!markerBox())
         return RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
-
-    auto markerNeedsOwnLine = [&] {
-        // Quirks mode puts the marker of a list item that starts with a nested list on a line of its own above that list, rather than on the line its first item makes.
-        for (CheckedPtr child = firstChild(); child; child = child->nextSibling()) {
-            auto boxType = markerSearchBoxType(*child);
-            if (boxType != MarkerSearchBoxType::Opaque)
-                return boxType == MarkerSearchBoxType::NestedListInQuirksMode;
-        }
-        return false;
-    };
 
     // The marker takes no part in layout, so a line of its own is room this list item makes for it before its block
     // children are placed. layoutBlockChildren calls us right after it starts them at the content edge.
-    if (!childrenInline() && markerNeedsOwnLine())
+    if (markerNeedsOwnLine())
         setLogicalHeight(logicalHeight() + lineHeight());
 
+    layoutOutsideMarker(relayoutChildren);
+    RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
+}
+
+void RenderListItem::layoutOutsideMarker(RelayoutChildren relayoutChildren)
+{
+    CheckedPtr outsideMarker = markerBox();
+    if (!outsideMarker)
+        return;
     outsideMarker->setIsExcludedFromNormalLayout(true);
     if (relayoutChildren == RelayoutChildren::Yes)
         outsideMarker->setNeedsLayout(MarkingBehavior::OnlyThis);
@@ -718,8 +728,15 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
             invalidateOutsideMarkerContainer();
         m_markerLayoutBounds = layoutBounds;
     }
+}
 
-    RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
+void RenderListItem::placeOutsideMarkerAfterLayout()
+{
+    CheckedPtr outsideMarker = markerBox();
+    if (!outsideMarker)
+        return;
+    placeOutsideMarker(*outsideMarker);
+    addOverflowFromContainedBox(*outsideMarker);
 }
 
 void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

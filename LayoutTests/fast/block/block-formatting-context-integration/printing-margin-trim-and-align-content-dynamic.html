@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.c { border: 2px solid blue; line-height: 30px; }
+.b { border-left: 4px solid; height: 60px; margin: 20px 0; }
+.r { display: flow-root; border: 2px solid green; line-height: 30px; }
+.initial .h { height: 5px !important; }
+</style>
+<div class=initial id=cases>
+<div style="height: 650px"></div><div class=c style="margin-trim: block"><div class="b h" style="height: 100px"></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div></div><div class=b></div>
+<div style="height: 650px; break-before: page"></div><div class=r style="align-content: center; height: 400px"><div class="h" style="height: 50px"></div>a<br>b</div><div class=b></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("cases").className = "";
+</script>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

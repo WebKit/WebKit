@@ -681,7 +681,8 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::formattingContextConstra
     auto padding = logicalPadding(rootRenderer, availableWidth, writingMode);
     auto border = logicalBorder(rootRenderer, writingMode);
     border.vertical.before += intrinsicBorder(rootRenderer);
-    if (writingMode.isVertical() && writingMode.isLineInverted()) {
+    // The content starts past the border and padding on the block-start side, which is the line-under one in vertical-lr and horizontal-bt.
+    if (writingMode.isLineInverted()) {
         padding.vertical = { padding.vertical.after, padding.vertical.before };
         border.vertical = { border.vertical.after, border.vertical.before };
     }

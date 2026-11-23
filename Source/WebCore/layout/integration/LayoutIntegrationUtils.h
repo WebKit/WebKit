@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/BlockLayoutState.h>
+#include <WebCore/InlineLineTypes.h>
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/RenderBlockFlow.h>
@@ -35,13 +36,18 @@
 
 namespace WebCore::Layout {
 
+class BlockFormattingContext;
+class BoxGeometry;
 class ElementBox;
 class InlineLayoutState;
 class LayoutState;
+struct BlockLayoutResult;
 
 class IntegrationUtils {
 public:
-    IntegrationUtils(const LayoutState&);
+    IntegrationUtils(LayoutState&);
+    // The block formatting context the inline content is in lays out the block-level boxes in it, and adds them to the result it is building.
+    IntegrationUtils(LayoutState&, BlockFormattingContext&, BlockLayoutResult&);
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth = { }, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight = { }) const;
     std::pair<LayoutUnit, LayoutUnit> borderAndPaddingForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
@@ -59,15 +65,23 @@ public:
     LayoutUnit maxContentLogicalWidthContribution(const ElementBox&) const;
     std::optional<LayoutUnit> firstLineBaselineForGridItem(const ElementBox&) const;
     std::optional<LayoutUnit> lastLineBaselineForGridItem(const ElementBox&) const;
-    void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
+    BlockContentBreak layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, InlineLayoutState&) const;
+    // The block formatting context the inline content is in lays out the content of a float that breaks across fragmentainers from where the
+    // float went, which gives the float its block size, and tells whether none of the content fits there (the float goes to the next
+    // fragmentainer then). None for a float laid out through the render tree, which layoutWithFormattingContextForBox measures.
+    std::optional<bool> layoutFloatContent(const ElementBox& floatBox, BoxGeometry&) const;
     NODELETE static const Style::ComputedStyle& firstNonAnonymousAncestorStyle(const Box&);
 
+    // What of RenderBlockFlow::MarginInfo crosses into the inline content; the rest stays with the block container (MarginInfo(const RenderBlockFlow&)).
     NODELETE static BlockLayoutState::MarginState toMarginState(const RenderBlockFlow::MarginInfo&);
-    static RenderBlockFlow::MarginInfo toMarginInfo(const Layout::BlockLayoutState::MarginState&);
+    static void updateMarginInfo(RenderBlockFlow::MarginInfo&, const BlockLayoutState::MarginState&);
     NODELETE static std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode);
 
 private:
-    const CheckedRef<const LayoutState> m_globalLayoutState;
+    const CheckedRef<LayoutState> m_globalLayoutState;
+    // FIXME: The block formatting context lays out the block-level boxes itself once it splits the inline content at them.
+    BlockFormattingContext* const m_blockFormattingContext { nullptr };
+    BlockLayoutResult* const m_blockLayoutResult { nullptr };
 };
 
 }

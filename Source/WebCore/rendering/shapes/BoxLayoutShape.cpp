@@ -57,12 +57,12 @@ static inline LayoutSize computeMarginBoxShapeRadius(const LayoutSize& radius, c
         adjustRadiusForMarginBoxShape(radius.height(), adjacentMargins.height()));
 }
 
-static inline LayoutRoundedRect::Radii computeMarginBoxShapeRadii(const LayoutRoundedRect::Radii& radii, const RenderBox& renderer)
+static inline LayoutRoundedRect::Radii computeMarginBoxShapeRadii(const LayoutRoundedRect::Radii& radii, const LayoutBoxExtent& margins)
 {
-    return LayoutRoundedRect::Radii(computeMarginBoxShapeRadius(radii.topLeft(), LayoutSize(renderer.marginLeft(), renderer.marginTop())),
-        computeMarginBoxShapeRadius(radii.topRight(), LayoutSize(renderer.marginRight(), renderer.marginTop())),
-        computeMarginBoxShapeRadius(radii.bottomLeft(), LayoutSize(renderer.marginLeft(), renderer.marginBottom())),
-        computeMarginBoxShapeRadius(radii.bottomRight(), LayoutSize(renderer.marginRight(), renderer.marginBottom())));
+    return LayoutRoundedRect::Radii(computeMarginBoxShapeRadius(radii.topLeft(), LayoutSize(margins.left(), margins.top())),
+        computeMarginBoxShapeRadius(radii.topRight(), LayoutSize(margins.right(), margins.top())),
+        computeMarginBoxShapeRadius(radii.bottomLeft(), LayoutSize(margins.left(), margins.bottom())),
+        computeMarginBoxShapeRadius(radii.bottomRight(), LayoutSize(margins.right(), margins.bottom())));
 }
 
 LayoutRoundedRect BoxShapeGeometry::roundedRect() const
@@ -113,16 +113,23 @@ static BoxShapeGeometry computeHalfBorderBoxGeometry(const RenderBox& renderer)
 
 BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& renderer)
 {
+    return computeGeometryForBoxShape(box, renderer, renderer.borderBoxSize(), renderer.marginBox());
+}
+
+BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& renderer, const LayoutSize& borderBoxSize, const LayoutBoxExtent& margins)
+{
     CheckedRef style = renderer.style();
+    auto borderBoxRect = LayoutRect { { }, borderBoxSize };
     switch (box) {
     case CSSBoxType::MarginBox: {
-        auto marginBox = renderer.marginBoxRect();
+        auto marginBox = borderBoxRect;
+        marginBox.expand(margins);
         if (!renderer.usedStyle().hasBorderRadius())
             return { BorderShape { marginBox, { } }, BoxShapeGeometry::Edge::Outer };
 
-        auto borderShape = BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect());
+        auto borderShape = BorderShape::shapeForBorderRect(renderer.usedStyle(), borderBoxRect);
         auto cornerCurvatures = borderShape.cornerCurvatures();
-        auto radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
+        auto radii = computeMarginBoxShapeRadii(borderShape.radii(), margins);
         // Expanding the radii for the margins can push concave corners into each other, so re-run the
         // opposite-corner constraint rather than just the adjacent-corner one.
         radii.scale(BorderShape::constrainedRadiiScale(marginBox, radii, cornerCurvatures));
@@ -133,21 +140,21 @@ BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& ren
     case CSSBoxType::HalfBorderBox:
         return computeHalfBorderBoxGeometry(renderer);
     case CSSBoxType::PaddingBox:
-        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
+        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), borderBoxRect), BoxShapeGeometry::Edge::Inner };
     // fill-box compute to content-box for HTML elements.
     case CSSBoxType::FillBox:
     case CSSBoxType::ContentBox:
-        return { renderer.borderShapeForContentClipping(renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
+        return { renderer.borderShapeForContentClipping(borderBoxRect), BoxShapeGeometry::Edge::Inner };
     // stroke-box, view-box compute to border-box for HTML elements.
     case CSSBoxType::BorderBox:
     case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:
     case CSSBoxType::BoxMissing:
-        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
+        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), borderBoxRect), BoxShapeGeometry::Edge::Outer };
     }
 
     ASSERT_NOT_REACHED();
-    return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
+    return { BorderShape::shapeForBorderRect(renderer.usedStyle(), borderBoxRect), BoxShapeGeometry::Edge::Outer };
 }
 
 LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const

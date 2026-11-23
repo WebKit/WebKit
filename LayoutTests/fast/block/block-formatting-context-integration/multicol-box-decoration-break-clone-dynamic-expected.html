@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<style>
+body { margin: 4px; font: 10px/20px monospace; }
+.m { columns: 3; column-fill: auto; gap: 0; width: 300px; height: 100px; margin-bottom: 8px; outline: 1px solid black; }
+.c { border: 5px solid green; padding: 5px; background-color: lightblue; }
+.k { background-color: purple; }
+.n { break-before: column; }
+</style>
+<div class=m><div class=c><div class=k style="height: 80px"></div></div><div class="c n"><div class=k style="height: 80px"></div></div><div class="c n"><div class=k style="height: 40px"></div></div></div>
+<div class=m><div class=c style="height: 80px; padding: 0; border-width: 10px"></div><div class="c n" style="height: 70px; padding: 0; border-width: 10px"></div></div>
+<div class=m><div class=c style="padding: 0; border-width: 10px">1<br>2<br>3<br>4</div><div class="c n" style="padding: 0; border-width: 10px">5<br>6<br>7<br>8</div><div class="c n" style="padding: 0; border-width: 10px">9<br>10</div></div>
+<div class=m><div class=c><div class=k style="height: 200px"></div></div></div>

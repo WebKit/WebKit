@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<meta name="fuzzy" content="maxDifference=0-80; totalPixels=0-20">
+<style>
+body { margin: 0; }
+.multicol { columns: 2; column-gap: 10px; width: 300px; }
+.spanner { column-span: all; border: 3px solid blue; }
+fieldset { margin: 0; padding: 5px; border: 5px solid black; }
+</style>
+<!-- A fieldset with a multi-column container and its spanner inside, and a multi-column container after it, both printed in a single column. -->
+<fieldset><div class="multicol">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class="spanner">spanner</div>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div></fieldset>
+<div class="multicol">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class="spanner">spanner</div>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

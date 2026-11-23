@@ -53,6 +53,8 @@ private:
     void paintTableCellDecorations(RenderTableCell&);
     void paintViewBackground(RenderView&);
 
+    void paintBoxDecorationsInRect(LayoutRect);
+
     BleedAvoidance determineBleedAvoidance() const;
     bool backgroundHasOpaqueTopLayer() const;
 

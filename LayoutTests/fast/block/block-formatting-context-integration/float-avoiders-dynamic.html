@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.a { display: flow-root; background: rgba(255, 255, 0, 0.4); }
+.h { overflow: hidden; background: rgba(255, 0, 255, 0.3); }
+</style>
+<div class="roots">
+<div class="root"><div class="l" id="wider"></div><div class="a">beside a float that gets wider</div></div>
+<div class="root"><div class="l"></div><div class="h" id="width" style="width: 100px">a width that stops fitting</div></div>
+<div class="root"><div class="l"></div><div class="h" id="margin" style="margin-left: 20px">a margin that grows past the float</div></div>
+<div class="root"><div class="l" id="removed"></div><div class="a">a float removed</div></div>
+<div class="root"><p id="inserted-before">a float added before</p><div class="h" style="width: 170px">this box</div></div>
+<div class="root"><div class="l"></div><div class="a"><span id="text">text that gets longer</span></div></div>
+<div class="root"><div class="l"></div><div id="avoider">overflow added</div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("wider").style.width = "100px";
+document.getElementById("width").style.width = "170px";
+document.getElementById("margin").style.marginLeft = "60px";
+document.getElementById("removed").remove();
+const added = document.createElement("div");
+added.className = "l";
+document.getElementById("inserted-before").after(added);
+document.getElementById("text").firstChild.appendData(", much longer, wrapping beside the float and below it");
+document.getElementById("avoider").className = "h";
+</script>

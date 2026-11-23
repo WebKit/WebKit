@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.cb { position: relative; width: 300px; height: 120px; border: 1px solid; margin: 4px; }
+.anchor { width: 40px; height: 20px; background: orange; margin: 10px 30px; }
+.a { position: absolute; background: lightblue; }
+.target { position: absolute; position-visibility: no-overflow; width: 60px; height: 60px; }
+</style>
+<div class="cb"><div id="anchor" class="anchor" style="anchor-name: --a1"></div><div class="a" style="position-anchor: --a1; top: anchor(bottom); left: anchor(right)">moves</div></div>
+<div class="cb"><div id="scroller" style="overflow: scroll; height: 80px; width: 200px"><div style="height: 200px"><div class="anchor" style="anchor-name: --a2; margin-top: 60px"></div></div></div><div class="a" style="position-anchor: --a2; top: anchor(bottom); left: anchor(right)">scrolled</div></div>
+<div class="cb"><div id="sized" class="anchor" style="anchor-name: --a3"></div><div class="a" style="position-anchor: --a3; top: anchor(top); left: anchor(right); height: anchor-size(height)">grows</div></div>
+<div class="cb" style="overflow: hidden"><div id="visibility" style="overflow: hidden scroll; scrollbar-width: none; height: 100%">
+<div class="anchor" style="anchor-name: --a4; width: 60px; height: 60px; display: inline-block; margin: 0"></div>
+<div class="anchor" style="anchor-name: --a5; width: 60px; height: 60px; display: inline-block; margin: 0; position: relative; top: 60px"></div>
+<div class="target" style="position-anchor: --a4; top: anchor(bottom); background: green">fits</div>
+<div class="target" style="position-anchor: --a5; left: anchor(left); bottom: anchor(top); background: red">overflows</div>
+<div style="height: 300px"></div>
+</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("anchor").style.marginLeft = "80px";
+document.getElementById("scroller").scrollTop = 30;
+document.getElementById("sized").style.height = "50px";
+document.getElementById("visibility").scrollTop = 30;
+</script>

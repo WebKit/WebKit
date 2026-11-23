@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.r { display: flow-root; border-left: 3px solid blue; width: 200px; }
+</style>
+<ul style="margin: 0"><li>Lorem ipsum</li></ul><div style="height: 768px"></div><div class=r>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</div><div>Lorem ipsum dolor sit amet.</div>
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>

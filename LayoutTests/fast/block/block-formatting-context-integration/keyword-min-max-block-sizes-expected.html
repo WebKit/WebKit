@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; height: 300px; background: lightgray; margin-bottom: 10px; font-family: monospace; font-size: 10px; }
+.box { background: rgba(0, 128, 0, 0.5); margin: 6px 0; }
+.content { height: 40px; width: 50px; background: blue; }
+</style>
+<div class="root">
+  <div class="box" style="height: 100px; max-height: min-content"><div class="content"></div></div>
+  <div class="box" style="height: 10px; min-height: max-content; padding: 3px; border: 2px solid black"><div class="content"></div></div>
+  <div class="box" style="height: 30%; max-height: fit-content"><div class="content"></div></div>
+  <div class="box" style="height: 60px; max-height: min-content; box-sizing: border-box; padding: 5px">text that wraps onto a few lines in this box</div>
+  <div class="box" style="height: 80px; max-height: min-content"><div style="height: 50%; width: 20px; background: purple"></div><div class="content"></div></div>
+  <div class="box" style="height: 0; min-height: min-content; margin: 10px 0"></div>
+</div>

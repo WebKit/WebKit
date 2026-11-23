@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class RenderBlock;
+class RenderBlockFlow;
 
 class LineClampUpdater {
 public:
@@ -57,6 +58,12 @@ public:
     NODELETE static bool isInsideLineClampContainer(const RenderObject&);
     // Whether the continue value of the block container hides the content after the clamp point.
     NODELETE static bool shouldDiscardOverflow(const RenderBlock&);
+    NODELETE static bool hasTextBoxTrimEnd(const RenderBlock&);
+    // Whether the last line before the clamp point gets its block end trimmed when it is inside this block, given whether it would when
+    // it is inside the parent.
+    static bool shouldTrimEndAtClampPoint(const RenderBlock&, bool parentShouldTrimEnd);
+    // Whether the content of a line-clamp container ends at its clamp point, which it is laid out again without then.
+    static bool contentFitsWithinMaximumLines(const RenderBlockFlow&);
     // Floats of a line-clamp container are clipped to its block-end content edge (and nowhere else). The clip rect is in the renderer's coordinates.
     static std::optional<LayoutRect> blockEndClipRect(const RenderBox& floatBox, const RenderElement&);
     static void setIsForcedHidden(RenderElement&, bool);

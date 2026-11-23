@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; margin: 2px; border: 1px solid; float: left; clear: left; }
+.f { float: left; background: yellow; }
+.ib { display: inline-block; background: pink; }
+.c { background: lightblue; }
+</style>
+<body>
+<div class="root"><div class="f"><div class="c" style="padding-left: 50%"><span id="a">float grows</span></div></div></div>
+<div class="root" style="position: relative; height: 30px; width: 300px"><div style="position: absolute; background: yellow"><div class="c" style="padding-left: 30%"><span id="b">absolute box</span></div></div></div>
+<div class="root"><div class="f"><table class="c" style="padding-left: 20%"><tr><td id="c">wider table cell</td></tr></table></div></div>
+<div class="root"><div class="f">text <span class="ib c" style="padding-right: 30%" id="d">longer atomic</span> text</div></div>
+<div class="root"><div style="width: max-content; background: yellow"><div class="c" style="padding: 0 calc(10% + 4px)" id="e">max-content box</div></div></div>
+<div class="root"><div class="f"><div><div class="c" style="padding-left: 40%" id="g">nested deeper</div></div></div></div>
+<div class="root"><div class="f">text <span class="ib c" style="padding-right: 30%" id="h">sane</span> text</div></div>

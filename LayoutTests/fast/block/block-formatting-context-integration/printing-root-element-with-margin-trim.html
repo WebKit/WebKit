@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+html { margin-trim: block; border: 2px solid; }
+body { display: contents; }
+.b { border-left: 4px solid; height: 100px; margin: 20px 0; }
+</style>
+<div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b style="break-before: page; margin-top: 30px"></div><div class=b></div><div class=b></div><div class=b></div><div class=b></div><div class=b style="margin-bottom: 40px"></div>
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>

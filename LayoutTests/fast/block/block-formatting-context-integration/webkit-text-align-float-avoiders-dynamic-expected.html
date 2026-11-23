@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px/16px sans-serif; margin: 4px; }
+.root { width: 300px; border: 1px solid; margin-bottom: 4px; display: flow-root; }
+.lf { float: left; height: 30px; background: green; }
+.rf { float: right; width: 80px; height: 30px; background: green; }
+.av { overflow: hidden; width: 60px; height: 20px; background: blue; }
+</style>
+<center class=root><div class=lf>a wider float</div><div class=av></div><div class=av style="margin-left: 10px; margin-right: 5px;"></div></center>
+<div class=root style="text-align: -webkit-right;"><div class=lf>a wider float</div><div class=av></div></div>
+<div class=root style="text-align: -webkit-center;"><div class=lf style="width: 100px;"></div><div class=av></div><table style="background: orange;"><tr><td>table</td></tr></table></div>

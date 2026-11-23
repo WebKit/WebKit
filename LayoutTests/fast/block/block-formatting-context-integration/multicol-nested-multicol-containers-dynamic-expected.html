@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 380px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.n { columns: 2; column-gap: 6px; border: 2px solid green; }
+.r { display: flow-root; border: 2px solid blue; padding: 2px; }
+.b { border: 2px solid blue; padding: 2px; }
+.s { column-span: all; background-color: lightgray; }
+img { display: block; background-color: green; width: 30px; height: 20px; }
+.initial .h { height: 5px !important; }
+.initial .t { height: 80px !important; }
+</style>
+<div class=mc style="height: 90px; column-fill: auto"><img class=h style="height: 40px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img></div>
+<div class=mc style="height: 90px; column-fill: auto"><img style="height: 40px"><div class=n>Lorem ipsum dolor sit amet, consectetur  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></div>
+<div class=mc style="height: 90px; column-fill: auto"><img style="height: 40px"><div class=n><img class=t style="height: 10px"></div><img></div>
+<div class=mc><img style="height: 30px"><img class=h style="height: 30px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img style="height: 30px"></div>

@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<html>
+<style>
+::-webkit-scrollbar { width: 0; height: 0; }
+body { margin: 0; font: 10px/12px monospace; height: 1000px; }
+.fixed { position: fixed; background: lightgreen; }
+.abs { position: absolute; background: lightblue; }
+</style>
+<script>
+if (window.internals)
+    internals.settings.setFixedElementsLayoutRelativeToFrame(true);
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.addEventListener("load", async () => {
+    if (window.testRunner)
+        await testRunner.setPageScaleFactor(2, 0, 0);
+    document.body.offsetHeight;
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+<body>
+<div style="width: 100px; background: lightgray">block</div>
+<div class=fixed style="width: 60px">static fixed</div>
+<div class=fixed style="right: 0; bottom: 0; width: 50%; height: 20%">fixed</div>
+<div class=fixed style="left: 0; right: 0; top: 0; bottom: 0; margin: auto; width: 60px; height: 20px">centered</div>
+<div class=fixed style="left: 10px; top: 40px; width: 20%">left</div>
+<div class=abs style="left: 0; top: 80px; width: 25%; height: 10%">abs</div>
+</body>
+</html>

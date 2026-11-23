@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 300px; height: 60px; columns: 3; column-fill: auto; column-gap: 6px; border: 1px solid; margin: 0 6px 6px 0; float: left; }
+.h { border-left: 3px solid blue; }
+.g { border: 2px solid green; padding: 1px; }
+</style>
+<div class=mc>a <span><div class=h id=d1 style="height: 30px">Lorem<br>ipsum</div>tail</span> after</div>
+<div class=mc>a <span><div class=h style="height: 30px"><span id=d2>x</span></div>tail</span> after</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("d1").style.height = "20px";
+document.getElementById("d1").lastChild.data = "ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor";
+document.getElementById("d2").firstChild.data = "text that grew longer than the box and goes on into the next column";
+</script>

@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; }
+.mc { width: 400px; height: 150px; columns: 3; column-fill: auto; column-gap: 10px; border: 1px solid; margin: 100px 0 0 100px; }
+.b { border-left: 4px solid; height: 80px; margin: 10px 0; }
+dialog, [popover] { border: 2px solid blue; padding: 0; width: 100px; height: 50px; }
+</style>
+<div class=mc><div class=b></div><div style="margin-left: 30px"><div class=b></div><div popover=manual id=popover style="position: absolute; inset: auto; margin: 0">popover</div><div class=b></div></div><div class=b></div><dialog id=dialog style="inset: auto; margin: 0">dialog</dialog><div class=b></div></div>
+<script>
+dialog.showModal();
+popover.showPopover();
+</script>

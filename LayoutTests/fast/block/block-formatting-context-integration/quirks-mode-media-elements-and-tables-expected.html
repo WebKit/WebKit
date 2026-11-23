@@ -1,0 +1,14 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.frame { border: 2px solid blue; margin: 2px; }
+video, audio { visibility: hidden; }
+table { border: 1px solid; margin: 2px; }
+td { border: 1px solid; padding: 2px; }
+</style>
+<div class="frame"><video controls style="display: block; width: 160px; height: 90px"></video></div>
+<div class="frame" style="height: 120px"><div><video controls style="display: block; width: 50%; margin-left: 20px"></video></div></div>
+<div class="frame">before <span class="frame" style="display: inline-block"><video controls style="width: 120px; height: 60px"></video></span> after</div>
+<div class="frame"><audio controls style="display: block"></audio></div>
+<div class="frame"><table><tr style="height: 50%"><td style="height: 40%">percentage row and cell</td></tr><tr><td>auto</td></tr></table></div>
+<div class="frame" style="height: 100px"><div><table style="height: 80%"><tr style="height: 30%"><td>row</td></tr><tr><td style="height: 60%">cell</td></tr></table></div></div>

@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 380px; height: 100px; column-fill: auto; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.a { position: absolute; width: 150px; border: 2px solid blue; }
+.rel { position: relative; border: 2px solid; }
+img { display: block; background-color: green; width: 30px; height: 20px; }
+.initial .h { height: 5px !important; }
+.initial .t { top: 5px !important; }
+</style>
+<div class=mc><div class=rel><div style="height: 180px"></div><div class=a style="top: 50px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div></div></div>
+<div class=mc><div class=rel><div style="height: 180px"></div><div class=a style="top: 50px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div></div></div>
+<div class=mc><div class=rel><img style="height: 70px"><div class=a>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div><img></div></div>

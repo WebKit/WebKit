@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<html style="margin: 4px 6px; padding: 2px; border: 2px solid; height: 30%">
+<style>
+body { font: 10px/12px monospace; margin: 3px; height: 50%; }
+iframe { width: 140px; height: 90px; border: 1px solid; margin: 2px; vertical-align: top; }
+.abs { position: absolute; background: lightblue; }
+.fixed { position: fixed; background: lightgreen; }
+</style>
+<body>
+<div style="height: 20px; margin: 5px 0; background: lightgray">block</div>
+text <span class=abs>static abs</span> after
+<div class=abs style="left: 10px; top: 330px; width: 15%; height: 5%">abs</div>
+<div class=abs style="left: 0; right: 0; width: 80px; margin: auto; top: 370px; height: 15px">auto margins</div>
+<div class=abs style="right: 5px; top: 400px; width: max-content">fit-content abs</div>
+<div class=abs style="top: 560px; bottom: 0; height: 60px; width: 40px; left: 200px; align-self: start">overflow</div>
+<div class=fixed style="right: 10px; bottom: 10px; width: 10%; height: 5%">fixed</div>
+<div class=fixed style="left: 0; right: 0; top: 400px; bottom: 0; margin: auto; width: 60px; height: 15px">centered</div>
+<div class=fixed>static fixed</div>
+<div style="margin-top: 70px">
+<iframe srcdoc="<html dir=rtl><body style='margin: 4px; font: 10px/12px monospace'><div style='width: 60px; background: lightgray'>block</div><div style='position: absolute; width: 30px; background: lightblue'>abs</div><div style='position: fixed; left: 5px; bottom: 5px; background: lightgreen'>fixed</div><div style='position: absolute; right: 5px; top: 40px; background: lightblue'>right</div>"></iframe>
+<iframe srcdoc="<html style='writing-mode: vertical-rl'><body style='margin: 4px; font: 10px/12px monospace'><div style='height: 50px; background: lightgray'>block</div><div style='position: absolute; height: 30px; background: lightblue'>abs</div><div style='position: fixed; left: 5px; bottom: 5px; background: lightgreen'>fixed</div>"></iframe>
+<iframe srcdoc="<html style='writing-mode: vertical-lr; direction: rtl'><body style='margin: 4px; font: 10px/12px monospace; writing-mode: horizontal-tb'><div style='width: 50px; background: lightgray'>block</div><div style='position: absolute; background: lightblue'>abs</div><div style='position: fixed; top: 5px; background: lightgreen'>fixed</div>"></iframe>
+<iframe srcdoc="<html style='display: flow-root; margin: 5px 10px; height: 60%; border: 2px solid'><body style='margin: 3px; font: 10px/12px monospace; height: 50%; background: lightgray'><div style='height: 50%; background: lightblue'>half</div><div style='position: absolute; bottom: 0; right: 0; background: lightgreen'>abs</div>"></iframe>
+<iframe srcdoc="<html style='position: absolute; left: 10px; top: 15px; width: 100px; border: 2px solid'><body style='margin: 3px; font: 10px/12px monospace'><div style='background: lightgray'>abs html</div><div style='position: absolute; right: 0; bottom: 0; background: lightblue'>abs</div>"></iframe>
+<iframe srcdoc="<html style='position: fixed; right: 10px; bottom: 15px; width: 100px; border: 2px solid'><body style='margin: 3px; font: 10px/12px monospace'><div style='background: lightgray'>fixed html</div>"></iframe>
+<iframe src="data:text/html,<html style='display: flow-root; margin: 5px; border: 2px solid'><body style='margin: 6px; padding: 2px; font: 10px/12px monospace; background: lightgray'>quirks"></iframe>
+<iframe src="data:text/html,<html style='margin: 5px; border: 2px solid'><body style='margin: 6px; padding: 2px; font: 10px/12px monospace; background: lightgray'><div style='height: 50%; background: lightblue'>quirks</div><div style='position: absolute; height: 50%; width: 30px; background: lightgreen'>abs</div>"></iframe>
+<iframe srcdoc="<body style='margin: 0; font: 10px/12px monospace'><div style='height: 300px; width: 200px; background: lightgray'>tall</div><div style='position: absolute; bottom: 0; right: 0; background: lightblue'>abs</div><div style='position: fixed; bottom: 0; right: 0; background: lightgreen'>fixed</div><div style='position: absolute; top: 60px; bottom: 0; height: 50px; align-self: start; background: lightblue'>start</div>"></iframe>
+</div>
+</body>
+</html>

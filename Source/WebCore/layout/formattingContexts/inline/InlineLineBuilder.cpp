@@ -330,10 +330,9 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         // contentful inline content leave marginState alone for the next line to apply.
         if (!hasContentfulInlineContent)
             return;
-        auto& marginState = blockLayoutState().marginState();
-        marginState.resetMarginValues();
-        if (marginState.atBeforeSideOfBlock)
-            marginState.resetBeforeSideOfBlock();
+        auto& marginState = layoutState().marginState();
+        marginState.resetAdjoiningMargins();
+        marginState.atBlockContainerStart = false;
     };
     updateMarginStateIfNeeded();
 
@@ -395,6 +394,8 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , lineContent->range.isEmpty() && !blockEllipsis ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
         , blockEllipsis
         , (isLastInlineContent && !nextContentfulInlineItem(lineContent->range.endIndex(), lineInput.needsLayoutRange.endIndex())) || m_lineClamp.isLastLineWithoutBlockEllipsis
+        , m_blockContentBreak
+        , m_initialLetterGoesToNextFragmentainer
     };
 }
 
@@ -450,6 +451,8 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
     ASSERT(!needsLayoutRange.isEmpty() || (previousLine && !previousLine->suspendedFloats.isEmpty()));
     ASSERT(!blockEllipsis || !isInIntrinsicWidthMode());
     reset();
+    m_blockContentBreak = BlockContentBreak::No;
+    m_initialLetterGoesToNextFragmentainer = false;
 
     m_previousLine = previousLine;
     m_isFirstFormattedLineCandidate = isFirstFormattedLineCandidate;
@@ -477,15 +480,14 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
         // <span><div style="margin-bottom: 100px;"></div>text</span>
         // where "text" sits at the block's content bottom plus 100px.
         auto lineLogicalRect = initialLineLogicalRect;
-        auto& marginState = blockLayoutState().marginState();
+        auto& marginState = layoutState().marginState();
         // If the previous line had no contentful in-flow content (float-only or empty), the same pending margin
         // is already baked into its top via this advance. Re-applying would double-count.
         // A margin still at the before side of the block is only skipped when it can actually collapse out
         // through that edge. When the root has a border or padding it cannot, so a self collapsing block on a
         // previous line has already committed the margin and the line has to move down by it.
-        auto marginCollapsesThroughBeforeSide = marginState.atBeforeSideOfBlock && marginState.canCollapseMarginBeforeWithChildren;
-        if (!marginCollapsesThroughBeforeSide && previousLine && previousLine->hasContentfulInFlowContent)
-            lineLogicalRect.moveVertically(marginState.margin());
+        if (!marginState.marginsCollapseWithBlockContainerTop() && previousLine && previousLine->hasContentfulInFlowContent)
+            lineLogicalRect.moveVertically(marginState.marginToPlace());
         auto constraints = floatAvoidingRect(lineLogicalRect, { });
         m_lineIsConstrainedByFloat = constraints.constrainedSideSet;
         return constraints.logicalRect;
@@ -529,6 +531,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
         // and the placed InlineItem range ends at the last inline item placed on the current line.
         for (size_t index = 0; index < m_previousLine->suspendedFloats.size(); ++index) {
             CheckedRef suspendedFloat = *m_previousLine->suspendedFloats[index];
+            auto placedFloatCount = m_placedFloats.size();
             auto isPlaced = tryPlacingFloatBox(suspendedFloat, !index ? MayOverConstrainLine::OnlyWhenFirstFloatOnLine : MayOverConstrainLine::No);
             if (!isPlaced) {
                 // Can't place more floats here. We'll try to place these floats on subsequent lines.
@@ -536,7 +539,8 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                     m_suspendedFloats.append(m_previousLine->suspendedFloats[index]);
                 return false;
             }
-            ++resumedFloatCount;
+            // Not one that went to the next fragmentainer.
+            resumedFloatCount += m_placedFloats.size() - placedFloatCount;
         }
         m_previousLine->suspendedFloats.clear();
         return true;
@@ -1397,10 +1401,21 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
         boxGeometry.setTopLeft(staticPosition);
         // Compute float position by running float layout.
-        auto floatingPosition = floatingContext.positionForFloat(floatBox, boxGeometry, rootHorizontalConstraints());
+        auto floatingPosition = floatingContext.positionForFloat(floatBox, boxGeometry, { { }, rootHorizontalConstraints() });
         boxGeometry.setTopLeft(floatingPosition);
     };
     computeFloatBoxPosition();
+    // A float whose content breaks gets its block size from where it goes.
+    auto isBreakBeforeFloatContent = formattingContext().integrationUtils().layoutFloatContent(downcast<ElementBox>(floatBox), boxGeometry);
+
+    // A float that goes to the next fragmentainer takes no space on this line. An initial letter takes the line with it, where the line can
+    // go (the floats of the lines after a break go back with them).
+    if (formattingContext().pushesFloat(floatBox, boxGeometry, isBreakBeforeFloatContent)) {
+        m_initialLetterGoesToNextFragmentainer = floatBox.style().pseudoElementType() == PseudoElementType::FirstLetter && floatBox.style().initialLetter().drop();
+        auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
+        formattingContext().pushFloat(floatingContext.makeFloatItem(floatBox, boxGeometry, { { }, rootHorizontalConstraints() }, lineIndex));
+        return true;
+    }
 
     auto willFloatBoxShrinkLine = [&] {
         // Float boxes don't get positioned higher than the line.
@@ -1431,7 +1446,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 
     auto placeFloatBox = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
-        auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, lineIndex);
+        auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, { { }, rootHorizontalConstraints() }, lineIndex);
         layoutState().placedFloats().add(floatItem);
         m_placedFloats.append(floatItem);
     };
@@ -1468,20 +1483,19 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     // marginState and re-adds the margin via its own collapsing logic; passing the already-advanced
     // top would double-count the margin. Roll back m_lineLogicalRect.top too so the line's reported
     // bottom doesn't inherit the eager advance (which would shift the next line down).
-    auto& marginState = blockLayoutState().marginState();
+    auto& marginState = layoutState().marginState();
     // Unless the margin collapses out through the root's before edge, the line's top already includes it: either
     // initialize advanced the line by it, or the previous line's bottom absorbed it as a self collapsing block box's
     // offset. Block layout applies the margin from the container's own position, so take it back off before handing over.
-    auto marginCollapsesThroughBeforeSide = marginState.atBeforeSideOfBlock && marginState.canCollapseMarginBeforeWithChildren;
-    auto lineTopIncludesPendingMargin = !marginCollapsesThroughBeforeSide;
+    auto lineTopIncludesPendingMargin = !marginState.marginsCollapseWithBlockContainerTop();
     if (lineTopIncludesPendingMargin) {
-        if (auto blockMargin = marginState.margin())
+        if (auto blockMargin = marginState.marginToPlace())
             m_lineLogicalRect = { m_lineLogicalRect.top() - blockMargin, m_lineInitialLogicalRect.left(), m_lineInitialLogicalRect.width(), m_lineInitialLogicalRect.height() };
     }
     // Block layout places this margin from its own position, where the clearance is accounted for already.
-    marginState.marginBeforeWithClearance = { };
+    marginState.marginBeforeIncludedInClearance = { };
 
-    formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(protect(downcast<ElementBox>(blockItem.layoutBox())), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
+    m_blockContentBreak = formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(protect(downcast<ElementBox>(blockItem.layoutBox())), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
     auto contentWidth = InlineLayoutUnit { };
     if (formattingContext().geometryForBox(protect(blockItem.layoutBox())).borderBoxHeight())
         contentWidth = formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false);

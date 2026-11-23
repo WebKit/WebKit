@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<html style="display: flow-root; height: 50%">
+<style>
+body { margin: 0; font: 10px/12px monospace; }
+</style>
+<body>
+<div style="height: 30px; background: lightgray">content</div>
+<div id=result style="width: 100px; background: lightgreen"></div>
+<script>
+if (window.internals)
+    internals.enableFixedWidthAutoSizeMode(true, 800, 600);
+document.body.offsetHeight;
+const blockSize = document.documentElement.getBoundingClientRect().height;
+if (window.internals)
+    internals.enableFixedWidthAutoSizeMode(false, 0, 0);
+document.getElementById("result").style.height = blockSize + "px";
+</script>
+</body>
+</html>

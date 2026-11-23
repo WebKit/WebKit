@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { width: 100px; height: 100px; columns: 1; column-fill: auto; column-gap: 0; border: 1px solid; float: left; margin: 0 6px 6px 0; }
+.g { background-color: green; }
+.o { background-color: orange; }
+</style>
+<div class=mc><div style="display: flow-root; border: 20px solid green"><div class=o style="contain: size; float: left; width: 100%; height: 100px"></div></div></div>
+<div class=mc><div style="border-top: 20px solid green"><div class=o style="contain: size; float: left; width: 100%; height: 100px"></div></div></div>
+<div class=mc><div style="display: flow-root; padding-top: 20px"><div class=o style="contain: size; float: left; width: 100%; height: 90px"></div></div></div>
+<div class=mc><div class=g style="contain: size; float: left; width: 100%; height: 50px"></div><div class=o style="contain: size; float: left; width: 100%; height: 60px"></div></div>
+<div class=mc><div class=g style="height: 30px"></div><div class=o style="contain: size; float: left; width: 100%; height: 90px"></div></div>

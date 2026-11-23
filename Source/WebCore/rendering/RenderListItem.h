@@ -101,6 +101,15 @@ public:
     // The layout bounds of our outside marker on its line, computed when the marker is laid out.
     std::pair<float, float> markerLayoutBounds() const { return m_markerLayoutBounds; }
 
+    // What layoutBlock does for the outside marker of a list item whose content the block formatting context lays out: the marker is laid
+    // out before the content, its line of its own in quirks mode goes above the block children, and it goes against its first formatted
+    // line once the content and the boxes in it have their geometry.
+    void layoutOutsideMarker(RelayoutChildren);
+    bool markerNeedsOwnLine() const;
+    // The line of its own the marker gets above the block children in quirks mode, none otherwise.
+    LayoutUnit markerOwnLineBlockSize() const { return markerNeedsOwnLine() ? lineHeight() : 0_lu; }
+    void placeOutsideMarkerAfterLayout();
+
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
 

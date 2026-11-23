@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.cb { position: relative; width: 180px; height: 100px; border: 1px solid black; margin: 0 4px 4px 0; display: inline-block; vertical-align: top; font: 12px/14px sans-serif; }
+.a { position: absolute; background-color: rgba(0, 128, 0, 0.4); }
+.c { width: 40px; height: 20px; background-color: rgba(0, 0, 255, 0.4); }
+</style>
+<div class=cb>x<div class=a style="position-area: top"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-area: bottom right"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-area: bottom right; inset: 0"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-area: top left; left: 10px; top: 10px"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-area: center; inset: 0"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-area: span-all; inset: 0; width: 50px"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-anchor: --missing; position-area: bottom; top: 0; bottom: 0"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-area: end; inset: 0; justify-self: start"><div class=c></div></div></div>
+<div class=cb dir=rtl>x<div class=a style="position-area: right; left: 0; right: 0"><div class=c></div></div></div>
+<div class=cb style="writing-mode: vertical-rl">x<div class=a style="position-area: top; inset: 0"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="position-area: bottom; margin: auto; inset: 0; width: 50px; height: 50px"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="justify-self: anchor-center; left: 0; right: 0; width: 50px"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="align-self: anchor-center; top: 0; bottom: 0; height: 50px"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="justify-self: anchor-center; left: 10px"><div class=c></div></div></div>
+<div class=cb>x<div class=a style="justify-self: center"><div class=c></div></div></div>
+<div class=cb dir=rtl>x<div class=a style="justify-self: safe center"><div class=c></div></div></div>

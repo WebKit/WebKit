@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<html><body>
+<style>td { border: 1px solid; vertical-align: top; width: 60px; font-family: monospace; font-size: 10px; } p { background: lightblue; outline: 1px solid blue } div { background: lightgreen; outline: 1px solid green }</style>
+<table><tr>
+<td id="insertEmpty"><p>x</p></td>
+<td id="insertFirst"><p>x</p></td>
+<td id="removeText"><p></p><p id="text">x</p></td>
+<td id="margins"><p>x</p><div id="margin"></div></td>
+<td><p id="emptied">x</p></td>
+<td><p id="filled"></p></td>
+</tr></table>
+<script>
+document.body.offsetHeight;
+document.getElementById("insertEmpty").appendChild(document.createElement("p"));
+document.getElementById("insertFirst").insertBefore(document.createElement("p"), document.getElementById("insertFirst").firstChild);
+document.getElementById("text").remove();
+document.getElementById("margin").style.margin = "20px";
+document.getElementById("emptied").firstChild.remove();
+document.getElementById("filled").appendChild(document.createTextNode("y"));
+</script>
+</body></html>

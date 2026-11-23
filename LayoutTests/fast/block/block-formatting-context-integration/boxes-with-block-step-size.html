@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true CSSRhythmicSizingEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.wrap { width: 250px; border: 1px solid; margin: 2px; display: inline-block; vertical-align: top; }
+.s { block-step-size: 30px; background: lightblue; }
+</style>
+<div class="wrap"><div class="s">one line</div><div class="s">two<br>lines</div><div class="s" style="height: 30px">exact</div></div>
+<div class="wrap"><div style="margin-bottom: 20px">margin</div><div class="s">after margin</div><div style="margin-top: 5px">after</div></div>
+<div class="wrap"><div class="s" style="margin: 7px 0">margins</div><div class="s" style="height: 0"></div><div class="s" style="padding: 3px; border: 2px solid">bp</div></div>
+<div class="wrap"><div class="s" style="display: flex">flex</div><div class="s" style="display: grid; height: 41px">grid</div></div>
+<div class="wrap"><div class="s" style="block-step-size: 25px; margin-top: -5px">negative</div><div class="s" style="block-step-insert: padding-box">unsupported</div></div>
+<div class="wrap" style="padding-top: 1px"><div class="s" style="margin-top: 10px"><div style="margin-top: 15px">nested</div></div></div>
+<div class="wrap"><div class="s" style="overflow: hidden">overflow</div><div class="s" style="display: flow-root">flow-root</div></div>
+<div class="wrap" style="writing-mode: vertical-rl; height: 120px"><div class="s">vertical</div><div class="s">two</div></div>

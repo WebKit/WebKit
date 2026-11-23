@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font: 10px/12px monospace; }
+.mc { columns: 3; column-gap: 6px; width: 300px; border: 1px solid; margin-bottom: 6px; }
+.s { column-span: all; border: 1px solid blue; }
+</style>
+<div class=mc>Lorem ipsum dolor sit amet <div>before <div class=s>spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="display: flow-root">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="overflow: hidden">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="display: inline-block; width: 90px">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="float: left; width: 90px">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="display: table-cell">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="display: flex"><div>before <div class=s style="column-span: none">not a spanner</div> after</div></div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <fieldset>before <div class=s style="column-span: none">not a spanner</div> after</fieldset> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="contain: layout">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="position: relative; height: 40px"><div style="position: absolute">before <div class=s style="column-span: none">not a spanner</div> after</div></div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="writing-mode: vertical-rl; height: 60px">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>
+<div class=mc>Lorem ipsum dolor sit amet <div style="align-content: center">before <div class=s style="column-span: none">not a spanner</div> after</div> consectetur adipiscing elit</div>

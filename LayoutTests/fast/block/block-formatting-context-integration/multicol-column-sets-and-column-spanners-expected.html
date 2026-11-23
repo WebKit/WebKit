@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 3; column-gap: 8px; width: 180px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.s { column-span: all; height: 10px; border: 1px solid green; }
+.b { border: 1px solid blue; }
+</style>
+<div class=mc><div class=s style="margin-bottom: 30px"></div><div class=s style="margin-top: 20px"></div><div class=s style="margin-top: -5px; margin-bottom: 10px"></div></div>
+<div class=mc><div class=s style="margin-top: 20px"></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class=s style="margin: 8px 0 15px"></div></div>
+<div class=mc><div class=b>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</div><div class=s style="margin-top: -6px"></div><div class=b>Ut enim ad minim veniam.</div></div>
+<div class=mc style="height: 100px; column-fill: auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<div class=s style="margin: 4px 0"></div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.</div>
+<div style="float: left; border: 1px solid red; margin: 0 0 6px 6px"><div class=mc style="width: auto; float: none; margin: 0">Lorem ipsum dolor sit amet<div class=s></div>consectetur adipiscing</div></div>
+<div style="clear: left"></div>
+<div class=mc style="display: inline-block; width: auto; float: none">Lorem ipsum dolor sit amet<div class=s style="height: auto">column spanner</div>consectetur adipiscing elit</div>
+<div class=mc style="columns: 2; float: none"><div class=s style="margin-bottom: 10px"></div><div style="position: absolute; width: 10px; height: 10px; border: 1px solid"></div><div class=s style="margin-top: 15px"></div></div>

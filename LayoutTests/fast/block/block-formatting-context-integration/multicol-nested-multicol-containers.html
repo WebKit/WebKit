@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.mc { columns: 2; column-gap: 10px; width: 380px; border: 1px solid black; margin: 0 0 6px 6px; float: left; }
+.n { columns: 2; column-gap: 6px; border: 2px solid green; }
+.r { display: flow-root; border: 2px solid blue; padding: 2px; }
+.b { border: 2px solid blue; padding: 2px; }
+.s { column-span: all; background-color: lightgray; }
+img { display: block; background-color: green; width: 30px; height: 20px; }
+</style>
+<div class=mc style="height: 90px; column-fill: auto"><img style="height: 40px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img></div>
+<div class=mc style="height: 90px; column-fill: auto"><img style="height: 10px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div><img></div>
+<div class=mc><img style="height: 30px"><img style="height: 30px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img style="height: 30px"></div>
+<div class=mc style="height: 90px; column-fill: auto"><img style="height: 20px"><div class=n>Lorem ipsum dolor sit amet, consectetur <div class=s>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div>Lorem ipsum dolor sit amet, consectetur </div></div>
+<div class=mc style="height: 50px; column-fill: auto"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img></div>
+<div class=mc style="height: 90px; column-fill: auto"><div class=n style="height: 80px; column-fill: auto"><img style="height: 30px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed</div></div></div>
+<div class=mc style="height: 90px; column-fill: auto"><div class=r><img style="height: 30px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img></div></div>
+<div class=mc style="height: 90px; column-fill: auto"><div class=b><img style="height: 30px"><div class=n>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img></div></div>
+<div class=mc style="height: 90px; column-fill: auto"><img style="height: 30px; margin-bottom: 5px"><div class=n style="margin-top: 20px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><img></div>

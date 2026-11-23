@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 0; font-family: -apple-system; font-size: 10px; line-height: 12px; }
+.o { border-left: 8px solid orange; width: 200px; }
+.c { contain: layout; }
+.g { border-left: 16px solid green; height: 20px; }
+.m { border-left: 4px solid; height: 30px; }
+.p { break-before: page; }
+</style>
+<!-- A break-before on the first child of a layout containment box and a break-after on its last child neither propagate to it (css-contain-2 §3.2) nor have a break point inside it (css-break-3 §4.1), where the render tree breaks before and after the child in pages. -->
+<div class=g></div><div class="o c"><div class=g></div><div class=g style="break-before: page"></div></div><div class=m></div>
+<div class="o c p" style="border-top: 20px solid blue"><div class=g></div><div class=g></div></div><div class=m></div>
+<div class=g></div><div class="o c"><div class=g style="height: 1000px"></div></div><div class=m></div>
+<div class="o c p"><div class=g></div></div><div class=m></div>
+<script>if (window.testRunner) testRunner.setPrinting();</script>

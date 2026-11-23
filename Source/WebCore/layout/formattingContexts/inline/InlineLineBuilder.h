@@ -110,6 +110,8 @@ private:
     Vector<InlineItem, 1> m_lineSpanningInlineBoxes;
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
+    BlockContentBreak m_blockContentBreak { BlockContentBreak::No };
+    bool m_initialLetterGoesToNextFragmentainer { false };
     TextSpacingContext m_textSpacingContext { };
     struct LineClamp {
         std::optional<BlockOverflowEllipsis> blockEllipsis;

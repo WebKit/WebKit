@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; width: 250px; padding: 3px; margin-bottom: 4px; }
+.small { font-size: 9px; line-height: 11px; }
+</style>
+<div class=grid>
+  <div class=small>first</div>
+  <div class=small style="float: left; width: 80px; margin-top: 4px;">a float with<br>two lines</div>
+  <div class=small style="float: right; width: 90px; margin-top: 7px; padding-top: 2px;">a right float<br>two</div>
+  <div class=small style="margin-top: 2px;">a block beside the floats</div>
+  <div class=small style="clear: both; margin-top: 3px;">cleared</div>
+  <table class=small style="margin: 5px 0 0 7px;"><tr><td style="padding: 2px;">cell<br>two</td></tr></table>
+  <div class=small style="display: flex; margin-top: 3px; padding-top: 1px;"><div>flex item<br>two</div><div style="margin-top: 5px;">second</div></div>
+  <div class=small style="display: grid; margin-top: 2px;"><div>grid item<br>two</div></div>
+</div>
+<div class=grid>
+  <div class=small>first line <span class=inline-float style="float: left; margin-top: 3px; width: 70px;">a float in<br>inline content</span> text that wraps beside the float for a few lines</div>
+  <div class=small style="margin-top: 5px;">more <span class=inline-float style="float: right; padding-top: 4px; width: 80px;">a right<br>float</span> text after the float</div>
+  <div class=small style="clear: both;">after</div>
+</div>
+<div class=grid>
+  <div class=small style="float: left; width: 100px; margin-top: 2px;"><div>a float</div><div style="margin-top: 3px;">with blocks<br>in it</div><table style="margin-top: 1px;"><tr><td>and a table</td></tr></table></div>
+  <div class=small style="float: left; width: 100px; margin: 5px 0 0 4px;">float <span class=inline-float style="float: right; margin-top: 2px;">in a float</span> text</div>
+  <div class=small style="clear: both; padding-top: 1px;">after</div>
+</div>
+<div class=grid style="position: absolute; left: 290px; top: 120px; width: 150px;">
+  <div class=small>first</div>
+  <div class=small style="float: left; width: 100px; height: 23px; background: lightblue;">a float</div>
+  <div class=small style="display: flow-root; width: 80px; margin-top: 3px;">a flow-root below<br>the float</div>
+  <table class=small style="width: 70px;"><tr><td>a table</td></tr></table>
+</div>
+<div class=grid style="direction: rtl; width: 150px; display: flow-root; position: absolute; left: 290px; top: 4px;">
+  <div class=small>right to left</div>
+  <div class=small style="float: left; margin-top: 3px;">a float<br>two</div>
+  <div class=small style="clear: both;">after <span class=inline-float style="float: right; margin-top: 1px;">inline float</span> text</div>
+</div>
+<script>
+// The render tree lays out a float in inline content before the inline formatting context places it, so it snaps its content to the line grid
+// from where it was before: it is laid out again once it is where it goes.
+document.body.offsetHeight;
+for (const element of document.querySelectorAll(".inline-float")) {
+    element.style.wordSpacing = "1px";
+    document.body.offsetHeight;
+    element.style.wordSpacing = "";
+    document.body.offsetHeight;
+}
+</script>

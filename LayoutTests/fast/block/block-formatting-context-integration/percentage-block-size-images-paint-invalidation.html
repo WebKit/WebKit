@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.container { height: 50px; margin-bottom: 10px; }
+img { height: 100%; }
+</style>
+<div id="text" style="width: 300px; height: 20px; margin-bottom: 10px">text</div>
+<div class="container"><img id="inFlow" src="../../images/resources/green-256x256.png"></div>
+<div class="container" style="position: relative"><div style="position: absolute; height: 100%"><img id="outOfFlow" src="../../images/resources/green-256x256.png"></div></div>
+<div class="container" style="overflow: hidden"><img id="nestedRoot" src="../../images/resources/green-256x256.png"></div>
+<div class="container"><div style="float: left; height: 100%"><img id="float" src="../../images/resources/green-256x256.png"></div></div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function intersects(rect, box)
+{
+    return rect.x < box.right && rect.x + rect.width > box.left && rect.y < box.bottom && rect.y + rect.height > box.top;
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => setTimeout(() => {
+        document.body.offsetHeight;
+        if (window.internals)
+            internals.startTrackingRepaints();
+        document.getElementById("text").firstChild.data = "changed text";
+        document.body.offsetHeight;
+        const rects = [];
+        if (window.internals) {
+            for (const match of internals.repaintRectsAsText().matchAll(/rect (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)/g))
+                rects.push({ x: +match[1], y: +match[2], width: +match[3], height: +match[4] });
+            internals.stopTrackingRepaints();
+        }
+        let output = "";
+        for (const id of ["inFlow", "outOfFlow", "nestedRoot", "float"]) {
+            const box = document.getElementById(id).getBoundingClientRect();
+            output += (rects.some(rect => intersects(rect, box)) ? "FAIL" : "PASS") + ": the image in " + id + " is not invalidated\n";
+        }
+        document.getElementById("log").textContent = output;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0));
+};
+</script>

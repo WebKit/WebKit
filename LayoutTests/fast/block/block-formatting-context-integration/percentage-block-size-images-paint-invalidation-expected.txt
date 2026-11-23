@@ -1,0 +1,10 @@
+changed text
+
+
+
+
+PASS: the image in inFlow is not invalidated
+PASS: the image in outOfFlow is not invalidated
+PASS: the image in nestedRoot is not invalidated
+PASS: the image in float is not invalidated
+

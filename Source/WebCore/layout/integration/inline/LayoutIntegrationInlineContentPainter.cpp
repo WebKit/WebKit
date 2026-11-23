@@ -151,9 +151,25 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
             CheckedRef paintRenderer = const_cast<RenderBox&>(*renderer);
             auto childPaintOffset = paintOffsetForChild(*renderer);
             if (box.isBlockLevelBox()) {
-                // Blocks-in-inline.
+                // Blocks-in-inline, which paint all of their fragments from their first line.
+                if (!box.isFirstForLayoutBox())
+                    return;
                 auto paintInfoForChild = Paint::BlockPainter::paintInfoForBlockChildren(m_root, m_paintInfo);
-                paintRenderer->paint(paintInfoForChild, childPaintOffset);
+                GraphicsContextStateSaver fragmentainerStateSaver(paintInfoForChild.context(), false);
+                auto paintInfoForFragmentainer = std::optional<PaintInfo> { };
+                if (paintInfoForChild.fragmentainer) {
+                    paintInfoForFragmentainer = paintRenderer->paintInfoForFragmentainer(paintInfoForChild, childPaintOffset, fragmentainerStateSaver);
+                    if (!paintInfoForFragmentainer)
+                        return;
+                }
+                paintRenderer->paint(paintInfoForFragmentainer ? *paintInfoForFragmentainer : paintInfoForChild, childPaintOffset);
+            } else if (m_paintInfo.fragmentainer) {
+                // Its line box decided the column it paints in, clipped at its inline-axis edges.
+                auto paintInfo = PaintInfo { m_paintInfo };
+                paintInfo.fragmentainer = std::nullopt;
+                GraphicsContextStateSaver stateSaver(paintInfo.context());
+                paintInfo.context().clip(m_paintInfo.fragmentainer->inlineAxisClipRect());
+                paintRenderer->paintAsInlineBlock(paintInfo, childPaintOffset);
             } else
                 paintRenderer->paintAsInlineBlock(m_paintInfo, childPaintOffset);
         }
@@ -173,8 +189,31 @@ void InlineContentPainter::paint()
             // Line ending ellipsis is never on the inline box (with layer).
             return;
         }
-        if (lastBoxLineIndex && (!currentLineIndex || *lastBoxLineIndex != currentLineIndex))
+        if (lastBoxLineIndex && (!currentLineIndex || *lastBoxLineIndex != currentLineIndex)) {
+            GraphicsContextStateSaver stateSaver(m_paintInfo.context(), false);
+            if (m_paintInfo.fragmentainer) {
+                stateSaver.save();
+                m_paintInfo.context().clip(m_paintInfo.fragmentainer->clipRect);
+            }
             paintEllipsis(*lastBoxLineIndex);
+        }
+    };
+
+    // A column that paints the fragments in it of the boxes that clone their decorations across columns (PaintInfo::fragmentainer) paints the
+    // inline content like the strip of columns paints it: what of it is in the column, clipped at the column's edges it crosses.
+    auto& fragmentainer = m_paintInfo.fragmentainer;
+    auto paintDisplayBoxInFragmentainer = [&](auto& box) {
+        auto rect = enclosingLayoutRect(box.inkOverflow());
+        root().blockStartRelativeToPhysical(rect);
+        rect.moveBy(m_paintOffset);
+        auto& clipRect = fragmentainer->clipRect;
+        auto [start, end] = fragmentainer->isHorizontal ? std::pair { rect.y(), rect.maxY() } : std::pair { rect.x(), rect.maxX() };
+        auto [clipStart, clipEnd] = fragmentainer->isHorizontal ? std::pair { clipRect.y(), clipRect.maxY() } : std::pair { clipRect.x(), clipRect.maxX() };
+        if (end <= clipStart || start >= clipEnd)
+            return;
+        GraphicsContextStateSaver stateSaver(m_paintInfo.context());
+        m_paintInfo.context().clip(start < clipStart || end > clipEnd ? clipRect : fragmentainer->inlineAxisClipRect());
+        paintDisplayBox(box);
     };
 
     for (auto& box : m_inlineContent.boxesForRect(m_damageRect)) {
@@ -210,12 +249,20 @@ void InlineContentPainter::paint()
 
         if (includedInPaintScope && shouldPaintBoxForPhase()) {
             paintLineEndingEllipsisIfApplicable(box.lineIndex());
-            paintDisplayBox(box);
+            if (fragmentainer && !box.isBlockLevelBox())
+                paintDisplayBoxInFragmentainer(box);
+            else
+                paintDisplayBox(box);
         }
         lastBoxLineIndex = box.lineIndex();
     }
     paintLineEndingEllipsisIfApplicable({ });
 
+    GraphicsContextStateSaver fragmentainerStateSaver(m_paintInfo.context(), false);
+    if (fragmentainer && !m_outlineObjects.computeIsEmpty()) {
+        fragmentainerStateSaver.save();
+        m_paintInfo.context().clip(fragmentainer->clipRect);
+    }
     Paint::OutlinePainter outlinePainter { m_paintInfo };
     for (CheckedRef inlineBox : m_outlineObjects)
         outlinePainter.paintOutline(inlineBox, m_paintOffset);
