@@ -76,6 +76,7 @@ struct WebPage::Internals {
     };
     HashMap<String, LinkDecorationFilteringConditionals> linkDecorationFilteringData;
     HashMap<WebCore::RegistrableDomain, HashSet<String>> allowedQueryParametersForAdvancedPrivacyProtections;
+    Vector<WebCore::LinkComponentFilteringData> linkComponentFilteringData;
 #endif
 };
 

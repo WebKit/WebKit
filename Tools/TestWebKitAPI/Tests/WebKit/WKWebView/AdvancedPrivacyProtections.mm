@@ -869,6 +869,136 @@ static RetainPtr<TestWKWebView> setUpWebViewForTestingTrackerDomainBlocking(Stri
     return webView;
 }
 
+class LinkComponentFilteringDataScope {
+    WTF_MAKE_NONCOPYABLE(LinkComponentFilteringDataScope);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LinkComponentFilteringDataScope);
+public:
+    explicit LinkComponentFilteringDataScope(NSString *json)
+        : m_dataStore { WKWebsiteDataStore.nonPersistentDataStore }
+    {
+        set(json);
+    }
+
+    ~LinkComponentFilteringDataScope()
+    {
+        set(@"[]");
+    }
+
+private:
+    void set(NSString *json)
+    {
+        __block bool done = false;
+        [m_dataStore _setLinkComponentFilteringDataForTesting:json completionHandler:^{
+            done = true;
+        }];
+        Util::run(&done);
+    }
+
+    RetainPtr<WKWebsiteDataStore> m_dataStore;
+};
+
+// Returns what a first-party inline script and a third-party script see for document.URL, in that order.
+static RetainPtr<NSArray<NSString *>> documentURLsSeenByScripts(NSString *requestURLString)
+{
+    auto webView = setUpWebViewForTestingQueryParameterHiding(@"<!DOCTYPE html>"
+        "<html>"
+        "    <head>"
+        "        <script src='custom://thirdparty/script-noop.js'></script>"
+        "        <script>"
+        "        window.results = [`firstparty: ${document.URL}`]"
+        "        </script>"
+        "        <script src='custom://thirdparty/script.js'></script>"
+        "    </head>"
+        "    <body>Hello world</body>"
+        "</html>", requestURLString);
+
+    return [webView objectByEvaluatingJavaScript:@"window.results"];
+}
+
+TEST(AdvancedPrivacyProtections, HidePathMatchingLinkComponentRule)
+{
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
+    LinkComponentFilteringDataScope dataScope { @"[{ \"component\": \"path\", \"key\": \"path[3]\", \"domain\": \"firstparty.com\", \"path\": \"/status/\", \"pattern\": \"[A-Za-z0-9]{19}\" }]" };
+
+    auto results = documentURLsSeenByScripts(@"custom://firstparty.com/status/index.html/AbCdEfGhIjKlMnOpQrS/20");
+
+    EXPECT_EQ(2U, [results count]);
+    EXPECT_WK_STREQ("firstparty: custom://firstparty.com/status/index.html/AbCdEfGhIjKlMnOpQrS/20", [results objectAtIndex:0]);
+    EXPECT_WK_STREQ("thirdparty: custom://firstparty.com/", [results objectAtIndex:1]);
+}
+
+TEST(AdvancedPrivacyProtections, DoNotHidePathWhenLinkComponentRuleDoesNotMatch)
+{
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
+    LinkComponentFilteringDataScope dataScope { @"["
+        // The segment at index 3 is too short for the pattern.
+        "{ \"component\": \"path\", \"key\": \"path[3]\", \"domain\": \"firstparty.com\", \"pattern\": \"[A-Za-z0-9]{24,26}\" },"
+        // The path doesn't contain the required string.
+        "{ \"component\": \"path\", \"key\": \"path[3]\", \"domain\": \"firstparty.com\", \"path\": \"/other/\", \"pattern\": \"[A-Za-z0-9]{19}\" },"
+        // The rule is for a different domain.
+        "{ \"component\": \"path\", \"key\": \"path[3]\", \"domain\": \"example.org\", \"pattern\": \"[A-Za-z0-9]{19}\" }"
+    "]" };
+
+    auto results = documentURLsSeenByScripts(@"custom://firstparty.com/status/index.html/AbCdEfGhIjKlMnOpQrS/20");
+
+    EXPECT_EQ(2U, [results count]);
+    EXPECT_WK_STREQ("thirdparty: custom://firstparty.com/status/index.html/AbCdEfGhIjKlMnOpQrS/20", [results objectAtIndex:1]);
+}
+
+TEST(AdvancedPrivacyProtections, HideSubdomainsMatchingLinkComponentRule)
+{
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
+    LinkComponentFilteringDataScope dataScope { @"[{ \"component\": \"subdomain\", \"key\": \"subdomain[2]\", \"subdomain\": \"login\", \"domain\": \"firstparty.com\", \"pattern\": \"[A-Za-z0-9]{19}\" }]" };
+
+    auto results = documentURLsSeenByScripts(@"custom://login.AbCdEfGhIjKlMnOpQrS.zero.firstparty.com/index.html");
+
+    EXPECT_EQ(2U, [results count]);
+    EXPECT_WK_STREQ("firstparty: custom://login.AbCdEfGhIjKlMnOpQrS.zero.firstparty.com/index.html", [results objectAtIndex:0]);
+    EXPECT_WK_STREQ("thirdparty: custom://firstparty.com/index.html", [results objectAtIndex:1]);
+}
+
+TEST(AdvancedPrivacyProtections, DoNotHideSubdomainsWhenLinkComponentRuleDoesNotMatch)
+{
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
+    LinkComponentFilteringDataScope dataScope { @"["
+        // The URL has no subdomain named "account".
+        "{ \"component\": \"subdomain\", \"key\": \"subdomain[2]\", \"subdomain\": \"account\", \"domain\": \"firstparty.com\", \"pattern\": \"[A-Za-z0-9]{19}\" },"
+        // The label at index 3 is "zero", which doesn't match the pattern.
+        "{ \"component\": \"subdomain\", \"key\": \"subdomain[3]\", \"domain\": \"firstparty.com\", \"pattern\": \"[A-Za-z0-9]{19}\" }"
+    "]" };
+
+    auto results = documentURLsSeenByScripts(@"custom://login.AbCdEfGhIjKlMnOpQrS.zero.firstparty.com/index.html");
+
+    EXPECT_EQ(2U, [results count]);
+    EXPECT_WK_STREQ("thirdparty: custom://login.AbCdEfGhIjKlMnOpQrS.zero.firstparty.com/index.html", [results objectAtIndex:1]);
+}
+
+TEST(AdvancedPrivacyProtections, IgnoreInvalidLinkComponentRules)
+{
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
+    LinkComponentFilteringDataScope dataScope { @"["
+        // Wildcard domains are only allowed for query rules.
+        "{ \"component\": \"path\", \"key\": \"path[3]\", \"domain\": \"*\", \"pattern\": \"[A-Za-z0-9]{19}\" },"
+        // Missing domain.
+        "{ \"component\": \"path\", \"key\": \"path[3]\", \"pattern\": \"[A-Za-z0-9]{19}\" },"
+        // Unknown component.
+        "{ \"component\": \"hostname\", \"key\": \"path[3]\", \"domain\": \"firstparty.com\" },"
+        // Invalid regular expression.
+        "{ \"component\": \"path\", \"key\": \"path[3]\", \"domain\": \"firstparty.com\", \"pattern\": \"[A-Z\" }"
+    "]" };
+
+    // Each rule above would hide the path if it were accepted, so none of them may take effect.
+    auto results = documentURLsSeenByScripts(@"custom://firstparty.com/status/index.html/AbCdEfGhIjKlMnOpQrS/20");
+
+    EXPECT_EQ(2U, [results count]);
+    EXPECT_WK_STREQ("thirdparty: custom://firstparty.com/status/index.html/AbCdEfGhIjKlMnOpQrS/20", [results objectAtIndex:1]);
+}
+
 TEST(AdvancedPrivacyProtections, DoNotBlockFirstPartyPartitionedCookiesFromTrackerDomain)
 {
     auto webView = setUpWebViewForTestingTrackerDomainBlocking("<!DOCTYPE html>"

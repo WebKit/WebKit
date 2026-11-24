@@ -1127,6 +1127,11 @@ struct WKWebsiteData {
     protect(*_websiteDataStore)->setLinkDecorationFilteringDataForTesting(makeVector<String>(queryParameters), makeBlockPtr(completionHandler));
 }
 
+- (void)_setLinkComponentFilteringDataForTesting:(NSString *)json completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_websiteDataStore)->setLinkComponentFilteringDataForTesting(json, makeBlockPtr(completionHandler));
+}
+
 - (void)_setPrivateTokenIPCForTesting:(bool)enabled
 {
     protect(*_websiteDataStore)->setPrivateTokenIPCForTesting(enabled);

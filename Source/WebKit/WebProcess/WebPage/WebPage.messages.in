@@ -901,6 +901,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     SetLinkDecorationFilteringData(Vector<WebCore::LinkDecorationFilteringData> strings);
     SetAllowedQueryParametersForAdvancedPrivacyProtections(Vector<WebCore::LinkDecorationFilteringData> allowedStrings);
+    SetLinkComponentFilteringData(Vector<WebCore::LinkComponentFilteringData> rules);
 #endif
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

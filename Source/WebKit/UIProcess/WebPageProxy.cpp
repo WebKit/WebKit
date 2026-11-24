@@ -1112,6 +1112,12 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
             protectedThis->sendCachedLinkDecorationFilteringData();
     }));
 
+    lazyInitialize(m_linkComponentFilteringDataUpdateObserver, LinkComponentFilteringController::sharedSingleton().observeUpdates([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->sendCachedLinkComponentFilteringData();
+    }));
+    LinkComponentFilteringController::sharedSingleton().initializeIfNeeded();
+
     if (protect(preferences())->scriptTrackingPrivacyProtectionsEnabled())
         protect(process.processPool())->observeScriptTrackingPrivacyUpdatesIfNeeded();
     if (protect(preferences())->consistentQueryParameterFilteringQuirkEnabled())
@@ -17606,6 +17612,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     parameters.linkDecorationFilteringData = LinkDecorationFilteringController::sharedSingleton().cachedListData();
     parameters.allowedQueryParametersForAdvancedPrivacyProtections = cachedAllowedQueryParametersForAdvancedPrivacyProtections();
+    parameters.linkComponentFilteringData = LinkComponentFilteringController::sharedSingleton().cachedListData();
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -22190,6 +22197,21 @@ void WebPageProxy::sendCachedLinkDecorationFilteringData()
         process.send(Messages::WebPage::SetLinkDecorationFilteringData(data), pageID);
     });
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+}
+
+void WebPageProxy::sendCachedLinkComponentFilteringData()
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (!hasRunningProcess())
+        return;
+
+    // Send the list even when empty, so that retracting all rules reaches pages that already have some.
+    // With site isolation, subframes may live in other processes, and the rules apply to them too.
+    auto& data = LinkComponentFilteringController::sharedSingleton().cachedListData();
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetLinkComponentFilteringData(data), pageID);
+    });
+#endif
 }
 
 void WebPageProxy::waitForInitialLinkDecorationFilteringData(WebFramePolicyListenerProxy& listener)

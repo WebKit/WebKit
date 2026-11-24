@@ -2168,6 +2168,16 @@ void WebsiteDataStore::setLinkDecorationFilteringDataForTesting(Vector<String>&&
     completionHandler();
 }
 
+void WebsiteDataStore::setLinkComponentFilteringDataForTesting(const String& json, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    LinkComponentFilteringController::sharedSingleton().setCachedListDataForTesting(parseLinkComponentFilteringData(json));
+#else
+    UNUSED_PARAM(json);
+#endif
+    completionHandler();
+}
+
 void WebsiteDataStore::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
     auto key = LocalNetworkAccessPermissionKey { WTF::move(origin), addressSpace };

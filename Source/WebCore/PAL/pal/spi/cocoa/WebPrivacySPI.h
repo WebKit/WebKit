@@ -240,6 +240,18 @@ typedef NS_OPTIONS(NSUInteger, WPScriptAccessCategories) {
 
 #endif // !defined(WP_SUPPORTS_SCRIPT_ACCESS_CATEGORY)
 
+#if !defined(HAS_WEB_PRIVACY_LINK_COMPONENT_FILTERING_API)
+
+#define WPResourceTypeLinkComponentFilteringRules ((WPResourceType)14)
+
+typedef void (^WKWPResourcesLinkComponentFilteringRulesCompletionHandler)(NSData *, NSError *);
+
+@interface WPResources (Staging_LinkComponentFiltering)
+- (void)requestLinkComponentFilteringRules:(WPResourceRequestOptions *)options completionHandler:(WKWPResourcesLinkComponentFilteringRulesCompletionHandler)completion;
+@end
+
+#endif
+
 #if !defined(HAS_WEB_PRIVACY_DISABLED_SECURITY_FLAGS_API)
 
 typedef void (^WPDisabledSecurityFlagsCompletionHandler)(NSArray<NSString *> *, NSError *);
