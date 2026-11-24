@@ -83,6 +83,7 @@ public:
     NODELETE bool canUseProcessForNavigation(const WebProcessProxy&, const WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity) const;
     NODELETE bool hasSameModesAs(const BrowsingContextGroup&) const;
 
+    NODELETE static bool shouldUseEnhancedSecurityForSharedProcess(const WebPreferences&, WebProcessProxy::LockdownMode);
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
     Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, BrowsingContextGroupUpdate = BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
     RefPtr<FrameProcess> processForSite(const WebCore::Site&);

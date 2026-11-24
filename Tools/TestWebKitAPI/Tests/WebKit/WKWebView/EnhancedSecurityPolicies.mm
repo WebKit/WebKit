@@ -61,6 +61,13 @@
 #import <wtf/WallTime.h>
 #import <wtf/text/MakeString.h>
 
+#if HAVE(LIBPROC)
+#include <libproc.h>
+#else
+extern "C" int proc_pidpath(int pid, void* buffer, uint32_t bufferSize);
+#define PROC_PIDPATHINFO_MAXSIZE (4 * MAXPATHLEN)
+#endif
+
 #if HAVE(ENHANCED_SECURITY_LINKS)
 #import <LinkSecurity/LinkSecurity.h>
 #import <wtf/BlockPtr.h>
@@ -187,9 +194,12 @@ static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
     const TestWebKitAPI::HTTPServer* secureServer = nullptr,
     bool useSiteIsolation = false,
     bool useNonPersistentStore = true,
-    UseSharedProcess useSharedProcess = UseSharedProcess::No)
+    UseSharedProcess useSharedProcess = UseSharedProcess::No,
+    WKProcessPool *processPool = nil)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    if (processPool)
+        [configuration setProcessPool:processPool];
 
     [configuration preferences].javaScriptCanOpenWindowsAutomatically = YES;
 
@@ -628,9 +638,9 @@ TEST(EnhancedSecurityPolicies, IframeInSharedProcessDoesNotKeepSiteOutOfEnhanced
 
 // MARK: - Site Isolation Shared Process Tests
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> sharedProcessTestWebView(const HTTPServer& secureServer, UseSharedProcess useSharedProcess = UseSharedProcess::YesWithEnhancedSecurity)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> sharedProcessTestWebView(const HTTPServer& secureServer, UseSharedProcess useSharedProcess = UseSharedProcess::YesWithEnhancedSecurity, WKProcessPool *processPool = nil)
 {
-    RetainPtr webView = enhancedSecurityTestConfiguration(nullptr, &secureServer, true, true, useSharedProcess);
+    RetainPtr webView = enhancedSecurityTestConfiguration(nullptr, &secureServer, true, true, useSharedProcess, processPool);
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     [webView setNavigationDelegate:navigationDelegate.get()];
@@ -1416,6 +1426,94 @@ TEST(EnhancedSecurityPolicies, SharedProcessEnhancedSecurityFlagOffFrameNavigate
     RetainPtr adFrame = [webView firstChildFrame];
     EXPECT_EQ(adFrame.get()._processIdentifier, sharedProcessPID);
     EXPECT_WK_STREQ(processVariantForFrame(webView.get(), adFrame.get()), "standard");
+}
+
+static RetainPtr<WKProcessPool> prewarmingProcessPool()
+{
+    RetainPtr configuration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    configuration.get().prewarmsProcessesAutomatically = YES;
+    return adoptNS([[WKProcessPool alloc] _initWithConfiguration:configuration.get()]);
+}
+
+struct PrewarmedProcessCounts {
+    unsigned standard { 0 };
+    unsigned enhancedSecurity { 0 };
+    unsigned unknown { 0 };
+};
+
+static PrewarmedProcessCounts prewarmedProcessCounts(WKProcessPool *processPool)
+{
+    PrewarmedProcessCounts counts;
+    for (NSNumber *processIdentifier in [processPool _prewarmedProcessIdentifiersForTesting]) {
+        char path[PROC_PIDPATHINFO_MAXSIZE] = "\0";
+        if (proc_pidpath(processIdentifier.intValue, path, sizeof(path)) <= 0) {
+            ++counts.unknown;
+            continue;
+        }
+        RetainPtr executableName = [@(path) lastPathComponent];
+        if ([executableName hasPrefix:@"com.apple.WebKit.WebContent.EnhancedSecurity"])
+            ++counts.enhancedSecurity;
+        else if ([executableName hasPrefix:@"com.apple.WebKit.WebContent"])
+            ++counts.standard;
+        else
+            ++counts.unknown;
+    }
+    return counts;
+}
+
+static bool waitForPrewarmedProcessCounts(WKProcessPool *processPool, unsigned standard, unsigned enhancedSecurity)
+{
+    return TestWebKitAPI::Util::waitFor([&] {
+        auto counts = prewarmedProcessCounts(processPool);
+        return !counts.unknown && counts.standard == standard && counts.enhancedSecurity == enhancedSecurity;
+    });
+}
+
+TEST(EnhancedSecurityPolicies, SharedProcessEnhancedSecurityUsesPrewarmedProcess)
+{
+    HTTPServer secureServer({
+        { "/main"_s, { mainPageWithAdFrame } },
+        { "/ad"_s, { "ad"_s } },
+        { "/other"_s, { "<iframe src='https://apple.com/ad'></iframe>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = prewarmingProcessPool();
+    auto [webView, navigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::YesWithEnhancedSecurity, processPool.get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(processVariantForFrame(webView.get(), [webView firstChildFrame]), "security");
+
+    ASSERT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 1, 1));
+    RetainPtr prewarmedProcessIdentifiers = [processPool _prewarmedProcessIdentifiersForTesting];
+
+    auto [secondWebView, secondNavigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::YesWithEnhancedSecurity, processPool.get());
+    [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.org/other"]]];
+    [secondNavigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<WKFrameInfo> mainFrame = [secondWebView mainFrame].info;
+    RetainPtr<WKFrameInfo> adFrame = [secondWebView firstChildFrame];
+    EXPECT_TRUE([prewarmedProcessIdentifiers containsObject:@(mainFrame.get()._processIdentifier)]);
+    EXPECT_TRUE([prewarmedProcessIdentifiers containsObject:@(adFrame.get()._processIdentifier)]);
+    EXPECT_WK_STREQ(processVariantForFrame(secondWebView.get(), mainFrame.get()), "standard");
+    EXPECT_WK_STREQ(processVariantForFrame(secondWebView.get(), adFrame.get()), "security");
+
+    EXPECT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 1, 1));
+}
+
+TEST(EnhancedSecurityPolicies, SharedProcessEnhancedSecurityFlagOffPrewarmsStandardProcesses)
+{
+    HTTPServer secureServer({
+        { "/main"_s, { mainPageWithAdFrame } },
+        { "/ad"_s, { "ad"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = prewarmingProcessPool();
+    auto [webView, navigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::Yes, processPool.get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(processVariantForFrame(webView.get(), [webView firstChildFrame]), "standard");
+
+    EXPECT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 2, 0));
 }
 
 // MARK: - HTTPS First Upgrade Tests
