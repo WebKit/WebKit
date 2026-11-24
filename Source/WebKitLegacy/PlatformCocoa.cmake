@@ -1155,7 +1155,6 @@ configure_file(${WEBKITLEGACY_DIR}/Modules/WorkAround173516139.h
 # time* to the source path, so both routes point to the same inode and clang's
 # `#import` dedupes. The on-disk migrated copy is kept for installhdrs / clients
 # that import the SDK directly.
-set(_wkl_vfs "${CMAKE_BINARY_DIR}/WebKitLegacy-vfs-overlay.yaml")
 set(_wkl_vfs_modules_entries "")
 list(APPEND _wkl_vfs_modules_entries
     "{\"type\":\"file\",\"name\":\"module.modulemap\",\"external-contents\":\"${_wkl_fw}/Modules/module.modulemap\"}"
@@ -1178,15 +1177,16 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
 endforeach ()
 list(JOIN _wkl_vfs_modules_entries "," _wkl_vfs_modules_str)
 list(JOIN _wkl_vfs_headers_entries "," _wkl_vfs_headers_str)
-file(WRITE "${_wkl_vfs}"
+WEBKIT_WRITE_VFS_OVERLAY(_wkl_vfs WebKitLegacy-vfs-overlay
 "{\"case-sensitive\":\"false\",\"version\":0,\"roots\":[\
 {\"type\":\"directory\",\"name\":\"${_wkl_fw}/Modules\",\"contents\":[${_wkl_vfs_modules_str}]},\
 {\"type\":\"directory\",\"name\":\"${_wkl_fw}/PrivateHeaders\",\"contents\":[${_wkl_vfs_headers_str}]},\
 {\"type\":\"directory\",\"name\":\"${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy\",\"contents\":[${_wkl_vfs_headers_str}]}\
 ]}\n")
 target_compile_options(WebKitLegacy PRIVATE
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_wkl_vfs}>")
+    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_wkl_vfs} -DWEBKITLEGACY_VFS_OVERLAY_HASH=${_wkl_vfs_HASH}>")
 unset(_wkl_vfs)
+unset(_wkl_vfs_HASH)
 unset(_wkl_vfs_modules_entries)
 unset(_wkl_vfs_modules_str)
 unset(_wkl_vfs_headers_entries)

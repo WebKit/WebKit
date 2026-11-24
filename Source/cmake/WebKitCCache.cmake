@@ -14,22 +14,54 @@ if (NOT "$ENV{WK_USE_CCACHE}" STREQUAL "NO" AND NOT CMAKE_CXX_COMPILER_LAUNCHER)
             # preset's environment block only apply to the cmake process, not to
             # the ninja that later invokes ccache. Generate a launcher that
             # exports them at compile time so cache hashes are portable across
-            # worktrees of the same checkout (-fdebug-prefix-map handles the
-            # debug-info side; CCACHE_BASEDIR handles the command-line side).
+            # worktrees of the same checkout (CCACHE_BASEDIR handles the
+            # command-line side; with RELATIVE_DEBUG_INFO, -fdebug-prefix-map
+            # handles the debug-info side). Without RELATIVE_DEBUG_INFO, debug
+            # info names the worktree, so its directory stays in the hash.
+            set(_ccache_nohashdir "")
+            if (RELATIVE_DEBUG_INFO)
+                set(_ccache_nohashdir "export CCACHE_NOHASHDIR=true\n")
+            endif ()
             set(_ccache_launcher "${CMAKE_BINARY_DIR}/ccache-launcher")
             file(CONFIGURE OUTPUT "${_ccache_launcher}" CONTENT
 "#!/bin/sh
 export CCACHE_BASEDIR='${CMAKE_SOURCE_DIR}'
-export CCACHE_NOHASHDIR=true
-export CCACHE_PCH_EXTSUM=true
+${_ccache_nohashdir}export CCACHE_PCH_EXTSUM=true
 # Hash the -MD depfile rather than preprocessing, so a cache miss is cheap.
 export CCACHE_DEPEND=true
-export CCACHE_SLOPPINESS='pch_defines,time_macros,include_file_mtime,include_file_ctime'
+export CCACHE_SLOPPINESS='pch_defines,time_macros,include_file_mtime,include_file_ctime,ivfsoverlay'
+pch=
+output=
+parent=
+previous=
 for arg; do
+    case \"$previous\" in
+    -o) output=$arg ;;
+    -include-pch) parent=$arg ;;
+    esac
     if [ \"$arg\" = \"-emit-pch\" ]; then
-        exec \"$@\"
+        pch=1
+    fi
+    if [ \"$arg\" != -Xclang ]; then
+        previous=$arg
     fi
 done
+if [ -n \"$pch\" ]; then
+    # A PCH holds absolute paths, so it is built here and never shared. Its users
+    # hash <pch>.sum in its place: its command line less the checkout's path, and
+    # the .sum of the PCH it extends. Their -MD depfiles name the headers it read.
+    rm -f \"$output.sum\"
+    \"$@\" || exit
+    {
+        printf '%s\\n' \"$@\" | awk '{ s = $0; t = \"\"; b = ENVIRON[\"CCACHE_BASEDIR\"]
+            while ((i = index(s, b)) > 0) { t = t substr(s, 1, i - 1) \"<source>\"; s = substr(s, i + length(b)) }
+            print t s }'
+        if [ -n \"$parent\" ]; then
+            cat \"$parent.sum\" || cat \"$parent\"
+        fi
+    } | shasum -a 256 > \"$output.sum\"
+    exit
+fi
 exec '${CCACHE_FOUND}' \"$@\"
 ")
             file(CHMOD "${_ccache_launcher}" PERMISSIONS

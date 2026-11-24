@@ -295,8 +295,7 @@ find_package(Threads REQUIRED)
 # checks.
 if (NOT USE_APPLE_INTERNAL_SDK)
     set(_availability_overlay_dir "${CMAKE_SOURCE_DIR}/WebKitLibraries/AvailabilityOverlay")
-    set(_availability_overlay_yaml "${CMAKE_BINARY_DIR}/availability-overlay.yaml")
-    file(WRITE "${_availability_overlay_yaml}.tmp"
+    WEBKIT_WRITE_VFS_OVERLAY(_availability_overlay_yaml availability-overlay
     "{
       \"version\": 0,
       \"case-sensitive\": false,
@@ -314,13 +313,13 @@ if (NOT USE_APPLE_INTERNAL_SDK)
       ]
     }
     ")
-    file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
-    add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
+    add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml} -DWEBKIT_AVAILABILITY_OVERLAY_HASH=${_availability_overlay_yaml_HASH}>")
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
     # For the Platform.h preprocess steps, which don't inherit compile options.
     set(WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE "${_availability_overlay_yaml}")
     unset(_availability_overlay_dir)
     unset(_availability_overlay_yaml)
+    unset(_availability_overlay_yaml_HASH)
 endif ()
 
 # Layer WebKit's sparse additions SDK over the iOS family's public SDKs, as

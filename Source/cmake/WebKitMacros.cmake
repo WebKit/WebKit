@@ -292,6 +292,22 @@ macro(WEBKIT_ADD_SOURCE_DEPENDENCIES _source _deps)
     unset(_tmp)
 endmacro()
 
+# Writes a clang VFS overlay to <_name>.yaml in the build directory, if it changed,
+# and sets _output_variable to its path and <_output_variable>_HASH to a hash of
+# its contents less the source directory. Compile commands that pass the hash
+# change with the mapping, for Ninja and ccache, and are the same in every checkout.
+function(WEBKIT_WRITE_VFS_OVERLAY _output_variable _name _contents)
+    set(_path "${CMAKE_BINARY_DIR}/${_name}.yaml")
+    file(WRITE "${_path}.tmp" "${_contents}")
+    file(COPY_FILE "${_path}.tmp" "${_path}" ONLY_IF_DIFFERENT)
+    file(REMOVE "${_path}.tmp")
+    string(REPLACE "${CMAKE_SOURCE_DIR}/" "<source>/" _portable_contents "${_contents}")
+    string(SHA256 _hash "${_portable_contents}")
+    string(SUBSTRING "${_hash}" 0 16 _hash)
+    set(${_output_variable} "${_path}" PARENT_SCOPE)
+    set(${_output_variable}_HASH "${_hash}" PARENT_SCOPE)
+endfunction()
+
 # Wrapper around enable_language(). Enabling a C-family language resets
 # CMAKE_PCH_PROLOGUE to "#pragma clang system_header", which would hide
 # warnings in prefix headers. A macro, because enable_language() must be
@@ -317,10 +333,20 @@ function(WEBKIT_ADD_PREFIX_HEADER _target _header)
         message(FATAL_ERROR "WEBKIT_ADD_PREFIX_HEADER(${_target}): PREFIX_LANGUAGES is required")
     endif ()
     string(JOIN "," _pch_genex_langs ${_PCH_PREFIX_LANGUAGES})
+    _WEBKIT_PREFIX_HEADER_INCLUDE(_include ${_target} ${_header})
     target_precompile_headers(${_target} PRIVATE
-        "$<$<COMPILE_LANGUAGE:${_pch_genex_langs}>:${CMAKE_CURRENT_SOURCE_DIR}/${_header}>")
+        "$<$<COMPILE_LANGUAGE:${_pch_genex_langs}>:${_include}>")
     _WEBKIT_PCH_STUB_NO_TIMESTAMP(${_target} ${_PCH_PREFIX_LANGUAGES})
     _WEBKIT_ADD_PCH_OBJECT(${_target} ${ARGN})
+endfunction()
+
+# Sets _output_variable to _header in quotes, relative to the directory of the
+# file CMake generates to include it, so that file is the same in every checkout
+# and ccache can share the objects that use its PCH (WebKitCCache.cmake).
+function(_WEBKIT_PREFIX_HEADER_INCLUDE _output_variable _target _header)
+    get_target_property(_pch_bin_dir ${_target} BINARY_DIR)
+    file(RELATIVE_PATH _include "${_pch_bin_dir}/CMakeFiles/${_target}.dir" "${CMAKE_CURRENT_SOURCE_DIR}/${_header}")
+    set(${_output_variable} "\"${_include}\"" PARENT_SCOPE)
 endfunction()
 
 # REUSE_FROM is only safe where producer and consumer compile flags match exactly.
@@ -401,8 +427,9 @@ endmacro()
 function(WEBKIT_ADD_PREFIX_HEADER_WITH_PARENT _target _base_target _header _parent_header)
     if (COMPILER_IS_CLANG)
         string(JOIN "," _lang_genex ${ARGN})
+        _WEBKIT_PREFIX_HEADER_INCLUDE(_include ${_target} ${_header})
         target_precompile_headers(${_target} PRIVATE
-            "$<$<COMPILE_LANGUAGE:${_lang_genex}>:${CMAKE_CURRENT_SOURCE_DIR}/${_header}>")
+            "$<$<COMPILE_LANGUAGE:${_lang_genex}>:${_include}>")
         if (APPLE)
             # FIXME: Upstream clang does not appear to propagate parent-PCH state to consumers
             # of the child PCH (webkit.org/b/314763). Until that is root-caused, build the child
@@ -1491,7 +1518,7 @@ function(webkit_generate_platform_feature_defines_file)
         COMMAND ${Python_EXECUTABLE} "${_script}"
             --print-feature-defines --output "${_defines_file}" -- ${_clang_cmd}
         DEPFILE "${_depfile}"
-        DEPENDS "${_script}" "${CMAKE_BINARY_DIR}/cmakeconfig.h" ${_command_deps}
+        DEPENDS "${_script}" "${CMAKE_BINARY_DIR}/cmakeconfig.h" ${_command_deps} ${WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE}
         COMMENT "Deriving generator feature defines from wtf/Platform.h"
         VERBATIM
     )
