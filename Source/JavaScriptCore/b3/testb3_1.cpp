@@ -1596,6 +1596,7 @@ void run(const TestConfig* config)
         RUN(testUMulHigh64());
         RUN(testMemoryMove());
         RUN(testMemoryMoveConstant());
+        RUN(testMemoryMoveShort(false));
         RUN(testGCSafeMemoryMove(false));
         RUN(testMemoryFill(MemoryFill8, false, false));
         RUN(testMemoryFill(MemoryFill16, false, false));
@@ -1603,6 +1604,7 @@ void run(const TestConfig* config)
         RUN(testMemoryFill(MemoryFill64, false, false));
         RUN(testMemoryFill(MemoryFill64, true, false));
         if (Options::useWasmSIMD()) {
+            RUN(testMemoryMoveShort(true));
             RUN(testGCSafeMemoryMove(true));
             RUN(testMemoryFill(MemoryFill8, false, true));
             RUN(testMemoryFill(MemoryFill16, false, true));

@@ -1769,6 +1769,42 @@ void testMemoryMoveConstant()
     }
 }
 
+void testMemoryMoveShort(bool usesSIMD)
+{
+    Procedure proc(usesSIMD);
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<void*, void*, void*>(proc, root);
+    root->appendNew<BulkMemoryValue>(proc, MemoryMove, Origin(), arguments[0], arguments[1], arguments[2]);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin());
+    auto code = compileProc(proc);
+
+    constexpr unsigned padding = 16;
+    Vector<uint8_t> buffer(256);
+    auto reset = [&] {
+        for (unsigned i = 0; i < buffer.size(); ++i)
+            buffer[i] = static_cast<uint8_t>(i * 7 + 3);
+    };
+    auto expected = [](unsigned i) {
+        return static_cast<uint8_t>(i * 7 + 3);
+    };
+    for (unsigned count = 0; count <= 64; ++count) {
+        for (int shift : { -9, -1, 0, 1, 9, 80 }) {
+            reset();
+            uint8_t* destination = buffer.mutableSpan().data() + padding + 80 + shift;
+            uint8_t* source = buffer.mutableSpan().data() + padding + 80;
+            invoke<void>(*code, destination, source, static_cast<uintptr_t>(count));
+            unsigned destinationStart = padding + 80 + shift;
+            for (unsigned i = 0; i < buffer.size(); ++i) {
+                if (i >= destinationStart && i < destinationStart + count)
+                    CHECK_EQ(buffer[i], expected(i - destinationStart + padding + 80));
+                else
+                    CHECK_EQ(buffer[i], expected(i));
+            }
+        }
+    }
+}
+
 void testMemoryFill(B3::Opcode opcode, bool isGCSafe, bool usesSIMD)
 {
     unsigned elementSize = bytesForWidth(memoryFillWidth(opcode));

@@ -211,24 +211,9 @@ private:
                 break;
             }
 
-            case MemoryMove: {
-                Value* functionAddress;
-                if (m_value->as<BulkMemoryValue>()->isGCSafe())
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(operationGCSafeMemoryMove));
-                else
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(operationMemoryMove));
-                Value* result = m_insertionSet.insert<CCallValue>(
-                    m_index,
-                    m_value->type(),
-                    m_origin,
-                    m_value->effects(),
-                    functionAddress,
-                    m_value->child(0),
-                    m_value->child(1),
-                    m_value->child(2));
-                m_value->replaceWithIdentity(result);
+            case MemoryMove:
+                lowerMemoryMove();
                 break;
-            }
 
             case MemoryFill8:
             case MemoryFill16:
@@ -243,6 +228,125 @@ private:
             }
         }
         m_insertionSet.execute(m_block);
+    }
+
+    void appendJump(BasicBlock* block, BasicBlock* target)
+    {
+        block->appendNew<Value>(m_proc, Jump, m_origin);
+        block->setSuccessors(FrequentedBlock(target));
+    }
+
+    void appendStore(BasicBlock* block, Width width, Value* value, Value* pointer, int32_t offset, HeapRange range)
+    {
+        block->appendNew<MemoryValue>(m_proc, storeOpcode(width == Width128 ? FP : GP, width), m_origin, value, pointer, offset, range);
+    }
+
+    // Returns where control continues when byteCount is at least limit and when it is below,
+    // with the below side sent straight to belowTarget if there is one. A constant byteCount
+    // decides the branch here: the side it never takes comes back null and the side it takes
+    // continues in block, so no dead blocks are built. New blocks are inserted before done.
+    std::pair<BasicBlock*, BasicBlock*> branchOnByteCount(BasicBlock* block, Value* byteCount, uint64_t limit, BasicBlock* done, BasicBlock* belowTarget = nullptr)
+    {
+        if (byteCount->hasInt()) {
+            if (static_cast<uint64_t>(byteCount->asInt()) >= limit)
+                return { block, nullptr };
+            if (!belowTarget)
+                return { nullptr, block };
+            appendJump(block, belowTarget);
+            return { nullptr, nullptr };
+        }
+        BasicBlock* atLeast = m_blockInsertionSet.insertBefore(done);
+        BasicBlock* below = belowTarget ? belowTarget : m_blockInsertionSet.insertBefore(done);
+        Value* condition = block->appendNew<Value>(m_proc, AboveEqual, m_origin, byteCount, block->appendIntConstant(m_proc, m_origin, pointerType(), limit));
+        block->appendNew<Value>(m_proc, Branch, m_origin, condition);
+        block->setSuccessors(FrequentedBlock(atLeast), FrequentedBlock(below));
+        return { atLeast, belowTarget ? nullptr : below };
+    }
+
+    // Short moves are inlined as a pair of overlapping chunks of the widest width that fits, both
+    // loaded before either is stored so that overlapping ranges still move correctly. A GC safe
+    // move has an 8-byte aligned count and addresses, so its chunks are 8-byte aligned 64-bit or
+    // 128-bit accesses, which are single-copy atomic per word.
+    void lowerMemoryMove()
+    {
+        constexpr uint64_t maxInlineByteCount = 32;
+
+        auto* memoryMove = m_value->as<BulkMemoryValue>();
+        Value* destination = memoryMove->child(0);
+        Value* source = memoryMove->child(1);
+        Value* byteCount = memoryMove->child(2);
+        HeapRange readRange = memoryMove->readRange();
+        HeapRange writeRange = memoryMove->writeRange();
+        bool usesVectors = m_proc.usesSIMD();
+        uint64_t elementSize = memoryMove->isGCSafe() ? sizeof(uint64_t) : 1;
+        if (memoryMove->isGCSafe() && byteCount->hasInt())
+            RELEASE_ASSERT(!(static_cast<uint64_t>(byteCount->asInt()) % sizeof(uint64_t)));
+
+        BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+        BasicBlock* done = m_block;
+        before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
+
+        auto load = [&](BasicBlock* block, Width width, Value* pointer, int32_t offset) -> Value* {
+            switch (width) {
+            case Width8:
+                return block->appendNew<MemoryValue>(m_proc, Load8Z, m_origin, pointer, offset, readRange);
+            case Width16:
+                return block->appendNew<MemoryValue>(m_proc, Load16Z, m_origin, pointer, offset, readRange);
+            case Width32:
+                return block->appendNew<MemoryValue>(m_proc, Load, Int32, m_origin, pointer, offset, readRange);
+            case Width64:
+                return block->appendNew<MemoryValue>(m_proc, Load, Int64, m_origin, pointer, offset, readRange);
+            case Width128:
+                return block->appendNew<MemoryValue>(m_proc, Load, V128, m_origin, pointer, offset, readRange);
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        };
+        auto [callBlock, inlineBlock] = branchOnByteCount(before, byteCount, maxInlineByteCount + 1, done);
+        if (callBlock) {
+            auto* operation = memoryMove->isGCSafe() ? operationGCSafeMemoryMove : operationMemoryMove;
+            Value* functionAddress = callBlock->appendNew<ConstPtrValue>(m_proc, m_origin, tagCFunction<OperationPtrTag>(operation));
+            callBlock->appendNew<CCallValue>(m_proc, Void, m_origin, memoryMove->effects(), functionAddress, destination, source, byteCount);
+            appendJump(callBlock, done);
+        }
+
+        if (inlineBlock) {
+            Value* sourceEnd = inlineBlock->appendNew<Value>(m_proc, Add, m_origin, source, byteCount);
+            Value* destinationEnd = inlineBlock->appendNew<Value>(m_proc, Add, m_origin, destination, byteCount);
+            BasicBlock* check = inlineBlock;
+            for (uint64_t size = 16; check && size >= elementSize; size /= 2) {
+                auto [sizeBlock, next] = branchOnByteCount(check, byteCount, size, done, size > elementSize ? nullptr : done);
+                if (sizeBlock) {
+                    // Each chunk covers at least half of any count from size to 2 * size, so the head
+                    // and the tail chunk together cover it. A move shorter than two elements is
+                    // exactly one element.
+                    Width width = widthForBytes(size);
+                    Vector<std::pair<int32_t, Value*>, 2> heads;
+                    Vector<std::pair<int32_t, Value*>, 2> tails;
+                    if (size == 16 && !usesVectors) {
+                        for (int32_t offset : { 0, 8 }) {
+                            heads.append({ offset, load(sizeBlock, Width64, source, offset) });
+                            tails.append({ offset - 16, load(sizeBlock, Width64, sourceEnd, offset - 16) });
+                        }
+                        width = Width64;
+                    } else {
+                        heads.append({ 0, load(sizeBlock, width, source, 0) });
+                        if (size > elementSize)
+                            tails.append({ -static_cast<int32_t>(size), load(sizeBlock, width, sourceEnd, -static_cast<int32_t>(size)) });
+                    }
+                    for (auto [offset, value] : heads)
+                        appendStore(sizeBlock, width, value, destination, offset, writeRange);
+                    for (auto [offset, value] : tails)
+                        appendStore(sizeBlock, width, value, destinationEnd, offset, writeRange);
+                    appendJump(sizeBlock, done);
+                }
+                check = next;
+            }
+            ASSERT(!check);
+        }
+
+        m_value->replaceWithNop();
+        before->updatePredecessorsAfter();
+        m_changed = true;
     }
 
     // Short fills are inlined as a pair of overlapping stores of the widest width that fits, or a
@@ -265,104 +369,72 @@ private:
         BasicBlock* done = m_block;
         before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
 
-        std::optional<uint64_t> constantByteCount;
         Value* byteCount = count;
-        if (count->hasInt() && static_cast<uint64_t>(count->asInt()) <= UINT64_MAX / elementSize) {
-            constantByteCount = static_cast<uint64_t>(count->asInt()) * elementSize;
-            byteCount = before->appendIntConstant(m_proc, m_origin, pointerType(), *constantByteCount);
-        } else if (elementSize > 1)
+        if (count->hasInt() && static_cast<uint64_t>(count->asInt()) <= UINT64_MAX / elementSize)
+            byteCount = before->appendIntConstant(m_proc, m_origin, pointerType(), static_cast<uint64_t>(count->asInt()) * elementSize);
+        else if (elementSize > 1)
             byteCount = before->appendNew<Value>(m_proc, Shl, m_origin, count, before->appendNew<Const32Value>(m_proc, m_origin, std::countr_zero(elementSize)));
 
-        auto addBlock = [&] {
-            return m_blockInsertionSet.insertBefore(done);
-        };
-        auto jump = [&](BasicBlock* block, BasicBlock* target) {
-            block->appendNew<Value>(m_proc, Jump, m_origin);
-            block->setSuccessors(FrequentedBlock(target));
-        };
-        // Returns where control continues when byteCount is at least limit and when it is below,
-        // with the below side sent straight to belowTarget if there is one. A constant byteCount
-        // decides the branch here: the side it never takes comes back null and the side it takes
-        // continues in block, so no dead blocks are built.
-        auto branchOnByteCount = [&](BasicBlock* block, uint64_t limit, BasicBlock* belowTarget = nullptr) -> std::pair<BasicBlock*, BasicBlock*> {
-            if (constantByteCount) {
-                if (*constantByteCount >= limit)
-                    return { block, nullptr };
-                if (!belowTarget)
-                    return { nullptr, block };
-                jump(block, belowTarget);
-                return { nullptr, nullptr };
-            }
-            BasicBlock* atLeast = addBlock();
-            BasicBlock* below = belowTarget ? belowTarget : addBlock();
-            Value* condition = block->appendNew<Value>(m_proc, AboveEqual, m_origin, byteCount, block->appendIntConstant(m_proc, m_origin, pointerType(), limit));
-            block->appendNew<Value>(m_proc, Branch, m_origin, condition);
-            block->setSuccessors(FrequentedBlock(atLeast), FrequentedBlock(below));
-            return { atLeast, belowTarget ? nullptr : below };
-        };
         auto splat = [&](BasicBlock* block, Width width) {
             return memoryFill->splatFillPattern(m_proc, width, [&](Value* value) {
                 block->append(value);
             });
         };
-        auto store = [&](BasicBlock* block, Width width, Value* value, Value* pointer, int32_t offset) {
-            block->appendNew<MemoryValue>(m_proc, storeOpcode(width == Width128 ? FP : GP, width), m_origin, value, pointer, offset, range);
-        };
 
-        auto [callBlock, inlineBlock] = branchOnByteCount(before, maxInlineByteCount + 1);
+        auto [callBlock, inlineBlock] = branchOnByteCount(before, byteCount, maxInlineByteCount + 1, done);
         if (callBlock) {
             emitMemoryFillCall(callBlock, memoryFill, byteCount);
-            jump(callBlock, done);
+            appendJump(callBlock, done);
         }
 
         if (inlineBlock) {
             Value* end = inlineBlock->appendNew<Value>(m_proc, Add, m_origin, destination, byteCount);
-            auto [wideBlock, narrowBlock] = branchOnByteCount(inlineBlock, unitSize, elementSize < static_cast<uint64_t>(unitSize) ? nullptr : done);
+            auto [wideBlock, narrowBlock] = branchOnByteCount(inlineBlock, byteCount, unitSize, done, elementSize < static_cast<uint64_t>(unitSize) ? nullptr : done);
 
             if (wideBlock) {
                 Value* pattern = splat(wideBlock, unitWidth);
-                auto [loopPreheader, pairBlock] = branchOnByteCount(wideBlock, 2 * unitSize);
+                auto [loopPreheader, pairBlock] = branchOnByteCount(wideBlock, byteCount, 2 * unitSize, done);
 
                 if (pairBlock) {
-                    store(pairBlock, unitWidth, pattern, destination, 0);
-                    store(pairBlock, unitWidth, pattern, end, -unitSize);
-                    jump(pairBlock, done);
+                    appendStore(pairBlock, unitWidth, pattern, destination, 0, range);
+                    appendStore(pairBlock, unitWidth, pattern, end, -unitSize, range);
+                    appendJump(pairBlock, done);
                 }
 
                 if (loopPreheader) {
-                    BasicBlock* loopBody = addBlock();
-                    BasicBlock* loopExit = addBlock();
+                    BasicBlock* loopBody = m_blockInsertionSet.insertBefore(done);
+                    BasicBlock* loopExit = m_blockInsertionSet.insertBefore(done);
 
                     Value* last = loopPreheader->appendNew<Value>(m_proc, Sub, m_origin, end, loopPreheader->appendIntConstant(m_proc, m_origin, pointerType(), 2 * unitSize));
                     UpsilonValue* initialCursor = loopPreheader->appendNew<UpsilonValue>(m_proc, m_origin, destination);
-                    jump(loopPreheader, loopBody);
+                    appendJump(loopPreheader, loopBody);
 
                     Value* cursor = loopBody->appendNew<Value>(m_proc, Phi, pointerType(), m_origin);
                     initialCursor->setPhi(cursor);
-                    store(loopBody, unitWidth, pattern, cursor, 0);
-                    store(loopBody, unitWidth, pattern, cursor, unitSize);
+                    appendStore(loopBody, unitWidth, pattern, cursor, 0, range);
+                    appendStore(loopBody, unitWidth, pattern, cursor, unitSize, range);
                     Value* nextCursor = loopBody->appendNew<Value>(m_proc, Add, m_origin, cursor, loopBody->appendIntConstant(m_proc, m_origin, pointerType(), 2 * unitSize));
                     loopBody->appendNew<UpsilonValue>(m_proc, m_origin, nextCursor, cursor);
                     loopBody->appendNew<Value>(m_proc, Branch, m_origin, loopBody->appendNew<Value>(m_proc, Below, m_origin, nextCursor, last));
                     loopBody->setSuccessors(FrequentedBlock(loopBody), FrequentedBlock(loopExit));
 
-                    store(loopExit, unitWidth, pattern, last, 0);
-                    store(loopExit, unitWidth, pattern, last, unitSize);
-                    jump(loopExit, done);
+                    appendStore(loopExit, unitWidth, pattern, last, 0, range);
+                    appendStore(loopExit, unitWidth, pattern, last, unitSize, range);
+                    appendJump(loopExit, done);
                 }
             }
 
             BasicBlock* check = narrowBlock;
             for (uint64_t size = unitSize / 2; check && size >= elementSize; size /= 2) {
                 Width width = widthForBytes(size);
-                auto [sizeBlock, next] = branchOnByteCount(check, size, size > elementSize ? nullptr : done);
+                auto [sizeBlock, next] = branchOnByteCount(check, byteCount, size, done, size > elementSize ? nullptr : done);
                 if (sizeBlock) {
                     Value* pattern = splat(sizeBlock, width);
-                    store(sizeBlock, width, pattern, destination, 0);
+                    appendStore(sizeBlock, width, pattern, destination, 0, range);
                     // A fill shorter than two elements is exactly one element.
                     if (size > elementSize)
-                        store(sizeBlock, width, pattern, end, -static_cast<int32_t>(size));
-                    jump(sizeBlock, done);
+                        appendStore(sizeBlock, width, pattern, end, -static_cast<int32_t>(size), range);
+                    appendJump(sizeBlock, done);
                 }
                 check = next;
             }

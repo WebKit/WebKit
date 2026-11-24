@@ -1534,6 +1534,7 @@ void testUMulHigh64();
 
 void testMemoryMove();
 void testMemoryMoveConstant();
+void testMemoryMoveShort(bool usesSIMD);
 void testMemoryFill(B3::Opcode, bool isGCSafe, bool usesSIMD);
 void testGCSafeMemoryMove(bool usesSIMD);
 
