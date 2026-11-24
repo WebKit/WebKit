@@ -38,6 +38,7 @@
 #include "GStreamerRegistryScanner.h"
 #include "GraphicsContext.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPStatusCodes.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"
 #include "InbandMetadataTextTrackPrivateGStreamer.h"
@@ -48,6 +49,7 @@
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "OriginAccessPatterns.h"
+#include "ParsedContentRange.h"
 #include "SecurityOrigin.h"
 #include "TextCombinerGStreamer.h"
 #include "TextSinkGStreamer.h"
@@ -2445,6 +2447,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 }
             }
 
+            std::optional<guint> httpStatusCode = gstStructureGet<guint>(structure, "http-status-code"_s);
+
             bool isRangeRequest = false;
             GUniqueOutPtr<GstStructure> requestHeaders;
             if (gst_structure_get(structure, "request-headers", GST_TYPE_STRUCTURE, &requestHeaders.outPtr(), nullptr))
@@ -2467,6 +2471,15 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     }
                 } else
                     contentLength = *contentLengthFromResponse;
+                if (!contentLength && httpStatusCode == httpStatus206PartialContent) {
+                    // A 206 without Content-Length (for instance sent chunked) still carries the full
+                    // resource size in Content-Range, so it is not a live stream.
+                    if (auto contentRangeValue = gstStructureGetString(responseHeaders.get(), httpHeaderNameString(HTTPHeaderName::ContentRange))) {
+                        ParsedContentRange contentRange(contentRangeValue.span());
+                        if (contentRange.isValid() && contentRange.instanceLength() != ParsedContentRange::unknownLength)
+                            contentLength = contentRange.instanceLength();
+                    }
+                }
                 if (!isRangeRequest) {
                     m_isLiveStream = !contentLength;
                     if (*m_isLiveStream && WEBKIT_IS_WEB_SRC(m_source.get()) && webKitSrcIsSeekable(WEBKIT_WEB_SRC_CAST(m_source.get())))
