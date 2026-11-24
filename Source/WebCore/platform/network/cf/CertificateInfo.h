@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
 
-    std::optional<CertificateSummary> summary() const;
+    WEBCORE_EXPORT std::optional<CertificateSummary> summary() const;
 
     bool isEmpty() const
     {
