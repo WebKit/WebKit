@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:html="http://www.w3.org/1999/xhtml">
+  <title>'text-anchor' on &#x3c;textPath&#x3e; applies to chunks created by 'x' or 'y' values that are ignored on a path</title>
+  <html:script src="/resources/testharness.js"/>
+  <html:script src="/resources/testharnessreport.js"/>
+  <html:link rel="stylesheet" href="/fonts/ahem.css"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextAnchoringProperties"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextpathLayoutRules"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TermTextChunk"/>
+  <defs>
+    <path id="p" d="M0,25h400"/>
+    <path id="v" d="M25,0v400"/>
+  </defs>
+  <!-- Each value starts a new chunk, so each glyph is anchored on its own at startOffset (200). -->
+  <g font-family="Ahem" font-size="20px">
+    <text text-anchor="middle" y="25 25 25 25" expected-x="190">
+      <textPath href="#p" startOffset="50%">XXXX</textPath>
+    </text>
+    <text text-anchor="end" y="25 25 25 25" expected-x="180" transform="translate(0 50)">
+      <textPath href="#p" startOffset="50%">XXXX</textPath>
+    </text>
+  </g>
+  <g font-family="Ahem" font-size="20px" writing-mode="vertical-rl">
+    <text text-anchor="middle" x="25 25 25 25" expected-x="190" vertical="" transform="translate(200 0)">
+      <textPath href="#v" startOffset="50%">XXXX</textPath>
+    </text>
+  </g>
+  <script>
+    for (let text of document.getElementsByTagName('text')) {
+      promise_test(async t => {
+        await document.fonts.load('20px Ahem');
+        await document.fonts.ready;
+        let extent = text.getExtentOfChar(0);
+        assert_approx_equals(text.hasAttribute('vertical') ? extent.y : extent.x, parseFloat(text.getAttribute('expected-x')), 0.5);
+      }, (text.hasAttribute('vertical') ? 'vertical, ' : '') + 'text-anchor=' + text.getAttribute('text-anchor'));
+    }
+  </script>
+</svg>

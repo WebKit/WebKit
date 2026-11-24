@@ -1,0 +1,12 @@
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+
+PASS text-anchor=middle, lengthAdjust=spacingAndGlyphs, XX/XX
+PASS text-anchor=end, lengthAdjust=spacingAndGlyphs, XX/XX
+PASS text-anchor=middle, lengthAdjust=spacing, XX/XX
+PASS text-anchor=end, lengthAdjust=spacing, XX/XX
+PASS text-anchor=end, lengthAdjust=spacing, X/XXX
+

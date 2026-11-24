@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:html="http://www.w3.org/1999/xhtml">
+  <title>'textLength' on &#x3c;textPath&#x3e; with 'text-anchor' on multiple anchored chunks</title>
+  <html:script src="/resources/testharness.js"/>
+  <html:script src="/resources/testharnessreport.js"/>
+  <html:link rel="stylesheet" href="/fonts/ahem.css"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElement"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementTextLengthAttribute"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextAnchoringProperties"/>
+  <defs>
+    <path id="p" d="M0,25h400"/>
+  </defs>
+  <!-- Two 40px chunks with textLength="40": spacingAndGlyphs scales each chunk to 20px. -->
+  <g font-family="Ahem" font-size="20px">
+    <text text-anchor="middle" expected-x="90 290">
+      <textPath href="#p" textLength="40" lengthAdjust="spacingAndGlyphs"><tspan x="100">XX</tspan><tspan x="300">XX</tspan></textPath>
+    </text>
+    <text text-anchor="end" expected-x="80 280" transform="translate(0 50)">
+      <textPath href="#p" textLength="40" lengthAdjust="spacingAndGlyphs"><tspan x="100">XX</tspan><tspan x="300">XX</tspan></textPath>
+    </text>
+    <!-- With spacing, -40px spread over three gaps makes each chunk 40 - 40 / 3 = 26.67px. -->
+    <text text-anchor="middle" expected-x="86.67 286.67" transform="translate(0 100)">
+      <textPath href="#p" textLength="40" lengthAdjust="spacing"><tspan x="100">XX</tspan><tspan x="300">XX</tspan></textPath>
+    </text>
+    <text text-anchor="end" expected-x="73.33 273.33" transform="translate(0 150)">
+      <textPath href="#p" textLength="40" lengthAdjust="spacing"><tspan x="100">XX</tspan><tspan x="300">XX</tspan></textPath>
+    </text>
+    <!-- 40px spread over three gaps: X stays 20px, XXX becomes 60 + 2 * 40 / 3 = 86.67px. -->
+    <text text-anchor="end" expected-x="80 213.33" second-chunk="1" transform="translate(0 200)">
+      <textPath href="#p" textLength="120" lengthAdjust="spacing"><tspan x="100">X</tspan><tspan x="300">XXX</tspan></textPath>
+    </text>
+  </g>
+  <script>
+    for (let text of document.getElementsByTagName('text')) {
+      let [first, second] = text.getAttribute('expected-x').split(' ').map(parseFloat);
+      promise_test(async t => {
+        await document.fonts.load('20px Ahem');
+        await document.fonts.ready;
+        assert_approx_equals(text.getStartPositionOfChar(0).x, first, 0.5, 'first chunk');
+        assert_approx_equals(text.getStartPositionOfChar(parseInt(text.getAttribute('second-chunk') ?? '2')).x, second, 0.5, 'second chunk');
+      }, 'text-anchor=' + text.getAttribute('text-anchor') + ', lengthAdjust=' + text.firstElementChild.getAttribute('lengthAdjust') + ', ' + Array.from(text.querySelectorAll('tspan'), tspan => tspan.textContent).join('/'));
+    }
+  </script>
+</svg>

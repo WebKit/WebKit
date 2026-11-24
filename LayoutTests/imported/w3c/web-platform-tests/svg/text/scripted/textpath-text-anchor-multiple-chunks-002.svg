@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:html="http://www.w3.org/1999/xhtml">
+  <title>'text-anchor' on &#x3c;textPath&#x3e; applies to each anchored chunk, right-to-left and vertical</title>
+  <html:script src="/resources/testharness.js"/>
+  <html:script src="/resources/testharnessreport.js"/>
+  <html:link rel="stylesheet" href="/fonts/ahem.css"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextAnchoringProperties"/>
+  <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextpathLayoutRules"/>
+  <defs>
+    <path id="h" d="M0,25h400"/>
+    <path id="v" d="M25,0v400"/>
+  </defs>
+  <!-- Each chunk is two 20px glyphs. expected is the left (or top) edge of each chunk. -->
+  <g font-family="Ahem" font-size="20px" direction="rtl">
+    <text text-anchor="start" expected="60 260">
+      <textPath href="#h"><tspan x="100">XX</tspan><tspan x="300">XX</tspan></textPath>
+    </text>
+    <text text-anchor="middle" expected="80 280" transform="translate(0 50)">
+      <textPath href="#h"><tspan x="100">XX</tspan><tspan x="300">XX</tspan></textPath>
+    </text>
+    <text text-anchor="end" expected="100 300" transform="translate(0 100)">
+      <textPath href="#h"><tspan x="100">XX</tspan><tspan x="300">XX</tspan></textPath>
+    </text>
+  </g>
+  <g font-family="Ahem" font-size="20px" writing-mode="vertical-rl">
+    <text text-anchor="middle" expected="80 280" vertical="" transform="translate(200 0)">
+      <textPath href="#v"><tspan y="100">XX</tspan><tspan y="300">XX</tspan></textPath>
+    </text>
+    <text text-anchor="end" expected="60 260" vertical="" transform="translate(250 0)">
+      <textPath href="#v"><tspan y="100">XX</tspan><tspan y="300">XX</tspan></textPath>
+    </text>
+  </g>
+  <script>
+    function chunkStart(text, first, vertical) {
+      let edges = [first, first + 1].map(i => {
+        let extent = text.getExtentOfChar(i);
+        return vertical ? extent.y : extent.x;
+      });
+      return Math.min(...edges);
+    }
+    for (let text of document.getElementsByTagName('text')) {
+      let [first, second] = text.getAttribute('expected').split(' ').map(parseFloat);
+      let vertical = text.hasAttribute('vertical');
+      let description = (vertical ? 'vertical' : 'rtl') + ', text-anchor=' + text.getAttribute('text-anchor');
+      promise_test(async t => {
+        await document.fonts.load('20px Ahem');
+        await document.fonts.ready;
+        assert_approx_equals(chunkStart(text, 0, vertical), first, 0.5, 'first chunk');
+        assert_approx_equals(chunkStart(text, 2, vertical), second, 0.5, 'second chunk');
+      }, description);
+    }
+  </script>
+</svg>
