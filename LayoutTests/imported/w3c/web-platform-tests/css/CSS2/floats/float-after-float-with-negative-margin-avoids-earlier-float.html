@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<title>CSS Test: A float with a negative margin does not let a later float overlap an earlier float</title>
+<link rel="help" href="https://drafts.csswg.org/css2/#float-position">
+<link rel="match" href="float-after-float-with-negative-margin-avoids-earlier-float-ref.html">
+<meta name="assert" content="The negative margin of the second green float puts its right outer edge to the left of the first green float's, but the blue float must still be placed to the right of the first green float, since its top is not lower than that float's bottom (rule 2).">
+<style>
+.container {
+  width: 300px;
+  height: 100px;
+  line-height: 10px;
+}
+
+.float {
+  float: left;
+}
+
+.first {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+
+.second {
+  margin-left: -100px;
+  width: 50px;
+  height: 30px;
+  background-color: green;
+}
+
+.blue {
+  width: 50px;
+  height: 10px;
+  background-color: blue;
+}
+</style>
+<!-- Floats placed by inline layout. -->
+<div class="container">
+  <div class="float first"></div>
+  <br><br><br><br><br>
+  <div class="float second"></div><br>
+  <div class="float blue"></div>
+</div>
+<!-- Floats placed by block layout. -->
+<div class="container">
+  <div class="float first"></div>
+  <div style="height: 50px"></div>
+  <div class="float second"></div>
+  <div style="height: 10px"></div>
+  <div class="float blue"></div>
+</div>

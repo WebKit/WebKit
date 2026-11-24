@@ -86,7 +86,6 @@ public:
     };
     using List = Vector<Item>;
     const List& list() const LIFETIME_BOUND { return m_list; }
-    const Item* last() const LIFETIME_BOUND { return list().isEmpty() ? nullptr : &m_list.last(); }
 
     void add(Item);
     bool remove(const Box&);
@@ -98,11 +97,14 @@ public:
 
     NODELETE std::optional<AxisPosition<ParentFormattingContextRoot>> highestPositionOnBlockAxis() const;
     NODELETE std::optional<AxisPosition<ParentFormattingContextRoot>> lowestPositionOnBlockAxis(Clear = Clear::Both) const;
+    // A new float cannot start above it. It is not necessarily the top of the last item in the list (see add()).
+    std::optional<AxisPosition<ParentFormattingContextRoot>> lowestTopPositionOnBlockAxis() const { return m_lowestTopPositionOnBlockAxis; }
 
     void shrinkToFit();
 
 private:
     void computeLowestPositionsOnBlockAxis();
+    void computeLowestTopPositionOnBlockAxis();
 
     CheckedRef<const ElementBox> m_blockFormattingContextRoot;
     List m_list;
@@ -114,6 +116,7 @@ private:
     // The lowest margin box bottom of the start and of the end positioned floats.
     std::optional<AxisPosition<ParentFormattingContextRoot>> m_lowestStartPositionOnBlockAxis;
     std::optional<AxisPosition<ParentFormattingContextRoot>> m_lowestEndPositionOnBlockAxis;
+    std::optional<AxisPosition<ParentFormattingContextRoot>> m_lowestTopPositionOnBlockAxis;
     WritingMode m_writingMode;
 };
 
@@ -122,8 +125,10 @@ inline bool PlacedFloats::remove(const Box& floatBox)
     auto removed = m_list.removeFirstMatching([&floatBox](auto& placedFloatItem) {
         return placedFloatItem.layoutBox() == &floatBox;
     });
-    if (removed)
+    if (removed) {
         computeLowestPositionsOnBlockAxis();
+        computeLowestTopPositionOnBlockAxis();
+    }
     return removed;
 }
 

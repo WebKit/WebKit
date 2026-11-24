@@ -258,10 +258,10 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     auto absoluteCoordinates = this->absoluteCoordinates(borderBoxTopLeft, containingBlock);
     auto absoluteTopLeft = absoluteCoordinates.topLeft;
     auto blockStartCandidate = absoluteTopLeft.y();
-    // Incoming float cannot be placed higher than existing floats (margin box of the last float).
-    // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-    auto lastFloatAbsoluteTop = placedFloats().last()->marginBoxTop();
-    auto lastOrClearedFloatPosition = std::max(clearPosition().value_or(lastFloatAbsoluteTop), lastFloatAbsoluteTop);
+    // Incoming float cannot be placed higher than existing floats (margin box of the lowest float).
+    // Take the static position (where the box would go if it wasn't floating) and adjust it with the lowest float.
+    auto lowestFloatTop = *placedFloats().lowestTopPositionOnBlockAxis();
+    auto lastOrClearedFloatPosition = std::max(clearPosition().value_or(lowestFloatTop), lowestFloatTop);
     if (blockStartCandidate - boxGeometry.marginBefore() < lastOrClearedFloatPosition)
         blockStartCandidate = lastOrClearedFloatPosition + boxGeometry.marginBefore();
 
