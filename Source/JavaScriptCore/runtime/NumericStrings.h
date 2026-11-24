@@ -72,6 +72,10 @@ public:
 
     ALWAYS_INLINE const String& add(double d)
     {
+        // Integral doubles format faster as integers, and share the integer caches. ToString(-0) is "0".
+        int32_t i = truncateDoubleToInt32(d);
+        if (i == d)
+            return add(i);
         if (!m_doubleCache) [[unlikely]]
             initializeDoubleCache();
         auto& entry = lookup(d);
