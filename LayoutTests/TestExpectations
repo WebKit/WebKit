@@ -1133,7 +1133,8 @@ imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-traverse-rel
 imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-uses-cache.sub.https.html?cross-site [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-middle-of-prefetch.https.html?origin=cross-site-initial [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-to-prefetch-url.https.html?origin=cross-site-initial [ DumpJSConsoleLogInStdErr ]
-
+# webkit.org/b/330353
+imported/w3c/web-platform-tests/speculation-rules/prefetch/no-vary-search [ Skip ]
 
 # Newly imported WPT ref tests failures.
 imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ ImageOnlyFailure ]
