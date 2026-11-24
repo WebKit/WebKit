@@ -515,8 +515,25 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
         IGNORE_WARNINGS_END \
     } while (0)
 
-#define WTFBeginSignpostWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
-#define WTFEndSignpostWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
+#define WTFBeginSignpostWithSpecificTime(pointer, name, specificTime, ...) \
+    do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-format-attr-call") \
+        if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
+            annotator->beginMarkAtTime((specificTime), reinterpret_cast<const void*>(pointer), std::span(_STRINGIFY(name)), WTFSysprofFormatAndArgs(__VA_ARGS__)); \
+        IGNORE_WARNINGS_END \
+        IGNORE_WARNINGS_END \
+    } while (0)
+
+#define WTFEndSignpostWithSpecificTime(pointer, name, specificTime, ...) \
+    do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-format-attr-call") \
+        if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
+            annotator->endMarkAtTime((specificTime), reinterpret_cast<const void*>(pointer), std::span(_STRINGIFY(name)), WTFSysprofFormatAndArgs(__VA_ARGS__)); \
+        IGNORE_WARNINGS_END \
+        IGNORE_WARNINGS_END \
+    } while (0)
 
 #define WTFEmitSignpostAlwaysWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
 #define WTFBeginSignpostAlwaysWithSpecificTime(pointer, name, specificTime, ...) WTFBeginSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)

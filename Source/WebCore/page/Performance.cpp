@@ -512,6 +512,19 @@ void Performance::resourceTimingBufferFullTimerFired()
     m_waitingForBackupBufferToBeProcessed = false;
 }
 
+std::optional<uint64_t> Performance::signpostTime(DOMHighResTimeStamp relativeTime) const
+{
+    auto offset = Seconds::fromMilliseconds(relativeTime);
+#if OS(DARWIN)
+    return (m_continuousTimeOrigin + offset).toMachContinuousTime();
+#elif USE(SYSPROF_CAPTURE)
+    return SysprofAnnotator::toCaptureTime(m_timeOrigin + offset);
+#else
+    UNUSED_PARAM(offset);
+    return std::nullopt;
+#endif
+}
+
 ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
     if (!m_userTiming)
@@ -520,6 +533,13 @@ ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalO
     auto mark = m_userTiming->mark(globalObject, markName, WTF::move(markOptions));
     if (mark.hasException())
         return mark.releaseException();
+
+#if USE(SYSPROF_CAPTURE)
+    if (isSignpostEnabled()) {
+        if (auto time = signpostTime(mark.returnValue()->startTime()))
+            WTFEmitSignpostAlwaysWithSpecificTime(mark.returnValue().ptr(), WebKitPerformanceMark, *time, "%" PUBLIC_LOG_STRING, markName.utf8());
+    }
+#endif
 
     addToEntryBuffer(mark.returnValue().get());
     queueEntry(mark.returnValue().get());
@@ -546,20 +566,22 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
     if (isSignpostEnabled()) {
         Ref entry { measure.returnValue() };
         auto message = measureName.utf8();
-#if OS(DARWIN)
+#if OS(DARWIN) || USE(SYSPROF_CAPTURE)
         {
-            auto startTime = m_continuousTimeOrigin + Seconds::fromMilliseconds(entry->startTime());
-            auto endTime = m_continuousTimeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration());
-            uint64_t platformStartTime = startTime.toMachContinuousTime();
-            uint64_t platformEndTime = endTime.toMachContinuousTime();
-            uint64_t correctedStartTime = std::min(platformStartTime, platformEndTime);
-            uint64_t correctedEndTime = std::max(platformStartTime, platformEndTime);
-            // Because signpost intervals are closed invervals [start, end], we decrease the endTime by 1 if startTime and endTime is not the same.
-            if (correctedStartTime != correctedEndTime)
-                correctedEndTime -= 1;
+            auto platformStartTime = signpostTime(entry->startTime());
+            auto platformEndTime = signpostTime(entry->startTime() + entry->duration());
+            if (platformStartTime && platformEndTime) {
+                uint64_t correctedStartTime = std::min(*platformStartTime, *platformEndTime);
+                uint64_t correctedEndTime = std::max(*platformStartTime, *platformEndTime);
+#if OS(DARWIN)
+                // Because signpost intervals are closed intervals [start, end], we decrease the endTime by 1 if startTime and endTime is not the same.
+                if (correctedStartTime != correctedEndTime)
+                    correctedEndTime -= 1;
+#endif
 
-            WTFBeginSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedStartTime, "%" PUBLIC_LOG_STRING, message);
-            WTFEndSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedEndTime, "%" PUBLIC_LOG_STRING, message);
+                WTFBeginSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedStartTime, "%" PUBLIC_LOG_STRING, message);
+                WTFEndSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedEndTime, "%" PUBLIC_LOG_STRING, message);
+            }
         }
 #endif
         {

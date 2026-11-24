@@ -119,9 +119,9 @@ static constexpr auto garbageCollectionMessage = "GC:(0x7f3a2c000000),mode:(Eden
 static constexpr uint64_t pageIdentifier = 1;
 static constexpr uint64_t frameIdentifier = 2;
 
-TEST_F(WTF_SysprofAnnotator, SignpostCarriesTheMessagesOfItsBeginAndEnd)
+TEST_F(WTF_SysprofAnnotator, SignpostCarriesTheMessageItsBeginAndEndShare)
 {
-    // Heap begins and ends a collection with the same message.
+    // Heap begins and ends a collection with the same message, which the mark carries once.
     int heap { };
 
     auto beforeBegin = checkpoint();
@@ -133,7 +133,27 @@ TEST_F(WTF_SysprofAnnotator, SignpostCarriesTheMessagesOfItsBeginAndEnd)
     auto marks = marksNamed("JSCGarbageCollector"_s);
     ASSERT_EQ(marks.size(), 1u);
     EXPECT_TRUE(ranBetween(marks[0], beforeBegin, beforeEnd, beforeEnd, afterEnd));
-    EXPECT_EQ(marks[0].message, makeString(String::fromLatin1(garbageCollectionMessage), " | "_s, String::fromLatin1(garbageCollectionMessage)));
+    EXPECT_EQ(marks[0].message, String::fromLatin1(garbageCollectionMessage));
+}
+
+TEST_F(WTF_SysprofAnnotator, SignpostCarriesTheMessagesOfItsBeginAndEnd)
+{
+    // An end that tells more than its begin adds its message to the begin's, and an end alone gives the message.
+    int script { };
+    int heap { };
+
+    WTFBeginSignpost(&script, ExecuteScriptElement, "%s", "executing module script");
+    WTFEndSignpost(&script, ExecuteScriptElement, "%s", "done");
+    WTFBeginSignpost(&heap, JSCGarbageCollector);
+    WTFEndSignpost(&heap, JSCGarbageCollector, "%s", garbageCollectionMessage);
+
+    auto scripts = marksNamed("ExecuteScriptElement"_s);
+    ASSERT_EQ(scripts.size(), 1u);
+    EXPECT_EQ(scripts[0].message, "executing module script | done"_s);
+
+    auto collections = marksNamed("JSCGarbageCollector"_s);
+    ASSERT_EQ(collections.size(), 1u);
+    EXPECT_EQ(collections[0].message, String::fromLatin1(garbageCollectionMessage));
 }
 
 TEST_F(WTF_SysprofAnnotator, SignpostsOfDifferentObjectsOverlap)
@@ -216,9 +236,9 @@ TEST_F(WTF_SysprofAnnotator, SameSignpostOnTwoThreadsAtOnce)
     auto marks = marksNamed("JSCJITCompiler"_s);
     ASSERT_EQ(marks.size(), 2u);
     EXPECT_TRUE(ranBetween(marks[0], t0, t1, t2, t3));
-    EXPECT_EQ(marks[0].message, "IPInt 0 instructions size = 12 | IPInt 0 instructions size = 12"_s);
+    EXPECT_EQ(marks[0].message, "IPInt 0 instructions size = 12"_s);
     EXPECT_TRUE(ranBetween(marks[1], t1, t2, t3, t4));
-    EXPECT_EQ(marks[1].message, "IPInt 1 instructions size = 34 | IPInt 1 instructions size = 34"_s);
+    EXPECT_EQ(marks[1].message, "IPInt 1 instructions size = 34"_s);
 }
 
 TEST_F(WTF_SysprofAnnotator, SignpostEndWithoutBegin)
@@ -587,6 +607,24 @@ TEST_F(WTF_SysprofAnnotator, InstantMarks)
     ASSERT_EQ(refreshes.size(), 1u);
     EXPECT_EQ(refreshes[0].begin, refreshes[0].end);
     EXPECT_TRUE(ranBetween(refreshes[0], t1, t2, t1, t2));
+}
+
+TEST_F(WTF_SysprofAnnotator, SignpostWithSpecificTimes)
+{
+    // Performance begins and ends a measure at the times the page measured, which have passed already.
+    int measure { };
+    auto now = checkpoint();
+    int64_t begin = now - 3'000'000;
+    int64_t end = now - 1'000'000;
+
+    WTFBeginSignpostAlwaysWithSpecificTime(&measure, WebKitPerformance, begin, "%s", "app-init");
+    WTFEndSignpostAlwaysWithSpecificTime(&measure, WebKitPerformance, end);
+
+    auto marks = marksNamed("WebKitPerformance"_s);
+    ASSERT_EQ(marks.size(), 1u);
+    EXPECT_EQ(marks[0].begin, begin);
+    EXPECT_EQ(marks[0].end, end);
+    EXPECT_EQ(marks[0].message, "app-init"_s);
 }
 
 } // namespace TestWebKitAPI
