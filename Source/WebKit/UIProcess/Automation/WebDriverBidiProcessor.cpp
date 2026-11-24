@@ -170,7 +170,7 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
     case Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout:
         return "script timeout"_s;
     case Inspector::Protocol::Automation::ErrorMessage::WindowNotFound:
-        return "no such browsing context"_s;
+        return "no such frame"_s;
     case Inspector::Protocol::Automation::ErrorMessage::FrameNotFound:
         return "no such frame"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NodeNotFound:
@@ -214,6 +214,8 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
         return "no such element"_s;
     case Inspector::Protocol::Automation::ErrorMessage::UnableToSetFileInput:
         return "unable to set file input"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::NoSuchHandle:
+        return "no such handle"_s;
     default:
         return "unknown error"_s;
     }

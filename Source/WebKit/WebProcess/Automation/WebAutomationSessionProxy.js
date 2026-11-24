@@ -25,7 +25,7 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, shadowRootForElement, bidiRemoteValueType, frameIdentifierForWindowProxy, shadowRootMode, accessibilityPropertiesForElement) {
+(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, shadowRootForElement, bidiRemoteValueType, frameIdentifierForWindowProxy, shadowRootMode, accessibilityPropertiesForElement, callFunctionWithUserActivation, isPromise) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
@@ -35,7 +35,9 @@ const convertToString = String;
 const dateToISOString = Date.prototype.toISOString;
 const jsonStringify = JSON.stringify;
 const mapForEach = Map.prototype.forEach;
+const promiseThen = Promise.prototype.then;
 const reflectApply = Reflect.apply;
+const regExpTest = RegExp.prototype.test;
 const setForEach = Set.prototype.forEach;
 
 const elementNodeType = 1;
@@ -54,6 +56,16 @@ const bidiLocateNodesErrorNames = new Set(["InvalidParameter", "InvalidSelector"
 // The UI process can't parse JSON that is nested more than 1000 levels deep. This leaves room for
 // the message around a remote value, and for the levels inside the innermost remote value.
 const maxBidiRemoteValueJSONDepth = 900;
+
+// https://tc39.es/ecma262/#sec-date-time-string-format, including expanded years.
+// Date parsing checks the field ranges.
+const dateTimeStringFormat = (() => {
+    const year = String.raw`(?!-000000)(?:[+-]\d{6}|\d{4})`;
+    const date = String.raw`${year}(?:-\d{2}(?:-\d{2})?)?`;
+    const offset = String.raw`(?:Z|[+-]\d{2}:\d{2})`;
+    const time = String.raw`T\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?${offset}?`;
+    return new RegExp(`^${date}(?:${time})?$`);
+})();
 
 // How deep in JSON the remote value being built is. Page script could intercept this if it were a property
 // of the proxy object.
@@ -80,6 +92,15 @@ function createBidiScriptError(error, name, fallbackMessage)
         name,
         message: message || fallbackMessage
     };
+}
+
+class InvalidArgumentError extends Error
+{
+    constructor(message)
+    {
+        super(message);
+        this.name = "InvalidParameter";
+    }
 }
 
 let AutomationSessionProxy = class AutomationSessionProxy
@@ -171,6 +192,38 @@ let AutomationSessionProxy = class AutomationSessionProxy
                 name = "InternalError";
             return jsonStringify({ error: name, message: safelyReadStringProperty(error, "message") || "" });
         }
+    }
+
+    evaluateBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, frameID, callbackID, resultCallback, callbackTimeout)
+    {
+        // Chain with the built-in then, since page script can replace Promise.prototype.then.
+        reflectApply(promiseThen, this._executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout), [result => {
+            let serializedResult;
+            let serializationError;
+            try {
+                serializedResult = jsonStringify(result);
+            } catch (error) {
+                serializationError = createBidiScriptError(error, "InternalError", "Script result serialization failed.");
+            }
+
+            if (serializationError) {
+                resultCallback(frameID, callbackID, serializationError);
+                return;
+            }
+
+            if (typeof serializedResult !== "string") {
+                resultCallback(frameID, callbackID, createBidiScriptError(undefined, "InternalError", "Script result serialization failed."));
+                return;
+            }
+
+            resultCallback(frameID, callbackID, serializedResult);
+        }, error => {
+            let name = safelyReadStringProperty(error, "name");
+            if (name !== "JavaScriptTimeout" && name !== "InvalidParameter")
+                name = "InternalError";
+            let fallbackMessage = name === "JavaScriptTimeout" ? "Script evaluation timed out." : "Script call failed.";
+            resultCallback(frameID, callbackID, createBidiScriptError(error, name, fallbackMessage));
+        }]);
     }
 
     nodeForIdentifier(identifier)
@@ -267,22 +320,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             this._clearStaleNodes();
 
             let resolveWithExceptionResult = error => {
-                let serializedException;
-                try {
-                    serializedException = this.serializeBidiRemoteValue(error);
-                } catch {
-                    // Report the exception without its contents instead of failing the command. Only an
-                    // object can fail to serialize.
-                    serializedException = { type: bidiRemoteValueType(error) ?? "object" };
-                }
-
-                let errorProperties = {
-                    exception: serializedException,
-                    name: safelyReadStringProperty(error, "name"),
-                    message: safelyReadStringProperty(error, "message"),
-                    stack: safelyReadStringProperty(error, "stack")
-                };
-                resolve({ success: false, error: errorProperties });
+                resolve(this._bidiExceptionResult(error));
             };
 
             let serializeAndResolveResult = value => {
@@ -329,6 +367,172 @@ let AutomationSessionProxy = class AutomationSessionProxy
                     clearTimeout(timeoutIdentifier);
                 }
             });
+    }
+
+    // Builds the exception result of script.evaluate and script.callFunction.
+    _bidiExceptionResult(error)
+    {
+        let serializedException;
+        try {
+            serializedException = this.serializeBidiRemoteValue(error);
+        } catch {
+            // Report the exception without its contents instead of failing the command. Only an
+            // object can fail to serialize.
+            serializedException = { type: bidiRemoteValueType(error) ?? "object" };
+        }
+
+        let errorProperties = {
+            exception: serializedException,
+            name: safelyReadStringProperty(error, "name"),
+            message: safelyReadStringProperty(error, "message"),
+            stack: safelyReadStringProperty(error, "stack")
+        };
+        return { success: false, error: errorProperties };
+    }
+
+    _executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout)
+    {
+        let timeoutPromise;
+        let timeoutIdentifier = 0;
+        if (callbackTimeout >= 0) {
+            timeoutPromise = new Promise((resolve, reject) => {
+                timeoutIdentifier = setTimeout(() => {
+                    reject({ name: "JavaScriptTimeout", message: `script timed out after ${callbackTimeout}ms` });
+                }, callbackTimeout);
+            });
+        }
+
+        let executionPromise;
+        let serializeResult = value => {
+            try {
+                return { success: true, result: this.serializeBidiRemoteValue(value, maxObjectDepth, maxDomDepth, includeShadowTree) };
+            } catch (error) {
+                throw createBidiScriptError(error, "InternalError", "Script result serialization failed.");
+            }
+        };
+
+        try {
+            // https://w3c.github.io/webdriver-bidi/#command-script-callFunction
+            // The arguments are deserialized before the function declaration is evaluated, so an invalid argument
+            // fails the command before the declaration has any side effects.
+            this._clearStaleNodes();
+            // FIXME: <https://webkit.org/b/328581> Prevent page-defined globals and array iterators from affecting
+            // argument deserialization and the call.
+            let argumentValues = argumentStrings.map(argument => this._deserializeBidiLocalValue(JSON.parse(argument)));
+
+            let lines = functionDeclaration.split("\n");
+            let prefixLines = [];
+            while (lines.length && lines[0].startsWith("//"))
+                prefixLines.push(lines.shift());
+
+            let prefix = prefixLines.join("\n");
+            if (prefix)
+                prefix += "\n";
+
+            let functionValue = evaluate(prefix + "(" + lines.join("\n") + "\n)");
+            if (typeof functionValue !== "function")
+                throw new InvalidArgumentError("Function declaration did not evaluate to a callable value.");
+
+            let result = callFunctionWithUserActivation(userActivation, functionValue, null, ...argumentValues);
+
+            if (awaitPromise && isPromise(result))
+                // Await with the built-in then, which ECMAScript Await uses, not one that page script installed.
+                executionPromise = reflectApply(promiseThen, result, [serializeResult, error => this._bidiExceptionResult(error)]);
+            else {
+                try {
+                    executionPromise = Promise.resolve(serializeResult(result));
+                } catch (error) {
+                    executionPromise = Promise.reject(error);
+                }
+            }
+        } catch (error) {
+            if (error instanceof InvalidArgumentError)
+                executionPromise = Promise.reject(error);
+            else
+                executionPromise = Promise.resolve(this._bidiExceptionResult(error));
+        }
+
+        // Settle with whichever of the call and the timeout settles first. Promise.race() and finally() would
+        // look up then on Promise.prototype, which page script can replace.
+        return new Promise((resolve, reject) => {
+            let settleWith = settle => value => {
+                if (timeoutIdentifier)
+                    clearTimeout(timeoutIdentifier);
+                settle(value);
+            };
+            reflectApply(promiseThen, executionPromise, [settleWith(resolve), settleWith(reject)]);
+            if (timeoutPromise)
+                reflectApply(promiseThen, timeoutPromise, [settleWith(resolve), settleWith(reject)]);
+        });
+    }
+
+    _deserializeBidiLocalValue(localValue)
+    {
+        if (!localValue || typeof localValue !== "object")
+            throw new InvalidArgumentError("LocalValue must be an object.");
+
+        switch (localValue.type) {
+        case "undefined":
+            return undefined;
+        case "null":
+            return null;
+        case "string":
+        case "boolean":
+            return localValue.value;
+        case "number":
+            if (typeof localValue.value === "number")
+                return localValue.value;
+            switch (localValue.value) {
+            case "NaN":
+                return NaN;
+            case "-0":
+                return -0;
+            case "Infinity":
+                return Infinity;
+            case "-Infinity":
+                return -Infinity;
+            default:
+                throw new InvalidArgumentError("Invalid number LocalValue.");
+            }
+        case "bigint":
+            try {
+                return BigInt(localValue.value);
+            } catch {
+                throw new InvalidArgumentError("Invalid bigint LocalValue.");
+            }
+        case "array":
+            return localValue.value.map(value => this._deserializeBidiLocalValue(value));
+        case "date": {
+            if (typeof localValue.value !== "string" || !reflectApply(regExpTest, dateTimeStringFormat, [localValue.value]))
+                throw new InvalidArgumentError("Invalid date LocalValue.");
+            let value = new Date(localValue.value);
+            if (Number.isNaN(value.valueOf()))
+                throw new InvalidArgumentError("Invalid date LocalValue.");
+            return value;
+        }
+        case "map":
+            return new Map(this._deserializeBidiLocalValueEntries(localValue.value));
+        case "object":
+            return Object.fromEntries(this._deserializeBidiLocalValueEntries(localValue.value));
+        case "regexp":
+            try {
+                return new RegExp(localValue.value.pattern, localValue.value.flags);
+            } catch {
+                throw new InvalidArgumentError("Invalid regexp LocalValue.");
+            }
+        case "set":
+            return new Set(localValue.value.map(value => this._deserializeBidiLocalValue(value)));
+        default:
+            throw new InvalidArgumentError("Unsupported LocalValue type.");
+        }
+    }
+
+    _deserializeBidiLocalValueEntries(entries)
+    {
+        return entries.map(entry => {
+            let key = typeof entry[0] === "string" ? entry[0] : this._deserializeBidiLocalValue(entry[0]);
+            return [key, this._deserializeBidiLocalValue(entry[1])];
+        });
     }
 
     _jsonParse(string)
