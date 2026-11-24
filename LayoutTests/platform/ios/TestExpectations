@@ -10392,3 +10392,9 @@ imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-
 imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-without-overflow.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=2.3&border-radius=40% [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=squircle&border-radius=50% [ ImageOnlyFailure ]
+
+# The input is too wide to fit the block ellipsis after it, and with no soft wrap opportunity before it, the whole line is displaced.
+# The test expects the input to stay with the ellipsis after it (https://github.com/w3c/csswg-drafts/issues/14448).
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-input-003.tentative.html [ ImageOnlyFailure ]
+# line-clamp on form controls.
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-select-001.tentative.html [ Pass ]

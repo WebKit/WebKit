@@ -4338,7 +4338,23 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-05
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-063.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-035.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-bidi-004.html [ ImageOnlyFailure ]
+# Tests that failed on the 2026-11-23 import of css-overflow/line-clamp
+# Removing characters when no soft wrap opportunity fits the block ellipsis (https://github.com/w3c/csswg-drafts/issues/14448).
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-043.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-044.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-045.tentative.html [ ImageOnlyFailure ]
+# line-clamp on form controls.
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-button-001.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-button-002.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-button-003.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-fieldset-001.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-select-001.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-textarea-001.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-textarea-002.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-textarea-003.tentative.html [ ImageOnlyFailure ]
+# Floats must not make the line-clamp container taller when the content has exactly as many lines as line-clamp allows.
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-017.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-013.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-014.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-015.html [ ImageOnlyFailure ]

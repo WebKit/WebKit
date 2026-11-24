@@ -2521,3 +2521,7 @@ imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.an
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.worker.html [ Skip ]
+
+# The input is too wide to fit the block ellipsis after it, and with no soft wrap opportunity before it, the whole line is displaced.
+# The test expects the input to stay with the ellipsis after it (https://github.com/w3c/csswg-drafts/issues/14448).
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-input-003.tentative.html [ ImageOnlyFailure ]
