@@ -2442,6 +2442,10 @@ UniqueRef<Style::ComputedStyle> HTMLInputElement::createInnerTextStyle(const Sty
 {
     auto textBlockStyle = Style::ComputedStyle::create();
     textBlockStyle->inheritFrom(style);
+    // Without a decoration container, the inner text is the text field's flex item: it fills the inline axis and is centered in the block axis.
+    textBlockStyle->setFlexGrow(1);
+    textBlockStyle->setLogicalMinWidth(0_css_px);
+    textBlockStyle->setAlignSelf(CSS::Keyword::Center { });
     adjustInnerTextStyle(style, textBlockStyle);
 
     textBlockStyle->setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);

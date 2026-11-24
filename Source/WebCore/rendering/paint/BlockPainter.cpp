@@ -171,6 +171,11 @@ void BlockPainter::paintChildren(PaintInfo& paintInfoForChild)
     }
 
     if (CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(m_block)) {
+        // Children excluded from layout, such as a text control's placeholder, are not flex items but still paint. A legend paints with the border.
+        for (CheckedRef child : childrenOfType<RenderBox>(*flexBox)) {
+            if (child->isExcludedFromNormalLayout() && !child->isLegend() && !paintChild(child, paintInfoForChild, usePrintRect))
+                return;
+        }
         for (auto& renderer : flexBox->flexLayout().flexItems()) {
             CheckedPtr flexItem = renderer;
             if (flexItem)

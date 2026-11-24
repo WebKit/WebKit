@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <WebCore/RenderBlockFlow.h>
 #include <WebCore/RenderFlexibleBox.h>
 #include <wtf/Platform.h>
 
@@ -30,13 +29,17 @@ namespace WebCore {
 class TextControlInnerTextElement;
 class HTMLTextFormControlElement;
 
-class RenderTextControl : public RenderBlockFlow {
+class RenderTextControl : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTextControl);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControl);
 public:
     virtual ~RenderTextControl();
 
     NODELETE WEBCORE_EXPORT HTMLTextFormControlElement& textFormControlElement() const;
+
+    // Flex containers have a different baseline definition. Use the block one so inputs of different types line up.
+    std::optional<LayoutUnit> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
+    std::optional<LayoutUnit> lastLineBaseline() const override { return RenderBlock::lastLineBaseline(); }
 
 #if PLATFORM(IOS_FAMILY)
     bool canScroll() const;
