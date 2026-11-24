@@ -317,16 +317,24 @@ public:
     using Base = SVGAnimationAdditiveValueFunction<FloatRect>;
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
-        m_from = SVGPropertyTraits<FloatRect>::fromString(targetElement, from);
-        m_to = SVGPropertyTraits<FloatRect>::fromString(targetElement, to);
+        // In to-animation mode 'from' is empty; the start value is resolved at runtime.
+        auto fromRect = !from.isEmpty() ? parseRect(from) : std::optional<FloatRect>(FloatRect { });
+        auto toRect = parseRect(to);
+        if (!fromRect || !toRect)
+            return false;
+        m_from = *fromRect;
+        m_to = *toRect;
         return true;
     }
 
-    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
     {
-        m_toAtEndOfDuration = SVGPropertyTraits<FloatRect>::fromString(targetElement, toAtEndOfDuration);
+        auto toAtEndOfDurationRect = parseRect(toAtEndOfDuration);
+        if (!toAtEndOfDurationRect)
+            return false;
+        m_toAtEndOfDuration = *toAtEndOfDurationRect;
         return true;
     }
 
