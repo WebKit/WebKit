@@ -307,6 +307,7 @@ bool Box::isBlockContainer() const
         || display == Style::DisplayType::BlockFlowRoot
         || display == Style::DisplayType::BlockFlowListItem
         || display == Style::DisplayType::BlockRuby
+        || display == Style::DisplayType::InlineFlowRoot
         || isTableCell()
         || isTableCaption(); // TODO && !replaced element
 }
