@@ -1167,8 +1167,9 @@ void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
     memset(static_cast<void*>(destination.data()), byte, destination.size_bytes()); // NOLINT
 }
 
+// memset() is not annotated NODELETE, but it runs no destructors, so the suppression is safe.
 template<typename T, std::size_t Extent>
-void zeroSpan(std::span<T, Extent> destination)
+NODELETE SUPPRESS_NODELETE void zeroSpan(std::span<T, Extent> destination)
 {
     static_assert(std::is_trivially_copyable_v<T> || std::is_floating_point_v<T>);
     memset(destination.data(), 0, destination.size_bytes()); // NOLINT

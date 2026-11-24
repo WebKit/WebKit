@@ -253,7 +253,7 @@ public:
     NODELETE JS_EXPORT_PRIVATE static RegisterSet allGPRs();
     NODELETE JS_EXPORT_PRIVATE static RegisterSet allFPRs();
     NODELETE JS_EXPORT_PRIVATE static RegisterSet allRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet allScalarRegisters();
+    NODELETE JS_EXPORT_PRIVATE static RegisterSet allScalarRegisters();
     NODELETE JS_EXPORT_PRIVATE static RegisterSet stackRegisters();
     NODELETE JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
     NODELETE JS_EXPORT_PRIVATE static RegisterSet macroClobberedGPRs();
