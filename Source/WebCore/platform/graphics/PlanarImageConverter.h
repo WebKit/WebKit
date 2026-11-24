@@ -107,12 +107,14 @@ enum class Component : bool { Luma, Chroma };
 // RangeConversion::None: between 8 bits and LSB or MSB storage, and between LSB and MSB storage. From 8 bits the top bits are
 // replicated, so 255 becomes the largest value. LSB samples are shifted to and from the MSBs (to 16 bits, the top bits are also
 // replicated into the low bits), and MSB storage of any bit depth is copied unchanged.
-// RangeConversion::FullToVideo: 8-bit to 10-bit MSB, and 10-bit MSB to 10-bit MSB.
+// RangeConversion::FullToVideo: 8-bit or 10-bit LSB to 10-bit MSB, and 10-bit MSB to 10-bit MSB.
 // RangeConversion::VideoToFull: 10-bit MSB to 8-bit.
 WEBCORE_EXPORT bool copyPlane(const SourcePlane&, const DestinationPlane&, RangeConversion = RangeConversion::None, Component = Component::Luma);
 
-// Single channel u and v planes to and from a two channel plane: 8-bit to 8-bit, 10 or 12-bit LSB to MSB (and back),
-// and the range conversions of copyPlane().
+// Single channel u and v planes to and from a two channel plane.
+// interleave(): 8-bit to 8-bit, 10 or 12-bit LSB to MSB, and between 16-bit formats with the same representation unchanged.
+// RangeConversion::FullToVideo: 8-bit or 10-bit LSB to 10-bit MSB.
+// deinterleave(): 8-bit to 8-bit, and MSB to 10 or 12-bit LSB. RangeConversion::VideoToFull: 10-bit MSB to 8-bit.
 WEBCORE_EXPORT bool interleave(const SourcePlane& uPlane, const SourcePlane& vPlane, const DestinationPlane& uvPlane, RangeConversion = RangeConversion::None);
 WEBCORE_EXPORT bool deinterleave(const SourcePlane& uvPlane, const DestinationPlane& uPlane, const DestinationPlane& vPlane, RangeConversion = RangeConversion::None);
 
