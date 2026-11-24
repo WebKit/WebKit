@@ -77,13 +77,7 @@
 #define _XSTRINGIFY(line) #line
 #define _STRINGIFY(line) _XSTRINGIFY(line)
 
-/* ASSERT_ENABLED and the *_DISABLED macros derived from it are defined in PlatformEnable.h. */
-
-#if ENABLE(RELEASE_LOG)
-#define RELEASE_LOG_DISABLED 0
-#else
-#define RELEASE_LOG_DISABLED !(USE(OS_LOG) || ENABLE(JOURNALD_LOG) || OS(ANDROID))
-#endif
+/* ASSERT_ENABLED, the *_DISABLED macros derived from it and RELEASE_LOG_DISABLED are defined in PlatformEnable.h. */
 
 #ifndef VERBOSE_RELEASE_LOG
 #define VERBOSE_RELEASE_LOG (ENABLE(JOURNALD_LOG) || OS(ANDROID))
@@ -372,6 +366,15 @@ namespace WTF {
 WTF_EXPORT_PRIVATE void notifyCurrentThreadIsCrashing();
 // Whether a thread other than the current one is about to crash.
 WTF_EXPORT_PRIVATE bool isAnotherThreadCrashing();
+
+#if LOG_DISABLED && RELEASE_LOG_DISABLED
+// Lets Swift code name channels when all logging is compiled out.
+inline WTFLogChannel& disabledLogChannel()
+{
+    static WTFLogChannel channel { };
+    return channel;
+}
+#endif
 
 } // namespace WTF
 #endif

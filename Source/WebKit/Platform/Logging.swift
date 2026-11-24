@@ -37,9 +37,9 @@ import os
 ///     WebKit.LogChannel.Loading().releaseLog.error("...")   // RELEASE_LOG_ERROR, and likewise info, debug, fault
 ///
 /// On Cocoa both are an `os.Logger` for the channel's os_log handle, so call sites get os_log's compile-time
-/// handling. `debugLog` discards everything unless the channel is enabled. Where LOG is compiled out, it is a
-/// `NullLogger`, so that neither the messages nor the calls remain in the binary. Use only the `privacy:`
-/// interpolation option so that code also builds against `PortableLogger` and `NullLogger`.
+/// handling. `debugLog` discards everything unless the channel is enabled. Where LOG or RELEASE_LOG is compiled out,
+/// `debugLog` or `releaseLog` is a `NullLogger`, so that neither the messages nor the calls remain in the binary.
+/// Use only the `privacy:` interpolation option so that code also builds against `PortableLogger` and `NullLogger`.
 extension WTFLogChannel {
     #if !LOG_DISABLED
     #if canImport(os)
@@ -60,7 +60,12 @@ extension WTFLogChannel {
     }
     #endif
 
-    #if canImport(os)
+    #if RELEASE_LOG_DISABLED
+    @inline(always)
+    var releaseLog: NullLogger {
+        NullLogger()
+    }
+    #elseif canImport(os)
     var releaseLog: os.Logger {
         os.Logger(WTF.osLog(self))
     }
@@ -109,7 +114,7 @@ struct PortableLogMessage: ExpressibleByStringInterpolation {
     }
 }
 
-/// What `debugLog` is where LOG is compiled out.
+/// What `debugLog` and `releaseLog` are where LOG and RELEASE_LOG are compiled out.
 ///
 /// Unlike `os.Logger(.disabled)`, it is visibly a no-op, so the optimizer removes each call along with its message.
 struct NullLogger {
@@ -132,14 +137,16 @@ struct NullLogger {
     func fault(_ message: @autoclosure () -> PortableLogMessage) {}
 }
 
-#if !canImport(os)
+#if !canImport(os) && (!LOG_DISABLED || !RELEASE_LOG_DISABLED)
 
 /// Stands in for `os.Logger` where os_log is not available, e.g. journald or Android.
 struct PortableLogger {
     fileprivate enum Destination {
         case disabled
         case log
+        #if !RELEASE_LOG_DISABLED
         case releaseLog
+        #endif
     }
 
     let channel: WTFLogChannel
@@ -208,12 +215,14 @@ struct PortableLogger {
             return
         case .log:
             WTF.logPreformatted(channel, WTF.String(message().output))
+        #if !RELEASE_LOG_DISABLED
         case .releaseLog:
             WTF.releaseLogPreformatted(channel, type, WTF.String(file), line, WTF.String(function), WTF.String(message().output))
+        #endif
         }
     }
 }
 
-#endif // !canImport(os)
+#endif // !canImport(os) && (!LOG_DISABLED || !RELEASE_LOG_DISABLED)
 
 #endif // ENABLE_BACK_FORWARD_LIST_SWIFT

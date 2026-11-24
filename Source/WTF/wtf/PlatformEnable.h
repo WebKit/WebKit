@@ -1199,3 +1199,12 @@
     && PLATFORM(MAC)
 #define ENABLE_DOCUMENT_PIP 1
 #endif
+
+/* A plain 0 or 1, so that generate-platform-args can pass it on to Swift. */
+#ifndef RELEASE_LOG_DISABLED
+#if ENABLE(RELEASE_LOG) || USE(OS_LOG) || ENABLE(JOURNALD_LOG) || OS(ANDROID)
+#define RELEASE_LOG_DISABLED 0
+#else
+#define RELEASE_LOG_DISABLED 1
+#endif
+#endif

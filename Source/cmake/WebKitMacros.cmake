@@ -1576,8 +1576,9 @@ endfunction()
 # Generates ${_resp_path}, a swiftc @-response file with the platform-derived
 # flags. Mirrors the Xcode "Generate Swift platform args" build phase.
 # Format (one token per line): -DNAME for truthy HAVE_/USE_/ENABLE_/
-# WTF_PLATFORM_/ASSERT_ macros from wtf/Platform.h, plus -Xcc -DNAME=VALUE
-# for every cmakeconfig.h entry. DEPFILE re-runs it on Platform header changes.
+# WTF_PLATFORM_/ASSERT_/LOG_/RELEASE_LOG_ macros from wtf/Platform.h, plus
+# -Xcc -DNAME=VALUE for every cmakeconfig.h entry. DEPFILE re-runs it on
+# Platform header changes.
 function(_webkit_generate_platform_swift_args _target _resp_path)
     set(_depfile "${_resp_path}.d")
     _webkit_platform_args_empty_input(_empty_input)

@@ -71,14 +71,8 @@
 #define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FAULT(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
 #endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX WebKit2Log
-#endif
-
-#ifdef __cplusplus
-extern "C" {
 #endif
 
 #define WEBKIT2_LOG_CHANNELS(M) \
@@ -189,23 +183,34 @@ extern "C" {
     M(Worker) \
     M(XR) \
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #undef DECLARE_LOG_CHANNEL
 
 #ifdef __cplusplus
 }
+#endif
 
+#define DEFINE_LOG_CHANNEL_ACCESSOR(name) static WTFLogChannel& name() { return LOG_CHANNEL(name); }
+#else
+#define DEFINE_LOG_CHANNEL_ACCESSOR(name) static WTFLogChannel& name() { return WTF::disabledLogChannel(); }
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#ifdef __cplusplus
 namespace WebKit {
 
 // Lets Swift name a channel, e.g. WebKit.LogChannel.BackForward(), since it cannot use LOG_CHANNEL.
 struct LogChannel {
-#define DEFINE_LOG_CHANNEL_ACCESSOR(name) static WTFLogChannel& name() { return LOG_CHANNEL(name); }
     WEBKIT2_LOG_CHANNELS(DEFINE_LOG_CHANNEL_ACCESSOR)
-#undef DEFINE_LOG_CHANNEL_ACCESSOR
 };
 
 } // namespace WebKit
 #endif
 
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+#undef DEFINE_LOG_CHANNEL_ACCESSOR
