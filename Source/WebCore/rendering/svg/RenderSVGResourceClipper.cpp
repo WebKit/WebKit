@@ -99,7 +99,7 @@ void RenderSVGResourceClipper::repaintAllClients() const
     RenderSVGResourceContainer::repaintAllClients();
 }
 
-AffineTransform RenderSVGResourceClipper::clipContentTransform(const FloatRect& objectBoundingBox) const
+AffineTransform RenderSVGResourceClipper::computeClipContentTransform(const FloatRect& objectBoundingBox) const
 {
     AffineTransform transform;
     if (layer()->isTransformed())
@@ -149,9 +149,9 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
         clipPathTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
         clipPathTransform.scale(targetRenderer.style().usedZoom());
     }
-    clipPathTransform.multiply(clipContentTransform(clipContentBox));
+    clipPathTransform.multiply(computeClipContentTransform(clipContentBox));
 
-    clipRenderer->computeClipContentTransform(clipPathTransform);
+    clipPathTransform.multiply(clipRenderer->computeClipChildUserSpaceTransform());
     const auto& clipPath = cachedPathClip(clipRenderer);
     auto windRule = clipRenderer->style().clipRule();
 
@@ -193,7 +193,7 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
     AffineTransform contentTransform;
 
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        contentTransform = clipContentTransform(objectBoundingBox);
+        contentTransform = computeClipContentTransform(objectBoundingBox);
         if (layer()->isTransformed())
             contentTransform.multiply(layer()->transform()->toAffineTransform().inverse().value_or(AffineTransform()));
     } else if (!targetRenderer.isSVGLayerAwareRenderer()) {
@@ -248,12 +248,12 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
             return false;
     }
 
-    auto contentTransform = clipContentTransform(objectBoundingBox);
+    auto contentTransform = computeClipContentTransform(objectBoundingBox);
 
     if (RefPtr graphicsElement = shouldApplyPathClipping()) {
         CheckedRef clipRenderer = downcast<RenderSVGModelObject>(*graphicsElement->renderer());
         auto clipPathTransform = contentTransform;
-        clipRenderer->computeClipContentTransform(clipPathTransform);
+        clipPathTransform.multiply(clipRenderer->computeClipChildUserSpaceTransform());
         auto inverseClipPathTransform = clipPathTransform.inverse();
         return inverseClipPathTransform && cachedPathClip(clipRenderer).contains(inverseClipPathTransform->mapPoint(nodeAtPoint), clipRenderer->style().clipRule());
     }
@@ -305,7 +305,7 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto clipContentRepaintRect = protect(clipPathElement())->calculateClipContentRepaintRect(repaintRectCalculation);
-    return clipContentTransform(targetBoundingBox).mapRect(clipContentRepaintRect);
+    return computeClipContentTransform(targetBoundingBox).mapRect(clipContentRepaintRect);
 }
 
 void RenderSVGResourceClipper::updateFromStyle()

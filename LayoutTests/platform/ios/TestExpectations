@@ -10398,3 +10398,6 @@ imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-input-003.tentative.html [ ImageOnlyFailure ]
 # line-clamp on form controls.
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-select-001.tentative.html [ Pass ]
+
+# Legacy SVG engine: textPath resolves transform-box: fill-box before the referenced path, which follows the text, is laid out.
+webkit.org/b/332613 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-after-text.html [ ImageOnlyFailure ]

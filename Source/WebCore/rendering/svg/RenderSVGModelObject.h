@@ -110,7 +110,7 @@ public:
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRectForPainting(location, relevancy); }
 
     Path computeClipPathGeometry() const;
-    void computeClipContentTransform(AffineTransform&) const;
+    AffineTransform computeClipChildUserSpaceTransform() const;
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer) const;
 
     void invalidateCachedVisualOverflowRect() override { m_cachedVisualOverflowRect = std::nullopt; }
