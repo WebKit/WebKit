@@ -230,8 +230,7 @@ class GitHub(Scm):
             )
             if response.status_code == 422:
                 sys.stderr.write(self.repository.tracker.parse_error(Tracker.decode_json(response)))
-                pull_request._opened = False
-                return pull_request
+                return None
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
                 sys.stderr.write(self.repository.tracker.parse_error(Tracker.decode_json(response)))
