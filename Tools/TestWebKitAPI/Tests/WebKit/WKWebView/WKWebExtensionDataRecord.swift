@@ -24,6 +24,8 @@
 #if ENABLE_WK_WEB_EXTENSIONS
 
 import Foundation
+private import TestWebKitAPILibrary
+private import TestWebKitAPILibrary.Helpers.cocoa.WebExtensionUtilities
 import Testing
 import WebKit
 private import WebKit_Private.WKWebExtensionControllerConfigurationPrivate
@@ -49,37 +51,34 @@ struct WKWebExtensionDataRecordTests {
 
     private let allDataTypes: Set<WKWebExtension.DataType> = [.local, .session, .synchronized]
 
-    // FIXME rdar://167044676 for macOS
-    #if WTF_PLATFORM_MAC
-    @Test(.disabled("rdar://167044676"))
-    #else
     @Test
-    #endif
     func getDataRecords() async throws {
         let backgroundScript = """
             const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }
             await browser?.storage?.local?.set(data)
             await browser?.storage?.session?.set(data)
             await browser?.storage?.sync?.set(data)
+
+            browser.test.sendMessage('Data Stored')
             """
 
-        let extensionToTest = try #require(
-            WKWebExtension(manifestDictionary: dataRecordTestManifest, resources: ["background.js": backgroundScript])
+        let manager = parseWebExtension(
+            manifest: dataRecordTestManifest,
+            resources: ["background.js": backgroundScript],
+            configuration: ._temporary()
         )
-        let testController = WKWebExtensionController(configuration: ._temporary())
-
-        let context = WKWebExtensionContext(for: extensionToTest)
-        context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.storage)
+        let context = try #require(manager.context)
 
         // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
         context.uniqueIdentifier = "org.webkit.test.extension (76C788B8)"
 
-        try testController.load(context)
+        manager.load()
+        try manager.checkCollectedFailures()
 
-        // Wait for the background page to load.
-        try await Task.sleep(for: .seconds(4))
+        // Wait for the background page to finish storing its data.
+        try await manager.waitForTestMessage("Data Stored")
 
-        let dataRecord = try #require(await testController.dataRecord(ofTypes: allDataTypes, for: context))
+        let dataRecord = try #require(await manager.controller.dataRecord(ofTypes: allDataTypes, for: context))
 
         #expect(dataRecord.errors.count == 0)
 
@@ -97,27 +96,35 @@ struct WKWebExtensionDataRecordTests {
         #expect(sizeOfDataTypes == 237)
     }
 
-    // FIXME rdar://147858640 for iOS Debug and rdar://167044676 for macOS
-    @Test(.disabled("rdar://147858640 for iOS Debug and rdar://167044676 for macOS"))
+    // FIXME: rdar://147858640 (times out on iOS Debug; not checked on iOS Release).
+    #if WTF_PLATFORM_MAC
+    @Test
+    #else
+    @Test(.disabled("rdar://147858640"))
+    #endif
     func getDataRecordsForMultipleContexts() async throws {
         let backgroundScriptOne = """
             const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }
             await browser?.storage?.local?.set(data)
+
+            browser.test.sendMessage('Data Stored One')
             """
 
         let backgroundScriptTwo = """
             const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }
             await browser?.storage?.session?.set(data)
             await browser?.storage?.sync?.set(data)
+
+            browser.test.sendMessage('Data Stored Two')
             """
 
-        let testController = WKWebExtensionController(configuration: ._temporary())
-
-        let testExtensionOne = try #require(
-            WKWebExtension(manifestDictionary: dataRecordTestManifest, resources: ["background.js": backgroundScriptOne])
+        let manager = parseWebExtension(
+            manifest: dataRecordTestManifest,
+            resources: ["background.js": backgroundScriptOne],
+            configuration: ._temporary()
         )
-        let testContextOne = WKWebExtensionContext(for: testExtensionOne)
-        testContextOne.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.storage)
+        let testController = manager.controller
+        let testContextOne = try #require(manager.context)
         testContextOne.uniqueIdentifier = "org.webkit.testOne.extension (76C788B8)"
 
         let testExtensionTwo = try #require(
@@ -127,11 +134,13 @@ struct WKWebExtensionDataRecordTests {
         testContextTwo.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.storage)
         testContextTwo.uniqueIdentifier = "org.webkit.testTwo.extension (76C788B8)"
 
-        try testController.load(testContextOne)
+        manager.load()
+        try manager.checkCollectedFailures()
         try testController.load(testContextTwo)
 
-        // Wait for the background pages to load.
-        try await Task.sleep(for: .seconds(4))
+        // Wait for both background pages to finish storing their data.
+        try await manager.waitForTestMessage("Data Stored One")
+        try await manager.waitForTestMessage("Data Stored Two")
 
         let dataRecords = await testController.dataRecords(ofTypes: allDataTypes)
 
@@ -170,31 +179,33 @@ struct WKWebExtensionDataRecordTests {
         #expect(dataRecordTwo.sizeInBytes(ofTypes: [.synchronized]) == 79)
     }
 
-    // FIXME: rdar://125926932 (Enable the WKWebExtensionDataRecord.RemoveDataRecords test (272236))
-    @Test(.disabled("rdar://125926932"))
+    @Test
     func removeDataRecords() async throws {
         let backgroundScript = """
             const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }
             await browser?.storage?.local?.set(data)
             await browser?.storage?.session?.set(data)
             await browser?.storage?.sync?.set(data)
+
+            browser.test.sendMessage('Data Stored')
             """
 
-        let extensionToTest = try #require(
-            WKWebExtension(manifestDictionary: dataRecordTestManifest, resources: ["background.js": backgroundScript])
+        let manager = parseWebExtension(
+            manifest: dataRecordTestManifest,
+            resources: ["background.js": backgroundScript],
+            configuration: ._temporary()
         )
-        let testController = WKWebExtensionController(configuration: ._temporary())
-
-        let context = WKWebExtensionContext(for: extensionToTest)
-        context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.storage)
+        let testController = manager.controller
+        let context = try #require(manager.context)
 
         // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
         context.uniqueIdentifier = "org.webkit.test.extension (76C788B8)"
 
-        try testController.load(context)
+        manager.load()
+        try manager.checkCollectedFailures()
 
-        // Wait for the background page to load.
-        try await Task.sleep(for: .seconds(4))
+        // Wait for the background page to finish storing its data.
+        try await manager.waitForTestMessage("Data Stored")
 
         let dataRecords = await testController.dataRecords(ofTypes: allDataTypes)
 
@@ -213,26 +224,34 @@ struct WKWebExtensionDataRecordTests {
         #expect(updatedRecords.first?.totalSizeInBytes == 79)
     }
 
-    // FIXME: rdar://125926932 (Enable the WKWebExtensionDataRecord.RemoveDataRecords test (272236))
-    @Test(.disabled("rdar://125926932"))
+    // FIXME: rdar://147858640 (the two-context setup times out on iOS Debug; not checked on iOS Release).
+    #if WTF_PLATFORM_MAC
+    @Test
+    #else
+    @Test(.disabled("rdar://147858640"))
+    #endif
     func removeDataRecordsForMultipleContexts() async throws {
         let backgroundScriptOne = """
             const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }
             await browser?.storage?.local?.set(data)
+
+            browser.test.sendMessage('Data Stored One')
             """
 
         let backgroundScriptTwo = """
             const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }
             await browser?.storage?.sync?.set(data)
+
+            browser.test.sendMessage('Data Stored Two')
             """
 
-        let testController = WKWebExtensionController(configuration: ._temporary())
-
-        let testExtensionOne = try #require(
-            WKWebExtension(manifestDictionary: dataRecordTestManifest, resources: ["background.js": backgroundScriptOne])
+        let manager = parseWebExtension(
+            manifest: dataRecordTestManifest,
+            resources: ["background.js": backgroundScriptOne],
+            configuration: ._temporary()
         )
-        let testContextOne = WKWebExtensionContext(for: testExtensionOne)
-        testContextOne.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.storage)
+        let testController = manager.controller
+        let testContextOne = try #require(manager.context)
         testContextOne.uniqueIdentifier = "org.webkit.testOne.extension (76C788B8)"
 
         let testExtensionTwo = try #require(
@@ -242,16 +261,18 @@ struct WKWebExtensionDataRecordTests {
         testContextTwo.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.storage)
         testContextTwo.uniqueIdentifier = "org.webkit.testTwo.extension (76C788B8)"
 
-        try testController.load(testContextOne)
+        manager.load()
+        try manager.checkCollectedFailures()
         try testController.load(testContextTwo)
 
-        // Wait for the background pages to load.
-        try await Task.sleep(for: .seconds(4))
+        // Wait for both background pages to finish storing their data.
+        try await manager.waitForTestMessage("Data Stored One")
+        try await manager.waitForTestMessage("Data Stored Two")
 
         let dataRecords = await testController.dataRecords(ofTypes: allDataTypes)
 
         #expect(dataRecords.count == 2)
-        #expect(dataRecords[0].totalSizeInBytes + dataRecords[1].totalSizeInBytes == 237)
+        #expect(dataRecords[0].totalSizeInBytes + dataRecords[1].totalSizeInBytes == 158)
 
         await testController.removeData(ofTypes: allDataTypes, from: dataRecords)
 
