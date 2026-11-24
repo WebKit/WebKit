@@ -531,6 +531,7 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
+    plistbuddy Add :com.apple.private.metal.hardened-compiler bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
