@@ -150,8 +150,10 @@ void HTMLImageElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
 void HTMLImageElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
     Ref rootNode = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope can be outdated.
-    if (rootNode.ptr() != &formRoot)
+    if (rootNode.ptr() != &formRoot) {
         setForm(nullptr);
+        resetFormOwner();
+    }
 }
 
 Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document& document, std::optional<unsigned> width, std::optional<unsigned> height)
