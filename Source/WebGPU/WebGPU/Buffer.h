@@ -117,7 +117,7 @@ public:
     uint64_t size() const final { return initialSize(); }
     WebGPU::BufferMapState mapState() const final;
 
-    Device& device() const { return m_device; }
+    NODELETE Device& device() const final { return m_device; }
     bool isDestroyed() const { return state() == State::Destroyed; }
 
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;

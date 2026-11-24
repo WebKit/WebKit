@@ -85,8 +85,8 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 WGPUFuture wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        Ref protectedInstance = WebGPU::CAPI::metalFromAPI(instance);
-        WebGPU::CAPI::Future future { protectedInstance.copyRef() };
+        Ref protectedInstance = WebGPU::CAPI::fromAPI(instance);
+        WebGPU::CAPI::Future future { protectedInstance.ptr() };
         auto callback = [callbackInfo, future](WGPURequestAdapterStatus status, WGPUAdapter adapter, ASCIILiteral message) {
             callbackInfo.callback(status, adapter, WebGPU::CAPI::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();

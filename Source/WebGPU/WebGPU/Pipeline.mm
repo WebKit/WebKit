@@ -303,7 +303,7 @@ Device::LibraryCompilation Device::asynchronousIfPossible()
 void Device::compileLibrary(const LibraryCompileRequest& request, LibraryCompilation libraryCompilation, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
 {
     if (libraryCompilation == LibraryCompilation::Asynchronous) {
-        if (RefPtr protectedInstance = instance()) {
+        if (RefPtr protectedInstance = weakInstance()) {
             compileLibraryAsync(m_device, *protectedInstance, request, WTF::move(callback));
             return;
         }
@@ -322,7 +322,7 @@ void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor
     };
 
     if (libraryCompilation == LibraryCompilation::Asynchronous) {
-        if (RefPtr protectedInstance = instance()) {
+        if (RefPtr protectedInstance = weakInstance()) {
             createComputePipelineStateAsync(m_device, *protectedInstance, descriptor, [reportError, callback = WTF::move(callback)](id<MTLComputePipelineState> computePipelineState, NSError *error) mutable {
                 reportError(error);
                 callback(computePipelineState);

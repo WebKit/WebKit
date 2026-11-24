@@ -1829,7 +1829,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         if (error)
             return callback(returnInvalidRenderPipeline(protectedThis, isAsync, error.localizedDescription));
 
-        RefPtr protectedInstance = protectedThis->instance();
+        RefPtr protectedInstance = protectedThis->weakInstance();
         if (libraryCompilation == LibraryCompilation::Synchronous || !protectedInstance)
             return callback(std::make_pair(WTF::move(pipeline), nil));
 
@@ -1868,7 +1868,7 @@ static CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)> asyn
         };
 
         // Resolve on a later turn of the WebGPU thread, never re-entrantly from the caller.
-        if (RefPtr protectedInstance = protectedDevice->instance()) {
+        if (RefPtr protectedInstance = protectedDevice->weakInstance()) {
             protectedInstance->scheduleWork(WTF::move(reportResult));
             return;
         }

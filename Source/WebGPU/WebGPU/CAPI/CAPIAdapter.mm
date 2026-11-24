@@ -142,7 +142,7 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
 {
     @autoreleasepool {
         Ref protectedAdapter = WebGPU::CAPI::fromAPI(adapter);
-        WebGPU::CAPI::Future future { WebGPU::CAPI::metalFromAPI(adapter).weakInstance().get() };
+        WebGPU::CAPI::Future future { protectedAdapter->instance() };
         auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
             callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();

@@ -64,6 +64,7 @@ public:
     WebGPUDeviceIdentifier backing() const { return m_backing; }
 
     RemoteAdapterProxy& adapter() const final { return m_parent; }
+    RefPtr<::WebGPU::Instance> instance() const final { return m_parent->instance(); }
     Vector<::WebGPU::FeatureName> features() const final { return m_features; }
     const ::WebGPU::Limits& limits() const LIFETIME_BOUND final { return m_limits; }
     NODELETE Ref<::WebGPU::Queue> queue() final;

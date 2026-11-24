@@ -48,6 +48,7 @@ public:
     RemoteGPUProxy& root() { return m_parent->root(); }
     WebGPUShaderModuleIdentifier backing() const { return m_backing; }
 
+    RemoteDeviceProxy& device() const final { return m_parent; }
     void compilationInfo(CompletionHandler<void(::WebGPU::CompilationInfo&&)>&&) final;
     void setLabel(String&&) final;
     bool isValid() const final;

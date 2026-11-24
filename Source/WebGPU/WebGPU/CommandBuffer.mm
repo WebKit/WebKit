@@ -143,7 +143,7 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
         [m_commandBuffer encodeSignalEvent:m_sharedEvent value:m_sharedEventSignalValue];
 
     m_cachedCommandBuffer = m_commandBuffer;
-    if (RefPtr instance = m_device->instance())
+    if (RefPtr instance = m_device->weakInstance())
         instance->retainCommandBuffer(*this, m_commandBuffer);
     [m_commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer> completedCommandBuffer) {
         // GPUStartTime/GPUEndTime bracket execution on the GPU; kernelStartTime/kernelEndTime only bracket the driver scheduling it.
@@ -163,7 +163,7 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
 
             protectedThis->m_commandEncoder = nullptr;
 
-            if (RefPtr instance = protectedThis->m_device->instance())
+            if (RefPtr instance = protectedThis->m_device->weakInstance())
                 instance->releaseCompletedCommandBuffers();
         });
     }];

@@ -304,7 +304,7 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
         RefPtr<Device> protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto instance = protectedThis->instance(); instance.get()) {
+        if (RefPtr instance = protectedThis->weakInstance()) {
             instance->scheduleWork([protectedThis = WTF::move(protectedThis), device = device]() {
                 if (![protectedThis->m_device isEqual:device])
                     return;
@@ -383,6 +383,11 @@ Device::~Device()
 
     if (m_uncapturedErrorCallback)
         m_uncapturedErrorCallback(false, std::nullopt);
+}
+
+RefPtr<WebGPU::Instance> Device::instance() const
+{
+    return m_instance.get();
 }
 
 RefPtr<XRSubImage> Device::getXRViewSubImage(XRProjectionLayer& projectionLayer)
@@ -679,7 +684,7 @@ void Device::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Er
 
     auto scope = m_errorScopeStack.takeLast();
 
-    if (auto inst = instance(); inst.get()) {
+    if (RefPtr inst = weakInstance()) {
         inst->scheduleWork([scope = WTF::move(scope), callback = WTF::move(callback)]() mutable {
             bool caughtNoError = !scope.error;
             callback(caughtNoError, WTF::move(scope.error));
@@ -723,7 +728,7 @@ void Device::setLabel(String&&)
 
 const std::optional<const MachSendRight> Device::webProcessID() const
 {
-    auto scheduler = instance();
+    RefPtr scheduler = weakInstance();
     return scheduler ? scheduler->webProcessID() : std::nullopt;
 }
 

@@ -185,7 +185,9 @@ public:
     void generateAnOutOfMemoryError(String&& message);
     void generateAnInternalError(String&& message);
 
-    RefPtr<Instance> instance() const { return m_instance.get(); }
+    RefPtr<WebGPU::Instance> instance() const final;
+    // The Metal instance, for the callers that need what only it has.
+    ThreadSafeWeakPtr<Instance> weakInstance() const { return m_instance; }
     Adapter& adapter() const final { return m_adapter; }
 #if CPU(X86_64)
     bool hasUnifiedMemory() const { return false; }
