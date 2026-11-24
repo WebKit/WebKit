@@ -432,11 +432,8 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
     if (!hasLayer()) {
         // Apply the transform before locationOffset, like the layer path. Don't check isTransformed():
         // the flags may already reflect the new transform, while the cache still holds the old one.
-        if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(this)) {
-            auto svgTransform = svgModel->nominalTransform();
-            if (!svgTransform.isIdentity())
-                adjustedRects.transform(TransformationMatrix(svgTransform));
-        }
+        if (auto svgTransform = nominalTransform(); !svgTransform.isIdentity())
+            adjustedRects.transform(TransformationMatrix(svgTransform));
     } else if (layer()->transform())
         adjustedRects.transform(*layer()->transform());
 

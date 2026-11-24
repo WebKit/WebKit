@@ -1,0 +1,16 @@
+Hello World
+Hello World
+Hello World
+plain: text bounding box 100,34 220x20
+selection: 'Hello'
+selection range rect x: 100 width: 100
+  (rect 100 34 100 20)
+transformed: text bounding box 100,104 220x20
+selection: 'Hello'
+selection range rect x: 100 width: 100
+  (rect 100 104 100 20)
+group: text bounding box 100,184 220x20
+selection: 'Hello'
+selection range rect x: 100 width: 100
+  (rect 100 184 100 20)
+

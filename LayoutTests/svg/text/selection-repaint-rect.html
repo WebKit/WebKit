@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+text { font-family: Ahem; font-size: 20px; }
+</style>
+</head>
+<body>
+<svg width="500" height="400" style="display: block">
+<text id="plain" x="100" y="50">Hello World</text>
+<text id="transformed" x="10" y="20" transform="translate(90, 100)">Hello World</text>
+<g transform="translate(50, 150)"><text id="group" x="50" y="50">Hello World</text></g>
+</svg>
+<pre id="log"></pre>
+<script>
+// Tests that selecting SVG text with the mouse selects the expected characters, and that the selection repaint rect
+// and the selection range rect cover the selected glyphs.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message) { document.getElementById("log").textContent += message + "\n"; }
+
+function nextFrame() { return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0))); }
+
+function rectToString(rect) { return rect.left + "," + rect.top + " " + rect.width + "x" + rect.height; }
+
+async function select(id, makeSelection) {
+    getSelection().removeAllRanges();
+    await nextFrame();
+
+    internals.startTrackingRepaints();
+    makeSelection();
+    await nextFrame();
+
+    // The order of the repaint rects is not relevant.
+    var repaintRects = internals.repaintRectsAsText().split("\n").filter(line => line.includes("(rect ")).sort().join("\n");
+    internals.stopTrackingRepaints();
+
+    log(id + ": text bounding box " + rectToString(document.getElementById(id).getBoundingClientRect()));
+    log("selection: '" + getSelection().toString() + "'");
+    var rangeRect = getSelection().getRangeAt(0).getBoundingClientRect();
+    log("selection range rect x: " + rangeRect.left + " width: " + rangeRect.width);
+    log(repaintRects);
+}
+
+function dragMouse(startX, endX, y) {
+    eventSender.mouseMoveTo(startX, y);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo((startX + endX) / 2, y);
+    eventSender.mouseMoveTo(endX, y);
+    eventSender.mouseUp();
+}
+
+async function runTest() {
+    if (!window.eventSender || !window.internals) {
+        log("This test requires eventSender and internals.");
+        testRunner.notifyDone();
+        return;
+    }
+
+    await select("plain", () => dragMouse(101, 199, 45));
+    await select("transformed", () => dragMouse(101, 199, 115));
+    await select("group", () => dragMouse(101, 199, 195));
+    testRunner.notifyDone();
+}
+
+runTest();
+</script>
+</body>
+</html>
