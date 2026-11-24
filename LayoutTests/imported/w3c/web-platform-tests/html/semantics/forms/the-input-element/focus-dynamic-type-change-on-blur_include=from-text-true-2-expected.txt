@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+PASS text -> color true
+PASS text -> image true
+PASS text -> range true
+PASS text -> time true
+

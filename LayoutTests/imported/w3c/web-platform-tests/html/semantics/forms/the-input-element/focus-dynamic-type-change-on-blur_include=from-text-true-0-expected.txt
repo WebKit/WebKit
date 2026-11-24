@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+PASS text -> button true
+PASS text -> email true
+PASS text -> password true
+PASS text -> submit true
+

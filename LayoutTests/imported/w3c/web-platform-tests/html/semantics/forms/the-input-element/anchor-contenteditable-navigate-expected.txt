@@ -1,4 +1,0 @@
-anchor
-
-PASS Anchor elements should not be able to navigate if they have contentEditable.
-

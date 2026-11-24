@@ -10,13 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/WEB_FEATURES.yml
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/anchor-active-contenteditable.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/anchor-contenteditable-navigate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/auto-direction-dynamic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/auto-direction-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/auto-direction-ref.html
@@ -29,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkable-active-space-key-prevented-default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkable-active-space-key-untrusted-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkbox-click-events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkbox-defaultIndeterminate.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkbox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checked.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/click-user-gesture.html
@@ -47,10 +44,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/default-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/disabled-attempt-focus-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/disabled-file-input-click-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/dynamic-value-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/dynamic-value-update-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/dynamic-value-update.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-set-value.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-value-idn.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/file-input-reset-shared-file-list-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/file-input-reset-shared-file-list-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/file-input-reset-shared-file-list.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/files.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/focus-dynamic-type-change-on-blur.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/focus-dynamic-type-change.html
@@ -71,6 +77,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-list.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-seconds-leading-zeroes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-setcustomvalidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-step-float.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-step-realignment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown.html
@@ -80,6 +88,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-text-overflow-ellipsis-scroll-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-text-overflow-ellipsis-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-button.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-change-during-activation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-change-empty-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-change-submit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-change-value.html
@@ -92,12 +101,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-untrusted-key-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-validationmessage.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-validity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-value-dirty-flag.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-value-invalidstateerr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-invalidstateerr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-null.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-stepping.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-typeerror.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-invalidstateerr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-nan.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-stepping.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-typeerror.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber.html
@@ -127,8 +139,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/pattern_attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/pattern_attribute_v_flag.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/placeholder-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/placeholder-update-no-value-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/placeholder-update-no-value-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/placeholder-update-no-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/placeholder-update-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/placeholder-update.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-click-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-disconnected-group-owner.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-double-activate-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focus-navigation-checked.html
@@ -136,6 +152,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focus-navigation-group-first-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focus-navigation-group-focusable-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focused-and-scrolled-into-view.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-form-owner-reset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-form-owner.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-groupname-case.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-input-cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-keyboard-navigation-order.html
@@ -143,6 +161,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-multiple-selected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-drag-after-selection.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size.html
@@ -200,9 +219,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-in-keypress-listener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-text-to-file-to-text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-to-password-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-to-password-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-to-password-when-parent-has-spellcheck-attr-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-to-password.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-to-same-type-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-to-same-type-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-to-same-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode.html

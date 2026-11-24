@@ -1,0 +1,6 @@
+
+PASS Assigning null to valueAsDate clears an input of type date
+PASS Assigning null to valueAsDate clears an input of type month
+PASS Assigning null to valueAsDate clears an input of type week
+PASS Assigning null to valueAsDate clears an input of type time
+

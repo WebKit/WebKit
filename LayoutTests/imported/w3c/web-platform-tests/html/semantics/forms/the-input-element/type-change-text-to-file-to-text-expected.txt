@@ -1,0 +1,5 @@
+
+FAIL Without a value attribute, the value is the empty string after text to file to text assert_equals: expected "" but got "foo"
+FAIL With a value attribute, the value is the attribute's value after text to file to text assert_equals: expected "bar" but got "foo"
+FAIL The dirty value flag is false after text to file to text assert_equals: expected "baz" but got "foo"
+

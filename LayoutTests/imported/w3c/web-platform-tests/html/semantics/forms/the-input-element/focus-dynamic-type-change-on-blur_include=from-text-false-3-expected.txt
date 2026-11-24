@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+PASS text -> date false
+PASS text -> month false
+PASS text -> reset false
+PASS text -> url false
+

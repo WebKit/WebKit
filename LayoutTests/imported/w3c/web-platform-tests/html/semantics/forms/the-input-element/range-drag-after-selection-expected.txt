@@ -1,0 +1,9 @@
+Text above the slider.
+
+
+Text below the slider.
+
+
+PASS Dragging the thumb of input type=range after a selection covers it
+PASS Dragging the track of input type=range after a selection covers it
+

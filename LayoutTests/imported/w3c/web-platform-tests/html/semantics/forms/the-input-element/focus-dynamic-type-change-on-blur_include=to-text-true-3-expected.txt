@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+FAIL date -> text true assert_true: date input should match :focus-visible expected true got false
+FAIL month -> text true assert_true: month input should match :focus-visible expected true got false
+PASS reset -> text true
+PASS url -> text true
+

@@ -1,0 +1,4 @@
+
+
+PASS input.stepUp/Down work when starting from a value not aligned with value step
+
