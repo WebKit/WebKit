@@ -98,6 +98,40 @@ typedef enum {
     WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE
 } WebKitUpgradeToHTTPSPolicy;
 
+/**
+ * WebKitGlobalPrivacyControlPolicy:
+ * @WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET: Do not configure Global
+ *    Privacy Control. The `Sec-GPC` request header is not set and
+ *    `navigator.globalPrivacyControl` is undefined.
+ * @WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_ENABLED: Enable Global Privacy
+ *    Control. Both `navigator.globalPrivacyControl` and the `Sec-GPC: 1`
+ *    request header are set for the main frame, its subframes, and their
+ *    subresources. The header is sent to secure origins: local addresses,
+ *    and secure URI schemes (like HTTPS).
+ *    (see [method@WebContext.register_uri_scheme]).
+ * @WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_DISABLED: Explicitly disable
+ *    Global Privacy Control. The `Sec-GPC` request header is not set and
+ *    `navigator.globalPrivacyControl` is set to `false`.
+ *
+ * Values used to specify how the Global Privacy Control signal is applied
+ * on navigations.
+ *
+ * The policy is configured using the [property@WebsitePolicies:global-privacy-control]
+ * property. It applies to main frame navigations, and is inherited by subframes
+ * and subrequests. Setting a different policy for subframes or subrequests
+ * is ignored.
+ *
+ * ::: seealso
+ *     [Global Privacy Control specification](https://www.w3.org/TR/gpc).
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET,
+    WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_ENABLED,
+    WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_DISABLED,
+} WebKitGlobalPrivacyControlPolicy;
+
 WEBKIT_API WebKitWebsitePolicies *
 webkit_website_policies_new                                   (void);
 
@@ -113,5 +147,8 @@ webkit_website_policies_get_custom_user_agent                 (WebKitWebsitePoli
 
 WEBKIT_API WebKitUpgradeToHTTPSPolicy
 webkit_website_policies_get_upgrade_to_https_policy           (WebKitWebsitePolicies *policies);
+
+WEBKIT_API WebKitGlobalPrivacyControlPolicy
+webkit_website_policies_get_global_privacy_control            (WebKitWebsitePolicies *policies);
 
 G_END_DECLS
