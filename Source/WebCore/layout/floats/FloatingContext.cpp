@@ -31,6 +31,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "LayoutShape.h"
+#include "RenderElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
@@ -357,7 +358,16 @@ static std::optional<std::pair<AxisPosition<ParentFormattingContextRoot>, AxisPo
     if (!shape)
         return { };
 
-    auto positionInShape = candidateTop - floatItem.borderBoxTop();
+    auto borderBoxTop = floatItem.borderBoxTop();
+    if (CheckedPtr floatBox = floatItem.layoutBox()) {
+        // Shapes are block-start relative, but IFC stores the block-axis margins of the floats it places
+        // line-relative (line-over, line-under). They differ when line-over is block-end.
+        if (floatBox->parent().writingMode().isLineInverted()) {
+            auto boxGeometry = floatItem.boxGeometry();
+            borderBoxTop += boxGeometry.marginAfter() - boxGeometry.marginBefore();
+        }
+    }
+    auto positionInShape = candidateTop - borderBoxTop;
 
     if (!shape->lineOverlapsShapeMarginBounds(positionInShape, candidateHeight))
         return { };
