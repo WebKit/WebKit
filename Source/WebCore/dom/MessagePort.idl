@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,6 @@
     undefined start();
     undefined close();
 
-    attribute EventHandler onmessage;
+    [CustomSetter] attribute EventHandler onmessage;
     attribute EventHandler onmessageerror;
 };
