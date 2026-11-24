@@ -36,33 +36,44 @@ GridItemPlacer::GridItemPlacer(GridAutoFlowOptions autoFlowOptions)
 {
 }
 
-static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
+static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, size_t leadingNonAutoFlowTracksCount, size_t leadingAutoFlowTracksCount, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount)
 {
     return WTF::map(logicalGridItems, [&](auto& gridItem) {
         CheckedRef gridItemStyle = gridItem->style();
+
+        auto gridItemNonAutoFlowStart = gridItemStyle->gridItemColumnStart();
+        auto gridItemNonAutoFlowEnd = gridItemStyle->gridItemColumnEnd();
+        auto gridItemAutoFlowStart = gridItemStyle->gridItemRowStart();
+        auto gridItemAutoFlowEnd = gridItemStyle->gridItemRowEnd();
+
         return UnplacedGridItem {
             gridItem,
-            gridItemStyle->gridItemColumnStart(),
-            gridItemStyle->gridItemColumnEnd(),
-            gridItemStyle->gridItemRowStart(),
-            gridItemStyle->gridItemRowEnd(),
-            explicitColumnsCount,
-            explicitRowsCount,
-            leadingImplicitTracks.columnsCount,
-            leadingImplicitTracks.rowsCount
+            gridItemNonAutoFlowStart,
+            gridItemNonAutoFlowEnd,
+            gridItemAutoFlowStart,
+            gridItemAutoFlowEnd,
+            explicitNonAutoFlowTracksCount,
+            explicitAutoFlowTracksCount,
+            leadingNonAutoFlowTracksCount,
+            leadingAutoFlowTracksCount
         };
     });
+}
+
+static GridAreaLines toGridAreaLines(const FlowRelativeAreaLines& area)
+{
+    return { area.nonAutoFlowStartLine, area.nonAutoFlowEndLine, area.autoFlowStartLine, area.autoFlowEndLine };
 }
 
 // 8.5. Grid Item Placement Algorithm.
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
 //
-// Step 3 (determining the columns in the implicit grid) is handled while the grid is built, in
+// Step 3 (determining the non-auto-flow tracks in the implicit grid, the columns for grid-auto-flow: row) is handled while the grid is built, in
 // ImplicitGrid::createInitialGrid().
 GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount) const
 {
-    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
-    auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
+    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingImplicitTracks.columnsCount, leadingImplicitTracks.rowsCount, explicitColumnsCount, explicitRowsCount);
+    auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks.columnsCount, leadingImplicitTracks.rowsCount, explicitColumnsCount, explicitRowsCount);
 
     // Grid areas are kept in order-modified document order. The steps below must run in spec order,
     // since each one depends on the cells occupied by the ones before it, so each step fills in the
@@ -78,15 +89,15 @@ GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logic
 
     // 1. Position anything that's not auto-positioned.
     for (auto& [item, lines] : gridAreasFor(isNonAutoPositioned))
-        lines = implicitGrid.insertUnplacedGridItem(item);
+        lines = toGridAreaLines(implicitGrid.insertUnplacedGridItem(item));
 
-    // 2. Process the items locked to a given row.
-    for (auto& [item, lines] : gridAreasFor(isDefiniteRowPositioned))
-        lines = implicitGrid.insertDefiniteRowItem(item, m_autoFlowOptions);
+    // 2. Process the items locked to a given auto-flow track.
+    for (auto& [item, lines] : gridAreasFor(isDefiniteAutoFlowPositioned))
+        lines = toGridAreaLines(implicitGrid.insertDefiniteAutoFlowItem(item, m_autoFlowOptions));
 
     // 4. Position the remaining grid items.
     for (auto& [item, lines] : gridAreasFor(isAutoPositioned))
-        lines = implicitGrid.insertAutoPositionedItem(item, m_autoFlowOptions);
+        lines = toGridAreaLines(implicitGrid.insertAutoPositionedItem(item, m_autoFlowOptions));
 
     // Every item belongs to exactly one of the steps above, so none is left with its empty
     // placeholder lines.
@@ -95,7 +106,7 @@ GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logic
         return lines.columnEndLine > lines.columnStartLine && lines.rowEndLine > lines.rowStartLine;
     }));
 
-    return { WTF::move(gridAreas), implicitGrid.columnsCount(), implicitGrid.rowsCount() };
+    return { WTF::move(gridAreas), implicitGrid.nonAutoFlowTracksCount(), implicitGrid.autoFlowTracksCount() };
 }
 
 } // namespace WebCore::Layout
