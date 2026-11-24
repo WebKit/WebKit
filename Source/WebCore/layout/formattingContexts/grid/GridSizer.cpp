@@ -187,7 +187,7 @@ UsedTrackSizes GridSizer::sizeGrid(const PlacedGridItems& placedGridItems, const
     };
     UNUSED_VARIABLE(resolveGridRowSizesIfAnyMinContentContributionChanged);
 
-    return { columnSizes, rowSizes };
+    return { WTF::move(columnSizes), WTF::move(rowSizes) };
 }
 
 } // namespace WebCore::Layout
