@@ -702,8 +702,15 @@ struct WKWebExtensionAPICookiesTests {
 
         // Kill the network process to simulate a cold start (e.g. after app relaunch). With the fix,
         // cookies.getAll() launches the network process on demand and reads the persisted cookie.
-        kill(WKWebsiteDataStore.default()._networkProcessIdentifier(), SIGKILL)
-        try await Task.sleep(for: .milliseconds(100))
+        let dataStore = WKWebsiteDataStore.default()
+        let networkProcessIdentifier = dataStore._networkProcessIdentifier()
+        try #require(networkProcessIdentifier != 0)
+
+        kill(networkProcessIdentifier, SIGKILL)
+
+        while dataStore._networkProcessIdentifier() != 0 {
+            try await Task.sleep(for: .milliseconds(10))
+        }
 
         try await manager.run()
 
