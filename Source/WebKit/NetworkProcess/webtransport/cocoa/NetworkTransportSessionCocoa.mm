@@ -228,7 +228,7 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
         hashes = std::exchange(options.serverCertificateHashes, { }),
         clientOrigin = WTF::move(clientOrigin)
     ](nw_protocol_options_t options) mutable {
-        RetainPtr securityOptions = adoptNS(nw_tls_copy_sec_protocol_options(options));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr securityOptions = adoptNS(nw_tls_copy_sec_protocol_options(options));
         sec_protocol_options_set_peer_authentication_required(securityOptions.get(), true);
         sec_protocol_options_set_verify_block(securityOptions.get(), makeBlockPtr([
             // The configureTLS lambda can be called more than once, which means that
@@ -257,7 +257,7 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
 
     auto configureTCP = options.requireUnreliable ? NW_PARAMETERS_DISABLE_PROTOCOL : NW_PARAMETERS_DEFAULT_CONFIGURATION;
 
-    RetainPtr parameters = adoptNS(MAYBE_SOFT_LINK(nw_parameters_create_webtransport_http)(configureWebTransport, configureTLS, configureQUIC, configureTCP));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr parameters = adoptNS(MAYBE_SOFT_LINK(nw_parameters_create_webtransport_http)(configureWebTransport, configureTLS, configureQUIC, configureTCP));
 #if PLATFORM(IOS_FAMILY)
     bool isSafari = WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService() || WTF::IOSApplication::isAppleWebApp();
 #elif PLATFORM(MAC)
@@ -282,7 +282,7 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
     if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(NetworkProcess::singleton().networkSession(connectionToWebProcess.sessionID())); sessionCocoa && sessionCocoa->proxyConfigurationRequiresTCPProtocols())
         return nullptr;
 
-    RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().legacyCStringPointer()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().legacyCStringPointer()));
     if (!endpoint) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -294,13 +294,13 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
         return nullptr;
     }
 
-    RetainPtr groupDescriptor = adoptNS(nw_group_descriptor_create_multiplex(endpoint.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr groupDescriptor = adoptNS(nw_group_descriptor_create_multiplex(endpoint.get()));
     if (!groupDescriptor) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    RetainPtr connectionGroup = adoptNS(nw_connection_group_create(groupDescriptor.get(), parameters.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr connectionGroup = adoptNS(nw_connection_group_create(groupDescriptor.get(), parameters.get()));
     if (!connectionGroup) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -333,7 +333,7 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
             __block Vector<KeyValuePair<String, String>> responseHeaders;
             WebCore::WebTransportReliabilityMode reliabilityMode = WebCore::WebTransportReliabilityMode::Pending;
             if (RefPtr protectedThis = weakThis.get()) {
-                protectedThis->m_sessionMetadata = nw_connection_group_copy_protocol_metadata(protectedThis->m_connectionGroup.get(), adoptNS(MAYBE_SOFT_LINK(nw_protocol_copy_webtransport_definition)()).get());
+                SUPPRESS_RETAINPTR_CTOR_ADOPT protectedThis->m_sessionMetadata = nw_connection_group_copy_protocol_metadata(protectedThis->m_connectionGroup.get(), adoptNS(MAYBE_SOFT_LINK(nw_protocol_copy_webtransport_definition)()).get());
                 if (RetainPtr metadata = protectedThis->m_sessionMetadata) {
                     MAYBE_SOFT_LINK(nw_webtransport_metadata_set_remote_drain_handler)(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *protectedThis }] () mutable {
                         RefPtr protectedThis = weakThis.get();
@@ -341,7 +341,7 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
                             return;
                         protectedThis->send(Messages::WebTransportSession::DidDrain());
                     }).get(), mainDispatchQueueSingleton());
-                    RetainPtr response = adoptNS(MAYBE_SOFT_LINK(nw_webtransport_metadata_copy_connect_response)(metadata.get()));
+                    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr response = adoptNS(MAYBE_SOFT_LINK(nw_webtransport_metadata_copy_connect_response)(metadata.get()));
                     MAYBE_SOFT_LINK(nw_http_fields_access_value_by_name)(response.get(), "wt-protocol", ^void(const char *value) {
                         if (auto parsedItem = RFC8941::parseItemStructuredFieldValue(String::fromUTF8(unsafeSpan(value)))) {
                             if (auto* stringValue = std::get_if<String>(&parsedItem->first)) {
@@ -412,7 +412,7 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
 {
     ASSERT(!m_datagramConnection);
 
-    RetainPtr webtransportOptions = adoptNS(MAYBE_SOFT_LINK(nw_webtransport_create_options)());
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr webtransportOptions = adoptNS(MAYBE_SOFT_LINK(nw_webtransport_create_options)());
     if (!webtransportOptions) {
         ASSERT_NOT_REACHED();
         return completionHandler(std::nullopt);
@@ -421,7 +421,7 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
     MAYBE_SOFT_LINK(nw_webtransport_options_set_is_datagram)(webtransportOptions.get(), true);
     MAYBE_SOFT_LINK(nw_webtransport_options_set_allow_joining_before_ready)(webtransportOptions.get(), true);
 
-    lazyInitialize(m_datagramConnection, adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get())));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT lazyInitialize(m_datagramConnection, adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get())));
     if (!m_datagramConnection) {
         ASSERT_NOT_REACHED();
         return completionHandler(std::nullopt);
@@ -522,7 +522,7 @@ void NetworkTransportSession::createStream(NetworkTransportStreamType streamType
     }
 
     ASSERT(streamType != NetworkTransportStreamType::IncomingUnidirectional);
-    RetainPtr webtransportOptions = adoptNS(MAYBE_SOFT_LINK(nw_webtransport_create_options)());
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr webtransportOptions = adoptNS(MAYBE_SOFT_LINK(nw_webtransport_create_options)());
     if (!webtransportOptions) {
         ASSERT_NOT_REACHED();
         return completionHandler(std::nullopt);
@@ -530,7 +530,7 @@ void NetworkTransportSession::createStream(NetworkTransportStreamType streamType
     MAYBE_SOFT_LINK(nw_webtransport_options_set_is_unidirectional)(webtransportOptions.get(), streamType != NetworkTransportStreamType::Bidirectional);
     MAYBE_SOFT_LINK(nw_webtransport_options_set_is_datagram)(webtransportOptions.get(), false);
     MAYBE_SOFT_LINK(nw_webtransport_options_set_allow_joining_before_ready)(webtransportOptions.get(), true);
-    RetainPtr connection = adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr connection = adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get()));
     if (!connection) {
         ASSERT_NOT_REACHED();
         return completionHandler(std::nullopt);
@@ -618,14 +618,14 @@ RetainPtr<sec_protocol_metadata_t> NetworkTransportSession::securityMetadata() c
     case nw_webtransport_transport_mode_unknown:
         return nullptr;
     case nw_webtransport_transport_mode_http2: {
-        RetainPtr tlsDefinition = adoptNS(nw_protocol_copy_tls_definition());
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr tlsDefinition = adoptNS(nw_protocol_copy_tls_definition());
         RetainPtr protocolMetadata = nw_connection_group_copy_protocol_metadata(m_connectionGroup.get(), tlsDefinition.get());
-        return adoptNS(nw_tls_copy_sec_protocol_metadata(protocolMetadata));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptNS(nw_tls_copy_sec_protocol_metadata(protocolMetadata));
     }
     case nw_webtransport_transport_mode_http3: {
-        RetainPtr quicDefinition = adoptNS(nw_protocol_copy_quic_connection_definition());
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr quicDefinition = adoptNS(nw_protocol_copy_quic_connection_definition());
         RetainPtr protocolMetadata = nw_connection_group_copy_protocol_metadata(m_connectionGroup.get(), quicDefinition.get());
-        return adoptNS(nw_quic_connection_copy_sec_protocol_metadata(protocolMetadata.get()));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptNS(nw_quic_connection_copy_sec_protocol_metadata(protocolMetadata.get()));
     }
     }
     ASSERT_NOT_REACHED();
@@ -637,7 +637,7 @@ void NetworkTransportSession::exportKeyingMaterial(std::span<const uint8_t> labe
     RetainPtr securityMetadata = this->securityMetadata();
     if (!securityMetadata)
         return completionHandler(std::nullopt);
-    RetainPtr data = adoptNS(sec_protocol_metadata_create_secret_with_context(securityMetadata.get(), label.size(), reinterpret_cast<const char*>(label.data()), context.size(), context.data(), outputLength));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr data = adoptNS(sec_protocol_metadata_create_secret_with_context(securityMetadata.get(), label.size(), reinterpret_cast<const char*>(label.data()), context.size(), context.data(), outputLength));
     if (!data)
         return completionHandler(std::nullopt);
 

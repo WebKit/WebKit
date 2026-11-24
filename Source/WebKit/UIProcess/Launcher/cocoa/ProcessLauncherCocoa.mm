@@ -277,7 +277,7 @@ void ProcessLauncher::launchProcess()
     launchWithExtensionKit(*this, m_launchOptions.processType, m_client.get(), WTF::move(handler));
 #else
     auto name = serviceName(m_launchOptions, protect(m_client));
-    m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
 #endif
 }
@@ -322,7 +322,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
 #if !USE(EXTENSIONKIT)
-    OSObjectPtr initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 #endif
@@ -355,7 +355,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
         clientIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
-    OSObjectPtr bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", WEBKIT_BUNDLE_VERSION);
@@ -364,7 +364,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     auto languagesIterator = m_launchOptions.extraInitializationData.find<HashTranslatorASCIILiteral>("OverrideLanguages"_s);
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
         LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
-        OSObjectPtr languages = adoptOSObject(xpc_array_create(nullptr, 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr languages = adoptOSObject(xpc_array_create(nullptr, 0));
         for (auto language : StringView(languagesIterator->value).split(','))
             xpcArraySetString(languages.get(), XPC_ARRAY_APPEND, language.utf8());
         xpc_dictionary_set_value(bootstrapMessage.get(), "OverrideLanguages", languages.get());
@@ -377,7 +377,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 #endif
     if (!isWebContentOrGPUExtension) {
         // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.
-        auto containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         if (const char* environmentHOME = getenv("HOME"))
             xpc_dictionary_set_string(containerEnvironmentVariables.get(), "HOME", environmentHOME);
         if (const char* environmentCFFIXED_USER_HOME = getenv("CFFIXED_USER_HOME"))
@@ -443,7 +443,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     auto sdkBehaviorBytes = sdkBehaviors.storageBytes();
     xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviorBytes.data(), sdkBehaviorBytes.size());
 
-    OSObjectPtr extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     for (const auto& keyValuePair : m_launchOptions.extraInitializationData)
         xpcDictionarySetString(extraInitializationData.get(), keyValuePair.key.utf8(), keyValuePair.value.utf8());

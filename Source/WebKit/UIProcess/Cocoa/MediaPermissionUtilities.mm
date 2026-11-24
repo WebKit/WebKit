@@ -404,7 +404,7 @@ void alertForPermission(WebPageProxy& page, PermissionPromptRequest&& request, C
     auto completionBlock = makeBlockPtr(WTF::move(completionHandler));
 
 #if PLATFORM(MAC)
-    RetainPtr alert = adoptNS([NSAlert new]);
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr alert = adoptNS([NSAlert new]);
     [alert setMessageText:alertTitle.get()];
     if (RetainPtr informativeText = promptInformativeText(request))
         [alert setInformativeText:informativeText.get()];

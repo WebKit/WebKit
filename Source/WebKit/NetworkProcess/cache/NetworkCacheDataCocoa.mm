@@ -38,7 +38,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-Data::Data(std::span<const uint8_t> data)
+SUPPRESS_RETAINPTR_CTOR_ADOPT Data::Data(std::span<const uint8_t> data)
     : m_dispatchData(adoptOSObject(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
 {
 }
@@ -69,7 +69,7 @@ std::span<const uint8_t> Data::span() const LIFETIME_BOUND
     if (!m_data.data() && m_dispatchData) {
         const void* data = nullptr;
         size_t size = 0;
-        m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
         m_data = unsafeMakeSpan(static_cast<const uint8_t*>(data), size);
     }
     return m_data;
@@ -96,7 +96,7 @@ bool Data::apply(NOESCAPE const Function<bool(std::span<const uint8_t>)>& applie
 
 Data Data::subrange(size_t offset, size_t size) const
 {
-    return { adoptOSObject(dispatch_data_create_subrange(protect(dispatchData()).get(), offset, size)) };
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return { adoptOSObject(dispatch_data_create_subrange(protect(dispatchData()).get(), offset, size)) };
 }
 
 Data concatenate(const Data& a, const Data& b)
@@ -105,7 +105,7 @@ Data concatenate(const Data& a, const Data& b)
         return b;
     if (b.isNull())
         return a;
-    return { adoptOSObject(dispatch_data_create_concat(protect(a.dispatchData()).get(), protect(b.dispatchData()).get())) };
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return { adoptOSObject(dispatch_data_create_concat(protect(a.dispatchData()).get(), protect(b.dispatchData()).get())) };
 }
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHandle&& outputHandle)
@@ -114,7 +114,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHan
     ASSERT(span.data());
     ASSERT_WITH_SECURITY_IMPLICATION(span.data() != MAP_FAILED);
     outputHandle = { };
-    auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
         munmap(span.data(), span.size());
     }));
     return { WTF::move(bodyMap), Data::Backing::Map };

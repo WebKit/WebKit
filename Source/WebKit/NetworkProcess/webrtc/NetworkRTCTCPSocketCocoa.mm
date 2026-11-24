@@ -54,7 +54,7 @@ using namespace WebCore;
 
 static dispatch_queue_t tcpSocketQueueSingleton()
 {
-    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("WebRTC TCP socket queue", serialQueueWithAutoreleasePoolAttrSingleton()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("WebRTC TCP socket queue", serialQueueWithAutoreleasePoolAttrSingleton()));
     return queue.get().get();
 }
 
@@ -89,9 +89,9 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
 
 static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, UTF8CStringView hostName, UTF8CStringView port, bool isTLS, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
-    RetainPtr host = adoptNS(nw_endpoint_create_host(hostName.utf8(), port.utf8()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr host = adoptNS(nw_endpoint_create_host(hostName.utf8(), port.utf8()));
     // FIXME: Handle TLS certificate validation like for other network code paths, using sec_protocol_options_set_verify_block
-    RetainPtr tcpTLS = adoptNS(nw_parameters_create_secure_tcp(isTLS ? NW_PARAMETERS_DEFAULT_CONFIGURATION : NW_PARAMETERS_DISABLE_PROTOCOL, ^(nw_protocol_options_t tcp_options) {
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr tcpTLS = adoptNS(nw_parameters_create_secure_tcp(isTLS ? NW_PARAMETERS_DEFAULT_CONFIGURATION : NW_PARAMETERS_DISABLE_PROTOCOL, ^(nw_protocol_options_t tcp_options) {
         nw_tcp_options_set_no_delay(tcp_options, true);
     }));
 
@@ -103,7 +103,7 @@ static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProv
         nw_parameters_set_service_class(tcpTLS.get(), nw_service_class_interactive_video);
     }
 
-    return adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 }
 
 NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const webrtc::SocketAddress& remoteAddress, int options, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
@@ -131,8 +131,8 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
                 RetainPtr nwConnection = weakNWConnection.get();
                 if (!nwConnection)
                     return;
-                RetainPtr path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
-                RetainPtr interface = adoptNS(nw_path_copy_interface(path.get()));
+                SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
+                SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr interface = adoptNS(nw_path_copy_interface(path.get()));
                 if (auto name = String::fromUTF8(nw_interface_get_name(interface.get())); !name.isNull())
                     connection->send(Messages::LibWebRTCNetwork::SignalUsedInterface(identifier, WTF::move(name)), 0);
             });
@@ -244,8 +244,8 @@ auto NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
             if (promiseProducer.isSettled())
                 return;
 
-            auto path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
-            auto interface = adoptNS(nw_path_copy_interface(path.get()));
+            SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
+            SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr interface = adoptNS(nw_path_copy_interface(path.get()));
 
             auto* name = nw_interface_get_name(interface.get());
             promiseProducer.resolve(name ? String::fromUTF8(name) : String { });

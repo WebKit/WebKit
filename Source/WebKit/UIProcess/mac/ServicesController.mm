@@ -45,7 +45,7 @@ ServicesController& ServicesController::singleton()
     return sharedController;
 }
 
-ServicesController::ServicesController()
+SUPPRESS_RETAINPTR_CTOR_ADOPT ServicesController::ServicesController()
     : m_refreshQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.ServicesController", serialQueueWithAutoreleasePoolAttrSingleton())))
     , m_hasPendingRefresh(false)
     , m_hasImageServices(false)
@@ -85,7 +85,7 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
 
     auto refreshTime = dispatch_time(DISPATCH_TIME_NOW, refreshImmediately ? 0 : (int64_t)(1 * NSEC_PER_SEC));
     dispatch_after(refreshTime, m_refreshQueue.get(), ^{
-        auto serviceLookupGroup = adoptOSObject(dispatch_group_create());
+        SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr serviceLookupGroup = adoptOSObject(dispatch_group_create());
 
         static NeverDestroyed<RetainPtr<NSImage>> image = adoptNS([[NSImage alloc] init]);
         hasCompatibleServicesForItems(serviceLookupGroup.get(), @[image.get().get()], [this] (bool hasServices) {
