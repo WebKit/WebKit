@@ -74,7 +74,7 @@ public:
     const PlacedFloats::Item* inlineEnd() const;
     bool intersects(const FloatAvoider&) const;
     bool intersects(AxisRange<ParentFormattingContextRoot>) const;
-    bool containsFloatFromFormattingContext() const;
+    bool containsFloatFromFormattingContext(const ElementBox& formattingContextRoot) const;
     NODELETE AxisPosition<ParentFormattingContextRoot> highestBlockAxisPosition() const { return m_highestBlockAxisPosition; }
     NODELETE AxisPosition<ParentFormattingContextRoot> lowestBlockAxisPosition() const;
 
@@ -154,7 +154,7 @@ static bool areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
 }
 #endif
 
-static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats& placedFloats, AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges)
+static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats& placedFloats, AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges, const ElementBox& formattingContextRoot)
 {
     auto lowestBlockAxisPosition = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
     auto innerMostInlineStartAndEnd = std::optional<FloatPair::InlineStartEndIndex> { };
@@ -184,7 +184,7 @@ static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatA
             return *innerMostInlineStartAndEnd;
 
         // Is this float pair is outside of our containing block's content box? In some cases we _may_ overlap them.
-        if (!inlineStartEndFloatPair.intersects(containingBlockContentBoxEdges) && !inlineStartEndFloatPair.containsFloatFromFormattingContext()) {
+        if (!inlineStartEndFloatPair.intersects(containingBlockContentBoxEdges) && !inlineStartEndFloatPair.containsFloatFromFormattingContext(formattingContextRoot)) {
             // Surprisingly floats do overlap each other on the non-floating side (e.g. float: left may overlap a float: right)
             // when they are not considered intrusive (i.e. they are outside of our containing block's content box) and coming from outside of the formatting context.
             return *innerMostInlineStartAndEnd;
@@ -268,7 +268,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     absoluteTopLeft.setY(blockStartCandidate);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, true, isFloatingCandidateStartPositionedInBlockFormattingContext(layoutBox) };
-    findAvailablePosition(floatBox, placedFloats(), absoluteCoordinates.containingBlockContentBox);
+    findAvailablePosition(floatBox, placedFloats(), absoluteCoordinates.containingBlockContentBox, root());
     // Convert box coordinates from formatting root back to containing block.
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatBox.inlineStart() + margins.horizontal.start - containingBlockTopLeft.x(), floatBox.blockStart() + margins.vertical.before - containingBlockTopLeft.y() };
@@ -495,7 +495,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
     // 3. Align the box with the intersected float and probe for placement again (#1). 
     auto& floats = m_placedFloats.list();
     while (true) {
-        auto innerMostInlineStartAndEnd = findAvailablePosition(floatAvoider, m_placedFloats, containingBlockContentBoxEdges);
+        auto innerMostInlineStartAndEnd = findAvailablePosition(floatAvoider, m_placedFloats, containingBlockContentBoxEdges, root());
         if (innerMostInlineStartAndEnd.isEmpty())
             return;
 
@@ -636,14 +636,12 @@ NODELETE bool FloatPair::intersects(AxisRange<ParentFormattingContextRoot> conta
     return false;
 }
 
-bool FloatPair::containsFloatFromFormattingContext() const
+bool FloatPair::containsFloatFromFormattingContext(const ElementBox& formattingContextRoot) const
 {
     ASSERT(!m_floatPair.isEmpty());
 
     auto isInsideCurrentFormattingContext = [&](auto* floatBox) {
-        // FIXME: This should be a tree traversal on the ancestor chain to see if this belongs to the
-        // FloatingContext's formatting context (e.g. float may come from parent and sibling formatting contexts)
-        return floatBox && floatBox->layoutBox();
+        return floatBox && floatBox->isInFormattingContextOf(formattingContextRoot);
     };
     return isInsideCurrentFormattingContext(inlineStart()) || isInsideCurrentFormattingContext(inlineEnd());
 }
