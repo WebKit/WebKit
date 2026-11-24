@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let canvas = document.createElement("canvas");
+canvas.width = 2;
+canvas.height = 2;
+
+let ctx = canvas.getContext("2d");
+
+let patterns = [];
+
+function fill2DCanvas(target, color, colorSpace) {
+    let context = target.getContext("2d", {colorSpace});
+    context.fillStyle = color;
+    context.fillRect(0, 0, target.width, target.height);
+    return target;
+}
+
+function solidColorCanvas(color, colorSpace = "srgb") {
+    let source = document.createElement("canvas");
+    source.width = 2;
+    source.height = 2;
+    return fill2DCanvas(source, color, colorSpace);
+}
+
+function clearWebGLCanvas(target, [r, g, b]) {
+    let gl = target.getContext("webgl");
+    gl.clearColor(r, g, b, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    return target;
+}
+
+async function transferToBitmapRendererCanvas(target, color, colorSpace) {
+    let bitmap = await createImageBitmap(solidColorCanvas(color, colorSpace));
+    target.getContext("bitmaprenderer").transferFromImageBitmap(bitmap);
+    return target;
+}
+
+function svgDataURL(color) {
+    return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2"><rect width="2" height="2" fill="${color}"/></svg>`);
+}
+
+function loadHTMLImage(src) {
+    return new Promise((resolve, reject) => {
+        let image = new Image;
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = src;
+    });
+}
+
+function loadSVGImage(src) {
+    return new Promise((resolve, reject) => {
+        let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        let image = document.createElementNS("http://www.w3.org/2000/svg", "image");
+        image.setAttribute("width", "2");
+        image.setAttribute("height", "2");
+        image.addEventListener("load", () => resolve(image));
+        image.addEventListener("error", reject);
+        image.setAttribute("href", src);
+        svg.appendChild(image);
+        document.body.appendChild(svg);
+    });
+}
+
+function loadVideo(src) {
+    return new Promise((resolve, reject) => {
+        let video = document.createElement("video");
+        video.addEventListener("loadeddata", () => resolve(video));
+        video.addEventListener("error", reject);
+        video.src = src;
+    });
+}
+
+// Draws the pattern source, to compare with the tile image in the recording. Patterns made from SVG
+// images taint the canvas, so this draws the source itself. createPattern() rasterizes SVG images in
+// sRGB, so for SVG images with display-p3 colors the tile differs from the source.
+function centerPixelOfSource(source, width, height) {
+    let target = document.createElement("canvas");
+    target.width = width;
+    target.height = height;
+    let context = target.getContext("2d", {colorSpace: "display-p3"});
+    context.drawImage(source, 0, 0, width, height);
+    return Array.from(context.getImageData(Math.floor(width / 2), Math.floor(height / 2), 1, 1, {colorSpace: "display-p3"}).data);
+}
+
+async function addPattern(label, sourcePromise, width = 2, height = 2) {
+    let source = await sourcePromise;
+    let pattern = ctx.createPattern(source, "repeat");
+    patterns.push({label, pattern, width, height, pixel: centerPixelOfSource(source, width, height)});
+}
+
+async function load() {
+    for (let [colorSpace, red, green, blue, yellow, magenta, cyan] of [
+        ["srgb", "rgb(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)", "rgb(255, 255, 0)", "rgb(255, 0, 255)", "rgb(0, 255, 255)"],
+        ["display-p3", "color(display-p3 1 0 0)", "color(display-p3 0 1 0)", "color(display-p3 0 0 1)", "color(display-p3 1 1 0)", "color(display-p3 1 0 1)", "color(display-p3 0 1 1)"],
+    ]) {
+        await addPattern(`HTMLImageElement with a PNG source (${colorSpace})`, loadHTMLImage(solidColorCanvas(red, colorSpace).toDataURL()));
+        await addPattern(`HTMLImageElement with an SVG source (${colorSpace})`, loadHTMLImage(svgDataURL(green)));
+        await addPattern(`SVGImageElement with a PNG source (${colorSpace})`, loadSVGImage(solidColorCanvas(blue, colorSpace).toDataURL()));
+        await addPattern(`SVGImageElement with an SVG source (${colorSpace})`, loadSVGImage(svgDataURL(yellow)));
+        await addPattern(`HTMLCanvasElement with a 2d context (${colorSpace})`, solidColorCanvas(magenta, colorSpace));
+        await addPattern(`HTMLCanvasElement with a bitmaprenderer context (${colorSpace})`, transferToBitmapRendererCanvas(Object.assign(document.createElement("canvas"), {width: 2, height: 2}), cyan, colorSpace));
+        await addPattern(`OffscreenCanvas with a 2d context (${colorSpace})`, fill2DCanvas(new OffscreenCanvas(2, 2), red, colorSpace));
+        await addPattern(`OffscreenCanvas with a bitmaprenderer context (${colorSpace})`, transferToBitmapRendererCanvas(new OffscreenCanvas(2, 2), green, colorSpace));
+        await addPattern(`ImageBitmap (${colorSpace})`, createImageBitmap(solidColorCanvas(blue, colorSpace)));
+    }
+    await addPattern("HTMLCanvasElement with a webgl context", clearWebGLCanvas(Object.assign(document.createElement("canvas"), {width: 2, height: 2}), [1, 1, 0]));
+    await addPattern("OffscreenCanvas with a webgl context", clearWebGLCanvas(new OffscreenCanvas(2, 2), [1, 0, 1]));
+    await addPattern("HTMLVideoElement", loadVideo("../../media/content/pure-color-green.mp4"), 640, 480);
+
+    runTest();
+}
+
+function patternInfo() {
+    return JSON.stringify(patterns.map(({label, width, height, pixel}) => ({label, width, height, pixel})));
+}
+
+function performActions() {
+    console.record(ctx, {name: "TEST"});
+    for (let {pattern} of patterns)
+        ctx.fillStyle = pattern;
+    console.recordEnd(ctx);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recording2D.patternTile");
+
+    const colorTolerance = 3;
+
+    function processRecording(recording) {
+        return new Promise((resolve) => {
+            let listener = recording.addEventListener(WI.Recording.Event.ProcessedAction, () => {
+                if (!recording.ready)
+                    return;
+
+                recording.removeEventListener(WI.Recording.Event.ProcessedAction, listener);
+                resolve();
+            });
+            recording.startProcessing();
+        });
+    }
+
+    function centerPixelOfImage(image) {
+        let canvas = document.createElement("canvas");
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        let context = canvas.getContext("2d", {colorSpace: "display-p3"});
+        context.drawImage(image, 0, 0);
+        return Array.from(context.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1, {colorSpace: "display-p3"}).data);
+    }
+
+    suite.addTestCase({
+        name: "Canvas.recording2D.patternTile.sourceTypes",
+        description: "Check that the tile image of a CanvasPattern is recorded for every pattern source type.",
+        async test() {
+            let recordingStoppedPromise = WI.Canvas.awaitEvent(WI.Canvas.Event.RecordingStopped);
+            await InspectorTest.evaluateInPage(`performActions()`);
+            let recording = (await recordingStoppedPromise).data.recording;
+            await processRecording(recording);
+
+            let patterns = JSON.parse(await InspectorTest.evaluateInPage(`patternInfo()`));
+
+            let patternActions = recording.frames.flatMap((frame) => frame.actions).filter((action) => action.name === "fillStyle" && action.swizzleTypes[0] === WI.Recording.Swizzle.CanvasPattern);
+            InspectorTest.expectEqual(patternActions.length, patterns.length, "Every pattern should have been recorded.");
+
+            for (let i = 0; i < patternActions.length; ++i) {
+                let {label, width, height, pixel} = patterns[i];
+                InspectorTest.log(`${label}:`);
+
+                let pattern = patternActions[i].parameters[0];
+                InspectorTest.expectThat(pattern.__data.image.startsWith("data:image/png;base64,"), "Tile should be recorded as a PNG data URL.");
+
+                let image = pattern.__image;
+                InspectorTest.expectEqual(`${image.naturalWidth}x${image.naturalHeight}`, `${width}x${height}`, `Tile should be ${width}x${height}.`);
+                if (!image.naturalWidth || !image.naturalHeight)
+                    continue;
+
+                let recordedPixel = centerPixelOfImage(image);
+                let matches = recordedPixel.every((value, channel) => Math.abs(value - pixel[channel]) <= colorTolerance);
+                InspectorTest.expectThat(matches, "Tile should have the colors of the source.");
+                if (!matches)
+                    InspectorTest.log(`Source pixel: ${JSON.stringify(pixel)}, recorded tile pixel: ${JSON.stringify(recordedPixel)}`);
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="window.testRunner?.waitUntilDone(); load()">
+    <p>Test that canvas recordings record the tile image of patterns for every pattern source type.</p>
+</body>
+</html>

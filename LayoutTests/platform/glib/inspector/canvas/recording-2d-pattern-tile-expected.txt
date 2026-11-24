@@ -1,0 +1,112 @@
+Test that canvas recordings record the tile image of patterns for every pattern source type.
+
+
+== Running test suite: Canvas.recording2D.patternTile
+-- Running test case: Canvas.recording2D.patternTile.sourceTypes
+PASS: Every pattern should have been recorded.
+HTMLImageElement with a PNG source (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+HTMLImageElement with an SVG source (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+SVGImageElement with a PNG source (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+SVGImageElement with an SVG source (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+HTMLCanvasElement with a 2d context (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+HTMLCanvasElement with a bitmaprenderer context (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+OffscreenCanvas with a 2d context (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+OffscreenCanvas with a bitmaprenderer context (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+ImageBitmap (srgb):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+HTMLImageElement with a PNG source (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+HTMLImageElement with an SVG source (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+FAIL: Tile should have the colors of the source.
+    Expected: truthy
+    Actual: false
+Source pixel: [0,255,0,255], recorded tile pixel: [117,251,76,255]
+SVGImageElement with a PNG source (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+SVGImageElement with an SVG source (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+FAIL: Tile should have the colors of the source.
+    Expected: truthy
+    Actual: false
+Source pixel: [255,255,0,255], recorded tile pixel: [255,255,84,255]
+HTMLCanvasElement with a 2d context (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+FAIL: Tile should have the colors of the source.
+    Expected: truthy
+    Actual: false
+Source pixel: [255,0,255,255], recorded tile pixel: [234,51,247,255]
+HTMLCanvasElement with a bitmaprenderer context (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+FAIL: Tile should have the colors of the source.
+    Expected: truthy
+    Actual: false
+Source pixel: [0,255,255,255], recorded tile pixel: [117,251,253,255]
+OffscreenCanvas with a 2d context (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+FAIL: Tile should have the colors of the source.
+    Expected: truthy
+    Actual: false
+Source pixel: [255,0,0,255], recorded tile pixel: [234,51,35,255]
+OffscreenCanvas with a bitmaprenderer context (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+FAIL: Tile should have the colors of the source.
+    Expected: truthy
+    Actual: false
+Source pixel: [0,255,0,255], recorded tile pixel: [117,251,76,255]
+ImageBitmap (display-p3):
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+FAIL: Tile should have the colors of the source.
+    Expected: truthy
+    Actual: false
+Source pixel: [0,0,255,255], recorded tile pixel: [0,0,245,255]
+HTMLCanvasElement with a webgl context:
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+OffscreenCanvas with a webgl context:
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 2x2.
+PASS: Tile should have the colors of the source.
+HTMLVideoElement:
+PASS: Tile should be recorded as a PNG data URL.
+PASS: Tile should be 640x480.
+PASS: Tile should have the colors of the source.
+
