@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+window.calls = [];
+
+function userGetter(label) {
+    return function() {
+        calls.push(label);
+        return label;
+    };
+}
+
+window.boundGetter = {};
+Object.defineProperty(boundGetter, "value", {get: userGetter("bound").bind(null), enumerable: true, configurable: true});
+
+window.proxyGetter = {};
+Object.defineProperty(proxyGetter, "value", {get: new Proxy(userGetter("proxy"), {}), enumerable: true, configurable: true});
+
+window.toStringGetter = {};
+let getterWithToString = userGetter("toStringGetter");
+getterWithToString.toString = function() {
+    calls.push("toString");
+    return "function () {\n    [native code]\n}";
+};
+Object.defineProperty(toStringGetter, "value", {get: getterWithToString, enumerable: true, configurable: true});
+
+window.inheritedBoundGetter = Object.create(Object.defineProperty({}, "value", {get: userGetter("inheritedBound").bind(null), enumerable: true, configurable: true}));
+
+window.url = new URL("https://example.com/path?query");
+window.arrayBuffer = new ArrayBuffer(8);
+window.countQueuingStrategy = new CountQueuingStrategy({highWaterMark: 7});
+
+// Embedder callbacks, such as the getters of JSExport properties, are internal functions, like `Array`.
+window.internalFunctionGetter = Object.defineProperty({}, "list", {get: Array, enumerable: true, configurable: true});
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.PreviewSideEffects.Getters");
+
+    async function evaluate(expression) {
+        let {result} = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression, objectGroup: "test", generatePreview: true}});
+        return result;
+    }
+
+    async function takeCalls() {
+        let {result} = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression: "calls.splice(0)", returnByValue: true}});
+        return result.value;
+    }
+
+    async function displayableProperties(remoteObject) {
+        let {properties} = await InspectorProtocol.awaitCommand({method: "Runtime.getDisplayableProperties", params: {objectId: remoteObject.objectId}});
+        return properties;
+    }
+
+    function addUserGetterTestCase(name, expression, getterLabel, {isOwn} = {isOwn: true}) {
+        suite.addTestCase({
+            name: `Runtime.PreviewSideEffects.Getters.${name}`,
+            description: `Previewing and expanding '${expression}' should not call its getter.`,
+            async test() {
+                await takeCalls();
+
+                let remoteObject = await evaluate(expression);
+                let previewProperty = remoteObject.preview.properties.find((property) => property.name === "value");
+                ProtocolTest.expectEqual(previewProperty?.type, "accessor", "Preview should show 'value' as an accessor.");
+                ProtocolTest.expectEqual((await takeCalls()).join(", "), "", "Preview should not call page code.");
+
+                let properties = await displayableProperties(remoteObject);
+                let property = properties.find((property) => property.name === "value");
+                if (isOwn) {
+                    ProtocolTest.expectThat(property && "get" in property && !("value" in property), "Displayable property 'value' should be an accessor.");
+                    ProtocolTest.expectFalse(property?.nativeGetter, "Displayable property 'value' should not be a native getter.");
+                } else
+                    ProtocolTest.expectFalse(property, "Inherited accessor 'value' should not be listed as a native getter.");
+                ProtocolTest.expectFalse((await takeCalls()).includes(getterLabel), "Displayable properties should not call the getter.");
+            }
+        });
+    }
+
+    addUserGetterTestCase("BoundFunction", "boundGetter", "bound");
+    addUserGetterTestCase("CallableProxy", "proxyGetter", "proxy");
+    addUserGetterTestCase("OwnToString", "toStringGetter", "toStringGetter");
+    addUserGetterTestCase("InheritedBoundFunction", "inheritedBoundGetter", "inheritedBound", {isOwn: false});
+
+    suite.addTestCase({
+        name: "Runtime.PreviewSideEffects.Getters.NativeGetters",
+        description: "Native getters should still be shown as values.",
+        async test() {
+            let cases = [
+                ["url", "href", true],
+                ["url", "pathname", false],
+                ["arrayBuffer", "byteLength", true],
+                ["countQueuingStrategy", "highWaterMark", true],
+                ["internalFunctionGetter", "list", true],
+            ];
+            for (let [expression, name, isInPreview] of cases) {
+                let remoteObject = await evaluate(expression);
+                if (isInPreview) {
+                    let previewProperty = remoteObject.preview.properties.find((property) => property.name === name);
+                    ProtocolTest.log(`${expression} preview: ${name} = ${previewProperty?.value ?? previewProperty?.valuePreview?.description}`);
+                }
+
+                let properties = await displayableProperties(remoteObject);
+                let property = properties.find((property) => property.name === name);
+                ProtocolTest.expectThat(property?.nativeGetter, `${expression}: displayable property '${name}' should be a native getter.`);
+                ProtocolTest.log(`${expression} displayable property: ${name} = ${property?.value?.value ?? property?.value?.description}`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that previews and displayable properties invoke native getters, but not user getters that look native.</p>
+</body>
+</html>
