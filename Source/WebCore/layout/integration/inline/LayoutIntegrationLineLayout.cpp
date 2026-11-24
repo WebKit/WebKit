@@ -1564,7 +1564,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
             return;
         if (!layerRenderer) {
             // Shortcut block-only painting.
-            Paint::BlockPainter { protect(flow()), paintInfo, paintOffset }.paintBlockLevelContentInInline();
+            Paint::BlockPainter::paintBlockLevelContentInInline(protect(flow()), paintInfo, paintOffset);
             return;
         }
     }

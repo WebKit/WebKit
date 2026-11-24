@@ -3192,6 +3192,7 @@ rendering/paint/MaskPainter.cpp @header:RenderStyleGetters @cost:4
 rendering/paint/NinePieceImagePainter.cpp @header:RenderStyleGetters @cost:5
 rendering/paint/OutlinePainter.cpp @header:RenderStyleGetters @cost:6
 rendering/paint/PaintClipPathScope.cpp
+rendering/paint/PaintOrderIterator.cpp @header:RenderStyleGetters @cost:3
 rendering/paint/PaintTextStyle.cpp @header:RenderStyleGetters
 rendering/paint/TextBoxPainter.cpp @header:RenderStyleGetters
 rendering/paint/TextDecorationPainter.cpp @header:RenderStyleGetters

@@ -6930,6 +6930,7 @@
 		E444B0A128C7437900CA560E /* BorderPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E444B0A028C7437900CA560E /* BorderPainter.h */; };
 		9E73BBA26303CDD5AC0FC2BD /* BoxDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */; };
 		DED455D86AFC6F27CAED7FD0 /* MaskPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 67DCCCAC39DA40C5774677AC /* MaskPainter.h */; };
+		9234214D6BA65E79F2D23B59 /* PaintOrderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B0934FEEB82F0746DB18450 /* PaintOrderIterator.h */; };
 		37E7335109FD761165A999E6 /* BlockPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = B141E4BFEA47122D7DBF2559 /* BlockPainter.h */; };
 		D5BED17B11A73E7021AA8090 /* TextPaintStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 273211FAAB837343D620CB8D /* TextPaintStyle.h */; };
 		3A257E33CCFA0AF52DD3E2CF /* PaintTransformScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C6D41BC4AA85D259FF1215 /* PaintTransformScope.h */; };
@@ -22961,6 +22962,8 @@
 		E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxDecorationPainter.h; sourceTree = "<group>"; };
 		D14F6BB279C841B98039C41A /* MaskPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MaskPainter.cpp; sourceTree = "<group>"; };
 		67DCCCAC39DA40C5774677AC /* MaskPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskPainter.h; sourceTree = "<group>"; };
+		BC1033E07661EE79FC603E12 /* PaintOrderIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaintOrderIterator.cpp; sourceTree = "<group>"; };
+		2B0934FEEB82F0746DB18450 /* PaintOrderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintOrderIterator.h; sourceTree = "<group>"; };
 		6A8FE8033371680FCD6A824D /* BlockPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlockPainter.cpp; sourceTree = "<group>"; };
 		B141E4BFEA47122D7DBF2559 /* BlockPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockPainter.h; sourceTree = "<group>"; };
 		273211FAAB837343D620CB8D /* TextPaintStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPaintStyle.h; sourceTree = "<group>"; };
@@ -28225,6 +28228,8 @@
 				55EC95972069C92D007DD0A9 /* PaintFrequencyTracker.h */,
 				0885067D11DA045B00182B98 /* PaintInfo.h */,
 				CD671C932F5BA34F00B387A2 /* PaintInfoInlines.h */,
+				BC1033E07661EE79FC603E12 /* PaintOrderIterator.cpp */,
+				2B0934FEEB82F0746DB18450 /* PaintOrderIterator.h */,
 				0885067E11DA045B00182B98 /* PaintPhase.h */,
 				E4C91A0F1802343900A17F6D /* PaintTextStyle.cpp */,
 				E4C91A0D1802343100A17F6D /* PaintTextStyle.h */,
@@ -48359,6 +48364,7 @@
 				55EC9599206AA7A0007DD0A9 /* PaintFrequencyTracker.h in Headers */,
 				0885067F11DA045B00182B98 /* PaintInfo.h in Headers */,
 				CD671C942F5BA34F00B387A2 /* PaintInfoInlines.h in Headers */,
+				9234214D6BA65E79F2D23B59 /* PaintOrderIterator.h in Headers */,
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
 				4B1E13EB217937B30042CF98 /* PaintRenderingContext2D.h in Headers */,
 				E4C91A0E1802343100A17F6D /* PaintTextStyle.h in Headers */,

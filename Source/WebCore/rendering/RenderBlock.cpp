@@ -1114,12 +1114,12 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
 
 void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    Paint::BlockPainter { *this, paintInfo, paintOffset }.paint();
+    Paint::BlockPainter::paint(*this, paintInfo, paintOffset);
 }
 
 void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    Paint::BlockPainter { *this, paintInfo, paintOffset }.paintObject();
+    Paint::BlockPainter::paintObject(*this, paintInfo, paintOffset);
 }
 
 void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

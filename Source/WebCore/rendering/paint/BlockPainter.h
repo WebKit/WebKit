@@ -26,8 +26,12 @@
 #pragma once
 
 #include "LayoutPoint.h"
+#include "PaintPhase.h"
 #include "RenderBlock.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/OptionSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -40,35 +44,74 @@ class LineLayout;
 
 namespace Paint {
 
+// The static functions paint one block. paint() walks the block's subtree with PaintOrderIterator
+// when the subtree can be iterated, using a BlockPainter instance for the walk.
 class BlockPainter {
 public:
-    BlockPainter(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
+    static void paint(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
+    static void paintObject(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
 
-    void paint();
-    void paintObject();
+    enum class ContentsAction : uint8_t { Paint, Skip, Stop };
+    // The parts of paintObject() before and after the contents.
+    static ContentsAction paintBeforeContents(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
+    static void paintAfterContents(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
 
-    void paintChildren(PaintInfo& paintInfoForChild);
+    static void paintInlineChildren(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset);
+    static void paintChildren(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset, PaintInfo& paintInfoForChildren);
 
     enum PaintBlockType { PaintAsBlock, PaintAsInlineBlock };
-    void paintChild(RenderBox&, PaintInfo& paintInfoForChild, PaintBlockType = PaintAsBlock);
+    static void paintChild(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset, RenderBox&, PaintInfo& paintInfoForChild, PaintBlockType = PaintAsBlock);
+    static void paintFloat(PaintInfo&, RenderBox&, const LayoutPoint& floatBoxLocation);
 
-    void paintBlockLevelContentInInline();
+    static void paintBlockLevelContentInInline(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
 
     static PaintInfo paintInfoForBlockChildren(const RenderBlock&, const PaintInfo&);
+    static void adjustPaintInfoForBlockChildren(const RenderBlock&, PaintInfo&);
+
+    // Whether the containing block skips the child when painting its children in normal flow, because it is painted elsewhere or not at all.
+    static bool isExcludedFromNormalFlowPainting(const RenderBox&);
+
+    static bool isNonPaintingTraversalPhase(PaintPhase);
+    static bool isVisualContentClippedOut(const RenderBlock&, const PaintInfo&, const LayoutPoint& adjustedPaintOffset);
+    static void paintOverflowControls(const RenderBlock&, const PaintInfo&, PaintPhase, const LayoutPoint& adjustedPaintOffset);
 
 private:
-    void paintContents(const LayoutPoint&);
-    void paintInlineChildren(const LayoutPoint&);
-    void paintFloatsAndBlockLevelContentInInline(const LayoutIntegration::LineLayout&);
-    void paintFloat(RenderBox&, const LayoutPoint&);
-    void paintColumnRules(const LayoutPoint&);
-    void paintExcludedChildrenInBorder();
-    void paintCarets();
-    void paintCaret(CaretType);
+    BlockPainter(RenderBlock& root, PaintInfo&, const LayoutPoint& paintOffset);
 
-    const CheckedRef<RenderBlock> m_block;
+    void paintSubtree();
+
+    static LayoutPoint scrolledPaintOffset(const RenderBlock&, const LayoutPoint& paintOffset);
+    static void paintContents(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset);
+    static void paintFloatsAndBlockLevelContentInInline(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset, const LayoutIntegration::LineLayout&);
+    static void paintColumnRules(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset);
+    static void paintExcludedChildrenInBorder(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
+    static void paintCarets(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset);
+    static void paintCaret(RenderBlock&, PaintInfo&, const LayoutPoint& paintOffset, CaretType);
+
+    // The parts of the paint info that adjustPaintInfoForBlockChildren() changes.
+    struct PaintInfoState {
+        PaintPhase phase;
+        CheckedPtr<RenderObject> subtreePaintRoot;
+        OptionSet<PaintBehavior> paintBehavior;
+    };
+    // An entered block.
+    struct Parent {
+        // The paint info state of the block's parent, restored by popParent(). Unset for the root.
+        std::optional<PaintInfoState> savedPaintInfoState;
+        // pushContentsClip() can change the phase, so remember the one the block started with.
+        PaintPhase phase;
+        bool pushedClip { false };
+    };
+
+    // Adjusts the paint info for the children of the parent block, if there is one.
+    void pushParent(const RenderBlock* parentBlock);
+    void popParent();
+    Parent& parent() LIFETIME_BOUND { return m_parentStack.last(); }
+
+    const CheckedRef<RenderBlock> m_root;
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;
+    Vector<Parent, 16> m_parentStack;
 };
 
 } // namespace Paint
