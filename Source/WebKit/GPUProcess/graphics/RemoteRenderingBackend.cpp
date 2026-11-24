@@ -593,14 +593,14 @@ void RemoteRenderingBackend::releasePathImpl(RemotePathImplIdentifier identifier
     MESSAGE_CHECK(success, "Path released before being cached.");
 }
 
-void RemoteRenderingBackend::cacheGradient(Ref<const Gradient>&& gradient, RemoteGradientIdentifier identifier)
+void RemoteRenderingBackend::cacheGradient(Ref<const Gradient>&& gradient, GradientIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.cacheGradient(identifier, WTF::move(gradient));
     MESSAGE_CHECK(success, "Gradient already cached.");
 }
 
-void RemoteRenderingBackend::releaseGradient(RemoteGradientIdentifier identifier)
+void RemoteRenderingBackend::releaseGradient(GradientIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.releaseGradient(identifier);

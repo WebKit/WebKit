@@ -482,7 +482,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/FloatRectCG.cpp
     platform/graphics/cg/FloatSizeCG.cpp
     platform/graphics/cg/GradientCG.cpp
-    platform/graphics/cg/GradientRendererCG.cpp
+    platform/graphics/cg/GradientCacheCG.cpp
     platform/graphics/cg/GraphicsContextCG.cpp
     platform/graphics/cg/GraphicsContextGLCG.cpp
     platform/graphics/cg/IOSurfacePool.mm
@@ -1338,7 +1338,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cg/CGContextStateSaver.h
     platform/graphics/cg/CGWindowUtilities.h
     platform/graphics/cg/ColorSpaceCG.h
-    platform/graphics/cg/GradientRendererCG.h
+    platform/graphics/cg/GradientCacheCG.h
     platform/graphics/cg/GraphicsContextCG.h
     platform/graphics/cg/IOSurfacePool.h
     platform/graphics/cg/ImageBufferCGBackend.h

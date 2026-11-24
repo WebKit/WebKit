@@ -203,6 +203,7 @@ template: enum class TestWebKitAPI::TestedObjectIdentifierType
 template: enum class WebCore::DOMCacheIdentifierType
 template: enum class WebCore::BroadcastChannelIdentifierType
 template: struct WebCore::FileSystemWritableFileStreamIdentifierType
+template: struct WebCore::GradientIdentifierType
 template: struct WebCore::IDBDatabaseConnectionIdentifierType
 template: struct WebCore::IDBIndexIdentifierType
 template: struct WebCore::IDBObjectStoreIdentifierType
@@ -227,7 +228,6 @@ template: struct WebKit::GPUProcessConnectionIdentifierType
 template: enum class WebKit::LegacyCustomProtocolIDType
 template: struct WebKit::LibWebRTCResolverIdentifierType
 template: struct WebKit::LogStreamIdentifierType
-template: struct WebKit::RemoteGradientIdentifierType
 template: struct WebKit::RemoteFreeformGradientIdentifierType
 template: struct WebKit::RemoteMeshGradientIdentifierType
 template: struct WebKit::RemoteGraphicsContextIdentifierType

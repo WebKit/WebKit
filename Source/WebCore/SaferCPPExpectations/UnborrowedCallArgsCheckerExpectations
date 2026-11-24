@@ -232,7 +232,7 @@ platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
 platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
-platform/graphics/cg/GradientRendererCG.cpp
+platform/graphics/cg/GradientCacheCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cocoa/CMUtilities.mm
 platform/graphics/cocoa/GraphicsContextGLCocoa.mm

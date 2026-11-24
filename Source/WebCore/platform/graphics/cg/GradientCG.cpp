@@ -29,46 +29,21 @@
 
 #if USE(CG)
 
-#include "GradientRendererCG.h"
+#include "GradientCacheCG.h"
 #include "GraphicsContextCG.h"
-#include "PredefinedColorSpace.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-static std::optional<ColorSpace> nonLinearColorSpace(const ColorSpace& colorSpace)
-{
-    auto predefined = toPredefinedColorSpace(colorSpace);
-    if (!predefined)
-        return colorSpace;
-    switch (*predefined) {
-    case PredefinedColorSpace::SRGBLinear:
-#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
-    case PredefinedColorSpace::DisplayP3Linear:
-#endif
-        return std::nullopt;
-    default:
-        return colorSpace;
-    }
-}
-
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect) const
 {
     context.clip(rect);
-    paint(context);
+    paint(protect(context.platformContext()), GradientCacheCG::cgGradient(*this, GradientCacheCG::colorSpaceForDestination(context.colorSpace())).get());
 }
 
-void Gradient::paint(GraphicsContext& context) const
+void Gradient::paint(CGContextRef platformContext, CGGradientRef gradient) const
 {
-    paint(protect(context.platformContext()), nonLinearColorSpace(context.colorSpace()));
-}
-
-void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> colorSpace) const
-{
-    if (!m_platformRenderer || m_platformRenderer->colorSpace() != colorSpace)
-        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops, colorSpace };
-
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {
             switch (m_spreadMethod) {
@@ -99,7 +74,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
                     CGPoint left = CGPointMake(flip ? end : start, 0);
                     CGPoint right = CGPointMake(flip ? start : end, 0);
 
-                    m_platformRenderer->drawLinearGradient(platformContext, left, right, extendOptions);
+                    CGContextDrawLinearGradient(platformContext, gradient, left, right, extendOptions);
                 };
 
                 auto isLeftOf = [](CGFloat start, CGFloat end, CGRect boundingBox) -> bool {
@@ -149,7 +124,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
             }
             case GradientSpreadMethod::Pad: {
                 CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
-                m_platformRenderer->drawLinearGradient(platformContext, data.point0, data.point1, extendOptions);
+                CGContextDrawLinearGradient(platformContext, gradient, data.point0, data.point1, extendOptions);
                 break;
             }
             }
@@ -167,7 +142,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
             }
 
             CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
-            m_platformRenderer->drawRadialGradient(platformContext, data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
+            CGContextDrawRadialGradient(platformContext, gradient, data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
 
             if (needScaling)
                 CGContextRestoreGState(platformContext);
@@ -177,7 +152,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-piOverTwoDouble);
             CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
-            m_platformRenderer->drawConicGradient(platformContext, data.point0, data.angleRadians);
+            CGContextDrawConicGradient(platformContext, gradient, data.point0, data.angleRadians);
             CGContextRestoreGState(platformContext);
         }
     );

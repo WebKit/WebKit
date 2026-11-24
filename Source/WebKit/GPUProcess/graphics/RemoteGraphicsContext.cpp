@@ -162,7 +162,7 @@ void RemoteGraphicsContext::setFillColor(const Color& color)
     context().setFillColor(color);
 }
 
-void RemoteGraphicsContext::setFillCachedGradient(RemoteGradientIdentifier identifier, const AffineTransform& spaceTransform)
+void RemoteGraphicsContext::setFillCachedGradient(GradientIdentifier identifier, const AffineTransform& spaceTransform)
 {
     RefPtr gradient = resourceCache().cachedGradient(identifier);
     MESSAGE_CHECK(gradient);
@@ -203,7 +203,7 @@ void RemoteGraphicsContext::setStrokeColor(const WebCore::Color& color)
     context().setStrokeColor(color);
 }
 
-void RemoteGraphicsContext::setStrokeCachedGradient(RemoteGradientIdentifier identifier, const AffineTransform& spaceTransform)
+void RemoteGraphicsContext::setStrokeCachedGradient(GradientIdentifier identifier, const AffineTransform& spaceTransform)
 {
     RefPtr gradient = resourceCache().cachedGradient(identifier);
     MESSAGE_CHECK(gradient);

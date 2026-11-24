@@ -47,8 +47,8 @@ messages -> RemoteRenderingBackend Stream {
     ReleaseFont(WebCore::RenderingResourceIdentifier identifier)
     CacheFontCustomPlatformData(struct WebCore::FontCustomPlatformSerializedData fontCustomPlatformData) NotStreamEncodable
     ReleaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier identifier)
-    CacheGradient(Ref<const WebCore::Gradient> gradient, WebKit::RemoteGradientIdentifier identifier)
-    ReleaseGradient(WebKit::RemoteGradientIdentifier identifier)
+    CacheGradient(Ref<const WebCore::Gradient> gradient, WebCore::GradientIdentifier identifier)
+    ReleaseGradient(WebCore::GradientIdentifier identifier)
     CacheFreeformGradient(Ref<WebCore::FreeformGradient> gradient, WebKit::RemoteFreeformGradientIdentifier identifier)
     ReleaseFreeformGradient(WebKit::RemoteFreeformGradientIdentifier identifier)
     CacheMeshGradient(Ref<WebCore::MeshGradient> gradient, WebKit::RemoteMeshGradientIdentifier identifier)

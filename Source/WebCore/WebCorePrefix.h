@@ -694,7 +694,7 @@
 #include "GradientColorStop.h"
 #include "GradientColorStops.h"
 #if USE(CG)
-#include "GradientRendererCG.h"
+#include "GradientCacheCG.h"
 #endif
 #include "GraphicsStyle.h"
 #include "HTMLElement.h"

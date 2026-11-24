@@ -38,7 +38,6 @@
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteDisplayListRecorderIdentifier.h"
 #include "RemoteFreeformGradientIdentifier.h"
-#include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
 #include "RemoteMeshGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
@@ -58,6 +57,7 @@
 #include "StreamServerConnection.h"
 #include <WebCore/FontBase.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/GradientIdentifier.h>
 #include <WebCore/PixelFormat.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -176,8 +176,8 @@ private:
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
     void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
     void releasePathImpl(RemotePathImplIdentifier);
-    void cacheGradient(Ref<const WebCore::Gradient>&&, RemoteGradientIdentifier);
-    void releaseGradient(RemoteGradientIdentifier);
+    void cacheGradient(Ref<const WebCore::Gradient>&&, WebCore::GradientIdentifier);
+    void releaseGradient(WebCore::GradientIdentifier);
     void cacheFreeformGradient(Ref<WebCore::FreeformGradient>&&, RemoteFreeformGradientIdentifier);
     void releaseFreeformGradient(RemoteFreeformGradientIdentifier);
     void cacheMeshGradient(Ref<WebCore::MeshGradient>&&, RemoteMeshGradientIdentifier);

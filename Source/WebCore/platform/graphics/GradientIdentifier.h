@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,13 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include <wtf/ObjectIdentifier.h>
 
-namespace WebKit {
+namespace WebCore {
 
-struct RemoteGradientIdentifierType;
-using RemoteGradientIdentifier = AtomicObjectIdentifier<RemoteGradientIdentifierType>;
+// Identifies a Gradient and its color stops within a process. Generated per process, so identifiers
+// of gradients in different processes may be equal.
+struct GradientIdentifierType;
+using GradientIdentifier = AtomicObjectIdentifier<GradientIdentifierType>;
 
-} // namespace WebKit
-
-#endif
+} // namespace WebCore

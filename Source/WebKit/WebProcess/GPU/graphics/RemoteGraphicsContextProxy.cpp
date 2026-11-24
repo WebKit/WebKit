@@ -885,7 +885,7 @@ bool RemoteGraphicsContextProxy::recordResourceUse(FontBase& font)
     return true;
 }
 
-std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const Gradient& gradient)
+std::optional<GradientIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const Gradient& gradient)
 {
     if (gradient.isTransient())
         return std::nullopt;

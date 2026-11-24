@@ -30,7 +30,6 @@
 #include "ArrayReferenceTuple.h"
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteFreeformGradientIdentifier.h"
-#include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
 #include "RemoteMeshGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
@@ -38,6 +37,7 @@
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/ControlFactory.h>
+#include <WebCore/GradientIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/WeakPtr.h>
@@ -64,14 +64,14 @@ public:
     void concatCTM(const WebCore::AffineTransform&);
     void setFillPackedColor(WebCore::PackedColor::RGBA);
     void setFillColor(const WebCore::Color&);
-    void setFillCachedGradient(RemoteGradientIdentifier, const WebCore::AffineTransform&);
+    void setFillCachedGradient(WebCore::GradientIdentifier, const WebCore::AffineTransform&);
     void setFillGradient(Ref<const WebCore::Gradient>&&, const WebCore::AffineTransform&);
     void setFillPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::PatternParameters&);
     void setFillPatternImageBuffer(WebCore::RenderingResourceIdentifier bufferIdentifier, const WebCore::PatternParameters&);
     void setFillRule(WebCore::WindRule);
     void setStrokePackedColor(WebCore::PackedColor::RGBA);
     void setStrokeColor(const WebCore::Color&);
-    void setStrokeCachedGradient(RemoteGradientIdentifier, const WebCore::AffineTransform&);
+    void setStrokeCachedGradient(WebCore::GradientIdentifier, const WebCore::AffineTransform&);
     void setStrokeGradient(Ref<const WebCore::Gradient>&&, const WebCore::AffineTransform&);
     void setStrokePatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::PatternParameters&);
     void setStrokePatternImageBuffer(WebCore::RenderingResourceIdentifier bufferIdentifier, const WebCore::PatternParameters&);
