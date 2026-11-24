@@ -68,7 +68,7 @@ void LaunchLogHook::initialize(xpc_connection_t connection)
             type = OS_LOG_TYPE_ERROR;
 
         if (auto messageString = adoptSystemMalloc(os_log_copy_message_string(msg))) {
-            OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+            OSObjectPtr message = adoptOSObject(xpc_dictionary_create_empty());
             xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, logMessageName);
             if (auto* subsystem = msg->subsystem)
                 xpc_dictionary_set_string(message.get(), subsystemKey, subsystem);
@@ -94,7 +94,7 @@ void LaunchLogHook::disable()
         connection = m_connection;
         m_connection = nullptr;
     }
-    OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr message = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, disableLogMessageName);
     xpc_connection_send_message(connection.get(), message.get());
 }

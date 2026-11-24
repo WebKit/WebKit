@@ -29,7 +29,7 @@
 
 int main(int argc, const char * argv[])
 {
-    xpc_object_t message = xpc_dictionary_create(nullptr, nullptr, 0);
+    xpc_object_t message = xpc_dictionary_create_empty();
     xpc_connection_t connection = xpc_connection_create_mach_service("com.apple.eligibilityd", nullptr, 0);
     xpc_connection_set_event_handler(connection, ^(xpc_object_t) { });
     xpc_connection_activate(connection);

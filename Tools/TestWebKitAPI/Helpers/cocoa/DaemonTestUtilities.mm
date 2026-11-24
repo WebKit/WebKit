@@ -96,7 +96,7 @@ static OSObjectPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
 
 static OSObjectPtr<xpc_object_t> convertDictionaryToXPC(NSDictionary<NSString *, id> *dictionary)
 {
-    OSObjectPtr xpc = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr xpc = adoptOSObject(xpc_dictionary_create_empty());
     for (NSString *key in dictionary) {
         ASSERT([key isKindOfClass:NSString.class]);
         const char* keyUTF8 = key.UTF8String;

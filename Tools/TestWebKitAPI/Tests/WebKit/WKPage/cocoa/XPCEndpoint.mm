@@ -62,7 +62,7 @@ private:
         if (messageName == testMessageFromClient) {
             endpointReceivedMessageFromClient = true;
 
-            OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+            OSObjectPtr message = adoptOSObject(xpc_dictionary_create_empty());
             xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromEndpoint);
             xpc_connection_send_message(connection, message.get());
         }
@@ -79,7 +79,7 @@ private:
     }
     void didConnect() final
     {
-        OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        OSObjectPtr message = adoptOSObject(xpc_dictionary_create_empty());
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromClient);
         xpc_connection_send_message(connection().get(), message.get());
 

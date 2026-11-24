@@ -109,7 +109,7 @@ bool DaemonConnectionSet::privateRelayEnforcementEnabled() const
 
 void DaemonConnectionSet::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)
 {
-    OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_uint64(dictionary.get(), protocolDebugMessageLevelKey, static_cast<uint64_t>(messageLevel));
     xpcDictionarySetString(dictionary.get(), protocolDebugMessageKey, message.utf8());
     for (auto& connection : m_connections.keys())

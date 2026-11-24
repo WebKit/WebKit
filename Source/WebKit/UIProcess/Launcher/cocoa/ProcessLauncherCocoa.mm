@@ -322,7 +322,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
 #if !USE(EXTENSIONKIT)
-    OSObjectPtr initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr initializationMessage = adoptOSObject(xpc_dictionary_create_empty());
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 #endif
@@ -355,7 +355,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
         clientIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
-    OSObjectPtr bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr bootstrapMessage = adoptOSObject(xpc_dictionary_create_empty());
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", WEBKIT_BUNDLE_VERSION);
@@ -377,7 +377,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 #endif
     if (!isWebContentOrGPUExtension) {
         // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.
-        auto containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        OSObjectPtr containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create_empty());
         if (const char* environmentHOME = getenv("HOME"))
             xpc_dictionary_set_string(containerEnvironmentVariables.get(), "HOME", environmentHOME);
         if (const char* environmentCFFIXED_USER_HOME = getenv("CFFIXED_USER_HOME"))
@@ -443,7 +443,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     auto sdkBehaviorBytes = sdkBehaviors.storageBytes();
     xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviorBytes.data(), sdkBehaviorBytes.size());
 
-    OSObjectPtr extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr extraInitializationData = adoptOSObject(xpc_dictionary_create_empty());
 
     for (const auto& keyValuePair : m_launchOptions.extraInitializationData)
         xpcDictionarySetString(extraInitializationData.get(), keyValuePair.key.utf8(), keyValuePair.value.utf8());
