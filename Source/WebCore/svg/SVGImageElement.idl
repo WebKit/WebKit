@@ -35,6 +35,7 @@
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
 
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString decoding;
     Promise<undefined> decode();
 };
 
