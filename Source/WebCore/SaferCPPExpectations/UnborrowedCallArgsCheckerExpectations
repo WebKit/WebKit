@@ -329,7 +329,6 @@ svg/SVGAnimationElement.cpp
 svg/SVGLengthList.cpp
 svg/SVGNumberList.cpp
 svg/SVGPointList.cpp
-svg/animation/SVGSMILElement.cpp
 svg/graphics/filters/SVGFilterRenderer.cpp
 svg/properties/SVGAnimationAdditiveListFunctionImpl.h
 svg/properties/SVGPrimitiveList.h
