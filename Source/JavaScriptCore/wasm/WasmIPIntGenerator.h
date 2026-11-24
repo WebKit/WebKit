@@ -110,7 +110,7 @@ struct CatchMetadata {
 
 struct BranchTargetMetadata {
     BlockMetadata block; // 8B for target
-    uint16_t toPop; // 2B for stack values to pop
+    uint32_t toPop; // 4B for stack values to pop
     uint16_t toKeep; // 2B for stack values to keep
 };
 
