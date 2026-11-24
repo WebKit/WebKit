@@ -500,6 +500,7 @@ private:
 
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;
+    FloatRect strokeBoundingBoxInLocalCoordinates() const;
 
     void clearSubtreeLayoutRootIfNeeded() const;
     

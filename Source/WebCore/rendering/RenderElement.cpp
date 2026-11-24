@@ -89,6 +89,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
@@ -2182,10 +2183,25 @@ const Style::ComputedStyle* RenderElement::targetTextPseudoStyle() const
     return textSegmentPseudoStyle(PseudoElementType::TargetText);
 }
 
+FloatRect RenderElement::strokeBoundingBoxInLocalCoordinates() const
+{
+    // Map from SVG user space to the LBSE local coordinate system, anchored at nominalSVGLayoutLocation().
+    // FIXME: RenderSVGInline returns the bounding box of its <text>, not that of the <tspan> itself.
+    auto boundingBox = strokeBoundingBox();
+    if (!document().settings().layerBasedSVGEngineEnabled() || !isSVGLayerAwareDescendantRenderer())
+        return boundingBox;
+
+    if (auto* text = RenderSVGText::locateRenderSVGTextAncestor(*this))
+        boundingBox.moveBy(-text->nominalSVGLayoutLocation());
+    else
+        boundingBox.moveBy(-downcast<RenderLayerModelObject>(*this).nominalSVGLayoutLocation());
+    return boundingBox;
+}
+
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 {
     if (isSVGRenderer()) {
-        point = localToAbsoluteQuad(strokeBoundingBox(), MapCoordinatesMode::UseTransforms).boundingBox().minXMinYCorner();
+        point = localToAbsoluteQuad(strokeBoundingBoxInLocalCoordinates(), MapCoordinatesMode::UseTransforms).boundingBox().minXMinYCorner();
         return true;
     }
 
@@ -2249,7 +2265,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) const
 {
     if (isSVGRenderer()) {
-        point = localToAbsoluteQuad(strokeBoundingBox(), MapCoordinatesMode::UseTransforms).boundingBox().maxXMaxYCorner();
+        point = localToAbsoluteQuad(strokeBoundingBoxInLocalCoordinates(), MapCoordinatesMode::UseTransforms).boundingBox().maxXMaxYCorner();
         return true;
     }
 

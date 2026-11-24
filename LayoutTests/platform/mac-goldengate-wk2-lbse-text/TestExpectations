@@ -112,7 +112,6 @@ imported/w3c/web-platform-tests/css/css-transforms/translate/translate-and-trans
 imported/w3c/web-platform-tests/css/css-transforms/z-index-does-not-apply.html                                                                                 [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/outline-svg-nested-svg-001.html                                                                                     [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-svg.html                                                                                      [ Failure ]
-imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-svg-shape.html                                                                                   [ Failure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-empty-element-with-filter-001.html                                                                      [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-001.html                                                                       [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-002.html                                                                       [ ImageOnlyFailure ]
