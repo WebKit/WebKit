@@ -482,6 +482,54 @@ TEST(PlanarImageConverter, FullRangeRoundTripIsExact)
     }
 }
 
+// Every 10-bit LSB level converts to the same value as its MSB aligned equivalent.
+TEST(PlanarImageConverter, FullToVideoRangeFromTenBitLSB)
+{
+    Vector<uint8_t> lsbStorage;
+    Vector<uint8_t> msbStorage;
+    Vector<uint8_t> fromLSBStorage;
+    Vector<uint8_t> fromMSBStorage;
+    auto lsb = allocatePlane(lsbStorage, 1024, 1, tenBitLSB, 1, 1, 3);
+    auto msb = allocatePlane(msbStorage, 1024, 1, tenBitMSB);
+    auto fromLSB = allocatePlane(fromLSBStorage, 1024, 1, tenBitMSB, 1, 1, 3);
+    auto fromMSB = allocatePlane(fromMSBStorage, 1024, 1, tenBitMSB);
+    for (size_t x = 0; x < 1024; ++x) {
+        setSampleAt(lsb, x, 0, x);
+        setSampleAt(msb, x, 0, x << 6);
+    }
+
+    ASSERT_TRUE(copyPlane(asSource(lsb), fromLSB, RangeConversion::FullToVideo, Component::Luma));
+    EXPECT_EQ(sampleAt(asSource(fromLSB), 0, 0), 64 << 6);
+    EXPECT_EQ(sampleAt(asSource(fromLSB), 1023, 0), 940 << 6);
+    for (auto component : { Component::Luma, Component::Chroma }) {
+        ASSERT_TRUE(copyPlane(asSource(lsb), fromLSB, RangeConversion::FullToVideo, component));
+        ASSERT_TRUE(copyPlane(asSource(msb), fromMSB, RangeConversion::FullToVideo, component));
+        for (size_t x = 0; x < 1024; ++x)
+            EXPECT_EQ(sampleAt(asSource(fromLSB), x, 0), sampleAt(asSource(fromMSB), x, 0)) << "at " << x;
+    }
+    EXPECT_EQ(countModifiedBytesOutsideRows(fromLSBStorage.span(), 1, asSource(fromLSB)), 0u);
+
+    if (!isBackendAvailable(Backend::LibYUV))
+        return;
+
+    Vector<uint8_t> uStorage;
+    Vector<uint8_t> vStorage;
+    Vector<uint8_t> uvStorage;
+    auto u = allocatePlane(uStorage, 1024, 1, tenBitLSB, 1, 1, 1);
+    auto v = allocatePlane(vStorage, 1024, 1, tenBitLSB);
+    auto uv = allocatePlane(uvStorage, 1024, 1, tenBitMSB, 2, 1, 3);
+    for (size_t x = 0; x < 1024; ++x) {
+        setSampleAt(u, x, 0, x);
+        setSampleAt(v, x, 0, 1023 - x);
+    }
+    ASSERT_TRUE(interleave(asSource(u), asSource(v), uv, RangeConversion::FullToVideo));
+    for (size_t x = 0; x < 1024; ++x) {
+        EXPECT_EQ(sampleAt(asSource(uv), x, 0, 0), sampleAt(asSource(fromMSB), x, 0)) << "at " << x;
+        EXPECT_EQ(sampleAt(asSource(uv), x, 0, 1), sampleAt(asSource(fromMSB), 1023 - x, 0)) << "at " << x;
+    }
+    EXPECT_EQ(countModifiedBytesOutsideRows(uvStorage.span(), 1, asSource(uv)), 0u);
+}
+
 #endif // USE(ACCELERATE)
 
 TEST(PlanarImageConverter, CopyPlaneToChannel)

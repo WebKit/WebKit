@@ -341,6 +341,8 @@ enum class SixteenBitTable : uint8_t {
     TwelveBitLSBToEightBit,
     FullToVideoLuma,
     FullToVideoChroma,
+    TenBitLSBFullToVideoLuma,
+    TenBitLSBFullToVideoChroma,
     VideoToFullLuma,
     VideoToFullChroma,
 };
@@ -364,6 +366,10 @@ static uint16_t sixteenBitTableEntry(SixteenBitTable table, uint16_t value)
         return tenBitFullToTenBitVideoLuma[value >> 6];
     case SixteenBitTable::FullToVideoChroma:
         return tenBitFullToTenBitVideoChroma[value >> 6];
+    case SixteenBitTable::TenBitLSBFullToVideoLuma:
+        return tenBitFullToTenBitVideoLuma[std::min<uint16_t>(value, 1023)];
+    case SixteenBitTable::TenBitLSBFullToVideoChroma:
+        return tenBitFullToTenBitVideoChroma[std::min<uint16_t>(value, 1023)];
     case SixteenBitTable::VideoToFullLuma:
         return narrowTenBitVideoRangeSample(value, Component::Luma);
     case SixteenBitTable::VideoToFullChroma:
@@ -472,6 +478,11 @@ static bool copyPlaneWithPlatformFrameworks(const SourcePlane& source, const Des
             if (component == Component::Chroma)
                 return lookUp(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::FullToVideoChroma>().span());
             return lookUp(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::FullToVideoLuma>().span());
+        }
+        if (from == tenBitLSB) {
+            if (component == Component::Chroma)
+                return lookUp(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::TenBitLSBFullToVideoChroma>().span());
+            return lookUp(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::TenBitLSBFullToVideoLuma>().span());
         }
         return false;
     case RangeConversion::VideoToFull:
@@ -653,6 +664,10 @@ static bool interleaveWithLibYUV(const SourcePlane& u, const SourcePlane& v, con
         libyuv::MergeUVPlane_16(sixteenBitSamples(u), sampleStride(u), sixteenBitSamples(v), sampleStride(v), sixteenBitSamples(uv), sampleStride(uv), width, height, u.format.bitDepth);
         return true;
     }
+    if (u.format.sampleSize() > 1 && u.format == uv.format) {
+        libyuv::MergeUVPlane_16(sixteenBitSamples(u), sampleStride(u), sixteenBitSamples(v), sampleStride(v), sixteenBitSamples(uv), sampleStride(uv), width, height, 16);
+        return true;
+    }
     return false;
 }
 
@@ -751,6 +766,12 @@ bool interleave(const SourcePlane& u, const SourcePlane& v, const DestinationPla
 {
     if (!haveSameSize(u, v) || u.format != v.format || u.channels != 1 || uv.channels != 2 || u.width != uv.width || u.height != uv.height)
         return false;
+
+    if (conversion == RangeConversion::FullToVideo && u.format == tenBitLSB && uv.format == tenBitMSB) {
+        Vector<uint16_t> storage;
+        auto scratch = packedPlane(storage, uv.width, uv.height, tenBitLSB, 2);
+        return interleave(u, v, scratch, RangeConversion::None) && copyPlane(asSource(scratch), uv, conversion, Component::Chroma);
+    }
 
     AlignedSource alignedU { u };
     AlignedSource alignedV { v };
