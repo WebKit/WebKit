@@ -392,6 +392,7 @@ public:
     void onSelectedOptionChanged(Element&);
     void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectPickerStyleChange(HTMLSelectElement&);
+    void onSelectButtonContentChanged(HTMLSelectElement&);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);
 #if PLATFORM(MAC)
     // Posts AXSelectedTextChanged on this cache's root web area for a selection change in a cross-site frame, relayed
@@ -1002,6 +1003,7 @@ private:
     AccessibilityObject* localFrameLeadingToFocusedFrame();
 #endif
     void handleMenuListValueChanged(Element&);
+    void handleSelectButtonContentChange(Element&);
     void handleTextChanged(AccessibilityObject*);
     void handleRecomputeCellSlots(AccessibilityNodeObject&);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

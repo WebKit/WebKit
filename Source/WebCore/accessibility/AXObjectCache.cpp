@@ -4420,6 +4420,7 @@ void AXObjectCache::handleAriaHiddenChange(Element& element)
 #endif
         updateCachedTextOfAssociatedObjects(*axObject);
     }
+    handleSelectButtonContentChange(element);
 
 #if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     if (RefPtr parent = get(protect(element.parentNode())))
@@ -4884,6 +4885,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         // When aria-label changes on an <html> element, it's the web area who needs to re-compute its accessibility text.
         handleTextChanged(protect(get(protect(element->document()).ptr())));
     } else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr) {
+        handleSelectButtonContentChange(*element);
         RefPtr axObject = get(*element);
         if (!axObject)
             return;
@@ -6900,6 +6902,25 @@ void AXObjectCache::handleMenuListValueChanged(Element& element)
 #endif
 
     postPlatformNotification(*object, AXNotification::MenuListValueChanged);
+}
+
+void AXObjectCache::onSelectButtonContentChanged(HTMLSelectElement& select)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(protect(get(select)), AXProperty::StringValue);
+#else
+    UNUSED_PARAM(select);
+#endif
+}
+
+void AXObjectCache::handleSelectButtonContentChange(Element& element)
+{
+    if (!element.isInSelectOrDataListSubtree())
+        return;
+
+    RefPtr select = lineageOfType<HTMLSelectElement>(element).first();
+    if (RefPtr button = select ? select->buttonElement() : nullptr; button && button->contains(element))
+        onSelectButtonContentChanged(*select);
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

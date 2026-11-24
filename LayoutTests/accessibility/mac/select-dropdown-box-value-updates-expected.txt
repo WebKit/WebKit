@@ -1,0 +1,37 @@
+This test ensures that the value of a base appearance dropdown box updates when the content of its button changes.
+
+hide:
+PASS: axSelect.stringValue === 'AXValue: Fruit: Apple'
+PASS: axSelect.stringValue === 'AXValue: Apple'
+unhide:
+PASS: axSelect.stringValue === 'AXValue: Apple'
+PASS: axSelect.stringValue === 'AXValue: Fruit: Apple'
+displayNone:
+PASS: axSelect.stringValue === 'AXValue: Fruit: Apple'
+PASS: axSelect.stringValue === 'AXValue: Apple'
+alt:
+PASS: axSelect.stringValue === 'AXValue: Apple (ripe)'
+PASS: axSelect.stringValue === 'AXValue: Apple (green)'
+label:
+PASS: axSelect.stringValue === 'AXValue: Fruit: Apple'
+PASS: axSelect.stringValue === 'AXValue: Choice: Apple'
+textInsert:
+PASS: axSelect.stringValue === 'AXValue: Apple'
+PASS: axSelect.stringValue === 'AXValue: Apple (ripe)'
+imageInsert:
+PASS: axSelect.stringValue === 'AXValue: Apple'
+PASS: axSelect.stringValue === 'AXValue: Apple (ripe)'
+nestedImageInsert:
+PASS: axSelect.stringValue === 'AXValue: Apple'
+PASS: axSelect.stringValue === 'AXValue: Apple (ripe)'
+imageRemove:
+PASS: axSelect.stringValue === 'AXValue: Apple (ripe)'
+PASS: axSelect.stringValue === 'AXValue: Apple'
+nestedImageRemove:
+PASS: axSelect.stringValue === 'AXValue: Apple (ripe)'
+PASS: axSelect.stringValue === 'AXValue: Apple'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
