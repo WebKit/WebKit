@@ -168,12 +168,7 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
         }
     }
 
-    // FIXME when webkit.org/b/301720 is resolved.
-    #if ASSERT_ENABLED
-    @Test(.disabled("webkit.org/b/301720"))
-    #else
     @Test
-    #endif
     func blockedLoadInPrivateBrowsingTest() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
