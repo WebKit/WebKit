@@ -698,6 +698,46 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
 }
 
 // https://drafts.csswg.org/css-grid-1/#min-size-auto
+// the used value of its automatic minimum size in a given axis is the content-based
+// minimum size if all of the following are true
+static bool usesContentBasedMinimumSize(const PlacedGridItem& gridItem, LogicalBoxAxis axis, const TrackSizingFunctionsList& trackSizingFunctions)
+{
+    // its computed overflow is not a scrollable overflow value
+    auto hasScrollableComputedOverflowValue = axis == LogicalBoxAxis::Inline ? hasScrollableInlineComputedOverflowValue(gridItem) : hasScrollableBlockComputedOverflowValue(gridItem);
+    if (hasScrollableComputedOverflowValue)
+        return false;
+
+    // it spans at least one track in that axis whose min track sizing function is auto
+    auto gridItemStartLine = axis == LogicalBoxAxis::Inline ? gridItem.columnStartLine() : gridItem.rowStartLine();
+    auto gridItemEndLine = axis == LogicalBoxAxis::Inline ? gridItem.columnEndLine() : gridItem.rowEndLine();
+    if (!spansAutoMinTrackSizingFunction({ gridItemStartLine, gridItemEndLine }, trackSizingFunctions))
+        return false;
+
+    // if it spans more than one track in that axis, none of those tracks are flexible
+    auto gridItemSpanCount = gridItemEndLine - gridItemStartLine;
+    if (gridItemSpanCount > 1 && spansFlexMaxTrackSizingFunction({ gridItemStartLine, gridItemEndLine }, trackSizingFunctions))
+        return false;
+
+    return true;
+}
+
+// https://drafts.csswg.org/css-grid-1/#min-size-auto
+// "Otherwise, the automatic minimum size is zero, as usual."
+static BorderBoxSize automaticMinimumInlineSizeFromAspectRatio()
+{
+    // FIXME: Use the min-content size, capped by the maximum size, in the ratio-dependent axis of a grid item with a preferred aspect ratio.
+    return BorderBoxSize::zeroSized();
+}
+
+// https://drafts.csswg.org/css-grid-1/#min-size-auto
+// "Otherwise, the automatic minimum size is zero, as usual."
+static BorderBoxSize automaticMinimumBlockSizeFromAspectRatio()
+{
+    // FIXME: Use the min-content size, capped by the maximum size, in the ratio-dependent axis of a grid item with a preferred aspect ratio.
+    return BorderBoxSize::zeroSized();
+}
+
+// https://drafts.csswg.org/css-grid-1/#min-size-auto
 BorderBoxSize automaticMinimumInlineSize(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding, const TrackSizingFunctionsList& trackSizingFunctions,
     std::optional<LayoutUnit> gridAreaInlineSize, std::optional<LayoutUnit> gridAreaMaximumInlineSize, const IntegrationUtils& integrationUtils, std::optional<LayoutUnit> gridAreaBlockSize,
     std::optional<LayoutUnit> gridAreaMaximumBlockSize)
@@ -705,25 +745,9 @@ BorderBoxSize automaticMinimumInlineSize(const PlacedGridItem& gridItem, LayoutU
     auto& inlineAxisSizes = gridItem.inlineAxisSizes();
     ASSERT(inlineAxisSizes.minimumSize.isAuto());
 
-    // the used value of its automatic minimum size in a given axis is the content-based
-    // minimum size if all of the following are true
-    //
-    // its computed overflow is not a scrollable overflow value
-    // it spans at least one track in that axis whose min track sizing function is auto
-    // if it spans more than one track in that axis, none of those tracks are flexible
-    //
     // Otherwise, the automatic minimum size is zero, as usual.
-    if (hasScrollableInlineComputedOverflowValue(gridItem))
-        return BorderBoxSize::zeroSized();
-
-    auto gridItemColumnStartLine = gridItem.columnStartLine();
-    auto gridItemColumnEndLine = gridItem.columnEndLine();
-    if (!spansAutoMinTrackSizingFunction({ gridItemColumnStartLine, gridItemColumnEndLine }, trackSizingFunctions))
-        return BorderBoxSize::zeroSized();
-
-    auto gridItemColumnSpanCount = gridItemColumnEndLine - gridItemColumnStartLine;
-    if (gridItemColumnSpanCount > 1 && spansFlexMaxTrackSizingFunction({ gridItemColumnStartLine, gridItemColumnEndLine }, trackSizingFunctions))
-        return BorderBoxSize::zeroSized();
+    if (!usesContentBasedMinimumSize(gridItem, LogicalBoxAxis::Inline, trackSizingFunctions))
+        return automaticMinimumInlineSizeFromAspectRatio();
 
     // However, if in a given dimension the grid item spans only grid tracks that have a fixed max
     // track sizing function, then its specified size suggestion and content size suggestion in that
@@ -772,25 +796,9 @@ BorderBoxSize automaticMinimumBlockSize(const PlacedGridItem& gridItem, LayoutUn
     auto& blockAxisSizes = gridItem.blockAxisSizes();
     ASSERT(blockAxisSizes.minimumSize.isAuto());
 
-    // the used value of its automatic minimum size in a given axis is the content-based
-    // minimum size if all of the following are true
-    //
-    // its computed overflow is not a scrollable overflow value
-    // it spans at least one track in that axis whose min track sizing function is auto
-    // if it spans more than one track in that axis, none of those tracks are flexible
-    //
     // Otherwise, the automatic minimum size is zero, as usual.
-    if (hasScrollableBlockComputedOverflowValue(gridItem))
-        return BorderBoxSize::zeroSized();
-
-    auto gridItemRowStartLine = gridItem.rowStartLine();
-    auto gridItemRowEndLine = gridItem.rowEndLine();
-    if (!spansAutoMinTrackSizingFunction({ gridItemRowStartLine, gridItemRowEndLine }, trackSizingFunctions))
-        return BorderBoxSize::zeroSized();
-
-    auto gridItemRowSpanCount = gridItemRowEndLine - gridItemRowStartLine;
-    if (gridItemRowSpanCount > 1 && spansFlexMaxTrackSizingFunction({ gridItemRowStartLine, gridItemRowEndLine }, trackSizingFunctions))
-        return BorderBoxSize::zeroSized();
+    if (!usesContentBasedMinimumSize(gridItem, LogicalBoxAxis::Block, trackSizingFunctions))
+        return automaticMinimumBlockSizeFromAspectRatio();
 
     // However, if in a given dimension the grid item spans only grid tracks that have a fixed max
     // track sizing function, then its specified size suggestion and content size suggestion in that
