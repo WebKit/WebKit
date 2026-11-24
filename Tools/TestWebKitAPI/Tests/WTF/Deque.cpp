@@ -597,4 +597,46 @@ TEST(WTF_Deque, TakeLastWithPredicateWrappedBuffer)
     }
 }
 
+TEST(WTF_Deque, UncheckedAppend)
+{
+    Deque<int> deque;
+    EXPECT_FALSE(deque.canAppendWithoutExpanding());
+
+    int next = 0;
+    deque.append(next++);
+    while (deque.canAppendWithoutExpanding())
+        deque.uncheckedAppend(next++);
+    EXPECT_EQ(static_cast<size_t>(next), deque.size());
+
+    int removed = next / 2;
+    for (int i = 0; i < removed; ++i)
+        EXPECT_EQ(i, deque.takeFirst());
+    while (deque.canAppendWithoutExpanding())
+        deque.uncheckedAppend(next++);
+
+    deque.append(next++);
+    EXPECT_TRUE(deque.canAppendWithoutExpanding());
+
+    int expected = removed;
+    for (int value : deque)
+        EXPECT_EQ(expected++, value);
+    EXPECT_EQ(next, expected);
+
+    deque.clear();
+    EXPECT_FALSE(deque.canAppendWithoutExpanding());
+
+    Deque<int, 1> singleInlineDeque;
+    EXPECT_FALSE(singleInlineDeque.canAppendWithoutExpanding());
+
+    Deque<MoveOnly, 4> inlineDeque;
+    EXPECT_TRUE(inlineDeque.canAppendWithoutExpanding());
+    unsigned count = 0;
+    while (inlineDeque.canAppendWithoutExpanding())
+        inlineDeque.uncheckedAppend(MoveOnly(count++));
+    EXPECT_EQ(3U, count);
+    EXPECT_EQ(3U, inlineDeque.size());
+    for (unsigned i = 0; i < count; ++i)
+        EXPECT_EQ(i, inlineDeque.takeFirst().value());
+}
+
 } // namespace TestWebKitAPI

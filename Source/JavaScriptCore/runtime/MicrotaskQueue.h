@@ -168,6 +168,13 @@ public:
         m_queue.append(WTF::move(task));
     }
 
+    bool canEnqueueWithoutExpanding() const { return m_queue.canAppendWithoutExpanding(); }
+
+    void enqueueWithoutExpanding(QueuedTask&& task)
+    {
+        m_queue.uncheckedAppend(WTF::move(task));
+    }
+
     bool isEmpty() const
     {
         return m_queue.isEmpty();
@@ -210,6 +217,14 @@ public:
 
     inline void enqueue(QueuedTask&&);
     JS_EXPORT_PRIVATE void enqueueSlow(QueuedTask&&);
+
+    bool canEnqueueWithoutSlowPath() const { return m_isScheduledToRun && m_queue.canEnqueueWithoutExpanding(); }
+    void enqueueFast(QueuedTask&& task)
+    {
+        ASSERT(canEnqueueWithoutSlowPath());
+        ASSERT(!task.isJSMicrotaskDispatcher());
+        m_queue.enqueueWithoutExpanding(WTF::move(task));
+    }
 
     bool isEmpty() const
     {

@@ -224,6 +224,8 @@ private:
     JSPromiseReaction* reactionHead(VM&);
     void settleInlineInternalMicrotask(VM&, JSGlobalObject*, Status, JSValue argument, uint16_t flags);
     void settleInlineHandler(VM&, JSGlobalObject*, Status, JSValue argument, uint16_t flags);
+    void fulfillPromiseImpl(VM&, JSValue);
+    void fulfillPromiseWithCell(VM&, JSCell*);
     static void triggerPromiseReactions(VM&, JSGlobalObject*, JSPromise::Status, JSPromiseReaction* head, JSValue argument);
 
     InternalMicrotask inlineReactionMicrotask() const

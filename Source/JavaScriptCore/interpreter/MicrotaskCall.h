@@ -63,6 +63,17 @@ public:
         return m_functionExecutable == executable;
     }
 
+    // When this holds, tryCallWithArguments() calls the function and returns an empty value only if it threw.
+    bool canCallWithArgumentCount(unsigned argumentCountIncludingThis) const
+    {
+#if (CPU(ARM64) || CPU(X86_64)) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
+        return m_numParameters <= argumentCountIncludingThis && m_addressForCall;
+#else
+        UNUSED_PARAM(argumentCountIncludingThis);
+        return false;
+#endif
+    }
+
     FunctionExecutable* functionExecutable() { return m_functionExecutable; }
 
     void unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock);

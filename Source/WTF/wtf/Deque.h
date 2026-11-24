@@ -66,6 +66,7 @@ public:
 
     size_t size() const { return (m_end - m_start) & m_capacityMask; }
     bool isEmpty() const { return m_start == m_end; }
+    bool canAppendWithoutExpanding() const { return ((m_end + 1) & m_capacityMask) != m_start; }
 
     iterator begin() LIFETIME_BOUND { return iterator(this, m_start); }
     iterator end() LIFETIME_BOUND { return iterator(this, m_end); }
@@ -88,6 +89,8 @@ public:
 
     void append(T&& value) { append<T>(std::forward<T>(value)); }
     template<typename U> void append(U&&);
+    void uncheckedAppend(T&& value) { uncheckedAppend<T>(std::forward<T>(value)); }
+    template<typename U> void uncheckedAppend(U&&);
     template<typename... Args> void constructAndAppend(Args&&...);
     template<typename U> void prepend(U&&);
     void removeFirst();
@@ -505,6 +508,16 @@ inline void Deque<T, inlineCapacity>::constructAndAppend(Args&&... args)
     checkValidity();
     expandCapacityIfNeeded();
     new (NotNull, std::addressof(m_buffer.capacitySpan()[m_end])) T(std::forward<Args>(args)...);
+    m_end = (m_end + 1) & m_capacityMask;
+    checkValidity();
+}
+
+template<typename T, size_t inlineCapacity> template<typename U>
+inline void Deque<T, inlineCapacity>::uncheckedAppend(U&& value)
+{
+    checkValidity();
+    ASSERT(canAppendWithoutExpanding());
+    new (NotNull, std::addressof(m_buffer.capacitySpan()[m_end])) T(std::forward<U>(value));
     m_end = (m_end + 1) & m_capacityMask;
     checkValidity();
 }

@@ -1226,6 +1226,7 @@ public:
     void queueMicrotask(VM&, QueuedTask&&);
     void queueMicrotask(VM&, InternalMicrotask, uint8_t, JSValue, JSValue, JSValue);
     void queueMicrotaskSlow(VM&, QueuedTask&&);
+    void queueMicrotaskSlow(VM&, InternalMicrotask, uint8_t, JSValue, JSValue, JSValue);
 
 #if ASSERT_ENABLED
     const JSGlobalObject* globalObjectAtDebuggerEntry() const { return m_globalObjectAtDebuggerEntry; }

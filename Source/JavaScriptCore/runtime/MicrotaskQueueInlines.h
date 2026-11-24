@@ -90,11 +90,11 @@ inline void JSGlobalObject::queueMicrotask(VM& vm, QueuedTask&& task)
 
 inline void JSGlobalObject::queueMicrotask(VM& vm, InternalMicrotask job, uint8_t payload, JSValue argument0, JSValue argument1, JSValue argument2)
 {
-    if (!m_canFastQueueMicrotask || vm.crossTaskToken()) [[unlikely]] {
-        queueMicrotaskSlow(vm, QueuedTask { nullptr, job, payload, this, argument0, argument1, argument2 });
+    if (!m_canFastQueueMicrotask || vm.crossTaskToken() || !m_microtaskQueue->canEnqueueWithoutSlowPath()) [[unlikely]] {
+        queueMicrotaskSlow(vm, job, payload, argument0, argument1, argument2);
         return;
     }
-    SUPPRESS_UNCOUNTED_ARG m_microtaskQueue->enqueue(QueuedTask { nullptr, job, payload, this, argument0, argument1, argument2 });
+    SUPPRESS_UNCOUNTED_ARG m_microtaskQueue->enqueueFast(QueuedTask { nullptr, job, payload, this, argument0, argument1, argument2 });
 }
 
 template<bool useCallOnEachMicrotask>

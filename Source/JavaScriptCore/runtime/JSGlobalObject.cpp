@@ -3717,6 +3717,11 @@ void JSGlobalObject::queueMicrotaskSlow(VM& vm, QueuedTask&& task)
     microtaskQueue().enqueue(WTF::move(task));
 }
 
+NEVER_INLINE void JSGlobalObject::queueMicrotaskSlow(VM& vm, InternalMicrotask job, uint8_t payload, JSValue argument0, JSValue argument1, JSValue argument2)
+{
+    queueMicrotaskSlow(vm, QueuedTask { nullptr, job, payload, this, argument0, argument1, argument2 });
+}
+
 void JSGlobalObject::setMicrotaskQueue(Ref<MicrotaskQueue>&& queue)
 {
     m_microtaskQueue = WTF::move(queue);

@@ -63,12 +63,8 @@ ALWAYS_INLINE JSValue MicrotaskCall::tryCallWithArguments(VM& vm, JSFunction* fu
     static_assert(argumentCountIncludingThis <= 7);
     if (m_numParameters <= argumentCountIncludingThis) [[likely]] {
         auto* entry = m_addressForCall;
-        if (!entry) [[unlikely]] {
-            DeferTraps deferTraps(vm);
-            relink(vm, function);
-            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, { });
-            entry = m_addressForCall;
-        }
+        if (!entry) [[unlikely]]
+            return { };
         auto* codeBlock = m_codeBlock;
         if constexpr (!sizeof...(args))
             RELEASE_AND_RETURN(scope, JSValue::decode(vmEntryToJavaScriptWith0Arguments(entry, &vm, codeBlock, function, thisValue, context)));

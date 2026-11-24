@@ -523,7 +523,20 @@ void JSPromise::rejectPromise(VM& vm, JSValue argument)
     }
 }
 
+// Storing a non-cell needs no write barrier, so splitting on that keeps the common path free of calls, removing stack frame.
 void JSPromise::fulfillPromise(VM& vm, JSValue argument)
+{
+    if (argument.isCell()) [[unlikely]]
+        return fulfillPromiseWithCell(vm, argument.asCell());
+    fulfillPromiseImpl(vm, argument);
+}
+
+NEVER_INLINE void JSPromise::fulfillPromiseWithCell(VM& vm, JSCell* argument)
+{
+    fulfillPromiseImpl(vm, argument);
+}
+
+ALWAYS_INLINE void JSPromise::fulfillPromiseImpl(VM& vm, JSValue argument)
 {
     ASSERT(status() == Status::Pending);
     JSGlobalObject* globalObject = realm();

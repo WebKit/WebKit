@@ -84,7 +84,10 @@ NODELETE static ALWAYS_INLINE JSCell* dynamicCastToCell(JSValue value)
 }
 
 template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
-static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisValue, JSCell* context, ASCIILiteral message, MicrotaskCallCache* microtaskCallCache, Args... args)
+static NEVER_INLINE JSValue callMicrotaskGeneric(JSGlobalObject*, JSValue functionObject, JSValue thisValue, JSCell* context, ASCIILiteral message, MicrotaskCallCache*, Args...);
+
+template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
+static ALWAYS_INLINE JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisValue, JSCell* context, ASCIILiteral message, MicrotaskCallCache* microtaskCallCache, Args... args)
 {
     NO_TAIL_CALLS();
 
@@ -93,17 +96,26 @@ static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObjec
     static_assert(sizeof...(args) <= MicrotaskCall::maxCallArguments);
 
     if (microtaskCallCache) [[likely]] {
-        if (auto* microtaskCall = microtaskCallCache->find(functionObject)) [[likely]] {
+        auto* microtaskCall = microtaskCallCache->find(functionObject);
+        if (microtaskCall && microtaskCall->canCallWithArgumentCount(1 + sizeof...(args))) [[likely]] {
             if (!vm.isSafeToRecurseSoft()) [[unlikely]]
                 return throwStackOverflowError(globalObject, scope);
-            auto* jsFunction = uncheckedDowncast<JSFunction>(functionObject.asCell());
-            if (auto result = microtaskCall->tryCallWithArguments(vm, jsFunction, thisValue, context, args...)) [[likely]] {
-                scope.release();
-                return result;
-            }
-            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, scope.exception());
+            scope.release();
+            return microtaskCall->tryCallWithArguments(vm, uncheckedDowncast<JSFunction>(functionObject.asCell()), thisValue, context, args...);
         }
     }
+
+    scope.release();
+    return callMicrotaskGeneric(globalObject, functionObject, thisValue, context, message, microtaskCallCache, args...);
+}
+
+template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
+static NEVER_INLINE JSValue callMicrotaskGeneric(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisValue, JSCell* context, ASCIILiteral message, MicrotaskCallCache* microtaskCallCache, Args... args)
+{
+    NO_TAIL_CALLS();
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto callData = JSC::getCallDataInline(functionObject);
     if (callData.type == CallData::Type::None)
@@ -1643,7 +1655,7 @@ static void runImportModuleNamespace(JSGlobalObject* globalObject, VM& vm, Inter
     return;
 }
 
-static void promiseResolveWithoutHandlerJobSlow(JSGlobalObject* globalObject, VM& vm, JSValue capability, JSValue resolution, JSPromise::Status status)
+static NEVER_INLINE void promiseResolveWithoutHandlerJobSlow(JSGlobalObject* globalObject, VM& vm, JSValue capability, JSValue resolution, JSPromise::Status status)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
