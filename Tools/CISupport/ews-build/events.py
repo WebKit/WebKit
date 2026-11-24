@@ -61,7 +61,7 @@ class Events(service.BuildbotService):
         'layout-tests', 'layout-tests-repeat-failures', 're-run-layout-tests',
         'run-layout-tests-without-change', 'layout-tests-repeat-failures-without-change',
         'run-layout-tests-in-stress-mode', 'run-layout-tests-in-guard-malloc-stress-mode',
-        'run-api-tests', 'run-api-tests-without-change', 're-run-api-tests',
+        'run-api-tests', 'run-api-tests-without-change', 're-run-api-tests', 'run-api-tests-in-stress-mode',
         'scan-build', 'find-unexpected-results', 'display-safer-cpp-results',
         'jscore-test', 'jscore-test-without-change',
         'add-reviewer-to-commit-message', 'push-commit-to-webkit-repo', 'canonicalize-commit',
