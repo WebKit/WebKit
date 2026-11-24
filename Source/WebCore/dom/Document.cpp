@@ -12128,6 +12128,8 @@ const CSSParserContext& Document::cssParserContext() const
 void Document::invalidateCachedCSSParserContext()
 {
     m_cachedCSSParserContext = { };
+    if (CheckedPtr svgExtensions = svgExtensionsIfExists())
+        svgExtensions->clearPresentationalHintValueCache();
 }
 
 const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
