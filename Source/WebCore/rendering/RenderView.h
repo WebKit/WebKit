@@ -140,21 +140,6 @@ public:
 
     NODELETE unsigned pageCount() const;
 
-    // FIXME: These functions are deprecated. No code should be added that uses these.
-    int bestTruncatedAt() const { return m_legacyPrinting.m_bestTruncatedAt; }
-    void setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bool forcedBreak = false);
-    int truncatedAt() const { return m_legacyPrinting.m_truncatedAt; }
-    void setTruncatedAt(int y)
-    { 
-        m_legacyPrinting.m_truncatedAt = y;
-        m_legacyPrinting.m_bestTruncatedAt = 0;
-        m_legacyPrinting.m_truncatorWidth = 0;
-        m_legacyPrinting.m_forcedPageBreak = false;
-    }
-    const IntRect& printRect() const LIFETIME_BOUND { return m_legacyPrinting.m_printRect; }
-    void setPrintRect(const IntRect& r) { m_legacyPrinting.m_printRect = r; }
-    // End deprecated functions.
-
     // Notification that this view moved into or out of a native window.
     void setIsInWindow(bool);
 
@@ -285,17 +270,6 @@ private:
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
     RenderSelection m_selection;
-
-    // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
-    struct LegacyPrinting {
-        int m_bestTruncatedAt { 0 };
-        int m_truncatedAt { 0 };
-        int m_truncatorWidth { 0 };
-        IntRect m_printRect;
-        bool m_forcedPageBreak { false };
-    };
-    LegacyPrinting m_legacyPrinting;
-    // End deprecated members.
 
     NODELETE bool shouldUsePrintingLayout() const;
 

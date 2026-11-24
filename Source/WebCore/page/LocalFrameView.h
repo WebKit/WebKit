@@ -499,24 +499,6 @@ public:
     WEBCORE_EXPORT void forceLayout(bool allowSubtreeLayout = false);
     WEBCORE_EXPORT void forceLayoutForPagination(const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkFactor, AdjustViewSize);
 
-    // FIXME: This method is retained because of embedded WebViews in AppKit.  When a WebView is embedded inside
-    // some enclosing view with auto-pagination, no call happens to resize the view.  The new pagination model
-    // needs the view to resize as a result of the breaks, but that means that the enclosing view has to potentially
-    // resize around that view.  Auto-pagination uses the bounds of the actual view that's being printed to determine
-    // the edges of the print operation, so the resize is necessary if the enclosing view's bounds depend on the
-    // web document's bounds.
-    // 
-    // This is already a problem if the view needs to be a different size because of printer fonts or because of print stylesheets.
-    // Mail/Dictionary work around this problem by using the _layoutForPrinting SPI
-    // to at least get print stylesheets and printer fonts into play, but since WebKit doesn't know about the page offset or
-    // page size, it can't actually paginate correctly during _layoutForPrinting.
-    //
-    // We can eventually move Mail to a newer SPI that would let them opt in to the layout-time pagination model,
-    // but that doesn't solve the general problem of how other AppKit views could opt in to the better model.
-    //
-    // NO OTHER PLATFORM BESIDES MAC SHOULD USE THIS METHOD.
-    WEBCORE_EXPORT void adjustPageHeightDeprecated(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
-
     bool scrollToFragment(const URL&);
     void scrollTo(const ScrollPosition&) final;
     void maintainScrollPositionAtAnchor(ContainerNode*);

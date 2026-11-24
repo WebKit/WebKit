@@ -47,10 +47,10 @@ public:
     void paint();
     void paintObject();
 
-    void paintChildren(PaintInfo& paintInfoForChild, bool usePrintRect);
+    void paintChildren(PaintInfo& paintInfoForChild);
 
     enum PaintBlockType { PaintAsBlock, PaintAsInlineBlock };
-    bool paintChild(RenderBox&, PaintInfo& paintInfoForChild, bool usePrintRect, PaintBlockType = PaintAsBlock);
+    void paintChild(RenderBox&, PaintInfo& paintInfoForChild, PaintBlockType = PaintAsBlock);
 
     void paintBlockLevelContentInInline();
 

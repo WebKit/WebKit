@@ -6513,26 +6513,6 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
         adjustViewSize();
 }
 
-void LocalFrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float oldBottom, float /*bottomLimit*/)
-{
-    CheckedPtr renderView = this->renderView();
-    if (!renderView) {
-        *newBottom = oldBottom;
-        return;
-
-    }
-    // Use a context with painting disabled.
-    NullGraphicsContext context;
-    renderView->setTruncatedAt(static_cast<int>(floorf(oldBottom)));
-    IntRect dirtyRect(0, static_cast<int>(floorf(oldTop)), renderView->layoutOverflowRect().maxX(), static_cast<int>(ceilf(oldBottom - oldTop)));
-    renderView->setPrintRect(dirtyRect);
-    protect(renderView->layer())->paint(context, dirtyRect);
-    *newBottom = renderView->bestTruncatedAt();
-    if (!*newBottom)
-        *newBottom = oldBottom;
-    renderView->setPrintRect(IntRect());
-}
-
 float LocalFrameView::documentToAbsoluteScaleFactor(std::optional<float> usedZoom) const
 {
     // If usedZoom is passed, it already factors in pageZoomFactor().

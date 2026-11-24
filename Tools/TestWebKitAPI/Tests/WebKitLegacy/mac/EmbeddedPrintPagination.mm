@@ -80,10 +80,10 @@ TEST(WebKitLegacy, EmbeddedPrintPaginationWithZeroPageSize)
     // subview of a larger view hierarchy being printed. Before the fix
     // this asserted in debug (LocalFrame.cpp:resizePageRectsKeepingRatio)
     // and silently dropped text runs in release; reaching the
-    // EXPECT_GT below without crashing is the pass condition.
+    // check below without crashing is the pass condition.
     CGFloat newBottom = 0;
     [webHTMLView adjustPageHeightNew:&newBottom top:0 bottom:400 limit:400];
-    EXPECT_GT(newBottom, 0);
+    EXPECT_EQ(newBottom, 400);
 }
 
 #if HAVE(PDFKIT)

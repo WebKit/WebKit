@@ -2513,22 +2513,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit
 {
-    RefPtr frame = core([self _frame]);
-    if (!frame)
-        return bottom;
-
-    RefPtr view = frame->view();
-    if (!view)
-        return bottom;
-
-    float newBottom;
-    view->adjustPageHeightDeprecated(&newBottom, top, bottom, bottomLimit);
-
-    // If the new bottom is equal to the old bottom (when both are treated as floats), we just return the original
-    // bottom. This prevents rounding errors that can occur when converting newBottom to a double.
-    if (WTF::areEssentiallyEqual(static_cast<float>(bottom), newBottom))
-        return bottom;
-    return newBottom;
+    return bottom;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -4741,17 +4726,15 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
     return YES;
 }
 
-// This is needed for the case where the webview is embedded in the view that's being printed.
-// It shouldn't be called when the webview is being printed directly.
+// AppKit calls this when the webview is embedded in the view being printed. Entering print mode
+// applies print styles. Page breaks are left to AppKit.
 - (void)adjustPageHeightNew:(CGFloat *)newBottom top:(CGFloat)oldTop bottom:(CGFloat)oldBottom limit:(CGFloat)bottomLimit
 {
-    // This helps when we print as part of a larger print process.
-    // If the WebHTMLView itself is what we're printing, then we will never have to do this.
     BOOL wasInPrintingMode = _private->printing;
     if (!wasInPrintingMode)
         [self _setPrinting:YES minimumPageLogicalWidth:0 logicalHeight:0 originalPageWidth:0 originalPageHeight:0 maximumShrinkRatio:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
 
-    *newBottom = [self _adjustedBottomOfPageWithTop:oldTop bottom:oldBottom limit:bottomLimit];
+    *newBottom = oldBottom;
 
     if (!wasInPrintingMode) {
         NSPrintOperation *currenPrintOperation = [NSPrintOperation currentOperation];

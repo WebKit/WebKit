@@ -155,30 +155,26 @@ void BlockPainter::paintContents(const LayoutPoint& paintOffset)
         paintInlineChildren(paintOffset);
     else {
         PaintInfo paintInfoForChildren = paintInfoForBlockChildren(m_block, m_paintInfo);
-
-        // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
-        // NSViews. Do not add any more code for this.
-        bool usePrintRect = !m_block->view().printRect().isEmpty();
-        BlockPainter { m_block, m_paintInfo, paintOffset }.paintChildren(paintInfoForChildren, usePrintRect);
+        BlockPainter { m_block, m_paintInfo, paintOffset }.paintChildren(paintInfoForChildren);
     }
 }
 
-void BlockPainter::paintChildren(PaintInfo& paintInfoForChild, bool usePrintRect)
+void BlockPainter::paintChildren(PaintInfo& paintInfoForChild)
 {
     ASSERT(!isSkippedContentRoot(m_block));
 
     if (CheckedPtr grid = dynamicDowncast<RenderGrid>(m_block)) {
         ASSERT(!grid->currentGrid().needsItemsPlacement());
         for (CheckedRef gridItem : grid->currentGrid().orderIterator().gridItems())
-            paintChild(gridItem, paintInfoForChild, usePrintRect, PaintAsInlineBlock);
+            paintChild(gridItem, paintInfoForChild, PaintAsInlineBlock);
         return;
     }
 
     if (CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(m_block)) {
         for (auto& renderer : flexBox->flexLayout().flexItems()) {
             CheckedPtr flexItem = renderer;
-            if (flexItem && !paintChild(*flexItem, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
-                return;
+            if (flexItem)
+                paintChild(*flexItem, paintInfoForChild, PaintAsInlineBlock);
         }
         return;
     }
@@ -197,53 +193,29 @@ void BlockPainter::paintChildren(PaintInfo& paintInfoForChild, bool usePrintRect
     for (CheckedRef child : childrenOfType<RenderBox>(m_block.get())) {
         if (takesFloatsLast && child->isFloating())
             continue;
-        if (!paintChild(child, paintInfoForChild, usePrintRect))
-            return;
+        paintChild(child, paintInfoForChild);
     }
     if (!takesFloatsLast)
         return;
     for (CheckedRef child : childrenOfType<RenderBox>(m_block.get())) {
-        if (child->isFloating() && !paintChild(child, paintInfoForChild, usePrintRect))
-            return;
+        if (child->isFloating())
+            paintChild(child, paintInfoForChild);
     }
 }
 
-bool BlockPainter::paintChild(RenderBox& child, PaintInfo& paintInfoForChild, bool usePrintRect, PaintBlockType paintType)
+void BlockPainter::paintChild(RenderBox& child, PaintInfo& paintInfoForChild, PaintBlockType paintType)
 {
     ASSERT(!isSkippedContentRoot(m_block));
 
     if (child.isExcludedAndPlacedInBorder())
-        return true;
+        return;
 
     if (child.isOutsideListMarker())
-        return true;
+        return;
 
     if (child.isSkippedContent()) {
         ASSERT(child.isColumnSpanner());
-        return true;
-    }
-
-    CheckedRef view = m_block->view();
-
-    // Check for page-break-before: always, and if it's set, break and bail.
-    bool checkBeforeAlways = !m_block->childrenInline() && (usePrintRect && alwaysPageBreak(child.style().breakBefore()));
-    LayoutUnit absoluteChildY = m_paintOffset.y() + child.y();
-    if (checkBeforeAlways
-        && absoluteChildY > m_paintInfo.rect.y()
-        && absoluteChildY < m_paintInfo.rect.maxY()) {
-        view->setBestTruncatedAt(absoluteChildY, m_block.ptr(), true);
-        return false;
-    }
-
-    if (!child.isFloating() && child.isBlockLevelReplacedOrAtomicInline() && usePrintRect && child.borderBoxHeight() <= view->printRect().height()) {
-        // Paginate block-level replaced elements.
-        if (absoluteChildY + child.borderBoxHeight() > view->printRect().maxY()) {
-            if (absoluteChildY < view->truncatedAt())
-                view->setBestTruncatedAt(absoluteChildY, &child);
-            // If we were able to truncate, don't paint.
-            if (absoluteChildY >= view->truncatedAt())
-                return false;
-        }
+        return;
     }
 
     LayoutPoint childPoint = m_block->blockStartRelativeToPhysicalForChild(child, m_paintOffset);
@@ -257,17 +229,6 @@ bool BlockPainter::paintChild(RenderBox& child, PaintInfo& paintInfoForChild, bo
         else
             child.paint(paintInfoForChild, childPoint);
     }
-
-    // Check for page-break-after: always, and if it's set, break and bail.
-    bool checkAfterAlways = !m_block->childrenInline() && (usePrintRect && alwaysPageBreak(child.style().breakAfter()));
-    if (checkAfterAlways
-        && (absoluteChildY + child.borderBoxHeight()) > m_paintInfo.rect.y()
-        && (absoluteChildY + child.borderBoxHeight()) < m_paintInfo.rect.maxY()) {
-        view->setBestTruncatedAt(absoluteChildY + child.borderBoxHeight() + std::max<LayoutUnit>(0, child.collapsedMarginAfter()), m_block.ptr(), true);
-        return false;
-    }
-
-    return true;
 }
 
 void BlockPainter::paintCarets()
@@ -596,8 +557,7 @@ void BlockPainter::paintBlockLevelContentInInline()
         // paintInlineChildren() paints the floats.
         if (!child || child->isFloating())
             continue;
-        if (!paintChild(*child, paintInfoForChildren, false))
-            return;
+        paintChild(*child, paintInfoForChildren);
     }
 }
 
@@ -611,7 +571,7 @@ void BlockPainter::paintFloatsAndBlockLevelContentInInline(const LayoutIntegrati
         // Like InlineContentPainter.
         if (!child->isFloating() && !m_paintInfo.shouldPaintWithinRoot(child))
             continue;
-        paintChild(child, paintInfoForChildren, false);
+        paintChild(child, paintInfoForChildren);
     }
 }
 
