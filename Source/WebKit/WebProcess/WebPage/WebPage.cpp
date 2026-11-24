@@ -6578,6 +6578,65 @@ void WebPage::modelDragEnded(NodeIdentifier nodeIdentifier)
 
 #endif // ENABLE(DRAG_SUPPORT)
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+static RefPtr<HTMLInputElement> controlTrackingElement(NodeIdentifier nodeID, Page* page)
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(Node::fromIdentifier(nodeID));
+    if (!input || !input->isConnected() || input->document().page() != page)
+        return nullptr;
+    return input;
+}
+
+static std::optional<LayoutPoint> absoluteLocationForControlTracking(HTMLInputElement& input, IntPoint location)
+{
+    RefPtr frameView = input.document().view();
+    if (!frameView)
+        return std::nullopt;
+    return LayoutPoint { frameView->rootViewToContents(location) };
+}
+
+void WebPage::controlTrackingDidTap(NodeIdentifier nodeID)
+{
+    RefPtr input = controlTrackingElement(nodeID, m_page.get());
+    if (!input)
+        return;
+
+    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, protect(input->document()).ptr() };
+    input->controlTrackingDidTap();
+}
+
+void WebPage::controlTrackingDidBegin(NodeIdentifier nodeID, IntPoint location)
+{
+    RefPtr input = controlTrackingElement(nodeID, m_page.get());
+    if (!input)
+        return;
+
+    if (auto absoluteLocation = absoluteLocationForControlTracking(*input, location))
+        input->controlTrackingDidBegin(*absoluteLocation);
+}
+
+void WebPage::controlTrackingDidUpdate(NodeIdentifier nodeID, IntPoint location)
+{
+    RefPtr input = controlTrackingElement(nodeID, m_page.get());
+    if (!input)
+        return;
+
+    if (auto absoluteLocation = absoluteLocationForControlTracking(*input, location))
+        input->controlTrackingDidUpdate(*absoluteLocation);
+}
+
+void WebPage::controlTrackingDidEnd(NodeIdentifier nodeID, IntPoint location, bool committed)
+{
+    RefPtr input = controlTrackingElement(nodeID, m_page.get());
+    if (!input)
+        return;
+
+    auto absoluteLocation = absoluteLocationForControlTracking(*input, location);
+    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, protect(input->document()).ptr() };
+    input->controlTrackingDidEnd(absoluteLocation.value_or(LayoutPoint { }), committed && absoluteLocation);
+}
+#endif
+
 #if ENABLE(MODEL_PROCESS)
 void WebPage::requestInteractiveModelElementAtPoint(std::optional<FrameIdentifier> frameID, IntPoint clientPosition, IntPoint interactionLocation, CompletionHandler<void(InteractiveModelElementHitTestResult&&)>&& completionHandler)
 {

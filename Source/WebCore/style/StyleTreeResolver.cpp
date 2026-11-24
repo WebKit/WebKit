@@ -456,6 +456,10 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
     if (update.style->usedUserModify() != UserModify::ReadOnly)
         m_document->setMayHaveEditableElements();
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    if (update.style->usedAppearance() == StyleAppearance::Switch)
+        m_document->setMayHaveControlTrackingRegions();
+#endif
 
     return { WTF::move(update), descendantsToResolve };
 }

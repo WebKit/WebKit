@@ -2714,6 +2714,10 @@ bool RenderLayerBacking::maintainsEventRegion() const
             return true;
     }
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    if (renderer().document().mayHaveControlTrackingRegions() && renderer().settings().controlTouchTrackingEnabled())
+        return true;
+#endif
 
     if (m_owningLayer.isRenderViewLayer())
         return false;

@@ -621,6 +621,7 @@ UIProcess/ios/WKBaseScrollView.mm @nonARC
 UIProcess/ios/WKCapturePreviewViewController.mm @nonARC
 UIProcess/ios/WKContentView.mm @nonARC @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @nonARC @no-unify
+UIProcess/ios/WKControlTrackingGestureRecognizer.mm @nonARC
 UIProcess/ios/WKExtendedTextInputTraits.mm @nonARC
 UIProcess/ios/WKExtrinsicButton.mm @nonARC
 UIProcess/ios/WKGeolocationProviderIOS.mm @nonARC

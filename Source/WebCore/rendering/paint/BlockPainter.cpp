@@ -402,6 +402,11 @@ void BlockPainter::paintObject()
         needsTraverseDescendants |= document->hasWheelEventHandlers() || document->mayHaveListBoxes();
         LOG_WITH_STREAM(EventRegions, stream << "  has wheel event handlers: " << document->hasWheelEventHandlers() << " may have list boxes: " << document->mayHaveListBoxes());
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+        bool mayHaveControlTrackingRegions = document->mayHaveControlTrackingRegions() && document->settings().controlTouchTrackingEnabled();
+        needsTraverseDescendants |= mayHaveControlTrackingRegions;
+        LOG_WITH_STREAM(EventRegions, stream << "  may have control tracking regions: " << mayHaveControlTrackingRegions);
+#endif
 
 #if ENABLE(EDITABLE_REGION)
         // We treat the entire text control as editable to match users' expectation even

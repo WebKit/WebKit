@@ -2533,4 +2533,31 @@ bool HTMLInputElement::isSwitchHeld() const
     return downcast<CheckboxInputType>(*m_inputType).isSwitchHeld();
 }
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+bool HTMLInputElement::contributesControlTrackingRegion() const
+{
+    return m_inputType->contributesControlTrackingRegion();
+}
+
+void HTMLInputElement::controlTrackingDidTap()
+{
+    protect(m_inputType)->controlTrackingDidTap();
+}
+
+void HTMLInputElement::controlTrackingDidBegin(LayoutPoint absoluteLocation)
+{
+    protect(m_inputType)->controlTrackingDidBegin(absoluteLocation);
+}
+
+void HTMLInputElement::controlTrackingDidUpdate(LayoutPoint absoluteLocation)
+{
+    protect(m_inputType)->controlTrackingDidUpdate(absoluteLocation);
+}
+
+void HTMLInputElement::controlTrackingDidEnd(LayoutPoint absoluteLocation, bool committed)
+{
+    protect(m_inputType)->controlTrackingDidEnd(absoluteLocation, committed);
+}
+#endif
+
 } // namespace

@@ -1,0 +1,40 @@
+
+
+
+
+Button
+
+Switches that are added, changed, or removed after the page loaded handle touches as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A drag sideways on a switch added after the page loaded:
+PASS input.checked is true
+PASS clicks is 1
+PASS activeOnClick is true
+A drag sideways on a checkbox that became a switch:
+PASS input.checked is true
+PASS clicks is 1
+A tap on a disabled switch:
+PASS input.checked is false
+PASS clicks is 0
+A drag sideways on a disabled switch:
+PASS input.checked is false
+PASS clicks is 0
+A drag sideways on the same switch once it is enabled:
+PASS input.checked is true
+PASS clicks is 1
+A tap on a switch with appearance: none:
+PASS input.checked is true
+PASS clicks is 1
+A hold and a release on a switch whose checkedness script changed during the hold:
+PASS input.checked is false
+PASS clicks is 1
+A tap on a button after a switch was removed during a hold:
+PASS buttonClicks is 1
+PASS clicks is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

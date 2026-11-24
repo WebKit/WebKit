@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="resources/switch-touch.js"></script>
+<p><input type=checkbox switch id=input></p>
+<div id="console"></div>
+<script>
+description("The click at the end of a drag can change the input's type.");
+jsTestIsAsync = true;
+
+const input = document.getElementById("input");
+let clicks = 0;
+input.addEventListener("click", () => ++clicks);
+input.addEventListener("click", () => input.type = "text", { once: true });
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBe("clicks", "1");
+    shouldBeEqualToString("input.type", "text");
+    finishJSTest();
+})();
+</script>
+</html>

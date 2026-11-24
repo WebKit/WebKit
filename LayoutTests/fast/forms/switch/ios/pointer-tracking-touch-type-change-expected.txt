@@ -1,0 +1,12 @@
+
+The click at the end of a drag can change the input's type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clicks is 1
+PASS input.type is "text"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
