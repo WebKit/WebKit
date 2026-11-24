@@ -152,11 +152,13 @@ def main(args):
     if args.toolchains:
         xcodebuild_args['TOOLCHAINS'] = args.toolchains
     if args.swift_conditions:
-        xcodebuild_args['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = args.swift_conditions
+        # Append to each target's conditions instead of replacing them; WTF, bmalloc, and JavaScriptCore set their own.
+        # make turns $$ into $, and the single quotes below keep the shell from treating $(inherited) as a command.
+        xcodebuild_args['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = '$$(inherited) {}'.format(args.swift_conditions)
     xcodebuild_args['COMPILATION_CACHE_ENABLE_CACHING'] = 'YES' if args.enable_compile_cache else 'NO'
     xcodebuild_args['CLANG_ENABLE_COMPILE_CACHE'] = 'YES' if args.enable_compile_cache else 'NO'
     if len(xcodebuild_args):
-        make_command.extend(['ARGS={}'.format(' '.join(["{}=\"{}\"".format(key, xcodebuild_args[key]) for key in xcodebuild_args]))])
+        make_command.extend(['ARGS={}'.format(' '.join(["{}='{}'".format(key, xcodebuild_args[key]) for key in xcodebuild_args]))])
 
     # FIXME (rdar://168692628): With Xcode compilation caching (CAS) disabled,
     # clang's `-fbounds-safety` silently turns on
