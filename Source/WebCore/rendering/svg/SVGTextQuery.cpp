@@ -84,91 +84,123 @@ static Vector<InlineIterator::SVGTextBoxIterator> collectTextBoxesInLogicalOrder
 SVGTextQuery::SVGTextQuery(const RenderElement& renderer)
 {
     for (auto& textBox : collectTextBoxesInLogicalOrder(renderer)) {
-        CheckedRef text = textBox->renderer();
-        auto& metrics = text->textMetrics();
-
-        unsigned offset = 0;
-        unsigned metricsIndex = 0;
-        auto appendHiddenCharacters = [&](unsigned endOffset) {
-            for (; offset < endOffset && metricsIndex < metrics.size(); ++metricsIndex) {
-                if (offset >= textBox->start())
-                    m_typographicCharacters.append({ .start = m_numberOfCharacters + offset - textBox->start(), .length = metrics[metricsIndex].length() });
-                offset += metrics[metricsIndex].length();
-            }
-        };
-
-        auto ascent = text->scaledFont().metricsOfPrimaryFont().ascent() / text->scalingFactor();
-        auto isVertical = text->writingMode().isVertical();
-        auto isBackward = textBox->isInlineFlipped();
-        for (auto& fragment : textBox->textFragments()) {
-            appendHiddenCharacters(fragment.characterOffset);
-            ASSERT(metricsIndex == fragment.metricsListOffset);
-
-            AffineTransform transform;
-            fragment.buildFragmentTransform(transform);
-            m_fragmentTransforms.append(transform);
-
-            auto rotation = narrowPrecisionToFloat(rad2deg(atan2(fragment.transform.b(), fragment.transform.a())));
-
-            // The positions follow the rotate attribute and the text path, not the orientation of the glyph.
-            auto positionTransform = transform;
-            if (isVertical) {
-                auto positionFragment = fragment;
-                positionFragment.transform = AffineTransform::makeRotation(rotation - fragment.orientationAngle);
-                positionFragment.buildFragmentTransform(positionTransform);
-            }
-
-            auto isSideways = isVertical && fmodf(fragment.orientationAngle, 180);
-            auto lengthAdjustScale = static_cast<float>(isVertical ? fragment.lengthAdjustTransform.d() : fragment.lengthAdjustTransform.a());
-            auto inlineLength = isVertical ? fragment.height : fragment.width;
-            auto origin = isVertical ? FloatPoint { fragment.x - fragment.baselineShift, fragment.y } : FloatPoint { fragment.x, fragment.y + fragment.baselineShift };
-
-            auto inlineVector = [&](float length) {
-                return isVertical ? FloatSize { 0, length } : FloatSize { length, 0 };
-            };
-
-            auto fragmentEnd = fragment.characterOffset + fragment.length;
-            auto inlineOffset = 0.f;
-            for (; offset < fragmentEnd && metricsIndex < metrics.size(); ++metricsIndex) {
-                auto& entry = metrics[metricsIndex];
-                auto advance = isVertical && !isSideways ? entry.height() : entry.width();
-                auto cellStart = isBackward ? inlineLength - inlineOffset - advance : inlineOffset;
-
-                // "The inline-base direction position of the alignment point is on the start-edge of the glyph."
-                // https://w3c.github.io/svgwg/svg2-draft/text.html#TermAlignmentPoint
-                auto alignmentPoint = origin + inlineVector(isBackward ? cellStart + advance : cellStart);
-
-                m_typographicCharacters.append({
-                    .start = m_numberOfCharacters + offset - textBox->start(),
-                    .length = entry.length(),
-                    .advance = advance * lengthAdjustScale,
-                    .spacing = offset + entry.length() >= fragmentEnd ? fragment.spacing : 0,
-                    .rotation = rotation,
-                    .glyphCell = isVertical ? FloatRect { fragment.x, fragment.y - ascent + cellStart, entry.width(), entry.height() } : FloatRect { fragment.x + cellStart, fragment.y - ascent, advance, entry.height() },
-                    .startPosition = positionTransform.mapPoint(alignmentPoint),
-                    .endPosition = positionTransform.mapPoint(alignmentPoint + inlineVector(isBackward ? -advance : advance)),
-                    .fragmentIndex = m_fragmentTransforms.size() - 1,
-                });
-
-                inlineOffset += advance;
-                offset += entry.length();
-            }
-        }
-
-        appendHiddenCharacters(textBox->start() + textBox->length());
+        appendTypographicCharacters(*textBox);
         m_numberOfCharacters += textBox->length();
     }
+    ASSERT(std::ranges::is_sorted(m_typographicCharacters, { }, &TypographicCharacter::firstCharacterIndex));
+}
+
+void SVGTextQuery::appendTypographicCharacters(const InlineIterator::SVGTextBox& textBox)
+{
+    CheckedRef textRenderer = textBox.renderer();
+    auto& metrics = textRenderer->textMetrics();
+
+    // The characters of all text boxes are numbered together in logical order. m_numberOfCharacters counts the characters of
+    // the previous text boxes, and offset is a position in the text of the renderer, where this text box starts at textBox.start().
+    auto characterIndexAt = [&](unsigned offset) {
+        return m_numberOfCharacters + offset - textBox.start();
+    };
+
+    unsigned offset = 0;
+    unsigned metricsIndex = 0;
+    auto appendHiddenCharacters = [&](unsigned endOffset) {
+        for (; offset < endOffset && metricsIndex < metrics.size(); ++metricsIndex) {
+            if (offset >= textBox.start())
+                m_typographicCharacters.append({ .firstCharacterIndex = characterIndexAt(offset), .characterCount = metrics[metricsIndex].length });
+            offset += metrics[metricsIndex].length;
+        }
+    };
+
+    auto ascent = textRenderer->scaledFont().metricsOfPrimaryFont().ascent() / textRenderer->scalingFactor();
+    auto isVertical = textRenderer->writingMode().isVertical();
+    auto isInlineFlipped = textBox.isInlineFlipped();
+    for (auto& fragment : textBox.textFragments()) {
+        appendHiddenCharacters(fragment.characterOffset);
+        ASSERT(metricsIndex == fragment.metricsListOffset);
+
+        AffineTransform transform;
+        fragment.buildFragmentTransform(transform);
+
+        auto rotation = narrowPrecisionToFloat(rad2deg(atan2(fragment.transform.b(), fragment.transform.a())));
+
+        // The positions follow the rotate attribute and the text path, not the orientation of the glyph.
+        auto positionTransform = transform;
+        if (isVertical) {
+            auto positionFragment = fragment;
+            positionFragment.transform = AffineTransform::makeRotation(rotation - fragment.orientationAngle);
+            positionFragment.buildFragmentTransform(positionTransform);
+        }
+
+        auto isSideways = isVertical && fmodf(fragment.orientationAngle, 180);
+        auto lengthAdjustScale = static_cast<float>(isVertical ? fragment.lengthAdjustTransform.d() : fragment.lengthAdjustTransform.a());
+        auto inlineLength = isVertical ? fragment.height : fragment.width;
+        auto origin = isVertical ? FloatPoint { fragment.x - fragment.baselineShift, fragment.y } : FloatPoint { fragment.x, fragment.y + fragment.baselineShift };
+
+        auto inlineVector = [&](float length) {
+            return isVertical ? FloatSize { 0, length } : FloatSize { length, 0 };
+        };
+
+        auto fragmentEnd = fragment.characterOffset + fragment.length;
+        auto firstTypographicCharacterIndex = m_typographicCharacters.size();
+        auto inlineOffset = 0.f;
+        for (; offset < fragmentEnd && metricsIndex < metrics.size(); ++metricsIndex) {
+            auto& entry = metrics[metricsIndex];
+            auto advance = isVertical && !isSideways ? entry.height : entry.width;
+            auto cellStart = isInlineFlipped ? inlineLength - inlineOffset - advance : inlineOffset;
+
+            // "The inline-base direction position of the alignment point is on the start-edge of the glyph."
+            // https://w3c.github.io/svgwg/svg2-draft/text.html#TermAlignmentPoint
+            auto alignmentPoint = origin + inlineVector(isInlineFlipped ? cellStart + advance : cellStart);
+
+            m_typographicCharacters.append({
+                .firstCharacterIndex = characterIndexAt(offset),
+                .characterCount = entry.length,
+                .advance = advance * lengthAdjustScale,
+                .spacing = offset + entry.length >= fragmentEnd ? fragment.spacing : 0,
+                .rotation = rotation,
+                .glyphCell = isVertical ? FloatRect { fragment.x, fragment.y - ascent + cellStart, entry.width, entry.height } : FloatRect { fragment.x + cellStart, fragment.y - ascent, advance, entry.height },
+                .startPosition = positionTransform.mapPoint(alignmentPoint),
+                .endPosition = positionTransform.mapPoint(alignmentPoint + inlineVector(isInlineFlipped ? -advance : advance)),
+            });
+
+            inlineOffset += advance;
+            offset += entry.length;
+        }
+
+        m_fragments.append({
+            .transform = transform,
+            .firstTypographicCharacterIndex = static_cast<unsigned>(firstTypographicCharacterIndex),
+            .typographicCharacterCount = static_cast<unsigned>(m_typographicCharacters.size() - firstTypographicCharacterIndex),
+        });
+    }
+
+    appendHiddenCharacters(textBox.start() + textBox.length());
 }
 
 // Spec: "While charnum < last and the character at index charnum does not correspond to a typographic character:
 // Set charnum to charnum + 1."
 // https://w3c.github.io/svgwg/svg2-draft/text.html#TermFindTypographicCharacterForCharacter
-const SVGTextQuery::TypographicCharacter* SVGTextQuery::findTypographicCharacter(unsigned position) const
+std::optional<size_t> SVGTextQuery::findTypographicCharacter(unsigned characterIndex) const
 {
-    auto it = std::ranges::find_if(m_typographicCharacters, [&](auto& character) {
-        return position < character.start + character.length;
-    });
-    return it != m_typographicCharacters.end() ? &*it : nullptr;
+    ASSERT(characterIndex < m_numberOfCharacters);
+    size_t next = std::ranges::upper_bound(m_typographicCharacters, characterIndex, { }, &TypographicCharacter::firstCharacterIndex) - m_typographicCharacters.begin();
+    if (next) {
+        auto& previous = m_typographicCharacters[next - 1];
+        if (characterIndex < previous.firstCharacterIndex + previous.characterCount)
+            return next - 1;
+    }
+    if (next < m_typographicCharacters.size())
+        return next;
+    return std::nullopt;
+}
+
+const SVGTextQuery::Fragment* SVGTextQuery::fragmentContaining(size_t typographicCharacterIndex) const
+{
+    size_t next = std::ranges::upper_bound(m_fragments, typographicCharacterIndex, { }, &Fragment::firstTypographicCharacterIndex) - m_fragments.begin();
+    if (!next)
+        return nullptr;
+    auto& fragment = m_fragments[next - 1];
+    return typographicCharacterIndex < fragment.firstTypographicCharacterIndex + fragment.typographicCharacterCount ? &fragment : nullptr;
 }
 
 // Spec: "Let length be the value that would be returned if the getSubStringLength method were called on this element,
@@ -184,13 +216,17 @@ float SVGTextQuery::textLength() const
 // for any font kerning in effect. If the letter-spacing or word-spacing properties contributed space just after the
 // typographic character, then add that space to length."
 // https://w3c.github.io/svgwg/svg2-draft/text.html#__svg__SVGTextContentElement__getSubStringLength
-float SVGTextQuery::subStringLength(unsigned startPosition, unsigned length) const
+float SVGTextQuery::subStringLength(unsigned characterIndex, unsigned characterCount) const
 {
-    auto endPosition = startPosition + std::min(length, m_numberOfCharacters - std::min(startPosition, m_numberOfCharacters));
+    // The caller clamps characterCount, so the sum cannot overflow.
+    ASSERT(characterIndex <= m_numberOfCharacters && characterCount <= m_numberOfCharacters - characterIndex);
+    auto endIndex = characterIndex + characterCount;
     auto subStringLength = 0.f;
-    for (auto& character : m_typographicCharacters) {
-        if (character.start >= startPosition && character.start < endPosition)
-            subStringLength += character.advance + character.spacing;
+    auto first = std::ranges::lower_bound(m_typographicCharacters, characterIndex, { }, &TypographicCharacter::firstCharacterIndex) - m_typographicCharacters.begin();
+    for (auto& character : m_typographicCharacters.subspan(first)) {
+        if (character.firstCharacterIndex >= endIndex)
+            break;
+        subStringLength += character.advance + character.spacing;
     }
     return subStringLength;
 }
@@ -198,32 +234,33 @@ float SVGTextQuery::subStringLength(unsigned startPosition, unsigned length) con
 // Spec: "Let p be the alignment point of the typographic character that correspond to the character at index charnum,
 // in the coordinate system of the current element."
 // https://w3c.github.io/svgwg/svg2-draft/text.html#__svg__SVGTextContentElement__getStartPositionOfChar
-FloatPoint SVGTextQuery::startPositionOfCharacter(unsigned position) const
+FloatPoint SVGTextQuery::startPositionOfCharacter(unsigned characterIndex) const
 {
-    auto* character = findTypographicCharacter(position);
-    return character ? character->startPosition : FloatPoint { };
+    auto index = findTypographicCharacter(characterIndex);
+    return index ? m_typographicCharacters[*index].startPosition : FloatPoint { };
 }
 
-FloatPoint SVGTextQuery::endPositionOfCharacter(unsigned position) const
+FloatPoint SVGTextQuery::endPositionOfCharacter(unsigned characterIndex) const
 {
-    auto* character = findTypographicCharacter(position);
-    return character ? character->endPosition : FloatPoint { };
+    auto index = findTypographicCharacter(characterIndex);
+    return index ? m_typographicCharacters[*index].endPosition : FloatPoint { };
 }
 
-float SVGTextQuery::rotationOfCharacter(unsigned position) const
+float SVGTextQuery::rotationOfCharacter(unsigned characterIndex) const
 {
-    auto* character = findTypographicCharacter(position);
-    return character ? character->rotation : 0;
+    auto index = findTypographicCharacter(characterIndex);
+    return index ? m_typographicCharacters[*index].rotation : 0;
 }
 
 // Spec: "Let rect be the rectangle that forms the tightest bounding box around quad in the current element's coordinate system."
 // https://w3c.github.io/svgwg/svg2-draft/text.html#__svg__SVGTextContentElement__getExtentOfChar
-FloatRect SVGTextQuery::extentOfCharacter(unsigned position) const
+FloatRect SVGTextQuery::extentOfCharacter(unsigned characterIndex) const
 {
-    auto* character = findTypographicCharacter(position);
-    if (!character || !character->fragmentIndex)
+    auto index = findTypographicCharacter(characterIndex);
+    if (!index)
         return { };
-    return m_fragmentTransforms[*character->fragmentIndex].mapRect(character->glyphCell);
+    auto* fragment = fragmentContaining(*index);
+    return fragment ? fragment->transform.mapRect(m_typographicCharacters[*index].glyphCell) : FloatRect { };
 }
 
 // Spec: "If the character at index charnum corresponds to a typographic character and it is the first character in document order
@@ -232,23 +269,21 @@ FloatRect SVGTextQuery::extentOfCharacter(unsigned position) const
 // https://w3c.github.io/svgwg/svg2-draft/text.html#__svg__SVGTextContentElement__getCharNumAtPosition
 int SVGTextQuery::characterNumberAtPosition(const FloatPoint& position) const
 {
-    auto positionsInFragments = m_fragmentTransforms.map([&](auto& transform) -> std::optional<FloatPoint> {
-        if (auto inverse = transform.inverse())
-            return inverse->mapPoint(position);
-        return std::nullopt;
-    });
-
     auto isInGlyphCell = [](const FloatRect& glyphCell, const FloatPoint& point) {
         return point.x() >= glyphCell.x() && point.x() < glyphCell.maxX() && point.y() >= glyphCell.y() && point.y() < glyphCell.maxY();
     };
 
     auto result = -1;
-    for (auto& character : m_typographicCharacters) {
-        if (!character.fragmentIndex)
+    for (auto& fragment : m_fragments) {
+        auto inverse = fragment.transform.inverse();
+        if (!inverse)
             continue;
 
-        if (auto& positionInFragment = positionsInFragments[*character.fragmentIndex]; positionInFragment && isInGlyphCell(character.glyphCell, *positionInFragment))
-            result = character.start;
+        auto positionInFragment = inverse->mapPoint(position);
+        for (auto& character : m_typographicCharacters.subspan(fragment.firstTypographicCharacterIndex, fragment.typographicCharacterCount)) {
+            if (isInGlyphCell(character.glyphCell, positionInFragment))
+                result = character.firstCharacterIndex;
+        }
     }
     return result;
 }

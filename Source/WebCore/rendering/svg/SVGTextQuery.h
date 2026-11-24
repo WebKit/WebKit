@@ -28,8 +28,12 @@ namespace WebCore {
 
 class RenderElement;
 
+namespace InlineIterator {
+class SVGTextBox;
+}
+
 // Answers the SVGTextContentElement queries from the result of the text layout: the text fragments and the metrics of the
-// typographic characters. Characters are numbered in logical order, positions are in the user space of the text.
+// typographic characters. Character indices are in logical order, positions are in the user space of the text.
 // https://w3c.github.io/svgwg/svg2-draft/text.html#InterfaceSVGTextContentElement
 class SVGTextQuery {
 public:
@@ -38,32 +42,47 @@ public:
 
     unsigned numberOfCharacters() const { return m_numberOfCharacters; }
     float textLength() const;
-    float subStringLength(unsigned startPosition, unsigned length) const;
-    FloatPoint startPositionOfCharacter(unsigned position) const;
-    FloatPoint endPositionOfCharacter(unsigned position) const;
-    float rotationOfCharacter(unsigned position) const;
-    FloatRect extentOfCharacter(unsigned position) const;
+    float subStringLength(unsigned characterIndex, unsigned characterCount) const;
+    FloatPoint startPositionOfCharacter(unsigned characterIndex) const;
+    FloatPoint endPositionOfCharacter(unsigned characterIndex) const;
+    float rotationOfCharacter(unsigned characterIndex) const;
+    FloatRect extentOfCharacter(unsigned characterIndex) const;
     int characterNumberAtPosition(const FloatPoint&) const;
 
 private:
+    // The unit the queries work on, a grapheme cluster or the characters of a ligature, drawn as one or more glyphs.
+    // https://w3c.github.io/svgwg/svg2-draft/text.html#TermTypographicCharacterUnit
     struct TypographicCharacter {
-        unsigned start { 0 };
-        unsigned length { 0 };
+        // The characters of the text it spans.
+        unsigned firstCharacterIndex { 0 };
+        unsigned characterCount { 0 };
+        // Length in the inline direction, without the letter and word spacing after it.
         float advance { 0 };
         float spacing { 0 };
         float rotation { 0 };
-        // Before the transform of the text fragment.
+        // The box of the glyph, before the transform of the text fragment, which maps it the way the glyph is drawn.
         FloatRect glyphCell { };
+        // The alignment points at the start and the end of the advance, in user space. Unlike the glyph cell, they follow
+        // the rotate attribute and the text path but not the orientation of the glyph.
         FloatPoint startPosition { };
         FloatPoint endPosition { };
-        // Characters that are not rendered, like the ones beyond the end of a text path, have no fragment.
-        std::optional<unsigned> fragmentIndex { };
     };
 
-    const TypographicCharacter* findTypographicCharacter(unsigned position) const;
+    // The typographic characters of a text fragment and their transform.
+    struct Fragment {
+        AffineTransform transform;
+        unsigned firstTypographicCharacterIndex { 0 };
+        unsigned typographicCharacterCount { 0 };
+    };
 
+    void appendTypographicCharacters(const InlineIterator::SVGTextBox&);
+    std::optional<size_t> findTypographicCharacter(unsigned characterIndex) const;
+    const Fragment* fragmentContaining(size_t typographicCharacterIndex) const;
+
+    // Sorted by firstCharacterIndex.
     Vector<TypographicCharacter> m_typographicCharacters;
-    Vector<AffineTransform> m_fragmentTransforms;
+    // Sorted by firstTypographicCharacterIndex.
+    Vector<Fragment> m_fragments;
     unsigned m_numberOfCharacters { 0 };
 };
 

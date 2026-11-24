@@ -181,36 +181,36 @@ float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVe
     if (isVerticalText) {
         float ascentMinusDescent = ascent - descent;
         if (!angle) {
-            xOrientationShift = (ascentMinusDescent - metrics.width()) / 2;
+            xOrientationShift = (ascentMinusDescent - metrics.width) / 2;
             yOrientationShift = ascent;
         } else if (angle == 180)
-            xOrientationShift = (ascentMinusDescent + metrics.width()) / 2;
+            xOrientationShift = (ascentMinusDescent + metrics.width) / 2;
         else if (angle == 270) {
-            yOrientationShift = metrics.width();
+            yOrientationShift = metrics.width;
             xOrientationShift = ascentMinusDescent;
         }
 
         // Vertical advance calculation.
         if (angle && !orientationIsMultiplyOf180Degrees)
-            return metrics.width();
+            return metrics.width;
 
-        return metrics.height();
+        return metrics.height;
     }
 
     // Horizontal orientation handling.
     if (angle == 90)
-        yOrientationShift = -metrics.width();
+        yOrientationShift = -metrics.width;
     else if (angle == 180) {
-        xOrientationShift = metrics.width();
+        xOrientationShift = metrics.width;
         yOrientationShift = -ascent;
     } else if (angle == 270)
-        xOrientationShift = metrics.width();
+        xOrientationShift = metrics.width;
 
     // Horizontal advance calculation.
     if (angle && !orientationIsMultiplyOf180Degrees)
-        return metrics.height();
+        return metrics.height;
 
-    return metrics.width();
+    return metrics.width;
 }
 
 }

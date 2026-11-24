@@ -23,13 +23,12 @@ document.fonts.ready.then(() => {
     test(() => {
         // "point in this element's coordinate system is within the glyph cell for the typographic character"
         // The cells are 10 units wide and span from y = 12 to y = 22. The spec has no rule for the right and bottom edges
-        // of a cell, so only points that are inside a cell under any rule are tested. No point is in the cell of the last character,
-        // "C", until the spec's loop ("While charnum < last") includes it.
+        // of a cell, or for the edge shared by two cells, so only points that are inside a cell under any rule are tested.
+        // No point is in the cell of the last character, "C", until the spec's loop ("While charnum < last") includes it.
         assert_equals(text.getCharNumAtPosition(point(10, 15)), 0, "left edge");
-        assert_equals(text.getCharNumAtPosition(point(20, 15)), 1, "shared edge");
         assert_equals(text.getCharNumAtPosition(point(29.9, 15)), 1, "inside");
         assert_equals(text.getCharNumAtPosition(point(15, 12)), 0, "top edge");
-    }, "A point on the edge between two glyph cells belongs to one of them");
+    }, "A point on the left or top edge of a glyph cell is inside it");
 
     test(() => {
         // The characters beyond the end of the path are not rendered and have no glyph cell. The path ends at x = 40, so
