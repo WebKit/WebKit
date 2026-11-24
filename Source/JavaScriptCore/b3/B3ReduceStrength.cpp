@@ -4748,7 +4748,41 @@ private:
         if (std::optional<Value*> match = m_layeredCSE.findOrAdd(key, m_value)) {
             m_value->replaceWithIdentity(*match);
             m_changed = true;
+            return;
         }
+
+        if (m_value->opcode() == WasmArrayLength) {
+            if (Value* selected = selectAvailableWasmArrayLengths()) {
+                m_layeredCSE.overlay(key, selected);
+                replaceWithIdentity(selected);
+            }
+        }
+    }
+
+    // The length check of an array access through `(c ? a : b)`; see selectAvailableWasmGCValues.
+    // A length that dominates here, trapping or not, means its array is not null, so when both arms
+    // have one, this length cannot trap either.
+    Value* selectAvailableWasmArrayLengths()
+    {
+        Value* select = m_value->child(0);
+        if (select->opcode() != Select)
+            return nullptr;
+        auto availableLength = [&](Value* array) -> Value* {
+            Kind kind = m_value->kind();
+            if (std::optional<Value*> length = m_layeredCSE.find(ValueKey(kind, Int32, array)))
+                return *length;
+            kind.setTraps(!kind.traps());
+            if (std::optional<Value*> length = m_layeredCSE.find(ValueKey(kind, Int32, array)))
+                return *length;
+            return nullptr;
+        };
+        Value* thenLength = availableLength(select->child(1));
+        if (!thenLength)
+            return nullptr;
+        Value* elseLength = availableLength(select->child(2));
+        if (!elseLength)
+            return nullptr;
+        return m_insertionSet.insert<Value>(m_index, Select, m_value->origin(), select->child(0), thenLength, elseLength);
     }
 
     // Each slot has an epoch in m_wasmGCEpochs, and a write bumps the epochs of the slots it may touch.
@@ -4844,16 +4878,52 @@ private:
     {
         WasmGCAccessKey key = wasmGCKeyFor(location);
         if (std::optional<WasmGCAvailableValue> available = m_wasmGCMap.findOrAdd(key, WasmGCAvailableValue { m_value, 0 })) {
-            Value* forwarded = available->value;
-            if (available->packedMask) {
-                // A value forwarded out of a store into a packed (i8/i16) field still needs the narrowing the
-                // load would have done; signed reads apply their own sign extension outside the load, so
-                // masking is always the right fixup.
-                Value* mask = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), available->packedMask);
-                forwarded = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), forwarded, mask);
-            }
-            replaceWithIdentity(forwarded);
+            replaceWithIdentity(materializeWasmGCAvailableValue(*available));
+            return;
         }
+        if (Value* selected = selectAvailableWasmGCValues(location)) {
+            m_wasmGCMap.overlay(key, WasmGCAvailableValue { selected, 0 });
+            replaceWithIdentity(selected);
+        }
+    }
+
+    Value* materializeWasmGCAvailableValue(const WasmGCAvailableValue& available)
+    {
+        if (!available.packedMask)
+            return available.value;
+        // A value forwarded out of a store into a packed (i8/i16) field still needs the narrowing the
+        // load would have done; signed reads apply their own sign extension outside the load, so
+        // masking is always the right fixup.
+        Value* mask = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), available.packedMask);
+        return m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), available.value, mask);
+    }
+
+    // Binaryen turns `c ? a.f : b.f` into `(c ? a : b).f`, and likewise for array elements. When
+    // both arms' values are already available, selecting them avoids a load that depends on the
+    // select. An available value means a dominating access already went through that arm at this
+    // location, so neither arm can trap.
+    Value* selectAvailableWasmGCValues(const WasmGCLocation& location)
+    {
+        Value* select = location.base;
+        if (select->opcode() != Select)
+            return nullptr;
+        // A vector Select lowers to a branch, which costs more than the load it would replace.
+        if (m_value->type().isVector())
+            return nullptr;
+        auto availableFor = [&](Value* base) {
+            WasmGCLocation armLocation = location;
+            armLocation.base = base;
+            return m_wasmGCMap.find(wasmGCKeyFor(armLocation));
+        };
+        std::optional<WasmGCAvailableValue> thenAvailable = availableFor(select->child(1));
+        if (!thenAvailable)
+            return nullptr;
+        std::optional<WasmGCAvailableValue> elseAvailable = availableFor(select->child(2));
+        if (!elseAvailable)
+            return nullptr;
+        Value* thenValue = materializeWasmGCAvailableValue(*thenAvailable);
+        Value* elseValue = materializeWasmGCAvailableValue(*elseAvailable);
+        return m_insertionSet.insert<Value>(m_index, Select, m_value->origin(), select->child(0), thenValue, elseValue);
     }
 
     void recordWasmGCStore(const WasmGCLocation& location, Value* stored, uint32_t packedMask)
