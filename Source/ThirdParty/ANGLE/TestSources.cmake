@@ -42,6 +42,16 @@ set(angle_test_utils_ios_sources
     "util/ios/ios_main.mm"
 )
 
+# The test runner and expectations sources that every test executable links. They are
+# compiled once here instead of in each executable.
+set(angle_test_harness_sources
+    "src/tests/test_expectations/GPUTestConfig.cpp"
+    "src/tests/test_expectations/GPUTestExpectationsParser.cpp"
+    "src/tests/test_utils/RenderDoc.cpp"
+    "src/tests/test_utils/runner/PartitionAllocSupport.cpp"
+    "src/tests/test_utils/runner/TestSuite.cpp"
+)
+
 set(angle_unittests_sources
     "src/common/BinaryStream_unittest.cpp"
     "src/common/CircularBuffer_unittest.cpp"
@@ -79,10 +89,6 @@ set(angle_unittests_sources
     "src/tests/compiler_tests/MSLSymbolEnv_test.cpp"
     "src/tests/compiler_tests/Type_test.cpp"
     "src/tests/compiler_tests/VariablePacker_test.cpp"
-    "src/tests/test_expectations/GPUTestConfig.cpp"
-    "src/tests/test_expectations/GPUTestExpectationsParser.cpp"
-    "src/tests/test_utils/runner/PartitionAllocSupport.cpp"
-    "src/tests/test_utils/runner/TestSuite.cpp"
     "util/test_blob_cache_unittest.cpp"
 )
 
@@ -276,25 +282,22 @@ set(angle_end2end_tests_sources
     "src/tests/gl_tests/WebGLCompressedTextureAvailabilityTest.cpp"
     "src/tests/gl_tests/WebGLFramebufferTest.cpp"
     "src/tests/gl_tests/WebGLReadOutsideFramebufferTest.cpp"
-    "src/tests/test_expectations/GPUTestConfig.cpp"
-    "src/tests/test_expectations/GPUTestExpectationsParser.cpp"
     "src/tests/test_expectations/GPUTestExpectationsTest.cpp"
     "src/tests/test_utils/ANGLETest.cpp"
     "src/tests/test_utils/MultiThreadSteps.cpp"
-    "src/tests/test_utils/RenderDoc.cpp"
     "src/tests/test_utils/angle_test_configs.cpp"
     "src/tests/test_utils/angle_test_instantiate.cpp"
     "src/tests/test_utils/angle_test_instantiate_apple.mm"
     "src/tests/test_utils/angle_test_platform.cpp"
-    "src/tests/test_utils/runner/PartitionAllocSupport.cpp"
-    "src/tests/test_utils/runner/TestSuite.cpp"
     "src/tests/test_utils/system_info_util.cpp"
 )
 
 set(angle_deqp_support_sources
     "WebKit/tcuImageIO.mm"
     "WebKit/tcuMustpassGen.cpp"
+    "src/tests/deqp_support/angle_deqp_libtester_main.cpp"
     "src/tests/deqp_support/tcuANGLENativeDisplayFactory.cpp"
+    "src/tests/deqp_support/tcuANGLEPlatform.cpp"
     "src/tests/deqp_support/tcuRandomOrderExecutor.cpp"
     "third_party/VK-GL-CTS/src/execserver/xsDefs.cpp"
     "third_party/VK-GL-CTS/src/execserver/xsExecutionServer.cpp"
@@ -571,13 +574,6 @@ set(angle_deqp_support_sources
 set(angle_deqp_gles2_tests_sources
     "src/tests/angle_deqp_tests_main.cpp"
     "src/tests/deqp_support/angle_deqp_gtest.cpp"
-    "src/tests/deqp_support/angle_deqp_libtester_main.cpp"
-    "src/tests/deqp_support/tcuANGLEPlatform.cpp"
-    "src/tests/test_expectations/GPUTestConfig.cpp"
-    "src/tests/test_expectations/GPUTestExpectationsParser.cpp"
-    "src/tests/test_utils/RenderDoc.cpp"
-    "src/tests/test_utils/runner/PartitionAllocSupport.cpp"
-    "src/tests/test_utils/runner/TestSuite.cpp"
     "third_party/VK-GL-CTS/src/modules/gles2/accuracy/es2aAccuracyTests.cpp"
     "third_party/VK-GL-CTS/src/modules/gles2/accuracy/es2aTextureFilteringTests.cpp"
     "third_party/VK-GL-CTS/src/modules/gles2/accuracy/es2aTextureMipmapTests.cpp"
@@ -692,13 +688,6 @@ set(angle_deqp_gles2_tests_sources
 set(angle_deqp_gles3_tests_sources
     "src/tests/angle_deqp_tests_main.cpp"
     "src/tests/deqp_support/angle_deqp_gtest.cpp"
-    "src/tests/deqp_support/angle_deqp_libtester_main.cpp"
-    "src/tests/deqp_support/tcuANGLEPlatform.cpp"
-    "src/tests/test_expectations/GPUTestConfig.cpp"
-    "src/tests/test_expectations/GPUTestExpectationsParser.cpp"
-    "src/tests/test_utils/RenderDoc.cpp"
-    "src/tests/test_utils/runner/PartitionAllocSupport.cpp"
-    "src/tests/test_utils/runner/TestSuite.cpp"
     "third_party/VK-GL-CTS/src/modules/gles3/accuracy/es3aAccuracyTests.cpp"
     "third_party/VK-GL-CTS/src/modules/gles3/accuracy/es3aTextureFilteringTests.cpp"
     "third_party/VK-GL-CTS/src/modules/gles3/accuracy/es3aTextureMipmapTests.cpp"

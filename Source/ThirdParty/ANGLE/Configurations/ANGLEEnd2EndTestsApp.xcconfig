@@ -37,6 +37,11 @@ ALTERNATE_HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS_$(SDK_VARIANT));
 ALTERNATE_HEADER_SEARCH_PATHS_iosmac = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAMEWORKS_DIR)/usr/local/include
 
 HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS) ${BUILT_PRODUCTS_DIR}/usr/local/include $(ANGLE_HEADER_PATH_PREFIX)/src/tests/ $(inherited);
+
+// In XBS builds, gtest and gmock are separate projects that install libgtest.a and libgmock.a into the SDK,
+// not into BUILT_PRODUCTS_DIR (as TestWebKitAPI's Base.xcconfig also accounts for).
+LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
+
 GCC_PREPROCESSOR_DEFINITIONS = EGL_EGLEXT_PROTOTYPES=1 GL_GLES_PROTOTYPES=1 GL_GLEXT_PROTOTYPES=1 ANGLE_EGL_LIBRARY_NAME=\"\" ANGLE_GLESV2_LIBRARY_NAME=\"\" ANGLE_MESA_EGL_LIBRARY_NAME=\"mesa-libEGL\" ANGLE_MESA_GLESV2_LIBRARY_NAME=\"mesa-libGLESv2\" ANGLE_VULKAN_SECONDARIES_EGL_LIBRARY_NAME=\"vk-libEGL\" ANGLE_VULKAN_SECONDARIES_GLESV2_LIBRARY_NAME=\"vk-libGLESv2\" $(inherited);
 
 // Use ios_main (in util/ios/ios_main.mm, already linked via libutils.a) as the
@@ -48,6 +53,11 @@ ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit;
 // Disable the Xcode 16+ debug-dylib stub-executor pattern. The stub's entry is
 // fixed and ignores OTHER_LDFLAGS=-e, which would silently strand UIKit init.
 ENABLE_DEBUG_DYLIB = NO;
+
+// Public SDK embedded builds have no provisioning profile; leave the identity
+// empty so Xcode falls back to ad hoc signing (matches WebKitTestRunnerApp).
+CODE_SIGN_IDENTITY[sdk=embedded] = $(CODE_SIGN_IDENTITY_EMBEDDED_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_EMBEDDED_YES = -;
 
 CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/ANGLEEnd2EndTestsApp-iOS-simulator.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]        = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
