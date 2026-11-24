@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "JSExecState.h"
 #include "LocalDOMWindow.h"
+#include <JavaScriptCore/InjectedScriptHost.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -117,8 +118,13 @@ void WebInjectedScriptManager::discardInjectedScriptsFor(LocalDOMWindow& window)
     m_idToInjectedScript.removeIf([document](auto& entry) {
         return executionContext(entry.value.globalObject()) == document;
     });
-    m_scriptStateToId.removeIf([document](auto& entry) {
-        return executionContext(entry.key) == document;
+    m_scriptStateToId.removeIf([this, document](auto& entry) {
+        if (executionContext(entry.key) != document)
+            return false;
+        protect(injectedScriptHost())->removeWrapper(entry.key);
+        if (m_commandLineAPIHost)
+            protect(m_commandLineAPIHost)->removeWrapper(entry.key);
+        return true;
     });
 }
 

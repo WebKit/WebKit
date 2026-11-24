@@ -6,3 +6,6 @@ Test for the Heap.gc command.
 PASS: Event should have GarbageCollection data.
 PASS: GarbageCollection type should be Full.
 
+-- Running test case: GCShouldCollectRemovedIframePayload
+PASS: GC should collect the removed iframe's payload.
+

@@ -89,6 +89,7 @@ public:
     String storageId(Storage&);
 
     JSC::JSValue wrapper(JSC::JSGlobalObject*, JSDOMGlobalObject*);
+    void removeWrapper(JSC::JSGlobalObject*);
     void clearAllWrappers();
 
 private:

@@ -3,6 +3,19 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
+async function removeFrameWithPayload()
+{
+    const frame = document.createElement("iframe");
+    // Keep the iframe scriptless so its page code cannot keep the window alive after removal.
+    frame.srcdoc = "<!doctype html>";
+    const loaded = new Promise((resolve) => frame.onload = resolve);
+    document.body.append(frame);
+    await loaded;
+    frame.contentWindow.payload = Array.from({length: 1000}, (_, i) => ({i}));
+    window.payloadRef = new WeakRef(frame.contentWindow.payload);
+    frame.remove();
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("Heap.gc");
@@ -23,6 +36,20 @@ function test()
                     resolve();
                 }
             });
+        }
+    });
+
+    suite.addTestCase({
+        name: "GCShouldCollectRemovedIframePayload",
+        description: "Calling Heap.gc should collect the payload of a removed iframe.",
+        async test() {
+            const evaluation = await RuntimeAgent.evaluate.invoke({expression: "removeFrameWithPayload()", objectGroup: "test"});
+            await RuntimeAgent.awaitPromise.invoke({promiseObjectId: evaluation.result.objectId});
+            await RuntimeAgent.releaseObjectGroup("test");
+
+            await HeapAgent.gc();
+            const {result} = await RuntimeAgent.evaluate.invoke({expression: "payloadRef.deref() === undefined", returnByValue: true});
+            InspectorTest.expectTrue(result.value, "GC should collect the removed iframe's payload.");
         }
     });
 

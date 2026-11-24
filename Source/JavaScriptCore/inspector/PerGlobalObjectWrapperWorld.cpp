@@ -47,6 +47,11 @@ void PerGlobalObjectWrapperWorld::addWrapper(JSGlobalObject* globalObject, JSObj
     m_wrappers.add(globalObject, wrapper);
 }
 
+void PerGlobalObjectWrapperWorld::removeWrapper(JSGlobalObject* globalObject)
+{
+    m_wrappers.remove(globalObject);
+}
+
 void PerGlobalObjectWrapperWorld::clearAllWrappers()
 {
     m_wrappers.clear();

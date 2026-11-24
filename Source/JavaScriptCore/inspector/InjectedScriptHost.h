@@ -42,6 +42,7 @@ public:
     virtual bool isHTMLAllCollection(JSC::VM&, JSC::JSValue) { return false; }
 
     JSC::JSValue wrapper(JSC::JSGlobalObject*);
+    JS_EXPORT_PRIVATE void removeWrapper(JSC::JSGlobalObject*);
     void clearAllWrappers();
 
     void setSavedResultAlias(const std::optional<String>& alias) { m_savedResultAlias = alias; }

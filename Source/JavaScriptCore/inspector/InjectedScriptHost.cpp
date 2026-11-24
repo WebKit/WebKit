@@ -52,6 +52,11 @@ JSValue InjectedScriptHost::wrapper(JSGlobalObject* globalObject)
     return injectedScriptHost;
 }
 
+void InjectedScriptHost::removeWrapper(JSGlobalObject* globalObject)
+{
+    m_wrappers.removeWrapper(globalObject);
+}
+
 void InjectedScriptHost::clearAllWrappers()
 {
     m_wrappers.clearAllWrappers();

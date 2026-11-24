@@ -242,6 +242,11 @@ JSValue CommandLineAPIHost::wrapper(JSGlobalObject* exec, JSDOMGlobalObject* glo
     return commandLineAPIHost;
 }
 
+void CommandLineAPIHost::removeWrapper(JSGlobalObject* globalObject)
+{
+    m_wrappers.removeWrapper(globalObject);
+}
+
 void CommandLineAPIHost::clearAllWrappers()
 {
     m_wrappers.clearAllWrappers();
