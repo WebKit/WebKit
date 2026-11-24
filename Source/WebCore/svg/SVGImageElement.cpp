@@ -168,7 +168,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
                 updateSVGRendererForElementChange();
             }
         } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
-            setPresentationalHintStyleIsDirty();
+            invalidatePresentationalHintStyle(attrName);
         else {
             ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
             updateSVGRendererForElementChange();

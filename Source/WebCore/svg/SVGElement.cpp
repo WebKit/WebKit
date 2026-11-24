@@ -602,6 +602,12 @@ void SVGElement::synchronizeAllAttributes()
         setSynchronizedLazyAttribute(entry.key, AtomString { entry.value });
 }
 
+void SVGElement::invalidateStyleForPresentationAttributeChangedWithoutNotification(const QualifiedName& attributeName)
+{
+    if (cssPropertyIdForSVGAttributeName(attributeName) != CSSPropertyID::Invalid)
+        invalidateStyle();
+}
+
 void SVGElement::commitPropertyChange(SVGProperty* property)
 {
     // We want to dirty the top-level property when a descendant changes. For example
@@ -610,7 +616,9 @@ void SVGElement::commitPropertyChange(SVGProperty* property)
     property->setDirty();
 
     setAnimatedSVGAttributesAreDirty();
-    svgAttributeChanged(propertyRegistry().propertyAttributeName(*this, *property));
+    auto attributeName = propertyRegistry().propertyAttributeName(*this, *property);
+    svgAttributeChanged(attributeName);
+    invalidateStyleForPresentationAttributeChangedWithoutNotification(attributeName);
 }
 
 void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
@@ -632,6 +640,7 @@ void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
 
     setAnimatedSVGAttributesAreDirty();
     svgAttributeChanged(attributeName);
+    invalidateStyleForPresentationAttributeChangedWithoutNotification(attributeName);
 }
 
 bool SVGElement::isAnimatedPropertyAttribute(const QualifiedName& attributeName) const
@@ -680,7 +689,7 @@ std::optional<Style::UnadjustedStyle> SVGElement::resolveCustomStyle(const Style
         return styleElement->resolveStyle(styleElementResolutionContext);
     }
 
-    return resolveStyle(resolutionContext);
+    return std::nullopt;
 }
 
 MutableStyleProperties* SVGElement::animatedSMILStyleProperties() const
@@ -1069,6 +1078,14 @@ bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) c
     if (name.matches(XMLNames::langAttr) || name.matches(HTMLNames::langAttr))
         return true;
     return StyledElement::hasPresentationalHintsForAttribute(name);
+}
+
+bool SVGElement::hasIndependentPresentationalHintForAttribute(const QualifiedName& name) const
+{
+    auto propertyID = cssPropertyIdForSVGAttributeName(name);
+    if (propertyID == CSSPropertyID::Invalid || isShorthand(propertyID))
+        return false;
+    return propertyID != CSSPropertyID::FontWidth;
 }
 
 void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)

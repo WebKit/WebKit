@@ -43,14 +43,17 @@
 #include "ElementRareData.h"
 #include "HTMLElement.h"
 #include "HTMLParserIdioms.h"
+#include "ImmutableStyleProperties.h"
 #include "InlineStylePropertyMap.h"
 #include "InspectorInstrumentation.h"
 #include "MutableStyleProperties.h"
 #include "SVGElement.h"
 #include "ScriptableDocumentParser.h"
+#include "StylePropertiesInlines.h"
 #include "StylePropertyMap.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include <wtf/Borrow.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -111,11 +114,26 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
     if (oldValue != newValue) {
         if (name == styleAttr)
             styleAttributeChanged(newValue, reason);
-        else if (hasPresentationalHintsForAttribute(name)) {
-            elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyle();
-        }
+        else if (hasPresentationalHintsForAttribute(name))
+            presentationalHintsChanged(name);
     }
+}
+
+void StyledElement::invalidatePresentationalHintStyle(const QualifiedName& changedAttribute)
+{
+    ensureUniqueElementData();
+    presentationalHintsChanged(changedAttribute);
+}
+
+void StyledElement::presentationalHintsChanged(const QualifiedName& changedAttribute)
+{
+    if (changedAttribute == nullQName())
+        clearDirtyPresentationalHintAttributes();
+    else
+        trackDirtyPresentationalHintAttribute(changedAttribute);
+
+    elementData()->setPresentationalHintStyleIsDirty(true);
+    Node::invalidateStyle(Style::Validity::InlineOrPresentationalHintStyleInvalid);
 }
 
 CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
@@ -171,7 +189,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
 
     elementData()->setStyleAttributeIsDirty(false);
 
-    Node::invalidateStyle(Style::Validity::InlineStyleInvalid);
+    Node::invalidateStyle(Style::Validity::InlineOrPresentationalHintStyleInvalid);
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
 
@@ -205,7 +223,7 @@ void StyledElement::invalidateStyleAttribute()
     // Inline style invalidation optimization does not work if there are selectors targeting the style attribute
     // as some rule may start or stop matching.
     auto selectorsForStyleAttribute = styleResolver().ruleSets().selectorsForStyleAttribute();
-    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineStyleInvalid : Style::Validity::ElementInvalid;
+    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineOrPresentationalHintStyleInvalid : Style::Validity::ElementInvalid;
 
     Node::invalidateStyle(validity);
 
@@ -323,7 +341,7 @@ Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute,
     return Attribute { styleAttr, properties->asTextAtom(serializationContext) };
 }
 
-const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
+const StyleProperties* StyledElement::presentationalHintStyle() const
 {
     if (!elementData())
         return nullptr;
@@ -333,20 +351,116 @@ const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
     return elementData()->presentationalHintStyle();
 }
 
+void StyledElement::trackDirtyPresentationalHintAttribute(const QualifiedName& name)
+{
+    static constexpr size_t maximumDirtyAttributes = 8;
+
+    auto* dirtyAttributes = dirtyPresentationalHintAttributes();
+
+    if (elementData() && elementData()->presentationalHintStyleIsDirty()) {
+        if (!dirtyAttributes || dirtyAttributes->isEmpty())
+            return;
+    } else if (dirtyAttributes)
+        dirtyAttributes->shrink(0);
+
+    bool canTrack = elementData() && elementData()->presentationalHintStyle() && hasIndependentPresentationalHintForAttribute(name);
+    if (!canTrack || (dirtyAttributes && dirtyAttributes->size() == maximumDirtyAttributes)) {
+        if (dirtyAttributes)
+            dirtyAttributes->shrink(0);
+        return;
+    }
+
+    if (dirtyAttributes && dirtyAttributes->contains(name))
+        return;
+    ensureDirtyPresentationalHintAttributes().append(name);
+}
+
+void StyledElement::clearDirtyPresentationalHintAttributes()
+{
+    if (auto* dirtyAttributes = dirtyPresentationalHintAttributes())
+        dirtyAttributes->shrink(0);
+}
+
+bool StyledElement::updatePresentationalHintStyleForDirtyAttributes()
+{
+    auto* dirtyAttributes = dirtyPresentationalHintAttributes();
+    if (!dirtyAttributes || dirtyAttributes->isEmpty())
+        return false;
+
+    bool didUpdate = [&] {
+        if (elementData()->animatedSVGAttributesAreDirty())
+            return false;
+
+        Ref changedStyle = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
+        for (auto& name : borrow(*dirtyAttributes).get()) {
+            auto* attribute = findAttributeByName(name);
+            if (!attribute)
+                return false;
+            auto propertyCount = changedStyle->propertyCount();
+            collectPresentationalHintsForAttribute(name, attribute->value(), changedStyle);
+            if (changedStyle->propertyCount() != propertyCount + 1)
+                return false;
+        }
+
+        return replacePresentationalHintStyleProperties(changedStyle);
+    }();
+
+    dirtyAttributes->shrink(0);
+    return didUpdate;
+}
+
+bool StyledElement::replacePresentationalHintStyleProperties(const StyleProperties& replacements)
+{
+    RefPtr existingStyle = elementData() ? elementData()->presentationalHintStyle() : nullptr;
+    if (!existingStyle)
+        return false;
+
+    for (auto replacement : replacements) {
+        if (existingStyle->findPropertyIndex(replacement.id()) == -1)
+            return false;
+    }
+
+    Ref elementData = ensureUniqueElementData();
+    RefPtr mutableStyle = dynamicDowncast<MutableStyleProperties>(elementData->m_presentationalHintStyle);
+    if (!mutableStyle) {
+        mutableStyle = existingStyle->mutableCopy();
+        elementData->m_presentationalHintStyle = mutableStyle;
+    }
+
+    for (auto replacement : replacements)
+        mutableStyle->setProperty(replacement.toCSSProperty());
+    return true;
+}
+
 void StyledElement::rebuildPresentationalHintStyle()
 {
-    bool isSVG = isSVGElement();
-    auto style = MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
-    for (auto& attribute : attributes())
-        collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
-    collectExtraStyleForPresentationalHints(style);
+    if (updatePresentationalHintStyleForDirtyAttributes()) {
+        elementData()->setPresentationalHintStyleIsDirty(false);
+        return;
+    }
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
     Ref elementData = ensureUniqueElementData();
 
+    bool hadStyle = !!elementData->m_presentationalHintStyle;
+    RefPtr existingMutableStyle = dynamicDowncast<MutableStyleProperties>(elementData->m_presentationalHintStyle);
+    if (existingMutableStyle)
+        existingMutableStyle->clear();
+
+    bool isSVG = isSVGElement();
+    Ref style = existingMutableStyle ? existingMutableStyle.releaseNonNull() : MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
+    for (auto& attribute : attributes())
+        collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
+    collectExtraStyleForPresentationalHints(style);
+
     elementData->setPresentationalHintStyleIsDirty(false);
     if (style->isEmpty()) {
         elementData->m_presentationalHintStyle = nullptr;
+        return;
+    }
+
+    if (hadStyle) {
+        elementData->m_presentationalHintStyle = WTF::move(style);
         return;
     }
 

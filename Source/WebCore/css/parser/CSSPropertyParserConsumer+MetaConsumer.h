@@ -78,6 +78,11 @@ struct MetaConsumerDispatcher<NumberToken, Consumer, typename std::void_t<typena
     {
         return Consumer::NumberToken::consume(std::forward<Args>(args)...);
     }
+    template<typename... Args>
+    static auto interpret(Args&&... args) -> decltype(Consumer::NumberToken::interpret(std::forward<Args>(args)...))
+    {
+        return Consumer::NumberToken::interpret(std::forward<Args>(args)...);
+    }
 };
 
 template<typename Consumer>
@@ -88,6 +93,11 @@ struct MetaConsumerDispatcher<PercentageToken, Consumer, typename std::void_t<ty
     {
         return Consumer::PercentageToken::consume(std::forward<Args>(args)...);
     }
+    template<typename... Args>
+    static auto interpret(Args&&... args) -> decltype(Consumer::PercentageToken::interpret(std::forward<Args>(args)...))
+    {
+        return Consumer::PercentageToken::interpret(std::forward<Args>(args)...);
+    }
 };
 
 template<typename Consumer>
@@ -97,6 +107,11 @@ struct MetaConsumerDispatcher<DimensionToken, Consumer, typename std::void_t<typ
     static decltype(auto) consume(Args&&... args)
     {
         return Consumer::DimensionToken::consume(std::forward<Args>(args)...);
+    }
+    template<typename... Args>
+    static auto interpret(Args&&... args) -> decltype(Consumer::DimensionToken::interpret(std::forward<Args>(args)...))
+    {
+        return Consumer::DimensionToken::interpret(std::forward<Args>(args)...);
     }
 };
 

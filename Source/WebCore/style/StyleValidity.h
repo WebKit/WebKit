@@ -30,7 +30,7 @@ namespace WebCore::Style {
 enum class Validity : uint8_t {
     Valid,
     AnimationInvalid,
-    InlineStyleInvalid,
+    InlineOrPresentationalHintStyleInvalid,
     ElementInvalid,
     SubtreeInvalid,
 };

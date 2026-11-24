@@ -131,11 +131,12 @@ UniqueElementData::UniqueElementData() = default;
 
 UniqueElementData::UniqueElementData(const UniqueElementData& other)
     : ElementData(other, true)
-    , m_presentationalHintStyle(other.m_presentationalHintStyle)
     , m_attributeVector(other.m_attributeVector)
 {
+    if (other.m_presentationalHintStyle)
+        m_presentationalHintStyle = protect(other.m_presentationalHintStyle)->immutableCopyIfNeeded();
     if (other.m_inlineStyle)
-        m_inlineStyle = protect(other.m_inlineStyle)->mutableCopy();
+        m_inlineStyle = protect(other.m_inlineStyle)->immutableCopyIfNeeded();
 }
 
 UniqueElementData::UniqueElementData(const ShareableElementData& other)

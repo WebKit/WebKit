@@ -46,7 +46,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-    const MutableStyleProperties* additionalPresentationalHintStyle() const final;
+    const ImmutableStyleProperties* additionalPresentationalHintStyle() const final;
 
     unsigned m_span;
 };
