@@ -85,7 +85,7 @@ void UserMediaPermissionRequestProxyCocoa::promptForGetDisplayMedia(UserMediaDis
     page->setIsPromptingForGetDisplayMedia(promptFlags);
 
     m_hasPendingGetDisplayMediaPrompt = true;
-    DisplayCaptureSessionManager::singleton().promptForGetDisplayMedia(promptType, *page, topLevelDocumentSecurityOrigin().data(), [protectedThis = Ref { *this }, page = WTF::move(page)](std::optional<CaptureDevice> device) mutable {
+    DisplayCaptureSessionManager::singleton().promptForGetDisplayMedia(*this, promptType, *page, topLevelDocumentSecurityOrigin().data(), [protectedThis = Ref { *this }, page = WTF::move(page)](std::optional<CaptureDevice> device) mutable {
 
         protectedThis->m_hasPendingGetDisplayMediaPrompt = false;
 

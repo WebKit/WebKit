@@ -596,6 +596,9 @@ class SessionHistoryTraversalQueue;
 class SpeechRecognitionPermissionManager;
 class SuspendedPageProxy;
 class SystemPreviewController;
+#if HAVE(WINDOW_CAPTURE)
+class TabCaptureWindow;
+#endif
 class TextExtractionAssertionScope;
 class TextExtractionCache;
 class UserData;
@@ -1942,6 +1945,11 @@ public:
     void clearContentWorld(API::ContentWorld&, CompletionHandler<void()>&&);
     void getAccessibilityTreeData(CompletionHandler<void(API::Data*)>&&);
     void updateRenderingWithForcedRepaint(CompletionHandler<void()>&&);
+
+#if HAVE(WINDOW_CAPTURE)
+    RefPtr<TabCaptureWindow> tabCaptureWindow();
+    void updateTabCaptureWindowSize();
+#endif
 
     float headerHeightForPrinting(WebFrameProxy&);
     float footerHeightForPrinting(WebFrameProxy&);
@@ -4198,6 +4206,9 @@ private:
 #endif
 
     RefPtr<DrawingAreaProxy> m_drawingArea;
+#if HAVE(WINDOW_CAPTURE)
+    WeakPtr<TabCaptureWindow> m_tabCaptureWindow;
+#endif
 #if PLATFORM(COCOA)
     std::unique_ptr<RemoteLayerTreeHost> m_frozenRemoteLayerTreeHost;
     RefPtr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;

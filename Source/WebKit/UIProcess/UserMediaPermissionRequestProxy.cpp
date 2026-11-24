@@ -35,6 +35,10 @@
 #include <wtf/Borrow.h>
 #include <wtf/text/StringHash.h>
 
+#if HAVE(WINDOW_CAPTURE)
+#include "TabCaptureWindow.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -75,6 +79,19 @@ UserMediaPermissionRequestManagerProxy* UserMediaPermissionRequestProxy::manager
 {
     return m_manager.get();
 }
+
+#if HAVE(WINDOW_CAPTURE)
+void UserMediaPermissionRequestProxy::setTabCaptureWindow(Ref<TabCaptureWindow>&& window)
+{
+    ASSERT(!m_tabCaptureWindow);
+    m_tabCaptureWindow = WTF::move(window);
+}
+
+RefPtr<TabCaptureWindow> UserMediaPermissionRequestProxy::takeTabCaptureWindow()
+{
+    return std::exchange(m_tabCaptureWindow, nullptr);
+}
+#endif
 
 bool UserMediaPermissionRequestProxy::willUseEchoCancellation() const
 {
@@ -416,6 +433,12 @@ bool UserMediaPermissionRequestProxy::canRequestDisplayCapturePermission()
 #else
     return false;
 #endif
+}
+
+RefPtr<WebPageProxy> UserMediaPermissionRequestProxy::page()
+{
+    RefPtr manager = m_manager;
+    return manager ? manager->page() : nullptr;
 }
 
 } // namespace WebKit

@@ -67,6 +67,10 @@
 #include <WebCore/ScreenCaptureKitCaptureSource.h>
 #endif
 
+#if HAVE(WINDOW_CAPTURE)
+#include "TabCaptureWindow.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -186,6 +190,9 @@ void UserMediaPermissionRequestManagerProxy::stopCapture()
     invalidatePendingRequests();
     if (RefPtr page = m_page.get())
         page->stopMediaCapture(MediaProducerMediaCaptureKind::EveryKind);
+#if HAVE(WINDOW_CAPTURE)
+    m_tabCaptureWindows.clear();
+#endif
 }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -413,6 +420,11 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
                 request->setEligibleVideoDevices(WTF::move(validDevices->videoDevices));
                 request->reapplyDeviceSelection({ validDevices->bestMatchingAudioDeviceCount, validDevices->bestMatchingVideoDeviceCount });
             }
+#if HAVE(WINDOW_CAPTURE)
+        } else if (RefPtr tabCaptureWindow = request->takeTabCaptureWindow()) {
+            auto pageIdentifier = tabCaptureWindow->pageIdentifier();
+            protectedThis->m_tabCaptureWindows.set(pageIdentifier, tabCaptureWindow.releaseNonNull());
+#endif
         }
 #endif
         page->sendWithAsyncReplyToProcessContainingFrame(request->frameID(), Messages::WebPage::UserMediaAccessWasGranted { *request->userMediaID(), request->audioDevice(), request->videoDevice(), request->deviceIdentifierHashSalts(), WTF::move(handles) }, WTF::move(completionHandler));
@@ -1307,6 +1319,12 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 
 void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducerMediaStateFlags oldState, MediaProducerMediaStateFlags newState)
 {
+#if HAVE(WINDOW_CAPTURE)
+    // FIXME: Remove the window of a tab when its capture ends, not only when the page stops capturing all tabs.
+    if (oldState.containsAny(MediaProducer::DisplayCaptureMask) && !newState.containsAny(MediaProducer::DisplayCaptureMask))
+        m_tabCaptureWindows.clear();
+#endif
+
     RefPtr page = m_page.get();
     if (!page || !page->hasRunningProcess())
         return;

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "UserMediaPermissionRequestProxy.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PermissionDescriptor.h>
 #include <WebCore/PermissionState.h>
@@ -61,6 +62,9 @@ OBJC_CLASS WKRotationCoordinatorObserver;
 
 namespace WebKit {
 
+#if HAVE(WINDOW_CAPTURE)
+class TabCaptureWindow;
+#endif
 class WebFrameProxy;
 class WebPageProxy;
 
@@ -227,6 +231,9 @@ private:
 
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
     Vector<Ref<UserMediaPermissionRequestProxy>> m_grantedRequests;
+#if HAVE(WINDOW_CAPTURE)
+    HashMap<WebPageProxyIdentifier, Ref<TabCaptureWindow>> m_tabCaptureWindows;
+#endif
     HashMap<WebCore::FrameIdentifier, String> m_frameEphemeralHashSalts;
 
     Vector<DeniedRequest> m_deniedRequests;

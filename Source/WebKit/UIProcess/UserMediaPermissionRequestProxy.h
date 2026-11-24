@@ -41,7 +41,11 @@ class SecurityOrigin;
 
 namespace WebKit {
 
+#if HAVE(WINDOW_CAPTURE)
+class TabCaptureWindow;
+#endif
 class UserMediaPermissionRequestManagerProxy;
+class WebPageProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest>, public CanMakeWeakPtr<UserMediaPermissionRequestProxy> {
 public:
@@ -133,6 +137,13 @@ public:
     void setBeforeStartingCaptureCallback(Function<void()>&& callback) { m_beforeStartingCaptureCallback = WTF::move(callback); }
     Function<void()> beforeStartingCaptureCallback() { return std::exchange(m_beforeStartingCaptureCallback, { }); }
 
+#if HAVE(WINDOW_CAPTURE)
+    void setTabCaptureWindow(Ref<TabCaptureWindow>&&);
+    RefPtr<TabCaptureWindow> takeTabCaptureWindow();
+#endif
+
+    RefPtr<WebPageProxy> page();
+
 protected:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&, Kind);
 
@@ -158,6 +169,9 @@ private:
     CompletionHandler<void(bool)> m_decisionCompletionHandler;
     Function<void()> m_beforeStartingCaptureCallback;
     const Kind m_kind;
+#if HAVE(WINDOW_CAPTURE)
+    RefPtr<TabCaptureWindow> m_tabCaptureWindow;
+#endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     CapturePreviewPromptHandles m_previewPromptHandles;
     uint64_t m_deviceListGeneration { 0 };

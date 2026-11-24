@@ -1952,6 +1952,10 @@ void WebViewImpl::setFrameSize(CGSize)
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     updateWebContentDistancesFromEdges();
 #endif
+
+#if HAVE(WINDOW_CAPTURE)
+    m_page->updateTabCaptureWindowSize();
+#endif
 }
 
 void WebViewImpl::disableFrameSizeUpdates()

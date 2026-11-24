@@ -32,6 +32,8 @@
 #import "Logging.h"
 #import "MediaPermissionUtilities.h"
 #import "TabCapturePicker.h"
+#import "TabCaptureWindow.h"
+#import "UserMediaPermissionRequestManagerProxy.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
@@ -115,19 +117,44 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
 }
 
 #if HAVE(WINDOW_CAPTURE)
-void DisplayCaptureSessionManager::showTabPicker(WebPageProxy& requestingPage, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+void DisplayCaptureSessionManager::showTabPicker(WebPageProxy& requestingPage, UserMediaPermissionRequestProxy& request, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
     if (RefPtr previousPicker = m_tabCapturePicker)
         previousPicker->cancel();
     ASSERT(!m_tabCapturePicker);
 
-    m_tabCapturePicker = TabCapturePicker::create(requestingPage, origin, [completionHandler = WTF::move(completionHandler)](auto&&) mutable {
+    m_tabCapturePicker = TabCapturePicker::create(requestingPage, origin, [request = Ref { request }, completionHandler = WTF::move(completionHandler)](auto&& pickedPage) mutable {
         DisplayCaptureSessionManager::singleton().m_tabCapturePicker = nullptr;
-        // FIXME: Implement capture of the selected tab.
-        completionHandler(std::nullopt);
+        if (!pickedPage) {
+            completionHandler(std::nullopt);
+            return;
+        }
+        DisplayCaptureSessionManager::singleton().startTabCapture(request, *pickedPage, WTF::move(completionHandler));
     });
     if (RefPtr picker = m_tabCapturePicker)
         picker->start();
+}
+
+void DisplayCaptureSessionManager::startTabCapture(UserMediaPermissionRequestProxy& request, WebPageProxy& capturedPage, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    RefPtr requestingPage = request.page();
+    if (!requestingPage || !protect(requestingPage->preferences())->useGPUProcessForDisplayCapture()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    RefPtr window = capturedPage.tabCaptureWindow();
+    if (!window) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    auto windowID = window->windowID();
+    request.setTabCaptureWindow(window.releaseNonNull());
+
+    Ref gpuProcess = protect(requestingPage->configuration().processPool())->ensureGPUProcess();
+    gpuProcess->updateSandboxAccess(CaptureSandboxAccess::Display);
+    gpuProcess->selectWindowForCapture(windowID, WTF::move(completionHandler));
 }
 #endif // HAVE(WINDOW_CAPTURE)
 
@@ -237,7 +264,7 @@ NODELETE static WebCore::DisplayCapturePromptType toScreenCaptureKitPromptType(U
 }
 #endif
 
-void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType, WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionRequestProxy& request, UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType, WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
     if (useMockCaptureDevices()) {
         if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window)
@@ -280,7 +307,7 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
     }
 
 #if HAVE(WINDOW_CAPTURE)
-    alertForGetDisplayMedia(page, origin, [this, weakPage = WeakPtr { page }, origin, completionHandler = WTF::move(completionHandler)](auto sessionType) mutable {
+    alertForGetDisplayMedia(page, origin, [this, weakPage = WeakPtr { page }, request = Ref { request }, origin, completionHandler = WTF::move(completionHandler)](auto sessionType) mutable {
         RefPtr protectedPage = weakPage;
         if (!protectedPage) {
             completionHandler(std::nullopt);
@@ -301,12 +328,13 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
             showWindowOrScreenPicker(*protectedPage, WTF::move(completionHandler));
             return;
         case CaptureSessionType::Tab:
-            showTabPicker(*protectedPage, origin, WTF::move(completionHandler));
+            showTabPicker(*protectedPage, request, origin, WTF::move(completionHandler));
             return;
         }
         ASSERT_NOT_REACHED();
     });
 #else
+    UNUSED_PARAM(request);
     completionHandler(std::nullopt);
 #endif // HAVE(WINDOW_CAPTURE)
 

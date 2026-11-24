@@ -482,6 +482,10 @@
 #import "DisplayCaptureSessionManager.h"
 #endif
 
+#if HAVE(WINDOW_CAPTURE)
+#include "TabCaptureWindow.h"
+#endif
+
 #if HAVE(SCREEN_CAPTURE_KIT)
 #import <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #endif
@@ -3651,6 +3655,9 @@ void WebPageProxy::setObscuredContentInsets(const WebCore::FloatBoxExtent& obscu
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(SCREEN_CAPTURE_KIT)
     DisplayCaptureSessionManager::singleton().pageObscuredContentRectDidChange();
+#endif
+#if HAVE(WINDOW_CAPTURE)
+    updateTabCaptureWindowSize();
 #endif
 
     if (!hasRunningProcess())
@@ -9432,6 +9439,24 @@ void WebPageProxy::setDevicePostureType(WebCore::DevicePostureType type)
         webProcess.send(Messages::WebPage::SetDevicePostureType(type), pageID);
     });
 }
+
+#if HAVE(WINDOW_CAPTURE)
+RefPtr<TabCaptureWindow> WebPageProxy::tabCaptureWindow()
+{
+    RefPtr tabCaptureWindow = m_tabCaptureWindow;
+    if (!tabCaptureWindow) {
+        tabCaptureWindow = TabCaptureWindow::create(*this);
+        m_tabCaptureWindow = tabCaptureWindow.get();
+    }
+    return tabCaptureWindow;
+}
+
+void WebPageProxy::updateTabCaptureWindowSize()
+{
+    if (RefPtr window = m_tabCaptureWindow)
+        window->updateSize();
+}
+#endif
 
 void WebPageProxy::preferencesDidChange()
 {

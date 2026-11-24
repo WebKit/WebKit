@@ -49,7 +49,7 @@ public:
     DisplayCaptureSessionManager();
     ~DisplayCaptureSessionManager();
 
-    void promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType, WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void promptForGetDisplayMedia(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType, WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt(WebPageProxy&);
     void pageVisibilityDidChange();
     void pageObscuredContentRectDidChange();
@@ -66,7 +66,8 @@ private:
     enum class CaptureSessionType : uint8_t { None, Screen, Window, WindowOrScreen, Tab };
     void alertForGetDisplayMedia(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(DisplayCaptureSessionManager::CaptureSessionType)>&&);
 #if HAVE(WINDOW_CAPTURE)
-    void showTabPicker(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void showTabPicker(WebPageProxy&, UserMediaPermissionRequestProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void startTabCapture(UserMediaPermissionRequestProxy&, WebPageProxy& capturedPage, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
     void showWindowOrScreenPicker(WebPageProxy&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
