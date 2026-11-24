@@ -109,10 +109,8 @@ NODELETE static inline SVGAngleValue::Type cssAngleUnitToSVGAngleType(CSS::Angle
 
 ExceptionOr<void> SVGAngleValue::setValueAsString(StringView value)
 {
-    if (value.isEmpty()) {
-        m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
-        return { };
-    }
+    if (value.isEmpty())
+        return Exception { ExceptionCode::SyntaxError };
 
     // Unresolved CSS primitive numeric types always hold their value as a double, and
     // CSS::All neither rejects nor clamps, so guard against values that are not
