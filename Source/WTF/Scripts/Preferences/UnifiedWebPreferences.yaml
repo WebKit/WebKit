@@ -857,6 +857,14 @@ CSSAlignmentBaselineOnInlineBoxesEnabled:
   humanReadableDescription: "Enable CSS alignment-baseline on inline boxes"
   defaultValue: false
 
+CSSAnchorNameHigherTreeEnabled:
+  type: bool
+  category: css
+  status: stable
+  humanReadableName: "CSS anchor() can resolve anchor-name from an ancestor tree"
+  humanReadableDescription: "anchor() in a shadow tree can reference an anchor-name declared in an ancestor tree, per the CSSWG 2025-11-13 resolution on w3c/csswg-drafts#9408."
+  defaultValue: true
+
 CSSAppearanceBaseEnabled:
   type: bool
   status: testable
