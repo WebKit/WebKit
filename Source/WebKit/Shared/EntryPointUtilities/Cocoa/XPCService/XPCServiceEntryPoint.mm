@@ -151,6 +151,10 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
             extraInitializationData.add("enable-enhanced-security"_s, enableEnhancedSecurity);
     }
 
+    auto enableRegExpInterpreterBodyRestart = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "enable-regexp-interpreter-body-restart"_s);
+    if (!enableRegExpInterpreterBodyRestart.isEmpty())
+        extraInitializationData.add("enable-regexp-interpreter-body-restart"_s, enableRegExpInterpreterBodyRestart);
+
     if (!isClientSandboxed()) {
         auto userDirectorySuffix = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "user-directory-suffix"_s);
         if (!userDirectorySuffix.isEmpty())
@@ -199,7 +203,7 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 }
 #endif
 
-void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode, EnableEnhancedSecurity enableEnhancedSecurity, bool isWebContentProcess)
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode, EnableEnhancedSecurity enableEnhancedSecurity, EnableRegExpInterpreterBodyRestart enableRegExpInterpreterBodyRestart, bool isWebContentProcess)
 {
     RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
 
@@ -210,6 +214,7 @@ void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLoc
     // call, so every option has to be predetermined and set in a single call.
     bool lockdownMode = enableLockdownMode == EnableLockdownMode::Yes;
     bool disableJIT = xpc_dictionary_get_bool(initializerMessage, "disable-jit") || enableEnhancedSecurity == EnableEnhancedSecurity::Yes;
+    bool useRegExpInterpreterBodyRestart = enableEnhancedSecurity == EnableEnhancedSecurity::Yes && enableRegExpInterpreterBodyRestart == EnableRegExpInterpreterBodyRestart::Yes;
 
     if (lockdownMode) {
         RELEASE_ASSERT(enableEnhancedSecurity == EnableEnhancedSecurity::No);
@@ -229,8 +234,11 @@ void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLoc
             JSC::Options::useZombieMode() = true;
             JSC::Options::allowDoubleShape() = false;
             JSC::Options::alwaysHaveABadTime() = true;
-        } else if (disableJIT)
+        } else if (disableJIT) {
             JSC::ExecutableAllocator::disableJIT();
+            if (useRegExpInterpreterBodyRestart)
+                JSC::Options::useRegExpInterpreterBodyRestart() = true;
+        }
     });
 }
 
