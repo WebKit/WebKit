@@ -55,9 +55,24 @@ static void removeTextBoxTrimStart(LocalFrameViewLayoutContext& layoutContext)
     layoutContext.setTextBoxTrim(LocalFrameViewLayoutContext::TextBoxTrim { false, textBoxTrim->lastFormattedLineRoot });
 }
 
+// "Like ::first-line, this property does not apply to, or propagate through, flex, grid, or table formatting contexts."
+// https://drafts.csswg.org/css-inline-3/#text-box-trim
+// The first formatted line "may occur inside a block-level descendant in the same flow (i.e., a block-level descendant that is not
+// out-of-flow due to floating or positioning)", which includes block formatting context roots like display: flow-root.
+// https://www.w3.org/TR/CSS2/selector.html#first-formatted-line
+// Multi-column containers apply trimming to each column instead (see textBoxTrim).
+static bool isTextBoxTrimBoundary(const RenderBlockFlow& blockContainer)
+{
+    if (!blockContainer.createsNewFormattingContext())
+        return false;
+    if (blockContainer.isFloatingOrOutOfFlowPositioned() || blockContainer.isInline() || !is<RenderBlockFlow>(blockContainer.parent()))
+        return true;
+    return blockContainer.multiColumnFlow() || is<RenderMultiColumnFlow>(blockContainer);
+}
+
 static bool shouldIgnoreAsFirstLastFormattedLineContainer(const RenderBlockFlow& container)
 {
-    if (container.style().display() == Style::DisplayType::RubyText || container.createsNewFormattingContext())
+    if (container.style().display() == Style::DisplayType::RubyText || isTextBoxTrimBoundary(container))
         return true;
     // Empty anonymous blocks should be ignored as they are implementation detail.
     if (container.isAnonymousBlock()) {
@@ -72,7 +87,7 @@ static inline CheckedPtr<RenderBlockFlow> firstFormattedLineRoot(const RenderBlo
 {
     for (auto* child = enclosingBlockContainer.firstChild(); child; child = child->nextSibling()) {
         CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*child);
-        if (!blockContainer || blockContainer->createsNewFormattingContext() || blockContainer->isFirstLetter())
+        if (!blockContainer || isTextBoxTrimBoundary(*blockContainer) || blockContainer->isFirstLetter())
             continue;
         if (blockContainer->hasContentfulInlineOrBlockLine())
             return blockContainer;
@@ -109,7 +124,7 @@ static CheckedPtr<RenderBlockFlow> lastFormattedLineRoot(const RenderBlockFlow& 
 
     for (auto* child = enclosingBlockContainer.lastChild(); child; child = child->previousSibling()) {
         CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*child);
-        if (!blockContainer || blockContainer->createsNewFormattingContext() || blockContainer->isFirstLetter())
+        if (!blockContainer || isTextBoxTrimBoundary(*blockContainer) || blockContainer->isFirstLetter())
             continue;
         if (blockContainer->hasContentfulInlineOrBlockLine()) {
             if (CheckedPtr candidate = lastFormattedLineRoot(*blockContainer))
@@ -213,7 +228,7 @@ void TextBoxTrimmer::handleTextBoxTrimNoneBeforeLayout()
     // This is when the block container does not have text-box-trim set.
     // 1. trimming from ancestors does not get propagated into formatting contexts e.g inside inline-block.
     // 2. border and padding (before) prevent trim start.
-    if (m_blockContainer->createsNewFormattingContext()) {
+    if (isTextBoxTrimBoundary(*m_blockContainer)) {
         m_previousTextBoxTrimStatus = layoutContext.textBoxTrim();
         m_shouldRestoreTextBoxTrimStatus = true;
         // Run layout on this subtree with no text-box-trim.
