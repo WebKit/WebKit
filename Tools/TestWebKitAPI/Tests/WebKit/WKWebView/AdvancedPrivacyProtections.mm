@@ -497,6 +497,45 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenDecidingNaviga
     EXPECT_WK_STREQ([targetURL absoluteString], "https://bundle-file/simple.html?garply=20");
 }
 
+TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingQueryParametersWhenRestoringFromBackForwardCache)
+{
+    [TestProtocol registerWithScheme:@"https"];
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
+
+    auto webView = createWebViewWithAdvancedPrivacyProtections();
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/first"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView objectByEvaluatingJavaScript:@"history.replaceState(null, '', '?foo=10&garply=20'); addEventListener('pageshow', event => window.wasPersisted = event.persisted); true"];
+    EXPECT_WK_STREQ("https://webkit.org/first?foo=10&garply=20", [webView URL].absoluteString);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/second"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    bool didFinishNavigation = false;
+    bool didTerminateWebProcess = false;
+    bool done = false;
+    [navigationDelegate setDidFinishNavigation:[&](WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+        done = true;
+    }];
+    [navigationDelegate setWebContentProcessDidTerminate:[&](WKWebView *, _WKProcessTerminationReason) {
+        didTerminateWebProcess = true;
+        done = true;
+    }];
+
+    [webView goBack];
+    Util::run(&done);
+
+    EXPECT_FALSE(didTerminateWebProcess);
+    EXPECT_TRUE(didFinishNavigation);
+    EXPECT_WK_STREQ("https://webkit.org/first?foo=10&garply=20", [webView URL].absoluteString);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.wasPersisted"] boolValue]);
+}
+
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersForMainFrameMainResourcesOnly)
 {
     [TestProtocol registerWithScheme:@"https"];
