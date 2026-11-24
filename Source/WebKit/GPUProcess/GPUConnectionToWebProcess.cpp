@@ -57,7 +57,6 @@
 #include "RemoteSampleBufferDisplayLayerMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
 #include "RemoteSharedResourceCache.h"
-#include "RemoteSharedResourceCacheMessages.h"
 #include "RotationMonitoringReason.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "WebErrors.h"
@@ -317,6 +316,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_gpuProcess(gpuProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_webProcessIdentity(adjustProcessIdentityIfNeeded(WTF::move(parameters.webProcessIdentity)))
+    , m_sharedResourceCache(RemoteSharedResourceCache::create(m_connection.get(), m_webProcessIdentity))
 #if ENABLE(VIDEO)
     , m_remoteMediaPlayerManagerProxy(RemoteMediaPlayerManagerProxy::create(*this))
 #endif
@@ -397,6 +397,7 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
     RELEASE_ASSERT(RunLoop::isMain());
 
     m_connection->invalidate();
+    m_sharedResourceCache->close();
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_sampleBufferDisplayLayerManager->close();
@@ -407,9 +408,7 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 
 Ref<RemoteSharedResourceCache> GPUConnectionToWebProcess::sharedResourceCache()
 {
-    if (!m_sharedResourceCache)
-        lazyInitialize(m_sharedResourceCache, RemoteSharedResourceCache::create(*this));
-    return *m_sharedResourceCache;
+    return m_sharedResourceCache;
 }
 
 uint64_t GPUConnectionToWebProcess::gObjectCountForTesting = 0;
@@ -436,6 +435,7 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     if (RefPtr userMediaCaptureManagerProxy = std::exchange(m_userMediaCaptureManagerProxy, nullptr))
         userMediaCaptureManagerProxy->close();
 #endif
+    protect(m_sharedResourceCache)->close();
 #if ENABLE(VIDEO)
     protect(videoFrameObjectHeap())->close();
     protect(remoteMediaPlayerManagerProxy())->connectionToWebProcessClosed();
@@ -599,8 +599,7 @@ void GPUConnectionToWebProcess::terminateWebProcess(IPC::MessageName invalidMess
 
 void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 {
-    if (m_sharedResourceCache)
-        m_sharedResourceCache->lowMemoryHandler();
+    protect(m_sharedResourceCache)->lowMemoryHandler();
 #if ENABLE(VIDEO)
     protect(videoFrameObjectHeap())->lowMemoryHandler();
 #endif
@@ -1168,10 +1167,6 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
     if (decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
         if (RefPtr listener = m_remoteRemoteCommandListener)
             listener->didReceiveMessage(connection, decoder);
-        return true;
-    }
-    if (decoder.messageReceiverName() == Messages::RemoteSharedResourceCache::messageReceiverName()) {
-        sharedResourceCache()->didReceiveMessage(connection, decoder);
         return true;
     }
 #if ENABLE(IPC_TESTING_API)
