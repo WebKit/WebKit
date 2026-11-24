@@ -4305,7 +4305,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, UniquedStringImpl** properties
 {
     unsigned i = 0;
     Structure* structure = this->structure();
-    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumerationCommon())) {
+    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLengthForNonEvalPutById || !structure->canPerformFastPropertyEnumerationCommon())) {
         Vector<PropertyOffset, 16> offsets(size, [&](size_t index) -> std::optional<PropertyOffset> {
             PropertyName propertyName(properties[index]);
 
@@ -4329,10 +4329,10 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, UniquedStringImpl** properties
 
             // It will go to the cacheable dictionary case. We stop the batching here and fall though to the generic case.
             // We break here before adding offset to offsets since this property itself should be put via generic path.
-            if (structure->shouldDoCacheableDictionaryTransitionForAdd(PutPropertySlot::UnknownContext)) [[unlikely]]
+            if (structure->shouldDoCacheableDictionaryTransitionForAdd(PutPropertySlot::PutById)) [[unlikely]]
                 return std::nullopt;
 
-            Structure* newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, 0, offset, PutPropertySlot::UnknownContext, nullptr);
+            Structure* newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, 0, offset, PutPropertySlot::PutById, nullptr);
 
             validateOffset(offset);
             ASSERT(newStructure->isValidOffset(offset));
@@ -4363,7 +4363,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, UniquedStringImpl** properties
     }
 
     for (; i < size; ++i) {
-        PutPropertySlot putPropertySlot(this, true);
+        PutPropertySlot putPropertySlot(this, true, PutPropertySlot::PutById);
         putOwnDataProperty(vm, properties[i], JSValue::decode(values[i]), putPropertySlot);
     }
 }
