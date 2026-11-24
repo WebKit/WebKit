@@ -40,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/non-secure-contexts.http.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-mdoc.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-openid4vp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/removed-iframe-next-request.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/tsconfig.json
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/user-activation-create.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/user-activation-get.https.html
