@@ -469,6 +469,9 @@ void AudioVideoRendererAVFObjC::requestAudioDataWhenReady(TrackIdentifier trackI
 
 void AudioVideoRendererAVFObjC::setReadyToRequestVideoData()
 {
+    if (m_videoSuspendedForVisibility)
+        return;
+
     m_readyToRequestVideoData = true;
     if (!m_requestVideoPromise || m_videoDataRequest->hasCallback() || !m_enabledVideoTrackId)
         return;
@@ -525,6 +528,7 @@ void AudioVideoRendererAVFObjC::flush()
 
     flushVideo();
     flushAudio();
+    updateVideoSuspension();
 }
 
 void AudioVideoRendererAVFObjC::flushTrack(TrackIdentifier trackId)
@@ -583,7 +587,7 @@ void AudioVideoRendererAVFObjC::play(std::optional<MonotonicTime> hostTime)
     if (m_isShutdown)
         return;
     ALWAYS_LOG(LOGIDENTIFIER, "m_rate: ", m_rate, " seeking: ", seeking());
-    m_isPlaying = true;
+    setIsPlaying(true);
     if (!seeking())
         setSynchronizerRate(m_rate, hostTime);
 }
@@ -593,7 +597,7 @@ void AudioVideoRendererAVFObjC::pause(std::optional<MonotonicTime> hostTime)
     if (m_isShutdown)
         return;
     ALWAYS_LOG(LOGIDENTIFIER, "m_rate: ", m_rate);
-    m_isPlaying = false;
+    setIsPlaying(false);
     // Capture current time to prevent time going backwards after resume.
     // The AVSampleBufferRenderSynchronizer can briefly report earlier times
     // during playback resumption due to timing jitter.
@@ -1037,6 +1041,108 @@ void AudioVideoRendererAVFObjC::setIsVisible(bool visible)
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateSpatialTrackingLabel();
 #endif
+    updateVideoSuspension();
+}
+
+void AudioVideoRendererAVFObjC::setIsPlaying(bool isPlaying)
+{
+    if (m_isPlaying == isPlaying)
+        return;
+
+    m_isPlaying = isPlaying;
+    updateVideoSuspension();
+}
+
+bool AudioVideoRendererAVFObjC::shouldSuspendVideo() const
+{
+    if (m_visible || m_isPlaying)
+        return false;
+
+    // A seek can't complete until the frame at its destination is decoded, and a paused element
+    // must still be able to provide an image of its current frame, so wait for that frame first.
+    return !seeking() && m_hasAvailableVideoFrame;
+}
+
+void AudioVideoRendererAVFObjC::updateVideoSuspension()
+{
+    if (!shouldSuspendVideo()) {
+        resumeVideoForVisibility();
+        return;
+    }
+
+    if (m_videoSuspendedForVisibility || m_videoSuspensionPending)
+        return;
+
+    m_videoSuspensionPending = true;
+    callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        if (!protectedThis->m_videoSuspensionPending)
+            return;
+        protectedThis->suspendVideoForVisibility();
+    });
+}
+
+void AudioVideoRendererAVFObjC::suspendVideoForVisibility()
+{
+    if (m_isShutdown)
+        return;
+
+    if (m_videoSuspendedForVisibility)
+        return;
+    m_videoSuspendedForVisibility = true;
+    m_videoSuspensionPending = false;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    setDisplayLayerHidden(true);
+
+    // Flushing the video renderer discards the current frame along with the queued ones, so keep it.
+    m_videoFrameWhileSuspended = currentVideoFrame();
+
+    clearReadyToRequestVideoData();
+    if (m_hasEverSubmittedVideoSample)
+        m_videoSamplesDroppedWhileSuspended = true;
+    if (RefPtr videoRenderer = m_videoRenderer)
+        videoRenderer->flush();
+}
+
+void AudioVideoRendererAVFObjC::resumeVideoForVisibility()
+{
+    if (m_isShutdown)
+        return;
+
+    if (!m_videoSuspendedForVisibility)
+        return;
+    m_videoSuspendedForVisibility = false;
+    m_videoSuspensionPending = false;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    setDisplayLayerHidden(false);
+    m_videoFrameWhileSuspended = nullptr;
+
+    // A seek re-enqueues from its destination, and requests video data when it does.
+    if (seeking())
+        return;
+
+    if (!m_videoSamplesDroppedWhileSuspended) {
+        setReadyToRequestVideoData();
+        return;
+    }
+    m_videoSamplesDroppedWhileSuspended = false;
+
+    notifyRequiresFlushToResume();
+}
+
+void AudioVideoRendererAVFObjC::setDisplayLayerHidden(bool hidden)
+{
+    if (!m_sampleBufferDisplayLayer)
+        return;
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [m_sampleBufferDisplayLayer setHidden:hidden];
+    [CATransaction commit];
 }
 
 void AudioVideoRendererAVFObjC::setPresentationSize(const IntSize& newSize)
@@ -1163,6 +1269,9 @@ void AudioVideoRendererAVFObjC::setResourceOwner(const ProcessIdentity& resource
 
 RefPtr<VideoFrame> AudioVideoRendererAVFObjC::currentVideoFrame() const
 {
+    if (m_videoFrameWhileSuspended)
+        return m_videoFrameWhileSuspended;
+
     RefPtr videoRenderer = m_videoRenderer;
     if (!videoRenderer)
         return nullptr;
@@ -1406,6 +1515,7 @@ void AudioVideoRendererAVFObjC::maybeCompleteSeek()
         return;
     }
     m_seekState = SeekCompleted;
+    updateVideoSuspension();
     if (shouldBePlaying())
         setSynchronizerRate(m_rate, { });
     else {
@@ -1484,6 +1594,7 @@ void AudioVideoRendererAVFObjC::setHasAvailableVideoFrame(bool hasAvailableVideo
         setNeedsPlaceholderImage(false);
     }
     updateAllRenderersHaveAvailableSamples();
+    updateVideoSuspension();
 }
 
 std::optional<TracksRendererManager::TrackType> AudioVideoRendererAVFObjC::typeOf(TrackIdentifier trackId) const
@@ -1585,6 +1696,9 @@ void AudioVideoRendererAVFObjC::ensureLayer()
     setLayerDynamicRangeLimit(m_sampleBufferDisplayLayer.get(), m_dynamicRangeLimit);
 
     m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), m_presentationSize);
+
+    if (m_videoSuspendedForVisibility)
+        setDisplayLayerHidden(true);
 }
 
 void AudioVideoRendererAVFObjC::destroyLayer()
@@ -1866,7 +1980,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::stageVideoRenderer(WebSampleBuffe
     if (flushRequired)
         clearReadyToRequestVideoData();
     else
-        m_readyToRequestVideoData = true;
+        m_readyToRequestVideoData = !m_videoSuspendedForVisibility;
     ALWAYS_LOG(LOGIDENTIFIER, "renderer: ", !!renderer, " flushRequired: ", flushRequired);
 
     return videoRenderer->changeRenderer(renderer)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, rendererToExpire = WTF::move(rendererToExpire), flushRequired] {
@@ -2295,6 +2409,7 @@ void AudioVideoRendererAVFObjC::flushVideo()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    m_videoSamplesDroppedWhileSuspended = false;
     setHasAvailableVideoFrame(false);
     m_hasEverSubmittedVideoSample = false;
     // Flush may immediately call requestMediaDataWhenReady, so set m_readyToRequestVideoData before flushing the renderer.
