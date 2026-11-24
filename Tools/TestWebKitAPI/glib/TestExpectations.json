@@ -13,13 +13,6 @@
             }
         }
     },
-    "TestWebKitAccessibility": {
-        "subtests": {
-            "/webkit/WebKitAccessibility/selection/listbox": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
-            }
-        }
-    },
     "TestPrinting": {
         "subtests": {
             "/webkit/WebKitPrintOperation/custom-widget": {

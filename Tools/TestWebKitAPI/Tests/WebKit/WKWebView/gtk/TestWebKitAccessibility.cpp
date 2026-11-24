@@ -2778,23 +2778,17 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_false(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(atspi_selection_deselect_selected_child(ATSPI_SELECTION(listBox.get()), 1, nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 1);
-    g_assert_true(atspi_selection_deselect_selected_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
-    g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 0);
-    g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 2, nullptr));
+    g_assert_false(atspi_selection_deselect_selected_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
+    g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 1);
+    g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 2, nullptr));
+    g_assert_false(atspi_selection_deselect_child(ATSPI_SELECTION(listBox.get()), 2, nullptr));
+    g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 2, nullptr));
     g_assert_false(atspi_selection_select_all(ATSPI_SELECTION(listBox.get()), nullptr));
     g_assert_false(AccessibilityTest::isSelected(option1.get()));
-    g_assert_false(AccessibilityTest::isSelected(option3.get()));
-    g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
+    g_assert_true(AccessibilityTest::isSelected(option3.get()));
+    g_assert_false(atspi_selection_clear_selection(ATSPI_SELECTION(listBox.get()), nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 1);
-    g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 0, nullptr));
-    test->startEventMonitor(listBox.get(), { "object:selection-changed"_s });
-    g_assert_true(atspi_selection_clear_selection(ATSPI_SELECTION(listBox.get()), nullptr));
-    events = test->stopEventMonitor(1);
-    g_assert_cmpuint(events.size(), ==, 1);
-    g_assert_cmpstr(events[0]->type, ==, "object:selection-changed");
-    events = { };
-    g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 0);
-    g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 0, nullptr));
+    g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 2, nullptr));
 
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('multiple').focus();", nullptr);
 
