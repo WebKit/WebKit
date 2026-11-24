@@ -330,6 +330,10 @@ void WebPageProxyTesting::resetStateBetweenTests()
     if (RefPtr phoneNumberPossessionCoordinatorProxy = page->phoneNumberPossessionCoordinatorProxy())
         phoneNumberPossessionCoordinatorProxy->clearMockConfigurationForTesting();
 #endif
+
+#if ENABLE(WEB_AUTHN)
+    protect(page->websiteDataStore())->removeMockAuthenticatorManager();
+#endif
 }
 
 CompletionHandler<void(NavigationResponseProcessSwapResult&&)> WebPageProxyTesting::holdNavigationResponseProcessSwapReply(CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
