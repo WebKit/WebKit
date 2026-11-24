@@ -17,8 +17,8 @@
           assert_true(layer instanceof XRCylinderLayer, "createCylinderLayer with textureType 'texture-array' must succeed on WebGL2.");
           assert_equals(layer.layout, 'stereo', "stereo + texture-array must preserve layer.layout as 'stereo'.");
         } else {
-          assert_throws_dom('InvalidStateError', () => binding.createCylinderLayer({ ...baseInit, textureType: 'texture-array' }),
-            "createCylinderLayer with textureType 'texture-array' must throw InvalidStateError on WebGL.");
+          assert_throws_js(TypeError, () => binding.createCylinderLayer({ ...baseInit, textureType: 'texture-array' }),
+            "createCylinderLayer with textureType 'texture-array' must throw TypeError on WebGL.");
         }
       });
     });

@@ -95,6 +95,7 @@ private:
     bool depthFormatIsSupportedForProjectionLayer(GCGLenum) const;
     bool colorFormatIsSupportedForNonProjectionLayer(GCGLenum) const;
     bool depthFormatIsSupportedForNonProjectionLayer(GCGLenum) const;
+    ExceptionOr<void> validateCompositionLayerDimensions(const XRLayerInit&) const;
     ExceptionOr<void> validateCompositionLayerInitParameters(const XRLayerInit&) const;
     ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateColorTexturesForProjectionLayer(XRProjectionLayer&, XRTextureType, GCGLenum textureFormat, double scaleFactor);
     ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateDepthTexturesForProjectionLayer(XRProjectionLayer&, XRTextureType, GCGLenum textureFormat, double scaleFactor);

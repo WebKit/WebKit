@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "XRWebGLBinding.h"
+#include <cstdint>
 
 #if ENABLE(WEBXR_LAYERS)
 
@@ -319,6 +320,28 @@ static ExceptionOr<void> checkCanSetSpace(const WebXRSpace& space, const WebXRSe
     return { };
 }
 
+ExceptionOr<void> XRWebGLBinding::validateCompositionLayerDimensions(const XRLayerInit& init) const
+{
+    if (!init.viewPixelWidth || !init.viewPixelHeight)
+        return Exception { ExceptionCode::TypeError, "Layer dimensions must be greater than 0."_s };
+
+    uint64_t maxTextureSize = WTF::switchOn(m_context,
+        [](const Ref<WebGLRenderingContextBase>& baseContext) -> uint64_t {
+            auto* context = baseContext->graphicsContextGL();
+            return context ? std::max(context->maxTextureSize(), 0) : 0;
+        });
+    uint64_t textureWidth = init.viewPixelWidth;
+    uint64_t textureHeight = init.viewPixelHeight;
+    if (init.layout == XRLayerLayout::Stereo || init.layout == XRLayerLayout::StereoLeftRight)
+        textureWidth *= 2;
+    else if (init.layout == XRLayerLayout::StereoTopBottom)
+        textureHeight *= 2;
+    if (textureWidth > maxTextureSize || textureHeight > maxTextureSize)
+        return Exception { ExceptionCode::TypeError, "Layer dimensions exceed the maximum texture size."_s };
+
+    return { };
+}
+
 ExceptionOr<void> XRWebGLBinding::validateCompositionLayerInitParameters(const XRLayerInit& init) const
 {
     if (init.layout == XRLayerLayout::Default)
@@ -334,7 +357,7 @@ ExceptionOr<void> XRWebGLBinding::validateCompositionLayerInitParameters(const X
                 return false;
             });
         if (!isWebGL2Context)
-            return Exception { ExceptionCode::InvalidStateError, "Texture array is only supported on WebGL 2.0 contexts."_s };
+            return Exception { ExceptionCode::TypeError, "Texture array is only supported on WebGL 2.0 contexts."_s };
     }
 
     if (init.mipLevels < 1)
@@ -346,6 +369,10 @@ ExceptionOr<void> XRWebGLBinding::validateCompositionLayerInitParameters(const X
         if (!isPowerOfTwo(init.viewPixelWidth) || !isPowerOfTwo(init.viewPixelHeight))
             return Exception { ExceptionCode::InvalidStateError, "Mip levels greater than 1 are not supported for non power of 2 textures."_s };
     }
+
+    auto validateDimensionsResult = validateCompositionLayerDimensions(init);
+    if (validateDimensionsResult.hasException())
+        return validateDimensionsResult.releaseException();
 
     if (!colorFormatIsSupportedForNonProjectionLayer(init.colorFormat))
         return Exception { ExceptionCode::NotSupportedError, "Unsupported texture format."_s };
