@@ -48,7 +48,7 @@ layer at (0,0) size 450x500
         RenderSVGInline {tspan} at (85,12) size 12x45
           RenderSVGInlineText {#text} at (85,12) size 12x45
             chunk 1 (middle anchor) text run 1 at (349.61,140.00) startOffset 0 endOffset 1 width 11.08: "I"
-        RenderSVGInline {tspan} at (93,2) size 54x69
+        RenderSVGInline {tspan} at (93,2) size 54x70
           RenderSVGInlineText {#text} at (93,2) size 54x69
             chunk 1 (middle anchor) text run 1 at (360.69,140.00) startOffset 0 endOffset 1 width 35.52: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -78,7 +78,7 @@ layer at (0,0) size 450x500
         RenderSVGInline {tspan} at (85,12) size 12x45
           RenderSVGInlineText {#text} at (85,12) size 12x45
             chunk 1 (middle anchor) text run 1 at (349.61,240.00) startOffset 0 endOffset 1 width 11.08: "I"
-        RenderSVGInline {tspan} at (93,2) size 54x69
+        RenderSVGInline {tspan} at (93,2) size 54x70
           RenderSVGInlineText {#text} at (93,2) size 54x69
             chunk 1 (middle anchor) text run 1 at (360.69,240.00) startOffset 0 endOffset 1 width 35.52: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -116,7 +116,7 @@ layer at (263.78,291.72) size 147x80
     RenderSVGInline {tspan} at (85,12) size 12x45
       RenderSVGInlineText {#text} at (85,12) size 12x45
         chunk 1 (middle anchor) text run 1 at (349.61,340.00) startOffset 0 endOffset 1 width 11.08: "I"
-    RenderSVGInline {tspan} at (93,2) size 54x69
+    RenderSVGInline {tspan} at (93,2) size 54x70
       RenderSVGInlineText {#text} at (93,2) size 54x69
         chunk 1 (middle anchor) text run 1 at (360.69,340.00) startOffset 0 endOffset 1 width 35.52: "K"
     RenderSVGInlineText {#text} at (0,0) size 0x0

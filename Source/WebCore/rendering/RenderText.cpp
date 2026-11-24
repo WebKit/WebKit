@@ -743,7 +743,7 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
     Vector<FloatQuad> quads;
     for (auto& textBox : InlineIterator::textBoxesFor(textRenderer)) {
         auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox);
-        auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.blockStartRelativePhysicalRect();
+        auto boundaries = svgTextBox ? svgTextBox->localBoundariesIncludingSVGTransform() : textBox.blockStartRelativePhysicalRect();
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
@@ -865,7 +865,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
 
         if (start <= textBox.start() && textBox.end() <= end) {
             auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox);
-            auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.blockStartRelativePhysicalRect();
+            auto boundaries = svgTextBox ? svgTextBox->localBoundariesIncludingSVGTransform() : textBox.blockStartRelativePhysicalRect();
 
             if (useSelectionHeight) {
                 LayoutRect selectionRect = selectionRectForTextBox(textBox, start, end);

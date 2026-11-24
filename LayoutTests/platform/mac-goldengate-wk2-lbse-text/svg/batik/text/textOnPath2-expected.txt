@@ -110,8 +110,8 @@ layer at (10,-117.78) size 421x122 backgroundClip at (0,0) size 450x500 clip at 
             chunk 1 text run 9 at (205.75,-81.91) startOffset 8 endOffset 9 width 4.45: "t"
             chunk 1 text run 10 at (210.26,-78.32) startOffset 9 endOffset 10 width 7.10: "e"
             chunk 1 text run 11 at (215.69,-73.07) startOffset 10 endOffset 11 width 8.00: "d"
-        RenderSVGInline {tspan} at (205,38) size 34x45
-          RenderSVGInlineText {#text} at (205,38) size 34x44
+        RenderSVGInline {tspan} at (205,39) size 34x44
+          RenderSVGInlineText {#text} at (205,39) size 34x44
             chunk 1 text run 1 at (219.59,-68.51) startOffset 0 endOffset 1 width 4.00: " "
             chunk 1 text run 2 at (222.11,-65.13) startOffset 1 endOffset 2 width 4.45: "t"
             chunk 1 text run 3 at (225.04,-60.67) startOffset 2 endOffset 3 width 6.23: "s"

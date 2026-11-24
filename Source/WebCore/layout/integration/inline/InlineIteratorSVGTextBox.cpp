@@ -47,6 +47,21 @@ FloatRect SVGTextBox::calculateBoundariesIncludingSVGTransform() const
     return calculateBoundariesIncludingSVGTransform(protect(renderer()), textFragments());
 }
 
+LayoutSize SVGTextBox::localToUserSpaceOffset() const
+{
+    CheckedRef textRoot = formattingContextRoot();
+    if (!textRoot->settings().layerBasedSVGEngineEnabled())
+        return { };
+    return toLayoutSize(textRoot->nominalSVGLayoutLocation());
+}
+
+FloatRect SVGTextBox::localBoundariesIncludingSVGTransform() const
+{
+    auto boundaries = calculateBoundariesIncludingSVGTransform();
+    boundaries.move(-localToUserSpaceOffset());
+    return boundaries;
+}
+
 FloatRect SVGTextBox::calculateBoundariesIncludingSVGTransform(const RenderSVGInlineText& text, std::span<const SVGTextFragment> fragments)
 {
     FloatRect textRect;
@@ -96,6 +111,10 @@ LayoutRect SVGTextBox::localSelectionRect(unsigned start, unsigned end) const
         selectionRect.unite(fragmentRect);
     }
 
+    if (selectionRect.isEmpty())
+        return LayoutRect();
+
+    selectionRect.move(-localToUserSpaceOffset());
     return enclosingIntRect(selectionRect);
 }
 

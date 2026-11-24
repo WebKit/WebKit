@@ -149,7 +149,13 @@ FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
 
 IntRect RenderSVGInlineText::linesBoundingBox() const
 {
-    return enclosingIntRect(floatLinesBoundingBox());
+    // Unlike floatLinesBoundingBox(), which is in SVG user space, this is in local coordinates, like for any RenderText.
+    auto boundingBox = floatLinesBoundingBox();
+    if (boundingBox.isEmpty())
+        return { };
+    if (auto firstTextBox = InlineIterator::firstSVGTextBoxFor(*this))
+        boundingBox.move(-firstTextBox->localToUserSpaceOffset());
+    return enclosingIntRect(boundingBox);
 }
 
 static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox, const SVGTextFragment& fragment, float position)
@@ -180,7 +186,8 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
 
     // Map local point to absolute point, as the character origins stored in the text fragments use absolute coordinates.
     FloatPoint absolutePoint(point);
-    absolutePoint.moveBy(firstTextBox->formattingContextRoot().location());
+    CheckedRef textRoot = firstTextBox->formattingContextRoot();
+    absolutePoint.moveBy(document().settings().layerBasedSVGEngineEnabled() ? textRoot->nominalSVGLayoutLocation() : textRoot->location());
 
     float closestDistance = std::numeric_limits<float>::max();
     float closestDistancePosition = 0;

@@ -963,14 +963,18 @@ FloatRect LineLayout::applySVGTextFragments()
 
     popParent(nullptr);
 
-    // Move so the top-left text box is at (0, 0).
+    // Move the boxes into the local coordinate system of the RenderSVGText. In LBSE its origin is
+    // RenderSVGText::nominalSVGLayoutLocation(), the floored top-left of the text boundaries.
+    auto origin = fullBoundaries.location();
+    if (flow().settings().layerBasedSVGEngineEnabled())
+        origin = flooredLayoutPoint(origin);
     for (auto& box : boxes) {
-        box.moveHorizontally(-fullBoundaries.x());
-        box.moveVertically(-fullBoundaries.y());
+        box.moveHorizontally(-origin.x());
+        box.moveVertically(-origin.y());
     }
 
     if (lines.size())
-        lines[0].setLineBoxRectForSVGText(FloatRect { { }, fullBoundaries.size() });
+        lines[0].setLineBoxRectForSVGText(FloatRect { toFloatPoint(fullBoundaries.location() - origin), fullBoundaries.size() });
 
     return fullBoundaries;
 }

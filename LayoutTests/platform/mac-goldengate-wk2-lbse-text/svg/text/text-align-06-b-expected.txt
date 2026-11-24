@@ -26,7 +26,7 @@ layer at (-8.34,0) size 294x302 backgroundClip at (0,0) size 800x600 clip at (0,
         chunk 1 (vertical) text run 1 at (-10.40,100.55) startOffset 0 endOffset 1 height 33.52: "x"
         chunk 1 (vertical) text run 2 at (-10.40,134.06) startOffset 1 endOffset 2 height 33.52: "t"
     RenderSVGText {text} at (54,0) size 43x269 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (25,0) size 17x68
+      RenderSVGInlineText {#text} at (26,0) size 17x68
         chunk 1 (vertical) text run 1 at (69.60,0.00) startOffset 0 endOffset 1 height 33.52: "t"
         chunk 1 (vertical) text run 2 at (69.60,33.52) startOffset 1 endOffset 2 height 33.52: "e"
       RenderSVGInline {tspan} at (0,67) size 27x135

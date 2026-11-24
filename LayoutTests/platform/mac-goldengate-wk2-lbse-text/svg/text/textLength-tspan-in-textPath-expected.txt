@@ -56,8 +56,8 @@ layer at (8,8) size 575x575
             chunk 1 text run 1 at (205.21,628.96) startOffset 0 endOffset 1 width 7.99: "I"
         RenderSVGInlineText {#text} at (94,454) size 23x25
           chunk 1 text run 1 at (131.32,582.24) startOffset 0 endOffset 1 width 6.00: " "
-        RenderSVGInline {tspan} at (43,402) size 30x24
-          RenderSVGInlineText {#text} at (43,402) size 29x24
+        RenderSVGInline {tspan} at (44,402) size 29x24
+          RenderSVGInlineText {#text} at (44,402) size 29x24
             chunk 1 text run 1 at (72.39,516.77) startOffset 0 endOffset 1 width 9.34: "J"
         RenderSVGInlineText {#text} at (12,343) size 29x15
           chunk 1 text run 1 at (33.51,437.73) startOffset 0 endOffset 1 width 6.00: " "

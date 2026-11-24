@@ -41,8 +41,11 @@ public:
 
     FloatRect calculateBoundariesIncludingSVGTransform() const;
     static FloatRect calculateBoundariesIncludingSVGTransform(const RenderSVGInlineText&, std::span<const SVGTextFragment>);
+    FloatRect localBoundariesIncludingSVGTransform() const;
     LayoutRect localSelectionRect(unsigned start, unsigned end) const;
     NODELETE const Vector<SVGTextFragment>& textFragments() const;
+
+    LayoutSize localToUserSpaceOffset() const;
 
     const RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(TextBox::renderer()); }
 };
