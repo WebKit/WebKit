@@ -349,8 +349,10 @@ public:
     // that block must be abstractly interpreted again. This also sets
     // to->cfaShouldRevisit to true, if it returns true, or if to has not been
     // visited yet.
-    bool merge(BasicBlock* from, BasicBlock* to);
-    
+    // If narrowedNode is given, the values that hold it at the first block's tail are
+    // filtered by narrowedValue before merging.
+    bool merge(BasicBlock* from, BasicBlock* to, Node* narrowedNode = nullptr, const AbstractValue* narrowedValue = nullptr);
+
     // Merge the abstract state stored at the block's tail into all of its
     // successors. Returns true if any of the successors' states changed. Note
     // that this is automatically called in endBasicBlock() if MergeMode is
@@ -382,7 +384,9 @@ private:
     
     void activateVariable(size_t variableIndex);
     void activateAllVariables();
-    
+
+    bool mergeToSwitchStructureSuccessors(BasicBlock*, Node* terminal);
+
     static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);
     
     Graph& m_graph;

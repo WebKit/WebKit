@@ -250,6 +250,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         }
 
         case SwitchCell:
+        case SwitchStructure:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
