@@ -321,25 +321,25 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     g_object_set(inputCapsFilter, "caps", inputCaps.get(), nullptr);
     gst_bin_add_many(bin, priv->encoder.get(), inputCapsFilter, nullptr);
 
-    auto videoConvert = createVideoConvertScaleElement();
-    if (!videoConvert)
-        return false;
-
-    gst_bin_add(bin, videoConvert.get());
-
-    GRefPtr<GstElement> videoFlip;
+    GRefPtr<GstElement> videoConvert;
     if (priv->enableVideoFlip) {
-        videoFlip = makeGStreamerElement("autovideoflip"_s);
-        if (videoFlip) {
-            gst_util_set_object_arg(G_OBJECT(videoFlip.get()), "video-direction", "auto");
-            gst_bin_add(bin, videoFlip.get());
-            gst_element_link(videoFlip.get(), videoConvert.get());
+        videoConvert = makeGStreamerElement("autovideoflip"_s);
+        if (videoConvert) {
+            gst_util_set_object_arg(G_OBJECT(videoConvert.get()), "video-direction", "auto");
+            gst_bin_add(bin, videoConvert.get());
         } else
             GST_WARNING_OBJECT(self, "The autovideoflip element is missing, video rotation handling cannot be enabled.");
     }
 
-    const auto& element = videoFlip ? videoFlip : videoConvert;
-    GRefPtr sinkPadTarget = adoptGRef(gst_element_get_static_pad(element.get(), "sink"));
+    if (!videoConvert) {
+        videoConvert = createVideoConvertScaleElement();
+        if (!videoConvert)
+            return false;
+
+        gst_bin_add(bin, videoConvert.get());
+    }
+
+    GRefPtr sinkPadTarget = adoptGRef(gst_element_get_static_pad(videoConvert.get(), "sink"));
     GRefPtr sinkPad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT_CAST(self), "sink"));
     gst_ghost_pad_set_target(GST_GHOST_PAD(sinkPad.get()), sinkPadTarget.get());
 
