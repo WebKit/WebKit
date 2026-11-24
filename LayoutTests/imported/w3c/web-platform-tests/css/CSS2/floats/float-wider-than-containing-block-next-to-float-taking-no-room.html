@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<title>CSS Test: A float wider than its containing block stays next to an earlier float that takes no room from it</title>
+<link rel="help" href="https://drafts.csswg.org/css2/#float-position">
+<link rel="match" href="float-wider-than-containing-block-next-to-float-taking-no-room-ref.html">
+<meta name="assert" content="The negative margin of the green float leaves the whole width of the containing block to the blue float, so the blue float is placed at the top of the green float even though it is wider than its containing block.">
+<style>
+.container {
+  display: flow-root;
+  margin-left: 300px;
+  width: 200px;
+  height: 40px;
+  line-height: 10px;
+  background-color: lightgray;
+}
+
+.spacer {
+  height: 10px;
+}
+
+.no-room {
+  float: left;
+  margin-left: -300px;
+  width: 50px;
+  height: 20px;
+  background-color: green;
+}
+
+.wide {
+  float: left;
+  width: 250px;
+  height: 10px;
+  background-color: blue;
+}
+</style>
+<!-- Floats placed by inline layout. -->
+<div class="container">
+  <br>
+  <div class="no-room"></div><div class="wide"></div>
+</div>
+<!-- Floats placed by block layout. -->
+<div class="container">
+  <div class="spacer"></div>
+  <div class="no-room"></div>
+  <div class="wide"></div>
+</div>

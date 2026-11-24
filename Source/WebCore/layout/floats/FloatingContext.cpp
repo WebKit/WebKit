@@ -180,7 +180,7 @@ static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatA
             floatAvoider.resetInlineStart();
         floatAvoider.setBlockStart(inlineStartEndFloatPair.highestBlockAxisPosition());
 
-        if (!inlineStartEndFloatPair.intersects(floatAvoider) && !floatAvoider.overflowsContainingBlock())
+        if (!inlineStartEndFloatPair.intersects(floatAvoider) && !floatAvoider.overflowsContainingBlockWhileConstrainedByFloats())
             return *innerMostInlineStartAndEnd;
 
         // Is this float pair is outside of our containing block's content box? In some cases we _may_ overlap them.

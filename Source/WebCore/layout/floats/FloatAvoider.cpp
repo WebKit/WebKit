@@ -93,4 +93,9 @@ bool FloatAvoider::overflowsContainingBlock() const
     return m_containingBlockAbsoluteContentBox.end() < right;
 }
 
+bool FloatAvoider::overflowsContainingBlockWhileConstrainedByFloats() const
+{
+    return m_absoluteTopLeft.x() != initialInlineStart() && overflowsContainingBlock();
+}
+
 }

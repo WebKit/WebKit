@@ -43,7 +43,8 @@ public:
     NODELETE void setBlockStart(AxisPosition<ParentFormattingContextRoot>);
     void resetInlineStart() { m_absoluteTopLeft.setX(initialInlineStart()); }
 
-    NODELETE bool overflowsContainingBlock() const;
+    // CSS 2.2 9.5.1 rule 7: a left float may not stick out at the right edge, unless it is already as far to the left as possible (and the mirror for right floats).
+    NODELETE bool overflowsContainingBlockWhileConstrainedByFloats() const;
 
     AxisPosition<ParentFormattingContextRoot> blockStart() const;
     AxisPosition<ParentFormattingContextRoot> inlineStart() const;
@@ -54,6 +55,7 @@ public:
 private:
     LayoutUnit borderBoxWidth() const { return m_borderBoxWidth; }
     NODELETE AxisPosition<ParentFormattingContextRoot> initialInlineStart() const;
+    NODELETE bool overflowsContainingBlock() const;
 
     LayoutUnit marginBefore() const { return m_margin.vertical.before; }
     LayoutUnit marginAfter() const { return m_margin.vertical.after; }
