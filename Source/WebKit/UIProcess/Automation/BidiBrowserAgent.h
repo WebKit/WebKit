@@ -64,6 +64,7 @@ private:
     // Inspector::BidiBrowserBackendDispatcherHandler methods.
     Inspector::CommandResult<void> close() override;
     Inspector::CommandResult<String> createUserContext() override;
+    void getClientWindows(Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowser::ClientWindowInfo>>>&&) override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowser::UserContextInfo>>> getUserContexts() override;
     void removeUserContext(const String& userContext, Inspector::CommandCallback<void>&&) override;
 

@@ -31,6 +31,7 @@
 #include "ViewSnapshotStore.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebKitWebViewBaseInternal.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/Scrollbar.h>
 #include <wtf/glib/GSpanExtras.h>
@@ -377,6 +378,53 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
 #else
     return base64EncodedPNGData(snapshot.surface());
 #endif
+}
+
+std::optional<WebAutomationSession::PlatformClientWindowState> WebAutomationSession::platformClientWindowStateForPage(WebPageProxy& page)
+{
+    auto* viewWidget = page.viewWidget();
+    if (!viewWidget)
+        return std::nullopt;
+
+    // The view tracks whether its toplevel is the active window as it changes, and, in developer builds
+    // under Xvfb, which doesn't support toplevel focus, considers it always active. gtk_window_is_active()
+    // would report every window as inactive there.
+    bool isActive = webkitWebViewBaseIsInWindowActive(WEBKIT_WEB_VIEW_BASE(viewWidget));
+
+#if USE(GTK4)
+    auto* root = gtk_widget_get_root(viewWidget);
+    if (!root)
+        return std::nullopt;
+
+    auto* surface = gtk_native_get_surface(GTK_NATIVE(root));
+    if (!surface || !GDK_IS_TOPLEVEL(surface))
+        return std::nullopt;
+
+    auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
+    if (state & GDK_TOPLEVEL_STATE_FULLSCREEN)
+        return PlatformClientWindowState { ClientWindowState::Fullscreen, isActive };
+    if (state & GDK_TOPLEVEL_STATE_MINIMIZED)
+        return PlatformClientWindowState { ClientWindowState::Minimized, isActive };
+    if (state & GDK_TOPLEVEL_STATE_MAXIMIZED)
+        return PlatformClientWindowState { ClientWindowState::Maximized, isActive };
+#else
+    auto* toplevel = gtk_widget_get_toplevel(viewWidget);
+    if (!gtk_widget_is_toplevel(toplevel))
+        return std::nullopt;
+
+    auto* window = gtk_widget_get_window(toplevel);
+    if (!window)
+        return std::nullopt;
+
+    auto state = gdk_window_get_state(window);
+    if (state & GDK_WINDOW_STATE_FULLSCREEN)
+        return PlatformClientWindowState { ClientWindowState::Fullscreen, isActive };
+    if (state & GDK_WINDOW_STATE_ICONIFIED)
+        return PlatformClientWindowState { ClientWindowState::Minimized, isActive };
+    if (state & GDK_WINDOW_STATE_MAXIMIZED)
+        return PlatformClientWindowState { ClientWindowState::Maximized, isActive };
+#endif
+    return PlatformClientWindowState { ClientWindowState::Normal, isActive };
 }
 
 } // namespace WebKit

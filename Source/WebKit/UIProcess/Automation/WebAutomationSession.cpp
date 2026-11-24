@@ -515,6 +515,37 @@ static const URL& activeOrInitialURL(WebPageProxy& page)
     return activeURL.isEmpty() ? aboutBlankURL() : activeURL;
 }
 
+String WebAutomationSession::clientWindowForPage(const WebPageProxy& page)
+{
+    return makeString(page.identifier().toUInt64());
+}
+
+WebAutomationSession::ClientWindowState WebAutomationSession::clientWindowStateForPage(WebPageProxy& page)
+{
+#if ENABLE(FULLSCREEN_API)
+    if (RefPtr fullScreenManager = page.fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
+        return ClientWindowState::Fullscreen;
+#endif
+    if (auto platformState = platformClientWindowStateForPage(page))
+        return platformState->state;
+    return ClientWindowState::Normal;
+}
+
+bool WebAutomationSession::isClientWindowActiveForPage(WebPageProxy& page)
+{
+    if (auto platformState = platformClientWindowStateForPage(page))
+        return platformState->isActive;
+    return page.isViewVisible() && page.isViewFocused() && page.isViewWindowActive();
+}
+
+// FIXME: Read the state of the toplevel on WPE too; it is not intrinsically different from GTK.
+#if !PLATFORM(MAC) && !PLATFORM(GTK)
+std::optional<WebAutomationSession::PlatformClientWindowState> WebAutomationSession::platformClientWindowStateForPage(WebPageProxy&)
+{
+    return std::nullopt;
+}
+#endif
+
 Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buildBrowsingContextForPage(WebPageProxy& page, WebCore::FloatRect windowFrame)
 {
     auto originObject = Inspector::Protocol::Automation::Point::create()
@@ -527,7 +558,7 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
         .setHeight(windowFrame.height())
         .release();
 
-    bool isActive = page.isViewVisible() && page.isViewFocused() && page.isViewWindowActive();
+    bool isActive = isClientWindowActiveForPage(page);
     String handle = handleForWebPageProxy(page);
 
     return Inspector::Protocol::Automation::BrowsingContext::create()
@@ -1831,7 +1862,7 @@ void WebAutomationSession::emitContextCreatedEvent(const WebPageProxy& page)
 
 static std::pair<String, String> getClientWindowAndUserContext(const WebPageProxy& page)
 {
-    String clientWindow = makeString(page.identifier().toUInt64());
+    String clientWindow = WebAutomationSession::clientWindowForPage(page);
     String userContext = "default"_s;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=281941 - Add support for reporting user context
     return { clientWindow, userContext };

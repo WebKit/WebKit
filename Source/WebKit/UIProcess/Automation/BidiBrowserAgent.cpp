@@ -35,10 +35,14 @@
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <pal/SessionID.h>
+#include <wtf/Borrow.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/HashSet.h>
 #include <wtf/HexNumber.h>
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringBuilder.h>
@@ -46,6 +50,8 @@
 namespace WebKit {
 
 using namespace Inspector;
+using ClientWindowInfo = Inspector::Protocol::BidiBrowser::ClientWindowInfo;
+using ClientWindowState = Inspector::Protocol::BidiBrowser::ClientWindowState;
 using UserContextInfo = Inspector::Protocol::BidiBrowser::UserContextInfo;
 
 namespace {
@@ -61,6 +67,49 @@ const String& defaultUserContextID()
 {
     static NeverDestroyed<const String> contextID(MAKE_STATIC_STRING_IMPL("default"));
     return contextID;
+}
+
+ClientWindowState toProtocol(WebAutomationSession::ClientWindowState state)
+{
+    switch (state) {
+    case WebAutomationSession::ClientWindowState::Normal:
+        return ClientWindowState::Normal;
+    case WebAutomationSession::ClientWindowState::Minimized:
+        return ClientWindowState::Minimized;
+    case WebAutomationSession::ClientWindowState::Maximized:
+        return ClientWindowState::Maximized;
+    case WebAutomationSession::ClientWindowState::Fullscreen:
+        return ClientWindowState::Fullscreen;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ClientWindowState::Normal;
+}
+
+// Takes the pages in reverse order, so that each step can take the next one from the end.
+void appendClientWindowInfo(WebAutomationSession& session, Vector<Ref<WebPageProxy>>&& pages, Ref<JSON::ArrayOf<ClientWindowInfo>>&& clientWindows, CommandCallback<Ref<JSON::ArrayOf<ClientWindowInfo>>>&& callback)
+{
+    if (pages.isEmpty()) {
+        callback(WTF::move(clientWindows));
+        return;
+    }
+
+    Ref page = pages.takeLast();
+    page->getWindowFrameWithCallback([session = Ref { session }, page = page.copyRef(), pages = WTF::move(pages), clientWindows = WTF::move(clientWindows), callback = WTF::move(callback)](WebCore::FloatRect windowFrame) mutable {
+        // https://w3c.github.io/webdriver-bidi/#get-the-client-window-info
+        auto info = ClientWindowInfo::create()
+            .setActive(session->isClientWindowActiveForPage(page))
+            .setClientWindow(WebAutomationSession::clientWindowForPage(page))
+            .setHeight(std::max(0, clampTo<int>(std::round(windowFrame.height()))))
+            .setState(toProtocol(session->clientWindowStateForPage(page)))
+            .setWidth(std::max(0, clampTo<int>(std::round(windowFrame.width()))))
+            .setX(clampTo<int>(std::round(windowFrame.x())))
+            .setY(clampTo<int>(std::round(windowFrame.y())))
+            .release();
+        clientWindows->addItem(WTF::move(info));
+
+        appendClientWindowInfo(session, WTF::move(pages), WTF::move(clientWindows), WTF::move(callback));
+    });
 }
 
 } // namespace
@@ -159,6 +208,36 @@ CommandResult<String> BidiBrowserAgent::createUserContext()
     m_userContexts.set(userContextID, WTF::move(userContext));
 
     return userContextID;
+}
+
+void BidiBrowserAgent::getClientWindows(CommandCallback<Ref<JSON::ArrayOf<ClientWindowInfo>>>&& callback)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-browser-getClientWindows
+    RefPtr session = m_session;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    RefPtr processPool = session->processPool();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!processPool, InternalError);
+
+    // Only windows hosting a top-level browsing context under automation are reported, never other windows
+    // of the browser. Pages are found through their main frame's process; with site isolation, the other
+    // processes hosting the page's frames only have a RemotePageProxy for it, so each page is seen once.
+    HashSet<String> clientWindowIDs;
+    Vector<Ref<WebPageProxy>> pages;
+    for (Ref process : borrow(processPool->processes()).get()) {
+        for (Ref page : process->mainPages()) {
+            if (!page->isControlledByAutomation())
+                continue;
+
+            if (!clientWindowIDs.add(WebAutomationSession::clientWindowForPage(page)).isNewEntry)
+                continue;
+
+            pages.append(WTF::move(page));
+        }
+    }
+
+    pages.reverse();
+    appendClientWindowInfo(*session, WTF::move(pages), JSON::ArrayOf<ClientWindowInfo>::create(), WTF::move(callback));
 }
 
 CommandResult<Ref<JSON::ArrayOf<UserContextInfo>>> BidiBrowserAgent::getUserContexts()

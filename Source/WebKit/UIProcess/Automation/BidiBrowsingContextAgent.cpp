@@ -331,7 +331,7 @@ Inspector::Protocol::BidiBrowsingContext::BrowsingContext BidiBrowsingContextAge
     return session->handleForWebFrameID(frameID);
 }
 
-Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, const String& clientWindow, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
 {
     // https://w3c.github.io/webdriver-bidi/#get-the-navigable-info
 
@@ -340,7 +340,7 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::ge
     auto info = Inspector::Protocol::BidiBrowsingContext::Info::create()
         .setContext(getBrowsingContextID(tree.info.frameID))
         .setUrl(tree.info.request.url().string())
-        .setClientWindow("placeholder_window"_s)
+        .setClientWindow(clientWindow)
         .setUserContext("default"_s)
         .setChildrenIsNull()
         .setOriginalOpenerIsNull()
@@ -365,7 +365,7 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::ge
     auto childrenInfo = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
     auto newDepth = maxDepth ? std::optional<uint64_t>(*maxDepth - 1) : std::nullopt;
     for (auto& child : borrow(tree.children))
-        childrenInfo->addItem(getNavigableInfo(child, newDepth, IncludeParentID::No));
+        childrenInfo->addItem(getNavigableInfo(child, clientWindow, newDepth, IncludeParentID::No));
 
     info->setChildren(WTF::move(childrenInfo));
     return info;
@@ -397,7 +397,7 @@ void BidiBrowsingContextAgent::getNextTree(Vector<Ref<WebPageProxy>>&& pagesToPr
         if (!protectedThis)
             return;
         if (tree)
-            resultsObject->addItem(protectedThis->getNavigableInfo(*tree, maxDepth, IncludeParentID::Yes));
+            resultsObject->addItem(protectedThis->getNavigableInfo(*tree, WebAutomationSession::clientWindowForPage(protectedPage), maxDepth, IncludeParentID::Yes));
         protectedThis->getNextTree(WTF::move(pagesToProcess), WTF::move(resultsObject), maxDepth, WTF::move(callback));
     });
 }
@@ -427,7 +427,9 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
         auto frameID = session->webFrameIDForHandle(frameHandle, frameNotFound);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page || frameNotFound || !frameID, FrameNotFound);
 
-        page->getAllFrames([weakThis = WeakPtr { *this }, frameID = *frameID, maxDepth, callback = WTF::move(callback)](std::optional<FrameTreeNodeData>&& tree) mutable {
+        // Every navigable of a page is in the client window of the page's top-level browsing context, whichever
+        // process hosts it.
+        page->getAllFrames([weakThis = WeakPtr { *this }, frameID = *frameID, clientWindow = WebAutomationSession::clientWindowForPage(*page), maxDepth, callback = WTF::move(callback)](std::optional<FrameTreeNodeData>&& tree) mutable {
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return;
@@ -435,7 +437,7 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!node, FrameNotFound);
 
             auto resultsObject = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
-            resultsObject->addItem(protectedThis->getNavigableInfo(*node, maxDepth, IncludeParentID::Yes));
+            resultsObject->addItem(protectedThis->getNavigableInfo(*node, clientWindow, maxDepth, IncludeParentID::Yes));
             callback(WTF::move(resultsObject));
         });
         return;
