@@ -57,6 +57,7 @@
 #include "JSSentinel.h"
 #include "LLIntThunks.h"
 #include "Microtask.h"
+#include "MicrotaskQueueInlines.h"
 #include "ModuleGraphLoadingState.h"
 #include "ModuleLoaderPayload.h"
 #include "ModuleLoadingContext.h"
