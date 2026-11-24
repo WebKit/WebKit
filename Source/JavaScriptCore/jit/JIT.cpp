@@ -45,6 +45,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
 #include "PCToCodeOriginMap.h"
+#include "PreciseJumpTargets.h"
 #include "ProbeContext.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
@@ -168,6 +169,54 @@ void JIT::emitSlowCaseCall(Vector<SlowCaseEntry>::iterator& iter, SlowPathFuncti
     slowPathCall.call();
 }
 
+void JIT::emitGetVirtualRegisterWithReusableResult(VirtualRegister src, GPRReg dst)
+{
+    ASSERT(m_reusableResult);
+    if (m_operandLoadsEnd != fallThroughPoint()) {
+        m_reusableResult = std::nullopt;
+        emitLoadVirtualRegister(src, dst);
+        return;
+    }
+
+    GPRReg reusableGPR = m_reusableResult->gpr;
+    if (m_reusableResult->virtualRegister == src) {
+        if (m_resultReloads.isEmpty() || m_resultReloads.last().bytecodeIndex != m_bytecodeIndex)
+            m_resultReloads.append({ m_bytecodeIndex, src, reusableGPR, m_labels[m_bytecodeIndex.offset()] });
+        move(reusableGPR, dst);
+        jitAssert([&] -> Jump {
+            return branch64(Equal, dst, addressFor(src));
+        });
+    } else {
+        emitLoadVirtualRegister(src, dst);
+        if (dst == reusableGPR) {
+            m_reusableResult = std::nullopt;
+            return;
+        }
+    }
+    m_operandLoadsEnd = fallThroughPoint();
+}
+
+void JIT::emitGetVirtualRegisters(std::initializer_list<std::pair<VirtualRegister, GPRReg>> operands)
+{
+    ASSERT(std::ranges::all_of(operands, [&](auto& operand) {
+        return std::ranges::count_if(operands, [&](auto& other) { return other.second == operand.second; }) == 1;
+    }));
+
+    // Copy the register holding the previous bytecode's result first, before another load overwrites it.
+    const std::pair<VirtualRegister, GPRReg>* reusable = nullptr;
+    if (m_reusableResult && m_operandLoadsEnd == fallThroughPoint()) {
+        auto iterator = std::ranges::find(operands, m_reusableResult->virtualRegister, &std::pair<VirtualRegister, GPRReg>::first);
+        if (iterator != operands.end())
+            reusable = iterator;
+    }
+    if (reusable)
+        emitGetVirtualRegister(reusable->first, reusable->second);
+    for (auto& operand : operands) {
+        if (&operand != reusable)
+            emitGetVirtualRegister(operand.first, operand.second);
+    }
+}
+
 void JIT::privateCompileMainPass()
 {
     if (JITInternal::verbose)
@@ -181,9 +230,18 @@ void JIT::privateCompileMainPass()
 
     BytecodeIndex startBytecodeIndex(0);
 
+    Vector<JSInstructionStream::Offset, 32> jumpTargets;
+    computePreciseJumpTargets(m_unlinkedCodeBlock, jumpTargets);
+    auto nextJumpTarget = jumpTargets.begin();
+
+    m_resultInRegister = std::nullopt;
     m_bytecodeCountHavingSlowCase = 0;
     for (m_bytecodeIndex = BytecodeIndex(0); m_bytecodeIndex.offset() < instructionCount; ) {
         unsigned previousSlowCasesSize = m_slowCases.size();
+        std::optional<ResultInRegister> previousResult = std::exchange(m_resultInRegister, std::nullopt);
+        if (previousResult && previousResult->storeEnd != fallThroughPoint())
+            previousResult = std::nullopt;
+
         if (m_bytecodeIndex == startBytecodeIndex && startBytecodeIndex.offset() > 0) {
             // We've proven all bytecode instructions up until here are unreachable.
             // Let's ensure that by crashing if it's ever hit.
@@ -211,14 +269,12 @@ void JIT::privateCompileMainPass()
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
-#if ASSERT_ENABLED
-        if (opcodeID != op_catch) {
-            loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-            static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
-            loadPairPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2, regT1);
-            m_consistencyCheckCalls.append(nearCall());
-        }
-#endif
+        unsigned bytecodeOffset = m_bytecodeIndex.offset();
+        while (nextJumpTarget != jumpTargets.end() && *nextJumpTarget < bytecodeOffset)
+            ++nextJumpTarget;
+        bool isJumpTarget = nextJumpTarget != jumpTargets.end() && *nextJumpTarget == bytecodeOffset;
+        if (isJumpTarget || currentInstruction->hasCheckpoints())
+            previousResult = std::nullopt;
 
         if (m_compilation) [[unlikely]] {
             JIT_COMMENT(*this, "Execution trace start");
@@ -232,7 +288,6 @@ void JIT::privateCompileMainPass()
         if (Options::eagerlyUpdateTopCallFrame())
             updateTopCallFrame();
 
-        unsigned bytecodeOffset = m_bytecodeIndex.offset();
         if (Options::traceBaselineJITExecution()) [[unlikely]] {
             VM* vm = m_vm;
             probeDebug([=] (Probe::Context& ctx) {
@@ -248,6 +303,18 @@ void JIT::privateCompileMainPass()
                 dataLogLn("JIT [", bytecodeOffset, "] ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }
+
+        // Labels bound at the bytecode start are fine: everything that jumps to the start goes
+        // through m_labels, which a reload stub replaces.
+        if (previousResult && previousResult->storeEnd.codeSize == m_assembler.buffer().codeSize())
+            m_reusableResult = previousResult;
+
+#if ASSERT_ENABLED
+        if (opcodeID != op_catch)
+            emitConsistencyCheckCall(m_reusableResult ? m_reusableResult->gpr : InvalidGPRReg);
+#endif
+
+        m_operandLoadsEnd = fallThroughPoint();
 
         switch (opcodeID) {
         DEFINE_SLOW_OP(is_callable)
@@ -455,9 +522,31 @@ void JIT::privateCompileMainPass()
         if (sizeMarker) [[unlikely]]
             m_vm->jitSizeStatistics->markEnd(WTF::move(*sizeMarker), *this, m_plan);
 
+        m_reusableResult = std::nullopt;
+
         if (JITInternal::verbose)
             dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
     }
+
+    if (m_disassembler)
+        m_disassembler->setEndOfMainPath(label());
+
+    std::optional<JITSizeStatistics::Marker> reloadSizeMarker;
+    if (!m_resultReloads.isEmpty() && Options::dumpBaselineJITSizeStatistics()) [[unlikely]]
+        reloadSizeMarker = m_vm->jitSizeStatistics->markStart("Baseline_result_reload"_s, *this);
+
+    // Each stub jumps back to the bytecode start, so the consistency check there covers it too.
+    for (auto& reload : m_resultReloads) {
+        m_bytecodeIndex = reload.bytecodeIndex;
+        Label stub = label();
+        m_pcToCodeOriginMapBuilder.appendItem(stub, CodeOrigin(reload.bytecodeIndex));
+        loadValue(addressFor(reload.virtualRegister), reload.gpr);
+        jump().linkTo(reload.bytecodeStart, this);
+        m_labels[reload.bytecodeIndex.offset()] = stub;
+    }
+
+    if (reloadSizeMarker) [[unlikely]]
+        m_vm->jitSizeStatistics->markEnd(WTF::move(*reloadSizeMarker), *this, m_plan);
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -708,6 +797,22 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "generateConsistencyCheck"_s, "generateConsistencyCheck");
 }
 
+void JIT::emitConsistencyCheckCall(GPRReg preservedGPR)
+{
+    // The call and the thunk clobber regT0 through regT3. Nothing else is live at a bytecode start, so
+    // regT4 is free to hold the preserved register across them.
+    static_assert(noOverlap(regT0, regT1, regT2, regT3, regT4));
+    bool needsPreservation = preservedGPR == regT0 || preservedGPR == regT1 || preservedGPR == regT2 || preservedGPR == regT3;
+    if (needsPreservation)
+        move(preservedGPR, regT4);
+    loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
+    static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    loadPairPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2, regT1);
+    m_consistencyCheckCalls.append(nearCall());
+    if (needsPreservation)
+        move(regT4, preservedGPR);
+}
+
 void JIT::emitConsistencyCheck()
 {
     ASSERT(!m_consistencyCheckLabel.isSet());
@@ -926,7 +1031,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
         patchBuffer.link<JSInternalPtrTag>(call, consistencyCheck);
 #endif
 
-    auto finalizeICs = [&] (auto& generators) {
+    auto finalizeICs = [&](auto& generators) {
         for (auto& gen : generators)
             gen.m_baselineUnlinkedPropertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
     };
@@ -975,14 +1080,18 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
         auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(m_profiledCodeBlock->inferredName());
         if (RefPtr provider = m_profiledCodeBlock->ownerExecutable()->source().provider()) {
             void* codeStart = patchBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
+            auto reload = m_resultReloads.begin();
             for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
                 if (!m_labels[bytecodeOffset].isSet())
                     continue;
                 BytecodeIndex bytecodeIndex(bytecodeOffset);
                 if (bytecodeIndex.offset() >= m_profiledCodeBlock->instructionsSize())
                     continue;
+                Label mainPathStart = m_labels[bytecodeOffset];
+                if (reload != m_resultReloads.end() && reload->bytecodeIndex == bytecodeIndex)
+                    mainPathStart = (reload++)->bytecodeStart;
                 LineColumn lineColumn = m_profiledCodeBlock->lineColumnForBytecodeIndex(bytecodeIndex);
-                auto location = patchBuffer.locationOf<DisassemblyPtrTag>(m_labels[bytecodeOffset]);
+                auto location = patchBuffer.locationOf<DisassemblyPtrTag>(mainPathStart);
                 uint32_t codeOffset = static_cast<uint32_t>(location.dataLocation<uintptr_t>() - reinterpret_cast<uintptr_t>(codeStart));
                 debugInfo->codeEntries.append({ codeOffset, lineColumn, Ref { *provider } });
             }

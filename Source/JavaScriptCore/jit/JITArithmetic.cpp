@@ -268,8 +268,7 @@ ALWAYS_INLINE void JIT::emit_compareImpl(VirtualRegister op1, VirtualRegister op
     if (handleConstantIntOperand(op2, op1, regT0, commute(condition)))
         return;
 
-    emitGetVirtualRegister(op1, regT0);
-    emitGetVirtualRegister(op2, regT2);
+    emitGetVirtualRegisters({ { op1, regT0 }, { op2, regT2 } });
     emitJumpSlowCaseIfNotInt(regT0);
     emitJumpSlowCaseIfNotInt(regT2);
 
@@ -299,8 +298,7 @@ void JIT::emit_compareUnsignedAndJumpImpl(VirtualRegister op1, VirtualRegister o
         int32_t op1imm = getOperandConstantInt(op1);
         addJump(branch32(commute(condition), regT1, Imm32(op1imm)), target);
     } else {
-        emitGetVirtualRegister(op1, regT0);
-        emitGetVirtualRegister(op2, regT1);
+        emitGetVirtualRegisters({ { op1, regT0 }, { op2, regT1 } });
         jitAssertIsJSInt32(regT0);
         jitAssertIsJSInt32(regT1);
         addJump(branch32(condition, regT0, regT1), target);
@@ -328,8 +326,7 @@ void JIT::emit_compareUnsignedImpl(VirtualRegister dst, VirtualRegister op1, Vir
         int32_t op1imm = getOperandConstantInt(op1);
         compare32(commute(condition), regT0, Imm32(op1imm), regT0);
     } else {
-        emitGetVirtualRegister(op1, regT0);
-        emitGetVirtualRegister(op2, regT1);
+        emitGetVirtualRegisters({ { op1, regT0 }, { op2, regT1 } });
         compare32(condition, regT0, regT1, regT0);
     }
     boxBoolean(regT0, regT0);
@@ -554,8 +551,7 @@ void JIT::emit_op_mod(const JSInstruction* currentInstruction)
     ASSERT(regT4 != edx);
     ASSERT(regT4 != ecx);
 
-    emitGetVirtualRegister(op1, regT4);
-    emitGetVirtualRegister(op2, ecx);
+    emitGetVirtualRegisters({ { op1, regT4 }, { op2, ecx } });
     emitJumpSlowCaseIfNotInt(regT4);
     emitJumpSlowCaseIfNotInt(ecx);
 
@@ -593,8 +589,7 @@ void JIT::emit_op_mod(const JSInstruction* currentInstruction)
     if (emitModByPowerOfTwoConstant(result, op1, op2))
         return;
 
-    emitGetVirtualRegister(op1, regT0);
-    emitGetVirtualRegister(op2, regT2);
+    emitGetVirtualRegisters({ { op1, regT0 }, { op2, regT2 } });
 
     addSlowCase(branchIfNotInt32(regT0));
     addSlowCase(branchIfNotInt32(regT2));
@@ -662,8 +657,7 @@ void JIT::emit_op_pow(const JSInstruction* currentInstruction)
     constexpr GPRReg resultGPR = leftGPR;
     constexpr GPRReg scratchGPR = regT4;
 
-    emitGetVirtualRegister(op1, leftGPR);
-    emitGetVirtualRegister(op2, rightGPR);
+    emitGetVirtualRegisters({ { op1, leftGPR }, { op2, rightGPR } });
     emitJumpSlowCaseIfNotInt(rightGPR);
 
     addSlowCase(branch32(LessThan, rightGPR, TrustedImm32(0)));
@@ -746,10 +740,12 @@ void JIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction)
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    if (!leftOperand.isConst())
-        emitGetVirtualRegister(op1, leftGPR);
-    if (!rightOperand.isConst())
+    if (leftOperand.isConst())
         emitGetVirtualRegister(op2, rightGPR);
+    else if (rightOperand.isConst())
+        emitGetVirtualRegister(op1, leftGPR);
+    else
+        emitGetVirtualRegisters({ { op1, leftGPR }, { op2, rightGPR } });
 
     SnippetGenerator gen = [&] {
         if constexpr (SnippetGenerator::needsScratchGPR)
@@ -826,10 +822,12 @@ void JIT::emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRig
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    if (!leftOperand.isConst())
-        emitGetVirtualRegister(op1, leftGPR);
-    if (!rightOperand.isConst())
+    if (leftOperand.isConst())
         emitGetVirtualRegister(op2, rightGPR);
+    else if (rightOperand.isConst())
+        emitGetVirtualRegister(op1, leftGPR);
+    else
+        emitGetVirtualRegisters({ { op1, leftGPR }, { op2, rightGPR } });
 
     JITRightShiftGenerator gen(leftOperand, rightOperand, resultGPR, leftGPR, rightGPR, fpRegT0, scratchGPR, snippetShiftType);
 
@@ -941,13 +939,15 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const JSInstruction
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
     mathIC->m_generator = Generator(leftOperand, rightOperand, resultGPR, leftGPR, rightGPR, fpRegT0, fpRegT1, scratchGPR);
-    
+
     ASSERT(!(Generator::isLeftOperandValidConstant(leftOperand) && Generator::isRightOperandValidConstant(rightOperand)));
-    
-    if (!Generator::isLeftOperandValidConstant(leftOperand))
-        emitGetVirtualRegister(op1, leftGPR);
-    if (!Generator::isRightOperandValidConstant(rightOperand))
+
+    if (Generator::isLeftOperandValidConstant(leftOperand))
         emitGetVirtualRegister(op2, rightGPR);
+    else if (Generator::isRightOperandValidConstant(rightOperand))
+        emitGetVirtualRegister(op1, leftGPR);
+    else
+        emitGetVirtualRegisters({ { op1, leftGPR }, { op2, rightGPR } });
 
 #if ENABLE(MATH_IC_STATS)
     auto inlineStart = label();
@@ -1116,10 +1116,12 @@ void JIT::emit_op_div(const JSInstruction* currentInstruction)
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    if (!leftOperand.isConst())
-        emitGetVirtualRegister(op1, leftGPR);
-    if (!rightOperand.isConst())
+    if (leftOperand.isConst())
         emitGetVirtualRegister(op2, rightGPR);
+    else if (rightOperand.isConst())
+        emitGetVirtualRegister(op1, leftGPR);
+    else
+        emitGetVirtualRegisters({ { op1, leftGPR }, { op2, rightGPR } });
 
     JITDivGenerator gen(leftOperand, rightOperand, resultGPR, leftGPR, rightGPR,
         fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);

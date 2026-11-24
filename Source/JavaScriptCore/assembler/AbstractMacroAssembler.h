@@ -454,6 +454,7 @@ public:
             : m_label(masm->m_assembler.label())
         {
             masm->invalidateAllTempRegisters();
+            ++masm->m_boundLabelCount;
         }
 
         friend bool operator==(const Label&, const Label&) = default;
@@ -688,6 +689,7 @@ public:
         void link(AbstractMacroAssemblerType* masm) const
         {
             masm->invalidateAllTempRegisters();
+            ++masm->m_boundLabelCount;
 
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
             masm->checkRegisterAllocationAgainstBranchRange(m_label.offset(), masm->debugOffset());
@@ -850,6 +852,7 @@ public:
 #if ENABLE(DFG_JIT)
     Label labelIgnoringWatchpoints()
     {
+        ++m_boundLabelCount;
         Label result;
         result.m_label = m_assembler.labelIgnoringWatchpoints();
         return result;
@@ -860,20 +863,35 @@ public:
         return label();
     }
 #endif
-    
+
     Label label()
     {
         return Label(this);
     }
-    
+
+    // Marks the current code offset for bookkeeping such as comments and size statistics. Unlike the
+    // other label functions it does not count toward boundLabelCount(), so it must never be a jump target.
+    Label offsetMarkerLabel()
+    {
+        Label result;
+        result.m_label = m_assembler.labelIgnoringWatchpoints();
+        return result;
+    }
+
+    // Incremented by every label bound and every jump linked, wherever they are. If neither this nor
+    // the code size changed since an earlier point, the current location is reached from that point
+    // only by falling through.
+    unsigned boundLabelCount() const { return m_boundLabelCount; }
+
     void padBeforePatch()
     {
         // Rely on the fact that asking for a label already does the padding.
         (void)label();
     }
-    
+
     Label watchpointLabel()
     {
+        ++m_boundLabelCount;
         Label result;
         result.m_label = m_assembler.labelForWatchpoint();
         return result;
@@ -1211,12 +1229,13 @@ protected:
         m_tempRegistersValidBits |= registerMask;
     }
 
-    void commentImpl(String&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTF::move(str) }); }
+    void commentImpl(String&& str) { m_comments.append({ offsetMarkerLabel(), WTF::move(str) }); }
 
     friend class AllowMacroScratchRegisterUsage;
     friend class AllowMacroScratchRegisterUsageIf;
     template<typename T> friend class DisallowMacroScratchRegisterUsage;
     unsigned m_tempRegistersValidBits;
+    unsigned m_boundLabelCount { 0 };
     bool m_allowScratchRegister { true };
 
     Vector<std::pair<Label, String>> m_comments;

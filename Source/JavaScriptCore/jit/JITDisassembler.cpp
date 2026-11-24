@@ -65,8 +65,10 @@ void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
     dumpHeader(out, linkBuffer);
     dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0].first);
     
-    dumpForInstructions(out, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel());
+    dumpForInstructions(out, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, endOfMainPath());
     out.print("    (End Of Main Path)\n");
+    if (m_endOfMainPath.isSet())
+        dumpDisassembly(out, linkBuffer, m_endOfMainPath, firstSlowLabel());
     dumpForInstructions(out, linkBuffer, "    (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
     out.print("    (End Of Slow Path)\n");
 
@@ -90,8 +92,13 @@ void JITDisassembler::reportToProfiler(Profiler::Compilation* compilation, LinkB
     dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0].first);
     compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), out.toUTF8CString()));
     
-    reportInstructions(compilation, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel());
+    reportInstructions(compilation, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, endOfMainPath());
     compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Main Path)\n"_s));
+    if (m_endOfMainPath.isSet()) {
+        out.reset();
+        dumpDisassembly(out, linkBuffer, m_endOfMainPath, firstSlowLabel());
+        compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), out.toUTF8CString()));
+    }
     reportInstructions(compilation, linkBuffer, " (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
     compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Slow Path)\n"_s));
     out.reset();
@@ -116,6 +123,11 @@ MacroAssembler::Label JITDisassembler::firstSlowLabel()
         }
     }
     return firstSlowLabel.isSet() ? firstSlowLabel : m_endOfSlowPath;
+}
+
+MacroAssembler::Label JITDisassembler::endOfMainPath()
+{
+    return m_endOfMainPath.isSet() ? m_endOfMainPath : firstSlowLabel();
 }
 
 Vector<JITDisassembler::DumpedOp> JITDisassembler::dumpVectorForInstructions(LinkBuffer& linkBuffer, const char* prefix, Vector<std::pair<MacroAssembler::Label, UTF8CString>>& labels, MacroAssembler::Label endLabel)

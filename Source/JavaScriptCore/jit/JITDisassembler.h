@@ -59,6 +59,8 @@ public:
     {
         m_labelForBytecodeIndexInSlowPath[bytecodeIndex] = std::make_pair(label, string);
     }
+    // Optional. Code between this and the first slow path is dumped without bytecode attribution.
+    void setEndOfMainPath(MacroAssembler::Label label) { m_endOfMainPath = label; }
     void setEndOfSlowPath(MacroAssembler::Label label) { m_endOfSlowPath = label; }
     void setEndOfCode(MacroAssembler::Label label) { m_endOfCode = label; }
     
@@ -70,6 +72,7 @@ private:
     NODELETE void setLinkedStartAndEnd(const LinkBuffer&);
     void dumpHeader(PrintStream&, LinkBuffer&);
     NODELETE MacroAssembler::Label firstSlowLabel();
+    NODELETE MacroAssembler::Label endOfMainPath();
     
     struct DumpedOp {
         BytecodeIndex bytecodeIndex;
@@ -86,6 +89,7 @@ private:
     MacroAssembler::Label m_startOfCode;
     Vector<std::pair<MacroAssembler::Label, UTF8CString>> m_labelForBytecodeIndexInMainPath;
     Vector<std::pair<MacroAssembler::Label, UTF8CString>> m_labelForBytecodeIndexInSlowPath;
+    MacroAssembler::Label m_endOfMainPath;
     MacroAssembler::Label m_endOfSlowPath;
     MacroAssembler::Label m_endOfCode;
     void* m_codeStart { nullptr };
