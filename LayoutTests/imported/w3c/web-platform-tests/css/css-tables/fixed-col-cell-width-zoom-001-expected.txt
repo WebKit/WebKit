@@ -1,0 +1,6 @@
+
+PASS table 1: Cell without a width takes its width from the zoomed col
+PASS table 2: Cell width smaller than the zoomed col width: the col width wins
+PASS table 3: Cell width larger than the zoomed col width: the cell width wins
+PASS table 4: Zoomed cell width larger than the zoomed col width: the cell width wins
+
