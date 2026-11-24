@@ -425,6 +425,14 @@ static std::optional<GstVideoFormat> gstVideoFormatForPlanarYUV(VideoPixelFormat
         return GST_VIDEO_FORMAT_Y444_12BE;
 #endif
     case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I420AP10:
+    case VideoPixelFormat::I420AP12:
+    case VideoPixelFormat::I422A:
+    case VideoPixelFormat::I422AP10:
+    case VideoPixelFormat::I422AP12:
+    case VideoPixelFormat::I444A:
+    case VideoPixelFormat::I444AP10:
+    case VideoPixelFormat::I444AP12:
     case VideoPixelFormat::NV12:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
@@ -436,12 +444,12 @@ static std::optional<GstVideoFormat> gstVideoFormatForPlanarYUV(VideoPixelFormat
     return { };
 }
 
-RefPtr<VideoFrame> VideoFrame::createPlanarYUV(VideoPixelFormat format, std::span<const uint8_t> span, size_t width, size_t height, std::span<const ComputedPlaneLayout, 3> layouts, Init&& init)
+RefPtr<VideoFrame> VideoFrame::createPlanarYUV(VideoPixelFormat format, std::span<const uint8_t> span, size_t width, size_t height, std::span<const ComputedPlaneLayout> layouts, Init&& init)
 {
     ensureVideoFrameDebugCategoryInitialized();
     auto layout = planarYUVFormatLayout(format);
     auto gstFormat = gstVideoFormatForPlanarYUV(format);
-    if (!layout || !gstFormat || !width || !height)
+    if (!layout || !gstFormat || !width || !height || layouts.size() != 3)
         return nullptr;
     GST_TRACE("Creating VideoFrame from %s raw buffer", gst_video_format_to_string(*gstFormat));
 

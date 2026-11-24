@@ -105,8 +105,8 @@ enum class Component : bool { Luma, Chroma };
 
 // Planes must have the same size and channel count.
 // RangeConversion::None: between 8 bits and LSB or MSB storage, and between LSB and MSB storage. From 8 bits the top bits are
-// replicated, so 255 becomes the largest value. LSB samples are shifted to and from the MSBs, and MSB storage of any bit depth
-// is copied unchanged.
+// replicated, so 255 becomes the largest value. LSB samples are shifted to and from the MSBs (to 16 bits, the top bits are also
+// replicated into the low bits), and MSB storage of any bit depth is copied unchanged.
 // RangeConversion::FullToVideo: 8-bit to 10-bit MSB, and 10-bit MSB to 10-bit MSB.
 // RangeConversion::VideoToFull: 10-bit MSB to 8-bit.
 WEBCORE_EXPORT bool copyPlane(const SourcePlane&, const DestinationPlane&, RangeConversion = RangeConversion::None, Component = Component::Luma);

@@ -36,12 +36,20 @@ enum class VideoPixelFormat {
     I420P10,
     I420P12,
     I420A,
+    I420AP10,
+    I420AP12,
     I422,
     I422P10,
     I422P12,
+    I422A,
+    I422AP10,
+    I422AP12,
     I444,
     I444P10,
     I444P12,
+    I444A,
+    I444AP10,
+    I444AP12,
     NV12,
     RGBA,
     RGBX,
@@ -59,16 +67,20 @@ inline bool isRGBVideoPixelFormat(VideoPixelFormat format)
 inline bool isHighBitDepthVideoPixelFormat(VideoPixelFormat format)
 {
     return format == VideoPixelFormat::I420P10 || format == VideoPixelFormat::I420P12
+        || format == VideoPixelFormat::I420AP10 || format == VideoPixelFormat::I420AP12
         || format == VideoPixelFormat::I422P10 || format == VideoPixelFormat::I422P12
-        || format == VideoPixelFormat::I444P10 || format == VideoPixelFormat::I444P12;
+        || format == VideoPixelFormat::I422AP10 || format == VideoPixelFormat::I422AP12
+        || format == VideoPixelFormat::I444P10 || format == VideoPixelFormat::I444P12
+        || format == VideoPixelFormat::I444AP10 || format == VideoPixelFormat::I444AP12;
 }
 
 struct PlanarYUVFormatLayout {
     PlanarImageConverter::ChromaSubsampling subsampling;
     PlanarImageConverter::SampleFormat format;
+    bool hasAlpha { false };
 };
 
-// The three plane Y'CbCr formats without alpha. Samples above 8 bits are stored in 16 bits, LSB aligned.
+// The planar Y'CbCr formats other than I420A. Samples above 8 bits are stored in 16 bits, LSB aligned.
 inline std::optional<PlanarYUVFormatLayout> planarYUVFormatLayout(VideoPixelFormat format)
 {
     using enum PlanarImageConverter::ChromaSubsampling;
@@ -79,18 +91,34 @@ inline std::optional<PlanarYUVFormatLayout> planarYUVFormatLayout(VideoPixelForm
         return PlanarYUVFormatLayout { HorizontalAndVertical, PlanarImageConverter::tenBitLSB };
     case VideoPixelFormat::I420P12:
         return PlanarYUVFormatLayout { HorizontalAndVertical, PlanarImageConverter::twelveBitLSB };
+    case VideoPixelFormat::I420AP10:
+        return PlanarYUVFormatLayout { HorizontalAndVertical, PlanarImageConverter::tenBitLSB, true };
+    case VideoPixelFormat::I420AP12:
+        return PlanarYUVFormatLayout { HorizontalAndVertical, PlanarImageConverter::twelveBitLSB, true };
     case VideoPixelFormat::I422:
         return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::eightBit };
     case VideoPixelFormat::I422P10:
         return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::tenBitLSB };
     case VideoPixelFormat::I422P12:
         return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::twelveBitLSB };
+    case VideoPixelFormat::I422A:
+        return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::eightBit, true };
+    case VideoPixelFormat::I422AP10:
+        return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::tenBitLSB, true };
+    case VideoPixelFormat::I422AP12:
+        return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::twelveBitLSB, true };
     case VideoPixelFormat::I444:
         return PlanarYUVFormatLayout { None, PlanarImageConverter::eightBit };
     case VideoPixelFormat::I444P10:
         return PlanarYUVFormatLayout { None, PlanarImageConverter::tenBitLSB };
     case VideoPixelFormat::I444P12:
         return PlanarYUVFormatLayout { None, PlanarImageConverter::twelveBitLSB };
+    case VideoPixelFormat::I444A:
+        return PlanarYUVFormatLayout { None, PlanarImageConverter::eightBit, true };
+    case VideoPixelFormat::I444AP10:
+        return PlanarYUVFormatLayout { None, PlanarImageConverter::tenBitLSB, true };
+    case VideoPixelFormat::I444AP12:
+        return PlanarYUVFormatLayout { None, PlanarImageConverter::twelveBitLSB, true };
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::NV12:
     case VideoPixelFormat::RGBA:

@@ -49,9 +49,21 @@ private:
     const bool m_isLocked;
 };
 
+// Tri-planar formats CoreVideo doesn't define, registered by WebKit. Their values are 'W', then 'f' or 'v' for full or video range,
+// '0', '2' or '4' for 4:2:0, 4:2:2 or 4:4:4, and '8' or 's' for 8-bit alpha (with 8-bit samples) or 16-bit alpha (with 10-bit samples).
+// 16-bit alpha is stored like the color samples: MSB aligned, so only the top 10 or 12 bits are used and opaque is 0xFFC0 or 0xFFF0.
+inline constexpr OSType pixelFormatWK420YpCbCr8FullRange8ATriPlanar = 'Wf08';
+inline constexpr OSType pixelFormatWK422YpCbCr8FullRange8ATriPlanar = 'Wf28';
+inline constexpr OSType pixelFormatWK444YpCbCr8FullRange8ATriPlanar = 'Wf48';
+inline constexpr OSType pixelFormatWK420YpCbCr10VideoRange16ATriPlanar = 'Wv0s';
+inline constexpr OSType pixelFormatWK420YpCbCr10FullRange16ATriPlanar = 'Wf0s';
+inline constexpr OSType pixelFormatWK422YpCbCr10FullRange16ATriPlanar = 'Wf2s';
+inline constexpr OSType pixelFormatWK444YpCbCr10FullRange16ATriPlanar = 'Wf4s';
+
 namespace PlanarImageConverter {
 
-// Bi-planar Y'CbCr formats, and the tri-planar ones that add a full size alpha plane.
+// Bi-planar Y'CbCr formats, and the tri-planar ones that add a full size alpha plane. The tri-planar formats CoreVideo
+// doesn't define are registered with CoreVideo, in the calling process, by the first pixelFormatDescription() or pixelFormat() call.
 struct YUVPixelFormatDescription {
     OSType pixelFormat { 0 };
     ChromaSubsampling subsampling { ChromaSubsampling::HorizontalAndVertical };

@@ -26,9 +26,14 @@
 #import "config.h"
 #import "PlanarImageConverterCV.h"
 
+#import "FourCC.h"
+#import "Logging.h"
 #import <array>
+#import <pal/spi/cf/CoreVideoSPI.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import "CoreVideoSoftLink.h"
 
@@ -49,14 +54,6 @@ PixelBufferLock::~PixelBufferLock()
 
 namespace PlanarImageConverter {
 
-static constexpr OSType pixelFormat422YpCbCr8VideoRange8ATriPlanar = 'v2a8';
-static constexpr OSType pixelFormat444YpCbCr8VideoRange8ATriPlanar = 'v4a8';
-static constexpr OSType pixelFormat420YpCbCr10VideoRange8ATriPlanar = 'x0a8';
-static constexpr OSType pixelFormat422YpCbCr10VideoRange8ATriPlanar = 'x2a8';
-static constexpr OSType pixelFormat444YpCbCr10VideoRange8ATriPlanar = 'x4a8';
-static constexpr OSType pixelFormat422YpCbCr10VideoRange16ATriPlanar = 'x2as';
-static constexpr OSType pixelFormat444YpCbCr10VideoRange16ATriPlanar = 'x4as';
-
 static constexpr auto subsampled420 = ChromaSubsampling::HorizontalAndVertical;
 static constexpr auto subsampled422 = ChromaSubsampling::Horizontal;
 static constexpr auto subsampled444 = ChromaSubsampling::None;
@@ -75,31 +72,133 @@ static constexpr std::array pixelFormatDescriptions {
     YUVPixelFormatDescription { kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange, subsampled444, tenBitMSB, false, { } },
     YUVPixelFormatDescription { kCVPixelFormatType_444YpCbCr10BiPlanarFullRange, subsampled444, tenBitMSB, true, { } },
     YUVPixelFormatDescription { kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar, subsampled420, eightBit, false, eightBit },
-    YUVPixelFormatDescription { pixelFormat422YpCbCr8VideoRange8ATriPlanar, subsampled422, eightBit, false, eightBit },
-    YUVPixelFormatDescription { pixelFormat444YpCbCr8VideoRange8ATriPlanar, subsampled444, eightBit, false, eightBit },
-    YUVPixelFormatDescription { pixelFormat420YpCbCr10VideoRange8ATriPlanar, subsampled420, tenBitMSB, false, eightBit },
-    YUVPixelFormatDescription { pixelFormat422YpCbCr10VideoRange8ATriPlanar, subsampled422, tenBitMSB, false, eightBit },
-    YUVPixelFormatDescription { pixelFormat444YpCbCr10VideoRange8ATriPlanar, subsampled444, tenBitMSB, false, eightBit },
-    YUVPixelFormatDescription { pixelFormat422YpCbCr10VideoRange16ATriPlanar, subsampled422, tenBitMSB, false, sixteenBit },
-    YUVPixelFormatDescription { pixelFormat444YpCbCr10VideoRange16ATriPlanar, subsampled444, tenBitMSB, false, sixteenBit },
+    YUVPixelFormatDescription { kCVPixelFormatType_422YpCbCr8VideoRange_8A_TriPlanar, subsampled422, eightBit, false, eightBit },
+    YUVPixelFormatDescription { kCVPixelFormatType_444YpCbCr8VideoRange_8A_TriPlanar, subsampled444, eightBit, false, eightBit },
+    YUVPixelFormatDescription { kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar, subsampled420, tenBitMSB, false, eightBit },
+    YUVPixelFormatDescription { kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar, subsampled422, tenBitMSB, false, eightBit },
+    YUVPixelFormatDescription { kCVPixelFormatType_444YpCbCr10VideoRange_8A_TriPlanar, subsampled444, tenBitMSB, false, eightBit },
+    YUVPixelFormatDescription { kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar, subsampled422, tenBitMSB, false, sixteenBit },
+    YUVPixelFormatDescription { kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar, subsampled444, tenBitMSB, false, sixteenBit },
 };
 
-std::optional<YUVPixelFormatDescription> pixelFormatDescription(OSType pixelFormat)
+static constexpr std::array registeredPixelFormatDescriptions {
+    YUVPixelFormatDescription { pixelFormatWK420YpCbCr8FullRange8ATriPlanar, subsampled420, eightBit, true, eightBit },
+    YUVPixelFormatDescription { pixelFormatWK422YpCbCr8FullRange8ATriPlanar, subsampled422, eightBit, true, eightBit },
+    YUVPixelFormatDescription { pixelFormatWK444YpCbCr8FullRange8ATriPlanar, subsampled444, eightBit, true, eightBit },
+    YUVPixelFormatDescription { pixelFormatWK420YpCbCr10VideoRange16ATriPlanar, subsampled420, tenBitMSB, false, tenBitMSB },
+    YUVPixelFormatDescription { pixelFormatWK420YpCbCr10FullRange16ATriPlanar, subsampled420, tenBitMSB, true, tenBitMSB },
+    YUVPixelFormatDescription { pixelFormatWK422YpCbCr10FullRange16ATriPlanar, subsampled422, tenBitMSB, true, tenBitMSB },
+    YUVPixelFormatDescription { pixelFormatWK444YpCbCr10FullRange16ATriPlanar, subsampled444, tenBitMSB, true, tenBitMSB },
+};
+
+// A sample of the given format holding eightBitValue scaled to its bit depth.
+static uint16_t sampleValue(SampleFormat format, unsigned eightBitValue)
+{
+    unsigned value = eightBitValue << (format.bitDepth - 8);
+    if (format.isMSBAligned)
+        value <<= 16 - format.bitDepth;
+    return static_cast<uint16_t>(value);
+}
+
+static uint16_t maximumSampleValue(SampleFormat format)
+{
+    unsigned value = (1u << format.bitDepth) - 1;
+    if (format.isMSBAligned)
+        value <<= 16 - format.bitDepth;
+    return static_cast<uint16_t>(value);
+}
+
+static RetainPtr<NSDictionary> planeDescription(SampleFormat format, std::span<const uint16_t> blackSamples, size_t horizontalSubsampling, size_t verticalSubsampling)
+{
+    Vector<uint8_t, 4> blackBlock;
+    for (auto sample : blackSamples) {
+        blackBlock.append(static_cast<uint8_t>(sample));
+        if (format.sampleSize() > 1)
+            blackBlock.append(static_cast<uint8_t>(sample >> 8));
+    }
+    return @{
+        (__bridge NSString *)kCVPixelFormatBitsPerBlock: @(8 * format.sampleSize() * blackSamples.size()),
+        (__bridge NSString *)kCVPixelFormatBlackBlock: WTF::toNSData(borrow(blackBlock)->span()).get(),
+        (__bridge NSString *)kCVPixelFormatHorizontalSubsampling: @(horizontalSubsampling),
+        (__bridge NSString *)kCVPixelFormatVerticalSubsampling: @(verticalSubsampling),
+    };
+}
+
+static RetainPtr<NSDictionary> coreVideoDescription(const YUVPixelFormatDescription& description)
+{
+    std::array<uint16_t, 1> lumaBlack { sampleValue(description.color, description.isFullRange ? 0 : 16) };
+    std::array<uint16_t, 2> chromaBlack { sampleValue(description.color, 128), sampleValue(description.color, 128) };
+    std::array<uint16_t, 1> opaqueAlpha { maximumSampleValue(*description.alpha) };
+    return @{
+        (__bridge NSString *)kCVPixelFormatConstant: @(description.pixelFormat),
+        (__bridge NSString *)kCVPixelFormatComponentRange: (__bridge NSString *)(description.isFullRange ? kCVPixelFormatComponentRange_FullRange : kCVPixelFormatComponentRange_VideoRange),
+        (__bridge NSString *)kCVPixelFormatContainsYCbCr: @YES,
+        (__bridge NSString *)kCVPixelFormatContainsRGB: @NO,
+        (__bridge NSString *)kCVPixelFormatContainsAlpha: @YES,
+        (__bridge NSString *)kCVPixelFormatBitsPerComponent: @(description.color.bitDepth),
+        (__bridge NSString *)kCVPixelFormatPlanes: @[
+            planeDescription(description.color, lumaBlack, 1, 1).get(),
+            planeDescription(description.color, chromaBlack, horizontalChromaFactor(description.subsampling), verticalChromaFactor(description.subsampling)).get(),
+            planeDescription(*description.alpha, opaqueAlpha, 1, 1).get(),
+        ],
+    };
+}
+
+// Registration only applies to the calling process, and a FourCC CoreVideo already knows keeps its description.
+// A format whose registered description isn't ours is not used.
+static std::array<bool, registeredPixelFormatDescriptions.size()> registerPixelFormats()
+{
+    std::array<bool, registeredPixelFormatDescriptions.size()> isAvailable { };
+    @autoreleasepool {
+        for (size_t index = 0; index < registeredPixelFormatDescriptions.size(); ++index) {
+            auto pixelFormat = registeredPixelFormatDescriptions[index].pixelFormat;
+            RetainPtr<CFDictionaryRef> description = bridge_cast(coreVideoDescription(registeredPixelFormatDescriptions[index]));
+            CVPixelFormatDescriptionRegisterDescriptionWithPixelFormatType(description, pixelFormat);
+            RetainPtr registered = adoptCF(CVPixelFormatDescriptionCreateWithPixelFormatType(kCFAllocatorDefault, pixelFormat));
+            isAvailable[index] = registered && CFEqual(registered, description);
+            if (!isAvailable[index])
+                RELEASE_LOG_ERROR(Media, "PlanarImageConverter: pixel format '%{public}s' is already registered with another description", FourCC { pixelFormat }.string().data());
+        }
+    }
+    return isAvailable;
+}
+
+static const std::array<bool, registeredPixelFormatDescriptions.size()>& registeredPixelFormatAvailability()
+{
+    static const std::array<bool, registeredPixelFormatDescriptions.size()> isAvailable = registerPixelFormats();
+    return isAvailable;
+}
+
+template<typename Predicate>
+static std::optional<YUVPixelFormatDescription> findPixelFormatDescription(NOESCAPE const Predicate& predicate)
 {
     for (auto& description : pixelFormatDescriptions) {
-        if (description.pixelFormat == pixelFormat)
+        if (predicate(description))
             return description;
+    }
+    auto& isAvailable = registeredPixelFormatAvailability();
+    for (size_t index = 0; index < registeredPixelFormatDescriptions.size(); ++index) {
+        if (isAvailable[index] && predicate(registeredPixelFormatDescriptions[index]))
+            return registeredPixelFormatDescriptions[index];
     }
     return { };
 }
 
+std::optional<YUVPixelFormatDescription> pixelFormatDescription(OSType pixelFormat)
+{
+    return findPixelFormatDescription([&](auto& description) {
+        return description.pixelFormat == pixelFormat;
+    });
+}
+
 std::optional<OSType> pixelFormat(ChromaSubsampling subsampling, SampleFormat color, bool isFullRange, std::optional<SampleFormat> alpha)
 {
-    for (auto& description : pixelFormatDescriptions) {
-        if (description.subsampling == subsampling && description.color == color && description.isFullRange == isFullRange && description.alpha == alpha)
-            return description.pixelFormat;
-    }
-    return { };
+    auto match = findPixelFormatDescription([&](auto& description) {
+        return description.subsampling == subsampling && description.color == color && description.isFullRange == isFullRange && description.alpha == alpha;
+    });
+    if (!match)
+        return { };
+    return match->pixelFormat;
 }
 
 std::optional<SampleFormat> pixelBufferSampleFormat(SampleFormat format)

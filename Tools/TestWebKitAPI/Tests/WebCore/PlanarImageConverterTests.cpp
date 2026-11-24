@@ -218,9 +218,17 @@ static constexpr std::array conversionCases {
     ConversionCase { tenBitLSB, tenBitMSB, 1023, 0xFFC0 },
     ConversionCase { tenBitLSB, tenBitMSB, 1, 0x0040 },
     ConversionCase { twelveBitLSB, twelveBitMSB, 4095, 0xFFF0 },
+    ConversionCase { tenBitLSB, sixteenBit, 1023, 0xFFFF },
+    ConversionCase { tenBitLSB, sixteenBit, 512, 0x8020 },
+    ConversionCase { tenBitLSB, sixteenBit, 1, 0x0040 },
+    ConversionCase { twelveBitLSB, sixteenBit, 4095, 0xFFFF },
+    ConversionCase { twelveBitLSB, sixteenBit, 2048, 0x8008 },
+    ConversionCase { twelveBitLSB, sixteenBit, 1, 0x0010 },
     ConversionCase { tenBitMSB, tenBitLSB, 0xFFC0, 1023 },
     ConversionCase { twelveBitMSB, twelveBitLSB, 0xFFF0, 4095 },
     ConversionCase { sixteenBit, twelveBitLSB, 0x0010, 1 },
+    ConversionCase { sixteenBit, tenBitLSB, 0xFFFF, 1023 },
+    ConversionCase { sixteenBit, twelveBitLSB, 0xFFFF, 4095 },
 };
 
 TEST(PlanarImageConverter, CopyPlaneConvertsBitDepthAndAlignment)

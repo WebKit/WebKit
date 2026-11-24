@@ -37,6 +37,7 @@
 #import "MediaSampleAVFObjC.h"
 #import "MediaSamplesBlock.h"
 #import "MediaUtilities.h"
+#import "PlanarImageConverterCV.h"
 #import "SharedBuffer.h"
 #import "WebMAudioUtilitiesCocoa.h"
 #import <CoreMedia/CMFormatDescription.h>
@@ -1206,13 +1207,18 @@ PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer
         matrix = PlatformVideoMatrixCoefficients::Bt470bg;
 
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
-    // FIXME: We should do a more comprehensive check.
-    bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
-        && pixelFormat != kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
-        && pixelFormat != kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange
-        && pixelFormat != kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange
-        && pixelFormat != kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange
-        && pixelFormat != kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange;
+    bool isFullRange;
+    if (auto description = PlanarImageConverter::pixelFormatDescription(pixelFormat))
+        isFullRange = description->isFullRange;
+    else {
+        // FIXME: We should do a more comprehensive check.
+        isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+            && pixelFormat != kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
+            && pixelFormat != kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange
+            && pixelFormat != kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange
+            && pixelFormat != kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange
+            && pixelFormat != kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange;
+    }
 
     std::optional<PlatformVideoChromaLocation> chromaLocation;
     RetainPtr pixelChromaLocation = CVBufferGetAttachment(pixelBuffer, kCVImageBufferChromaLocationTopFieldKey, nil);

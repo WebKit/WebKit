@@ -335,6 +335,8 @@ static constexpr auto eightBitToTwelveBitLSB = eightBitToLSBTable(12);
 enum class SixteenBitTable : uint8_t {
     TenBitLSBToMSB,
     TwelveBitLSBToMSB,
+    TenBitLSBToSixteenBit,
+    TwelveBitLSBToSixteenBit,
     MSBToTenBitLSB,
     MSBToTwelveBitLSB,
     TenBitLSBToEightBit,
@@ -352,6 +354,12 @@ static uint16_t sixteenBitTableEntry(SixteenBitTable table, uint16_t value)
         return static_cast<uint16_t>(value << 6);
     case SixteenBitTable::TwelveBitLSBToMSB:
         return static_cast<uint16_t>(value << 4);
+    case SixteenBitTable::TenBitLSBToSixteenBit:
+        value &= 0x3FF;
+        return static_cast<uint16_t>(value << 6 | value >> 4);
+    case SixteenBitTable::TwelveBitLSBToSixteenBit:
+        value &= 0xFFF;
+        return static_cast<uint16_t>(value << 4 | value >> 8);
     case SixteenBitTable::MSBToTenBitLSB:
         return value >> 6;
     case SixteenBitTable::MSBToTwelveBitLSB:
@@ -451,6 +459,11 @@ static bool copyPlaneWithPlatformFrameworks(const SourcePlane& source, const Des
             if (from.bitDepth == 10)
                 return lookUpToEightBit(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::TenBitLSBToEightBit>().span());
             return lookUpToEightBit(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::TwelveBitLSBToEightBit>().span());
+        }
+        if (to == sixteenBit) {
+            if (from.bitDepth == 10)
+                return lookUp(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::TenBitLSBToSixteenBit>().span());
+            return lookUp(source, destination, sixteenBitLookupTableSingleton<SixteenBitTable::TwelveBitLSBToSixteenBit>().span());
         }
         if (to.isMSBAligned) {
             if (from.bitDepth == 10)
@@ -607,6 +620,15 @@ static int samplesPerRow(const auto& plane)
     return static_cast<int>(plane.width * plane.channels);
 }
 
+// Fills the unused low bits of MSB aligned samples with their top bits, so the largest sourceBitDepth value becomes 0xFFFF.
+static void replicateTopBits(const DestinationPlane& plane, unsigned sourceBitDepth)
+{
+    for (size_t row = 0; row < plane.height; ++row) {
+        for (auto& sample : spanReinterpretCast<uint16_t>(plane.row(row)))
+            sample |= sample >> sourceBitDepth;
+    }
+}
+
 static bool copyPlaneWithLibYUV(const SourcePlane& source, const DestinationPlane& destination, RangeConversion conversion)
 {
     if (conversion != RangeConversion::None)
@@ -630,6 +652,8 @@ static bool copyPlaneWithLibYUV(const SourcePlane& source, const DestinationPlan
     }
     if (to.isMSBAligned) {
         libyuv::ConvertToMSBPlane_16(sixteenBitSamples(source), sampleStride(source), sixteenBitSamples(destination), sampleStride(destination), width, height, from.bitDepth);
+        if (to == sixteenBit)
+            replicateTopBits(destination, from.bitDepth);
         return true;
     }
     if (from.isMSBAligned) {
