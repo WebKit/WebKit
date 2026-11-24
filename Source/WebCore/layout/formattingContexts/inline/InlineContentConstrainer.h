@@ -65,12 +65,12 @@ private:
     void initialize();
     void updateCachedWidths();
     NODELETE void checkCanConstrainInlineItems();
-    EntryPretty layoutSingleLineForPretty(InlineItemRange layoutRange, InlineLayoutUnit idealLineWidth, EntryPretty lastValidEntry, size_t previousBreakIndex);
+    EntryPretty layoutSingleLineForPretty(InlineItemRange layoutRange, EntryPretty lastValidEntry, size_t previousBreakIndex);
 
     // trailingWidth is the width that follows the content of the last line of the range on that line (i.e. the block ellipsis).
     std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk, InlineLayoutUnit trailingWidth);
     std::optional<Vector<LayoutUnit>> balanceRangeWithNoLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk, InlineLayoutUnit trailingWidth);
-    std::optional<Vector<LayoutUnit>> prettifyRange(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk);
+    std::optional<Vector<LayoutUnit>> prettifyRange(InlineItemRange, bool isFirstChunk);
 
     InlineLayoutUnit inlineItemWidth(size_t inlineItemIndex, bool useFirstLineStyle) const;
     bool shouldTrimLeading(size_t inlineItemIndex, bool useFirstLineStyle, bool isFirstLineInChunk) const;
