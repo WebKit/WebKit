@@ -214,7 +214,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/Scripts/run-bindings-tests'],
             ).exit(0),
         )
@@ -227,7 +227,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/Scripts/run-bindings-tests'],
             ).exit(2)
             .log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp'),
@@ -250,7 +250,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/CISupport/kill-old-processes', 'buildbot'],
             ).exit(0),
         )
@@ -263,7 +263,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/CISupport/kill-old-processes', 'buildbot'],
             ).exit(2)
             .log('stdio', stdout='Unexpected error.'),
@@ -289,7 +289,7 @@ class TestCleanBuildIfScheduled(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-14', '--release'],
             ).exit(0),
         )
@@ -305,7 +305,7 @@ class TestCleanBuildIfScheduled(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-simulator-14', '--debug'],
             ).exit(2)
             .log('stdio', stdout='Unexpected error.'),
@@ -336,7 +336,7 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=1200,
-                        log_environ=True,
+                        log_environ=False,
                         command=['perl', 'Tools/Scripts/update-webkitgtk-libs', '--release'],
                         )
             .exit(0),
@@ -352,7 +352,7 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/update-webkitgtk-libs', '--debug'],
             ).exit(2)
             .log('stdio', stdout='Unexpected error.'),
@@ -377,7 +377,7 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/update-webkitwpe-libs', '--release'],
             ).exit(0),
         )
@@ -392,7 +392,7 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/update-webkitwpe-libs', '--release'],
             ).exit(2)
             .log('stdio', stdout='Unexpected error.'),
@@ -417,7 +417,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
             ).exit(0),
         )
@@ -432,7 +432,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=7200,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
             ).exit(0),
         )
@@ -449,7 +449,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --no-fatal-warnings --release --architecture "x86_64 arm64" WK_VALIDATE_DEPENDENCIES=YES WK_ENABLE_SLOW_BUILD_VERIFICATION=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
             ).exit(0),
         )
@@ -468,7 +468,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 env={'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:BuildDir'},
                 command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --no-fatal-warnings --debug --cmake --architecture "x86_64 arm64" 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
             ).exit(0),
@@ -489,7 +489,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 env={'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:BuildDir'},
                 command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --no-fatal-warnings --release --cmake --dsym --cmakeargs="-DCMAKE_C_FLAGS=-gline-tables-only -DCMAKE_CXX_FLAGS=-gline-tables-only -DCMAKE_OBJC_FLAGS=-gline-tables-only -DCMAKE_OBJCXX_FLAGS=-gline-tables-only -DCMAKE_OSX_DEPLOYMENT_TARGET=15.0" 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
             ).exit(0),
@@ -505,7 +505,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
             ).exit(0),
         )
@@ -521,7 +521,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--gtk'],
             ).exit(0),
         )
@@ -537,7 +537,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--wpe'],
             ).exit(0),
         )
@@ -552,7 +552,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--debug'],
             ).exit(2)
             .log('stdio', stdout='1 error generated.'),
@@ -577,7 +577,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-jsc', '--release'],
             ).exit(0),
         )
@@ -592,7 +592,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=3600,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
             ).exit(2)
             .log('stdio', stdout='1 error generated.'),
@@ -655,7 +655,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/test-webkitperl'],
             ).exit(0),
         )
@@ -668,7 +668,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['perl', 'Tools/Scripts/test-webkitperl'],
             ).exit(2)
             .log('stdio', stdout='''Failed tests:  1-3, 5-7, 9, 11-13
@@ -805,7 +805,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ).exit(0),
         )
@@ -819,7 +819,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ).exit(2),
         )
@@ -833,7 +833,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ).exit(2)
             .log('stdio', stdout='FAILED (failures=2, errors=0)'),
@@ -848,7 +848,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ).exit(2)
             .log('stdio', stdout='FAILED (failures=0, errors=2)'),
@@ -863,7 +863,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
-                log_environ=True,
+                log_environ=False,
                 command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ).exit(2)
             .log('stdio', stdout='FAILED (failures=30, errors=2)'),
@@ -1886,7 +1886,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/generate-bundle', '--release', '--platform=gtk', '--bundle=MiniBrowser', '--syslibs=bundle-all', '--compression=tar.xz', '--compression-level=9', '--revision=261281@main', '--builder-name', 'GTK-Linux-64-bit-Release-Build'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(0),
@@ -1903,7 +1903,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/generate-bundle', '--release', '--platform=gtk', '--bundle=MiniBrowser', '--syslibs=bundle-all', '--compression=tar.xz', '--compression-level=9', '--revision=261281@main', '--builder-name', 'GTK-Linux-64-bit-Release-Build'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(2),
@@ -1923,7 +1923,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs test-bundle'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(0),
@@ -1942,7 +1942,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs test-bundle'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .log('stdio', stdout="""[BUNDLETEST][ENV-FAIL] Environment setup (deps install) failed on mageia:latest
@@ -1963,7 +1963,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs test-bundle'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(2),
@@ -1980,7 +1980,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=jsc', '--syslibs=bundle-all', '--platform=gtk', '--release', '--revision=261281@main'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(0),
@@ -1996,7 +1996,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=jsc', '--syslibs=bundle-all', '--platform=gtk', '--release', '--revision=261281@main'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(2),
@@ -2012,7 +2012,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-minibrowser-bundle-upload-config.json', '--remote-file', 'MiniBrowser_gtk_261281@main.tar.xz', 'WebKitBuild/MiniBrowser_gtk_release.tar.xz'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(0),
@@ -2026,7 +2026,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-jsc-bundle-upload-config.json', '--remote-file', '261281@main.zip', 'WebKitBuild/jsc_gtk_release.zip'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(0),
@@ -2061,7 +2061,7 @@ class TestCheckIfNeededUpdateCrossTargetImageSteps(BuildStepMixinAdditions, unit
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'deployed', '--cross-target=rpi4-64bits-mesa'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(0),
@@ -2078,7 +2078,7 @@ class TestCheckIfNeededUpdateCrossTargetImageSteps(BuildStepMixinAdditions, unit
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'deployed', '--cross-target=rpi4-64bits-mesa'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(1),
@@ -2095,7 +2095,7 @@ class TestCheckIfNeededUpdateCrossTargetImageSteps(BuildStepMixinAdditions, unit
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'running'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(0),
@@ -2112,7 +2112,7 @@ class TestCheckIfNeededUpdateCrossTargetImageSteps(BuildStepMixinAdditions, unit
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'running'],
-                        log_environ=True,
+                        log_environ=False,
                         timeout=1200,
                         )
             .exit(1),
@@ -2541,10 +2541,10 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
 
         self.expectRemoteCommands(
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
                         timeout=2 * 60 * 60).exit(0),
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=self.EXPECTED_BUILD_COMMAND,
                         timeout=2 * 60 * 60)
             .log('stdio', stdout='scan-build-static-analyzer: No bugs found.\nTotal issue count: 123\n')
@@ -2564,11 +2564,11 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expectRemoteCommands(
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
                         timeout=2 * 60 * 60)
             .exit(0),
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=self.EXPECTED_BUILD_COMMAND,
                         timeout=2 * 60 * 60)
             .log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
@@ -2597,11 +2597,11 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
 
         self.expectRemoteCommands(
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
                         timeout=2 * 60 * 60)
             .exit(0),
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=self.EXPECTED_BUILD_COMMAND,
                         timeout=2 * 60 * 60)
             .log('stdio', stdout='ANALYZE SUCCEEDED\n Total issue count: 300\n')
@@ -2621,11 +2621,11 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expectRemoteCommands(
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
                         timeout=2 * 60 * 60)
             .exit(0),
-            ExpectShell(workdir=self.WORK_DIR,
+            ExpectShell(log_environ=False, workdir=self.WORK_DIR,
                         command=self.EXPECTED_IOS_BUILD_COMMAND,
                         timeout=2 * 60 * 60)
             .log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
@@ -2654,7 +2654,7 @@ class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase)
         command = ['python3', 'Tools/Scripts/generate-dirty-files', f'wkdir/build/{SCAN_BUILD_OUTPUT_DIR}', '--output-dir', 'wkdir/smart-pointer-result-archive/1234', '--build-dir', 'wkdir/build']
 
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(log_environ=False, workdir='wkdir',
                         command=command)
             .log('stdio', stdout='Total (24247) WebKit (327) WebCore (23920)\n')
             .exit(0),
@@ -2695,7 +2695,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.configureStep()
 
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(log_environ=False, workdir='wkdir',
                         command=self.command + self.upload_options + self.configuration,
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             .log('stdio', stdout='').exit(0),
@@ -2707,7 +2707,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.configureStep()
 
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(log_environ=False, workdir='wkdir',
                         command=self.command + self.upload_options + self.configuration,
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             .log('stdio', stdout='Total unexpected failing files: 123\nTotal unexpected passing files: 456\nTotal unexpected issues: 789\n').exit(0),
@@ -2732,11 +2732,11 @@ class TestUpdateSaferCPPBaseline(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildnumber', 2)
 
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(log_environ=False, workdir='wkdir',
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -r wkdir/smart-pointer-result-archive/baseline'],)
             .log('stdio', stdout='')
             .exit(0),
-            ExpectShell(workdir='wkdir',
+            ExpectShell(log_environ=False, workdir='wkdir',
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cp -r wkdir/smart-pointer-result-archive/2 wkdir/smart-pointer-result-archive/baseline'],)
             .log('stdio', stdout='')
             .exit(0),
@@ -2856,7 +2856,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=3600,
-                        log_environ=True,
+                        log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --release 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
@@ -2871,7 +2871,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=3600,
-                        log_environ=True,
+                        log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --debug 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .log('stdio', stdout='''! NEW FAIL: test/built-ins/Array/prototype/at/index-non-numeric.js
@@ -2891,7 +2891,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=3600,
-                        log_environ=True,
+                        log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --release 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
@@ -2907,7 +2907,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=3600,
-                        log_environ=True,
+                        log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
@@ -2923,7 +2923,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=3600,
-                        log_environ=True,
+                        log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --debug --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
@@ -2947,7 +2947,7 @@ class TestRunBenchmarkTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=2000,
-                        log_environ=True,
+                        log_environ=False,
                         command=['python3', 'Tools/Scripts/browserperfdash-benchmark', '--plans-from-config', '--config-file', '../../browserperfdash-benchmark-config.txt',
                                  '--browser-version', '12345@main', '--timestamp-from-repo', '.', '--build-log-url', 'http://localhost:8080/#/builders/1/builds/13'],
                         )
@@ -2964,7 +2964,7 @@ class TestRunBenchmarkTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=2000,
-                        log_environ=True,
+                        log_environ=False,
                         command=['python3', 'Tools/Scripts/browserperfdash-benchmark', '--plans-from-config', '--config-file', '../../browserperfdash-benchmark-config.txt',
                                  '--browser-version', '12345@main', '--timestamp-from-repo', '.', '--build-log-url', 'http://localhost:8080/#/builders/1/builds/13'],
                         )

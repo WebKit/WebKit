@@ -1588,6 +1588,7 @@ class CheckChangeRelevance(AnalyzeChange):
 
 class GetTestExpectationsBaseline(shell.ShellCommand, ShellMixin):
     name = 'get-test-expectations-baseline'
+    logEnviron = False
     description = 'get-test-expectations-baseline running'
     descriptionDone = 'Found baseline expectations for layout tests'
     command = ['python3', 'Tools/Scripts/run-webkit-tests', '--print-expectations', WithProperties('--%(configuration)s')]
@@ -1616,6 +1617,7 @@ class GetTestExpectationsBaseline(shell.ShellCommand, ShellMixin):
 
 class GetUpdatedTestExpectations(steps.ShellSequence, ShellMixin):
     name = 'get-updated-test-expectations'
+    logEnviron = False
     description = 'get-updated-test-expectations running'
     descriptionDone = 'Found updated expectations for layout tests'
 
@@ -3998,6 +4000,7 @@ class AnalyzeJSCTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLog
 
 class CleanBuild(shell.Compile):
     name = 'delete-WebKitBuild-directory'
+    logEnviron = False
     description = ['deleting WebKitBuild directory']
     descriptionDone = ['Deleted WebKitBuild directory']
     command = ['python3', 'Tools/CISupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]

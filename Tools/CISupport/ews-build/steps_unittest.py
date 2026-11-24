@@ -1092,7 +1092,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'ios-11')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(log_environ=False, workdir='wkdir',
                         command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-11', '--release'],
                         )
             .exit(0),
@@ -1105,7 +1105,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(log_environ=False, workdir='wkdir',
                         command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-simulator-11', '--debug'],
                         )
             .log('stdio', stdout='Unexpected error.')
@@ -7261,7 +7261,7 @@ class TestGetTestExpectationsBaseline(BuildStepMixinAdditions, unittest.TestCase
         self.setup_step(GetTestExpectationsBaseline())
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=True, command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --print-expectations --debug > base-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --print-expectations --debug > base-expectations.txt']).exit(0)
         )
         self.expect_outcome(result=SUCCESS, state_string='Found baseline expectations for layout tests')
         return self.run_step()
@@ -7271,7 +7271,7 @@ class TestGetTestExpectationsBaseline(BuildStepMixinAdditions, unittest.TestCase
         self.setProperty('configuration', 'release')
         self.setProperty('additionalArguments', ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"])
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=True, command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --print-expectations --release --child-processes=6 --exclude-tests imported/w3c/web-platform-tests > base-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --print-expectations --release --child-processes=6 --exclude-tests imported/w3c/web-platform-tests > base-expectations.txt']).exit(0)
         )
         self.expect_outcome(result=SUCCESS, state_string='Found baseline expectations for layout tests')
         return self.run_step()
@@ -7290,12 +7290,12 @@ class TestGetUpdatedTestExpectations(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        log_environ=True,
+                        log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --print-expectations --debug > new-expectations.txt'],
                         )
             .exit(0),
-            ExpectShell(workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' base-expectations.txt"]).exit(0),
-            ExpectShell(workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' new-expectations.txt"]).exit(0),
+            ExpectShell(log_environ=False, workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' base-expectations.txt"]).exit(0),
+            ExpectShell(log_environ=False, workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' new-expectations.txt"]).exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='Found updated expectations for layout tests')
         rc = self.run_step()
@@ -7307,12 +7307,12 @@ class TestGetUpdatedTestExpectations(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('additionalArguments', ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        log_environ=True,
+                        log_environ=False,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --print-expectations --release --child-processes=6 --exclude-tests imported/w3c/web-platform-tests > new-expectations.txt'],
                         )
             .exit(0),
-            ExpectShell(workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' base-expectations.txt"]).exit(0),
-            ExpectShell(workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' new-expectations.txt"]).exit(0),
+            ExpectShell(log_environ=False, workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' base-expectations.txt"]).exit(0),
+            ExpectShell(log_environ=False, workdir='wkdir', command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "perl -p -i -e 's/\\].*/\\]/' new-expectations.txt"]).exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='Found updated expectations for layout tests')
         rc = self.run_step()

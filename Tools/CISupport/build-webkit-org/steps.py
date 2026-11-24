@@ -142,6 +142,7 @@ class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
 
 
 class TestWithFailureCount(shell.Test):
+    logEnviron = False
     failedTestsFormatString = "%d test%s failed"
 
     def countFailures(self):
@@ -298,6 +299,7 @@ class CheckOutSpecificRevision(shell.ShellCommand):
 
 class KillOldProcesses(shell.Compile):
     name = "kill-old-processes"
+    logEnviron = False
     description = ["killing old processes"]
     descriptionDone = ["killed old processes"]
     command = ["python3", "Tools/CISupport/kill-old-processes", "buildbot"]
@@ -305,6 +307,7 @@ class KillOldProcesses(shell.Compile):
 
 class TriggerCrashLogSubmission(shell.Compile):
     name = "trigger-crash-log-submission"
+    logEnviron = False
     description = ["triggering crash log submission"]
     descriptionDone = ["triggered crash log submission"]
     command = ["python3", "Tools/CISupport/trigger-crash-log-submission"]
@@ -312,6 +315,7 @@ class TriggerCrashLogSubmission(shell.Compile):
 
 class WaitForCrashCollection(shell.Compile):
     name = "wait-for-crash-collection"
+    logEnviron = False
     description = ["waiting for crash collection to quiesce"]
     descriptionDone = ["crash collection has quiesced"]
     command = ["python3", "Tools/CISupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
@@ -319,6 +323,7 @@ class WaitForCrashCollection(shell.Compile):
 
 class CleanBuildIfScheduled(shell.Compile):
     name = "delete-WebKitBuild-directory"
+    logEnviron = False
     description = ["deleting WebKitBuild directory"]
     descriptionDone = ["deleted WebKitBuild directory"]
     command = ["python3", "Tools/CISupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
@@ -332,6 +337,7 @@ class CleanBuildIfScheduled(shell.Compile):
 
 class DeleteStaleBuildFiles(shell.Compile):
     name = "delete-stale-build-files"
+    logEnviron = False
     description = ["deleting stale build files"]
     descriptionDone = ["deleted stale build files"]
     command = ["python3", "Tools/CISupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
@@ -345,6 +351,7 @@ class DeleteStaleBuildFiles(shell.Compile):
 
 class InstallGtkDependencies(shell.ShellCommand, CustomFlagsMixin):
     name = "jhbuild"
+    logEnviron = False
     description = ["updating gtk dependencies"]
     descriptionDone = ["updated gtk dependencies"]
     command = ["perl", "Tools/Scripts/update-webkitgtk-libs", WithProperties("--%(configuration)s")]
@@ -357,6 +364,7 @@ class InstallGtkDependencies(shell.ShellCommand, CustomFlagsMixin):
 
 class InstallWpeDependencies(shell.ShellCommand, CustomFlagsMixin):
     name = "jhbuild"
+    logEnviron = False
     description = ["updating wpe dependencies"]
     descriptionDone = ["updated wpe dependencies"]
     command = ["perl", "Tools/Scripts/update-webkitwpe-libs", WithProperties("--%(configuration)s")]
@@ -372,6 +380,7 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin, ShellMixin, AddToLogMixin):
     filter_command = ['perl', 'Tools/Scripts/filter-build-webkit', '-logfile', 'build-log.txt']
     APPLE_PLATFORMS = ('mac', 'ios', 'visionos', 'tvos', 'watchos')
     name = "compile-webkit"
+    logEnviron = False
     description = ["compiling"]
     descriptionDone = ["compiled"]
     warningPattern = ".*arning: .*"
@@ -536,6 +545,7 @@ class CompileJSCOnly(CompileWebKit):
 
 class InstallBuiltProduct(shell.ShellCommand):
     name = 'install-built-product'
+    logEnviron = False
     description = ['Installing Built Product']
     descriptionDone = ['Installed Built Product']
     command = ["python3", "Tools/Scripts/install-built-product",
@@ -546,6 +556,7 @@ class ArchiveBuiltProduct(shell.ShellCommand, CustomFlagsMixin):
     command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
     name = "archive-built-product"
+    logEnviron = False
     description = ["archiving built product"]
     descriptionDone = ["archived built product"]
     haltOnFailure = True
@@ -568,6 +579,7 @@ class UploadBuiltProductViaSftp(shell.ShellCommand):
                "--remote-file", WithProperties("%(archive_revision)s.zip"),
                WithProperties("WebKitBuild/%(configuration)s.zip")]
     name = "upload-built-product-via-sftp"
+    logEnviron = False
     description = ["uploading built product via sftp"]
     descriptionDone = ["uploaded built product via sftp"]
     haltOnFailure = True
@@ -579,6 +591,7 @@ class UploadMiniBrowserBundleViaSftp(shell.ShellCommand):
                "--remote-file", WithProperties("MiniBrowser_%(fullPlatform)s_%(archive_revision)s.tar.xz"),
                WithProperties("WebKitBuild/MiniBrowser_%(fullPlatform)s_%(configuration)s.tar.xz")]
     name = "upload-minibrowser-bundle-via-sftp"
+    logEnviron = False
     description = ["uploading minibrowser bundle via sftp"]
     descriptionDone = ["uploaded minibrowser bundle via sftp"]
     haltOnFailure = False
@@ -590,6 +603,7 @@ class UploadJSCBundleViaSftp(shell.ShellCommand):
                "--remote-file", WithProperties("%(archive_revision)s.zip"),
                WithProperties("WebKitBuild/jsc_%(fullPlatform)s_%(configuration)s.zip")]
     name = "upload-jsc-bundle-via-sftp"
+    logEnviron = False
     description = ["uploading jsc bundle via sftp"]
     descriptionDone = ["uploaded jsc bundle via sftp"]
     haltOnFailure = False
@@ -600,6 +614,7 @@ class GenerateJSCBundle(shell.ShellCommand):
                "--bundle=jsc", "--syslibs=bundle-all", WithProperties("--platform=%(fullPlatform)s"),
                WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s")]
     name = "generate-jsc-bundle"
+    logEnviron = False
     description = ["generating jsc bundle"]
     descriptionDone = ["generated jsc bundle"]
     haltOnFailure = False
@@ -617,6 +632,7 @@ class GenerateMiniBrowserBundle(shell.ShellCommand):
                "--bundle=MiniBrowser", "--syslibs=bundle-all", "--compression=tar.xz", "--compression-level=9",
                WithProperties("--revision=%(archive_revision)s"), "--builder-name", WithProperties("%(buildername)s")]
     name = "generate-minibrowser-bundle"
+    logEnviron = False
     description = ["generating minibrowser bundle"]
     descriptionDone = ["generated minibrowser bundle"]
     haltOnFailure = False
@@ -633,6 +649,7 @@ class TestMiniBrowserBundle(shell.ShellCommand, ShellMixin):
     command = ["Tools/Scripts/test-bundle", WithProperties("--platform=%(fullPlatform)s"), "--bundle-type=universal",
                WithProperties("WebKitBuild/MiniBrowser_%(fullPlatform)s_%(configuration)s.tar.xz")]
     name = "test-minibrowser-bundle"
+    logEnviron = False
     description = ["testing minibrowser bundle"]
     descriptionDone = ["tested minibrowser bundle"]
     haltOnFailure = False
@@ -685,6 +702,7 @@ class ExtractBuiltProduct(shell.ShellCommand):
     command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "extract"]
     name = "extract-built-product"
+    logEnviron = False
     description = ["extracting built product"]
     descriptionDone = ["extracted built product"]
     haltOnFailure = True
@@ -717,6 +735,7 @@ class DownloadBuiltProduct(shell.ShellCommand):
         WithProperties(S3URL + S3_BUCKET + "/%(fullPlatform)s-%(archForUpload)s-%(configuration)s/%(archive_revision)s.zip"),
     ]
     name = "download-built-product"
+    logEnviron = False
     description = ["downloading built product"]
     descriptionDone = ["downloaded built product"]
     haltOnFailure = True
@@ -1370,6 +1389,7 @@ class Run32bitJSCTests(TestWithFailureCount):
 
 class RunBindingsTests(shell.Test):
     name = "bindings-generation-tests"
+    logEnviron = False
     description = ["bindings-tests running"]
     descriptionDone = ["bindings-tests"]
     command = ["python3", "Tools/Scripts/run-bindings-tests"]
@@ -1377,6 +1397,7 @@ class RunBindingsTests(shell.Test):
 
 class RunBuiltinsTests(shell.Test):
     name = "builtins-generator-tests"
+    logEnviron = False
     description = ["builtins-generator-tests running"]
     descriptionDone = ["builtins-generator-tests"]
     command = ["python3", "Tools/Scripts/run-builtins-generator-tests"]
@@ -1385,6 +1406,7 @@ class RunBuiltinsTests(shell.Test):
 class RunMVTTests(shell.Test):
     command = ["Tools/Scripts/run-mvt-tests", WithProperties("--%(configuration)s"), WithProperties("--%(fullPlatform)s")]
     name = "MVT-tests"
+    logEnviron = False
     description = ["MVT tests running"]
     descriptionDone = ["MVT tests"]
 
@@ -1536,6 +1558,7 @@ class RunWebKit1LeakTests(RunWebKit1Tests):
 
 class RunAndUploadPerfTests(shell.Test):
     name = "perf-test"
+    logEnviron = False
     description = ["perf-tests running"]
     descriptionDone = ["perf-tests"]
     command = ["python3", "Tools/Scripts/run-perf-tests",
@@ -1584,6 +1607,7 @@ class RunAndUploadPerfTests(shell.Test):
 
 class RunBenchmarkTests(shell.Test):
     name = "benchmark-test"
+    logEnviron = False
     description = ["benchmark tests running"]
     descriptionDone = ["benchmark tests"]
     command = ["python3", "Tools/Scripts/browserperfdash-benchmark", "--plans-from-config",
@@ -1617,6 +1641,7 @@ class ArchiveTestResults(shell.ShellCommand):
     command = ["python3", "Tools/CISupport/test-result-archive",
                WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-test-results"
+    logEnviron = False
     description = ["archiving test results"]
     descriptionDone = ["archived test results"]
     haltOnFailure = True
@@ -1772,6 +1797,7 @@ class ArchiveStaticAnalyzerResults(shell.ShellCommand):
     command = ["Tools/Scripts/generate-static-analysis-archive", "--id-string", WithProperties("Build #%(buildnumber)s"),
                "--output-root", SCAN_BUILD_OUTPUT_DIR, "--destination", "/tmp/static-analysis.zip"]
     name = "archive-static-analyzer-results"
+    logEnviron = False
     description = ["archiving static analyzer results"]
     descriptionDone = ["archived static analyzer results"]
     haltOnFailure = True
@@ -1785,6 +1811,7 @@ class UploadStaticAnalyzerResults(UploadTestResults):
 
 class ScanBuild(steps.ShellSequence, ShellMixin):
     name = "scan-build"
+    logEnviron = False
     description = ["scanning with static analyzer"]
     descriptionDone = ["scanned with static analyzer"]
     flunkOnFailure = True
@@ -1867,6 +1894,7 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
 
 class ParseStaticAnalyzerResults(shell.ShellCommand):
     name = 'parse-static-analyzer-results'
+    logEnviron = False
     description = ['parsing static analyzer results']
     descriptionDone = ['parsed static analyzer results']
     haltOnFailure = True
@@ -1911,6 +1939,7 @@ class ParseStaticAnalyzerResults(shell.ShellCommand):
 
 class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand):
     name = 'find-unexpected-static-analyzer-results'
+    logEnviron = False
     description = ['finding unexpected static analyzer results']
     descriptionDone = ['found unexpected static analyzer results']
     resultMsg = ''
@@ -2045,6 +2074,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
 
 class UpdateSaferCPPBaseline(steps.ShellSequence, ShellMixin):
     name = 'update-safer-cpp-baseline'
+    logEnviron = False
     description = ['updating safer cpp baseline']
     descriptionDone = ['updated safer cpp baseline']
 
@@ -2294,6 +2324,7 @@ class ShowIdentifier(shell.ShellCommand):
 class CheckIfNeededUpdateDeployedCrossTargetImage(shell.ShellCommand, CustomFlagsMixin):
     command = ["python3", "Tools/Scripts/cross-toolchain-helper", "--check-if-image-is-updated", "deployed"]
     name = "check-if-deployed-cross-target-image-is-updated"
+    logEnviron = False
     description = ["checking if deployed cross target image is updated"]
     descriptionDone = ["deployed cross target image is updated"]
     haltOnFailure = False
@@ -2312,6 +2343,7 @@ class CheckIfNeededUpdateDeployedCrossTargetImage(shell.ShellCommand, CustomFlag
 class CheckIfNeededUpdateRunningCrossTargetImage(shell.ShellCommand):
     command = ["python3", "Tools/Scripts/cross-toolchain-helper", "--check-if-image-is-updated", "running"]
     name = "check-if-running-cross-target-image-is-updated"
+    logEnviron = False
     description = ["checking if running cross target image is updated"]
     descriptionDone = ["running cross target image is updated"]
     haltOnFailure = False
@@ -2330,6 +2362,7 @@ class BuildAndDeployCrossTargetImage(shell.ShellCommand, CustomFlagsMixin):
     command = ["python3", "Tools/Scripts/cross-toolchain-helper", "--build-image",
                "--deploy-image-with-script", "../../cross-toolchain-helper-deploy.sh"]
     name = "build-and-deploy-cross-target-image"
+    logEnviron = False
     description = ["building and deploying cross target image"]
     descriptionDone = ["cross target image built and deployed"]
     haltOnFailure = True
@@ -2343,6 +2376,7 @@ class RebootWithUpdatedCrossTargetImage(shell.ShellCommand):
     # Either use env var SUDO_ASKPASS or configure /etc/sudoers for passwordless reboot
     command = ["sudo", "-A", "reboot"]
     name = "reboot-with-updated-cross-target-image"
+    logEnviron = False
     description = ["rebooting with updated cross target image"]
     descriptionDone = ["rebooted with updated cross target image"]
     haltOnFailure = True
