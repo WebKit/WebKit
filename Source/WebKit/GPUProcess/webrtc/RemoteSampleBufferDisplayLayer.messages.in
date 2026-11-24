@@ -35,12 +35,10 @@ messages -> RemoteSampleBufferDisplayLayer {
     UpdateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
     Flush()
     FlushAndRemoveImage()
-    EnqueueVideoFrame(struct WebKit::SharedVideoFrame frame)
+    EnqueueVideoFrame(WebKit::RemoteVideoFrameReadReference frame, MediaTime presentationTime)
     ClearVideoFrames()
     Play()
     Pause()
-    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
-    SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle)
     SetShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
 }
 

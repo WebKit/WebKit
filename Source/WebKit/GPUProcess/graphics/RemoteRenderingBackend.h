@@ -120,6 +120,9 @@ public:
     // identifier. Clipping to it clips everything.
     static RefPtr<WebCore::NativeImage> createPlaceholderNativeImage();
     RemoteSharedResourceCache& sharedResourceCache() { return m_sharedResourceCache; }
+    // Caches `image` in this backend under the identifier of `reference`, and publishes the same image in the
+    // shared resource cache under `reference`, so that the Web process can read its pixels from any thread.
+    bool cacheAndPublishNativeImage(RemoteNativeImageReference, Ref<WebCore::NativeImage>&&);
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -161,7 +164,7 @@ private:
     void createMappableImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat, ImageBufferBackendHandle&& backingStore, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
     void createImageBufferWithBackingStore(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat, std::optional<ImageBufferBackendHandle>&& backingStore, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
-    void sinkImageBufferIntoNativeImage(WebCore::RenderingResourceIdentifier, WebCore::RenderingResourceIdentifier imageIdentifier);
+    void sinkImageBufferIntoNativeImage(WebCore::RenderingResourceIdentifier, RemoteNativeImageReference);
     void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier, RemoteSerializedImageBufferIdentifier);
     void moveToImageBuffer(RemoteSerializedImageBufferIdentifier, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
     void moveSerializedBufferToTransferHeap(RemoteSerializedImageBufferIdentifier, CompletionHandler<void(std::optional<WebCore::ImageBufferTransferIdentifier>)>&&);
@@ -170,7 +173,6 @@ private:
     void sinkDisplayListRecorderIntoDisplayList(RemoteDisplayListRecorderIdentifier, RemoteDisplayListIdentifier);
     void releaseDisplayList(RemoteDisplayListIdentifier);
     void destroyGetPixelBufferSharedMemory();
-    void nativeImageBitmap(WebCore::RenderingResourceIdentifier imageIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>)>&&);
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheNativeImageFromSharedNativeImage(RemoteNativeImageReadReference&&);
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);

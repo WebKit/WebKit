@@ -29,6 +29,7 @@
 
 #include "GPUProcessConnection.h"
 #include "RemoteRenderingBackendIdentifier.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPU.h>
@@ -70,6 +71,9 @@ public:
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
     // The connection of the GPU process connection that streamClientConnection() was created on.
     IPC::Connection& gpuProcessIPCConnection() const { return *m_gpuProcessIPCConnection; }
+#if ENABLE(VIDEO)
+    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return m_videoFrameObjectHeapProxy.get(); }
+#endif
 
     void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
@@ -151,6 +155,9 @@ private:
     const Ref<RemoteRenderingBackendProxy> m_renderingBackend;
     // Weak, because the instance holds a reference to this. The adapters hold the instance.
     ThreadSafeWeakPtr<WebGPU::RemoteWebGPUInstanceProxy> m_instance;
+#if ENABLE(VIDEO)
+    const Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#endif
     RemoteGPUIdentifier m_backing { RemoteGPUIdentifier::generate() };
     bool m_didInitialize { false };
     bool m_lost { false };

@@ -394,7 +394,7 @@ private:
 #if ENABLE(WEB_AUDIO)
     const std::unique_ptr<RemoteAudioDestinationManager> m_remoteAudioDestinationManager;
 #endif
-    const RefPtr<RemoteSharedResourceCache> m_sharedResourceCache;
+    const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
 #if ENABLE(VIDEO)
     const RefPtr<RemoteAudioVideoRendererProxyManager> m_remoteAudioVideoRendererProxyManager;
     const Ref<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;

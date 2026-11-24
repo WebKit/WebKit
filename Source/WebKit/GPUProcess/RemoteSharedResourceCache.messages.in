@@ -30,6 +30,7 @@
 messages -> RemoteSharedResourceCache {
     void ReleaseSerializedImageBuffer(WebKit::RemoteSerializedImageBufferIdentifier identifier)
     void ReleaseNativeImage(WebKit::RemoteNativeImageWriteReference reference)
+    GetNativeImagePixels(WebKit::RemoteNativeImageReadReference image) -> (std::optional<WebCore::ShareableBitmapHandle> handle)
 }
 
 #endif

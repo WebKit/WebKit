@@ -31,6 +31,7 @@
 #include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
 #include "RemoteGraphicsContextIdentifier.h"
+#include "RemoteNativeImageIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "StreamMessageReceiver.h"
@@ -71,7 +72,7 @@ private:
     void getPixelBuffer(WebCore::PixelBufferFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, CompletionHandler<void()>&&);
     void getPixelBufferWithNewMemory(WebCore::SharedMemory::Handle&&, WebCore::PixelBufferFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, CompletionHandler<void()>&&);
     void putPixelBuffer(const WebCore::PixelBufferSourceView&, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat);
-    void copyNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier);
+    void copyNativeImage(RemoteNativeImageReference);
     void getEffectiveRenderingModeForTesting(CompletionHandler<void(std::optional<WebCore::RenderingMode>)>&&);
     void getBackendHandle(CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&&);
 #if PLATFORM(COCOA)

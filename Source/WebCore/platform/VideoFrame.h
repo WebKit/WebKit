@@ -124,9 +124,9 @@ public:
 
     enum class ShouldClone : bool { No, Yes };
     // updateTimestamp, updateOrientation and updateShouldIgnoreAlpha should be called before being used by VideoFrame consumers.
-    Ref<VideoFrame> updateTimestamp(MediaTime, ShouldClone);
+    WEBCORE_EXPORT Ref<VideoFrame> updateTimestamp(MediaTime, ShouldClone);
     WEBCORE_EXPORT Ref<VideoFrame> updateOrientation(Rotation, bool isMirrored, ShouldClone);
-    Ref<VideoFrame> updateShouldIgnoreAlpha(bool, ShouldClone);
+    WEBCORE_EXPORT Ref<VideoFrame> updateShouldIgnoreAlpha(bool, ShouldClone);
 
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;
     void copyTo(std::span<uint8_t>, VideoPixelFormat, ColorSpace, Vector<ComputedPlaneLayout>&&, CopyCallback&&);

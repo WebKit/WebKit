@@ -30,7 +30,6 @@
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteQueue.h"
 #include "RemoteVideoFrameIdentifier.h"
-#include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUBufferDescriptor.h"
 #include "WebGPUCommandEncoderDescriptor.h"
@@ -68,7 +67,6 @@ class VideoFrame;
 namespace WebKit {
 
 class RemoteGPU;
-struct SharedVideoFrame;
 
 namespace WebGPU {
 struct BindGroupDescriptor;
@@ -148,8 +146,6 @@ private:
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, bool isLost)>&&);
 
     void setLabel(String&&);
-    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
     void pauseAllErrorReporting(bool pauseErrorReporting);
 
     void createInvalidBindGroup(WebGPUBindGroupIdentifier);
@@ -174,9 +170,6 @@ private:
     const Ref<RemoteQueue> m_queue;
 #if ENABLE(VIDEO)
     const Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
-#if PLATFORM(COCOA)
-    SharedVideoFrameReader m_sharedVideoFrameReader;
-#endif
 #endif
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WeakRef<RemoteGPU> m_gpu;

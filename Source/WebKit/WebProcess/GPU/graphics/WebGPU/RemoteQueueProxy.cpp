@@ -44,15 +44,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQueueProxy);
 RemoteQueueProxy::RemoteQueueProxy(RemoteAdapterProxy& parent, WebGPUQueueIdentifier identifier)
     : m_backing(identifier)
     , m_parent(parent)
-{
-#if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
-    RefPtr<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy;
-    callOnMainRunLoopAndWait([&videoFrameObjectHeapProxy] {
-        videoFrameObjectHeapProxy = protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy();
-    });
-
-    lazyInitialize(m_videoFrameObjectHeapProxy, videoFrameObjectHeapProxy.releaseNonNull());
+#if ENABLE(VIDEO)
+    , m_videoFrameObjectHeapProxy(&parent.root().videoFrameObjectHeapProxy())
 #endif
+{
 }
 
 RemoteQueueProxy::~RemoteQueueProxy()
@@ -171,27 +166,26 @@ void RemoteQueueProxy::copyExternalImageFromVideoFrameToTexture(
         return;
 
     // A frame with no media player behind it - every WebCodecs frame, and a media element whose
-    // player has not been given an identifier - has to be shipped across itself, the same way
-    // RemoteDeviceProxy ships one for an external texture.
+    // player has not been given an identifier - goes through the video frame object heap, the same
+    // way RemoteDeviceProxy sends one for an external texture. `remoteFrame` holds the frame in the
+    // GPU process until the message below has been sent.
+    RefPtr<RemoteVideoFrameProxy> remoteFrame;
     if (!convertedSource->mediaIdentifier) {
         auto* videoFrame = std::get_if<RefPtr<WebCore::VideoFrame>>(&*source.videoSource);
         if (!videoFrame || !videoFrame->get())
             return;
 
-        convertedSource->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), protect(root().gpuProcessIPCConnection()), [this, protectedThis = protect(*this)](auto& semaphore) {
-            auto sendResult = send(Messages::RemoteQueue::SetSharedVideoFrameSemaphore { semaphore });
-            UNUSED_VARIABLE(sendResult);
-        }, [this, protectedThis = protect(*this)](WebCore::SharedMemory::Handle&& handle) {
-            auto sendResult = send(Messages::RemoteQueue::SetSharedVideoFrameMemory { WTF::move(handle) });
-            UNUSED_VARIABLE(sendResult);
-        });
-        if (!convertedSource->sharedFrame)
+        remoteFrame = protect(root().videoFrameObjectHeapProxy())->remoteFrame(*videoFrame->get());
+        if (remoteFrame)
+            convertedSource->videoFrame = remoteFrame->newReadReference(protect(root().gpuProcessIPCConnection()));
+        if (!convertedSource->videoFrame)
             return;
     }
 
-    // Sent asynchronously, unlike the ImageBuffer copy above: the frame either travels with the
-    // message or is named by a media player the GPU process resolves for itself, so there is no
-    // identifier on another stream whose lifetime this call has to hold open.
+    // Sent asynchronously, unlike the ImageBuffer copy above: the frame is either held in the video
+    // frame object heap until the GPU process reads it, or named by a media player the GPU process
+    // resolves for itself, so there is no identifier on another stream whose lifetime this call has
+    // to hold open.
     auto sendResult = send(Messages::RemoteQueue::CopyExternalImageFromVideoFrameToTexture(WTF::move(*convertedSource), *convertedDestination, copySize));
     UNUSED_VARIABLE(sendResult);
 }

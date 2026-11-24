@@ -70,9 +70,7 @@ messages -> RemoteDevice Stream {
     void CreateInvalidTexture(WebKit::WebGPUTextureIdentifier identifier)
     void GenerateAValidationError(String message)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
-    void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
-    void ImportExternalTextureFromVideoFrame(WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUExternalTextureIdentifier identifier) NotStreamEncodable
+    void ImportExternalTextureFromVideoFrame(WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUExternalTextureIdentifier identifier)
     void UpdateExternalTexture(WebKit::WebGPUExternalTextureIdentifier externalTextureIdentifier, WebCore::MediaPlayerIdentifier mediaIdentifier)
 #endif
 }

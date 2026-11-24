@@ -33,7 +33,6 @@
 #include "RemoteSampleBufferDisplayLayerManager.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
-#include "SharedVideoFrame.h"
 #include <WebCore/HostingContext.h>
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/MediaTime.h>
@@ -49,6 +48,7 @@ enum class VideoFrameRotation : uint16_t;
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
+class RemoteVideoFrameObjectHeap;
 struct SharedPreferencesForWebProcess;
 
 class RemoteSampleBufferDisplayLayer : public ThreadSafeRefCounted<RemoteSampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop>, public WebCore::SampleBufferDisplayLayerClient, public IPC::MessageReceiver, private IPC::MessageSender {
@@ -84,10 +84,8 @@ private:
     void flushAndRemoveImage();
     void play();
     void pause();
-    void enqueueVideoFrame(SharedVideoFrame&&);
+    void enqueueVideoFrame(RemoteVideoFrameReadReference&&, MediaTime presentationTime);
     void clearVideoFrames();
-    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
     void setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio);
 
     // IPC::MessageSender
@@ -106,7 +104,7 @@ private:
     const Ref<IPC::Connection> m_connection;
     const RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
-    SharedVideoFrameReader m_sharedVideoFrameReader;
+    const Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
     ThreadLikeAssertion m_consumeThread NO_UNIQUE_ADDRESS;
     ThreadSafeWeakPtr<RemoteSampleBufferDisplayLayerManager> m_remoteSampleBufferDisplayLayerManager;
 };

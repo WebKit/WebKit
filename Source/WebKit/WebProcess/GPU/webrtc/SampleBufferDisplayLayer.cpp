@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include "WebProcess.h"
@@ -51,6 +52,7 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
     , m_gpuProcessConnection(&WebProcess::singleton().ensureGPUProcessConnection())
     , m_manager(manager)
     , m_connection(m_gpuProcessConnection.get()->connection())
+    , m_videoFrameObjectHeapProxy(m_gpuProcessConnection.get()->videoFrameObjectHeapProxy())
 {
     manager.addLayer(*this);
     auto gpuProcessConnection = m_gpuProcessConnection.get();
@@ -124,8 +126,12 @@ void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFram
 {
     auto size = videoFrame.presentationSize();
     WebCore::IntSize blackFrameSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
-    SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), { }, false, blackFrameSize };
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTF::move(sharedVideoFrame) }, identifier());
+    // Holds the frame in the GPU process until EnqueueVideoFrame has been sent.
+    RefPtr remoteFrame = m_videoFrameObjectHeapProxy->remoteBlackFrame(videoFrame.presentationTime(), videoFrame.rotation(), blackFrameSize);
+    auto reference = remoteFrame ? remoteFrame->newReadReference(m_connection) : std::nullopt;
+    if (!reference)
+        return;
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTF::move(*reference), videoFrame.presentationTime() }, identifier());
 }
 
 void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
@@ -133,14 +139,13 @@ void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
     if (m_paused)
         return;
 
-    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame, m_connection,
-        [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, identifier()); },
-        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { WTF::move(handle) }, identifier()); }
-    );
-    if (!sharedVideoFrame)
+    // Holds the frame in the GPU process until EnqueueVideoFrame has been sent.
+    RefPtr remoteFrame = m_videoFrameObjectHeapProxy->remoteFrame(videoFrame);
+    auto reference = remoteFrame ? remoteFrame->newReadReference(m_connection) : std::nullopt;
+    if (!reference)
         return;
 
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTF::move(*sharedVideoFrame) }, identifier());
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTF::move(*reference), videoFrame.presentationTime() }, identifier());
 }
 
 void SampleBufferDisplayLayer::clearVideoFrames()
@@ -171,7 +176,6 @@ void SampleBufferDisplayLayer::updateVideoFrameCounters(uint64_t totalVideoFrame
 
 void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
-    m_sharedVideoFrameWriter.disable();
     setDidFail(true);
 }
 

@@ -74,6 +74,9 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Remote
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
     , m_shouldIgnoreAlpha(properties.shouldIgnoreAlpha)
+    , m_heapFrameRotation(properties.rotation)
+    , m_heapFrameIsMirrored(properties.isMirrored)
+    , m_heapFrameShouldIgnoreAlpha(properties.shouldIgnoreAlpha)
     , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
 {
 }
@@ -84,6 +87,9 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameP
     , m_size(baseVideoFrame.m_size)
     , m_pixelFormat(baseVideoFrame.m_pixelFormat)
     , m_shouldIgnoreAlpha(baseVideoFrame.m_shouldIgnoreAlpha)
+    , m_heapFrameRotation(baseVideoFrame.m_heapFrameRotation)
+    , m_heapFrameIsMirrored(baseVideoFrame.m_heapFrameIsMirrored)
+    , m_heapFrameShouldIgnoreAlpha(baseVideoFrame.m_heapFrameShouldIgnoreAlpha)
 {
 }
 
@@ -105,6 +111,28 @@ std::optional<RemoteVideoFrameReadReference> RemoteVideoFrameProxy::newReadRefer
     if (m_connection.get() != &connection)
         return std::nullopt;
     return m_referenceTracker->read();
+}
+
+bool RemoteVideoFrameProxy::belongsToConnection(const IPC::Connection& connection) const
+{
+    if (m_baseVideoFrame)
+        return m_baseVideoFrame->belongsToConnection(connection);
+    return m_connection.get() == &connection;
+}
+
+bool RemoteVideoFrameProxy::hasHeapFrameProperties(WebCore::VideoFrameRotation rotation, bool isMirrored, bool shouldIgnoreAlpha) const
+{
+    return m_heapFrameRotation == rotation && m_heapFrameIsMirrored == isMirrored && m_heapFrameShouldIgnoreAlpha == shouldIgnoreAlpha;
+}
+
+RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameProxy::derivedFrame(NOESCAPE const Function<RefPtr<RemoteVideoFrameProxy>()>& createDerivedFrame) const
+{
+    Locker locker { m_derivedFrameLock };
+    if (RefPtr derivedFrame = m_derivedFrame; derivedFrame && derivedFrame->hasHeapFrameProperties(rotation(), isMirrored(), shouldIgnoreAlpha()))
+        return derivedFrame;
+    RefPtr derivedFrame = createDerivedFrame();
+    m_derivedFrame = derivedFrame;
+    return derivedFrame;
 }
 
 uint32_t RemoteVideoFrameProxy::pixelFormat() const
@@ -134,6 +162,13 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
     if (!m_pixelBuffer)
         m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
     return m_pixelBuffer.get();
+}
+
+void RemoteVideoFrameProxy::setLocalPixelBuffer(RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+{
+    ASSERT(!m_baseVideoFrame);
+    Locker lock(m_pixelBufferLock);
+    m_pixelBuffer = WTF::move(pixelBuffer);
 }
 #endif
 

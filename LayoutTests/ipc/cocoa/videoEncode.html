@@ -21,8 +21,14 @@ if (window.IPC) {
         CoreIPC.GPU.LibWebRTCCodecsProxy.InitializeEncoder(0, {
             id, width, height, startBitrate:62, maxBitrate:91, minBitrate:5, maxFramerate:720916
         });
+        const time = { timeValue:43, timeScale:79, timeFlags:145 };
+        const colorSpace = {primaries: {optionalValue: 0}, transfer: {optionalValue: 0}, matrix:{optionalValue: 1}, fullRange: {optionalValue: false}, chromaLocation: {}};
+        const reference = { identifier: 393217, version: 0 };
+        CoreIPC.GPU.RemoteVideoFrameObjectHeap.AddVideoFrame(0, {
+            reference, frame:{ time, mirrored:false, rotation:0, colorSpace, shouldIgnoreAlpha: false, buffer:{ alias: { variantType:'WebCore::IntSize', variant : { width, height } } } }
+        });
         CoreIPC.GPU.LibWebRTCCodecsProxy.EncodeFrame(0, {
-            id, buffer:{ time: { timeValue:43, timeScale:79, timeFlags:145 }, mirrored:false, rotation:0, colorSpace: {primaries: {optionalValue: 0}, transfer: {optionalValue: 0}, matrix:{optionalValue: 1}, fullRange: {optionalValue: false}, chromaLocation: {}}, shouldIgnoreAlpha: false, buffer:{ alias: { variantType:'WebCore::IntSize', variant : { width, height } } }}, timeStamp:61, duration:{}, shouldEncodeAsKeyFrame:true
+            id, frame:{ reference }, presentationTime:time, rotation:0, isMirrored:false, colorSpace, timeStamp:61, duration:{}, shouldEncodeAsKeyFrame:true
         });
         CoreIPC.GPU.LibWebRTCCodecsProxy.ReleaseEncoder(0, {
             id

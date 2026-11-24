@@ -42,11 +42,10 @@ class RemoteNativeImageProxy final : public WebCore::NativeImage {
     WTF_MAKE_TZONE_ALLOCATED(RemoteNativeImageProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteNativeImageProxy);
 public:
-    static Ref<RemoteNativeImageProxy> create(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&&);
-
     // Creates an image whose contents live in the GPU process's RemoteSharedResourceCache. It is not
-    // cached in any rendering backend until RemoteResourceCacheProxy::recordSharedNativeImageUse()
-    // adopts it, and its shared cache entry is released via `sharedResourceCache` when destroyed.
+    // cached in any rendering backend until a RemoteResourceCacheProxy adopts it, and its shared cache
+    // entry is released via `sharedResourceCache` when destroyed. platformImage() reads the pixels from
+    // the shared cache, from any thread.
     static Ref<RemoteNativeImageProxy> create(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&&);
 
     ~RemoteNativeImageProxy() override;
@@ -55,24 +54,23 @@ public:
     bool hasAlpha() const override;
     WebCore::ColorSpace colorSpace() const override;
 
-    // Reference tracking for images held in the RemoteSharedResourceCache. The tracker's lifetime is
+    // Reference tracking for the image in the RemoteSharedResourceCache. The tracker's lifetime is
     // this image's lifetime, so the shared cache does not need to track it separately.
-    bool isSharedNativeImage() const { return m_referenceTracker.has_value(); }
-    RemoteNativeImageReference reference() const { return m_referenceTracker->add(); }
-    RemoteNativeImageReadReference newReadReference() const { return m_referenceTracker->read(); }
-    RemoteNativeImageWriteReference writeReference() const { return m_referenceTracker->write(); }
+    RemoteNativeImageReference reference() const { return m_referenceTracker.add(); }
+    RemoteNativeImageReadReference newReadReference() const { return m_referenceTracker.read(); }
+    RemoteNativeImageWriteReference writeReference() const { return m_referenceTracker.write(); }
 
-    // Called by the RemoteResourceCacheProxy that adopts a shared image into its rendering backend, so
-    // that the image's destruction is reported to it and pixel read-back is routed through it.
+    // Called by the RemoteResourceCacheProxy that adopts the image into its rendering backend, so
+    // that the image's destruction is reported to it.
     void attachResourceCache(WeakRef<RemoteResourceCacheProxy>&&);
 
 private:
-    RemoteNativeImageProxy(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha, WeakPtr<RemoteResourceCacheProxy>&&, RefPtr<RemoteSharedResourceCacheProxy>&&);
+    RemoteNativeImageProxy(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&&);
 
     WeakPtr<RemoteResourceCacheProxy> m_resourceCache;
-    // Set only for images held in the RemoteSharedResourceCache, which releases the shared entry.
-    const RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
-    std::optional<RemoteNativeImageReferenceTracker> m_referenceTracker;
+    // Releases the shared cache entry, and reads the pixels.
+    const Ref<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
+    const RemoteNativeImageReferenceTracker m_referenceTracker;
     const WebCore::IntSize m_size;
     const WebCore::PlatformColorSpace m_colorSpace;
     const bool m_hasAlpha;

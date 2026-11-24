@@ -22,12 +22,12 @@
 
 #if ENABLE(GPU_PROCESS)
 header: "WebGPUExternalTextureDescriptor.h"
-[RValue] struct WebKit::WebGPU::ExternalTextureDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
+[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ExternalTextureDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
     std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
     WebCore::PredefinedColorSpace colorSpace;
     WebCore::IntSize visibleSize;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    std::optional<WebKit::SharedVideoFrame> sharedFrame;
+    std::optional<WebKit::RemoteVideoFrameReadReference> videoFrame;
 #endif
 };
 #endif

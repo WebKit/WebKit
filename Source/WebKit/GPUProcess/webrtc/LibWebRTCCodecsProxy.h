@@ -30,7 +30,6 @@
 #include "Connection.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedPreferencesForWebProcess.h"
-#include "SharedVideoFrame.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
@@ -41,6 +40,7 @@
 #include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <atomic>
+#include <wtf/MediaTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/UniqueRef.h>
@@ -61,8 +61,6 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteVideoFrameObjectHeap;
-struct SharedVideoFrame;
-class SharedVideoFrameReader;
 
 class LibWebRTCCodecsProxy final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCCodecsProxy);
@@ -97,11 +95,9 @@ private:
     void createEncoder(VideoEncoderIdentifier, WebCore::VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, WebCore::IntSize, CompletionHandler<void(bool)>&&);
     void releaseEncoder(VideoEncoderIdentifier);
     void initializeEncoder(VideoEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
-    void encodeFrame(VideoEncoderIdentifier, SharedVideoFrame&&, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&&);
+    void encodeFrame(VideoEncoderIdentifier, RemoteVideoFrameReadReference&&, MediaTime presentationTime, WebCore::VideoFrameRotation, bool isMirrored, WebCore::PlatformVideoColorSpace&&, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&&);
     void flushEncoder(VideoEncoderIdentifier, CompletionHandler<void()>&&);
     void setEncodeRates(VideoEncoderIdentifier, uint32_t bitRate, uint32_t frameRate, CompletionHandler<void()>&&);
-    void setSharedVideoFrameSemaphore(VideoEncoderIdentifier, IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(VideoEncoderIdentifier, WebCore::SharedMemory::Handle&&);
     void setRTCLoggingLevel(WTFLogLevel);
 
     void notifyEncoderResult(VideoEncoderIdentifier, bool);
@@ -118,7 +114,6 @@ private:
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(Encoder);
 
         const Ref<WebCore::GPUVideoEncoder> gpuEncoder;
-        const UniqueRef<SharedVideoFrameReader> frameReader;
         Deque<CompletionHandler<void(bool)>> encodingCallbacks;
         WebCore::VideoCodecType codecType { WebCore::VideoCodecType::H264 };
         bool useLowLatency { false };

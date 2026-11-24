@@ -85,6 +85,9 @@ class RemoteSharedResourceCacheProxy;
 class RemoteLayerBackingStore;
 class RemoteImageBufferProxyFlushState;
 class RemoteImageBufferSetProxy;
+#if ENABLE(VIDEO)
+class RemoteVideoFrameObjectHeapProxy;
+#endif
 
 enum class UsesRenderingUpdateBackpressure : bool { No, Yes };
 
@@ -123,8 +126,6 @@ public:
     RefPtr<RemoteImageBufferProxy> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat);
     void releaseImageBuffer(RemoteImageBufferProxy&);
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
-    // Returns backing store bitmap for the RemoteNativeImageProxy.
-    RefPtr<WebCore::ShareableBitmap> nativeImageBitmap(const RemoteNativeImageProxy&);
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     // Adopts a shared NativeImage (whose contents the GPU process publishes in the shared resource
     // cache) into this backend's cache, so that drawing it needs no further set up.
@@ -204,6 +205,12 @@ public:
     RefPtr<IPC::StreamClientConnection> connection();
     // The connection of the GPU process connection that connection() was created on.
     RefPtr<IPC::Connection> gpuProcessIPCConnection();
+    // The shared resource cache of the GPU process connection that connection() was created on.
+    Ref<RemoteSharedResourceCacheProxy> sharedResourceCache();
+#if ENABLE(VIDEO)
+    // The video frame object heap of the GPU process connection that connection() was created on.
+    Ref<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy();
+#endif
     void gpuProcessConnectionDidClose(IPC::Connection&);
 
     bool isCurrent() const final;
@@ -256,6 +263,9 @@ private:
     RefPtr<IPC::StreamClientConnection> m_connection;
     RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
+#if ENABLE(VIDEO)
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#endif
     RemoteRenderingBackendIdentifier m_identifier { RemoteRenderingBackendIdentifier::generate() };
     const UniqueRef<RemoteResourceCacheProxy> m_remoteResourceCacheProxy { RemoteResourceCacheProxy::create(*this) };
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;

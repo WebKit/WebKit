@@ -31,6 +31,11 @@
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WorkQueue.h>
+
+namespace WebCore {
+class ShareableBitmap;
+}
 
 namespace WebKit {
 
@@ -49,10 +54,16 @@ public:
 
     void releaseNativeImage(const RemoteNativeImageProxy&);
 
+    // Any thread. Waits until the GPU process has published `image`, and returns its pixels.
+    // Null if the image fails, the connection closes or the GPU process does not answer in time.
+    RefPtr<WebCore::ShareableBitmap> nativeImagePixels(const RemoteNativeImageProxy&);
+
 private:
     explicit RemoteSharedResourceCacheProxy(IPC::Connection&);
 
     const Ref<IPC::Connection> m_connection;
+    // Receives the replies, so that waiting for them does not depend on the waiting thread's run loop.
+    const Ref<WorkQueue> m_replyQueue;
 };
 
 }

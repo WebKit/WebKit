@@ -46,6 +46,7 @@
 #include "RemoteSharedResourceCacheProxy.h"
 #include "RemoteSnapshotRecorderProxy.h"
 #include "RemoteTextDetectorProxy.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
@@ -127,6 +128,9 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_gpuProcessConnection = gpuProcessConnection.get();
         m_gpuProcessIPCConnection = &gpuProcessConnection->connection();
         m_sharedResourceCache = gpuProcessConnection->sharedResourceCache();
+#if ENABLE(VIDEO)
+        m_videoFrameObjectHeapProxy = &gpuProcessConnection->videoFrameObjectHeapProxy();
+#endif
     });
 }
 
@@ -364,7 +368,7 @@ Ref<RemoteNativeImageProxy> RemoteRenderingBackendProxy::sinkIntoNativeImage(Rem
     ASSERT_UNUSED(success, success);
     bool hasAlpha = !pixelFormatIsOpaque(imageBuffer.pixelFormat());
     Ref nativeImage = m_remoteResourceCacheProxy->createNativeImage(imageBuffer.backendSize(), imageBuffer.colorSpace().platformColorSpace(), hasAlpha);
-    send(Messages::RemoteRenderingBackend::SinkImageBufferIntoNativeImage(identifier, nativeImage->renderingResourceIdentifier()));
+    send(Messages::RemoteRenderingBackend::SinkImageBufferIntoNativeImage(identifier, nativeImage->reference()));
     return nativeImage;
 }
 
@@ -496,18 +500,6 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
         return;
     m_getPixelBufferSharedMemory = nullptr;
     send(Messages::RemoteRenderingBackend::DestroyGetPixelBufferSharedMemory());
-}
-
-RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::nativeImageBitmap(const RemoteNativeImageProxy& image)
-{
-    auto sendResult = sendSync(Messages::RemoteRenderingBackend::NativeImageBitmap(image.renderingResourceIdentifier()));
-    if (!sendResult.succeeded())
-        return { };
-    auto [handle] = sendResult.takeReply();
-    if (!handle)
-        return { };
-    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
-    return ShareableBitmap::create(WTF::move(*handle));
 }
 
 void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -800,6 +792,20 @@ RefPtr<IPC::Connection> RemoteRenderingBackendProxy::gpuProcessIPCConnection()
     ensureGPUProcessConnection();
     return m_gpuProcessIPCConnection;
 }
+
+Ref<RemoteSharedResourceCacheProxy> RemoteRenderingBackendProxy::sharedResourceCache()
+{
+    ensureGPUProcessConnection();
+    return *m_sharedResourceCache;
+}
+
+#if ENABLE(VIDEO)
+Ref<RemoteVideoFrameObjectHeapProxy> RemoteRenderingBackendProxy::videoFrameObjectHeapProxy()
+{
+    ensureGPUProcessConnection();
+    return *m_videoFrameObjectHeapProxy;
+}
+#endif
 
 RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::cachedImageBuffer(const ImageBuffer& imageBuffer) const
 {

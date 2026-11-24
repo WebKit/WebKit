@@ -88,7 +88,6 @@ public:
     void releaseMemory();
 
     void willDestroyRemoteNativeImageProxy(const RemoteNativeImageProxy&);
-    WebCore::PlatformImagePtr platformImage(const RemoteNativeImageProxy&);
 
     // CheckedPtr interface.
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
@@ -111,6 +110,7 @@ private:
     void willDestroyFilter(WebCore::RenderingResourceIdentifier) override;
     void willDestroyDisplayList(const WebCore::DisplayList::DisplayList&) override;
 
+    void adoptSharedNativeImage(RemoteNativeImageProxy&);
     void finalizeRenderingUpdateForFonts();
     NODELETE void prepareForNextRenderingUpdate();
     void releaseFonts();
