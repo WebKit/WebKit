@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"
 #include "SVGZoomAndPanType.h"
@@ -42,7 +41,7 @@ public:
 
     SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
     void setZoomAndPan(SVGZoomAndPanType zoomAndPan) { m_zoomAndPan = zoomAndPan; }
-    ExceptionOr<void> setZoomAndPan(unsigned) { return Exception { ExceptionCode::NoModificationAllowedError }; }
+    void setZoomAndPan(unsigned short zoomAndPan) { m_zoomAndPan = zoomAndPan > SVGZoomAndPanMagnify ? SVGZoomAndPanUnknown : static_cast<SVGZoomAndPanType>(zoomAndPan); }
     void reset() { m_zoomAndPan = SVGPropertyTraits<SVGZoomAndPanType>::initialValue(); }
 
     void parseAttribute(SVGElement&, const QualifiedName&, const AtomString&);

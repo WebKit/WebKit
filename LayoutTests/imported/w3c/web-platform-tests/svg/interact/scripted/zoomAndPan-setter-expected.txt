@@ -1,0 +1,6 @@
+
+PASS Setting zoomAndPan on <svg> to a valid value updates the IDL attribute
+PASS Setting zoomAndPan on <svg> overrides the value from the zoomAndPan content attribute
+PASS Setting zoomAndPan on <view> to a valid value updates the IDL attribute
+PASS Setting zoomAndPan on <view> overrides the value from the zoomAndPan content attribute
+
