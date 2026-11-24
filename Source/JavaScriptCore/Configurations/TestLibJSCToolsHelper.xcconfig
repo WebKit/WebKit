@@ -30,3 +30,4 @@ EXCLUDED_SOURCE_FILE_NAMES = $(WK_JAVASCRIPTCORE_TOOLS_EXCLUDED_SOURCE_FILE_NAME
 
 // This target does not depend on bmalloc, whose build generates the availability overlay.
 WK_AVAILABILITY_OVERLAY_FLAGS = ;
+WK_AVAILABILITY_OVERLAY_SWIFT_FLAGS = ;
