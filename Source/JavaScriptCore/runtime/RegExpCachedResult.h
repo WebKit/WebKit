@@ -37,13 +37,10 @@ class RegExp;
 
 // RegExpCachedResult is used to track the cached results of the last
 // match, stores on the RegExp constructor (e.g. $&, $_, $1, $2 ...).
-// These values will be lazily generated on demand, so the cached result
-// may be in a lazy or reified state. A lazy state is indicated by a
-// value of m_result indicating a successful match, and a reified state
-// is indicated by setting m_result to MatchResult::failed().
-// Following a successful match, m_result, m_lastInput and m_lastRegExp
-// can be used to reify the results from the match, following reification
-// m_reifiedResult and m_reifiedInput hold the cached results.
+// Recording a match stores only m_lastRegExp, m_lastInput and m_result
+// (the JIT writes these fields directly). The matches array is built on
+// demand, which sets m_reified and fills m_reifiedResult and
+// m_reifiedInput. m_result describes the last match in both states.
 class RegExpCachedResult {
 public:
     inline void record(VM&, JSObject* owner, RegExp*, JSString* input, MatchResult, bool oneCharacterMatch);
@@ -51,6 +48,7 @@ public:
     JSArray* lastResult(JSGlobalObject*, JSObject* owner);
     void setInput(JSGlobalObject*, JSObject* owner, JSString*);
 
+    JSString* lastMatch(JSGlobalObject*, JSObject* owner);
     JSString* leftContext(JSGlobalObject*, JSObject* owner);
     JSString* rightContext(JSGlobalObject*, JSObject* owner);
 
@@ -72,6 +70,10 @@ public:
     MatchResult result() const { return m_result; }
 
 private:
+    bool hasLazyMatch() const { return !m_reified && m_lastRegExp; }
+    JSString* lastInputWithPreciseResult(JSGlobalObject*);
+    void makeResultPrecise(StringView input);
+
     MatchResult m_result { 0, 0 };
     bool m_reified { false };
     bool m_oneCharacterMatch { false };

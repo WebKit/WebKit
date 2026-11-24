@@ -20,8 +20,11 @@ const string = "a".repeat(2000) + "c";
 const regExp = new RegExp("(?:(?!(?:a|b)*d)a)*c" + "(x)?".repeat(1600));
 
 if (regExp.test(string)) {
-    for (const name of ["lastMatch", "lastParen", "$1", "leftContext", "rightContext"])
+    shouldBe(RegExp.lastMatch, string);
+    for (const name of ["lastParen", "$1"])
         shouldThrowRangeError(() => RegExp[name]);
+    shouldBe(RegExp.leftContext, "");
+    shouldBe(RegExp.rightContext, "");
     shouldThrowRangeError(() => { RegExp.input = "x"; });
     shouldBe(RegExp.input, string);
 }

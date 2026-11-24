@@ -46,6 +46,21 @@ void RegExpCachedResult::visitAggregateImpl(Visitor& visitor)
 
 DEFINE_VISIT_AGGREGATE(RegExpCachedResult);
 
+void RegExpCachedResult::makeResultPrecise(StringView input)
+{
+    ASSERT(m_oneCharacterMatch);
+    ASSERT(m_lastRegExp->hasValidAtom());
+    const String& pattern = m_lastRegExp->atom();
+    ASSERT(!pattern.isEmpty());
+    ASSERT(pattern.length() == 1);
+    size_t found = input.reverseFind(pattern.codeUnitAt(0));
+    if (found != notFound) {
+        m_result.start = found;
+        m_result.end = found + 1;
+    }
+    m_oneCharacterMatch = false;
+}
+
 JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* owner)
 {
     VM& vm = globalObject->vm();
@@ -62,19 +77,8 @@ JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* 
             auto input = string->view(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
 
-            if (m_oneCharacterMatch) {
-                ASSERT(m_lastRegExp->hasValidAtom());
-                const String& pattern = m_lastRegExp->atom();
-                ASSERT(!pattern.isEmpty());
-                ASSERT(pattern.length() == 1);
-                // Reify precise m_result.
-                size_t found = input->reverseFind(pattern.codeUnitAt(0));
-                if (found != notFound) {
-                    m_result.start = found;
-                    m_result.end = found + 1;
-                }
-                m_oneCharacterMatch = false;
-            }
+            if (m_oneCharacterMatch)
+                makeResultPrecise(input);
 
             MatchResult ignoreMatched;
             result = createRegExpMatchesArray(vm, globalObject, string, input, m_lastRegExp.get(), m_result.start, ignoreMatched);
@@ -97,11 +101,56 @@ JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* 
     return m_reifiedResult.get();
 }
 
-JSString* RegExpCachedResult::leftContext(JSGlobalObject* globalObject, JSObject* owner)
+JSString* RegExpCachedResult::lastInputWithPreciseResult(JSGlobalObject* globalObject)
 {
-    // Make sure we're reified.
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(hasLazyMatch());
+    ASSERT(m_result);
+    JSString* input = m_lastInput.get();
+    if (m_oneCharacterMatch) {
+        auto view = input->view(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        makeResultPrecise(view);
+    }
+    return input;
+}
+
+// The match itself and the contexts around it are substrings of the last input, so they do not
+// need the matches array, which would rerun the match to compute the captures.
+JSString* RegExpCachedResult::lastMatch(JSGlobalObject* globalObject, JSObject* owner)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (hasLazyMatch()) {
+        JSString* input = lastInputWithPreciseResult(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        RELEASE_AND_RETURN(scope, jsSubstring(globalObject, input, m_result.start, m_result.end - m_result.start));
+    }
+
+    JSArray* array = lastResult(globalObject, owner);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (array->length()) {
+        JSValue result = JSValue(array).get(globalObject, 0U);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        if (result.isString())
+            return asString(result);
+    }
+    return jsEmptyString(vm);
+}
+
+JSString* RegExpCachedResult::leftContext(JSGlobalObject* globalObject, JSObject* owner)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (hasLazyMatch()) {
+        JSString* input = lastInputWithPreciseResult(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        RELEASE_AND_RETURN(scope, jsSubstring(globalObject, input, 0, m_result.start));
+    }
 
     lastResult(globalObject, owner);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -116,9 +165,15 @@ JSString* RegExpCachedResult::leftContext(JSGlobalObject* globalObject, JSObject
 
 JSString* RegExpCachedResult::rightContext(JSGlobalObject* globalObject, JSObject* owner)
 {
-    // Make sure we're reified.
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (hasLazyMatch()) {
+        JSString* input = lastInputWithPreciseResult(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        unsigned length = input->length();
+        RELEASE_AND_RETURN(scope, jsSubstring(globalObject, input, m_result.end, length - m_result.end));
+    }
 
     lastResult(globalObject, owner);
     RETURN_IF_EXCEPTION(scope, nullptr);
