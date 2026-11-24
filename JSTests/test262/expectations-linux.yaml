@@ -19,6 +19,24 @@
 ---
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 3
+test/built-ins/DataView/prototype/byteLength/detached-buffer.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteLength/resizable-array-buffer-auto.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteLength/resizable-array-buffer-fixed.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteOffset/detached-buffer.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteOffset/resizable-array-buffer-auto.js:
+  default: 3
+  strict mode: 3
+test/built-ins/DataView/prototype/byteOffset/resizable-array-buffer-fixed.js:
+  default: 3
+  strict mode: 3
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 3
   strict mode: 3
@@ -52,16 +70,70 @@ test/built-ins/Proxy/construct/arguments-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 3
   strict mode: 3
+test/built-ins/Temporal/PlainMonthDay/from/iso-year-used-only-for-overflow.js:
+  default: 3
+  strict mode: 3
+test/built-ins/TypedArray/prototype/filter/BigInt/callbackfn-detachbuffer-kept-undefined.js:
+  default: 3
+  strict mode: 3
+test/built-ins/TypedArray/prototype/filter/BigInt/callbackfn-shrink-kept-undefined.js:
+  default: 3
+  strict mode: 3
 test/built-ins/TypedArray/prototype/slice/speciesctor-return-same-buffer-with-offset.js:
   default: 3
   strict mode: 3
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
   default: 3
   strict mode: 3
+test/intl402/Locale/constructor-options-firstDayOfWeek-valid.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/constructor-unicode-extension-uvalue-yes.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/calendar/canonicalize-case.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/collation/canonicalize-case.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/firstDayOfWeek/valid-id.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/firstDayOfWeek/valid-options.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getCollations/preferred-from-unicode-extension-true-empty.js:
+  default: 3
+  strict mode: 3
 test/intl402/Locale/prototype/getHourCycles/region-priority.js:
   default: 3
   strict mode: 3
 test/intl402/Locale/prototype/getHourCycles/subdivision-region.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getNumberingSystems/preferred-from-unicode-extension-true-empty.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/language-subtag-with-more-than-three-letters.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-metadata-rtl-is-unknown.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-metadata-unlisted-language-script-is-rtl.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-subtag-missing.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-subtag-present.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getTextInfo/script-unregistered-or-privateuse.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/numberingSystem/canonicalize-case.js:
   default: 3
   strict mode: 3
 test/intl402/Temporal/PlainDate/prototype/daysInYear/basic-chinese.js:

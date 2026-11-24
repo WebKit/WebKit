@@ -1226,3 +1226,5 @@ webkit.org/b/217938 [ arm64 ] http/wpt/service-workers/mac/throttleable.https.ht
 
 webkit.org/b/332136 [ x86_64 ] imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-extendablemessageevent.any.serviceworker.html [ Failure Pass ]
 webkit.org/b/332136 [ x86_64 ] imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-global.any.serviceworker.html [ Failure Pass ]
+
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-shape-table-part-background.html [ Pass ]
