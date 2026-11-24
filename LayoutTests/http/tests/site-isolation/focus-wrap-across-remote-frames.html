@@ -26,7 +26,7 @@ function waitForActiveElementTagName(expected) {
 </script>
 
 <body>
-<input type="text" id="outerInput" placeholder="Outer frame input">
+<button id="outerButton">Outer frame button</button>
 <iframe id="testIframe" src="http://localhost:8000/site-isolation/resources/focus-wrap-iframe.html"></iframe>
 
 <script>
@@ -36,10 +36,11 @@ async function runTest() {
 
     shouldBe("document.activeElement.tagName", "'BODY'");
 
-    // Focus the outer input.
-    document.getElementById('outerInput').focus();
-    shouldBe("document.activeElement.id", "'outerInput'");
-    testPassed("Outer input focused");
+    // Start from a button rather than a text input. On iPad, UIKit routes Tab from a single-line text input
+    // to its own focus engine instead of delivering it to the page, so the key would never reach WebKit.
+    document.getElementById('outerButton').focus();
+    shouldBe("document.activeElement.id", "'outerButton'");
+    testPassed("Outer button focused");
 
     // Tab into the cross-origin iframe.
     await UIHelper.keyDown("\t");
