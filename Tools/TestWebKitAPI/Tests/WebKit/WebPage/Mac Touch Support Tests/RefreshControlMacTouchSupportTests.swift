@@ -26,6 +26,7 @@
 import AppKit
 import Foundation
 @_spi(Testing) import WebKit
+import _WebKit_SwiftUI
 import SwiftUI
 import struct Swift.String
 import Testing

@@ -26,6 +26,7 @@
 import Foundation
 import struct Foundation.URL
 @_spi(Testing) import WebKit
+import _WebKit_SwiftUI
 import SwiftUI
 import struct Swift.String
 private import struct TestWebKitAPILibrary.DOMRect

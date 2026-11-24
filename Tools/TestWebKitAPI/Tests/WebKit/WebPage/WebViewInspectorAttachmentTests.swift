@@ -27,6 +27,7 @@ import AppKit
 import SwiftUI
 import Testing
 @_spi(CrossImportOverlay) import WebKit
+import _WebKit_SwiftUI
 import WebKit_Private.WKPreferencesPrivate
 import WebKit_Private.WKWebViewPrivate
 import WebKit_Private._WKInspector

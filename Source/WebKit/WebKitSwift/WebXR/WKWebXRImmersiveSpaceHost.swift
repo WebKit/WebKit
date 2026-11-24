@@ -34,8 +34,7 @@
 // the embedder owns the scene and the view controller that the session is presented from.
 //
 // WebKit reaches this class through WebKitSwiftSoftLink.h. It cannot be built into WebKit.framework:
-// importing SwiftUI and CompositorServices together links the _CompositorServices_SwiftUI overlay,
-// which depends on WebKit itself.
+// it uses the _CompositorServices_SwiftUI overlay, which depends on WebKit itself.
 
 #if ENABLE_WEBXR && WTF_PLATFORM_MAC
 
@@ -44,6 +43,8 @@ import ARKit
 import CompositorServices
 import Metal
 import SwiftUI
+import _ARKit_SwiftUI
+import _CompositorServices_SwiftUI
 import os
 
 @objc
