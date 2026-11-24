@@ -51,6 +51,7 @@ ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSessio
     : m_session(session)
     , m_parameters(WTF::move(parameters))
     , m_state(state)
+    , m_requestIncludesCredentials(m_parameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use ? IncludesCredentials::Yes : IncludesCredentials::No)
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
     , m_startTime(MonotonicTime::now())
 {
@@ -183,6 +184,7 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
 
     m_response = WTF::move(response);
     m_response.setRedirected(false);
+    m_response.setRequestIncludesCredentials(m_requestIncludesCredentials);
     m_responseCompletionHandler = WTF::move(completionHandler);
 
     if (auto callback = std::exchange(m_responseCallback, { }))

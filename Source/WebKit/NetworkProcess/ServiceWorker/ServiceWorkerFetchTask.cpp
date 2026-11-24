@@ -30,6 +30,7 @@
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkLoad.h"
+#include "NetworkLoadChecker.h"
 #include "NetworkOriginAccessPatterns.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
@@ -141,6 +142,12 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
     if (canUsePreloader && (m_shouldRaceNetworkAndFetchHandler || !isWorkerReady || registration.navigationPreloadState().enabled)) {
         NetworkLoadParameters parameters = loader.parameters().networkLoadParameters();
         parameters.request = m_currentRequest;
+        if (RefPtr networkLoadChecker = loader.networkLoadChecker()) {
+            if (parameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use)
+                parameters.storedCredentialsPolicy = networkLoadChecker->storedCredentialsPolicy();
+            if (!networkLoadChecker->crossOriginEmbedderPolicyAllowsCredentials())
+                parameters.request.setAllowCookies(false);
+        }
         m_preloader = ServiceWorkerNavigationPreloader::create(*session, WTF::move(parameters), registration.navigationPreloadState(), loader.shouldCaptureExtraNetworkLoadMetrics());
         session->addNavigationPreloaderTask(*this);
 
