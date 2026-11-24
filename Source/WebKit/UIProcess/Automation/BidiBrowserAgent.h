@@ -57,6 +57,7 @@ public:
 
     bool isValidUserContext(const String& userContextID) const;
     String userContextForPage(const WebPageProxy&) const;
+    RefPtr<WebsiteDataStore> dataStoreForUserContext(const String& userContextID) const;
 
 private:
     struct BidiUserContextDeletionRecord;
