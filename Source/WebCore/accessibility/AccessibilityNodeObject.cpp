@@ -920,7 +920,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
         return false;
 
     // Alternative text replaces the generated content as a whole, so the content itself isn't exposed.
-    if (!altTextFromStyle().isNull())
+    if (!altTextFromPseudoStyle().isNull())
         return false;
 
     if (CheckedPtr renderer = this->renderer(); renderer && renderer->isOutsideListMarker())
@@ -3304,17 +3304,13 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
     if (!labelAttribute.isEmpty())
         return labelAttribute;
 
-    labelAttribute = getAttribute(altAttr);
-    if (!labelAttribute.isEmpty())
-        return labelAttribute;
+    // Check null: empty alt represents a deliberate text alternative.
+    const auto& altAttribute = getAttribute(altAttr);
+    if (!altAttribute.isNull() && usesAltForTextComputation())
+        return altAttribute;
 
-    labelAttribute = getAttribute(titleAttr);
-    if (!labelAttribute.isEmpty())
-        return labelAttribute;
-
-    // The alt text of 'content' stands in for this element's content, so it ranks with the content
-    // (below the attributes above), and replaces the children it hides.
-    if (auto contentAlt = altTextFromContent(); !contentAlt.isEmpty())
+    // The 'content' property replaces children.
+    if (auto contentAlt = altTextFromContentStyle(); !contentAlt.isNull())
         return contentAlt;
 
     if (isNativeLabel()) {
@@ -3354,7 +3350,13 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
     String text = this->text();
     if (!text.isEmpty())
         return text;
-    return textUnderElement();
+
+    text = textUnderElement();
+    if (!text.isEmpty())
+        return text;
+
+    // Last resort, used only when there is no other text.
+    return getAttribute(titleAttr);
 }
 
 String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& labelElements, DescendIntoContainers descendIntoContainers) const
@@ -3564,8 +3566,8 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
 
     // An element replaced by a 'content' image is described by that image's alt text, whatever its role.
     if (CheckedPtr image = dynamicDowncast<RenderImage>(renderer()); image && image->isGeneratedContent()) {
-        if (String altText = image->altText(); !altText.isEmpty())
-            textOrder.append(AccessibilityText(WTF::move(altText), AccessibilityTextSource::Alternative));
+        if (String alt = altText(); !alt.isNull())
+            textOrder.append(AccessibilityText(WTF::move(alt), AccessibilityTextSource::Alternative));
     }
 }
 

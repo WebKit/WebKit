@@ -1102,15 +1102,18 @@ void RenderImage::updateAltText()
     if (!element())
         return;
 
+    m_altText = nullString();
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element()))
         m_altText = input->altText();
     else if (RefPtr image = dynamicDowncast<HTMLImageElement>(*element()))
-        m_altText = image->altText();
+        m_altText = image->attributeWithoutSynchronization(altAttr);
+
+    if (m_altText.isNull())
+        m_altText = style().content().altText();
 
     if (m_altText.isNull()) {
-        // We check isNull() and not isEmpty() because we don't want to override empty-string
-        // alt text provided by either of the above branches.
-        m_altText = style().content().altText();
+        if (RefPtr image = dynamicDowncast<HTMLImageElement>(*element()))
+            m_altText = image->attributeWithoutSynchronization(titleAttr);
     }
 }
 

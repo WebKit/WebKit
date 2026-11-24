@@ -178,7 +178,19 @@ replacedLabelInput
 AXTitle: ALT LABEL
 
 replacedLabelTitledInput
-AXTitle: LABEL TITLE
+AXTitle: ALT LABEL TITLED
+
+replacedLabelEmptyAltInput
+AXTitle:
+
+titledLabelInput
+AXTitle: TITLE LABEL TEXT
+
+titledEmptyLabelInput
+AXTitle: EMPTY LABEL TITLE
+
+altOnLabelInput
+AXTitle: ALT ON LABEL TEXT
 
 Elements replaced by a content image
 replacedFocusable children: 0
@@ -216,6 +228,33 @@ AXRole: AXImageMap
 
 replacedOverlay has children: true
 AXRole: AXImage
+
+replacedImgTitleAlt
+AXDescription: ALT IMG TITLE
+AXHelp: TIP ALT
+
+replacedImgTitleNoAlt
+AXDescription: TIP NO ALT
+AXHelp:
+
+replacedImgAttrAlt
+AXDescription: ALT IMG ATTRIBUTE
+AXHelp: TIP ATTR
+
+replacedDivTitleAlt
+AXDescription: ALT DIV TITLE
+AXHelp: TIP DIV ALT
+
+replacedDivTitleNoAlt
+AXDescription: TIP DIV NO ALT
+AXHelp:
+
+replacedDivTitleEmptyAlt
+not exposed
+
+replacedButtonTitleEmptyAlt
+AXDescription:
+AXHelp: TIP BUTTON EMPTY ALT
 
 Unused content alt text
 unusedContentAlt children: 0

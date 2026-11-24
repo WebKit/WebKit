@@ -407,7 +407,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
         return RenderListItem::markerText(protect(*m_renderer));
     }
 
-    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+    if (auto contentAlt = altTextFromPseudoStyle(); !contentAlt.isNull())
         return contentAlt;
 
     if (CheckedPtr fileUpload = dynamicDowncast<RenderFileUploadControl>(*m_renderer))
@@ -529,7 +529,7 @@ String AccessibilityRenderObject::stringValue() const
 
     bool isStaticText = this->isStaticText();
     if (isStaticText) {
-        if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+        if (auto contentAlt = altTextFromPseudoStyle(); !contentAlt.isNull())
             return contentAlt;
 
         if (node()) {
@@ -1118,7 +1118,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         return true;
 
     // The alt text may be set on generated content through CSS, which should be honored.
-    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+    if (auto contentAlt = altTextFromPseudoStyle(); !contentAlt.isNull())
         return objectInclusionFromAltText(contentAlt) == AccessibilityObjectInclusion::IgnoreObject;
 
     // A marker is exposed as the marker of its list item, and only when that is what its parent is.
@@ -2585,7 +2585,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (roleFromNode != AccessibilityRole::Unknown)
         return roleFromNode;
 
-    if (!altTextFromStyle().isNull()) {
+    if (!altTextFromPseudoStyle().isNull()) {
         // FIXME: Generated content made only of images is exposed as an image, and other generated content as text.
         // Should all generated content with alternative text be exposed as text?
         return generatedContentIsOnlyImages(m_renderer->style()) ? AccessibilityRole::Image : AccessibilityRole::StaticText;

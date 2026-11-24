@@ -423,9 +423,8 @@ public:
     String description() const override { return { }; }
     virtual String helpText() const { return { }; }
     String altText() const;
-    String altTextFromContent() const;
-    // Only for pseudo-element boxes, whose alt text replaces their generated content as a whole. Empty marks it as decorative.
-    String altTextFromStyle() const;
+    String altTextFromContentStyle() const;
+    String altTextFromPseudoStyle() const;
 
     std::optional<String> textContent() const final;
     bool hasTextContent() const;

@@ -448,12 +448,15 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     switch (name.nodeName()) {
     case AttributeNames::altAttr:
-        if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer()))
-            renderImage->updateAltText();
         if (isInSelectOrDataListSubtree()) {
+            // alt feeds into option labels, so update them.
             if (RefPtr parent = parentElement())
                 parent->notifyDescendantsChanged();
         }
+        [[fallthrough]];
+    case AttributeNames::titleAttr:
+        if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer()))
+            renderImage->updateAltText();
         break;
     case AttributeNames::srcAttr:
     case AttributeNames::srcsetAttr:

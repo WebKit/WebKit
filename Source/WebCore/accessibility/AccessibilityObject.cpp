@@ -1458,21 +1458,19 @@ String AccessibilityObject::altText() const
         return alt;
     }
 
-    return altTextFromContent();
+    return altTextFromContentStyle();
 }
 
-// Alternative text from 'content' only applies where that content is used: a pseudo-element's
-// generated content, or an element replaced by a 'content' image.
-String AccessibilityObject::altTextFromContent() const
+String AccessibilityObject::altTextFromContentStyle() const
 {
-    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+    if (auto contentAlt = altTextFromPseudoStyle(); !contentAlt.isNull())
         return contentAlt;
     if (CheckedPtr image = dynamicDowncast<RenderImage>(renderer()); image && image->isGeneratedContent())
-        return image->altText();
+        return image->style().content().altText();
     return nullString();
 }
 
-String AccessibilityObject::altTextFromStyle() const
+String AccessibilityObject::altTextFromPseudoStyle() const
 {
     CheckedPtr renderer = dynamicDowncast<RenderElement>(this->renderer());
     if (!renderer || !renderer->style().pseudoElementType())
