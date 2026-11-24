@@ -98,7 +98,7 @@ public:
     OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
     Update takePendingUpdate();
 #else
-    std::optional<Update> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
+    std::optional<Update> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
 #endif
 
     void waitUntilPaintingFinished();
@@ -163,10 +163,14 @@ private:
     CoordinatedBackingStoreProxy() = default;
 
     void invalidateRegion(const Vector<IntRect, 1>&);
+#if USE(TEXTURE_MAPPER)
     void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage&, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
-    IntSize computeTileSize(const IntSize& viewportSize, int maxTextureSize) const;
     std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;
     void adjustForContentsRect(IntRect&) const;
+#else
+    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage&, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
+#endif
+    IntSize computeTileSize(const IntSize& viewportSize, int maxTextureSize) const;
 
     IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;
@@ -176,7 +180,9 @@ private:
 
     float m_contentsScale { 1 };
     IntSize m_tileSize;
+#if USE(TEXTURE_MAPPER)
     float m_coverAreaMultiplier { 2 };
+#endif
 #if USE(CAIRO)
     bool m_pendingTileCreation { false };
 #endif

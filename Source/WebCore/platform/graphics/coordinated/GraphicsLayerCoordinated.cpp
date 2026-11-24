@@ -44,7 +44,9 @@
 #include "GraphicsLayerKeyframeValueList.h"
 #include "MediaPlayer.h"
 #include "NativeImage.h"
+#include "TiledBacking.h"
 #include <wtf/Locker.h>
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 
@@ -762,6 +764,18 @@ Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCoordinated::
     return animations;
 }
 
+#if !USE(TEXTURE_MAPPER)
+void GraphicsLayerCoordinated::setTileCoverage(TileCoverage tileCoverage)
+{
+    if (m_tileCoverage && *m_tileCoverage == tileCoverage)
+        return;
+
+    GraphicsLayer::setTileCoverage(tileCoverage);
+    m_tileCoverage = tileCoverage;
+    noteLayerPropertyChanged(Change::TileCoverage, ScheduleFlush::Yes);
+}
+#endif
+
 void GraphicsLayerCoordinated::setShowDebugBorder(bool showDebugBorder)
 {
     if (m_showDebugBorder == showDebugBorder)
@@ -852,6 +866,7 @@ void GraphicsLayerCoordinated::flushCompositingState(const FloatRect& visibleRec
 {
     CommitState commitState;
     commitState.visibleRect = visibleRect;
+    commitState.coverageRect = visibleRect;
     if (m_visibleRect != visibleRect) {
         m_visibleRect = visibleRect;
         commitState.ancestorHadChanges = true;
@@ -995,6 +1010,38 @@ void GraphicsLayerCoordinated::computeLayerTransformIfNeeded(bool affectedByTran
     m_platformLayer->didUpdateLayerTransform();
 }
 
+#if !USE(TEXTURE_MAPPER)
+FloatRect GraphicsLayerCoordinated::computeCoverageRect(const FloatRect& rootVisibleRect, const FloatRect& inheritedCoverageRect, TileCoverage tileCoverage) const
+{
+    if (tileCoverage == TiledBacking::CoverageForVisibleArea || MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return inheritedCoverageRect;
+
+    FloatRect bounds { { }, m_size };
+    FloatRect visibleRect = m_layerTransform.cachedInverse->clampedBoundsOfProjectedQuad(FloatQuad(rootVisibleRect));
+    clampToSizeIfRectIsInfinite(visibleRect, m_size);
+    if (!visibleRect.intersects(bounds))
+        return inheritedCoverageRect;
+
+    FloatRect coverageRect = visibleRect;
+    if (tileCoverage & TiledBacking::CoverageForHorizontalScrolling)
+        coverageRect.inflateX(visibleRect.width() / 2);
+    if (tileCoverage & TiledBacking::CoverageForVerticalScrolling)
+        coverageRect.inflateY(visibleRect.height() / 2);
+
+    if (coverageRect.x() < bounds.x())
+        coverageRect.setX(bounds.x());
+    else if (coverageRect.maxX() > bounds.maxX())
+        coverageRect.setX(bounds.maxX() - coverageRect.width());
+    if (coverageRect.y() < bounds.y())
+        coverageRect.setY(bounds.y());
+    else if (coverageRect.maxY() > bounds.maxY())
+        coverageRect.setY(bounds.maxY() - coverageRect.height());
+    coverageRect.intersect(bounds);
+
+    return unionRect(inheritedCoverageRect, m_layerTransform.current.combined().mapRect(coverageRect));
+}
+#endif
+
 void GraphicsLayerCoordinated::clampToSizeIfRectIsInfinite(FloatRect& rect, const FloatSize& contentsSize)
 {
     if (rect.width() >= LayoutUnit::nearlyMax() || rect.width() <= LayoutUnit::nearlyMin()) {
@@ -1008,33 +1055,46 @@ void GraphicsLayerCoordinated::clampToSizeIfRectIsInfinite(FloatRect& rect, cons
     }
 }
 
-void GraphicsLayerCoordinated::updateVisibleRect(const FloatRect& rect)
+void GraphicsLayerCoordinated::updateVisibleAndCoverageRects(const FloatRect& visibleRect, const FloatRect& coverageRect)
 {
     assertIsMainThread();
 #if USE(TEXTURE_MAPPER)
     assertIsHeld(m_platformLayer->lock());
 #endif
-    m_platformLayer->setVisibleRect(rect);
+    m_platformLayer->setVisibleRect(visibleRect);
 
     // Non-invertible layers are not visible.
     if (!m_layerTransform.cachedInverse) {
+#if USE(TEXTURE_MAPPER)
         m_platformLayer->setTransformedVisibleRect({ });
+#else
+        m_platformLayer->setTransformedVisibleAndCoverageRects({ }, { });
+#endif
         return;
     }
 
     // Return a projection of the rect (surface coordinates) onto the layer's plane (layer coordinates).
     // The resulting quad might be squewed and the result is the bounding box of this quad,
-    // so it might spread further than the real visible area (and then even more amplified by the cover rect multiplier).
+    // so it might spread further than the real visible area.
     ASSERT(m_layerTransform.cachedInverse == m_layerTransform.current.combined().inverse());
-    auto transformedRect = [&](const TransformationMatrix& matrix) -> IntRect {
-        FloatRect result = matrix.clampedBoundsOfProjectedQuad(FloatQuad(rect));
-        clampToSizeIfRectIsInfinite(result, m_size);
-        return enclosingIntRect(result);
+    auto projectRect = [&](const FloatRect& rect) -> IntRect {
+        auto transformedRect = [&](const TransformationMatrix& matrix) -> IntRect {
+            FloatRect result = matrix.clampedBoundsOfProjectedQuad(FloatQuad(rect));
+            clampToSizeIfRectIsInfinite(result, m_size);
+            return enclosingIntRect(result);
+        };
+        auto result = transformedRect(*m_layerTransform.cachedInverse);
+        if (m_layerTransform.cachedFutureInverse && m_layerTransform.cachedInverse != m_layerTransform.cachedFutureInverse)
+            result.unite(transformedRect(*m_layerTransform.cachedFutureInverse));
+        return result;
     };
-    auto visibleRect = transformedRect(*m_layerTransform.cachedInverse);
-    if (m_layerTransform.cachedFutureInverse && m_layerTransform.cachedInverse != m_layerTransform.cachedFutureInverse)
-        visibleRect.unite(transformedRect(*m_layerTransform.cachedFutureInverse));
-    m_platformLayer->setTransformedVisibleRect(WTF::move(visibleRect));
+
+#if USE(TEXTURE_MAPPER)
+    m_platformLayer->setTransformedVisibleRect(projectRect(visibleRect));
+    UNUSED_PARAM(coverageRect);
+#else
+    m_platformLayer->setTransformedVisibleAndCoverageRects(projectRect(visibleRect), projectRect(coverageRect));
+#endif
 }
 
 #if USE(TEXTURE_MAPPER)
@@ -1209,7 +1269,11 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
 
 
     computeLayerTransformIfNeeded(affectedByTransformAnimation);
-    updateVisibleRect(commitState.visibleRect);
+#if !USE(TEXTURE_MAPPER)
+    if (m_tileCoverage && m_layerTransform.cachedInverse)
+        commitState.coverageRect = computeCoverageRect(commitState.visibleRect, commitState.coverageRect, *m_tileCoverage);
+#endif
+    updateVisibleAndCoverageRects(commitState.visibleRect, commitState.coverageRect);
 
     if (m_pendingChanges.contains(Change::DrawsContent))
         m_platformLayer->setDrawsContent(m_drawsContent);

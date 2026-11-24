@@ -560,11 +560,8 @@ static TiledBacking::TileCoverage computeOverflowTiledBackingCoverage(const Rend
 void RenderLayerBacking::adjustTiledBackingCoverage()
 {
     CheckedRef owningLayer = m_owningLayer;
-    if (m_isFrameLayerWithTiledBacking) {
-        auto tileCoverage = computePageTiledBackingCoverage(owningLayer);
-        if (CheckedPtr tiledBacking = this->tiledBacking())
-            tiledBacking->setTileCoverage(tileCoverage);
-    }
+    if (m_isFrameLayerWithTiledBacking)
+        protect(m_graphicsLayer)->setTileCoverage(computePageTiledBackingCoverage(owningLayer));
 
     if (owningLayer->hasCompositedScrollableOverflow() && m_scrolledContentsLayer) {
         auto tileCoverage = computeOverflowTiledBackingCoverage(owningLayer);

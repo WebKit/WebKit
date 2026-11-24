@@ -144,7 +144,11 @@ public:
     void didUpdateLayerTransform();
 
     void setVisibleRect(const FloatRect&);
+#if USE(TEXTURE_MAPPER)
     void setTransformedVisibleRect(IntRect&&);
+#else
+    void setTransformedVisibleAndCoverageRects(const IntRect&, const IntRect&);
+#endif
 
 #if ENABLE(SCROLLING_THREAD)
     void setScrollingNodeID(std::optional<ScrollingNodeID>) WTF_REQUIRES_LOCK(m_lock);
@@ -404,6 +408,7 @@ private:
     IntRect m_transformedVisibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
     Vector<IntRect, 1> m_dirtyRegion WTF_GUARDED_BY_CAPABILITY(mainThread);
 #if !USE(TEXTURE_MAPPER)
+    IntRect m_transformedCoverageRect WTF_GUARDED_BY_CAPABILITY(mainThread);
     EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_CAPABILITY(mainThread);
     TransformationMatrix m_childrenTransform WTF_GUARDED_BY_CAPABILITY(mainThread);
     bool m_preserves3D WTF_GUARDED_BY_CAPABILITY(mainThread) { false };

@@ -155,14 +155,14 @@ void CoordinatedBackingStoreProxy::setAffectedByTransformAnimation(bool affected
     }
 }
 
-std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
+std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
 {
     assertIsMainThread();
     ASSERT(layer.owner());
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
-        createOrDestroyTiles(layer, unscaledVisibleRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
+        createOrDestroyTiles(layer, unscaledVisibleRect, unscaledCoverageRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
 
     if (m_animatedBackingStoreClient)
         m_animatedBackingStoreClient->update(layer.owner(), unscaledViewportRect, m_coverRect, unscaledSize, contentsScale);
@@ -299,16 +299,17 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
     }
 }
 
-void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage& damage, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
+void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage& damage, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
 {
-    float coverAreaMultiplier = MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 1.0f : 2.0f;
     bool contentsScaleChanged = m_contentsScale != contentsScale;
     m_contentsScale = contentsScale;
 
     IntRect contentsRect = mapFromContents(unscaledContentsRect);
     IntRect visibleRect = mapFromContents(unscaledVisibleRect);
+    IntRect coverRect = unionRect(visibleRect, mapFromContents(unscaledCoverageRect));
+    coverRect.intersect(contentsRect);
     bool contentsRectChanged = contentsScaleChanged || m_contentsRect != contentsRect;
-    bool geometryChanged = contentsRectChanged || m_visibleRect != visibleRect || m_coverAreaMultiplier != coverAreaMultiplier;
+    bool geometryChanged = contentsRectChanged || m_visibleRect != visibleRect || m_coverRect != coverRect;
     if (!geometryChanged)
         return;
 
@@ -320,7 +321,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
     if (geometryChanged) {
         m_contentsRect = contentsRect;
         m_visibleRect = visibleRect;
-        m_coverAreaMultiplier = coverAreaMultiplier;
+        m_coverRect = coverRect;
 
         bool tileSizeChanged = false;
         if (!m_contentsRect.isEmpty()) {
@@ -330,7 +331,6 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
         }
 
         if (tileSizeChanged || contentsScaleChanged || m_contentsRect.isEmpty()) {
-            m_coverRect = { };
             m_keepRect = { };
             if (!m_tiles.isEmpty()) {
                 for (auto& tile : m_tiles.values())
@@ -343,30 +343,11 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
         }
     }
 
-    /* We must compute cover and keep rects using the visibleRect, instead of the rect intersecting the visibleRect with m_contentsRect,
-     * because TBS can be used as a backing store of GraphicsLayer and the visible rect usually does not intersect with m_contentsRect.
-     * In the below case, the intersecting rect is an empty.
-     *
-     *  +----------------+
-     *  |                |
-     *  | m_contentsRect |
-     *  |       +--------|----------------------+
-     *  |       | HERE   |  cover or keep       |
-     *  +----------------+      rect            |
-     *          |         +---------+           |
-     *          |         | visible |           |
-     *          |         |  rect   |           |
-     *          |         +---------+           |
-     *          |                               |
-     *          |                               |
-     *          +-------------------------------+
-     *
-     * We must create or keep the tiles in the HERE region.
-     */
-
-    auto [coverRect, keepRect] = computeCoverAndKeepRect();
-    m_coverRect = WTF::move(coverRect);
-    m_keepRect = WTF::move(keepRect);
+    // The keep rect is an inflated version of the cover rect, inflated in tile dimensions.
+    m_keepRect = m_coverRect;
+    m_keepRect.inflateX(m_tileSize.width() / 2);
+    m_keepRect.inflateY(m_tileSize.height() / 2);
+    m_keepRect.intersect(m_contentsRect);
 
     // Drop tiles outside the new keepRect.
     m_tiles.removeIf([&](auto& iter) {
@@ -495,49 +476,6 @@ IntSize CoordinatedBackingStoreProxy::computeTileSize(const IntSize& viewportSiz
         tileSize.clampToMaximumSize({ maxTextureSize, maxTextureSize });
 
     return tileSize;
-}
-
-void CoordinatedBackingStoreProxy::adjustForContentsRect(IntRect& rect) const
-{
-    if (m_visibleRect.intersects(m_contentsRect)) {
-        if (rect.x() < m_contentsRect.x())
-            rect.setX(m_contentsRect.x());
-        else if (rect.maxX() > m_contentsRect.maxX())
-            rect.setX(m_contentsRect.maxX() - rect.width());
-
-        if (rect.y() < m_contentsRect.y())
-            rect.setY(m_contentsRect.y());
-        else if (rect.maxY() > m_contentsRect.maxY())
-            rect.setY(m_contentsRect.maxY() - rect.height());
-    }
-
-    rect.intersect(m_contentsRect);
-}
-
-std::pair<IntRect, IntRect> CoordinatedBackingStoreProxy::computeCoverAndKeepRect() const
-{
-    IntRect coverRect = m_visibleRect;
-    IntRect keepRect = m_visibleRect;
-
-    // If we cover more that the actual viewport we can be smart about which tiles we choose to render.
-    if (m_coverAreaMultiplier > 1) {
-        // The initial cover area covers equally in each direction, according to the coverAreaMultiplier.
-        coverRect.inflateX(m_visibleRect.width() * (m_coverAreaMultiplier - 1) / 2);
-        coverRect.inflateY(m_visibleRect.height() * (m_coverAreaMultiplier - 1) / 2);
-        keepRect = coverRect;
-        ASSERT(keepRect.contains(coverRect));
-    }
-
-    adjustForContentsRect(coverRect);
-
-    // The keep rect is an inflated version of the cover rect, inflated in tile dimensions.
-    keepRect.unite(coverRect);
-    keepRect.inflateX(m_tileSize.width() / 2);
-    keepRect.inflateY(m_tileSize.height() / 2);
-    keepRect.intersect(m_contentsRect);
-
-    ASSERT(coverRect.isEmpty() || keepRect.contains(coverRect));
-    return { WTF::move(coverRect), WTF::move(keepRect) };
 }
 
 IntRect CoordinatedBackingStoreProxy::mapToContents(const IntRect& rect) const

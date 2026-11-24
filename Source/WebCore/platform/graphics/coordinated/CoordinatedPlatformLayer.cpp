@@ -325,13 +325,14 @@ void CoordinatedPlatformLayer::setVisibleRect(const FloatRect& visibleRect)
     m_visibleRect = visibleRect;
 }
 
-void CoordinatedPlatformLayer::setTransformedVisibleRect(IntRect&& transformedVisibleRect)
+void CoordinatedPlatformLayer::setTransformedVisibleAndCoverageRects(const IntRect& transformedVisibleRect, const IntRect& transformedCoverageRect)
 {
     assertIsMainThread();
-    if (m_transformedVisibleRect == transformedVisibleRect)
+    if (m_transformedVisibleRect == transformedVisibleRect && m_transformedCoverageRect == transformedCoverageRect)
         return;
 
-    m_transformedVisibleRect = WTF::move(transformedVisibleRect);
+    m_transformedVisibleRect = transformedVisibleRect;
+    m_transformedCoverageRect = transformedCoverageRect;
     m_needsTilesUpdate = true;
 }
 
@@ -892,7 +893,7 @@ void CoordinatedPlatformLayer::updateBackingStore()
 
     Damage damage(sizeOnMainThread(), Damage::Mode::Rectangles);
     bool shouldCreateDestroyTiles = m_needsTilesUpdate;
-    auto tilesUpdate = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, sizeOnMainThread(), m_visibleRect, m_contentsScale, m_contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, damage, *this);
+    auto tilesUpdate = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, m_transformedCoverageRect, sizeOnMainThread(), m_visibleRect, m_contentsScale, m_contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, damage, *this);
     m_dirtyRegion.clear();
     m_needsTilesUpdate = false;
 
