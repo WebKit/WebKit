@@ -811,6 +811,8 @@ NODELETE static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return sqrtThunkGenerator;
     case AbsIntrinsic:
         return absThunkGenerator;
+    case SignIntrinsic:
+        return signThunkGenerator;
     case FloorIntrinsic:
         return floorThunkGenerator;
     case CeilIntrinsic:

@@ -4791,6 +4791,60 @@ void SpeculativeJIT::compileArithAdd(Node* node)
     }
 }
 
+void SpeculativeJIT::compileArithSign(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case Int32Use: {
+        SpeculateStrictInt32Operand op1(this, node->child1());
+        GPRTemporary result(this);
+        GPRTemporary scratch(this, Reuse, op1);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+
+        rshift32(op1GPR, TrustedImm32(31), resultGPR);
+        neg32(op1GPR, scratchGPR);
+        urshift32(TrustedImm32(31), scratchGPR);
+        or32(scratchGPR, resultGPR);
+        strictInt32Result(resultGPR, node);
+        break;
+    }
+
+    case DoubleRepUse: {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRTemporary result(this, op1);
+        FPRTemporary zero(this);
+        FPRReg op1FPR = op1.fpr();
+        FPRReg resultFPR = result.fpr();
+        FPRReg zeroFPR = zero.fpr();
+
+        moveZeroToDouble(zeroFPR);
+        moveDouble(op1FPR, resultFPR);
+        Jump notPositive = branchDouble(DoubleLessThanOrEqualOrUnordered, op1FPR, zeroFPR);
+        move64ToDouble(TrustedImm64(std::bit_cast<int64_t>(1.0)), resultFPR);
+        Jump done = jump();
+        notPositive.link(this);
+        Jump notNegative = branchDouble(DoubleGreaterThanOrEqualOrUnordered, op1FPR, zeroFPR);
+        move64ToDouble(TrustedImm64(std::bit_cast<int64_t>(-1.0)), resultFPR);
+        notNegative.link(this);
+        done.link(this);
+        doubleResult(resultFPR, node);
+        break;
+    }
+
+    default: {
+        DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
+        JSValueOperand op1(this, node->child1());
+        GPRReg op1GPR = op1.gpr();
+        flushRegisters();
+        FPRResult result(this);
+        callOperation(operationArithSign, result.fpr(), LinkableConstant::globalObject(*this, node), op1GPR);
+        doubleResult(result.fpr(), node);
+        break;
+    }
+    }
+}
+
 void SpeculativeJIT::compileArithAbs(Node* node)
 {
     switch (node->child1().useKind()) {

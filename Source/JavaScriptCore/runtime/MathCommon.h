@@ -362,5 +362,16 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundDouble, double, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(jsRoundDouble, double, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundFloat, float, (float));
 
+inline double mathSign(double value)
+{
+    if (value > 0)
+        return 1;
+    if (value < 0)
+        return -1;
+    if (std::isnan(value))
+        return PNaN;
+    return value;
+}
+
 } // namespace Math
 } // namespace JSC

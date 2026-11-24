@@ -914,6 +914,7 @@ bool LoopUnrollingPhase::LoopData::isNumericComputationNode(Node* node)
     case ArithDiv:
     case ArithMod:
     case ArithAbs:
+    case ArithSign:
     case ArithMin:
     case ArithMax:
     case ArithFRound:

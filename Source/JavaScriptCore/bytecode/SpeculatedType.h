@@ -581,6 +581,7 @@ NODELETE SpeculatedType typeOfDoubleQuotient(SpeculatedType, SpeculatedType);
 NODELETE SpeculatedType typeOfDoubleMinMax(SpeculatedType, SpeculatedType);
 NODELETE SpeculatedType typeOfDoubleNegation(SpeculatedType);
 NODELETE SpeculatedType typeOfDoubleAbs(SpeculatedType);
+NODELETE SpeculatedType typeOfDoubleSign(SpeculatedType);
 NODELETE SpeculatedType typeOfDoubleRounding(SpeculatedType);
 NODELETE SpeculatedType typeOfDoublePow(SpeculatedType, SpeculatedType);
 

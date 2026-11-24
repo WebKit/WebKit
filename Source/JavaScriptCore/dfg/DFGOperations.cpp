@@ -701,6 +701,18 @@ JSC_DEFINE_JIT_OPERATION(operationValuePow, EncodedJSValue, (JSGlobalObject* glo
     OPERATION_RETURN(scope, JSValue::encode(jsPow(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2))));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationArithSign, double, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double number = JSValue::decode(encodedOp1).toNumber(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, PNaN);
+    OPERATION_RETURN(scope, Math::mathSign(number));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationArithAbs, double, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1))
 {
     VM& vm = globalObject->vm();

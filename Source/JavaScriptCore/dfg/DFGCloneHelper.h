@@ -154,6 +154,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, NOESCAPE const Cust
     CLONE_STATUS(ArithPow, Common) \
     CLONE_STATUS(ArithRandom, Common) \
     CLONE_STATUS(ArithRound, Common) \
+    CLONE_STATUS(ArithSign, Common) \
     CLONE_STATUS(ArithSqrt, Common) \
     CLONE_STATUS(ArithSub, Common) \
     CLONE_STATUS(ArithTrunc, Common) \

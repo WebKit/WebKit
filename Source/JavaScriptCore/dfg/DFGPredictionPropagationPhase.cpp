@@ -537,6 +537,17 @@ private:
             break;
         }
 
+        case ArithSign: {
+            SpeculatedType childPrediction = node->child1()->prediction();
+            if (childPrediction) {
+                if (isInt32OrBooleanSpeculation(childPrediction))
+                    changed |= mergePrediction(SpecInt32Only);
+                else
+                    changed |= mergePrediction(speculatedDoubleTypeForPrediction(childPrediction));
+            }
+            break;
+        }
+
         case ArithAbs: {
             SpeculatedType childPrediction = node->child1()->prediction();
             if (isInt32OrBooleanSpeculation(childPrediction)
@@ -862,7 +873,14 @@ private:
                 
             m_graph.voteNode(node->child1(), ballot, weight);
             break;
-                
+
+        case ArithSign:
+            if (node->child1()->shouldSpeculateNumber() && !node->child1()->shouldSpeculateInt32OrBoolean())
+                m_graph.voteNode(node->child1(), VoteDouble, weight);
+            else
+                m_graph.voteNode(node->child1(), VoteValue, weight);
+            break;
+
         case ArithSqrt:
         case ArithUnary:
             if (node->child1()->shouldSpeculateNumber())
@@ -1628,6 +1646,7 @@ private:
         case ArithDiv:
         case ArithMod:
         case ArithAbs:
+        case ArithSign:
         case GetByVal:
         case MultiGetByVal:
         case ToThis:

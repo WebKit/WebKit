@@ -701,6 +701,23 @@ private:
             break;
         }
             
+        case ArithSign: {
+            if (node->child1()->shouldSpeculateInt32OrBoolean()) {
+                fixIntOrBooleanEdge(node->child1());
+                node->setResult(NodeResultInt32);
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
+                fixDoubleOrBooleanEdge(node->child1());
+                node->clearFlags(NodeMustGenerate);
+            } else
+                fixEdge<UntypedUse>(node->child1());
+            node->setResult(NodeResultDouble);
+            break;
+        }
+
         case ArithAbs: {
             if (node->child1()->shouldSpeculateInt32OrBoolean()
                 && node->canSpeculateInt32(FixupPass)) {

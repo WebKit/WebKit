@@ -86,6 +86,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> globalIsFiniteThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> numberIsFiniteThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> numberIsSafeIntegerThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> signThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM&);

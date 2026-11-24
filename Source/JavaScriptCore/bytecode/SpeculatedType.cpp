@@ -923,6 +923,17 @@ SpeculatedType typeOfDoubleAbs(SpeculatedType value)
     return typeOfDoubleNegation(value);
 }
 
+SpeculatedType typeOfDoubleSign(SpeculatedType value)
+{
+    SpeculatedType result = value & SpecDoubleNaN;
+    if (result & SpecDoubleImpureNaN)
+        result |= SpecDoubleNaN;
+    // The result is 1, -1, 0 or -0, and -0 is not an int-as-double.
+    if (value & SpecDoubleReal)
+        result |= SpecDoubleReal;
+    return result;
+}
+
 SpeculatedType typeOfDoubleRounding(SpeculatedType value)
 {
     // Impure NaN can become pure when rounding but none of the pure NaNs we produce will convert to an impure NaN.

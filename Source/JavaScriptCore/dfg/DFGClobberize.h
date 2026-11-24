@@ -360,6 +360,13 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
             clobberTop();
         return;
 
+    case ArithSign:
+        if (node->child1().useKind() == Int32Use || node->child1().useKind() == DoubleRepUse)
+            def(PureValue(node));
+        else
+            clobberTop();
+        return;
+
     case ArithClz32:
         if (node->child1().useKind() == Int32Use || node->child1().useKind() == KnownInt32Use)
             def(PureValue(node));

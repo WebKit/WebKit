@@ -3595,6 +3595,10 @@ void SpeculativeJIT::compile(Node* node)
     case ArithAbs:
         compileArithAbs(node);
         break;
+
+    case ArithSign:
+        compileArithSign(node);
+        break;
         
     case ArithMin:
     case ArithMax: {

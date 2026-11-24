@@ -3075,6 +3075,16 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
+        case SignIntrinsic: {
+            insertChecks();
+            if (argumentCountIncludingThis == 1) {
+                setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
+                return CallOptimizationResult::Inlined;
+            }
+            setResult(addToGraph(ArithSign, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+            return CallOptimizationResult::Inlined;
+        }
+
         case MinIntrinsic:
         case MaxIntrinsic:
             handleMinMax(resultOperand, intrinsic == MinIntrinsic ? ArithMin : ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);

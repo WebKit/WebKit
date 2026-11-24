@@ -164,6 +164,7 @@ private:
         case ArithFloor:
         case ArithCeil:
         case ArithTrunc:
+        case ArithSign:
         case ArithSqrt:
         case ArithUnary: {
             if (foldPurifyNaNOnUnary(m_node))

@@ -35,6 +35,7 @@ namespace JSC {
     /* Call intrinsics. */ \
     macro(NoIntrinsic) \
     macro(AbsIntrinsic) \
+    macro(SignIntrinsic) \
     macro(ACosIntrinsic) \
     macro(ASinIntrinsic) \
     macro(ATanIntrinsic) \
