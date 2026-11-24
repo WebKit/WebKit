@@ -346,9 +346,26 @@ public:
         return std::max(1U, info.memoryCount());
     }
 
+    // Type checks and global accesses are the most frequent instance loads in Wasm code, so their slots
+    // come first, where a load's immediate offset can reach them.
+    static ptrdiff_t offsetOfGCObjectStructureID(const Wasm::ModuleInformation& info, unsigned index)
+    {
+        return roundUpToMultipleOf<alignof(WriteBarrierStructureID)>(offsetOfCachedMemoryBaseSizePair(cachedMemoryBaseSizePairCount(info))) + sizeof(WriteBarrierStructureID) * index;
+    }
+
+    static unsigned gcObjectStructureIDCount(const Wasm::ModuleInformation& info)
+    {
+        return info.hasGCObjectTypes() ? info.typeCount() : 0;
+    }
+
+    static ptrdiff_t offsetOfGlobal(const Wasm::ModuleInformation& info, unsigned index)
+    {
+        return roundUpToMultipleOf<alignof(Wasm::Global::Value)>(offsetOfGCObjectStructureID(info, gcObjectStructureIDCount(info))) + sizeof(Wasm::Global::Value) * index;
+    }
+
     static ptrdiff_t offsetOfImportFunctionInfo(const Wasm::ModuleInformation& info, unsigned index)
     {
-        return WTF::roundUpToMultipleOf<alignof(WasmOrJSImportableFunctionCallLinkInfo)>(offsetOfCachedMemoryBaseSizePair(cachedMemoryBaseSizePairCount(info))) + sizeof(WasmOrJSImportableFunctionCallLinkInfo) * index;
+        return WTF::roundUpToMultipleOf<alignof(WasmOrJSImportableFunctionCallLinkInfo)>(offsetOfGlobal(info, info.globalCount())) + sizeof(WasmOrJSImportableFunctionCallLinkInfo) * index;
     }
 
     static ptrdiff_t offsetOfTable(const Wasm::ModuleInformation& info, unsigned index)
@@ -356,24 +373,14 @@ public:
         return roundUpToMultipleOf<alignof(RefPtr<Wasm::Table>)>(offsetOfImportFunctionInfo(info, info.importFunctionCount())) + sizeof(RefPtr<Wasm::Table>) * index;
     }
 
-    static ptrdiff_t offsetOfGlobal(const Wasm::ModuleInformation& info, unsigned index)
-    {
-        return roundUpToMultipleOf<alignof(Wasm::Global::Value)>(offsetOfTable(info, info.tableCount())) + sizeof(Wasm::Global::Value) * index;
-    }
-
     static ptrdiff_t offsetOfBaselineData(const Wasm::ModuleInformation& info, unsigned index)
     {
-        return roundUpToMultipleOf<alignof(RefPtr<Wasm::BaselineData>)>(offsetOfGlobal(info, info.globalCount())) + sizeof(RefPtr<Wasm::BaselineData>) * index;
-    }
-
-    static ptrdiff_t offsetOfGCObjectStructureID(const Wasm::ModuleInformation& info, unsigned index)
-    {
-        return roundUpToMultipleOf<alignof(WriteBarrierStructureID)>(offsetOfBaselineData(info, info.internalFunctionCount())) + sizeof(WriteBarrierStructureID) * index;
+        return roundUpToMultipleOf<alignof(RefPtr<Wasm::BaselineData>)>(offsetOfTable(info, info.tableCount())) + sizeof(RefPtr<Wasm::BaselineData>) * index;
     }
 
     static ptrdiff_t offsetOfAllocatorForGCObject(const Wasm::ModuleInformation& info, unsigned index)
     {
-        return roundUpToMultipleOf<alignof(Allocator)>(offsetOfGCObjectStructureID(info, info.typeCount())) + sizeof(Allocator) * index;
+        return roundUpToMultipleOf<alignof(Allocator)>(offsetOfBaselineData(info, info.internalFunctionCount())) + sizeof(Allocator) * index;
     }
 
     static ptrdiff_t offsetOfFunctionWrapper(const Wasm::ModuleInformation& info, unsigned index)
@@ -418,7 +425,7 @@ public:
 
     std::span<WriteBarrierStructureID> gcObjectStructureIDs()
     {
-        return std::span { std::bit_cast<WriteBarrierStructureID*>(std::bit_cast<uint8_t*>(this) + offsetOfGCObjectStructureID(m_moduleInformation, 0)), m_moduleInformation->typeCount() };
+        return std::span { std::bit_cast<WriteBarrierStructureID*>(std::bit_cast<uint8_t*>(this) + offsetOfGCObjectStructureID(m_moduleInformation, 0)), gcObjectStructureIDCount(m_moduleInformation) };
     }
 
     std::span<Allocator, MarkedSpace::numSizeClasses> allocators()
