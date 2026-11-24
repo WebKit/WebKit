@@ -32,6 +32,8 @@
 #include "RemoteVideoFrameProxyProperties.h"
 #include <WebCore/VideoFrame.h>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -61,6 +63,14 @@ public:
     NODELETE RemoteVideoFrameIdentifier identifier() const;
     // Returns std::nullopt if the frame does not belong to `connection`, so that the reference is never sent to another GPU process.
     NODELETE std::optional<RemoteVideoFrameReadReference> newReadReference(const IPC::Connection&) const;
+    NODELETE bool belongsToConnection(const IPC::Connection&) const;
+
+    // Whether the frame in the GPU process has the rotation, mirroring and alpha that this frame has now.
+    // VideoFrame::updateOrientation() and VideoFrame::updateShouldIgnoreAlpha() change only this frame.
+    bool matchesHeapFrame() const { return hasHeapFrameProperties(rotation(), isMirrored(), shouldIgnoreAlpha()); }
+    // Returns the frame derived from this frame for its current rotation, mirroring and alpha. Calls
+    // `createDerivedFrame` unless the frame derived last still matches them.
+    RefPtr<RemoteVideoFrameProxy> derivedFrame(NOESCAPE const Function<RefPtr<RemoteVideoFrameProxy>()>& createDerivedFrame) const;
 
     WebCore::IntSize size() const { return m_size; }
 
@@ -71,9 +81,13 @@ public:
     bool shouldIgnoreAlpha() const final { return m_shouldIgnoreAlpha; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
+    // For a frame uploaded from this process: pixelBuffer() returns `pixelBuffer` instead of reading the frame back.
+    void setLocalPixelBuffer(RetainPtr<CVPixelBufferRef>&&);
 #endif
 
 private:
+    bool hasHeapFrameProperties(WebCore::VideoFrameRotation, bool isMirrored, bool shouldIgnoreAlpha) const;
+
     RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, RemoteVideoFrameReference, Properties&&);
 
     enum CloneConstructor { cloneConstructor };
@@ -90,6 +104,12 @@ private:
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
     bool m_shouldIgnoreAlpha { false };
+    // The properties of the frame in the GPU process, as opposed to the VideoFrame properties that can change.
+    const WebCore::VideoFrameRotation m_heapFrameRotation;
+    const bool m_heapFrameIsMirrored;
+    const bool m_heapFrameShouldIgnoreAlpha;
+    mutable Lock m_derivedFrameLock;
+    mutable RefPtr<RemoteVideoFrameProxy> m_derivedFrame WTF_GUARDED_BY_LOCK(m_derivedFrameLock);
     // FIXME: Remove this.
     mutable RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #if PLATFORM(COCOA)

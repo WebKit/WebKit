@@ -110,6 +110,9 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const 
 
 RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(const GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)
     : GraphicsContextGL(attributes)
+#if ENABLE(VIDEO)
+    , m_videoFrameObjectHeapProxy(renderingBackend.videoFrameObjectHeapProxy())
+#endif
     , m_renderingBackend(renderingBackend)
 {
 }
@@ -129,7 +132,6 @@ void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection
         m_gpuProcessConnection = gpuProcessConnection.get();
         lazyInitialize(m_sharedResourceCache, gpuProcessConnection->sharedResourceCache());
 #if ENABLE(VIDEO)
-        lazyInitialize(m_videoFrameObjectHeapProxy, Ref { gpuProcessConnection->videoFrameObjectHeapProxy() });
         lazyInitialize(m_gpuProcessIPCConnection, Ref { gpuProcessConnection->connection() });
 #endif
     });
@@ -312,12 +314,8 @@ RefPtr<NativeImage> RemoteGraphicsContextGLProxy::videoFrameToNativeImage(WebCor
         return { };
 
 #if PLATFORM(COCOA)
-    RefPtr<NativeImage> nativeImage;
-    callOnMainRunLoopAndWait([&] {
-        // FIXME: WebGL uploads the native image as is, so the rotation has to be applied in GPU process. Apply the rotation when drawing instead.
-        nativeImage = m_videoFrameObjectHeapProxy->getNativeImage(frame, ShouldApplyRotation::Yes);
-    });
-    return nativeImage;
+    // FIXME: WebGL uploads the native image as is, so the rotation has to be applied in GPU process. Apply the rotation when drawing instead.
+    return protect(m_videoFrameObjectHeapProxy)->createNativeImage(frame, ShouldApplyRotation::Yes);
 #else
     return GraphicsContextGL::videoFrameToNativeImage(frame);
 #endif

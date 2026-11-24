@@ -2014,6 +2014,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::SelectionFlags': ['"GestureTypes.h"'],
         'WebKit::SelectionTouch': ['"GestureTypes.h"'],
         'WebKit::SelectWithGestureResult': ['"GestureTypes.h"'],
+        'WebKit::ShouldApplyRotation': ['"RemoteVideoFrameProxyProperties.h"'],
         'WebKit::SwapBuffersDisplayRequirement': ['"PrepareBackingStoreBuffersData.h"'],
         'WebKit::TapIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::TextCheckerRequestID': ['"IdentifierTypes.h"'],

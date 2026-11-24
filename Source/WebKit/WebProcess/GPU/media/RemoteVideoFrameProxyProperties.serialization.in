@@ -32,4 +32,7 @@
     bool shouldIgnoreAlpha;
 };
 
+header: "RemoteVideoFrameProxyProperties.h"
+enum class WebKit::ShouldApplyRotation : bool;
+
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

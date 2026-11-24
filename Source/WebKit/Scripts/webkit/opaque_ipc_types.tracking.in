@@ -471,20 +471,12 @@
     [Legacy] MessageParam WebPageProxy.SaveImageToLibrary handle
     [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage imageHandle
     [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage archiveHandle
-    [Legacy] MessageParam LibWebRTCCodecsProxy.SetSharedVideoFrameMemory storageHandle
-    [Legacy] MessageParam RemoteGraphicsContext.SetSharedVideoFrameMemory storageHandle
     [Legacy] MessageParam RemoteGraphicsContextGL.SetSharedVideoFrameMemory storageHandle
     [Legacy] MessageParam RemoteGraphicsContextGL.GetBufferSubDataSharedMemory handle
     [Legacy] MessageParam RemoteGraphicsContextGL.ReadPixelsSharedMemory handle
     [Legacy] MessageParam RemoteImageBuffer.GetPixelBufferWithNewMemory handle
-    [Legacy] MessageParam RemoteDevice.SetSharedVideoFrameMemory storageHandle
-    [Legacy] MessageParam RemoteSampleBufferDisplayLayer.SetSharedVideoFrameMemory storageHandle
     [Legacy] MessageParam RemoteAudioDestinationManager.CreateAudioDestination frameCount
     [Legacy] MessageParam RemoteVideoFrameObjectHeap.SetSharedVideoFrameMemory storageHandle
-
-    # The same shared video frame memory RemoteDevice.SetSharedVideoFrameMemory above carries, for the
-    # frames copyExternalImageToTexture copies from a video element or a WebCodecs frame.
-    [Legacy] MessageParam RemoteQueue.SetSharedVideoFrameMemory storageHandle
 
     [NotSentFromWebContent] MessageParam VisitedLinkTableController.SetVisitedLinkTable handle
     [NotSentFromWebContent] MessageParam WebSWClientConnection.SetSWOriginTableSharedMemory handle
@@ -537,7 +529,6 @@
 
 [UnsafeWrapper] std::optional<WebKit::SharedVideoFrame::Buffer> {
     [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewVideoFrameBuffer frame
-    [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewConvertedVideoFrameBuffer frame
 }
 
 [UnsafeWrapper] std::optional<Vector<WebKit::CoreIPCNSURLRequestData::BodyParts>> {

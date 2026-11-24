@@ -27,19 +27,21 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "MessageReceiver.h"
+#include "Connection.h"
 #include "RemoteNativeImageIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
 #include "ThreadSafeObjectHeap.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferResourceLimits.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WorkQueue.h>
 
 #if USE(IOSURFACE)
 #include <WebCore/IOSurfacePool.h>
@@ -50,28 +52,29 @@ namespace WebKit {
 // Timeout for waiting on a resource to be published in the shared cache from another work queue.
 constexpr Seconds defaultRemoteSharedResourceCacheTimeout = 15_s;
 
-class GPUConnectionToWebProcess;
 // Class holding GPU process resources per Web Content process.
-// Thread-safe.
-class RemoteSharedResourceCache final : public ThreadSafeRefCounted<RemoteSharedResourceCache>, IPC::MessageReceiver {
+// Thread-safe. Receives its messages on its own work queue.
+class RemoteSharedResourceCache final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSharedResourceCache);
 public:
-    static Ref<RemoteSharedResourceCache> create(GPUConnectionToWebProcess&);
+    static Ref<RemoteSharedResourceCache> create(IPC::Connection&, const WebCore::ProcessIdentity& resourceOwner);
     virtual ~RemoteSharedResourceCache();
 
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
+    void ref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::ref(); }
+    void deref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::deref(); }
+
+    // Stops receiving messages. Called when the connection closes.
+    void close();
 
     bool addSerializedImageBuffer(RemoteSerializedImageBufferIdentifier, Ref<WebCore::ImageBuffer>);
     RefPtr<WebCore::ImageBuffer> takeSerializedImageBuffer(RemoteSerializedImageBufferIdentifier);
 
     bool addNativeImage(RemoteNativeImageReference, Ref<WebCore::NativeImage>);
+    // Null tells the readers that the image could not be made.
+    bool addNativeImage(RemoteNativeImageReference, RefPtr<WebCore::NativeImage>&&);
     RefPtr<WebCore::NativeImage> readNativeImage(RemoteNativeImageReadReference&&, Seconds timeout);
     // For stream message handlers: std::nullopt means that the handler should defer the message.
     std::optional<RefPtr<WebCore::NativeImage>> readNativeImage(IPC::StreamServerConnection&, RemoteNativeImageReadReference&&);
-
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     const WebCore::ProcessIdentity& resourceOwner() const LIFETIME_BOUND { return m_resourceOwner; }
 #if HAVE(IOSURFACE)
@@ -87,11 +90,25 @@ public:
     void lowMemoryHandler();
 
 private:
-    RemoteSharedResourceCache(GPUConnectionToWebProcess&);
+    RemoteSharedResourceCache(IPC::Connection&, const WebCore::ProcessIdentity& resourceOwner);
+
+    WorkQueue& workQueue() const LIFETIME_BOUND { return m_workQueue; }
+
+    // IPC::WorkQueueMessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages
     void releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier);
     void releaseNativeImage(RemoteNativeImageWriteReference&&);
+    void getNativeImagePixels(RemoteNativeImageReadReference&&, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+
+    // A bitmap with the pixels of `image`, owned by the Web process. Replaces the platform image of `image` with
+    // one that uses the bitmap, so that the pixels are not held twice.
+    std::optional<WebCore::ShareableBitmap::Handle> createBitmapHandle(const WebCore::NativeImage&);
+
+    const Ref<IPC::Connection> m_connection;
+    const Ref<WorkQueue> m_workQueue;
+    bool m_isClosed { false };
 
     IPC::ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<WebCore::ImageBuffer>> m_serializedImageBuffers;
     IPC::ThreadSafeObjectHeap<WebCore::RenderingResourceIdentifier, RefPtr<WebCore::NativeImage>> m_nativeImages;

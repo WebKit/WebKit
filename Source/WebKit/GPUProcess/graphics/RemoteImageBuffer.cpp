@@ -180,7 +180,7 @@ void RemoteImageBuffer::putPixelBuffer(const WebCore::PixelBufferSourceView& pix
     m_imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
-void RemoteImageBuffer::copyNativeImage(RenderingResourceIdentifier imageIdentifier)
+void RemoteImageBuffer::copyNativeImage(RemoteNativeImageReference imageReference)
 {
     assertIsCurrent(workQueue());
     RefPtr image = m_imageBuffer->copyNativeImage();
@@ -188,7 +188,7 @@ void RemoteImageBuffer::copyNativeImage(RenderingResourceIdentifier imageIdentif
     if (!image)
         image = RemoteRenderingBackend::createPlaceholderNativeImage();
     MESSAGE_CHECK(image, "NativeImage could not be created");
-    bool success = m_renderingBackend->remoteResourceCache().cacheNativeImage(imageIdentifier, image.releaseNonNull());
+    bool success = m_renderingBackend->cacheAndPublishNativeImage(imageReference, image.releaseNonNull());
     MESSAGE_CHECK(success, "NativeImage already exists");
 }
 

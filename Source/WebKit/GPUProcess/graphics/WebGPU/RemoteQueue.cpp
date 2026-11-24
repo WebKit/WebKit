@@ -72,11 +72,7 @@ RemoteQueue::RemoteQueue([[maybe_unused]] GPUConnectionToWebProcess& gpuConnecti
     , m_gpu(gpu)
     , m_identifier(identifier)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    // A frame shipped across by RemoteQueueProxy is usually a reference into the video frame object
-    // heap rather than pixels, because a media player hosted in this process hands the web process a
-    // proxy. Reading one needs the heap it names, exactly as RemoteDevice needs it to import an
-    // external texture, and the web process' identity attributes any buffer read out of shared memory.
-    , m_sharedVideoFrameReader(&gpuConnectionToWebProcess.videoFrameObjectHeap(), gpuConnectionToWebProcess.webProcessIdentity())
+    , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
 #endif
 {
     protect(m_streamConnection)->startReceivingMessages(*this, Messages::RemoteQueue::messageReceiverName(), m_identifier.toUInt64());
@@ -222,16 +218,6 @@ void RemoteQueue::copyExternalImageToTexture(
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-void RemoteQueue::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
-{
-    m_sharedVideoFrameReader.setSemaphore(WTF::move(semaphore));
-}
-
-void RemoteQueue::setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&& handle)
-{
-    m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
-}
-
 void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
     WebGPU::ImageCopyExternalImageVideoSource&& source,
     const WebGPU::ImageCopyTextureTagged& destination,
@@ -239,8 +225,8 @@ void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
 {
     MESSAGE_CHECK(source.sourceSize.width() >= 0 && source.sourceSize.height() >= 0);
 
-    // Resolved the same way RemoteDevice resolves an external texture's frame: a shared frame is read
-    // out of the shared video frame memory, and a media player identifier is asked for the frame it is
+    // Resolved the same way RemoteDevice resolves an external texture's frame: a heap frame is read
+    // from the video frame object heap, and a media player identifier is asked for the frame it is
     // showing right now.
     RetainPtr<CVPixelBufferRef> pixelBuffer;
     // A frame's pixels are stored as decoded, so the transform that presents them travels separately.
@@ -253,9 +239,17 @@ void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
         rotation = videoFrame.rotation();
         isMirrored = videoFrame.isMirrored();
     };
-    if (source.sharedFrame) {
-        if (auto videoFrame = m_sharedVideoFrameReader.read(WTF::move(*source.sharedFrame)))
-            takeFrame(*videoFrame);
+    if (source.videoFrame) {
+        // The Web process adds the frame to the heap on another connection. Wait without blocking the queue.
+        // The heap frame has the rotation and mirroring of the Web process frame.
+        Ref streamConnection = m_streamConnection;
+        auto videoFrame = m_videoFrameObjectHeap->read(streamConnection, RemoteVideoFrameReadReference { *source.videoFrame });
+        if (!videoFrame) {
+            streamConnection->markCurrentlyDispatchedMessageAsDeferred();
+            return;
+        }
+        if (RefPtr frame = WTF::move(*videoFrame))
+            takeFrame(*frame);
     } else if (source.mediaIdentifier) {
         if (RefPtr connection = protect(m_gpu)->gpuConnectionToWebProcess()) {
             connection->performWithMediaPlayerOnMainThread(*source.mediaIdentifier, [&](auto& player) mutable {

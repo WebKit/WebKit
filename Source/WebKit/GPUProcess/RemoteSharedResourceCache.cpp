@@ -28,7 +28,8 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSharedResourceCache.h"
 
-#include "GPUConnectionToWebProcess.h"
+#include "RemoteSharedResourceCacheMessages.h"
+#include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(IOSURFACE)
@@ -52,20 +53,36 @@ static std::atomic<size_t> globalImageBufferForCanvasCount = 0;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSharedResourceCache);
 
-Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create(IPC::Connection& connection, const ProcessIdentity& resourceOwner)
 {
-    return adoptRef(*new RemoteSharedResourceCache(gpuConnectionToWebProcess));
+    Ref cache = adoptRef(*new RemoteSharedResourceCache(connection, resourceOwner));
+    connection.addWorkQueueMessageReceiver(Messages::RemoteSharedResourceCache::messageReceiverName(), cache->workQueue(), cache);
+    return cache;
 }
 
-RemoteSharedResourceCache::RemoteSharedResourceCache(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
-    : m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
+RemoteSharedResourceCache::RemoteSharedResourceCache(IPC::Connection& connection, const ProcessIdentity& resourceOwner)
+    : m_connection(connection)
+    , m_workQueue(WorkQueue::create("org.webkit.RemoteSharedResourceCache"_s, WorkQueue::QOS::UserInteractive))
+    , m_resourceOwner(resourceOwner)
 #if HAVE(IOSURFACE)
     , m_ioSurfacePool(IOSurfacePool::create())
 #endif
 {
 }
 
-RemoteSharedResourceCache::~RemoteSharedResourceCache() = default;
+RemoteSharedResourceCache::~RemoteSharedResourceCache()
+{
+    ASSERT(m_isClosed);
+}
+
+void RemoteSharedResourceCache::close()
+{
+    assertIsMainThread();
+    if (m_isClosed)
+        return;
+    m_isClosed = true;
+    protect(m_connection)->removeWorkQueueMessageReceiver(Messages::RemoteSharedResourceCache::messageReceiverName());
+}
 
 bool RemoteSharedResourceCache::addSerializedImageBuffer(RemoteSerializedImageBufferIdentifier identifier, Ref<ImageBuffer> imageBuffer)
 {
@@ -86,6 +103,11 @@ bool RemoteSharedResourceCache::addNativeImage(RemoteNativeImageReference refere
     return m_nativeImages.add(reference, WTF::move(image));
 }
 
+bool RemoteSharedResourceCache::addNativeImage(RemoteNativeImageReference reference, RefPtr<NativeImage>&& image)
+{
+    return m_nativeImages.add(reference, WTF::move(image));
+}
+
 RefPtr<NativeImage> RemoteSharedResourceCache::readNativeImage(RemoteNativeImageReadReference&& read, Seconds timeout)
 {
     return m_nativeImages.read(WTF::move(read), timeout);
@@ -96,15 +118,53 @@ std::optional<RefPtr<NativeImage>> RemoteSharedResourceCache::readNativeImage(IP
     return m_nativeImages.read(connection, WTF::move(read));
 }
 
+std::optional<ShareableBitmap::Handle> RemoteSharedResourceCache::createBitmapHandle(const NativeImage& image)
+{
+    RefPtr<ShareableBitmap> bitmap;
+#if USE(CG)
+    bitmap = ShareableBitmap::createFromImagePixels(image);
+#endif
+    if (!bitmap)
+        bitmap = ShareableBitmap::createFromImageDraw(image, ColorSpace { image.colorSpace() });
+    if (!bitmap)
+        return std::nullopt;
+    auto handle = bitmap->createHandle();
+    if (!handle)
+        return std::nullopt;
+    if (m_resourceOwner)
+        handle->setOwnershipOfMemory(m_resourceOwner, MemoryLedger::Graphics);
+    auto platformImage = bitmap->createPlatformImage();
+    if (!platformImage) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+    image.replacePlatformImage(WTF::move(platformImage));
+    return handle;
+}
+
 void RemoteSharedResourceCache::releaseNativeImage(RemoteNativeImageWriteReference&& write)
 {
+    assertIsCurrent(workQueue());
     m_nativeImages.remove(WTF::move(write));
 }
 
 void RemoteSharedResourceCache::releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier identifier)
 {
+    assertIsCurrent(workQueue());
     // Must wait due to using current accounting mechanism.
     takeSerializedImageBuffer(identifier);
+}
+
+void RemoteSharedResourceCache::getNativeImagePixels(RemoteNativeImageReadReference&& read, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    // The producers publish the image from their own work queues, and none of them waits for this queue.
+    RefPtr image = readNativeImage(WTF::move(read), defaultRemoteSharedResourceCacheTimeout);
+    if (!image) {
+        completionHandler(std::nullopt);
+        return;
+    }
+    completionHandler(createBitmapHandle(*image));
 }
 
 void RemoteSharedResourceCache::lowMemoryHandler()

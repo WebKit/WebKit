@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "SharedVideoFrame.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "WebGPUObjectDescriptorBase.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/WebGPUExternalTextureDescriptor.h>
@@ -41,7 +41,8 @@ struct ExternalTextureDescriptor : public ObjectDescriptorBase {
     WebCore::PredefinedColorSpace colorSpace { WebCore::PredefinedColorSpace::SRGB };
     WebCore::IntSize visibleSize;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    std::optional<WebKit::SharedVideoFrame> sharedFrame;
+    // A frame in the video frame object heap, for a frame with no media player.
+    std::optional<WebKit::RemoteVideoFrameReadReference> videoFrame;
 #endif
 };
 

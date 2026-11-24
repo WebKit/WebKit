@@ -28,11 +28,13 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
+#include "RemoteNativeImageProxy.h"
+#include "RemoteSharedResourceCacheProxy.h"
 #include "RemoteVideoFrameObjectHeap.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
-#include "WebProcess.h"
+#include <WebCore/CMUtilities.h>
 #include <WebCore/CVUtilities.h>
 #include <WebCore/NativeImage.h>
 
@@ -50,6 +52,7 @@ Ref<RemoteVideoFrameObjectHeapProxyProcessor> RemoteVideoFrameObjectHeapProxyPro
 RemoteVideoFrameObjectHeapProxyProcessor::RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection& connection)
     : m_connection(&connection.connection())
     , m_queue(WorkQueue::create("RemoteVideoFrameObjectHeapProxy"_s, WorkQueue::QOS::UserInteractive))
+    , m_sharedResourceCache(connection.sharedResourceCache())
 {
     connection.addClient(*this);
 }
@@ -73,7 +76,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::initialize()
 
 void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
-    m_sharedVideoFrameWriter.disable();
+    disableSharedVideoFrameWriter();
     {
         Locker lock(m_connectionLock);
         m_connection = nullptr;
@@ -104,6 +107,12 @@ void RemoteVideoFrameObjectHeapProxyProcessor::setSharedVideoFrameSemaphore(IPC:
 void RemoteVideoFrameObjectHeapProxyProcessor::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
     m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
+}
+
+RefPtr<IPC::Connection> RemoteVideoFrameObjectHeapProxyProcessor::connection()
+{
+    Locker lock(m_connectionLock);
+    return m_connection;
 }
 
 RemoteVideoFrameObjectHeapProxyProcessor::Callback RemoteVideoFrameObjectHeapProxyProcessor::takeCallback(RemoteVideoFrameIdentifier identifier)
@@ -141,39 +150,124 @@ void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteV
     connection->send(Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(WTF::move(*reference)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&& buffer)
+bool RemoteVideoFrameObjectHeapProxyProcessor::addVideoFrame(IPC::Connection& connection, RemoteVideoFrameReference reference, const VideoFrame& videoFrame)
 {
-    ASSERT(!m_convertedBuffer);
-    if (buffer)
-        m_convertedBuffer = m_sharedVideoFrameReader.readBuffer(WTF::move(*buffer));
-    m_conversionSemaphore.signal();
-}
-
-RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame, ShouldApplyRotation shouldApplyRotation)
-{
-    Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-
+    Locker locker { m_sharedVideoFrameWriterLock };
     if (m_sharedVideoFrameWriter.isDisabled())
-        m_sharedVideoFrameWriter = { };
+        return false;
 
     auto frame = m_sharedVideoFrameWriter.write(videoFrame, connection,
-        [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
-        [&](auto&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTF::move(handle) }, 0); });
+        [&](auto& semaphore) {
+            connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0);
+        },
+        [&](auto&& handle) {
+            connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTF::move(handle) }, 0);
+        });
     if (!frame)
+        return false;
+
+    if (connection.send(Messages::RemoteVideoFrameObjectHeap::AddVideoFrame { reference, WTF::move(*frame) }, 0) != IPC::Error::NoError) {
+        m_sharedVideoFrameWriter.disable();
+        return false;
+    }
+    return true;
+}
+
+RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameObjectHeapProxyProcessor::remoteFrame(RemoteVideoFrameObjectHeapProxy& heapProxy, const VideoFrame& videoFrame)
+{
+    RefPtr connection = this->connection();
+    if (!connection)
         return nullptr;
 
-    auto sendResult = connection->sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { WTF::move(*frame), shouldApplyRotation == ShouldApplyRotation::Yes }, 0, GPUProcessConnection::defaultTimeout);
-    if (!sendResult.succeeded()) {
-        m_sharedVideoFrameWriter.disable();
-        return nullptr;
+    if (RefPtr frameProxy = const_cast<RemoteVideoFrameProxy*>(dynamicDowncast<RemoteVideoFrameProxy>(&videoFrame))) {
+        if (!frameProxy->belongsToConnection(*connection))
+            return nullptr;
+        if (frameProxy->matchesHeapFrame())
+            return frameProxy;
+        return frameProxy->derivedFrame([&] -> RefPtr<RemoteVideoFrameProxy> {
+            auto read = frameProxy->newReadReference(*connection);
+            if (!read)
+                return nullptr;
+            auto reference = RemoteVideoFrameReference::generateForAdd();
+            SharedVideoFrame frame { videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), videoFrame.colorSpace(), videoFrame.shouldIgnoreAlpha(), WTF::move(*read) };
+            if (connection->send(Messages::RemoteVideoFrameObjectHeap::AddVideoFrame { reference, WTF::move(frame) }, 0) != IPC::Error::NoError)
+                return nullptr;
+            return RemoteVideoFrameProxy::create(*connection, heapProxy, reference, RemoteVideoFrameProxy::properties(videoFrame));
+        });
     }
 
-    auto [destinationColorSpace] = sendResult.takeReplyOr(ColorSpace { ColorSpace::SRGB().platformColorSpace() });
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    if (!addVideoFrame(*connection, reference, videoFrame))
+        return nullptr;
+    Ref uploadedFrame = RemoteVideoFrameProxy::create(*connection, heapProxy, reference, RemoteVideoFrameProxy::properties(videoFrame));
+    if (videoFrame.isCV())
+        uploadedFrame->setLocalPixelBuffer(videoFrame.pixelBuffer());
+    return uploadedFrame;
+}
 
-    m_conversionSemaphore.wait();
+#if USE(LIBWEBRTC)
+RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameObjectHeapProxyProcessor::remoteFrame(RemoteVideoFrameObjectHeapProxy& heapProxy, const webrtc::VideoFrame& videoFrame, IntSize size)
+{
+    RefPtr connection = this->connection();
+    if (!connection)
+        return nullptr;
 
-    RetainPtr pixelBuffer = std::exchange(m_convertedBuffer, { });
-    return pixelBuffer ? NativeImage::create(WTF::move(pixelBuffer), videoFrame.shouldIgnoreAlpha() ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaFirst, destinationColorSpace.platformColorSpace()) : nullptr;
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    {
+        Locker locker { m_sharedVideoFrameWriterLock };
+        if (m_sharedVideoFrameWriter.isDisabled())
+            return nullptr;
+
+        auto buffer = m_sharedVideoFrameWriter.writeBuffer(videoFrame, *connection,
+            [&](auto& semaphore) {
+                connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0);
+            },
+            [&](auto&& handle) {
+                connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTF::move(handle) }, 0);
+            });
+        if (!buffer)
+            return nullptr;
+
+        SharedVideoFrame frame { { }, false, VideoFrameRotation::None, { }, false, WTF::move(*buffer) };
+        if (connection->send(Messages::RemoteVideoFrameObjectHeap::AddVideoFrame { reference, WTF::move(frame) }, 0) != IPC::Error::NoError) {
+            m_sharedVideoFrameWriter.disable();
+            return nullptr;
+        }
+    }
+    return RemoteVideoFrameProxy::create(*connection, heapProxy, reference, RemoteVideoFrameProxy::Properties { { }, false, VideoFrameRotation::None, size, 0, { }, false });
+}
+#endif
+
+RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::createNativeImage(RemoteVideoFrameObjectHeapProxy& heapProxy, const VideoFrame& videoFrame, ShouldApplyRotation shouldApplyRotation)
+{
+    RefPtr frame = remoteFrame(heapProxy, videoFrame);
+    if (!frame)
+        return nullptr;
+    RefPtr connection = this->connection();
+    if (!connection)
+        return nullptr;
+    auto read = frame->newReadReference(*connection);
+    if (!read)
+        return nullptr;
+
+    auto size = shouldApplyRotation == ShouldApplyRotation::Yes ? videoFrame.rotatedSize() : videoFrame.presentationSize();
+    Ref image = RemoteNativeImageProxy::create(size, createCGColorSpace(videoFrame.colorSpace()), !videoFrame.shouldIgnoreAlpha(), m_sharedResourceCache.copyRef());
+    if (connection->send(Messages::RemoteVideoFrameObjectHeap::CreateNativeImage { WTF::move(*read), image->reference(), shouldApplyRotation }, 0) != IPC::Error::NoError)
+        return nullptr;
+    return RefPtr<NativeImage> { WTF::move(image) };
+}
+
+RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameObjectHeapProxyProcessor::remoteBlackFrame(RemoteVideoFrameObjectHeapProxy& heapProxy, MediaTime presentationTime, VideoFrameRotation rotation, IntSize size)
+{
+    RefPtr connection = this->connection();
+    if (!connection)
+        return nullptr;
+
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    SharedVideoFrame frame { presentationTime, false, rotation, { }, false, size };
+    if (connection->send(Messages::RemoteVideoFrameObjectHeap::AddVideoFrame { reference, WTF::move(frame) }, 0) != IPC::Error::NoError)
+        return nullptr;
+    return RemoteVideoFrameProxy::create(*connection, heapProxy, reference, RemoteVideoFrameProxy::Properties { presentationTime, false, rotation, size, 0, { }, false });
 }
 
 }

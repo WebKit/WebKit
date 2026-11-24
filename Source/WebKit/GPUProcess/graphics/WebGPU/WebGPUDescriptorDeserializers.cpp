@@ -243,7 +243,7 @@ std::optional<WebCore::WebGPUExternalImageSource> deserialize(ObjectHeap&, const
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 std::optional<WebCore::WebGPUExternalImageSource> deserialize(ObjectHeap&, const ImageCopyExternalImageVideoSource& imageCopyExternalImage, PixelBufferType pixelBuffer, WebCore::VideoFrameRotation rotation, bool isMirrored)
 {
-    // RemoteQueue has already resolved the media player identifier, or read the shared frame, into
+    // RemoteQueue has already resolved the media player identifier, or read the heap frame, into
     // the pixel buffer the backing queue wraps, and read the display transform off the frame the
     // pixel buffer came from; a decoded frame is opaque, so its alpha needs neither premultiplying
     // nor undoing.

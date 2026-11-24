@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "Logging.h"
 #include "ObjectIdentifierDomains.h"
+#include "RemoteSharedResourceCache.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
@@ -37,6 +38,7 @@
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/CMUtilities.h>
 #include <WebCore/CVUtilities.h>
 #include <WebCore/ColorSpaceCG.h>
 #include <WebCore/ImageRotationSessionVT.h>
@@ -45,6 +47,8 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <WebCore/CoreVideoSoftLink.h>
 #endif
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_connection.get())
 
 namespace WebKit {
 
@@ -56,16 +60,25 @@ static WorkQueue& remoteVideoFrameObjectHeapQueueSingleton()
     return queue.get();
 }
 
-Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(Ref<IPC::Connection>&& connection)
+Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(Ref<IPC::Connection>&& connection, const ProcessIdentity& webProcessIdentity, RemoteSharedResourceCache& sharedResourceCache)
 {
-    Ref heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTF::move(connection)));
+    Ref heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTF::move(connection), webProcessIdentity, sharedResourceCache));
     protect(heap->m_connection)->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName(), remoteVideoFrameObjectHeapQueueSingleton(), heap);
     return heap;
 }
 
-RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&& connection)
+RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&& connection, const ProcessIdentity& webProcessIdentity, RemoteSharedResourceCache& sharedResourceCache)
     : m_connection(WTF::move(connection))
+#if PLATFORM(COCOA)
+    , m_sharedResourceCache(sharedResourceCache)
+    // The reader resolves no frame references, so it does not hold the heap.
+    , m_sharedVideoFrameReader(nullptr, webProcessIdentity, SharedVideoFrameReader::UseIOSurfaceBufferPool::Yes)
+#endif
 {
+#if !PLATFORM(COCOA)
+    UNUSED_PARAM(webProcessIdentity);
+    UNUSED_PARAM(sharedResourceCache);
+#endif
 }
 
 RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap()
@@ -114,6 +127,28 @@ void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReferenc
 }
 
 #if PLATFORM(COCOA)
+void RemoteVideoFrameObjectHeap::addVideoFrame(RemoteVideoFrameReference&& reference, SharedVideoFrame&& sharedVideoFrame)
+{
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
+    MESSAGE_CHECK(!isInGPUProcessObjectIdentifierDomain(reference.identifier().toUInt64()));
+    MESSAGE_CHECK(!reference.version());
+
+    RefPtr<VideoFrame> frame;
+    if (auto* read = std::get_if<RemoteVideoFrameReadReference>(&sharedVideoFrame.buffer)) {
+        // A frame derived from a frame in the heap: the same pixels, with the orientation and alpha of the Web process frame.
+        if (RefPtr heapFrame = get(WTF::move(*read))) {
+            Ref derivedFrame = heapFrame->updateOrientation(sharedVideoFrame.rotation, sharedVideoFrame.mirrored, VideoFrame::ShouldClone::Yes);
+            auto shouldClone = derivedFrame.ptr() == heapFrame.get() ? VideoFrame::ShouldClone::Yes : VideoFrame::ShouldClone::No;
+            frame = derivedFrame->updateShouldIgnoreAlpha(sharedVideoFrame.shouldIgnoreAlpha, shouldClone);
+        }
+    } else
+        frame = m_sharedVideoFrameReader.read(WTF::move(sharedVideoFrame));
+
+    // Add even a null frame, so that the consumers waiting for the reference get null instead of waiting forever.
+    bool success = m_heap.add(reference, WTF::move(frame));
+    MESSAGE_CHECK(success);
+}
+
 void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
 {
     assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
@@ -134,62 +169,67 @@ void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReferen
     connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier, WTF::move(buffer) }, 0);
 }
 
-void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, bool shouldApplyRotation, CompletionHandler<void(WebCore::ColorSpace)>&& callback)
+void RemoteVideoFrameObjectHeap::createNativeImage(RemoteVideoFrameReadReference&& read, RemoteNativeImageReference reference, ShouldApplyRotation shouldApplyRotation)
 {
-    ColorSpace destinationColorSpace { ColorSpace::SRGB().platformColorSpace() };
-    auto scope = makeScopeExit([&callback, &destinationColorSpace] { callback(destinationColorSpace); });
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
+    MESSAGE_CHECK(!isInGPUProcessObjectIdentifierDomain(reference.identifier().toUInt64()));
+    MESSAGE_CHECK(!reference.version());
 
-    RefPtr<VideoFrame> frame;
-    Ref connection = m_connection;
+    // The Web process sends the frame before this message on the same connection, so get() does not wait.
+    RefPtr<NativeImage> image;
+    if (RefPtr frame = get(WTF::move(read)))
+        image = convertToNativeImage(*frame, shouldApplyRotation);
 
-    if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)) {
-        if (RefPtr heapFrame = get(WTF::move(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))))
-            frame = heapFrame->updateOrientation(sharedVideoFrame.rotation, sharedVideoFrame.mirrored, VideoFrame::ShouldClone::Yes);
-    } else
-        frame = m_sharedVideoFrameReader.read(WTF::move(sharedVideoFrame));
+    // Publish even a null image, so that the readers get null instead of waiting.
+    bool success = protect(m_sharedResourceCache)->addNativeImage(reference, WTF::move(image));
+    MESSAGE_CHECK(success);
+}
 
-    if (!frame) {
-        connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
-        return;
-    }
+RefPtr<NativeImage> RemoteVideoFrameObjectHeap::convertToNativeImage(VideoFrame& frame, ShouldApplyRotation shouldApplyRotation)
+{
+    RetainPtr<CVPixelBufferRef> sourceBuffer = frame.pixelBuffer();
+    if (!sourceBuffer)
+        return nullptr;
 
+    // The color space as VideoFrame::copyNativeImage() tags it. The Web process makes the same choice for the
+    // RemoteNativeImageProxy when the frame describes its color space fully.
+    RetainPtr<CGColorSpaceRef> colorSpace;
+    const auto& frameColorSpace = frame.colorSpace();
+    if (frameColorSpace.primaries && frameColorSpace.transfer)
+        colorSpace = createCGColorSpace(frameColorSpace);
+    else
+        colorSpace = createCGColorSpaceForCVPixelBuffer(sourceBuffer.get());
+    auto alphaInfo = frame.shouldIgnoreAlpha() ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaFirst;
+
+    RetainPtr buffer = sourceBuffer;
     // When requested, the native image is oriented and callers must not apply the rotation and mirroring of the frame again.
-    if (shouldApplyRotation && !frame->hasNoTransformation()) {
-        Locker locker { m_pixelBufferConformerLock };
-        if (!m_imageRotationSession)
-            m_imageRotationSession = makeUnique<WebCore::ImageRotationSessionVT>();
-
-        frame = m_imageRotationSession->applyRotation(*frame);
-        if (!frame) {
-            RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer rotation failed");
-            connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
-            return;
+    if (shouldApplyRotation == ShouldApplyRotation::Yes && !frame.hasNoTransformation()) {
+        RefPtr<VideoFrame> rotatedFrame;
+        {
+            Locker locker { m_pixelBufferConformerLock };
+            if (!m_imageRotationSession)
+                m_imageRotationSession = makeUnique<WebCore::ImageRotationSessionVT>();
+            rotatedFrame = m_imageRotationSession->applyRotation(frame);
         }
+        if (!rotatedFrame) {
+            RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertToNativeImage rotation failed");
+            return nullptr;
+        }
+        buffer = rotatedFrame->pixelBuffer();
     }
-
-    RetainPtr<CVPixelBufferRef> buffer = frame->pixelBuffer();
-    destinationColorSpace = ColorSpace(createCGColorSpaceForCVPixelBuffer(buffer.get()));
 
     if (CVPixelBufferGetPixelFormatType(buffer.get()) != kCVPixelFormatType_32BGRA) {
         Locker locker { m_pixelBufferConformerLock };
         if (!m_pixelBufferConformer)
             m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>(kCVPixelFormatType_32BGRA);
-
-        auto convertedBuffer = m_pixelBufferConformer->convert(buffer.get());
-        if (!convertedBuffer) {
-            RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer conformer failed");
-            connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
-            return;
+        buffer = m_pixelBufferConformer->convert(buffer.get());
+        if (!buffer) {
+            RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertToNativeImage conformer failed");
+            return nullptr;
         }
-        buffer = WTF::move(convertedBuffer);
     }
 
-    bool canSendIOSurface = false;
-    auto result = m_sharedVideoFrameWriter.writeBuffer(buffer.get(),
-        [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
-        [&](auto&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { WTF::move(handle) }, 0); },
-        canSendIOSurface);
-    connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { WTF::move(result) }, 0);
+    return NativeImage::create(WTF::move(buffer), alphaInfo, WTF::move(colorSpace));
 }
 
 void RemoteVideoFrameObjectHeap::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
@@ -217,6 +257,11 @@ RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameRead
     return m_heap.read(WTF::move(read), timeout);
 }
 
+std::optional<RefPtr<WebCore::VideoFrame>> RemoteVideoFrameObjectHeap::read(IPC::StreamServerConnection& connection, RemoteVideoFrameReadReference&& read)
+{
+    return m_heap.read(connection, WTF::move(read));
+}
+
 #endif
 
 void RemoteVideoFrameObjectHeap::lowMemoryHandler()
@@ -229,5 +274,7 @@ void RemoteVideoFrameObjectHeap::lowMemoryHandler()
 }
 
 }
+
+#undef MESSAGE_CHECK
 
 #endif

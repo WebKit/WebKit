@@ -412,10 +412,9 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     // Prefer the frame's own color space (if fully described), to avoid falling back to SDR sRGB.
     RetainPtr<CGColorSpaceRef> cgColorSpace;
     const auto& frameColorSpace = colorSpace();
-    if (frameColorSpace.primaries && frameColorSpace.transfer) {
-        attachColorSpaceToPixelBuffer(frameColorSpace, bgraSource.get());
-        cgColorSpace = createCGColorSpaceForCVPixelBuffer(bgraSource.get());
-    } else
+    if (frameColorSpace.primaries && frameColorSpace.transfer)
+        cgColorSpace = createCGColorSpace(frameColorSpace);
+    else
         cgColorSpace = createCGColorSpaceForCVPixelBuffer(source.get());
 
     auto alphaInfo = shouldIgnoreAlpha() ? kCGImageAlphaNoneSkipFirst : alphaInfoForCVPixelBuffer(bgraSource);

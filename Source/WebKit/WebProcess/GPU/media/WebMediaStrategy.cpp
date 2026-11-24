@@ -247,8 +247,7 @@ void WebMediaStrategy::enableMockMediaSource()
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 void WebMediaStrategy::nativeImageFromVideoFrame(const WebCore::VideoFrame& frame, CompletionHandler<void(std::optional<RefPtr<WebCore::NativeImage>>&&)>&& completionHandler)
 {
-    // FIXME: Move out of sync IPC.
-    completionHandler(protect(protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy())->getNativeImage(frame));
+    completionHandler(protect(protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy())->createNativeImage(frame));
 }
 #endif
 

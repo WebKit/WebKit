@@ -44,6 +44,7 @@ typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 typedef const struct opaqueCMFormatDescription* CMVideoFormatDescriptionRef;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+typedef struct CGColorSpace* CGColorSpaceRef;
 typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
 
 namespace WebCore {
@@ -77,6 +78,8 @@ bool hasSeparateAlphaStream(CMFormatDescriptionRef);
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionWithAlpha(CVPixelBufferRef);
 
 WEBCORE_EXPORT void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace&, CVPixelBufferRef);
+// The color space described by the attachments that attachColorSpaceToPixelBuffer() sets, or sRGB if they describe none.
+WEBCORE_EXPORT RetainPtr<CGColorSpaceRef> createCGColorSpace(const PlatformVideoColorSpace&);
 
 CFStringRef convertToCMColorPrimaries(PlatformVideoColorPrimaries);
 CFStringRef convertToCMTransferFunction(PlatformVideoTransferCharacteristics);

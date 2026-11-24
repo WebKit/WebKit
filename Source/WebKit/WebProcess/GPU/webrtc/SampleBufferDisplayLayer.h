@@ -30,7 +30,6 @@
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
-#include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
@@ -41,6 +40,7 @@ enum class VideoFrameRotation : uint16_t;
 
 namespace WebKit {
 
+class RemoteVideoFrameObjectHeapProxy;
 class SampleBufferDisplayLayerManager;
 
 class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver, public GPUProcessConnection::Client, public Identified<SampleBufferDisplayLayerIdentifier> {
@@ -84,12 +84,12 @@ private:
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WeakPtr<SampleBufferDisplayLayerManager> m_manager;
     const Ref<IPC::Connection> m_connection;
+    const Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 
     PlatformLayerContainer m_videoLayer;
     bool m_didFail { false };
     bool m_paused { false };
 
-    SharedVideoFrameWriter m_sharedVideoFrameWriter;
     std::optional<WebCore::HostingContext> m_hostingContext;
 };
 

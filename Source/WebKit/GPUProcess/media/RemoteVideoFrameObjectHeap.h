@@ -27,27 +27,31 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "Connection.h"
+#include "RemoteNativeImageIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #include "ThreadSafeObjectHeap.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/ProcessIdentity.h>
 
 #if PLATFORM(COCOA)
 #include "SharedVideoFrame.h"
 #endif
 
 namespace WebCore {
-class ColorSpace;
 class ImageRotationSessionVT;
+class NativeImage;
 class PixelBufferConformerCV;
 class VideoFrame;
 }
 
 namespace WebKit {
 
+class RemoteSharedResourceCache;
+
 // Holds references to all VideoFrame instances that are mapped from GPU process to Web process.
 class RemoteVideoFrameObjectHeap final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
 public:
-    static Ref<RemoteVideoFrameObjectHeap> create(Ref<IPC::Connection>&&);
+    static Ref<RemoteVideoFrameObjectHeap> create(Ref<IPC::Connection>&&, const WebCore::ProcessIdentity& webProcessIdentity, RemoteSharedResourceCache&);
     ~RemoteVideoFrameObjectHeap();
 
     void ref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::ref(); }
@@ -59,29 +63,35 @@ public:
     // Adds `frame` under `reference`.
     void add(RemoteVideoFrameReference, Ref<WebCore::VideoFrame>&&);
     RefPtr<WebCore::VideoFrame> get(RemoteVideoFrameReadReference&&);
+    // For stream message handlers: std::nullopt means that the handler should defer the message.
+    std::optional<RefPtr<WebCore::VideoFrame>> read(IPC::StreamServerConnection&, RemoteVideoFrameReadReference&&);
 
     void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&&) { close(); }
     void lowMemoryHandler();
 
 private:
-    explicit RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&);
+    RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&, const WebCore::ProcessIdentity& webProcessIdentity, RemoteSharedResourceCache&);
 
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages.
     void releaseVideoFrame(RemoteVideoFrameWriteReference&&);
 #if PLATFORM(COCOA)
+    void addVideoFrame(RemoteVideoFrameReference&&, SharedVideoFrame&&);
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&);
-    void convertFrameBuffer(SharedVideoFrame&&, bool shouldApplyRotation, CompletionHandler<void(WebCore::ColorSpace)>&&);
+    void createNativeImage(RemoteVideoFrameReadReference&&, RemoteNativeImageReference, ShouldApplyRotation);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 
     UniqueRef<WebCore::PixelBufferConformerCV> createPixelConformer();
+    RefPtr<WebCore::NativeImage> convertToNativeImage(WebCore::VideoFrame&, ShouldApplyRotation);
 #endif
 
     const Ref<IPC::Connection> m_connection;
+#if PLATFORM(COCOA)
+    const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
+#endif
     IPC::ThreadSafeObjectHeap<RemoteVideoFrameIdentifier, RefPtr<WebCore::VideoFrame>> m_heap;
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;

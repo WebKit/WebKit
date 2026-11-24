@@ -44,8 +44,8 @@
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
 #include "RemoteTextureProxy.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteXRBindingProxy.h"
-#include "SharedVideoFrame.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUDescriptorSerializers.h"
 #include "WebGPUProxyIdentifiers.h"
@@ -156,17 +156,14 @@ RefPtr<::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const
         return nullptr;
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
+    // Holds the frame in the GPU process until the message below has been sent.
+    RefPtr<RemoteVideoFrameProxy> remoteFrame;
     if (!convertedDescriptor->mediaIdentifier) {
         auto* videoFrame = std::get_if<RefPtr<WebCore::VideoFrame>>(&descriptor.videoBacking);
         if (videoFrame && videoFrame->get()) {
-            convertedDescriptor->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), protect(root().gpuProcessIPCConnection()), [this, protectedThis = protect(*this)](auto& semaphore) {
-                auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameSemaphore { semaphore });
-                UNUSED_VARIABLE(sendResult);
-            }, [this, protectedThis = protect(*this)](WebCore::SharedMemory::Handle&& handle) {
-                auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameMemory { WTF::move(handle) });
-                UNUSED_VARIABLE(sendResult);
-            });
-            ASSERT(convertedDescriptor->sharedFrame);
+            remoteFrame = protect(root().videoFrameObjectHeapProxy())->remoteFrame(*videoFrame->get());
+            if (remoteFrame)
+                convertedDescriptor->videoFrame = remoteFrame->newReadReference(protect(root().gpuProcessIPCConnection()));
         }
     }
 
