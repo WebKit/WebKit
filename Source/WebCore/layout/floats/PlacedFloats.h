@@ -35,7 +35,6 @@ namespace WebCore::Layout {
 
 class Box;
 class BoxGeometry;
-class Rect;
 
 // PlacedFloats are relative to the BFC's logical top/left.
 // When floats added by nested IFCs with mismatching inline direcctions (e.g. where BFC is RTL but IFC is RTL)
@@ -63,10 +62,14 @@ public:
 
         BoxGeometry boxGeometry() const;
 
-        Rect absoluteRectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
-        Rect absoluteBorderBoxRect() const { return BoxGeometry::borderBoxRect(m_absoluteBoxGeometry); }
+        AxisPosition<ParentFormattingContextRoot> marginBoxTop() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).top() }; }
+        AxisPosition<ParentFormattingContextRoot> marginBoxBottom() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).bottom() }; }
+        AxisPosition<ParentFormattingContextRoot> marginBoxLeft() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).left() }; }
+        AxisPosition<ParentFormattingContextRoot> marginBoxRight() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).right() }; }
+        LayoutSize marginBoxSize() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).size(); }
+        AxisPosition<ParentFormattingContextRoot> borderBoxTop() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::borderBoxRect(m_absoluteBoxGeometry).top() }; }
+        AxisPosition<ParentFormattingContextRoot> borderBoxLeft() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::borderBoxRect(m_absoluteBoxGeometry).left() }; }
         BoxGeometry::HorizontalEdges inlineAxisMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
-        PositionInContextRoot absoluteBottom() const { return { absoluteRectWithMargin().bottom() }; }
 
         const LayoutShape* shape() const { return m_shape.get(); }
         std::optional<size_t> placedByLine() const { return m_placedByLine; }
@@ -93,8 +96,8 @@ public:
     bool hasStartPositioned() const;
     bool hasEndPositioned() const;
 
-    NODELETE std::optional<LayoutUnit> highestPositionOnBlockAxis() const;
-    NODELETE std::optional<LayoutUnit> lowestPositionOnBlockAxis(Clear = Clear::Both) const;
+    NODELETE std::optional<AxisPosition<ParentFormattingContextRoot>> highestPositionOnBlockAxis() const;
+    NODELETE std::optional<AxisPosition<ParentFormattingContextRoot>> lowestPositionOnBlockAxis(Clear = Clear::Both) const;
 
     void shrinkToFit();
 

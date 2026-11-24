@@ -36,24 +36,24 @@ namespace WebCore::Layout {
 class FloatAvoider {
     WTF_MAKE_TZONE_ALLOCATED(FloatAvoider);
 public:
-    NODELETE FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
+    NODELETE FloatAvoider(Point<ParentFormattingContextRoot> absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, AxisRange<ParentFormattingContextRoot> containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
     virtual ~FloatAvoider() = default;
 
-    void setInlineStart(LayoutUnit);
-    NODELETE void setBlockStart(LayoutUnit);
+    void setInlineStart(AxisPosition<ParentFormattingContextRoot>);
+    NODELETE void setBlockStart(AxisPosition<ParentFormattingContextRoot>);
     void resetInlineStart() { m_absoluteTopLeft.setX(initialInlineStart()); }
 
     NODELETE bool overflowsContainingBlock() const;
 
-    LayoutUnit blockStart() const;
-    LayoutUnit inlineStart() const;
-    LayoutUnit inlineEnd() const;
+    AxisPosition<ParentFormattingContextRoot> blockStart() const;
+    AxisPosition<ParentFormattingContextRoot> inlineStart() const;
+    AxisPosition<ParentFormattingContextRoot> inlineEnd() const;
 
     bool isStartAligned() const { return m_isStartAligned; }
 
 private:
     LayoutUnit borderBoxWidth() const { return m_borderBoxWidth; }
-    NODELETE LayoutUnit initialInlineStart() const;
+    NODELETE AxisPosition<ParentFormattingContextRoot> initialInlineStart() const;
 
     LayoutUnit marginBefore() const { return m_margin.vertical.before; }
     LayoutUnit marginAfter() const { return m_margin.vertical.after; }
@@ -65,16 +65,16 @@ private:
 
 private:
     // These coordinate values are relative to the formatting root's border box.
-    LayoutPoint m_absoluteTopLeft;
+    Point<ParentFormattingContextRoot> m_absoluteTopLeft;
     // Note that float avoider should work with no height value.
     LayoutUnit m_borderBoxWidth;
     BoxGeometry::Edges m_margin;
-    BoxGeometry::HorizontalEdges m_containingBlockAbsoluteContentBox;
+    AxisRange<ParentFormattingContextRoot> m_containingBlockAbsoluteContentBox;
     bool m_isFloatingPositioned { true };
     bool m_isStartAligned { true };
 };
 
-inline LayoutUnit FloatAvoider::blockStart() const
+inline AxisPosition<ParentFormattingContextRoot> FloatAvoider::blockStart() const
 {
     auto blockStart = m_absoluteTopLeft.y();
     if (isFloatingBox())
@@ -82,7 +82,7 @@ inline LayoutUnit FloatAvoider::blockStart() const
     return blockStart;
 }
 
-inline LayoutUnit FloatAvoider::inlineStart() const
+inline AxisPosition<ParentFormattingContextRoot> FloatAvoider::inlineStart() const
 {
     auto inlineStart = m_absoluteTopLeft.x();
     if (isFloatingBox())
@@ -90,7 +90,7 @@ inline LayoutUnit FloatAvoider::inlineStart() const
     return inlineStart;
 }
 
-inline LayoutUnit FloatAvoider::inlineEnd() const
+inline AxisPosition<ParentFormattingContextRoot> FloatAvoider::inlineEnd() const
 {
     if (isFloatingBox())
         return inlineStart() + marginBoxWidth();

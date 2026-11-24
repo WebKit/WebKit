@@ -572,10 +572,11 @@ void LineLayout::setOutsideMarkerPositions(const OutsideMarkerList& outsideMarke
         for (auto& floatItem : ensureBlockFormattingState().placedFloats().list()) {
             if (!floatItem.isInFormattingContextOf(protect(rootLayoutBox())))
                 continue;
-            auto floatRect = floatItem.absoluteRectWithMargin();
-            if (floatRect.bottom() <= lineBoxLogicalRect.y() || floatRect.top() >= lineBoxLogicalRect.maxY())
+            // These placed floats are relative to rootLayoutBox() (see ensureBlockFormattingState()).
+            if (floatItem.marginBoxBottom().value() <= lineBoxLogicalRect.y() || floatItem.marginBoxTop().value() >= lineBoxLogicalRect.maxY())
                 continue;
-            edge += isLeftToRight ? -floatRect.width() : floatRect.width();
+            auto floatWidth = floatItem.marginBoxSize().width();
+            edge += isLeftToRight ? -floatWidth : floatWidth;
         }
         return edge;
     }();

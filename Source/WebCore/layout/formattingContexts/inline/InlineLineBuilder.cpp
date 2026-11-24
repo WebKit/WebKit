@@ -1240,12 +1240,12 @@ LineBuilder::RectAndFloatConstraints LineBuilder::floatAvoidingRect(const Inline
         // text-indent acts as (start)margin on the line. When looking for intrusive floats we need to check against the line's _margin_ box.
         auto marginBoxRect = InlineRect { logicalRect.top(), logicalRect.left() - lineMarginStart, logicalRect.width() + lineMarginStart, logicalRect.height() };
 
-        if (constraints.start && constraints.start->x > marginBoxRect.left()) {
-            marginBoxRect.shiftLeftTo(constraints.start->x);
+        if (constraints.start && constraints.start->x().value() > marginBoxRect.left()) {
+            marginBoxRect.shiftLeftTo(constraints.start->x().value());
             constrainedSideSet.add(UsedFloat::Left);
         }
-        if (constraints.end && constraints.end->x < marginBoxRect.right()) {
-            marginBoxRect.setRight(std::max<InlineLayoutUnit>(marginBoxRect.left(), constraints.end->x));
+        if (constraints.end && constraints.end->x().value() < marginBoxRect.right()) {
+            marginBoxRect.setRight(std::max<InlineLayoutUnit>(marginBoxRect.left(), constraints.end->x().value()));
             constrainedSideSet.add(UsedFloat::Right);
         }
 
