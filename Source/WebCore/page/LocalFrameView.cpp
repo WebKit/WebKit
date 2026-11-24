@@ -3561,9 +3561,18 @@ void LocalFrameView::scrollToFocusedElementInternal()
 
     bool insideFixed;
     auto absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
-    auto anchorRectWithScrollMargin = absoluteBounds.marginRect;
     auto anchorRect = absoluteBounds.anchorRect;
-    LocalFrameView::scrollRectToVisible(anchorRectWithScrollMargin, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No, ScrollBehavior::Auto, OnlyAllowForwardScrolling::No, AllowScrollingOverflowHidden::Yes, anchorRect });
+    LocalFrameView::scrollRectToVisible(anchorRect, *renderer, insideFixed, {
+        .revealMode = m_selectionRevealModeForFocusedElement,
+        .alignX = ScrollAlignment::alignCenterIfNeeded,
+        .alignY = ScrollAlignment::alignCenterIfNeeded,
+        .shouldAllowCrossOriginScrolling = ShouldAllowCrossOriginScrolling::No,
+        .behavior = ScrollBehavior::Auto,
+        .onlyAllowForwardScrolling = OnlyAllowForwardScrolling::No,
+        .allowScrollingOverflowHidden = AllowScrollingOverflowHidden::Yes,
+        .visibilityCheckRect = anchorRect,
+        .scrollMargin = absoluteBounds.scrollMargin
+    });
 }
 
 void LocalFrameView::textFragmentIndicatorTimerFired()
@@ -3717,7 +3726,10 @@ void LocalFrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRe
     if (CheckedPtr renderer = element ? element->renderBox() : nullptr)
         targetRect.expand(renderer->scrollPaddingForViewportRect(viewRect));
 
-    auto revealRect = getPossiblyFixedRectToExpose(viewRect, targetRect, isFixed, options.alignX, options.alignY);
+    auto targetRectWithMargin = targetRect;
+    targetRectWithMargin.expand(options.scrollMargin);
+
+    auto revealRect = getPossiblyFixedRectToExpose(viewRect, targetRectWithMargin, isFixed, options.alignX, options.alignY);
     auto scrollPosition = roundedIntPoint(revealRect.location());
     scrollPosition = constrainedScrollPosition(scrollPosition);
 
@@ -3821,6 +3833,8 @@ void LocalFrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absolut
     RefPtr element = m_frame->document() ? m_frame->document()->documentElement() : nullptr;
     if (CheckedPtr renderBox = element ? element->renderBox() : nullptr)
         targetRect.expand(renderBox->scrollPaddingForViewportRect(viewRect));
+
+    targetRect.expand(options.scrollMargin);
 
     LayoutRect revealRect = getPossiblyFixedRectToExpose(viewRect, targetRect, isFixed, options.alignX, options.alignY);
 
@@ -4811,9 +4825,13 @@ void LocalFrameView::scrollToAnchor()
     cancelScheduledScrolls();
 
     LayoutRect rect;
+    LayoutBoxExtent scrollMargin;
     bool insideFixed = false;
-    if (CheckedPtr renderer = anchorNode->renderer(); renderer && anchorNode != m_frame->document())
-        rect = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
+    if (CheckedPtr renderer = anchorNode->renderer(); renderer && anchorNode != m_frame->document()) {
+        auto bounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
+        rect = bounds.anchorRect;
+        scrollMargin = bounds.scrollMargin;
+    }
 
     LOG_WITH_STREAM(Scrolling, stream << " anchor node rect " << rect);
 
@@ -4836,7 +4854,13 @@ void LocalFrameView::scrollToAnchor()
 
     adjustScrollAlignmentForScrollSnapAlign(renderer, &alignX, &alignY);
 
-    scrollRectToVisible(rect, renderer, insideFixed, { SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::No });
+    scrollRectToVisible(rect, renderer, insideFixed, {
+        .revealMode = SelectionRevealMode::Reveal,
+        .alignX = alignX,
+        .alignY = alignY,
+        .shouldAllowCrossOriginScrolling = ShouldAllowCrossOriginScrolling::No,
+        .scrollMargin = scrollMargin
+    });
 
     if (AXObjectCache* cache = protect(m_frame->document())->existingAXObjectCache())
         cache->handleScrolledToAnchor(*anchorNode);

@@ -1098,6 +1098,13 @@ header: <WebCore/RectEdges.h>
     bool left();
 }
 
+[CustomHeader] class WebCore::RectEdges<WebCore::LayoutUnit> {
+    WebCore::LayoutUnit top();
+    WebCore::LayoutUnit right();
+    WebCore::LayoutUnit bottom();
+    WebCore::LayoutUnit left();
+}
+
 header: <WebCore/RectCorners.h>
 [CustomHeader] class WebCore::RectCorners<float> {
     float topLeft();

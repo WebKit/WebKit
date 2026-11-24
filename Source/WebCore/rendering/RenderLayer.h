@@ -45,6 +45,7 @@
 #pragma once
 
 #include <WebCore/AffineTransform.h>
+#include <WebCore/BoxExtents.h>
 #include <WebCore/ClipRect.h>
 #include <WebCore/GraphicsLayerEnums.h>
 #include <WebCore/LayerFragment.h>
@@ -167,6 +168,7 @@ struct ScrollRectToVisibleOptions {
     std::optional<LayoutRect> visibilityCheckRect { std::nullopt };
     SkipScrollingTargetElement skipScrollingTargetElement { SkipScrollingTargetElement::No };
     ScrollIntoViewContainer container { ScrollIntoViewContainer::All };
+    LayoutBoxExtent scrollMargin { };
 };
 
 enum class UpdateBackingSharingFlags {
