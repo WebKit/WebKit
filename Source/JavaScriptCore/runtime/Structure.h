@@ -249,12 +249,19 @@ public:
 
     inline bool shouldDoCacheableDictionaryTransitionForAdd(PutPropertySlot::Context context)
     {
+        // A structure that grew past s_maxTransitionLength through dot syntax has a fixed shape, so keyed adds
+        // keep sharing its transitions until they make up a quarter of its properties, when it acts as a hash map.
         int maxTransitionLength;
-        if (context == PutPropertySlot::PutById)
+        if (context == PutPropertySlot::PutById || (grewPastTransitionLimitThroughPutById() && canAddKeyedPropertyPastTransitionLimit()))
             maxTransitionLength = s_maxTransitionLengthForNonEvalPutById;
         else
             maxTransitionLength = s_maxTransitionLength;
         return transitionCountEstimate() > maxTransitionLength;
+    }
+
+    bool canAddKeyedPropertyPastTransitionLimit() const
+    {
+        return m_keyedAddsPastTransitionLimit < std::numeric_limits<uint8_t>::max() && 4 * static_cast<int>(m_keyedAddsPastTransitionLimit) < transitionCountEstimate();
     }
 
     inline bool shouldDoCacheableDictionaryTransitionForRemoveAndAttributeChange()
@@ -843,6 +850,7 @@ public:
     DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 6);
     DEFINE_BITFIELD(bool, hasSpecialProperties, HasSpecialProperties, 1, 7);
     DEFINE_BITFIELD(DefinitelyNonThenableState, definitelyNonThenableState, DefinitelyNonThenableState, 2, 8); // This flag can be flipped on the main thread at any timing.
+    DEFINE_BITFIELD(bool, grewPastTransitionLimitThroughPutById, GrewPastTransitionLimitThroughPutById, 1, 12);
     DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
     DEFINE_BITFIELD(bool, isWatchingReplacement, IsWatchingReplacement, 1, 18); // This flag can be fliped on the main thread at any timing.
     DEFINE_BITFIELD(bool, mayBePrototype, MayBePrototype, 1, 19);
@@ -1016,6 +1024,7 @@ private:
     uint8_t m_inlineCapacity;
 
     ConcurrentJSLock m_lock;
+    uint8_t m_keyedAddsPastTransitionLimit { 0 };
 
     uint32_t m_bitField;
     TransitionPropertyAttributes m_transitionPropertyAttributes { 0 };
