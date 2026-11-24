@@ -6,13 +6,18 @@
     description('This tests that WebKit properly handles sub-frames with invalid URLs. It passes if it does not crash.');
     window.jsTestIsAsync = true;
 
-    var lscript = 'script>'
-
     function runTest() {
-        var doc = document.getElementById('target').contentWindow.document;
-        doc.open();
-        doc.write("<body onload='test()'><p>Test Content</p><script>function test() { var doc=document.getElementById('target').contentWindow.document; doc.open(); doc.write(\'<img src=x onerror=\"alert(0);if(window.testRunner)testRunner.notifyDone()\">\'); doc.close(); }</" + lscript + "<iframe id='target' src='http://255.255.255.255'></body>");
-        doc.close();
+        // The frame's navigation failed, so it shows an error document, whose origin is opaque.
+        try {
+            document.getElementById('target').contentWindow.document.open();
+            testFailed("Opening the frame's document did not throw.");
+        } catch (e) {
+            if (e.name == "SecurityError")
+                testPassed("Opening the frame's document threw a SecurityError.");
+            else
+                testFailed("Opening the frame's document threw " + e.name + ".");
+        }
+        finishJSTest();
     }
     </script>
 </head>

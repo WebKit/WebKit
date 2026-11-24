@@ -398,9 +398,14 @@ TEST(WKNavigation, Frames)
             "host2",
             "frame://host3/"
         }, {
-            "fail provisional",
-            "frame://host2/",
-            "host2",
+            "commit",
+            "frame://host3/",
+            "host3",
+            "frame://host3/"
+        }, {
+            "fail",
+            "frame://host3/",
+            "host3",
             "frame://host3/"
         }
     });
